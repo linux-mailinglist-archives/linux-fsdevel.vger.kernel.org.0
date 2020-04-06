@@ -2,103 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B13919F5C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 14:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C62EC19F649
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 15:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbgDFM2v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 08:28:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59896 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbgDFM2v (ORCPT
+        id S1728117AbgDFNBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 09:01:43 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:51515 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbgDFNBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 08:28:51 -0400
-Received: from mail-qv1-f71.google.com ([209.85.219.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jLQrw-0005wm-Qe
-        for linux-fsdevel@vger.kernel.org; Mon, 06 Apr 2020 12:28:48 +0000
-Received: by mail-qv1-f71.google.com with SMTP id f4so13232450qvu.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 05:28:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=OF5+/9Hx0SVxloqW+AsVqfRADYJTfKE7xEAXHE0ATtQ=;
-        b=cbmMVvIgfl5eZbTqAkyLYDEPUYSJrr805Z3lBLz2KhjM0YUHOgXtVcbFrZB/Znp8NV
-         Nv73KDHq5W7KgK3hLh3uGja4bdpHVoifLR3ncCBmMyRUiznqUrrGKr/0zqxGMtXK/cPL
-         BtCSnq1ppshkLROt/1NIcm31/B4YdMMBJUwdi8KpRLdDJsIh1uK0hpUvFUU7gNYxWL7o
-         XHUHeLJEXMOar7Qpy3cddLjp3M6GY+OjI7sgeXAitZ43HU6lztEer+fR4Ea2ddv04Djx
-         x1SFGoD3vnRb9uYvV3jDWfymrRBNFrKzzSPNc9oO8gGG6zn+uVYuQKkYRxv1HOsVURCk
-         UH1w==
-X-Gm-Message-State: AGi0PuZhmpIiH155pFF/tM7XH3XE68LZpkABfVMil7ckSENZdBgTqD2T
-        Qa+3LmJbW/gjYVMbPwVFizWXFho9YgIbkDgGnTaWHqvOXrj4BojTfQXcfFcbQ3Tsjhkds5T/v8P
-        0371TZh2RZHHnX1+1MTCRrcd2RnbIgh1qRI75W/mkClU=
-X-Received: by 2002:a05:620a:48:: with SMTP id t8mr9118376qkt.21.1586176128009;
-        Mon, 06 Apr 2020 05:28:48 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJYLiXAu6E02kHBhfDM1nCHxnL13FHkbN3p7Z/eOEFCi3eXhdf202hvNJRK1IZo1qiltey8FA==
-X-Received: by 2002:a05:620a:48:: with SMTP id t8mr9118359qkt.21.1586176127806;
-        Mon, 06 Apr 2020 05:28:47 -0700 (PDT)
-Received: from [192.168.1.75] (201-27-34-233.dsl.telesp.net.br. [201.27.34.233])
-        by smtp.gmail.com with ESMTPSA id g187sm14076243qkf.115.2020.04.06.05.28.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Apr 2020 05:28:47 -0700 (PDT)
-Subject: Re: [PATCH V3] kernel/hung_task.c: Introduce sysctl to print all
- traces when a hung task is detected
-To:     akpm@linux-foundation.org, keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        mcgrof@kernel.org, yzaikin@google.com, tglx@linutronix.de,
-        penguin-kernel@I-love.SAKURA.ne.jp, vbabka@suse.cz,
-        rdunlap@infradead.org, willy@infradead.org, kernel@gpiccoli.net,
-        dvyukov@google.com
-References: <20200327223646.20779-1-gpiccoli@canonical.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <d4888de4-5748-a1d0-4a45-d1ecebe6f2a9@canonical.com>
-Date:   Mon, 6 Apr 2020 09:28:41 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Mon, 6 Apr 2020 09:01:42 -0400
+Received: from mail-qt1-f176.google.com ([209.85.160.176]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N9MlI-1jIKor1ERw-015Lh9; Mon, 06 Apr 2020 15:01:41 +0200
+Received: by mail-qt1-f176.google.com with SMTP id f20so12682135qtq.6;
+        Mon, 06 Apr 2020 06:01:41 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZRqJFzBfGN2kcbOmxTsxVGDR1Ew//AdsEuGdlqjoeFeM6O6XMp
+        XK0D2kcs4tLnZfPliPVGccE1f1+4T+afC+8JkGQ=
+X-Google-Smtp-Source: APiQypKGl0rcjmxPk7LYkIyq/3sFEAQ9JSPbooEo+AQI5dEX6atvP7qavyGi7h4ravOrmygkje1eLWDqMVjJqya7e2s=
+X-Received: by 2002:ac8:d8e:: with SMTP id s14mr20274585qti.204.1586178100052;
+ Mon, 06 Apr 2020 06:01:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200327223646.20779-1-gpiccoli@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200406120312.1150405-1-hch@lst.de> <20200406120312.1150405-3-hch@lst.de>
+In-Reply-To: <20200406120312.1150405-3-hch@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 6 Apr 2020 15:01:24 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a02LQNOehukgaCj81wg1D2XhW1=_mQZ72cT6nQdO=mhOw@mail.gmail.com>
+Message-ID: <CAK8P3a02LQNOehukgaCj81wg1D2XhW1=_mQZ72cT6nQdO=mhOw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] binfmt_elf: open code copy_siginfo_to_user to
+ kernelspace buffer
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:dGr/PTHzNlhAg8nmJiAVpx3qyNykoPFVVfJTEzev2QMu2b+GJt5
+ MwseBCwLfebyAuVxIj/eu++fOsT1+89Ai5a1SSOdnXOQxMo6iiUdOEDBKBvBchemFXS/9iM
+ ksV7b7Y7iaQmlwq2jnGXyH1a2sQhbvu7Vto269EJGL6tEVzCkJIhvqlL7Wpb9kxOD1Likzp
+ EXMzAPOON4rmpwi8DBpEA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H8nvoPmcBCY=:+2G3Ozxt1Z+SydtUKt6d+5
+ nhOaKGkoBaQLlFv/IWC59fP+dHQ2tuwUBpEkkjrzQNh0CBU2b/dcZd8jXcjA6Y2SVn4eiE0hU
+ eay14z9qwK4/38FrfqmBY6zLzpomzZHdr5D77TZ5ALRZU380ACuLme1pGarQZ27GoOZ9YvlB3
+ C716dVErOAKDR5FlSnHazfCKl2lRPs+vmeTXx5lRpnepmxoI1GJA5D+dCk+crd5UiNZBdOZFs
+ BKaX0b/jWX+sqWXxtmMrZo63BsZALqajLIAbTEkPsk4CR05Ii9G9Aq8iYRLu3W3EbLgBYNJLL
+ TDukJxQULIYJi658+D3FQ3YaW+RkaihjXBkRTWg2sGUej2jUtFS+v84wwgm6qIsfSPCVzwO8n
+ On95rRtx/Zb1qe5WAJJcKNqBbYXJanXtcTr5nGzlfJ5ilNbdM/21+O0UkRvxNYA9VV93FsA3+
+ Glr/520GmIxPmtFIBHC0MXy5saL92Xd3BuixvDZsfmJ6hli5jVO7jaOiXm5CGDhU9xousUa96
+ jT3xC1Mhi7uz+tSY/JZHfXw3d+JTeV4uoHeTFQzPzKIBg0W1uVLpnTbvI04IFtyJxEfunZC03
+ gtJuXf42oijsmYOTbyk8VKTmm/QgIaH0nNtuxMFEaGsHeoZeLHElAJSCBLVKOha5IDxJZheAg
+ lp6o2OEcLoYDzRCDCmX7cvqJOWM/gIlgyDQWIS4w0w5bcu3Z0URlSPZpMC6U8t6p9FLtMLNTC
+ vFJDGO5KOjV1qEgCXVohXE72xiqlUY/7DCcbqj9ags4/2F1OfuwR2JevtwdR/tGk8UVQ3JFW+
+ gB59/5Fpbgxr2cQ13bEcWC5nKoxiXp+dSu50lHipR6kRWDLU+c=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Andrew / Kees, sorry for the ping.
-Is there anything else missing in this patch? What are the necessary
-steps to get it merged?
+On Mon, Apr 6, 2020 at 2:03 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Instead of messing with the address limit just open code the trivial
+> memcpy + memset logic.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/binfmt_elf.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index f4713ea76e82..d744ce9a4b52 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1556,10 +1556,9 @@ static void fill_auxv_note(struct memelfnote *note, struct mm_struct *mm)
+>  static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+>                 const kernel_siginfo_t *siginfo)
+>  {
+> -       mm_segment_t old_fs = get_fs();
+> -       set_fs(KERNEL_DS);
+> -       copy_siginfo_to_user((user_siginfo_t __user *) csigdata, siginfo);
+> -       set_fs(old_fs);
+> +       memcpy(csigdata, siginfo, sizeof(struct kernel_siginfo));
+> +       memset((char *)csigdata + sizeof(struct kernel_siginfo), 0,
+> +               SI_EXPANSION_SIZE);
+>         fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+>  }
 
-Thanks in advance,
+I think this breaks compat binfmt-elf mode, which relies on this trick:
 
+fs/compat_binfmt_elf.c:#define copy_siginfo_to_user     copy_siginfo_to_user32
+fs/compat_binfmt_elf.c#include "binfmt_elf.c"
 
-Guilherme
+At least we seem to only have one remaining implementation of
+__copy_siginfo_to_user32(), so fixing this won't require touching all
+architectures, but I don't see an obvious way to do it right. Maybe
+compat-binfmt-elf.c should just override fill_siginfo_note() itself
+rather than overriding copy_siginfo_to_user().
+
+       Arnd
