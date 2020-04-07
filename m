@@ -2,78 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1631A0A24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 11:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8140D1A0A96
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 11:58:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgDGJbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 05:31:04 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:55738 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgDGJbD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 05:31:03 -0400
-Received: by mail-io1-f70.google.com with SMTP id k5so2477128ioa.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Apr 2020 02:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=9ecQ8raBwV+ql8FB6mKArZB1484qcIdZc1keMaK2jMc=;
-        b=EiAMXkZ4A8vvGb5rKm/V6kVlYdBooBwjQ65DA3oCnyQ/h1s49Uszp4XMSFA9DGpA8+
-         pzKXD8wwZkr1WRSzrHsP7HXz59tEwRUYZzfUvCsblgfqJeBDfrMLsULDKbIa/giS/15G
-         ppbtEuxAIRK9GqeJwSRPkWZh2y59iOlmz+4spOEDVkc97rAE/7ptA2EVJ5JJin6cdk5V
-         RneXQRWefbxuRhcopXkAUPN8NSSu3vfB5olhMVD5ZPDiyti+IJN+bZVh2JV16UO+zrqS
-         56mEloJ1DFmIQMwva4UGLfEU7hA1QFk18AMm2xks29664FJdWE51PpSElOHB4hFk772T
-         s8+g==
-X-Gm-Message-State: AGi0PuaLyEX7MPVYwITmsvNc+KgUNgKkpgJipkJjlxUN946QiMbOj8IC
-        LwX//QYWiTniYC4Ycc/LaRu0tuefuLXHZCdib3MOoye4w94Y
-X-Google-Smtp-Source: APiQypIVR59kn7drjOvrJ37LHlH0A1TQqNo5AIe8adfVvVA7j+43yXTNPKQq6cEndGOflU7+5OFZ9Q/tarO/p/azAPJ9AMzyiuAb
+        id S1728180AbgDGJ6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 05:58:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33864 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726716AbgDGJ6F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Apr 2020 05:58:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 51A19AC44;
+        Tue,  7 Apr 2020 09:58:01 +0000 (UTC)
+Date:   Tue, 7 Apr 2020 11:57:58 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 5/8] powerpc/64: make buildable without CONFIG_COMPAT
+Message-ID: <20200407095758.GF25468@kitsune.suse.cz>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584699455.git.msuchanek@suse.de>
+ <e5619617020ef3a1f54f0c076e7d74cb9ec9f3bf.1584699455.git.msuchanek@suse.de>
+ <b420b304-05e9-df58-7149-31169b0b01e2@c-s.fr>
 MIME-Version: 1.0
-X-Received: by 2002:a92:498e:: with SMTP id k14mr1290576ilg.160.1586251862658;
- Tue, 07 Apr 2020 02:31:02 -0700 (PDT)
-Date:   Tue, 07 Apr 2020 02:31:02 -0700
-In-Reply-To: <000000000000f59ac305a25cfa14@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cc522f05a2b00ad5@google.com>
-Subject: Re: possible deadlock in io_submit_one (3)
-From:   syzbot <syzbot+343f75cdeea091340956@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        allison@lohutok.net, areber@redhat.com, aubrey.li@linux.intel.com,
-        avagin@gmail.com, bcrl@kvack.org, christian@brauner.io,
-        cyphar@cyphar.com, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, guro@fb.com, joel@joelfernandes.org,
-        keescook@chromium.org, linmiaohe@huawei.com, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mhocko@suse.com, mingo@kernel.org, oleg@redhat.com,
-        peterz@infradead.org, sargun@sargun.me,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b420b304-05e9-df58-7149-31169b0b01e2@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Tue, Apr 07, 2020 at 07:50:30AM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 20/03/2020 à 11:20, Michal Suchanek a écrit :
+> > There are numerous references to 32bit functions in generic and 64bit
+> > code so ifdef them out.
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> > v2:
+> > - fix 32bit ifdef condition in signal.c
+> > - simplify the compat ifdef condition in vdso.c - 64bit is redundant
+> > - simplify the compat ifdef condition in callchain.c - 64bit is redundant
+> > v3:
+> > - use IS_ENABLED and maybe_unused where possible
+> > - do not ifdef declarations
+> > - clean up Makefile
+> > v4:
+> > - further makefile cleanup
+> > - simplify is_32bit_task conditions
+> > - avoid ifdef in condition by using return
+> > v5:
+> > - avoid unreachable code on 32bit
+> > - make is_current_64bit constant on !COMPAT
+> > - add stub perf_callchain_user_32 to avoid some ifdefs
+> > v6:
+> > - consolidate current_is_64bit
+> > v7:
+> > - remove leftover perf_callchain_user_32 stub from previous series version
+> > v8:
+> > - fix build again - too trigger-happy with stub removal
+> > - remove a vdso.c hunk that causes warning according to kbuild test robot
+> > v9:
+> > - removed current_is_64bit in previous patch
+> > v10:
+> > - rebase on top of 70ed86f4de5bd
+> > ---
+> >   arch/powerpc/include/asm/thread_info.h | 4 ++--
+> >   arch/powerpc/kernel/Makefile           | 6 +++---
+> >   arch/powerpc/kernel/entry_64.S         | 2 ++
+> >   arch/powerpc/kernel/signal.c           | 3 +--
+> >   arch/powerpc/kernel/syscall_64.c       | 6 ++----
+> >   arch/powerpc/kernel/vdso.c             | 3 ++-
+> >   arch/powerpc/perf/callchain.c          | 8 +++++++-
+> >   7 files changed, 19 insertions(+), 13 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/arch/powerpc/kernel/syscall_64.c b/arch/powerpc/kernel/syscall_64.c
+> > index 87d95b455b83..2dcbfe38f5ac 100644
+> > --- a/arch/powerpc/kernel/syscall_64.c
+> > +++ b/arch/powerpc/kernel/syscall_64.c
+> > @@ -24,7 +24,6 @@ notrace long system_call_exception(long r3, long r4, long r5,
+> >   				   long r6, long r7, long r8,
+> >   				   unsigned long r0, struct pt_regs *regs)
+> >   {
+> > -	unsigned long ti_flags;
+> >   	syscall_fn f;
+> >   	if (IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG))
+> > @@ -68,8 +67,7 @@ notrace long system_call_exception(long r3, long r4, long r5,
+> >   	local_irq_enable();
+> > -	ti_flags = current_thread_info()->flags;
+> > -	if (unlikely(ti_flags & _TIF_SYSCALL_DOTRACE)) {
+> > +	if (unlikely(current_thread_info()->flags & _TIF_SYSCALL_DOTRACE)) {
+> >   		/*
+> >   		 * We use the return value of do_syscall_trace_enter() as the
+> >   		 * syscall number. If the syscall was rejected for any reason
+> > @@ -94,7 +92,7 @@ notrace long system_call_exception(long r3, long r4, long r5,
+> >   	/* May be faster to do array_index_nospec? */
+> >   	barrier_nospec();
+> > -	if (unlikely(ti_flags & _TIF_32BIT)) {
+> > +	if (unlikely(is_32bit_task())) {
+> 
+> is_compat() should be used here instead, because we dont want to use
+is_compat_task()
+> compat_sys_call_table() on PPC32.
+> 
+> >   		f = (void *)compat_sys_call_table[r0];
+> >   		r3 &= 0x00000000ffffffffULL;
+> 
+That only applies once you use this for 32bit as well. Right now it's
+64bit only so the two are the same.
 
-commit 7bc3e6e55acf065500a24621f3b313e7e5998acf
-Author: Eric W. Biederman <ebiederm@xmission.com>
-Date:   Thu Feb 20 00:22:26 2020 +0000
+Thanks
 
-    proc: Use a list of inodes to flush from proc
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b3c9c7e00000
-start commit:   7e634208 Merge tag 'acpi-5.7-rc1-2' of git://git.kernel.or..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=11b3c9c7e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b3c9c7e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12205d036cec317f
-dashboard link: https://syzkaller.appspot.com/bug?extid=343f75cdeea091340956
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=105d592be00000
-
-Reported-by: syzbot+343f75cdeea091340956@syzkaller.appspotmail.com
-Fixes: 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Michal
