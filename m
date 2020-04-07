@@ -2,105 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6AAD1A156A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 21:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9981A15A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 21:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgDGTAK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 15:00:10 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44153 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgDGTAK (ORCPT
+        id S1726826AbgDGTLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 15:11:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45576 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbgDGTLu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 15:00:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n13so725394pgp.11;
-        Tue, 07 Apr 2020 12:00:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8g+YOhto+FId7IOGUsnB9ouZCy1lzdR5Jj8DGscjgPI=;
-        b=lZ1KjvpXvtj33QhvN+6L47Fl7nyV9BQgah/WiiuNfrJRnXXoKpzRIASMmJI1U6DJfY
-         Nspm7KlQkEt9JzC7SRfIaVSOe1OehX5PlhgO0i1EM7L2HwITRo0Nk6y5o2ZVyMPrrcb/
-         iavfpmP/lhUyvEXk4x17fzVzR+zJ4RSxho4zpA4x/wERThmineXfAH3Ra1HtldHJKYJ6
-         Csg3C6XedQAV6sqrYlv1bOw7g9HOntHqEP1TfRUnc869NpCp/TJKIu1VODW7ukO261FL
-         QeZi45Au/nwwBrgThMeuD5kqtCsRYeVm98qFKaZLciXpJHPtnPaRiPLZO/VHBGSrIf0c
-         rcTg==
-X-Gm-Message-State: AGi0PubnlF2qgaelbQlFdCLc6H5OXhjdRcsOyGR2mC0TQ1E4yIiwJrwD
-        WzGrP1UDE0eaDI1TRQMDJrI=
-X-Google-Smtp-Source: APiQypKZLouSqK9lQOJSsWNqRvqKEIfChEwiU3Z9h3IB3dcC5wNVv88wHOM+aJPwonteOJ90kXqfDQ==
-X-Received: by 2002:aa7:96c1:: with SMTP id h1mr3991833pfq.212.1586286007677;
-        Tue, 07 Apr 2020 12:00:07 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id i2sm14616408pfr.203.2020.04.07.12.00.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2020 12:00:05 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 60B4B40246; Tue,  7 Apr 2020 19:00:04 +0000 (UTC)
-Date:   Tue, 7 Apr 2020 19:00:04 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "yukuai (C)" <yukuai3@huawei.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        nstange@suse.de, mhocko@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/3] block: address blktrace use-after-free
-Message-ID: <20200407190004.GG11244@42.do-not-panic.com>
-References: <20200402000002.7442-1-mcgrof@kernel.org>
- <20200403081929.GC6887@ming.t460p>
- <0e753195-72fb-ce83-16a1-176f2c3cea6a@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e753195-72fb-ce83-16a1-176f2c3cea6a@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 7 Apr 2020 15:11:50 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 037J84Ik060043;
+        Tue, 7 Apr 2020 19:09:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=swajKYutGq2J/flsUm50gGY9cMazIJGr09EB2ZsOi40=;
+ b=uqvNasyPkZpE0WsJm/4dH/pnZTwFH534H6Bpy3rYZYrfwrrqJ05K5H6q7F18wb3tTUmS
+ rfeWUx0o7WvySvFmsuUL57BNGwbFfOc74I1kjs2wNlX42h5GpPurIvPuBSNY3oFLZYti
+ DToHOgan1AWxGSRzkw7rCUKp6KRUjhjFNnQeKhDyi5M8/LggfceYItVbDjaSaE4EEJVV
+ Jlh+CHAXc9W0cdThRXIhzCSn4k9TvQv6/a08YmXe1++VyHXAUbE1hwsRVQTsNtv7zHM3
+ FYdaidr+anDEh310RLE+QEJQo4wrEdDoRN3tiTYQ7fysYCLp1CFnFT8V3vsAYkENA5P9 rQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 306j6mexrx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Apr 2020 19:09:34 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 037J7hUD095632;
+        Tue, 7 Apr 2020 19:09:34 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 3073qgxx5t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Apr 2020 19:09:33 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 037J9WFu028390;
+        Tue, 7 Apr 2020 19:09:32 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Apr 2020 12:09:32 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [RFC] Renaming page_offset() to page_pos()
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20200403153323.GQ21484@bombadil.infradead.org>
+Date:   Tue, 7 Apr 2020 13:09:31 -0600
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FE9117E6-D432-439D-836F-9805986C29DD@oracle.com>
+References: <20200403153323.GQ21484@bombadil.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9584 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 mlxlogscore=827
+ spamscore=0 bulkscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004070153
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9584 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=875 spamscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004070153
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 10:47:01AM +0800, yukuai (C) wrote:
-> On 2020/4/3 16:19, Ming Lei wrote:
-> 
-> > BTW, Yu Kuai posted one patch for this issue, looks that approach
-> > is simpler:
-> > 
-> > https://lore.kernel.org/linux-block/20200324132315.22133-1-yukuai3@huawei.com/
-> > 
-> > 
-> 
-> I think the issue might not be fixed with the patch seires.
-> 
-> At first, I think there are two key points for the issure:
-> 1. The final release of queue is delayed in a workqueue
-> 2. The creation of 'q->debugfs_dir' might failed(only if 1 exist)
-> And if we can fix any of the above problem, the UAF issue will be fixed.
-> (BTW, I did not come up with a good idea for problem 1, and my approach
-> is for problem 2.)
-> 
-> The third patch "block: avoid deferral of blk_release_queue() work" is
-> not enough to fix problem 1:
-> a. if CONFIG_DEBUG_KOBJECT_RELEASE is enable:
-> static void kobject_release(struct kref *kref)
-> {
->         struct kobject *kobj = container_of(kref, struct kobject, kref);
-> #ifdef CONFIG_DEBUG_KOBJECT_RELEASE
->         unsigned long delay = HZ + HZ * (get_random_int() & 0x3);
->         pr_info("kobject: '%s' (%p): %s, parent %p (delayed %ld)\n",
->                 ┊kobject_name(kobj), kobj, __func__, kobj->parent, delay);
->         INIT_DELAYED_WORK(&kobj->release, kobject_delayed_cleanup);
-> 
->         schedule_delayed_work(&kobj->release, delay);
-> #else
->         kobject_cleanup(kobj);
-> #endif
-> }
-> b. when 'kobject_put' is called from blk_cleanup_queue, can we make sure
-> it is the last reference?
+page_pos seems quite reasonable to me.
 
-You are right, I think I know the fix for this now. Will run some more
-tests.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-  Luis
+
+> On Apr 3, 2020, at 9:33 AM, Matthew Wilcox <willy@infradead.org> =
+wrote:
+>=20
+> Without looking at the source, can you tell me what page_offset() =
+does?
+>=20
+> At least one regular contributor thought it meant the pgoff_t of this
+> page within the file.  It's actually the byte offset of this page into
+> the file.
+>=20
+> We have a perfectly good name for byte offset into the file --
+> file->f_pos.  So I propose renaming it to page_pos().  To minimise
+> disruption to other development, I'm going to send Linus a pull =
+request
+> at the end of the merge window with the results of this coccinelle =
+script:
+>=20
+> @@ expression a; @@
+> -       page_offset(a)
+> +       page_pos(a)
+>=20
+> I've reviewed the output and the only slight weirdness is an extra =
+space
+> in casts:
+>=20
+>                btrfs_warn(BTRFS_I(page->mapping->host)->root->fs_info,
+>                           "page private not zero on page %llu",
+> -                          (unsigned long long)page_offset(page));
+> +                          (unsigned long long) page_pos(page));
+>=20
+> Sometimes Coccinelle fixes the surrounding whitespace to be better
+> than it currently is:
+>=20
+> -               ow->bv[i].bv_len =3D min(page_offset(ow->pages[i]) + =
+PAGE_SIZE,
+> -                   ow->off + ow->len) -
+> -                   max(ow->off, page_offset(ow->pages[i]));
+> +               ow->bv[i].bv_len =3D min(page_pos(ow->pages[i]) + =
+PAGE_SIZE,
+> +                                      ow->off + ow->len) -
+> +                   max(ow->off, page_pos(ow->pages[i]));
+>=20
+> (it's still bad, but it's an improvement)
+>=20
+> Any objections?  Anyone got a better name than page_pos()?
+>=20
+
