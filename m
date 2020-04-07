@@ -2,118 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D44B31A057E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 06:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A85A1A063A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 07:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbgDGEEP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 00:04:15 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35972 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbgDGEEP (ORCPT
+        id S1726965AbgDGFMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 01:12:46 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46750 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbgDGFMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 00:04:15 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jLfSs-00ClNx-E5; Tue, 07 Apr 2020 04:03:54 +0000
-Date:   Tue, 7 Apr 2020 05:03:54 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Yun Levi <ppbuk5246@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Guillaume Nault <gnault@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Li RongQing <lirongqing@baidu.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Johannes Berg <johannes.berg@intel.com>,
-        David Howells <dhowells@redhat.com>, daniel@iogearbox.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] netns: dangling pointer on netns bind mount point.
-Message-ID: <20200407040354.GZ23230@ZenIV.linux.org.uk>
-References: <20200407023512.GA25005@ubuntu>
- <20200407030504.GX23230@ZenIV.linux.org.uk>
- <20200407031318.GY23230@ZenIV.linux.org.uk>
- <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
+        Tue, 7 Apr 2020 01:12:43 -0400
+Received: by mail-yb1-f196.google.com with SMTP id f14so1119950ybr.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 22:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=38NlpNEbzNFWb7RFQtfvRASB+B576yw7dNc7pozf3pc=;
+        b=m9m/DCsFRus/zRmIuphflM5sHyenmkMN/TOEnECOGthbLJHVg8u2+iqtFZpNbyb2/k
+         2tLF//qwyXGtNVJKRleGUy+KbEtVjN+06Aw6FbGL98d5M/QEqB9c9SHaIsBPFlQYoUCh
+         Lj+P9EPUGdvyQRip4KeH3oSvDVhqDTV0IJcbcI66BzYP/b9Y/1y4LF++1q0teLhPl3GM
+         v15gBTxOBB8qvH4CNaCnwdm2sugBL+St8qIlm7SqBWweWj6hdsos1F0mjeWO8qJt64R9
+         xl3tya8AfljNAFdSOkZ4tC7INitomO8JQPFHHcp+JAODUsaup01At9KIYDntXEoTQZb0
+         DmdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=38NlpNEbzNFWb7RFQtfvRASB+B576yw7dNc7pozf3pc=;
+        b=Mspc/B3kjcC34SFOdz3Gnsi911LrFAD5PZ/zey64iHmwqAznatbg+IYByA/Po/x7Dj
+         JuVPJ9u3Q9K4sOM8L5NaWMqfCMkCMj86PsDDsspizQJgaKiG6DES/VIub+uYFfHA/YTw
+         KqgK4VaGzKA2ve9HIefK4qRcnipnNrWAj4spZaCc1Mo9m9cxcKYo+VylTW8Y1S5GHpap
+         oqbiUJBdjZzssHS3zwPDBnUcasRruo7YzxOTKwzfF4ttzypQ7Wqp/EkGWxfwUTIozDr7
+         tZx17Xooh3doWij/VS3V1uUynu4A0v+DzN1zW1kVDrjrRkOTNqZQUfiNm/A1HiV1Mv+k
+         vI3Q==
+X-Gm-Message-State: AGi0PuYCnhSXohpiV65GqEFT4rQOKkp9cgFUxJT0+itQgl5ELDijZFGf
+        N1DEaA34TCgVuCCsgbR89GMwsk+Fk+WlzQ394cisSzlYA9I=
+X-Google-Smtp-Source: APiQypIYXniGQUHEpASwiGNjKth4Cu9ElCz4yjrJ2uXbYBYunhfz0887D/TRydUbTstl7MwaeVftG8QxF1P80ST3qos=
+X-Received: by 2002:ab0:a9:: with SMTP id 38mr504317uaj.61.1586236361040; Mon,
+ 06 Apr 2020 22:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
+Received: by 2002:ab0:4929:0:0:0:0:0 with HTTP; Mon, 6 Apr 2020 22:12:40 -0700 (PDT)
+From:   SANDRA DEWI <dewisandra154@gmail.com>
+Date:   Tue, 7 Apr 2020 05:12:40 +0000
+Message-ID: <CABRVPWys0xe4CWBkaU0ZXQW+4d=tjDOjyo8cKohc5-VFkWPkcA@mail.gmail.com>
+Subject: whether this is your correct email address or not
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 12:29:34PM +0900, Yun Levi wrote:
+Dear ,Pastor
 
-> sock_prot_inuse_add+0x10/0x20
-> __sock_release+0x44/0xc0
-> sock_close+0x14/0x20
-> __fput+0x8c/0x1b8
-> ____fput+0xc/0x18
-> task_work_run+0xa8/0xd8
-> do_exit+0x2e4/0xa50
-> do_group_exit+0x34/0xc8
-> get_signal+0xd4/0x600
-> do_signal+0x174/0x268
-> do_notify_resume+0xcc/0x110
-> work_pending+0x8/0x10
-> Code: b940c821 f940c000 d538d083 8b010800 (b8606861) ---[ end trace
-> 0b98c9ccbfd9f6fd ]---
-> Date/Time : 02-14-0120 06:35:47 Kernel panic - not syncing: Fatal
-> exception in interrupt SMP: stopping secondary CPUs Kernel Offset:
-> disabled CPU features: 0x0,21806000 Memory Limit: none
-> 
-> What I saw is when I try to bind on some mount point to
-> /proc/{pid}/ns/net which made by child process, That's doesn't
-> increase the netns' refcnt.
 
-Why would it?  Increase of netns refcount should happen when you
-follow /proc/*/ns/net and stay for as long as nsfs inode is alive,
-not by cloning that mount.  And while we are at it, you don't need
-to bind it anywhere in order to call setns() - just open the
-sucker and then feed the resulting descriptor to setns(2).  No
-mount --bind involved and if child exiting between open() and
-setns() would free netns, we would have exact same problem.
 
-> And when the child process's going to exit, it frees the netns But
-> Still bind mount point's inode's private data point to netns which was
-> freed by child when it exits.
+I have a client who is an oil business man and he made a fixed deposit
+of $26 million USD in my bank, where I am the director of the branch,
+My client died with his entire family in Jordanian
 
-Look: we call ns_get_path(), which calls ns_get_path_cb(), which
-calls the callback passed to it (ns_get_path_task(), in this case),
-which grabs a reference to ns.  Then we pass that reference to
-__ns_get_path().
+50% of the fund will be for the church  for the work of God,the
+balance 50% we share it in the ratio of 50/50. Meaning 50% to you and
+50% for me
 
-__ns_get_path() looks for dentry stashed in ns.  If there is one
-and it's still alive, we grab a reference to that dentry and drop
-the reference to ns - no new inodes had been created, so no new
-namespace references have appeared.  Existing inode is pinned
-by dentry and dentry is pinned by _dentry_ reference we've got.
+intervention in the Syrian Civil War 2014 leaving behind no next of
+kin. I Propose to present you as next of kin to claim the funds, if
+interested reply me for full details and how we are to
 
-If dentry is not there or is already in the middle of being destroyed,
-we allocate a new inode, stash our namespace reference into it,
-create a dentry referencing that new inode, stash it into namespace
-and return that dentry.  Without dropping namespace reference we'd
-obtained in ns_get_path_task() - it went into new inode.
 
-If inode or dentry creation fails (out of memory), we drop what
-we'd obtained (namespace if inode creation fails, just the inode
-if dentry creation fails - namespace reference that went into
-inode will be dropped by inode destructor in the latter case) and
-return an error.
 
-If somebody else manages to get through the entire thing while
-we'd been allocating stuff and we see _their_ dentry already
-stashed into namespace, we just drop our dentry (its destructor
-will drop inode reference, which will lead to inode destructor,
-which will drop namespace reference) and bugger off with -EAGAIN.
-The caller (ns_get_path_cb()) will retry the entire thing.
+proceed to close this deal.
 
-The invariant to be preserved here is "each of those inodes
-holds a reference to namespace for as long as the inode exists".
-ns_get_path() increments namespace refcount if and only if it
-has allocated an nsfs inode.  If it grabs an existing dentry
-instead, the namespace refcount remains unchanged.
 
-Anyway, I would really like to see .config and C (or shell)
-reproducer.  Ideally - .config that could be run in a KVM.
+
+
+Mrs. Sandra Dewi
+
+
+
+Email  mrsdewi@gmx.com
