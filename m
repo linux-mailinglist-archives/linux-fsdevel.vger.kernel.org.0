@@ -2,231 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92CD31A0C82
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 13:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4581B1A0E07
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 14:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgDGLGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 07:06:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59794 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728304AbgDGLGN (ORCPT
+        id S1728643AbgDGM5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 08:57:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37334 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgDGM5s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 07:06:13 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 037B3w1U011570
-        for <linux-fsdevel@vger.kernel.org>; Tue, 7 Apr 2020 07:06:11 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3082n9v2e6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Apr 2020 07:06:11 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 7 Apr 2020 12:05:45 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 Apr 2020 12:05:36 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 037B4rYX44302654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Apr 2020 11:04:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63B014C059;
-        Tue,  7 Apr 2020 11:05:58 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12E284C040;
-        Tue,  7 Apr 2020 11:05:56 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.167.201])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Apr 2020 11:05:55 +0000 (GMT)
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches as
- usercopy caches
-To:     Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Michal Kubecek <mkubecek@suse.cz>
-References: <201911121313.1097D6EE@keescook> <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
- <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
- <202001281457.FA11CC313A@keescook>
- <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
- <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
- <20200129170939.GA4277@infradead.org>
- <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
- <202001300945.7D465B5F5@keescook>
- <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
- <7d810f6d-8085-ea2f-7805-47ba3842dc50@suse.cz>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Tue, 7 Apr 2020 13:05:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 7 Apr 2020 08:57:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id j19so1728677wmi.2;
+        Tue, 07 Apr 2020 05:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=NJgFiHGVdEHVoPHsjcjQFPUVIguP3zuu0mFKw20AE/I=;
+        b=vBaMQQlfPEOTUUXSzYIRq4G4kDrCj4VmuSnRz3BAzJkT0orChsQF6W5INidkHLNPW7
+         nqTyfzXBdohezy0lOGI3lsaO3OXyZ6MdPUHTa1tcM2ngqPFMKVvkUY1s0dXNxJgocRgO
+         Gx5sYtkoAVX+xl/QN/Hz+fspEgaZqIcIQbVGDG5oGJ8HV45f9zFNSbU9c7NNqwKVF5Yi
+         0K3exelQTcqOpeP5+huVBYoOda9yUg+AiGiV3ezLl1QSpsaHcj97JsmWdaHoj5AP8c5u
+         Te9qraRr03mED15QGisiH2MQZobn32netPPlIBXXmbbaQBwVOatO/8ev0uu42D3dYGBN
+         RWEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=NJgFiHGVdEHVoPHsjcjQFPUVIguP3zuu0mFKw20AE/I=;
+        b=Vyr/TmkQhAvU1NHPqqyB9d9aSsha+imcteGun1aqNAoI8GgG1uXWjbO9q+otC2FpK6
+         EUKI7Qlwq6bCzGQfBsWqlaqGrVx2qvevW5YRg4wCh/OjzJpt95Bn6dqbMLxcdRgV7CLi
+         3omADt1XgTukdJu4Nw5dEXymP0UQbmp9KUykU6wmD1odHEC7+Rdoue/ZCLmY75feKxi8
+         ix6L09RQSHZmLDDiNI5L3c3threSfuPdMsOpzWOZn1DMcqxlIGQVRtXaPbjkfaPTtF+f
+         dXaEaut872tdfu9U/ksHPanJX5i5ZFfl+UkeBIdIMS9L1KbQYn4+a5AgGNGKfqPRsjJw
+         b8hw==
+X-Gm-Message-State: AGi0PuYbEfFls2vJhiqucth+Jz4RLeKOqWGzPoJgjyy+ZkBWVkONkPpk
+        3fwGaGBNXZgQ2orqE/dMbz28vEnMbAKICiNNqZU=
+X-Google-Smtp-Source: APiQypLf2n32gkj/40LPaOXiDFIUwBtDEXVa9iT+o0zSQGe98lpZiv9eO+Dg4KTGdklo81hElYAdZ5EZ/fvR5qsk8rE=
+X-Received: by 2002:a1c:7c0d:: with SMTP id x13mr2251285wmc.44.1586264266277;
+ Tue, 07 Apr 2020 05:57:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7d810f6d-8085-ea2f-7805-47ba3842dc50@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20040711-0016-0000-0000-000002FFF93A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20040711-0017-0000-0000-00003363D38B
-Message-Id: <aecba9ae-887d-39c5-c3b7-8236fbcaa898@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-07_03:2020-04-07,2020-04-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 mlxscore=0 phishscore=0 spamscore=0
- malwarescore=0 clxscore=1015 impostorscore=0 mlxlogscore=912 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004070091
+References: <20200407023512.GA25005@ubuntu> <20200407030504.GX23230@ZenIV.linux.org.uk>
+ <20200407031318.GY23230@ZenIV.linux.org.uk> <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
+ <20200407040354.GZ23230@ZenIV.linux.org.uk> <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
+In-Reply-To: <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
+From:   Yun Levi <ppbuk5246@gmail.com>
+Date:   Tue, 7 Apr 2020 21:57:35 +0900
+Message-ID: <CAM7-yPQ4DNNBHd2=QJpCLAmRRLSVuxKjnH6kJmuBdQ8iP0TRSA@mail.gmail.com>
+Subject: Fwd: [PATCH] netns: dangling pointer on netns bind mount point.
+To:     daniel@iogearbox.net, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+---------- Forwarded message ---------
+From: Yun Levi <ppbuk5246@gmail.com>
+Date: Tue, Apr 7, 2020 at 9:53 PM
+Subject: Re: [PATCH] netns: dangling pointer on netns bind mount point.
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David S. Miller <davem@davemloft.net>, Jakub Kicinski
+<kuba@kernel.org>, Guillaume Nault <gnault@redhat.com>, Nicolas
+Dichtel <nicolas.dichtel@6wind.com>, Eric Dumazet
+<edumazet@google.com>, Li RongQing <lirongqing@baidu.com>, Thomas
+Gleixner <tglx@linutronix.de>, Johannes Berg
+<johannes.berg@intel.com>, David Howells <dhowells@redhat.com>,
+<daniel@iogearbox.net>, <linux-fsdevel@vger.kernel.org>,
+<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
 
 
-On 07.04.20 10:00, Vlastimil Babka wrote:
-> On 1/31/20 1:03 PM, Jann Horn wrote:
-> 
->> I think dma-kmalloc slabs should be handled the same way as normal
->> kmalloc slabs. When a dma-kmalloc allocation is freshly created, it is
->> just normal kernel memory - even if it might later be used for DMA -,
->> and it should be perfectly fine to copy_from_user() into such
->> allocations at that point, and to copy_to_user() out of them at the
->> end. If you look at the places where such allocations are created, you
->> can see things like kmemdup(), memcpy() and so on - all normal
->> operations that shouldn't conceptually be different from usercopy in
->> any relevant way.
->  
-> So, let's do that?
-> 
-> ----8<----
-> From d5190e4e871689a530da3c3fd327be45a88f006a Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Tue, 7 Apr 2020 09:58:00 +0200
-> Subject: [PATCH] usercopy: Mark dma-kmalloc caches as usercopy caches
-> 
-> We have seen a "usercopy: Kernel memory overwrite attempt detected to SLUB
-> object 'dma-kmalloc-1 k' (offset 0, size 11)!" error on s390x, as IUCV uses
-> kmalloc() with __GFP_DMA because of memory address restrictions.
-> The issue has been discussed [2] and it has been noted that if all the kmalloc
-> caches are marked as usercopy, there's little reason not to mark dma-kmalloc
-> caches too. The 'dma' part merely means that __GFP_DMA is used to restrict
-> memory address range.
-> 
-> As Jann Horn put it [3]:
-> 
-> "I think dma-kmalloc slabs should be handled the same way as normal
-> kmalloc slabs. When a dma-kmalloc allocation is freshly created, it is
-> just normal kernel memory - even if it might later be used for DMA -,
-> and it should be perfectly fine to copy_from_user() into such
-> allocations at that point, and to copy_to_user() out of them at the
-> end. If you look at the places where such allocations are created, you
-> can see things like kmemdup(), memcpy() and so on - all normal
-> operations that shouldn't conceptually be different from usercopy in
-> any relevant way."
-> 
-> Thus this patch marks the dma-kmalloc-* caches as usercopy.
-> 
-> [1] https://bugzilla.suse.com/show_bug.cgi?id=1156053
-> [2] https://lore.kernel.org/kernel-hardening/bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz/
-> [3] https://lore.kernel.org/kernel-hardening/CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com/
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+BTW, It's my question.
 
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>Look: we call ns_get_path(), which calls ns_get_path_cb(), which
+>calls the callback passed to it (ns_get_path_task(), in this case),
+>which grabs a reference to ns.  Then we pass that reference to
+>__ns_get_path().
+>
+>__ns_get_path() looks for dentry stashed in ns.  If there is one
+>and it's still alive, we grab a reference to that dentry and drop
+>the reference to ns - no new inodes had been created, so no new
+>namespace references have appeared.  Existing inode is pinned
+>by dentry and dentry is pinned by _dentry_ reference we've got.
 
-> ---
->  mm/slab_common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 5282f881d2f5..ae9486160594 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1303,7 +1303,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
->  			kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
->  				kmalloc_info[i].name[KMALLOC_DMA],
->  				kmalloc_info[i].size,
-> -				SLAB_CACHE_DMA | flags, 0, 0);
-> +				SLAB_CACHE_DMA | flags, 0,
-> +				kmalloc_info[i].size);
->  		}
->  	}
->  #endif
-> 
+actually ns_get_path is called in unshare(2). and it makes new dentry
+and inode in __ns_get_path finally (Cuz it create new network
+namespace)
+In that case, when I mount with --bind option to this
+proc/self/ns/net, it only increase dentry refcount on
+do_loopback->clone_mnt finally (not call netns_operation->get)
+That means it's not increase previous created network namespace
+reference count but only increase reference count of _dentry_
+In that situation, If I exit the child process it definitely frees the
+net_namespace previous created at the same time it decrease
+net_namespace's refcnt in exit_task_namespace().
+It means it's possible that bind mount point can hold the dentry with
+inode having net_namespace's dangling pointer in another process.
+In above situation, parent who know that binded mount point calls
+setns(2) then it sets the net_namespace which is refered by the inode
+of the dentry increased by do_loopback.
+That makes set the net_namespace which was freed already.
 
+The Kernel Panic log is happend NOT in child kill but in Parent killed
+after I setns(2) with the net_namespace made by child process.
+
+Thanks you for your reviewing, But Please forgive that I couldn't
+share .config right now (I try to make for x86....)
+I try to understand your comments But Please forgive my fault because
+of my ignorant...
+If my explain is wrong, please rebuke me... and Please share your knowledge...
+
+Thank you.
+
+On Tue, Apr 7, 2020 at 1:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Tue, Apr 07, 2020 at 12:29:34PM +0900, Yun Levi wrote:
+>
+> > sock_prot_inuse_add+0x10/0x20
+> > __sock_release+0x44/0xc0
+> > sock_close+0x14/0x20
+> > __fput+0x8c/0x1b8
+> > ____fput+0xc/0x18
+> > task_work_run+0xa8/0xd8
+> > do_exit+0x2e4/0xa50
+> > do_group_exit+0x34/0xc8
+> > get_signal+0xd4/0x600
+> > do_signal+0x174/0x268
+> > do_notify_resume+0xcc/0x110
+> > work_pending+0x8/0x10
+> > Code: b940c821 f940c000 d538d083 8b010800 (b8606861) ---[ end trace
+> > 0b98c9ccbfd9f6fd ]---
+> > Date/Time : 02-14-0120 06:35:47 Kernel panic - not syncing: Fatal
+> > exception in interrupt SMP: stopping secondary CPUs Kernel Offset:
+> > disabled CPU features: 0x0,21806000 Memory Limit: none
+> >
+> > What I saw is when I try to bind on some mount point to
+> > /proc/{pid}/ns/net which made by child process, That's doesn't
+> > increase the netns' refcnt.
+>
+> Why would it?  Increase of netns refcount should happen when you
+> follow /proc/*/ns/net and stay for as long as nsfs inode is alive,
+> not by cloning that mount.  And while we are at it, you don't need
+> to bind it anywhere in order to call setns() - just open the
+> sucker and then feed the resulting descriptor to setns(2).  No
+> mount --bind involved and if child exiting between open() and
+> setns() would free netns, we would have exact same problem.
+>
+> > And when the child process's going to exit, it frees the netns But
+> > Still bind mount point's inode's private data point to netns which was
+> > freed by child when it exits.
+>
+> Look: we call ns_get_path(), which calls ns_get_path_cb(), which
+> calls the callback passed to it (ns_get_path_task(), in this case),
+> which grabs a reference to ns.  Then we pass that reference to
+> __ns_get_path().
+>
+> __ns_get_path() looks for dentry stashed in ns.  If there is one
+> and it's still alive, we grab a reference to that dentry and drop
+> the reference to ns - no new inodes had been created, so no new
+> namespace references have appeared.  Existing inode is pinned
+> by dentry and dentry is pinned by _dentry_ reference we've got.
+>
+> If dentry is not there or is already in the middle of being destroyed,
+> we allocate a new inode, stash our namespace reference into it,
+> create a dentry referencing that new inode, stash it into namespace
+> and return that dentry.  Without dropping namespace reference we'd
+> obtained in ns_get_path_task() - it went into new inode.
+>
+> If inode or dentry creation fails (out of memory), we drop what
+> we'd obtained (namespace if inode creation fails, just the inode
+> if dentry creation fails - namespace reference that went into
+> inode will be dropped by inode destructor in the latter case) and
+> return an error.
+>
+> If somebody else manages to get through the entire thing while
+> we'd been allocating stuff and we see _their_ dentry already
+> stashed into namespace, we just drop our dentry (its destructor
+> will drop inode reference, which will lead to inode destructor,
+> which will drop namespace reference) and bugger off with -EAGAIN.
+> The caller (ns_get_path_cb()) will retry the entire thing.
+>
+> The invariant to be preserved here is "each of those inodes
+> holds a reference to namespace for as long as the inode exists".
+> ns_get_path() increments namespace refcount if and only if it
+> has allocated an nsfs inode.  If it grabs an existing dentry
+> instead, the namespace refcount remains unchanged.
+>
+> Anyway, I would really like to see .config and C (or shell)
+> reproducer.  Ideally - .config that could be run in a KVM.
