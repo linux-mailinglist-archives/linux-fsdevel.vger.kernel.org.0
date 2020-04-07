@@ -2,198 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4BC91A1386
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 20:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E27211A1391
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 20:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgDGS0n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 14:26:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46958 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgDGS0n (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 14:26:43 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jLsvJ-00DKY3-Bm; Tue, 07 Apr 2020 18:26:09 +0000
-Date:   Tue, 7 Apr 2020 19:26:09 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Yun Levi <ppbuk5246@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Guillaume Nault <gnault@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Li RongQing <lirongqing@baidu.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Johannes Berg <johannes.berg@intel.com>,
-        David Howells <dhowells@redhat.com>, daniel@iogearbox.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] netns: dangling pointer on netns bind mount point.
-Message-ID: <20200407182609.GA23230@ZenIV.linux.org.uk>
-References: <20200407023512.GA25005@ubuntu>
- <20200407030504.GX23230@ZenIV.linux.org.uk>
- <20200407031318.GY23230@ZenIV.linux.org.uk>
- <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
- <20200407040354.GZ23230@ZenIV.linux.org.uk>
- <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
+        id S1726628AbgDGSaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 14:30:12 -0400
+Received: from mga14.intel.com ([192.55.52.115]:60112 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726332AbgDGSaL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Apr 2020 14:30:11 -0400
+IronPort-SDR: aat543FUNqMwKniNQEWkV4Un5133hP62tEFF4hDlKtIwx+EGUj/ZaSzmvXwuzuHcHLWNWB+wRg
+ HEpHzmHXEEbw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 11:30:10 -0700
+IronPort-SDR: ZwrsoMC8FP+nMgQHxSpq0C5muJmfVAL83tMxkeXV63taXiHZ1DJeyxaq2vFmySl8XEg79EDTLa
+ 678dkWgjTJ1g==
+X-IronPort-AV: E=Sophos;i="5.72,356,1580803200"; 
+   d="scan'208";a="424844297"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 11:30:10 -0700
+From:   ira.weiny@intel.com
+To:     linux-kernel@vger.kernel.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>
+Subject: [PATCH V6 0/8] Enable per-file/per-directory DAX operations V6
+Date:   Tue,  7 Apr 2020 11:29:50 -0700
+Message-Id: <20200407182958.568475-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 09:53:29PM +0900, Yun Levi wrote:
-> BTW, It's my question.
-> 
-> >Look: we call ns_get_path(), which calls ns_get_path_cb(), which
-> >calls the callback passed to it (ns_get_path_task(), in this case),
-> >which grabs a reference to ns.  Then we pass that reference to
-> >__ns_get_path().
-> >
-> >__ns_get_path() looks for dentry stashed in ns.  If there is one
-> >and it's still alive, we grab a reference to that dentry and drop
-> >the reference to ns - no new inodes had been created, so no new
-> >namespace references have appeared.  Existing inode is pinned
-> >by dentry and dentry is pinned by _dentry_ reference we've got.
-> 
-> actually ns_get_path is called in unshare(2).
+From: Ira Weiny <ira.weiny@intel.com>
 
-Yes, it does.  Via perf_event_namespaces(), which does
-        perf_fill_ns_link_info(&ns_link_info[NET_NS_INDEX],
-                               task, &netns_operations);
-and there we have
-        error = ns_get_path(&ns_path, task, ns_ops);
-        if (!error) {
-                ns_inode = ns_path.dentry->d_inode;
-                ns_link_info->dev = new_encode_dev(ns_inode->i_sb->s_dev);
-                ns_link_info->ino = ns_inode->i_ino;
-                path_put(&ns_path);
-        }
-See that path_put()?  Dentry reference is dropped by it.
+Changes from V5:
+	* make dax mount option a tri-state
+	* Reject changes to FS_XFLAG_DAX for regular files
+		- Allow only on directories
+	* Update documentation
 
-> and it makes new dentry and
-> inode in __ns_get_path finally (Cuz it create new network namespace)
->
-> In that case, when I mount with --bind option to this proc/self/ns/net, it
-> only increase dentry refcount on do_loopback->clone_mnt finally (not call
-> netns_operation->get)
-> That means it's not increase previous created network namespace reference
-> count but only increase reference count of _dentry_
->
-> In that situation, If I exit the child process it definitely frees the
-> net_namespace previous created at the same time it decrease net_namespace's
-> refcnt in exit_task_namespace().
-> It means it's possible that bind mount point can hold the dentry with inode
-> having net_namespace's dangling pointer in another process.
-> In above situation, parent who know that binded mount point calls setns(2)
-> then it sets the net_namespace which is refered by the inode of the dentry
-> increased by do_loopback.
-> That makes set the net_namespace which was freed already.
+At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
+consumption due to their inability to detect whether the kernel will
+instantiate page cache for a file, and cases where a global dax enable via a
+mount option is too coarse.
 
-How?  Netns reference in inode contributes to netns refcount.  And it's held
-for as long as the _inode_ has positive refcount - we only drop it from
-the inode destructor, *NOT* every time we drop a reference to inode.
-In the similar fashion, the inode reference in dentry contributes to inode
-refcount.  And again, that inode reference won't be dropped until the _last_
-reference to dentry gets dropped.
+The following patch series enables the use of DAX on individual files and/or
+directories on xfs, and lays some groundwork to do so in ext4.  It further
+enhances the dax mount option to be a tri-state of 'always', 'never', or
+'iflag' (default).  Furthermore, it maintians '-o dax' to be equivalent to '-o
+dax=always'.
 
-Incrementing refcount of dentry is enough to pin the inode and thus the
-netns the inode refers to.  It's a very common pattern with refcounting;
-a useful way of thinking about it is to consider the refcount of e.g.
-inode as sum of several components, one of them being "number of struct
-dentry instances with ->d_inode pointing to our inode".  And look at e.g.
-__ns_get_path() like this:
-        rcu_read_lock();
-        d = atomic_long_read(&ns->stashed);
-        if (!d)
-                goto slow;
-        dentry = (struct dentry *)d;
-        if (!lockref_get_not_dead(&dentry->d_lockref))
-                goto slow;
-other_count(dentry) got incremented by 1.
-        rcu_read_unlock();
-        ns->ops->put(ns);
-other_count(ns) decremented by 1.
-got_it:
-        path->mnt = mntget(mnt);
-        path->dentry = dentry;
-path added to paths(dentry), other_count(dentry) decremented by 1 (getting
-it back to the original value).
-        return 0;
-slow:   
-        rcu_read_unlock();
-        inode = new_inode_pseudo(mnt->mnt_sb);
-        if (!inode) {
-                ns->ops->put(ns);
-subtract 1 from other_count(ns)
-                return -ENOMEM;
-        }
-dentries(inode) = empty
-other_count(inode) = 1
-	....
-	inode->i_private = ns;
-add inode to inodes(ns), subtract 1 from other_count(ns); the total
-is unchanged.
-        dentry = d_alloc_anon(mnt->mnt_sb);
-        if (!dentry) {
-                iput(inode);
-subtract 1 from other_count(inode).  Since now all components of
-inode refcount are zero, inode gets destroyed.  Destructor calls
-nsfs_evict_inode(), which removes the inode from inodes(ns).
-The total effect: inode is destroyed, inodes(ns) is back to what
-it used to be and other_count(ns) is left decremented by 1 compared
-to what we used to have.  IOW, the balance is the same as if inode
-allocation would've failed.
-                return -ENOMEM;
-        }
-other_count(dentry) = 1
-        d_instantiate(dentry, inode);
-add dentry to dentries(inode), subtract 1 from other_count(inode).
-The total is unchanged.  Now other_count(inode) is 0 and dentries(inode)
-is {dentry}.
-        d = atomic_long_cmpxchg(&ns->stashed, 0, (unsigned long)dentry);
-        if (d) {
-somebody else has gotten there first
-                d_delete(dentry);       /* make sure ->d_prune() does nothing */
-                dput(dentry);
-subtract 1 from other_count(dentry) (which will drive it to 0).  Since
-no other references exist, dentry gets destroyed.  Destructor will
-remove dentry from dentries(inode) and since other_count(inode) is already
-zero, trigger destruction of inode.  That, in turn, will remove inode
-from inodes(ns).  Total effect: dentry is destroyed, inode is destroyed,
-inodes(ns) is back to what it used to be, other_count(ns) is left decremented
-by 1 compared to what we used to have.
-                cpu_relax();
-                return -EAGAIN;
-        }
-        goto got_it;
-got_it:
-        path->mnt = mntget(mnt);
-        path->dentry = dentry;
-add path to paths(dentry), subtract 1 from other_count(dentry).  At that
-point other_count(dentry) is back to 0, ditto for other_count(inode) and
-other_count(ns) is left decremented by 1 compared to what it used to be.
-inode is added to inodes(ns), dentry - to dentries(inode) and path - to
-paths(dentry).
-        return 0;
-and we are done.
+The insight at LSF/MM was to separate the per-mount or per-file "physical"
+(FS_XFLAG_DAX) capability switch from an "effective" (S_DAX) attribute for the
+file.
 
-In all cases the total effect is the same as far as "other" counts go:
-other_count(ns) is down by 1 and that's the only change in other_count()
-of *ANY* objects.  Of course we do not keep track of the sets explicitly;
-it would cost too much and we only interested in the sum of their sizes
-anyway.  What we actually store is the sum, so operations like "transfer
-the reference from one component to another" are not immediately obvious
-to be refcounting ones - the sum is unchanged.  Conceptually, though,
-they are refcounting operations.
-	Up to d_instantiate() we are holding a reference to inode;
-after that we are *not* - it has been transferred to dentry.  That's
-why on subsequent failure exits we do not call iput() - the inode
-reference is not ours to discard anymore.
-	In the same way, up to inode->i_private = ns; we are holding
-a reference to ns.  After that we are not - it's been transferred to
-inode.  From that point on it's not ours to discard; it will be
-dropped when inode gets destroyed, whenever that happens.
+At LSF/MM we discussed the difficulties of switching the DAX state of a file
+with active mappings / page cache.  It was thought the races could be avoided
+by limiting DAX state flips to 0-length files.
+
+However, this turns out to not be true.[3][5] This is because address space
+operations (a_ops) may be in use at any time the inode is referenced.
+
+For this reason direct manipulation of the FS_XFLAG_DAX file is prohibited on
+files in this patch set.  File can only inherit this flag from their parent
+directory on creation.
+
+Details of when and how DAX state can be changed on a file is included in a
+documentation patch.
+
+It should be noted that FS_XFLAG_DAX inheritance is not shown in this patch set
+as it was maintained from previous work on XFS.  FS_XFLAG_DAX and it's
+inheritance will need to be added to other file systems for user control. 
+
+
+[1] https://lwn.net/Articles/787973/
+[2] https://lwn.net/Articles/787233/
+[3] https://lkml.org/lkml/2019/10/20/96
+[4] https://patchwork.kernel.org/patch/11310511/
+[5] https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
+
+
+To: linux-kernel@vger.kernel.org
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+
+
+Changes from V4:
+	* Open code the aops lock rather than add it to the xfs_ilock()
+	  subsystem (Darrick's comments were obsoleted by this change)
+	* Fix lkp build suggestions and bugs
+
+Changes from V3:
+	* Remove global locking...  :-D
+	* put back per inode locking and remove pre-mature optimizations
+	* Fix issues with Directories having IS_DAX() set
+	* Fix kernel crash issues reported by Jeff
+	* Add some clean up patches
+	* Consolidate diflags to iflags functions
+	* Update/add documentation
+	* Reorder/rename patches quite a bit
+
+Changes from V2:
+
+	* Move i_dax_sem to be a global percpu_rw_sem rather than per inode
+		Internal discussions with Dan determined this would be easier,
+		just as performant, and slightly less overhead that having it
+		in the SB as suggested by Jan
+	* Fix locking order in comments and throughout code
+	* Change "mode" to "state" throughout commits
+	* Add CONFIG_FS_DAX wrapper to disable inode_[un]lock_state() when not
+		configured
+	* Add static branch for which is activated by a device which supports
+		DAX in XFS
+	* Change "lock/unlock" to up/down read/write as appropriate
+		Previous names were over simplified
+	* Update comments/documentation
+
+	* Remove the xfs specific lock to the vfs (global) layer.
+	* Fix i_dax_sem locking order and comments
+
+	* Move 'i_mapped' count from struct inode to struct address_space and
+		rename it to mmap_count
+	* Add inode_has_mappings() call
+
+	* Fix build issues
+	* Clean up syntax spacing and minor issues
+	* Update man page text for STATX_ATTR_DAX
+	* Add reviewed-by's
+	* Rebase to 5.6
+
+	Rename patch:
+		from: fs/xfs: Add lock/unlock state to xfs
+		to: fs/xfs: Add write DAX lock to xfs layer
+	Add patch:
+		fs/xfs: Clarify lockdep dependency for xfs_isilocked()
+	Drop patch:
+		fs/xfs: Fix truncate up
+
+Ira Weiny (8):
+  fs/xfs: Remove unnecessary initialization of i_rwsem
+  fs: Remove unneeded IS_DAX() check
+  fs/stat: Define DAX statx attribute
+  fs/xfs: Make DAX mount option a tri-state
+  fs/xfs: Create function xfs_inode_enable_dax()
+  fs/xfs: Combine xfs_diflags_to_linux() and xfs_diflags_to_iflags()
+  fs/xfs: Change xfs_ioctl_setattr_dax_invalidate() to
+    xfs_ioctl_dax_check()
+  Documentation/dax: Update Usage section
+
+ Documentation/filesystems/dax.txt |  94 +++++++++++++++++++++-
+ fs/stat.c                         |   3 +
+ fs/xfs/xfs_icache.c               |   4 +-
+ fs/xfs/xfs_inode.h                |   1 +
+ fs/xfs/xfs_ioctl.c                | 124 +++---------------------------
+ fs/xfs/xfs_iops.c                 |  62 ++++++++++-----
+ fs/xfs/xfs_mount.h                |  26 ++++++-
+ fs/xfs/xfs_super.c                |  34 ++++++--
+ include/linux/fs.h                |   2 +-
+ include/uapi/linux/stat.h         |   1 +
+ 10 files changed, 206 insertions(+), 145 deletions(-)
+
+-- 
+2.25.1
+
