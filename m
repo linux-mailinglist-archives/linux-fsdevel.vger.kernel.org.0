@@ -2,209 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF061A04D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 04:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7435C1A04F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 04:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgDGCWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 22:22:12 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:57377 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726332AbgDGCWM (ORCPT
+        id S1726399AbgDGCg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 22:36:29 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54916 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgDGCg2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 22:22:12 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 57676580173;
-        Mon,  6 Apr 2020 22:22:10 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 06 Apr 2020 22:22:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        5dNVhfLMUt+8tcPKdoTMiF0YG1bsTSZmcEY4vAPNwSw=; b=G3zhLNwlhoBqP+G8
-        UwCj3dmUonEhJlRFoodWDaFNEmgD9adZCBapxgao+DkeRvbWrXzbqtMEVxS8Cp/E
-        gutJlnL6EnWW1p4aIa3fZdh2g+xnc37bL1E84WbLSxzhjk/H/6f5jr4npugiY9+Y
-        K7JwwhNbXlbHTaZxJpvS4E5yqcszvJopzGkMPwJz226VvRyhSJU7WZcvztVEc2mZ
-        2JA5GusojluT39DjK6IKolVXt+WBvYnO6Gh5j2rbMlvlZvd43g4dh5EdpTezuTzk
-        Z9OmNCVY0y+JfFnDxdJDhxvV9Sk/sA0erQeSDB/kgN+tt71kDNtPEzkyftNkc8WW
-        HU6F4Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=5dNVhfLMUt+8tcPKdoTMiF0YG1bsTSZmcEY4vAPNw
-        Sw=; b=FhI8OYVHzCqgMW0J30jdJEPY0mYut7dTMQfe8HXJmRXf6/zT64lyLyN8D
-        p3mnV4asB3a9CeT4cWYW/7fVUBXHgtr5p8DeVuIr0LSva7IsDqLCmT1spKnQwE50
-        oSHD+FWCeTDZEAmbDxGPmgHEpiVst4ZYlAUktjBKEXHId7SfxDvKFvZlAgXrsa+4
-        nfNYMQYPyuh0rCh2Vyb+QrLN/leCd7cvO83gIy9GLm3kMuNr6nvgTg3f2JP5U0Rn
-        4KFgXjJFhetpSpLngEnxUvQa0cg0zBO7pwdzXmAnPTfo1OKm/95BSTA6dZLmRxGE
-        Ic+jkAI51Q9mi+t27bkuZjfHdvJ0g==
-X-ME-Sender: <xms:0OOLXg-5Trx9ScuOkRCbMRfDLLn4w7ens3PjsAlQBGZiKqDfAOW8iw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeggdehgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
-    dukeelrddujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:0OOLXlAPHjEhxtWgp2onM4JAAhHsk9-0cz2JjwCKpFSm6RceGwfvUA>
-    <xmx:0OOLXnoHRCNWOoRNWB4BpRxdgScqZFVdoVuRV8cmgTodDogT3EIGBQ>
-    <xmx:0OOLXtmJaxyNlf8D_0Lzot5BsjxN6JKZNO5hKUpXhwXP-tJpi3IlYw>
-    <xmx:0uOLXkak-p80leqRgUWIZI_lIcC6FFuDYNpQ6izmPEFZDBvpCAILDw>
-Received: from mickey.themaw.net (unknown [118.208.189.17])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0DA7D306D4B9;
-        Mon,  6 Apr 2020 22:22:02 -0400 (EDT)
-Message-ID: <a4b5828d73ff097794f63f5f9d0fd1532067941c.camel@themaw.net>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-From:   Ian Kent <raven@themaw.net>
-To:     Lennart Poettering <mzxreary@0pointer.de>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Date:   Tue, 07 Apr 2020 10:21:59 +0800
-In-Reply-To: <20200406172917.GA37692@gardel-login>
-References: <20200402143623.GB31529@gardel-login>
-         <CAJfpegtRi9epdxAeoVbm+7UxkZfzC6XmD4K_5dg=RKADxy_TVA@mail.gmail.com>
-         <20200402152831.GA31612@gardel-login>
-         <CAJfpegum_PsCfnar8+V2f_VO3k8CJN1LOFJV5OkHRDbQKR=EHg@mail.gmail.com>
-         <20200402155020.GA31715@gardel-login>
-         <CAJfpeguM__+S6DiD4MWFv5GCf_EUWvGFT0mzuUCCrfQwggqtDQ@mail.gmail.com>
-         <20200403110842.GA34663@gardel-login>
-         <CAJfpegtYKhXB-HNddUeEMKupR5L=RRuydULrvm39eTung0=yRg@mail.gmail.com>
-         <20200403150143.GA34800@gardel-login>
-         <CAJfpegudLD8F-25k-k=9G96JKB+5Y=xFT=ZMwiBkNTwkjMDumA@mail.gmail.com>
-         <20200406172917.GA37692@gardel-login>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Mon, 6 Apr 2020 22:36:28 -0400
+Received: by mail-pj1-f67.google.com with SMTP id np9so111645pjb.4;
+        Mon, 06 Apr 2020 19:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ExK57tXOixEJPtpgQX6g+8AKcUB7kSM0nnsqiNXCe8g=;
+        b=b57Mqs1SyShP3Bt0t9JzzA0NZqy2N4G3vB+SfwUQSesJu7SXsYL38fHId7tYnxONr9
+         MlBOzEeaZw/TeYN+AIaWPvxmRwZkdYWKjWjNzPiLcBUV3Hha8AxakAfVC5BNCZS/KVBx
+         904wYURAm3l73G6TCXuHoCmOJQQetZAssWnL+iMrUgAvNYJhqmUoMNNAgY3vJcJcCbiU
+         NUp8H/IMn/Luk/iGvQlLSSrQhXNp53oOTEkj/xx+iB7IzQayOGMBir4tBjdE2PCuCtGB
+         3ci41UWd27FUwH/MKTpH9KPsbxplzUBysnkQXr6Zv826LQqCDU6U5xVe0QyuPkb/JlG8
+         sjXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ExK57tXOixEJPtpgQX6g+8AKcUB7kSM0nnsqiNXCe8g=;
+        b=SG0o2LmNPmmMGDiueFhiYpkp2hWZcv/kist9t3C3uDkRqedN1FG7JIU+dyRcytyvz6
+         w7QA9T2QxvhvyK2SGfwmMd61XnaGahdCE2SZ1wfEzaQ2ghcU91Vwb7DIyKU9JdWsLWtl
+         O4AE8ZDVO4/rHtwyndm5IXtZK2FaHD9zB+e64ku7Awv9t+2f+Uct5XfL3UVYVrWlG5Md
+         Y6MQzPkbYvsPq5eS6cuIduspjARLHh4f1TG9ePvFTxEDuMsNSIz8IbkdPWST7zS5oK5/
+         gojsPjrwkxTg4dABlMOcsO+VNAEe8KBNuzaxIO9s0UslVuoSW0lNNRHP7zXdhdGIc1ac
+         Ajiw==
+X-Gm-Message-State: AGi0PuYQ+pwxExV3KyjZcXlgxSrvjrnj3cFe10urHYcc5YNDO3JiT4TX
+        AVHNDKv9osLMpGMYO0FRdsM=
+X-Google-Smtp-Source: APiQypIeTnYYzsxQVldoeNZqGd/EuxIqSfFT/gSqGItMiyge00wsJhmlNbG62DgPwOfbvsZD/piv1w==
+X-Received: by 2002:a17:902:5a4b:: with SMTP id f11mr334310plm.7.1586226986814;
+        Mon, 06 Apr 2020 19:36:26 -0700 (PDT)
+Received: from ubuntu ([125.132.45.8])
+        by smtp.gmail.com with ESMTPSA id v59sm168874pjb.26.2020.04.06.19.36.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Apr 2020 19:36:26 -0700 (PDT)
+Date:   Tue, 7 Apr 2020 11:35:46 +0900
+From:   Levi <ppbuk5246@gmail.com>
+To:     viro@zeniv.linux.org.uk, davem@davemloft.net, kuba@kernel.org,
+        gnault@redhat.com, nicolas.dichtel@6wind.com, edumazet@google.com,
+        lirongqing@baidu.com, tglx@linutronix.de, johannes.berg@intel.com,
+        dhowells@redhat.com, daniel@iogearbox.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] netns: dangling pointer on netns bind mount point.
+Message-ID: <20200407023512.GA25005@ubuntu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-04-06 at 19:29 +0200, Lennart Poettering wrote:
-> On Mo, 06.04.20 11:22, Miklos Szeredi (miklos@szeredi.hu) wrote:
-> 
-> > > Nah. What I wrote above is drastically simplified. It's IRL more
-> > > complex. Specific services need to be killed between certain
-> > > mounts
-> > > are unmounted, since they are a backend for another mount. NFS,
-> > > or
-> > > FUSE or stuff like that usually has some processes backing them
-> > > around, and we need to stop the mounts they provide before these
-> > > services, and then the mounts these services reside on after
-> > > that, and
-> > > so on. It's a complex dependency tree of stuff that needs to be
-> > > done
-> > > in order, so that we can deal with arbitrarily nested mounts,
-> > > storage
-> > > subsystems, and backing services.
-> > 
-> > That still doesn't explain why you need to keep track of all mounts
-> > in
-> > the system.
-> > 
-> > If you are aware of the dependency, then you need to keep track of
-> > that particular mount. If not, then why?
-> 
-> it works the other way round in systemd: something happens, i.e. a
-> device pops up or a mount is established and systemd figures our if
-> there's something to do. i.e. whether services shall be pulled in or
-> so.
-> 
-> It's that way for a reason: there are plenty services that want to
-> instantiated once for each object of a certain kind to pop up (this
-> happens very often for devices, but could also happen for any other
-> kind of "unit" systemd manages, and one of those kinds are mount
-> units). For those we don't know the unit to pull in yet (because it's
-> not going to be a well-named singleton, but an instance incorporating
-> some identifier from the source unit) when the unit that pops up does
-> so, thus we can only wait for the the latter to determine what to
-> pull
-> in.
-> 
-> > What I'm starting to see is that there's a fundamental conflict
-> > between how systemd people want to deal with new mounts and how
-> > some
-> > other people want to use mounts (i.e. tens of thousands of mounts
-> > in
-> > an automount map).
-> 
-> Well, I am not sure what automount has to do with anything. You can
-> have 10K mounts with or without automount, it's orthogonal to that.
-> In
-> fact, I assumed the point of automount was to pretend there are 10K
-> mounts but not actually have them most of the time, no?
+When we try to bind mount on network namespace (ex) /proc/{pid}/ns/net,
+inode's private data can have dangling pointer to net_namespace that was
+already freed in below case.
 
-Yes, but automount, when using a large direct mount map will, be the
-source of lots of mounts which of an autofs file system.
+    1. Forking the process.
+    2. [PARENT] Waiting the Child till the end.
+    3. [CHILD] call unshare for creating new network namespace
+    4. [CHILD] Bind mount with /proc/self/ns/net to some mount point.
+    5. [CHILD] Exit child.
+    6. [PARENT] Try to setns with binded mount point
 
-> 
-> I mean, whether there's room to optimize D-Bus IPC or not is entirely
-> orthogonal to anything discussed here regarding fsinfo(). Don't make
-> this about systemd sending messages over D-Bus, that's a very
-> different story, and a non-issue if you ask me:
+In step 5, net_namespace made by child process'll be freed,
+But in bind mount point, it still held the pointer to net_namespace made
+by child process.
+In this situation, when parent try to call "setns" systemcall with the
+bind mount point, parent process try to access to freed memory, That
+makes memory corruption.
 
-Quite probably, yes, that's something you can care about if it really
-is an issue but isn't something I care about myself either.
+This patch fix the above scenario by increaseing reference count.
 
-> 
-> Right now, when you have n mounts, and any mount changes, or one is
-> added or removed then we have to parse the whole mount table again,
-> asynchronously, processing all n entries again, every frickin
-> time. This means the work to process n mounts popping up at boot is
-> O(n²). That sucks, it should be obvious to anyone. Now if we get that
-> fixed, by some mount API that can send us minimal notifications about
-> what happened and where, then this becomes O(n), which is totally OK.
+Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+---
+ fs/namespace.c              | 31 +++++++++++++++++++++++++++++++
+ include/net/net_namespace.h |  7 +++++++
+ net/core/net_namespace.c    |  5 -----
+ 3 files changed, 38 insertions(+), 5 deletions(-)
 
-But this is clearly a problem and is what I do care about and the
-infrastructure being proposed here can be used to achieve this.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a28e4db075ed..ed0fbb6a1b52 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -31,6 +31,10 @@
+ #include <linux/fs_context.h>
+ #include <linux/shmem_fs.h>
 
-Unfortunately, and I was mistaken about what systemd does, I don't
-see a simple way of improving this. This is because it appears that
-systemd, having had to scan the entire mount table every time has,
-necessarily, lead to code that can't easily accommodate the ability
-to directly get the info immediately for a single mount.
++#ifdef CONFIG_NET_NS
++#include <net/net_namespace.h>
++#endif
++
+ #include "pnode.h"
+ #include "internal.h"
 
-So to improve this I think quite a few changes will be needed in
-systemd and libmount. I'm not quite sure how to get that started.
-After all it needs to be done how Karel would like to see it done
-in libmount and how systemd folks would like to see it done in
-systemd which is very probably not how I would approach it myself.
+@@ -1013,12 +1017,25 @@ vfs_submount(const struct dentry *mountpoint, struct file_system_type *type,
+ }
+ EXPORT_SYMBOL_GPL(vfs_submount);
 
-> 
-> You keep talking about filtering, which will just lower the "n" a bit
-> in particular cases to some value "m" maybe (with m < n), it does not
-> address the fact that O(m²) is still a big problem.
-> 
-> hence, filtering is great, no problem, add it if you want it. I
-> personally don't care about filtering though, and I doubt we'd use it
-> in systemd, I just care about the O(n²) issue.
-> 
-> If you ask me if D-Bus can handle 10K messages sent over the bus
-> during boot, then yes, it totally can handle that. Can systemd nicely
-> process O(n²) mounts internally though equally well? No, obviously
-> not,
-> if n grows too large. Anyone computer scientist should understand
-> that..
-> 
-> Anyway, I have the suspicion this discussion has stopped being
-> useful. I think you are trying to fix problems that userspce actually
-> doesn't have. I can just tell you what we understand the problems
-> are,
-> but if you are out trying to fix other percieved ones, then great,
-> but
-> I mostly lost interest.
++#ifdef CONFIG_NET_NS
++static bool is_net_ns_file(struct dentry *dentry)
++{
++	/* Is this a proxy for a network namespace? */
++	return dentry->d_op == &ns_dentry_operations &&
++		dentry->d_fsdata == &netns_operations;
++}
++#endif
++
+ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+ 					int flag)
+ {
+ 	struct super_block *sb = old->mnt.mnt_sb;
+ 	struct mount *mnt;
+ 	int err;
++#ifdef CONFIG_NET_NS
++	struct ns_common *ns = NULL;
++	struct net *net = NULL;
++#endif
 
-Yes, filtering sounds like we've wandered off topic, ;)
+ 	mnt = alloc_vfsmnt(old->mnt_devname);
+ 	if (!mnt)
+@@ -1035,6 +1052,20 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+ 			goto out_free;
+ 	}
 
-Ian
++#ifdef CONFIG_NET_NS
++	if (!(flag & CL_COPY_MNT_NS_FILE) && is_net_ns_file(root)) {
++		ns = get_proc_ns(d_inode(root));
++		if (ns == NULL || ns->ops->type != CLONE_NEWNET) {
++			err = -EINVAL;
++
++			goto out_free;
++		}
++
++		net = to_net_ns(ns);
++		net = get_net(net);
++	}
++#endif
++
+ 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
+ 	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
 
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index ab96fb59131c..275258d1dbee 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -474,4 +474,11 @@ static inline void fnhe_genid_bump(struct net *net)
+ 	atomic_inc(&net->fnhe_genid);
+ }
+
++#ifdef CONFIG_NET_NS
++static inline struct net *to_net_ns(struct ns_common *ns)
++{
++	return container_of(ns, struct net, ns);
++}
++#endif
++
+ #endif /* __NET_NET_NAMESPACE_H */
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 190ca66a383b..3a6d9155806f 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -1343,11 +1343,6 @@ static struct ns_common *netns_get(struct task_struct *task)
+ 	return net ? &net->ns : NULL;
+ }
+
+-static inline struct net *to_net_ns(struct ns_common *ns)
+-{
+-	return container_of(ns, struct net, ns);
+-}
+-
+ static void netns_put(struct ns_common *ns)
+ {
+ 	put_net(to_net_ns(ns));
+--
+2.26.0
