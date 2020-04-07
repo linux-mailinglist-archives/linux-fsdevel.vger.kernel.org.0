@@ -2,181 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF691A06B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 07:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C66D1A070C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 08:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgDGFuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 01:50:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2364 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725817AbgDGFuj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 01:50:39 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48xGj80qxxz9tyl1;
-        Tue,  7 Apr 2020 07:50:36 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=nXcul3e4; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id LZXCBihUOUFy; Tue,  7 Apr 2020 07:50:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48xGj76XqXz9tyl0;
-        Tue,  7 Apr 2020 07:50:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1586238635; bh=2tZXuUuex6nYp5avlGoJBieKqNJeU842UJK6lCZeZPI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nXcul3e4DfJz0oM+xpLF9D5KFsNSJWxYp7PA9W3ITIQcqYUdiyVW1sAUPqGqCxJyw
-         BwvgBOpHsrpTZ8JH2VvPA0qmqfeAih64Ql/VijwikDKSaPq/07LD7gdSUKWK/sYVlr
-         QphDLp2os721Ch5R4UtyRkSVjow/YCG5h8UngLyo=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B8D208B76E;
-        Tue,  7 Apr 2020 07:50:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id J6cArsecsUwx; Tue,  7 Apr 2020 07:50:36 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BBBE78B75E;
-        Tue,  7 Apr 2020 07:50:33 +0200 (CEST)
-Subject: Re: [PATCH v12 5/8] powerpc/64: make buildable without CONFIG_COMPAT
-To:     Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        id S1726692AbgDGGNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 02:13:11 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43854 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgDGGNL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Apr 2020 02:13:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w15so2397258wrv.10;
+        Mon, 06 Apr 2020 23:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8etR1CFejVLVV7lIaOkWLfh+67hUJYeYv/uOXoSbqAk=;
+        b=Xrq+pk9ZBZFhr78R37fPiEJRJ/QBMtPjUh/iw6q4R1EShJjUnWUCBRniyMbRxWdleD
+         V1M4KylOmk9OIOMowRT8X03CpfDKv6MKdEJ5mpg8kyVa1Bbm8BMr8nLhHQGDcT1MDImz
+         /HsY2j01dpiijHNYAmFnLIxNM4gpn+EFylErKXiM4gzhU+uwExiMwR6DWeFvAcNpYi8d
+         3F36Mh9Puxl8Qtnk56ziuqOUwyG9uK0Th2jqShzCMCm/vkf52qu9I5alswXsWhRCc+WC
+         s6E3oEaGgf3eWFuJWO/bmhkcsESBnoSdKw+k7K6XoPSCV8zczXwHQrF5ZMvRSP4iJ+rD
+         teLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8etR1CFejVLVV7lIaOkWLfh+67hUJYeYv/uOXoSbqAk=;
+        b=b7QHTra3L7jVia07A7Q+mIcyNSK8hm16sMjslWGLByn/Aph6Dm09Zmp1eJOJ122YZc
+         NlGEP5ybb3Hrhe702/xD/tmx/2egGeKgtYIOeCT3e1X3Or/e8PQAOteCeDChoMZIerTp
+         VLuCiOrVUGpHBTAKkwyXs7i+6w7MMzvGekuL4OT4krff9+jKNDlAcIp0sTCvNQoyRIud
+         scZ9+mNMcGE6vRK6f1ez9YwMkhCgUfyYm33pSGFjuLVN0DJ71/BfA1X9iPvhqnF41rVX
+         jfnSb6oR24kZoWOFlzc3c0qxWM4t3bi+GIslyrlMHszUFoYmt1L7gpxARqTjG/G1Ehhx
+         YIwg==
+X-Gm-Message-State: AGi0PuZGVGPx3lJJe9WZ2xTBPlQrJHxY6rZAqfs9udrzPQs6THbwFhxR
+        QuhuFbSMNhW/FfeNHFNbZ3jmQ9Jt
+X-Google-Smtp-Source: APiQypJz3aouSR3QwOXMTTllaAt9cRgpZjrg9bL4L/TqTfUjxt4UxUDUbr0VggwT/bh2iIMHbBYAAQ==
+X-Received: by 2002:a5d:498b:: with SMTP id r11mr849739wrq.368.1586239987014;
+        Mon, 06 Apr 2020 23:13:07 -0700 (PDT)
+Received: from [192.168.43.134] ([109.126.129.227])
+        by smtp.gmail.com with ESMTPSA id h10sm30867497wrq.33.2020.04.06.23.13.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Apr 2020 23:13:06 -0700 (PDT)
+To:     Colin King <colin.king@canonical.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200225173541.1549955-1-npiggin@gmail.com>
- <cover.1584699455.git.msuchanek@suse.de>
- <e5619617020ef3a1f54f0c076e7d74cb9ec9f3bf.1584699455.git.msuchanek@suse.de>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b420b304-05e9-df58-7149-31169b0b01e2@c-s.fr>
-Date:   Tue, 7 Apr 2020 07:50:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200406225439.654486-1-colin.king@canonical.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH] io_uring: remove redundant variable pointer nxt and
+ io_wq_assign_next call
+Message-ID: <e9fba5b9-7dd9-c9ef-c978-94615169351b@gmail.com>
+Date:   Tue, 7 Apr 2020 09:12:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <e5619617020ef3a1f54f0c076e7d74cb9ec9f3bf.1584699455.git.msuchanek@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+In-Reply-To: <20200406225439.654486-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-Le 20/03/2020 à 11:20, Michal Suchanek a écrit :
-> There are numerous references to 32bit functions in generic and 64bit
-> code so ifdef them out.
+On 07/04/2020 01:54, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> ---
-> v2:
-> - fix 32bit ifdef condition in signal.c
-> - simplify the compat ifdef condition in vdso.c - 64bit is redundant
-> - simplify the compat ifdef condition in callchain.c - 64bit is redundant
-> v3:
-> - use IS_ENABLED and maybe_unused where possible
-> - do not ifdef declarations
-> - clean up Makefile
-> v4:
-> - further makefile cleanup
-> - simplify is_32bit_task conditions
-> - avoid ifdef in condition by using return
-> v5:
-> - avoid unreachable code on 32bit
-> - make is_current_64bit constant on !COMPAT
-> - add stub perf_callchain_user_32 to avoid some ifdefs
-> v6:
-> - consolidate current_is_64bit
-> v7:
-> - remove leftover perf_callchain_user_32 stub from previous series version
-> v8:
-> - fix build again - too trigger-happy with stub removal
-> - remove a vdso.c hunk that causes warning according to kbuild test robot
-> v9:
-> - removed current_is_64bit in previous patch
-> v10:
-> - rebase on top of 70ed86f4de5bd
-> ---
->   arch/powerpc/include/asm/thread_info.h | 4 ++--
->   arch/powerpc/kernel/Makefile           | 6 +++---
->   arch/powerpc/kernel/entry_64.S         | 2 ++
->   arch/powerpc/kernel/signal.c           | 3 +--
->   arch/powerpc/kernel/syscall_64.c       | 6 ++----
->   arch/powerpc/kernel/vdso.c             | 3 ++-
->   arch/powerpc/perf/callchain.c          | 8 +++++++-
->   7 files changed, 19 insertions(+), 13 deletions(-)
+> An earlier commit "io_uring: remove @nxt from handlers" removed the
+> setting of pointer nxt and now it is always null, hence the non-null
+> check and call to io_wq_assign_next is redundant and can be removed.
 > 
+> Addresses-Coverity: ("'Constant' variable guard")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/io_uring.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 14efcf0a3070..b594fa0bd210 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3509,14 +3509,11 @@ static void __io_sync_file_range(struct io_kiocb *req)
+>  static void io_sync_file_range_finish(struct io_wq_work **workptr)
+>  {
+>  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+> -	struct io_kiocb *nxt = NULL;
+>  
+>  	if (io_req_cancelled(req))
+>  		return;
+>  	__io_sync_file_range(req);
+>  	io_put_req(req); /* put submission ref */
+> -	if (nxt)
+> -		io_wq_assign_next(workptr, nxt);
 
-[...]
+Works, but it should be io_steal_work() instead
 
-> diff --git a/arch/powerpc/kernel/syscall_64.c b/arch/powerpc/kernel/syscall_64.c
-> index 87d95b455b83..2dcbfe38f5ac 100644
-> --- a/arch/powerpc/kernel/syscall_64.c
-> +++ b/arch/powerpc/kernel/syscall_64.c
-> @@ -24,7 +24,6 @@ notrace long system_call_exception(long r3, long r4, long r5,
->   				   long r6, long r7, long r8,
->   				   unsigned long r0, struct pt_regs *regs)
->   {
-> -	unsigned long ti_flags;
->   	syscall_fn f;
->   
->   	if (IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG))
-> @@ -68,8 +67,7 @@ notrace long system_call_exception(long r3, long r4, long r5,
->   
->   	local_irq_enable();
->   
-> -	ti_flags = current_thread_info()->flags;
-> -	if (unlikely(ti_flags & _TIF_SYSCALL_DOTRACE)) {
-> +	if (unlikely(current_thread_info()->flags & _TIF_SYSCALL_DOTRACE)) {
->   		/*
->   		 * We use the return value of do_syscall_trace_enter() as the
->   		 * syscall number. If the syscall was rejected for any reason
-> @@ -94,7 +92,7 @@ notrace long system_call_exception(long r3, long r4, long r5,
->   	/* May be faster to do array_index_nospec? */
->   	barrier_nospec();
->   
-> -	if (unlikely(ti_flags & _TIF_32BIT)) {
-> +	if (unlikely(is_32bit_task())) {
-
-is_compat() should be used here instead, because we dont want to use 
-compat_sys_call_table() on PPC32.
-
->   		f = (void *)compat_sys_call_table[r0];
->   
->   		r3 &= 0x00000000ffffffffULL;
-
-Christophe
+-- 
+Pavel Begunkov
