@@ -2,276 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ADE01A284B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 20:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEDDE1A2A78
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 22:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730608AbgDHSNJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 14:13:09 -0400
-Received: from mga11.intel.com ([192.55.52.93]:47058 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbgDHSNJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 14:13:09 -0400
-IronPort-SDR: isIsVlu97vKQuXxujBhPZ5Weu/6k4WLa5namHLVb0Fuv7zyBX1BpQHCNTbHAeJLpYKRc22GVEA
- 3k608PCOeOYA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2020 11:13:08 -0700
-IronPort-SDR: L7Rv2nmBCkAOLMcUDs5v28XWwubkyLkhzVJxf03f1GFQHbvT7ElRXZjyNbP+GC2r39NWdpOrcv
- hi7TftJR2T7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,359,1580803200"; 
-   d="scan'208";a="425225955"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by orsmga005.jf.intel.com with ESMTP; 08 Apr 2020 11:13:07 -0700
-Date:   Wed, 8 Apr 2020 11:13:07 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
- to xfs_ioctl_dax_check()
-Message-ID: <20200408181307.GD569068@iweiny-DESK2.sc.intel.com>
-References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-8-ira.weiny@intel.com>
- <20200408153717.GH6742@magnolia>
+        id S1728072AbgDHUbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 16:31:49 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:58030 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727817AbgDHUbt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 16:31:49 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jMHME-0004Sh-5A; Wed, 08 Apr 2020 14:31:34 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jMHMC-0006QZ-IJ; Wed, 08 Apr 2020 14:31:33 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     linux-kernel@vger.kernel.org
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        syzbot <syzbot+f675f964019f884dbd0f@syzkaller.appspotmail.com>,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
+        allison@lohutok.net, areber@redhat.com, aubrey.li@linux.intel.com,
+        avagin@gmail.com, bfields@fieldses.org, christian@brauner.io,
+        cyphar@cyphar.com, gregkh@linuxfoundation.org, guro@fb.com,
+        jlayton@kernel.org, joel@joelfernandes.org, keescook@chromium.org,
+        linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org,
+        mhocko@suse.com, mingo@kernel.org, peterz@infradead.org,
+        sargun@sargun.me, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk
+References: <00000000000011d66805a25cd73f@google.com>
+        <20200403091135.GA3645@redhat.com>
+Date:   Wed, 08 Apr 2020 15:28:40 -0500
+In-Reply-To: <20200403091135.GA3645@redhat.com> (Oleg Nesterov's message of
+        "Fri, 3 Apr 2020 11:11:35 +0200")
+Message-ID: <87pnchwwlj.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200408153717.GH6742@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain
+X-XM-SPF: eid=1jMHMC-0006QZ-IJ;;;mid=<87pnchwwlj.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1++6KsIaJkmWP6lC1k/JL9e4EdcFQS0Cxk=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;linux-kernel@vger.kernel.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1140 ms - load_scoreonly_sql: 0.10 (0.0%),
+        signal_user_changed: 4.3 (0.4%), b_tie_ro: 2.9 (0.3%), parse: 1.25
+        (0.1%), extract_message_metadata: 18 (1.6%), get_uri_detail_list: 3.9
+        (0.3%), tests_pri_-1000: 13 (1.1%), tests_pri_-950: 1.00 (0.1%),
+        tests_pri_-900: 0.84 (0.1%), tests_pri_-90: 90 (7.9%), check_bayes: 88
+        (7.7%), b_tokenize: 11 (0.9%), b_tok_get_all: 11 (1.0%), b_comp_prob:
+        2.6 (0.2%), b_tok_touch_all: 58 (5.1%), b_finish: 0.80 (0.1%),
+        tests_pri_0: 358 (31.4%), check_dkim_signature: 0.41 (0.0%),
+        check_dkim_adsp: 2.5 (0.2%), poll_dns_idle: 640 (56.1%), tests_pri_10:
+        2.4 (0.2%), tests_pri_500: 648 (56.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH] proc: Use a dedicated lock in struct pid
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 08:37:17AM -0700, Darrick J. Wong wrote:
-> On Tue, Apr 07, 2020 at 11:29:57AM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > We only support changing FS_XFLAG_DAX on directories.  Files get their
-> > flag from the parent directory on creation only.  So no data
-> > invalidation needs to happen.
-> > 
-> > Alter the xfs_ioctl_setattr_dax_invalidate() to be
-> > xfs_ioctl_dax_check().
-> > 
-> > This also allows use to remove the join_flags logic.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes from v5:
-> > 	New patch
-> > ---
-> >  fs/xfs/xfs_ioctl.c | 91 +++++-----------------------------------------
-> >  1 file changed, 10 insertions(+), 81 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > index c6cd92ef4a05..5472faab7c4f 100644
-> > --- a/fs/xfs/xfs_ioctl.c
-> > +++ b/fs/xfs/xfs_ioctl.c
-> > @@ -1145,63 +1145,18 @@ xfs_ioctl_setattr_xflags(
-> >  }
-> >  
-> >  /*
-> > - * If we are changing DAX flags, we have to ensure the file is clean and any
-> > - * cached objects in the address space are invalidated and removed. This
-> > - * requires us to lock out other IO and page faults similar to a truncate
-> > - * operation. The locks need to be held until the transaction has been committed
-> > - * so that the cache invalidation is atomic with respect to the DAX flag
-> > - * manipulation.
-> > + * Only directories are allowed to change dax flags
-> >   */
-> >  static int
-> >  xfs_ioctl_setattr_dax_invalidate(
-> > -	struct xfs_inode	*ip,
-> > -	struct fsxattr		*fa,
-> > -	int			*join_flags)
-> > +	struct xfs_inode	*ip)
-> >  {
-> >  	struct inode		*inode = VFS_I(ip);
-> > -	struct super_block	*sb = inode->i_sb;
-> > -	int			error;
-> > -
-> > -	*join_flags = 0;
-> > -
-> > -	/*
-> > -	 * It is only valid to set the DAX flag on regular files and
-> > -	 * directories on filesystems where the block size is equal to the page
-> > -	 * size. On directories it serves as an inherited hint so we don't
-> > -	 * have to check the device for dax support or flush pagecache.
-> > -	 */
-> > -	if (fa->fsx_xflags & FS_XFLAG_DAX) {
-> > -		struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> > -
-> > -		if (!bdev_dax_supported(target->bt_bdev, sb->s_blocksize))
-> > -			return -EINVAL;
-> > -	}
-> > -
-> > -	/* If the DAX state is not changing, we have nothing to do here. */
-> > -	if ((fa->fsx_xflags & FS_XFLAG_DAX) && IS_DAX(inode))
-> > -		return 0;
-> > -	if (!(fa->fsx_xflags & FS_XFLAG_DAX) && !IS_DAX(inode))
-> > -		return 0;
-> 
-> Does the !S_ISDIR check below apply unconditionally even if we weren't
-> trying to change the DAX flag?
 
-:-/
+syzbot wrote:
+> ========================================================
+> WARNING: possible irq lock inversion dependency detected
+> 5.6.0-syzkaller #0 Not tainted
+> --------------------------------------------------------
+> swapper/1/0 just changed the state of lock:
+> ffffffff898090d8 (tasklist_lock){.+.?}-{2:2}, at: send_sigurg+0x9f/0x320 fs/fcntl.c:840
+> but this lock took another, SOFTIRQ-unsafe lock in the past:
+>  (&pid->wait_pidfd){+.+.}-{2:2}
+>
+>
+> and interrupts could create inverse lock ordering between them.
+>
+>
+> other info that might help us debug this:
+>  Possible interrupt unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&pid->wait_pidfd);
+>                                local_irq_disable();
+>                                lock(tasklist_lock);
+>                                lock(&pid->wait_pidfd);
+>   <Interrupt>
+>     lock(tasklist_lock);
+>
+>  *** DEADLOCK ***
+>
+> 4 locks held by swapper/1/0:
 
-shoot...  I really screwed this up...
+The problem is that because wait_pidfd.lock is taken under the tasklist
+lock.  It must always be taken with irqs disabled as tasklist_lock can be
+taken from interrupt context and if wait_pidfd.lock was already taken this
+would create a lock order inversion.
 
-> 
-> > -	if (S_ISDIR(inode->i_mode))
-> > -		return 0;
-> >  
-> > -	/* lock, flush and invalidate mapping in preparation for flag change */
-> > -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > -	error = filemap_write_and_wait(inode->i_mapping);
-> > -	if (error)
-> > -		goto out_unlock;
-> > -	error = invalidate_inode_pages2(inode->i_mapping);
-> > -	if (error)
-> > -		goto out_unlock;
-> > +	if (!S_ISDIR(inode->i_mode))
-> > +		return -EINVAL;
-> 
-> If this entire function collapses to an S_ISDIR check then you might
-> as well just hoist this one piece to the caller.
+Oleg suggested just disabling irqs where I have added extra calls to
+wait_pidfd.lock.  That should be safe and I think the code will eventually
+do that.  It was rightly pointed out by Christian that sharing the
+wait_pidfd.lock was a premature optimization.
 
-Oops...  yea this is broken...  All broken.
+It is also true that my pre-merge window testing was insufficient.  So
+remove the premature optimization and give struct pid a dedicated lock of
+it's own for struct pid things.  I have verified that lockdep sees all 3
+paths where we take the new pid->lock and lockdep does not complain.
 
-> Also, where is
-> xfs_ioctl_dax_check?
+It is my current day dream that one day pid->lock can be used to guard the
+task lists as well and then the tasklist_lock won't need to be held to
+deliver signals.  That will require taking pid->lock with irqs disabled.
 
-I forgot to change the name.
+Link: https://lore.kernel.org/lkml/00000000000011d66805a25cd73f@google.com/
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Reported-by: syzbot+343f75cdeea091340956@syzkaller.appspotmail.com
+Reported-by: syzbot+832aabf700bc3ec920b9@syzkaller.appspotmail.com
+Reported-by: syzbot+f675f964019f884dbd0f@syzkaller.appspotmail.com
+Reported-by: syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com
+Fixes: 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
 
-> 
-> <confused>
+If anyone sees an issue please holer otherwise I plan on sending
+this fix to Linus.
 
-Much less so than me...  :-/
+ fs/proc/base.c      | 10 +++++-----
+ include/linux/pid.h |  1 +
+ kernel/pid.c        |  1 +
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-I'll clean it up.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 74f948a6b621..6042b646ab27 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1839,9 +1839,9 @@ void proc_pid_evict_inode(struct proc_inode *ei)
+ 	struct pid *pid = ei->pid;
+ 
+ 	if (S_ISDIR(ei->vfs_inode.i_mode)) {
+-		spin_lock(&pid->wait_pidfd.lock);
++		spin_lock(&pid->lock);
+ 		hlist_del_init_rcu(&ei->sibling_inodes);
+-		spin_unlock(&pid->wait_pidfd.lock);
++		spin_unlock(&pid->lock);
+ 	}
+ 
+ 	put_pid(pid);
+@@ -1877,9 +1877,9 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
+ 	/* Let the pid remember us for quick removal */
+ 	ei->pid = pid;
+ 	if (S_ISDIR(mode)) {
+-		spin_lock(&pid->wait_pidfd.lock);
++		spin_lock(&pid->lock);
+ 		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
+-		spin_unlock(&pid->wait_pidfd.lock);
++		spin_unlock(&pid->lock);
+ 	}
+ 
+ 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+@@ -3273,7 +3273,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
+ 
+ void proc_flush_pid(struct pid *pid)
+ {
+-	proc_invalidate_siblings_dcache(&pid->inodes, &pid->wait_pidfd.lock);
++	proc_invalidate_siblings_dcache(&pid->inodes, &pid->lock);
+ 	put_pid(pid);
+ }
+ 
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 01a0d4e28506..cc896f0fc4e3 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -60,6 +60,7 @@ struct pid
+ {
+ 	refcount_t count;
+ 	unsigned int level;
++	spinlock_t lock;
+ 	/* lists of tasks that use this pid */
+ 	struct hlist_head tasks[PIDTYPE_MAX];
+ 	struct hlist_head inodes;
+diff --git a/kernel/pid.c b/kernel/pid.c
+index efd34874b3d1..517d0855d4cf 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -246,6 +246,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 
+ 	get_pid_ns(ns);
+ 	refcount_set(&pid->count, 1);
++	spin_lock_init(&pid->lock);
+ 	for (type = 0; type < PIDTYPE_MAX; ++type)
+ 		INIT_HLIST_HEAD(&pid->tasks[type]);
+ 
+-- 
+2.20.1
 
-Thanks, this was really bad on my part...
-Ira
-
-> 
-> --D
-> 
-> >  
-> > -	*join_flags = XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL;
-> >  	return 0;
-> > -
-> > -out_unlock:
-> > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > -	return error;
-> > -
-> >  }
-> >  
-> >  /*
-> > @@ -1209,17 +1164,10 @@ xfs_ioctl_setattr_dax_invalidate(
-> >   * have permission to do so. On success, return a clean transaction and the
-> >   * inode locked exclusively ready for further operation specific checks. On
-> >   * failure, return an error without modifying or locking the inode.
-> > - *
-> > - * The inode might already be IO locked on call. If this is the case, it is
-> > - * indicated in @join_flags and we take full responsibility for ensuring they
-> > - * are unlocked from now on. Hence if we have an error here, we still have to
-> > - * unlock them. Otherwise, once they are joined to the transaction, they will
-> > - * be unlocked on commit/cancel.
-> >   */
-> >  static struct xfs_trans *
-> >  xfs_ioctl_setattr_get_trans(
-> > -	struct xfs_inode	*ip,
-> > -	int			join_flags)
-> > +	struct xfs_inode	*ip)
-> >  {
-> >  	struct xfs_mount	*mp = ip->i_mount;
-> >  	struct xfs_trans	*tp;
-> > @@ -1236,8 +1184,7 @@ xfs_ioctl_setattr_get_trans(
-> >  		goto out_unlock;
-> >  
-> >  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> > -	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL | join_flags);
-> > -	join_flags = 0;
-> > +	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
-> >  
-> >  	/*
-> >  	 * CAP_FOWNER overrides the following restrictions:
-> > @@ -1258,8 +1205,6 @@ xfs_ioctl_setattr_get_trans(
-> >  out_cancel:
-> >  	xfs_trans_cancel(tp);
-> >  out_unlock:
-> > -	if (join_flags)
-> > -		xfs_iunlock(ip, join_flags);
-> >  	return ERR_PTR(error);
-> >  }
-> >  
-> > @@ -1386,7 +1331,6 @@ xfs_ioctl_setattr(
-> >  	struct xfs_dquot	*pdqp = NULL;
-> >  	struct xfs_dquot	*olddquot = NULL;
-> >  	int			code;
-> > -	int			join_flags = 0;
-> >  
-> >  	trace_xfs_ioctl_setattr(ip);
-> >  
-> > @@ -1410,18 +1354,11 @@ xfs_ioctl_setattr(
-> >  			return code;
-> >  	}
-> >  
-> > -	/*
-> > -	 * Changing DAX config may require inode locking for mapping
-> > -	 * invalidation. These need to be held all the way to transaction commit
-> > -	 * or cancel time, so need to be passed through to
-> > -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> > -	 * appropriately.
-> > -	 */
-> > -	code = xfs_ioctl_setattr_dax_invalidate(ip, fa, &join_flags);
-> > +	code = xfs_ioctl_setattr_dax_invalidate(ip);
-> >  	if (code)
-> >  		goto error_free_dquots;
-> >  
-> > -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> > +	tp = xfs_ioctl_setattr_get_trans(ip);
-> >  	if (IS_ERR(tp)) {
-> >  		code = PTR_ERR(tp);
-> >  		goto error_free_dquots;
-> > @@ -1552,7 +1489,6 @@ xfs_ioc_setxflags(
-> >  	struct fsxattr		fa;
-> >  	struct fsxattr		old_fa;
-> >  	unsigned int		flags;
-> > -	int			join_flags = 0;
-> >  	int			error;
-> >  
-> >  	if (copy_from_user(&flags, arg, sizeof(flags)))
-> > @@ -1569,18 +1505,11 @@ xfs_ioc_setxflags(
-> >  	if (error)
-> >  		return error;
-> >  
-> > -	/*
-> > -	 * Changing DAX config may require inode locking for mapping
-> > -	 * invalidation. These need to be held all the way to transaction commit
-> > -	 * or cancel time, so need to be passed through to
-> > -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> > -	 * appropriately.
-> > -	 */
-> > -	error = xfs_ioctl_setattr_dax_invalidate(ip, &fa, &join_flags);
-> > +	error = xfs_ioctl_setattr_dax_invalidate(ip);
-> >  	if (error)
-> >  		goto out_drop_write;
-> >  
-> > -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> > +	tp = xfs_ioctl_setattr_get_trans(ip);
-> >  	if (IS_ERR(tp)) {
-> >  		error = PTR_ERR(tp);
-> >  		goto out_drop_write;
-> > -- 
-> > 2.25.1
-> > 
+Eric
