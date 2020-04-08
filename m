@@ -2,79 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861BF1A1E63
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 11:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB041A1EE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 12:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbgDHJ6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 05:58:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57678 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbgDHJ6G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 05:58:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DD924AC2C;
-        Wed,  8 Apr 2020 09:58:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B04B41E1239; Wed,  8 Apr 2020 11:58:03 +0200 (CEST)
-Date:   Wed, 8 Apr 2020 11:58:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
- to xfs_ioctl_dax_check()
-Message-ID: <20200408095803.GB30172@quack2.suse.cz>
-References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-8-ira.weiny@intel.com>
- <20200408022318.GJ24067@dread.disaster.area>
+        id S1727026AbgDHKnn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 06:43:43 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40787 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbgDHKnn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 06:43:43 -0400
+Received: by mail-qk1-f196.google.com with SMTP id z15so2636823qki.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 03:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=b9ZrfNjphj616yH9sSpebMBULoKkQA/z9o077oUH2XA=;
+        b=ju/G3soC9hydw7B8uQTFahfl74QN8u1ircGFuBolI9vh3unphkeHcVY0gfTYrdgNwe
+         lHwBjmXsz3dbic5gsSsKSmyEvUXk87UykjCVL00rFNk4ZRiZqcJCA8j374r1jn6R4LdN
+         oZFNrjldT5tyHKOVFPoI7sLIGCREwVS8Q4ob3ihnWDqOQN0tByxqKize6JvK0DLxMUOa
+         Zbx3JeUvjHKCjT+UMhiO6qIS0ASDVoD4Ed7D3KWE2TDpkKi3dKM8dVt0wrK0uaVGUh3L
+         /695m4qMbI9zFeiNQ+PDPnzM9mmpgVyMV+Uc0UqHloy6EeIesmt/QJ067HxwML7VXU4K
+         LTQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=b9ZrfNjphj616yH9sSpebMBULoKkQA/z9o077oUH2XA=;
+        b=JdkYxM3WdieYjjS94ftq7ujGmAwB67+EPacgAzhcr31EoJPP6NtDTiUos3P6Qpppe9
+         X83szlpWT+iEIoXiGwwbzJVA4gNPamRHziY1bEDUPnAt06j5u2GnflKXpnpPdvIawWZD
+         HznY/T5bJi0R7JT5eoneXX9jcXSs21eBifntQQGsmSpRRaq0GHZD8cdH2wfKuOA3jTfm
+         VDIGk2g3VhbTSiP2Ep50vuWLvgz+Rrb86FxQwwMquwXDxMY+DjABc7A+0WTKjWcedMZk
+         spZiH9ySF6SfOR0siP2jEtgOu3FPVaVw6J0idIuuYddAcoAGu6X4z9glZDh0I4QBlw1m
+         j1UQ==
+X-Gm-Message-State: AGi0Puar2H91oBQHFSt1bwatDUj82aAnmr+opA2IXECpxKHtPCVpeVaq
+        /EtSq2rSwe2TURgoyOQSZuFWs128ZKYjB9ikbTI=
+X-Google-Smtp-Source: APiQypLujpGz0iLZzBmGQTvUrpLtBbwQfaUW2nhHVqQqo1DaRc3q4bqBWOjGJAGOmQls7DYk1RIyMz3oxu6kkQIwCqc=
+X-Received: by 2002:a05:620a:12e9:: with SMTP id f9mr6954556qkl.235.1586342621914;
+ Wed, 08 Apr 2020 03:43:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200408022318.GJ24067@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ac8:728c:0:0:0:0:0 with HTTP; Wed, 8 Apr 2020 03:43:41 -0700 (PDT)
+From:   philip marah <pmarah002@gmail.com>
+Date:   Wed, 8 Apr 2020 10:43:41 +0000
+Message-ID: <CA+cQMaYbhuJZSA7zBVHXyWV6GChp2N99Da0m-KWvXNhvk3XrNg@mail.gmail.com>
+Subject: Hello.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 08-04-20 12:23:18, Dave Chinner wrote:
-> On Tue, Apr 07, 2020 at 11:29:57AM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > We only support changing FS_XFLAG_DAX on directories.  Files get their
-> > flag from the parent directory on creation only.  So no data
-> > invalidation needs to happen.
-> 
-> Which leads me to ask: how are users and/or admins supposed to
-> remove the flag from regular files once it is set in the filesystem?
-> 
-> Only being able to override the flag via the "dax=never" mount
-> option means that once the flag is set, nobody can ever remove it
-> and they can only globally turn off dax if it gets set incorrectly.
-> It also means a global interrupt because all apps on the filesystem
-> need to be stopped so the filesystem can be unmounted and mounted
-> again with dax=never. This is highly unfriendly to admins and users.
-> 
-> IOWs, we _must_ be able to clear this inode flag on regular inodes
-> in some way. I don't care if it doesn't change the current in-memory
-> state, but we must be able to clear the flags so that the next time
-> the inodes are instantiated DAX is not enabled for those files...
+Dear friend.
+How are you? I am Mr. Philip Marah. From Italy, I contacting you with
+good mind and wiliness as God directed me to reach you today. My time
+left to die is only but few days, coronavirus take over my home in
+Italy.
+Kindly contact below bank address to receive the sum of 9million
+Euros, from them, I deposited it in Africa development bank of Togo.
+Because I planed   to live Italy and enter West African Togo, it
+failed me because of the virus. Please use this money to help the poor
+ones.
+I have informed the bank that my partner will contact the funds.
+Contact the bank on my name, Mr. Philip Marah, of Italy.
 
-Well, there's one way to clear the flag: delete the file. If you still care
-about the data, you can copy the data first. It isn't very convenient, I
-agree, and effectively means restarting whatever application that is using
-the file. But it seems like more understandable API than letting user clear
-the on-disk flag but the inode will still use DAX until kernel decides to
-evict the inode - because that often means you need to restart the
-application using the file anyway for the flag change to have any effect.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+African development bank of Togo. Address: 68, Avenue de la
+Lib=C3=A9ration, Lome Togolese. E-mail: info.adb_tgbranch@africamail.com
+Tel: +228-98363077 / FAX+228-92072284
+Take immediate action as soon as you received this message, incase i
+did not answer your message which means i have departed from the
+earth. And make issue bank transfer the funds to you, I will forward
+document of the funds to you as possible as I hear you.
+Best regards.
+Mr. Philip Marah..
