@@ -2,137 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA5D1A21FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 14:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D161A2398
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 15:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbgDHM0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 08:26:32 -0400
-Received: from mout-p-103.mailbox.org ([80.241.56.161]:58328 "EHLO
-        mout-p-103.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbgDHM0c (ORCPT
+        id S1727960AbgDHNte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 09:49:34 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60260 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbgDHNte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 08:26:32 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 48y3RT1xT9zKmXH;
-        Wed,  8 Apr 2020 14:26:29 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id m9ZmrmVd4PFA; Wed,  8 Apr 2020 14:26:25 +0200 (CEST)
-Date:   Wed, 8 Apr 2020 22:26:01 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3 0/3] Support userspace-selected fds
-Message-ID: <20200408122601.kvrdjksjkl7ktgt4@yavin.dot.cyphar.com>
-References: <cover.1586321767.git.josh@joshtriplett.org>
+        Wed, 8 Apr 2020 09:49:34 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jMB4a-00E49z-DG; Wed, 08 Apr 2020 13:48:56 +0000
+Date:   Wed, 8 Apr 2020 14:48:56 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Yun Levi <ppbuk5246@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Guillaume Nault <gnault@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Li RongQing <lirongqing@baidu.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Johannes Berg <johannes.berg@intel.com>,
+        David Howells <dhowells@redhat.com>, daniel@iogearbox.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] netns: dangling pointer on netns bind mount point.
+Message-ID: <20200408134856.GB23230@ZenIV.linux.org.uk>
+References: <20200407023512.GA25005@ubuntu>
+ <20200407030504.GX23230@ZenIV.linux.org.uk>
+ <20200407031318.GY23230@ZenIV.linux.org.uk>
+ <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
+ <20200407040354.GZ23230@ZenIV.linux.org.uk>
+ <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
+ <20200407182609.GA23230@ZenIV.linux.org.uk>
+ <CAM7-yPS_xh54H9M7B8-tAmPM4+w0VgnruJhK509upsDgZvcNhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="753o2egv4zmh6vyt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1586321767.git.josh@joshtriplett.org>
-X-Rspamd-Queue-Id: DDA58175B
-X-Rspamd-Score: -6.44 / 15.00 / 15.00
+In-Reply-To: <CAM7-yPS_xh54H9M7B8-tAmPM4+w0VgnruJhK509upsDgZvcNhg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Apr 08, 2020 at 02:59:17PM +0900, Yun Levi wrote:
+> Thank you for great comments. Thanks to you I understand what i missed.
+> 
+> I try to generate problem on mainline But, as you explained that
+> situation isn't happen,
+> 
+> Maybe my other things which I made generate some problem (freeing
+> network namespace..)
+> 
+> Thanks for great answering and sharing.
+> 
+> If I meet the situation, at that time I'll share. Thank you very much!
+> 
+> P.S. If I have a question, Could I ask via e-mail like this?
 
---753o2egv4zmh6vyt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2020-04-07, Josh Triplett <josh@joshtriplett.org> wrote:
-> (Note: numbering this updated version v3, to avoid confusion with Jens'
-> v2 that built on my v1. Jens, if you like this approach, please feel
-> free to stack your additional patches from the io_uring-fd-select branch
-> atop this series. 5.8 material, not intended for the current merge window=
-=2E)
->=20
-> Inspired by the X protocol's handling of XIDs, allow userspace to select
-> the file descriptor opened by a call like openat2, so that it can use
-> the resulting file descriptor in subsequent system calls without waiting
-> for the response to the initial openat2 syscall.
->=20
-> The first patch is independent of the other two; it allows reserving
-> file descriptors below a certain minimum for userspace-selected fd
-> allocation only.
->=20
-> The second patch implements userspace-selected fd allocation for
-> openat2, introducing a new O_SPECIFIC_FD flag and an fd field in struct
-> open_how. In io_uring, this allows sequences like openat2/read/close
-> without waiting for the openat2 to complete. Multiple such sequences can
-> overlap, as long as each uses a distinct file descriptor.
->=20
-> The third patch adds userspace-selected fd allocation to pipe2 as well.
-> I did this partly as a demonstration of how simple it is to wire up
-> O_SPECIFIC_FD support for any fd-allocating system call, and partly in
-> the hopes that this may make it more useful to wire up io_uring support
-> for pipe2 in the future.
->=20
-> If this gets accepted, I'm happy to also write corresponding manpage
-> patches.
->=20
-> v3:
-> This new version has an API to atomically increase the minimum fd and
-> return the previous minimum, rather than just getting and setting the
-> minimum; this makes it easier to allocate a range. (A library that might
-> initialize after the program has already opened other file descriptors
-> may need to check for existing open fds in the range after reserving it,
-> and reserve more fds if needed; this can be done entirely in userspace,
-> and we can't really do anything simpler in the kernel due to limitations
-> on file-descriptor semantics, so this patch series avoids introducing
-> any extra complexity in the kernel.)
->=20
-> This new version also supports a __get_specific_unused_fd_flags call
-> which accepts the limit for RLIMIT_NOFILE as an argument, analogous to
-> __get_unused_fd_flags, since io_uring needs that to correctly handle
-> RLIMIT_NOFILE.
->=20
-> Josh Triplett (3):
->   fs: Support setting a minimum fd for "lowest available fd" allocation
->   fs: openat2: Extend open_how to allow userspace-selected fds
->   fs: pipe2: Support O_SPECIFIC_FD
-
-Aside from my specific comments and questions, the changes to openat2
-deserve at least one or two selftests.
-
->  fs/fcntl.c                       |  2 +-
->  fs/file.c                        | 62 ++++++++++++++++++++++++++++----
->  fs/io_uring.c                    |  3 +-
->  fs/open.c                        |  6 ++--
->  fs/pipe.c                        | 16 ++++++---
->  include/linux/fcntl.h            |  5 +--
->  include/linux/fdtable.h          |  1 +
->  include/linux/file.h             |  4 +++
->  include/uapi/asm-generic/fcntl.h |  4 +++
->  include/uapi/linux/openat2.h     |  2 ++
->  include/uapi/linux/prctl.h       |  3 ++
->  kernel/sys.c                     |  5 +++
->  12 files changed, 97 insertions(+), 16 deletions(-)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---753o2egv4zmh6vyt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXo3C0QAKCRCdlLljIbnQ
-EhhjAQDFUJ5VOPLwbFaGpNlrcUpjPunloiKcWks6ACx6gv1cSwEA9Ii9QQBfqGMO
-K8HrFWauN6ip0V8Sf5777xDP7rGWww8=
-=OtzS
------END PGP SIGNATURE-----
-
---753o2egv4zmh6vyt--
+Sure, no problem...
