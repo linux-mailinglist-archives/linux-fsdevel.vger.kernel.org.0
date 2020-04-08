@@ -2,133 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1221A2BDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 00:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B3C1A2C2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 01:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgDHW0j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 18:26:39 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54798 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbgDHW0j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 18:26:39 -0400
-IronPort-SDR: 6pq+mChRpqA0WZFWT5H3wsSm4AAYwnhYuM2DQYwha+bofPAcWqj3NHJUCLRkY3+/zvz4g5nL99
- 1FZFTvi+Qe5Q==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2020 15:26:37 -0700
-IronPort-SDR: S7w5tzhSIUMK1s0Evt+AKVNgzUL9c21YMfReFPfYHTUsV68lgWkEkFlNelu5tYpfqWc5BiUCib
- ekmJgdujvqMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,360,1580803200"; 
-   d="scan'208";a="275594942"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Apr 2020 15:26:37 -0700
-Date:   Wed, 8 Apr 2020 15:26:36 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        id S1726527AbgDHXVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 19:21:12 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:52664 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726467AbgDHXVM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 19:21:12 -0400
+Received: from dread.disaster.area (pa49-180-125-11.pa.nsw.optusnet.com.au [49.180.125.11])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EBE823A2652;
+        Thu,  9 Apr 2020 09:21:07 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jMK0I-0005XT-PA; Thu, 09 Apr 2020 09:21:06 +1000
+Date:   Thu, 9 Apr 2020 09:21:06 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
- to xfs_ioctl_dax_check()
-Message-ID: <20200408222636.GC664132@iweiny-DESK2.sc.intel.com>
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V6 6/8] fs/xfs: Combine xfs_diflags_to_linux() and
+ xfs_diflags_to_iflags()
+Message-ID: <20200408232106.GO24067@dread.disaster.area>
 References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-8-ira.weiny@intel.com>
- <20200408022318.GJ24067@dread.disaster.area>
- <20200408095803.GB30172@quack2.suse.cz>
- <20200408210950.GL24067@dread.disaster.area>
+ <20200407182958.568475-7-ira.weiny@intel.com>
+ <20200408020827.GI24067@dread.disaster.area>
+ <20200408170923.GC569068@iweiny-DESK2.sc.intel.com>
+ <20200408210236.GK24067@dread.disaster.area>
+ <20200408220734.GA664132@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200408210950.GL24067@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20200408220734.GA664132@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=2h+yFbpuifLtD1c++IMymA==:117 a=2h+yFbpuifLtD1c++IMymA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10
+        a=7-415B0cAAAA:8 a=Ekvvis_OAEGBRbM5Ic8A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 07:09:50AM +1000, Dave Chinner wrote:
-> On Wed, Apr 08, 2020 at 11:58:03AM +0200, Jan Kara wrote:
-> > On Wed 08-04-20 12:23:18, Dave Chinner wrote:
-> > > On Tue, Apr 07, 2020 at 11:29:57AM -0700, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > We only support changing FS_XFLAG_DAX on directories.  Files get their
-> > > > flag from the parent directory on creation only.  So no data
-> > > > invalidation needs to happen.
+On Wed, Apr 08, 2020 at 03:07:35PM -0700, Ira Weiny wrote:
+> On Thu, Apr 09, 2020 at 07:02:36AM +1000, Dave Chinner wrote:
+> > On Wed, Apr 08, 2020 at 10:09:23AM -0700, Ira Weiny wrote:
+> 
+> [snip]
+> 
 > > > 
-> > > Which leads me to ask: how are users and/or admins supposed to
-> > > remove the flag from regular files once it is set in the filesystem?
+> > > This sounds good but I think we need a slight modification to make the function equivalent in functionality.
 > > > 
-> > > Only being able to override the flag via the "dax=never" mount
-> > > option means that once the flag is set, nobody can ever remove it
-> > > and they can only globally turn off dax if it gets set incorrectly.
-> > > It also means a global interrupt because all apps on the filesystem
-> > > need to be stopped so the filesystem can be unmounted and mounted
-> > > again with dax=never. This is highly unfriendly to admins and users.
+> > > void
+> > > xfs_diflags_to_iflags(
+> > >         struct xfs_inode        *ip,
+> > >         bool init)
+> > > {
+> > >         struct inode            *inode = VFS_I(ip);
+> > >         unsigned int            xflags = xfs_ip2xflags(ip);
+> > >         unsigned int            flags = 0;
 > > > 
-> > > IOWs, we _must_ be able to clear this inode flag on regular inodes
-> > > in some way. I don't care if it doesn't change the current in-memory
-> > > state, but we must be able to clear the flags so that the next time
-> > > the inodes are instantiated DAX is not enabled for those files...
+> > >         inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC | S_NOATIME |
+> > >                             S_DAX);
 > > 
-> > Well, there's one way to clear the flag: delete the file. If you still care
-> > about the data, you can copy the data first. It isn't very convenient, I
-> > agree, and effectively means restarting whatever application that is using
-> > the file.
+> > We don't want to clear the dax flag here, ever, if it is already
+> > set. That is an externally visible change and opens us up (again) to
+> > races where IS_DAX() changes half way through a fault path. IOWs, avoiding
+> > clearing the DAX flag was something I did explicitly in the above
+> > code fragment.
 > 
-> Restarting the application is fine. Having to backup/restore or copy
-> the entire data set just to turn off an inode flag? That's not a
-> viable management strategy. We could be talking about terabytes of
-> data here.
+> <sigh> yes... you are correct.
 > 
-> I explained how we can safely remove the flag in the other branch of
-> this thread...
+> But I don't like depending on the caller to clear the S_DAX flag if
+> xfs_inode_enable_dax() is false.  IMO this function should clear the flag in
+> that case for consistency...
+
+No. We simply cannot do that here except in the init case when the
+inode is not yet visible to userspace. In which case, we know -for
+certain- that the S_DAX is not set, and hence we do not need to
+clear it. Initial conditions matter!
+
+If you want to make sure of this, add this:
+
+	ASSERT(!(IS_DAX(inode) && init));
+
+And now we'll catch inodes that incorrectly have S_DAX set at init
+time.
+
+> > memory S_DAX flag, we can actually clear the on-disk flag
+> > safely, so that next time the inode cycles into memory it won't
+> > be using DAX. IOWs, admins can stop the applications, clear the
+> > DAX flag and drop caches. This should result in the inode being
+> > recycled and when the app is restarted it will run without DAX.
+> > No ned for deleting files, copying large data sets, etc just to
+> > turn off an inode flag.
 > 
-> > But it seems like more understandable API than letting user clear
-> > the on-disk flag but the inode will still use DAX until kernel decides to
-> > evict the inode
-> 
-> Certainly doesn't seem that way to me. "stop app, clear flags, drop
-> caches, restart app" is a pretty simple, easy thing to do for an
-> admin.
+> We already discussed evicting the inode and it was determined to
+> be too confusing.[*]
 
-I want to be clear here: I think this is reasonable.  However, I don't see
-consensus for that interface.
+That discussion did not even consider how admins are supposed to
+clear the inode flag once it is set on disk. It was entirely
+focussed around "we can't change in memory S_DAX state" and how the
+tri-state mount option to "override" the on-disk flag could be done.
 
-Christoph in particular said that a 'lazy change' is: "... straight from
-the playbook for arcane and confusing API designs."
+Nobody noticed that being unable to rmeove the on-disk flag means
+the admin's only option to turn off dax for an application is to
+turn it off for everything, filesystem wide, which requires:
 
-	"But returning an error and doing a lazy change anyway is straight from
-	the playbook for arcane and confusing API designs."
+	1. stopping the app.
+	2. stopping every other app using the filesystem
+	3. unmounting the filesystem
+	4. changing to dax=never mount option
+	5. mounting the filesystem
+	6. restarting all apps.
 
-	-- https://lore.kernel.org/lkml/20200403072731.GA24176@lst.de/
+It's a hard stop for everything using the filesystem, and it changes
+the runtime environment for all applications, not just the one that
+needs DAX turned off.  Not to mention that if it's the root
+filesystem that is using DAX, then it's a full system reboot needed
+to change the mount options.
 
-Did I somehow misunderstand this?
+IMO, this is a non-starter from a production point of view - testing
+and qualification of all applications rather than just the affected
+app is required to make this sort of change.  It simply does not
+follow the "minimal change to fix the problem" rules for managing
+issues in production environments.
 
-Again for this patch set, 5.8, lets leave that alone for now.  I think if we
-disable setting this on files right now we can still allow it in the future as
-another step forward.
+So, pLease explain to me how this process:
 
-> 
-> Especially compared to process that is effectively "stop app, backup
-> data set, delete data set, clear flags, restore data set, restart
-> app"
-> 
-> > - because that often means you need to restart the
-> > application using the file anyway for the flag change to have any effect.
-> 
-> That's a trivial requirement compared to the downtime and resource
-> cost of a data set backup/restore just to clear inode flags....
-> 
+	1. stop the app
+	2. remove inode flags via xfs_io
+	3. run drop_caches
+	4. start the app
 
-I agree but others do not.  This still provides a baby step forward and some
-granularity for those who plan out the creation of their files.
+is worse than requiring admins to unmount the filesystem to turn off
+DAX for an application.
 
-Ira
+> Furthermore, if we did want an interface like that why not allow
+> the on-disk flag to be set as well as cleared?
 
+Well, why not - it's why I implemented the flag in the first place!
+The only problem we have here is how to safely change the in-memory
+DAX state, and that largely has nothing to do with setting/clearing
+the on-disk flag....
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
