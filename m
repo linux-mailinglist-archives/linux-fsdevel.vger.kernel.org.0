@@ -2,218 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEDDE1A2A78
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 22:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51ABB1A2AC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 23:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgDHUbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 16:31:49 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:58030 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgDHUbt (ORCPT
+        id S1729767AbgDHVCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 17:02:43 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:44124 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728221AbgDHVCn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 16:31:49 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jMHME-0004Sh-5A; Wed, 08 Apr 2020 14:31:34 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jMHMC-0006QZ-IJ; Wed, 08 Apr 2020 14:31:33 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     linux-kernel@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        syzbot <syzbot+f675f964019f884dbd0f@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        allison@lohutok.net, areber@redhat.com, aubrey.li@linux.intel.com,
-        avagin@gmail.com, bfields@fieldses.org, christian@brauner.io,
-        cyphar@cyphar.com, gregkh@linuxfoundation.org, guro@fb.com,
-        jlayton@kernel.org, joel@joelfernandes.org, keescook@chromium.org,
-        linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org,
-        mhocko@suse.com, mingo@kernel.org, peterz@infradead.org,
-        sargun@sargun.me, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, viro@zeniv.linux.org.uk
-References: <00000000000011d66805a25cd73f@google.com>
-        <20200403091135.GA3645@redhat.com>
-Date:   Wed, 08 Apr 2020 15:28:40 -0500
-In-Reply-To: <20200403091135.GA3645@redhat.com> (Oleg Nesterov's message of
-        "Fri, 3 Apr 2020 11:11:35 +0200")
-Message-ID: <87pnchwwlj.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 8 Apr 2020 17:02:43 -0400
+Received: from dread.disaster.area (pa49-180-125-11.pa.nsw.optusnet.com.au [49.180.125.11])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9A6A77EA644;
+        Thu,  9 Apr 2020 07:02:37 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jMHqG-0004mn-Sn; Thu, 09 Apr 2020 07:02:36 +1000
+Date:   Thu, 9 Apr 2020 07:02:36 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V6 6/8] fs/xfs: Combine xfs_diflags_to_linux() and
+ xfs_diflags_to_iflags()
+Message-ID: <20200408210236.GK24067@dread.disaster.area>
+References: <20200407182958.568475-1-ira.weiny@intel.com>
+ <20200407182958.568475-7-ira.weiny@intel.com>
+ <20200408020827.GI24067@dread.disaster.area>
+ <20200408170923.GC569068@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jMHMC-0006QZ-IJ;;;mid=<87pnchwwlj.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1++6KsIaJkmWP6lC1k/JL9e4EdcFQS0Cxk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;linux-kernel@vger.kernel.org
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1140 ms - load_scoreonly_sql: 0.10 (0.0%),
-        signal_user_changed: 4.3 (0.4%), b_tie_ro: 2.9 (0.3%), parse: 1.25
-        (0.1%), extract_message_metadata: 18 (1.6%), get_uri_detail_list: 3.9
-        (0.3%), tests_pri_-1000: 13 (1.1%), tests_pri_-950: 1.00 (0.1%),
-        tests_pri_-900: 0.84 (0.1%), tests_pri_-90: 90 (7.9%), check_bayes: 88
-        (7.7%), b_tokenize: 11 (0.9%), b_tok_get_all: 11 (1.0%), b_comp_prob:
-        2.6 (0.2%), b_tok_touch_all: 58 (5.1%), b_finish: 0.80 (0.1%),
-        tests_pri_0: 358 (31.4%), check_dkim_signature: 0.41 (0.0%),
-        check_dkim_adsp: 2.5 (0.2%), poll_dns_idle: 640 (56.1%), tests_pri_10:
-        2.4 (0.2%), tests_pri_500: 648 (56.8%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] proc: Use a dedicated lock in struct pid
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200408170923.GC569068@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=2h+yFbpuifLtD1c++IMymA==:117 a=2h+yFbpuifLtD1c++IMymA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=BZUbvsNFl7CrKh3hfgsA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Apr 08, 2020 at 10:09:23AM -0700, Ira Weiny wrote:
+> On Wed, Apr 08, 2020 at 12:08:27PM +1000, Dave Chinner wrote:
+> > On Tue, Apr 07, 2020 at 11:29:56AM -0700, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> 
+> [snip]
+> 
+> > >  
+> > > -STATIC void
+> > > -xfs_diflags_to_linux(
+> > > -	struct xfs_inode	*ip)
+> > > -{
+> > > -	struct inode		*inode = VFS_I(ip);
+> > > -	unsigned int		xflags = xfs_ip2xflags(ip);
+> > > -
+> > > -	if (xflags & FS_XFLAG_IMMUTABLE)
+> > > -		inode->i_flags |= S_IMMUTABLE;
+> > > -	else
+> > > -		inode->i_flags &= ~S_IMMUTABLE;
+> > > -	if (xflags & FS_XFLAG_APPEND)
+> > > -		inode->i_flags |= S_APPEND;
+> > > -	else
+> > > -		inode->i_flags &= ~S_APPEND;
+> > > -	if (xflags & FS_XFLAG_SYNC)
+> > > -		inode->i_flags |= S_SYNC;
+> > > -	else
+> > > -		inode->i_flags &= ~S_SYNC;
+> > > -	if (xflags & FS_XFLAG_NOATIME)
+> > > -		inode->i_flags |= S_NOATIME;
+> > > -	else
+> > > -		inode->i_flags &= ~S_NOATIME;
+> > > -#if 0	/* disabled until the flag switching races are sorted out */
+> > > -	if (xflags & FS_XFLAG_DAX)
+> > > -		inode->i_flags |= S_DAX;
+> > > -	else
+> > > -		inode->i_flags &= ~S_DAX;
+> > > -#endif
+> > 
+> > So this variant will set the flag in the inode if the disk inode
+> > flag is set, otherwise it will clear it.  It does it with if/else
+> > branches.
+> > 
+> > 
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index e07f7b641226..a4ac8568c8c7 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -1259,7 +1259,7 @@ xfs_inode_supports_dax(
+> > >  	return xfs_inode_buftarg(ip)->bt_daxdev != NULL;
+> > >  }
+> > >  
+> > > -STATIC bool
+> > > +static bool
+> > >  xfs_inode_enable_dax(
+> > >  	struct xfs_inode *ip)
+> > >  {
+> > 
+> > This belongs in the previous patch.
+> 
+> Ah yea...  Sorry.
+> 
+> Fixed in V7
+> 
+> > 
+> > > @@ -1272,26 +1272,38 @@ xfs_inode_enable_dax(
+> > >  	return false;
+> > >  }
+> > >  
+> > > -STATIC void
+> > > +void
+> > >  xfs_diflags_to_iflags(
+> > > -	struct inode		*inode,
+> > > -	struct xfs_inode	*ip)
+> > > +	struct xfs_inode	*ip,
+> > > +	bool init)
+> > >  {
+> > > -	uint16_t		flags = ip->i_d.di_flags;
+> > > -
+> > > -	inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC |
+> > > -			    S_NOATIME | S_DAX);
+> > 
+> > And this code cleared all the flags in the inode first, then
+> > set them if the disk inode flag is set. This does not require
+> > branches, resulting in more readable code and better code
+> > generation.
+> > 
+> > > +	struct inode		*inode = VFS_I(ip);
+> > > +	uint			diflags = xfs_ip2xflags(ip);
+> > >  
+> > > -	if (flags & XFS_DIFLAG_IMMUTABLE)
+> > > +	if (diflags & FS_XFLAG_IMMUTABLE)
+> > >  		inode->i_flags |= S_IMMUTABLE;
+> > > -	if (flags & XFS_DIFLAG_APPEND)
+> > > +	else
+> > > +		inode->i_flags &= ~S_IMMUTABLE;
+> > 
+> > > +	if (diflags & FS_XFLAG_APPEND)
+> > >  		inode->i_flags |= S_APPEND;
+> > > -	if (flags & XFS_DIFLAG_SYNC)
+> > > +	else
+> > > +		inode->i_flags &= ~S_APPEND;
+> > > +	if (diflags & FS_XFLAG_SYNC)
+> > >  		inode->i_flags |= S_SYNC;
+> > > -	if (flags & XFS_DIFLAG_NOATIME)
+> > > +	else
+> > > +		inode->i_flags &= ~S_SYNC;
+> > > +	if (diflags & FS_XFLAG_NOATIME)
+> > >  		inode->i_flags |= S_NOATIME;
+> > > -	if (xfs_inode_enable_dax(ip))
+> > > -		inode->i_flags |= S_DAX;
+> > > +	else
+> > > +		inode->i_flags &= ~S_NOATIME;
+> > > +
+> > > +	/* Only toggle the dax flag when initializing */
+> > > +	if (init) {
+> > > +		if (xfs_inode_enable_dax(ip))
+> > > +			inode->i_flags |= S_DAX;
+> > > +		else
+> > > +			inode->i_flags &= ~S_DAX;
+> > > +	}
+> > >  }
+> > 
+> > IOWs, this:
+> > 
+> >         struct inode            *inode = VFS_I(ip);
+> >         unsigned int            xflags = xfs_ip2xflags(ip);
+> >         unsigned int            flags = 0;
+> > 
+> >         if (xflags & FS_XFLAG_IMMUTABLE)
+> >                 flags |= S_IMMUTABLE;
+> >         if (xflags & FS_XFLAG_APPEND)
+> >                 flags |= S_APPEND;
+> >         if (xflags & FS_XFLAG_SYNC)
+> >                 flags |= S_SYNC;
+> >         if (xflags & FS_XFLAG_NOATIME)
+> >                 flags |= S_NOATIME;
+> > 	if ((xflags & FS_XFLAG_DAX) && init)
+> > 		flags |= S_DAX;
+> > 
+> >         inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC | S_NOATIME);
+> >         inode->i_flags |= flags;
+> > 
+> > ends up being much easier to read and results in better code
+> > generation. And we don't need to clear the S_DAX flag when "init" is
+> > set, because we are starting from an inode that has no flags set
+> > (because init!)...
+> 
+> This sounds good but I think we need a slight modification to make the function equivalent in functionality.
+> 
+> void
+> xfs_diflags_to_iflags(
+>         struct xfs_inode        *ip,
+>         bool init)
+> {
+>         struct inode            *inode = VFS_I(ip);
+>         unsigned int            xflags = xfs_ip2xflags(ip);
+>         unsigned int            flags = 0;
+> 
+>         inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC | S_NOATIME |
+>                             S_DAX);
 
-syzbot wrote:
-> ========================================================
-> WARNING: possible irq lock inversion dependency detected
-> 5.6.0-syzkaller #0 Not tainted
-> --------------------------------------------------------
-> swapper/1/0 just changed the state of lock:
-> ffffffff898090d8 (tasklist_lock){.+.?}-{2:2}, at: send_sigurg+0x9f/0x320 fs/fcntl.c:840
-> but this lock took another, SOFTIRQ-unsafe lock in the past:
->  (&pid->wait_pidfd){+.+.}-{2:2}
->
->
-> and interrupts could create inverse lock ordering between them.
->
->
-> other info that might help us debug this:
->  Possible interrupt unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(&pid->wait_pidfd);
->                                local_irq_disable();
->                                lock(tasklist_lock);
->                                lock(&pid->wait_pidfd);
->   <Interrupt>
->     lock(tasklist_lock);
->
->  *** DEADLOCK ***
->
-> 4 locks held by swapper/1/0:
+We don't want to clear the dax flag here, ever, if it is already
+set. That is an externally visible change and opens us up (again) to
+races where IS_DAX() changes half way through a fault path. IOWs, avoiding
+clearing the DAX flag was something I did explicitly in the above
+code fragment.
 
-The problem is that because wait_pidfd.lock is taken under the tasklist
-lock.  It must always be taken with irqs disabled as tasklist_lock can be
-taken from interrupt context and if wait_pidfd.lock was already taken this
-would create a lock order inversion.
+And it makes the logic clearer by pre-calculating the new flags,
+then clearing and setting the inode flags together, rather than
+having the spearated at the top and bottom of the function.
 
-Oleg suggested just disabling irqs where I have added extra calls to
-wait_pidfd.lock.  That should be safe and I think the code will eventually
-do that.  It was rightly pointed out by Christian that sharing the
-wait_pidfd.lock was a premature optimization.
+THis leads to an obvious conclusion: if we never clear the in memory
+S_DAX flag, we can actually clear the on-disk flag safely, so that
+next time the inode cycles into memory it won't be using DAX. IOWs,
+admins can stop the applications, clear the DAX flag and drop
+caches. This should result in the inode being recycled and when the
+app is restarted it will run without DAX. No ned for deleting files,
+copying large data sets, etc just to turn off an inode flag.
 
-It is also true that my pre-merge window testing was insufficient.  So
-remove the premature optimization and give struct pid a dedicated lock of
-it's own for struct pid things.  I have verified that lockdep sees all 3
-paths where we take the new pid->lock and lockdep does not complain.
+Cheers,
 
-It is my current day dream that one day pid->lock can be used to guard the
-task lists as well and then the tasklist_lock won't need to be held to
-deliver signals.  That will require taking pid->lock with irqs disabled.
-
-Link: https://lore.kernel.org/lkml/00000000000011d66805a25cd73f@google.com/
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Reported-by: syzbot+343f75cdeea091340956@syzkaller.appspotmail.com
-Reported-by: syzbot+832aabf700bc3ec920b9@syzkaller.appspotmail.com
-Reported-by: syzbot+f675f964019f884dbd0f@syzkaller.appspotmail.com
-Reported-by: syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com
-Fixes: 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
-
-If anyone sees an issue please holer otherwise I plan on sending
-this fix to Linus.
-
- fs/proc/base.c      | 10 +++++-----
- include/linux/pid.h |  1 +
- kernel/pid.c        |  1 +
- 3 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 74f948a6b621..6042b646ab27 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1839,9 +1839,9 @@ void proc_pid_evict_inode(struct proc_inode *ei)
- 	struct pid *pid = ei->pid;
- 
- 	if (S_ISDIR(ei->vfs_inode.i_mode)) {
--		spin_lock(&pid->wait_pidfd.lock);
-+		spin_lock(&pid->lock);
- 		hlist_del_init_rcu(&ei->sibling_inodes);
--		spin_unlock(&pid->wait_pidfd.lock);
-+		spin_unlock(&pid->lock);
- 	}
- 
- 	put_pid(pid);
-@@ -1877,9 +1877,9 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	/* Let the pid remember us for quick removal */
- 	ei->pid = pid;
- 	if (S_ISDIR(mode)) {
--		spin_lock(&pid->wait_pidfd.lock);
-+		spin_lock(&pid->lock);
- 		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
--		spin_unlock(&pid->wait_pidfd.lock);
-+		spin_unlock(&pid->lock);
- 	}
- 
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-@@ -3273,7 +3273,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
- 
- void proc_flush_pid(struct pid *pid)
- {
--	proc_invalidate_siblings_dcache(&pid->inodes, &pid->wait_pidfd.lock);
-+	proc_invalidate_siblings_dcache(&pid->inodes, &pid->lock);
- 	put_pid(pid);
- }
- 
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 01a0d4e28506..cc896f0fc4e3 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -60,6 +60,7 @@ struct pid
- {
- 	refcount_t count;
- 	unsigned int level;
-+	spinlock_t lock;
- 	/* lists of tasks that use this pid */
- 	struct hlist_head tasks[PIDTYPE_MAX];
- 	struct hlist_head inodes;
-diff --git a/kernel/pid.c b/kernel/pid.c
-index efd34874b3d1..517d0855d4cf 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -246,6 +246,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 
- 	get_pid_ns(ns);
- 	refcount_set(&pid->count, 1);
-+	spin_lock_init(&pid->lock);
- 	for (type = 0; type < PIDTYPE_MAX; ++type)
- 		INIT_HLIST_HEAD(&pid->tasks[type]);
- 
+Dave.
 -- 
-2.20.1
-
-Eric
+Dave Chinner
+david@fromorbit.com
