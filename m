@@ -2,99 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF121A1C1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 08:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA6671A1C87
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 09:22:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbgDHG5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 02:57:55 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:35549 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbgDHG5y (ORCPT
+        id S1726834AbgDHHWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 03:22:54 -0400
+Received: from mx05.melco.co.jp ([192.218.140.145]:41832 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbgDHHWy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 02:57:54 -0400
-Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9F48D200004;
-        Wed,  8 Apr 2020 06:57:49 +0000 (UTC)
-Date:   Tue, 7 Apr 2020 23:57:47 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v3 3/3] fs: pipe2: Support O_SPECIFIC_FD
-Message-ID: <4ce301ca8ab8f6fdcc8feb05b4f7c026a203f68a.1586321767.git.josh@joshtriplett.org>
-References: <cover.1586321767.git.josh@joshtriplett.org>
+        Wed, 8 Apr 2020 03:22:54 -0400
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id DDEC43A4087;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 48xwj764j7zRkDb;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 48xwj75md8zRjp0;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48xwj75d7rzRkH0;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 48xwj74TxBzRjHB;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received:  from tux532.tad.melco.co.jp
+        by tux532.tad.melco.co.jp (unknown) with ESMTP id 0387Mpx3030688;
+        Wed, 8 Apr 2020 16:22:51 +0900
+Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
+        by postfix.imss70 (Postfix) with ESMTP id 50EC217E07A;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from tux554.tad.melco.co.jp (mailgw1.tad.melco.co.jp [10.168.7.223])
+        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 4524D17E079;
+        Wed,  8 Apr 2020 16:22:51 +0900 (JST)
+Received: from tux554.tad.melco.co.jp
+        by tux554.tad.melco.co.jp (unknown) with ESMTP id 0387Mpsr003470;
+        Wed, 8 Apr 2020 16:22:51 +0900
+From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
+Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] exfat: replace 'time_ms' with 'time_10ms'
+Date:   Wed,  8 Apr 2020 16:22:42 +0900
+Message-Id: <20200408072242.95334-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1586321767.git.josh@joshtriplett.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows the caller of pipe2 to specify one or both file descriptors
-rather than having them automatically use the lowest available file
-descriptor. The caller can specify either file descriptor as -1 to
-allow that file descriptor to use the lowest available.
+Replace "time_ms"  with "time_10ms" in the file directory entry structure
+and related functions.
 
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+The unit of create_time_ms/modify_time_ms in File Directory Entry are
+not 'milli-second', but 'ceni-second'.
+
+The reason for using 10ms instead of cs for the names is that the exfat
+specification defines it as Create10msIncrement/LastModified10msIncrement.
+
+Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 ---
- fs/pipe.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ fs/exfat/dir.c       |  8 ++++----
+ fs/exfat/exfat_fs.h  |  4 ++--
+ fs/exfat/exfat_raw.h |  4 ++--
+ fs/exfat/file.c      |  2 +-
+ fs/exfat/inode.c     |  4 ++--
+ fs/exfat/misc.c      | 18 +++++++++---------
+ fs/exfat/namei.c     |  4 ++--
+ 7 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 16fb72e9abf7..4681a0d1d587 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -936,19 +936,19 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
- 	int error;
- 	int fdw, fdr;
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 4b91afb0f0..cacc53ff11 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -137,12 +137,12 @@ static int exfat_readdir(struct inode *inode, struct exfat_dir_entry *dir_entry)
+ 					ep->dentry.file.create_tz,
+ 					ep->dentry.file.create_time,
+ 					ep->dentry.file.create_date,
+-					ep->dentry.file.create_time_ms);
++					ep->dentry.file.create_time_10ms);
+ 			exfat_get_entry_time(sbi, &dir_entry->mtime,
+ 					ep->dentry.file.modify_tz,
+ 					ep->dentry.file.modify_time,
+ 					ep->dentry.file.modify_date,
+-					ep->dentry.file.modify_time_ms);
++					ep->dentry.file.modify_time_10ms);
+ 			exfat_get_entry_time(sbi, &dir_entry->atime,
+ 					ep->dentry.file.access_tz,
+ 					ep->dentry.file.access_time,
+@@ -461,12 +461,12 @@ int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
+ 			&ep->dentry.file.create_tz,
+ 			&ep->dentry.file.create_time,
+ 			&ep->dentry.file.create_date,
+-			&ep->dentry.file.create_time_ms);
++			&ep->dentry.file.create_time_10ms);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			&ep->dentry.file.modify_tz,
+ 			&ep->dentry.file.modify_time,
+ 			&ep->dentry.file.modify_date,
+-			&ep->dentry.file.modify_time_ms);
++			&ep->dentry.file.modify_time_10ms);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			&ep->dentry.file.access_tz,
+ 			&ep->dentry.file.access_time,
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 67d4e46fb8..6d357e9f5b 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -506,9 +506,9 @@ void __exfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
+ void exfat_msg(struct super_block *sb, const char *lv, const char *fmt, ...)
+ 		__printf(3, 4) __cold;
+ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 tz, __le16 time, __le16 date, u8 time_ms);
++		u8 tz, __le16 time, __le16 date, u8 time_10ms);
+ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms);
++		u8 *tz, __le16 *time, __le16 *date, u8 *time_10ms);
+ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 		unsigned short chksum, int type);
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
+diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+index 2a841010e6..be0e362422 100644
+--- a/fs/exfat/exfat_raw.h
++++ b/fs/exfat/exfat_raw.h
+@@ -136,8 +136,8 @@ struct exfat_dentry {
+ 			__le16 modify_date;
+ 			__le16 access_time;
+ 			__le16 access_date;
+-			__u8 create_time_ms;
+-			__u8 modify_time_ms;
++			__u8 create_time_10ms;
++			__u8 modify_time_10ms;
+ 			__u8 create_tz;
+ 			__u8 modify_tz;
+ 			__u8 access_tz;
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 483f683757..a986f1eeef 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -165,7 +165,7 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
+ 				&ep->dentry.file.modify_tz,
+ 				&ep->dentry.file.modify_time,
+ 				&ep->dentry.file.modify_date,
+-				&ep->dentry.file.modify_time_ms);
++				&ep->dentry.file.modify_time_10ms);
+ 		ep->dentry.file.attr = cpu_to_le16(ei->attr);
  
--	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT))
-+	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT | O_SPECIFIC_FD))
- 		return -EINVAL;
+ 		/* File size should be zero if there is no cluster allocated */
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 06887492f5..59b50dfbdd 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -56,12 +56,12 @@ static int __exfat_write_inode(struct inode *inode, int sync)
+ 			&ep->dentry.file.create_tz,
+ 			&ep->dentry.file.create_time,
+ 			&ep->dentry.file.create_date,
+-			&ep->dentry.file.create_time_ms);
++			&ep->dentry.file.create_time_10ms);
+ 	exfat_set_entry_time(sbi, &inode->i_mtime,
+ 			&ep->dentry.file.modify_tz,
+ 			&ep->dentry.file.modify_time,
+ 			&ep->dentry.file.modify_date,
+-			&ep->dentry.file.modify_time_ms);
++			&ep->dentry.file.modify_time_10ms);
+ 	exfat_set_entry_time(sbi, &inode->i_atime,
+ 			&ep->dentry.file.access_tz,
+ 			&ep->dentry.file.access_time,
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index 14a3300848..8b39c8176a 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -75,7 +75,7 @@ static void exfat_adjust_tz(struct timespec64 *ts, u8 tz_off)
  
- 	error = create_pipe_files(files, flags);
- 	if (error)
- 		return error;
- 
--	error = get_unused_fd_flags(flags);
-+	error = get_specific_unused_fd_flags(fd[0], flags);
- 	if (error < 0)
- 		goto err_read_pipe;
- 	fdr = error;
- 
--	error = get_unused_fd_flags(flags);
-+	error = get_specific_unused_fd_flags(fd[1], flags);
- 	if (error < 0)
- 		goto err_fdr;
- 	fdw = error;
-@@ -969,7 +969,11 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
- int do_pipe_flags(int *fd, int flags)
+ /* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70). */
+ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 tz, __le16 time, __le16 date, u8 time_ms)
++		u8 tz, __le16 time, __le16 date, u8 time_10ms)
  {
- 	struct file *files[2];
--	int error = __do_pipe_flags(fd, files, flags);
-+	int error;
-+
-+	if (flags & O_SPECIFIC_FD)
-+		return -EINVAL;
-+	error = __do_pipe_flags(fd, files, flags);
- 	if (!error) {
- 		fd_install(fd[0], files[0]);
- 		fd_install(fd[1], files[1]);
-@@ -987,6 +991,10 @@ static int do_pipe2(int __user *fildes, int flags)
- 	int fd[2];
- 	int error;
+ 	u16 t = le16_to_cpu(time);
+ 	u16 d = le16_to_cpu(date);
+@@ -84,10 +84,10 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 			      t >> 11, (t >> 5) & 0x003F, (t & 0x001F) << 1);
  
-+	if (flags & O_SPECIFIC_FD)
-+		if (copy_from_user(fd, fildes, sizeof(fd)))
-+			return -EFAULT;
-+
- 	error = __do_pipe_flags(fd, files, flags);
- 	if (!error) {
- 		if (unlikely(copy_to_user(fildes, fd, sizeof(fd)))) {
+ 
+-	/* time_ms field represent 0 ~ 199(1990 ms) */
+-	if (time_ms) {
+-		ts->tv_sec += time_ms / 100;
+-		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
++	/* time_10ms field represent 0 ~ 199cs(1990 ms) */
++	if (time_10ms) {
++		ts->tv_sec += (time_10ms * 10) / 1000;
++		ts->tv_nsec = (time_10ms * 10) % 1000 * NSEC_PER_MSEC;
+ 	}
+ 
+ 	if (tz & EXFAT_TZ_VALID)
+@@ -100,7 +100,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 
+ /* Convert linear UNIX date to a EXFAT time/date pair. */
+ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms)
++		u8 *tz, __le16 *time, __le16 *date, u8 *time_10ms)
+ {
+ 	struct tm tm;
+ 	u16 t, d;
+@@ -112,9 +112,9 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 	*time = cpu_to_le16(t);
+ 	*date = cpu_to_le16(d);
+ 
+-	/* time_ms field represent 0 ~ 199(1990 ms) */
+-	if (time_ms)
+-		*time_ms = (tm.tm_sec & 1) * 100 +
++	/* time_10ms field represent 0 ~ 199cs(1990 ms) */
++	if (time_10ms)
++		*time_10ms = (tm.tm_sec & 1) * 100 +
+ 			ts->tv_nsec / (10 * NSEC_PER_MSEC);
+ 
+ 	/*
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index a8681d91f5..90d8273cd8 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -698,12 +698,12 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 				ep->dentry.file.create_tz,
+ 				ep->dentry.file.create_time,
+ 				ep->dentry.file.create_date,
+-				ep->dentry.file.create_time_ms);
++				ep->dentry.file.create_time_10ms);
+ 		exfat_get_entry_time(sbi, &info->mtime,
+ 				ep->dentry.file.modify_tz,
+ 				ep->dentry.file.modify_time,
+ 				ep->dentry.file.modify_date,
+-				ep->dentry.file.modify_time_ms);
++				ep->dentry.file.modify_time_10ms);
+ 		exfat_get_entry_time(sbi, &info->atime,
+ 				ep->dentry.file.access_tz,
+ 				ep->dentry.file.access_time,
 -- 
-2.26.0
+2.25.0
 
