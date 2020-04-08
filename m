@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CAC1A1A71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 05:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754021A1A75
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 05:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgDHD5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 23:57:10 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:35826 "EHLO
+        id S1726594AbgDHD5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 23:57:13 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:34001 "EHLO
         mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbgDHD5K (ORCPT
+        with ESMTP id S1726475AbgDHD5M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 23:57:10 -0400
-Received: by mail-pf1-f202.google.com with SMTP id f11so793618pfq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Apr 2020 20:57:09 -0700 (PDT)
+        Tue, 7 Apr 2020 23:57:12 -0400
+Received: by mail-pf1-f202.google.com with SMTP id 71so4350442pfu.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Apr 2020 20:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=2NzLcvm/MV6r5F4T2ucAz3sc8O+poTUeJILf3zO1hAs=;
-        b=pXYhTqdoyitidzapCX2lefQ+fwh/9Io0h5gnuoxIgORuuQ6VKla3UOgTxMdZ2Sy5Os
-         XasW+fh7DsaYwQQJtIZgEV1Oq1KYteolOfFKQsWnsfwUif8CW+51x6b+Ire+dkxqhP4J
-         uuA/GVMbfF4WCHnrCXh3naU8FPrIcIeVJ7XKRR3lVnb/gFQbkAsjFCW2MLkGC7xH8PMb
-         DC1VKeX005j6vnLIOrGHW4Rr0mN4BHoCCPs5pYvsvtFG9XAq/c78Oe3fM9J140ez2G55
-         Yp+tnU1BFysYKXRBRgEYhdskATc/CCYK53DiqxeqXXLs5vxqHolkoCkSOiMPHmqjMkhi
-         cqDg==
+        bh=Y2Ov7b6aWqJHt/HNiBPhZauak92MfGGZ+4X1cpH8Ti8=;
+        b=FuUfSjXdmPmL/4Jrpl/aY6FAIRTfyy59vDVFU/e5jG2yJMo6gVn6o5HOOG9INitf2t
+         RgZIdsas3bzJMM2J9dk28TAfyFIrJ8Gs99TClgX2SNVQxzrMLYDDuFW6YjgOxd4hjCaW
+         lBLricu3mgZGIl/IUp0Umx+ulWI8q8k1pm0q0YY13toyJ6Fo+TmeOkIAPOecXkhasid6
+         xzucNH6qLRUNwlHUGdpGvyAhf8binIYgJAZOFuFLCgkjYSqiPdI11Ky8uoxZbuTrpmXA
+         aV3jE8ZlYXUvkGN0LtfSAQJFPNfgQHvolhQ9LB6kkqfx2QOHFmwbMqvDzdLPEjMhzwo/
+         rjDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=2NzLcvm/MV6r5F4T2ucAz3sc8O+poTUeJILf3zO1hAs=;
-        b=HqxVPdnRCFcaMD22XkeQ7O/WL4Pu964FDWI3HG3xYsm674Wz1txmxNgLxl67umGevV
-         Gf1zP8wc264V3R8Iu4yE9nOBQG3VcRe1BucOxCK4CfgYmn6+4/tcjilPJONP+I1UhlJJ
-         1WOtg0rgx08oxSvB5I1J5MP6jF6EDGZQJFJM0nOnRQv44SHZzoRiYM7qQ5j2eduIYLBD
-         TuoBJrJkuRtjPL0DWExaWm3fZTtNxLI5yhmDrOoUec28MajHYE43qzrofymPNbX0hcfS
-         tUdPzgog2sgFNLkFht36HlCt20K2EOGapsJzrCJiMlApv2StZZacRltoTwbETUmScAvr
-         ASbw==
-X-Gm-Message-State: AGi0PuZp/42BAr2EWXswxmLOMgY9Rh+u7m2HHZQA9souk7/18JpaLqi+
-        VUnjv/HKKOHXPO9jTMGm+RBW27XFMZE=
-X-Google-Smtp-Source: APiQypI4QH4y//ZZSrCIJiIMrL19IY+O1rQr0IqEn3l023InupDa2BMjbgrfMpn+qXio3RJ8BW88JzBdYhM=
-X-Received: by 2002:a63:1a1e:: with SMTP id a30mr119040pga.368.1586318228663;
- Tue, 07 Apr 2020 20:57:08 -0700 (PDT)
-Date:   Tue,  7 Apr 2020 20:56:43 -0700
+        bh=Y2Ov7b6aWqJHt/HNiBPhZauak92MfGGZ+4X1cpH8Ti8=;
+        b=cEK9NDLZOeLy8LLjEagIoKog8NHbqbkO6f1GYGzjQ5yCQUj6Rl4Qlx6gsjRBbJ8Xwn
+         Nt5dz6mbCrHbJ7jRbviLO6H23YehgLZYnu0+ZeiOr/TaZ0FOniAYjkeWqr/4nW0ucqQZ
+         oCV/dJb3JarL9rw62ML8f84I+udSPYLNn41ymKl4N7g0lf6v6sWS1FV0ScUnLO+iQqUT
+         E8NiFGZwPxMU9fnqh8UMRdIv7GXlfS9N0SRiOa6ITSWQqF07GsEK+evF7/IT3GCN2Cb1
+         Q5g8t15ZNDSLcWqoWMiMDgZcAot8LBUKvnOB0HTFnlu59wSRWIG1DUDnQ9npgX6FDOpO
+         RX1w==
+X-Gm-Message-State: AGi0PuZtz86D87m5K62DAH8dK+6cUFxF88U4y4vfcdUsYZOWNfpyoE/M
+        HM2aQZ5kYlijHMvn7+4A/uAA8kBTTww=
+X-Google-Smtp-Source: APiQypJ5Qj5JaU6PY+Ko+CrVmxLm0mnYjf2CjCWfx0q8c+B7UOCFoOtOAH7PiA3bWyKsbM5PAJ1ujXXo+EU=
+X-Received: by 2002:a17:90a:77cb:: with SMTP id e11mr3108193pjs.0.1586318231182;
+ Tue, 07 Apr 2020 20:57:11 -0700 (PDT)
+Date:   Tue,  7 Apr 2020 20:56:44 -0700
 In-Reply-To: <20200408035654.247908-1-satyat@google.com>
-Message-Id: <20200408035654.247908-2-satyat@google.com>
+Message-Id: <20200408035654.247908-3-satyat@google.com>
 Mime-Version: 1.0
 References: <20200408035654.247908-1-satyat@google.com>
 X-Mailer: git-send-email 2.26.0.110.g2183baf09c-goog
-Subject: [PATCH v10 01/12] Documentation: Document the blk-crypto framework
+Subject: [PATCH v10 02/12] block: Keyslot Manager for Inline Encryption
 From:   Satya Tangirala <satyat@google.com>
 To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -55,291 +55,663 @@ To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
 Cc:     Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
         Kuohong Wang <kuohong.wang@mediatek.com>,
         Kim Boojin <boojin.kim@samsung.com>,
-        Satya Tangirala <satyat@google.com>
+        Satya Tangirala <satyat@google.com>,
+        Eric Biggers <ebiggers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The blk-crypto framework adds support for inline encryption. There
-are numerous changes throughout the storage stack. This patch documents
-the main design choices in the block layer, the API presented to users
-of the block layer (like fscrypt or layered devices) and the API presented
-to drivers for adding support for inline encryption.
+Inline Encryption hardware allows software to specify an encryption context
+(an encryption key, crypto algorithm, data unit num, data unit size) along
+with a data transfer request to a storage device, and the inline encryption
+hardware will use that context to en/decrypt the data. The inline
+encryption hardware is part of the storage device, and it conceptually sits
+on the data path between system memory and the storage device.
 
+Inline Encryption hardware implementations often function around the
+concept of "keyslots". These implementations often have a limited number
+of "keyslots", each of which can hold a key (we say that a key can be
+"programmed" into a keyslot). Requests made to the storage device may have
+a keyslot and a data unit number associated with them, and the inline
+encryption hardware will en/decrypt the data in the requests using the key
+programmed into that associated keyslot and the data unit number specified
+with the request.
+
+As keyslots are limited, and programming keys may be expensive in many
+implementations, and multiple requests may use exactly the same encryption
+contexts, we introduce a Keyslot Manager to efficiently manage keyslots.
+
+We also introduce a blk_crypto_key, which will represent the key that's
+programmed into keyslots managed by keyslot managers. The keyslot manager
+also functions as the interface that upper layers will use to program keys
+into inline encryption hardware. For more information on the Keyslot
+Manager, refer to documentation found in block/keyslot-manager.c and
+linux/keyslot-manager.h.
+
+Co-developed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- Documentation/block/inline-encryption.rst | 260 ++++++++++++++++++++++
- 1 file changed, 260 insertions(+)
- create mode 100644 Documentation/block/inline-encryption.rst
+ block/Kconfig                   |   7 +
+ block/Makefile                  |   1 +
+ block/keyslot-manager.c         | 378 ++++++++++++++++++++++++++++++++
+ include/linux/blk-crypto.h      |  53 +++++
+ include/linux/blkdev.h          |   6 +
+ include/linux/keyslot-manager.h | 107 +++++++++
+ 6 files changed, 552 insertions(+)
+ create mode 100644 block/keyslot-manager.c
+ create mode 100644 include/linux/blk-crypto.h
+ create mode 100644 include/linux/keyslot-manager.h
 
-diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
+diff --git a/block/Kconfig b/block/Kconfig
+index 3bc76bb113a08..c04a1d5008421 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -185,6 +185,13 @@ config BLK_SED_OPAL
+ 	Enabling this option enables users to setup/unlock/lock
+ 	Locking ranges for SED devices using the Opal protocol.
+ 
++config BLK_INLINE_ENCRYPTION
++	bool "Enable inline encryption support in block layer"
++	help
++	  Build the blk-crypto subsystem. Enabling this lets the
++	  block layer handle encryption, so users can take
++	  advantage of inline encryption hardware if present.
++
+ menu "Partition Types"
+ 
+ source "block/partitions/Kconfig"
+diff --git a/block/Makefile b/block/Makefile
+index 206b96e9387f4..fc963e4676b0a 100644
+--- a/block/Makefile
++++ b/block/Makefile
+@@ -36,3 +36,4 @@ obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
+ obj-$(CONFIG_BLK_DEBUG_FS_ZONED)+= blk-mq-debugfs-zoned.o
+ obj-$(CONFIG_BLK_SED_OPAL)	+= sed-opal.o
+ obj-$(CONFIG_BLK_PM)		+= blk-pm.o
++obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o
+diff --git a/block/keyslot-manager.c b/block/keyslot-manager.c
 new file mode 100644
-index 0000000000000..c9ac1d5d5ab7e
+index 0000000000000..bae8d67a1f3fd
 --- /dev/null
-+++ b/Documentation/block/inline-encryption.rst
-@@ -0,0 +1,260 @@
-+.. SPDX-License-Identifier: GPL-2.0
++++ b/block/keyslot-manager.c
+@@ -0,0 +1,378 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 Google LLC
++ */
 +
-+=================
-+Inline Encryption
-+=================
++/**
++ * DOC: The Keyslot Manager
++ *
++ * Many devices with inline encryption support have a limited number of "slots"
++ * into which encryption contexts may be programmed, and requests can be tagged
++ * with a slot number to specify the key to use for en/decryption.
++ *
++ * As the number of slots are limited, and programming keys is expensive on
++ * many inline encryption hardware, we don't want to program the same key into
++ * multiple slots - if multiple requests are using the same key, we want to
++ * program just one slot with that key and use that slot for all requests.
++ *
++ * The keyslot manager manages these keyslots appropriately, and also acts as
++ * an abstraction between the inline encryption hardware and the upper layers.
++ *
++ * Lower layer devices will set up a keyslot manager in their request queue
++ * and tell it how to perform device specific operations like programming/
++ * evicting keys from keyslots.
++ *
++ * Upper layers will call blk_ksm_get_slot_for_key() to program a
++ * key into some slot in the inline encryption hardware.
++ */
++#include <crypto/algapi.h>
++#include <linux/keyslot-manager.h>
++#include <linux/atomic.h>
++#include <linux/mutex.h>
++#include <linux/pm_runtime.h>
++#include <linux/wait.h>
++#include <linux/blkdev.h>
 +
-+Background
-+==========
++struct blk_ksm_keyslot {
++	atomic_t slot_refs;
++	struct list_head idle_slot_node;
++	struct hlist_node hash_node;
++	struct blk_crypto_key key;
++	struct blk_keyslot_manager *ksm;
++};
 +
-+Inline encryption hardware sits logically between memory and the disk, and can
-+en/decrypt data as it goes in/out of the disk. Inline encryption hardware has a
-+fixed number of "keyslots" - slots into which encryption contexts (i.e. the
-+encryption key, encryption algorithm, data unit size) can be programmed by the
-+kernel at any time. Each request sent to the disk can be tagged with the index
-+of a keyslot (and also a data unit number to act as an encryption tweak), and
-+the inline encryption hardware will en/decrypt the data in the request with the
-+encryption context programmed into that keyslot. This is very different from
-+full disk encryption solutions like self encrypting drives/TCG OPAL/ATA
-+Security standards, since with inline encryption, any block on disk could be
-+encrypted with any encryption context the kernel chooses.
++static inline void blk_ksm_hw_enter(struct blk_keyslot_manager *ksm)
++{
++	/*
++	 * Calling into the driver requires ksm->lock held and the device
++	 * resumed.  But we must resume the device first, since that can acquire
++	 * and release ksm->lock via blk_ksm_reprogram_all_keys().
++	 */
++	if (ksm->dev)
++		pm_runtime_get_sync(ksm->dev);
++	down_write(&ksm->lock);
++}
 +
++static inline void blk_ksm_hw_exit(struct blk_keyslot_manager *ksm)
++{
++	up_write(&ksm->lock);
++	if (ksm->dev)
++		pm_runtime_put_sync(ksm->dev);
++}
 +
-+Objective
-+=========
++/**
++ * blk_ksm_init() - Initialize a keyslot manager
++ * @ksm: The keyslot_manager to initialize.
++ * @num_slots: The number of key slots to manage.
++ *
++ * Allocate memory for keyslots and initialize a keyslot manager. Called by
++ * e.g. storage drivers to set up a keyslot manager in their request_queue.
++ *
++ * Return: 0 on success, or else a negative error code.
++ */
++int blk_ksm_init(struct blk_keyslot_manager *ksm, unsigned int num_slots)
++{
++	unsigned int slot;
++	unsigned int i;
 +
-+We want to support inline encryption (IE) in the kernel.
-+To allow for testing, we also want a crypto API fallback when actual
-+IE hardware is absent. We also want IE to work with layered devices
-+like dm and loopback (i.e. we want to be able to use the IE hardware
-+of the underlying devices if present, or else fall back to crypto API
-+en/decryption).
++	memset(ksm, 0, sizeof(*ksm));
 +
++	if (num_slots == 0)
++		return -EINVAL;
 +
-+Constraints and notes
-+=====================
++	ksm->slots = kvcalloc(num_slots, sizeof(ksm->slots[0]), GFP_KERNEL);
++	if (!ksm->slots)
++		return -ENOMEM;
 +
-+- IE hardware has a limited number of "keyslots" that can be programmed
-+  with an encryption context (key, algorithm, data unit size, etc.) at any time.
-+  One can specify a keyslot in a data request made to the device, and the
-+  device will en/decrypt the data using the encryption context programmed into
-+  that specified keyslot. When possible, we want to make multiple requests with
-+  the same encryption context share the same keyslot.
++	ksm->num_slots = num_slots;
 +
-+- We need a way for upper layers like filesystems to specify an encryption
-+  context to use for en/decrypting a struct bio, and a device driver (like UFS)
-+  needs to be able to use that encryption context when it processes the bio.
++	init_rwsem(&ksm->lock);
 +
-+- We need a way for device drivers to expose their inline encryption
-+  capabilities in a unified way to the upper layers.
++	init_waitqueue_head(&ksm->idle_slots_wait_queue);
++	INIT_LIST_HEAD(&ksm->idle_slots);
 +
++	for (slot = 0; slot < num_slots; slot++) {
++		ksm->slots[slot].ksm = ksm;
++		list_add_tail(&ksm->slots[slot].idle_slot_node,
++			      &ksm->idle_slots);
++	}
 +
-+Design
-+======
++	spin_lock_init(&ksm->idle_slots_lock);
 +
-+We add a :c:type:`struct bio_crypt_ctx` to :c:type:`struct bio` that can
-+represent an encryption context, because we need to be able to pass this
-+encryption context from the upper layers (like the fs layer) to the
-+device driver to act upon.
++	ksm->slot_hashtable_size = roundup_pow_of_two(num_slots);
++	ksm->slot_hashtable = kvmalloc_array(ksm->slot_hashtable_size,
++					     sizeof(ksm->slot_hashtable[0]),
++					     GFP_KERNEL);
++	if (!ksm->slot_hashtable)
++		goto err_destroy_ksm;
++	for (i = 0; i < ksm->slot_hashtable_size; i++)
++		INIT_HLIST_HEAD(&ksm->slot_hashtable[i]);
 +
-+While IE hardware works on the notion of keyslots, the FS layer has no
-+knowledge of keyslots - it simply wants to specify an encryption context to
-+use while en/decrypting a bio.
++	return 0;
 +
-+We introduce a keyslot manager (KSM) that handles the translation from
-+encryption contexts specified by the FS to keyslots on the IE hardware.
-+This KSM also serves as the way IE hardware can expose its capabilities to
-+upper layers. The generic mode of operation is: each device driver that wants
-+to support IE will construct a KSM and set it up in its struct request_queue.
-+Upper layers that want to use IE on this device can then use this KSM in
-+the device's struct request_queue to translate an encryption context into
-+a keyslot. The presence of the KSM in the request queue shall be used to mean
-+that the device supports IE.
++err_destroy_ksm:
++	blk_ksm_destroy(ksm);
++	return -ENOMEM;
++}
++EXPORT_SYMBOL_GPL(blk_ksm_init);
 +
-+The KSM uses refcounts to track which keyslots are idle (either they have no
-+encryption context programmed, or there are no in-flight struct bios
-+referencing that keyslot). When a new encryption context needs a keyslot, it
-+tries to find a keyslot that has already been programmed with the same
-+encryption context, and if there is no such keyslot, it evicts the least
-+recently used idle keyslot and programs the new encryption context into that
-+one. If no idle keyslots are available, then the caller will sleep until there
-+is at least one.
++static inline struct hlist_head *
++blk_ksm_hash_bucket_for_key(struct blk_keyslot_manager *ksm,
++			    const struct blk_crypto_key *key)
++{
++	return &ksm->slot_hashtable[key->hash & (ksm->slot_hashtable_size - 1)];
++}
 +
++static void blk_ksm_remove_slot_from_lru_list(struct blk_ksm_keyslot *slot)
++{
++	struct blk_keyslot_manager *ksm = slot->ksm;
++	unsigned long flags;
 +
-+blk-mq changes, other block layer changes and blk-crypto-fallback
-+=================================================================
++	spin_lock_irqsave(&ksm->idle_slots_lock, flags);
++	list_del(&slot->idle_slot_node);
++	spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
++}
 +
-+We add a pointer to a ``bi_crypt_context`` and ``keyslot`` to
-+:c:type:`struct request`. These will be referred to as the ``crypto fields``
-+for the request. This ``keyslot`` is the keyslot into which the
-+``bi_crypt_context`` has been programmed in the KSM of the ``request_queue``
-+that this request is being sent to.
++static struct blk_ksm_keyslot *blk_ksm_find_keyslot(
++					struct blk_keyslot_manager *ksm,
++					const struct blk_crypto_key *key)
++{
++	const struct hlist_head *head = blk_ksm_hash_bucket_for_key(ksm, key);
++	struct blk_ksm_keyslot *slotp;
 +
-+We introduce ``block/blk-crypto-fallback.c``, which allows upper layers to remain
-+blissfully unaware of whether or not real inline encryption hardware is present
-+underneath. When a bio is submitted with a target ``request_queue`` that doesn't
-+support the encryption context specified with the bio, the block layer will
-+en/decrypt the bio with the blk-crypto-fallback.
++	hlist_for_each_entry(slotp, head, hash_node) {
++		if (slotp->key.hash == key->hash &&
++		    slotp->key.crypto_cfg.crypto_mode ==
++					key->crypto_cfg.crypto_mode &&
++		    slotp->key.crypto_cfg.data_unit_size ==
++					key->crypto_cfg.data_unit_size &&
++		    !crypto_memneq(slotp->key.raw, key->raw, key->size))
++			return slotp;
++	}
++	return NULL;
++}
 +
-+If the bio is a ``WRITE`` bio, a bounce bio is allocated, and the data in the bio
-+is encrypted stored in the bounce bio - blk-mq will then proceed to process the
-+bounce bio as if it were not encrypted at all (except when blk-integrity is
-+concerned). ``blk-crypto-fallback`` sets the bounce bio's ``bi_end_io`` to an
-+internal function that cleans up the bounce bio and ends the original bio.
++static struct blk_ksm_keyslot *blk_ksm_find_and_grab_keyslot(
++					struct blk_keyslot_manager *ksm,
++					const struct blk_crypto_key *key)
++{
++	struct blk_ksm_keyslot *slot;
 +
-+If the bio is a ``READ`` bio, the bio's ``bi_end_io`` (and also ``bi_private``)
-+is saved and overwritten by ``blk-crypto-fallback`` to
-+``bio_crypto_fallback_decrypt_bio``.  The bio's ``bi_crypt_context`` is also
-+overwritten with ``NULL``, so that to the rest of the stack, the bio looks
-+as if it was a regular bio that never had an encryption context specified.
-+``bio_crypto_fallback_decrypt_bio`` will decrypt the bio, restore the original
-+``bi_end_io`` (and also ``bi_private``) and end the bio again.
++	slot = blk_ksm_find_keyslot(ksm, key);
++	if (!slot)
++		return NULL;
++	if (atomic_inc_return(&slot->slot_refs) == 1) {
++		/* Took first reference to this slot; remove it from LRU list */
++		blk_ksm_remove_slot_from_lru_list(slot);
++	}
++	return slot;
++}
 +
-+Regardless of whether real inline encryption hardware is used or the
-+blk-crypto-fallback is used, the ciphertext written to disk (and hence the
-+on-disk format of data) will be the same (assuming the hardware's implementation
-+of the algorithm being used adheres to spec and functions correctly).
++unsigned int blk_ksm_get_slot_idx(struct blk_ksm_keyslot *slot)
++{
++	return slot - slot->ksm->slots;
++}
++EXPORT_SYMBOL_GPL(blk_ksm_get_slot_idx);
 +
-+If a ``request queue``'s inline encryption hardware claimed to support the
-+encryption context specified with a bio, then it will not be handled by the
-+``blk-crypto-fallback``. We will eventually reach a point in blk-mq when a
-+:c:type:`struct request` needs to be allocated for that bio. At that point,
-+blk-mq tries to program the encryption context into the ``request_queue``'s
-+keyslot_manager, and obtain a keyslot, which it stores in its newly added
-+``keyslot`` field. This keyslot is released when the request is completed.
++/**
++ * blk_ksm_get_slot_for_key() - Program a key into a keyslot.
++ * @ksm: The keyslot manager to program the key into.
++ * @key: Pointer to the key object to program, including the raw key, crypto
++ *	 mode, and data unit size.
++ * @keyslot: A pointer to return the pointer of the allocated keyslot.
++ *
++ * Get a keyslot that's been programmed with the specified key.  If one already
++ * exists, return it with incremented refcount.  Otherwise, wait for a keyslot
++ * to become idle and program it.
++ *
++ * Context: Process context. Takes and releases ksm->lock.
++ * Return: BLK_STS_OK on success (and keyslot is set to the pointer of the
++ *	   allocated keyslot), or some other blk_status_t otherwise (and
++ *	   keyslot is set to NULL).
++ */
++blk_status_t blk_ksm_get_slot_for_key(struct blk_keyslot_manager *ksm,
++				      const struct blk_crypto_key *key,
++				      struct blk_ksm_keyslot **slot_ptr)
++{
++	struct blk_ksm_keyslot *slot;
++	int slot_idx;
++	int err;
 +
-+When a bio is added to a request, the request takes over ownership of the
-+``bi_crypt_context`` of the bio - in particular, the request keeps the
-+``bi_crypt_context`` of the first bio in its bio-list, and frees the rest
-+(blk-mq needs to be careful to maintain this invariant during bio and request
-+merges).
++	*slot_ptr = NULL;
++	down_read(&ksm->lock);
++	slot = blk_ksm_find_and_grab_keyslot(ksm, key);
++	up_read(&ksm->lock);
++	if (slot)
++		goto success;
 +
-+To make it possible for inline encryption to work with request queue based
-+layered devices, when a request is cloned, its ``crypto fields`` are cloned as
-+well. When the cloned request is submitted, blk-mq programs the
-+``bi_crypt_context`` of the request into the clone's request_queue's keyslot
-+manager, and stores the returned keyslot in the clone's ``keyslot``.
++	for (;;) {
++		blk_ksm_hw_enter(ksm);
++		slot = blk_ksm_find_and_grab_keyslot(ksm, key);
++		if (slot) {
++			blk_ksm_hw_exit(ksm);
++			goto success;
++		}
 +
++		/*
++		 * If we're here, that means there wasn't a slot that was
++		 * already programmed with the key. So try to program it.
++		 */
++		if (!list_empty(&ksm->idle_slots))
++			break;
 +
-+API presented to users of the block layer
-+=========================================
++		blk_ksm_hw_exit(ksm);
++		wait_event(ksm->idle_slots_wait_queue,
++			   !list_empty(&ksm->idle_slots));
++	}
 +
-+``struct blk_crypto_key`` represents a crypto key (the raw key, size of the
-+key, the crypto algorithm to use, the data unit size to use, and the number of
-+bytes required to represent data unit numbers that will be specified with the
-+``bi_crypt_context``).
++	slot = list_first_entry(&ksm->idle_slots, struct blk_ksm_keyslot,
++				idle_slot_node);
++	slot_idx = blk_ksm_get_slot_idx(slot);
 +
-+``blk_crypto_init_key`` allows upper layers to initialize such a
-+``blk_crypto_key``.
++	err = ksm->ksm_ll_ops.keyslot_program(ksm, key, slot_idx);
++	if (err) {
++		wake_up(&ksm->idle_slots_wait_queue);
++		blk_ksm_hw_exit(ksm);
++		return errno_to_blk_status(err);
++	}
 +
-+``bio_crypt_set_ctx`` should be called on any bio that a user of
-+the block layer wants en/decrypted via inline encryption (or the
-+blk-crypto-fallback, if hardware support isn't available for the desired
-+crypto configuration). This function takes the ``blk_crypto_key`` and the
-+data unit number (DUN) to use when en/decrypting the bio.
++	/* Move this slot to the hash list for the new key. */
++	if (slot->key.crypto_cfg.crypto_mode != BLK_ENCRYPTION_MODE_INVALID)
++		hlist_del(&slot->hash_node);
++	hlist_add_head(&slot->hash_node, blk_ksm_hash_bucket_for_key(ksm, key));
 +
-+``blk_crypto_config_supported`` allows upper layers to query whether or not the
-+an encryption context passed to request queue can be handled by blk-crypto
-+(either by real inline encryption hardware, or by the blk-crypto-fallback).
-+This is useful e.g. when blk-crypto-fallback is disabled, and the upper layer
-+wants to use an algorithm that may not supported by hardware - this function
-+lets the upper layer know ahead of time that the algorithm isn't supported,
-+and the upper layer can fallback to something else if appropriate.
++	atomic_set(&slot->slot_refs, 1);
++	slot->key = *key;
 +
-+``blk_crypto_start_using_key`` - Upper layers must call this function on
-+``blk_crypto_key`` and a ``request_queue`` before using the key with any bio
-+headed for that ``request_queue``. This function ensures that either the
-+hardware supports the key's crypto settings, or the crypto API fallback has
-+transforms for the needed mode allocated and ready to go. Note that this
-+function may allocate an ``skcipher``, and must not be called from the data
-+path, since allocating ``skciphers`` from the data path can deadlock.
++	blk_ksm_remove_slot_from_lru_list(slot);
 +
-+``blk_crypto_evict_key`` should be called by upper layers when they want
-+to ensure that a key is removed from memory and from any keyslots in inline
-+encryption hardware that the key might have been programmed into (or the
-+blk-crypto-fallback).
++	blk_ksm_hw_exit(ksm);
++success:
++	*slot_ptr = slot;
++	return BLK_STS_OK;
++}
 +
-+API presented to device drivers
-+===============================
++/**
++ * blk_ksm_put_slot() - Release a reference to a slot
++ * @slot: The keyslot to release the reference of.
++ *
++ * Context: Any context.
++ */
++void blk_ksm_put_slot(struct blk_ksm_keyslot *slot)
++{
++	struct blk_keyslot_manager *ksm;
++	unsigned long flags;
 +
-+A :c:type:``struct keyslot_manager`` should be set up by device drivers in the
-+``request_queue`` of the device. The device driver needs to call
-+``blk_ksm_init`` on the ``keyslot_manager``, which specfying the number of
-+keyslots supported by the hardware.
++	if (!slot)
++		return;
 +
-+The device driver also needs to tell the KSM how to actually manipulate the
-+IE hardware in the device to do things like programming the crypto key into
-+the IE hardware into a particular keyslot. All this is achieved through the
-+:c:type:`struct keyslot_mgmt_ll_ops` field in the KSM that the device driver
-+must fill up after initing the ``keyslot_manager``.
++	ksm = slot->ksm;
 +
-+The KSM also handles runtime power management for the device when applicable
-+(e.g. when it wants to program a crypto key into the IE hardware, the device
-+must be runtime powered on) - so the device driver must also set the ``dev``
-+field in the ksm to point to the `struct device` for the KSM to use for runtime
-+power management.
++	if (atomic_dec_and_lock_irqsave(&slot->slot_refs,
++					&ksm->idle_slots_lock, flags)) {
++		list_add_tail(&slot->idle_slot_node, &ksm->idle_slots);
++		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
++		wake_up(&ksm->idle_slots_wait_queue);
++	}
++}
 +
-+``blk_ksm_reprogram_all_keys`` can be called by device drivers if the device
-+needs each and every of its keyslots to be reprogrammed with the key it
-+"should have" at the point in time when the function is called. This is useful
-+e.g. if a device loses all its keys on runtime power down/up.
++/**
++ * blk_ksm_crypto_cfg_supported() - Find out if the crypto_mode, dusize, dun
++ *				    bytes of a crypto_config are supported by a
++ *				    ksm.
++ * @ksm: The keyslot manager to check
++ * @cfg: The crypto configuration to check for.
++ *
++ * Checks for crypto_mode/data unit size/dun bytes support.
++ *
++ * Return: Whether or not this ksm supports the specified crypto key.
++ */
++bool blk_ksm_crypto_cfg_supported(struct blk_keyslot_manager *ksm,
++				  const struct blk_crypto_config *cfg)
++{
++	if (!ksm)
++		return false;
++	return (ksm->crypto_modes_supported[cfg->crypto_mode] &
++		cfg->data_unit_size) &&
++	       (ksm->max_dun_bytes_supported >= cfg->dun_bytes);
++}
 +
-+``blk_ksm_destroy`` should be called to free up all resources used by a keyslot
-+manager upon ``blk_ksm_init``, once the ``keyslot_manager`` is no longer
-+needed.
++/**
++ * blk_ksm_evict_key() - Evict a key from the lower layer device.
++ * @ksm: The keyslot manager to evict from
++ * @key: The key to evict
++ *
++ * Find the keyslot that the specified key was programmed into, and evict that
++ * slot from the lower layer device if that slot is not currently in use.
++ *
++ * Context: Process context. Takes and releases ksm->lock.
++ * Return: 0 on success or if there's no keyslot with the specified key, -EBUSY
++ *	   if the key is still in use, or another -errno value on other error.
++ */
++int blk_ksm_evict_key(struct blk_keyslot_manager *ksm,
++		      const struct blk_crypto_key *key)
++{
++	struct blk_ksm_keyslot *slot;
++	int err = 0;
 +
++	blk_ksm_hw_enter(ksm);
++	slot = blk_ksm_find_keyslot(ksm, key);
++	if (!slot)
++		goto out_unlock;
 +
-+Layered Devices
-+===============
++	if (atomic_read(&slot->slot_refs) != 0) {
++		err = -EBUSY;
++		goto out_unlock;
++	}
++	err = ksm->ksm_ll_ops.keyslot_evict(ksm, key,
++					    blk_ksm_get_slot_idx(slot));
++	if (err)
++		goto out_unlock;
 +
-+Request queue based layered devices like dm-rq that wish to support IE need to
-+create their own keyslot manager for their request queue, and expose whatever
-+functionality they choose. When a layered device wants to pass a clone of that
-+request to another ``request_queue``, blk-crypto will initialize and prepare the
-+clone as necessary - see ``blk_crypto_rq_prep_clone`` and
-+``blk_crypto_insert_cloned_request`` in ``blk-crypto.c``.
++	hlist_del(&slot->hash_node);
++	memzero_explicit(&slot->key, sizeof(slot->key));
++	err = 0;
++out_unlock:
++	blk_ksm_hw_exit(ksm);
++	return err;
++}
 +
++/**
++ * blk_ksm_reprogram_all_keys() - Re-program all keyslots.
++ * @ksm: The keyslot manager
++ *
++ * Re-program all keyslots that are supposed to have a key programmed.  This is
++ * intended only for use by drivers for hardware that loses its keys on reset.
++ *
++ * Context: Process context. Takes and releases ksm->lock.
++ */
++void blk_ksm_reprogram_all_keys(struct blk_keyslot_manager *ksm)
++{
++	unsigned int slot;
 +
-+Future Optimizations for layered devices
-+========================================
++	/* This is for device initialization, so don't resume the device */
++	down_write(&ksm->lock);
++	for (slot = 0; slot < ksm->num_slots; slot++) {
++		const struct blk_crypto_key *key = &ksm->slots[slot].key;
++		int err;
 +
-+Creating a keyslot manager for a layered device uses up memory for each
-+keyslot, and in general, a layered device merely passes the request on to a
-+"child" device, so the keyslots in the layered device itself are completely
-+unused, and don't need any refcounting or keyslot programming. We can instead
-+define a new type of KSM; the "passthrough KSM", that layered devices can use
-+to advertise an unlimited number of keyslots, and support for any encryption
-+algorithms they choose, while not actually using any memory for each keyslot.
-+Another use case for the "passthrough KSM" is for IE devices that do not have a
-+limited number of keyslots.
++		if (key->crypto_cfg.crypto_mode == BLK_ENCRYPTION_MODE_INVALID)
++			continue;
 +
++		err = ksm->ksm_ll_ops.keyslot_program(ksm, key, slot);
++		WARN_ON(err);
++	}
++	up_write(&ksm->lock);
++}
++EXPORT_SYMBOL_GPL(blk_ksm_reprogram_all_keys);
 +
-+Interaction between inline encryption and blk integrity
-+=======================================================
++void blk_ksm_destroy(struct blk_keyslot_manager *ksm)
++{
++	if (!ksm)
++		return;
++	kvfree(ksm->slot_hashtable);
++	memzero_explicit(ksm->slots, sizeof(ksm->slots[0]) * ksm->num_slots);
++	kvfree(ksm->slots);
++	memzero_explicit(ksm, sizeof(*ksm));
++}
++EXPORT_SYMBOL_GPL(blk_ksm_destroy);
+diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
+new file mode 100644
+index 0000000000000..eaa683d9dca37
+--- /dev/null
++++ b/include/linux/blk-crypto.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2019 Google LLC
++ */
 +
-+At the time of this patch, there is no real hardware that supports both these
-+features. However, these features do interact with each other, and it's not
-+completely trivial to make them both work together properly. In particular,
-+when a WRITE bio wants to use inline encryption on a device that supports both
-+features, the bio will have an encryption context specified, after which
-+its integrity information is calculated (using the plaintext data, since
-+the encryption will happen while data is being written), and the data and
-+integrity info is sent to the device. Obviously, the integrity info must be
-+verified before the data is encrypted. After the data is encrypted, the device
-+must not store the integrity info that it received with the plaintext data
-+since that might reveal information about the plaintext data. As such, it must
-+re-generate the integrity info from the ciphertext data and store that on disk
-+instead. Another issue with storing the integrity info of the plaintext data is
-+that it changes the on disk format depending on whether hardware inline
-+encryption support is present or the kernel crypto API fallback is used (since
-+if the fallback is used, the device will receive the integrity info of the
-+ciphertext, not that of the plaintext).
++#ifndef __LINUX_BLK_CRYPTO_H
++#define __LINUX_BLK_CRYPTO_H
 +
-+Because there isn't any real hardware yet, it seems prudent to assume that
-+hardware implementations might not implement both features together correctly,
-+and disallow the combination for now. Whenever a device supports integrity, the
-+kernel will pretend that the device does not support hardware inline encryption
-+(by essentially setting the keyslot manager in the request_queue of the device
-+to NULL). When the crypto API fallback is enabled, this means that all bios with
-+and encryption context will use the fallback, and IO will complete as usual.
-+When the fallback is disabled, a bio with an encryption context will be failed.
++enum blk_crypto_mode_num {
++	BLK_ENCRYPTION_MODE_INVALID,
++	BLK_ENCRYPTION_MODE_AES_256_XTS,
++	BLK_ENCRYPTION_MODE_AES_128_CBC_ESSIV,
++	BLK_ENCRYPTION_MODE_ADIANTUM,
++	BLK_ENCRYPTION_MODE_MAX,
++};
++
++#define BLK_CRYPTO_MAX_KEY_SIZE		64
++/**
++ * struct blk_crypto_config - an inline encryption key's crypto configuration
++ * @crypto_mode: encryption algorithm this key is for
++ * @data_unit_size: the data unit size for all encryption/decryptions with this
++ *	key.  This is the size in bytes of each individual plaintext and
++ *	ciphertext.  This is always a power of 2.  It might be e.g. the
++ *	filesystem block size or the disk sector size.
++ * @dun_bytes: the maximum number of bytes of DUN used when using this key
++ */
++struct blk_crypto_config {
++	enum blk_crypto_mode_num crypto_mode;
++	unsigned int data_unit_size;
++	unsigned int dun_bytes;
++};
++
++/**
++ * struct blk_crypto_key - an inline encryption key
++ * @crypto_cfg: the crypto configuration (like crypto_mode, key size) for this
++ *		key
++ * @data_unit_size_bits: log2 of data_unit_size
++ * @size: size of this key in bytes (determined by @crypto_cfg.crypto_mode)
++ * @hash: hash of this key, for keyslot manager use only
++ * @raw: the raw bytes of this key.  Only the first @size bytes are used.
++ *
++ * A blk_crypto_key is immutable once created, and many bios can reference it at
++ * the same time.  It must not be freed until all bios using it have completed.
++ */
++struct blk_crypto_key {
++	struct blk_crypto_config crypto_cfg;
++	unsigned int data_unit_size_bits;
++	unsigned int size;
++	unsigned int hash;
++	u8 raw[BLK_CRYPTO_MAX_KEY_SIZE];
++};
++
++#endif /* __LINUX_BLK_CRYPTO_H */
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 32868fbedc9e9..7b36695f71931 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -43,6 +43,7 @@ struct pr_ops;
+ struct rq_qos;
+ struct blk_queue_stats;
+ struct blk_stat_callback;
++struct blk_keyslot_manager;
+ 
+ #define BLKDEV_MIN_RQ	4
+ #define BLKDEV_MAX_RQ	128	/* Default maximum */
+@@ -474,6 +475,11 @@ struct request_queue {
+ 	unsigned int		dma_pad_mask;
+ 	unsigned int		dma_alignment;
+ 
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++	/* Inline crypto capabilities */
++	struct blk_keyslot_manager *ksm;
++#endif
++
+ 	unsigned int		rq_timeout;
+ 	int			poll_nsec;
+ 
+diff --git a/include/linux/keyslot-manager.h b/include/linux/keyslot-manager.h
+new file mode 100644
+index 0000000000000..a355c784a23b9
+--- /dev/null
++++ b/include/linux/keyslot-manager.h
+@@ -0,0 +1,107 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2019 Google LLC
++ */
++
++#ifndef __LINUX_KEYSLOT_MANAGER_H
++#define __LINUX_KEYSLOT_MANAGER_H
++
++#include <linux/bio.h>
++#include <linux/blk-crypto.h>
++
++struct blk_keyslot_manager;
++
++/**
++ * struct blk_ksm_ll_ops - functions to manage keyslots in hardware
++ * @keyslot_program:	Program the specified key into the specified slot in the
++ *			inline encryption hardware.
++ * @keyslot_evict:	Evict key from the specified keyslot in the hardware.
++ *			The key is provided so that e.g. dm layers can evict
++ *			keys from the devices that they map over.
++ *			Returns 0 on success, -errno otherwise.
++ *
++ * This structure should be provided by storage device drivers when they set up
++ * a keyslot manager - this structure holds the function ptrs that the keyslot
++ * manager will use to manipulate keyslots in the hardware.
++ */
++struct blk_ksm_ll_ops {
++	int (*keyslot_program)(struct blk_keyslot_manager *ksm,
++			       const struct blk_crypto_key *key,
++			       unsigned int slot);
++	int (*keyslot_evict)(struct blk_keyslot_manager *ksm,
++			     const struct blk_crypto_key *key,
++			     unsigned int slot);
++};
++
++struct blk_keyslot_manager {
++	/*
++	 * The struct blk_ksm_ll_ops that this keyslot manager will use
++	 * to perform operations like programming and evicting keys on the
++	 * device
++	 */
++	struct blk_ksm_ll_ops ksm_ll_ops;
++
++	/*
++	 * The maximum number of bytes supported for specifying the data unit
++	 * number.
++	 */
++	unsigned int max_dun_bytes_supported;
++
++	/*
++	 * Array of size BLK_ENCRYPTION_MODE_MAX of bitmasks that represents
++	 * whether a crypto mode and data unit size are supported. The i'th
++	 * bit of crypto_mode_supported[crypto_mode] is set iff a data unit
++	 * size of (1 << i) is supported. We only support data unit sizes
++	 * that are powers of 2.
++	 */
++	unsigned int crypto_modes_supported[BLK_ENCRYPTION_MODE_MAX];
++
++	/* Device for runtime power management (NULL if none) */
++	struct device *dev;
++
++	/* Here onwards are *private* fields for internal keyslot manager use */
++
++	unsigned int num_slots;
++
++	/* Protects programming and evicting keys from the device */
++	struct rw_semaphore lock;
++
++	/* List of idle slots, with least recently used slot at front */
++	wait_queue_head_t idle_slots_wait_queue;
++	struct list_head idle_slots;
++	spinlock_t idle_slots_lock;
++
++	/*
++	 * Hash table which maps key hashes to keyslots, so that we can find a
++	 * key's keyslot in O(1) time rather than O(num_slots).  Protected by
++	 * 'lock'.  A cryptographic hash function is used so that timing attacks
++	 * can't leak information about the raw keys.
++	 */
++	struct hlist_head *slot_hashtable;
++	unsigned int slot_hashtable_size;
++
++	/* Per-keyslot data */
++	struct blk_ksm_keyslot *slots;
++};
++
++int blk_ksm_init(struct blk_keyslot_manager *ksm, unsigned int num_slots);
++
++blk_status_t blk_ksm_get_slot_for_key(struct blk_keyslot_manager *ksm,
++				      const struct blk_crypto_key *key,
++				      struct blk_ksm_keyslot **slot_ptr);
++
++unsigned int blk_ksm_get_slot_idx(struct blk_ksm_keyslot *slot);
++
++void blk_ksm_put_slot(struct blk_ksm_keyslot *slot);
++
++bool blk_ksm_crypto_cfg_supported(struct blk_keyslot_manager *ksm,
++				  const struct blk_crypto_config *cfg);
++
++int blk_ksm_evict_key(struct blk_keyslot_manager *ksm,
++		      const struct blk_crypto_key *key);
++
++void blk_ksm_reprogram_all_keys(struct blk_keyslot_manager *ksm);
++
++void blk_ksm_destroy(struct blk_keyslot_manager *ksm);
++
++#endif /* __LINUX_KEYSLOT_MANAGER_H */
 -- 
 2.26.0.110.g2183baf09c-goog
 
