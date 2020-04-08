@@ -2,277 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C203A1A1AAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 05:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 755401A1AB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 06:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgDHD5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 23:57:37 -0400
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:38603 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbgDHD5g (ORCPT
+        id S1726520AbgDHEBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 00:01:17 -0400
+Received: from mx04.melco.co.jp ([192.218.140.144]:53674 "EHLO
+        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbgDHEBR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 23:57:36 -0400
-Received: by mail-pj1-f74.google.com with SMTP id l12so1525638pjh.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Apr 2020 20:57:35 -0700 (PDT)
+        Wed, 8 Apr 2020 00:01:17 -0400
+Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
+        by mx04.melco.co.jp (Postfix) with ESMTP id EA6183A3F22;
+        Wed,  8 Apr 2020 13:01:14 +0900 (JST)
+Received: from mr04.melco.co.jp (unknown [127.0.0.1])
+        by mr04.imss (Postfix) with ESMTP id 48xrDV6GckzRk8X;
+        Wed,  8 Apr 2020 13:01:14 +0900 (JST)
+Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
+        by mr04.melco.co.jp (Postfix) with ESMTP id 48xrDV5ySczRjnK;
+        Wed,  8 Apr 2020 13:01:14 +0900 (JST)
+Received: from mf04.melco.co.jp (unknown [133.141.98.184])
+        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48xrDV5wWRzRk9n;
+        Wed,  8 Apr 2020 13:01:14 +0900 (JST)
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.54])
+        by mf04.melco.co.jp (Postfix) with ESMTP id 48xrDV5kXczRk5B;
+        Wed,  8 Apr 2020 13:01:14 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CQt5YYyG7NTdHmXyLqhr13wI+9wjbXRczUjulArvafQiedDi56PU2R85KyBtLZS9N3S2GddU0jsubk1OSo+XrTVKyp1oyrFWjyaY77cewXPqYyPUHEmxveHURx6IaVQEYfkJfjJqx/n6gA+3lnwDo/CZeIN7qzVh3+3yeqE7FnI31vfhHWug2P88xfhv/tvZN06fY637nAXADDHHF/PZpEu7ED0SJmWwKkgOcFfMZQuOZw5XbAq6LTucgG5QaBTz8CGu1CExWsOjhD1bl6VKX5R91HctWvaEmqyN6mKaPGa/G9gPv011loLjJR2cCH1m1u9aFgYiRw3CVuUeLjHpiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/YQcHkqTkj5HoqtPWEnuxKX4jz5Ytg39Nn507xmaFBA=;
+ b=Jlx/paScw/HpBjQV4e/Tw5p5AmJXQ90G7WKV/L9LgnW8629XhhKVg38KY9Hza2urPFf7KI6sCpxUItL15tb3HMm+0OuB4piJIHlom9hjIK+lZ1I++zo03n67/lAG0wC9wtSXWKl9ylj45pJ/P215IebyTZtpEQJhPiCk9nh4HFJ+A6P7hQQjXoxS14CaIwglm/Ski6vu/zX/+7aRKQ/CP/n9ec3GQwgXLUMBMSyKCfZsFgj5g0cSgn5JOPk9ZRhNyx6Nnwl7cLkWBuKjxU8rMAta+l6HY1271ySty3Xob+jY/5SzG2dNhLs/r/z6TnSdzPuEN4L/QPtXnQXC1qUkzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=7D13JogXFe1JCEV8qFRYg97/dIBd9Yj2YknwY62/3L4=;
-        b=ARgnInOvFykHikP924+1Hp9B8S2TINGZiXnz7KGkOzogNCvrPcZp0yicygd+SI5Kk8
-         PjSaQ8Re+iEqsCgD1aAQDh1+HVycmmvv9VnKSj2PIExTib+SIxLcRZpe+4BQxQcD/130
-         OUqLB6kjY+wmNgMYCcyO7BjpR0q4RX+skLrLVH7Genl1W+6NsXvNDLBwPOVf6tHS9yQC
-         WjnMdVshlRRbnC3WDev1/e5VYu/SQF8p8KvT2U7P/QWDo7hjDUG/zs/avvfGFmDWmPkQ
-         iNprRxjuoFqweuVwIslhOgMkG71xqkVck62PIS9VxGPy9Vmj4gg5hX0zQ4fv6x0zT7f5
-         wiEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=7D13JogXFe1JCEV8qFRYg97/dIBd9Yj2YknwY62/3L4=;
-        b=RTD/tYJIsVJqGRhUvvZ0lD9lJES+atxa9o/sv9/TAOUqxFVgDxnJ7+nF9u7JJ5/QRK
-         RyvDTOBlvLGEZ6Elw5O6/GgHQ93iU4+oFV1YScugPlRTFExZwFsyKvRRuI33EmTEVWFs
-         5jda2P2O2LHyvax6NOOsvRhrNv7xG/j4/4NaDbCcsYCmau1L8gePHFlbLKS0vfaIDWc2
-         Wxw5NDZXDGZFd6kkbLCfbNJPt3wfbnir0Pe+9Wg3i94KtUVnhbycDZkVnUTaX0AtXlos
-         ++ErC5Ppmne9eRUFJFJctE7sA/Mt179CWNTSI+MKhJjn+kGzcfdt1pXP0YnTcrA4v40u
-         1pCQ==
-X-Gm-Message-State: AGi0Pub/xfMx6/nXCFMTJW8zvn7fxLohEnzt6UQkyKKkXD1prxvGt/S2
-        mE7M/aKZ0KiDq9s4wPG3y1oytKhVR28=
-X-Google-Smtp-Source: APiQypJx6NsRs9SY9caqTGgYqn5+wm7yGe4hGaWQCw0+1OR08cUUraxMJUL2D7/bSE59GiFYRoBSRQA5Yf0=
-X-Received: by 2002:a63:64c4:: with SMTP id y187mr5096645pgb.36.1586318255191;
- Tue, 07 Apr 2020 20:57:35 -0700 (PDT)
-Date:   Tue,  7 Apr 2020 20:56:54 -0700
-In-Reply-To: <20200408035654.247908-1-satyat@google.com>
-Message-Id: <20200408035654.247908-13-satyat@google.com>
-Mime-Version: 1.0
-References: <20200408035654.247908-1-satyat@google.com>
-X-Mailer: git-send-email 2.26.0.110.g2183baf09c-goog
-Subject: [PATCH v10 12/12] ext4: add inline encryption support
-From:   Satya Tangirala <satyat@google.com>
-To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Cc:     Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Satya Tangirala <satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/YQcHkqTkj5HoqtPWEnuxKX4jz5Ytg39Nn507xmaFBA=;
+ b=N54RVh26QJroifmhgVuR+nXLmMuaQLtOME0qC+fRgpHzwj7HQ8jWLbMMio5up//lGNKAv3ZQQYJwKdEkSa5kSTBQUbAocgcr7CEkpr5A66u7igc6j+7+Nsxzdb4dTbx15KvCgEDQWzc+7DISu8bIZvgOS+jnH1Tz8vpBxK03Z1w=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY1PR01MB1594.jpnprd01.prod.outlook.com (52.133.161.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2878.16; Wed, 8 Apr 2020 04:01:14 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96%3]) with mapi id 15.20.2878.022; Wed, 8 Apr 2020
+ 04:01:14 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     "'pali@kernel.org'" <pali@kernel.org>
+CC:     "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
+        "'sj1557.seo@samsung.com'" <sj1557.seo@samsung.com>,
+        "'viro@zeniv.linux.org.uk'" <viro@zeniv.linux.org.uk>
+Subject: RE: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
+ above U+FFFF
+Thread-Topic: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
+ above U+FFFF
+Thread-Index: AQHWCfgm33iC4HYp6U6hpobeaScABqhrVdFggAIevgCAARtD4A==
+Date:   Wed, 8 Apr 2020 03:59:06 +0000
+Deferred-Delivery: Wed, 8 Apr 2020 04:01:00 +0000
+Message-ID: <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <TY1PR01MB15782019FA3094015950830590C70@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200403204037.hs4ae6cl3osogrso@pali>
+ <TY1PR01MB1578D63C6F303DE805D75DAA90C20@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200407100648.phkvxbmv2kootyt7@pali>
+In-Reply-To: <20200407100648.phkvxbmv2kootyt7@pali>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.163]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 16449eaa-8bb6-46cf-e1be-08d7db717b30
+x-ms-traffictypediagnostic: TY1PR01MB1594:
+x-microsoft-antispam-prvs: <TY1PR01MB159470A326D76195848EC20F90C00@TY1PR01MB1594.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0367A50BB1
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(39860400002)(396003)(346002)(136003)(376002)(366004)(64756008)(76116006)(66946007)(6666004)(55016002)(186003)(478600001)(66476007)(66556008)(26005)(9686003)(81156014)(33656002)(52536014)(8936002)(54906003)(4744005)(86362001)(7696005)(5660300002)(316002)(66446008)(8676002)(6506007)(71200400001)(2906002)(4326008)(6916009)(81166007)(491001);DIR:OUT;SFP:1102;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jUqY/4ml88tkiaMZ8qMFm3bfCuZgtx1u2y6p+ODyesNmjKLeUy7aN1btLqvEAavhqnqXqORn7ed2kYwzuMOPB9RdeuJ1qk4PkZMCAoXF2hldTe45gdBWe85MznfDjI9D6fbUXqhHwWFT0oRYbaklFB94K2xRFn5Igz4hC1coWI229AwsJjYwD4xQx34vgwoJXwMzGXHeZNmDQMrihGTwYOEbrCaFKyq4Ec0oQ+8ntTlMKgj8Je+h5z9tlJHj9aEsiC5jTFATiWW3cgHQCRcU6zAWtw0DFYW6oUC9KhXG2JIZ4TPO3gASJRdhB8myG1bWt+TlPMXIJ76HdppzYvbr4v7WNDMvHX8y1SYXuY/g0GkS51CmLSFu8JHiik23C6UdCT9E8IAHqUzL+FIyVr81htRxaQWiGaRddnzJf+nUeVo/FB9Ss/7/Jb5MHdcN3pB2r1Ss7EfaTeaJqHTOFE3dhdfkxeGFtyB77uTS66MVy0Q=
+x-ms-exchange-antispam-messagedata: PdneWJLrMTA8AXBdYcZ9GFLVt+4DmO8ELCbuBHLjCeJg4gkzBODmAX/R+FPm3xcAMM9ypGvkM7NKwGIdCHrdw3fUi4LfC+8pdSpBrFuws4w+ilwuJW2fefZ6Nz62LWR2O3sPTAcIJk1NtG3MfpGINw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16449eaa-8bb6-46cf-e1be-08d7db717b30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2020 04:01:13.9813
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: L5ZWcUP8GCvdvUycg6qBP+sB96iHjhgl3ZfxVJArKGnW+k8gho2LG/BpmxeurEb7ew7DeXdTy9v8zowO8uHwjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1594
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
-
-Wire up ext4 to support inline encryption via the helper functions which
-fs/crypto/ now provides.  This includes:
-
-- Adding a mount option 'inlinecrypt' which enables inline encryption
-  on encrypted files where it can be used.
-
-- Setting the bio_crypt_ctx on bios that will be submitted to an
-  inline-encrypted file.
-
-  Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
-  this part, since ext4 sometimes uses ll_rw_block() on file data.
-
-- Not adding logically discontiguous data to bios that will be submitted
-  to an inline-encrypted file.
-
-- Not doing filesystem-layer crypto on inline-encrypted files.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Co-developed-by: Satya Tangirala <satyat@google.com>
-Signed-off-by: Satya Tangirala <satyat@google.com>
----
- Documentation/admin-guide/ext4.rst |  6 ++++++
- fs/buffer.c                        |  7 ++++---
- fs/ext4/inode.c                    |  4 ++--
- fs/ext4/page-io.c                  |  6 ++++--
- fs/ext4/readpage.c                 | 11 ++++++++---
- fs/ext4/super.c                    |  9 +++++++++
- 6 files changed, 33 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
-index 9443fcef18760..ed997e3766781 100644
---- a/Documentation/admin-guide/ext4.rst
-+++ b/Documentation/admin-guide/ext4.rst
-@@ -395,6 +395,12 @@ When mounting an ext4 filesystem, the following option are accepted:
-         Documentation/filesystems/dax.txt.  Note that this option is
-         incompatible with data=journal.
- 
-+  inlinecrypt
-+        Encrypt/decrypt the contents of encrypted files using the blk-crypto
-+        framework rather than filesystem-layer encryption. This allows the use
-+        of inline encryption hardware. The on-disk format is unaffected. For
-+        more details, see Documentation/block/inline-encryption.rst.
-+
- Data Mode
- =========
- There are 3 different data modes:
-diff --git a/fs/buffer.c b/fs/buffer.c
-index f73276d746bbf..8b5d7c857fa76 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -328,9 +328,8 @@ static void decrypt_bh(struct work_struct *work)
- static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
- {
- 	/* Decrypt if needed */
--	if (uptodate && IS_ENABLED(CONFIG_FS_ENCRYPTION) &&
--	    IS_ENCRYPTED(bh->b_page->mapping->host) &&
--	    S_ISREG(bh->b_page->mapping->host->i_mode)) {
-+	if (uptodate &&
-+	    fscrypt_inode_uses_fs_layer_crypto(bh->b_page->mapping->host)) {
- 		struct decrypt_bh_ctx *ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
- 
- 		if (ctx) {
-@@ -3036,6 +3035,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 	 */
- 	bio = bio_alloc(GFP_NOIO, 1);
- 
-+	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-+
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_write_hint = write_hint;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e416096fc0813..9b5ca088b9a7b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1088,7 +1088,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
- 	}
- 	if (unlikely(err)) {
- 		page_zero_new_buffers(page, from, to);
--	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
-+	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 		for (i = 0; i < nr_wait; i++) {
- 			int err2;
- 
-@@ -3738,7 +3738,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 		/* Uhhuh. Read error. Complain and punt. */
- 		if (!buffer_uptodate(bh))
- 			goto unlock;
--		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
-+		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 			/* We expect the key to be set. */
- 			BUG_ON(!fscrypt_has_encryption_key(inode));
- 			err = fscrypt_decrypt_pagecache_blocks(page, blocksize,
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index de6fe969f7737..defd2e10dfd10 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -402,6 +402,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
- 	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
- 	 */
- 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-+	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_end_io = ext4_end_bio;
-@@ -418,7 +419,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
- {
- 	int ret;
- 
--	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
-+	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
-+			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
- submit_and_retry:
- 		ext4_io_submit(io);
- 	}
-@@ -506,7 +508,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- 	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
- 	 * can't happen in the common case of blocksize == PAGE_SIZE.
- 	 */
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
-+	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
- 		gfp_t gfp_flags = GFP_NOFS;
- 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
- 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index c1769afbf7995..68eac0aeffad3 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -195,7 +195,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
- {
- 	unsigned int post_read_steps = 0;
- 
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-+	if (fscrypt_inode_uses_fs_layer_crypto(inode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
- 
- 	if (ext4_need_verity(inode, first_idx))
-@@ -232,6 +232,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 	const unsigned blkbits = inode->i_blkbits;
- 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
- 	const unsigned blocksize = 1 << blkbits;
-+	sector_t next_block;
- 	sector_t block_in_file;
- 	sector_t last_block;
- 	sector_t last_block_in_file;
-@@ -264,7 +265,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		if (page_has_buffers(page))
- 			goto confused;
- 
--		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
-+		block_in_file = next_block =
-+			(sector_t)page->index << (PAGE_SHIFT - blkbits);
- 		last_block = block_in_file + nr_pages * blocks_per_page;
- 		last_block_in_file = (ext4_readpage_limit(inode) +
- 				      blocksize - 1) >> blkbits;
-@@ -364,7 +366,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		 * This page will go to BIO.  Do we need to send this
- 		 * BIO off first?
- 		 */
--		if (bio && (last_block_in_bio != blocks[0] - 1)) {
-+		if (bio && (last_block_in_bio != blocks[0] - 1 ||
-+			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
- 		submit_and_realloc:
- 			submit_bio(bio);
- 			bio = NULL;
-@@ -376,6 +379,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			 */
- 			bio = bio_alloc(GFP_KERNEL,
- 				min_t(int, nr_pages, BIO_MAX_PAGES));
-+			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
-+						  GFP_KERNEL);
- 			ext4_set_bio_post_read_ctx(bio, inode, page->index);
- 			bio_set_dev(bio, bdev);
- 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 9728e7b0e84fc..2ad28a075cdf7 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1511,6 +1511,7 @@ enum {
- 	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
- 	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
- 	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
-+	Opt_inlinecrypt,
- 	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
- 	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
- 	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
-@@ -1608,6 +1609,7 @@ static const match_table_t tokens = {
- 	{Opt_noinit_itable, "noinit_itable"},
- 	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
-+	{Opt_inlinecrypt, "inlinecrypt"},
- 	{Opt_nombcache, "nombcache"},
- 	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
- 	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
-@@ -1895,6 +1897,13 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
- 	case Opt_nolazytime:
- 		sb->s_flags &= ~SB_LAZYTIME;
- 		return 1;
-+	case Opt_inlinecrypt:
-+#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-+		sb->s_flags |= SB_INLINECRYPT;
-+#else
-+		ext4_msg(sb, KERN_ERR, "inline encryption not supported");
-+#endif
-+		return 1;
- 	}
- 
- 	for (m = ext4_mount_opts; m->token != Opt_err; m++)
--- 
-2.26.0.110.g2183baf09c-goog
-
+PiBTbyBwYXJ0aWFsX25hbWVfaGFzaCgpIGxpa2UgSSB1c2VkIGl0IGluIHRoaXMgcGF0Y2ggc2Vy
+aWVzIGlzIGVub3VnaD8NCg0KSSB0aGluayBwYXJ0aWFsX25hbWVfaGFzaCgpIGlzIGVub3VnaCBm
+b3IgOC8xNi8yMWJpdCBjaGFyYWN0ZXJzLg0KDQpBbm90aGVyIHBvaW50IGFib3V0IHRoZSBkaXNj
+cmltaW5hdGlvbiBvZiAyMWJpdCBjaGFyYWN0ZXJzOg0KSSB0aGluayB0aGF0IGNoZWNraW5nIGlu
+IGV4ZmF0X3RvdXBwZXIgKCkgY2FuIGJlIG1vcmUgc2ltcGxpZmllZC4NCg0KIGV4OiByZXR1cm4g
+YSA8IFBMQU5FX1NJWkUgJiYgc2JpLT52b2xfdXRibFthXSA/IHNiaS0+dm9sX3V0YmxbYV0gOiBh
+Ow0KDQotLS0NCktvaGFkYSBUZXRzdWhpcm8gPEtvaGFkYS5UZXRzdWhpcm9AZGMuTWl0c3ViaXNo
+aUVsZWN0cmljLmNvLmpwPg0KDQo=
