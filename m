@@ -2,120 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C13691A1DAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 10:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A33511A1DCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 11:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgDHIyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 04:54:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42527 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbgDHIyg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 04:54:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h15so6863890wrx.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 01:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=1FwpYHoynE2gyCrz/nbvDvoG7yiJ9Y2XWNV93B0aQPs=;
-        b=OcUCgo/uv/hUR/MlTD0/uA2O4PYZqP4bcPG6RsJzv2RbVwDcz6Gk81wkvWTL85Obs4
-         k2+lD/L8+mnKDB0+NSM3m6NxdWG+vTcnppV+K8jcocyj6hoxdaYwuva3//hg5Bzk+ohF
-         WXdgn8wCIyxgZ/gJqwcqUeQ5tlc6CnmrGm+4M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=1FwpYHoynE2gyCrz/nbvDvoG7yiJ9Y2XWNV93B0aQPs=;
-        b=q2s4kn0aniiI6Jtar7ZbDKzlkGZL+oOorFK9sar7KDpsVXVKjQKZwdE+0AEgKHwG7V
-         E1ZDIHpH3eSlAfucdq6IoHCLqM3mwe7jpehHpNzCwbK45B0TnCDo/E5un0rgQW240mMB
-         EOLc43qpzjrBcbykd/2yKWFxE0/DXsm7HIkQUFRtO/2vW/o1IoJRM1j49zFS+dKcXle0
-         ng0u5kJNtGcnYWBVMbJE1JeRA6VMwsw8xf5ZHy2a9gDdalIEIKtrFOQsaNJ6JyKKiMjq
-         i4KRaoqivT5ekocHIdP67gddijtBvhXRwM0OUB72rUoaXDt8l6FWVbAmgauPtJV2p915
-         gZgQ==
-X-Gm-Message-State: AGi0Puao9E8wzAI3OtAs3LnzDPQuJKQ9lkBc0xl+e/AHUfdpfJ/4cli0
-        Gzowzhaoy42Vb2jnd/TXgt2/IyHXvfQ=
-X-Google-Smtp-Source: APiQypKMEZAToOUgXRdGrbEdio34X4BVF/X7L8iZVOwA5tv1WXLZRx/RAgoMcrrez/kzQKOMAjgLQQ==
-X-Received: by 2002:adf:ee06:: with SMTP id y6mr7566767wrn.187.1586336075386;
-        Wed, 08 Apr 2020 01:54:35 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id j11sm34797250wrt.14.2020.04.08.01.54.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2020 01:54:34 -0700 (PDT)
-Date:   Wed, 8 Apr 2020 10:54:23 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs update for 5.7
-Message-ID: <20200408085423.GA21974@miu.piliscsaba.redhat.com>
+        id S1726996AbgDHJEj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 05:04:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbgDHJEi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 05:04:38 -0400
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 406BB20692;
+        Wed,  8 Apr 2020 09:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586336678;
+        bh=9kbufo3o6enn038b+/eT3GGy2OJh9n+0Gmmfe1errw4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gClleIa6JVwmMtFjQ+VLKstEyu2cAnmLBAYUvRdQ78Mc4QaUjCqjIY+lFgC2tJ/5d
+         K4FpWE2X1K4NjctqOm0u4QC2TyJZxAsOzFJlHQY4zjVgUg7wUDsq0lu83XzZAvTv9y
+         Vy870rZ8PwV6NlUxUWkTaGjnA+N3rxNwUyVmDf+A=
+Received: by pali.im (Postfix)
+        id 51648A7A; Wed,  8 Apr 2020 11:04:35 +0200 (CEST)
+Date:   Wed, 8 Apr 2020 11:04:35 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>,
+        viro@zeniv.linux.org.uk
+Cc:     "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
+        "'sj1557.seo@samsung.com'" <sj1557.seo@samsung.com>
+Subject: Re: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
+ above U+FFFF
+Message-ID: <20200408090435.i3ufmbfinx5dyd7w@pali>
+References: <TY1PR01MB15782019FA3094015950830590C70@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200403204037.hs4ae6cl3osogrso@pali>
+ <TY1PR01MB1578D63C6F303DE805D75DAA90C20@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200407100648.phkvxbmv2kootyt7@pali>
+ <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wednesday 08 April 2020 03:59:06 Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp wrote:
+> > So partial_name_hash() like I used it in this patch series is enough?
+> 
+> I think partial_name_hash() is enough for 8/16/21bit characters.
 
-Please pull from:
+Great!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.7
+Al, could you please take this patch series?
 
- - Fix failure to copy-up files from certain NFSv4 mounts.
+> Another point about the discrimination of 21bit characters:
+> I think that checking in exfat_toupper () can be more simplified.
+> 
+>  ex: return a < PLANE_SIZE && sbi->vol_utbl[a] ? sbi->vol_utbl[a] : a;
 
- - Sort out inconsistencies between st_ino and i_ino (used in /proc/locks).
+I was thinking about it, but it needs more refactoring. Currently
+exfat_toupper() is used on other places for UTF-16 (u16 array) and
+therefore it cannot be extended to take more then 16 bit value.
 
- - Allow consistent (POSIX-y) inode numbering in more cases.
-
- - Allow virtiofs to be used as upper layer.
-
- - Miscellaneous cleanups and fixes.
-
-Thanks,
-Miklos
-
----
-Al Viro (1):
-      ovl: ovl_obtain_alias(): don't call d_instantiate_anon() for old
-
-Amir Goldstein (10):
-      ovl: fix value of i_ino for lower hardlink corner case
-      ovl: fix out of date comment and unreachable code
-      ovl: factor out helper ovl_get_root()
-      ovl: simplify i_ino initialization
-      ovl: check if upper fs supports RENAME_WHITEOUT
-      ovl: strict upper fs requirements for remote upper fs
-      ovl: use a private non-persistent ino pool
-      ovl: avoid possible inode number collisions with xino=on
-      ovl: enable xino automatically in more cases
-      ovl: document xino expected behavior
-
-Chengguang Xu (1):
-      ovl: fix a typo in comment
-
-Gustavo A. R. Silva (1):
-      ovl: replace zero-length array with flexible-array member
-
-Miklos Szeredi (7):
-      ovl: document permission model
-      ovl: ignore failure to copy up unknown xattrs
-      ovl: restructure dentry revalidation
-      ovl: separate detection of remote upper layer from stacked overlay
-      ovl: decide if revalidate needed on a per-dentry basis
-      ovl: allow remote upper
-      ovl: fix WARN_ON nlink drop to zero
-
----
- Documentation/filesystems/overlayfs.rst |  82 +++++++++-
- fs/overlayfs/copy_up.c                  |  16 +-
- fs/overlayfs/dir.c                      |  31 +++-
- fs/overlayfs/export.c                   |  40 ++---
- fs/overlayfs/inode.c                    |  99 ++++++++----
- fs/overlayfs/namei.c                    |   5 +-
- fs/overlayfs/overlayfs.h                |  25 +++-
- fs/overlayfs/ovl_entry.h                |   2 +
- fs/overlayfs/readdir.c                  |  25 +++-
- fs/overlayfs/super.c                    | 258 ++++++++++++++++++++++----------
- fs/overlayfs/util.c                     |  40 +++--
- 11 files changed, 460 insertions(+), 163 deletions(-)
+But I agree that this is another step which can be improved.
