@@ -2,78 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB041A1EE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 12:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E761A1FBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 13:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgDHKnn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 06:43:43 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40787 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbgDHKnn (ORCPT
+        id S1728395AbgDHLV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 07:21:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59166 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728205AbgDHLV5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 06:43:43 -0400
-Received: by mail-qk1-f196.google.com with SMTP id z15so2636823qki.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 03:43:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=b9ZrfNjphj616yH9sSpebMBULoKkQA/z9o077oUH2XA=;
-        b=ju/G3soC9hydw7B8uQTFahfl74QN8u1ircGFuBolI9vh3unphkeHcVY0gfTYrdgNwe
-         lHwBjmXsz3dbic5gsSsKSmyEvUXk87UykjCVL00rFNk4ZRiZqcJCA8j374r1jn6R4LdN
-         oZFNrjldT5tyHKOVFPoI7sLIGCREwVS8Q4ob3ihnWDqOQN0tByxqKize6JvK0DLxMUOa
-         Zbx3JeUvjHKCjT+UMhiO6qIS0ASDVoD4Ed7D3KWE2TDpkKi3dKM8dVt0wrK0uaVGUh3L
-         /695m4qMbI9zFeiNQ+PDPnzM9mmpgVyMV+Uc0UqHloy6EeIesmt/QJ067HxwML7VXU4K
-         LTQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=b9ZrfNjphj616yH9sSpebMBULoKkQA/z9o077oUH2XA=;
-        b=JdkYxM3WdieYjjS94ftq7ujGmAwB67+EPacgAzhcr31EoJPP6NtDTiUos3P6Qpppe9
-         X83szlpWT+iEIoXiGwwbzJVA4gNPamRHziY1bEDUPnAt06j5u2GnflKXpnpPdvIawWZD
-         HznY/T5bJi0R7JT5eoneXX9jcXSs21eBifntQQGsmSpRRaq0GHZD8cdH2wfKuOA3jTfm
-         VDIGk2g3VhbTSiP2Ep50vuWLvgz+Rrb86FxQwwMquwXDxMY+DjABc7A+0WTKjWcedMZk
-         spZiH9ySF6SfOR0siP2jEtgOu3FPVaVw6J0idIuuYddAcoAGu6X4z9glZDh0I4QBlw1m
-         j1UQ==
-X-Gm-Message-State: AGi0Puar2H91oBQHFSt1bwatDUj82aAnmr+opA2IXECpxKHtPCVpeVaq
-        /EtSq2rSwe2TURgoyOQSZuFWs128ZKYjB9ikbTI=
-X-Google-Smtp-Source: APiQypLujpGz0iLZzBmGQTvUrpLtBbwQfaUW2nhHVqQqo1DaRc3q4bqBWOjGJAGOmQls7DYk1RIyMz3oxu6kkQIwCqc=
-X-Received: by 2002:a05:620a:12e9:: with SMTP id f9mr6954556qkl.235.1586342621914;
- Wed, 08 Apr 2020 03:43:41 -0700 (PDT)
+        Wed, 8 Apr 2020 07:21:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PWkE951pF6gwEgnZrr9rlPlV6Gs3OzC1B/guo+3Nato=; b=jL8HBJZUW04p8UIqAHE625jZEu
+        pR+6oxFHckjc35R4VhzZcl01WIJomt7KJiZZRvnX/EC/5B2rTcTamkwArtYmzgw80e71f9+U3s1Nn
+        9EbFYHkNZomfJ+Lc2/o0l696J0HTYsH7i+fAey2YjCaGuy3l94V5sxK/5b23Pku3AFe+SbtQGCMt2
+        ptE8WU3lReh6n7K/OYuYAkv940+hijRidD+qYV9oep32w9shhbiP7f3AIzqA1aYrokjRexWTlefYj
+        7lqqoamXNnvxVZdt+nV5xFauE2xq5BUlu5sp0kv9t9tcxIYgH1R+hKwMK41txIr8UAQzpQmCfog4D
+        5EejFJ/w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jM8mG-0003CR-H4; Wed, 08 Apr 2020 11:21:52 +0000
+Date:   Wed, 8 Apr 2020 04:21:52 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
+Cc:     Mori.Takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exfat: replace 'time_ms' with 'time_10ms'
+Message-ID: <20200408112152.GP21484@bombadil.infradead.org>
+References: <20200408074610.35591-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 MIME-Version: 1.0
-Received: by 2002:ac8:728c:0:0:0:0:0 with HTTP; Wed, 8 Apr 2020 03:43:41 -0700 (PDT)
-From:   philip marah <pmarah002@gmail.com>
-Date:   Wed, 8 Apr 2020 10:43:41 +0000
-Message-ID: <CA+cQMaYbhuJZSA7zBVHXyWV6GChp2N99Da0m-KWvXNhvk3XrNg@mail.gmail.com>
-Subject: Hello.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200408074610.35591-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear friend.
-How are you? I am Mr. Philip Marah. From Italy, I contacting you with
-good mind and wiliness as God directed me to reach you today. My time
-left to die is only but few days, coronavirus take over my home in
-Italy.
-Kindly contact below bank address to receive the sum of 9million
-Euros, from them, I deposited it in Africa development bank of Togo.
-Because I planed   to live Italy and enter West African Togo, it
-failed me because of the virus. Please use this money to help the poor
-ones.
-I have informed the bank that my partner will contact the funds.
-Contact the bank on my name, Mr. Philip Marah, of Italy.
+Please leave at least 24 hours between sending new versions so that
+you can collect all feedback relating to your change, and we don't see
+discussion fragment between different threads.
 
-African development bank of Togo. Address: 68, Avenue de la
-Lib=C3=A9ration, Lome Togolese. E-mail: info.adb_tgbranch@africamail.com
-Tel: +228-98363077 / FAX+228-92072284
-Take immediate action as soon as you received this message, incase i
-did not answer your message which means i have departed from the
-earth. And make issue bank transfer the funds to you, I will forward
-document of the funds to you as possible as I hear you.
-Best regards.
-Mr. Philip Marah..
+> @@ -84,10 +84,10 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+>  			      t >> 11, (t >> 5) & 0x003F, (t & 0x001F) << 1);
+>  
+>  
+> -	/* time_ms field represent 0 ~ 199(1990 ms) */
+> -	if (time_ms) {
+> -		ts->tv_sec += time_ms / 100;
+> -		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
+> +	/* time_10ms field represent 0 ~ 199cs(1990 ms) */
+> +	if (time_10ms) {
+> +		ts->tv_sec += (time_10ms * 10) / 1000;
+> +		ts->tv_nsec = (time_10ms * 10) % 1000 * NSEC_PER_MSEC;
+
+I find this more confusing than the original.
+
+		ts->tv_sec += time_10ms / 100;
+		ts->tv_nsec = (time_10ms % 100) * 10 * NSEC_PER_MSEC;
+
+is easier to understand for me, not least because I don't need to worry
+about the operator precedence between % and *.
+
