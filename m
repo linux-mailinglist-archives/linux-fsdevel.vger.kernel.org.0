@@ -2,113 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FB731A2ACB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 23:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26331A2B13
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 23:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbgDHVJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 17:09:57 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:53967 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728797AbgDHVJ5 (ORCPT
+        id S1729729AbgDHV2o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 17:28:44 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38376 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729620AbgDHV2o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 17:09:57 -0400
-Received: from dread.disaster.area (pa49-180-125-11.pa.nsw.optusnet.com.au [49.180.125.11])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7E8CB7EBB0D;
-        Thu,  9 Apr 2020 07:09:51 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jMHxG-0004nC-66; Thu, 09 Apr 2020 07:09:50 +1000
-Date:   Thu, 9 Apr 2020 07:09:50 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
- to xfs_ioctl_dax_check()
-Message-ID: <20200408210950.GL24067@dread.disaster.area>
-References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-8-ira.weiny@intel.com>
- <20200408022318.GJ24067@dread.disaster.area>
- <20200408095803.GB30172@quack2.suse.cz>
+        Wed, 8 Apr 2020 17:28:44 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e5so10640981edq.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 14:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gsc90LPV5vuebvWSwowSniEuuhSDnHS3fNotzCrMHhI=;
+        b=pI/Ke2eb3jkjDRXlYPpj3VkVyEJR335iPpo7DsBKOj3g+DjMNeZJvrbuvyfq267OUD
+         4I7dyDJsclQ5Slr540XjTRPHixi7zmEpnJbFNdrNPHGDhdR50DfloDptknHgyMIdpzbg
+         +WLguh/vuRJiMIUGJsbXd21ZCz0w3EwbKD2oPW2TCb/WITmelq+YNrw74a1YeDapL9IM
+         0UVEJDV/xqFxic1LVguPMWHIax948Z3G5lH3pCNHB7nyS8N+6MiW7SNMEuDx41bQqr/o
+         XwWla1TJ1Cpdx1w3dRFYLcVNTKUZee16zXqvVoociuElI8kaSzpd8d2REh/aJHXedYW1
+         1U7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gsc90LPV5vuebvWSwowSniEuuhSDnHS3fNotzCrMHhI=;
+        b=oWTGC4ZTERpRRN0BRjWUUSfI72rh1IVEeTMB6QH8PFsl6/VaX3A178BrtAhk7trohZ
+         Te6Sa6cNDuYbLDTSk6nDhg8cY9Ccy6JhpG9ZYyc8yXE5kWY4oOoYmBoaAxfx9E2LAXqx
+         IkIkcqOMUBwnaOUlm3mVb0cvXrxVJqGk417/XfQSjCq2BlswwC/nFF6FpiMlQoyt7p1T
+         kh0GE/X4C5lDhQC4jKksjYwnADAuusf96hVHAnvJDnBQcsky2ftu8ffr1yTuOKvuj4Rx
+         UO6Hg6T/lNzRN3rvJe+vqhu336w1Ybccxq4UPJiBWvljCdEhdRCsa5Q/GQMSqdRmM6No
+         GD4Q==
+X-Gm-Message-State: AGi0PubLPUJC1N/MzN7PkoEV+6W1DERJssTvdh7DcQFsxW//u7DQKzOh
+        NLRVOFaaVApyyIrVn076E9VIIm0gdovkypyrMDOHgQ==
+X-Google-Smtp-Source: APiQypJk5ijyBzx01h6/nF0/FztOREeQcwbT2SBq1CK12n6G3N8IiyFCzIyOVWUiYtoBKEH4Kr8GDj8vGyt7ncuxacA=
+X-Received: by 2002:a17:907:1185:: with SMTP id uz5mr4432200ejb.335.1586381321924;
+ Wed, 08 Apr 2020 14:28:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200408095803.GB30172@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=2h+yFbpuifLtD1c++IMymA==:117 a=2h+yFbpuifLtD1c++IMymA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=yYyG1RkBxaf--jwLynEA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200407182958.568475-1-ira.weiny@intel.com> <20200407182958.568475-7-ira.weiny@intel.com>
+ <20200408020827.GI24067@dread.disaster.area> <20200408170923.GC569068@iweiny-DESK2.sc.intel.com>
+ <20200408210236.GK24067@dread.disaster.area>
+In-Reply-To: <20200408210236.GK24067@dread.disaster.area>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 8 Apr 2020 14:28:30 -0700
+Message-ID: <CAPcyv4gLvMSA9BypvWbYtv3xsK8o4+db3kvxBozUGAjr_sDDFQ@mail.gmail.com>
+Subject: Re: [PATCH V6 6/8] fs/xfs: Combine xfs_diflags_to_linux() and xfs_diflags_to_iflags()
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 11:58:03AM +0200, Jan Kara wrote:
-> On Wed 08-04-20 12:23:18, Dave Chinner wrote:
-> > On Tue, Apr 07, 2020 at 11:29:57AM -0700, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > We only support changing FS_XFLAG_DAX on directories.  Files get their
-> > > flag from the parent directory on creation only.  So no data
-> > > invalidation needs to happen.
-> > 
-> > Which leads me to ask: how are users and/or admins supposed to
-> > remove the flag from regular files once it is set in the filesystem?
-> > 
-> > Only being able to override the flag via the "dax=never" mount
-> > option means that once the flag is set, nobody can ever remove it
-> > and they can only globally turn off dax if it gets set incorrectly.
-> > It also means a global interrupt because all apps on the filesystem
-> > need to be stopped so the filesystem can be unmounted and mounted
-> > again with dax=never. This is highly unfriendly to admins and users.
-> > 
-> > IOWs, we _must_ be able to clear this inode flag on regular inodes
-> > in some way. I don't care if it doesn't change the current in-memory
-> > state, but we must be able to clear the flags so that the next time
-> > the inodes are instantiated DAX is not enabled for those files...
-> 
-> Well, there's one way to clear the flag: delete the file. If you still care
-> about the data, you can copy the data first. It isn't very convenient, I
-> agree, and effectively means restarting whatever application that is using
-> the file.
+On Wed, Apr 8, 2020 at 2:02 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Wed, Apr 08, 2020 at 10:09:23AM -0700, Ira Weiny wrote:
+> > On Wed, Apr 08, 2020 at 12:08:27PM +1000, Dave Chinner wrote:
+> > > On Tue, Apr 07, 2020 at 11:29:56AM -0700, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> >
+> > [snip]
+> >
+> > > >
+> > > > -STATIC void
+> > > > -xfs_diflags_to_linux(
+> > > > - struct xfs_inode        *ip)
+> > > > -{
+> > > > - struct inode            *inode = VFS_I(ip);
+> > > > - unsigned int            xflags = xfs_ip2xflags(ip);
+> > > > -
+> > > > - if (xflags & FS_XFLAG_IMMUTABLE)
+> > > > -         inode->i_flags |= S_IMMUTABLE;
+> > > > - else
+> > > > -         inode->i_flags &= ~S_IMMUTABLE;
+> > > > - if (xflags & FS_XFLAG_APPEND)
+> > > > -         inode->i_flags |= S_APPEND;
+> > > > - else
+> > > > -         inode->i_flags &= ~S_APPEND;
+> > > > - if (xflags & FS_XFLAG_SYNC)
+> > > > -         inode->i_flags |= S_SYNC;
+> > > > - else
+> > > > -         inode->i_flags &= ~S_SYNC;
+> > > > - if (xflags & FS_XFLAG_NOATIME)
+> > > > -         inode->i_flags |= S_NOATIME;
+> > > > - else
+> > > > -         inode->i_flags &= ~S_NOATIME;
+> > > > -#if 0    /* disabled until the flag switching races are sorted out */
+> > > > - if (xflags & FS_XFLAG_DAX)
+> > > > -         inode->i_flags |= S_DAX;
+> > > > - else
+> > > > -         inode->i_flags &= ~S_DAX;
+> > > > -#endif
+> > >
+> > > So this variant will set the flag in the inode if the disk inode
+> > > flag is set, otherwise it will clear it.  It does it with if/else
+> > > branches.
+> > >
+> > >
+> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > > index e07f7b641226..a4ac8568c8c7 100644
+> > > > --- a/fs/xfs/xfs_iops.c
+> > > > +++ b/fs/xfs/xfs_iops.c
+> > > > @@ -1259,7 +1259,7 @@ xfs_inode_supports_dax(
+> > > >   return xfs_inode_buftarg(ip)->bt_daxdev != NULL;
+> > > >  }
+> > > >
+> > > > -STATIC bool
+> > > > +static bool
+> > > >  xfs_inode_enable_dax(
+> > > >   struct xfs_inode *ip)
+> > > >  {
+> > >
+> > > This belongs in the previous patch.
+> >
+> > Ah yea...  Sorry.
+> >
+> > Fixed in V7
+> >
+> > >
+> > > > @@ -1272,26 +1272,38 @@ xfs_inode_enable_dax(
+> > > >   return false;
+> > > >  }
+> > > >
+> > > > -STATIC void
+> > > > +void
+> > > >  xfs_diflags_to_iflags(
+> > > > - struct inode            *inode,
+> > > > - struct xfs_inode        *ip)
+> > > > + struct xfs_inode        *ip,
+> > > > + bool init)
+> > > >  {
+> > > > - uint16_t                flags = ip->i_d.di_flags;
+> > > > -
+> > > > - inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC |
+> > > > -                     S_NOATIME | S_DAX);
+> > >
+> > > And this code cleared all the flags in the inode first, then
+> > > set them if the disk inode flag is set. This does not require
+> > > branches, resulting in more readable code and better code
+> > > generation.
+> > >
+> > > > + struct inode            *inode = VFS_I(ip);
+> > > > + uint                    diflags = xfs_ip2xflags(ip);
+> > > >
+> > > > - if (flags & XFS_DIFLAG_IMMUTABLE)
+> > > > + if (diflags & FS_XFLAG_IMMUTABLE)
+> > > >           inode->i_flags |= S_IMMUTABLE;
+> > > > - if (flags & XFS_DIFLAG_APPEND)
+> > > > + else
+> > > > +         inode->i_flags &= ~S_IMMUTABLE;
+> > >
+> > > > + if (diflags & FS_XFLAG_APPEND)
+> > > >           inode->i_flags |= S_APPEND;
+> > > > - if (flags & XFS_DIFLAG_SYNC)
+> > > > + else
+> > > > +         inode->i_flags &= ~S_APPEND;
+> > > > + if (diflags & FS_XFLAG_SYNC)
+> > > >           inode->i_flags |= S_SYNC;
+> > > > - if (flags & XFS_DIFLAG_NOATIME)
+> > > > + else
+> > > > +         inode->i_flags &= ~S_SYNC;
+> > > > + if (diflags & FS_XFLAG_NOATIME)
+> > > >           inode->i_flags |= S_NOATIME;
+> > > > - if (xfs_inode_enable_dax(ip))
+> > > > -         inode->i_flags |= S_DAX;
+> > > > + else
+> > > > +         inode->i_flags &= ~S_NOATIME;
+> > > > +
+> > > > + /* Only toggle the dax flag when initializing */
+> > > > + if (init) {
+> > > > +         if (xfs_inode_enable_dax(ip))
+> > > > +                 inode->i_flags |= S_DAX;
+> > > > +         else
+> > > > +                 inode->i_flags &= ~S_DAX;
+> > > > + }
+> > > >  }
+> > >
+> > > IOWs, this:
+> > >
+> > >         struct inode            *inode = VFS_I(ip);
+> > >         unsigned int            xflags = xfs_ip2xflags(ip);
+> > >         unsigned int            flags = 0;
+> > >
+> > >         if (xflags & FS_XFLAG_IMMUTABLE)
+> > >                 flags |= S_IMMUTABLE;
+> > >         if (xflags & FS_XFLAG_APPEND)
+> > >                 flags |= S_APPEND;
+> > >         if (xflags & FS_XFLAG_SYNC)
+> > >                 flags |= S_SYNC;
+> > >         if (xflags & FS_XFLAG_NOATIME)
+> > >                 flags |= S_NOATIME;
+> > >     if ((xflags & FS_XFLAG_DAX) && init)
+> > >             flags |= S_DAX;
+> > >
+> > >         inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC | S_NOATIME);
+> > >         inode->i_flags |= flags;
+> > >
+> > > ends up being much easier to read and results in better code
+> > > generation. And we don't need to clear the S_DAX flag when "init" is
+> > > set, because we are starting from an inode that has no flags set
+> > > (because init!)...
+> >
+> > This sounds good but I think we need a slight modification to make the function equivalent in functionality.
+> >
+> > void
+> > xfs_diflags_to_iflags(
+> >         struct xfs_inode        *ip,
+> >         bool init)
+> > {
+> >         struct inode            *inode = VFS_I(ip);
+> >         unsigned int            xflags = xfs_ip2xflags(ip);
+> >         unsigned int            flags = 0;
+> >
+> >         inode->i_flags &= ~(S_IMMUTABLE | S_APPEND | S_SYNC | S_NOATIME |
+> >                             S_DAX);
+>
+> We don't want to clear the dax flag here, ever, if it is already
+> set. That is an externally visible change and opens us up (again) to
+> races where IS_DAX() changes half way through a fault path. IOWs, avoiding
+> clearing the DAX flag was something I did explicitly in the above
+> code fragment.
+>
+> And it makes the logic clearer by pre-calculating the new flags,
+> then clearing and setting the inode flags together, rather than
+> having the spearated at the top and bottom of the function.
+>
+> THis leads to an obvious conclusion: if we never clear the in memory
+> S_DAX flag, we can actually clear the on-disk flag safely, so that
+> next time the inode cycles into memory it won't be using DAX. IOWs,
+> admins can stop the applications, clear the DAX flag and drop
+> caches. This should result in the inode being recycled and when the
+> app is restarted it will run without DAX. No ned for deleting files,
+> copying large data sets, etc just to turn off an inode flag.
 
-Restarting the application is fine. Having to backup/restore or copy
-the entire data set just to turn off an inode flag? That's not a
-viable management strategy. We could be talking about terabytes of
-data here.
+Makes sense, but is that sufficient? I recall you saying there might
+be a multitude of other reasons that the inode is not evicted, not the
+least of which is races [1]. Does this need another flag, lets call it
+"dax toggle" to track the "I requested the inode to clear the flag,
+but on cache-flush + restart the inode never got evicted" case. S_DAX
+almost plays this role, but it loses the ability to audit which files
+are pending an inode eviction event. So the dax-toggle flag indicates
+to the kernel to xor the toggle value with the inode flag on inode
+instantiation and the dax inode flag is never directly manipulated by
+the ioctl path.
 
-I explained how we can safely remove the flag in the other branch of
-this thread...
-
-> But it seems like more understandable API than letting user clear
-> the on-disk flag but the inode will still use DAX until kernel decides to
-> evict the inode
-
-Certainly doesn't seem that way to me. "stop app, clear flags, drop
-caches, restart app" is a pretty simple, easy thing to do for an
-admin.
-
-Especially compared to process that is effectively "stop app, backup
-data set, delete data set, clear flags, restore data set, restart
-app"
-
-> - because that often means you need to restart the
-> application using the file anyway for the flag change to have any effect.
-
-That's a trivial requirement compared to the downtime and resource
-cost of a data set backup/restore just to clear inode flags....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+[1]: http://lore.kernel.org/r/20191025003603.GE4614@dread.disaster.area
