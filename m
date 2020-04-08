@@ -2,282 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A021A2565
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 17:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5751A2617
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 17:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbgDHPhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 11:37:43 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46396 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729174AbgDHPhm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 11:37:42 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 038FDlpx070604;
-        Wed, 8 Apr 2020 15:37:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=KeiGyQzCitBI7OpwnOdSAa98UlvLhw7jZV9PLWvum7k=;
- b=s/Hue1ySZvDibbj2dPDDcv/XuME+YnwWLnOnFn8IVdXNYO4borKG7OD7TjPun5Hj05Pa
- J32JBAdYj2FaTAco/nrdzBdofYGvz2fD9jEclKU64vYnnAa6na9dbqIY5hilnIBboExt
- 1jPu4ZsN+Jn68e4ZQhELsl0fCpLHxN6CFwPRcX+SBScR37NgAveXVRtoa/67BXI8HbfC
- OOmtfj1yVcYSb+jf0HNDdehtquDVW8sN0/820o65T1iqeM2fQMT5PoiggovxD1f0xWhz
- N0xmR38CBQKvrqPOxmdJJvCuFCDa39pQAH8RCuEudYA7QWAL/BWJ9wELX8jQXXRVR0vH 2Q== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 3091m0vapc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Apr 2020 15:37:26 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 038FCYKa173999;
-        Wed, 8 Apr 2020 15:37:26 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 309gd8wbqq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 Apr 2020 15:37:26 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 038FbKr3027899;
-        Wed, 8 Apr 2020 15:37:21 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 Apr 2020 08:37:20 -0700
-Date:   Wed, 8 Apr 2020 08:37:17 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
- to xfs_ioctl_dax_check()
-Message-ID: <20200408153717.GH6742@magnolia>
-References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-8-ira.weiny@intel.com>
+        id S1729942AbgDHPr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 11:47:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729567AbgDHPqd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 11:46:33 -0400
+Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E436F20769;
+        Wed,  8 Apr 2020 15:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586360791;
+        bh=NGLDDtyN8RZKYu/2cTSKBLZPkCz8Mr0c9YVBRHz1zys=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I3LVCc26/VdF24AsOrt+PHJ6A8shQrFjca47izBLXO8vl1fetOmpTsay+HfFnjRDn
+         ELpq2el4OVbLL0QQpHim4bJ4r72BlEiJ9tHPbEFlZ/E6g9CVUSW9fzJZn0GNpSqQLs
+         eoPTB+ArHDBqNWFtK9BnG7DerSf9cD29j4b39qq4=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jMCuK-000cAH-Vl; Wed, 08 Apr 2020 17:46:28 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh@kernel.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Yuti Amonkar <yamonkar@cadence.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-crypto@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-afs@lists.infradead.org,
+        ecryptfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ocfs2-devel@oss.oracle.com, linux-pci@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-ide@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-spi@vger.kernel.org,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-usb@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Matthias Brugger <mbrugger@suse.com>, netdev@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH 00/35] Documentation fixes for Kernel 5.8
+Date:   Wed,  8 Apr 2020 17:45:52 +0200
+Message-Id: <cover.1586359676.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200407182958.568475-8-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9584 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 phishscore=0
- suspectscore=3 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004080123
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9584 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 phishscore=0 suspectscore=3 bulkscore=0
- lowpriorityscore=0 impostorscore=0 malwarescore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004080123
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 11:29:57AM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> We only support changing FS_XFLAG_DAX on directories.  Files get their
-> flag from the parent directory on creation only.  So no data
-> invalidation needs to happen.
-> 
-> Alter the xfs_ioctl_setattr_dax_invalidate() to be
-> xfs_ioctl_dax_check().
-> 
-> This also allows use to remove the join_flags logic.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes from v5:
-> 	New patch
-> ---
->  fs/xfs/xfs_ioctl.c | 91 +++++-----------------------------------------
->  1 file changed, 10 insertions(+), 81 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index c6cd92ef4a05..5472faab7c4f 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1145,63 +1145,18 @@ xfs_ioctl_setattr_xflags(
->  }
->  
->  /*
-> - * If we are changing DAX flags, we have to ensure the file is clean and any
-> - * cached objects in the address space are invalidated and removed. This
-> - * requires us to lock out other IO and page faults similar to a truncate
-> - * operation. The locks need to be held until the transaction has been committed
-> - * so that the cache invalidation is atomic with respect to the DAX flag
-> - * manipulation.
-> + * Only directories are allowed to change dax flags
->   */
->  static int
->  xfs_ioctl_setattr_dax_invalidate(
-> -	struct xfs_inode	*ip,
-> -	struct fsxattr		*fa,
-> -	int			*join_flags)
-> +	struct xfs_inode	*ip)
->  {
->  	struct inode		*inode = VFS_I(ip);
-> -	struct super_block	*sb = inode->i_sb;
-> -	int			error;
-> -
-> -	*join_flags = 0;
-> -
-> -	/*
-> -	 * It is only valid to set the DAX flag on regular files and
-> -	 * directories on filesystems where the block size is equal to the page
-> -	 * size. On directories it serves as an inherited hint so we don't
-> -	 * have to check the device for dax support or flush pagecache.
-> -	 */
-> -	if (fa->fsx_xflags & FS_XFLAG_DAX) {
-> -		struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> -
-> -		if (!bdev_dax_supported(target->bt_bdev, sb->s_blocksize))
-> -			return -EINVAL;
-> -	}
-> -
-> -	/* If the DAX state is not changing, we have nothing to do here. */
-> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) && IS_DAX(inode))
-> -		return 0;
-> -	if (!(fa->fsx_xflags & FS_XFLAG_DAX) && !IS_DAX(inode))
-> -		return 0;
+Hi Jon,
 
-Does the !S_ISDIR check below apply unconditionally even if we weren't
-trying to change the DAX flag?
+I have a large list of patches this time for the Documentation/. So, I'm
+starting sending them a little earier. Yet, those are meant to be applied
+after the end of the merge window. They're based on today's linux-next,
+with has only 49 patches pending to be applied upstream touching
+Documentation/, so I don't expect much conflicts if applied early at
+-rc cycle.
 
-> -	if (S_ISDIR(inode->i_mode))
-> -		return 0;
->  
-> -	/* lock, flush and invalidate mapping in preparation for flag change */
-> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> -	error = filemap_write_and_wait(inode->i_mapping);
-> -	if (error)
-> -		goto out_unlock;
-> -	error = invalidate_inode_pages2(inode->i_mapping);
-> -	if (error)
-> -		goto out_unlock;
-> +	if (!S_ISDIR(inode->i_mode))
-> +		return -EINVAL;
+Most of the patches here were already submitted, but weren't
+merged yet at next. So, it seems that nobody picked them yet.
 
-If this entire function collapses to an S_ISDIR check then you might
-as well just hoist this one piece to the caller.  Also, where is
-xfs_ioctl_dax_check?
+In any case, most of those patches here are independent from 
+the others.
 
-<confused>
+The number of doc build warnings have been rising with time.
+The main goal with this series is to get rid of most Sphinx warnings
+and other errors.
 
---D
+Patches 1 to 5: fix broken references detected by this tool:
 
->  
-> -	*join_flags = XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL;
->  	return 0;
-> -
-> -out_unlock:
-> -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> -	return error;
-> -
->  }
->  
->  /*
-> @@ -1209,17 +1164,10 @@ xfs_ioctl_setattr_dax_invalidate(
->   * have permission to do so. On success, return a clean transaction and the
->   * inode locked exclusively ready for further operation specific checks. On
->   * failure, return an error without modifying or locking the inode.
-> - *
-> - * The inode might already be IO locked on call. If this is the case, it is
-> - * indicated in @join_flags and we take full responsibility for ensuring they
-> - * are unlocked from now on. Hence if we have an error here, we still have to
-> - * unlock them. Otherwise, once they are joined to the transaction, they will
-> - * be unlocked on commit/cancel.
->   */
->  static struct xfs_trans *
->  xfs_ioctl_setattr_get_trans(
-> -	struct xfs_inode	*ip,
-> -	int			join_flags)
-> +	struct xfs_inode	*ip)
->  {
->  	struct xfs_mount	*mp = ip->i_mount;
->  	struct xfs_trans	*tp;
-> @@ -1236,8 +1184,7 @@ xfs_ioctl_setattr_get_trans(
->  		goto out_unlock;
->  
->  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> -	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL | join_flags);
-> -	join_flags = 0;
-> +	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
->  
->  	/*
->  	 * CAP_FOWNER overrides the following restrictions:
-> @@ -1258,8 +1205,6 @@ xfs_ioctl_setattr_get_trans(
->  out_cancel:
->  	xfs_trans_cancel(tp);
->  out_unlock:
-> -	if (join_flags)
-> -		xfs_iunlock(ip, join_flags);
->  	return ERR_PTR(error);
->  }
->  
-> @@ -1386,7 +1331,6 @@ xfs_ioctl_setattr(
->  	struct xfs_dquot	*pdqp = NULL;
->  	struct xfs_dquot	*olddquot = NULL;
->  	int			code;
-> -	int			join_flags = 0;
->  
->  	trace_xfs_ioctl_setattr(ip);
->  
-> @@ -1410,18 +1354,11 @@ xfs_ioctl_setattr(
->  			return code;
->  	}
->  
-> -	/*
-> -	 * Changing DAX config may require inode locking for mapping
-> -	 * invalidation. These need to be held all the way to transaction commit
-> -	 * or cancel time, so need to be passed through to
-> -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> -	 * appropriately.
-> -	 */
-> -	code = xfs_ioctl_setattr_dax_invalidate(ip, fa, &join_flags);
-> +	code = xfs_ioctl_setattr_dax_invalidate(ip);
->  	if (code)
->  		goto error_free_dquots;
->  
-> -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> +	tp = xfs_ioctl_setattr_get_trans(ip);
->  	if (IS_ERR(tp)) {
->  		code = PTR_ERR(tp);
->  		goto error_free_dquots;
-> @@ -1552,7 +1489,6 @@ xfs_ioc_setxflags(
->  	struct fsxattr		fa;
->  	struct fsxattr		old_fa;
->  	unsigned int		flags;
-> -	int			join_flags = 0;
->  	int			error;
->  
->  	if (copy_from_user(&flags, arg, sizeof(flags)))
-> @@ -1569,18 +1505,11 @@ xfs_ioc_setxflags(
->  	if (error)
->  		return error;
->  
-> -	/*
-> -	 * Changing DAX config may require inode locking for mapping
-> -	 * invalidation. These need to be held all the way to transaction commit
-> -	 * or cancel time, so need to be passed through to
-> -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> -	 * appropriately.
-> -	 */
-> -	error = xfs_ioctl_setattr_dax_invalidate(ip, &fa, &join_flags);
-> +	error = xfs_ioctl_setattr_dax_invalidate(ip);
->  	if (error)
->  		goto out_drop_write;
->  
-> -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> +	tp = xfs_ioctl_setattr_get_trans(ip);
->  	if (IS_ERR(tp)) {
->  		error = PTR_ERR(tp);
->  		goto out_drop_write;
-> -- 
-> 2.25.1
-> 
+        ./scripts/documentation-file-ref-check
+
+The other patches fix other random errors due to tags being
+mis-interpreted or mis-used.
+
+You should notice that several patches touch kernel-doc scripts.
+IMHO, some of the warnings are actually due to kernel-doc being
+too pedantic. So, I ended by improving some things at the toolset,
+in order to make it smarter. That's the case of those patches:
+
+	docs: scripts/kernel-doc: accept blank lines on parameter description
+	scripts: kernel-doc: accept negation like !@var
+	scripts: kernel-doc: proper handle @foo->bar()
+
+The last 4 patches address problems with PDF building.
+
+The first one address a conflict that will rise during the merge
+window: Documentation/media will be removed. Instead of
+just drop it from the list of PDF documents, I opted to drop the
+entire list, as conf.py will auto-generate from the sources:
+
+	docs: LaTeX/PDF: drop list of documents
+
+Also, right now, PDF output is broken due to a namespace conflict 
+at I2c (two pdf outputs there will have the same name).
+
+	docs: i2c: rename i2c.svg to i2c_bus.svg
+
+The third PDF patch is not really a fix, but it helps a lot to identify
+if the build succeeded or not, by placing the final PDF output on
+a separate dir:
+
+	docs: Makefile: place final pdf docs on a separate dir
+
+Finally, the last one solves a bug since the first supported Sphinx
+version, with also impacts PDF output: basically while nested tables
+are valid with ReST notation, the toolset only started supporting
+it on PDF output since version 2.4:
+
+	docs: update recommended Sphinx version to 2.4.4
+
+PS.: Due to the large number of C/C, I opted to keep a smaller
+set of C/C at this first e-mail (only e-mails with "L:" tag from
+MAINTAINERS file).
+
+Mauro Carvalho Chehab (35):
+  MAINTAINERS: dt: update display/allwinner file entry
+  docs: dt: fix broken reference to phy-cadence-torrent.yaml
+  docs: fix broken references to text files
+  docs: fix broken references for ReST files that moved around
+  docs: filesystems: fix renamed references
+  docs: amu: supress some Sphinx warnings
+  docs: arm64: booting.rst: get rid of some warnings
+  docs: pci: boot-interrupts.rst: improve html output
+  futex: get rid of a kernel-docs build warning
+  firewire: firewire-cdev.hL get rid of a docs warning
+  scripts: kernel-doc: proper handle @foo->bar()
+  lib: bitmap.c: get rid of some doc warnings
+  ata: libata-core: fix a doc warning
+  fs: inode.c: get rid of docs warnings
+  docs: ras: get rid of some warnings
+  docs: ras: don't need to repeat twice the same thing
+  docs: watch_queue.rst: supress some Sphinx warnings
+  scripts: kernel-doc: accept negation like !@var
+  docs: infiniband: verbs.c: fix some documentation warnings
+  docs: scripts/kernel-doc: accept blank lines on parameter description
+  docs: spi: spi.h: fix a doc building warning
+  docs: drivers: fix some warnings at base/platform.c when building docs
+  docs: fusion: mptbase.c: get rid of a doc build warning
+  docs: mm: slab.h: fix a broken cross-reference
+  docs mm: userfaultfd.rst: use ``foo`` for literals
+  docs: mm: userfaultfd.rst: use a cross-reference for a section
+  docs: vm: index.rst: add an orphan doc to the building system
+  docs: dt: qcom,dwc3.txt: fix cross-reference for a converted file
+  MAINTAINERS: dt: fix pointers for ARM Integrator, Versatile and
+    RealView
+  docs: dt: fix a broken reference for a file converted to json
+  powerpc: docs: cxl.rst: mark two section titles as such
+  docs: LaTeX/PDF: drop list of documents
+  docs: i2c: rename i2c.svg to i2c_bus.svg
+  docs: Makefile: place final pdf docs on a separate dir
+  docs: update recommended Sphinx version to 2.4.4
+
+ Documentation/ABI/stable/sysfs-devices-node   |   2 +-
+ Documentation/ABI/testing/procfs-smaps_rollup |   2 +-
+ Documentation/Makefile                        |   6 +-
+ Documentation/PCI/boot-interrupts.rst         |  34 +--
+ Documentation/admin-guide/cpu-load.rst        |   2 +-
+ Documentation/admin-guide/mm/userfaultfd.rst  | 209 +++++++++---------
+ Documentation/admin-guide/nfs/nfsroot.rst     |   2 +-
+ Documentation/admin-guide/ras.rst             |  18 +-
+ Documentation/arm64/amu.rst                   |   5 +
+ Documentation/arm64/booting.rst               |  36 +--
+ Documentation/conf.py                         |  38 ----
+ .../bindings/net/qualcomm-bluetooth.txt       |   2 +-
+ .../bindings/phy/ti,phy-j721e-wiz.yaml        |   2 +-
+ .../devicetree/bindings/usb/qcom,dwc3.txt     |   4 +-
+ .../doc-guide/maintainer-profile.rst          |   2 +-
+ .../driver-api/driver-model/device.rst        |   4 +-
+ .../driver-api/driver-model/overview.rst      |   2 +-
+ Documentation/filesystems/dax.txt             |   2 +-
+ Documentation/filesystems/dnotify.txt         |   2 +-
+ .../filesystems/ramfs-rootfs-initramfs.rst    |   2 +-
+ Documentation/filesystems/sysfs.rst           |   2 +-
+ Documentation/i2c/{i2c.svg => i2c_bus.svg}    |   2 +-
+ Documentation/i2c/summary.rst                 |   2 +-
+ Documentation/memory-barriers.txt             |   2 +-
+ Documentation/powerpc/cxl.rst                 |   2 +
+ .../powerpc/firmware-assisted-dump.rst        |   2 +-
+ Documentation/process/adding-syscalls.rst     |   2 +-
+ Documentation/process/submit-checklist.rst    |   2 +-
+ Documentation/sphinx/requirements.txt         |   2 +-
+ .../it_IT/process/adding-syscalls.rst         |   2 +-
+ .../it_IT/process/submit-checklist.rst        |   2 +-
+ .../translations/ko_KR/memory-barriers.txt    |   2 +-
+ .../translations/zh_CN/filesystems/sysfs.txt  |   8 +-
+ .../zh_CN/process/submit-checklist.rst        |   2 +-
+ Documentation/virt/kvm/arm/pvtime.rst         |   2 +-
+ Documentation/virt/kvm/devices/vcpu.rst       |   2 +-
+ Documentation/virt/kvm/hypercalls.rst         |   4 +-
+ Documentation/virt/kvm/mmu.rst                |   2 +-
+ Documentation/virt/kvm/review-checklist.rst   |   2 +-
+ Documentation/vm/index.rst                    |   1 +
+ Documentation/watch_queue.rst                 |  34 ++-
+ MAINTAINERS                                   |   7 +-
+ arch/powerpc/include/uapi/asm/kvm_para.h      |   2 +-
+ arch/x86/kvm/mmu/mmu.c                        |   2 +-
+ drivers/ata/libata-core.c                     |   2 +-
+ drivers/base/core.c                           |   2 +-
+ drivers/base/platform.c                       |   6 +-
+ .../allwinner/sun8i-ce/sun8i-ce-cipher.c      |   2 +-
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c |   2 +-
+ .../allwinner/sun8i-ss/sun8i-ss-cipher.c      |   2 +-
+ .../crypto/allwinner/sun8i-ss/sun8i-ss-core.c |   2 +-
+ drivers/gpu/drm/Kconfig                       |   2 +-
+ drivers/gpu/drm/drm_ioctl.c                   |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h       |   2 +-
+ drivers/hwtracing/coresight/Kconfig           |   2 +-
+ drivers/infiniband/core/verbs.c               |   7 +-
+ drivers/media/v4l2-core/v4l2-fwnode.c         |   2 +-
+ drivers/message/fusion/mptbase.c              |   8 +-
+ fs/Kconfig                                    |   2 +-
+ fs/Kconfig.binfmt                             |   2 +-
+ fs/adfs/Kconfig                               |   2 +-
+ fs/affs/Kconfig                               |   2 +-
+ fs/afs/Kconfig                                |   6 +-
+ fs/bfs/Kconfig                                |   2 +-
+ fs/cramfs/Kconfig                             |   2 +-
+ fs/ecryptfs/Kconfig                           |   2 +-
+ fs/fat/Kconfig                                |   8 +-
+ fs/fuse/Kconfig                               |   2 +-
+ fs/fuse/dev.c                                 |   2 +-
+ fs/hfs/Kconfig                                |   2 +-
+ fs/hpfs/Kconfig                               |   2 +-
+ fs/inode.c                                    |   6 +-
+ fs/isofs/Kconfig                              |   2 +-
+ fs/namespace.c                                |   2 +-
+ fs/notify/inotify/Kconfig                     |   2 +-
+ fs/ntfs/Kconfig                               |   2 +-
+ fs/ocfs2/Kconfig                              |   2 +-
+ fs/overlayfs/Kconfig                          |   6 +-
+ fs/proc/Kconfig                               |   4 +-
+ fs/romfs/Kconfig                              |   2 +-
+ fs/sysfs/dir.c                                |   2 +-
+ fs/sysfs/file.c                               |   2 +-
+ fs/sysfs/mount.c                              |   2 +-
+ fs/sysfs/symlink.c                            |   2 +-
+ fs/sysv/Kconfig                               |   2 +-
+ fs/udf/Kconfig                                |   2 +-
+ include/linux/kobject.h                       |   2 +-
+ include/linux/kobject_ns.h                    |   2 +-
+ include/linux/mm.h                            |   4 +-
+ include/linux/relay.h                         |   2 +-
+ include/linux/slab.h                          |   2 +-
+ include/linux/spi/spi.h                       |   1 +
+ include/linux/sysfs.h                         |   2 +-
+ include/uapi/linux/ethtool_netlink.h          |   2 +-
+ include/uapi/linux/firewire-cdev.h            |   2 +-
+ include/uapi/linux/kvm.h                      |   4 +-
+ include/uapi/rdma/rdma_user_ioctl_cmds.h      |   2 +-
+ kernel/futex.c                                |   3 +
+ kernel/relay.c                                |   2 +-
+ lib/bitmap.c                                  |  27 +--
+ lib/kobject.c                                 |   4 +-
+ mm/gup.c                                      |  12 +-
+ scripts/kernel-doc                            |  41 ++--
+ tools/include/uapi/linux/kvm.h                |   4 +-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c              |   2 +-
+ virt/kvm/arm/vgic/vgic.h                      |   4 +-
+ 106 files changed, 373 insertions(+), 338 deletions(-)
+ rename Documentation/i2c/{i2c.svg => i2c_bus.svg} (99%)
+
+-- 
+2.25.2
+
+
