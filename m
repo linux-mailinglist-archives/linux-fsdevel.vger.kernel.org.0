@@ -2,156 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3351A1953
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 02:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553071A19BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 03:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgDHAsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Apr 2020 20:48:08 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57005 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726428AbgDHAsI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Apr 2020 20:48:08 -0400
-Received: from dread.disaster.area (pa49-180-164-3.pa.nsw.optusnet.com.au [49.180.164.3])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E352E3A454A;
-        Wed,  8 Apr 2020 10:48:02 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jLysr-0005w2-Tp; Wed, 08 Apr 2020 10:48:01 +1000
-Date:   Wed, 8 Apr 2020 10:48:01 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V6 4/8] fs/xfs: Make DAX mount option a tri-state
-Message-ID: <20200408004801.GH24067@dread.disaster.area>
-References: <20200407182958.568475-1-ira.weiny@intel.com>
- <20200407182958.568475-5-ira.weiny@intel.com>
- <20200407235909.GF24067@dread.disaster.area>
- <20200408000903.GA569068@iweiny-DESK2.sc.intel.com>
+        id S1726521AbgDHB6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Apr 2020 21:58:14 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28723 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726504AbgDHB6N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Apr 2020 21:58:13 -0400
+IronPort-SDR: CTtoA5K0SAoQHSWhC+ybvAQTZIan5vtu4XbMmQr9yfK/KjQalGBVLhWeI4Qve5myTt7YoVPwyX
+ SwBcDd0yoyIQ==
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 18:58:12 -0700
+IronPort-SDR: A4X7dV6qT3+K0DSyPnNmCF/GDGceFfXtbdjKlTt2reQA/4yUPH+2z0aFGXOBusNPqoYjKMJCp7
+ QnQtn4VLkifQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,357,1580803200"; 
+   d="asc'?scan'208";a="254650039"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.160.147])
+  by orsmga006.jf.intel.com with ESMTP; 07 Apr 2020 18:58:06 -0700
+Date:   Wed, 8 Apr 2020 09:44:37 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        linux-usb@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        intel-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Jason Wang <jasowang@redhat.com>,
+        Zhi Wang <zhi.a.wang@intel.com>
+Subject: Re: [PATCH 3/6] i915/gvt: remove unused xen bits
+Message-ID: <20200408014437.GF11247@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HnQK338I3UIa/qiP"
 Content-Disposition: inline
-In-Reply-To: <20200408000903.GA569068@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=K0+o7W9luyMo1Ua2eXjR1w==:117 a=K0+o7W9luyMo1Ua2eXjR1w==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10
-        a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=d8_y8XitTFHW5w8ycSMA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200404094101.672954-4-hch@lst.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 05:09:04PM -0700, Ira Weiny wrote:
-> On Wed, Apr 08, 2020 at 09:59:09AM +1000, Dave Chinner wrote:
-> > On Tue, Apr 07, 2020 at 11:29:54AM -0700, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > As agreed upon[1].  We make the dax mount option a tri-state.  '-o dax'
-> > > continues to operate the same.  We add 'always', 'never', and 'iflag'
-> > > (default).
-> > > 
-> > > [1] https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
-> > > 
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > ---
-> > > Changes from v5:
-> > > 	New Patch
-> > > ---
-> > >  fs/xfs/xfs_iops.c  |  2 +-
-> > >  fs/xfs/xfs_mount.h | 26 +++++++++++++++++++++++++-
-> > >  fs/xfs/xfs_super.c | 34 +++++++++++++++++++++++++++++-----
-> > >  3 files changed, 55 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > index 81f2f93caec0..1ec4a36917bd 100644
-> > > --- a/fs/xfs/xfs_iops.c
-> > > +++ b/fs/xfs/xfs_iops.c
-> > > @@ -1248,7 +1248,7 @@ xfs_inode_supports_dax(
-> > >  		return false;
-> > >  
-> > >  	/* DAX mount option or DAX iflag must be set. */
-> > > -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
-> > > +	if (xfs_mount_dax_mode(mp) != XFS_DAX_ALWAYS &&
-> > >  	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-> > >  		return false;
-> > >  
-> > > diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> > > index 88ab09ed29e7..ce027ee06692 100644
-> > > --- a/fs/xfs/xfs_mount.h
-> > > +++ b/fs/xfs/xfs_mount.h
-> > > @@ -233,7 +233,31 @@ typedef struct xfs_mount {
-> > >  						   allocator */
-> > >  #define XFS_MOUNT_NOATTR2	(1ULL << 25)	/* disable use of attr2 format */
-> > >  
-> > > -#define XFS_MOUNT_DAX		(1ULL << 62)	/* TEST ONLY! */
-> > > +/* DAX flag is a 2 bit field representing a tri-state for dax
-> > > + *      iflag, always, never
-> > > + * We reserve/document the 2 bits using dax field/field2
-> > > + */
-> > > +#define XFS_DAX_FIELD_MASK 0x3ULL
-> > > +#define XFS_DAX_FIELD_SHIFT 62
-> > > +#define XFS_MOUNT_DAX_FIELD	(1ULL << 62)
-> > > +#define XFS_MOUNT_DAX_FIELD2	(1ULL << 63)
-> > > +
-> > > +enum {
-> > > +	XFS_DAX_IFLAG = 0,
-> > > +	XFS_DAX_ALWAYS = 1,
-> > > +	XFS_DAX_NEVER = 2,
-> > > +};
-> > > +
-> > > +static inline void xfs_mount_set_dax(struct xfs_mount *mp, u32 val)
-> > > +{
-> > > +	mp->m_flags &= ~(XFS_DAX_FIELD_MASK << XFS_DAX_FIELD_SHIFT);
-> > > +	mp->m_flags |= ((val & XFS_DAX_FIELD_MASK) << XFS_DAX_FIELD_SHIFT);
-> > > +}
-> > > +
-> > > +static inline u32 xfs_mount_dax_mode(struct xfs_mount *mp)
-> > > +{
-> > > +	return (mp->m_flags >> XFS_DAX_FIELD_SHIFT) & XFS_DAX_FIELD_MASK;
-> > > +}
-> > 
-> > This is overly complex. Just use 2 flags:
-> 
-> LOL...  I was afraid someone would say that.  At first I used 2 flags with
-> fsparam_string, but then I realized Darrick suggested fsparam_enum:
 
-Well, I'm not concerned about the fsparam enum, it's just that
-encoding an integer into a flags bit field is just ... messy.
-Especially when encoding that state can be done with just 2 flags.
+--HnQK338I3UIa/qiP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you want to keep the xfs_mount_dax_mode() wrapper, then:
+On 2020.04.04 11:40:58 +0200, Christoph Hellwig wrote:
+> No Xen support anywhere here.  Remove a dead declaration and an unused
+> include.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-static inline uint32_t xfs_mount_dax_mode(struct xfs_mount *mp)
-{
-	if (mp->m_flags & XFS_MOUNT_DAX_NEVER)
-		return XFS_DAX_NEVER;
-	if (mp->m_flags & XFS_MOUNT_DAX_ALWAYS)
-		return XFS_DAX_ALWAYS;
-	return XFS_DAX_IFLAG;
-}
+We'll keep that off-tree.
 
-but once it's encoded in flags like this, the wrapper really isn't
-necessary...
+Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-Also, while I think of it, can we change "iflag" to "inode". i.e.
-the DAX state is held on the inode. Saying it comes from an "inode
-flag" encodes the implementation into the user interface. i.e. it
-could well be held in an xattr on the inode on another filesystem,
-so we shouldn't mention "flag" in the user API....
+Thanks
 
-Cheers,
+>  drivers/gpu/drm/i915/gvt/gvt.c       | 1 -
+>  drivers/gpu/drm/i915/gvt/hypercall.h | 2 --
+>  2 files changed, 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/gvt.c b/drivers/gpu/drm/i915/gvt/gv=
+t.c
+> index 9e1787867894..c7c561237883 100644
+> --- a/drivers/gpu/drm/i915/gvt/gvt.c
+> +++ b/drivers/gpu/drm/i915/gvt/gvt.c
+> @@ -31,7 +31,6 @@
+>   */
+> =20
+>  #include <linux/types.h>
+> -#include <xen/xen.h>
+>  #include <linux/kthread.h>
+> =20
+>  #include "i915_drv.h"
+> diff --git a/drivers/gpu/drm/i915/gvt/hypercall.h b/drivers/gpu/drm/i915/=
+gvt/hypercall.h
+> index b17c4a1599cd..b79da5124f83 100644
+> --- a/drivers/gpu/drm/i915/gvt/hypercall.h
+> +++ b/drivers/gpu/drm/i915/gvt/hypercall.h
+> @@ -79,6 +79,4 @@ struct intel_gvt_mpt {
+>  	bool (*is_valid_gfn)(unsigned long handle, unsigned long gfn);
+>  };
+> =20
+> -extern struct intel_gvt_mpt xengt_mpt;
+> -
+>  #endif /* _GVT_HYPERCALL_H_ */
+> --=20
+> 2.25.1
+>=20
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--HnQK338I3UIa/qiP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXo0shQAKCRCxBBozTXgY
+J8WgAJ0VW4AV47S/NYsttohA4zN5UaISYwCcDrId8F/1nTizuYFrFCCaENgnHw4=
+=EI9a
+-----END PGP SIGNATURE-----
+
+--HnQK338I3UIa/qiP--
