@@ -2,64 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D161A2398
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 15:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 381441A24BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 17:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgDHNte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 09:49:34 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60260 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbgDHNte (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 09:49:34 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jMB4a-00E49z-DG; Wed, 08 Apr 2020 13:48:56 +0000
-Date:   Wed, 8 Apr 2020 14:48:56 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Yun Levi <ppbuk5246@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Guillaume Nault <gnault@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Li RongQing <lirongqing@baidu.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Johannes Berg <johannes.berg@intel.com>,
-        David Howells <dhowells@redhat.com>, daniel@iogearbox.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] netns: dangling pointer on netns bind mount point.
-Message-ID: <20200408134856.GB23230@ZenIV.linux.org.uk>
-References: <20200407023512.GA25005@ubuntu>
- <20200407030504.GX23230@ZenIV.linux.org.uk>
- <20200407031318.GY23230@ZenIV.linux.org.uk>
- <CAM7-yPQas7hvTVLa4U80t0Em0HgLCk2whLQa4O3uff5J3OYiAA@mail.gmail.com>
- <20200407040354.GZ23230@ZenIV.linux.org.uk>
- <CAM7-yPRaQsNgZKjru40nM1N_u8HVLVKmJCAzu20DcPL=jzKjWQ@mail.gmail.com>
- <20200407182609.GA23230@ZenIV.linux.org.uk>
- <CAM7-yPS_xh54H9M7B8-tAmPM4+w0VgnruJhK509upsDgZvcNhg@mail.gmail.com>
+        id S1729445AbgDHPMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 11:12:32 -0400
+Received: from nautica.notk.org ([91.121.71.147]:56749 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728309AbgDHPMb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 11:12:31 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id D04B4C009; Wed,  8 Apr 2020 17:12:29 +0200 (CEST)
+Date:   Wed, 8 Apr 2020 17:12:14 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [GIT PULL v2] 9p update for 5.7
+Message-ID: <20200408151214.GA30977@nautica>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAM7-yPS_xh54H9M7B8-tAmPM4+w0VgnruJhK509upsDgZvcNhg@mail.gmail.com>
+In-Reply-To: <20200406110702.GA13469@nautica>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 02:59:17PM +0900, Yun Levi wrote:
-> Thank you for great comments. Thanks to you I understand what i missed.
-> 
-> I try to generate problem on mainline But, as you explained that
-> situation isn't happen,
-> 
-> Maybe my other things which I made generate some problem (freeing
-> network namespace..)
-> 
-> Thanks for great answering and sharing.
-> 
-> If I meet the situation, at that time I'll share. Thank you very much!
-> 
-> P.S. If I have a question, Could I ask via e-mail like this?
+Hi Linus,
 
-Sure, no problem...
+v2 of monday's pull request. The commit date is just now, but that is
+just the documentation patch I applied, there is no code change since
+the last version.
+
+Thanks,
+Dominique
+
+The following changes since commit 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e:
+
+  Linux 5.6-rc7 (2020-03-22 18:31:56 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/martinetd/linux tags/9p-for-5.7-2
+
+for you to fetch changes up to c6f141412d24c8d8a9d98ef45303c0235829044b:
+
+  9p: document short read behaviour with O_NONBLOCK (2020-04-08 17:05:28 +0200)
+
+----------------------------------------------------------------
+9p pull request for inclusion in 5.7 (take 2)
+
+- Change read with O_NONBLOCK to allow incomplete read and return immediately
+(and document it)
+- Rest is just cleanup (indent, unused field in struct, extra semicolon)
+
+----------------------------------------------------------------
+Dominique Martinet (2):
+      net/9p: remove unused p9_req_t aux field
+      9p: document short read behaviour with O_NONBLOCK
+
+Krzysztof Kozlowski (1):
+      9p: Fix Kconfig indentation
+
+Sergey Alirzaev (2):
+      9pnet: allow making incomplete read requests
+      9p: read only once on O_NONBLOCK
+
+zhengbin (1):
+      9p: Remove unneeded semicolon
+
+ Documentation/filesystems/9p.txt |  10 +++++++++
+ fs/9p/Kconfig                    |  18 ++++++++--------
+ fs/9p/vfs_file.c                 |   5 ++++-
+ fs/9p/vfs_inode.c                |   2 +-
+ include/net/9p/client.h          |   4 ++--
+ net/9p/client.c                  | 144  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------
+ 6 files changed, 104 insertions(+), 79 deletions(-)
