@@ -2,137 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E64B1A275F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 18:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2431A278D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 18:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbgDHQmK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 8 Apr 2020 12:42:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43227 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729029AbgDHQmK (ORCPT
+        id S1729096AbgDHQy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 12:54:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25584 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729017AbgDHQyZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 12:42:10 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <stgraber@ubuntu.com>)
-        id 1jMDly-0001U6-01
-        for linux-fsdevel@vger.kernel.org; Wed, 08 Apr 2020 16:41:54 +0000
-Received: by mail-wr1-f52.google.com with SMTP id 31so8635796wre.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 09:41:53 -0700 (PDT)
-X-Gm-Message-State: AGi0PuY25rPHjphWQhI+4qaksySqCOJszluePShWiQqeUo+y6p1vtUwD
-        iMEhIv6Ia128DjXGFNPYdhoZIRG1uO4n0vS3c26SEA==
-X-Google-Smtp-Source: APiQypLzUyLptlfj4UREBf2l5xN02F+xA0MQtCV/4zxKUkblPb/olSzPaY17gwOo3IIMcNmLwikMsI/ASDg0+VXPjE8=
-X-Received: by 2002:a2e:97c2:: with SMTP id m2mr5450395ljj.228.1586364113069;
- Wed, 08 Apr 2020 09:41:53 -0700 (PDT)
+        Wed, 8 Apr 2020 12:54:25 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 038GYSRu167356
+        for <linux-fsdevel@vger.kernel.org>; Wed, 8 Apr 2020 12:54:24 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 309gw0u8b9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 12:54:24 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 8 Apr 2020 17:54:02 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Apr 2020 17:53:59 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 038GsHM934340882
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Apr 2020 16:54:17 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67378A4060;
+        Wed,  8 Apr 2020 16:54:17 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4BDD5A4054;
+        Wed,  8 Apr 2020 16:54:15 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.33.42])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Apr 2020 16:54:15 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
+        linux-fsdevel@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        sandeen@sandeen.net, Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RFC 0/1] ext4: Fix mballoc race in freeing up group preallocations
+Date:   Wed,  8 Apr 2020 22:24:09 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20200408152151.5780-1-christian.brauner@ubuntu.com> <CAG48ez0KWgLMOp1d3X1AcRNc4-eF1YiCw=PgWiGjtM6PqQqawg@mail.gmail.com>
-In-Reply-To: <CAG48ez0KWgLMOp1d3X1AcRNc4-eF1YiCw=PgWiGjtM6PqQqawg@mail.gmail.com>
-From:   =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>
-Date:   Wed, 8 Apr 2020 12:41:41 -0400
-X-Gmail-Original-Message-ID: <CA+enf=uhTi1yWtOe+iuv2FvdZzo69pwsP-NNU2775jN01aDcVQ@mail.gmail.com>
-Message-ID: <CA+enf=uhTi1yWtOe+iuv2FvdZzo69pwsP-NNU2775jN01aDcVQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] loopfs
-To:     Jann Horn <jannh@google.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Serge Hallyn <serge@hallyn.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, Tejun Heo <tj@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        David Rheinsberg <david.rheinsberg@gmail.com>,
-        Tom Gundersen <teg@jklm.no>,
-        Christian Kellner <ckellner@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-doc@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20040816-0008-0000-0000-0000036CF98F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20040816-0009-0000-0000-00004A8E97A5
+Message-Id: <cover.1586358980.git.riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-07_10:2020-04-07,2020-04-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004080125
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 8, 2020 at 12:24 PM Jann Horn <jannh@google.com> wrote:
->
-> On Wed, Apr 8, 2020 at 5:23 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > One of the use-cases for loopfs is to allow to dynamically allocate loop
-> > devices in sandboxed workloads without exposing /dev or
-> > /dev/loop-control to the workload in question and without having to
-> > implement a complex and also racy protocol to send around file
-> > descriptors for loop devices. With loopfs each mount is a new instance,
-> > i.e. loop devices created in one loopfs instance are independent of any
-> > loop devices created in another loopfs instance. This allows
-> > sufficiently privileged tools to have their own private stash of loop
-> > device instances. Dmitry has expressed his desire to use this for
-> > syzkaller in a private discussion. And various parties that want to use
-> > it are Cced here too.
-> >
-> > In addition, the loopfs filesystem can be mounted by user namespace root
-> > and is thus suitable for use in containers. Combined with syscall
-> > interception this makes it possible to securely delegate mounting of
-> > images on loop devices, i.e. when a user calls mount -o loop <image>
-> > <mountpoint> it will be possible to completely setup the loop device.
-> > The final mount syscall to actually perform the mount will be handled
-> > through syscall interception and be performed by a sufficiently
-> > privileged process. Syscall interception is already supported through a
-> > new seccomp feature we implemented in [1] and extended in [2] and is
-> > actively used in production workloads. The additional loopfs work will
-> > be used there and in various other workloads too. You'll find a short
-> > illustration how this works with syscall interception below in [4].
->
-> Would that privileged process then allow you to mount your filesystem
-> images with things like ext4? As far as I know, the filesystem
-> maintainers don't generally consider "untrusted filesystem image" to
-> be a strongly enforced security boundary; and worse, if an attacker
-> has access to a loop device from which something like ext4 is mounted,
-> things like "struct ext4_dir_entry_2" will effectively be in shared
-> memory, and an attacker can trivially bypass e.g.
-> ext4_check_dir_entry(). At the moment, that's not a huge problem (for
-> anything other than kernel lockdown) because only root normally has
-> access to loop devices.
->
-> Ubuntu carries an out-of-tree patch that afaik blocks the shared
-> memory thing: <https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/eoan/commit?id=4bc428fdf5500b7366313f166b7c9c50ee43f2c4>
->
-> But even with that patch, I'm not super excited about exposing
-> filesystem image parsing attack surface to containers unless you run
-> the filesystem in a sandboxed environment (at which point you don't
-> need a loop device anymore either).
+Hello All, 
 
-So in general we certainly agree that you should never expose someone
-that you wouldn't trust with root on the host to syscall interception
-mounting of real kernel filesystems.
+There seems to be a below race with current
+ext4_mb_group_discard_preallocations() function. This could be fairly
+easily reproduced on a system with only 1 group. But internally this was even
+reported with more than 1 group. We could reproduce this on both 64K and 4K
+blocksize filesystem.
 
-But that's not all that our syscall interception logic can do. We have
-support for rewriting a normal filesystem mount attempt to instead use
-an available FUSE implementation. As far as the user is concerned,
-they ran "mount /dev/sdaX /mnt" and got that ext4 filesystem mounted
-on /mnt as requested, except that the container manager intercepted
-the mount attempt and instead spawned fuse2fs for that mount. This
-requires absolutely no change to the software the user is running.
+This is a RFC patch sent out for reviews, feedback and/or any comments.
+Below mail provide all the necessary details.
 
-loopfs, with that interception mode, will let us also handle all cases
-where a loop would be used, similarly without needing any change to
-the software being run. If a piece of software calls the command
-"mount -o loop blah.img /mnt", the "mount" command will setup a loop
-device as it normally would (doing so through loopfs) and then will
-call the "mount" syscall, which will get intercepted and redirected to
-a FUSE implementation if so configured, resulting in the expected
-filesystem being mounted for the user.
+Test setup
+==========
+1. It's a multithreaded test case where each thread is trying to create a
+file using open() -> ftruncate().
+2. Then we are doing mmap of this file for filesize bytes. 
+3. Then start writing sequentially byte by byte for full filesize. 
 
-LXD with syscall interception offers both straight up privileged
-mounting using the kernel fs or using a FUSE based implementation.
-This is configurable on a per-filesystem and per-container basis.
+Details for creating it on loop device:-
+======================================
+1. truncate -s 240M filefs   (easier on a smaller filesystem)
+2. losetup /dev/loop0 filefs 
+3. mkfs.ext4 -F -b 65536 /dev/loop0
+4. mkdir mnt
+5. mount -t ext4 /dev/loop0 mnt/
+6. cd mnt/
+7. Start running the test case mentioned above in above "Test setup".
+(for our test we were keeping no. of threads to ~70 and filling the available
+filesystem space (df -h) to around ~80%/70%. Based on that each filesize is
+calculated).
+8. cd .. (once the test finishes)
+9. umount mnt
+10. Go to step 3.
 
-I hope that clarifies what we're doing here :)
+Test (test-ext4-mballoc.c) file and script which does the
+unmount/mount and run the ./a.out is mentioned at [1], [2].
 
-Stéphane
+
+Analysis:-
+==========
+
+It seems below race could be occurring
+	P1 							P2
+ext4_mb_new_blocks() 						|
+	|						ext4_mb_new_blocks()
+	|
+ext4_mb_group_discard_preallocations() 				|
+		| 				ext4_mb_group_discard_preallocations()
+	if (list_empty(&grp->bb_prealloc_list)
+		return 0; 					|
+		| 						|
+	ext4_lock_group() 					|
+	list_for_each_entry_safe() {  				|
+		<..>  						|
+		list_del(&pa->pa_group_list);  			|
+		list_add(&pa->u.pa_tmp_list, &list) 		|
+	} 							|
+								|
+	processing-local-list() 		if(list_empty(&grp->bb_prealloc_list)
+	 	|					return 0
+	<...>
+	ext4_unlock_group()
+
+What we see here is that, there are multiple threads which are trying to allocate. 
+But since there is not enough space, they try to discard the group preallocations.
+(will be easy to understand if we only consider group 0, though it could
+be reproduced with multiple groups as well). 
+Now while more than 1 thread tries to free up the group preallocations, there
+could be 1 thread (P2) which sees that the bb_prealloc_list is already
+empty and will assume that there is nothing to free from here. Hence return 0.
+Now consider this happens with thread P2 for all other groups as well (where some other
+thread came in early and freed up the group preallocations). At that point,
+P2 sees that the total freed blocks returned by ext4_mb_discard_preallocations()
+back to ext4_mb_new_blocks() is 0 and hence it does not retry the allocation,
+instead it returns -ENOSPC error. 
+
+This causes SIGBUS to the application who was doing an mmap write. Once
+the application crashes we could still see that the filesystem available space
+is more than ~70-80% (worst case scenario). So ideally P2 should have waited
+for P1 to get over and should have checked how much P1 could free up.
+
+
+Solution (based on the understanding of the mballoc code)
+=========================================================
+
+We think that it is best to check if there is anything to be freed
+within ext4_group_lock(). i.e. to check if the bb_prealloc_list is empty.
+This patch attempts to fix this race by checking if nothing could be collected
+in the local list. This could mean that someone else might have freed
+all of this group PAs for us. So simply return group->bb_free which
+should also give us an upper bound on the total available space for
+allocation in this group.
+
+We need not worry about the fast path of whether the list is empty without
+taking ext4_group_lock(), since we are anyway in the slow path where the
+ext4_mb_regular_allocator() failed and hence we are now desperately trying
+to discard all the group PAs to free up some space for allocation.
+
+
+Please correct if any of below understanding is incorrect:-
+==========================================================
+1. grp->bb_free is the available number of free blocks in that group for
+   allocation by anyone.
+2. If grp->bb_free is non-zero and we call ext4_mb_regular_allocator(ac),
+then it will always return ac->ac_status == AC_STATUS_FOUND
+(and it could even allocate and return less than the requested no. of blocks).
+3. There shouldn't be any infinte loop in ext4_mb_new_blocks() after we
+return grp->bb_free in this patch.
+(i.e. between ext4_mb_regular_allocator() and ext4_mb_discard_preallocations())
+It could only happen if ext4_mb_regular_allocator cannot make any forward
+progress even if grp->bb_free is non-zero. 
+But IIUC, that won't happen. Please correct here.
+
+Tests run:-
+==========
+For now I have only done unit testing with the shared test code [1] [2].
+Wanted to post this RFC for review comments/discussion.
+
+Resources:
+==========
+[1] - https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test-ext4-mballoc.c
+[2] - https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test_mballoc.sh
+
+Ritesh Harjani (1):
+  ext4: Fix race in ext4_mb_discard_group_preallocations()
+
+ fs/ext4/mballoc.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
+
+-- 
+2.21.0
+
