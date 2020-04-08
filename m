@@ -2,72 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33511A1DCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 11:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461A51A1E43
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Apr 2020 11:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgDHJEj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Apr 2020 05:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgDHJEi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Apr 2020 05:04:38 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 406BB20692;
-        Wed,  8 Apr 2020 09:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586336678;
-        bh=9kbufo3o6enn038b+/eT3GGy2OJh9n+0Gmmfe1errw4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gClleIa6JVwmMtFjQ+VLKstEyu2cAnmLBAYUvRdQ78Mc4QaUjCqjIY+lFgC2tJ/5d
-         K4FpWE2X1K4NjctqOm0u4QC2TyJZxAsOzFJlHQY4zjVgUg7wUDsq0lu83XzZAvTv9y
-         Vy870rZ8PwV6NlUxUWkTaGjnA+N3rxNwUyVmDf+A=
-Received: by pali.im (Postfix)
-        id 51648A7A; Wed,  8 Apr 2020 11:04:35 +0200 (CEST)
-Date:   Wed, 8 Apr 2020 11:04:35 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>,
-        viro@zeniv.linux.org.uk
-Cc:     "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
-        "'sj1557.seo@samsung.com'" <sj1557.seo@samsung.com>
-Subject: Re: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
- above U+FFFF
-Message-ID: <20200408090435.i3ufmbfinx5dyd7w@pali>
-References: <TY1PR01MB15782019FA3094015950830590C70@TY1PR01MB1578.jpnprd01.prod.outlook.com>
- <20200403204037.hs4ae6cl3osogrso@pali>
- <TY1PR01MB1578D63C6F303DE805D75DAA90C20@TY1PR01MB1578.jpnprd01.prod.outlook.com>
- <20200407100648.phkvxbmv2kootyt7@pali>
- <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+        id S1727180AbgDHJsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Apr 2020 05:48:50 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39428 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbgDHJsu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Apr 2020 05:48:50 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i20so6915019ljn.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Apr 2020 02:48:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eEezST1RXJ88ybnVOwFKxlJ6+MPqHS1LvuVkjRbNDs4=;
+        b=AtfViQT1klZEFep9wTrnlBNvl75uK2hyUO/WqUNRXSA41ipnxHC6/JdTZ3LZ2pYsiD
+         aVWUeYmPUfXymIYFRcLAfKqAtXhxI+0x8F71hJj3VwT8OA2db3sAhZcSKfJdwPs33Jdm
+         ebi6utBvs/stkR0zNal8RJLdCUJdcqw56v97JaMJ4h1bgaiSQAzOSbUGbLJ+c5tQnb2f
+         gp6kz/XUdx2fc8Nq4gRN9GAzGAtdlLOEChwhCUBlQ5q6OMPNHqw2tKWqI2YcCq8exhku
+         4UumWQGM+wUD+m2N6hhQYDG5WC9E5o0NH2k0LGeMMn6+O0BGBEeEQugb4L+3crwWu09L
+         a/dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eEezST1RXJ88ybnVOwFKxlJ6+MPqHS1LvuVkjRbNDs4=;
+        b=pdpEmqoRLGxWotf2crWMwvBrDI5Wfv7VAMSE9yWqRBpD7etf0tbe9q4TK6OIFrJgBQ
+         mLGF2qyCP3cMM96v+WIO9Oeu02wyEQGPujks/y23gu9qt7Z6zutCYf8e4P8WLODXTYvn
+         tfGOs/C9z99r2jhYXurBhLZLr7Q/RrG4CbpjmsMoZQCRULs2ne5h03Kxl3OwU7/wQ8Kl
+         KhQPKyOFivAP3D/HCAM11Ful1ylAGZozWs4XPaQ0J0uW3OE8cAj7Z6E7zcPSqwfJjJLO
+         xoJEoybQQeaMAV7JF74l8V4f5IsH12orsrZ2gG0Co+DJng2nPNDNR/l5bGL8i5gfZQqq
+         XvMA==
+X-Gm-Message-State: AGi0PuYhTtLkQsx16+AYHi8rRF5KRjV8CFE4nznpXyNEci8N4z/Ndl9g
+        4RrHb/4FhSZhFshgUsUQNwY/PXkKd2W9YBwXNUV/xQ==
+X-Google-Smtp-Source: APiQypKzRT3tjcthaIy1IYrParD4m/MJGtYTGgck/20gGjrf0nKgcCSDB9gBB+Pbu1aw6GTj8C+5BqYtxFna/wpkfJg=
+X-Received: by 2002:a2e:5048:: with SMTP id v8mr4074814ljd.99.1586339328475;
+ Wed, 08 Apr 2020 02:48:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+References: <20200318205337.16279-1-sashal@kernel.org> <20200318205337.16279-30-sashal@kernel.org>
+ <CAG48ez1pzF76DpPWoAwDkXLJ01w8Swe=obBrNoBWr=iGTbH7-g@mail.gmail.com>
+In-Reply-To: <CAG48ez1pzF76DpPWoAwDkXLJ01w8Swe=obBrNoBWr=iGTbH7-g@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 8 Apr 2020 11:48:22 +0200
+Message-ID: <CAG48ez29d-JJOw8XMp1Z=7sDj8Kvmt+9KXC9-ux-0OBhUP02Xg@mail.gmail.com>
+Subject: backport request for 3.16 [was: Re: [PATCH AUTOSEL 5.4 30/73] futex:
+ Fix inode life-time issue]
+To:     stable <stable@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday 08 April 2020 03:59:06 Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp wrote:
-> > So partial_name_hash() like I used it in this patch series is enough?
-> 
-> I think partial_name_hash() is enough for 8/16/21bit characters.
+@Ben: You'll probably also want to take these two into the next 3.16 release.
 
-Great!
+Sorry, I forgot that 3.16 has a different maintainer...
 
-Al, could you please take this patch series?
-
-> Another point about the discrimination of 21bit characters:
-> I think that checking in exfat_toupper () can be more simplified.
-> 
->  ex: return a < PLANE_SIZE && sbi->vol_utbl[a] ? sbi->vol_utbl[a] : a;
-
-I was thinking about it, but it needs more refactoring. Currently
-exfat_toupper() is used on other places for UTF-16 (u16 array) and
-therefore it cannot be extended to take more then 16 bit value.
-
-But I agree that this is another step which can be improved.
+On Mon, Mar 23, 2020 at 8:18 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Wed, Mar 18, 2020 at 9:54 PM Sasha Levin <sashal@kernel.org> wrote:
+> >
+> > From: Peter Zijlstra <peterz@infradead.org>
+> >
+> > [ Upstream commit 8019ad13ef7f64be44d4f892af9c840179009254 ]
+> >
+> > As reported by Jann, ihold() does not in fact guarantee inode
+> > persistence. And instead of making it so, replace the usage of inode
+> > pointers with a per boot, machine wide, unique inode identifier.
+> >
+> > This sequence number is global, but shared (file backed) futexes are
+> > rare enough that this should not become a performance issue.
+>
+> Please also take this patch, together with
+> 8d67743653dce5a0e7aa500fcccb237cde7ad88e "futex: Unbreak futex
+> hashing", into the older stable branches. This has to go all the way
+> back; as far as I can tell, the bug already existed at the beginning
+> of git history.
