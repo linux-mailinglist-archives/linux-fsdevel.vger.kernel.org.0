@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2478F1A3856
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 18:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76FA1A385A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 18:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbgDIQyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 12:54:03 -0400
+        id S1727677AbgDIQyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 12:54:04 -0400
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:24715 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbgDIQyC (ORCPT
+        with ESMTP id S1727235AbgDIQyD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 12:54:02 -0400
+        Thu, 9 Apr 2020 12:54:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586451242; x=1617987242;
+  t=1586451244; x=1617987244;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Kvkqhedaxckecfp14XwRLXhYwHCzNuCrujz+QWt/cdU=;
-  b=OO4BZROVvRNcUnABBTd1IjXOs7Q6IaH7MJoUx6NIXUTJdcBN1CK2RZd7
-   Sru2EUneMZ5GaiiEYhKerwUN3U7/AVAMiM+MQXLFX7C+hr7rMKJbZaNDw
-   iBf72ghselhK5Lp+4R7TEdqonQOQu6eXunKAjescBmYVVC9g4y/8Mn8ql
-   z3EB+mD2nWivbRoAJUBL84LF7xJ2k8yNQudT12WCXlLP3Ezr8evKwl+SV
-   CFzBVHVNBC8yaQxwtJC1PzWlRja11+3vWUtvclaikxDDQL1W5rmuYwtYI
-   iBKAefgpzoSHTKjFJGPs4kDOw5Dw3Hfk20DLkjcMJH/TTTsgMWxaKBusE
+  bh=tmksEDboe4ywDTGLgmwOeM5+BOGLe3IzaNWoQ4/NHho=;
+  b=TLKgEHIKGUdVzU4YSTG8Wk2dK/A1QXgkux0ulsnL7p/p8LM3aAtbOxDp
+   OlbnOhnsjTsZASeb5Q5iQWdofCMY+xFitNVqSx1bfpeNn+L22arqV+ltx
+   8QaX+mAbpqt+mFc7i5BJZnQgRi+ScOejf7CO3YMulzuMllc23vG9qknNX
+   z6sz3Eap2755wFTAXwKblrAMV+bUuQTrNjz/uZeA/IIMszDU9l3pz4fFV
+   2lwDt+O0DJe5Uvz9yXYX57RUehASRXjF52mIWAeUz8l+6eJ+BRSw6tOZW
+   w4GoQFv+Y7V08fYB3490Q8c5qQZ22ppYmuMceedTzXV6DReIh6RKuZyrd
    Q==;
-IronPort-SDR: LHWTyCrSGUM+RV/6Vm6YQeV4fxxzoIoEWZ8DI3UG2VFLNnGowWlU/tAp1BTh/qAwRT9OVBib5T
- h6QSLuYY3lCDiRzpB3I/MM4KVdP6QPQ2eynocUCH9vGV1Ya+GG6c6OXxGfdHUvvO8H7wjqrsla
- 02VfONDMxPzA3r1ZqbODW+UqnntmsPtHdh+ipm53ss41RaUGj/12lO2TFYY4HLDhXLjSePgFSV
- 6rCFqKiCTS5agqmXDwuCRrszkOQOSoCIHJCcjcFuqPogMEJoRJCH0MxGpiPbvp+xPOBwV0iILN
- 9Sc=
+IronPort-SDR: TZirsWmHGCcuCGDoj5OFR35AafJS0vZWlN8UIBYrZcrE6qvw1ccRDz3+hYzTyFYFzuO4tojN8h
+ SR2Rc8hQFlVyhG1vC8kuVfWSy4pK9Sgp9jD/NK+Mv2VlDTPwWsZ/eNwF698ZgBKdkkcFejUoT0
+ /xw446VHCP563S3Hvw4BOw8ZgpR0X7yMzvIJynyYfisrzTHXrZ7oW/4gqeHIErXDdotCfnwjPQ
+ XhJODxQBCSFe67Bfj0WARUJ18hy1m9ReH+pCORhSuO4L5Ajp74t5y5w5xuT6xOYzMW07SXkEg1
+ uu0=
 X-IronPort-AV: E=Sophos;i="5.72,363,1580745600"; 
-   d="scan'208";a="136423686"
+   d="scan'208";a="136423690"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Apr 2020 00:54:02 +0800
-IronPort-SDR: aTHeFwOAkuBh8w/ohZstRT3VKliw8CPlZbw26ErdGxI0TB9bUAK6O31Y9cHPfQ6sDqOtCoASjC
- N4r4bjGK1s+r7W01IPY1rfLFuGH4wKNUpUatLTzqb2UsTsVTS9fWGLbw7v5LF8hmf1X1I4WpsK
- GcEdPVbqEscIP/8e6uRIh4HkJ6u27nmr8JrOIuHz6g7YHL1e6l9P0n/lReyRXkUjQu24WH6Rmv
- Tgs3GVtai9MbFg+i1F0o4ODb6JosOLhHA7R9GqY+1QnMrjybsr0Fp/8c41IqVAeacZe792N92o
- oo1/F01Ow7hJXX1sG1ENeFwG
+  by ob1.hgst.iphmx.com with ESMTP; 10 Apr 2020 00:54:04 +0800
+IronPort-SDR: K1jl0uT5hGMULBkUXY0Bqc54GOh6aw0sDkjwFqhvh8vmfj/M0cYhzuHLcEfNXSYZKWydflEfmw
+ T11mQejKrFWROuUjzlQ1U3WqCOgsvvEq+6SIiwb8s6cJsseChhqcffmvFWe4Qi6BE5M8g9WXzn
+ NMf/ABKKqWgTfnhgXaigl4bdGgZ8+w/5yhsN3AOBpVHVDEyV7W/LOQg5AnMqUP/T8MYRopr2/j
+ SeTb4PR9lDuK9lV3/x06v4s8ncWIJsdbT8MOWu9Je74/galm7LlDfEMbjcEOPbBHC69GLP6rmM
+ hlU9Q9CVdM6ByLZQsBJmwZD5
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 09:44:40 -0700
-IronPort-SDR: w/CnDXvbqBJ6S6wBeXOgCIFQDvwqB6LtLe6hFAbeZ/GPS3VFMkpirXCqkqq5bYxe8+KCa7y6f8
- SMjANsO5TV4H5txf3HxEGgpaqBwmR0GvZTsPHBFpXNuAmp8J9lcF9355CZCovNmreUgHyxl46H
- dJhboJqu2YSQgnsmUwHbNrmt72FzPbNaSRhDdngfaC5izfthJW8qFrhwVd4JOZJrbTGZSffwJt
- Mu+iV+jVpaBUEFq/XryXH/sXz4ez8VJOWhmRBWgDO7SKIkU9/RNRIOH1ZiodgWFIZeCRT0aRJl
- 8a0=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 09:44:42 -0700
+IronPort-SDR: Ha6lzkHwhM0BaEUUAY089ZiFimgoH32MQnUX2l0jeICoxR7PEgWC8iwb6ifLxOOwH8qg/NT/Wu
+ TwYLYqviTFepIoCReTuO8YT7CugOPDF1OpfMfrJFe2oTKOI07OzMkwXz3JuNIhhvJUOFD4+qNV
+ 6SPhLur+hLiN/NwVCjbtrXdVhrysBR1PeRnfMRqPoR395zIrQjwS4Rs7DT30jcWnYGeUiVI6B7
+ zePw/hjeHDIodPE6w6MXG1hYvU17ymAlW6+WUyImkhAMk1nbka3nogRcY38JudBgA8gKmZrNnS
+ 8ss=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 09 Apr 2020 09:54:01 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 09 Apr 2020 09:54:02 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -58,11 +58,11 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 03/10] block: introduce blk_req_zone_write_trylock
-Date:   Fri, 10 Apr 2020 01:53:45 +0900
-Message-Id: <20200409165352.2126-4-johannes.thumshirn@wdc.com>
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v5 04/10] block: Modify revalidate zones
+Date:   Fri, 10 Apr 2020 01:53:46 +0900
+Message-Id: <20200409165352.2126-5-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
 References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
@@ -73,53 +73,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce blk_req_zone_write_trylock(), which either grabs the write-lock
-for a sequential zone or returns false, if the zone is already locked.
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
+Modify the interface of blk_revalidate_disk_zones() to add an optional
+revalidation callback function that a driver can use to extend checks and
+processing done during zone revalidation. The callback, if defined, is
+executed time after all zones are inspected and with the queue frozen.
+blk_revalidate_disk_zones() is renamed as __blk_revalidate_disk_zones()
+and blk_revalidate_disk_zones() implemented as an inline function calling
+__blk_revalidate_disk_zones() without no revalidation callback specified,
+resulting in an unchanged behavior for all callers of
+blk_revalidate_disk_zones().
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- block/blk-zoned.c      | 14 ++++++++++++++
- include/linux/blkdev.h |  1 +
- 2 files changed, 15 insertions(+)
+ block/blk-zoned.c      | 19 ++++++++++++++-----
+ include/linux/blkdev.h | 10 +++++++++-
+ 2 files changed, 23 insertions(+), 6 deletions(-)
 
 diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 05741c6f618b..00b025b8b7c0 100644
+index 00b025b8b7c0..6c37fec6859b 100644
 --- a/block/blk-zoned.c
 +++ b/block/blk-zoned.c
-@@ -50,6 +50,20 @@ bool blk_req_needs_zone_write_lock(struct request *rq)
+@@ -437,20 +437,27 @@ static int blk_revalidate_zone_cb(struct blk_zone *zone, unsigned int idx,
  }
- EXPORT_SYMBOL_GPL(blk_req_needs_zone_write_lock);
  
-+bool blk_req_zone_write_trylock(struct request *rq)
-+{
-+	unsigned int zno = blk_rq_zone_no(rq);
-+
-+	if (test_and_set_bit(zno, rq->q->seq_zones_wlock))
-+		return false;
-+
-+	WARN_ON_ONCE(rq->rq_flags & RQF_ZONE_WRITE_LOCKED);
-+	rq->rq_flags |= RQF_ZONE_WRITE_LOCKED;
-+
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(blk_req_zone_write_trylock);
-+
- void __blk_req_zone_write_lock(struct request *rq)
+ /**
+- * blk_revalidate_disk_zones - (re)allocate and initialize zone bitmaps
+- * @disk:	Target disk
++ * __blk_revalidate_disk_zones - (re)allocate and initialize zone bitmaps
++ * @disk:		Target disk
++ * @revalidate_cb:	LLD callback
++ * @revalidate_data:	LLD callback argument
+  *
+  * Helper function for low-level device drivers to (re) allocate and initialize
+  * a disk request queue zone bitmaps. This functions should normally be called
+  * within the disk ->revalidate method for blk-mq based drivers.  For BIO based
+  * drivers only q->nr_zones needs to be updated so that the sysfs exposed value
+  * is correct.
++ * If the @revalidate_cb callback function is not NULL, the callback will be
++ * executed with the device request queue frozen after all zones have been
++ * checked.
+  */
+-int blk_revalidate_disk_zones(struct gendisk *disk)
++int __blk_revalidate_disk_zones(struct gendisk *disk,
++				revalidate_zones_cb revalidate_cb,
++				void *revalidate_data)
  {
- 	if (WARN_ON_ONCE(test_and_set_bit(blk_rq_zone_no(rq),
+ 	struct request_queue *q = disk->queue;
+ 	struct blk_revalidate_zone_args args = {
+-		.disk		= disk,
++		.disk			= disk,
+ 	};
+ 	unsigned int noio_flag;
+ 	int ret;
+@@ -480,6 +487,8 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
+ 		q->nr_zones = args.nr_zones;
+ 		swap(q->seq_zones_wlock, args.seq_zones_wlock);
+ 		swap(q->conv_zones_bitmap, args.conv_zones_bitmap);
++		if (revalidate_cb)
++			revalidate_cb(disk, revalidate_data);
+ 		ret = 0;
+ 	} else {
+ 		pr_warn("%s: failed to revalidate zones\n", disk->disk_name);
+@@ -491,4 +500,4 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
+ 	kfree(args.conv_zones_bitmap);
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(blk_revalidate_disk_zones);
++EXPORT_SYMBOL_GPL(__blk_revalidate_disk_zones);
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 36111b10d514..e591b22ace03 100644
+index e591b22ace03..a730cacda0f7 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1746,6 +1746,7 @@ extern int bdev_write_page(struct block_device *, sector_t, struct page *,
+@@ -353,6 +353,8 @@ struct queue_limits {
+ typedef int (*report_zones_cb)(struct blk_zone *zone, unsigned int idx,
+ 			       void *data);
  
++typedef void (*revalidate_zones_cb)(struct gendisk *disk, void *data);
++
  #ifdef CONFIG_BLK_DEV_ZONED
- bool blk_req_needs_zone_write_lock(struct request *rq);
-+bool blk_req_zone_write_trylock(struct request *rq);
- void __blk_req_zone_write_lock(struct request *rq);
- void __blk_req_zone_write_unlock(struct request *rq);
  
+ #define BLK_ALL_ZONES  ((unsigned int)-1)
+@@ -362,7 +364,13 @@ unsigned int blkdev_nr_zones(struct gendisk *disk);
+ extern int blkdev_zone_mgmt(struct block_device *bdev, enum req_opf op,
+ 			    sector_t sectors, sector_t nr_sectors,
+ 			    gfp_t gfp_mask);
+-extern int blk_revalidate_disk_zones(struct gendisk *disk);
++int __blk_revalidate_disk_zones(struct gendisk *disk,
++				revalidate_zones_cb revalidate_cb,
++				void *revalidate_data);
++static inline int blk_revalidate_disk_zones(struct gendisk *disk)
++{
++	return __blk_revalidate_disk_zones(disk, NULL, NULL);
++}
+ 
+ extern int blkdev_report_zones_ioctl(struct block_device *bdev, fmode_t mode,
+ 				     unsigned int cmd, unsigned long arg);
 -- 
 2.24.1
 
