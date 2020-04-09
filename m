@@ -2,78 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38631A3B0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 22:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECC51A3B90
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 22:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgDIUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 16:04:16 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35802 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgDIUEP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 16:04:15 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r26so61813wmh.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Apr 2020 13:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sDzglqZlZcxrIEiGaCL876u0tJXo/b3LCDiUPke6hM8=;
-        b=kE2dlQbAMbxEph/+OiWhvyA2TElid9qcNZ9MipQGEbkPmNmME0oWP6Qeyy+4+m8DjY
-         Bzl8br1FY05eY895V9BGKO0RGgmtQ0dU3lZjg6dn6zyPs/Dz9un44sS2qR1abZq1bF/4
-         4/ZkOlf3VMtAy462g4DrAo/3LvWxmEcahtAa2/z6FIGV072KBOOgJIJk1pdX+i7z0jz/
-         AY26jAQRRnv/7PNSWOc4z15UCesUJAC/VrvfCs/PiE5/g34utB0jXuEl9b65MXwXhkao
-         dAYCHj+t4ZqNfz/hQrkiSRyHkyXz/NqmgKFSVgBk86gdEwOOP1hvEIinZxG+zCBOJkbH
-         6EfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sDzglqZlZcxrIEiGaCL876u0tJXo/b3LCDiUPke6hM8=;
-        b=UAIA/mPGB3lnLE8Xv8MOCNjutfs3jNgPh6amwNtKi4a4rCR8XavdnCy0DQ35SnQ3UZ
-         P3Oy05e3+bbp2cTmjYz4SnvgDx+qlH2mv3AsD98m751uzuToFeOc0HaG8fQNAGCNpv16
-         U9OERM69ssXgzw2BJRngabuBYBtZPJE4nQY6emeZvb2dmlpfPaXgtZnyNOWUQ/m4NXnK
-         /hKv5PzoWXfX4+00t7EpYoQLzgv32uRQVoqoS/t9MN5j18xQZvKWqKlJG6ghX2kME1fV
-         fzljx1lLwZJQAM6B/nzlvTz1XXOk7/DLk1ZzhGojF9gKOkjhUNpQQnk3s0/oeJRmz1pi
-         hS+A==
-X-Gm-Message-State: AGi0PuZM+8UQ87J7YMzbkIPHZITM9dpWCzeRnUXNJ1G1niYf8thNQN5s
-        GnUN6t+NJY/jK2AJkvRI6sfW92e28KVOUVwWXa7DCQ==
-X-Google-Smtp-Source: APiQypIcxF55PCob3T7OJxlGddq8VbpK2dOAPx9ekIsXVMhJIBfxd3KBkrxn+QUgv+BxWPQtP+u9KmtE4swbJT8Ouc4=
-X-Received: by 2002:a7b:c050:: with SMTP id u16mr1700238wmc.68.1586462652947;
- Thu, 09 Apr 2020 13:04:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200409113305.1604965-1-hch@lst.de>
-In-Reply-To: <20200409113305.1604965-1-hch@lst.de>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Thu, 9 Apr 2020 22:04:01 +0200
-Message-ID: <CAFLxGvxXxR29R77nQKsYSpxviARk4AhWrzwfMPc1FECDLxh_sg@mail.gmail.com>
-Subject: Re: [PATCH] ubifs: remove broken lazytime support
+        id S1727247AbgDIUtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 16:49:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43445 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726964AbgDIUtz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Apr 2020 16:49:55 -0400
+IronPort-SDR: uXuWMNIRaWcJ3HWZL8ZTsRL/q4urg2weWeN1PdqnxNbjT8SlR3aEoGHjDucOfUB8ItnLhqSjB5
+ C44WU4ixg5TA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 13:49:54 -0700
+IronPort-SDR: uGT2DQfawKjjxTzrrboYSQ2lFlqOecSpTc00bpqC/04zZXNNxhOiDe9kG3EkErDx95QHN0t0w6
+ ULbqkaHAeq0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,364,1580803200"; 
+   d="scan'208";a="452138957"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Apr 2020 13:49:53 -0700
+Date:   Thu, 9 Apr 2020 13:49:53 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Richard Weinberger <richard@nod.at>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V6 6/8] fs/xfs: Combine xfs_diflags_to_linux() and
+ xfs_diflags_to_iflags()
+Message-ID: <20200409204952.GB801897@iweiny-DESK2.sc.intel.com>
+References: <20200407182958.568475-1-ira.weiny@intel.com>
+ <20200407182958.568475-7-ira.weiny@intel.com>
+ <20200408020827.GI24067@dread.disaster.area>
+ <20200408170923.GC569068@iweiny-DESK2.sc.intel.com>
+ <20200408210236.GK24067@dread.disaster.area>
+ <CAPcyv4gLvMSA9BypvWbYtv3xsK8o4+db3kvxBozUGAjr_sDDFQ@mail.gmail.com>
+ <20200408235836.GQ24067@dread.disaster.area>
+ <20200409002203.GE664132@iweiny-DESK2.sc.intel.com>
+ <20200409124127.GB18171@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409124127.GB18171@lst.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 9, 2020 at 1:33 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> When "ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs" introduced atime
-> support to ubifs, it also added lazytime support.  As far as I can tell
-> the lazytime support is terminally broken, as it causes
-> mark_inode_dirty_sync to be called from __writeback_single_inode, which
-> will then trigger the locking assert in ubifs_dirty_inode.  Just remove
-> the broken lazytime support for now, it can be added back later,
-> especially as some infrastructure changes should make that easier soon.
->
-> Fixes: 8c1c5f263833 ("ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Thu, Apr 09, 2020 at 02:41:27PM +0200, Christoph Hellwig wrote:
+> On Wed, Apr 08, 2020 at 05:22:03PM -0700, Ira Weiny wrote:
+> > > You mean something like XFS_IDONTCACHE?
+> > > 
+> > > i.e. the functionality already exists in XFS to selectively evict an
+> > > inode from cache when the last reference to it is dropped rather
+> > > than let it go to the LRUs and hang around in memory.
+> > > 
+> > > That flag can be set when changing the on disk DAX flag, and we can
+> > > tweak how it works so new cache hits don't clear it (as happens
+> > > now). Hence the only thing that can prevent eviction are active
+> > > references.
+> > > 
+> > > That means we'll still need to stop the application and drop_caches,
+> > > because we need to close all the files and purge the dentries that
+> > > hold references to the inode before it can be evicted.
+> > 
+> > That sounds like a great idea...
+> > 
+> > Jan?  Christoph?
+> 
+> Sounds ok.  Note that we could also pretty trivially lift
+> XFS_IDONTCACHE to the VFS if we need to apply the same scheme to
+> ext4.
 
-Thanks for pointing this out.
-Patch applied.
+Yes I have been slowing working on ext4 in the background.  So lifting
+XXX_IDONTCACHE to VFS will be part of that series.
 
--- 
 Thanks,
-//richard
+Ira
