@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7944E1A385D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 18:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AAD1A3866
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 18:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgDIQyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 12:54:06 -0400
+        id S1727822AbgDIQyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 12:54:10 -0400
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:24715 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbgDIQyF (ORCPT
+        with ESMTP id S1727235AbgDIQyH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 12:54:05 -0400
+        Thu, 9 Apr 2020 12:54:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586451246; x=1617987246;
+  t=1586451247; x=1617987247;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=af+TpmrNaP6opwMEPh6jKrw6Bxfh1IsevFX/PW8xfPo=;
-  b=hsNvvNHTjsovPfvo3hCiHTDRiN58mmI6xa1IVm5PmsY0Y554GSsxLRrU
-   a5bpZAE8A63a+Z2CL7HqCv1Hf5BgQQod3ZJPGroRykWzEcGkljgDxyom5
-   xYe8tRCkjgDHTd7uDKTbJXEnlAAkSkzPuwreRNdE+iyQkJACtObkt7Y2J
-   YqJ9W3q9X/v96+fPkoZrbFVx6ZkfW66lpPxNyYexojqpupDuhXYpuQgnj
-   wYLN+JNE5JqZ/XvCgAkkm2DGdbBe5kechpWUL31G9myWqLrglEFZUUFeY
-   NETVDO/IquJ+c5qmnHANam6rcD8KUe3iezov37kcvPz+zkGTYgaKjJH3f
-   w==;
-IronPort-SDR: SGoCgbltRKsC32MsHKc6VlUJLj78Itsn6c38gKapAqhtHleDBIGOauzn85VTdX1N+tFqeCLlIg
- Ux7unujbsuShrE2Q3XlfNbs8Qf3xT+bYca4cpry58Ft4PVHgeu96RCUTr0Rjc1jWMSdC73biqw
- yfUmy0bSPF5deEat8YbTMkFNxxtXLnQ5uLI5ivwS7R4ZVxY3tvB89VjBfKDF+2rsEIq1tnuGgb
- l7McOz2bftcKVu6JEqZJumHBeTnlwkvjq2aWhf0eo8Qr/Fir9JkVwxhXwTZm4dl9u46K1DF4Bk
- zK0=
+  bh=q++7tLiMOyjklktmG5UM9qExxC1QYLaiR3sPHhtXviQ=;
+  b=iJLQiagGiYDY5NYzRSfWltaFaj9UmEfVL58I3l2kZ3AKyx+8YTlSGxIh
+   jyafYE189o+FhiKjyKPgna8h9dYeVaAltJnSjHD/pDu5AEU8YRrlk9Db3
+   A/DiFM3oKmYIgCYCA+0V7g+y1zO2WnUiCAd5DTuEaj/ChKhFBJLZJPLvD
+   AqXzXesaARtsaZIGV4u/HQUrVff+D5LmNkZso/1MA6DfrUqh0DpbqP9uD
+   b0qdVkQapvyGIaGLAPsRHaEfKgzq82hykmnsAS1FpmBt84tHKFdf0Trx7
+   UCn3ylb0f5vmQ4CdXJQ9x+bX4I/VwUTexLII/0fsc+EQMwnheuDqaaoRQ
+   Q==;
+IronPort-SDR: HXPaPfkK95IBcn6lbT98CIrqVtLGfKXa0/iXI+S08PcfqJ0Dy/n6wOM3GMj4zuD2yKCV9lL0xv
+ LzkgN9L4264gZhPF1J73TrUNM+CzZeFVph2hq/QlNYTT6kLp6xTkmySKZfnVeTomxN5aUvGwue
+ eN4Y3K0iQZRw62MoZkOw1HNjaktXRiDSB4+qDmlG90fwTDfLliUqvl/9s8qrnrlyLM0lUc7oL6
+ AQk1uKRy0/sidFkbUFp2MvKoo4SJlHSaTxEjzJ4ODARiM0UaW8OoMDPlECO4Kp46r3NOr5R5xi
+ oK4=
 X-IronPort-AV: E=Sophos;i="5.72,363,1580745600"; 
-   d="scan'208";a="136423695"
+   d="scan'208";a="136423697"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Apr 2020 00:54:06 +0800
-IronPort-SDR: 6+39GUFAAH12uu+VXz/DSKRR3pYUblPtY9sLWsQFyS4x1SEnemhNMyePwNzOwpFuGGAz5V6ylD
- +Klk3Qy/8VBRu0WM4l25VhIkH99UqoOeU2QWSUXbg6mXlDzuKVOIROsXDcFXfzQsdE4Nn1uHiK
- aHYxsEHIl00bDM6efb75oJehRyOsLhC8L2TU3XBGj7ZnQCC6nfhgWd3YbmS3RqR2mzvwQ+tW5B
- RlRR0JlmD5TaiXcFdGyIdHgUXXmp+9VcMAu5wmunTc9iE3jNP/l44b5WVGjBe+rw2iUGunvZj2
- 2hpR0KVNVHAfyxY+DgiWBk1s
+  by ob1.hgst.iphmx.com with ESMTP; 10 Apr 2020 00:54:07 +0800
+IronPort-SDR: Fau621jWYy6tQZ7S25GWwtivGduaB8ZHT3i9AhgIdDOkBVU2emVvyQ+s3wPi/tLYuJaUoEXQEV
+ XVhte+26SNYRnwId/HG66MydHFCzEm6ET2zuemrPE9UTkykv63aFjgWmy2aOKIEUlsVyvvIG66
+ 44YK7Rsq+fiDK8KPqds/hKg0F5Tsgc9U9tFHhcLEl97Ig4HBog7N/SUxTj8pr45Waf8MhAuNaa
+ 6zkkH0sbZ8WeGC2EmjkZPN8gDDcy/A25SBF7YXI7LoaVHFbJviY2hc8cjtsfgSvuGxPjvWTaIH
+ HS1KDqSxEUImH20I5QXdrbxn
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 09:44:44 -0700
-IronPort-SDR: +nAtLtmGjeh9fwyAgaXidtrGP5Yf+uR8XGp8p49fIAOKF4Eb9wD/Lo9d1wRe9y3VjHbY3umxIj
- 9AokJG83wV4AWOdifM4Xs+33cX4OQK5WbX/N3olSaSWBf68bxD7uyHXK+pVBqNuxxvskWZ6ZLI
- C6n75DZRH5nz5dnGhIy9JlMdTe+d4WWSQOj904KsWpmOfUdcBKK3h9WQYMHOKJu2LSlbWGylmd
- mt4As2mJPRw3o9rzWz90IyI1cyQRYRqd94MHEfp2lE5MODhwFQW5XnqHjp6KN10NxSwusugQ+1
- GSk=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 09:44:46 -0700
+IronPort-SDR: oeDJliF9+Gc5BrpOJzUUaj+cFpnU6A2fmoukfsV4u746HazOKY4LIbyIk6CW4GEAV0Irfz9M9c
+ Eche1Dn4C4/sBkgNa9sYfR77o403hL9EfEcEyQnhlwoxompSuMI6OLUgdmmKJXkSm5Df0aIgKV
+ uC8pL6ubm7PnEySMqdITeKxiAUSObR5EWJbKpaKeFNpI8OHnhoYUfp9BJU0bXHHhitvYFmfAHH
+ FU7UyRV38Wwcdxie5LACm7TW5dgFYu/xWIGbsXRk+6xvNX0xKnRAIgGjSe6Ca8PgHVBTMB/zUW
+ d8I=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 09 Apr 2020 09:54:04 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 09 Apr 2020 09:54:06 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -58,11 +58,10 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 05/10] scsi: sd_zbc: factor out sanity checks for zoned commands
-Date:   Fri, 10 Apr 2020 01:53:47 +0900
-Message-Id: <20200409165352.2126-6-johannes.thumshirn@wdc.com>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v5 06/10] scsi: export scsi_mq_free_sgtables
+Date:   Fri, 10 Apr 2020 01:53:48 +0900
+Message-Id: <20200409165352.2126-7-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
 References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
@@ -73,73 +72,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Factor sanity checks for zoned commands from sd_zbc_setup_zone_mgmt_cmnd().
+scsi_mq_free_sgtables is used to free the sg_tables, uninitialize the
+command and delete it from the command list.
 
-This will help with the introduction of an emulated ZONE_APPEND command.
+Export this function so it can be used from modular code to free the
+memory allocated by scsi_init_io() if the caller of scsi_init_io() needs
+to do error recovery.
+
+While we're at it, rename scsi_mq_free_sgtables() to scsi_free_sgtables().
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- drivers/scsi/sd_zbc.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
-index f45c22b09726..ee156fbf3780 100644
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -209,6 +209,26 @@ int sd_zbc_report_zones(struct gendisk *disk, sector_t sector,
- 	return ret;
+---
+Changes to v4:
+- Export scsi_mq_free_sgtables() instead of scsi_mq_uninit_cmnd()
+---
+ drivers/scsi/scsi_lib.c  | 7 ++++---
+ include/scsi/scsi_cmnd.h | 1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index ea327f320b7f..b6b3ccd366da 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -548,7 +548,7 @@ static void scsi_uninit_cmd(struct scsi_cmnd *cmd)
+ 	}
  }
  
-+static blk_status_t sd_zbc_cmnd_checks(struct scsi_cmnd *cmd)
-+{
-+	struct request *rq = cmd->request;
-+	struct scsi_disk *sdkp = scsi_disk(rq->rq_disk);
-+	sector_t sector = blk_rq_pos(rq);
-+
-+	if (!sd_is_zoned(sdkp))
-+		/* Not a zoned device */
-+		return BLK_STS_IOERR;
-+
-+	if (sdkp->device->changed)
-+		return BLK_STS_IOERR;
-+
-+	if (sector & (sd_zbc_zone_sectors(sdkp) - 1))
-+		/* Unaligned request */
-+		return BLK_STS_IOERR;
-+
-+	return BLK_STS_OK;
-+}
-+
- /**
-  * sd_zbc_setup_zone_mgmt_cmnd - Prepare a zone ZBC_OUT command. The operations
-  *			can be RESET WRITE POINTER, OPEN, CLOSE or FINISH.
-@@ -223,20 +243,14 @@ blk_status_t sd_zbc_setup_zone_mgmt_cmnd(struct scsi_cmnd *cmd,
- 					 unsigned char op, bool all)
+-static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
++void scsi_free_sgtables(struct scsi_cmnd *cmd)
  {
- 	struct request *rq = cmd->request;
--	struct scsi_disk *sdkp = scsi_disk(rq->rq_disk);
- 	sector_t sector = blk_rq_pos(rq);
-+	struct scsi_disk *sdkp = scsi_disk(rq->rq_disk);
- 	sector_t block = sectors_to_logical(sdkp->device, sector);
-+	blk_status_t ret;
+ 	if (cmd->sdb.table.nents)
+ 		sg_free_table_chained(&cmd->sdb.table,
+@@ -557,10 +557,11 @@ static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
+ 		sg_free_table_chained(&cmd->prot_sdb->table,
+ 				SCSI_INLINE_PROT_SG_CNT);
+ }
++EXPORT_SYMBOL_GPL(scsi_free_sgtables);
  
--	if (!sd_is_zoned(sdkp))
--		/* Not a zoned device */
--		return BLK_STS_IOERR;
--
--	if (sdkp->device->changed)
--		return BLK_STS_IOERR;
--
--	if (sector & (sd_zbc_zone_sectors(sdkp) - 1))
--		/* Unaligned request */
--		return BLK_STS_IOERR;
-+	ret = sd_zbc_cmnd_checks(cmd);
-+	if (ret != BLK_STS_OK)
-+		return ret;
+ static void scsi_mq_uninit_cmd(struct scsi_cmnd *cmd)
+ {
+-	scsi_mq_free_sgtables(cmd);
++	scsi_free_sgtables(cmd);
+ 	scsi_uninit_cmd(cmd);
+ 	scsi_del_cmd_from_list(cmd);
+ }
+@@ -1060,7 +1061,7 @@ blk_status_t scsi_init_io(struct scsi_cmnd *cmd)
  
- 	cmd->cmd_len = 16;
- 	memset(cmd->cmnd, 0, cmd->cmd_len);
+ 	return BLK_STS_OK;
+ out_free_sgtables:
+-	scsi_mq_free_sgtables(cmd);
++	scsi_free_sgtables(cmd);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(scsi_init_io);
+diff --git a/include/scsi/scsi_cmnd.h b/include/scsi/scsi_cmnd.h
+index a2849bb9cd19..a6383ced6156 100644
+--- a/include/scsi/scsi_cmnd.h
++++ b/include/scsi/scsi_cmnd.h
+@@ -167,6 +167,7 @@ extern void *scsi_kmap_atomic_sg(struct scatterlist *sg, int sg_count,
+ extern void scsi_kunmap_atomic_sg(void *virt);
+ 
+ extern blk_status_t scsi_init_io(struct scsi_cmnd *cmd);
++extern void scsi_free_sgtables(struct scsi_cmnd *cmd);
+ 
+ #ifdef CONFIG_SCSI_DMA
+ extern int scsi_dma_map(struct scsi_cmnd *cmd);
 -- 
 2.24.1
 
