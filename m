@@ -2,174 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9A81A3AA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 21:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B38631A3B0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 22:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbgDITgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 15:36:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40547 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbgDITgr (ORCPT
+        id S1726810AbgDIUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 16:04:16 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35802 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgDIUEP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 15:36:47 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w26so1418815edu.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Apr 2020 12:36:47 -0700 (PDT)
+        Thu, 9 Apr 2020 16:04:15 -0400
+Received: by mail-wm1-f67.google.com with SMTP id r26so61813wmh.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Apr 2020 13:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eblJGJkw4w1UEKYnbDX6zF9V7vMEXzIi4rXWl3QDYb4=;
-        b=aFdqjV4lrgBjhfSKBcQ24Rk2ZchceA5m5q7el1vKb8vpIwmKRj84DAV/TWJxkqKuFt
-         O1oDJ4Ewk40ZQwG3xm9odnDd4zCB5gL0zzFEELhT1WNha0YNvAjwy4EYFJ0z68D2HWxh
-         kZIC7dKMpby4y4Qsi2K8UlLLI355iNl+8KXmY=
+        bh=sDzglqZlZcxrIEiGaCL876u0tJXo/b3LCDiUPke6hM8=;
+        b=kE2dlQbAMbxEph/+OiWhvyA2TElid9qcNZ9MipQGEbkPmNmME0oWP6Qeyy+4+m8DjY
+         Bzl8br1FY05eY895V9BGKO0RGgmtQ0dU3lZjg6dn6zyPs/Dz9un44sS2qR1abZq1bF/4
+         4/ZkOlf3VMtAy462g4DrAo/3LvWxmEcahtAa2/z6FIGV072KBOOgJIJk1pdX+i7z0jz/
+         AY26jAQRRnv/7PNSWOc4z15UCesUJAC/VrvfCs/PiE5/g34utB0jXuEl9b65MXwXhkao
+         dAYCHj+t4ZqNfz/hQrkiSRyHkyXz/NqmgKFSVgBk86gdEwOOP1hvEIinZxG+zCBOJkbH
+         6EfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eblJGJkw4w1UEKYnbDX6zF9V7vMEXzIi4rXWl3QDYb4=;
-        b=DUnG3P8/lE/+8f5wv7qOyL66/iJpJ7Fe8rMQEYn4KoxGzUIy/dgToZQcZ6uO6kCGka
-         ywFAeeIqUhCp9fwaHZ3All6YPHMVfLYTShmc91v3bzoVbXcAfXC5sPQgsRFijuUJI71i
-         S/LVW7m6e+UivF/kUNnE+7bm69fkkJM9IYgKE90SzYBV6tOTehW3KD4mli56tJgqo+sN
-         /CbOEThTwzZw4wi68nFM8LRC3wfheyBVzVVEZ4BUaDC5TdxYCK/5LTJ7KFboqeUOvxcV
-         cL4YJd7blEiZnX5MqUEnplooYyisJkVk4WRuMKjXwnE3FiYpeCd3JKdbTJRzqGN7GRHV
-         AUMg==
-X-Gm-Message-State: AGi0PuZMkrY8V/TfXceQ7QKsEmZTjr9AX+T9vSwWJIcb1UUclOqjL1Ly
-        liZtE5LlvLcKre5s7C4sf7mutq/JKWQuN7gGTkRJrQ==
-X-Google-Smtp-Source: APiQypI998ICFNbqu8mR+IGJhpH4E7oQiodXgAj6x/q+EeqcZygIgn3TYK2lDJ2f8hMc30PHwHrl+Vnl0AdTLu5YFpU=
-X-Received: by 2002:a17:906:35ce:: with SMTP id p14mr613564ejb.43.1586461006313;
- Thu, 09 Apr 2020 12:36:46 -0700 (PDT)
+        bh=sDzglqZlZcxrIEiGaCL876u0tJXo/b3LCDiUPke6hM8=;
+        b=UAIA/mPGB3lnLE8Xv8MOCNjutfs3jNgPh6amwNtKi4a4rCR8XavdnCy0DQ35SnQ3UZ
+         P3Oy05e3+bbp2cTmjYz4SnvgDx+qlH2mv3AsD98m751uzuToFeOc0HaG8fQNAGCNpv16
+         U9OERM69ssXgzw2BJRngabuBYBtZPJE4nQY6emeZvb2dmlpfPaXgtZnyNOWUQ/m4NXnK
+         /hKv5PzoWXfX4+00t7EpYoQLzgv32uRQVoqoS/t9MN5j18xQZvKWqKlJG6ghX2kME1fV
+         fzljx1lLwZJQAM6B/nzlvTz1XXOk7/DLk1ZzhGojF9gKOkjhUNpQQnk3s0/oeJRmz1pi
+         hS+A==
+X-Gm-Message-State: AGi0PuZM+8UQ87J7YMzbkIPHZITM9dpWCzeRnUXNJ1G1niYf8thNQN5s
+        GnUN6t+NJY/jK2AJkvRI6sfW92e28KVOUVwWXa7DCQ==
+X-Google-Smtp-Source: APiQypIcxF55PCob3T7OJxlGddq8VbpK2dOAPx9ekIsXVMhJIBfxd3KBkrxn+QUgv+BxWPQtP+u9KmtE4swbJT8Ouc4=
+X-Received: by 2002:a7b:c050:: with SMTP id u16mr1700238wmc.68.1586462652947;
+ Thu, 09 Apr 2020 13:04:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200409141619.GF28467@miu.piliscsaba.redhat.com>
- <20200409165048.GE23230@ZenIV.linux.org.uk> <20200409165446.GF23230@ZenIV.linux.org.uk>
- <20200409183008.GG23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200409183008.GG23230@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 9 Apr 2020 21:36:35 +0200
-Message-ID: <CAJfpegtZ3T+1bN-pg-vmVvWZs-7chDWxBr0T+j4x_Lt4x0T8MQ@mail.gmail.com>
-Subject: Re: [PATCH v2] proc/mounts: add cursor
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org
+References: <20200409113305.1604965-1-hch@lst.de>
+In-Reply-To: <20200409113305.1604965-1-hch@lst.de>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 9 Apr 2020 22:04:01 +0200
+Message-ID: <CAFLxGvxXxR29R77nQKsYSpxviARk4AhWrzwfMPc1FECDLxh_sg@mail.gmail.com>
+Subject: Re: [PATCH] ubifs: remove broken lazytime support
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Richard Weinberger <richard@nod.at>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mtd@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 9, 2020 at 8:30 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Thu, Apr 9, 2020 at 1:33 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Thu, Apr 09, 2020 at 05:54:46PM +0100, Al Viro wrote:
-> > On Thu, Apr 09, 2020 at 05:50:48PM +0100, Al Viro wrote:
-> > > On Thu, Apr 09, 2020 at 04:16:19PM +0200, Miklos Szeredi wrote:
-> > > > Solve this by adding a cursor entry for each open instance.  Taking the
-> > > > global namespace_sem for write seems excessive, since we are only dealing
-> > > > with a per-namespace list.  Instead add a per-namespace spinlock and use
-> > > > that together with namespace_sem taken for read to protect against
-> > > > concurrent modification of the mount list.  This may reduce parallelism of
-> > > > is_local_mountpoint(), but it's hardly a big contention point.  We could
-> > > > also use RCU freeing of cursors to make traversal not need additional
-> > > > locks, if that turns out to be neceesary.
-> > >
-> > > Umm...  That can do more than reduction of parallelism - longer lists take
-> > > longer to scan and moving cursors dirties cachelines in a bunch of struct
-> > > mount instances.  And I'm not convinced that your locking in m_next() is
-> > > correct.
-> > >
-> > > What's to stop umount_tree() from removing the next entry from the list
-> > > just as your m_next() tries to move the cursor?  I don't see any common
-> > > locks for those two...
-> >
-> > Ah, you still have namespace_sem taken (shared) by m_start().  Nevermind
-> > that one, then...  Let me get through mnt_list users and see if I can
-> > catch anything.
+> When "ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs" introduced atime
+> support to ubifs, it also added lazytime support.  As far as I can tell
+> the lazytime support is terminally broken, as it causes
+> mark_inode_dirty_sync to be called from __writeback_single_inode, which
+> will then trigger the locking assert in ubifs_dirty_inode.  Just remove
+> the broken lazytime support for now, it can be added back later,
+> especially as some infrastructure changes should make that easier soon.
 >
-> OK...  Locking is safe, but it's not obvious.  And your changes do make it
-> scarier.   There are several kinds of lists that can be threaded through
-> ->mnt_list and your code depends upon never having those suckers appear
-> in e.g. anon namespace ->list.  It is true (AFAICS), but...
+> Fixes: 8c1c5f263833 ("ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-See analysis below.
+Thanks for pointing this out.
+Patch applied.
 
-> Another fun question is ns->mounts rules - it used to be "the number of
-> entries in ns->list", now it's "the number of non-cursor entries there".
-> Incidentally, we might have a problem with that logics wrt count_mount().
-
-Nope, count_mount() iterates through the mount tree, not through mnt_ns->list.
-
-> Sigh...  The damn thing has grown much too convoluted over years ;-/
->
-> I'm still not happy with that patch; at the very least it needs a lot more
-> detailed analysis to go along with it.
-
-Functions touching mnt_list:
-
-In pnode.c:
-
-umount_one:
-umount_list:
-propagate_umount: both of the above are indirectly called from this.
-The only caller is umount_tree(), which has lots of different call
-paths, but in each one has namespace_sem taken for write:
-
-do_move_mount
-  attach_recursive_mnt
-    umount_tree
-
-do_loopback
-  graft_tree
-    attach_recursive_mnt
-      umount_tree
-
-do_new_mount_fc
-  do_add_mount
-    graft_tree
-      attach_recursive_mnt
-        umount_tree
-
-finish_automount
-  do_add_mount
-    graft_tree
-      attach_recursive_mnt
-        umount_tree
-
-do_umount
-  shrink_submounts
-    umount_tree
-
-namespace.c:
-
-__is_local_mountpoint: takes namespace_sem for read
-
-commit_tree: has namespace_sem for write (only caller being
-attach_recursive_mnt, see above for call paths).
-
-m_start:
-m_next:
-m_show: all have namespace_sem for read
-
-umount_tree: all callers have namespace_sem for write (se above for call paths)
-
-do_umount: has namespace_sem for write
-
-copy_tree: all members are newly allocated
-
-iterate_mounts: operates on private copy built by collect_mounts()
-
-open_detached_copy: takes namespace_sem for write
-
-copy_mnt_ns: takes namespace_sem for write
-
-mount_subtree: adds onto a newly allocated mnt_namespace
-
-sys_fsmount: ditto
-
-init_mount_tree: ditto
-
-mnt_already_visible: takes namespace_sem for read
-
-Patch adds ns_lock locking to all places that only have namespace_sem
-for read.  So everyone is still excluded:  those taking namespace_sem
-for write against everyone else obviously, and those taking
-namespace_sem for read because they take ns_lock.
-
+-- 
 Thanks,
-Miklos
+//richard
