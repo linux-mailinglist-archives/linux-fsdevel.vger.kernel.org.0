@@ -2,111 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A32D31A35F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 16:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C0B1A3666
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 16:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbgDIOdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 10:33:08 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:45052 "EHLO raptor.unsafe.ru"
+        id S1727931AbgDIO5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 10:57:49 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43830 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727368AbgDIOdI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 10:33:08 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 9128E209C3;
-        Thu,  9 Apr 2020 14:32:56 +0000 (UTC)
-Date:   Thu, 9 Apr 2020 16:32:51 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
-Message-ID: <20200409143251.pqoprbjnetoup5vw@comp-core-i7-2640m-0182e6>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-9-gladkov.alexey@gmail.com>
- <87d08pkh4u.fsf@x220.int.ebiederm.org>
+        id S1727815AbgDIO5s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Apr 2020 10:57:48 -0400
+IronPort-SDR: +8O6pwnemwrKSqSh+fFrfOmtUnRm7BiVFT1l6Cu002rGQdAHf2DAZZRYZk9fVTycRmGctKdAcc
+ Bi4w8lEXRDgg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:57:48 -0700
+IronPort-SDR: hWIHqFJAKXewk6/sKwLmSZsN92xEpLx2GPDTgP2gywa6d7/KUy8wCmqL7INQxhknGssoSm/7+z
+ 7dsmfMxNOd0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
+   d="scan'208";a="286912897"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Apr 2020 07:57:48 -0700
+Date:   Thu, 9 Apr 2020 07:57:48 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V6 2/8] fs: Remove unneeded IS_DAX() check
+Message-ID: <20200409145747.GF664132@iweiny-DESK2.sc.intel.com>
+References: <20200407182958.568475-1-ira.weiny@intel.com>
+ <20200407182958.568475-3-ira.weiny@intel.com>
+ <20200409073134.GA31376@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87d08pkh4u.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 09 Apr 2020 14:33:06 +0000 (UTC)
+In-Reply-To: <20200409073134.GA31376@lst.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 11:05:21AM -0500, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+On Thu, Apr 09, 2020 at 09:31:34AM +0200, Christoph Hellwig wrote:
+> On Tue, Apr 07, 2020 at 11:29:52AM -0700, ira.weiny@intel.com wrote:
+> >  static inline bool io_is_direct(struct file *filp)
+> >  {
+> > -	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
+> > +	return (filp->f_flags & O_DIRECT);
+> >  }
 > 
-> > The hidepid parameter values are becoming more and more and it becomes
-> > difficult to remember what each new magic number means.
-> 
-> In principle I like this change.  In practice I think you have just
-> broken ABI compatiblity with the new mount ABI.
-> 
-> In particular the following line seems broken.
-> 
-> > diff --git a/fs/proc/root.c b/fs/proc/root.c
-> > index dbcd96f07c7a..ba782d6e6197 100644
-> > --- a/fs/proc/root.c
-> > +++ b/fs/proc/root.c
-> > @@ -45,7 +45,7 @@ enum proc_param {
-> >  
-> >  static const struct fs_parameter_spec proc_fs_parameters[] = {
-> >  	fsparam_u32("gid",	Opt_gid),
-> > -	fsparam_u32("hidepid",	Opt_hidepid),
-> > +	fsparam_string("hidepid",	Opt_hidepid),
-> >  	fsparam_string("subset",	Opt_subset),
-> >  	{}
-> >  };
-> 
-> As I read fs_parser.c fs_param_is_u32 handles string inputs and turns them
-> into numbers, and it handles binary numbers.
+> As requested last time: Can you please also just remove io_is_direct?
 
-Yes, you can use: fsconfig(fsfd, FSCONFIG_SET_BINARY, ...); but in this
-case the type of parameter will be fs_value_is_blob [1]. This kind of
-parameters is handled by fs_param_is_blob(). The fs_param_is_u32 can
-handle only parametes with fs_value_is_string type [2].
+FWIW I just found this mail in my junk folder...  My fault I know... :-/
 
-Am I missing something?
+Regardless I did not see that request last time but I can do that,
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fsopen.c#n405
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fs_parser.c#n215
-
-> However fs_param_is_string
-> appears to only handle strings.  It appears to have not capacity to turn
-> raw binary numbers into strings.
-> 
-> So I think we probably need to fix fs_param_is_string to raw binary
-> numbers before we can safely make this change to fs/proc/root.c
-> 
-> David am I reading the fs_parser.c code correctly?  If I am are you ok
-> with a change like the above?
-> 
-> Eric
-> 
-
--- 
-Rgrds, legion
-
+Done for V7
+Ira
