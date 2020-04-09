@@ -2,113 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E071A34FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 15:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A4D61A350D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Apr 2020 15:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbgDINhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 09:37:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49866 "EHLO mx2.suse.de"
+        id S1726928AbgDINmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 09:42:49 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:53632 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbgDINhW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 09:37:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6FD8AAE30;
-        Thu,  9 Apr 2020 13:37:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DA5F71E124D; Thu,  9 Apr 2020 15:37:19 +0200 (CEST)
-Date:   Thu, 9 Apr 2020 15:37:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        sandeen@sandeen.net
-Subject: Re: [RFC 1/1] ext4: Fix race in
- ext4_mb_discard_group_preallocations()
-Message-ID: <20200409133719.GA18960@quack2.suse.cz>
-References: <cover.1586358980.git.riteshh@linux.ibm.com>
- <2e231c371cc83357a6c9d55e4f7284f6c1fb1741.1586358980.git.riteshh@linux.ibm.com>
+        id S1726880AbgDINmt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Apr 2020 09:42:49 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 26602209C3;
+        Thu,  9 Apr 2020 13:42:43 +0000 (UTC)
+Date:   Thu, 9 Apr 2020 15:42:36 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH RESEND v11 0/8] proc: modernize proc to support multiple
+ private instances
+Message-ID: <20200409134236.mksvudaucp3jawf6@comp-core-i7-2640m-0182e6>
+References: <20200409123752.1070597-1-gladkov.alexey@gmail.com>
+ <87y2r4vmpo.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e231c371cc83357a6c9d55e4f7284f6c1fb1741.1586358980.git.riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87y2r4vmpo.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 09 Apr 2020 13:42:45 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Ritesh!
+On Thu, Apr 09, 2020 at 07:59:47AM -0500, Eric W. Biederman wrote:
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+> 
+> > Preface:
+> > --------
+> > This is patchset v11 to modernize procfs and make it able to support multiple
+> > private instances per the same pid namespace.
+> >
+> > This patchset can be applied on top of:
+> >
+> > git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
+> > 4b871ce26ab2
+> 
+> 
+> 
+> Why the resend?
+> 
+> Nothing happens until the merge window closes with the release of -rc1
+> (almost certainly on this coming Sunday).  I goofed and did not act on
+> this faster, and so it is my fault this did not make it into linux-next
+> before the merge window.  But I am not going to rush this forward.
+> 
+> 
+> 
+> You also ignored my review and have not even descibed why it is safe
+> to change the type of a filesystem parameter.
+> 
+> -	fsparam_u32("hidepid",	Opt_hidepid),
+> +	fsparam_string("hidepid",	Opt_hidepid),
+> 
+> 
+> Especially in light of people using fsconfig(fd, FSCONFIG_SET_...);
+> 
+> All I need is someone to point out that fsparam_u32 does not use
+> FSCONFIG_SET_BINARY, but FSCONFIG_SET_STRING.
 
-On Wed 08-04-20 22:24:10, Ritesh Harjani wrote:
-> @@ -3908,16 +3919,13 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
->  
->  	mb_debug(1, "discard preallocation for group %u\n", group);
->  
-> -	if (list_empty(&grp->bb_prealloc_list))
-> -		return 0;
-> -
+I decided to resend again because I was not sure that the previous
+patchset was not lost. I also wanted to ask David to review and explain
+about the new API. I in any case did not ignore your question about
+changing the type of the parameter.
 
-OK, so ext4_mb_discard_preallocations() is now going to lock every group
-when we try to discard preallocations. That's likely going to increase lock
-contention on the group locks if we are running out of free blocks when
-there are multiple processes trying to allocate blocks. I guess we don't
-care about the performace of this case too deeply but I'm not sure if the
-cost won't be too big - probably we should check how much the CPU usage
-with multiple allocating process trying to find free blocks grows...
+I guess I was wrong when I sent the whole patchset again. Sorry.
 
->  	bitmap_bh = ext4_read_block_bitmap(sb, group);
->  	if (IS_ERR(bitmap_bh)) {
->  		err = PTR_ERR(bitmap_bh);
->  		ext4_set_errno(sb, -err);
->  		ext4_error(sb, "Error %d reading block bitmap for %u",
->  			   err, group);
-> -		return 0;
-> +		goto out_dbg;
->  	}
->  
->  	err = ext4_mb_load_buddy(sb, group, &e4b);
-> @@ -3925,7 +3933,7 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
->  		ext4_warning(sb, "Error %d loading buddy information for %u",
->  			     err, group);
->  		put_bh(bitmap_bh);
-> -		return 0;
-> +		goto out_dbg;
->  	}
->  
->  	if (needed == 0)
-> @@ -3967,9 +3975,15 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
->  		goto repeat;
->  	}
->  
-> -	/* found anything to free? */
-> +	/*
-> +	 * If this list is empty, then return the grp->bb_free. As someone
-> +	 * else may have freed the PAs and updated grp->bb_free.
-> +	 */
->  	if (list_empty(&list)) {
->  		BUG_ON(free != 0);
-> +		mb_debug(1, "Someone may have freed PA for this group %u, grp->bb_free %d\n",
-> +			 group, grp->bb_free);
-> +		free = grp->bb_free;
->  		goto out;
->  	}
+> My apologies for being grumpy but this feels like you are asking me to
+> go faster when it is totally inappropriate to do so, while busily
+> ignoring my feedback.
+> 
+> I think this should happen.  But I can't do anything until after -rc1.
 
-OK, but this still doesn't reliably fix the problem, does it? Because
-bb_free can be still zero and another process just has some extents to free
-in its local 'list' (e.g. because it has decided it doesn't have enough
-extents, some were busy and it decided to cond_resched()), so bb_free will
-increase from 0 only once these extents are freed.
+I think you misunderstood me. I didn't mean to rush you.
 
-Honestly, I don't understand why ext4_mb_discard_group_preallocations()
-bothers with the local 'list'. Why doesn't it simply free the preallocation
-right away? And that would also basically fix your problem (well, it would
-still theoretically exist because there's still freeing of one extent
-potentially pending but I'm not sure if that will still be a practical
-issue).
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Rgrds, legion
+
