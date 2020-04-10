@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE761A425B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 08:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 928D51A4274
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 08:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725818AbgDJGE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 02:04:26 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59822 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbgDJGE0 (ORCPT
+        id S1725880AbgDJGSX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 02:18:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40968 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgDJGSX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 02:04:26 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jMmm6-00FnMr-DK; Fri, 10 Apr 2020 06:04:22 +0000
-Date:   Fri, 10 Apr 2020 07:04:22 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4] proc/mounts: add cursor
-Message-ID: <20200410060422.GJ23230@ZenIV.linux.org.uk>
-References: <20200410050522.GI28467@miu.piliscsaba.redhat.com>
- <20200410051457.GI23230@ZenIV.linux.org.uk>
- <CAJfpegvse9GrzncMOShNf80-7a6AMaAEGdbpL739RBzQmpQdMw@mail.gmail.com>
+        Fri, 10 Apr 2020 02:18:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Vd1LnDW74LEIAOjIFqooGW6tp/Rca5J0XyRGTCKSUCA=; b=XG4EL/7CIpfxUP3Bs95F3EluO4
+        V+BmjeIhamdR1wz8cogPiMiOgWlpQaWNAy8puH6HGGSF0WWD0ynZsdmjm3wfUvdzA+RKk1q/dTwiO
+        SjqkgdaLUsgntn8SZVSqm8JfJ5G/HMSixrCP3Y4ppDGl8eZ0E58rGCdEnujAPNLfq2EoC/KVZDRsK
+        v7Kz3X0wCS0b/2VTMqJSK1b7OIipw5uItXcOM6tVV0Xk09oHJIp+4QH+q1daE19/rwbFEItr2OWBj
+        iIFJCG1ZzLnF6Ty4pYF5dIZMVDAwjfhotlwFZwUTuuNR4A6t6gdWLnRTeJSsCbUE0Gyz28SXIw8AR
+        78T5Z3tQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jMmze-0006IO-W7; Fri, 10 Apr 2020 06:18:22 +0000
+Date:   Thu, 9 Apr 2020 23:18:22 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 07/10] scsi: sd_zbc: emulate ZONE_APPEND commands
+Message-ID: <20200410061822.GB4791@infradead.org>
+References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
+ <20200409165352.2126-8-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegvse9GrzncMOShNf80-7a6AMaAEGdbpL739RBzQmpQdMw@mail.gmail.com>
+In-Reply-To: <20200409165352.2126-8-johannes.thumshirn@wdc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 10, 2020 at 07:23:47AM +0200, Miklos Szeredi wrote:
+On Fri, Apr 10, 2020 at 01:53:49AM +0900, Johannes Thumshirn wrote:
+> +	if (req_op(rq) == REQ_OP_ZONE_APPEND) {
+> +		ret = sd_zbc_prepare_zone_append(cmd, &lba, nr_blocks);
+> +		if (ret) {
+> +			scsi_free_sgtables(cmd);
+> +			return ret;
+> +		}
+> +	}
 
-> > Hmm...  I wonder if it would be better to do something like
-> >         if (!*pos)
-> >                 prev = &p->ns->list.next;
-> >         else
-> >                 prev = &p->mnt.mnt_list.next;
-> >         mnt = mnt_skip_cursors(p->ns, prev);
-> >
-> > >  static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-> > >  {
-> > >       struct proc_mounts *p = m->private;
-> > > +     struct mount *mnt = v;
-> > > +
-> > > +     lock_ns_list(p->ns);
-> > > +     mnt = mnt_skip_cursors(p->ns, list_next_entry(mnt, mnt_list));
-> >
-> > ... and mnt = mnt_skip_cursors(p->ns, &mnt->mnt_list.next);
-> 
-> If you prefer that, yes.  Functionally it's equivalent.
+So actually.
 
-Sure, it's just that I suspect that result will be somewhat more
-readable that way.
-
-Incidentally, there might be another benefit - both &p->ns->list.next
-and &p->mnt.mnt_list.next are not going to change.  So calculation of
-prev can be lifter out of lock_ns_list() and _that_ promises something
-more tasty - all callers of mnt_skip_cursors() are immediately
-surrounded by lock_ns_list()/unlock_ns_list() and those can be moved
-inside the damn thing.
+I've been trying to understand the lifetime of the sgtables.  Shouldn't
+we free them in the midayer ->init_command returned BLK_STS_*RESOURCE
+instead?  It seems like this just catches one particular error instead
+of the whole category?  The end of scsi_queue_rq seem like a particular
+good place, as that also releases the resources for the "hard" errors.
