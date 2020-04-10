@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6924B1A3E8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 05:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F7811A3E9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 05:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgDJDDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Apr 2020 23:03:04 -0400
-Received: from mail-pj1-f46.google.com ([209.85.216.46]:54434 "EHLO
-        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbgDJDDD (ORCPT
+        id S1726638AbgDJDM1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Apr 2020 23:12:27 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33436 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbgDJDM0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Apr 2020 23:03:03 -0400
-Received: by mail-pj1-f46.google.com with SMTP id np9so295024pjb.4;
-        Thu, 09 Apr 2020 20:03:02 -0700 (PDT)
+        Thu, 9 Apr 2020 23:12:26 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d17so456751pgo.0;
+        Thu, 09 Apr 2020 20:12:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=Yx63lk8RT34aqmn2wwwXYr4ITQy56i1jV6rkTskGXfo=;
-        b=hcS9H/jol2nloTnhxTTYz1J86hCOKpi76OI2AASsk2QeJRkgvgha318lwVYO0HoBdn
-         9D3EtsC0uDRUc2z+3Rj4hOtJOkLIfKDdYpjazjZLR8oAS7BdxrAAlUY5tRzuvEnIQcaI
-         /rBJtby8y3D/+zYVMrtPFwZnHOlu7X9p8iOCGVp59hMETiDguo/D00aJXusyktTjvs31
-         FA7fp+OvMcj3EQP689SHihxS0QNuX8+cmBBCPj+xxb3rifeH3gz/6jmt5OASsuTVd95N
-         1vKLC6oB1eW6Buw8VSgGnCJOvllXTdYUsYYpQHdF5Hzkoz1svmsAYsKHk/ZNmtAh/52a
-         ATJg==
-X-Gm-Message-State: AGi0PuarZ2jyoNmHfBRQprrDSksO/LmRW9ujJtMEsmWS6yMuRK+yDxYt
-        3lQcQrKiidRisWara6d9FGk=
-X-Google-Smtp-Source: APiQypIoUZ/3/EuxFpsd/RfuPKDsadzakCdg2WbLCZWPB/VGhmKM+C1OymdKtBxeWmnVjHot2qRsTg==
-X-Received: by 2002:a17:902:b60d:: with SMTP id b13mr2814516pls.324.1586487781345;
-        Thu, 09 Apr 2020 20:03:01 -0700 (PDT)
+        bh=riLsCQbI8rWtquYxJsTgKqCXsr91BsaOod5Gd8OL/tY=;
+        b=AcVxCVhitGWT7cX7BC3gMTShdwHIFV5P+Jx8Q5h0Qp1kliooiSyQCNr7uE1nIizppC
+         Ygj1Z9CPNTWP6FI8YeNQuRpDxHP/njrgWzKvlbCMHc57JRKWkxXkzC2fCU5HB4cMOHE6
+         xGN7Vh0vo/wqar3SN9oZWL/4/do0C5gaDGNoC2v1LYcw4UpMGCh3LIGmJ6x2csMBGNaW
+         S4ZJ6/pXzdtXtHzMMe53u3r7zNqzEY5KZCl9H8bF7eDLVpMksP78VAvMt9AcFnjbGGSm
+         DK9S0SXDZ3pVSKop/meYukydamHAk85gb7sUu3rxj9wJt6Ce6dJboGs87OKLwtz7cVzc
+         GmSA==
+X-Gm-Message-State: AGi0PuZ04j8Zq0FJwDUzdvmoav665rDlAIxlQBerp0iCZVMRnPLl9r/m
+        /N7W7InMeWO1x7sL4i+9lrg=
+X-Google-Smtp-Source: APiQypJB9TbTwNuE4JRdnVGrOnnBOWWgxmCc4vJV5SidGuVHW3ci9n/1oxuQj7yHNMWcyR+ZersXAg==
+X-Received: by 2002:a65:5a4f:: with SMTP id z15mr2583848pgs.103.1586488344310;
+        Thu, 09 Apr 2020 20:12:24 -0700 (PDT)
 Received: from ?IPv6:2601:647:4000:d7:ed4e:1b14:7fc4:cd73? ([2601:647:4000:d7:ed4e:1b14:7fc4:cd73])
-        by smtp.gmail.com with ESMTPSA id t63sm433471pgc.85.2020.04.09.20.02.59
+        by smtp.gmail.com with ESMTPSA id q6sm461549pja.34.2020.04.09.20.12.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Apr 2020 20:03:00 -0700 (PDT)
-Subject: Re: [RFC v2 4/5] mm/swapfile: refcount block and queue before using
- blkcg_schedule_throttle()
+        Thu, 09 Apr 2020 20:12:23 -0700 (PDT)
+Subject: Re: [RFC v2 5/5] block: revert back to synchronous request_queue
+ removal
 To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
         viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
         rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
@@ -47,7 +47,7 @@ Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
         Hannes Reinecke <hare@suse.com>,
         Michal Hocko <mhocko@kernel.org>
 References: <20200409214530.2413-1-mcgrof@kernel.org>
- <20200409214530.2413-5-mcgrof@kernel.org>
+ <20200409214530.2413-6-mcgrof@kernel.org>
 From:   Bart Van Assche <bvanassche@acm.org>
 Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
@@ -72,12 +72,12 @@ Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
  mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
  goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <5001fb4f-28b8-26b1-fc66-11b3105b15b9@acm.org>
-Date:   Thu, 9 Apr 2020 20:02:59 -0700
+Message-ID: <161e938d-929b-1fdb-ba77-56b839c14b5b@acm.org>
+Date:   Thu, 9 Apr 2020 20:12:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200409214530.2413-5-mcgrof@kernel.org>
+In-Reply-To: <20200409214530.2413-6-mcgrof@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,21 +87,36 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020-04-09 14:45, Luis Chamberlain wrote:
->  		if (si->bdev) {
-> +			bdev = bdgrab(si->bdev);
-> +			if (!bdev)
-> +				continue;
-> +			/*
-> +			 * By adding our own bdgrab() we ensure the queue
-> +			 * sticks around until disk_release(), and so we ensure
-> +			 * our release of the request_queue does not happen in
-> +			 * atomic context.
-> +			 */
->  			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
->  						true);
+> blk_put_queue() puts decrements the refcount for the request_queue
+                  ^^^^
+        can this word be left out?
 
-How about changing the si->bdev argument of blkcg_schedule_throttle()
-into bdev?
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 8b1cab52cef9..46fee1ef92e3 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -614,6 +614,7 @@ struct request_queue {
+>  #define QUEUE_FLAG_PCI_P2PDMA	25	/* device supports PCI p2p requests */
+>  #define QUEUE_FLAG_ZONE_RESETALL 26	/* supports Zone Reset All */
+>  #define QUEUE_FLAG_RQ_ALLOC_TIME 27	/* record rq->alloc_time_ns */
+> +#define QUEUE_FLAG_DEFER_REMOVAL 28	/* defer queue removal */
+>  
+>  #define QUEUE_FLAG_MQ_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+>  				 (1 << QUEUE_FLAG_SAME_COMP))
+> @@ -648,6 +649,8 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
+>  #else
+>  #define blk_queue_rq_alloc_time(q)	false
+>  #endif
+> +#define blk_queue_defer_removal(q) \
+> +	test_bit(QUEUE_FLAG_DEFER_REMOVAL, &(q)->queue_flags)
+
+Since blk_queue_defer_removal() has no callers the code that depends on
+QUEUE_FLAG_DEFER_REMOVAL to be set will be subject to bitrot. It would
+make me happy if the QUEUE_FLAG_DEFER_REMOVAL flag and the code that
+depends on that flag would be removed.
+
+Please add a might_sleep() call in blk_put_queue() since with this patch
+applied it is no longer allowed to call blk_put_queue() from atomic context.
 
 Thanks,
 
