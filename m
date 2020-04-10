@@ -2,86 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732161A4784
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 16:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CDB21A47A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 16:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgDJOe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 10:34:59 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43658 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgDJOe7 (ORCPT
+        id S1726181AbgDJOxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 10:53:04 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:43194 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbgDJOxE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 10:34:59 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l1so1103957pff.10;
-        Fri, 10 Apr 2020 07:34:57 -0700 (PDT)
+        Fri, 10 Apr 2020 10:53:04 -0400
+Received: by mail-ua1-f66.google.com with SMTP id g24so689420uan.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Apr 2020 07:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=iOuSkiNnCdrm6WQOP5UTBzqHj5dlpQHZNX0c4sN5kGU=;
+        b=ugGo4RpyxVPUyPNqgSF/orZjZYqvJ/WM7qjbUvTqYx4VfB3YRWlVrlLsK9MUsxVhNU
+         zXEVMMc9s6SDJdQrcSLugVFHj7PUK/fBJkR0+vEAoaTQHcsVjZMRykR0jYKdwW2tFEU6
+         jj4PZSgroXPRJ69kpyG57hQWRNEdDPzzDfcZqz76QJ3qWZGRKlsIg2B07XzYdUjE94T9
+         diFK2jp9is7Lt5QSMoPePW3DctY5cJSQMfZ3kAlYVml4V9XpRTI21rAaZShvNhHUmRpC
+         f6sWGJXFZ/fnsUKMRwtIoI32hDJJXLKMeQat1UqpbNKkCw7wuBTHczK5DACUmVW97c/Q
+         SZwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yiasH6wCnDGCTdH9mzlfIlSZUoRnw4cIEE89UnT/Y/c=;
-        b=Z4hQ9i7tKJP6LjsuwIuk4uSGY4EaPDBrV4fedQMhodSG0z05BiHWDMWhoOc0MSvqa7
-         1DvePot9jlpfTbNcL+1kRo+o3wQldtLR1jNkc8UtBrUcKQruT3usveT074qWvRFaXJaL
-         VUE1jWE0R+0cjTf4SOBIFRMELmot5Xi59n7jKFrGE1zIXMjThHxk1Q9P+X13CLJXFT4H
-         6qdvdB4MBNPOHInvNDXR6sewCxXqh2H5c0V7xbVh3xwKrARl4rXHV+MwKpu2Z3tLowl7
-         zH6sbQxU47u66iU5Qi88hOtF/t+9B/Eu6TWzj42rib2C9hnaFzE+cg2SJkbRoh8KmXA0
-         zHRQ==
-X-Gm-Message-State: AGi0PuY1Prtdc63X6K65/xE5i3FmKBYNMaBQFXhYvikk3h+cs9Ak+lGn
-        dM2isuipGg5W/391NoQJH0A=
-X-Google-Smtp-Source: APiQypLWmTwZhj96obnuL8BMloW/igvcDJXIQg366hd4jfScUoh9JrDWnnjg3g++vQtKj/IO2ajdvA==
-X-Received: by 2002:a63:741a:: with SMTP id p26mr5078048pgc.40.1586529296982;
-        Fri, 10 Apr 2020 07:34:56 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j24sm1918955pji.20.2020.04.10.07.34.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 07:34:56 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id D3C5940630; Fri, 10 Apr 2020 14:34:54 +0000 (UTC)
-Date:   Fri, 10 Apr 2020 14:34:54 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RFC v2 4/5] mm/swapfile: refcount block and queue before using
- blkcg_schedule_throttle()
-Message-ID: <20200410143454.GL11244@42.do-not-panic.com>
-References: <20200409214530.2413-1-mcgrof@kernel.org>
- <20200409214530.2413-5-mcgrof@kernel.org>
- <5001fb4f-28b8-26b1-fc66-11b3105b15b9@acm.org>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=iOuSkiNnCdrm6WQOP5UTBzqHj5dlpQHZNX0c4sN5kGU=;
+        b=bp+EKrOpzhZkAIriWaj0Zfg38uFBaBlc1E1qnwaKgppk0iuI8OWGHj/Y894VY2dD4I
+         2DafMm2Px7X6cWqf0yFhsgCQEVAG5dVI6RgimxVyVkYd0d7xUvRL370m8zjYG10haek1
+         JV7agZXT/0vGDKyeiooxujGIm8Et37XE1pryH0ktzvkOocXAAmHZkXbAkaHBTkB81j4F
+         rS70L49c0rhlIH6v/3nMOg2cguNsvlbFQROQpmg68Kbjnqc+IPTA6oAO8QFVqvsOwICv
+         jlgPuTNzKfqD2Mg9JoZk+FJ++Fxuh4520v0kN/BoOBOrPMDKRCZM0ZKopLVdmoZaosUG
+         5+uA==
+X-Gm-Message-State: AGi0Puap4zgT5wFSoA1a8fhgS3NRcliDmBBI8TWsABSxJ5vWc69ZUf0j
+        DP8ceW5ZBZHbWNOevvI0uafyArXiTkVLlepYEngQmg==
+X-Google-Smtp-Source: APiQypJZSlsqTv9Cy2lNEkMUUK0oSXXePKPxhBr26dnCs7fyCJq27LC83Guv/EBclbZ46zq+vQ3pkxXv6ohvxIxToSs=
+X-Received: by 2002:ab0:6588:: with SMTP id v8mr3314969uam.35.1586530381502;
+ Fri, 10 Apr 2020 07:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5001fb4f-28b8-26b1-fc66-11b3105b15b9@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Fri, 10 Apr 2020 10:52:50 -0400
+Message-ID: <CAOg9mSSeHarznzQOBr4GkdxMHqSTEEj786o8yG1nZ35C0FYSng@mail.gmail.com>
+Subject: [GIT PULL] orangefs: a fix and two cleanups and a merge conflict
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, hubcapsc@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 08:02:59PM -0700, Bart Van Assche wrote:
-> On 2020-04-09 14:45, Luis Chamberlain wrote:
-> >  		if (si->bdev) {
-> > +			bdev = bdgrab(si->bdev);
-> > +			if (!bdev)
-> > +				continue;
-> > +			/*
-> > +			 * By adding our own bdgrab() we ensure the queue
-> > +			 * sticks around until disk_release(), and so we ensure
-> > +			 * our release of the request_queue does not happen in
-> > +			 * atomic context.
-> > +			 */
-> >  			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
-> >  						true);
-> 
-> How about changing the si->bdev argument of blkcg_schedule_throttle()
-> into bdev?
+The following changes since commit 7111951b8d4973bda27ff663f2cf18b663d15b48:
 
-Sure, thanks!
+  Linux 5.6 (2020-03-29 15:25:41 -0700)
 
-  Luis
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+tags/for-linus-5.7-ofs1
+
+for you to fetch changes up to aa317d3351dee7cb0b27db808af0cd2340dcbaef:
+
+  orangefs: clarify build steps for test server in orangefs.txt
+(2020-04-08 13:01:03 -0400)
+
+----------------------------------------------------------------
+orangefs: a fix and two cleanups and a merge conflict
+
+Fix: Christoph Hellwig noticed that some logic I added to
+     orangefs_file_read_iter introduced a race condition, so he
+     sent a reversion patch. I had to modify his patch since
+     reverting at this point broke Orangefs.
+
+Cleanup 1: Christoph Hellwig noticed that we were doing some unnecessary
+           work in orangefs_flush, so he sent in a patch that removed
+           the un-needed code.
+
+Cleanup 2: Al Viro told me he had trouble building Orangefs. Orangefs
+           should be easy to build, even for Al :-). I looked back
+           at the test server build notes in orangefs.txt, just in case
+           that's where the trouble really is, and found a couple of
+           typos and made a couple of clarifications.
+
+Merge Conflict: Stephen Rothwell reported that my modifications to
+                orangefs.txt caused a merge conflict with orangefs.rst
+                in Linux Next. I wasn't sure what to do, so I asked,
+                and Jonathan Corbet said not to worry about it and
+                just to report it to Linus.
+
+----------------------------------------------------------------
+Mike Marshall (3):
+      orangefs: get rid of knob code...
+      orangefs: don't mess with I_DIRTY_TIMES in orangefs_flush
+      orangefs: clarify build steps for test server in orangefs.txt
+
+ Documentation/filesystems/orangefs.txt | 34 ++++++++++++++++-------------
+ fs/orangefs/file.c                     | 34 +----------------------------
+ fs/orangefs/inode.c                    | 39 ++++++----------------------------
+ fs/orangefs/orangefs-kernel.h          |  4 ----
+ 4 files changed, 26 insertions(+), 85 deletions(-)
