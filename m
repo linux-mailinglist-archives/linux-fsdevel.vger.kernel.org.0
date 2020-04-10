@@ -2,82 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95AA71A4B8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 23:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5F001A4C6F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Apr 2020 01:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgDJV1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 17:27:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbgDJV1i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 17:27:38 -0400
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82460215A4;
-        Fri, 10 Apr 2020 21:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586554058;
-        bh=V8QhhiRTymtAGzS4jMm11mYDdFfOWqwXJ0Awmxqa7oM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=s/nBaA6LOPpckWlwyeu6G42+wIf81zq6VVgY/lVhpQpkRhgz03nPSamZe1NK+HPq/
-         D7M7tbdynL5FR499sS8D6zY/s8Xpq3iLG7vm6xDpfqwefsnO9khABcOVrqTHv8Yf0r
-         qeXKgH66aRJSC+2OLj65YDrzKFiF+ftWEMJFf8xw=
-Received: by mail-ua1-f54.google.com with SMTP id x18so387044uap.8;
-        Fri, 10 Apr 2020 14:27:38 -0700 (PDT)
-X-Gm-Message-State: AGi0Pubjevd8pGFhQnbWWlTaFuVNvOp73AI5C4eAqlZXF/7O2Z+1oe3e
-        9b+5pSOABsJGozlw7/QSbk0IXw9AraWUmN9GKUI=
-X-Google-Smtp-Source: APiQypKL5aZ2RNqUUOB0SjAH5YbjeLzshTc1ta+JOreiajZrgqBymzHOh8oGSfSKa2KXtA1f94T8sQs2WZLp2sC77bg=
-X-Received: by 2002:ab0:1e89:: with SMTP id o9mr4281024uak.93.1586554057531;
- Fri, 10 Apr 2020 14:27:37 -0700 (PDT)
+        id S1726678AbgDJXH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 19:07:57 -0400
+Received: from fallback23.m.smailru.net ([94.100.187.222]:42512 "EHLO
+        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726648AbgDJXH5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Apr 2020 19:07:57 -0400
+X-Greylist: delayed 1569 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Apr 2020 19:07:55 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:Cc:To:From; bh=mxvx/67cV1C+TL0pdy757vF+ITHUDShoO3Ua/Uix1eM=;
+        b=nIKSxHvQjrKIgItacr3NZ6gM3csz1ru2yL72OXeMwegqfEQvGJKFA7TmvxkmDTQ3QxedZAbI5EqjpYcHSsgUlAMZk6kMGmwz6xzzSCr1HcBm+VCuwShrfVbNHvo7X3kKaHEnagwlSSpFj8KcqaBsWDKS3FZVWbyHVlZav7ou1mU=;
+Received: from [10.161.163.38] (port=44038 helo=f476.i.mail.ru)
+        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
+        id 1jN2LI-0006Ti-NV; Sat, 11 Apr 2020 01:41:44 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:Cc:To:From; bh=mxvx/67cV1C+TL0pdy757vF+ITHUDShoO3Ua/Uix1eM=;
+        b=nIKSxHvQjrKIgItacr3NZ6gM3csz1ru2yL72OXeMwegqfEQvGJKFA7TmvxkmDTQ3QxedZAbI5EqjpYcHSsgUlAMZk6kMGmwz6xzzSCr1HcBm+VCuwShrfVbNHvo7X3kKaHEnagwlSSpFj8KcqaBsWDKS3FZVWbyHVlZav7ou1mU=;
+Received: by f476.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
+        id 1jN2LF-0004fK-6I; Sat, 11 Apr 2020 01:41:41 +0300
+Received: by light.mail.ru with HTTP;
+        Sat, 11 Apr 2020 01:41:41 +0300
+From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+To:     cyphar@cyphar.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: =?UTF-8?B?V2hhdCBhYm91dCBhZGRpbmcgQVRfTk9fQVVUT01PVU5UIGFuYWxvZ3VlIHRv?=
+ =?UTF-8?B?IG9wZW5hdDI/?=
 MIME-Version: 1.0
-References: <20200409214530.2413-1-mcgrof@kernel.org> <20200409214530.2413-6-mcgrof@kernel.org>
- <161e938d-929b-1fdb-ba77-56b839c14b5b@acm.org> <20200410143412.GK11244@42.do-not-panic.com>
- <CAB=NE6VfQH3duMGneJnzEnXzAJ1TDYn26WhQCy8X1Mb_T6esgQ@mail.gmail.com>
-In-Reply-To: <CAB=NE6VfQH3duMGneJnzEnXzAJ1TDYn26WhQCy8X1Mb_T6esgQ@mail.gmail.com>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Fri, 10 Apr 2020 15:27:30 -0600
-X-Gmail-Original-Message-ID: <CAB=NE6XfdgB82ncZUkLpdYvDDdyVvVUd8nUmRCb8LbOQ213QoA@mail.gmail.com>
-Message-ID: <CAB=NE6XfdgB82ncZUkLpdYvDDdyVvVUd8nUmRCb8LbOQ213QoA@mail.gmail.com>
-Subject: Re: [RFC v2 5/5] block: revert back to synchronous request_queue removal
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
-        Ming Lei <ming.lei@redhat.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, yu kuai <yukuai3@huawei.com>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Mail.Ru Mailer 1.0
+Date:   Sat, 11 Apr 2020 01:41:41 +0300
+Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+X-Priority: 3 (Normal)
+Message-ID: <1586558501.806374941@f476.i.mail.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-7564579A: 646B95376F6C166E
+X-77F55803: 0A44E481635329DB4E7FAE048FD183FFD32E5E488652173699CE90E9CBBFB45F533187F580C9A3C5FBDBF69DD7E3F538CCE2E01486CEC77C7C958CBD0D8051AE467A4D52C36B36E8F7C03686E6FAFAA4
+X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE79A7838B1C93996B3D82A6BABE6F325AC9EB98D58427B1C2ABCF491FFA38154B613377AFFFEAFD2691661749BA6B97735E338B9D28515FD48C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE7FDE19FEC90BA7BD78F08D7030A58E5AD6BA297DBC24807EAA9D420A4CFB5DD3E14EAEAFEC97FBC61D7027B63E537BF2EAB3F61A9443B25348941B15DA834481FA18204E546F3947C2FFDA4F57982C5F4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BF1175FABE1C0F9B6A471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E735262FEC7FBD7D1F5BB5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DBEB6346B700B4D54FE5BFE6E7EFDEDCD789D4C264860C145E
+X-D57D3AED: Y8kq8+OzVozcFQziTi/Zi098oNK9gy3Irm5KFwLuDg60je4lC+GbTj0M8KbzpOmgsB7wYP6nnel8wfEHQiZAetlEg7qy07ISeqrIhHPnkjx0qYt/JhcayA==
+X-Mailru-Internal-Actual: A:0.81979357255974
+X-Mailru-Sender: 5EEECD413B34D8D993653919C594580509AFADCAB17C8D30412F8EFC6DC694E9173A9C3A3203BEB4E050B273745CFBD67903AA853BEC14D66BF3EC0C2B8D44F11752C749FAB18CA3A8F61D99D8C7FF8FA4CD9F439FE7F8175FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-Spam: undefined
+X-7564579A: EEAE043A70213CC8
+X-77F55803: E8DB3678F13EF3E07F9F52485CB584D7271FD7DF62800FDCB52A10C9A23050676302471D10535BE4B9CBC6B6FC358B3AA2BF6DEF702989DB
+X-7FA49CB5: 0D63561A33F958A53B747B576B896318F086C37C234D0504BD5F5ABDD7532A788941B15DA834481FA18204E546F3947C2FFDA4F57982C5F4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BF1175FABE1C0F9B6A471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E735262FEC7FBD7D1F5BB5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DBEB6346B700B4D54FE5BFE6E7EFDEDCD789D4C264860C145E
+X-D57D3AED: Y8kq8+OzVozcFQziTi/Zi098oNK9gy3Irm5KFwLuDg60je4lC+GbTj0M8KbzpOmgsB7wYP6nnel8wfEHQiZAetlEg7qy07ISeqrIhHPnkjz+XW1r9CAP/Q==
+X-Mailru-MI: 800
+X-Mras: Ok
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 10, 2020 at 2:50 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Fri, Apr 10, 2020 at 8:34 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > On Thu, Apr 09, 2020 at 08:12:21PM -0700, Bart Van Assche wrote:
-> > > Please add a might_sleep() call in blk_put_queue() since with this patch
-> > > applied it is no longer allowed to call blk_put_queue() from atomic context.
-> >
-> > Sure thing.
->
-> On second though, I don't think blk_put_queue() would be the right
-> place for might_sleep(), given we really only care about the *last*
-> refcount decrement to 0. So I'll move it to blk_release_queue().
-> Granted, at that point we are too late, and we'd get a splat about
-> this issue *iff* we really sleep. So yeah, I do suppose that forcing
-> this check there still makes sense.
-
-I'll add might_sleep() to both blk_release_queue() *and* blk_cleanup_queue().
-
-  Luis
+V2hhdCBhYm91dCBhZGRpbmcgc3RhdCdzIEFUX05PX0FVVE9NT1VOVCBhbmFsb2d1ZSB0byBvcGVu
+YXQyPwoKCj09CkFza2FyIFNhZmluCmh0dHBzOi8vZ2l0aHViLmNvbS9zYWZpbmFza2FyCg==
