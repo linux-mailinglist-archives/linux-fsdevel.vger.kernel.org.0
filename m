@@ -2,123 +2,306 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D76B1A4343
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 10:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD751A436A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 10:15:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgDJIBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 04:01:33 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57875 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbgDJIBc (ORCPT
+        id S1726111AbgDJIPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 04:15:44 -0400
+Received: from smtp-42ac.mail.infomaniak.ch ([84.16.66.172]:58077 "EHLO
+        smtp-42ac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726059AbgDJIPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 04:01:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586505693; x=1618041693;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=4o3TisBG1Yclcv/K4CcJ6BW7Az2djfFo4ACWhV2a7sE=;
-  b=Ug2g0NpyTD24E3qZaqtC2aF83ViRNDd09QH/rufX06ljfpgF7sRSzsZa
-   MTz/CH4Uh7f21F4/Fx/Ug3c/ftk0ODysOBppb+bCoMsSeKEGl47RU1JC+
-   xSIdDCaIz1Bh/5uepUsvNVylTv0/NPDXan86IBIBpFB16Ou+nLNGbFXTh
-   IczmijHiBuQNPa0BJflR7QXtcrippxJtWQelPhAGyrWkz+34IqBQP31oF
-   atC3aUXD4aeSVgp4fJKQKt6pmRbli0w+BQ0+/DYKkxxvKlQ6mDj3+91wW
-   1pd18cGfbv+UIJ5aldbiVsSMFncIBMW2NTpCTAnpE09Xw6f0KOiF48d1C
-   w==;
-IronPort-SDR: kzfqaA+PzNxJJmB4B3OnDLN8m2MujzCu5M1PTxf0MQX2CwM6c3fBaZxzX4l2EqkfDBlbO5i8EH
- OfYYnb8eRgZpF/HYIp6shYzmG3EcsobldSIOGUK+kOLc/3QJ4LRpP6yi6rZ2sopaYGrL3j93UQ
- yLEWS7kT2zsYYrglblQED3tu2xkrpDJGXw9phDXiAh02GbRYbuURQA/DzzdvVP4VpLWLq2t1gq
- o6lbkSIZdIajxagVpi3AViDgW0OTU4Y7OaVJkMsV1LmLMxLTuRli6NiaqgIpOO4ubkweuhnLDv
- DRE=
-X-IronPort-AV: E=Sophos;i="5.72,366,1580745600"; 
-   d="scan'208";a="139359330"
-Received: from mail-mw2nam10lp2102.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.102])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Apr 2020 16:01:32 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z+jdwJmBTRUUHybO2EIXox9hjLolfqVlq7WM99pD7YPwtHA8rbKPQJ8cYDQu4Tb/ue29hSvFTGhAkpt58KmAow5k02axfcrI7JLyYQ8NV6Z0Ho4YjTBiucT6Jb1XpQUXSXfqV6G4+NV2jn03bT0qsLJa9GJQXxUQpG9rMtYvZ5yCxs0U8C1EmR4HiAgdSxdnqJf08nqyHmDxk6CJoFjFvyRy2t+EREndxl6qOfOnWS7VhLGQouwrrim/LaMEqmyvyQWFw4bFgWto4Xd3TtRGCRNCxeN5wIX2MNrDRtsu5Rosg02lYgAgyvMaQbCZT9lcP3ClO9SXEiO4ueaLin+o9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rNGDoxVqol+AGNgz1SwgR7+Xgb/QNRuYTHRnEeyCMZY=;
- b=L3LYkYCB+loW8XjcHkGMBr/8X00nB/zxQXg1zHpjDqJ6SenUqyPrFP24vMYc49zzje4NZTTkFXynGo7pA1st0s9hp7gLibVbjfYyWpIhbeqvCiqhanPH3YdpZ1t1OEp5baPif2VOfY2+DKrMEQarF8bmKsPVHTjPYWuNQu0IxKqV4kJh+tOUDpRQWGcZPLebkMhW0wshLDfbcjF4YRu7GUGFkzp1URfPOqr4soZOy5L5Jfd9s07LQK/LjoaJxdJ2jThIIB0bLcs8xU0VnEThPARbnpHQdY/RticnAwKO96sbqHIH/zBviJM53W0fI0EM8HYkQdLkixZmFKXBhtDmyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rNGDoxVqol+AGNgz1SwgR7+Xgb/QNRuYTHRnEeyCMZY=;
- b=amU6DeUA5gwGL9cLNF5ts9WcDK9ecl/HMEQtIaNHMqD5nmnUm902ctBG2M+2LRaDhVOMeuvmqjyZbpcUx9Y3itzXrMHMSwAL37CcuRGguC73d3lvYHvMU8S122jD7v5GRQ+EpNswy5BvNapHlFfiva+Mqq8aha32EFKh+S7n7W8=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3661.namprd04.prod.outlook.com
- (2603:10b6:803:45::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.20; Fri, 10 Apr
- 2020 08:01:30 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2878.018; Fri, 10 Apr 2020
- 08:01:30 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v5 07/10] scsi: sd_zbc: emulate ZONE_APPEND commands
-Thread-Topic: [PATCH v5 07/10] scsi: sd_zbc: emulate ZONE_APPEND commands
-Thread-Index: AQHWDo9/7/TsxA+1IEecB4cF8olDQw==
-Date:   Fri, 10 Apr 2020 08:01:29 +0000
-Message-ID: <SN4PR0401MB3598BD2ABC30EE4413BAD2DB9BDE0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
- <20200409165352.2126-8-johannes.thumshirn@wdc.com>
- <20200410061822.GB4791@infradead.org> <20200410063855.GC4791@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 2ab216b1-6d89-407b-2460-08d7dd2560a2
-x-ms-traffictypediagnostic: SN4PR0401MB3661:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB3661C3D276F14AC294FC50389BDE0@SN4PR0401MB3661.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0369E8196C
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(346002)(376002)(136003)(396003)(366004)(39860400002)(71200400001)(53546011)(6506007)(186003)(6916009)(26005)(5660300002)(7696005)(54906003)(8676002)(4744005)(81156014)(33656002)(52536014)(8936002)(478600001)(91956017)(66446008)(4326008)(66946007)(86362001)(76116006)(66556008)(66476007)(64756008)(316002)(9686003)(55016002)(2906002);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +JkZQ7FVGQC/M+Taoh9aCsRuo5FDgiaTIWftG+ojps6I6bGZFBQK3ZfLcQoyAuACmKEXxLWaTzKyn9moZwnBzxRu3eaelHYxuXy7qRcRlEG91ysULouhCGz0pQXxXc8igjjGJ0KUXOj7ZoO5Jfk/wFOXWbWyOGkg84+OnySv2aXXvIXqi4O2sed6Gvabig7DMVyHeZTpB3sy2KYNQ9FW3OGu5km+te40GRqaPdf6Wb/Nsm6mQhiz2eUFQLZwAWpnnOiTzqLSfEB8HY/28+JXjlJGkQsOQE81RY8c3exfUEaNCFI9Zhw+6IOoxP3oZuztdwAS34DoIE9qI5hYyvqVFBNUDWdH7rM4wPu49rO1r5I8heZmUXWZyG9OnRU++TTlScNCMc5ZsSg1PcsOLeu17UMzRrxSCUxIttXnHNhf05VbB/XPmPtiyzXNqiN2NJo3
-x-ms-exchange-antispam-messagedata: FsmP9vVovD3dbExBTI/4kSU0Q4LcfBdl7pOz/Msk6g7FrwT93MKgwGgjo1B1LGt5uvZ/tFRse9GYeZLE2CADthHQghn1gHNwGrtY5RDCQKVlqYlq36Neiam8xyRTinbXhr+YlLjgC3paQMiSRY6ZpQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 10 Apr 2020 04:15:43 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48z9n83JCjzlhPGX;
+        Fri, 10 Apr 2020 10:15:40 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48z9n526xVzlm1Nc;
+        Fri, 10 Apr 2020 10:15:37 +0200 (CEST)
+Subject: Re: [selftests/landlock] d9d464ccf6:
+ kernel-selftests.landlock.test_base.fail
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        lkp@lists.01.org
+References: <20200410022739.GK8179@shao2-debian>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <65904ee7-602a-c10b-b85c-1a39023506a6@digikod.net>
+Date:   Fri, 10 Apr 2020 10:15:36 +0200
+User-Agent: 
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ab216b1-6d89-407b-2460-08d7dd2560a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2020 08:01:29.9542
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RhiDu2lJdFRYQxFyaqxj1Zl3tt9IwvuMGAgUptM2nrHirN22qg/DZ3WkQcEuKkZ0fHVU8dPi8htA6sxgItK6+f0GNCDDzvQWCnCtsnjXTDM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3661
+In-Reply-To: <20200410022739.GK8179@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: fr
+Content-Transfer-Encoding: 7bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/04/2020 08:39, Christoph Hellwig wrote:=0A=
-> Looking more the situation seems even worse.  If scsi_mq_prep_fn=0A=
-> isn't successfull we never seem to free the sgtables, even for fatal=0A=
-> errors.  So I think we need a real bug fix here in front of the series.=
-=0A=
-> =0A=
-=0A=
-I'll look at in on Tuesday, Easter holidays here.=0A=
+Why isn't this bot enabling the required kernel configuration (i.e.
+CONFIG_SECURITY_LANDLOCK, specified in
+tools/testing/selftests/landlock/config)?
+
+On 10/04/2020 04:27, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: d9d464ccf68e19bf7d303022d873141b5e1f7219 ("[PATCH v15 08/10] selftests/landlock: Add initial tests")
+> url: https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Landlock-LSM/20200327-073729
+> base: https://git.kernel.org/cgit/linux/kernel/git/shuah/linux-kselftest.git next
+> 
+> in testcase: kernel-selftests
+> with following parameters:
+> 
+> 	group: kselftests-01
+> 	ucode: 0xd6
+> 
+> test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
+> test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
+> 
+> 
+> on test machine: 8 threads Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz with 16G memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> 
+> 
+> 2020-04-09 08:20:02 make run_tests -C landlock
+> make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock'
+> make --no-builtin-rules ARCH=x86 -C ../../../.. headers_install
+> make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219'
+>   INSTALL ./usr/include
+> make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219'
+> gcc -Wall -O2 -I../../../../usr/include    test_base.c /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest_harness.h /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest.h ../../../../usr/include/linux/landlock.h ../kselftest_harness.h common.h  -o /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock/test_base
+> gcc -Wall -O2 -I../../../../usr/include    test_ptrace.c /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest_harness.h /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest.h ../../../../usr/include/linux/landlock.h ../kselftest_harness.h common.h  -o /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock/test_ptrace
+> gcc -Wall -O2 -I../../../../usr/include    test_fs.c /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest_harness.h /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/kselftest.h ../../../../usr/include/linux/landlock.h ../kselftest_harness.h common.h  -o /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock/test_fs
+> gcc -Os -static -o /usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock/true true.c
+> TAP version 13
+> 1..3
+> # selftests: landlock: test_base
+> # common.h:37:ruleset_rw.fdinfo:Expected 0 (0) <= self->ruleset_fd (18446744073709551615)
+> # ruleset_rw.fdinfo: Test terminated by assertion
+> # test_base.c:64:global.features:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.features: Test terminated by assertion
+> # test_base.c:89:global.empty_attr_ruleset:Expected errno (38) == EINVAL (22)
+> # global.empty_attr_ruleset: Test terminated by assertion
+> # test_base.c:99:global.empty_attr_path_beneath:Expected errno (38) == EINVAL (22)
+> # global.empty_attr_path_beneath: Test terminated by assertion
+> # test_base.c:109:global.empty_attr_enforce:Expected errno (38) == EINVAL (22)
+> # global.empty_attr_enforce: Test terminated by assertion
+> # [==========] Running 5 tests from 2 test cases.
+> # [ RUN      ] ruleset_rw.fdinfo
+> # [     FAIL ] ruleset_rw.fdinfo
+> # [ RUN      ] global.features
+> # [     FAIL ] global.features
+> # [ RUN      ] global.empty_attr_ruleset
+> # [     FAIL ] global.empty_attr_ruleset
+> # [ RUN      ] global.empty_attr_path_beneath
+> # [     FAIL ] global.empty_attr_path_beneath
+> # [ RUN      ] global.empty_attr_enforce
+> # [     FAIL ] global.empty_attr_enforce
+> # [==========] 0 / 5 tests passed.
+> # [  FAILED  ]
+> not ok 1 selftests: landlock: test_base # exit=1
+> # selftests: landlock: test_ptrace
+> # test_ptrace.c:36:global.allow_with_one_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # test_ptrace.c:148:global.allow_with_one_domain:Expected 1 (1) == read(pipe_child[0], &buf_parent, 1) (0)
+> # test_ptrace.c:149:global.allow_with_one_domain:Failed to read() sync #2 from child
+> # global.allow_with_one_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.deny_with_parent_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # test_ptrace.c:99:global.deny_with_parent_domain:Expected 1 (1) == read(pipe_parent[0], &buf_child, 1) (0)
+> # test_ptrace.c:100:global.deny_with_parent_domain:Failed to read() sync #1 from parent
+> # global.deny_with_parent_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.deny_with_sibling_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # test_ptrace.c:36:global.deny_with_sibling_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.deny_with_sibling_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.allow_sibling_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.allow_sibling_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.allow_with_nested_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.allow_with_nested_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.deny_with_nested_and_parent_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.deny_with_nested_and_parent_domain: Test terminated by assertion
+> # test_ptrace.c:36:global.deny_with_forked_domain:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # global.deny_with_forked_domain: Test terminated by assertion
+> # [==========] Running 8 tests from 2 test cases.
+> # [ RUN      ] global.allow_without_domain
+> # [       OK ] global.allow_without_domain
+> # [ RUN      ] global.allow_with_one_domain
+> # [     FAIL ] global.allow_with_one_domain
+> # [ RUN      ] global.deny_with_parent_domain
+> # [     FAIL ] global.deny_with_parent_domain
+> # [ RUN      ] global.deny_with_sibling_domain
+> # [     FAIL ] global.deny_with_sibling_domain
+> # [ RUN      ] global.allow_sibling_domain
+> # [     FAIL ] global.allow_sibling_domain
+> # [ RUN      ] global.allow_with_nested_domain
+> # [     FAIL ] global.allow_with_nested_domain
+> # [ RUN      ] global.deny_with_nested_and_parent_domain
+> # [     FAIL ] global.deny_with_nested_and_parent_domain
+> # [ RUN      ] global.deny_with_forked_domain
+> # [     FAIL ] global.deny_with_forked_domain
+> # [==========] 1 / 8 tests passed.
+> # [  FAILED  ]
+> not ok 2 selftests: landlock: test_ptrace # exit=1
+> # selftests: landlock: test_fs
+> # common.h:37:ruleset_rw.inval:Expected 0 (0) <= self->ruleset_fd (18446744073709551615)
+> # ruleset_rw.inval: Test terminated by assertion
+> # common.h:37:ruleset_rw.nsfs:Expected 0 (0) <= self->ruleset_fd (18446744073709551615)
+> # ruleset_rw.nsfs: Test terminated by assertion
+> # test_fs.c:342:layout1.whitelist:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.whitelist: Test terminated by assertion
+> # test_fs.c:342:layout1.unhandled_access:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.unhandled_access: Test terminated by assertion
+> # test_fs.c:342:layout1.ruleset_overlap:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.ruleset_overlap: Test terminated by assertion
+> # test_fs.c:342:layout1.inherit_superset:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.inherit_superset: Test terminated by assertion
+> # test_fs.c:342:layout1.rule_on_mountpoint:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rule_on_mountpoint: Test terminated by assertion
+> # test_fs.c:342:layout1.rule_over_mountpoint:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rule_over_mountpoint: Test terminated by assertion
+> # test_fs.c:342:layout1.rule_over_root:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rule_over_root: Test terminated by assertion
+> # test_fs.c:720:layout1.rule_inside_mount_ns:Expected -1 (18446744073709551615) != syscall(SYS_pivot_root, dir_s3d2, dir_s3d3) (18446744073709551615)
+> # test_fs.c:722:layout1.rule_inside_mount_ns:Failed to pivot_root into "tmp/s3d1/s3d2": Invalid argument
+> # 
+> # layout1.rule_inside_mount_ns: Test terminated by assertion
+> # test_fs.c:342:layout1.mount_and_pivot:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.mount_and_pivot: Test terminated by assertion
+> # test_fs.c:342:layout1.relative_open:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.relative_open: Test terminated by assertion
+> # test_fs.c:342:layout1.relative_chdir:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.relative_chdir: Test terminated by assertion
+> # test_fs.c:342:layout1.relative_chroot_only:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.relative_chroot_only: Test terminated by assertion
+> # test_fs.c:342:layout1.relative_chroot_chdir:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.relative_chroot_chdir: Test terminated by assertion
+> # test_fs.c:342:layout1.chroot:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.chroot: Test terminated by assertion
+> # test_fs.c:342:layout1.execute:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.execute: Test terminated by assertion
+> # test_fs.c:342:layout1.link_to:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.link_to: Test terminated by assertion
+> # test_fs.c:342:layout1.rename_from:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rename_from: Test terminated by assertion
+> # test_fs.c:342:layout1.rename_to:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rename_to: Test terminated by assertion
+> # test_fs.c:342:layout1.rmdir:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.rmdir: Test terminated by assertion
+> # test_fs.c:342:layout1.unlink:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.unlink: Test terminated by assertion
+> # test_fs.c:342:layout1.make_char:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_char: Test terminated by assertion
+> # test_fs.c:342:layout1.make_block:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_block: Test terminated by assertion
+> # test_fs.c:342:layout1.make_reg:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_reg: Test terminated by assertion
+> # test_fs.c:342:layout1.make_sock:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_sock: Test terminated by assertion
+> # test_fs.c:342:layout1.make_fifo:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_fifo: Test terminated by assertion
+> # test_fs.c:342:layout1.make_sym:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_sym: Test terminated by assertion
+> # test_fs.c:342:layout1.make_dir:Expected 0 (0) == landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES, sizeof(attr_features), &attr_features) (18446744073709551615)
+> # layout1.make_dir: Test terminated by assertion
+> # [==========] Running 31 tests from 3 test cases.
+> # [ RUN      ] layout1.no_restriction
+> # [       OK ] layout1.no_restriction
+> # [ RUN      ] ruleset_rw.inval
+> # [     FAIL ] ruleset_rw.inval
+> # [ RUN      ] ruleset_rw.nsfs
+> # [     FAIL ] ruleset_rw.nsfs
+> # [ RUN      ] layout1.whitelist
+> # [     FAIL ] layout1.whitelist
+> # [ RUN      ] layout1.unhandled_access
+> # [     FAIL ] layout1.unhandled_access
+> # [ RUN      ] layout1.ruleset_overlap
+> # [     FAIL ] layout1.ruleset_overlap
+> # [ RUN      ] layout1.inherit_superset
+> # [     FAIL ] layout1.inherit_superset
+> # [ RUN      ] layout1.rule_on_mountpoint
+> # [     FAIL ] layout1.rule_on_mountpoint
+> # [ RUN      ] layout1.rule_over_mountpoint
+> # [     FAIL ] layout1.rule_over_mountpoint
+> # [ RUN      ] layout1.rule_over_root
+> # [     FAIL ] layout1.rule_over_root
+> # [ RUN      ] layout1.rule_inside_mount_ns
+> # [     FAIL ] layout1.rule_inside_mount_ns
+> # [ RUN      ] layout1.mount_and_pivot
+> # [     FAIL ] layout1.mount_and_pivot
+> # [ RUN      ] layout1.relative_open
+> # [     FAIL ] layout1.relative_open
+> # [ RUN      ] layout1.relative_chdir
+> # [     FAIL ] layout1.relative_chdir
+> # [ RUN      ] layout1.relative_chroot_only
+> # [     FAIL ] layout1.relative_chroot_only
+> # [ RUN      ] layout1.relative_chroot_chdir
+> # [     FAIL ] layout1.relative_chroot_chdir
+> # [ RUN      ] layout1.chroot
+> # [     FAIL ] layout1.chroot
+> # [ RUN      ] layout1.execute
+> # [     FAIL ] layout1.execute
+> # [ RUN      ] layout1.link_to
+> # [     FAIL ] layout1.link_to
+> # [ RUN      ] layout1.rename_from
+> # [     FAIL ] layout1.rename_from
+> # [ RUN      ] layout1.rename_to
+> # [     FAIL ] layout1.rename_to
+> # [ RUN      ] layout1.rmdir
+> # [     FAIL ] layout1.rmdir
+> # [ RUN      ] layout1.unlink
+> # [     FAIL ] layout1.unlink
+> # [ RUN      ] layout1.make_char
+> # [     FAIL ] layout1.make_char
+> # [ RUN      ] layout1.make_block
+> # [     FAIL ] layout1.make_block
+> # [ RUN      ] layout1.make_reg
+> # [     FAIL ] layout1.make_reg
+> # [ RUN      ] layout1.make_sock
+> # [     FAIL ] layout1.make_sock
+> # [ RUN      ] layout1.make_fifo
+> # [     FAIL ] layout1.make_fifo
+> # [ RUN      ] layout1.make_sym
+> # [     FAIL ] layout1.make_sym
+> # [ RUN      ] layout1.make_dir
+> # [     FAIL ] layout1.make_dir
+> # [ RUN      ] global.cleanup
+> # [       OK ] global.cleanup
+> # [==========] 2 / 31 tests passed.
+> # [  FAILED  ]
+> not ok 3 selftests: landlock: test_fs # exit=1
+> make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.6-d9d464ccf68e19bf7d303022d873141b5e1f7219/tools/testing/selftests/landlock'
+> 
+> 
+> 
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+> 
+> 
+> 
+> Thanks,
+> Rong Chen
+> 
