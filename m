@@ -2,95 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC2B1A4238
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 07:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B2A1A4258
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 07:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbgDJFYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 01:24:03 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42199 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgDJFYD (ORCPT
+        id S1725880AbgDJF6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 01:58:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36938 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbgDJF6f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 01:24:03 -0400
-Received: by mail-ed1-f68.google.com with SMTP id cw6so1073693edb.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Apr 2020 22:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/nBmYmVumG9MztPQcUGIMpUoVrrgn99Ut4zgYrcNXG8=;
-        b=dZCvpDD6b1apJ/W5hm8A6GxD/yFOUY9EID9Z+/76blOw60pbeLt+LP63eS7o77RDQn
-         2M+4udydrPbLJN/4bFlyo1qgLd59x8jP+YNNR+UW0W7Es3CZMazNBEx9fnO+nTQECxFo
-         9T1jth3Grn3+VKCrglCQ9ccXqn+pG3SsmxMuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/nBmYmVumG9MztPQcUGIMpUoVrrgn99Ut4zgYrcNXG8=;
-        b=strDmx3jlfa6UAr+muS4B/0G4t/R8ql64GKoT6ilQCYRDqipUfnh17NPpkLXMq9FcX
-         zEqsgzugpz/DpR3ju5Pq1gXz/G4TBMyuEHXtdpKc86AQyDV3zEDQ8EdzAjowQvTbTDAM
-         0DjcUH6d1F2OJ7oA2g4CqOc8BxvEl1dKD9BwO57+qCOXa6m0fBQlInT5GBBkZkXT/NS2
-         ir9C0F9jk4dpzl/ZkkXeXsIEe/8O+rTUFVeux/v4tmvdZk54HdSMM2DKs61B0TF/Lr7J
-         M7tmRtv8uU6x8OgaG9Qn9bo8QpimAeUssWciAWbiJldFn4yw3TqQpDcDKu7JKH0vfoAL
-         3zNg==
-X-Gm-Message-State: AGi0PualdsX/5PNKooJhfk0cieMnCW7hn1EuieBEr0p0BhP9MEZdBNjK
-        QxP4pdBpNg8TVPAmZ+v5k2qM9ANFa4shlmE2Bnd6Jg==
-X-Google-Smtp-Source: APiQypL/iIG/7PbSJHoSfaoOwOMNG7Es4Pov23/uqjlbo1QHwN6I9Sr8DmswmpGWkiSWniAMWz2rTbJIFlhxwAqJDF0=
-X-Received: by 2002:a17:906:35ce:: with SMTP id p14mr2384239ejb.43.1586496238451;
- Thu, 09 Apr 2020 22:23:58 -0700 (PDT)
+        Fri, 10 Apr 2020 01:58:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tVDFAQy0GfDOukYPJW4ZPu7TUMtuz/n3F/EhfThjKv0=; b=dmUj16NDNtaJ2sI/r6Qbk7vQTc
+        +QRQzA90XetTRqD1ZLa3ko4HkygAGd2x7Xaj0U963tJzZZGGJC1K+fC+UJs1nzLbS3FKkC9+zgQr7
+        HGqOKA2T9BM6KgmPkGsLjId0S5ngSTrmUZIS8mM5+MNNG6958tOUQlhFkBUDFXakEN4uFwVwg6VTA
+        o1T6EhrSp2gEw8UlxOaOGgsBPhXSJXzhxMY4sTygwTr1EESwsmZD5dV1rS5pO+lLUu6JzWPA6Ez2D
+        WQGRL/PMWsQlZqObr7j1gAfA9YIATxQAVnd2n1DzarFh5A15t5BHcATm7DGgarGYmR3EaGlBJLsFy
+        cBkCtfXg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jMmgU-00033Y-T6; Fri, 10 Apr 2020 05:58:34 +0000
+Date:   Thu, 9 Apr 2020 22:58:34 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 06/10] scsi: export scsi_mq_free_sgtables
+Message-ID: <20200410055834.GA4791@infradead.org>
+References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
+ <20200409165352.2126-7-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-References: <20200410050522.GI28467@miu.piliscsaba.redhat.com> <20200410051457.GI23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200410051457.GI23230@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 10 Apr 2020 07:23:47 +0200
-Message-ID: <CAJfpegvse9GrzncMOShNf80-7a6AMaAEGdbpL739RBzQmpQdMw@mail.gmail.com>
-Subject: Re: [PATCH v4] proc/mounts: add cursor
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409165352.2126-7-johannes.thumshirn@wdc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 10, 2020 at 7:14 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Apr 10, 2020 at 07:05:22AM +0200, Miklos Szeredi wrote:
-> > +     /* read after we'd reached the end? */
-> > +     if (*pos && list_empty(&mnt->mnt_list))
-> > +             return NULL;
-> > +
-> > +     lock_ns_list(p->ns);
-> > +     if (!*pos)
-> > +             mnt = list_first_entry(&p->ns->list, typeof(*mnt), mnt_list);
-> > +     mnt = mnt_skip_cursors(p->ns, mnt);
-> > +     unlock_ns_list(p->ns);
-> >
-> > -     p->cached_event = p->ns->event;
-> > -     p->cached_mount = seq_list_start(&p->ns->list, *pos);
-> > -     p->cached_index = *pos;
-> > -     return p->cached_mount;
-> > +     return mnt;
-> >  }
->
-> Hmm...  I wonder if it would be better to do something like
->         if (!*pos)
->                 prev = &p->ns->list.next;
->         else
->                 prev = &p->mnt.mnt_list.next;
->         mnt = mnt_skip_cursors(p->ns, prev);
->
-> >  static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-> >  {
-> >       struct proc_mounts *p = m->private;
-> > +     struct mount *mnt = v;
-> > +
-> > +     lock_ns_list(p->ns);
-> > +     mnt = mnt_skip_cursors(p->ns, list_next_entry(mnt, mnt_list));
->
-> ... and mnt = mnt_skip_cursors(p->ns, &mnt->mnt_list.next);
+Looks good, althrough we really don't need the extern for the
+prototype in the header (that also applies to a few other patches in
+the series):
 
-If you prefer that, yes.  Functionally it's equivalent.
-
-Thanks,
-Miklos
+Reviewed-by: Christoph Hellwig <hch@lst.de>
