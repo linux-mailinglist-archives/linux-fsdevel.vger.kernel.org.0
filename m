@@ -2,127 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 851771A4AA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 21:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5131A4AE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Apr 2020 21:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbgDJTi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 15:38:28 -0400
-Received: from mout.web.de ([212.227.17.11]:56425 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgDJTi2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 15:38:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1586547440;
-        bh=PGEeqxNlVBCsSOG4LIqFOF2BvoLw4Q31E+UCkpke5aA=;
-        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
-        b=FzwYaxzvptZn7OAXoibSOtHQglzrbu9Q404Q6WbomdRhGmd/q7Q+UXjil5U+Dw/2J
-         JOA+rKrp/nuQy3efkyVK1XVrgIr2uiCynGKQ9OyHvjGgH7hiBHwISQR985GlFJ36Ix
-         f5SwiIq/+I7AQjXAZBqvBnDPSgFhdpuRDdjurOHs=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.110.107]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lhvpu-1iseZu1Q9a-00nBTJ; Fri, 10
- Apr 2020 21:37:20 +0200
-To:     Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hannes Reinecke <hare@suse.com>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Ming Lei <ming.lei@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Nicolai Stange <nstange@suse.de>,
+        id S1726680AbgDJT6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 15:58:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45133 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgDJT6K (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Apr 2020 15:58:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w11so1380034pga.12;
+        Fri, 10 Apr 2020 12:58:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9egYYB6bTrpDrTzttwKsxVc0B6/GRj6jRTmV+gtkQ74=;
+        b=ksLeGT4QCxDaJyVKdpDPp6Us7KFo1tPlmwu1u1ufKBUXfRzPHzY5nQ45TD7ysVJB9D
+         MNDE3UmKzHMcKaw9e4g/tGT11gH7F8WwsbCmGDKH3y/n1ttTZ+9UiJ03eRUqv/HxdQE2
+         2SLuJ8o9MmAnikyYJxLUF5ZGDI/j2M2SIpmU8JRBpwf65Tb9b/xVjUxMnh0R5ulvyQg0
+         VWcmp0HK9rl/pYcrEx+8cg68F+eKK3znJhaK0JXqWNPEbkY9qdZprjFne+G1prMlREzv
+         Q3nHrdEA1Gb3nDQzR+q6d84fhr6AibEIPLP37arZhBV0DmLF9B4/jDFux1xmZQEApuMY
+         9uNg==
+X-Gm-Message-State: AGi0PuY/zoo5+v1dvX+qYDiyOgjQyRjmPH1dCmGsUtks4M125LNT5vDi
+        7J9B6ovfj9ovQsBOlDoALIg=
+X-Google-Smtp-Source: APiQypIkB3vH8LrSlvbH4JNkcEKZxJNCyG4NdBP0VvNLnRjmPqrr2Gra6b7M/BCoXvFMKaCfdh8HTg==
+X-Received: by 2002:aa7:97a6:: with SMTP id d6mr6824993pfq.154.1586548688133;
+        Fri, 10 Apr 2020 12:58:08 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id q201sm2483234pfq.32.2020.04.10.12.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2020 12:58:05 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 12FD140630; Fri, 10 Apr 2020 19:58:05 +0000 (UTC)
+Date:   Fri, 10 Apr 2020 19:58:05 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Omar Sandoval <osandov@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Yu Kuai <yukuai3@huawei.com>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
 Subject: Re: [RFC v2 2/5] blktrace: fix debugfs use after free
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <ccc51229-ae0c-4c41-842b-f267eed96843@web.de>
-Date:   Fri, 10 Apr 2020 21:37:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+Message-ID: <20200410195805.GM11244@42.do-not-panic.com>
+References: <20200409214530.2413-1-mcgrof@kernel.org>
+ <20200409214530.2413-3-mcgrof@kernel.org>
+ <88f94070-cd34-7435-9175-e0518a7d7db8@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:SqcB46BVWuHcsp34+t7mjQ4lYXatYFAbVT0yn5wReMaLmawsuKa
- nmZa04tGZABhR4ZvIl6hLcs4eMfbCEkuTLn9rrGpujiMhGUEglOB5bcIa4OkLvEyw0O3AGO
- cDkTMM1gVq4zbHZjHxoKRIgHyFY2kEfHAVlJHDu2E0WGLyqOj6eoYoh7B+RX56fmPBKOnb1
- 8Lm3lvGxYqQaeyd5Ldoaw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Hy4Do2hsiqw=:xA7n8QnkZxeSx8p4Cloh4C
- q33RG+if7wj0s8c0xcKLmFRsg7uw+zT3Ya8CjMz3uJzkG5AyhpLMvWbyIhl0ORbAZ5fHHvaNH
- etOK2G0QO5FpOQoPsZUA79zJvKBhpG8hxA49JVGZuJlGwYUysUD5AVj7LBdRtWhtEOXoOtft9
- DJ3gM6vTSWz9I9Kf0ELav3wo6hZhGoOF8dblZaM0qO+JuIQZO/KF51JXR8x9/B6+pP7K2P1CV
- DuM9geZgfvaAfrAPYvLTts7yfYJqhKa36J70MV2EwmrOxF4sb4wCIEjCa1pX2q/SLH8yB5D2f
- D9KC9lo4YYfO3+l37rRQCsVB+SveaxRdh3VwGHEo7ZMf8Zbx8qi3KUiXweaKZeBc28v8lvCte
- D5e97yBiD+zb084CqjvU/rwQdWfMR3UJltXSHGZAX2tHJ0AxwTS0xvJ8ApNeBpPPU3awN7d2l
- oSjJtxZT7hNb4s0znAMxAYbUzJc0M8uYktYqyCmRRmUrpxPLtSdOclzp0I7AFkEtJRBEjiOpZ
- ZKSfR3HjJ9W15DvJvhMFIpXiXuQxsZBXYAyenAyV+oAqffdWPfQXr7QS+SLi8Fy7RUw0wQcoM
- fJkJbKtwPb1odnh4koB94Nc9pC20Br3ml0NKNwlesipehRdGVmerMvuOukb0vU3IdrLAAYihY
- aTlkIl2J4+orlP9QzZQ5Kiw7sU4+BiW6URTXumYjqDohQWbVmxhqMxzkCfOWV2x09glTMnV4B
- CZc1kaZIC8pFNgqNhspMzBNcEAir7YRIbVOHs4ua2b3lCYywyPYwfawRgR0rVUZvjNybUpfbD
- JFWQWCQea9ZNeUCuZh8ZU5cEIXDGcq76DZ4jorszGuOSCePVTegDW/t/DnyNwR+C2W8gOJdTN
- 9Ud+kwhNRd7l615bd0QLH8bu8FaDkg1TwSRS5gupVWfaawwY13RtIamB31gnXqmOuFlLIpTj1
- WuyuIN7uAv8rK61tSbX+CsuWqW/pm0beUwFOSuRGW/VUt2EjIDzuL2Q+fLuNSn/lEG6kvOUh+
- YaPkynKNoF6UtBNZoQDMvTe2VdEuZVu5rsl98hmcriqMSYGScRXE9PPfnIuW7kYi+TJvNewRN
- dXnXU9Tyl3G/rxQhNu7mY+noq5Il0mErH6F9i2W+Rk5G1cw3nwwL2q6GlzXRNJGVysYR9IwI0
- rH8gl7fRhTbgiGY56g733JT2JkzmZLzM63KRt2eH2Sw5cPHz3fruDOFPP203a/3aV6Nw31X8A
- Jl0MeTrwRoewM83bu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88f94070-cd34-7435-9175-e0518a7d7db8@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Fiexes: 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
+On Thu, Apr 09, 2020 at 07:52:59PM -0700, Bart Van Assche wrote:
+> On 2020-04-09 14:45, Luis Chamberlain wrote:
+> > +void blk_q_debugfs_register(struct request_queue *q)
+> > +{
+> > +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+> > +					    blk_debugfs_root);
+> > +}
+> > +
+> > +void blk_q_debugfs_unregister(struct request_queue *q)
+> > +{
+> > +	debugfs_remove_recursive(q->debugfs_dir);
+> > +	q->debugfs_dir = NULL;
+> > +}
+> 
+> There are no other functions in the block layer that start with the
+> prefix blk_q_. How about changing that prefix into blk_?
 
-Please avoid a typo for this tag.
+I the first patch already introduced blk_debugfs_register(), so I have
+now changed the above to:
 
-Regards,
-Markus
+blk_debugfs_common_register()
+blk_debugfs_common_unregister()
+
+Let me know if something else is preferred.
+
+> > -#ifdef CONFIG_BLK_DEBUG_FS
+> > +#ifdef CONFIG_DEBUG_FS
+> >  	struct dentry		*debugfs_dir;
+> > +#endif
+> 
+> Please add a comment above 'debugfs_dir' that it is used not only by the
+> code in block/blk-*debugfs.c but also by the code in
+> kernel/trace/blktrace.c. Otherwise this patch looks good to me.
+
+Sure, I'll do that.
+
+In the future, after this patch set I'll follow up with another series
+to clean that header file to make it easier to expand on proper
+documentaiton with kdoc.
+
+  Luis
