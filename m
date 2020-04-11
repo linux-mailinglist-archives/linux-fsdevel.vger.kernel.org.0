@@ -2,86 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92B6F1A53E7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 00:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 547001A53EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 00:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbgDKWJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Apr 2020 18:09:55 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45587 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgDKWJy (ORCPT
+        id S1726689AbgDKW2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Apr 2020 18:28:34 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39485 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726167AbgDKW2e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Apr 2020 18:09:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t17so5253938ljc.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Apr 2020 15:09:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TETsvPIW3zFK7a+s4Xy+/EsP/ZIyd7MDAnh8kXDUPDY=;
-        b=LWKhzNO/fmkN9AXIbh6BdMPSoUwuuc1JIQbspBQF8oSJHNi+9xPH2NDbM8dVz5Mzia
-         O5Bv8VqXhUpaAfmywLN4z2mbstp/udAPbBebWk/RVBwyz93e9k0XSh0EtntzOz886wT6
-         HCLCmJBbcNFSByCMNpooPlQvhUTqF3YMn4tsQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TETsvPIW3zFK7a+s4Xy+/EsP/ZIyd7MDAnh8kXDUPDY=;
-        b=TuTZnOAPsojglhvDArB2eVKjdxEb/2hrNM4ud06rjQtIJlKLerBu0uf9P7CWS9HpWZ
-         XiBmuEAu1aXuBUB18F1+x1A2YFek4TmiCTHf8d5HpSw7uLEfGhvfC9hZOu+MR29OeFRy
-         XxSBFsMxgkaNpMOyhJzvf/deNda6tEPgCel0P4IBu66Nf80pkAHunM0gMpSuecpM7az6
-         2dlYAP2nNM8bYlBOXmD33C7Pk4DZ/IoP00p1c1cEENduM8bsoSlgxLF2sNcqCd/PoKTB
-         zKnGmeuGz/YNskf3ktYJD7SYLAyL9hvtLw4BuLofTg8tkhvyzdpEgySxae4oo2tw/uvE
-         vvTw==
-X-Gm-Message-State: AGi0PuYTlwyw7/X7cn2W2jW6JLmaGCfI4TJBpTy9HOR1GH0A6SZoZMUu
-        R1YEOlNll3C1jI3+RkW1DcKBukiy7Wk=
-X-Google-Smtp-Source: APiQypJFBqOFT/qLRcTg6I4xL1WSVDRBW5RrJ63/xXYXXihu166EzOWGoRtFlPWHs64JnQLKcwHqWA==
-X-Received: by 2002:a2e:96d9:: with SMTP id d25mr178125ljj.89.1586642992873;
-        Sat, 11 Apr 2020 15:09:52 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id a26sm4187776ljn.22.2020.04.11.15.09.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Apr 2020 15:09:51 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id r17so3831344lff.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Apr 2020 15:09:51 -0700 (PDT)
-X-Received: by 2002:a19:9109:: with SMTP id t9mr6353420lfd.10.1586642991463;
- Sat, 11 Apr 2020 15:09:51 -0700 (PDT)
+        Sat, 11 Apr 2020 18:28:34 -0400
+Received: from dread.disaster.area (pa49-180-167-53.pa.nsw.optusnet.com.au [49.180.167.53])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B113558B984;
+        Sun, 12 Apr 2020 08:28:30 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jNOc1-0005AG-Az; Sun, 12 Apr 2020 08:28:29 +1000
+Date:   Sun, 12 Apr 2020 08:28:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-unionfs@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH] ovl: skip overlayfs superblocks at global sync
+Message-ID: <20200411222829.GO10737@dread.disaster.area>
+References: <158642098777.5635.10501704178160375549.stgit@buzz>
 MIME-Version: 1.0
-References: <20200411203220.GG21484@bombadil.infradead.org>
- <CAHk-=wgCAGVwAVTuaoJu4bF99JEG66iN7_vzih=Z33GMmOTC_Q@mail.gmail.com>
- <20200411214818.GH21484@bombadil.infradead.org> <CAHk-=wj71d1ExE-_W0hy87r3d=2URMwx0f6oh+bvdfve6G71ew@mail.gmail.com>
- <20200411220603.GI21484@bombadil.infradead.org>
-In-Reply-To: <20200411220603.GI21484@bombadil.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 11 Apr 2020 15:09:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whFfcUEMq5C9Xy=c=sJrT-+3uOE2bAwEQo9MUdbhP2X3Q@mail.gmail.com>
-Message-ID: <CAHk-=whFfcUEMq5C9Xy=c=sJrT-+3uOE2bAwEQo9MUdbhP2X3Q@mail.gmail.com>
-Subject: Re: [GIT PULL] Rename page_offset() to page_pos()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158642098777.5635.10501704178160375549.stgit@buzz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=2xmR08VVv0jSFCMMkhec0Q==:117 a=2xmR08VVv0jSFCMMkhec0Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10
+        a=7-415B0cAAAA:8 a=haEqjSr0uQTM00mUMRMA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 11, 2020 at 3:06 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> But we _have_ an offset_in_page() and it doesn't take a struct page
-> argument.
+On Thu, Apr 09, 2020 at 11:29:47AM +0300, Konstantin Khlebnikov wrote:
+> Stacked filesystems like overlayfs has no own writeback, but they have to
+> forward syncfs() requests to backend for keeping data integrity.
+> 
+> During global sync() each overlayfs instance calls method ->sync_fs()
+> for backend although it itself is in global list of superblocks too.
+> As a result one syscall sync() could write one superblock several times
+> and send multiple disk barriers.
+> 
+> This patch adds flag SB_I_SKIP_SYNC into sb->sb_iflags to avoid that.
 
-.. it doesn't take a struct page argument because a struct page always
-has one compile-time fixed size.
+Why wouldn't you just remove the ->sync_fs method from overlay?
 
-The only reason you seem to want to get the new interface is because
-you want to change that fact.
+I mean, if you don't need the filesystem to do anything special for
+one specific data integrity sync_fs call, you don't need it for any
+of them, yes?
 
-So yes, you'd have to change the _existing_ offset_in_page() to take
-that extra "which page" argument.
-
-That's not confusing.
-
-             Linus
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
