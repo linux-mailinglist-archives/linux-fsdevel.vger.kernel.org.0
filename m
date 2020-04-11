@@ -2,112 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EACB1A526A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Apr 2020 15:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E074F1A52DA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Apr 2020 18:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbgDKN4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Apr 2020 09:56:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39612 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbgDKN4m (ORCPT
+        id S1726204AbgDKQOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Apr 2020 12:14:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbgDKQOm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Apr 2020 09:56:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p10so5223643wrt.6;
-        Sat, 11 Apr 2020 06:56:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0HPAHahYAQGlzoLYgXtzlxsXkNFun+xx6JrId2I04YY=;
-        b=si63vvCBYvdKsYsBVeAsyrf7ysXXpHRt6vHXXNoUu/JvtOAJLVP5phHL6iHyPbv1k9
-         TrgeJPcLaZkdoPZW9PIKhr2+pzblitFxElzBhd0Oi7Cu9fYsHg2/FFZnoKg9+wRq9EVb
-         xM4XuUpI/n+78ZoKtBl9OzId/Yo6JeeABzKuvzMGar+pVFgcHG4S82q3OaRZbbS8aeCb
-         geoJjPrLeV8kqLVCcDtG0fO0y+1Whc8ZIbzs/eb2UBOUn4E6VvvvqN+RPWlQpjq8zvon
-         Ozz2wefNOdYOtaa5x1nu1ABXQakgwIVZAQ8OLx41QCQ5PRj6wFLFUdedEL58K37C2kYg
-         KBgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0HPAHahYAQGlzoLYgXtzlxsXkNFun+xx6JrId2I04YY=;
-        b=elrwZBfHvV71TcJUtC9DFosnCEqUYRjkjc5Dir/vdeyh6ehOLZWi1H2ipZwRXW/71M
-         yBygPr2mZiwDcVwRioiueElMpHiWi6V6Z6lJpsLCy53VyY0NBcYtkzoSzpeeyaoIGiSW
-         eCWEPS5QlZvO2dEObISgH7paXdsxYUNnenLEY6PUrIxL1iqcIF34LpG/6CciRWPlZ5SL
-         n1X+Z+Ag2IsYzy6DVmrRb3jzwnRA/YxYKLlQX0xxVFdHFbrRTPcAWl/+bLzPhUNc+Sy5
-         4NIoPLZlzJzmPTRclTxpq39JLC1FoA0lYB2aWdmQ0Y+vSyijFoosagWSQ6CpFQb38oP5
-         88/Q==
-X-Gm-Message-State: AGi0PubVza07VLzMNr3tIYMrmwo0VaZ4H7h+3Y9LoM8L4aXgmv7FPwy9
-        Zv+piy1ty3MXPj9uaqv4CnA=
-X-Google-Smtp-Source: APiQypJxdgTfGuuX+f4Ee56mZ11rjBVKzNcnxYXlcornkz9wCaUiFNB5OrRtpjSciaq5gtl5FcCOfA==
-X-Received: by 2002:adf:cc81:: with SMTP id p1mr1042081wrj.372.1586613401053;
-        Sat, 11 Apr 2020 06:56:41 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id v186sm6812436wme.24.2020.04.11.06.56.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 11 Apr 2020 06:56:40 -0700 (PDT)
-Date:   Sat, 11 Apr 2020 13:56:39 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/9] XArray: entry in last level is not expected to be a
- node
-Message-ID: <20200411135639.qn36v6e4bcgc3lnz@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-6-richard.weiyang@gmail.com>
- <20200330124842.GY22483@bombadil.infradead.org>
- <20200406012453.tthxonovxzdzoluj@master>
+        Sat, 11 Apr 2020 12:14:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4kLMPck/UQTFbc7P/dtGX9z+C5HE2yHjGcXQaPeD8UE=; b=E0NjrzbCb12cq87rjgyqkwADEW
+        WAHh8mUUwTfsCROLuFG0kbje7DyHccwxOL380SlXlKeGnNjF1bsciAybqAPEmO8A+J3X/1QtH19Xy
+        +53Ux1fcD5TfDsE20RWsl8RObPX1qW5c/K8rzmTk33ONfOLvRz5d9IxM2p2Mk2goeNMYjwze1O3GY
+        wsHu/ins6D7MCHyncSooKHUIilEp5z9YHm1zyBXzOE1V+Lb9jhS0nG2IcuDAzTWSwUQccjqgQR0Qa
+        hm8ooSvlQZJLMhV/HFq1p6r1rlkDX3/SDeHLpj5W2lvCoWJKUE7kUn1u3X1eAkHiiKTDk1FUnWZ8I
+        Q4A1BvHw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jNImG-0002LU-1t; Sat, 11 Apr 2020 16:14:40 +0000
+Date:   Sat, 11 Apr 2020 09:14:39 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     syzbot <syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com>
+Cc:     darrick.wong@oracle.com, hch@infradead.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, riteshh@linux.ibm.com,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: WARNING in iomap_apply
+Message-ID: <20200411161439.GE21484@bombadil.infradead.org>
+References: <00000000000048518b05a2fef23a@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200406012453.tthxonovxzdzoluj@master>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <00000000000048518b05a2fef23a@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 06, 2020 at 01:24:53AM +0000, Wei Yang wrote:
->On Mon, Mar 30, 2020 at 05:48:42AM -0700, Matthew Wilcox wrote:
->>On Mon, Mar 30, 2020 at 12:36:39PM +0000, Wei Yang wrote:
->>> If an entry is at the last level, whose parent's shift is 0, it is not
->>> expected to be a node. We can just leverage the xa_is_node() check to
->>> break the loop instead of check shift additionally.
->>
->>I know you didn't run the test suite after making this change.
->
+On Sat, Apr 11, 2020 at 12:39:13AM -0700, syzbot wrote:
+> The bug was bisected to:
+> 
+> commit d3b6f23f71670007817a5d59f3fbafab2b794e8c
+> Author: Ritesh Harjani <riteshh@linux.ibm.com>
+> Date:   Fri Feb 28 09:26:58 2020 +0000
+> 
+>     ext4: move ext4_fiemap to use iomap framework
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16c62a57e00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15c62a57e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11c62a57e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com
+> Fixes: d3b6f23f7167 ("ext4: move ext4_fiemap to use iomap framework")
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 7023 at fs/iomap/apply.c:51 iomap_apply+0xa0c/0xcb0 fs/iomap/apply.c:51
 
-Matthew
+This is:
 
-Have you got my mail?
+        if (WARN_ON(iomap.length == 0))
+                return -EIO;
 
->Well, I got your point finally. From commit 76b4e5299565 ('XArray: Permit
->storing 2-byte-aligned pointers'), xa_is_node() will not be *ACURATE*. Those
->2-byte align pointers will be treated as node too.
->
->Well, I found another thing, but not sure whether you have fixed this or not.
->
->If applying following change
->
->@@ -1461,6 +1461,11 @@ static void check_align_1(struct xarray *xa, char *name)
->                                        GFP_KERNEL) != 0);
->                XA_BUG_ON(xa, id != i);
->        }
->+       XA_STATE_ORDER(xas, xa, 0, 0);
->+       entry = xas_find_conflict(&xas);
->        xa_for_each(xa, index, entry)
->                XA_BUG_ON(xa, xa_is_err(entry));
->        xa_destroy(xa);
->
->We trigger an error message. The reason is the same. And we can fix this with
->the same approach in xas_find_conflict().
->
->If you think this is the proper way, I would add a patch for this.
->
->-- 
->Wei Yang
->Help you, Help me
+and the call trace contains ext4_fiemap() so the syzbot bisection looks
+correct.
 
--- 
-Wei Yang
-Help you, Help me
+>  iomap_fiemap+0x184/0x2c0 fs/iomap/fiemap.c:88
+>  _ext4_fiemap+0x178/0x4f0 fs/ext4/extents.c:4860
+>  ovl_fiemap+0x13f/0x200 fs/overlayfs/inode.c:467
+>  ioctl_fiemap fs/ioctl.c:226 [inline]
+>  do_vfs_ioctl+0x8d7/0x12d0 fs/ioctl.c:715
