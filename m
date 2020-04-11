@@ -2,61 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F001A4C6F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Apr 2020 01:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AECFB1A4D29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Apr 2020 03:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbgDJXH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Apr 2020 19:07:57 -0400
-Received: from fallback23.m.smailru.net ([94.100.187.222]:42512 "EHLO
-        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726648AbgDJXH5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Apr 2020 19:07:57 -0400
-X-Greylist: delayed 1569 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Apr 2020 19:07:55 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:Cc:To:From; bh=mxvx/67cV1C+TL0pdy757vF+ITHUDShoO3Ua/Uix1eM=;
-        b=nIKSxHvQjrKIgItacr3NZ6gM3csz1ru2yL72OXeMwegqfEQvGJKFA7TmvxkmDTQ3QxedZAbI5EqjpYcHSsgUlAMZk6kMGmwz6xzzSCr1HcBm+VCuwShrfVbNHvo7X3kKaHEnagwlSSpFj8KcqaBsWDKS3FZVWbyHVlZav7ou1mU=;
-Received: from [10.161.163.38] (port=44038 helo=f476.i.mail.ru)
-        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
-        id 1jN2LI-0006Ti-NV; Sat, 11 Apr 2020 01:41:44 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:Cc:To:From; bh=mxvx/67cV1C+TL0pdy757vF+ITHUDShoO3Ua/Uix1eM=;
-        b=nIKSxHvQjrKIgItacr3NZ6gM3csz1ru2yL72OXeMwegqfEQvGJKFA7TmvxkmDTQ3QxedZAbI5EqjpYcHSsgUlAMZk6kMGmwz6xzzSCr1HcBm+VCuwShrfVbNHvo7X3kKaHEnagwlSSpFj8KcqaBsWDKS3FZVWbyHVlZav7ou1mU=;
-Received: by f476.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
-        id 1jN2LF-0004fK-6I; Sat, 11 Apr 2020 01:41:41 +0300
-Received: by light.mail.ru with HTTP;
-        Sat, 11 Apr 2020 01:41:41 +0300
-From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-To:     cyphar@cyphar.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: =?UTF-8?B?V2hhdCBhYm91dCBhZGRpbmcgQVRfTk9fQVVUT01PVU5UIGFuYWxvZ3VlIHRv?=
- =?UTF-8?B?IG9wZW5hdDI/?=
-MIME-Version: 1.0
-X-Mailer: Mail.Ru Mailer 1.0
-Date:   Sat, 11 Apr 2020 01:41:41 +0300
-Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-X-Priority: 3 (Normal)
-Message-ID: <1586558501.806374941@f476.i.mail.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-7564579A: 646B95376F6C166E
-X-77F55803: 0A44E481635329DB4E7FAE048FD183FFD32E5E488652173699CE90E9CBBFB45F533187F580C9A3C5FBDBF69DD7E3F538CCE2E01486CEC77C7C958CBD0D8051AE467A4D52C36B36E8F7C03686E6FAFAA4
-X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE79A7838B1C93996B3D82A6BABE6F325AC9EB98D58427B1C2ABCF491FFA38154B613377AFFFEAFD2691661749BA6B97735E338B9D28515FD48C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE7FDE19FEC90BA7BD78F08D7030A58E5AD6BA297DBC24807EAA9D420A4CFB5DD3E14EAEAFEC97FBC61D7027B63E537BF2EAB3F61A9443B25348941B15DA834481FA18204E546F3947C2FFDA4F57982C5F4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BF1175FABE1C0F9B6A471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E735262FEC7FBD7D1F5BB5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DBEB6346B700B4D54FE5BFE6E7EFDEDCD789D4C264860C145E
-X-D57D3AED: Y8kq8+OzVozcFQziTi/Zi098oNK9gy3Irm5KFwLuDg60je4lC+GbTj0M8KbzpOmgsB7wYP6nnel8wfEHQiZAetlEg7qy07ISeqrIhHPnkjx0qYt/JhcayA==
-X-Mailru-Internal-Actual: A:0.81979357255974
-X-Mailru-Sender: 5EEECD413B34D8D993653919C594580509AFADCAB17C8D30412F8EFC6DC694E9173A9C3A3203BEB4E050B273745CFBD67903AA853BEC14D66BF3EC0C2B8D44F11752C749FAB18CA3A8F61D99D8C7FF8FA4CD9F439FE7F8175FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-Spam: undefined
-X-7564579A: EEAE043A70213CC8
-X-77F55803: E8DB3678F13EF3E07F9F52485CB584D7271FD7DF62800FDCB52A10C9A23050676302471D10535BE4B9CBC6B6FC358B3AA2BF6DEF702989DB
-X-7FA49CB5: 0D63561A33F958A53B747B576B896318F086C37C234D0504BD5F5ABDD7532A788941B15DA834481FA18204E546F3947C2FFDA4F57982C5F4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BF1175FABE1C0F9B6A471835C12D1D977C4224003CC836476C0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E735262FEC7FBD7D1F5BB5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DBEB6346B700B4D54FE5BFE6E7EFDEDCD789D4C264860C145E
-X-D57D3AED: Y8kq8+OzVozcFQziTi/Zi098oNK9gy3Irm5KFwLuDg60je4lC+GbTj0M8KbzpOmgsB7wYP6nnel8wfEHQiZAetlEg7qy07ISeqrIhHPnkjz+XW1r9CAP/Q==
-X-Mailru-MI: 800
-X-Mras: Ok
+        id S1726712AbgDKBUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Apr 2020 21:20:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726648AbgDKBUE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Apr 2020 21:20:04 -0400
+Subject: Re: [GIT PULL] orangefs: a fix and two cleanups and a merge conflict
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586568004;
+        bh=6T2VQApC3NkKw7DoEort9CtNiuIlCpTergh5jCrcdE8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=o4t8Wqn6YY+xbCxJjSx9xYScDWnGUr+PlLfeD4Ojigahe0JEYK0NXyIbKWBvAmB7v
+         JWuq0vUtUiawbUyNBl1SdVA4oliLTHHsjJvffxpdVAh6W6VvHbjq3tUo4++Zoz8opS
+         feWIB+M1rsTg4kc4I37spN7vezxSvD0SjmAxwuVA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAOg9mSSeHarznzQOBr4GkdxMHqSTEEj786o8yG1nZ35C0FYSng@mail.gmail.com>
+References: <CAOg9mSSeHarznzQOBr4GkdxMHqSTEEj786o8yG1nZ35C0FYSng@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAOg9mSSeHarznzQOBr4GkdxMHqSTEEj786o8yG1nZ35C0FYSng@mail.gmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+ tags/for-linus-5.7-ofs1
+X-PR-Tracked-Commit-Id: aa317d3351dee7cb0b27db808af0cd2340dcbaef
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4e4bdcfa21297ab6f4d963edae3abb8ec4eac312
+Message-Id: <158656800463.16442.17342596625957694196.pr-tracker-bot@kernel.org>
+Date:   Sat, 11 Apr 2020 01:20:04 +0000
+To:     Mike Marshall <hubcap@omnibond.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, hubcapsc@gmail.com
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-V2hhdCBhYm91dCBhZGRpbmcgc3RhdCdzIEFUX05PX0FVVE9NT1VOVCBhbmFsb2d1ZSB0byBvcGVu
-YXQyPwoKCj09CkFza2FyIFNhZmluCmh0dHBzOi8vZ2l0aHViLmNvbS9zYWZpbmFza2FyCg==
+The pull request you sent on Fri, 10 Apr 2020 10:52:50 -0400:
+
+> https://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-5.7-ofs1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4e4bdcfa21297ab6f4d963edae3abb8ec4eac312
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
