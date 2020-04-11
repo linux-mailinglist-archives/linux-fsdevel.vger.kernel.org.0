@@ -2,94 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B66E1A576A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 01:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C441A5B9C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 01:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbgDKXWi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Apr 2020 19:22:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54748 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbgDKXWE (ORCPT
+        id S1726818AbgDKX6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Apr 2020 19:58:34 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33564 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbgDKX6e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Apr 2020 19:22:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kQkDW0nh6/SfP4OPM8VhrnzpbvEqadvFvedQUkcdAZw=; b=MwXAfGgw1DYwAIj42DDJRJxpi8
-        lOeqwfBQzpC1GCKO/kqjSXId1O3AJyZk7Y/nf88jms+vOJlN1O7nC6M/pdX+dxi+/7M8FLPVZMm7p
-        qAQbgsYA7fpbytNPN2ux44QglDhxGrjUFCfZ5sUgsjDBR8oE8Hm9uF/FmBz6kyu5YgCnlpO89jcUL
-        naLX3uHkXsfIU/XXqwcue1vzkxpqh2Ec3+SvIIrJpH2MWQLQk66ayvCm+0UPGzM1fXTrCP7yWJI6Q
-        bGp04EULVg5zXezCjDZcPtDyzi8ROk8i3Xzum6JLZ6pme6aZMSi5yuMB1JwTsgdu+jq4K6WfejwOr
-        C/lJQNdQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jNPRt-0005TR-7h; Sat, 11 Apr 2020 23:22:05 +0000
-Date:   Sat, 11 Apr 2020 16:22:05 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Rename page_offset() to page_pos()
-Message-ID: <20200411232205.GJ21484@bombadil.infradead.org>
-References: <20200411203220.GG21484@bombadil.infradead.org>
- <CAHk-=wgCAGVwAVTuaoJu4bF99JEG66iN7_vzih=Z33GMmOTC_Q@mail.gmail.com>
- <20200411214818.GH21484@bombadil.infradead.org>
- <CAHk-=wj71d1ExE-_W0hy87r3d=2URMwx0f6oh+bvdfve6G71ew@mail.gmail.com>
- <20200411220603.GI21484@bombadil.infradead.org>
- <CAHk-=whFfcUEMq5C9Xy=c=sJrT-+3uOE2bAwEQo9MUdbhP2X3Q@mail.gmail.com>
+        Sat, 11 Apr 2020 19:58:34 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 44AE42A0399
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] unicode: Expose available encodings in sysfs
+Date:   Sat, 11 Apr 2020 19:58:23 -0400
+Message-Id: <20200411235823.2967193-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whFfcUEMq5C9Xy=c=sJrT-+3uOE2bAwEQo9MUdbhP2X3Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 11, 2020 at 03:09:35PM -0700, Linus Torvalds wrote:
-> On Sat, Apr 11, 2020 at 3:06 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > But we _have_ an offset_in_page() and it doesn't take a struct page
-> > argument.
-> 
-> .. it doesn't take a struct page argument because a struct page always
-> has one compile-time fixed size.
-> 
-> The only reason you seem to want to get the new interface is because
-> you want to change that fact.
-> 
-> So yes, you'd have to change the _existing_ offset_in_page() to take
-> that extra "which page" argument.
-> 
-> That's not confusing.
+A filesystem configuration utility has no way to detect which filename
+encodings are supported by the running kernel.  This means, for
+instance, mkfs has no way to tell if the generated filesystem will be
+mountable in the current kernel or not.  Also, users have no easy way to
+know if they can update the encoding in their filesystems and still have
+something functional in the end.
 
-Unfortunately there isn't always a struct page around.  For example:
+This exposes details of the encodings available in the unicode
+subsystem, to fill that gap.
 
-int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
-                struct list_head *uf, bool downgrade)
-{
-        unsigned long end;
-        struct vm_area_struct *vma, *prev, *last;
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+---
+ Documentation/ABI/testing/sysfs-fs-unicode | 13 +++++
+ fs/unicode/utf8-core.c                     | 64 ++++++++++++++++++++++
+ fs/unicode/utf8-norm.c                     | 18 ++++++
+ fs/unicode/utf8n.h                         |  5 ++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-unicode
 
-        if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
-                return -EINVAL;
+diff --git a/Documentation/ABI/testing/sysfs-fs-unicode b/Documentation/ABI/testing/sysfs-fs-unicode
+new file mode 100644
+index 000000000000..15c63367bb8e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-unicode
+@@ -0,0 +1,13 @@
++What:		/sys/fs/unicode/latest
++Date:		April 2020
++Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
++Description:
++		The latest version of the Unicode Standard supported by
++		this kernel
++
++What:		/sys/fs/unicode/encodings
++Date:		April 2020
++Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
++Description:
++		List of encodings and corresponding versions supported
++		by this kernel
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 2a878b739115..7e0282707435 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -6,6 +6,7 @@
+ #include <linux/parser.h>
+ #include <linux/errno.h>
+ #include <linux/unicode.h>
++#include <linux/fs.h>
+ 
+ #include "utf8n.h"
+ 
+@@ -212,4 +213,67 @@ void utf8_unload(struct unicode_map *um)
+ }
+ EXPORT_SYMBOL(utf8_unload);
+ 
++static ssize_t latest_show(struct kobject *kobj,
++			   struct kobj_attribute *attr, char *buf)
++{
++	int l = utf8version_latest();
++
++	return snprintf(buf, PAGE_SIZE, "UTF-8 %d.%d.%d\n", UNICODE_AGE_MAJ(l),
++			UNICODE_AGE_MIN(l), UNICODE_AGE_REV(l));
++
++}
++static ssize_t encodings_show(struct kobject *kobj,
++			      struct kobj_attribute *attr, char *buf)
++{
++	int n;
++
++	n = snprintf(buf, PAGE_SIZE, "UTF-8:");
++	n += utf8version_list(buf + n, PAGE_SIZE - n);
++	n += snprintf(buf+n, PAGE_SIZE-n, "\n");
++
++	return n;
++}
++
++#define UCD_ATTR(x) \
++	static struct kobj_attribute x ## _attr = __ATTR_RO(x)
++
++UCD_ATTR(latest);
++UCD_ATTR(encodings);
++
++static struct attribute *ucd_attrs[] = {
++	&latest_attr.attr,
++	&encodings_attr.attr,
++	NULL,
++};
++static const struct attribute_group ucd_attr_group = {
++	.attrs = ucd_attrs,
++};
++static struct kobject *ucd_root;
++
++int __init ucd_init(void)
++{
++	int ret;
++
++	ucd_root = kobject_create_and_add("unicode", fs_kobj);
++	if (!ucd_root)
++		return -ENOMEM;
++
++	ret = sysfs_create_group(ucd_root, &ucd_attr_group);
++	if (ret) {
++		kobject_put(ucd_root);
++		ucd_root = NULL;
++		return ret;
++	}
++
++	return 0;
++}
++
++void __exit ucd_exit(void)
++{
++	kobject_put(ucd_root);
++}
++
++module_init(ucd_init);
++module_exit(ucd_exit)
++
+ MODULE_LICENSE("GPL v2");
+diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
+index 1d2d2e5b906a..f9ebba89a138 100644
+--- a/fs/unicode/utf8-norm.c
++++ b/fs/unicode/utf8-norm.c
+@@ -35,6 +35,24 @@ int utf8version_latest(void)
+ }
+ EXPORT_SYMBOL(utf8version_latest);
+ 
++int utf8version_list(char *buf, int len)
++{
++	int i = ARRAY_SIZE(utf8agetab) - 1;
++	int ret = 0;
++
++	/*
++	 * Print most relevant (latest) first.  No filesystem uses
++	 * unicode <= 12.0.0, so don't expose them to userspace.
++	 */
++	for (; utf8agetab[i] >= UNICODE_AGE(12, 0, 0); i--) {
++		ret += snprintf(buf+ret, len-ret, " %d.%d.%d",
++				UNICODE_AGE_MAJ(utf8agetab[i]),
++				UNICODE_AGE_MIN(utf8agetab[i]),
++				UNICODE_AGE_REV(utf8agetab[i]));
++	}
++	return ret;
++}
++
+ /*
+  * UTF-8 valid ranges.
+  *
+diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
+index 0acd530c2c79..5dea2c4af1f3 100644
+--- a/fs/unicode/utf8n.h
++++ b/fs/unicode/utf8n.h
+@@ -21,9 +21,14 @@
+ 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+ 	 ((unsigned int)(REV)))
+ 
++#define UNICODE_AGE_MAJ(x) ((x) >> UNICODE_MAJ_SHIFT & 0xff)
++#define UNICODE_AGE_MIN(x) ((x) >> UNICODE_MIN_SHIFT & 0xff)
++#define UNICODE_AGE_REV(x) ((x) & 0xff)
++
+ /* Highest unicode version supported by the data tables. */
+ extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
+ extern int utf8version_latest(void);
++extern int utf8version_list(char *buf, int len);
+ 
+ /*
+  * Look for the correct const struct utf8data for a unicode version.
+-- 
+2.26.0
 
-where we don't care _which_ page, we just want to know the offset relative
-to the architecturally defined page size.  In this specific case, it
-should probably be changed to is_page_aligned(start).
-
-There are trickier ones like on powerpc:
-
-unsigned long vmalloc_to_phys(void *va)
-{
-        unsigned long pfn = vmalloc_to_pfn(va);
-
-        BUG_ON(!pfn);
-        return __pa(pfn_to_kaddr(pfn)) + offset_in_page(va);
-}
-
-where there actually _is_ a struct page, but it will need to be found.
-Maybe we can pass in NULL to indicate to use the base page size.  Or
-rename all current callers to offset_in_base_page() before adding a
-struct page pointer to offset_in_page().  Tedious, but doable.
