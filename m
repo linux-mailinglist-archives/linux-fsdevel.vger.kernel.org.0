@@ -2,222 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (unknown [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3478A1A5F6C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 18:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE721A60D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 00:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbgDLQzH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Apr 2020 12:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.18]:56384 "EHLO
+        id S1726231AbgDLW2v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Apr 2020 18:28:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.18]:57740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbgDLQzH (ORCPT
+        with ESMTP id S1725954AbgDLW2v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Apr 2020 12:55:07 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848A9C0A3BF5;
-        Sun, 12 Apr 2020 09:49:58 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 490d5b5FnlzQl1t;
-        Sun, 12 Apr 2020 18:49:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id uaGde-C1kHvu; Sun, 12 Apr 2020 18:49:52 +0200 (CEST)
-Date:   Mon, 13 Apr 2020 02:49:43 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2)
- syscall
-Message-ID: <20200412164943.imwpdj5qgtyfn5de@yavin.dot.cyphar.com>
-References: <20200202151907.23587-1-cyphar@cyphar.com>
- <20200202151907.23587-3-cyphar@cyphar.com>
- <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com>
- <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
- <cd3a6aad-b906-ee57-1b5b-5939b9602ad0@gmail.com>
+        Sun, 12 Apr 2020 18:28:51 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3AF0C0A88B5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 15:28:51 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id t11so7071750ils.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 15:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=juliacomputing-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ANGfUKyG+6xWky2jJ2nWMKG+M8IIxgEacG/h0ycqR20=;
+        b=tAqXHlP8pnC0Fae5HqLveAPHChvu5fDrBR9aCpdJ/+VGWLe239sL5EQQWbqaz3R9zk
+         EAQUa5NP5nmgrY74n41PftFvtCCNCkmDthGZgO1ECVJSvQ4IMF53VSupjwSpg+7RuiI2
+         v8IH811tUAia95Hhy4SCvG+4vNYPYkm/oQwKOCJSYOIjRu3W/kSiUZHWJk1lZ+sCtpCN
+         sz3mK9n7qAcYjYqEBtPNGS5pNjUaJMtI1sYKypSgAKOTUQlwM5XiVkmGcy1PN8/Nb7x4
+         5Dp2zxa0TXQ+m0aDA5A0d4GXIcPgOuuLePU4s7tZZkslKAfNetsNFpjzQdzBZpgG9Dy/
+         XODw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ANGfUKyG+6xWky2jJ2nWMKG+M8IIxgEacG/h0ycqR20=;
+        b=dg9MqwYA22Pa9SWmXbhvt05gbYAfv4750tec7z06D/tvRU3fXrzw/d21cierXRJ14N
+         zN2scsYS/RPdD1Sy3uEKuALDgrcOVZB9yQkL86j9uql5m15tQV8yHt1pBAjIly68tYB7
+         k4lyP16zgvCQMiw3lRSJlof20IFocUGqbFLn3Uj/UsFyfICqbamOwldoPRuNqrxHNV8W
+         ua9+l0+1rkxVTiOiVJ+NQJvnvq9x3yXf6P6FK8lJ5XHXIYNaG4rGtGYLxglyHZWxbAnP
+         Wrm9+oJp/nDo8KN2XNyKe3ciPOUtptcYCGVryjbFfj1067JmIyr+EMnoq5+VfReP8tTo
+         xFaQ==
+X-Gm-Message-State: AGi0PuaNla3t60XywpbN7NNPexKd9kwuW7BDPSX/1ezllKdE4qwnnpWd
+        JXijMZ9QpFQRZm2sdIT/7MuOHMQoV0NLrb27NS+Ycg==
+X-Google-Smtp-Source: APiQypJO2Sswe5+NMVXMBxFMyLnpwoxty/zztpPW7J2prcZwXcKcdiwPWUFR1BvBQmKAE2/hAJpBzCD4M7x9p/ukihc=
+X-Received: by 2002:a92:250e:: with SMTP id l14mr14538847ill.201.1586730530779;
+ Sun, 12 Apr 2020 15:28:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sk2rmexkwnlikbil"
-Content-Disposition: inline
-In-Reply-To: <cd3a6aad-b906-ee57-1b5b-5939b9602ad0@gmail.com>
-X-Rspamd-Queue-Id: 65CA51666
-X-Rspamd-Score: -5.74 / 15.00 / 15.00
+References: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
+ <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
+From:   Keno Fischer <keno@juliacomputing.com>
+Date:   Sun, 12 Apr 2020 18:28:13 -0400
+Message-ID: <CABV8kRxVA0j2qLkyWx+vULh2DxK2Ef4nPk-zXCikN8XmdBOFgQ@mail.gmail.com>
+Subject: Re: Same mountpoint restriction in FICLONE ioctls
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Steve French <smfrench@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> You did not specify your use case.
 
---sk2rmexkwnlikbil
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My use case is recording (https://rr-project.org/) executions
+of containers (which often make heavy use of bind mounts on
+the same file system, thus me running into this restriction).
+In essence, at relevant read or mmap operations,
+rr needs to checkpoint the file that was opened,
+in case it later gets deleted or modified.
+It always tries to FICLONE the file first,
+before deciding heuristically whether to
+instead create a copy (if it decides there is a low
+likelihood the file will get changed - e.g. because
+it's a system file - it may decide to take the chance and
+not copy it at the risk of creating a broken recording).
+That's often a decent trade-off, but of course it's not
+100% perfect.
 
-Sorry, I could've sworn I responded when you posted this -- comments
-below. And sorry for not getting back to you before the 5.06 release.
+> The question is: do you *really* need cross mount clone?
+> Can you use copy_file_range() instead?
 
-On 2020-04-01, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> On 3/31/20 4:39 PM, Aleksa Sarai wrote:
-> > On 2020-03-30, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wro=
-te:
-> >> On 2/2/20 4:19 PM, Aleksa Sarai wrote:
-> >>> Rather than trying to merge the new syscall documentation into open.2
-> >>> (which would probably result in the man-page being incomprehensible),
-> >>> instead the new syscall gets its own dedicated page with links between
-> >>> open(2) and openat2(2) to avoid duplicating information such as the l=
-ist
-> >>> of O_* flags or common errors.
-> >>>
-> >>> In addition to describing all of the key flags, information about the
-> >>> extensibility design is provided so that users can better understand =
-why
-> >>> they need to pass sizeof(struct open_how) and how their programs will
-> >>> work across kernels. After some discussions with David Laight, I also
-> >>> included explicit instructions to zero the structure to avoid issues
-> >>> when recompiling with new headers.
-> >>>
-> >>> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> >>
-> >> Thanks. I've applied this patch, but also done quite a lot of
-> >> editing of the page. The current draft is below (and also pushed=20
-> >> to Git). Could I ask you to review the page, to see if I injected
-> >> any error during my edits.
-> >=20
-> > Looks good to me.
-> >=20
-> >> In addition, I've added a number of FIXMEs in comments
-> >> in the page source. Can you please check these, and let me
-> >> know your thoughts.
-> >=20
-> > Will do, see below.
-> >=20
-> >> .\" FIXME I find the "previously-functional systems" in the previous
-> >> .\" sentence a little odd (since openat2() ia new sysycall), so I would
-> >> .\" like to clarify a little...
-> >> .\" Are you referring to the scenario where someone might take an
-> >> .\" existing application that uses openat() and replaces the uses
-> >> .\" of openat() with openat2()? In which case, is it correct to
-> >> .\" understand that you mean that one should not just indiscriminately
-> >> .\" add the RESOLVE_NO_XDEV flag to all of the openat2() calls?
-> >> .\" If I'm not on the right track, could you point me in the right
-> >> .\" direction please.
-> >=20
-> > This is mostly meant as a warning to hopefully avoid applications
-> > because the developer didn't realise that system paths may contain
-> > symlinks or bind-mounts. For an application which has switched to
-> > openat2() and then uses RESOLVE_NO_SYMLINKS for a non-security reason,
-> > it's possible that on some distributions (or future versions of a
-> > distribution) that their application will stop working because a system
-> > path suddenly contains a symlink or is a bind-mount.
-> >=20
-> > This was a concern which was brought up on LWN some time ago. If you can
-> > think of a phrasing that makes this more clear, I'd appreciate it.
->=20
-> Thanks. I've made the text:
->=20
->                      Applications  that  employ  the RESOLVE_NO_XDEV flag
->                      are encouraged to make its use configurable  (unless
->                      it is used for a specific security purpose), as bind
->                      mounts are widely used by end-users.   Setting  this
->                      flag indiscriminately=E2=80=94i.e., for purposes not=
- specif=E2=80=90
->                      ically related to security=E2=80=94for all uses of o=
-penat2()
->                      may  result  in  spurious errors on previously-func=
-=E2=80=90
->                      tional systems.  This may occur if, for  example,  a
->                      system  pathname  that  is used by an application is
->                      modified (e.g., in a new  distribution  release)  so
->                      that  a  pathname  component  (now)  contains a bind
->                      mount.
->=20
-> Okay?
+Good question. copy_file_range doesn't quite work
+for that initial clone, because we do want it to fail if
+cloning doesn't work (so that we can apply the
+heuristics). However, you make a good point that
+the copy fallback should probably use copy_file_range.
+At least that way, if it does decide to copy, the
+performance will be better.
 
-Yup, and the same text should be used for the same warning I gave for
-RESOLVE_NO_SYMLINKS (for the same reason, because system paths may
-switch to symlinks -- the prime example being what Arch Linux did
-several years ago).
+It would still be nice for FICLONE to ease this restriction,
+since it reduces the chance of the heuristics getting
+it wrong and preventing the copy, even if such
+a copy would have been cheap.
 
-> >> .\" FIXME: what specific details in symlink(7) are being referred
-> >> .\" by the following sentence? It's not clear.
-> >=20
-> > The section on magic-links, but you're right that the sentence ordering
-> > is a bit odd. It should probably go after the first sentence.
->=20
-> I must admit that I'm still confused. There's only the briefest of=20
-> mentions of magic links in symlink(7). Perhaps that needs to be fixed?
+> Across which filesystems mounts are you trying to clone?
 
-It wouldn't hurt to add a longer description of magic-links in
-symlink(7). I'll send you a small patch to beef up the description (I
-had planned to include a longer rewrite with the O_EMPTYPATH patches but
-those require quite a bit more work to land).
+This functionality was written with btrfs in mind, so that's
+what I was testing with. The mounts themselves are just
+different bindmounts into the same filesystem.
 
-> And, while I think of it, the text just preceding that FIXME says:
->=20
->     Due to the potential danger of unknowingly opening=20
->     these magic links, it may be preferable for users to=20
->     disable their resolution entirely.
->=20
-> This sentence reads a little strangely. Could you please give me some
-> concrete examples, and I will try rewording that sentence a bit.
-
-The primary example is that certain files (such as tty devices) are
-best not opened by an unsuspecting program (if you do not have a
-controlling TTY, and you open such a file that console becomes your
-controlling TTY unless you use O_NOCTTY).
-
-But more generally, magic-links allow programs to be "beamed" all over
-the system (bypassing ordinary mount namespace restrictions). Since they
-are fairly rarely used intentionally by most programs, this is more of a
-tip to programmers that maybe they should play it safe and disallow
-magic-links unless they are expecting to have to use them.
-
-> >> .\" FIXME I found the following hard to understand (in particular, the
-> >> .\" meaning of "scoped" is unclear) , and reworded as below. Is it oka=
-y?
-> >> .\"     Absolute symbolic links and ".." path components will be scope=
-d to
-> >> .\"     .IR dirfd .
-> >=20
-> > Scoped does broadly mean "interpreted relative to", though the
-> > difference is mainly that when I said scoped it's meant to be more of an
-> > assertive claim ("the kernel promises to always treat this path inside
-> > dirfd"). But "interpreted relative to" is a clearer way of phrasing the
-> > semantics, so I'm okay with this change.
->=20
-> Okay.
->=20
-> >> .\" FIXME The next piece is unclear (to me). What kind of ".." escape
-> >> .\" attempts does chroot() not detect that RESOLVE_IN_ROOT does?
-> >=20
-> > If the root is moved, you can escape from a chroot(2). But this sentence
-> > might not really belong in a man-page since it's describing (important)
-> > aspects of the implementation and not the semantics.
->=20
-> So, should I just remove the sentence?
-
-Yup, sounds reasonable.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---sk2rmexkwnlikbil
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXpNGpAAKCRCdlLljIbnQ
-Eu41AQC5eoSSECNWVaMgwzaC7W/Qobh6lI4TM6FTh5iy0Z1qqgD/Yq2YO1zmslfV
-YITOlptH67Fzel45Fqz0P0Zo0DgGgAE=
-=D0Zq
------END PGP SIGNATURE-----
-
---sk2rmexkwnlikbil--
+Keno
