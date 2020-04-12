@@ -2,204 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C441A5B9C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 01:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFDB01A5D15
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 08:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbgDKX6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Apr 2020 19:58:34 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33564 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbgDKX6e (ORCPT
+        id S1726633AbgDLGrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Apr 2020 02:47:05 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42102 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbgDLGrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Apr 2020 19:58:34 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 44AE42A0399
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] unicode: Expose available encodings in sysfs
-Date:   Sat, 11 Apr 2020 19:58:23 -0400
-Message-Id: <20200411235823.2967193-1-krisman@collabora.com>
-X-Mailer: git-send-email 2.26.0
+        Sun, 12 Apr 2020 02:47:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id y17so6224292iow.9;
+        Sat, 11 Apr 2020 23:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mjGDxi5B3VXdAiZ5r2/e7JLSd3GB+0GVuORm4mGPP3c=;
+        b=ZU62f04iXHvT06cgjyP1zhmCpdCijIeNT1rzkXBNyRaJY3eXtiU/8+DYL9aT2ZBidV
+         RmNPfPFlKHh/s0iLo9tvqSG+eZHejjIE9g30UCPKlhCYwiF9o8ulStpudSsx/czde283
+         ZEDGXLRaFBsJDSInam0s8urqqs8oTp8a+XefssaW7LmWQhxb0oM50uOPPC9YoRzIQCto
+         J7C/73C9FfG2GQOXV/JALKqi3Yw9NHfVQ9HaqtlLTqKSEV4jOlNif+VwvswqtrIFmmkE
+         nnI1ICwHBWAQSvhXDDjqIiIAn3G1+Ns8fxIww7AI0lDX3Y4Zy0q+CtsJoJuEyD8KJ2pR
+         VaFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mjGDxi5B3VXdAiZ5r2/e7JLSd3GB+0GVuORm4mGPP3c=;
+        b=RlJluQMCiwE2SWo0/uj2s8qT015iw0CCAg6ATm8n/M66ywmhWervoW7jgfXgKK2P2j
+         A3d9PA06PbJcouVkpYF4hJw795ZOZjDFjEKDHybABdtpiUcxckA82kLRCmNUMx+6KLBa
+         5nwyP/UWRC1pkt/JX3ofqovKYykV9eofZ2cJwCaQAAlZLU0OVOjjN5R+83bHWNQD6WHW
+         3HU1zmr9dMNM2tKXe3/j2xsl/JHzelGBU9MWbtLx0It7Ett/rhZnog4lj37v/BncoKZj
+         UdjXbfnDzaKXHajlQLvJUF/a0DTfODO8gKcNDPKiVjdBFCFMKpgeKt9tomqOHTYiqRYr
+         WLMA==
+X-Gm-Message-State: AGi0PuazWvZKLhHCug9RUTTdIySPt9+cre7PYWF9Qm7t4Qx9lFouPrLs
+        8aTxukML/QxqOlUQ3A38S0mG0w1uDG9yNlG5PNn+wcq6
+X-Google-Smtp-Source: APiQypLNtacdtAqj8zZFpCSgeQiPfEj/zpXMaKMK+FdRcT6C1vtRXKAII5Jeji8d4W2je5OX1xLz6j7ZzzyiPcRlvyY=
+X-Received: by 2002:a02:c9cb:: with SMTP id c11mr10641464jap.93.1586674024515;
+ Sat, 11 Apr 2020 23:47:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <158642098777.5635.10501704178160375549.stgit@buzz> <20200411222829.GO10737@dread.disaster.area>
+In-Reply-To: <20200411222829.GO10737@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 12 Apr 2020 09:46:53 +0300
+Message-ID: <CAOQ4uxgnSVctF5Kyh+RwW9zH00ctaA9UPS2cnW1roxho7pjf3g@mail.gmail.com>
+Subject: Re: [PATCH] ovl: skip overlayfs superblocks at global sync
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A filesystem configuration utility has no way to detect which filename
-encodings are supported by the running kernel.  This means, for
-instance, mkfs has no way to tell if the generated filesystem will be
-mountable in the current kernel or not.  Also, users have no easy way to
-know if they can update the encoding in their filesystems and still have
-something functional in the end.
+On Sun, Apr 12, 2020 at 1:29 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Thu, Apr 09, 2020 at 11:29:47AM +0300, Konstantin Khlebnikov wrote:
+> > Stacked filesystems like overlayfs has no own writeback, but they have to
+> > forward syncfs() requests to backend for keeping data integrity.
+> >
+> > During global sync() each overlayfs instance calls method ->sync_fs()
+> > for backend although it itself is in global list of superblocks too.
+> > As a result one syscall sync() could write one superblock several times
+> > and send multiple disk barriers.
+> >
+> > This patch adds flag SB_I_SKIP_SYNC into sb->sb_iflags to avoid that.
+>
+> Why wouldn't you just remove the ->sync_fs method from overlay?
+>
+> I mean, if you don't need the filesystem to do anything special for
+> one specific data integrity sync_fs call, you don't need it for any
+> of them, yes?
+>
 
-This exposes details of the encodings available in the unicode
-subsystem, to fill that gap.
+No, but I understand the confusion.
 
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- Documentation/ABI/testing/sysfs-fs-unicode | 13 +++++
- fs/unicode/utf8-core.c                     | 64 ++++++++++++++++++++++
- fs/unicode/utf8-norm.c                     | 18 ++++++
- fs/unicode/utf8n.h                         |  5 ++
- 4 files changed, 100 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-fs-unicode
+Say you have 1000 overlay sb's all of them using upper directories
+from a single xfs sb (quite common for containers).
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-unicode b/Documentation/ABI/testing/sysfs-fs-unicode
-new file mode 100644
-index 000000000000..15c63367bb8e
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-fs-unicode
-@@ -0,0 +1,13 @@
-+What:		/sys/fs/unicode/latest
-+Date:		April 2020
-+Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
-+Description:
-+		The latest version of the Unicode Standard supported by
-+		this kernel
-+
-+What:		/sys/fs/unicode/encodings
-+Date:		April 2020
-+Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
-+Description:
-+		List of encodings and corresponding versions supported
-+		by this kernel
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index 2a878b739115..7e0282707435 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -6,6 +6,7 @@
- #include <linux/parser.h>
- #include <linux/errno.h>
- #include <linux/unicode.h>
-+#include <linux/fs.h>
- 
- #include "utf8n.h"
- 
-@@ -212,4 +213,67 @@ void utf8_unload(struct unicode_map *um)
- }
- EXPORT_SYMBOL(utf8_unload);
- 
-+static ssize_t latest_show(struct kobject *kobj,
-+			   struct kobj_attribute *attr, char *buf)
-+{
-+	int l = utf8version_latest();
-+
-+	return snprintf(buf, PAGE_SIZE, "UTF-8 %d.%d.%d\n", UNICODE_AGE_MAJ(l),
-+			UNICODE_AGE_MIN(l), UNICODE_AGE_REV(l));
-+
-+}
-+static ssize_t encodings_show(struct kobject *kobj,
-+			      struct kobj_attribute *attr, char *buf)
-+{
-+	int n;
-+
-+	n = snprintf(buf, PAGE_SIZE, "UTF-8:");
-+	n += utf8version_list(buf + n, PAGE_SIZE - n);
-+	n += snprintf(buf+n, PAGE_SIZE-n, "\n");
-+
-+	return n;
-+}
-+
-+#define UCD_ATTR(x) \
-+	static struct kobj_attribute x ## _attr = __ATTR_RO(x)
-+
-+UCD_ATTR(latest);
-+UCD_ATTR(encodings);
-+
-+static struct attribute *ucd_attrs[] = {
-+	&latest_attr.attr,
-+	&encodings_attr.attr,
-+	NULL,
-+};
-+static const struct attribute_group ucd_attr_group = {
-+	.attrs = ucd_attrs,
-+};
-+static struct kobject *ucd_root;
-+
-+int __init ucd_init(void)
-+{
-+	int ret;
-+
-+	ucd_root = kobject_create_and_add("unicode", fs_kobj);
-+	if (!ucd_root)
-+		return -ENOMEM;
-+
-+	ret = sysfs_create_group(ucd_root, &ucd_attr_group);
-+	if (ret) {
-+		kobject_put(ucd_root);
-+		ucd_root = NULL;
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+void __exit ucd_exit(void)
-+{
-+	kobject_put(ucd_root);
-+}
-+
-+module_init(ucd_init);
-+module_exit(ucd_exit)
-+
- MODULE_LICENSE("GPL v2");
-diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
-index 1d2d2e5b906a..f9ebba89a138 100644
---- a/fs/unicode/utf8-norm.c
-+++ b/fs/unicode/utf8-norm.c
-@@ -35,6 +35,24 @@ int utf8version_latest(void)
- }
- EXPORT_SYMBOL(utf8version_latest);
- 
-+int utf8version_list(char *buf, int len)
-+{
-+	int i = ARRAY_SIZE(utf8agetab) - 1;
-+	int ret = 0;
-+
-+	/*
-+	 * Print most relevant (latest) first.  No filesystem uses
-+	 * unicode <= 12.0.0, so don't expose them to userspace.
-+	 */
-+	for (; utf8agetab[i] >= UNICODE_AGE(12, 0, 0); i--) {
-+		ret += snprintf(buf+ret, len-ret, " %d.%d.%d",
-+				UNICODE_AGE_MAJ(utf8agetab[i]),
-+				UNICODE_AGE_MIN(utf8agetab[i]),
-+				UNICODE_AGE_REV(utf8agetab[i]));
-+	}
-+	return ret;
-+}
-+
- /*
-  * UTF-8 valid ranges.
-  *
-diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
-index 0acd530c2c79..5dea2c4af1f3 100644
---- a/fs/unicode/utf8n.h
-+++ b/fs/unicode/utf8n.h
-@@ -21,9 +21,14 @@
- 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
- 	 ((unsigned int)(REV)))
- 
-+#define UNICODE_AGE_MAJ(x) ((x) >> UNICODE_MAJ_SHIFT & 0xff)
-+#define UNICODE_AGE_MIN(x) ((x) >> UNICODE_MIN_SHIFT & 0xff)
-+#define UNICODE_AGE_REV(x) ((x) & 0xff)
-+
- /* Highest unicode version supported by the data tables. */
- extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
- extern int utf8version_latest(void);
-+extern int utf8version_list(char *buf, int len);
- 
- /*
-  * Look for the correct const struct utf8data for a unicode version.
--- 
-2.26.0
+syncfs(2) of each overlay, must call sync_fs of xfs (see ovl_sync_fs)
+sync(2) will call xfs sync_fs anyway, so there is no point in calling
+ovl_sync_fs => xfs sync_fs 1000 more times.
 
+Thanks,
+Amir.
