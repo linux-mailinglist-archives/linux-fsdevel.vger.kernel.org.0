@@ -2,109 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 940351A5E48
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 13:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7954F1A5E68
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 14:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgDLL3r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Apr 2020 07:29:47 -0400
-Received: from mail-io1-f52.google.com ([209.85.166.52]:39075 "EHLO
-        mail-io1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgDLL3q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Apr 2020 07:29:46 -0400
-Received: by mail-io1-f52.google.com with SMTP id m4so6597107ioq.6;
-        Sun, 12 Apr 2020 04:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lr8Du1SNizwqButahq7qkxIKOJ2tYQem2z0WmME8mcI=;
-        b=LRxbCfnM2pAXUuR19iUj6iP0vBxBl6OyeOmOOFBnYiOUeygcQ6wd1ZJA8timIuABUC
-         qwiyPIxYWoFB0KCfgStqa+sucIENFSFvuxV8jsgBP98rW2uLQoWKjQxVJhKDGBVZ+6xe
-         R7PXQvvSTcHwhvyiqPcN/tjHlnXBVdMgSle2tEim4e0DIJkyK36IJJVTuF4NMB9PnNgy
-         B7JPZMVRJ2EQMuwlhRlQreGJoMd/A9TK4nt09k72toTtnRmCb9qFnVIIux0+PIBx24ng
-         qHmcHmpPCaKYSBeG1F+fEImHYHNyFphV79PbEwuBStrk1+bH4acZopN6z/F0OA7M8hY4
-         zEZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lr8Du1SNizwqButahq7qkxIKOJ2tYQem2z0WmME8mcI=;
-        b=DNCrM6CC1K7gz75dwyseFfjfYG0aNrb6lKA6PO9gsCRpO8Eje2Tzy75VHJDRsxbSNS
-         zWqGkP18q4RFbsG+XbJa29s9KYguopuRHk8bhC8P95t9aLEit8HQG/6rE9f/qS+/qZQa
-         xAPKzTsZc3xbb7S1KGlwjn/K1R0pM1+LQZBgU5aM5tHyXnK5EpK2Aeqxr1LUU1hrMO9+
-         DSluX7McTJcMjULXVeZDcX939IP/K3aCOo1ZOfYZXP00Tnest2cPbEEHxJQ7NHss1X2M
-         dLDcCV/PJLtN6BFziFbNMh9IiVbAxSkiJ4dxdTx48geHuemYYrUek1bHr23wCsYN+iVM
-         hRyg==
-X-Gm-Message-State: AGi0Pubk4M+aVapQJc/fO1Qik9hs3qL4vXT11L/icNFxAK5lIz5SR7LZ
-        afG1agQYkDrEpnsEftJ6sJKQ/QN8kXLg++4gftE=
-X-Google-Smtp-Source: APiQypJoFFkbwvHNs7m2NtbtOkd6202kUw0Zhm4Xg4fnqOTM83ohDAaCR7uPl1lz0AyybO2GXi0EnO5JCXeTMI5sX7g=
-X-Received: by 2002:a05:6638:38e:: with SMTP id y14mr11426792jap.123.1586690986095;
- Sun, 12 Apr 2020 04:29:46 -0700 (PDT)
+        id S1726139AbgDLMCF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Apr 2020 08:02:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43357 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbgDLMCF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 12 Apr 2020 08:02:05 -0400
+IronPort-SDR: DV8SGnOzTv5dLWq5Okw5eyA2/fNlYaEDV17mKHXXCGmgGkR/+TZF2kYxrb7uiOb8/cMXzvUoFG
+ g1iBG8Hyfxpg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2020 05:02:03 -0700
+IronPort-SDR: MjYZ86/QsXaBRn4BYskzJn7SZtC2x837CRFf5pLQWAHnD+L8vEuIA597bfzpymfK3VYAu3KPEx
+ rUYiWmvesTrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,374,1580803200"; 
+   d="scan'208";a="399363868"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 12 Apr 2020 05:02:01 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jNbJI-000Dci-Q7; Sun, 12 Apr 2020 20:02:00 +0800
+Date:   Sun, 12 Apr 2020 20:01:48 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] unicode: Expose available encodings in sysfs
+Message-ID: <202004121952.JzmoxRo5%lkp@intel.com>
+References: <20200411235823.2967193-1-krisman@collabora.com>
 MIME-Version: 1.0
-References: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
-In-Reply-To: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 12 Apr 2020 14:29:35 +0300
-Message-ID: <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
-Subject: Re: Same mountpoint restriction in FICLONE ioctls
-To:     Keno Fischer <keno@juliacomputing.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Steve French <smfrench@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200411235823.2967193-1-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+CC XFS,NFS,CIFS
+Hi Gabriel,
 
-On Sun, Apr 12, 2020 at 1:06 PM Keno Fischer <keno@juliacomputing.com> wrote:
->
-> Hello,
->
-> I was curious about the reasoning behind the
-> same-mountpoint restriction in the FICLONE
-> ioctl. I saw that in commit
->
-> [913b86e92] vfs: allow vfs_clone_file_range() across mount points
->
-> this check was moved from the vfs layer into
-> the ioctl itself, so it appears to be a policy restriction
-> rather than a technical limitation. I understand why
-> hardlinks are disallowed across mount point boundaries,
-> but it seems like that rationale would not apply to clones,
-> since modifying the clone would not affect the original
-> file. Is there some other reason that the ioctl enforces
-> this restriction?
->
+I love your patch! Perhaps something to improve:
 
-I don't know. I suppose that when FICLONE was introduced
-there wasn't any use case for cross mount clone.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v5.6 next-20200412]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-Note that copy_file_range() also had this restriction, which was
-recently lifted, because NFSv4 and CIFS needed this functionality.
+url:    https://github.com/0day-ci/linux/commits/Gabriel-Krisman-Bertazi/unicode-Expose-available-encodings-in-sysfs/20200412-080010
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b032227c62939b5481bcd45442b36dfa263f4a7c
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-188-g79f7ac98-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-As far as I can tell, CIFS and NFSv4 can also support cross mount
-clone, but nobody stepped up to request or implement that.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kbuild test robot <lkp@intel.com>
 
-The question is: do you *really* need cross mount clone?
-Can you use copy_file_range() instead?
-It attempts to do remap_file_range() (clone) before falling back to
-kernel copy_file_range().
 
-> Removing this restrictions would have some performance
-> advantages for us, but I figured there must be a good reason
-> why it's there that I just don't know about, so I figured I'd ask.
->
+sparse warnings: (new ones prefixed by >>)
 
-You did not specify your use case.
-Across which filesystems mounts are you trying to clone?
+>> fs/unicode/utf8-core.c:253:12: sparse: sparse: symbol 'ucd_init' was not declared. Should it be static?
+>> fs/unicode/utf8-core.c:271:13: sparse: sparse: symbol 'ucd_exit' was not declared. Should it be static?
 
-Thanks,
-Amir.
+Please review and possibly fold the followup patch.
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
