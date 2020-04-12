@@ -2,94 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFDB01A5D15
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 08:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 352911A5DB4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Apr 2020 11:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbgDLGrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Apr 2020 02:47:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42102 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbgDLGrF (ORCPT
+        id S1726139AbgDLJRX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Apr 2020 05:17:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725832AbgDLJRX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Apr 2020 02:47:05 -0400
-Received: by mail-io1-f67.google.com with SMTP id y17so6224292iow.9;
-        Sat, 11 Apr 2020 23:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mjGDxi5B3VXdAiZ5r2/e7JLSd3GB+0GVuORm4mGPP3c=;
-        b=ZU62f04iXHvT06cgjyP1zhmCpdCijIeNT1rzkXBNyRaJY3eXtiU/8+DYL9aT2ZBidV
-         RmNPfPFlKHh/s0iLo9tvqSG+eZHejjIE9g30UCPKlhCYwiF9o8ulStpudSsx/czde283
-         ZEDGXLRaFBsJDSInam0s8urqqs8oTp8a+XefssaW7LmWQhxb0oM50uOPPC9YoRzIQCto
-         J7C/73C9FfG2GQOXV/JALKqi3Yw9NHfVQ9HaqtlLTqKSEV4jOlNif+VwvswqtrIFmmkE
-         nnI1ICwHBWAQSvhXDDjqIiIAn3G1+Ns8fxIww7AI0lDX3Y4Zy0q+CtsJoJuEyD8KJ2pR
-         VaFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mjGDxi5B3VXdAiZ5r2/e7JLSd3GB+0GVuORm4mGPP3c=;
-        b=RlJluQMCiwE2SWo0/uj2s8qT015iw0CCAg6ATm8n/M66ywmhWervoW7jgfXgKK2P2j
-         A3d9PA06PbJcouVkpYF4hJw795ZOZjDFjEKDHybABdtpiUcxckA82kLRCmNUMx+6KLBa
-         5nwyP/UWRC1pkt/JX3ofqovKYykV9eofZ2cJwCaQAAlZLU0OVOjjN5R+83bHWNQD6WHW
-         3HU1zmr9dMNM2tKXe3/j2xsl/JHzelGBU9MWbtLx0It7Ett/rhZnog4lj37v/BncoKZj
-         UdjXbfnDzaKXHajlQLvJUF/a0DTfODO8gKcNDPKiVjdBFCFMKpgeKt9tomqOHTYiqRYr
-         WLMA==
-X-Gm-Message-State: AGi0PuazWvZKLhHCug9RUTTdIySPt9+cre7PYWF9Qm7t4Qx9lFouPrLs
-        8aTxukML/QxqOlUQ3A38S0mG0w1uDG9yNlG5PNn+wcq6
-X-Google-Smtp-Source: APiQypLNtacdtAqj8zZFpCSgeQiPfEj/zpXMaKMK+FdRcT6C1vtRXKAII5Jeji8d4W2je5OX1xLz6j7ZzzyiPcRlvyY=
-X-Received: by 2002:a02:c9cb:: with SMTP id c11mr10641464jap.93.1586674024515;
- Sat, 11 Apr 2020 23:47:04 -0700 (PDT)
+        Sun, 12 Apr 2020 05:17:23 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03C93X72025308
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 05:17:23 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30b96s0k6h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 05:17:23 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Sun, 12 Apr 2020 10:17:04 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 12 Apr 2020 10:17:01 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03C9HG3N49152136
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 12 Apr 2020 09:17:16 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 353A9A4055;
+        Sun, 12 Apr 2020 09:17:16 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7282A404D;
+        Sun, 12 Apr 2020 09:17:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.84.25])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 12 Apr 2020 09:17:13 +0000 (GMT)
+Subject: Re: WARNING in iomap_apply
+To:     syzbot <syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-unionfs@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>, darrick.wong@oracle.com,
+        hch@infradead.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <00000000000048518b05a2fef23a@google.com>
+ <20200411161439.GE21484@bombadil.infradead.org>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Sun, 12 Apr 2020 14:47:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <158642098777.5635.10501704178160375549.stgit@buzz> <20200411222829.GO10737@dread.disaster.area>
-In-Reply-To: <20200411222829.GO10737@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 12 Apr 2020 09:46:53 +0300
-Message-ID: <CAOQ4uxgnSVctF5Kyh+RwW9zH00ctaA9UPS2cnW1roxho7pjf3g@mail.gmail.com>
-Subject: Re: [PATCH] ovl: skip overlayfs superblocks at global sync
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200411161439.GE21484@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20041209-0012-0000-0000-000003A308E4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20041209-0013-0000-0000-000021E03930
+Message-Id: <20200412091713.B7282A404D@d06av23.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-12_02:2020-04-11,2020-04-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 impostorscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004120084
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 12, 2020 at 1:29 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Thu, Apr 09, 2020 at 11:29:47AM +0300, Konstantin Khlebnikov wrote:
-> > Stacked filesystems like overlayfs has no own writeback, but they have to
-> > forward syncfs() requests to backend for keeping data integrity.
-> >
-> > During global sync() each overlayfs instance calls method ->sync_fs()
-> > for backend although it itself is in global list of superblocks too.
-> > As a result one syscall sync() could write one superblock several times
-> > and send multiple disk barriers.
-> >
-> > This patch adds flag SB_I_SKIP_SYNC into sb->sb_iflags to avoid that.
->
-> Why wouldn't you just remove the ->sync_fs method from overlay?
->
-> I mean, if you don't need the filesystem to do anything special for
-> one specific data integrity sync_fs call, you don't need it for any
-> of them, yes?
->
 
-No, but I understand the confusion.
 
-Say you have 1000 overlay sb's all of them using upper directories
-from a single xfs sb (quite common for containers).
+On 4/11/20 9:44 PM, Matthew Wilcox wrote:
+> On Sat, Apr 11, 2020 at 12:39:13AM -0700, syzbot wrote:
+>> The bug was bisected to:
+>>
+>> commit d3b6f23f71670007817a5d59f3fbafab2b794e8c
+>> Author: Ritesh Harjani <riteshh@linux.ibm.com>
+>> Date:   Fri Feb 28 09:26:58 2020 +0000
+>>
+>>      ext4: move ext4_fiemap to use iomap framework
+>>
+>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16c62a57e00000
+>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15c62a57e00000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=11c62a57e00000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com
+>> Fixes: d3b6f23f7167 ("ext4: move ext4_fiemap to use iomap framework")
+>>
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 0 PID: 7023 at fs/iomap/apply.c:51 iomap_apply+0xa0c/0xcb0 fs/iomap/apply.c:51
+> 
+> This is:
+> 
+>          if (WARN_ON(iomap.length == 0))
+>                  return -EIO;
+> 
+> and the call trace contains ext4_fiemap() so the syzbot bisection looks
+> correct.
 
-syncfs(2) of each overlay, must call sync_fs of xfs (see ovl_sync_fs)
-sync(2) will call xfs sync_fs anyway, so there is no point in calling
-ovl_sync_fs => xfs sync_fs 1000 more times.
+I think I know what could be going wrong here.
 
-Thanks,
-Amir.
+So the problem happens when we have overlayfs mounted on top of ext4.
+Now overlayfs might be supporting max logical filesize which is more
+than what ext4 could support (i.e. sb->s_maxbytes for overlayfs must
+be greater than compared to ext4). So that's why the check in func
+ioctl_fiemap -> fiemap_check_ranges() couldn't truncate to logical
+filesize which the actual underlying filesystem supports.
+
+@All,
+Do you think we should make overlayfs also check for 
+fiemap_check_ranges()? Not as part of this fix, but as a later
+addition to overlayfs? Please let me know, I could also make that patch.
+
+
+Now coming back to ext4. I guess since the min_t() is returning
+EXT4_MAX_LOGICAL_BLOCK as the min value among the two. That then
+followed by +1 is resulting into a overflow of unsigned int and it is 
+becoming 0. Hence the warning in iomap_apply of iomap.length == 0.
+
+Note (there are 2 points mentioned below). Please check both.
+
+1. I think below diff should fix this reported problem. Do you agree?
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index e416096fc081..d630ec7a9c8e 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3424,6 +3424,7 @@ static int ext4_iomap_begin(struct inode *inode, 
+loff_t offset, loff_t length,
+         int ret;
+         struct ext4_map_blocks map;
+         u8 blkbits = inode->i_blkbits;
++       loff_t len;
+
+         if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
+                 return -EINVAL;
+@@ -3435,8 +3436,11 @@ static int ext4_iomap_begin(struct inode *inode, 
+loff_t offset, loff_t length,
+          * Calculate the first and last logical blocks respectively.
+          */
+         map.m_lblk = offset >> blkbits;
+-       map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
++       len = min_t(loff_t, (offset + length - 1) >> blkbits,
+                           EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
++       if (len > EXT4_MAX_LOGICAL_BLOCK)
++               len = EXT4_MAX_LOGICAL_BLOCK;
++       map.m_len = len;
+
+         if (flags & IOMAP_WRITE)
+                 ret = ext4_iomap_alloc(inode, &map, flags);
+@@ -3524,6 +3528,7 @@ static int ext4_iomap_begin_report(struct inode 
+*inode, loff_t offset,
+         bool delalloc = false;
+         struct ext4_map_blocks map;
+         u8 blkbits = inode->i_blkbits;
++       loff_t len
+
+         if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
+                 return -EINVAL;
+@@ -3541,8 +3546,11 @@ static int ext4_iomap_begin_report(struct inode 
+*inode, loff_t offset,
+          * Calculate the first and last logical block respectively.
+          */
+         map.m_lblk = offset >> blkbits;
+-       map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
++       len = min_t(loff_t, (offset + length - 1) >> blkbits,
+                           EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
++       if (len > EXT4_MAX_LOGICAL_BLOCK)
++               len = EXT4_MAX_LOGICAL_BLOCK;
++       map.m_len = len;
+
+         /*
+          * Fiemap callers may call for offset beyond s_bitmap_maxbytes.
+
+
+2. One other discrepancy which I noted is, in function
+ext4_iomap_begin_** v/s ext4_map_blocks().
+In ext4_iomap_begin_** we check, if offset(in terms of blocksize units)
+is greater than EXT4_MAX_LOGICAL_BLOCK, if yes, then return -EINVAL.
+
+Whereas in function ext4_map_blocks() we check, if offset is greater
+then equal to EXT_MAX_BLOCKS, if yes, then return -EFSCORRUPTED.
+
+Now both EXT_MAX_BLOCKS and EXT4_MAX_LOGICAL_BLOCK are same.
+So if actually offset == EXT4_MAX_LOGICAL_BLOCK then we end up
+returning -EFSCORRUPTED. Which do you also think is wrong?
+The request may come to map just the last logical block of file
+which is EXT4_MAX_LOGICAL_BLOCK, no?
+
+
+The history of the change in ext4_map_blocks for checking EXT_MAX_BLOCKS
+goes back to this patch.
+
+https://lore.kernel.org/patchwork/patch/461641/
+
+I will have to read more about it and see all the references
+of EXT_MAX_BLOCKS to tell why the discrepancy. But if someone
+already knows about this, please let me know.
+
+
+But the diff mentioned in point 1 above should fix the problem
+reported at hand. I can address this 2nd point once I go and look
+at all references of EXT_MAX_BLOCKS. But nevertheless,
+I wanted to make sure I this is logged in this mail.
+
+-ritesh
+
+
+> 
+>>   iomap_fiemap+0x184/0x2c0 fs/iomap/fiemap.c:88
+>>   _ext4_fiemap+0x178/0x4f0 fs/ext4/extents.c:4860
+>>   ovl_fiemap+0x13f/0x200 fs/overlayfs/inode.c:467
+>>   ioctl_fiemap fs/ioctl.c:226 [inline]
+>>   do_vfs_ioctl+0x8d7/0x12d0 fs/ioctl.c:715
+
