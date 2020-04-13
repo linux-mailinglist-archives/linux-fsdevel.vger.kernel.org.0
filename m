@@ -2,91 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDC41A6A33
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 18:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ACA21A6A8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 18:55:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbgDMQsp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 12:48:45 -0400
-Received: from sonic308-36.consmr.mail.ne1.yahoo.com ([66.163.187.59]:46137
-        "EHLO sonic308-36.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731784AbgDMQsm (ORCPT
+        id S1732092AbgDMQyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 12:54:05 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60970 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732082AbgDMQyD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 12:48:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1586796520; bh=bElmMGeGrTv4UdyeT/oxmt1v3extMJthOFW7mXr0BPk=; h=Date:From:To:Cc:Subject:References:From:Subject; b=G6N26eb/yIVXiQw0qE6W8f1AUrYzP2Vnj639Wh1dRrPcss2DmnvhpM6jv3pahSdqrFPJylW7ww6buFHDad/XWvsA0ORW2x4Pqk2m7Rl3wB//SK75W/34y8J46ioDHOwyfgZuoNAirliNbZMXd2ssFqHczVm6uwjizaz8w4+roui8RAImkHC1G8HM0eLi+lIN+UpXYFFzsHxk0/fpUN7p1G+a08pwx9Q5aXfZHZH6JmyFThQVGq3uLKmzFlPLEIMb4NFQpKquxYjJdjfNPnsB8XJgTLhVI0idEPo/POaX9oGrUXioupjEW8jrcagzTy6jliHX7oUMzGd4K7n/idELdQ==
-X-YMail-OSG: LNqYr_cVM1k37p0BEArws0j2SMpuYOmfY_EMhqarqChYwpxuxB8KFGB5vV9fJsz
- iIhnJb3jaXvCGfE2aSt4doan7aJ6dnzbyn89vnjq_SV8cDsINa2Fqtq5gc4ss64xsowGwGkY0CFL
- bkDlKb.TBuK5i6h5kMoSuaco4ej32E_P1gf2QALa7eJ4GjX3kPp1EPZiOY7t91D7aYL8_D_qdt3H
- vO3CrC3b3OzsJM2iIxCQTrZhgw_xhCgXknUXKldyXSCljK.xwsr6ptXFP0ShFiClnDhnnzQSeb8U
- 8moIDJ0FYYVSUa5fkj9bVqabZrzyVLc1F11Q19S1nCLBWPK3XhvJyJYWLAXyfcB.b.GvP2KFnYxd
- .622OG1af5W_BeM9zU.B0c_zanoiWMHY5iDCE4YL7hr0Z9_vvXrbkIdlZzinFy1cDN.jqFa6Audw
- gINBZnjZwlUDG_kWvj7oLaD6DBTOlN5FSKkY3TqJCvii_60QSyGPbhVDbzMpyoK9WrDLrc9Qdcxv
- vplOG2bPeK6hS1GT4th80ccQjURFsuAX4URg1Ud7Pg.Rgy5_m3ChN8gh_gPG6s6yro2abNq1zTVk
- 5MiCxH5yW6Um1DLHst.PQPVBq0jsOJJINwuE52hU5csMNA1iS878f2XIdgfuJ80uGTw9C0Suq7MV
- jUQPvf7Jn.r0CPz6wIduG5MdgGa5MUc6EaQ9Uk2BgNfahC6Cjhlm1NdcNMBrpoQKcFCw2MeCoqOX
- XtKpIYf0Cwkg3P_imu2PoQSeZEBtLzT7fk1O2mdzN7Add.8_6nITJWcVQ9tLbKVk5cO0HzcmEX7G
- Wk3y05Z.DkCwSpSMcv1Pt2tu2Jm5sCTeBqMvJeRrc0sWL2q8Z_Hv.ZmxNrFPZ7yIhNm3tp7M33Oi
- YUy0yCJ2V8JL71R14dSZ9slsRCO26FHABrYpmPfindFDov.JMXs7_zdnKFTDtVehI.Pf1xUAh8WP
- eGk0o2xRK12vs3jQejL8E3_HS7MSqPRXf9.2YkjO9Mbn3MXzicXwMk00MgoB8EV_tGnMZCtZIwYw
- foZddko11qm3tQQONrDFvdKb9qax0V2OWdPkraYbNgpukrtllXThKRQhV2u34MzH3hmr3_urqUQs
- ClkLC64opRM.mNzxEj.VxatPE83c0L5SREGkqlyOHuHTA9bofUTDAb02wx7mVSNIOH8CIyvO8GS_
- 71HVoS2qnZAM_.wmbp1Lyyow_1hO6MGdI42Gg8O2AH5E5faSJVUDvjfsVcv2SiaiCKIOZvlOKCxX
- v9jYAeL6UkGR0Yy3ugJ6EPuNc1WvWQi9gkbZ6aNb7RshbfeE_dscpY1d691.OuEZa2dVD.of3eIn
- DqS2tCYzshoHXS.Hq5wHrwSAUsFwh12D8q0VPrMoQ3E0aTchM7X7hCVNafw95qXWfliTAppfKhiM
- EUiz_SVqm8in1o_lrVJUImDS0i2fBFlWRye6G2WZC.oU45UJJqcfnqc5_0WiZN8Ktf.JESTnVovd
- BytjHtcq9zOOXZcUjJ_3yQ73uipcIyH3TcxKvspLA2cqw95M.gQwTZc76yQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 13 Apr 2020 16:48:40 +0000
-Received: by smtp424.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 700b38ef91bca85d70b21427f6befc3c;
-          Mon, 13 Apr 2020 16:46:38 +0000 (UTC)
-Date:   Tue, 14 Apr 2020 00:46:08 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
-        Lasse Collin <lasse.collin@tukaani.org>
-Subject: [ANNOUNCE] erofs-utils: release 1.1
-Message-ID: <20200413164544.GA5578@hsiangkao-HP-ZHAN-66-Pro-G1>
+        Mon, 13 Apr 2020 12:54:03 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id E12392A02D3
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH v2] unicode: Expose available encodings in sysfs
+Date:   Mon, 13 Apr 2020 12:53:52 -0400
+Message-Id: <20200413165352.598877-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-References: <20200413164544.GA5578.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-Mailer: WebService/1.1.15620 hermes_aol Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+A filesystem configuration utility has no way to detect which filename
+encodings are supported by the running kernel.  This means, for
+instance, mkfs has no way to tell if the generated filesystem will be
+mountable in the current kernel or not.  Also, users have no easy way to
+know if they can update the encoding in their filesystems and still have
+something functional in the end.
 
-A new version erofs-utils 1.1 is available at:
-git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git tags/v1.1
+This exposes details of the encodings available in the unicode
+subsystem, to fill that gap.
 
-It's actually a maintenance release including the following updates:
-  - (mkfs.erofs) add a manual for mkfs.erofs;
-  - (mkfs.erofs) add superblock checksum support;
-  - (mkfs.erofs) add filesystem UUID support;
-  - (mkfs.erofs) add exclude files support;
-  - (mkfs.erofs) fix compiling issues under some specific conditions,
-                 mainly reported by various buildbots;
-  - (mkfs.erofs) minor code cleanups;
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-EROFS LZMA support is still ongoing, and the previous preliminary
-progress is available at
- https://lore.kernel.org/r/20200229045017.12424-1-hsiangkao@aol.com
-and
- https://lore.kernel.org/r/20200306020252.9041-1-hsiangkao@aol.com
-some minor updates I'd like to send out with the next WIP version.
+---
+Changes since v1:
+  - Make init functions static. (lkp)
 
-In addition, as discussed with Lasse before, XZ Utils liblzma would
-probably support fixed-sized output compression officially later
-as well. But it may need some more time then.
+ Documentation/ABI/testing/sysfs-fs-unicode | 13 +++++
+ fs/unicode/utf8-core.c                     | 64 ++++++++++++++++++++++
+ fs/unicode/utf8-norm.c                     | 18 ++++++
+ fs/unicode/utf8n.h                         |  5 ++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-unicode
 
-Recently I have little time for features due to struggling with my
-upcoming English test which has been greatly impacted (delayed) by
-corona. While I'm still keeping up with community by email and
-available for all potential issues and/or responses if any.
-
-Thanks,
-Gao Xiang
+diff --git a/Documentation/ABI/testing/sysfs-fs-unicode b/Documentation/ABI/testing/sysfs-fs-unicode
+new file mode 100644
+index 000000000000..15c63367bb8e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-unicode
+@@ -0,0 +1,13 @@
++What:		/sys/fs/unicode/latest
++Date:		April 2020
++Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
++Description:
++		The latest version of the Unicode Standard supported by
++		this kernel
++
++What:		/sys/fs/unicode/encodings
++Date:		April 2020
++Contact:	Gabriel Krisman Bertazi <krisman@collabora.com>
++Description:
++		List of encodings and corresponding versions supported
++		by this kernel
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 2a878b739115..b48e13e823a5 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -6,6 +6,7 @@
+ #include <linux/parser.h>
+ #include <linux/errno.h>
+ #include <linux/unicode.h>
++#include <linux/fs.h>
+ 
+ #include "utf8n.h"
+ 
+@@ -212,4 +213,67 @@ void utf8_unload(struct unicode_map *um)
+ }
+ EXPORT_SYMBOL(utf8_unload);
+ 
++static ssize_t latest_show(struct kobject *kobj,
++			   struct kobj_attribute *attr, char *buf)
++{
++	int l = utf8version_latest();
++
++	return snprintf(buf, PAGE_SIZE, "UTF-8 %d.%d.%d\n", UNICODE_AGE_MAJ(l),
++			UNICODE_AGE_MIN(l), UNICODE_AGE_REV(l));
++
++}
++static ssize_t encodings_show(struct kobject *kobj,
++			      struct kobj_attribute *attr, char *buf)
++{
++	int n;
++
++	n = snprintf(buf, PAGE_SIZE, "UTF-8:");
++	n += utf8version_list(buf + n, PAGE_SIZE - n);
++	n += snprintf(buf+n, PAGE_SIZE-n, "\n");
++
++	return n;
++}
++
++#define UCD_ATTR(x) \
++	static struct kobj_attribute x ## _attr = __ATTR_RO(x)
++
++UCD_ATTR(latest);
++UCD_ATTR(encodings);
++
++static struct attribute *ucd_attrs[] = {
++	&latest_attr.attr,
++	&encodings_attr.attr,
++	NULL,
++};
++static const struct attribute_group ucd_attr_group = {
++	.attrs = ucd_attrs,
++};
++static struct kobject *ucd_root;
++
++static int __init ucd_init(void)
++{
++	int ret;
++
++	ucd_root = kobject_create_and_add("unicode", fs_kobj);
++	if (!ucd_root)
++		return -ENOMEM;
++
++	ret = sysfs_create_group(ucd_root, &ucd_attr_group);
++	if (ret) {
++		kobject_put(ucd_root);
++		ucd_root = NULL;
++		return ret;
++	}
++
++	return 0;
++}
++
++static void __exit ucd_exit(void)
++{
++	kobject_put(ucd_root);
++}
++
++module_init(ucd_init);
++module_exit(ucd_exit)
++
+ MODULE_LICENSE("GPL v2");
+diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
+index 1d2d2e5b906a..f9ebba89a138 100644
+--- a/fs/unicode/utf8-norm.c
++++ b/fs/unicode/utf8-norm.c
+@@ -35,6 +35,24 @@ int utf8version_latest(void)
+ }
+ EXPORT_SYMBOL(utf8version_latest);
+ 
++int utf8version_list(char *buf, int len)
++{
++	int i = ARRAY_SIZE(utf8agetab) - 1;
++	int ret = 0;
++
++	/*
++	 * Print most relevant (latest) first.  No filesystem uses
++	 * unicode <= 12.0.0, so don't expose them to userspace.
++	 */
++	for (; utf8agetab[i] >= UNICODE_AGE(12, 0, 0); i--) {
++		ret += snprintf(buf+ret, len-ret, " %d.%d.%d",
++				UNICODE_AGE_MAJ(utf8agetab[i]),
++				UNICODE_AGE_MIN(utf8agetab[i]),
++				UNICODE_AGE_REV(utf8agetab[i]));
++	}
++	return ret;
++}
++
+ /*
+  * UTF-8 valid ranges.
+  *
+diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
+index 0acd530c2c79..5dea2c4af1f3 100644
+--- a/fs/unicode/utf8n.h
++++ b/fs/unicode/utf8n.h
+@@ -21,9 +21,14 @@
+ 	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+ 	 ((unsigned int)(REV)))
+ 
++#define UNICODE_AGE_MAJ(x) ((x) >> UNICODE_MAJ_SHIFT & 0xff)
++#define UNICODE_AGE_MIN(x) ((x) >> UNICODE_MIN_SHIFT & 0xff)
++#define UNICODE_AGE_REV(x) ((x) & 0xff)
++
+ /* Highest unicode version supported by the data tables. */
+ extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
+ extern int utf8version_latest(void);
++extern int utf8version_list(char *buf, int len);
+ 
+ /*
+  * Look for the correct const struct utf8data for a unicode version.
+-- 
+2.26.0
 
