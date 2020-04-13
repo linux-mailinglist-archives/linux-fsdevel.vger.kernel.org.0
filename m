@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE131A6C7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 21:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B801A6C9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 21:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733177AbgDMTaN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 15:30:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:1619 "EHLO mga17.intel.com"
+        id S2387966AbgDMTja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 15:39:30 -0400
+Received: from mga17.intel.com ([192.55.52.151]:2346 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728291AbgDMTaM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 15:30:12 -0400
-IronPort-SDR: 286oIun30BGMf8BEttGaW4EX38hDPfV/LmIUtzOxJv9pFU/TmRmUgLx4cdGfn2UQSOHDetd8mX
- ZVon1wcdcfrw==
+        id S2387935AbgDMTj2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Apr 2020 15:39:28 -0400
+IronPort-SDR: SPlWXs2KrMSQxUnM6RnTorVE2e0tU99HnckO1Aw/31ckL/pmC1D3ttqdunzBpaQoof6rnbKwNF
+ NMB6Xu8U1hNA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 12:28:12 -0700
-IronPort-SDR: Loglpq7aF2CK7g5lon1QpB2lgXi+lpHfvkyrveMp5eD18Th7RS80UtW520OINb8y3tn0W4P7oK
- ML2GF8/CaN3g==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 12:39:28 -0700
+IronPort-SDR: AtZlCvspS0QhHfNaeA4JpRFkstaWsTU7TlFEOda3Xn0ws7J1kIWaG8dnZOqg7oDZGJPh9Nsewu
+ chVjMzIPBUww==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,380,1580803200"; 
-   d="scan'208";a="241750198"
+   d="scan'208";a="245219538"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by orsmga007.jf.intel.com with ESMTP; 13 Apr 2020 12:28:11 -0700
-Date:   Mon, 13 Apr 2020 12:28:11 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 13 Apr 2020 12:39:28 -0700
+Date:   Mon, 13 Apr 2020 12:39:28 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -34,181 +34,142 @@ Cc:     linux-kernel@vger.kernel.org,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V7 4/9] fs/xfs: Make DAX mount option a tri-state
-Message-ID: <20200413192810.GB1649878@iweiny-DESK2.sc.intel.com>
+Subject: Re: [PATCH V7 5/9] fs/xfs: Create function xfs_inode_enable_dax()
+Message-ID: <20200413193927.GC1649878@iweiny-DESK2.sc.intel.com>
 References: <20200413054046.1560106-1-ira.weiny@intel.com>
- <20200413054046.1560106-5-ira.weiny@intel.com>
- <20200413154619.GT6742@magnolia>
+ <20200413054046.1560106-6-ira.weiny@intel.com>
+ <20200413155251.GU6742@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200413154619.GT6742@magnolia>
+In-Reply-To: <20200413155251.GU6742@magnolia>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 08:46:19AM -0700, Darrick J. Wong wrote:
-> On Sun, Apr 12, 2020 at 10:40:41PM -0700, ira.weiny@intel.com wrote:
+On Mon, Apr 13, 2020 at 08:52:51AM -0700, Darrick J. Wong wrote:
+> On Sun, Apr 12, 2020 at 10:40:42PM -0700, ira.weiny@intel.com wrote:
 > > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > As agreed upon[1].  We make the dax mount option a tri-state.  '-o dax'
-> > continues to operate the same.  We add 'always', 'never', and 'inode'
-> > (default).
+> > xfs_inode_supports_dax() should reflect if the inode can support DAX not
+> > that it is enabled for DAX.
 > > 
-> > [1] https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
+> > Change the use of xfs_inode_supports_dax() to reflect only if the inode
+> > and underlying storage support dax.
+> > 
+> > Add a new function xfs_inode_enable_dax() which reflects if the inode
+> > should be enabled for DAX.
 > > 
 > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 > > 
 > > ---
 > > Changes from v6:
-> > 	Use 2 flag bits rather than a field.
-> > 	change iflag to inode
+> > 	Change enable checks to be sequential logic.
+> > 	Update for 2 bit tri-state option.
+> > 	Make 'static' consistent.
+> > 	Don't set S_DAX if !CONFIG_FS_DAX
 > > 
 > > Changes from v5:
-> > 	New Patch
-> > ---
-> >  fs/xfs/xfs_mount.h |  3 ++-
-> >  fs/xfs/xfs_super.c | 44 ++++++++++++++++++++++++++++++++++++++++----
-> >  2 files changed, 42 insertions(+), 5 deletions(-)
+> > 	Update to reflect the new tri-state mount option
 > > 
-> > diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> > index 88ab09ed29e7..d581b990e59a 100644
-> > --- a/fs/xfs/xfs_mount.h
-> > +++ b/fs/xfs/xfs_mount.h
-> > @@ -233,7 +233,8 @@ typedef struct xfs_mount {
-> >  						   allocator */
-> >  #define XFS_MOUNT_NOATTR2	(1ULL << 25)	/* disable use of attr2 format */
+> > Changes from v3:
+> > 	Update functions and names to be more clear
+> > 	Update commit message
+> > 	Merge with
+> > 		'fs/xfs: Clean up DAX support check'
+> > 		don't allow IS_DAX() on a directory
+> > 		use STATIC macro for static
+> > 		make xfs_inode_supports_dax() static
+> > ---
+> >  fs/xfs/xfs_iops.c | 34 +++++++++++++++++++++++++++++-----
+> >  1 file changed, 29 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 81f2f93caec0..37bd15b55878 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -1244,12 +1244,11 @@ xfs_inode_supports_dax(
+> >  	struct xfs_mount	*mp = ip->i_mount;
 > >  
-> > -#define XFS_MOUNT_DAX		(1ULL << 62)	/* TEST ONLY! */
-> > +#define XFS_MOUNT_DAX		(1ULL << 62)
-> > +#define XFS_MOUNT_NODAX		(1ULL << 63)
+> >  	/* Only supported on non-reflinked files. */
+> > -	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
+> > +	if (xfs_is_reflink_inode(ip))
+> >  		return false;
 > >  
-> >  /*
-> >   * Max and min values for mount-option defined I/O
-> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > index 2094386af8ac..d7bd8f5e00c9 100644
-> > --- a/fs/xfs/xfs_super.c
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -47,6 +47,32 @@ static struct kset *xfs_kset;		/* top-level xfs sysfs dir */
-> >  static struct xfs_kobj xfs_dbg_kobj;	/* global debug sysfs attrs */
-> >  #endif
-> >  
-> > +enum {
-> > +	XFS_DAX_INODE = 0,
-> > +	XFS_DAX_ALWAYS = 1,
-> > +	XFS_DAX_NEVER = 2,
-> > +};
-> > +
-> > +static void xfs_mount_set_dax_mode(struct xfs_mount *mp, u32 val)
-> > +{
-> > +	if (val == XFS_DAX_INODE) {
-> > +		mp->m_flags &= ~(XFS_MOUNT_DAX | XFS_MOUNT_NODAX);
-> > +	} else if (val == XFS_DAX_ALWAYS) {
-> > +		mp->m_flags &= ~XFS_MOUNT_NODAX;
-> > +		mp->m_flags |= XFS_MOUNT_DAX;
-> > +	} else if (val == XFS_DAX_NEVER) {
-> > +		mp->m_flags &= ~XFS_MOUNT_DAX;
-> > +		mp->m_flags |= XFS_MOUNT_NODAX;
-> > +	}
-> > +}
-> > +
-> > +static const struct constant_table dax_param_enums[] = {
-> > +	{"inode",	XFS_DAX_INODE },
-> > +	{"always",	XFS_DAX_ALWAYS },
-> > +	{"never",	XFS_DAX_NEVER },
-> > +	{}
+> > -	/* DAX mount option or DAX iflag must be set. */
+> > -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
+> > -	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
+> > +	/* Only supported on regular files. */
+> > +	if (!S_ISREG(VFS_I(ip)->i_mode))
+> >  		return false;
 > 
-> I think that the dax_param_enums table (and the unnamed enum defining
-> XFS_DAX_*) probably ought to be part of the VFS so that you don't have
-> to duplicate these two pieces whenever it's time to bring ext4 in line
-> with XFS.
+> Why separate the !S_ISREG and the is_reflink_inode checks?
 > 
-> That probably doesn't need to be done right away, though...
+> The part about "Change the use of xfs_inode_supports_dax() to reflect
+> only if the inode and underlying storage support dax" would be a lot
+> more straightforward if this hunk only removed the DIFLAG2_DAX check.
 
-Ext4 has a very different param parsing mechanism which I've barely learned.
-I'm not really seeing how to use the enum strategy so I've just used a string
-option.  But I'm open to being corrected.
+Yes I could see that.  But for me the separate checks were more clear.  FWIW,
+Dave requested a similar pattern for xfs_inode_enable_dax()[*] and I think I
+agree with him.
 
-I am close to having the series working and hope to have that set (which builds
-on this one) out for review soon (today?).
+So I'm inclined to keep the checks like this.
 
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-Thanks,
+Thanks for the reviews!
 Ira
 
+[*] https://lore.kernel.org/lkml/20200408000533.GG24067@dread.disaster.area/
+
+> 
+> The rest of the patch looks ok.
 > 
 > --D
 > 
-> 
-> > +};
-> > +
-> >  /*
-> >   * Table driven mount option parser.
-> >   */
-> > @@ -59,7 +85,7 @@ enum {
-> >  	Opt_filestreams, Opt_quota, Opt_noquota, Opt_usrquota, Opt_grpquota,
-> >  	Opt_prjquota, Opt_uquota, Opt_gquota, Opt_pquota,
-> >  	Opt_uqnoenforce, Opt_gqnoenforce, Opt_pqnoenforce, Opt_qnoenforce,
-> > -	Opt_discard, Opt_nodiscard, Opt_dax,
-> > +	Opt_discard, Opt_nodiscard, Opt_dax, Opt_dax_enum,
-> >  };
 > >  
-> >  static const struct fs_parameter_spec xfs_fs_parameters[] = {
-> > @@ -103,6 +129,7 @@ static const struct fs_parameter_spec xfs_fs_parameters[] = {
-> >  	fsparam_flag("discard",		Opt_discard),
-> >  	fsparam_flag("nodiscard",	Opt_nodiscard),
-> >  	fsparam_flag("dax",		Opt_dax),
-> > +	fsparam_enum("dax",		Opt_dax_enum, dax_param_enums),
-> >  	{}
-> >  };
-> >  
-> > @@ -129,7 +156,6 @@ xfs_fs_show_options(
-> >  		{ XFS_MOUNT_GRPID,		",grpid" },
-> >  		{ XFS_MOUNT_DISCARD,		",discard" },
-> >  		{ XFS_MOUNT_LARGEIO,		",largeio" },
-> > -		{ XFS_MOUNT_DAX,		",dax" },
-> >  		{ 0, NULL }
-> >  	};
-> >  	struct xfs_mount	*mp = XFS_M(root->d_sb);
-> > @@ -185,6 +211,13 @@ xfs_fs_show_options(
-> >  	if (!(mp->m_qflags & XFS_ALL_QUOTA_ACCT))
-> >  		seq_puts(m, ",noquota");
-> >  
-> > +	if (mp->m_flags & XFS_MOUNT_DAX)
-> > +		seq_puts(m, ",dax=always");
-> > +	else if (mp->m_flags & XFS_MOUNT_NODAX)
-> > +		seq_puts(m, ",dax=never");
-> > +	else
-> > +		seq_puts(m, ",dax=inode");
-> > +
-> >  	return 0;
+> >  	/* Block size must match page size */
+> > @@ -1260,6 +1259,31 @@ xfs_inode_supports_dax(
+> >  	return xfs_inode_buftarg(ip)->bt_daxdev != NULL;
 > >  }
 > >  
-> > @@ -1244,7 +1277,10 @@ xfs_fc_parse_param(
-> >  		return 0;
-> >  #ifdef CONFIG_FS_DAX
-> >  	case Opt_dax:
-> > -		mp->m_flags |= XFS_MOUNT_DAX;
-> > +		xfs_mount_set_dax_mode(mp, XFS_DAX_ALWAYS);
-> > +		return 0;
-> > +	case Opt_dax_enum:
-> > +		xfs_mount_set_dax_mode(mp, result.uint_32);
-> >  		return 0;
-> >  #endif
-> >  	default:
-> > @@ -1451,7 +1487,7 @@ xfs_fc_fill_super(
-> >  		if (!rtdev_is_dax && !datadev_is_dax) {
-> >  			xfs_alert(mp,
-> >  			"DAX unsupported by block device. Turning off DAX.");
-> > -			mp->m_flags &= ~XFS_MOUNT_DAX;
-> > +			xfs_mount_set_dax_mode(mp, XFS_DAX_NEVER);
-> >  		}
-> >  		if (xfs_sb_version_hasreflink(&mp->m_sb)) {
-> >  			xfs_alert(mp,
+> > +#ifdef CONFIG_FS_DAX
+> > +static bool
+> > +xfs_inode_enable_dax(
+> > +	struct xfs_inode *ip)
+> > +{
+> > +	if (ip->i_mount->m_flags & XFS_MOUNT_NODAX)
+> > +		return false;
+> > +	if (!xfs_inode_supports_dax(ip))
+> > +		return false;
+> > +	if (ip->i_mount->m_flags & XFS_MOUNT_DAX)
+> > +		return true;
+> > +	if (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)
+> > +		return true;
+> > +	return false;
+> > +}
+> > +#else /* !CONFIG_FS_DAX */
+> > +static bool
+> > +xfs_inode_enable_dax(
+> > +	struct xfs_inode *ip)
+> > +{
+> > +	return false;
+> > +}
+> > +#endif /* CONFIG_FS_DAX */
+> > +
+> > +
+> >  STATIC void
+> >  xfs_diflags_to_iflags(
+> >  	struct inode		*inode,
+> > @@ -1278,7 +1302,7 @@ xfs_diflags_to_iflags(
+> >  		inode->i_flags |= S_SYNC;
+> >  	if (flags & XFS_DIFLAG_NOATIME)
+> >  		inode->i_flags |= S_NOATIME;
+> > -	if (xfs_inode_supports_dax(ip))
+> > +	if (xfs_inode_enable_dax(ip))
+> >  		inode->i_flags |= S_DAX;
+> >  }
+> >  
 > > -- 
 > > 2.25.1
 > > 
