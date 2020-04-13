@@ -2,268 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E031A6CCE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 21:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8711A6E89
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 23:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388113AbgDMTqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 15:46:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:2914 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387774AbgDMTqb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 15:46:31 -0400
-IronPort-SDR: grEFM0nhMEbvPTaie49Xn6oP9QUTNd6QpZ4rtP0JOJkG7NUIu2hp+UniACxAuIp2Vhg+lQBn00
- skocZ4GfAY9A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 12:46:30 -0700
-IronPort-SDR: e4mMITxY+fkq+PARmd2XJYn1qgoh2dn84nSTYeUzXAhlMWRZa9fI+jXQDxAMfekIN3a1LzDQ1n
- 9hWem+LTO3lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,380,1580803200"; 
-   d="scan'208";a="277010474"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Apr 2020 12:46:30 -0700
-Date:   Mon, 13 Apr 2020 12:46:10 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V7 8/9] fs/xfs: Change xfs_ioctl_setattr_dax_invalidate()
-Message-ID: <20200413194609.GE1649878@iweiny-DESK2.sc.intel.com>
-References: <20200413054046.1560106-1-ira.weiny@intel.com>
- <20200413054046.1560106-9-ira.weiny@intel.com>
- <20200413161240.GX6742@magnolia>
+        id S2389202AbgDMVnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 17:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388914AbgDMVnF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Apr 2020 17:43:05 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E84C0A3BDC;
+        Mon, 13 Apr 2020 14:43:05 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id k1so4646888wrx.4;
+        Mon, 13 Apr 2020 14:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=afpWVAYpzZoZj0cDvbL8nrVqxs7nYxlOztCZvs4WtUQ=;
+        b=n4GgF6ZvxeiMQzKcLPJYat0oTylnX+JU8HeEovMVSF3wH7koxJ/qhOk8Rx8OsZv2ZU
+         M/ouFWf+mujWlix45liM6rESmfaaySYkc4WbrHKEzprG80Tw6oCUi6AK2qopMck8TNLX
+         vCvCiNaPj5g/etB57fWlQx59B4vGjQh/IH95iiXlz1YWQAal1oWT20c38lnRF1kR1pcy
+         fMvDilMbH/oi9r8YRgjLOHrcwfx2OWxRIdqv4Tjw5zY+A7rRDZmY2sl6S6nw+FdmixRh
+         WO0cviCLsO5h3p5ZyVJBB6rDenpX6C4U8l7wP3qL+Vz3cNO8zQN1DbiH7SnGkBpmgpqB
+         8fKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=afpWVAYpzZoZj0cDvbL8nrVqxs7nYxlOztCZvs4WtUQ=;
+        b=WHeTLrKLR8AYA8U0rcJv4+a/WMy961JV5jr0bXbMtrdLns9okS2CWZqgDZecbWcpiZ
+         AEhXFGcqbFRhi79fPp+e1X466kj2VQwzLSFeWB/qZaUWktqdun9TSVEJNnXkvPWNZ9y4
+         CZ1BgEnmugOK7/QV1D00lBSwmCccsMT2t6COAA096daQ2beYRWWB2rNU2HAGotz70XSB
+         +ihj33UZOkQr09kgwdZBRcoBUOVB3GfzNaovD0RLvH6gw7NrNPDVndJNpBR7DDK8AzjZ
+         WVvNXiR9baUQrw7hcOb9YNo//E+usd6l5kbUQCWfeF72Fp81a23YQtTz4arLxjPs00GJ
+         SMhw==
+X-Gm-Message-State: AGi0PuYwszpaPiYBRenu0iMAN2jO8x+HEOBVpr+XQPyDQ7xZaT3fJ1Fi
+        nvbVUvXCrH8MOzB+PfIjGABzpc3D3Q==
+X-Google-Smtp-Source: APiQypKoWcnPd09pTJoHtRS5w95RqrkCG3ThrVdtiu2tqlaUdLoXeUKrjEYD25oz7RWRfHnpVPwR1Q==
+X-Received: by 2002:a5d:6a10:: with SMTP id m16mr22341815wru.371.1586814183920;
+        Mon, 13 Apr 2020 14:43:03 -0700 (PDT)
+Received: from ninjahost.lan (79-73-33-244.dynamic.dsl.as9105.com. [79.73.33.244])
+        by smtp.gmail.com with ESMTPSA id 1sm15597703wmi.0.2020.04.13.14.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2020 14:43:03 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     boqun.feng@gmail.com, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org (open list:FSNOTIFY: FILESYSTEM
+        NOTIFICATION INFRASTRUCTURE)
+Subject: [PATCH v2] fsnotify: Add missing annotation for fsnotify_finish_user_wait() and for fsnotify_prepare_user_wait()
+Date:   Mon, 13 Apr 2020 22:42:40 +0100
+Message-Id: <20200413214240.15245-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200413161240.GX6742@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 09:12:40AM -0700, Darrick J. Wong wrote:
-> On Sun, Apr 12, 2020 at 10:40:45PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > We only support changing FS_XFLAG_DAX on directories.  Files get their
-> > flag from the parent directory on creation only.  So no data
-> > invalidation needs to happen.
-> > 
-> > Alter the xfs_ioctl_setattr_dax_invalidate() to be
-> > xfs_ioctl_setattr_dax_validate().  xfs_ioctl_setattr_dax_validate() now
-> > validates that any FS_XFLAG_DAX change is ok.
-> > 
-> > This also allows use to remove the join_flags logic.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes from v6:
-> > 	Fix completely broken implementation and update commit message.
-> > 	Use the new VFS layer I_DONTCACHE to facilitate inode eviction
-> > 	and S_DAX changing on drop_caches
-> > 
-> > Changes from v5:
-> > 	New patch
-> > ---
-> >  fs/xfs/xfs_ioctl.c | 102 +++++++--------------------------------------
-> >  1 file changed, 16 insertions(+), 86 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > index c6cd92ef4a05..ba42a5fb5b05 100644
-> > --- a/fs/xfs/xfs_ioctl.c
-> > +++ b/fs/xfs/xfs_ioctl.c
-> > @@ -1145,63 +1145,23 @@ xfs_ioctl_setattr_xflags(
-> >  }
-> >  
-> >  /*
-> > - * If we are changing DAX flags, we have to ensure the file is clean and any
-> > - * cached objects in the address space are invalidated and removed. This
-> > - * requires us to lock out other IO and page faults similar to a truncate
-> > - * operation. The locks need to be held until the transaction has been committed
-> > - * so that the cache invalidation is atomic with respect to the DAX flag
-> > - * manipulation.
-> > + * Mark inodes with a changing FS_XFLAG_DAX, I_DONTCACHE
-> >   */
-> > -static int
-> > +static void
-> >  xfs_ioctl_setattr_dax_invalidate(
-> >  	struct xfs_inode	*ip,
-> > -	struct fsxattr		*fa,
-> > -	int			*join_flags)
-> > +	struct fsxattr		*fa)
-> >  {
-> > -	struct inode		*inode = VFS_I(ip);
-> > -	struct super_block	*sb = inode->i_sb;
-> > -	int			error;
-> > -
-> > -	*join_flags = 0;
-> > -
-> > -	/*
-> > -	 * It is only valid to set the DAX flag on regular files and
-> > -	 * directories on filesystems where the block size is equal to the page
-> > -	 * size. On directories it serves as an inherited hint so we don't
-> > -	 * have to check the device for dax support or flush pagecache.
-> > -	 */
-> > -	if (fa->fsx_xflags & FS_XFLAG_DAX) {
-> > -		struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> > -
-> > -		if (!bdev_dax_supported(target->bt_bdev, sb->s_blocksize))
-> > -			return -EINVAL;
-> > -	}
-> > -
-> > -	/* If the DAX state is not changing, we have nothing to do here. */
-> > -	if ((fa->fsx_xflags & FS_XFLAG_DAX) && IS_DAX(inode))
-> > -		return 0;
-> > -	if (!(fa->fsx_xflags & FS_XFLAG_DAX) && !IS_DAX(inode))
-> > -		return 0;
-> > +	struct inode            *inode = VFS_I(ip);
-> >  
-> >  	if (S_ISDIR(inode->i_mode))
-> > -		return 0;
-> > -
-> > -	/* lock, flush and invalidate mapping in preparation for flag change */
-> > -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > -	error = filemap_write_and_wait(inode->i_mapping);
-> > -	if (error)
-> > -		goto out_unlock;
-> > -	error = invalidate_inode_pages2(inode->i_mapping);
-> > -	if (error)
-> > -		goto out_unlock;
-> > -
-> > -	*join_flags = XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL;
-> > -	return 0;
-> > -
-> > -out_unlock:
-> > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > -	return error;
-> > +		return;
-> 
-> We also need a check up here to skip the I_DONTCACHE setting if the
-> admin has set a mount option to override the inode flag.
+Sparse reports warnings at fsnotify_prepare_user_wait()
+	and at fsnotify_finish_user_wait()
 
-Yes that would be more optimal!
+warning: context imbalance in fsnotify_finish_user_wait()
+	- wrong count at exit
+warning: context imbalance in fsnotify_prepare_user_wait()
+	- unexpected unlock
 
-Thanks,
-Ira
+The root cause is the missing annotation at fsnotify_finish_user_wait()
+	and at fsnotify_prepare_user_wait()
+fsnotify_prepare_user_wait() has an extra annotation __release()
+ that only tell Sparse and not GCC to shutdown the warning
 
-> 
-> The rest looks good to me.
-> 
-> --D
-> 
-> > +	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
-> > +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
-> > +	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
-> > +	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
-> > +		inode->i_state |= I_DONTCACHE;
-> >  }
-> >  
-> >  /*
-> > @@ -1209,17 +1169,10 @@ xfs_ioctl_setattr_dax_invalidate(
-> >   * have permission to do so. On success, return a clean transaction and the
-> >   * inode locked exclusively ready for further operation specific checks. On
-> >   * failure, return an error without modifying or locking the inode.
-> > - *
-> > - * The inode might already be IO locked on call. If this is the case, it is
-> > - * indicated in @join_flags and we take full responsibility for ensuring they
-> > - * are unlocked from now on. Hence if we have an error here, we still have to
-> > - * unlock them. Otherwise, once they are joined to the transaction, they will
-> > - * be unlocked on commit/cancel.
-> >   */
-> >  static struct xfs_trans *
-> >  xfs_ioctl_setattr_get_trans(
-> > -	struct xfs_inode	*ip,
-> > -	int			join_flags)
-> > +	struct xfs_inode	*ip)
-> >  {
-> >  	struct xfs_mount	*mp = ip->i_mount;
-> >  	struct xfs_trans	*tp;
-> > @@ -1236,8 +1189,7 @@ xfs_ioctl_setattr_get_trans(
-> >  		goto out_unlock;
-> >  
-> >  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> > -	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL | join_flags);
-> > -	join_flags = 0;
-> > +	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
-> >  
-> >  	/*
-> >  	 * CAP_FOWNER overrides the following restrictions:
-> > @@ -1258,8 +1210,6 @@ xfs_ioctl_setattr_get_trans(
-> >  out_cancel:
-> >  	xfs_trans_cancel(tp);
-> >  out_unlock:
-> > -	if (join_flags)
-> > -		xfs_iunlock(ip, join_flags);
-> >  	return ERR_PTR(error);
-> >  }
-> >  
-> > @@ -1386,7 +1336,6 @@ xfs_ioctl_setattr(
-> >  	struct xfs_dquot	*pdqp = NULL;
-> >  	struct xfs_dquot	*olddquot = NULL;
-> >  	int			code;
-> > -	int			join_flags = 0;
-> >  
-> >  	trace_xfs_ioctl_setattr(ip);
-> >  
-> > @@ -1410,18 +1359,9 @@ xfs_ioctl_setattr(
-> >  			return code;
-> >  	}
-> >  
-> > -	/*
-> > -	 * Changing DAX config may require inode locking for mapping
-> > -	 * invalidation. These need to be held all the way to transaction commit
-> > -	 * or cancel time, so need to be passed through to
-> > -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> > -	 * appropriately.
-> > -	 */
-> > -	code = xfs_ioctl_setattr_dax_invalidate(ip, fa, &join_flags);
-> > -	if (code)
-> > -		goto error_free_dquots;
-> > +	xfs_ioctl_setattr_dax_invalidate(ip, fa);
-> >  
-> > -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> > +	tp = xfs_ioctl_setattr_get_trans(ip);
-> >  	if (IS_ERR(tp)) {
-> >  		code = PTR_ERR(tp);
-> >  		goto error_free_dquots;
-> > @@ -1552,7 +1492,6 @@ xfs_ioc_setxflags(
-> >  	struct fsxattr		fa;
-> >  	struct fsxattr		old_fa;
-> >  	unsigned int		flags;
-> > -	int			join_flags = 0;
-> >  	int			error;
-> >  
-> >  	if (copy_from_user(&flags, arg, sizeof(flags)))
-> > @@ -1569,18 +1508,9 @@ xfs_ioc_setxflags(
-> >  	if (error)
-> >  		return error;
-> >  
-> > -	/*
-> > -	 * Changing DAX config may require inode locking for mapping
-> > -	 * invalidation. These need to be held all the way to transaction commit
-> > -	 * or cancel time, so need to be passed through to
-> > -	 * xfs_ioctl_setattr_get_trans() so it can apply them to the join call
-> > -	 * appropriately.
-> > -	 */
-> > -	error = xfs_ioctl_setattr_dax_invalidate(ip, &fa, &join_flags);
-> > -	if (error)
-> > -		goto out_drop_write;
-> > +	xfs_ioctl_setattr_dax_invalidate(ip, &fa);
-> >  
-> > -	tp = xfs_ioctl_setattr_get_trans(ip, join_flags);
-> > +	tp = xfs_ioctl_setattr_get_trans(ip);
-> >  	if (IS_ERR(tp)) {
-> >  		error = PTR_ERR(tp);
-> >  		goto out_drop_write;
-> > -- 
-> > 2.25.1
-> > 
+Add the missing  __acquires(&fsnotify_mark_srcu) annotation
+Add the missing __releases(&fsnotify_mark_srcu) annotation
+Add the __release(&fsnotify_mark_srcu) annotation.
+
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+changes since v2
+-include annotations for fsnotify_prepare_user_wait()
+
+ fs/notify/mark.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index 1d96216dffd1..8387937b9d01 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -325,13 +325,16 @@ static void fsnotify_put_mark_wake(struct fsnotify_mark *mark)
+ }
+ 
+ bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
++	__releases(&fsnotify_mark_srcu)
+ {
+ 	int type;
+ 
+ 	fsnotify_foreach_obj_type(type) {
+ 		/* This can fail if mark is being removed */
+-		if (!fsnotify_get_mark_safe(iter_info->marks[type]))
++		if (!fsnotify_get_mark_safe(iter_info->marks[type])) {
++			__release(&fsnotify_mark_srcu);
+ 			goto fail;
++		}
+ 	}
+ 
+ 	/*
+@@ -350,6 +353,7 @@ bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
+ }
+ 
+ void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info)
++	__acquires(&fsnotify_mark_srcu)
+ {
+ 	int type;
+ 
+-- 
+2.24.1
+
