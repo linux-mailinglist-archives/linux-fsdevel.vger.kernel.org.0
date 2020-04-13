@@ -2,105 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E331A6CA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 21:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 779391A6CBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 21:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388002AbgDMTkk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 15:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387935AbgDMTkh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 15:40:37 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD4AC0A3BDC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Apr 2020 12:40:35 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id i14so9622130ilr.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Apr 2020 12:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=juliacomputing-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bdK8gEyBj47+B+b5fdWD48DFf9snz/SocRpKyG/PMKw=;
-        b=1x8U2KZMxLh/Y782kba7SyBXt1QFaYYGloH3M3XRqPHvjiH2sJChN66jW+0oFeYTho
-         U3L1FYkAiqUREN247XRMF+D9yNlFBFCwnvXrstKNfnLkFZgulF1vt3r9u3ewQnRRdlX1
-         ZM/jrhK7ZZkhAAQoeg5QtMZesveYglPTsh7Q+RqGlSxHkvA6V3plAF0jBUQbY9NtCwas
-         Y+Px8gK2IVOkpFQ3xiy5g8ywMA2Zt4DKXaeRoYg2yyG/nXnRDqNCE87GJG9j/1C10x5Z
-         MfkMxvvdM71yjDwaY0nbxX+Yd5JaG3w//3ZXeQNKiX2QRcF8Ml5y9h6WpbuMziJnx9vQ
-         bOXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bdK8gEyBj47+B+b5fdWD48DFf9snz/SocRpKyG/PMKw=;
-        b=HflhB5MNo1ZOX2ZuYXo63rHfzE6+s6OSfoxglpDobZwAA64/hdmDNn2ezVfBGKHAm2
-         S4JCjRC+JqAgKFj8aWdApEHshJNZ769D/aoE8ncF/RJFpFNyUbEKRrasgHLVAU/C1s9K
-         QeQEref/SsgePsi/0bG6nNi2Iv5cbNndN0Srs5Yas03UyZ+xZYD5BtBS32KT2049e5gM
-         NveJGA7KcynS0Jsh3oKaOMsBzlU2mazI7MRKot6AEpKpDJLVLcVUgeLTQSOUhxewF6cQ
-         QDXo6ZDxzjYSEbq6mMyt+5vnlEhqDwemsXifMdgmHfD535EJ9rH/V5K7uCVxg1yuHzM4
-         IMvg==
-X-Gm-Message-State: AGi0PuYi62xc6BwvhOreO0v8snwsYqeUBZ1DE6mp3j2Yu6OS/TvgIWIh
-        prpoOg0rcSQoWLzfYwgwfjON7eNrdN21KiItetWGxQ==
-X-Google-Smtp-Source: APiQypIknUBY7zD49Gd1oPk5pW7D4JYc6dZ50SjzIyGXfthayjGIWZ1Eh2CgEOvbLhUjF/axckqco/b7Gsb8b6IyFfM=
-X-Received: by 2002:a92:5f17:: with SMTP id t23mr4857115ilb.2.1586806834685;
- Mon, 13 Apr 2020 12:40:34 -0700 (PDT)
+        id S2388054AbgDMToe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 15:44:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29540 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388034AbgDMToe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Apr 2020 15:44:34 -0400
+IronPort-SDR: Ae2xt0TSgl1+VtNBnJm1r1VQfZsEIvN07r3gehnhzZAmsi2zfYsfM3u8A0Ft3KGcmrI1CQJCtp
+ TBS5JqkT5Guw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 12:44:33 -0700
+IronPort-SDR: v+q6zP5bKPmHA88y6ZiO81BAf42afIm8n0sGOl7dCToUlDBSth6eGFpgqbf2PNOyTnsccQEh+U
+ NlVotKwkBJsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,380,1580803200"; 
+   d="scan'208";a="256275264"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga006.jf.intel.com with ESMTP; 13 Apr 2020 12:44:32 -0700
+Date:   Mon, 13 Apr 2020 12:44:32 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V7 7/9] fs: Define I_DONTCACNE in VFS layer
+Message-ID: <20200413194432.GD1649878@iweiny-DESK2.sc.intel.com>
+References: <20200413054046.1560106-1-ira.weiny@intel.com>
+ <20200413054046.1560106-8-ira.weiny@intel.com>
+ <20200413160929.GW6742@magnolia>
 MIME-Version: 1.0
-References: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
- <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
- <CABV8kRxVA0j2qLkyWx+vULh2DxK2Ef4nPk-zXCikN8XmdBOFgQ@mail.gmail.com> <CAOQ4uxh2KKwORLC+gWEF=mWzBa3Kh4A4HgRoiad5N5qu06xjcg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh2KKwORLC+gWEF=mWzBa3Kh4A4HgRoiad5N5qu06xjcg@mail.gmail.com>
-From:   Keno Fischer <keno@juliacomputing.com>
-Date:   Mon, 13 Apr 2020 15:39:58 -0400
-Message-ID: <CABV8kRxsGm2-RLsuWPQGc82=6+x8v8FtV0=a6MQS=Nt-Pv3V9A@mail.gmail.com>
-Subject: Re: Same mountpoint restriction in FICLONE ioctls
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Steve French <smfrench@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200413160929.GW6742@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> You make it sound like the heuristic decision must be made
-> *after* trying to clone, but it can be made before and pass
-> flags to the kernel whether or to fallback to copy.
+On Mon, Apr 13, 2020 at 09:09:29AM -0700, Darrick J. Wong wrote:
+> > Subject: [PATCH V7 7/9] fs: Define I_DONTCACNE in VFS layer
+> 
+> CACNE -> CACHE.
+> 
+> On Sun, Apr 12, 2020 at 10:40:44PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > DAX effective mode changes (setting of S_DAX) require inode eviction.
+> > 
+> > Define a flag which can be set to inform the VFS layer that inodes
+> > should not be cached.  This will expedite the eviction of those nodes
+> > requiring reload.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  include/linux/fs.h | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index a818ced22961..e2db71d150c3 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2151,6 +2151,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+> >   *
+> >   * I_CREATING		New object's inode in the middle of setting up.
+> >   *
+> > + * I_DONTCACHE		Do not cache the inode
+> 
+> "Do not cache" is a bit vague, how about:
+> 
+> "Evict the inode when the last reference is dropped.
+> Do not put it on the LRU list."
+> 
+> Also, shouldn't xfs_ioctl_setattr be setting I_DONTCACHE if someone
+> changes FS_XFLAG_DAX (and there are no mount option overrides)?  I don't
+> see any user of I_DONTCACHE in this series.
+> 
+> (Also also, please convert XFS_IDONTCACHE, since it's a straightforward
+> conversion...)
 
-True, though I simplified slightly. There's other things we try
-first if the clone fails, like creating a hardlink. If cloning fails,
-we also often only want to copy a part of the file (again
-heuristically, whether more than what the program asked
-for will be useful for debugging)
+AFAICT XFS_IDONTCACHE is not exactly the same because it can be cleared if
+someone access' the inode before it is evicted.  Dave mentioned that we could
+probably do this but I was not 100% sure if that would change some other
+behavior.
 
-> copy_file_range(2) has an unused flags argument.
-> Adding support for flags like:
-> COPY_FILE_RANGE_BY_FS
-> COPY_FILE_RANGE_BY_KERNEL
+I'm happy to remove XFS_IDONTCACHE if we are sure that it will not regress
+something in the bulkstat code?  (I don't know exactly what bulkstat does so
+I'm not expert here...  Was just doing what seemed safest)
 
-That would solve it of course, and I'd be happy with that
-solution, but it seems like we'd end up with just another
-spelling for the cloning ioctls then that have subtly different
-semantics.
+Ira
 
-> I can also suggest a workaround for you.
-> If your only problem is bind mounts and if recorder is a privileged
-> process (CAP_DAC_READ_SEARCH) then you can use a "master"
-> bind mount to perform all clone operations on.
-> Use name_to_handle_at(2) to get sb file handle of source file.
-> Use open_by_handle_at(2) to get an open file descriptor of the source
-> file under the "master" bind mount.
-
-Thanks, that's a very valuable suggestion - I hadn't considered
-that. Unfortunately, I don't think the recorder does generally have
-those privileges. It doesn't help in my use case, since I'm recording
-a container that makes use of user namespaces, so nothing requires
-priviledge, but it does seem like it would be useful if the recorder does
-have appropriate capabilities (rr already has a mode where it runs
-with privilege, e.g. for recording setuid binaries).
-
-Keno
+> 
+> --D
+> 
+> > + *
+> >   * Q: What is the difference between I_WILL_FREE and I_FREEING?
+> >   */
+> >  #define I_DIRTY_SYNC		(1 << 0)
+> > @@ -2173,6 +2175,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+> >  #define I_WB_SWITCH		(1 << 13)
+> >  #define I_OVL_INUSE		(1 << 14)
+> >  #define I_CREATING		(1 << 15)
+> > +#define I_DONTCACHE		(1 << 16)
+> >  
+> >  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+> >  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> > @@ -3042,7 +3045,8 @@ extern int inode_needs_sync(struct inode *inode);
+> >  extern int generic_delete_inode(struct inode *inode);
+> >  static inline int generic_drop_inode(struct inode *inode)
+> >  {
+> > -	return !inode->i_nlink || inode_unhashed(inode);
+> > +	return !inode->i_nlink || inode_unhashed(inode) ||
+> > +		(inode->i_state & I_DONTCACHE);
+> >  }
+> >  
+> >  extern struct inode *ilookup5_nowait(struct super_block *sb,
+> > -- 
+> > 2.25.1
+> > 
