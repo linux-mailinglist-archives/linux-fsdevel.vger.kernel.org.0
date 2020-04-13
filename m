@@ -2,138 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F2D1A6470
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 11:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1B891A64C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 11:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgDMJEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 05:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728091AbgDMJEl (ORCPT
+        id S1728172AbgDMJnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 05:43:20 -0400
+Received: from mx05.melco.co.jp ([192.218.140.145]:44831 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727968AbgDMJnU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 05:04:41 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0008AC008749;
-        Mon, 13 Apr 2020 01:57:51 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id f82so4509930ilh.8;
-        Mon, 13 Apr 2020 01:57:51 -0700 (PDT)
+        Mon, 13 Apr 2020 05:43:20 -0400
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id 43C223A41B2;
+        Mon, 13 Apr 2020 18:43:17 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 4913Zs1Nj0zRkCc;
+        Mon, 13 Apr 2020 18:43:17 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 4913Zs14R8zRkB1;
+        Mon, 13 Apr 2020 18:43:17 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 4913Zs0qm8zRk8h;
+        Mon, 13 Apr 2020 18:43:17 +0900 (JST)
+Received: from JPN01-OS2-obe.outbound.protection.outlook.com (unknown [104.47.92.54])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 4913Zs0Q9pzRjQG;
+        Mon, 13 Apr 2020 18:43:17 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cHa6KfzfvM+RMjUrytfSDMJi0GyZsT0LDuqX9y/hyc4UqvnEFUNXiVeo3DqnLvYynledzDIdc/4fYnhtC7rOixiZLCEm7iXDsnNNsFx1lxn6mSkX6HKaWquq33C+LqVDLKQQp/bTWXFY7WYeEJ0Q7tdXMb5J1riYkkDcjdYVvIiqxg2HYrPO1bRb7GmexmR0WULUpoK+8iL0zEGYZlzTyq4CKM+A4BX+Ei4BosmK8kTVBtai1lq4EbdArE/rww1Fyn4qOn1kYq1Yvy8NGbz4xvWszIl9mb1an5xf1g8V26LnhsaLHzv4jmZo5ryR962Jr4KZCv3OL5dphTFAKUfpdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kgnmufpCnzJ/I6SF/doJLgd5ZXOX4DEJoXWiwSYORsc=;
+ b=P398//Uwk5LTQWmgSxiNvXXzHtP2iNlvwLuz8vsHSTeJbuAvShhohpIjIPWLWdnmiY0mQ6VyGrGUe5N8dQpy1njel3eY8yx1Y0LYvwu28t41ZzcNjBL0UUNuwAaJfmr2irOvDcNcgRvXcBQamy6UmnAc8l1ACaHfiKBI0IRMj3pNFvz5qQKeG7OMZR8oYF0nohzc5RuAPZwtjzHYv95gTKpB31B5N96lDWknNbAz3eyYK7lh5fMelkUFIM2NpV9Gskip3qu2WoT8h9R55RtcEG4X4XYJBR3ktoByRtkjzEcLYy2PzsQivVz9NNq0AAHVFwkpshO/B5+62//JIt5KwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GHA9/acdYNKg6TtXigttoWf+ctJ+xZIYedEqvuMFErI=;
-        b=gtIWF+DRFw3NFjElbOmdUq+StalADZweXYUfWCkqiK8JLnF7+ewHUQMxY+05DelQSh
-         qXSsO4sJPiZJO5nQCa3P36ztKcww04jTPFhV7HkEKzuN22nplRCgZ1Zf7qRo3fGIKHQ6
-         7X+qnxY6W3J8t4tN73OF6zZKx1wsnuu+3MN8PLFa77bWZvxOID6Hap2HgyVEMWm3235m
-         wPXQZS9Mq+UFvND3v/rf6kfHfS9Dtlj7GHzLNFHzDfKI7YP88UIGKKQWyrGgKy/TRMLg
-         f8Hw9XVxkuDpz/JGArMAMJnoBgNoxJHtqr1WTtcp0Hph4bDYkRgn0hNTjOVSZevNria0
-         0x/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GHA9/acdYNKg6TtXigttoWf+ctJ+xZIYedEqvuMFErI=;
-        b=NwsDSGSaKdFTZkTmiVqAnpW62xZArNmU6d5w+o9F3+bbxfOmvyEXM1NA/Tx9OASAs5
-         9sbCeOYFDS4bKI7QSV71QBVjO8wgap36rBwLifstQCNg9eEuR69n/+eLuSxaFt1pjfGW
-         ngPQ13g8ZqqbeAFU5lrAwPuA/O6SVjn89RKS3ogq/3kMc4sgXcfaHeKiOAgYZkg3Xkbs
-         wX2Thtd2M9nmPcCjwXVyEjHeEUY0kExO9sU8AlrGC7v7FCu5D3CrD2blMwUNlSW6C8iU
-         P93Ne5NimiENFEA368sKClnHegA3N+jmRyv8LI5wpckkC+fJWJcOGR8KPEf5Wdanzgmq
-         65ZQ==
-X-Gm-Message-State: AGi0PuZ9vZcE3FWUmgWohdx6HQ09ge0lVV//bZNOsX3jJqaJwNvlOKXN
-        As5tGuTTwMH4mLlSh8PJ70ThsoCQc5F6VOHZWFMU/qWI
-X-Google-Smtp-Source: APiQypJCBRNY8WDeGRUOflqvmNLp4SLE40Vw+oZCgbf0ZQM7kLQ076HrzVTr4mL4n8pgv7NuZjDw6OSN5H1RzKfZw1A=
-X-Received: by 2002:a92:cc02:: with SMTP id s2mr12907286ilp.9.1586768271374;
- Mon, 13 Apr 2020 01:57:51 -0700 (PDT)
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kgnmufpCnzJ/I6SF/doJLgd5ZXOX4DEJoXWiwSYORsc=;
+ b=UTM0Fn2tO50bN11TdFMEZwDasTXHv7uEW3Y3ghgEsEohYslsSO+2oBrmzgiI7kX5GrvqDG0Z94qKB7QKqJElyvp8hZ6oR5kksC82+d/eOUifFhTrV2Bmdeajzfn+hjXAeBy1Cr2yPDY64HiSMNUJBrHDGcgHqviVAz73evTBNRs=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY1PR01MB1852.jpnprd01.prod.outlook.com (52.133.164.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2900.19; Mon, 13 Apr 2020 09:43:16 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96%3]) with mapi id 15.20.2878.022; Mon, 13 Apr 2020
+ 09:43:16 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+CC:     "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] exfat: replace 'time_ms' with 'time_10ms'
+Thread-Topic: [PATCH v2] exfat: replace 'time_ms' with 'time_10ms'
+Thread-Index: AQHWDXnb7kFzLdIDe0GisWVV38Nr1KhvFNoAgAenMeA=
+Date:   Mon, 13 Apr 2020 09:41:22 +0000
+Deferred-Delivery: Mon, 13 Apr 2020 09:43:00 +0000
+Message-ID: <TY1PR01MB157894A971A781BE900C5A7590DD0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <20200408074610.35591-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <20200408112152.GP21484@bombadil.infradead.org>
+In-Reply-To: <20200408112152.GP21484@bombadil.infradead.org>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1139211b-162b-4bc6-6c27-08d7df8f1784
+x-ms-traffictypediagnostic: TY1PR01MB1852:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB1852A3B0D56E133AD400A46D90DD0@TY1PR01MB1852.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 037291602B
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(39860400002)(346002)(136003)(366004)(396003)(376002)(4326008)(66446008)(5660300002)(86362001)(71200400001)(52536014)(64756008)(66556008)(66476007)(66946007)(109986005)(316002)(55016002)(54906003)(9686003)(76116006)(4744005)(6666004)(2906002)(478600001)(6506007)(7696005)(33656002)(8676002)(81156014)(26005)(8936002)(186003)(95630200002);DIR:OUT;SFP:1102;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: C8EM0RZ+Y5q2gWFmvNrbgFL+uTFi7QjxiER1VKNVG+AUUtdatzWCRchX2I+kh+u7+Z831Q1Tddm54hqP4BBHFDRjq73Z1z4Hmkl2T6ngEEjr5qGQMY/1XQ4jvPhNFsHeHKEDi8O2M53Fu40TQX0OHBIT/SELQcEp02Bvm7cMpPhFYG1l8UWEvqf4/E2ZCSlBstnHlRL0s0AEEWJWIGhVWpZjqqnJAJ2C7krtNwU0p96SQbi2qa0kvvIieGoA2o3Axt7AaKLXiE+jmu3A/Qqp+df6Z7t4gX+FOnBQ7LyNlKxvIl0RfG6EmOpFQEBVyiOY8iVmkOP/FdtiBM+Dh3r87tknikPUqiNnBKiMkM3QCSfcTrPBh4IjzyuDjKwb/p6heT/2ZSXYlSPGjKPJDwlnqUWeA4SbF8nePOirIXjIULDoxPPpp9OPfHyPwi5Lpok3A/UyArKLVwx1I8rZ7HNIpqbS9fi6T1c8Lb1SfotrmusnFy3YXZWD0X22cEu9Zi34
+x-ms-exchange-antispam-messagedata: UpX2Iv3ndNO+qmcHwVt9P+yv/FnHTyQDU3eo/igacvixlw20g0K6SYjLoRsOtWbXg+Jf6oaj6MeDmChzVb11sCRY4mGpFLpJmJKEX+O94mx4OXCc9eSuKoB9rZbSq5i0mLdXADKhJZKcyuzrlBMT7A==
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
- <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com> <CABV8kRxVA0j2qLkyWx+vULh2DxK2Ef4nPk-zXCikN8XmdBOFgQ@mail.gmail.com>
-In-Reply-To: <CABV8kRxVA0j2qLkyWx+vULh2DxK2Ef4nPk-zXCikN8XmdBOFgQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 13 Apr 2020 11:57:40 +0300
-Message-ID: <CAOQ4uxh2KKwORLC+gWEF=mWzBa3Kh4A4HgRoiad5N5qu06xjcg@mail.gmail.com>
-Subject: Re: Same mountpoint restriction in FICLONE ioctls
-To:     Keno Fischer <keno@juliacomputing.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Steve French <smfrench@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1139211b-162b-4bc6-6c27-08d7df8f1784
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2020 09:43:16.3486
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YW5qVCCdY1Kx6D7mMWVh+F9X4EHPUHL6x1ZQFp0/MsIuqd8hjZhW31xPTmphOovxtzuEejIbbaMjCnrkZKQZBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1852
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 1:28 AM Keno Fischer <keno@juliacomputing.com> wrote:
->
-> > You did not specify your use case.
->
-> My use case is recording (https://rr-project.org/) executions
+> Please leave at least 24 hours between sending new versions so that
+> you can collect all feedback relating to your change, and we don't see
+> discussion fragment between different threads.
 
-Cool! I should try that ;-)
+Thanks for good advice!
 
-> of containers (which often make heavy use of bind mounts on
-> the same file system, thus me running into this restriction).
-> In essence, at relevant read or mmap operations,
-> rr needs to checkpoint the file that was opened,
-> in case it later gets deleted or modified.
-> It always tries to FICLONE the file first,
-> before deciding heuristically whether to
-> instead create a copy (if it decides there is a low
-> likelihood the file will get changed - e.g. because
-> it's a system file - it may decide to take the chance and
-> not copy it at the risk of creating a broken recording).
-> That's often a decent trade-off, but of course it's not
-> 100% perfect.
->
-> > The question is: do you *really* need cross mount clone?
-> > Can you use copy_file_range() instead?
->
-> Good question. copy_file_range doesn't quite work
-> for that initial clone, because we do want it to fail if
-> cloning doesn't work (so that we can apply the
-> heuristics). However, you make a good point that
-> the copy fallback should probably use copy_file_range.
-> At least that way, if it does decide to copy, the
-> performance will be better.
->
-> It would still be nice for FICLONE to ease this restriction,
-> since it reduces the chance of the heuristics getting
-> it wrong and preventing the copy, even if such
-> a copy would have been cheap.
->
+> > +		ts->tv_sec +=3D (time_10ms * 10) / 1000;
+> > +		ts->tv_nsec =3D (time_10ms * 10) % 1000 * NSEC_PER_MSEC;
+>=20
+> I find this more confusing than the original.
 
-You make it sound like the heuristic decision must be made
-*after* trying to clone, but it can be made before and pass
-flags to the kernel whether or to fallback to copy.
+The parentheses were intended to group conversions into milliseconds,=20
+but were not necessary from an "operator precedence" perspective.
 
-copy_file_range(2) has an unused flags argument.
-Adding support for flags like:
-COPY_FILE_RANGE_BY_FS
-COPY_FILE_RANGE_BY_KERNEL
 
-or any other names elected after bike shedding can be used
-to control whether user intended to use filesystem internal
-clone/copy methods and/or to fallback to kernel copy.
+>=20
+> 		ts->tv_sec +=3D time_10ms / 100;
+> 		ts->tv_nsec =3D (time_10ms % 100) * 10 * NSEC_PER_MSEC;
+>=20
+> is easier to understand for me, not least because I don't need to worry
+> about the operator precedence between % and *.
 
-I think this functionality will be useful to many.
+If I use '100' for the divisor of '10ms', I find it difficult to understand=
+=20
+the meaning of the operation.
 
-> > Across which filesystems mounts are you trying to clone?
->
-> This functionality was written with btrfs in mind, so that's
-> what I was testing with. The mounts themselves are just
-> different bindmounts into the same filesystem.
->
+When using '100' for the divisor, I think cs (centi-sec) is easier to under=
+stand than 10ms.
+Which do you prefer, time_10ms or time_cs?
 
-I can also suggest a workaround for you.
-If your only problem is bind mounts and if recorder is a privileged
-process (CAP_DAC_READ_SEARCH) then you can use a "master"
-bind mount to perform all clone operations on.
-Use name_to_handle_at(2) to get sb file handle of source file.
-Use open_by_handle_at(2) to get an open file descriptor of the source
-file under the "master" bind mount.
 
-Thanks,
-Amir.
+BR
+---
+Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
