@@ -2,107 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (unknown [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE721A60D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 00:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123371A62BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 07:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbgDLW2v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Apr 2020 18:28:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.18]:57740 "EHLO
+        id S1726067AbgDMFvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 01:51:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.18]:44456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbgDLW2v (ORCPT
+        with ESMTP id S1725842AbgDMFvg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Apr 2020 18:28:51 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3AF0C0A88B5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 15:28:51 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id t11so7071750ils.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Apr 2020 15:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=juliacomputing-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ANGfUKyG+6xWky2jJ2nWMKG+M8IIxgEacG/h0ycqR20=;
-        b=tAqXHlP8pnC0Fae5HqLveAPHChvu5fDrBR9aCpdJ/+VGWLe239sL5EQQWbqaz3R9zk
-         EAQUa5NP5nmgrY74n41PftFvtCCNCkmDthGZgO1ECVJSvQ4IMF53VSupjwSpg+7RuiI2
-         v8IH811tUAia95Hhy4SCvG+4vNYPYkm/oQwKOCJSYOIjRu3W/kSiUZHWJk1lZ+sCtpCN
-         sz3mK9n7qAcYjYqEBtPNGS5pNjUaJMtI1sYKypSgAKOTUQlwM5XiVkmGcy1PN8/Nb7x4
-         5Dp2zxa0TXQ+m0aDA5A0d4GXIcPgOuuLePU4s7tZZkslKAfNetsNFpjzQdzBZpgG9Dy/
-         XODw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ANGfUKyG+6xWky2jJ2nWMKG+M8IIxgEacG/h0ycqR20=;
-        b=dg9MqwYA22Pa9SWmXbhvt05gbYAfv4750tec7z06D/tvRU3fXrzw/d21cierXRJ14N
-         zN2scsYS/RPdD1Sy3uEKuALDgrcOVZB9yQkL86j9uql5m15tQV8yHt1pBAjIly68tYB7
-         k4lyP16zgvCQMiw3lRSJlof20IFocUGqbFLn3Uj/UsFyfICqbamOwldoPRuNqrxHNV8W
-         ua9+l0+1rkxVTiOiVJ+NQJvnvq9x3yXf6P6FK8lJ5XHXIYNaG4rGtGYLxglyHZWxbAnP
-         Wrm9+oJp/nDo8KN2XNyKe3ciPOUtptcYCGVryjbFfj1067JmIyr+EMnoq5+VfReP8tTo
-         xFaQ==
-X-Gm-Message-State: AGi0PuaNla3t60XywpbN7NNPexKd9kwuW7BDPSX/1ezllKdE4qwnnpWd
-        JXijMZ9QpFQRZm2sdIT/7MuOHMQoV0NLrb27NS+Ycg==
-X-Google-Smtp-Source: APiQypJO2Sswe5+NMVXMBxFMyLnpwoxty/zztpPW7J2prcZwXcKcdiwPWUFR1BvBQmKAE2/hAJpBzCD4M7x9p/ukihc=
-X-Received: by 2002:a92:250e:: with SMTP id l14mr14538847ill.201.1586730530779;
- Sun, 12 Apr 2020 15:28:50 -0700 (PDT)
+        Mon, 13 Apr 2020 01:51:36 -0400
+Received: from huawei.com (szxga06-in.huawei.com [45.249.212.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13FF7C008654;
+        Sun, 12 Apr 2020 22:12:27 -0700 (PDT)
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B717B5D6576156E76FA3;
+        Mon, 13 Apr 2020 13:12:22 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.183) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Mon, 13 Apr 2020
+ 13:12:12 +0800
+To:     <viro@zeniv.linux.org.uk>, <rostedt@goodmis.org>,
+        <mingo@redhat.com>, "Jens Axboe" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <jack@suse.cz>, <tj@kernel.org>, <bigeasy@linutronix.de>,
+        linfeilong <linfeilong@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        renxudong <renxudong1@huawei.com>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Subject: [PATCH] buffer: remove useless comment and WB_REASON_FREE_MORE_MEM,
+ reason.
+Message-ID: <5844aa66-de1e-278b-5491-b7e6839640e9@huawei.com>
+Date:   Mon, 13 Apr 2020 13:12:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <CABV8kRw_jGxPqWc68Bj-uP_hSrKO0MmShOmtuzGQA2W3WHyCrg@mail.gmail.com>
- <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhPKR34cXvWfF49z8mTGJm+oP2ibfohsXNdY7tXaOi4RA@mail.gmail.com>
-From:   Keno Fischer <keno@juliacomputing.com>
-Date:   Sun, 12 Apr 2020 18:28:13 -0400
-Message-ID: <CABV8kRxVA0j2qLkyWx+vULh2DxK2Ef4nPk-zXCikN8XmdBOFgQ@mail.gmail.com>
-Subject: Re: Same mountpoint restriction in FICLONE ioctls
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        Steve French <smfrench@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.183]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> You did not specify your use case.
+From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-My use case is recording (https://rr-project.org/) executions
-of containers (which often make heavy use of bind mounts on
-the same file system, thus me running into this restriction).
-In essence, at relevant read or mmap operations,
-rr needs to checkpoint the file that was opened,
-in case it later gets deleted or modified.
-It always tries to FICLONE the file first,
-before deciding heuristically whether to
-instead create a copy (if it decides there is a low
-likelihood the file will get changed - e.g. because
-it's a system file - it may decide to take the chance and
-not copy it at the risk of creating a broken recording).
-That's often a decent trade-off, but of course it's not
-100% perfect.
+free_more_memory func has been completely removed in commit bc48f001de12
+("buffer: eliminate the need to call free_more_memory() in __getblk_slow()")
 
-> The question is: do you *really* need cross mount clone?
-> Can you use copy_file_range() instead?
+So comment and `WB_REASON_FREE_MORE_MEM` reason about free_more_memory
+are no longer needed.
 
-Good question. copy_file_range doesn't quite work
-for that initial clone, because we do want it to fail if
-cloning doesn't work (so that we can apply the
-heuristics). However, you make a good point that
-the copy fallback should probably use copy_file_range.
-At least that way, if it does decide to copy, the
-performance will be better.
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+---
+ fs/buffer.c                      | 2 +-
+ include/linux/backing-dev-defs.h | 1 -
+ include/trace/events/writeback.h | 1 -
+ 3 files changed, 1 insertion(+), 3 deletions(-)
 
-It would still be nice for FICLONE to ease this restriction,
-since it reduces the chance of the heuristics getting
-it wrong and preventing the copy, even if such
-a copy would have been cheap.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index b8d28370cfd7..07ab0405f3f5 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -973,7 +973,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+ 	struct page *page;
+ 	struct buffer_head *bh;
+ 	sector_t end_block;
+-	int ret = 0;		/* Will call free_more_memory() */
++	int ret = 0;
+ 	gfp_t gfp_mask;
 
-> Across which filesystems mounts are you trying to clone?
+ 	gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS) | gfp;
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 4fc87dee005a..ee577a83cfe6 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -54,7 +54,6 @@ enum wb_reason {
+ 	WB_REASON_SYNC,
+ 	WB_REASON_PERIODIC,
+ 	WB_REASON_LAPTOP_TIMER,
+-	WB_REASON_FREE_MORE_MEM,
+ 	WB_REASON_FS_FREE_SPACE,
+ 	/*
+ 	 * There is no bdi forker thread any more and works are done
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index d94def25e4dc..85a33bea76f1 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -36,7 +36,6 @@
+ 	EM( WB_REASON_SYNC,			"sync")			\
+ 	EM( WB_REASON_PERIODIC,			"periodic")		\
+ 	EM( WB_REASON_LAPTOP_TIMER,		"laptop_timer")		\
+-	EM( WB_REASON_FREE_MORE_MEM,		"free_more_memory")	\
+ 	EM( WB_REASON_FS_FREE_SPACE,		"fs_free_space")	\
+ 	EMe(WB_REASON_FORKER_THREAD,		"forker_thread")
 
-This functionality was written with btrfs in mind, so that's
-what I was testing with. The mounts themselves are just
-different bindmounts into the same filesystem.
+-- 
+2.19.1
 
-Keno
+
