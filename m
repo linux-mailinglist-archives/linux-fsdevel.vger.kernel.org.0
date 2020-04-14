@@ -2,116 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0F9F1A8CBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 22:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 069471A8CE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 22:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633328AbgDNUny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 16:43:54 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32111 "EHLO mga09.intel.com"
+        id S2633435AbgDNUyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 16:54:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:32810 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729251AbgDNUnx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 16:43:53 -0400
-IronPort-SDR: tY3mnLJJMZ37LeY2lerYR74iByqJPSo7WPVr0ZmzcmKklgwAoNBdpSi6z/xIs915+wgeko6NpR
- T5d4xGyLj44w==
+        id S1730661AbgDNUyq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 16:54:46 -0400
+IronPort-SDR: J0S1V3hJcgIJ1pWqKTnjwYCrZAVd56mNz4t0oJSxvYK9tIqfpTfUNNsi76Ulqf/htW40jAHbaV
+ 769S3qJgU7dA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 13:43:50 -0700
-IronPort-SDR: jvkuPtTN/g4RAWjWQMPkUlO26mLy522pbJdALXipvnoDStHxBiGv8bGZfJMVMTIjUsa/dZ4LGa
- Idxxc5Q9+WDw==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 13:54:44 -0700
+IronPort-SDR: BZChCMYVjYFNgj/WPAnrIXxxL30sSdjjJOLvtEa8gqzFAPoAV1bL8QYBJ4AhNfUMFrGcQwknUh
+ TlfbYx01RNGA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,384,1580803200"; 
-   d="scan'208";a="298809188"
+   d="scan'208";a="253308266"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Apr 2020 13:43:50 -0700
-Date:   Tue, 14 Apr 2020 13:43:50 -0700
+  by orsmga003.jf.intel.com with ESMTP; 14 Apr 2020 13:54:44 -0700
+Date:   Tue, 14 Apr 2020 13:54:44 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V7 5/9] fs/xfs: Create function xfs_inode_enable_dax()
-Message-ID: <20200414204349.GB1982089@iweiny-DESK2.sc.intel.com>
+        Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V7 9/9] Documentation/dax: Update Usage section
+Message-ID: <20200414205443.GC1982089@iweiny-DESK2.sc.intel.com>
 References: <20200413054046.1560106-1-ira.weiny@intel.com>
- <20200413054046.1560106-6-ira.weiny@intel.com>
- <20200414062718.GE23154@lst.de>
+ <20200413054046.1560106-10-ira.weiny@intel.com>
+ <CAPcyv4g1gGWUuzVyOgOtkRTxzoSKOjVpAOmW-UDtmud9a3CUUA@mail.gmail.com>
+ <20200414161509.GF6742@magnolia>
+ <CAPcyv4hr+NKbpAU4UhKcmHfvDq1+GTM+y+K28XGbkDYBP=Kaag@mail.gmail.com>
+ <20200414195754.GH6742@magnolia>
+ <20200414200015.GF1853609@iweiny-DESK2.sc.intel.com>
+ <20200414201808.GI6742@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200414062718.GE23154@lst.de>
+In-Reply-To: <20200414201808.GI6742@magnolia>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 08:27:18AM +0200, Christoph Hellwig wrote:
-> On Sun, Apr 12, 2020 at 10:40:42PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
+On Tue, Apr 14, 2020 at 01:18:08PM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 14, 2020 at 01:00:15PM -0700, Ira Weiny wrote:
+> > On Tue, Apr 14, 2020 at 12:57:54PM -0700, Darrick J. Wong wrote:
+> > > On Tue, Apr 14, 2020 at 12:04:57PM -0700, Dan Williams wrote:
+> > > > On Tue, Apr 14, 2020 at 9:15 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
 > > 
-
-[snip]
-
-> > index 81f2f93caec0..37bd15b55878 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -1244,12 +1244,11 @@ xfs_inode_supports_dax(
-> >  	struct xfs_mount	*mp = ip->i_mount;
-> >  
-> >  	/* Only supported on non-reflinked files. */
-> > -	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
-> > +	if (xfs_is_reflink_inode(ip))
-> >  		return false;
-> >  
-> > -	/* DAX mount option or DAX iflag must be set. */
-> > -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
-> > -	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-> > +	/* Only supported on regular files. */
-> > +	if (!S_ISREG(VFS_I(ip)->i_mode))
-> >  		return false;
+> > [snip]
+> > 
+> > > > > > > +
+> > > > > > > +Enabling DAX on xfs
+> > > > > > > +-------------------
+> > > > > > > +
+> > > > > > > +Summary
+> > > > > > > +-------
+> > > > > > > +
+> > > > > > > + 1. There exists an in-kernel access mode flag S_DAX that is set when
+> > > > > > > +    file accesses go directly to persistent memory, bypassing the page
+> > > > > > > +    cache.
+> > > > > >
+> > > > > > I had reserved some quibbling with this wording, but now that this is
+> > > > > > being proposed as documentation I'll let my quibbling fly. "dax" may
+> > > > > > imply, but does not require persistent memory nor does it necessarily
+> > > > > > "bypass page cache". For example on configurations that support dax,
+> > > > > > but turn off MAP_SYNC (like virtio-pmem), a software flush is
+> > > > > > required. Instead, if we're going to define "dax" here I'd prefer it
+> > > > > > be a #include of the man page definition that is careful (IIRC) to
+> > > > > > only talk about semantics and not backend implementation details. In
+> > > > > > other words, dax is to page-cache as direct-io is to page cache,
+> > > > > > effectively not there, but dig a bit deeper and you may find it.
+> > > > >
+> > > > > Uh, which manpage?  Are you talking about the MAP_SYNC documentation?
+> > > > 
+> > > > No, I was referring to the proposed wording for STATX_ATTR_DAX.
+> > > > There's no reason for this description to say anything divergent from
+> > > > that description.
+> > > 
+> > > Ahh, ok.  Something like this, then:
+> > > 
+> > >  1. There exists an in-kernel access mode flag S_DAX.  When set, the
+> > >     file is in the DAX (cpu direct access) state.  DAX state attempts to
+> > >     minimize software cache effects for both I/O and memory mappings of
+> > >     this file.  The S_DAX state is exposed to userspace via the
+> > >     STATX_ATTR_DAX statx flag.
+> > > 
+> > >     See the STATX_ATTR_DAX in the statx(2) manpage for more information.
+> > 
+> > We crossed in the ether!!!  I propose even less details here...  Leave all the
+> > details to the man page.
+> > 
+> > <quote>
+> > 1. There exists an in-kernel access mode flag S_DAX that is set when file
+> >     accesses is enabled for 'DAX'.  Applications must call statx to discover
+> >     the current S_DAX state (STATX_ATTR_DAX).  See the man page for statx for
+> >     more details.
+> > </quote>
 > 
-> To me it would make sense to check S_ISREG before reflink, as it seems
-> more logical.
+> Why stop cutting there? :)
+> 
+>  1. There exists an in-kernel file access mode flag S_DAX that
+>     corresponds to the statx flag STATX_ATTR_DIRECT_LOAD_STORE.  See the
+>     manpage for statx(2) for details about this access mode.
 
-Done.
+Sure!  But I'm holding to STATX_ATTR_DAX...  I don't like introducing another
+alias for this stuff.  Why have '-o dax=x' and then have some other term here?
 
-> 
-> > +#ifdef CONFIG_FS_DAX
-> > +static bool
-> > +xfs_inode_enable_dax(
-> > +	struct xfs_inode *ip)
-> > +{
-> > +	if (ip->i_mount->m_flags & XFS_MOUNT_NODAX)
-> > +		return false;
-> > +	if (!xfs_inode_supports_dax(ip))
-> > +		return false;
-> > +	if (ip->i_mount->m_flags & XFS_MOUNT_DAX)
-> > +		return true;
-> > +	if (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)
-> > +		return true;
-> > +	return false;
-> > +}
-> > +#else /* !CONFIG_FS_DAX */
-> > +static bool
-> > +xfs_inode_enable_dax(
-> > +	struct xfs_inode *ip)
-> > +{
-> > +	return false;
-> > +}
-> > +#endif /* CONFIG_FS_DAX */
-> 
-> Just throw in a
-> 
-> 	if (!IS_ENABLED(CONFIG_FS_DAX))
-> 		return false;
-> 
-> as the first statement of the full version and avoid the stub entirely?
+Keep the name the same for consistency.
 
-Sure, less code that way.  Done.
+Searching for 'DAX Linux'[*] results in 'About 877,000 results' on Google.
+
+While "'direct load store' Linux" results in 'About 2,630 results'.
+
+I'll update the rest of the text though!  :-D
 
 Ira
 
+[*] Because 'DAX' is some company index and or a rapper...  <sigh>
