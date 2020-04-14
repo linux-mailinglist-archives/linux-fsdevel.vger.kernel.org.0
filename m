@@ -2,126 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF131A73A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 08:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F561A73F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 09:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405996AbgDNG10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 02:27:26 -0400
-Received: from verein.lst.de ([213.95.11.211]:37638 "EHLO verein.lst.de"
+        id S2406183AbgDNHAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 03:00:21 -0400
+Received: from verein.lst.de ([213.95.11.211]:37725 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405926AbgDNG1Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 02:27:25 -0400
+        id S1728471AbgDNHAT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 03:00:19 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 23D05227A81; Tue, 14 Apr 2020 08:27:19 +0200 (CEST)
-Date:   Tue, 14 Apr 2020 08:27:18 +0200
+        id 024D068BEB; Tue, 14 Apr 2020 09:00:13 +0200 (CEST)
+Date:   Tue, 14 Apr 2020 09:00:13 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V7 5/9] fs/xfs: Create function xfs_inode_enable_dax()
-Message-ID: <20200414062718.GE23154@lst.de>
-References: <20200413054046.1560106-1-ira.weiny@intel.com> <20200413054046.1560106-6-ira.weiny@intel.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread
+ is a kthread
+Message-ID: <20200414070013.GA23680@lst.de>
+References: <20200404094101.672954-1-hch@lst.de> <20200404094101.672954-3-hch@lst.de> <20200407030845.GA10586@joy-OptiPlex-7040> <20200413132730.GB14455@lst.de> <20200414000410.GE10586@joy-OptiPlex-7040>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200413054046.1560106-6-ira.weiny@intel.com>
+In-Reply-To: <20200414000410.GE10586@joy-OptiPlex-7040>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 12, 2020 at 10:40:42PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Apr 13, 2020 at 08:04:10PM -0400, Yan Zhao wrote:
+> > I can't think of another way for a kernel thread to have a mm indeed.
+> for example, before calling to vfio_dma_rw(), a kernel thread has already
+> called use_mm(), then its current->mm is not null, and it has flag
+> PF_KTHREAD.
+> in this case, we just want to allow the copy_to_user() directly if
+> current->mm == mm, rather than call another use_mm() again.
 > 
-> xfs_inode_supports_dax() should reflect if the inode can support DAX not
-> that it is enabled for DAX.
-> 
-> Change the use of xfs_inode_supports_dax() to reflect only if the inode
-> and underlying storage support dax.
-> 
-> Add a new function xfs_inode_enable_dax() which reflects if the inode
-> should be enabled for DAX.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes from v6:
-> 	Change enable checks to be sequential logic.
-> 	Update for 2 bit tri-state option.
-> 	Make 'static' consistent.
-> 	Don't set S_DAX if !CONFIG_FS_DAX
-> 
-> Changes from v5:
-> 	Update to reflect the new tri-state mount option
-> 
-> Changes from v3:
-> 	Update functions and names to be more clear
-> 	Update commit message
-> 	Merge with
-> 		'fs/xfs: Clean up DAX support check'
-> 		don't allow IS_DAX() on a directory
-> 		use STATIC macro for static
-> 		make xfs_inode_supports_dax() static
-> ---
->  fs/xfs/xfs_iops.c | 34 +++++++++++++++++++++++++++++-----
->  1 file changed, 29 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 81f2f93caec0..37bd15b55878 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1244,12 +1244,11 @@ xfs_inode_supports_dax(
->  	struct xfs_mount	*mp = ip->i_mount;
->  
->  	/* Only supported on non-reflinked files. */
-> -	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
-> +	if (xfs_is_reflink_inode(ip))
->  		return false;
->  
-> -	/* DAX mount option or DAX iflag must be set. */
-> -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
-> -	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-> +	/* Only supported on regular files. */
-> +	if (!S_ISREG(VFS_I(ip)->i_mode))
->  		return false;
+> do you think it makes sense?
 
-To me it would make sense to check S_ISREG before reflink, as it seems
-more logical.
-
-> +#ifdef CONFIG_FS_DAX
-> +static bool
-> +xfs_inode_enable_dax(
-> +	struct xfs_inode *ip)
-> +{
-> +	if (ip->i_mount->m_flags & XFS_MOUNT_NODAX)
-> +		return false;
-> +	if (!xfs_inode_supports_dax(ip))
-> +		return false;
-> +	if (ip->i_mount->m_flags & XFS_MOUNT_DAX)
-> +		return true;
-> +	if (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)
-> +		return true;
-> +	return false;
-> +}
-> +#else /* !CONFIG_FS_DAX */
-> +static bool
-> +xfs_inode_enable_dax(
-> +	struct xfs_inode *ip)
-> +{
-> +	return false;
-> +}
-> +#endif /* CONFIG_FS_DAX */
-
-Just throw in a
-
-	if (!IS_ENABLED(CONFIG_FS_DAX))
-		return false;
-
-as the first statement of the full version and avoid the stub entirely?
+I mean no other way than using use_mm.  That being said nesting
+potentional use_mm callers sounds like a rather bad idea, and we
+should avoid that.
