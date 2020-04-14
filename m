@@ -2,185 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C94E21A7851
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 12:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB2B1A7892
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 12:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438259AbgDNKS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 06:18:58 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:56921 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438250AbgDNKSo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 06:18:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586859530; x=1618395530;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=6bQZL4TPPaXzlnUHM2wHkTgMubteEFsRfrzlhl75zUQ=;
-  b=oU0jmWRjD+vcy7KaRp4vONYTdsf8AoM7/i1D/C5sal/AvnVpzaDlhrnK
-   0gxYr47qY4hUbNc+SgePyUHPKBwLJ+DWSTahM1EOLr5baK1pDhtCMLKNT
-   sdXODVRZkrIC8x3v4IG1rnylkUx41jSFlsCm8B8nrC190EEZNiGArT8vS
-   DUuNZSunK1FA98Uolk6N30Xhc3AyaI4fAaMShGYZqE4N+o5OwgLs1RV5P
-   zUDyASE185ukFsSQ4wtcSiy7DiDPnjVfXpUzRcP+uRUIRGm/5A11f63Ld
-   tNb0E5OPQ2fA8LPLUAwpFJO6P02ohX835hbjY3DEh+TWphxxJJeAhM+vR
-   Q==;
-IronPort-SDR: 5MItCoTVDGNjn+9pl6H9cBLNBQCqa1ouHwAuFmX4M8C8ij1K8tWL90S89AvBx2Fg87mfwyYa4q
- i8R0nnztTn6vPIXQGFhA4PJ4z9PI1hI6juEAP1G4l642Q/PECP7g1FgpV3nxKFdMFXGyzZkQ2M
- wdiubQU+Fg6N6NYJCiGOcknYl/18mu/a9L7omYTLDFBV8uJK2UdBAE4/1onXY+izsJfZGBHtAZ
- Z9YJrmKIAiHMG0EbN5936tT/b6FXABeeQSIKM83dx2Sks3BkNFMGCtym/L/906bFWuDB72Iaya
- +lU=
-X-IronPort-AV: E=Sophos;i="5.72,382,1580745600"; 
-   d="scan'208";a="237701901"
-Received: from mail-mw2nam10lp2109.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.109])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Apr 2020 18:18:48 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j92pJaitgoEqYyRjWkFuM9rXuMMLCmckESHXdfu1AJYPqk6Xw84YV205Q1Dad5jcxuSOMB/ncuq+MkImigF/rOIQYeW/auAm4lDR+fjutHOuYM68ZgWaRJV09nS/E6gX2rPZq9aA2o/ojlwrq4HkhrpkF0U+XgRn0rHp+P1tlL2Otd2ltXbe9JjyNvVrVFdfBEjQ3c/kyTyhD1MR2udeZL4q3VZnghWR+qZXOSNxjeyfwkItCZccMq00MUjo3H4ZaBiHIefV2/5OKBWKa2dM0vzMuqXFoPVZx40941EfzqjyHnV/meNfCwKEG8/cUTES4/5wjLpa0i2m8+bcyBdMLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fu4ealQwv9/uIhIXmON2xgvkgrM2Li50pWzEUqeBOqg=;
- b=HgzL8M2RJdv61KKcHm6TdWWJP8VJZXJClRjEG3bA7mkWaKFvi2B2ufmApyG1WSmWZsyB120IVLi7NMuQya43NVDtyIvy8RTDqqvgGyonOjoipdDWsNb8iOHBOPU+0g0PkCtahKS09DOCNRU63X0kqOQq+QDLn2wZoiLq7TRnUq0HaKe5m9MADIqk0X1DrfUBl3uyoiuuQvsEt3cqHVzN5MNXD2ijZYzA/wsGyBoQQXOtuNiOvmPO2tcnOmTE3r0BS5wxhijXyjhpmlHJlJJ3m1ZAkvDuLyZV+B9Gj+aIvg9p9fiB5YhgKpndqj0CwwOOIpWXkg4CaI/YhFUf3Y099Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fu4ealQwv9/uIhIXmON2xgvkgrM2Li50pWzEUqeBOqg=;
- b=vmtJ8ar26NbRoBhnXsAhFcGDZ7BEIvVDdq+oLwRWUvUIUFmZdB3JQZTx51905bj7Gxv26EET3obV8l92dlZ3/8yJ16PW4BwVHyF+UDex7LxTKLOFSFVQIwAsAOIvU+DCvMO0GXtKuAgpgrJQPH8uXPIdqK29NSpG5v+HKt0Pe6A=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3648.namprd04.prod.outlook.com
- (2603:10b6:803:46::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.26; Tue, 14 Apr
- 2020 10:18:40 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2900.028; Tue, 14 Apr 2020
- 10:18:40 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v5 07/10] scsi: sd_zbc: emulate ZONE_APPEND commands
-Thread-Topic: [PATCH v5 07/10] scsi: sd_zbc: emulate ZONE_APPEND commands
-Thread-Index: AQHWDo9/7/TsxA+1IEecB4cF8olDQw==
-Date:   Tue, 14 Apr 2020 10:18:40 +0000
-Message-ID: <SN4PR0401MB35984EF882B0E43E73CEE4729BDA0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200409165352.2126-1-johannes.thumshirn@wdc.com>
- <20200409165352.2126-8-johannes.thumshirn@wdc.com>
- <20200410072354.GB13404@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fd21b817-2bad-41a2-c6e4-08d7e05d33f4
-x-ms-traffictypediagnostic: SN4PR0401MB3648:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB36480650FE73913416AC2C1E9BDA0@SN4PR0401MB3648.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0373D94D15
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(7696005)(2906002)(53546011)(6506007)(54906003)(81156014)(52536014)(55016002)(8676002)(6916009)(478600001)(33656002)(5660300002)(66946007)(71200400001)(8936002)(186003)(316002)(66556008)(66446008)(9686003)(64756008)(76116006)(91956017)(26005)(66476007)(86362001)(4326008);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cWXZPNkTGxJwDoQhK0hTTUoWKAJRQIzJfAIO42d41nXJSqA5xe0wGvj+iCdXLq32+ESPEhLzXkeF9ZQIZkk9+hzI3j3aYGErFRwvoRvdhSqOVZ8z6gBqGXr2VADp3A5nRJko8aTrCJwlLGW214Xm5ExfzUrPnUi4IfRp9w6kVH0rh9vseqBbEnetwvxM/KpC4X7XAh8q8WDkHcJQTynHOldDeA30/icw2nXk0xzHizU2pvRhODugnmWFNx8jYkmXvprRBwZgopiTxcjS4NeTvIgu2pGJqaGkuj81Xnj8XcV8TTBygjtkVa+qf8eZdQP7UiQsLXzG6rO1Pa/ADURIbLz0YB518IhwKxYCFGPAHWWzfMWDqUgvbUKlqnsNkTx7FOwQLTAejTIdJuSalANilLdBvmdXNdWwFVC/yBLhGFtLpK1fq4tw1B0xYHkBOZw4
-x-ms-exchange-antispam-messagedata: WYsqsz58kUQXBpiNxc+JVJDFTbbCuR83uws8XAH6qdQjOVy4iGcUzYovn/2pQ1lrUWzcE9hTy/xHTHlnq9yEl0gmGjuznRuht1ixStvN/0OjjR9rcpg4pZsolNdQqEKtiFt+esMtYxDXAGo2UJaK4A==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2438463AbgDNKh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 06:37:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48660 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2438448AbgDNKfi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 06:35:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 873BAABB2;
+        Tue, 14 Apr 2020 10:35:33 +0000 (UTC)
+Date:   Tue, 14 Apr 2020 20:35:24 +1000
+From:   Aleksa Sarai <asarai@suse.de>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2)
+ syscall
+Message-ID: <20200414103524.wjhyfobzpjk236o7@yavin.dot.cyphar.com>
+References: <20200202151907.23587-1-cyphar@cyphar.com>
+ <20200202151907.23587-3-cyphar@cyphar.com>
+ <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com>
+ <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
+ <cd3a6aad-b906-ee57-1b5b-5939b9602ad0@gmail.com>
+ <20200412164943.imwpdj5qgtyfn5de@yavin.dot.cyphar.com>
+ <cd1438ab-cfc6-b286-849e-d7de0d5c7258@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd21b817-2bad-41a2-c6e4-08d7e05d33f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2020 10:18:40.2665
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bx/5qmfuwEw1Qnxv5FLFLiNun/246LyvK4iG2kLqRT00Xr3TtiMD7JjqbW+ejMPl86L5bWzOPtiCY78ihZVQEUC/Pl3vsdNn/2D1g6Flpd4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3648
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="imnm2xqfgm757zs2"
+Content-Disposition: inline
+In-Reply-To: <cd1438ab-cfc6-b286-849e-d7de0d5c7258@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/04/2020 09:23, Christoph Hellwig wrote:=0A=
->> +	spin_lock_bh(&sdkp->zones_wp_ofst_lock);=0A=
->> +=0A=
->> +	wp_ofst =3D sdkp->zones_wp_ofst[zno];=0A=
->> +	if (wp_ofst =3D=3D SD_ZBC_UPDATING_WP_OFST) {=0A=
->> +		/* Write pointer offset update in progress: ask for a requeue */=0A=
->> +		ret =3D BLK_STS_RESOURCE;=0A=
->> +		goto err;=0A=
->> +	}=0A=
->> +=0A=
->> +	if (wp_ofst =3D=3D SD_ZBC_INVALID_WP_OFST) {=0A=
->> +		/* Invalid write pointer offset: trigger an update from disk */=0A=
->> +		ret =3D sd_zbc_update_wp_ofst(sdkp, zno);=0A=
->> +		goto err;=0A=
->> +	}=0A=
-> =0A=
-> Maybe I'm a little too clever for my own sake, but what about something=
-=0A=
-> like:=0A=
-> =0A=
-> 	spin_lock_bh(&sdkp->zones_wp_ofst_lock);=0A=
-> 	switch (wp_ofst) {=0A=
-> 	case SD_ZBC_INVALID_WP_OFST:=0A=
-> 		if (scsi_device_get(sdkp->device)) {=0A=
-> 			ret =3D BLK_STS_IOERR;=0A=
-> 			break;=0A=
-> 		}=0A=
-> 		sdkp->zones_wp_ofst[zno] =3D SD_ZBC_UPDATING_WP_OFST;=0A=
-> 		schedule_work(&sdkp->zone_wp_ofst_work);=0A=
-> 		/*FALLTHRU*/=0A=
-> 	case SD_ZBC_UPDATING_WP_OFST:=0A=
-> 		ret =3D BLK_STS_DEV_RESOURCE;=0A=
-> 		break;=0A=
-> 	default:=0A=
-> 		wp_ofst =3D sectors_to_logical(sdkp->device, wp_ofst);=0A=
-> 		if (wp_ofst + nr_blocks > sdkp->zone_blocks) {=0A=
-> 			ret =3D BLK_STS_IOERR;=0A=
-> 			break;=0A=
-> 		}=0A=
-> =0A=
-> 		*lba +=3D wp_ofst;=0A=
-> 	}=0A=
-> 	spin_unlock_bh(&sdkp->zones_wp_ofst_lock);=0A=
-> 	if (ret)=0A=
-> 		blk_req_zone_write_unlock(rq);=0A=
-> 	return ret;=0A=
-> }=0A=
-=0A=
-This indeed looks cleaner, I'll throw it into testing.=0A=
-=0A=
-> =0A=
->>   	int result =3D cmd->result;=0A=
->> @@ -294,7 +543,18 @@ void sd_zbc_complete(struct scsi_cmnd *cmd, unsigne=
-d int good_bytes,=0A=
->>   		 * so be quiet about the error.=0A=
->>   		 */=0A=
->>   		rq->rq_flags |=3D RQF_QUIET;=0A=
->> +		goto unlock_zone;=0A=
->>   	}=0A=
->> +=0A=
->> +	if (sd_zbc_need_zone_wp_update(rq))=0A=
->> +		good_bytes =3D sd_zbc_zone_wp_update(cmd, good_bytes);=0A=
->> +=0A=
->> +=0A=
->> +unlock_zone:=0A=
-> =0A=
-> why not use a good old "else if" here?=0A=
-> =0A=
-=0A=
-Done=0A=
+
+--imnm2xqfgm757zs2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2020-04-13, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+> >>>> .\" FIXME I find the "previously-functional systems" in the previous
+> >>>> .\" sentence a little odd (since openat2() ia new sysycall), so I wo=
+uld
+> >>>> .\" like to clarify a little...
+> >>>> .\" Are you referring to the scenario where someone might take an
+> >>>> .\" existing application that uses openat() and replaces the uses
+> >>>> .\" of openat() with openat2()? In which case, is it correct to
+> >>>> .\" understand that you mean that one should not just indiscriminate=
+ly
+> >>>> .\" add the RESOLVE_NO_XDEV flag to all of the openat2() calls?
+> >>>> .\" If I'm not on the right track, could you point me in the right
+> >>>> .\" direction please.
+> >>>
+> >>> This is mostly meant as a warning to hopefully avoid applications
+> >>> because the developer didn't realise that system paths may contain
+> >>> symlinks or bind-mounts. For an application which has switched to
+> >>> openat2() and then uses RESOLVE_NO_SYMLINKS for a non-security reason,
+> >>> it's possible that on some distributions (or future versions of a
+> >>> distribution) that their application will stop working because a syst=
+em
+> >>> path suddenly contains a symlink or is a bind-mount.
+> >>>
+> >>> This was a concern which was brought up on LWN some time ago. If you =
+can
+> >>> think of a phrasing that makes this more clear, I'd appreciate it.
+> >>
+> >> Thanks. I've made the text:
+> >>
+> >>                      Applications  that  employ  the RESOLVE_NO_XDEV f=
+lag
+> >>                      are encouraged to make its use configurable  (unl=
+ess
+> >>                      it is used for a specific security purpose), as b=
+ind
+> >>                      mounts are widely used by end-users.   Setting  t=
+his
+> >>                      flag indiscriminately=E2=80=94i.e., for purposes =
+not specif=E2=80=90
+> >>                      ically related to security=E2=80=94for all uses o=
+f openat2()
+> >>                      may  result  in  spurious errors on previously-fu=
+nc=E2=80=90
+> >>                      tional systems.  This may occur if, for  example,=
+  a
+> >>                      system  pathname  that  is used by an application=
+ is
+> >>                      modified (e.g., in a new  distribution  release) =
+ so
+> >>                      that  a  pathname  component  (now)  contains a b=
+ind
+> >>                      mount.
+> >>
+> >> Okay?
+> >=20
+> > Yup,
+>=20
+> Thanks.
+>=20
+> > and the same text should be used for the same warning I gave for
+> > RESOLVE_NO_SYMLINKS (for the same reason, because system paths may
+> > switch to symlinks -- the prime example being what Arch Linux did
+> > several years ago).
+>=20
+> Okay -- I added similar text to RESOLVE_NO_SYMLINKS.
+
+Much appreciated.
+
+> >>>> .\" FIXME: what specific details in symlink(7) are being referred
+> >>>> .\" by the following sentence? It's not clear.
+> >>>
+> >>> The section on magic-links, but you're right that the sentence orderi=
+ng
+> >>> is a bit odd. It should probably go after the first sentence.
+> >>
+> >> I must admit that I'm still confused. There's only the briefest of=20
+> >> mentions of magic links in symlink(7). Perhaps that needs to be fixed?
+> >=20
+> > It wouldn't hurt to add a longer description of magic-links in
+> > symlink(7). I'll send you a small patch to beef up the description (I
+> > had planned to include a longer rewrite with the O_EMPTYPATH patches but
+> > those require quite a bit more work to land).
+>=20
+> That would be great. Thank you!
+
+I'll cook something up later this week.
+
+> >> And, while I think of it, the text just preceding that FIXME says:
+> >>
+> >>     Due to the potential danger of unknowingly opening=20
+> >>     these magic links, it may be preferable for users to=20
+> >>     disable their resolution entirely.
+> >>
+> >> This sentence reads a little strangely. Could you please give me some
+> >> concrete examples, and I will try rewording that sentence a bit.
+> >=20
+> > The primary example is that certain files (such as tty devices) are
+> > best not opened by an unsuspecting program (if you do not have a
+> > controlling TTY, and you open such a file that console becomes your
+> > controlling TTY unless you use O_NOCTTY).
+> >=20
+> > But more generally, magic-links allow programs to be "beamed" all over
+> > the system (bypassing ordinary mount namespace restrictions). Since they
+> > are fairly rarely used intentionally by most programs, this is more of a
+> > tip to programmers that maybe they should play it safe and disallow
+> > magic-links unless they are expecting to have to use them.
+>=20
+>=20
+> I've reworked the text on RESOLVE_NO_MAGICLINKS substantially:
+>=20
+>        RESOLVE_NO_MAGICLINKS
+>               Disallow all magic-link resolution during path reso=E2=80=90
+>               lution.
+>=20
+>               Magic links are symbolic link-like objects that  are
+>               most  notably  found  in  proc(5);  examples include
+>               /proc/[pid]/exe  and  /proc/[pid]/fd/*.   (See  sym=E2=80=90
+>               link(7) for more details.)
+>=20
+>               Unknowingly  opening  magic  links  can be risky for
+>               some applications.  Examples of such  risks  include
+>               the following:
+>=20
+>               =C2=B7 If the process opening a pathname is a controlling
+>                 process that currently has no controlling terminal
+>                 (see  credentials(7)),  then  opening a magic link
+>                 inside /proc/[pid]/fd that happens to refer  to  a
+>                 terminal would cause the process to acquire a con=E2=80=90
+>                 trolling terminal.
+>=20
+>               =C2=B7 In  a  containerized  environment,  a  magic  link
+>                 inside  /proc  may  refer to an object outside the
+>                 container, and thus may provide a means to  escape
+>                 from the container.
+>=20
+> [The above example derives from https://lwn.net/Articles/796868/]
+>=20
+>               Because  of such risks, an application may prefer to
+>               disable   magic   link    resolution    using    the
+>               RESOLVE_NO_MAGICLINKS flag.
+>=20
+>               If  the trailing component (i.e., basename) of path=E2=80=90
+>               name is a magic link, and  how.flags  contains  both
+>               O_PATH  and O_NOFOLLOW, then an O_PATH file descrip=E2=80=90
+>               tor referencing the magic link will be returned.
+>=20
+> How does the above look?
+
+The changes look correct, though you could end up going through procfs
+even if you weren't resolving a path inside proc directly (since you can
+bind-mount symlinks or have a symlink to procfs). But I'm not sure if
+it's necessary to outline all the ways a program could be tricked into
+doing something unintended.
+
+> Also, regarding the last paragraph, I  have a question.  The
+> text doesn't seem quite to relate to the rest of the discussion.
+> Should it be saying something like:
+>=20
+> If the trailing component (i.e., basename) of pathname is a magic link,
+> **how.resolve contains RESOLVE_NO_MAGICLINKS,**
+> and how.flags contains both O_PATH and O_NOFOLLOW, then an O_PATH
+> file descriptor referencing the magic link will be returned.
+>=20
+> ?
+
+Yes, that is what I meant to write -- and I believe that the
+RESOLVE_NO_SYMLINKS section is missing similar text in the second
+paragraph (except it should refer to RESOLVE_NO_SYMLINKS, obviously).
+
+Thanks!
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--imnm2xqfgm757zs2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAl6VkekACgkQnhiqJn3b
+jbRFCBAAySOXNoi4rBtphTOrPpV04SkFI3zJXufokazx9NSB/q0Wn399VAyuwORF
+R8Zlq+6SvA/jDR/oOBduXIWOWs1wcnI3a+fBF5lhm63Gidvf1NroIAYnHS+kJ91Z
+gnZlleHHx9QOwYp3Ds6CTphKBJ5kYIArTIMaPyrEyd7gmDyT+oEJ25s+WidiYDUe
+I0IVdjLJNc9U7QG2va02xhv91QSkZYDvsZH+mjcZs1fZAksccEIB8oovUUz7sI8t
+mLlpHdcx9X+75QJozHyzoBB4Zh0fyndkzVpgKyvZgS2ZKWzra94Lln0ZBv/jP+kl
+4Lk0a1L0YIrr2EYXVgcjQM+G8HOozVYQfoaabtdxLB5qKTv3Xlfb/imeOAG0d86K
+9pUANSuDg0JQwFcxnIcEDoNtmiRdmovF67wdBM73z001TScYuBchwQALkBAwbpXF
+OAi0wrOv6oZ7xpoCHEY5jrV472fGA/3fnBR+eV/9X2jEjmsLTFZSaINxvRTNZT1H
+ClxmIEJE0pkS1FsuBCxYyihpTWNZ2nDlSmSZAxNrz9/s7zyAvOUEr1zY3yACsjLJ
+Xx0A/TiTdvm4d8/Zw6cteImWKVXxj6Wko1pLvXTbOEgv3xQV1WAe4hbvraqUnoB0
+PBSuKd7vQtGxlg9cHOEPGablYwu4SXnIgQPBszoGOBT6vRNf5Jo=
+=vLXb
+-----END PGP SIGNATURE-----
+
+--imnm2xqfgm757zs2--
