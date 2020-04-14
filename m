@@ -2,124 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8711A6E89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Apr 2020 23:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE571A6FF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 02:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389202AbgDMVnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 17:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388914AbgDMVnF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 17:43:05 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E84C0A3BDC;
-        Mon, 13 Apr 2020 14:43:05 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id k1so4646888wrx.4;
-        Mon, 13 Apr 2020 14:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=afpWVAYpzZoZj0cDvbL8nrVqxs7nYxlOztCZvs4WtUQ=;
-        b=n4GgF6ZvxeiMQzKcLPJYat0oTylnX+JU8HeEovMVSF3wH7koxJ/qhOk8Rx8OsZv2ZU
-         M/ouFWf+mujWlix45liM6rESmfaaySYkc4WbrHKEzprG80Tw6oCUi6AK2qopMck8TNLX
-         vCvCiNaPj5g/etB57fWlQx59B4vGjQh/IH95iiXlz1YWQAal1oWT20c38lnRF1kR1pcy
-         fMvDilMbH/oi9r8YRgjLOHrcwfx2OWxRIdqv4Tjw5zY+A7rRDZmY2sl6S6nw+FdmixRh
-         WO0cviCLsO5h3p5ZyVJBB6rDenpX6C4U8l7wP3qL+Vz3cNO8zQN1DbiH7SnGkBpmgpqB
-         8fKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=afpWVAYpzZoZj0cDvbL8nrVqxs7nYxlOztCZvs4WtUQ=;
-        b=WHeTLrKLR8AYA8U0rcJv4+a/WMy961JV5jr0bXbMtrdLns9okS2CWZqgDZecbWcpiZ
-         AEhXFGcqbFRhi79fPp+e1X466kj2VQwzLSFeWB/qZaUWktqdun9TSVEJNnXkvPWNZ9y4
-         CZ1BgEnmugOK7/QV1D00lBSwmCccsMT2t6COAA096daQ2beYRWWB2rNU2HAGotz70XSB
-         +ihj33UZOkQr09kgwdZBRcoBUOVB3GfzNaovD0RLvH6gw7NrNPDVndJNpBR7DDK8AzjZ
-         WVvNXiR9baUQrw7hcOb9YNo//E+usd6l5kbUQCWfeF72Fp81a23YQtTz4arLxjPs00GJ
-         SMhw==
-X-Gm-Message-State: AGi0PuYwszpaPiYBRenu0iMAN2jO8x+HEOBVpr+XQPyDQ7xZaT3fJ1Fi
-        nvbVUvXCrH8MOzB+PfIjGABzpc3D3Q==
-X-Google-Smtp-Source: APiQypKoWcnPd09pTJoHtRS5w95RqrkCG3ThrVdtiu2tqlaUdLoXeUKrjEYD25oz7RWRfHnpVPwR1Q==
-X-Received: by 2002:a5d:6a10:: with SMTP id m16mr22341815wru.371.1586814183920;
-        Mon, 13 Apr 2020 14:43:03 -0700 (PDT)
-Received: from ninjahost.lan (79-73-33-244.dynamic.dsl.as9105.com. [79.73.33.244])
-        by smtp.gmail.com with ESMTPSA id 1sm15597703wmi.0.2020.04.13.14.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 14:43:03 -0700 (PDT)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     boqun.feng@gmail.com, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org (open list:FSNOTIFY: FILESYSTEM
-        NOTIFICATION INFRASTRUCTURE)
-Subject: [PATCH v2] fsnotify: Add missing annotation for fsnotify_finish_user_wait() and for fsnotify_prepare_user_wait()
-Date:   Mon, 13 Apr 2020 22:42:40 +0100
-Message-Id: <20200413214240.15245-1-jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        id S2390383AbgDNANy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 20:13:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64690 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390372AbgDNANx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Apr 2020 20:13:53 -0400
+IronPort-SDR: Tcx1HYoDFFG/1ecGXpMr1zxOB2GVLzRwBS/5G4vwoQVPIV4Z2qNJ9d4jejWxd2UPkM0dMhnXlI
+ 6Q6Hejcy44YQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 17:13:53 -0700
+IronPort-SDR: WwSP/bjwzVqCvzpfDJVQx7mHVD9DqAVfA90u9u6YJ0BE3eg8B7Aus6XqC75wdrzGtPX0vlI9oI
+ I6IjfgU71shQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,380,1580803200"; 
+   d="scan'208";a="277078198"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Apr 2020 17:13:48 -0700
+Date:   Mon, 13 Apr 2020 20:04:10 -0400
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread is
+ a kthread
+Message-ID: <20200414000410.GE10586@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-3-hch@lst.de>
+ <20200407030845.GA10586@joy-OptiPlex-7040>
+ <20200413132730.GB14455@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200413132730.GB14455@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sparse reports warnings at fsnotify_prepare_user_wait()
-	and at fsnotify_finish_user_wait()
+On Mon, Apr 13, 2020 at 03:27:30PM +0200, Christoph Hellwig wrote:
+> On Mon, Apr 06, 2020 at 11:08:46PM -0400, Yan Zhao wrote:
+> > hi
+> > we were removing this code. see
+> > https://lore.kernel.org/kvm/20200313031109.7989-1-yan.y.zhao@intel.com/
+> 
+> This didn't make 5.7-rc1.
+> 
+> > The implementation of vfio_dma_rw() has been in vfio next tree.
+> > https://github.com/awilliam/linux-vfio/commit/8d46c0cca5f4dc0538173d62cd36b1119b5105bc
+> 
+> 
+> This made 5.7-rc1, so I'll update the series to take it into account.
+> 
+> T
+> > in vfio_dma_rw(),  we still use
+> > bool kthread = current->mm == NULL.
+> > because if current->mm != NULL and current->flags & PF_KTHREAD, instead
+> > of calling use_mm(), we first check if (current->mm == mm) and allow copy_to_user() if it's true.
+> > 
+> > Do you think it's all right?
+> 
+> I can't think of another way for a kernel thread to have a mm indeed.
+for example, before calling to vfio_dma_rw(), a kernel thread has already
+called use_mm(), then its current->mm is not null, and it has flag
+PF_KTHREAD.
+in this case, we just want to allow the copy_to_user() directly if
+current->mm == mm, rather than call another use_mm() again.
 
-warning: context imbalance in fsnotify_finish_user_wait()
-	- wrong count at exit
-warning: context imbalance in fsnotify_prepare_user_wait()
-	- unexpected unlock
+do you think it makes sense?
 
-The root cause is the missing annotation at fsnotify_finish_user_wait()
-	and at fsnotify_prepare_user_wait()
-fsnotify_prepare_user_wait() has an extra annotation __release()
- that only tell Sparse and not GCC to shutdown the warning
+Thanks
+Yan
 
-Add the missing  __acquires(&fsnotify_mark_srcu) annotation
-Add the missing __releases(&fsnotify_mark_srcu) annotation
-Add the __release(&fsnotify_mark_srcu) annotation.
-
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
-changes since v2
--include annotations for fsnotify_prepare_user_wait()
-
- fs/notify/mark.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 1d96216dffd1..8387937b9d01 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -325,13 +325,16 @@ static void fsnotify_put_mark_wake(struct fsnotify_mark *mark)
- }
- 
- bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
-+	__releases(&fsnotify_mark_srcu)
- {
- 	int type;
- 
- 	fsnotify_foreach_obj_type(type) {
- 		/* This can fail if mark is being removed */
--		if (!fsnotify_get_mark_safe(iter_info->marks[type]))
-+		if (!fsnotify_get_mark_safe(iter_info->marks[type])) {
-+			__release(&fsnotify_mark_srcu);
- 			goto fail;
-+		}
- 	}
- 
- 	/*
-@@ -350,6 +353,7 @@ bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
- }
- 
- void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info)
-+	__acquires(&fsnotify_mark_srcu)
- {
- 	int type;
- 
--- 
-2.24.1
-
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
