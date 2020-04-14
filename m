@@ -2,223 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E551A726D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 06:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4491A72B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 06:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405249AbgDNETX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 00:19:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35289 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405223AbgDNETL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 00:19:11 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y12so3899772pll.2;
-        Mon, 13 Apr 2020 21:19:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AAvWimIn06L/ckTvHYJdjtyNjcqrQOPPMI8XJSOmgvI=;
-        b=TIfxM8D5oRdCqOxeW1d9FUPdVVUcj7Zy044/kNNsybCmbboWxmLksiV+i6kkxjGbg2
-         Op6uamCE+2oMyM/XwXSpiujQPMMApKgivdhBBemZ+meEmymc1SApQRhRxi4v4dacqLIc
-         Ki7RJRnh9Y0mF70AJRHl4k8g4HemcgteFZiUk2qx2GDoKaCHcGm6c09QU3NHBq84CS4T
-         cK7g5KOehHFMQ2z7E92BfUmXYx9uk7NOTghfYqpdUoX/BV+gQhQyEezEtBnjR3CfaF16
-         2iIlP7l6Ze6lIaQQbr6H5SgCji4PFLX3W33J8FjAli3802C/mmBvWYcfXgaOmArflygQ
-         zdCw==
-X-Gm-Message-State: AGi0PuYBMTsMaGmOVakyo4xalvtKA7oWIZ7g7VomMZ/RkxQ2JTdF4Ewn
-        IZw6h1VONSIrZ2fVx7PAQHzWQWHJzSs=
-X-Google-Smtp-Source: APiQypIIV5QwziKUNQLFlwjUY+5TxLvww5Fasa/CK24h/7LqZeND5GJga3hHm43a7pojb0NsTeIXBg==
-X-Received: by 2002:a17:90a:a602:: with SMTP id c2mr25226081pjq.135.1586837950844;
-        Mon, 13 Apr 2020 21:19:10 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id u18sm10164611pfl.40.2020.04.13.21.19.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 21:19:08 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 35461419C3; Tue, 14 Apr 2020 04:19:04 +0000 (UTC)
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH 5/5] block: revert back to synchronous request_queue removal
-Date:   Tue, 14 Apr 2020 04:19:02 +0000
-Message-Id: <20200414041902.16769-6-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20200414041902.16769-1-mcgrof@kernel.org>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
+        id S1728996AbgDNEi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 00:38:26 -0400
+Received: from mga03.intel.com ([134.134.136.65]:50461 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728974AbgDNEi0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 00:38:26 -0400
+IronPort-SDR: 1GpeoPljzo6mZb0pKO9Y/ES+VOadV90vcpj5gmTXK913Y8WVA74E2Yb7CVIOvCsFMLn0Je7Qrx
+ 0HsfXn/XvcoA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 21:38:22 -0700
+IronPort-SDR: AFsnbKJXO7Jq6GCMvOoawRvmgN4SSCpQ8n9T2cFhMQZ9nfNGAnGTGIWMWCx0PpGgvF9tIF/aFM
+ 6KuB7Qgq09VQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,381,1580803200"; 
+   d="scan'208";a="245318141"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Apr 2020 21:38:22 -0700
+Date:   Mon, 13 Apr 2020 21:38:22 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V7 9/9] Documentation/dax: Update Usage section
+Message-ID: <20200414043821.GG1649878@iweiny-DESK2.sc.intel.com>
+References: <20200413054046.1560106-1-ira.weiny@intel.com>
+ <20200413054046.1560106-10-ira.weiny@intel.com>
+ <20200413161912.GZ6742@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200413161912.GZ6742@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") merged on
-v4.12 moved the work behind blk_release_queue() into a workqueue after a
-splat floated around which indicated some work on blk_release_queue()
-could sleep in blk_exit_rl(). This splat would be possible when a driver
-called blk_put_queue() or blk_cleanup_queue() (which calls blk_put_queue()
-as its final call) from an atomic context.
+On Mon, Apr 13, 2020 at 09:19:12AM -0700, Darrick J. Wong wrote:
+> On Sun, Apr 12, 2020 at 10:40:46PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Update the Usage section to reflect the new individual dax selection
+> > functionality.
+> 
+> Yum. :)
+> 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Changes from V6:
+> > 	Update to allow setting FS_XFLAG_DAX any time.
+> > 	Update with list of behaviors from Darrick
+> > 	https://lore.kernel.org/lkml/20200409165927.GD6741@magnolia/
+> > 
+> > Changes from V5:
+> > 	Update to reflect the agreed upon semantics
+> > 	https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
+> > ---
+> >  Documentation/filesystems/dax.txt | 166 +++++++++++++++++++++++++++++-
+> >  1 file changed, 163 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
+> > index 679729442fd2..af14c1b330a9 100644
+> > --- a/Documentation/filesystems/dax.txt
+> > +++ b/Documentation/filesystems/dax.txt
+> > @@ -17,11 +17,171 @@ For file mappings, the storage device is mapped directly into userspace.
+> >  Usage
+> >  -----
+> >  
+> > -If you have a block device which supports DAX, you can make a filesystem
+> > +If you have a block device which supports DAX, you can make a file system
+> >  on it as usual.  The DAX code currently only supports files with a block
+> >  size equal to your kernel's PAGE_SIZE, so you may need to specify a block
+> > -size when creating the filesystem.  When mounting it, use the "-o dax"
+> > -option on the command line or add 'dax' to the options in /etc/fstab.
+> > +size when creating the file system.
+> > +
+> > +Currently 2 filesystems support DAX, ext4 and xfs.  Enabling DAX on them is
+> > +different at this time.
+> 
+> I thought ext2 supports DAX?
 
-blk_put_queue() decrements the refcount for the request_queue
-kobject, and upon reaching 0 blk_release_queue() is called. Although
-blk_exit_rl() is now removed through commit db6d9952356 ("block: remove
-request_list code"), we reserve the right to be able to sleep within
-blk_release_queue() context. If you see no other way and *have* be
-in atomic context when you driver calls the last blk_put_queue()
-you can always just increase your block device's reference count with
-bdgrab() as this can be done in atomic context and the request_queue
-removal would be left to upper layers later. We document this bit of
-tribal knowledge as well now, and adjust kdoc format a bit.
+Not that I know of?  Does it?
 
-We revert back to synchronous request_queue removal because asynchronous
-removal creates a regression with expected userspace interaction with
-several drivers. An example is when removing the loopback driver and
-issues ioctl from userspace to do so, upon return and if successful one
-expects the device to be removed. Moving to asynchronous request_queue
-removal could have broken many scripts which relied on the removal to
-have been completed if there was no error.
+> 
+> > +Enabling DAX on ext4
+> > +--------------------
+> > +
+> > +When mounting the filesystem, use the "-o dax" option on the command line or
+> > +add 'dax' to the options in /etc/fstab.
+> > +
+> > +
+> > +Enabling DAX on xfs
+> > +-------------------
+> > +
+> > +Summary
+> > +-------
+> > +
+> > + 1. There exists an in-kernel access mode flag S_DAX that is set when
+> > +    file accesses go directly to persistent memory, bypassing the page
+> > +    cache.  Applications must call statx to discover the current S_DAX
+> > +    state (STATX_ATTR_DAX).
+> > +
+> > + 2. There exists an advisory file inode flag FS_XFLAG_DAX that is
+> > +    inherited from the parent directory FS_XFLAG_DAX inode flag at file
+> > +    creation time.  This advisory flag can be set or cleared at any
+> > +    time, but doing so does not immediately affect the S_DAX state.
+> > +
+> > +    Unless overridden by mount options (see (3)), if FS_XFLAG_DAX is set
+> > +    and the fs is on pmem then it will enable S_DAX at inode load time;
+> > +    if FS_XFLAG_DAX is not set, it will not enable S_DAX.
+> > +
+> > + 3. There exists a dax= mount option.
+> > +
+> > +    "-o dax=never"  means "never set S_DAX, ignore FS_XFLAG_DAX."
+> > +
+> > +    "-o dax=always" means "always set S_DAX (at least on pmem),
+> > +                    and ignore FS_XFLAG_DAX."
+> > +
+> > +    "-o dax"        is an alias for "dax=always".
+> > +
+> > +    "-o dax=inode"  means "follow FS_XFLAG_DAX" and is the default.
+> > +
+> > + 4. There exists an advisory directory inode flag FS_XFLAG_DAX that can
+> > +    be set or cleared at any time.  The flag state is inherited by any files or
+> > +    subdirectories when they are created within that directory.
+> > +
+> > + 5. Programs that require a specific file access mode (DAX or not DAX)
+> > +    can do one of the following:
+> > +
+> > +    (a) Create files in directories that the FS_XFLAG_DAX flag set as
+> > +        needed; or
+> > +
+> > +    (b) Have the administrator set an override via mount option; or
+> > +
+> > +    (c) Set or clear the file's FS_XFLAG_DAX flag as needed.  Programs
+> > +        must then cause the kernel to evict the inode from memory.  This
+> > +        can be done by:
+> > +
+> > +        i>  Closing the file and re-opening the file and using statx to
+> > +            see if the fs has changed the S_DAX flag; and
+> > +
+> > +        ii> If the file still does not have the desired S_DAX access
+> > +            mode, either unmount and remount the filesystem, or close
+> > +            the file and use drop_caches.
+> > +
+> > + 6. It is expected that users who want to squeeze every last bit of performance
+> > +    out of the particular rough and tumble bits of their storage will also be
+> > +    exposed to the difficulties of what happens when the operating system can't
+> > +    totally virtualize those hardware capabilities.  DAX is such a feature.
+> > +    Basically, Formula-1 cars require a bit more care and feeding than your
+> > +    averaged Toyota minivan, as it were.
+> 
+> I think we can omit this last sentence for the formal documentation...
 
-Using asynchronous request_queue removal however has helped us find
-other bugs, in the future we can test what could break with this
-arrangement by enabling CONFIG_DEBUG_KOBJECT_RELEASE.
+Done.
 
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Omar Sandoval <osandov@fb.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: yu kuai <yukuai3@huawei.com>
-Suggested-by: Nicolai Stange <nstange@suse.de>
-Fixes: dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- block/blk-core.c       | 19 ++++++++++++++++++-
- block/blk-sysfs.c      | 38 +++++++++++++++++---------------------
- include/linux/blkdev.h |  2 --
- 3 files changed, 35 insertions(+), 24 deletions(-)
+> :)
+> 
+> > +
+> > +
+> > +Details
+> > +-------
+> > +
+> > +There are 2 per-file dax flags.  One is a physical inode setting (FS_XFLAG_DAX)
+> > +and the other a currently enabled state (S_DAX).
+> > +
+> > +FS_XFLAG_DAX is maintained, on disk, on individual inodes.  It is preserved
+> > +within the file system.  This 'physical' config setting can be set using an
+> > +ioctl and/or an application such as "xfs_io -c 'chattr [-+]x'".  Files and
+> > +directories automatically inherit FS_XFLAG_DAX from their parent directory
+> > +_when_ _created_.  Therefore, setting FS_XFLAG_DAX at directory creation time
+> > +can be used to set a default behavior for an entire sub-tree.  (Doing so on the
+> > +root directory acts to set a default for the entire file system.)
+> > +
+> > +To clarify inheritance here are 3 examples:
+> > +
+> > +Example A:
+> > +
+> > +mkdir -p a/b/c
+> > +xfs_io 'chattr +x' a
+> > +mkdir a/b/c/d
+> > +mkdir a/e
+> > +
+> > +	dax: a,e
+> > +	no dax: b,c,d
+> > +
+> > +Example B:
+> > +
+> > +mkdir a
+> > +xfs_io 'chattr +x' a
+> > +mkdir -p a/b/c/d
+> > +
+> > +	dax: a,b,c,d
+> > +	no dax:
+> > +
+> > +Example C:
+> > +
+> > +mkdir -p a/b/c
+> > +xfs_io 'chattr +x' c
+> > +mkdir a/b/c/d
+> > +
+> > +	dax: c,d
+> > +	no dax: a,b
+> > +
+> > +
+> > +The current enabled state (S_DAX) is set when a file inode is _loaded_ based on
+> > +the underlying media support, the value of FS_XFLAG_DAX, and the file systems
+> > +dax mount option setting.  See below.
+> > +
+> > +statx can be used to query S_DAX.  NOTE that a directory will never have S_DAX
+> > +set and therefore statx will always return false on directories.
+> 
+> "statx will never indicate that S_DAX is set on directories."
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 5aaae7a1b338..8346c7c59ee6 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -301,6 +301,17 @@ void blk_clear_pm_only(struct request_queue *q)
- }
- EXPORT_SYMBOL_GPL(blk_clear_pm_only);
- 
-+/**
-+ * blk_put_queue - decrement the request_queue refcount
-+ *
-+ * Decrements the refcount to the request_queue kobject, when this reaches
-+ * 0 we'll have blk_release_queue() called. You should avoid calling
-+ * this function in atomic context but if you really have to ensure you
-+ * first refcount the block device with bdgrab() / bdput() so that the
-+ * last decrement happens in blk_cleanup_queue().
-+ *
-+ * @q: the request_queue structure to decrement the refcount for
-+ */
- void blk_put_queue(struct request_queue *q)
- {
- 	kobject_put(&q->kobj);
-@@ -328,10 +339,16 @@ EXPORT_SYMBOL_GPL(blk_set_queue_dying);
- 
- /**
-  * blk_cleanup_queue - shutdown a request queue
-- * @q: request queue to shutdown
-  *
-  * Mark @q DYING, drain all pending requests, mark @q DEAD, destroy and
-  * put it.  All future requests will be failed immediately with -ENODEV.
-+ *
-+ * You should not call this function in atomic context. If you need to
-+ * refcount a request_queue in atomic context, instead refcount the
-+ * block device with bdgrab() / bdput().
-+ *
-+ * @q: request queue to shutdown
-+ *
-  */
- void blk_cleanup_queue(struct request_queue *q)
- {
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index 0285d67e1e4c..859911191ebc 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -860,22 +860,27 @@ static void blk_exit_queue(struct request_queue *q)
- 	bdi_put(q->backing_dev_info);
- }
- 
--
- /**
-- * __blk_release_queue - release a request queue
-- * @work: pointer to the release_work member of the request queue to be released
-+ * blk_release_queue - release a request queue
-+ *
-+ * This function is called as part of the process when a block device is being
-+ * unregistered. Releasing a request queue starts with blk_cleanup_queue(),
-+ * which set the appropriate flags and then calls blk_put_queue() as the last
-+ * step. blk_put_queue() decrements the reference counter of the request queue
-+ * and once the reference counter reaches zero, this function is called to
-+ * release all allocated resources of the request queue.
-  *
-- * Description:
-- *     This function is called when a block device is being unregistered. The
-- *     process of releasing a request queue starts with blk_cleanup_queue, which
-- *     set the appropriate flags and then calls blk_put_queue, that decrements
-- *     the reference counter of the request queue. Once the reference counter
-- *     of the request queue reaches zero, blk_release_queue is called to release
-- *     all allocated resources of the request queue.
-+ * This function can sleep, and so we must ensure that the very last
-+ * blk_put_queue() is never called from atomic context.
-+ *
-+ * @kobj: pointer to a kobject, who's container is a request_queue
-  */
--static void __blk_release_queue(struct work_struct *work)
-+static void blk_release_queue(struct kobject *kobj)
- {
--	struct request_queue *q = container_of(work, typeof(*q), release_work);
-+	struct request_queue *q =
-+		container_of(kobj, struct request_queue, kobj);
-+
-+	might_sleep();
- 
- 	if (test_bit(QUEUE_FLAG_POLL_STATS, &q->queue_flags))
- 		blk_stat_remove_callback(q, q->poll_cb);
-@@ -905,15 +910,6 @@ static void __blk_release_queue(struct work_struct *work)
- 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
- }
- 
--static void blk_release_queue(struct kobject *kobj)
--{
--	struct request_queue *q =
--		container_of(kobj, struct request_queue, kobj);
--
--	INIT_WORK(&q->release_work, __blk_release_queue);
--	schedule_work(&q->release_work);
--}
--
- static const struct sysfs_ops queue_sysfs_ops = {
- 	.show	= queue_attr_show,
- 	.store	= queue_attr_store,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index cc43c8e6516c..81f7ddb1587e 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -582,8 +582,6 @@ struct request_queue {
- 
- 	size_t			cmd_size;
- 
--	struct work_struct	release_work;
--
- #define BLK_MAX_WRITE_HINTS	5
- 	u64			write_hints[BLK_MAX_WRITE_HINTS];
- };
--- 
-2.25.1
+Done.
 
+> 
+> > +
+> > +NOTE: Setting the FS_XFLAG_DAX (specifically or through inheritance) occurs
+> > +even if the underlying media does not support dax and/or the file system is
+> > +overridden with a mount option.
+> > +
+> > +
+> > +Overriding FS_XFLAG_DAX (dax= mount option)
+> > +-------------------------------------------
+> > +
+> > +There exists a dax mount option.  Using the mount option does not change the
+> > +physical configured state of individual files but overrides the S_DAX operating
+> > +state when inodes are loaded.
+> > +
+> > +Given underlying media support, the dax mount option is a tri-state option
+> > +(never, always, inode) with the following meanings:
+> > +
+> > +   "-o dax=never" means "never set S_DAX, ignore FS_XFLAG_DAX"
+> > +   "-o dax=always" means "always set S_DAX, ignore FS_XFLAG_DAX"
+> > +        "-o dax" by itself means "dax=always" to remain compatible with older
+> > +	         kernels
+> > +   "-o dax=inode" means "follow FS_XFLAG_DAX"
+> > +
+> > +The default state is 'inode'.  Given underlying media support, the following
+> > +algorithm is used to determine the effective mode of the file S_DAX on a
+> > +capable device.
+> > +
+> > +	S_DAX = FS_XFLAG_DAX;
+> > +
+> > +	if (dax_mount == "always")
+> > +		S_DAX = true;
+> > +	else if (dax_mount == "off"
+> > +		S_DAX = false;
+> > +
+> > +To reiterate: Setting, and inheritance, continues to affect FS_XFLAG_DAX even
+> > +while the file system is mounted with a dax override.  However, file enabled
+> > +state, S_DAX, will continue to be the overridden until the file system is
+> > +remounted with dax=inode.
+> 
+> "However, in-core inode state (S_DAX) will continue to be overridden
+> until the filesystem is remounted with dax=inode and the inode is
+> evicted."
+> 
+> ...since we don't currently evict inodes just because a remount occurred.
+> :)
+
+Done
+
+Thanks again for the review!  :-D
+
+Ira
+
+> 
+> --D
+> 
+> >  
+> >  
+> >  Implementation Tips for Block Driver Writers
+> > -- 
+> > 2.25.1
+> > 
