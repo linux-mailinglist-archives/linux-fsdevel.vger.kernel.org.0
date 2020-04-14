@@ -2,173 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6306F1A8D04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 22:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB401A8D39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 23:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633527AbgDNU66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 16:58:58 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43486 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633447AbgDNU64 (ORCPT
+        id S2633653AbgDNVFC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 17:05:02 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51622 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633645AbgDNVEv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 16:58:56 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l1so494778pff.10;
-        Tue, 14 Apr 2020 13:58:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2BFbh/NVyd/nEEqnIV7FAkYPsjDu10E1KJ7JMizEGUs=;
-        b=ZWg9atuX4nJmFaJPPy+n7lOuSBx7FEJ8gvZo1CcZo74d88FAoma5A71qE1KOBH/PvC
-         DV5Vkof9X6SLYKwo9ORSz80qzDn3LK6aDCrt5IIvD36s0A/1Z+6nq1FiUXwylFO/Xh+b
-         CjnbGHZdIjgxWp/2vTphtjenOw2vnr8c/Us3Gr2cqqjvppUOaj8xR5IIhejNomuZpHiw
-         1Z3ccIpUfz0eM79HJrNGR/yGx+4F+bHrtYKjaBCxqBIkWO1OOqh6NWRKO3IQqQoWcPDp
-         FV2Z0vcA0th/lS+ARwUj6to88XraeBz9oQn9/8pVvtf1oULyC5QeYb6gbdtEheRNEWrl
-         qsig==
-X-Gm-Message-State: AGi0PuZP3OMe13UFWnBtH2hOsMkorDZ5tzBBAGZNdF8AXpYQ9Xfsxvk/
-        2W475FGPTuz3PvZtSPcj420=
-X-Google-Smtp-Source: APiQypKmhyUPwU3E+eaaqWqZ9C3MBCiwt3U/HU4Vjk70huVm8L0B8YcyK+w2BA/5pI1GVFdjIpQH2g==
-X-Received: by 2002:a63:d454:: with SMTP id i20mr22395308pgj.209.1586897935063;
-        Tue, 14 Apr 2020 13:58:55 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id a1sm11817266pfl.188.2020.04.14.13.58.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 13:58:53 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id DA82440277; Tue, 14 Apr 2020 20:58:52 +0000 (UTC)
-Date:   Tue, 14 Apr 2020 20:58:52 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 5/5] block: revert back to synchronous request_queue
- removal
-Message-ID: <20200414205852.GP11244@42.do-not-panic.com>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-6-mcgrof@kernel.org>
- <20200414154725.GD25765@infradead.org>
+        Tue, 14 Apr 2020 17:04:51 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03EL469C133804;
+        Tue, 14 Apr 2020 21:04:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=7AGgMb1PjME7s9rPiVWSDRYMFiGgWwtSji2SOveCIpQ=;
+ b=oHEweahbVZSQKWrSswPx90EP9moF7zB9bjp6JQQucufuN6b+Rety1PhjeHPPRquASDZL
+ cmOUhclzlGH7t2NwbSXgDZGYrPnKsdHSBPBLMg8knLjukbfT01J4rET+KJx6VdvhmQDf
+ iKY+MVjUWqE6AvT3Q99zjMPEvLPZXU3pJKdBahvzUmtu8hCdR1SB9MG+AuW4YeyBNDFl
+ ksY08SpjHKti9NWYT9EJnO4KMkZc5+q+zTvbGLOdNjMIpJLGdcLTN7hwFYuGza58AFDx
+ RFhrP5Jdl6jvrwdnxh7lNuZDQG0nt18/mIOHuwzKvXfZG9x1JqFljGKi8kebw3yyEtb/ fQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 30b5um7db5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Apr 2020 21:04:38 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03EKv9dO108124;
+        Tue, 14 Apr 2020 21:02:38 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 30ctab5maj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Apr 2020 21:02:37 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03EL2XOc020543;
+        Tue, 14 Apr 2020 21:02:34 GMT
+Received: from localhost (/10.159.239.16)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 Apr 2020 14:02:33 -0700
+Date:   Tue, 14 Apr 2020 14:02:31 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V7 9/9] Documentation/dax: Update Usage section
+Message-ID: <20200414210231.GJ6742@magnolia>
+References: <20200413054046.1560106-1-ira.weiny@intel.com>
+ <20200413054046.1560106-10-ira.weiny@intel.com>
+ <CAPcyv4g1gGWUuzVyOgOtkRTxzoSKOjVpAOmW-UDtmud9a3CUUA@mail.gmail.com>
+ <20200414161509.GF6742@magnolia>
+ <CAPcyv4hr+NKbpAU4UhKcmHfvDq1+GTM+y+K28XGbkDYBP=Kaag@mail.gmail.com>
+ <20200414195754.GH6742@magnolia>
+ <20200414200015.GF1853609@iweiny-DESK2.sc.intel.com>
+ <20200414201808.GI6742@magnolia>
+ <20200414205443.GC1982089@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200414154725.GD25765@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200414205443.GC1982089@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9591 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ spamscore=0 adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004140149
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9591 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 bulkscore=0 mlxscore=0
+ mlxlogscore=999 lowpriorityscore=0 impostorscore=0 adultscore=0
+ phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004140150
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 08:47:25AM -0700, Christoph Hellwig wrote:
-> On Tue, Apr 14, 2020 at 04:19:02AM +0000, Luis Chamberlain wrote:
-> > Commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") merged on
-> > v4.12 moved the work behind blk_release_queue() into a workqueue after a
-> > splat floated around which indicated some work on blk_release_queue()
-> > could sleep in blk_exit_rl(). This splat would be possible when a driver
-> > called blk_put_queue() or blk_cleanup_queue() (which calls blk_put_queue()
-> > as its final call) from an atomic context.
+On Tue, Apr 14, 2020 at 01:54:44PM -0700, Ira Weiny wrote:
+> On Tue, Apr 14, 2020 at 01:18:08PM -0700, Darrick J. Wong wrote:
+> > On Tue, Apr 14, 2020 at 01:00:15PM -0700, Ira Weiny wrote:
+> > > On Tue, Apr 14, 2020 at 12:57:54PM -0700, Darrick J. Wong wrote:
+> > > > On Tue, Apr 14, 2020 at 12:04:57PM -0700, Dan Williams wrote:
+> > > > > On Tue, Apr 14, 2020 at 9:15 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > 
+> > > [snip]
+> > > 
+> > > > > > > > +
+> > > > > > > > +Enabling DAX on xfs
+> > > > > > > > +-------------------
+> > > > > > > > +
+> > > > > > > > +Summary
+> > > > > > > > +-------
+> > > > > > > > +
+> > > > > > > > + 1. There exists an in-kernel access mode flag S_DAX that is set when
+> > > > > > > > +    file accesses go directly to persistent memory, bypassing the page
+> > > > > > > > +    cache.
+> > > > > > >
+> > > > > > > I had reserved some quibbling with this wording, but now that this is
+> > > > > > > being proposed as documentation I'll let my quibbling fly. "dax" may
+> > > > > > > imply, but does not require persistent memory nor does it necessarily
+> > > > > > > "bypass page cache". For example on configurations that support dax,
+> > > > > > > but turn off MAP_SYNC (like virtio-pmem), a software flush is
+> > > > > > > required. Instead, if we're going to define "dax" here I'd prefer it
+> > > > > > > be a #include of the man page definition that is careful (IIRC) to
+> > > > > > > only talk about semantics and not backend implementation details. In
+> > > > > > > other words, dax is to page-cache as direct-io is to page cache,
+> > > > > > > effectively not there, but dig a bit deeper and you may find it.
+> > > > > >
+> > > > > > Uh, which manpage?  Are you talking about the MAP_SYNC documentation?
+> > > > > 
+> > > > > No, I was referring to the proposed wording for STATX_ATTR_DAX.
+> > > > > There's no reason for this description to say anything divergent from
+> > > > > that description.
+> > > > 
+> > > > Ahh, ok.  Something like this, then:
+> > > > 
+> > > >  1. There exists an in-kernel access mode flag S_DAX.  When set, the
+> > > >     file is in the DAX (cpu direct access) state.  DAX state attempts to
+> > > >     minimize software cache effects for both I/O and memory mappings of
+> > > >     this file.  The S_DAX state is exposed to userspace via the
+> > > >     STATX_ATTR_DAX statx flag.
+> > > > 
+> > > >     See the STATX_ATTR_DAX in the statx(2) manpage for more information.
+> > > 
+> > > We crossed in the ether!!!  I propose even less details here...  Leave all the
+> > > details to the man page.
+> > > 
+> > > <quote>
+> > > 1. There exists an in-kernel access mode flag S_DAX that is set when file
+> > >     accesses is enabled for 'DAX'.  Applications must call statx to discover
+> > >     the current S_DAX state (STATX_ATTR_DAX).  See the man page for statx for
+> > >     more details.
+> > > </quote>
 > > 
-> > blk_put_queue() decrements the refcount for the request_queue
-> > kobject, and upon reaching 0 blk_release_queue() is called. Although
-> > blk_exit_rl() is now removed through commit db6d9952356 ("block: remove
-> > request_list code"), we reserve the right to be able to sleep within
-> > blk_release_queue() context. If you see no other way and *have* be
-> > in atomic context when you driver calls the last blk_put_queue()
-> > you can always just increase your block device's reference count with
-> > bdgrab() as this can be done in atomic context and the request_queue
-> > removal would be left to upper layers later. We document this bit of
-> > tribal knowledge as well now, and adjust kdoc format a bit.
+> > Why stop cutting there? :)
 > > 
-> > We revert back to synchronous request_queue removal because asynchronous
-> > removal creates a regression with expected userspace interaction with
-> > several drivers. An example is when removing the loopback driver and
-> > issues ioctl from userspace to do so, upon return and if successful one
-> > expects the device to be removed. Moving to asynchronous request_queue
-> > removal could have broken many scripts which relied on the removal to
-> > have been completed if there was no error.
-> > 
-> > Using asynchronous request_queue removal however has helped us find
-> > other bugs, in the future we can test what could break with this
-> > arrangement by enabling CONFIG_DEBUG_KOBJECT_RELEASE.
-> > 
-> > Cc: Bart Van Assche <bvanassche@acm.org>
-> > Cc: Omar Sandoval <osandov@fb.com>
-> > Cc: Hannes Reinecke <hare@suse.com>
-> > Cc: Nicolai Stange <nstange@suse.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: yu kuai <yukuai3@huawei.com>
-> > Suggested-by: Nicolai Stange <nstange@suse.de>
-> > Fixes: dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  block/blk-core.c       | 19 ++++++++++++++++++-
-> >  block/blk-sysfs.c      | 38 +++++++++++++++++---------------------
-> >  include/linux/blkdev.h |  2 --
-> >  3 files changed, 35 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/block/blk-core.c b/block/blk-core.c
-> > index 5aaae7a1b338..8346c7c59ee6 100644
-> > --- a/block/blk-core.c
-> > +++ b/block/blk-core.c
-> > @@ -301,6 +301,17 @@ void blk_clear_pm_only(struct request_queue *q)
-> >  }
-> >  EXPORT_SYMBOL_GPL(blk_clear_pm_only);
-> >  
-> > +/**
-> > + * blk_put_queue - decrement the request_queue refcount
-> > + *
-> > + * Decrements the refcount to the request_queue kobject, when this reaches
-> > + * 0 we'll have blk_release_queue() called. You should avoid calling
-> > + * this function in atomic context but if you really have to ensure you
-> > + * first refcount the block device with bdgrab() / bdput() so that the
-> > + * last decrement happens in blk_cleanup_queue().
-> > + *
-> > + * @q: the request_queue structure to decrement the refcount for
-> > + */
-> >  void blk_put_queue(struct request_queue *q)
-> >  {
-> >  	kobject_put(&q->kobj);
-> > @@ -328,10 +339,16 @@ EXPORT_SYMBOL_GPL(blk_set_queue_dying);
-> >  
-> >  /**
-> >   * blk_cleanup_queue - shutdown a request queue
-> > - * @q: request queue to shutdown
-> >   *
-> >   * Mark @q DYING, drain all pending requests, mark @q DEAD, destroy and
-> >   * put it.  All future requests will be failed immediately with -ENODEV.
-> > + *
-> > + * You should not call this function in atomic context. If you need to
-> > + * refcount a request_queue in atomic context, instead refcount the
-> > + * block device with bdgrab() / bdput().
+> >  1. There exists an in-kernel file access mode flag S_DAX that
+> >     corresponds to the statx flag STATX_ATTR_DIRECT_LOAD_STORE.  See the
+> >     manpage for statx(2) for details about this access mode.
 > 
-> I think this needs a WARN_ON thrown in to enforece the calling context.
+> Sure!  But I'm holding to STATX_ATTR_DAX...  I don't like introducing another
+> alias for this stuff.  Why have '-o dax=x' and then have some other term here?
 
-I considered adding a might_sleep() but upon review with Bart, he noted
-that this function already has a mutex_lock(), and if you look under the
-hood of mutex_lock(), it has a might_sleep() at the very top. The
-warning then is implicit.
+Ok, STATX_ATTR_DAX then.
 
-> > + *
-> > + * @q: request queue to shutdown
+> Keep the name the same for consistency.
 > 
-> Moving the argument documentation seems against the usual kerneldoc
-> style.
+> Searching for 'DAX Linux'[*] results in 'About 877,000 results' on Google.
+> 
+> While "'direct load store' Linux" results in 'About 2,630 results'.
+> 
+> I'll update the rest of the text though!  :-D
+> 
+> Ira
+> 
+> [*] Because 'DAX' is some company index and or a rapper...  <sigh>
 
-Would you look at that, Documentation/doc-guide/kernel-doc.rst does
-say to keep the argument at the top as it was in place before, OK will
-revert that. Sorry, I used include/net/mac80211.h as my base for style.
+Don't forget Jadzia and Ezri. ;)
 
-> Otherwise this look good, I hope it sticks :)
-
-I hope that the kdocs / might_sleep() sprinkled should make it stick now.
-But hey, this uncovered wonderful obscure bugs, it was fun. I'll add a
-selftest also later to ensure we don't regress on some of this later
-once again.
-
-  Luis
+--D
