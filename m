@@ -2,102 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D061A71E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 05:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CDF1A7215
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 06:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404847AbgDNDiJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 23:38:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35946 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404832AbgDNDiI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 23:38:08 -0400
-Received: by mail-pf1-f194.google.com with SMTP id n10so5486382pff.3;
-        Mon, 13 Apr 2020 20:38:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h/r5aOsQUftJul1WcNyBZHlZU1sP9juTahr+5gdxxlg=;
-        b=eY6Po53FMrgn7zyfImIEoNGBsf3Q/L4BK/JpaOTo3GMlGi+AJIYTAXyruGjEeXrYn6
-         koZFvaXlOlw4XTIgYfU3mvCVnmP094gIKjR/aiHyaHmD/8FzxsPJ46eygSbPCiK+hiHb
-         AeT4oRa1XFQ+/Oqew27t5EQvNn5lTLYNtdVfbCqQ0qu7aEI+iZ/RDvf1kBkNb6ZmJHp4
-         1yv2UrXEaH8TzTPHv/a8YqsMp2RiaDogZf6anz8c3bT4U4Su09ZZT1+Wu6YaqYLlpiAZ
-         aZe+1CJijZkYBuyyOdNRj0LzsNQSfw9A+wHOd86ymg+il7R22Q4H2makifKFF5g69b3y
-         XV9A==
-X-Gm-Message-State: AGi0PuZdgrprLIqVk9DF9dsqjtGyeZd2EgTP1V1yrFX062D485cRXuHd
-        MvUeqyw6olu7kjCz0APjrjMo7cmuths=
-X-Google-Smtp-Source: APiQypLbMnY7RmOhI54DEIQDHmqf9p5b+ywolxB5Vv3/JhisfnuzWeRXYY9C/ZyBC+MSinBn4WxhUg==
-X-Received: by 2002:a63:da47:: with SMTP id l7mr21029707pgj.315.1586835487193;
-        Mon, 13 Apr 2020 20:38:07 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id x71sm9855165pfd.129.2020.04.13.20.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 20:38:05 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id EF98140277; Tue, 14 Apr 2020 03:38:04 +0000 (UTC)
-Date:   Tue, 14 Apr 2020 03:38:04 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
-        Ming Lei <ming.lei@redhat.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, yu kuai <yukuai3@huawei.com>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RFC v2 5/5] block: revert back to synchronous request_queue
- removal
-Message-ID: <20200414033804.GO11244@42.do-not-panic.com>
-References: <20200409214530.2413-1-mcgrof@kernel.org>
- <20200409214530.2413-6-mcgrof@kernel.org>
- <161e938d-929b-1fdb-ba77-56b839c14b5b@acm.org>
- <20200410143412.GK11244@42.do-not-panic.com>
- <CAB=NE6VfQH3duMGneJnzEnXzAJ1TDYn26WhQCy8X1Mb_T6esgQ@mail.gmail.com>
- <CAB=NE6XfdgB82ncZUkLpdYvDDdyVvVUd8nUmRCb8LbOQ213QoA@mail.gmail.com>
- <64c9212d-aaa3-d172-0ab9-0fc0e25a019a@acm.org>
+        id S1726049AbgDNEAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 00:00:46 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28534 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbgDNEAo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 00:00:44 -0400
+IronPort-SDR: CfP8XdVa/CouJCM9TyOAvBdCUeYY7Qg3UsatnpdJwcrk4/TU8DLPv4PXZVurvX9Vn0gQ61ovch
+ upN7dwiL4wpQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 21:00:43 -0700
+IronPort-SDR: ac5JXNdae/2dlz5ZobRke4va6g04z64miNSjEFZk8tw3JwyRgewl6ftq6a23jBhVJldqOhhxVS
+ jhfgUcsf976A==
+X-IronPort-AV: E=Sophos;i="5.72,381,1580803200"; 
+   d="scan'208";a="253076242"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 21:00:43 -0700
+From:   ira.weiny@intel.com
+To:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>
+Subject: [PATCH RFC 0/8] Enable ext4 support for per-file/directory DAX operations
+Date:   Mon, 13 Apr 2020 21:00:22 -0700
+Message-Id: <20200414040030.1802884-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64c9212d-aaa3-d172-0ab9-0fc0e25a019a@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 11, 2020 at 04:21:17PM -0700, Bart Van Assche wrote:
-> On 2020-04-10 14:27, Luis Chamberlain wrote:
-> > On Fri, Apr 10, 2020 at 2:50 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >>
-> >> On Fri, Apr 10, 2020 at 8:34 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >>> On Thu, Apr 09, 2020 at 08:12:21PM -0700, Bart Van Assche wrote:
-> >>>> Please add a might_sleep() call in blk_put_queue() since with this patch
-> >>>> applied it is no longer allowed to call blk_put_queue() from atomic context.
-> >>>
-> >>> Sure thing.
-> >>
-> >> On second though, I don't think blk_put_queue() would be the right
-> >> place for might_sleep(), given we really only care about the *last*
-> >> refcount decrement to 0. So I'll move it to blk_release_queue().
-> >> Granted, at that point we are too late, and we'd get a splat about
-> >> this issue *iff* we really sleep. So yeah, I do suppose that forcing
-> >> this check there still makes sense.
-> > 
-> > I'll add might_sleep() to both blk_release_queue() *and* blk_cleanup_queue().
-> 
-> Since there is already an unconditional mutex_lock() call in
-> blk_cleanup_queue(), do we really need to add a might_sleep() call in
-> blk_cleanup_queue()?
+From: Ira Weiny <ira.weiny@intel.com>
 
-You are right, mutex_lock() already has a might_sleep() sprinkled on it.
+Enable the same per file DAX support to ext4 as was done for xfs.  This series
+builds and depends on the V7 series for xfs.[1]
 
-  Luis
+To summarize:
+
+ 1. There exists an in-kernel access mode flag S_DAX that is set when
+    file accesses go directly to persistent memory, bypassing the page
+    cache.  Applications must call statx to discover the current S_DAX
+    state (STATX_ATTR_DAX).
+
+ 2. There exists an advisory file inode flag FS_XFLAG_DAX that is
+    inherited from the parent directory FS_XFLAG_DAX inode flag at file
+    creation time.  This advisory flag can be set or cleared at any
+    time, but doing so does not immediately affect the S_DAX state.
+
+    Unless overridden by mount options (see (3)), if FS_XFLAG_DAX is set
+    and the fs is on pmem then it will enable S_DAX at inode load time;
+    if FS_XFLAG_DAX is not set, it will not enable S_DAX.
+
+ 3. There exists a dax= mount option.
+
+    "-o dax=never"  means "never set S_DAX, ignore FS_XFLAG_DAX."
+
+    "-o dax=always" means "always set S_DAX (at least on pmem),
+                    and ignore FS_XFLAG_DAX."
+
+    "-o dax"        is an alias for "dax=always".
+
+    "-o dax=inode"  means "follow FS_XFLAG_DAX" and is the default.
+
+ 4. There exists an advisory directory inode flag FS_XFLAG_DAX that can
+    be set or cleared at any time.  The flag state is inherited by any files or
+    subdirectories when they are created within that directory.
+
+ 5. Programs that require a specific file access mode (DAX or not DAX)
+    can do one of the following:
+
+    (a) Create files in directories that the FS_XFLAG_DAX flag set as
+        needed; or
+
+    (b) Have the administrator set an override via mount option; or
+
+    (c) Set or clear the file's FS_XFLAG_DAX flag as needed.  Programs
+        must then cause the kernel to evict the inode from memory.  This
+        can be done by:
+
+        i>  Closing the file and re-opening the file and using statx to
+            see if the fs has changed the S_DAX flag; and
+
+        ii> If the file still does not have the desired S_DAX access
+            mode, either unmount and remount the filesystem, or close
+            the file and use drop_caches.
+
+ 6. It is expected that users who want to squeeze every last bit of performance
+    out of the particular rough and tumble bits of their storage will also be
+    exposed to the difficulties of what happens when the operating system can't
+    totally virtualize those hardware capabilities.  DAX is such a feature.
+
+
+[1] https://lore.kernel.org/lkml/20200407182958.568475-1-ira.weiny@intel.com/
+
+To: linux-kernel@vger.kernel.org
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+
+
+Ira Weiny (8):
+  fs/ext4: Narrow scope of DAX check in setflags
+  fs/ext4: Disallow verity if inode is DAX
+  fs/ext4: Disallow encryption if inode is DAX
+  fs/ext4: Introduce DAX inode flag
+  fs/ext4: Make DAX mount option a tri-state
+  fs/ext4: Update ext4_should_use_dax()
+  fs/ext4: Only change S_DAX on inode load
+  Documentation/dax: Update DAX enablement for ext4
+
+ Documentation/filesystems/dax.txt | 13 +------
+ fs/ext4/ext4.h                    | 16 ++++++---
+ fs/ext4/ialloc.c                  |  2 +-
+ fs/ext4/inode.c                   | 22 ++++++++----
+ fs/ext4/ioctl.c                   | 28 ++++++++++++---
+ fs/ext4/super.c                   | 57 +++++++++++++++++++++++--------
+ fs/ext4/verity.c                  |  5 ++-
+ 7 files changed, 99 insertions(+), 44 deletions(-)
+
+-- 
+2.25.1
+
