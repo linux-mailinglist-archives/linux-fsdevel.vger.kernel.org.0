@@ -2,101 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 537521A71CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 05:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D061A71E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 05:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404748AbgDNDct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 23:32:49 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55263 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728845AbgDNDcs (ORCPT
+        id S2404847AbgDNDiJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 23:38:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35946 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404832AbgDNDiI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 23:32:48 -0400
-Received: by mail-pj1-f68.google.com with SMTP id np9so4718811pjb.4;
-        Mon, 13 Apr 2020 20:32:47 -0700 (PDT)
+        Mon, 13 Apr 2020 23:38:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n10so5486382pff.3;
+        Mon, 13 Apr 2020 20:38:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ArgnOF6jLXpb/Aiqzc0Aon2OsGQE4oCrOJZfbEaRH+I=;
-        b=bn5RUFOoLjNufGkZiwp+HvhbtDf+SXl58erARtI9EBH9cETeOXao+x/CLmeULiCjnp
-         lNgEHUz2GMvRrSOWEXaxOrkah+FqA0mCsLFLjkOsywlgHp0xiVhCPQPoUiJm5t7/jEH0
-         0UEyorNelLbBB8qXPceyL2lPJPLbxNRtF5tYBRbBihNqKXGX4umJSe+t9HcyB2MBc5tW
-         Cu8bcnXj2VQ9af9u4lMAc5qsDWcgBaYSTWLXfy3zro8bv1KONjTne/ys5TZQfKZPz+ZW
-         x6uTUmwfmgZC/y9wXIMtDDsiWLyquSvIryanXSoNx9G+W+S9ziZa6ak60Z0mKWy+u1tq
-         KF1g==
-X-Gm-Message-State: AGi0PuYduIQC+z6m77/RE8Lp4Bpp2bqrNclkpYzjYoW6gagfOtrWy+xc
-        2RetwDv+3mMaAtzx/dxVV3U=
-X-Google-Smtp-Source: APiQypID3YxvbyG2BHdjJhI/9Ccmf+GO9Qf3+pzzIuUIxcf0WguocjZaoZm68OvUVdP61Q4w8oVZnQ==
-X-Received: by 2002:a17:902:bc48:: with SMTP id t8mr2486948plz.311.1586835167370;
-        Mon, 13 Apr 2020 20:32:47 -0700 (PDT)
+        bh=h/r5aOsQUftJul1WcNyBZHlZU1sP9juTahr+5gdxxlg=;
+        b=eY6Po53FMrgn7zyfImIEoNGBsf3Q/L4BK/JpaOTo3GMlGi+AJIYTAXyruGjEeXrYn6
+         koZFvaXlOlw4XTIgYfU3mvCVnmP094gIKjR/aiHyaHmD/8FzxsPJ46eygSbPCiK+hiHb
+         AeT4oRa1XFQ+/Oqew27t5EQvNn5lTLYNtdVfbCqQ0qu7aEI+iZ/RDvf1kBkNb6ZmJHp4
+         1yv2UrXEaH8TzTPHv/a8YqsMp2RiaDogZf6anz8c3bT4U4Su09ZZT1+Wu6YaqYLlpiAZ
+         aZe+1CJijZkYBuyyOdNRj0LzsNQSfw9A+wHOd86ymg+il7R22Q4H2makifKFF5g69b3y
+         XV9A==
+X-Gm-Message-State: AGi0PuZdgrprLIqVk9DF9dsqjtGyeZd2EgTP1V1yrFX062D485cRXuHd
+        MvUeqyw6olu7kjCz0APjrjMo7cmuths=
+X-Google-Smtp-Source: APiQypLbMnY7RmOhI54DEIQDHmqf9p5b+ywolxB5Vv3/JhisfnuzWeRXYY9C/ZyBC+MSinBn4WxhUg==
+X-Received: by 2002:a63:da47:: with SMTP id l7mr21029707pgj.315.1586835487193;
+        Mon, 13 Apr 2020 20:38:07 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id u8sm2686875pjy.16.2020.04.13.20.32.46
+        by smtp.gmail.com with ESMTPSA id x71sm9855165pfd.129.2020.04.13.20.38.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 20:32:46 -0700 (PDT)
+        Mon, 13 Apr 2020 20:38:05 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 757DF40277; Tue, 14 Apr 2020 03:32:44 +0000 (UTC)
-Date:   Tue, 14 Apr 2020 03:32:44 +0000
+        id EF98140277; Tue, 14 Apr 2020 03:38:04 +0000 (UTC)
+Date:   Tue, 14 Apr 2020 03:38:04 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
+        Ming Lei <ming.lei@redhat.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, yu kuai <yukuai3@huawei.com>,
+        linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Omar Sandoval <osandov@fb.com>,
         Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [RFC v2 2/5] blktrace: fix debugfs use after free
-Message-ID: <20200414033244.GN11244@42.do-not-panic.com>
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC v2 5/5] block: revert back to synchronous request_queue
+ removal
+Message-ID: <20200414033804.GO11244@42.do-not-panic.com>
 References: <20200409214530.2413-1-mcgrof@kernel.org>
- <20200409214530.2413-3-mcgrof@kernel.org>
- <88f94070-cd34-7435-9175-e0518a7d7db8@acm.org>
- <20200410195805.GM11244@42.do-not-panic.com>
- <0837b27e-e07b-b61c-5842-00cdf78873ca@acm.org>
+ <20200409214530.2413-6-mcgrof@kernel.org>
+ <161e938d-929b-1fdb-ba77-56b839c14b5b@acm.org>
+ <20200410143412.GK11244@42.do-not-panic.com>
+ <CAB=NE6VfQH3duMGneJnzEnXzAJ1TDYn26WhQCy8X1Mb_T6esgQ@mail.gmail.com>
+ <CAB=NE6XfdgB82ncZUkLpdYvDDdyVvVUd8nUmRCb8LbOQ213QoA@mail.gmail.com>
+ <64c9212d-aaa3-d172-0ab9-0fc0e25a019a@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0837b27e-e07b-b61c-5842-00cdf78873ca@acm.org>
+In-Reply-To: <64c9212d-aaa3-d172-0ab9-0fc0e25a019a@acm.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 11, 2020 at 04:09:13PM -0700, Bart Van Assche wrote:
-> On 2020-04-10 12:58, Luis Chamberlain wrote:
-> > On Thu, Apr 09, 2020 at 07:52:59PM -0700, Bart Van Assche wrote:
-> >> On 2020-04-09 14:45, Luis Chamberlain wrote:
-> >>> +void blk_q_debugfs_register(struct request_queue *q)
-> >>> +{
-> >>> +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> >>> +					    blk_debugfs_root);
-> >>> +}
-> >>> +
-> >>> +void blk_q_debugfs_unregister(struct request_queue *q)
-> >>> +{
-> >>> +	debugfs_remove_recursive(q->debugfs_dir);
-> >>> +	q->debugfs_dir = NULL;
-> >>> +}
+On Sat, Apr 11, 2020 at 04:21:17PM -0700, Bart Van Assche wrote:
+> On 2020-04-10 14:27, Luis Chamberlain wrote:
+> > On Fri, Apr 10, 2020 at 2:50 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
 > >>
-> >> There are no other functions in the block layer that start with the
-> >> prefix blk_q_. How about changing that prefix into blk_?
+> >> On Fri, Apr 10, 2020 at 8:34 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >>> On Thu, Apr 09, 2020 at 08:12:21PM -0700, Bart Van Assche wrote:
+> >>>> Please add a might_sleep() call in blk_put_queue() since with this patch
+> >>>> applied it is no longer allowed to call blk_put_queue() from atomic context.
+> >>>
+> >>> Sure thing.
+> >>
+> >> On second though, I don't think blk_put_queue() would be the right
+> >> place for might_sleep(), given we really only care about the *last*
+> >> refcount decrement to 0. So I'll move it to blk_release_queue().
+> >> Granted, at that point we are too late, and we'd get a splat about
+> >> this issue *iff* we really sleep. So yeah, I do suppose that forcing
+> >> this check there still makes sense.
 > > 
-> > I the first patch already introduced blk_debugfs_register(), so I have
-> > now changed the above to:
-> > 
-> > blk_debugfs_common_register()
-> > blk_debugfs_common_unregister()
-> > 
-> > Let me know if something else is preferred.
+> > I'll add might_sleep() to both blk_release_queue() *and* blk_cleanup_queue().
 > 
-> I just realized that the "q" in "blk_q_" probably refers to the word
-> "queue"? How about renaming these funtions into
-> blk_queue_debugfs_register/unregister()?
+> Since there is already an unconditional mutex_lock() call in
+> blk_cleanup_queue(), do we really need to add a might_sleep() call in
+> blk_cleanup_queue()?
 
-Sure.
+You are right, mutex_lock() already has a might_sleep() sprinkled on it.
 
   Luis
