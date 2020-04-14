@@ -2,103 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD9AE1A71A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 05:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537521A71CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 05:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404563AbgDNDSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Apr 2020 23:18:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:45507 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404552AbgDNDSa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Apr 2020 23:18:30 -0400
-IronPort-SDR: +NMZCy1JVAWaNUivVeURdiFWk6qA5gEF5LQ2edM7FSP3bOsxYl5B+CKx4T3WsT1sz6Fe6Xn+ZP
- re7ucNw1RIKQ==
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 20:18:29 -0700
-IronPort-SDR: A6dvFsKAF+nMYpB5Nxql8OZD8ESyhZEcZnZf1S7cpOWdTRI4yLKnP5sujEava2jQgnZvzsGGKH
- 8bIyy78zkIAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,381,1580803200"; 
-   d="asc'?scan'208";a="256373748"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.160.147])
-  by orsmga006.jf.intel.com with ESMTP; 13 Apr 2020 20:18:25 -0700
-Date:   Tue, 14 Apr 2020 11:04:44 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
-        amd-gfx@lists.freedesktop.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-usb@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        intel-gfx@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Jason Wang <jasowang@redhat.com>,
-        Zhi Wang <zhi.a.wang@intel.com>
-Subject: Re: [PATCH 3/6] i915/gvt: remove unused xen bits
-Message-ID: <20200414030444.GO11247@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20200404094101.672954-1-hch@lst.de>
- <20200404094101.672954-4-hch@lst.de>
- <20200408014437.GF11247@zhen-hp.sh.intel.com>
- <20200413130806.GA14455@lst.de>
+        id S2404748AbgDNDct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Apr 2020 23:32:49 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:55263 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728845AbgDNDcs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Apr 2020 23:32:48 -0400
+Received: by mail-pj1-f68.google.com with SMTP id np9so4718811pjb.4;
+        Mon, 13 Apr 2020 20:32:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ArgnOF6jLXpb/Aiqzc0Aon2OsGQE4oCrOJZfbEaRH+I=;
+        b=bn5RUFOoLjNufGkZiwp+HvhbtDf+SXl58erARtI9EBH9cETeOXao+x/CLmeULiCjnp
+         lNgEHUz2GMvRrSOWEXaxOrkah+FqA0mCsLFLjkOsywlgHp0xiVhCPQPoUiJm5t7/jEH0
+         0UEyorNelLbBB8qXPceyL2lPJPLbxNRtF5tYBRbBihNqKXGX4umJSe+t9HcyB2MBc5tW
+         Cu8bcnXj2VQ9af9u4lMAc5qsDWcgBaYSTWLXfy3zro8bv1KONjTne/ys5TZQfKZPz+ZW
+         x6uTUmwfmgZC/y9wXIMtDDsiWLyquSvIryanXSoNx9G+W+S9ziZa6ak60Z0mKWy+u1tq
+         KF1g==
+X-Gm-Message-State: AGi0PuYduIQC+z6m77/RE8Lp4Bpp2bqrNclkpYzjYoW6gagfOtrWy+xc
+        2RetwDv+3mMaAtzx/dxVV3U=
+X-Google-Smtp-Source: APiQypID3YxvbyG2BHdjJhI/9Ccmf+GO9Qf3+pzzIuUIxcf0WguocjZaoZm68OvUVdP61Q4w8oVZnQ==
+X-Received: by 2002:a17:902:bc48:: with SMTP id t8mr2486948plz.311.1586835167370;
+        Mon, 13 Apr 2020 20:32:47 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id u8sm2686875pjy.16.2020.04.13.20.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2020 20:32:46 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 757DF40277; Tue, 14 Apr 2020 03:32:44 +0000 (UTC)
+Date:   Tue, 14 Apr 2020 03:32:44 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [RFC v2 2/5] blktrace: fix debugfs use after free
+Message-ID: <20200414033244.GN11244@42.do-not-panic.com>
+References: <20200409214530.2413-1-mcgrof@kernel.org>
+ <20200409214530.2413-3-mcgrof@kernel.org>
+ <88f94070-cd34-7435-9175-e0518a7d7db8@acm.org>
+ <20200410195805.GM11244@42.do-not-panic.com>
+ <0837b27e-e07b-b61c-5842-00cdf78873ca@acm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3eH4Qcq5fItR5cpy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200413130806.GA14455@lst.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <0837b27e-e07b-b61c-5842-00cdf78873ca@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Apr 11, 2020 at 04:09:13PM -0700, Bart Van Assche wrote:
+> On 2020-04-10 12:58, Luis Chamberlain wrote:
+> > On Thu, Apr 09, 2020 at 07:52:59PM -0700, Bart Van Assche wrote:
+> >> On 2020-04-09 14:45, Luis Chamberlain wrote:
+> >>> +void blk_q_debugfs_register(struct request_queue *q)
+> >>> +{
+> >>> +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+> >>> +					    blk_debugfs_root);
+> >>> +}
+> >>> +
+> >>> +void blk_q_debugfs_unregister(struct request_queue *q)
+> >>> +{
+> >>> +	debugfs_remove_recursive(q->debugfs_dir);
+> >>> +	q->debugfs_dir = NULL;
+> >>> +}
+> >>
+> >> There are no other functions in the block layer that start with the
+> >> prefix blk_q_. How about changing that prefix into blk_?
+> > 
+> > I the first patch already introduced blk_debugfs_register(), so I have
+> > now changed the above to:
+> > 
+> > blk_debugfs_common_register()
+> > blk_debugfs_common_unregister()
+> > 
+> > Let me know if something else is preferred.
+> 
+> I just realized that the "q" in "blk_q_" probably refers to the word
+> "queue"? How about renaming these funtions into
+> blk_queue_debugfs_register/unregister()?
 
---3eH4Qcq5fItR5cpy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure.
 
-On 2020.04.13 15:08:06 +0200, Christoph Hellwig wrote:
-> On Wed, Apr 08, 2020 at 09:44:37AM +0800, Zhenyu Wang wrote:
-> > On 2020.04.04 11:40:58 +0200, Christoph Hellwig wrote:
-> > > No Xen support anywhere here.  Remove a dead declaration and an unused
-> > > include.
-> > >=20
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > ---
-> >=20
-> > We'll keep that off-tree.
-> >=20
-> > Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
->=20
-> Can you pick this up through the i915 tree?
-
-Yes, I'll pick this.
-
-Thanks
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---3eH4Qcq5fItR5cpy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXpUoTAAKCRCxBBozTXgY
-JygxAJ9JZICeCzXSNp8YPszWNoMERUV94ACeJJLziuDjCDenyBchPPCAYkP+EtI=
-=56PP
------END PGP SIGNATURE-----
-
---3eH4Qcq5fItR5cpy--
+  Luis
