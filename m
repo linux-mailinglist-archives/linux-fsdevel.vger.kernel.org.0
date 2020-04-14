@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B44B11A7407
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 09:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4C41A7405
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 09:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406267AbgDNHDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 03:03:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44152 "EHLO
+        id S2406256AbgDNHCy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 03:02:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44172 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406218AbgDNHCI (ORCPT
+        with ESMTP id S2406224AbgDNHCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 03:02:08 -0400
+        Tue, 14 Apr 2020 03:02:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=PqrAb/R+T1+weUMpxzPvgPO+qhhXZzaZTaIC3FpFndY=; b=shGFAAThy+2ClIl03W3qrPhTZZ
-        YiIoEhLSMwgyWDyIeQeC3VXXlOCOtS8NYwEmW8hsGoj/IzTDpp46tBATY+m6pr3Xb51D/W8DTWqaK
-        aIgvc8CP+sX8Ti65id35W3OobQpFFW8uAGf6MqG+kU1aXuEAhw+rLJH0nBVELavuGjvZBxPyG1xyF
-        kbKiFH/1vgIBTZp3rnyXgQbY4cdsule8sf8OVKzuIMtSOlsuuBW/T9Yx3+FAfL1Gmt6rcDo448EMK
-        ysReccNTBd0QAORYfljkognerhewzL7IzawHmYflSNLc1r+ze42NXwXXlv94jNDhnCHgVC1dFAjqD
-        KanZ5feg==;
+        bh=KHVzeUUAH3X0C6cb/ymYAEgh7N1ttmSFET3iRg2WhBE=; b=tlPfosRrj3qkmtLbo7WAC3GLFM
+        pZUo0pIHOMgV2ItCPG5KBLuBF6ptIBBgLnIC4mv3ugIcbqiTPrTD4kSThZ+6eM6vxBWR4ykY/hSre
+        I/9rty73cmTUeDn2B4K0O6O+ExQVh32xgF8rLfpUGLVt9krhTDBPxGUS7USXvuyPnhE+wb18GjNU0
+        b1FOJMBrXQzxMuFzEuT1P21UflcExmhYZ4jpJVV+ivuOOnVsEZ7GNoV8qESgFv5BYbiAQ600qhB4D
+        Y34UOIvdtYsCXzVV2UPoVPFATeJIAyLH3KxISCe5cU2rsB4RGAmi0qfFYW+Ip70BFDF2yTOywgZCu
+        7Md5KSYw==;
 Received: from [2001:4bb8:180:384b:4c21:af7:dd95:e552] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jOFa6-0005ZO-1a; Tue, 14 Apr 2020 07:02:02 +0000
+        id 1jOFa8-0005Zi-VO; Tue, 14 Apr 2020 07:02:05 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
@@ -32,9 +32,9 @@ Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] binfmt_elf_fdpic: remove the set_fs(KERNEL_DS) in elf_fdpic_core_dump
-Date:   Tue, 14 Apr 2020 09:01:40 +0200
-Message-Id: <20200414070142.288696-7-hch@lst.de>
+Subject: [PATCH 7/8] exec: simplify the copy_strings_kernel calling convention
+Date:   Tue, 14 Apr 2020 09:01:41 +0200
+Message-Id: <20200414070142.288696-8-hch@lst.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200414070142.288696-1-hch@lst.de>
 References: <20200414070142.288696-1-hch@lst.de>
@@ -46,124 +46,143 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no logic in elf_fdpic_core_dump itself that uses uaccess
-routines on kernel pointers, the file writes are nicely encapsulated in
-dump_emit which does its own set_fs.
+copy_strings_kernel is always used with a single argument,
+adjust the calling convention to that.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/binfmt_elf_fdpic.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ fs/binfmt_em86.c        |  6 +++---
+ fs/binfmt_misc.c        |  4 ++--
+ fs/binfmt_script.c      |  6 +++---
+ fs/exec.c               | 13 ++++++-------
+ include/linux/binfmts.h |  3 +--
+ 5 files changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 240f66663543..c62c17a5c34a 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -1549,7 +1549,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
+diff --git a/fs/binfmt_em86.c b/fs/binfmt_em86.c
+index 466497860c62..f33fa668c91f 100644
+--- a/fs/binfmt_em86.c
++++ b/fs/binfmt_em86.c
+@@ -68,15 +68,15 @@ static int load_em86(struct linux_binprm *bprm)
+ 	 * user environment and arguments are stored.
+ 	 */
+ 	remove_arg_zero(bprm);
+-	retval = copy_strings_kernel(1, &bprm->filename, bprm);
++	retval = copy_string_kernel(bprm->filename, bprm);
+ 	if (retval < 0) return retval; 
+ 	bprm->argc++;
+ 	if (i_arg) {
+-		retval = copy_strings_kernel(1, &i_arg, bprm);
++		retval = copy_string_kernel(i_arg, bprm);
+ 		if (retval < 0) return retval; 
+ 		bprm->argc++;
+ 	}
+-	retval = copy_strings_kernel(1, &i_name, bprm);
++	retval = copy_string_kernel(i_name, bprm);
+ 	if (retval < 0)	return retval;
+ 	bprm->argc++;
+ 
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index cdb45829354d..b15257d8ff5e 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -190,13 +190,13 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 		bprm->file = NULL;
+ 	}
+ 	/* make argv[1] be the path to the binary */
+-	retval = copy_strings_kernel(1, &bprm->interp, bprm);
++	retval = copy_string_kernel(bprm->interp, bprm);
+ 	if (retval < 0)
+ 		goto error;
+ 	bprm->argc++;
+ 
+ 	/* add the interp as argv[0] */
+-	retval = copy_strings_kernel(1, &fmt->interpreter, bprm);
++	retval = copy_string_kernel(fmt->interpreter, bprm);
+ 	if (retval < 0)
+ 		goto error;
+ 	bprm->argc++;
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index e9e6a6f4a35f..c4fb7f52a46e 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -117,17 +117,17 @@ static int load_script(struct linux_binprm *bprm)
+ 	retval = remove_arg_zero(bprm);
+ 	if (retval)
+ 		return retval;
+-	retval = copy_strings_kernel(1, &bprm->interp, bprm);
++	retval = copy_string_kernel(bprm->interp, bprm);
+ 	if (retval < 0)
+ 		return retval;
+ 	bprm->argc++;
+ 	if (i_arg) {
+-		retval = copy_strings_kernel(1, &i_arg, bprm);
++		retval = copy_string_kernel(i_arg, bprm);
+ 		if (retval < 0)
+ 			return retval;
+ 		bprm->argc++;
+ 	}
+-	retval = copy_strings_kernel(1, &i_name, bprm);
++	retval = copy_string_kernel(i_name, bprm);
+ 	if (retval)
+ 		return retval;
+ 	bprm->argc++;
+diff --git a/fs/exec.c b/fs/exec.c
+index 06b4c550af5d..b2a77d5acede 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -588,24 +588,23 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ }
+ 
+ /*
+- * Like copy_strings, but get argv and its values from kernel memory.
++ * Copy and argument/environment string from the kernel to the processes stack.
+  */
+-int copy_strings_kernel(int argc, const char *const *__argv,
+-			struct linux_binprm *bprm)
++int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
  {
- #define	NUM_NOTES	6
- 	int has_dumped = 0;
--	mm_segment_t fs;
- 	int segs;
- 	int i;
- 	struct vm_area_struct *vma;
-@@ -1678,9 +1677,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 			  "LINUX", ELF_CORE_XFPREG_TYPE, sizeof(*xfpu), xfpu);
- #endif
+ 	int r;
+ 	mm_segment_t oldfs = get_fs();
+ 	struct user_arg_ptr argv = {
+-		.ptr.native = (const char __user *const  __user *)__argv,
++		.ptr.native = (const char __user *const  __user *)&arg,
+ 	};
  
--	fs = get_fs();
--	set_fs(KERNEL_DS);
--
- 	offset += sizeof(*elf);				/* Elf header */
- 	offset += segs * sizeof(struct elf_phdr);	/* Program headers */
+ 	set_fs(KERNEL_DS);
+-	r = copy_strings(argc, argv, bprm);
++	r = copy_strings(1, argv, bprm);
+ 	set_fs(oldfs);
  
-@@ -1695,7 +1691,7 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
+ 	return r;
+ }
+-EXPORT_SYMBOL(copy_strings_kernel);
++EXPORT_SYMBOL(copy_string_kernel);
  
- 		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
- 		if (!phdr4note)
--			goto end_coredump;
-+			goto cleanup;
+ #ifdef CONFIG_MMU
  
- 		fill_elf_note_phdr(phdr4note, sz, offset);
- 		offset += sz;
-@@ -1711,17 +1707,17 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 	if (e_phnum == PN_XNUM) {
- 		shdr4extnum = kmalloc(sizeof(*shdr4extnum), GFP_KERNEL);
- 		if (!shdr4extnum)
--			goto end_coredump;
-+			goto cleanup;
- 		fill_extnum_info(elf, shdr4extnum, e_shoff, segs);
- 	}
+@@ -1863,7 +1862,7 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	if (retval < 0)
+ 		goto out;
  
- 	offset = dataoff;
+-	retval = copy_strings_kernel(1, &bprm->filename, bprm);
++	retval = copy_string_kernel(bprm->filename, bprm);
+ 	if (retval < 0)
+ 		goto out;
  
- 	if (!dump_emit(cprm, elf, sizeof(*elf)))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	/* write program headers for segments dump */
- 	for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
-@@ -1745,16 +1741,16 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 		phdr.p_align = ELF_EXEC_PAGESIZE;
- 
- 		if (!dump_emit(cprm, &phdr, sizeof(phdr)))
--			goto end_coredump;
-+			goto cleanup;
- 	}
- 
- 	if (!elf_core_write_extra_phdrs(cprm, offset))
--		goto end_coredump;
-+		goto cleanup;
- 
-  	/* write out the notes section */
- 	for (i = 0; i < numnote; i++)
- 		if (!writenote(notes + i, cprm))
--			goto end_coredump;
-+			goto cleanup;
- 
- 	/* write out the thread status notes section */
- 	list_for_each(t, &thread_list) {
-@@ -1763,21 +1759,21 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 
- 		for (i = 0; i < tmp->num_notes; i++)
- 			if (!writenote(&tmp->notes[i], cprm))
--				goto end_coredump;
-+				goto cleanup;
- 	}
- 
- 	if (!dump_skip(cprm, dataoff - cprm->pos))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!elf_fdpic_dump_segments(cprm))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!elf_core_write_extra_data(cprm))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (e_phnum == PN_XNUM) {
- 		if (!dump_emit(cprm, shdr4extnum, sizeof(*shdr4extnum)))
--			goto end_coredump;
-+			goto cleanup;
- 	}
- 
- 	if (cprm->file->f_pos != offset) {
-@@ -1787,9 +1783,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 		       cprm->file->f_pos, offset);
- 	}
- 
--end_coredump:
--	set_fs(fs);
--
- cleanup:
- 	while (!list_empty(&thread_list)) {
- 		struct list_head *tmp = thread_list.next;
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index a345d9fed3d8..3d3afe094c97 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -144,8 +144,7 @@ extern int setup_arg_pages(struct linux_binprm * bprm,
+ extern int transfer_args_to_stack(struct linux_binprm *bprm,
+ 				  unsigned long *sp_location);
+ extern int bprm_change_interp(const char *interp, struct linux_binprm *bprm);
+-extern int copy_strings_kernel(int argc, const char *const *argv,
+-			       struct linux_binprm *bprm);
++int copy_string_kernel(const char *arg, struct linux_binprm *bprm);
+ extern void install_exec_creds(struct linux_binprm *bprm);
+ extern void set_binfmt(struct linux_binfmt *new);
+ extern ssize_t read_code(struct file *, unsigned long, loff_t, size_t);
 -- 
 2.25.1
 
