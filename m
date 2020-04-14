@@ -2,82 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7E21A746B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 09:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29E81A74DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Apr 2020 09:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406443AbgDNHN2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 03:13:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60361 "EHLO mga03.intel.com"
+        id S2406689AbgDNHfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 03:35:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728832AbgDNHN2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 03:13:28 -0400
-IronPort-SDR: Bmi7r8AIOfEmVbCDegF0//TBTZ2W5wFR8I/kst/X8cYiCc4vCg/nCKmFwfbxylI0YhpRuTdTBt
- MXvcce6zRXIQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 00:13:27 -0700
-IronPort-SDR: 3mzTZiupNXsl0k5QcLc9AHNCJBc5G9UIIEYO8qCIUclLUzsoEbBJJHUqxdgJkxiNvCr7gq5Idq
- YjsPeTwaKt8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,381,1580803200"; 
-   d="scan'208";a="426968243"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga005.jf.intel.com with ESMTP; 14 Apr 2020 00:13:22 -0700
-Date:   Tue, 14 Apr 2020 03:03:44 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread is
- a kthread
-Message-ID: <20200414070344.GF10586@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200404094101.672954-1-hch@lst.de>
- <20200404094101.672954-3-hch@lst.de>
- <20200407030845.GA10586@joy-OptiPlex-7040>
- <20200413132730.GB14455@lst.de>
- <20200414000410.GE10586@joy-OptiPlex-7040>
- <20200414070013.GA23680@lst.de>
+        id S2406666AbgDNHfc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 03:35:32 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7F8320575;
+        Tue, 14 Apr 2020 07:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586849731;
+        bh=eDG8jUkXKP6GlO4ycCt674m7P7qKoklsMoL0hVpzxxM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wYpObs6ZvcIHIqra9ac5XXuKQw9De9kpn9vnNiIoKTMwYHwj7d75RlybGU0rHYkS2
+         GBkEQDQLojwrekj1wP0m4GkbLsYiskX1vlMuBEkCTCDwxdBbZUrHXOtj56NEeXD8ZS
+         ZBfE8rf3bz6SHKnSbROfmWD1AvCPivayZI/XrU9w=
+Date:   Tue, 14 Apr 2020 09:35:28 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 1/5] block: move main block debugfs initialization to its
+ own file
+Message-ID: <20200414073528.GA4111599@kroah.com>
+References: <20200414041902.16769-1-mcgrof@kernel.org>
+ <20200414041902.16769-2-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200414070013.GA23680@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200414041902.16769-2-mcgrof@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 09:00:13AM +0200, Christoph Hellwig wrote:
-> On Mon, Apr 13, 2020 at 08:04:10PM -0400, Yan Zhao wrote:
-> > > I can't think of another way for a kernel thread to have a mm indeed.
-> > for example, before calling to vfio_dma_rw(), a kernel thread has already
-> > called use_mm(), then its current->mm is not null, and it has flag
-> > PF_KTHREAD.
-> > in this case, we just want to allow the copy_to_user() directly if
-> > current->mm == mm, rather than call another use_mm() again.
-> > 
-> > do you think it makes sense?
+On Tue, Apr 14, 2020 at 04:18:58AM +0000, Luis Chamberlain wrote:
+> make_request-based drivers and and request-based drivers share some
+> some debugfs code. By moving this into its own file it makes it easier
+> to expand and audit this shared code.
 > 
-> I mean no other way than using use_mm.  That being said nesting
-> potentional use_mm callers sounds like a rather bad idea, and we
-> should avoid that.
-yes, agree.
-I was explaining why we just use "current->mm == NULL"
-(not "current->flag & PF_KTHREAD") as a criteria to call use_mm()
-in vfio_dma_rw(), which you might ask us when you take that part into your
-series. :)
+> This patch contains no functional changes.
+> 
+> Cc: Bart Van Assche <bvanassche@acm.org>
+> Cc: Omar Sandoval <osandov@fb.com>
+> Cc: Hannes Reinecke <hare@suse.com>
+> Cc: Nicolai Stange <nstange@suse.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: yu kuai <yukuai3@huawei.com>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
