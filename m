@@ -2,152 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9F21AB267
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 22:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7F7F1AB26E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 22:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437945AbgDOUU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 16:20:58 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:41016 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437924AbgDOUU4 (ORCPT
+        id S2442010AbgDOUZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 16:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37736 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2442001AbgDOUZD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 16:20:56 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jOoWV-0002mn-Gy; Wed, 15 Apr 2020 14:20:39 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jOoWH-0000TQ-TH; Wed, 15 Apr 2020 14:20:39 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     syzbot <syzbot+d9ae59d4662c941e39c6@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, christian@brauner.io, guro@fb.com,
-        kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mhocko@suse.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-References: <0000000000001c5eaa05a357f2e1@google.com>
-        <878siwioxj.fsf@x220.int.ebiederm.org>
-        <20200415193612.7cmmbwfpof6pvsqv@wittgenstein>
-Date:   Wed, 15 Apr 2020 15:17:26 -0500
-In-Reply-To: <20200415193612.7cmmbwfpof6pvsqv@wittgenstein> (Christian
-        Brauner's message of "Wed, 15 Apr 2020 21:36:12 +0200")
-Message-ID: <873694ijvt.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 15 Apr 2020 16:25:03 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0B1C061A0C;
+        Wed, 15 Apr 2020 13:25:02 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id j20so6764020edj.0;
+        Wed, 15 Apr 2020 13:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=TG84DAM+ZvzWT1WjDaPyx3Y8pzSbrP4EyNOH4w1Vf2Y=;
+        b=l1JPPwS/D7e1Rxn1TxQe+CD0VuProMofkSe7CHsvHc7yfSLMPjRPPSqs9OolRsMu7N
+         HDioibypXMJQfwAhsRnOG13Bny2s2UxLDTFe08wrySheWpE0gRMOWIoPCJ4ZU9KbP3Yc
+         Amdmk/+9+ddBVRxA/2BATUTsIzzqfsY9KhPxG3tDz6seN0AEzOFRcOt3hrTlouyOlKYo
+         Fpqw29lFhnwNMnYiG83Xp5BFqB/t66cVLhYFMBfNey30aqdxV87bBPUWcYXncgBQaez9
+         Eqgzwe8H3qJkYZeY+iOcxqKiyIGKtXTK3HT9jk5wIKrM25INIagjci504yO7UongG3dc
+         /sDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=TG84DAM+ZvzWT1WjDaPyx3Y8pzSbrP4EyNOH4w1Vf2Y=;
+        b=O1fWxIu10eVk6zEALITUr8mQ4i2ng/qaxBhObSdhQ2PddfWtEoRSKKJroiWjTFYITh
+         tUu3eUmArWvuBdd5KFmInqmQ7Iv0/e4X0tYaEypg0wElqnozm7ALy492p7oIj6w5fGLt
+         MQEK+R7i9U2dFnZpj4v/UiNHTFcp+y+p5AIfBdaucR2uundqhUhU7DVYpL72lFTHOvlA
+         fPGyxfD0dEgoIwax7imqM4LjYU2mr7PtS3zILjkxPgIELtFMarwkOam8mmq4pUUJxnMG
+         BN0vNqyX4344hjn+Ekid1l4GzsOQ2nCGg0eBiNbz3tb8JTL9NdcurfFJ0IjJ9zAq7tqR
+         FgFQ==
+X-Gm-Message-State: AGi0Pua8DFMsh+9c1Qb4ZfMDCnGt8NgtG9xp8TN9AS+pH8RsKurbDkL/
+        cUek+mL6EXBdPRoNj2PjsjKYJqluAkhau4kMzq0=
+X-Google-Smtp-Source: APiQypKrpiRQDp+uevm4TMFo8xjLOpCqzM1jBIP63ImHO0yiIu0dgaaLktBqHiyj0911kGTBxyMRqicR4Glm/FiTkx0=
+X-Received: by 2002:a05:6402:16da:: with SMTP id r26mr12259794edx.375.1586982301317;
+ Wed, 15 Apr 2020 13:25:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jOoWH-0000TQ-TH;;;mid=<873694ijvt.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18DPCq9Nz2frtDug5iGSOpxqL8ILPXh+aw=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Christian Brauner <christian.brauner@ubuntu.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 13028 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 11 (0.1%), b_tie_ro: 9 (0.1%), parse: 1.64 (0.0%),
-         extract_message_metadata: 29 (0.2%), get_uri_detail_list: 4.2 (0.0%),
-        tests_pri_-1000: 16 (0.1%), tests_pri_-950: 1.48 (0.0%),
-        tests_pri_-900: 1.24 (0.0%), tests_pri_-90: 112 (0.9%), check_bayes:
-        109 (0.8%), b_tokenize: 13 (0.1%), b_tok_get_all: 9 (0.1%),
-        b_comp_prob: 3.8 (0.0%), b_tok_touch_all: 80 (0.6%), b_finish: 1.12
-        (0.0%), tests_pri_0: 515 (4.0%), check_dkim_signature: 0.79 (0.0%),
-        check_dkim_adsp: 11 (0.1%), poll_dns_idle: 12297 (94.4%),
-        tests_pri_10: 4.5 (0.0%), tests_pri_500: 12332 (94.7%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH] proc: Handle umounts cleanly
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20200202151907.23587-1-cyphar@cyphar.com> <20200202151907.23587-3-cyphar@cyphar.com>
+ <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com> <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
+ <cd3a6aad-b906-ee57-1b5b-5939b9602ad0@gmail.com> <20200412164943.imwpdj5qgtyfn5de@yavin.dot.cyphar.com>
+ <cd1438ab-cfc6-b286-849e-d7de0d5c7258@gmail.com> <20200414103524.wjhyfobzpjk236o7@yavin.dot.cyphar.com>
+In-Reply-To: <20200414103524.wjhyfobzpjk236o7@yavin.dot.cyphar.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Wed, 15 Apr 2020 22:24:00 +0200
+Message-ID: <CAKgNAkhCE0BHjHzc7My1shieDvohCRb-n3AL_E9P49EEsz5upA@mail.gmail.com>
+Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2) syscall
+To:     Aleksa Sarai <asarai@suse.de>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
+Hello Aleksa,
 
-> On Wed, Apr 15, 2020 at 01:28:24PM -0500, Eric W. Biederman wrote:
->> syzbot writes:
->> > KASAN: use-after-free Read in dput (2)
->> >
->> > proc_fill_super: allocate dentry failed
->> > ==================================================================
->> > BUG: KASAN: use-after-free in fast_dput fs/dcache.c:727 [inline]
->> > BUG: KASAN: use-after-free in dput+0x53e/0xdf0 fs/dcache.c:846
->> > Read of size 4 at addr ffff88808a618cf0 by task syz-executor.0/8426
->> >
->> > CPU: 0 PID: 8426 Comm: syz-executor.0 Not tainted 5.6.0-next-20200412-syzkaller #0
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> > Call Trace:
->> >  __dump_stack lib/dump_stack.c:77 [inline]
->> >  dump_stack+0x188/0x20d lib/dump_stack.c:118
->> >  print_address_description.constprop.0.cold+0xd3/0x315 mm/kasan/report.c:382
->> >  __kasan_report.cold+0x35/0x4d mm/kasan/report.c:511
->> >  kasan_report+0x33/0x50 mm/kasan/common.c:625
->> >  fast_dput fs/dcache.c:727 [inline]
->> >  dput+0x53e/0xdf0 fs/dcache.c:846
->> >  proc_kill_sb+0x73/0xf0 fs/proc/root.c:195
->> >  deactivate_locked_super+0x8c/0xf0 fs/super.c:335
->> >  vfs_get_super+0x258/0x2d0 fs/super.c:1212
->> >  vfs_get_tree+0x89/0x2f0 fs/super.c:1547
->> >  do_new_mount fs/namespace.c:2813 [inline]
->> >  do_mount+0x1306/0x1b30 fs/namespace.c:3138
->> >  __do_sys_mount fs/namespace.c:3347 [inline]
->> >  __se_sys_mount fs/namespace.c:3324 [inline]
->> >  __x64_sys_mount+0x18f/0x230 fs/namespace.c:3324
->> >  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
->> >  entry_SYSCALL_64_after_hwframe+0x49/0xb3
->> > RIP: 0033:0x45c889
->> > Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> > RSP: 002b:00007ffc1930ec48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
->> > RAX: ffffffffffffffda RBX: 0000000001324914 RCX: 000000000045c889
->> > RDX: 0000000020000140 RSI: 0000000020000040 RDI: 0000000000000000
->> > RBP: 000000000076bf00 R08: 0000000000000000 R09: 0000000000000000
->> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
->> > R13: 0000000000000749 R14: 00000000004ca15a R15: 0000000000000013
->> 
->> Looking at the code now that it the internal mount of proc is no
->> longer used it is possible to unmount proc.   If proc is unmounted
->> the fields of the pid namespace that were used for filesystem
->> specific state are not reinitialized.
->> 
->> Which means that proc_self and proc_thread_self can be pointers to
->> already freed dentries.
->> 
->> The reported user after free appears to be from mounting and
->> unmounting proc followed by mounting proc again and using error
->> injection to cause the new root dentry allocation to fail.  This in
->> turn results in proc_kill_sb running with proc_self and
->> proc_thread_self still retaining their values from the previous mount
->> of proc.  Then calling dput on either proc_self of proc_thread_self
->> will result in double put.  Which KASAN sees as a use after free.
->> 
->> Solve this by always reinitializing the filesystem state stored
->> in the struct pid_namespace, when proc is unmounted.
->> 
->> Reported-by: syzbot+72868dd424eb66c6b95f@syzkaller.appspotmail.com
->> Fixes: 69879c01a0c3 ("proc: Remove the now unnecessary internal mount of proc")
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+On Tue, 14 Apr 2020 at 12:35, Aleksa Sarai <asarai@suse.de> wrote:
+
+[...]
+
+> > >> I must admit that I'm still confused. There's only the briefest of
+> > >> mentions of magic links in symlink(7). Perhaps that needs to be fixe=
+d?
+> > >
+> > > It wouldn't hurt to add a longer description of magic-links in
+> > > symlink(7). I'll send you a small patch to beef up the description (I
+> > > had planned to include a longer rewrite with the O_EMPTYPATH patches =
+but
+> > > those require quite a bit more work to land).
+> >
+> > That would be great. Thank you!
 >
-> Was looking at that earlier right before eod briefly here as well.
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> I'll cook something up later this week.
 
-The syzbot report or did you see the failure another way?
+Thank you!
 
-Eric
+[...]
+
+> > I've reworked the text on RESOLVE_NO_MAGICLINKS substantially:
+> >
+> >        RESOLVE_NO_MAGICLINKS
+> >               Disallow all magic-link resolution during path reso=E2=80=
+=90
+> >               lution.
+> >
+> >               Magic links are symbolic link-like objects that  are
+> >               most  notably  found  in  proc(5);  examples include
+> >               /proc/[pid]/exe  and  /proc/[pid]/fd/*.   (See  sym=E2=80=
+=90
+> >               link(7) for more details.)
+> >
+> >               Unknowingly  opening  magic  links  can be risky for
+> >               some applications.  Examples of such  risks  include
+> >               the following:
+> >
+> >               =C2=B7 If the process opening a pathname is a controlling
+> >                 process that currently has no controlling terminal
+> >                 (see  credentials(7)),  then  opening a magic link
+> >                 inside /proc/[pid]/fd that happens to refer  to  a
+> >                 terminal would cause the process to acquire a con=E2=80=
+=90
+> >                 trolling terminal.
+> >
+> >               =C2=B7 In  a  containerized  environment,  a  magic  link
+> >                 inside  /proc  may  refer to an object outside the
+> >                 container, and thus may provide a means to  escape
+> >                 from the container.
+> >
+> > [The above example derives from https://lwn.net/Articles/796868/]
+> >
+> >               Because  of such risks, an application may prefer to
+> >               disable   magic   link    resolution    using    the
+> >               RESOLVE_NO_MAGICLINKS flag.
+> >
+> >               If  the trailing component (i.e., basename) of path=E2=80=
+=90
+> >               name is a magic link, and  how.flags  contains  both
+> >               O_PATH  and O_NOFOLLOW, then an O_PATH file descrip=E2=80=
+=90
+> >               tor referencing the magic link will be returned.
+> >
+> > How does the above look?
+>
+> The changes look correct, though you could end up going through procfs
+> even if you weren't resolving a path inside proc directly (since you can
+> bind-mount symlinks or have a symlink to procfs). But I'm not sure if
+> it's necessary to outline all the ways a program could be tricked into
+> doing something unintended.
+
+Yes, indeed. These paragraphs are merely intended to give the reader
+some ideas about what the issues are.
+
+> > Also, regarding the last paragraph, I  have a question.  The
+> > text doesn't seem quite to relate to the rest of the discussion.
+> > Should it be saying something like:
+> >
+> > If the trailing component (i.e., basename) of pathname is a magic link,
+> > **how.resolve contains RESOLVE_NO_MAGICLINKS,**
+> > and how.flags contains both O_PATH and O_NOFOLLOW, then an O_PATH
+> > file descriptor referencing the magic link will be returned.
+> >
+> > ?
+>
+> Yes, that is what I meant to write --
+
+Good. Fixed.
+
+> and I believe that the
+> RESOLVE_NO_SYMLINKS section is missing similar text in the second
+> paragraph (except it should refer to RESOLVE_NO_SYMLINKS, obviously).
+
+Also fixed.
+
+Thanks,
+
+Michael
+
+--=20
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/[...]
