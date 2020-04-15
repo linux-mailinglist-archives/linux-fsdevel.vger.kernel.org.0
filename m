@@ -2,138 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FA841AAAA0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 16:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D851AAB82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 17:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392306AbgDOOp0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 10:45:26 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:33209 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388669AbgDOOpW (ORCPT
+        id S1414635AbgDOPLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 11:11:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49366 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730901AbgDOPLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:45:22 -0400
-Received: by mail-pj1-f68.google.com with SMTP id ay6so77791pjb.0;
-        Wed, 15 Apr 2020 07:45:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pBJo/JQSnidWIsZkfJsj1QT0fRaerLE2o4j81aCDQl4=;
-        b=XY5CPSn6z+RdSSJgvwljbJj0V06TGZIQtXQ7QsurU7HyY2kZyA2Ie27+taAcZuN2kL
-         f7ApyYNJpyvOt97FVz/OHMpqPus2UWZO3aC+qa8b38hXalo/lMvcBbDiqRojsMnmthDA
-         EhMaGkasqpsXYunTfvII6ax7QCrQA158Atbcc9F4sX7+xlYIjBFgQlxI0Y/lXkbHOqtx
-         jgyJ4QzvQK9Xxc5/KaM4rMo4baLW2ILaV4DZQU9KPswgCzTZ6CD7Jbb5iZGXcufTW6iC
-         OyL3yPAmr8YH6dQVoAA4ZhuG8hXSrVfOH+THHnZqj3uB8i4iYyed4Lf/ZUVDCZ4Wx0ad
-         qD8A==
-X-Gm-Message-State: AGi0PuZa68HUFFZiuIOyy4ivlp+JXWYCGgLK58kxFQBjXZdNnmsJWkUD
-        nPkVJv/VJf3vfWUZFZ2Vnrs=
-X-Google-Smtp-Source: APiQypKUu9JDV3E8NnRbxbNWJAsd3dksGpoqMVJtTMB0nvp0uezQYXkIIqv1ZWREFaMB8ztY9s+DMA==
-X-Received: by 2002:a17:902:a5c7:: with SMTP id t7mr5227310plq.330.1586961921350;
-        Wed, 15 Apr 2020 07:45:21 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:74a5:f25a:9320:53da? ([2601:647:4000:d7:74a5:f25a:9320:53da])
-        by smtp.gmail.com with ESMTPSA id o15sm14773001pjp.41.2020.04.15.07.45.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Apr 2020 07:45:20 -0700 (PDT)
-Subject: Re: [PATCH 3/5] blktrace: refcount the request_queue during ioctl
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-4-mcgrof@kernel.org>
- <20200414154044.GB25765@infradead.org>
- <20200415061649.GS11244@42.do-not-panic.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <49bfcbe0-2630-5c82-f305-fcee489ac9ea@acm.org>
-Date:   Wed, 15 Apr 2020 07:45:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Wed, 15 Apr 2020 11:11:43 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03FF3gY5073535;
+        Wed, 15 Apr 2020 15:11:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=MOfRD5Cwea5AiSC2Q578nXPPlxyjV7Yye8pgBK2f8w8=;
+ b=FeKL6UhPMQbqcyY7ee3CsyLWbT39OUkh2vC+AQ4j6iStWi5nZNdQk/tF5wUs82V07zuI
+ KUjkaLMX36ovwLFQWfpVVmJasYIzugob0YYaPqJn/GY0Tm9rLKZTVX8KWlpeWk5r+toW
+ jPBsA/Oo2FtA7V5eDCS8lzF1cEdY85CJa9X9sGXQeadoJPUYxmqObu/s0lsBt/3CupEm
+ nT7PL3G+Kbh0/x663X20kuMfxp5X+tF3H/3TQZtOgYEOqGv32EsA5xtAEp613TUdTKfS
+ kasQzEo4dGDfKIgTTlt79Rn0DD30pONcmKnP2zJvxIxOk5adq4a6iG6wBacuu1smDjeL vw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 30e0aa1h95-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Apr 2020 15:11:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03FF7Axu112260;
+        Wed, 15 Apr 2020 15:11:27 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 30dyveyqjp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Apr 2020 15:11:27 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 03FFBPIm031474;
+        Wed, 15 Apr 2020 15:11:25 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Apr 2020 08:11:24 -0700
+Date:   Wed, 15 Apr 2020 08:11:23 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V8 04/11] fs/xfs: Change XFS_MOUNT_DAX to
+ XFS_MOUNT_DAX_ALWAYS
+Message-ID: <20200415151123.GM6742@magnolia>
+References: <20200415064523.2244712-1-ira.weiny@intel.com>
+ <20200415064523.2244712-5-ira.weiny@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200415061649.GS11244@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415064523.2244712-5-ira.weiny@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9591 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004150112
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9591 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ suspectscore=1 adultscore=0 spamscore=0 malwarescore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004150112
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-04-14 23:16, Luis Chamberlain wrote:
-> On Tue, Apr 14, 2020 at 08:40:44AM -0700, Christoph Hellwig wrote:
->> Hmm, where exactly does the race come in so that it can only happen
->> after where you take the reference, but not before it?  I'm probably
->> missing something, but that just means it needs to be explained a little
->> better :)
+On Tue, Apr 14, 2020 at 11:45:16PM -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
->>From the trace on patch 2/5:
+> In prep for the new tri-state mount option which then introduces
+> XFS_MOUNT_DAX_NEVER.
 > 
->     BLKTRACE_SETUP(loop0) #2
->     [   13.933961] == blk_trace_ioctl(2, BLKTRACESETUP) start
->     [   13.936758] === do_blk_trace_setup(2) start
->     [   13.938944] === do_blk_trace_setup(2) creating directory
->     [   13.941029] === do_blk_trace_setup(2) using what debugfs_lookup() gave
->     
->     ---> From LOOP_CTL_DEL(loop0) #2
->     [   13.971046] === blk_trace_cleanup(7) end
->     [   13.973175] == __blk_trace_remove(7) end
->     [   13.975352] == blk_trace_shutdown(7) end
->     [   13.977415] = __blk_release_queue(7) calling blk_mq_debugfs_unregister()
->     [   13.980645] ==== blk_mq_debugfs_unregister(7) begin
->     [   13.980696] ==== blk_mq_debugfs_unregister(7) debugfs_remove_recursive(q->debugfs_dir)
->     [   13.983118] ==== blk_mq_debugfs_unregister(7) end q->debugfs_dir is NULL
->     [   13.986945] = __blk_release_queue(7) blk_mq_debugfs_unregister() end
->     [   13.993155] = __blk_release_queue(7) end
->     
->     ---> From BLKTRACE_SETUP(loop0) #2
->     [   13.995928] === do_blk_trace_setup(2) end with ret: 0
->     [   13.997623] == blk_trace_ioctl(2, BLKTRACESETUP) end
-> 
-> The BLKTRACESETUP above works on request_queue which later
-> LOOP_CTL_DEL races on and sweeps the debugfs dir underneath us.
-> If you use this commit alone though, this doesn't fix the race issue
-> however, and that's because of both still the debugfs_lookup() use
-> and that we're still using asynchronous removal at this point.
-> 
-> refcounting will just ensure we don't take the request_queue underneath
-> our noses.
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-I think the above trace reveals a bug in the loop driver. The loop
-driver shouldn't allow the associated request queue to disappear while
-the loop device is open. One may want to have a look at sd_open() in the
-sd driver. The scsi_disk_get() call in that function not only increases
-the reference count of the SCSI disk but also of the underlying SCSI device.
+Looks straightforward,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Thanks,
+--D
 
-Bart.
+> ---
+>  fs/xfs/xfs_iops.c  | 2 +-
+>  fs/xfs/xfs_mount.h | 2 +-
+>  fs/xfs/xfs_super.c | 8 ++++----
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 81f2f93caec0..a6e634631da8 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1248,7 +1248,7 @@ xfs_inode_supports_dax(
+>  		return false;
+>  
+>  	/* DAX mount option or DAX iflag must be set. */
+> -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
+> +	if (!(mp->m_flags & XFS_MOUNT_DAX_ALWAYS) &&
+>  	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
+>  		return false;
+>  
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index 88ab09ed29e7..54bd74088936 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -233,7 +233,7 @@ typedef struct xfs_mount {
+>  						   allocator */
+>  #define XFS_MOUNT_NOATTR2	(1ULL << 25)	/* disable use of attr2 format */
+>  
+> -#define XFS_MOUNT_DAX		(1ULL << 62)	/* TEST ONLY! */
+> +#define XFS_MOUNT_DAX_ALWAYS	(1ULL << 62)	/* TEST ONLY! */
+>  
+>  /*
+>   * Max and min values for mount-option defined I/O
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 2094386af8ac..3863f41757d2 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -129,7 +129,7 @@ xfs_fs_show_options(
+>  		{ XFS_MOUNT_GRPID,		",grpid" },
+>  		{ XFS_MOUNT_DISCARD,		",discard" },
+>  		{ XFS_MOUNT_LARGEIO,		",largeio" },
+> -		{ XFS_MOUNT_DAX,		",dax" },
+> +		{ XFS_MOUNT_DAX_ALWAYS,		",dax" },
+>  		{ 0, NULL }
+>  	};
+>  	struct xfs_mount	*mp = XFS_M(root->d_sb);
+> @@ -1244,7 +1244,7 @@ xfs_fc_parse_param(
+>  		return 0;
+>  #ifdef CONFIG_FS_DAX
+>  	case Opt_dax:
+> -		mp->m_flags |= XFS_MOUNT_DAX;
+> +		mp->m_flags |= XFS_MOUNT_DAX_ALWAYS;
+>  		return 0;
+>  #endif
+>  	default:
+> @@ -1437,7 +1437,7 @@ xfs_fc_fill_super(
+>  	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+>  		sb->s_flags |= SB_I_VERSION;
+>  
+> -	if (mp->m_flags & XFS_MOUNT_DAX) {
+> +	if (mp->m_flags & XFS_MOUNT_DAX_ALWAYS) {
+>  		bool rtdev_is_dax = false, datadev_is_dax;
+>  
+>  		xfs_warn(mp,
+> @@ -1451,7 +1451,7 @@ xfs_fc_fill_super(
+>  		if (!rtdev_is_dax && !datadev_is_dax) {
+>  			xfs_alert(mp,
+>  			"DAX unsupported by block device. Turning off DAX.");
+> -			mp->m_flags &= ~XFS_MOUNT_DAX;
+> +			mp->m_flags &= ~XFS_MOUNT_DAX_ALWAYS;
+>  		}
+>  		if (xfs_sb_version_hasreflink(&mp->m_sb)) {
+>  			xfs_alert(mp,
+> -- 
+> 2.25.1
+> 
