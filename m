@@ -2,337 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 154131A950A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 09:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C54D41A9513
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 09:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2635302AbgDOHqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 03:46:16 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41982 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2635297AbgDOHqH (ORCPT
+        id S2635315AbgDOHsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 03:48:25 -0400
+Received: from mx04.melco.co.jp ([192.218.140.144]:59542 "EHLO
+        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2635311AbgDOHsX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 03:46:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9so17883040wrc.8;
-        Wed, 15 Apr 2020 00:46:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=70RoicXZ/eY1XFEiBVyjiV4GvnURO5ZqIfVmQBlofXE=;
-        b=VrUTJ/g3PUbloG+UeHuWDUdZXuWB3CGHbaj160UCGvB2zzJSG8UOKezzNAVVZIwQdT
-         lkL8s2G3KS8e32mIGan11jzAA0pXF+wGxzpHblpTyr+U48M3/w+ZXSZrC8t97uL3FXGJ
-         h9HG5JcE8NCGpKj0KaptiT8jXKq5NKf7jD/6UTYPlbY6BL7TmtkLv/qckNdUef44u0Cv
-         aLDEI45YCOpcR/5bH0a4VTVyr1ZnhxDCIFHc4eZOkq9JBasXsb/wIJfysmE2HaqHqxAs
-         8GnWu7w+3iW3NT3jH/TepfrFsCvoB0zpoUaWpGLyAY2y7kTre2mdxQ3mLSZfiME0svII
-         FPAA==
-X-Gm-Message-State: AGi0PuYUliTq6r0/tTu5DONhNgMyg7vuqh/ABbg6Qa+Fb5RH5J9CzZ8K
-        TIC9vuFQVk+jVD82pMbhTLM=
-X-Google-Smtp-Source: APiQypL9OHD8HGM5jysFKhcrci72ZSDDzy43/jEhV0zLTIDErn8i6b3rr5GYG8JaOr12aixx2Zt69w==
-X-Received: by 2002:adf:a406:: with SMTP id d6mr27060342wra.79.1586936763378;
-        Wed, 15 Apr 2020 00:46:03 -0700 (PDT)
-Received: from darkstar ([51.154.17.58])
-        by smtp.gmail.com with ESMTPSA id y7sm23001625wmb.43.2020.04.15.00.46.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Apr 2020 00:46:02 -0700 (PDT)
-Date:   Wed, 15 Apr 2020 09:46:00 +0200
-From:   Patrick Bellasi <patrick.bellasi@matbug.net>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200415074600.GA26984@darkstar>
-References: <20200403123020.13897-1-qais.yousef@arm.com>
- <20200414182152.GB20442@darkstar>
+        Wed, 15 Apr 2020 03:48:23 -0400
+Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
+        by mx04.melco.co.jp (Postfix) with ESMTP id 4B7F33A43A9;
+        Wed, 15 Apr 2020 16:48:21 +0900 (JST)
+Received: from mr04.melco.co.jp (unknown [127.0.0.1])
+        by mr04.imss (Postfix) with ESMTP id 492DxK1vXQzRkHC;
+        Wed, 15 Apr 2020 16:48:21 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr04.melco.co.jp (Postfix) with ESMTP id 492DxK1bTRzRjKt;
+        Wed, 15 Apr 2020 16:48:21 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 492DxK1GH3zRkBs;
+        Wed, 15 Apr 2020 16:48:21 +0900 (JST)
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.58])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 492DxK1055zRjJW;
+        Wed, 15 Apr 2020 16:48:21 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cYkIbQQVN2CAp/EvgSq31TdcJ3+BUDlXExlJwHhdjTUTJ4gJUoUiLZbYBlsuy9iFzXGN9BZd6uBLIA/1kwIperLH+gETIIvXKS7bxsQFuw6s6ia+GvcsNMFUPdAySNFtFvvhR3HcDr/rWhf28yBxppklYWNnkDK/j61TQt4PfCoqw9+F9tt5BzmIqgR/QG/DWOqm/yMRYEfGdzDOJuA1g+0aCF5IsWS6lbgME1rVMTraB/VptuFo6S3xN/pljE1izbG+HbtJrk+xKmFgKjYT45F2oLLukf/cdHbk8ZW+QA0QW3c2vrTnfIcrmXR7SBZ06sd4CE9yQZrdKADn9sYabw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p7Y+1FjTZO/Dhuo4ezOfq0KGI/C0safWyZkyFfK2T2k=;
+ b=bAW8k0JNIUuXiSX9OpYlVBQnh0VrM990+QjdiBcZmXsxN60mTZTTh+PzljR3MQyNI0zvDVBl4Xul9gvXIiiCH4GxD6uhH4+CMWJdl2t92rdUmFH2qGA27/jEc2gOr0+doLCCe1tu+oLBm5EVe+z0cmf/BiEr/Pq52RbOcSuLay6NbEJSk/aKi/KM/aIIon+qJa0J0lYLo/T9jP9uXoh+II1JKLgv7nw5VQG6/cFqXjiWr2cq2CKkxM5ciTL3SWUFn55fGyYgKZh4L2h5NQhslYkHvey42aetAlWksNAb2TT+FyOHonI/AmQST07l7FNZ4PgukHR/Fl4BzXXEMivJrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p7Y+1FjTZO/Dhuo4ezOfq0KGI/C0safWyZkyFfK2T2k=;
+ b=KTufnvm5pGFL1SDJyNwKyydXqkjqIsWGV20rUfZw8kUEIBWFBDHjBd0mlVmJ6eDe2lhsw+ddi289aujjr9YNULpbCN9CjrT+mxKhNofQKvCoVATw1GsNKqd5sTYIPeLj74f7bMvBJ2jDKNbIXtqOQZzJjVwwElUb7PJ1AMUu4Og=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY1PR01MB1803.jpnprd01.prod.outlook.com (52.133.163.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2900.24; Wed, 15 Apr 2020 07:48:20 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::c5d6:a88e:62c6:4b96%3]) with mapi id 15.20.2900.028; Wed, 15 Apr 2020
+ 07:48:20 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     =?utf-8?B?J1BhbGkgUm9ow6FyJw==?= <pali@kernel.org>
+CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'namjae.jeon@samsung.com'" <namjae.jeon@samsung.com>,
+        "'sj1557.seo@samsung.com'" <sj1557.seo@samsung.com>,
+        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Ohara.Eiji@bk.MitsubishiElectric.co.jp" 
+        <Ohara.Eiji@bk.MitsubishiElectric.co.jp>
+Subject: RE: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
+ above U+FFFF
+Thread-Topic: [PATCH 1/4] exfat: Simplify exfat_utf8_d_hash() for code points
+ above U+FFFF
+Thread-Index: AQHWCfgm33iC4HYp6U6hpobeaScABqhrVdFggAIevgCAARtD4IAAZbCAgAd0CHCAAHnvgIABFVvAgAB2xICAARY8kA==
+Date:   Wed, 15 Apr 2020 07:46:27 +0000
+Deferred-Delivery: Wed, 15 Apr 2020 07:48:00 +0000
+Message-ID: <TY1PR01MB157892A6218DBF733EDC0F1590DB0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <TY1PR01MB15782019FA3094015950830590C70@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200403204037.hs4ae6cl3osogrso@pali>
+ <TY1PR01MB1578D63C6F303DE805D75DAA90C20@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200407100648.phkvxbmv2kootyt7@pali>
+ <TY1PR01MB1578892F886C62868F87663B90C00@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200408090435.i3ufmbfinx5dyd7w@pali>
+ <TY1PR01MB15784063EED4CEC93A2B501390DD0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200413101007.lbey6q5u6jz3ulmr@pali>
+ <TY1PR01MB15782010C68C0C568A6AE68690DA0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+ <20200414094753.kk2q2elgtwl6ubft@pali>
+In-Reply-To: <20200414094753.kk2q2elgtwl6ubft@pali>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1dc93944-b2ce-47ff-a838-08d7e1115e1f
+x-ms-traffictypediagnostic: TY1PR01MB1803:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB18031808A7B35A4C52FC0F7090DB0@TY1PR01MB1803.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 0374433C81
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(366004)(376002)(346002)(396003)(136003)(39860400002)(66476007)(66946007)(6506007)(186003)(66446008)(76116006)(71200400001)(54906003)(64756008)(7696005)(316002)(8936002)(4326008)(2906002)(66556008)(81156014)(52536014)(5660300002)(45080400002)(86362001)(33656002)(55016002)(478600001)(26005)(9686003)(8676002)(6916009)(107886003);DIR:OUT;SFP:1102;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: c41KxSJ+pknGTfLP/5abRYyzHO6gw0m8Hyc5h2iffMiodgM9JEn79ASVyZvuHbnfeksgB/Hu+3Wv+25w6/iTK/kuEg19Oo+oxOySFzHau7gWpO+VoUD2bL/1TiQZvixOV8V1ikBVdnfedQq46KK6bxTjbH/teXIEEHZ1gh8Z54MOtFeVXNNcww3o7hQP/dA6g8QUVRzK/exmmnfVbxtLULb9X7KZ+HMxIRyW0JDPQUB58+82nLqMKwCgbY2gUiLdGJmnop8LCG9sqAP5+0qLwPCYUd+X7uwlSY6Ph7swd4awIg54aCaBRD9raJJKG/pOpJh8S69upp89JqX/rQvR+0nvn0U3yDj9IFMTlpPrRoEn/MWY728R18aUOimpqVQgJIERlfl+oRaDWFKywxz1bq6vxcFC4lYjbj541XNyfLbRfsfGKynPKvhszI/ezQ5b
+x-ms-exchange-antispam-messagedata: yixxIB28/uniQHEphVJZ2QRRMiKhGJqj+lZEqiQCguQirZTDg/3CBGavpawHPrH6SDg99o7v7vsUFo87tECTt/PtVvaDm4tR3OCW6R+tBedfXr3Jw9PM8VVu0qG8v45B2wdhHOvnv7f8AN5Je9S2ng==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414182152.GB20442@darkstar>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dc93944-b2ce-47ff-a838-08d7e1115e1f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2020 07:48:20.5571
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: od6XfwxOBjcaxMyuJOKnW5IYlMiAzwCYNzWwMuUy+DAtdSCpvlroC+tCvpDvjOyeXoMySkt5M3EzdJnXg4qBjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1803
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14-Apr 20:21, Patrick Bellasi wrote:
-> Hi Qais!
-
-Hello againa!
-
-> On 03-Apr 13:30, Qais Yousef wrote:
-> 
-> [...]
-> 
-> > diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-> > index d4f6215ee03f..91204480fabc 100644
-> > --- a/include/linux/sched/sysctl.h
-> > +++ b/include/linux/sched/sysctl.h
-> > @@ -59,6 +59,7 @@ extern int sysctl_sched_rt_runtime;
-> >  #ifdef CONFIG_UCLAMP_TASK
-> >  extern unsigned int sysctl_sched_uclamp_util_min;
-> >  extern unsigned int sysctl_sched_uclamp_util_max;
-> > +extern unsigned int sysctl_sched_rt_default_uclamp_util_min;
-> 
-> nit-pick: I would prefer to keep the same prefix of the already
-> exising knobs, i.e. sysctl_sched_uclamp_util_min_rt
-> 
-> The same change for consistency should be applied to all the following
-> symbols related to "uclamp_util_min_rt".
-> 
-> NOTE: I would not use "default" as I think that what we are doing is
-> exactly force setting a user_defined value for all RT tasks. More on
-> that later...
-
-Had a second tought on that...
-
-> 
-> >  #endif
-> >  
-> >  #ifdef CONFIG_CFS_BANDWIDTH
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 1a9983da4408..a726b26a5056 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -797,6 +797,27 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
-> >  /* Max allowed maximum utilization */
-> >  unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
-> >  
-> > +/*
-> > + * By default RT tasks run at the maximum performance point/capacity of the
-> > + * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
-> > + * SCHED_CAPACITY_SCALE.
-> > + *
-> > + * This knob allows admins to change the default behavior when uclamp is being
-> > + * used. In battery powered devices, particularly, running at the maximum
-> > + * capacity and frequency will increase energy consumption and shorten the
-> > + * battery life.
-> > + *
-> > + * This knob only affects the default value RT has when a new RT task is
-> > + * forked or has just changed policy to RT, given the user hasn't modified the
-> > + * uclamp.min value of the task via sched_setattr().
-> > + *
-> > + * This knob will not override the system default sched_util_clamp_min defined
-> > + * above.
-> > + *
-> > + * Any modification is applied lazily on the next RT task wakeup.
-> > + */
-> > +unsigned int sysctl_sched_rt_default_uclamp_util_min = SCHED_CAPACITY_SCALE;
-> > +
-> >  /* All clamps are required to be less or equal than these values */
-> >  static struct uclamp_se uclamp_default[UCLAMP_CNT];
-> >  
-> > @@ -924,6 +945,14 @@ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
-> >  	return uc_req;
-> >  }
-> >  
-> > +static void uclamp_rt_sync_default_util_min(struct task_struct *p)
-> > +{
-> > +	struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
-> 
-> Don't we have to filter for RT tasks only here?
-
-I think this is still a valid point.
-
-> > +
-> > +	if (!uc_se->user_defined)
-> > +		uclamp_se_set(uc_se, sysctl_sched_rt_default_uclamp_util_min, false);
-> 
-> Here you are actually setting a user-requested value, why not marking
-> it as that, i.e. by using true for the last parameter?
-
-I think you don't want to set user_defined to ensure we keep updating
-the value every time the task is enqueued, in case the "default"
-should be updated at run-time.
-
-> Moreover, by keeping user_defined=false I think you are not getting
-> what you want for RT tasks running in a nested cgroup.
-> 
-> Let say a subgroup is still with the util_min=1024 inherited from the
-> system defaults, in uclamp_tg_restrict() we will still return the max
-> value and not what you requested for. Isn't it?
-
-This is also not completely true since perhaps you assume that if an
-RT task is running in a nested group with a non tuned uclamp_max then
-that's probably what we want.
-
-There is still a small concern due to the fact we don't distinguish
-CFS and RT tasks when it comes to cgroup clamp values, which
-potentially could still generate the same issue. Let say for example
-you wanna allow CFS tasks to be boosted to max (util_min=1024) but
-still want to run RT tasks only at lower OPPs.
-Not sure if that could be a use case tho.
- 
-> IOW, what about:
-> 
-> ---8<---
-> static void uclamp_sync_util_min_rt(struct task_struct *p)
-> {
-> 	struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
-> 
->   if (likely(uc_se->user_defined || !rt_task(p)))
->     return;
-> 
->   uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt, true);
-                                                          ^^^^
-                     This should remain false as in your patch.
-> }
-> ---8<---
-
-Still, I was thinking that perhaps it would be better to massage the
-code above into the generation of the effective value, in uclamp_eff_get().
-
-Since you wanna (possibly) update the value at each enqueue time,
-that's what conceptually is represented by the "effective clamp
-value": a value that is computed by definition at enqueue time by
-aggregating all the requests and constraints.
-
-Poking with the effective value instead of the requested value will
-fix also the ambiguity above, where we set a "requested values" with
-user-defined=false.
-
-> > +}
-> > +
-> >  unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
-> >  {
-> >  	struct uclamp_se uc_eff;
-> > @@ -1030,6 +1059,12 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> >  	if (unlikely(!p->sched_class->uclamp_enabled))
-> >  		return;
-> >  
-> > +	/*
-> > +	 * When sysctl_sched_rt_default_uclamp_util_min value is changed by the
-> > +	 * user, we apply any new value on the next wakeup, which is here.
-> > +	 */
-> > +	uclamp_rt_sync_default_util_min(p);
-> > +
-> >  	for_each_clamp_id(clamp_id)
-> >  		uclamp_rq_inc_id(rq, p, clamp_id);
-> >  
-> > @@ -1121,12 +1156,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  				loff_t *ppos)
-> >  {
-> >  	bool update_root_tg = false;
-> > -	int old_min, old_max;
-> > +	int old_min, old_max, old_rt_min;
-> >  	int result;
-> >  
-> >  	mutex_lock(&uclamp_mutex);
-> >  	old_min = sysctl_sched_uclamp_util_min;
-> >  	old_max = sysctl_sched_uclamp_util_max;
-> > +	old_rt_min = sysctl_sched_rt_default_uclamp_util_min;
-> 
-> Perpahs it's just my OCD but, is not "old_min_rt" reading better?
-> 
-> >  
-> >  	result = proc_dointvec(table, write, buffer, lenp, ppos);
-> >  	if (result)
-> > @@ -1134,12 +1170,23 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  	if (!write)
-> >  		goto done;
-> >  
-> > +	/*
-> > +	 * The new value will be applied to all RT tasks the next time they
-> > +	 * wakeup, assuming the task is using the system default and not a user
-> > +	 * specified value. In the latter we shall leave the value as the user
-> > +	 * requested.
-> > +	 */
-> 
-> Should not this comment go before the next block?
-> 
-> >  	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
-> >  	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
-> >  		result = -EINVAL;
-> >  		goto undo;
-> >  	}
-> >  
-> > +	if (sysctl_sched_rt_default_uclamp_util_min > SCHED_CAPACITY_SCALE) {
-> > +		result = -EINVAL;
-> > +		goto undo;
-> > +	}
-> > +
-> >  	if (old_min != sysctl_sched_uclamp_util_min) {
-> >  		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
-> >  			      sysctl_sched_uclamp_util_min, false);
-> > @@ -1165,6 +1212,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  undo:
-> >  	sysctl_sched_uclamp_util_min = old_min;
-> >  	sysctl_sched_uclamp_util_max = old_max;
-> > +	sysctl_sched_rt_default_uclamp_util_min = old_rt_min;
-> >  done:
-> >  	mutex_unlock(&uclamp_mutex);
-> >  
-> > @@ -1207,9 +1255,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
-> >  		if (uc_se->user_defined)
-> >  			continue;
-> >  
-> > -		/* By default, RT tasks always get 100% boost */
-> > +		/*
-> > +		 * By default, RT tasks always get 100% boost, which the admins
-> > +		 * are allowed to change via
-> > +		 * sysctl_sched_rt_default_uclamp_util_min knob.
-> > +		 */
-> >  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-> > -			clamp_value = uclamp_none(UCLAMP_MAX);
-> > +			clamp_value = sysctl_sched_rt_default_uclamp_util_min;
-> >
-> >  		uclamp_se_set(uc_se, clamp_value, false);
-> >  	}
-> > @@ -1241,9 +1293,13 @@ static void uclamp_fork(struct task_struct *p)
-> >  	for_each_clamp_id(clamp_id) {
-> >  		unsigned int clamp_value = uclamp_none(clamp_id);
-> >  
-> > -		/* By default, RT tasks always get 100% boost */
-> > +		/*
-> > +		 * By default, RT tasks always get 100% boost, which the admins
-> > +		 * are allowed to change via
-> > +		 * sysctl_sched_rt_default_uclamp_util_min knob.
-> > +		 */
-> >  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-> > -			clamp_value = uclamp_none(UCLAMP_MAX);
-> > +			clamp_value = sysctl_sched_rt_default_uclamp_util_min;
-> >  
-> 
-> This is not required, look at this Quentin's patch:
-> 
->    Message-ID: <20200414161320.251897-1-qperret@google.com>
->    https://lore.kernel.org/lkml/20200414161320.251897-1-qperret@google.com/
-> 
-> >  		uclamp_se_set(&p->uclamp_req[clamp_id], clamp_value, false);
-> >  	}
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index ad5b88a53c5a..0272ae8c6147 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -465,6 +465,13 @@ static struct ctl_table kern_table[] = {
-> >  		.mode		= 0644,
-> >  		.proc_handler	= sysctl_sched_uclamp_handler,
-> >  	},
-> > +	{
-> > +		.procname	= "sched_rt_default_util_clamp_min",
-> > +		.data		= &sysctl_sched_rt_default_uclamp_util_min,
-> > +		.maxlen		= sizeof(unsigned int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= sysctl_sched_uclamp_handler,
-> > +	},
-> >  #endif
-> >  #ifdef CONFIG_SCHED_AUTOGROUP
-> >  	{
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+PiA+IFVDUy0yLCBVQ1MtNCwgYW5kIFVURi0xNiB0ZXJtcyBkbyBub3QgYXBwZWFyIGluIHRoZSBl
+eGZhdCBzcGVjaWZpY2F0aW9uLg0KPiA+IEl0IGp1c3Qgc2F5cyAiVW5pY29kZSIuDQo+IA0KPiBU
+aGF0IGlzIGJlY2F1c2UgaW4gTVMgd29ybGQsICJVbmljb2RlIiB0ZXJtIGxvdCBvZiB0aW1lcyBt
+ZWFucyBVQ1MtMiBvciBVVEYtMTYuIA0KDQpGb3IgZXhhbXBsZSwgdGhlIEpvbGlldCBTcGVjaWZp
+Y2F0aW9uIGRlc2NyaWJlcyB1c2luZyBVQ1MtMiBmb3IgY2hhcmFjdGVyIHNldHMuDQpTaW1pbGFy
+bHksIHRoZSBVREYgU3BlY2lmaWNhdGlvbiBkZXNjcmliZXMgdXNpbmcgVW5pY29kZSBWZXJzaW9u
+IDIuMCBmb3IgY2hhcmFjdGVyIHNldHMuDQpIb3dldmVyLCBXaW5kb3dzIEZpbGUgU3lzdGVtcyBh
+bHNvIGFjY2VwdHMgVVRGLTE2IGVuY29kZWQgVUNTLTQuDQpUaGUgZm91bmRhdGlvbiBvZiB0aGVp
+ciBtYWluIHByb2R1Y3QoV2luZG93cyBOVCkgd2FzIGRlc2lnbmVkIGluIHRoZSBlcmEgd2hlbiBV
+VEYtMTYgYW5kIFVDUy0yIHdlcmUgZXF1YWwuDQpUaGUgbm9uLUJNUCBwbGFpbnMgd2VyZSBwcm9i
+YWJseSBub3QgZnVsbHkgY29uc2lkZXJlZC4NCg0KPiBZb3UgbmVlZCB0byBoYXZlIGEgY3J5c3Rh
+bCBiYWxsIHRvIGNvcnJlY3RseSB1bmRlcnN0YW5kIHRoZWlyIHNwZWNpZmljYXRpb25zLg0KDQpF
+eGFjdGx5ISENCk15IGNyeXN0YWwgYmFsbCBzYXlzIC4uLg0KIlRoZXkndmUgZGVzaWduZWQgRDgw
+MC1ERkZGIHRvIGJlIGEgbXlzdGVyaW91cyBhcmVhLCBzbyBpdCdzIGdvaW5nIHRocm91Z2ggaXQu
+Ig0KDQo+ID4gTWljcm9zb2Z0J3MgRmlsZSBTeXN0ZW1zIHVzZXMgdGhlIFVURi0xNiBlbmNvZGVk
+IFVDUy00IGNvZGUgc2V0Lg0KPiA+IFRoZSBjaGFyYWN0ZXIgdHlwZSBpcyBiYXNpY2FsbHkgJ3dj
+aGFyX3QnKDE2Yml0KS4NCj4gPiBUaGUgZGVzY3JpcHRpb24gIjAwMDBoIHRvIEZGRkZoIiBhbHNv
+IGFzc3VtZXMgdGhlIHVzZSBvZiAnd2NoYXJfdCcuDQo+ID4NCj4gPiBUaGlzIOKAnDAwMDBoIHRv
+IEZGRkZo4oCdIGFsc28gaW5jbHVkZXMgc3Vycm9nYXRlIGNoYXJhY3RlcnMoVStEODAwIHRvDQo+
+ID4gVStERkZGKSwgYnV0IHRoZXNlIHNob3VsZCBub3QgYmUgY29udmVydGVkIHRvIHVwcGVyIGNh
+c2UuDQo+ID4gUGFzc2luZyBhIHN1cnJvZ2F0ZSBjaGFyYWN0ZXIgdG8gUnRsVXBjYXNlVW5pY29k
+ZUNoYXIoKSBvbiBXaW5kb3dzLCBqdXN0IHJldHVybnMgdGhlIHNhbWUgdmFsdWUuDQo+ID4gKCog
+UnRsVXBjYXNlVW5pY29kZUNoYXIoKSBpcyBvbmUgb2YgV2luZG93cyBuYXRpdmUgQVBJKQ0KPiA+
+DQo+ID4gSWYgdGhlIHVwY2FzZS10YWJsZSBjb250YWlucyBzdXJyb2dhdGUgY2hhcmFjdGVycywg
+ZXhmYXRfdG91cHBlcigpIHdpbGwgY2F1c2UgaW5jb3JyZWN0IGNvbnZlcnNpb24uDQo+ID4gV2l0
+aCB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiwgdGhlIHJlc3VsdHMgb2YgZXhmYXRfdXRmOF9k
+X2NtcCgpIGFuZCBleGZhdF91bmluYW1lX25jbXAoKSBtYXkgZGlmZmVyLg0KPiA+DQo+ID4gVGhl
+IG5vcm1hbCBleGZhdCdzIHVwY2FzZS10YWJsZSBkb2VzIG5vdCBjb250YWluIHN1cnJvZ2F0ZSBj
+aGFyYWN0ZXJzLCBzbyB0aGUgcHJvYmxlbSBkb2VzIG5vdCBvY2N1ci4NCj4gPiBUbyBiZSBtb3Jl
+IHN0cmljdC4uLg0KPiA+IEQ4MDBoIHRvIERGRkZoIHNob3VsZCBiZSBleGNsdWRlZCB3aGVuIGxv
+YWRpbmcgdXBjYXNlLXRhYmxlIG9yIGluIGV4ZmF0X3RvdXBwZXIoKS4NCj4gDQo+IEV4YWN0bHks
+IHRoYXQgaXMgd2h5IHN1cnJvZ2F0ZSBwYWlycyBjYW5ub3QgYmUgcHV0IGludG8gYW55ICJ0byB1
+cHBlciINCj4gZnVuY3Rpb24uIE9yIHJhdGhlciAidG8gdXBwZXIiIGZ1bmN0aW9uIG5lZWRzIHRv
+IGJlIGlkZW50aXR5IGZvciB0aGVtIHRvIG5vdCBicmVhayBhbnl0aGluZy4gInRvIHVwcGVyIiBk
+b2VzIG5vdCBtYWtlDQo+IGFueSBzZW5zZSBvbiBvbmUgdTE2IGl0ZW0gZnJvbSBVVEYtMTYgc2Vx
+dWVuY2Ugd2hlbiB5b3UgZG8gbm90IGhhdmUgYSBjb21wbGV0ZSBjb2RlIHBvaW50Lg0KPiBTbyBB
+UEkgZm9yIFVURi0xNiAidG8gdXBwZXIiIGZ1bmN0aW9uIG5lZWRzIHRvIHRha2UgZnVsbCBzdHJp
+bmcsIG5vdCBqdXN0IG9uZSB1MTYuDQo+DQo+IFNvIGZvciBjb2RlIHBvaW50cyBhYm92ZSBVK0ZG
+RkYgaXQgaXMgbmVlZGVkIHNvbWUgb3RoZXIgbWVjaGFuaXNtIGhvdyB0byByZXByZXNlbnQgdXBj
+YXNlIHRhYmxlIChlLmcuIGJ5IHByb3ZpZGluZyBmdWxsDQo+IFVURi0xNiBwYWlyIG9yIGNvZGUg
+cG9pbnQgZW5jb2RlZCBpbiBVVEYtMzIpLiBBbmQgdGhpcyBpcyB1bmtub3duIGFuZCByZWFzb24g
+d2h5IEkgcHV0IHF1ZXN0aW9uIHdoaWNoIHdhcyBJSVJDIGZvcndhcmRlZA0KPiB0byBNUy4NCg0K
+VGhhdCdzIGV4YWN0bHkgdGhlIGNhc2Ugd2l0aCB0aGUgImdlbmVyaWMiIFVURi0xNiB0b3VwcGVy
+IGZ1bmN0aW9uLg0KSG93ZXZlciwgZXhmYXQgKGFuZCBvdGhlciBNUy1GUydzKSBkb2VzIG5vdCBy
+ZXF1aXJlIHVwcGVyY2FzZSBjb252ZXJzaW9uIGZvciBub24tQk1QIHBsYWlucyBjaGFyYWN0ZXJz
+Lg0KRm9yIG5vbi1CTVAgY2hhcmFjdGVycywgSSB0aGluayBpdCdzIGVub3VnaCB0byBqdXN0IGRv
+IG5vdGhpbmcgKG5vIHNraXAsIG5vIGNvbnZlcnNpb24pLlNvIGxpa2UgV2luZG93cy4NCg0KDQo+
+ID4gV1RGLTggaXMgbmV3IHRvIG1lLg0KPiA+IFRoYXQncyBhbiBpbnRlcmVzdGluZyBpZGVhLCBi
+dXQgaXMgaXQgbmVlZGVkIGZvciBleGZhdD8NCj4gPg0KPiA+IEZvciBjaGFyYWN0ZXJzIG92ZXIg
+VStGRkZGLA0KPiA+ICAtRm9yIFVURi0zMiwgYSB2YWx1ZSBvZiAweDEwMDAwIG9yIG1vcmUgIC1G
+b3IgVVRGLTE2LCB0aGUgdmFsdWUgZnJvbQ0KPiA+IDB4ZDgwMCB0byAweGRmZmYgSSB0aGluayB0
+aGVzZSBhcmUganVzdCAiZG9uJ3QgY29udmVydCB0byB1cHBlcmNhc2UuIg0KPiA+DQo+ID4gSWYg
+dGhlIEZpbGUgTmFtZSBEaXJlY3RvcnkgRW50cnkgY29udGFpbnMgaWxsZWdhbCBzdXJyb2dhdGUN
+Cj4gPiBjaGFyYWN0ZXJzKHN1Y2ggYXMgb25lIHVucGFpcmVkIHN1cnJvZ2F0ZSBoYWxmKSwgaXQg
+d2lsbCBzaW1wbHkgYmUgaWdub3JlZCBieSB1dGYxNnNfdG9fdXRmOHMoKS4NCj4gDQo+IFRoaXMg
+aXMgdGhlIGV4YW1wbGUgd2h5IGl0IGNhbiBiZSB1c2VmdWwgZm9yIGV4ZmF0IG9uIGxpbnV4LiBl
+eGZhdCBmaWxlbmFtZSBjYW4gY29udGFpbiBqdXN0IHNlcXVlbmNlIG9mIHVucGFpcmVkIGhhbHZl
+cw0KPiBvZiBzdXJyb2dhdGUgcGFpcnMuIFN1Y2ggdGhpbmcgaXMgbm90IHJlcHJlc2VudGFibGUg
+aW4gVVRGLTgsIGJ1dCB2YWxpZCBpbiBleGZhdC4NCj4gVGhlcmVmb3JlIGN1cnJlbnQgbGludXgg
+a2VybmVsIGV4ZmF0IGRyaXZlciB3aXRoIFVURi04IGVuY29kaW5nIGNhbm5vdCBoYW5kbGUgc3Vj
+aCBmaWxlbmFtZXMuIEJ1dCB3aXRoIFdURi04IGl0IGlzIHBvc3NpYmxlLg0KDQpJbiBmYWN0LCBl
+eGZhdChhbmQgb3RoZXIgTVMtRlNzKSBhY2NlcHQgdW5wYWlyZWQgc3Vycm9nYXRlIGNoYXJhY3Rl
+cnMuDQpCdXQgdGhpcyBpcyBpbGxlZ2FsIHVuaWNvZGUuDQpBbHNvLCBpdCBpcyB2ZXJ5IHJhcmVs
+eSBnZW5lcmF0ZWQgYnkgbm9ybWFsIHVzZXIgb3BlcmF0aW9uIChleGNlcHQgZm9yIFZGQVQgc2hv
+cnRuYW1lKS4NCklsbGVnYWwgdW5pY29kZSBjaGFyYWN0ZXJzIHdlcmUgb2Z0ZW4gYSBzZWN1cml0
+eSByaXNrIGFuZCBJIHRoaW5rIHRoZXkgc2hvdWxkIG5vdCBiZSBhY2NlcHRlZC4gZXZlbiBpZiBw
+b3NzaWJsZS4NCg0KPiBTbyBpZiB3ZSB3YW50IHRoYXQgdXNlcnNwYWNlIHdvdWxkIGJlIGFibGUg
+dG8gcmVhZCBzdWNoIGZpbGVzIGZyb20gZXhmYXQgZnMsIHNvbWUgbWVjaGFuaXNtIGZvciBjb252
+ZXJ0aW5nICJ1bnBhaXJlZCBoYWx2ZXMiDQo+IHRvIE5VTEwtdGVybSBjaGFyKiBzdHJpbmcgc3Vp
+dGFibGUgZm9yIGZpbGVuYW1lcyBpcyBuZWVkZWQuIEFuZCBXVEYtOCBzZWVtcyBsaWtlIGEgZ29v
+ZCBjaG9pY2UgYXMgaXQgaXMgYmFja3dhcmQgY29tcGF0aWJsZQ0KPiB3aXRoIFVURi04Lg0KDQpJ
+IHRoaW5rIHRoZXJlIGFyZSB2ZXJ5IGZldyByZXF1aXJlbWVudHMgdG8gYWNjZXNzIHN1Y2ggZmls
+ZSBuYW1lcy4NCkl0IGlzIHJhcmUgdG8gdXNlIG5vbi1CTVAgY2hhcmFjdGVycyBpbiBmaWxlIG5h
+bWVzLCBhbmQgaXQgaXMgZXZlbiByYXJlciB0byBpbGxlZ2FsbHkgcmVjb3JkIG9ubHkgaGFsZiBv
+ZiB0aGVtLg0KDQo+ID4gc3RyaW5nIGFmdGVyIHV0ZjggY29udmVyc2lvbiBkb2VzIG5vdCBpbmNs
+dWRlIGlsbGVnYWwgYnl0ZSBzZXF1ZW5jZS4NCj4gDQo+IFllcywgYnV0IHRoaXMgaXMgbG9vc3kg
+Y29udmVyc2lvbi4gV2hlbiB5b3Ugd291bGQgaGF2ZSB0d28gZmlsZW5hbWVzIHdpdGggZGlmZmVy
+ZW50ICJzdXJyb2dhdGUgaGFsdmVzIiB0aGV5IHdvdWxkIGJlIGNvbnZlcnRlZA0KPiB0byBzYW1l
+IGZpbGUgbmFtZS4gU28geW91IHdvdWxkIG5vdCBiZSBhYmxlIHRvIGFjY2VzcyBib3RoIG9mIHRo
+ZW0uDQoNCkkgYWxzbyB0aGluayB0aGVyZSBpcyBhIHByb2JsZW0gd2l0aCB0aGlzIGNvbnZlcnNp
+b24uDQpJbGxlZ2FsIGJ5dGUgc2VxdWVuY2VzIGFyZSBzdHJpcHBlZCBvZmYsIGFuZCBiZWhhdmUg
+YXMgaWYgdGhleSBkaWRuJ3QgZXhpc3QgDQpmcm9tIHRoZSBiZWdpbm5pbmcgKGxpa2UgYSBsZWdh
+bCBVVEYtOCBzdHJpbmcpLg0KSSB0aGluayBpdCdzIHNhZmVzdCB0byBmYWlsIHRoZSBjb252ZXJz
+aW9uIGlmIGl0IGRldGVjdHMgYW4gaWxsZWdhbCBieXRlIHNlcXVlbmNlLg0KQW5kIGl0J3MgYWxz
+byBwb3B1bGFyIHRvIHJlcGxhY2UgaXQgd2l0aCBhbm90aGVyIGNoYXJhY3RlcihzdWNoIGFzJ18g
+JykuDQoobm90IHBlcmZlY3QsIGJ1dCB3b3JrcyByZWFzb25hYmx5KQ0KDQpBbnl3YXksIHdlIGRv
+bid0IG5lZWQgdG8gY29udmVydCBub24tQk1QIGNoYXJhY3RlcnMgb3IgdW5wYWlyZWQgc3Vycm9n
+YXRlIGNoYXJhY3RlcnMgDQp0byB1cHBlcmNhc2UgaW4gZXhmYXQoYW5kIG90aGVyIE1TLUZTcyku
+DQoNCg0KQlINCi0tLQ0KS29oYWRhIFRldHN1aGlybyA8S29oYWRhLlRldHN1aGlyb0BkYy5NaXRz
+dWJpc2hpRWxlY3RyaWMuY28uanA+DQo=
