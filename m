@@ -2,91 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A9E1AA46D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 15:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 357901AA946
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 16:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636093AbgDONZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 09:25:35 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38242 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2636090AbgDONZG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 09:25:06 -0400
-Received: by mail-pj1-f68.google.com with SMTP id t40so6672649pjb.3;
-        Wed, 15 Apr 2020 06:25:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VxzOHBakm6zWRy000AuKfccE4q5d/hsyCc04Zt0DJtg=;
-        b=IRZ0H8DcQ2OaXUc/yZtJgNL6K8Kx4uKT+N1omloeQ5Up8gtBfHz0pMmHPOFIh+KY0o
-         BLvYaaZG0Y2X2gf9vclLe4Mzc9kAv1m27aqljqlzq9vVMY3IDG7egZC1nER4qWu8nhxc
-         Rq2s83bupsK0AEKNwJlvCbrCH6er9+Qk9kXZh2V87xjycZBldqU0qQn35bGY868GaOUF
-         sE7yOONXD7QbWLOAkDKIy1GAUmr09Ux+sldzykA9CrL+BnCtt58M6d7hsFAnEJQqB9mL
-         ZOEmNUBQw05vKN6I3gJugVn+640CJZ3DPO82S8kHbTnWUjkKpSpBXL82fREbQCwwDkcX
-         L1Dw==
-X-Gm-Message-State: AGi0PuYsxlMo9zy/2c/lHHWifFBbmK/8GOuIX4Ith2NBS9NcTIMWtFN4
-        K7rqaEK7DmIqk3di2nObq1A=
-X-Google-Smtp-Source: APiQypLzsjEy5ye1O+lv4UjZnyAkJCntXBLPPdDHpWm50UQu9/3cAd14/acJ8Zmqjk3bVWJOaNRWQw==
-X-Received: by 2002:a17:902:8608:: with SMTP id f8mr4959948plo.110.1586957105130;
-        Wed, 15 Apr 2020 06:25:05 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id z63sm13828068pfb.20.2020.04.15.06.25.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 06:25:04 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 757A040277; Wed, 15 Apr 2020 13:25:03 +0000 (UTC)
-Date:   Wed, 15 Apr 2020 13:25:03 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 3/5] blktrace: refcount the request_queue during ioctl
-Message-ID: <20200415132503.GX11244@42.do-not-panic.com>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-4-mcgrof@kernel.org>
- <20200414154044.GB25765@infradead.org>
- <20200415061649.GS11244@42.do-not-panic.com>
- <20200415071425.GA21099@infradead.org>
- <20200415123434.GU11244@42.do-not-panic.com>
- <20200415123925.GA14925@infradead.org>
+        id S2636375AbgDON6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 09:58:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38180 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2633783AbgDON6h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 09:58:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 08777AC19;
+        Wed, 15 Apr 2020 13:58:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8E38D1E1250; Wed, 15 Apr 2020 15:58:34 +0200 (CEST)
+Date:   Wed, 15 Apr 2020 15:58:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 6/8] fs/ext4: Update ext4_should_use_dax()
+Message-ID: <20200415135834.GI6126@quack2.suse.cz>
+References: <20200414040030.1802884-1-ira.weiny@intel.com>
+ <20200414040030.1802884-7-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415123925.GA14925@infradead.org>
+In-Reply-To: <20200414040030.1802884-7-ira.weiny@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 05:39:25AM -0700, Christoph Hellwig wrote:
-> On Wed, Apr 15, 2020 at 12:34:34PM +0000, Luis Chamberlain wrote:
-> > I'll pile up a fix. I've also considered doing a full review of callers
-> > outside of the core block layer using it, and maybe just unexporting
-> > this. It was originally exported due to commit d86e0e83b ("block: export
-> > blk_{get,put}_queue()") to fix a scsi bug, but I can't find such
-> > respective fix. I suspec that using bdgrab()/bdput() seems more likely
-> > what drivers should be using. That would allow us to keep this
-> > functionality internal.
-> > 
-> > Think that's worthy review?
+On Mon 13-04-20 21:00:28, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Probably.  I did in fact very quickly look into that but then gave
-> up due to the fair amount of modular users.
+> Change the logic of ext4_should_use_dax() to support using the inode dax
+> flag OR the overriding tri-state mount option.
+> 
+> While we are at it change the function to ext4_enable_dax() as this
+> better reflects the ask.
 
-Alright, then might as well then verify if the existing practice of
-bdgrab()/bdput() is indeed valid logic, as otherwise we'd be puting
-the atomic context / sleep concern to bdput(). As noted earlier I
-am able to confirm easily that bdgrab() can be called in atomic contex,
-however I cannot easily yet vet for *why* this was a safe assumption for
-bdput().
+I disagree with the renaming. ext4_enable_dax() suggests it enables
+something. It does not. I'd either leave ext4_should_use_dax() or maybe
+change it to ext4_should_enable_dax() if you really like the "enable" word
+:).
 
-  Luis
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/ext4/inode.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index fa0ff78dc033..e9d582e516bc 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4383,9 +4383,11 @@ int ext4_get_inode_loc(struct inode *inode, struct ext4_iloc *iloc)
+>  		!ext4_test_inode_state(inode, EXT4_STATE_XATTR));
+>  }
+>  
+> -static bool ext4_should_use_dax(struct inode *inode)
+> +static bool ext4_enable_dax(struct inode *inode)
+>  {
+> -	if (!test_opt(inode->i_sb, DAX))
+> +	unsigned int flags = EXT4_I(inode)->i_flags;
+> +
+> +	if (test_opt2(inode->i_sb, NODAX))
+>  		return false;
+>  	if (!S_ISREG(inode->i_mode))
+>  		return false;
+> @@ -4397,7 +4399,13 @@ static bool ext4_should_use_dax(struct inode *inode)
+>  		return false;
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY))
+>  		return false;
+> -	return true;
+> +	if (!bdev_dax_supported(inode->i_sb->s_bdev,
+> +				inode->i_sb->s_blocksize))
+> +		return false;
+> +	if (test_opt(inode->i_sb, DAX))
+> +		return true;
+> +
+> +	return (flags & EXT4_DAX_FL) == EXT4_DAX_FL;
+
+flags & EXT4_DAX_FL is enough here, isn't it?
+
+								Honza
+
+>  }
+>  
+>  void ext4_set_inode_flags(struct inode *inode)
+> @@ -4415,7 +4423,7 @@ void ext4_set_inode_flags(struct inode *inode)
+>  		new_fl |= S_NOATIME;
+>  	if (flags & EXT4_DIRSYNC_FL)
+>  		new_fl |= S_DIRSYNC;
+> -	if (ext4_should_use_dax(inode))
+> +	if (ext4_enable_dax(inode))
+>  		new_fl |= S_DAX;
+>  	if (flags & EXT4_ENCRYPT_FL)
+>  		new_fl |= S_ENCRYPTED;
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
