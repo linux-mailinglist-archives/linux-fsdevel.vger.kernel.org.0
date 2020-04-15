@@ -2,123 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E97091AB2D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 22:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 631A51AB347
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 23:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442089AbgDOUj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 16:39:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:5824 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438376AbgDOUj0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 16:39:26 -0400
-IronPort-SDR: YXdlE5sGDTE2nXHPYp4kFm1d1ULAFC95iW/NGpKO3KD8QEyQse0Epkx0/tVgBFWUMZY0e+c20+
- 1BMw/cYLxkGg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 13:39:25 -0700
-IronPort-SDR: SCt4dNj4WEUs8M1Y/+OmMuJVAREuUDMSfkTCsNZ/iC/VnmW7zYxANvKOU14AxwPNRx9l6aKLI2
- fIpf58+6za0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,388,1580803200"; 
-   d="scan'208";a="245783322"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Apr 2020 13:39:25 -0700
-Date:   Wed, 15 Apr 2020 13:39:25 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/8] fs/ext4: Introduce DAX inode flag
-Message-ID: <20200415203924.GD2309605@iweiny-DESK2.sc.intel.com>
-References: <20200414040030.1802884-1-ira.weiny@intel.com>
- <20200414040030.1802884-5-ira.weiny@intel.com>
- <20200415120846.GG6126@quack2.suse.cz>
+        id S2442354AbgDOVUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 17:20:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51048 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438890AbgDOVUm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 17:20:42 -0400
+Received: from ip5f5bd698.dynamic.kabel-deutschland.de ([95.91.214.152] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jOpSU-0004QT-Au; Wed, 15 Apr 2020 21:20:34 +0000
+Date:   Wed, 15 Apr 2020 23:20:33 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     syzbot <syzbot+d9ae59d4662c941e39c6@syzkaller.appspotmail.com>,
+        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, christian@brauner.io, guro@fb.com,
+        kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mhocko@suse.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        Alexey Gladkov <gladkov.alexey@gmail.com>
+Subject: Re: [PATCH] proc: Handle umounts cleanly
+Message-ID: <20200415212033.vrkybww6gwbja76x@wittgenstein>
+References: <0000000000001c5eaa05a357f2e1@google.com>
+ <878siwioxj.fsf@x220.int.ebiederm.org>
+ <20200415193612.7cmmbwfpof6pvsqv@wittgenstein>
+ <873694ijvt.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200415120846.GG6126@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <873694ijvt.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 02:08:46PM +0200, Jan Kara wrote:
-> On Mon 13-04-20 21:00:26, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
-> > 
-> > Set the flag to be user visible and changeable.  Set the flag to be
-> > inherited.  Allow applications to change the flag at any time.
-> > 
-> > Finally, on regular files, flag the inode to not be cached to facilitate
-> > changing S_DAX on the next creation of the inode.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  fs/ext4/ext4.h  | 13 +++++++++----
-> >  fs/ext4/ioctl.c | 21 ++++++++++++++++++++-
-> >  2 files changed, 29 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index 61b37a052052..434021fcec88 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -415,13 +415,16 @@ struct flex_groups {
-> >  #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
-> >  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
-> >  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
-> > +
-> > +#define EXT4_DAX_FL			0x00800000 /* Inode is DAX */
-> > +
+On Wed, Apr 15, 2020 at 03:17:26PM -0500, Eric W. Biederman wrote:
+> Christian Brauner <christian.brauner@ubuntu.com> writes:
 > 
-> You seem to be using somewhat older kernel... EXT4_EOFBLOCKS_FL doesn't
-> exist anymore (but still it's good to leave it reserved for some time so
-> the value you've chosen is OK).
-
-I'm on top of 5.6 released.  Did this get removed for 5.7?  I've heard there are
-some boot issues with 5.7-rc1 so I'm holding out for rc2.
-
+> > On Wed, Apr 15, 2020 at 01:28:24PM -0500, Eric W. Biederman wrote:
+> >> syzbot writes:
+> >> > KASAN: use-after-free Read in dput (2)
+> >> >
+> >> > proc_fill_super: allocate dentry failed
+> >> > ==================================================================
+> >> > BUG: KASAN: use-after-free in fast_dput fs/dcache.c:727 [inline]
+> >> > BUG: KASAN: use-after-free in dput+0x53e/0xdf0 fs/dcache.c:846
+> >> > Read of size 4 at addr ffff88808a618cf0 by task syz-executor.0/8426
+> >> >
+> >> > CPU: 0 PID: 8426 Comm: syz-executor.0 Not tainted 5.6.0-next-20200412-syzkaller #0
+> >> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> > Call Trace:
+> >> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >> >  dump_stack+0x188/0x20d lib/dump_stack.c:118
+> >> >  print_address_description.constprop.0.cold+0xd3/0x315 mm/kasan/report.c:382
+> >> >  __kasan_report.cold+0x35/0x4d mm/kasan/report.c:511
+> >> >  kasan_report+0x33/0x50 mm/kasan/common.c:625
+> >> >  fast_dput fs/dcache.c:727 [inline]
+> >> >  dput+0x53e/0xdf0 fs/dcache.c:846
+> >> >  proc_kill_sb+0x73/0xf0 fs/proc/root.c:195
+> >> >  deactivate_locked_super+0x8c/0xf0 fs/super.c:335
+> >> >  vfs_get_super+0x258/0x2d0 fs/super.c:1212
+> >> >  vfs_get_tree+0x89/0x2f0 fs/super.c:1547
+> >> >  do_new_mount fs/namespace.c:2813 [inline]
+> >> >  do_mount+0x1306/0x1b30 fs/namespace.c:3138
+> >> >  __do_sys_mount fs/namespace.c:3347 [inline]
+> >> >  __se_sys_mount fs/namespace.c:3324 [inline]
+> >> >  __x64_sys_mount+0x18f/0x230 fs/namespace.c:3324
+> >> >  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+> >> >  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+> >> > RIP: 0033:0x45c889
+> >> > Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> >> > RSP: 002b:00007ffc1930ec48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> >> > RAX: ffffffffffffffda RBX: 0000000001324914 RCX: 000000000045c889
+> >> > RDX: 0000000020000140 RSI: 0000000020000040 RDI: 0000000000000000
+> >> > RBP: 000000000076bf00 R08: 0000000000000000 R09: 0000000000000000
+> >> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+> >> > R13: 0000000000000749 R14: 00000000004ca15a R15: 0000000000000013
+> >> 
+> >> Looking at the code now that it the internal mount of proc is no
+> >> longer used it is possible to unmount proc.   If proc is unmounted
+> >> the fields of the pid namespace that were used for filesystem
+> >> specific state are not reinitialized.
+> >> 
+> >> Which means that proc_self and proc_thread_self can be pointers to
+> >> already freed dentries.
+> >> 
+> >> The reported user after free appears to be from mounting and
+> >> unmounting proc followed by mounting proc again and using error
+> >> injection to cause the new root dentry allocation to fail.  This in
+> >> turn results in proc_kill_sb running with proc_self and
+> >> proc_thread_self still retaining their values from the previous mount
+> >> of proc.  Then calling dput on either proc_self of proc_thread_self
+> >> will result in double put.  Which KASAN sees as a use after free.
+> >> 
+> >> Solve this by always reinitializing the filesystem state stored
+> >> in the struct pid_namespace, when proc is unmounted.
+> >> 
+> >> Reported-by: syzbot+72868dd424eb66c6b95f@syzkaller.appspotmail.com
+> >> Fixes: 69879c01a0c3 ("proc: Remove the now unnecessary internal mount of proc")
+> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> >
+> > Was looking at that earlier right before eod briefly here as well.
+> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 > 
-> > @@ -813,6 +818,17 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
-> >  	return error;
-> >  }
-> >  
-> > +static void ext4_dax_dontcache(struct inode *inode, unsigned int flags)
-> > +{
-> > +	struct ext4_inode_info *ei = EXT4_I(inode);
-> > +
-> > +	if (S_ISDIR(inode->i_mode))
-> > +		return;
-> > +
-> > +	if ((ei->i_flags ^ flags) == EXT4_DAX_FL)
-> > +		inode->i_state |= I_DONTCACHE;
-> > +}
-> > +
-> 
-> You probably want to use the function you've introduced in the XFS series
-> here...
+> The syzbot report or did you see the failure another way?
 
-you mean:
+Yep, the syzbot report. I haven't seen other issues so far.
 
-flag_inode_dontcache()
-???
-
-Yes that is done.  I sent this prior to v8 (where that was added) of the other
-series...
-
-Ira
-
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Christian
