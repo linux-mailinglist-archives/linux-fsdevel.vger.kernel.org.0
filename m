@@ -2,247 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86DA71AAF70
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 19:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E651AAFA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 19:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410883AbgDORXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 13:23:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52044 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2410902AbgDORXP (ORCPT
+        id S2411030AbgDOR1w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 13:27:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411013AbgDOR1n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 13:23:15 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03FH7RuK113048
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 13:23:14 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30dnuu51fy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 13:23:14 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 15 Apr 2020 18:23:07 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Apr 2020 18:23:05 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03FHN8AT38207846
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Apr 2020 17:23:08 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C224552051;
-        Wed, 15 Apr 2020 17:23:08 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.199.54.166])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 09DFE5204F;
-        Wed, 15 Apr 2020 17:23:06 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, linux-ext4@vger.kernel.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
-        sandeen@sandeen.net
-Subject: [RFCv2 1/1] ext4: Fix race in ext4 mb discard group preallocations
-Date:   Wed, 15 Apr 2020 22:53:01 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1586954511.git.riteshh@linux.ibm.com>
-References: <cover.1586954511.git.riteshh@linux.ibm.com>
+        Wed, 15 Apr 2020 13:27:43 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B974FC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 10:27:42 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id s29so6038085edc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 10:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PQn/ANk0pwHlFuEamxgp0PrtqC/xvAZ3EDlh2VOe0m0=;
+        b=yd+J2FgA/lmkvwZA0iSAyzd7KBbCuB/XPFMuZjRayE9JGURa/42PqYHqh7VHqG6yED
+         /nIczfFJbvdoQAofGTftRvfbs5J6uDzfmUI7zWxFs+8D4fq0K2r/F4vzakBSi+Gwk7Bx
+         X0xvX3stfs4GjV5EQpXvDPsua3QTuXUI9TSVNKzn1db2Q+eV16gw9MpJQd57dpb6Sr/D
+         1E623YfOYHf9Av67Mp04BaCkBoZRhDoZNiVRCSubUb/X8dM1J+YRK975cPajYodiP5EX
+         jhAtPq7673DF9HC3HsRN0ErLQCEH1HelkhzITVfbeLqLsX5cmWmt1bDXCJmLiAloPWcj
+         YC5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PQn/ANk0pwHlFuEamxgp0PrtqC/xvAZ3EDlh2VOe0m0=;
+        b=LS9JMXoXD5yIS9j8QQWPfr8Qh3DUZhLK11f6bt2B7XO7q6gKy7vB1zV4FXhWDestX7
+         1i4dd0u3yILCPgVW7jNKgkhwmMheoXx/XXlAJWWhy54kQ3qFQdZXEauXIWKyPZmZ1pDs
+         /nidS6jCGOI/BtCc4tDtC40fgWpvbU0dswjG6JPRW3hY34ymjAX7qVo9hXqfScO2gHvt
+         C6uZQcrIfGfTfkDD+Z7GleHGu1BzmaQkcZmdW5QwXKjuEKOkU5EOrh0QdOwByYJKm0on
+         KV5FWgA412bSS+6/Cr7KraxAm4PbcFlQNrOSSxv0EbVv9LEJdRngMCs6Si6LHZX0Thpi
+         Pf3Q==
+X-Gm-Message-State: AGi0PuaGGz6RxUG+WojXyIO7d8dy93/fAa1wUh03NK4DbDPz2ROVa6hd
+        hIGc4DVP3Mh67M2b4EtAE9zsbHSrQCrUfLvyy/BG3LQI7O4=
+X-Google-Smtp-Source: APiQypJQto6RgiMwvrOJoJJZzQ2YMTpz2NolWBUDftzJdaKnsDAKa/cP6mTGhuplHbMRPC1NtLSayFuBX50THyRB8Ng=
+X-Received: by 2002:a17:906:1e42:: with SMTP id i2mr5854049ejj.317.1586971661463;
+ Wed, 15 Apr 2020 10:27:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20041517-0028-0000-0000-000003F8D139
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20041517-0029-0000-0000-000024BE84BD
-Message-Id: <533ac1f5b19c520b08f8c99aec5baf8729185714.1586954511.git.riteshh@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-15_06:2020-04-14,2020-04-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=2
- clxscore=1015 phishscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004150124
+References: <20200414040030.1802884-1-ira.weiny@intel.com> <20200414040030.1802884-4-ira.weiny@intel.com>
+ <20200415160307.GJ90651@mit.edu>
+In-Reply-To: <20200415160307.GJ90651@mit.edu>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 15 Apr 2020 10:27:30 -0700
+Message-ID: <CAPcyv4jmBRsexpW2=SxqatbMK_u2aZcGnjeF+76=XwrCHfPoXA@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/8] fs/ext4: Disallow encryption if inode is DAX
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     "Weiny, Ira" <ira.weiny@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There could be a race in function ext4_mb_discard_group_preallocations()
-where the 1st thread may iterate through group's bb_prealloc_list and
-remove all the PAs and add to function's local list head.
-Now if the 2nd thread comes in to discard the group preallocations,
-it will see that the group->bb_prealloc_list is empty and will return 0.
+On Wed, Apr 15, 2020 at 9:03 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Mon, Apr 13, 2020 at 09:00:25PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> >
+> > Encryption and DAX are incompatible.  Changing the DAX mode due to a
+> > change in Encryption mode is wrong without a corresponding
+> > address_space_operations update.
+> >
+> > Make the 2 options mutually exclusive by returning an error if DAX was
+> > set first.
+> >
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+>
+> The encryption flag is inherited from the containing directory, and
+> directories can't have the DAX flag set, so anything we do in
+> ext4_set_context() will be safety belt / sanity checking in nature.
+>
+> But we *do* need to figure out what we do with mount -o dax=always
+> when the file system might have encrypted files.  My previous comments
+> about the verity flag and dax flag applies here.
+>
+> Also note that encrypted files are read/write so we must never allow
+> the combination of ENCRPYT_FL and DAX_FL.  So that may be something
+> where we should teach __ext4_iget() to check for this, and declare the
+> file system as corrupted if it sees this combination.  (For VERITY_FL
+> && DAX_FL that is a combo that we might want to support in the future,
+> so that's probably a case where arguably, we should just ignore the
+> DAX_FL for now.)
 
-Consider for a case where we have less number of groups (for e.g. just group 0),
-this may even return an -ENOSPC error from ext4_mb_new_blocks()
-(where we call for ext4_mb_discard_group_preallocations()).
-But that is wrong, since 2nd thread should have waited for 1st thread to release
-all the PAs and should have retried for allocation. Since 1st thread
-was anyway going to discard the PAs.
-
-This patch fixes this race by introducing two paths (fastpath and
-slowpath). We first try the fastpath via
-ext4_mb_discard_preallocations(). So if any of the group's PA list is
-empty then instead of waiting on the group_lock we continue to discard
-other group's PA. This could help maintain the parallelism in trying to
-discard multiple group's PA list. So if at the end some process is
-not able to find any freed block, then we retry freeing all of the
-groups PA list while holding the group_lock. And in case if the PA list
-is empty, then we try return grp->bb_free which should tell us
-whether there are any free blocks in the given group or not to make any
-forward progress.
-
-Suggested-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/ext4/mballoc.c | 76 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 63 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 1027e01c9011..0728bfd3bc7e 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -3885,7 +3885,27 @@ ext4_mb_release_group_pa(struct ext4_buddy *e4b,
- }
- 
- /*
-- * releases all preallocations in given group
-+ * This function discards all the preallocations for the given group.
-+ * In this there could be a race with another process also trying to discard
-+ * this group's PA. So, if we could not get any PA from grp->bb_prealloc_list
-+ * into our local list (though when initially the list was non-empty),
-+ * then we simply return grp->bb_free. Note that this need
-+ * not be an upper bound value since it may happen that some of the PAs of
-+ * a given group is in process-A local list while some other PAs of the same
-+ * group could end up in process-B local list (this is due to cond_resched()
-+ * busy logic below). But as long as there this process could free some PAs
-+ * or if there are any grp->bb_free blocks freed by some other process, a
-+ * forward progress could be made.
-+ *
-+ * return value could be either of either of below in fastpath:-
-+ *  - 0 of the grp->bb_prealloc_list is empty.
-+ *  - actual discarded PA blocks from grp->bb_prealloc_list.
-+ *  - grp->bb_free.
-+ *
-+ * In case of slowpath, we try to free all the PAs of the given group in the
-+ * similar manner. But if even after taking the group_lock, we find
-+ * that the list is empty, then we return grp->bb_free blocks.
-+ * This will be 0 only when there are acually no free blocks in this group.
-  *
-  * first, we need to decide discard policy:
-  * - when do we discard
-@@ -3894,8 +3914,8 @@ ext4_mb_release_group_pa(struct ext4_buddy *e4b,
-  *   1) how many requested
-  */
- static noinline_for_stack int
--ext4_mb_discard_group_preallocations(struct super_block *sb,
--					ext4_group_t group, int needed)
-+ext4_mb_discard_group_preallocations(struct super_block *sb, ext4_group_t group,
-+				     int needed, bool fastpath)
- {
- 	struct ext4_group_info *grp = ext4_get_group_info(sb, group);
- 	struct buffer_head *bitmap_bh = NULL;
-@@ -3907,9 +3927,8 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
- 	int free = 0;
- 
- 	mb_debug(1, "discard preallocation for group %u\n", group);
--
--	if (list_empty(&grp->bb_prealloc_list))
--		return 0;
-+	if (fastpath && list_empty(&grp->bb_prealloc_list))
-+		goto out_dbg;
- 
- 	bitmap_bh = ext4_read_block_bitmap(sb, group);
- 	if (IS_ERR(bitmap_bh)) {
-@@ -3917,7 +3936,7 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
- 		ext4_set_errno(sb, -err);
- 		ext4_error(sb, "Error %d reading block bitmap for %u",
- 			   err, group);
--		return 0;
-+		goto out_dbg;
- 	}
- 
- 	err = ext4_mb_load_buddy(sb, group, &e4b);
-@@ -3925,7 +3944,7 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
- 		ext4_warning(sb, "Error %d loading buddy information for %u",
- 			     err, group);
- 		put_bh(bitmap_bh);
--		return 0;
-+		goto out_dbg;
- 	}
- 
- 	if (needed == 0)
-@@ -3967,9 +3986,15 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
- 		goto repeat;
- 	}
- 
--	/* found anything to free? */
-+	/*
-+	 * If this list is empty, then return the grp->bb_free. As someone
-+	 * else may have freed the PAs and updated grp->bb_free.
-+	 */
- 	if (list_empty(&list)) {
- 		BUG_ON(free != 0);
-+		mb_debug(1, "Someone may have freed PA for this group %u, grp->bb_free %d\n",
-+			 group, grp->bb_free);
-+		free = grp->bb_free;
- 		goto out;
- 	}
- 
-@@ -3994,6 +4019,9 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
- 	ext4_unlock_group(sb, group);
- 	ext4_mb_unload_buddy(&e4b);
- 	put_bh(bitmap_bh);
-+out_dbg:
-+	mb_debug(1, "discarded (%d) blocks preallocated for group %u fastpath (%d)\n",
-+		 free, group, fastpath);
- 	return free;
- }
- 
-@@ -4464,17 +4492,39 @@ static int ext4_mb_release_context(struct ext4_allocation_context *ac)
- 	return 0;
- }
- 
-+/*
-+ * ext4_mb_discard_preallocations: This function loop over each group's prealloc
-+ * list and try to free it. It may so happen that more than 1 process try to
-+ * call this function in parallel. That's why we initially take a fastpath
-+ * approach in which we first check if the grp->bb_prealloc_list is empty,
-+ * that could mean that, someone else may have removed all of it's PA and added
-+ * into it's local list. So we quickly return from there and try to discard
-+ * next group's PAs. This way we try to parallelize discarding of multiple group
-+ * PAs. But in case if any of the process is unfortunate to not able to free
-+ * any of group's PA, then we retry with slow path which will gurantee that
-+ * either some PAs will be made free or we will get group->bb_free blocks
-+ * (grp->bb_free if non-zero gurantees forward progress in ext4_mb_new_blocks())
-+ */
- static int ext4_mb_discard_preallocations(struct super_block *sb, int needed)
- {
- 	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
- 	int ret;
- 	int freed = 0;
-+	bool fastpath = true;
-+	int tmp_needed;
- 
--	trace_ext4_mb_discard_preallocations(sb, needed);
--	for (i = 0; i < ngroups && needed > 0; i++) {
--		ret = ext4_mb_discard_group_preallocations(sb, i, needed);
-+repeat:
-+	tmp_needed = needed;
-+	trace_ext4_mb_discard_preallocations(sb, tmp_needed);
-+	for (i = 0; i < ngroups && tmp_needed > 0; i++) {
-+		ret = ext4_mb_discard_group_preallocations(sb, i, tmp_needed,
-+							   fastpath);
- 		freed += ret;
--		needed -= ret;
-+		tmp_needed -= ret;
-+	}
-+	if (!freed && fastpath) {
-+		fastpath = false;
-+		goto repeat;
- 	}
- 
- 	return freed;
--- 
-2.21.0
-
+We also have a pending consideration for what MKTME (inline memory
+encryption with programmable hardware keys) means for file-encryption
++ dax. Certainly kernel based software encryption is incompatible with
+dax, but one of the hallway track discussions I wanted to have at LSF
+is whether fscrypt is the right interface for managing inline memory
+encryption. For now, disallowing ENCRPYT_FL + DAX_FL seems ok if
+ENCRPYT_FL always means software encryption, but this is something to
+circle back to once we get MKTME implemented for volume encryption and
+start to look at finer grained (per-directory key) encryption.
