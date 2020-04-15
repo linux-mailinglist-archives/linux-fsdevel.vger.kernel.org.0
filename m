@@ -2,212 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 071C21A97DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 11:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E19871A9807
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 11:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408244AbgDOJGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 05:06:19 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:19515 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393880AbgDOJGJ (ORCPT
+        id S2408330AbgDOJKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 05:10:46 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:20846 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408295AbgDOJKi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 05:06:09 -0400
+        Wed, 15 Apr 2020 05:10:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586941568; x=1618477568;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DntH3FOL+F2qJ4JB8bNfeHvJeRnIrbJq4X8RpN63JaA=;
-  b=fJ0B2pANzlSl0VBrWupGdOmva4z4MMx1j9WLLYI4ZzvzJ2uswJ1Wl0Gx
-   8Ooxc48WFdHDGZE+5IMY5RuqwANcpHqYEToqqDeHtg5o/LriK9cXBx8mN
-   93HQ1td/nUWUA+LmBF9rxvdOzRTixhGsXdL+mhaW1LmfkckG6ZdVCegII
-   p+48iW74DAEACMMnYXkqPhdtC7oZDNjil7WBcZkgqE7QIUeZnvIS147/a
-   +uP3tXdsmOdWZ22vVSUES/xBTr1vtD0OFq5Gya2H/sXa6nqTpF//4Kb+t
-   ccvLNzw66krod8/EuRWcJ7WkYwUOZZGXAAEkoq/G7Ept1afwuD8by3/E+
-   A==;
-IronPort-SDR: mRqp9F8CN+TLjwY52VfuZqc3vxnZ0pCnZySf7JCNjrZSRL7SiPIteA/lhFeyALGNLBid6hyVfJ
- sfVTeaFK67Y/jD3TFjDNl3uhm45QODaau7eeg/dQ47CB2NPbF/qWgCbZW7Qe/oIkDptNx1PkpU
- 2tlmzwvgEa8qccX+WDZB903KG3P9vg7YAaG3xx5DjvPY1AJujgvtQgEj2jhdUuEKMdBBqx71FE
- w5faa5L2wX4wl3OUUcAiwAO3D79AHp8jfGxD6EgEu0RmKN1dVQsucOh7bN7EFjmqFOjcW5JtK/
- e9E=
+  t=1586941837; x=1618477837;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=Y9f6bonRVRKbfBFTJ6042ow30q4UtGVyrgUn9rmSGO9LTGCcRdC8WofV
+   pQOZ0H6yKe/aaNDD+BNgS90h8U1ZF8UbK66PJ1YmaX7PpCAiWx88ZWJnl
+   QHRNWmJ5CoyhnFoUSUTb4PkYCy3hkklpgaz5qH0naIctWKglj0052jDmA
+   eXwvMYLDFTfdHMKAXB4mEfZONSehBXM8Hg7rZob+jiKD1vtTJPtgo/TgW
+   Q8UNzf8aE09/ceAx/Oyusom2TJOisudFHP+nF2mQmrjjhv+0cRboyQOWS
+   chEmdSn4ypyKjl/hkTetEINDjAknJPjPPYwWVbH6joYvCe+G95iBabET2
+   w==;
+IronPort-SDR: 95i4dpGue9eNjoYk2K/9cbOToVeWBBtkiWiQhEHO7EFSD1h2NzcPaGUo/1aPiT4V91hLq1wdEu
+ JkZ8xqP4mXpXp5SOX/Xmby+I5FPE0PQGo64RvyPtXSLe1rR1eWQCBh/n5ZqGNkWddjcHlITDQ7
+ Em2CIJuLg2GWAh9K46RexHbC4bfKgJSCUp2DBrlqFOy3cuWpfNvQik3ltm4DEvJSBQVOAs3W28
+ tUMBtevXNEyg/7USRKfOrqenmsbSwLJ1Q0bmbVgbu7Aa3j23lF8D+9rCxEwKNKlpZ8g2eVSPTQ
+ c0A=
 X-IronPort-AV: E=Sophos;i="5.72,386,1580745600"; 
-   d="scan'208";a="136803003"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2020 17:05:42 +0800
-IronPort-SDR: Wy5oZ7G809To6Zq5kAITRnlSIqD4HksBFE5FIivXLK/u6/AUUrkyzS0MSGO90NQ6T6P4q++gk7
- iriZqjqXiW8zkJxKlkCM+ebXXEWVnG42/WErfpCkXe/wbe1cTEnJ7/JFQLlab3EFD2GSnQeiFe
- ClNHShrkiuITbvWY8iNhdE4/gAURlSRF0hVnpH/BCHDXl7UHDrvDt68PIhggDaMFv8trRnrB76
- wx3L4nirHTrtLWE7VvwxUGkCWX6WsagCTCzvdCge0ovJLco3SZD4Dp/F67/rjH0uqBn9DLJrET
- lpeBCiUPDaOMW09kbDTTM9MF
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 01:56:44 -0700
-IronPort-SDR: dKC1E9AeVkx+muIlHXeFzjxxjuxcWeA+EC5/LsL0rUxOlaPuV09fr9UynNxAPRrWJAJZ9jqo91
- k0PiJ1Fm2nOAcn3XGVTL5SyRHrPUMeq90nx14ewx7oMQPz5AV9mH+nb+qnomacEXrmQ4ep5EKb
- Aw8Y2yG7/IQwN5d6yj8kicVHi2P8B44r/yl3vJws2TEHERx2k77cCAc2mPdSVwhS9V5SSpfMjr
- haPoeyiQqo181Q6b09LTpV1994VC7+ES84sYiw5LaaVkCSPWjv691nR4Tl76Ek5zNtYhAWnUXE
- mtY=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 15 Apr 2020 02:05:41 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v6 11/11] zonefs: use REQ_OP_ZONE_APPEND for sync DIO
-Date:   Wed, 15 Apr 2020 18:05:13 +0900
-Message-Id: <20200415090513.5133-12-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
-References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+   d="scan'208";a="244033359"
+Received: from mail-co1nam04lp2053.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.53])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2020 17:10:32 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D2Xs028JgTBHrlnEvgJ/p8UilVh5M2YVmknCeMUfx9kjOmVae40x9oNfqJVGD3+OJbuHLD3osu3GbQv5GvVEWg7Vj3i12IKHT3oHuILszhJ/V3PR4QjzAV1FPdU6UlImyL4GgSZKStp6C+pvdpbz9AJn9vW7U/47vWLgpfGExKhVbKJAmxKL2rfdAcCmLdDOqlp3h7SsPJvmi43IcG9aUXOkNXMBm45ntMBQg2r9kRXA5ikuFPZJj5S7g8sX4wZL6JgPKIfKlRb/3+DrPn7/JiAO0iikOUiNRIwTnNiPabyf9bNf01b151PTwLi5e/LI71mnB7Nxjp36ipEiTefvnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=i4yOOBoRmCsR/I7VlSR8v7lxEPPqjbgrQ8/cDyGRfMsnOKWxhrGtNBYhAXUytn56jl0PeYD8v1PkAFnyMb4R5rekL2rorkgKqG9L3kiJVV7d+h/gW51sXpSZ+KLPRvRC77wFPPpDO4uGs7e+Irro4zli3w+lxkeWrW6NjsRqAfsvs7ntp9SGYNsDpOkgnPpg+slNmTCtjW8QVtRIGYqTIYni1C/pdUyGSQOf2NCjn6viPb931MUWg2h9YKcx9ik0zKl31ZzDN1ffWc4YiRgHl80JRui8uSMmDH3Xyc+HGH0X5YXoGVn+9SujlNAiyVDZE8ytovBs6k8zCvIIPfjGhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=IB/SQjf9mKvmSURSWenwo2Y3VQ/sD/la2pZc4arPiO0zUuodi/0B2/hzs3r8SJ4FxLAJ+BWlug97gAuhSAN5808A54ZOkWmOLDo4798UwGho/fQBReZ9ouPIcovvEBddtkqaD5FXuN7I/5oV2FFffju3BfoSlkqZPrqGpgdNiTI=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3599.namprd04.prod.outlook.com
+ (2603:10b6:803:4e::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.28; Wed, 15 Apr
+ 2020 09:10:31 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2900.028; Wed, 15 Apr 2020
+ 09:10:31 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v11 01/25] mm: Move readahead prototypes from mm.h
+Thread-Topic: [PATCH v11 01/25] mm: Move readahead prototypes from mm.h
+Thread-Index: AQHWEm/+X7EfNJ2OKkyFI+rGvCts3g==
+Date:   Wed, 15 Apr 2020 09:10:31 +0000
+Message-ID: <SN4PR0401MB3598C4E727F07B81F75EA6719BDB0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200414150233.24495-1-willy@infradead.org>
+ <20200414150233.24495-2-willy@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 65f197ce-a436-4803-b0c4-08d7e11cd958
+x-ms-traffictypediagnostic: SN4PR0401MB3599:
+x-microsoft-antispam-prvs: <SN4PR0401MB35994BDEBB4BCA4B125C10749BDB0@SN4PR0401MB3599.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-forefront-prvs: 0374433C81
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(346002)(39860400002)(396003)(366004)(376002)(136003)(54906003)(52536014)(91956017)(4326008)(4270600006)(19618925003)(5660300002)(33656002)(110136005)(316002)(186003)(6506007)(71200400001)(76116006)(2906002)(86362001)(7416002)(7696005)(558084003)(9686003)(8936002)(66476007)(26005)(8676002)(66556008)(64756008)(55016002)(66446008)(81156014)(66946007)(478600001);DIR:OUT;SFP:1102;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: eUZe0V7dpVRe38Qbak+OXZnXMUyn2jT1GpYBt1XC9V2HJ5Xyago/PL79j8PJ7619d2CH50W5/iS8pHaam7mIgNQNZRbvaicuoSDerHprEzxgP9eZJqtrq9NCCJfQs9YMXgGl6qtzBp4d7ksbQayumPPqBS6CDrh6YZs1sL8hb29So5FmZ3+SogifY4lT5oc4Lnpiluy0Kc4JsJSjE11g2BR6gOGvCVYGdoS0ma1fhbU0L9Gqp8MJxV4b9QkZINmG1LAisy4WG3FHHVRYneSdJLQmbKvqj2qWLu2IiPYOCWSZ7VOOw6UsRiltYIMccHb81ZRxHgAeqp91etm8J71vbObfkjaVsk7VG0W1VgwAasdDG4wu0CyiIFMukSnep8TMPWZ2CEg6zwLe/HFT06TK5J3vkUI0yfY6iCBO1bdyFsmebbUmDkmrO2pLCi/Q4mzl
+x-ms-exchange-antispam-messagedata: qMgzjpfOIFZuBsMKi59iqhZM4tReTMgOPKnS76raZ+3KcRbEKzSza4SbkVVNRsq7pQNw92YUmPtibdfvwNsFL6xcmfv8FsxlbXu+l+1sqzi8JXYMmslLPvDBbFkpr37lGmGMCfDrJoh7IfJfypgRvg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65f197ce-a436-4803-b0c4-08d7e11cd958
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2020 09:10:31.7107
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZbWFK7kHx7rw59FVwqO+RfmhITfV5Zu3Iza6p3zBcbXwLKKUzSNQZljS1V+A4nBx7sdlgjD7Vb6RJQ1i/Ys64htwy3/Mpy5928efB5Ofej0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3599
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Synchronous direct I/O to a sequential write only zone can be issued using
-the new REQ_OP_ZONE_APPEND request operation. As dispatching multiple
-BIOs can potentially result in reordering, we cannot support asynchronous
-IO via this interface.
-
-We also can only dispatch up to queue_max_zone_append_sectors() via the
-new zone-append method and have to return a short write back to user-space
-in case an IO larger than queue_max_zone_append_sectors() has been issued.
-
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/zonefs/super.c | 80 ++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 72 insertions(+), 8 deletions(-)
-
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 3ce9829a6936..0bf7009f50a2 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -20,6 +20,7 @@
- #include <linux/mman.h>
- #include <linux/sched/mm.h>
- #include <linux/crc32.h>
-+#include <linux/task_io_accounting_ops.h>
- 
- #include "zonefs.h"
- 
-@@ -596,6 +597,61 @@ static const struct iomap_dio_ops zonefs_write_dio_ops = {
- 	.end_io			= zonefs_file_write_dio_end_io,
- };
- 
-+static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	struct block_device *bdev = inode->i_sb->s_bdev;
-+	unsigned int max;
-+	struct bio *bio;
-+	ssize_t size;
-+	int nr_pages;
-+	ssize_t ret;
-+
-+	nr_pages = iov_iter_npages(from, BIO_MAX_PAGES);
-+	if (!nr_pages)
-+		return 0;
-+
-+	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
-+	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
-+	iov_iter_truncate(from, max);
-+
-+	bio = bio_alloc_bioset(GFP_NOFS, nr_pages, &fs_bio_set);
-+	if (!bio)
-+		return -ENOMEM;
-+
-+	bio_set_dev(bio, bdev);
-+	bio->bi_iter.bi_sector = zi->i_zsector;
-+	bio->bi_write_hint = iocb->ki_hint;
-+	bio->bi_ioprio = iocb->ki_ioprio;
-+	bio->bi_opf = REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE;
-+	if (iocb->ki_flags & IOCB_DSYNC)
-+		bio->bi_opf |= REQ_FUA;
-+
-+	ret = bio_iov_iter_get_pages(bio, from);
-+	if (unlikely(ret)) {
-+		bio_io_error(bio);
-+		return ret;
-+	}
-+	size = bio->bi_iter.bi_size;
-+	task_io_account_write(ret);
-+
-+	if (iocb->ki_flags & IOCB_HIPRI)
-+		bio_set_polled(bio, iocb);
-+
-+	ret = submit_bio_wait(bio);
-+
-+	bio_put(bio);
-+
-+	zonefs_file_write_dio_end_io(iocb, size, ret, 0);
-+	if (ret >= 0) {
-+		iocb->ki_pos += size;
-+		return size;
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle direct writes. For sequential zone files, this is the only possible
-  * write path. For these files, check that the user is issuing writes
-@@ -611,6 +667,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
- 	struct super_block *sb = inode->i_sb;
-+	bool sync = is_sync_kiocb(iocb);
-+	bool append = false;
- 	size_t count;
- 	ssize_t ret;
- 
-@@ -619,7 +677,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
- 	 * on the inode lock but the second goes through but is now unaligned).
- 	 */
--	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb) &&
-+	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !sync &&
- 	    (iocb->ki_flags & IOCB_NOWAIT))
- 		return -EOPNOTSUPP;
- 
-@@ -643,16 +701,22 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Enforce sequential writes (append only) in sequential zones */
--	mutex_lock(&zi->i_truncate_mutex);
--	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && iocb->ki_pos != zi->i_wpoffset) {
-+	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ) {
-+		mutex_lock(&zi->i_truncate_mutex);
-+		if (iocb->ki_pos != zi->i_wpoffset) {
-+			mutex_unlock(&zi->i_truncate_mutex);
-+			ret = -EINVAL;
-+			goto inode_unlock;
-+		}
- 		mutex_unlock(&zi->i_truncate_mutex);
--		ret = -EINVAL;
--		goto inode_unlock;
-+		append = sync;
- 	}
--	mutex_unlock(&zi->i_truncate_mutex);
- 
--	ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
--			   &zonefs_write_dio_ops, is_sync_kiocb(iocb));
-+	if (append)
-+		ret = zonefs_file_dio_append(iocb, from);
-+	else
-+		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
-+				   &zonefs_write_dio_ops, sync);
- 	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
- 	    (ret > 0 || ret == -EIOCBQUEUED)) {
- 		if (ret > 0)
--- 
-2.24.1
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
