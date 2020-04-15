@@ -2,255 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B68721AAF6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 19:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DA71AAF70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 19:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410876AbgDORWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 13:22:43 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:49966 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406316AbgDORWl (ORCPT
+        id S2410883AbgDORXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 13:23:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52044 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2410902AbgDORXP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 13:22:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TvdP111_1586971349;
-Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TvdP111_1586971349)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Apr 2020 01:22:35 +0800
-Date:   Thu, 16 Apr 2020 01:22:29 +0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 20/20] fuse,virtiofs: Add logic to free up a memory range
-Message-ID: <20200415172229.GA121484@rsjd01523.et2sqa>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-21-vgoyal@redhat.com>
- <20200326000904.GA34937@rsjd01523.et2sqa>
- <20200327140114.GB32717@redhat.com>
- <20200327220606.GA119028@rsjd01523.et2sqa>
- <20200414193045.GB210453@redhat.com>
+        Wed, 15 Apr 2020 13:23:15 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03FH7RuK113048
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 13:23:14 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30dnuu51fy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 13:23:14 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 15 Apr 2020 18:23:07 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Apr 2020 18:23:05 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03FHN8AT38207846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Apr 2020 17:23:08 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C224552051;
+        Wed, 15 Apr 2020 17:23:08 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.54.166])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 09DFE5204F;
+        Wed, 15 Apr 2020 17:23:06 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        sandeen@sandeen.net
+Subject: [RFCv2 1/1] ext4: Fix race in ext4 mb discard group preallocations
+Date:   Wed, 15 Apr 2020 22:53:01 +0530
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1586954511.git.riteshh@linux.ibm.com>
+References: <cover.1586954511.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414193045.GB210453@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20041517-0028-0000-0000-000003F8D139
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20041517-0029-0000-0000-000024BE84BD
+Message-Id: <533ac1f5b19c520b08f8c99aec5baf8729185714.1586954511.git.riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-15_06:2020-04-14,2020-04-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=2
+ clxscore=1015 phishscore=0 priorityscore=1501 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004150124
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 03:30:45PM -0400, Vivek Goyal wrote:
-> On Sat, Mar 28, 2020 at 06:06:06AM +0800, Liu Bo wrote:
-> > On Fri, Mar 27, 2020 at 10:01:14AM -0400, Vivek Goyal wrote:
-> > > On Thu, Mar 26, 2020 at 08:09:05AM +0800, Liu Bo wrote:
-> > > 
-> > > [..]
-> > > > > +/*
-> > > > > + * Find first mapping in the tree and free it and return it. Do not add
-> > > > > + * it back to free pool. If fault == true, this function should be called
-> > > > > + * with fi->i_mmap_sem held.
-> > > > > + */
-> > > > > +static struct fuse_dax_mapping *inode_reclaim_one_dmap(struct fuse_conn *fc,
-> > > > > +							 struct inode *inode,
-> > > > > +							 bool fault)
-> > > > > +{
-> > > > > +	struct fuse_inode *fi = get_fuse_inode(inode);
-> > > > > +	struct fuse_dax_mapping *dmap;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	if (!fault)
-> > > > > +		down_write(&fi->i_mmap_sem);
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Make sure there are no references to inode pages using
-> > > > > +	 * get_user_pages()
-> > > > > +	 */
-> > > > > +	ret = fuse_break_dax_layouts(inode, 0, 0);
-> > > > 
-> > > > Hi Vivek,
-> > > > 
-> > > > This patch is enabling inline reclaim for fault path, but fault path
-> > > > has already holds a locked exceptional entry which I believe the above
-> > > > fuse_break_dax_layouts() needs to wait for, can you please elaborate
-> > > > on how this can be avoided?
-> > > > 
-> > > 
-> > > Hi Liubo,
-> > > 
-> > > Can you please point to the exact lock you are referring to. I will
-> > > check it out. Once we got rid of needing to take inode lock in
-> > > reclaim path, that opended the door to do inline reclaim in fault
-> > > path as well. But I was not aware of this exceptional entry lock.
-> > 
-> > Hi Vivek,
-> > 
-> > dax_iomap_{pte,pmd}_fault has called grab_mapping_entry to get a
-> > locked entry, when this fault gets into inline reclaim, would
-> > fuse_break_dax_layouts wait for the locked exceptional entry which is
-> > locked in dax_iomap_{pte,pmd}_fault?
-> 
-> Hi Liu Bo,
-> 
-> This is a good point. Indeed it can deadlock the way code is written
-> currently.
->
+There could be a race in function ext4_mb_discard_group_preallocations()
+where the 1st thread may iterate through group's bb_prealloc_list and
+remove all the PAs and add to function's local list head.
+Now if the 2nd thread comes in to discard the group preallocations,
+it will see that the group->bb_prealloc_list is empty and will return 0.
 
-It's 100% reproducible on 4.19, but not on 5.x which has xarray for
-dax_layout_busy_page.
+Consider for a case where we have less number of groups (for e.g. just group 0),
+this may even return an -ENOSPC error from ext4_mb_new_blocks()
+(where we call for ext4_mb_discard_group_preallocations()).
+But that is wrong, since 2nd thread should have waited for 1st thread to release
+all the PAs and should have retried for allocation. Since 1st thread
+was anyway going to discard the PAs.
 
-It was weird that on 5.x kernel the deadlock is gone, it turned out
-that xarray search in dax_layout_busy_page simply skips the empty
-locked exceptional entry, I didn't get deeper to find out whether it's
-reasonable, but with that 5.x doesn't run to deadlock.
+This patch fixes this race by introducing two paths (fastpath and
+slowpath). We first try the fastpath via
+ext4_mb_discard_preallocations(). So if any of the group's PA list is
+empty then instead of waiting on the group_lock we continue to discard
+other group's PA. This could help maintain the parallelism in trying to
+discard multiple group's PA list. So if at the end some process is
+not able to find any freed block, then we retry freeing all of the
+groups PA list while holding the group_lock. And in case if the PA list
+is empty, then we try return grp->bb_free which should tell us
+whether there are any free blocks in the given group or not to make any
+forward progress.
 
-thanks,
-liubo
+Suggested-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+ fs/ext4/mballoc.c | 76 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 63 insertions(+), 13 deletions(-)
 
-> Currently we are calling fuse_break_dax_layouts() on the whole file
-> in memory inline reclaim path. I am thinking of changing that. Instead,
-> find a mapped memory range and file offset and call
-> fuse_break_dax_layouts() only on that range (2MB). This should ensure
-> that we don't try to break dax layout in the range where we are holding
-> exceptional entry lock and avoid deadlock possibility.
-> 
-> This also has added benefit that we don't have to unmap the whole
-> file in an attempt to reclaim one memory range. We will unmap only
-> a portion of file and that should be good from performance point of
-> view.
-> 
-> Here is proof of concept patch which applies on top of my internal 
-> tree.
-> 
-> ---
->  fs/fuse/file.c |   72 +++++++++++++++++++++++++++++++++++++++------------------
->  1 file changed, 50 insertions(+), 22 deletions(-)
-> 
-> Index: redhat-linux/fs/fuse/file.c
-> ===================================================================
-> --- redhat-linux.orig/fs/fuse/file.c	2020-04-14 13:47:19.493780528 -0400
-> +++ redhat-linux/fs/fuse/file.c	2020-04-14 14:58:26.814079643 -0400
-> @@ -4297,13 +4297,13 @@ static int fuse_break_dax_layouts(struct
->          return ret;
->  }
->  
-> -/* Find first mapping in the tree and free it. */
-> -static struct fuse_dax_mapping *
-> -inode_reclaim_one_dmap_locked(struct fuse_conn *fc, struct inode *inode)
-> +/* Find first mapped dmap for an inode and return file offset. Caller needs
-> + * to hold inode->i_dmap_sem lock either shared or exclusive. */
-> +static struct fuse_dax_mapping *inode_lookup_first_dmap(struct fuse_conn *fc,
-> +							struct inode *inode)
->  {
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  	struct fuse_dax_mapping *dmap;
-> -	int ret;
->  
->  	for (dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, 0, -1);
->  	     dmap;
-> @@ -4312,18 +4312,6 @@ inode_reclaim_one_dmap_locked(struct fus
->  		if (refcount_read(&dmap->refcnt) > 1)
->  			continue;
->  
-> -		ret = reclaim_one_dmap_locked(fc, inode, dmap);
-> -		if (ret < 0)
-> -			return ERR_PTR(ret);
-> -
-> -		/* Clean up dmap. Do not add back to free list */
-> -		dmap_remove_busy_list(fc, dmap);
-> -		dmap->inode = NULL;
-> -		dmap->start = dmap->end = 0;
-> -
-> -		pr_debug("fuse: %s: reclaimed memory range. inode=%px,"
-> -			 " window_offset=0x%llx, length=0x%llx\n", __func__,
-> -			 inode, dmap->window_offset, dmap->length);
->  		return dmap;
->  	}
->  
-> @@ -4335,30 +4323,70 @@ inode_reclaim_one_dmap_locked(struct fus
->   * it back to free pool. If fault == true, this function should be called
->   * with fi->i_mmap_sem held.
->   */
-> -static struct fuse_dax_mapping *inode_reclaim_one_dmap(struct fuse_conn *fc,
-> -							 struct inode *inode,
-> -							 bool fault)
-> +static struct fuse_dax_mapping *
-> +inode_inline_reclaim_one_dmap(struct fuse_conn *fc, struct inode *inode,
-> +			      bool fault)
->  {
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  	struct fuse_dax_mapping *dmap;
-> +	u64 dmap_start, dmap_end;
->  	int ret;
->  
->  	if (!fault)
->  		down_write(&fi->i_mmap_sem);
->  
-> +	/* Lookup a dmap and corresponding file offset to reclaim. */
-> +	down_read(&fi->i_dmap_sem);
-> +	dmap = inode_lookup_first_dmap(fc, inode);
-> +	if (dmap) {
-> +		dmap_start = dmap->start;
-> +		dmap_end = dmap->end;
-> +	}
-> +	up_read(&fi->i_dmap_sem);
-> +
-> +	if (!dmap)
-> +		goto out_mmap_sem;
->  	/*
->  	 * Make sure there are no references to inode pages using
->  	 * get_user_pages()
->  	 */
-> -	ret = fuse_break_dax_layouts(inode, 0, 0);
-> +	ret = fuse_break_dax_layouts(inode, dmap_start, dmap_end);
->  	if (ret) {
->  		printk("virtio_fs: fuse_break_dax_layouts() failed. err=%d\n",
->  		       ret);
->  		dmap = ERR_PTR(ret);
->  		goto out_mmap_sem;
->  	}
-> +
->  	down_write(&fi->i_dmap_sem);
-> -	dmap = inode_reclaim_one_dmap_locked(fc, inode);
-> +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, dmap_start,
-> +						 dmap_start);
-> +	/* Range already got reclaimed by somebody else */
-> +	if (!dmap)
-> +		goto out_write_dmap_sem;
-> +
-> +	/* still in use. */
-> +	if (refcount_read(&dmap->refcnt) > 1) {
-> +		dmap = NULL;
-> +		goto out_write_dmap_sem;
-> +	}
-> +
-> +	ret = reclaim_one_dmap_locked(fc, inode, dmap);
-> +	if (ret < 0) {
-> +		dmap = NULL;
-> +		goto out_write_dmap_sem;
-> +	}
-> +
-> +	/* Clean up dmap. Do not add back to free list */
-> +	dmap_remove_busy_list(fc, dmap);
-> +	dmap->inode = NULL;
-> +	dmap->start = dmap->end = 0;
-> +
-> +	pr_debug("fuse: %s: inline reclaimed memory range. inode=%px,"
-> +		 " window_offset=0x%llx, length=0x%llx\n", __func__,
-> +		 inode, dmap->window_offset, dmap->length);
-> +
-> +out_write_dmap_sem:
->  	up_write(&fi->i_dmap_sem);
->  out_mmap_sem:
->  	if (!fault)
-> @@ -4379,7 +4407,7 @@ static struct fuse_dax_mapping *alloc_da
->  			return dmap;
->  
->  		if (fi->nr_dmaps) {
-> -			dmap = inode_reclaim_one_dmap(fc, inode, fault);
-> +			dmap = inode_inline_reclaim_one_dmap(fc, inode, fault);
->  			if (dmap)
->  				return dmap;
->  			/* If we could not reclaim a mapping because it
-> 
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 1027e01c9011..0728bfd3bc7e 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3885,7 +3885,27 @@ ext4_mb_release_group_pa(struct ext4_buddy *e4b,
+ }
+ 
+ /*
+- * releases all preallocations in given group
++ * This function discards all the preallocations for the given group.
++ * In this there could be a race with another process also trying to discard
++ * this group's PA. So, if we could not get any PA from grp->bb_prealloc_list
++ * into our local list (though when initially the list was non-empty),
++ * then we simply return grp->bb_free. Note that this need
++ * not be an upper bound value since it may happen that some of the PAs of
++ * a given group is in process-A local list while some other PAs of the same
++ * group could end up in process-B local list (this is due to cond_resched()
++ * busy logic below). But as long as there this process could free some PAs
++ * or if there are any grp->bb_free blocks freed by some other process, a
++ * forward progress could be made.
++ *
++ * return value could be either of either of below in fastpath:-
++ *  - 0 of the grp->bb_prealloc_list is empty.
++ *  - actual discarded PA blocks from grp->bb_prealloc_list.
++ *  - grp->bb_free.
++ *
++ * In case of slowpath, we try to free all the PAs of the given group in the
++ * similar manner. But if even after taking the group_lock, we find
++ * that the list is empty, then we return grp->bb_free blocks.
++ * This will be 0 only when there are acually no free blocks in this group.
+  *
+  * first, we need to decide discard policy:
+  * - when do we discard
+@@ -3894,8 +3914,8 @@ ext4_mb_release_group_pa(struct ext4_buddy *e4b,
+  *   1) how many requested
+  */
+ static noinline_for_stack int
+-ext4_mb_discard_group_preallocations(struct super_block *sb,
+-					ext4_group_t group, int needed)
++ext4_mb_discard_group_preallocations(struct super_block *sb, ext4_group_t group,
++				     int needed, bool fastpath)
+ {
+ 	struct ext4_group_info *grp = ext4_get_group_info(sb, group);
+ 	struct buffer_head *bitmap_bh = NULL;
+@@ -3907,9 +3927,8 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
+ 	int free = 0;
+ 
+ 	mb_debug(1, "discard preallocation for group %u\n", group);
+-
+-	if (list_empty(&grp->bb_prealloc_list))
+-		return 0;
++	if (fastpath && list_empty(&grp->bb_prealloc_list))
++		goto out_dbg;
+ 
+ 	bitmap_bh = ext4_read_block_bitmap(sb, group);
+ 	if (IS_ERR(bitmap_bh)) {
+@@ -3917,7 +3936,7 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
+ 		ext4_set_errno(sb, -err);
+ 		ext4_error(sb, "Error %d reading block bitmap for %u",
+ 			   err, group);
+-		return 0;
++		goto out_dbg;
+ 	}
+ 
+ 	err = ext4_mb_load_buddy(sb, group, &e4b);
+@@ -3925,7 +3944,7 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
+ 		ext4_warning(sb, "Error %d loading buddy information for %u",
+ 			     err, group);
+ 		put_bh(bitmap_bh);
+-		return 0;
++		goto out_dbg;
+ 	}
+ 
+ 	if (needed == 0)
+@@ -3967,9 +3986,15 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
+ 		goto repeat;
+ 	}
+ 
+-	/* found anything to free? */
++	/*
++	 * If this list is empty, then return the grp->bb_free. As someone
++	 * else may have freed the PAs and updated grp->bb_free.
++	 */
+ 	if (list_empty(&list)) {
+ 		BUG_ON(free != 0);
++		mb_debug(1, "Someone may have freed PA for this group %u, grp->bb_free %d\n",
++			 group, grp->bb_free);
++		free = grp->bb_free;
+ 		goto out;
+ 	}
+ 
+@@ -3994,6 +4019,9 @@ ext4_mb_discard_group_preallocations(struct super_block *sb,
+ 	ext4_unlock_group(sb, group);
+ 	ext4_mb_unload_buddy(&e4b);
+ 	put_bh(bitmap_bh);
++out_dbg:
++	mb_debug(1, "discarded (%d) blocks preallocated for group %u fastpath (%d)\n",
++		 free, group, fastpath);
+ 	return free;
+ }
+ 
+@@ -4464,17 +4492,39 @@ static int ext4_mb_release_context(struct ext4_allocation_context *ac)
+ 	return 0;
+ }
+ 
++/*
++ * ext4_mb_discard_preallocations: This function loop over each group's prealloc
++ * list and try to free it. It may so happen that more than 1 process try to
++ * call this function in parallel. That's why we initially take a fastpath
++ * approach in which we first check if the grp->bb_prealloc_list is empty,
++ * that could mean that, someone else may have removed all of it's PA and added
++ * into it's local list. So we quickly return from there and try to discard
++ * next group's PAs. This way we try to parallelize discarding of multiple group
++ * PAs. But in case if any of the process is unfortunate to not able to free
++ * any of group's PA, then we retry with slow path which will gurantee that
++ * either some PAs will be made free or we will get group->bb_free blocks
++ * (grp->bb_free if non-zero gurantees forward progress in ext4_mb_new_blocks())
++ */
+ static int ext4_mb_discard_preallocations(struct super_block *sb, int needed)
+ {
+ 	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
+ 	int ret;
+ 	int freed = 0;
++	bool fastpath = true;
++	int tmp_needed;
+ 
+-	trace_ext4_mb_discard_preallocations(sb, needed);
+-	for (i = 0; i < ngroups && needed > 0; i++) {
+-		ret = ext4_mb_discard_group_preallocations(sb, i, needed);
++repeat:
++	tmp_needed = needed;
++	trace_ext4_mb_discard_preallocations(sb, tmp_needed);
++	for (i = 0; i < ngroups && tmp_needed > 0; i++) {
++		ret = ext4_mb_discard_group_preallocations(sb, i, tmp_needed,
++							   fastpath);
+ 		freed += ret;
+-		needed -= ret;
++		tmp_needed -= ret;
++	}
++	if (!freed && fastpath) {
++		fastpath = false;
++		goto repeat;
+ 	}
+ 
+ 	return freed;
+-- 
+2.21.0
+
