@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 291A61A97F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 11:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 187601A97F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 11:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408261AbgDOJHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 05:07:00 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:19511 "EHLO
+        id S2408265AbgDOJHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 05:07:02 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:19515 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393850AbgDOJFZ (ORCPT
+        with ESMTP id S2393851AbgDOJFZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 15 Apr 2020 05:05:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
   t=1586941525; x=1618477525;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tV5+FI/nWmuJ8QKVHPii1dGIvjypo14JmyE9F4kEeO8=;
-  b=hBVEQJqe6cF1DeQwbGE/XTMWlNakggaXmfkMMlYcz/4x5mJU+d0g95Vz
-   f9MIWIIiUtP1luGv/jIFvI+6L7X5yG1RQSZUzQqhvV3d4ptf2wshulrqn
-   9+1uHo+VKOPmzyDWRAptdJN9JBHoPG2lmFTmvaWTGO1Z7goDk0T64TB/X
-   FyXROEg0wxS7UcuTrlUe4mwwJW9gZ4+sY+OOnV1yE8g9zd+L+6Ol9Q2EG
-   4g3Pv2FvTiEMAbo+aPqEclm+7dOKnyrVD2Smv3W7xcCruPWLdVImIAfIK
-   VCmh7tNOFtfxhLpbT3wz+eyM5SWkvwYB3yF3ARKHAYo6mzdiOB2wLGePF
-   g==;
-IronPort-SDR: qYVXCo5FWRgflf6RW1B/+/p+szRcmfS64iuo3btO+n45aj+rXbvGyQYN8+nwm6oKuNXIwy0zR6
- sIIOpxyNLvb6IXPOKrtxjzglD1fmkl6OVxAXm9vM4ale9dQqXw9Ky31dRjAIMWcQAUlMM4Bj+T
- BsrRvTi/Fb7OoXtSiJtLB/fa7DHeHN5v7C3usUhSFKev01moGL79GgmUk5HR6HNvY7UPtMiZ7y
- vwiiOJHQVWSFPvyXH/w76Y+LLEm+Uop2zwxmDxjplEwhjRwkJ8E+XEq5le5/pAKuCk+0lgYkWd
- LU8=
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=AP8UZmn5ljqVZ4+z4DUJXnQSKmNe/BWD06zNOt2Hu9Q=;
+  b=VzG2zTyEH0GwwOBlMjZKkeBHggWi0fNag6mpeDoYL1jni6lvRfhG8/TW
+   HfS284lcQUUfFUgdxKudXkndtFBJZUhSYstwfDETMvMHRxYWZ2BkntAG2
+   MvSX4+qt+dieyo6W4XgjgGZgzZN7XNOlIJZf19eL/nDjKHvbeh36AFw2C
+   T9v/R0prza9EI70l6qVCqWwUaaPQLeFg4aLz3pvajmaNcOhesb/2vbGep
+   CeaW1GhNwpzWNSwPyqtqLkt8FEk1WNDCTpLPhpiNlty5CKsoyzm9Off2F
+   1xlKJG+xE7N/1HNJdUHbTYcWHwbDRxoM5880ttl4W3tQivgjhkiL01bYT
+   Q==;
+IronPort-SDR: BoaS3ax6/BkDT9G2wTVXayM6EDiVoqcPXACFJCFmwvsvGI6b553jijofHGfjT/2tdI6A4o/133
+ 0wO+u/kbc4T0fsk+6UQpD3GLVhWLIkc7LZd21F38R/iYYPmbrbnhzaWUTkoSc0Jn4y0YNlwc2D
+ 6lviQSrz/2KlAhSflQ3pWbaiYINoC7Mrf2zZGZoQLzmaBWToQ2ynUN3Cj447TuLCuLc6cGu6BL
+ tFKSmFj4vU8RSrm9o29qbC2SSNp3I4qSMflWqyDBcw30bJDhfhpnMTVVrrLqqmbSGIqAMRnjzD
+ mRU=
 X-IronPort-AV: E=Sophos;i="5.72,386,1580745600"; 
-   d="scan'208";a="136802964"
+   d="scan'208";a="136802968"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2020 17:05:23 +0800
-IronPort-SDR: PjldsnGKaw1BRo9i2ltXXGj6sE/mhFa20EyDOKiY55f2TwBWCCI5DXLIDXQHYFJl8F/dWlDmhl
- 5lwIUx+kjO40JoEeUyrmeJw90ODJ/abife7UK1/VFKfBR/rTeyEVkeWYjv/uv3pl92t/F2mcn9
- 4Da9IWknM79MmbcjOhz5qJndNfwhUdZjeEpZm/kpF0E0xJa4///vDtB3HTLbB701mbAkSWYPCh
- BAuNuinXksNm/FCrALTUfekxxpfaSdEbhXnlHhiM9NTfFSMLxzexvnOLcG6nd94A/ceHKx2F68
- HVN9ncyiOi5d0YbXYLkCadP/
+  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2020 17:05:24 +0800
+IronPort-SDR: B0d7AqiFS1GjREfoaSJb+RXjmNj0AWJA1Gy8aev2xHiTtcM722UQhRfBpNAYBXU2Jy2qe2Vl89
+ T8S0bG5/TZrORrvMMvRjoRSJDNI2ZBZpCX9QWY70BWkXX7JJcNkHz7mmPhPbp6IJilj3RnghVU
+ TljiHPtxmNJm458dxPA0GJGrkGYQpCftHD9H3bycmUUcfNfNFh+JKz2I+e9Uj29U3Na1knqHHw
+ WNIrv8se6LYgj1ZifLfocK+wgwOb8PuQGdcNcPSpcXMvYXE+YXpJKyddI80g0woqeJ8bW4sbL2
+ MDHDnhSgQF6WJfV06Jdvbmlz
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 01:56:24 -0700
-IronPort-SDR: L0GDHwqtqtCkJ2tGecHkstjXZ1LCSPSVvPdym8zdmKPZqAAIz2E2BNKwYMWMWU5Ua85KRUfzl+
- G29fydanA2ICZJoqWMmFp1XPQuAIlBTnNmaBlicz6SgL8gZHFl7ZHiyABMhh1oM/bnM3X4o3o9
- OcltSqh+fLb4b+v15a8qXg6z2e9hYpom5OXoQ5ljo1neDxlCkiCNHWCFBIj9QBCTSsgCGcOmQP
- GQya3a5UTKTWX2TBD2Y6M8EVCKvfmVEwOhdQvuenFJR3HjFjF8vBcx8mzQMf4EHqmDXSQ21nG9
- ruo=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 01:56:26 -0700
+IronPort-SDR: G1Az18EKRNd2RXo6CTVI1cHv05AAeOwFl453t9yBSflSgNJ2NdQ+zDYEfF3dY/55pMrCpQ1uZs
+ yKOOGouhzkCtzkficmwp3HTbQ7Q7RavJnD6YchgCuPPV6ZncXuwdI6obYc+BcTjnfWfPlCKifl
+ V6lel/CKL4CFt/pcNwf2cyYbkhV8FWZx3tCq5PvaQJnqUNh8oKY8IjpJ8A3WVWHlEX8Wf9XwRp
+ MWk5r9Vg2rW6VGDyv6OIPaZm045/i/wYuPgwUrxXhDRWh9qVlTkWvTHtCHPfupF3RzIp08ZPRK
+ wjc=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 15 Apr 2020 02:05:21 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 15 Apr 2020 02:05:23 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -59,10 +59,12 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v6 00/11] Introduce Zone Append for writing to zoned block devices
-Date:   Wed, 15 Apr 2020 18:05:02 +0900
-Message-Id: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+Subject: [PATCH v6 01/11] scsi: free sgtables in case command setup fails
+Date:   Wed, 15 Apr 2020 18:05:03 +0900
+Message-Id: <20200415090513.5133-2-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -70,131 +72,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The upcoming NVMe ZNS Specification will define a new type of write
-command for zoned block devices, zone append.
+In case scsi_setup_fs_cmnd() fails we're not freeing the sgtables
+allocated by scsi_init_io(), thus we leak the allocated memory.
 
-When when writing to a zoned block device using zone append, the start
-sector of the write is pointing at the start LBA of the zone to write to.
-Upon completion the block device will respond with the position the data
-has been placed in the zone. This from a high level perspective can be
-seen like a file system's block allocator, where the user writes to a
-file and the file-system takes care of the data placement on the device.
+So free the sgtables allocated by scsi_init_io() in case
+scsi_setup_fs_cmnd() fails.
 
-In order to fully exploit the new zone append command in file-systems and
-other interfaces above the block layer, we choose to emulate zone append
-in SCSI and null_blk. This way we can have a single write path for both
-file-systems and other interfaces above the block-layer, like io_uring on
-zoned block devices, without having to care too much about the underlying
-characteristics of the device itself.
+Technically scsi_setup_scsi_cmnd() does not suffer from this problem, as
+it can only fail if scsi_init_io() fails, so it does not have sgtables
+allocated. But to maintain symmetry and as a measure of defensive
+programming, free the sgtables on scsi_setup_scsi_cmnd() failure as well.
+scsi_mq_free_sgtables() has safeguards against double-freeing of memory so
+this is safe to do.
 
-The emulation works by providing a cache of each zone's write pointer, so
-zone append issued to the disk can be translated to a write with a
-starting LBA of the write pointer. This LBA is used as input zone number
-for the write pointer lookup in the zone write pointer offset cache and
-the cached offset is then added to the LBA to get the actual position to
-write the data. In SCSI we then turn the REQ_OP_ZONE_APPEND request into a
-WRITE(16) command. Upon successful completion of the WRITE(16), the cache
-will be updated to the new write pointer location and the written sector
-will be noted in the request. On error the cache entry will be marked as
-invalid and on the next write an update of the write pointer will be
-scheduled, before issuing the actual write.
+While we're at it, rename scsi_mq_free_sgtables() to scsi_free_sgtables().
 
-In order to reduce memory consumption, the only cached item is the offset
-of the write pointer from the start of the zone, everything else can be
-calculated. On an example drive with 52156 zones, the additional memory
-consumption of the cache is thus 52156 * 4 = 208624 Bytes or 51 4k Byte
-pages. The performance impact is neglectable for a spinning drive.
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ drivers/scsi/scsi_lib.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-For null_blk the emulation is way simpler, as null_blk's zoned block
-device emulation support already caches the write pointer position, so we
-only need to report the position back to the upper layers. Additional
-caching is not needed here.
-
-Furthermore we have converted zonefs to run use ZONE_APPEND for synchronous
-direct I/Os. Asynchronous I/O still uses the normal path via iomap.
-
-The series is based on v5.7-rc1 , but it should be trivial to re-base onto
-Jens' for-next branch once it re-opened.
-
-As Christoph asked for a branch I pushed it to a git repo at:
-git://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git zone-append.v6
-https://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git/log/?h=zone-append.v6
-
-Changes to v5:
-- Added patch to fix the memleak on failed scsi command setup
-- Added prep patch from Christoph for bio_add_hw_page
-- Added Christoph's suggestions for adding append pages to bios
-- Fixed compile warning with !CONFIG_BLK_DEV_ZONED
-- Damien re-worked revalidate zone
-- Added Christoph's suggestions for rescanning write pointers to update cache
-
-Changes to v4:
-- Added page merging for zone-append bios (Christoph)
-- Removed different locking schmes for zone management operations (Christoph)
-- Changed wp_ofst assignment from blk_revalidate_zones (Christoph)
-- Smaller nitpicks (Christoph)
-- Documented my changes to Keith's patch so it's clear where I messed up so he
-  doesn't get blamed
-- Added Damien as a Co-developer to the sd emulation patch as he wrote as much
-  code for it as I did (if not more)
-
-Changes since v3:
-- Remove impact of zone-append from bio_full() and bio_add_page()
-  fast-path (Christoph)
-- All of the zone write pointer offset caching is handled in SCSI now
-  (Christoph) 
-- Drop null_blk pathces that damien sent separately (Christoph)
-- Use EXPORT_SYMBOL_GPL for new exports (Christoph)	
-
-Changes since v2:
-- Remove iomap implementation and directly issue zone-appends from within
-  zonefs (Christoph)
-- Drop already merged patch
-- Rebase onto new for-next branch
-
-Changes since v1:
-- Too much to mention, treat as a completely new series.
-  block: Modify revalidate zones
-  null_blk: Support REQ_OP_ZONE_APPEND
-
-Christoph Hellwig (1):
-  block: rename __bio_add_pc_page to bio_add_hw_page
-
-Damien Le Moal (2):
-  block: Modify revalidate zones
-  null_blk: Support REQ_OP_ZONE_APPEND
-
-Johannes Thumshirn (7):
-  scsi: free sgtables in case command setup fails
-  block: provide fallbacks for blk_queue_zone_is_seq and
-    blk_queue_zone_no
-  block: introduce blk_req_zone_write_trylock
-  scsi: sd_zbc: factor out sanity checks for zoned commands
-  scsi: sd_zbc: emulate ZONE_APPEND commands
-  block: export bio_release_pages and bio_iov_iter_get_pages
-  zonefs: use REQ_OP_ZONE_APPEND for sync DIO
-
-Keith Busch (1):
-  block: Introduce REQ_OP_ZONE_APPEND
-
- block/bio.c                    | 127 +++++++++---
- block/blk-core.c               |  52 +++++
- block/blk-map.c                |   5 +-
- block/blk-mq.c                 |  27 +++
- block/blk-settings.c           |  23 +++
- block/blk-sysfs.c              |  13 ++
- block/blk-zoned.c              |  22 +-
- block/blk.h                    |   4 +-
- drivers/block/null_blk_zoned.c |  39 +++-
- drivers/scsi/scsi_lib.c        |  17 +-
- drivers/scsi/sd.c              |  24 ++-
- drivers/scsi/sd.h              |  43 +++-
- drivers/scsi/sd_zbc.c          | 359 +++++++++++++++++++++++++++++++--
- fs/zonefs/super.c              |  80 +++++++-
- include/linux/blk_types.h      |  14 ++
- include/linux/blkdev.h         |  25 ++-
- 16 files changed, 783 insertions(+), 91 deletions(-)
-
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 47835c4b4ee0..ad97369ffabd 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -548,7 +548,7 @@ static void scsi_uninit_cmd(struct scsi_cmnd *cmd)
+ 	}
+ }
+ 
+-static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
++static void scsi_free_sgtables(struct scsi_cmnd *cmd)
+ {
+ 	if (cmd->sdb.table.nents)
+ 		sg_free_table_chained(&cmd->sdb.table,
+@@ -560,7 +560,7 @@ static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
+ 
+ static void scsi_mq_uninit_cmd(struct scsi_cmnd *cmd)
+ {
+-	scsi_mq_free_sgtables(cmd);
++	scsi_free_sgtables(cmd);
+ 	scsi_uninit_cmd(cmd);
+ }
+ 
+@@ -1059,7 +1059,7 @@ blk_status_t scsi_init_io(struct scsi_cmnd *cmd)
+ 
+ 	return BLK_STS_OK;
+ out_free_sgtables:
+-	scsi_mq_free_sgtables(cmd);
++	scsi_free_sgtables(cmd);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(scsi_init_io);
+@@ -1190,6 +1190,7 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
+ 		struct request *req)
+ {
+ 	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(req);
++	blk_status_t ret;
+ 
+ 	if (!blk_rq_bytes(req))
+ 		cmd->sc_data_direction = DMA_NONE;
+@@ -1199,9 +1200,14 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
+ 		cmd->sc_data_direction = DMA_FROM_DEVICE;
+ 
+ 	if (blk_rq_is_scsi(req))
+-		return scsi_setup_scsi_cmnd(sdev, req);
++		ret = scsi_setup_scsi_cmnd(sdev, req);
+ 	else
+-		return scsi_setup_fs_cmnd(sdev, req);
++		ret = scsi_setup_fs_cmnd(sdev, req);
++
++	if (ret != BLK_STS_OK)
++		scsi_free_sgtables(cmd);
++
++	return ret;
+ }
+ 
+ static blk_status_t
 -- 
 2.24.1
 
