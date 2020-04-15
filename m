@@ -2,122 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D894D1A9216
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 06:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 220481A929E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 07:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393160AbgDOE4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 00:56:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393136AbgDOE4S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 00:56:18 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BD0920784;
-        Wed, 15 Apr 2020 04:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586926577;
-        bh=7/cyAEWqRIoOXcFZNvYgjU7w3cE8iC6Fh8sNAEooM88=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o7nTdRDWnBos1+imCHuZl8B8uuGul0yLnN9eMfYMaDqOlB+cl/NgjLOckV0vY0hpP
-         Ucm/O1A9vtop3dW0jo3wEyrWUTI/eFT4pIPVlWkKKNR0Qa5IVvC7y0T9VVsiPyVZ+6
-         YcmvoJe/CEGPjhSZX5DnQnSB/tg3reced0fueZDI=
-Date:   Tue, 14 Apr 2020 21:56:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v11 05/25] mm: Add new readahead_control API
-Message-Id: <20200414215616.f665d12f8549f52606784d1e@linux-foundation.org>
-In-Reply-To: <20200415021808.GA5820@bombadil.infradead.org>
-References: <20200414150233.24495-1-willy@infradead.org>
-        <20200414150233.24495-6-willy@infradead.org>
-        <20200414181705.bfc4c0087092051a9475141e@linux-foundation.org>
-        <20200415021808.GA5820@bombadil.infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2393399AbgDOFmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 01:42:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35285 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393395AbgDOFmj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 01:42:39 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t11so1012574pgg.2;
+        Tue, 14 Apr 2020 22:42:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WVRGT38XUU6swRwzPEXLZ5k+G+eQg7kh7o2o1EiB+e0=;
+        b=BURb0KoXrGq3CeMemEwS/w7sasWpNmr4obb6UxIeGSij1vZZnTlbGq+ZriFI8wfwzj
+         R7k3hiH2aFVm0SAUK3/dAptHSG+x60ITAmgvTgnEXxzLXIKI97hckoZUhBhkDUrtTOVt
+         x2QNqTlLnLb7PpJSuuB3G9iIeY8mVtY/5m2m7LuI8wtgVaCINSi9Gc0JpzxYq6PVCuUj
+         OdLXBuSoTlQYf1T2Luy5aZAqHWaX/l8h/hsD3YLSm3Mwinz2OMlqftmFRwnpqhvLfDTV
+         s2QWHHKGcvyInT9KLQFCaW4jF+E6ao6tG5H1eV5QW6A5qoEE5lpAWkzCofuJ3hOJMrsw
+         f2Ug==
+X-Gm-Message-State: AGi0PuYC5+ADKGwXBniX2eHnYfqF54vF2Uu7pLcwy8+Xap4a0kG5oH9Q
+        aMuCqQcid7hvRA7oLTBxQhw=
+X-Google-Smtp-Source: APiQypLmh/Lgdr/B3ZY1buelbusFHBjMg4/XhSao7YfVHnutpJiQaiLvOKzKUkf7C36e2nFiqFgLgw==
+X-Received: by 2002:a63:602:: with SMTP id 2mr25278301pgg.383.1586929356466;
+        Tue, 14 Apr 2020 22:42:36 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p1sm13349461pjr.40.2020.04.14.22.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 22:42:34 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 1E49F40277; Wed, 15 Apr 2020 05:42:34 +0000 (UTC)
+Date:   Wed, 15 Apr 2020 05:42:34 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 4/5] mm/swapfile: refcount block and queue before using
+ blkcg_schedule_throttle()
+Message-ID: <20200415054234.GQ11244@42.do-not-panic.com>
+References: <20200414041902.16769-1-mcgrof@kernel.org>
+ <20200414041902.16769-5-mcgrof@kernel.org>
+ <20200414154447.GC25765@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200414154447.GC25765@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 14 Apr 2020 19:18:08 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-
-> On Tue, Apr 14, 2020 at 06:17:05PM -0700, Andrew Morton wrote:
-> > On Tue, 14 Apr 2020 08:02:13 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > Filesystems which implement the upcoming ->readahead method will get
-> > > their pages by calling readahead_page() or readahead_page_batch().
-> > > These functions support large pages, even though none of the filesystems
-> > > to be converted do yet.
-> > > 
-> > > +static inline struct page *readahead_page(struct readahead_control *rac)
-> > > +static inline unsigned int __readahead_batch(struct readahead_control *rac,
-> > > +		struct page **array, unsigned int array_sz)
+On Tue, Apr 14, 2020 at 08:44:47AM -0700, Christoph Hellwig wrote:
+> On Tue, Apr 14, 2020 at 04:19:01AM +0000, Luis Chamberlain wrote:
+> > block devices are refcounted so to ensure once its final user goes away it
+> > can be cleaned up by the lower layers properly. The block device's
+> > request_queue structure is also refcounted, however, if the last
+> > blk_put_queue() is called under atomic context the block layer has
+> > to defer removal.
 > > 
-> > These are large functions.  Was it correct to inline them?
+> > By refcounting the block device during the use of blkcg_schedule_throttle(),
+> > we ensure ensure two things:
+> > 
+> > 1) the block device remains available during the call
+> > 2) we ensure avoid having to deal with the fact we're using the
+> >    request_queue structure in atomic context, since the last
+> >    blk_put_queue() will be called upon disk_release(), *after*
+> >    our own bdput().
+> > 
+> > This means this code path is *not* going to remove the request_queue
+> > structure, as we are ensuring some later upper layer disk_release()
+> > will be the one to release the request_queue structure for us.
+> > 
+> > Cc: Bart Van Assche <bvanassche@acm.org>
+> > Cc: Omar Sandoval <osandov@fb.com>
+> > Cc: Hannes Reinecke <hare@suse.com>
+> > Cc: Nicolai Stange <nstange@suse.de>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: yu kuai <yukuai3@huawei.com>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  mm/swapfile.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 6659ab563448..9285ff6030ca 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -3753,6 +3753,7 @@ static void free_swap_count_continuations(struct swap_info_struct *si)
+> >  void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
+> >  				  gfp_t gfp_mask)
+> >  {
+> > +	struct block_device *bdev;
+> >  	struct swap_info_struct *si, *next;
+> >  	if (!(gfp_mask & __GFP_IO) || !memcg)
+> >  		return;
+> > @@ -3771,8 +3772,17 @@ void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
+> >  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
+> >  				  avail_lists[node]) {
+> >  		if (si->bdev) {
+> > -			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
+> > -						true);
+> > +			bdev = bdgrab(si->bdev);
+> > +			if (!bdev)
+> > +				continue;
+> > +			/*
+> > +			 * By adding our own bdgrab() we ensure the queue
+> > +			 * sticks around until disk_release(), and so we ensure
+> > +			 * our release of the request_queue does not happen in
+> > +			 * atomic context.
+> > +			 */
+> > +			blkcg_schedule_throttle(bdev_get_queue(bdev), true);
+> > +			bdput(bdev);
 > 
-> Hmm.  They don't seem that big to me.
+> I don't understand the atomic part of the comment.  How does
+> bdgrab/bdput help us there?
 
-They're really big!
+The commit log above did a better job at explaining this in terms of our
+goal to use the request_queue and how this use would prevent the risk of
+releasing the request_queue, which could sleep.
 
-> readahead_page, stripped of its sanity checks:
+If its not clear still, at least why we'd escape the sleep potential
+of the request_queue, we can just see its up to the disk_release()
+to call the last blk_put_queue():
 
-Well, the sanity checks still count for cache footprint.
+static void __device_add_disk(struct device *parent, struct gendisk disk,      
+			      const struct attribute_group **groups,            
+			      bool register_queue)                              
+{   
+	...
+        /*                                                                      
+	 * Take an extra ref on queue which will be put on disk_release()
+	 * so that it sticks around as long as @disk is there.                  
+	 */                                                                     
+	WARN_ON_ONCE(!blk_get_queue(disk->queue));
 
-otoh, I think a function which is expected to be called from a single
-site per filesystem is OK to be inlined, because there's not likely to
-be much icache benefit unless different filesystem types are
-simultaneously being used heavily, which sounds unlikely.  Although
-there's still a bit of overall code size bloat.
+	disk_add_events(disk);
+	blk_integrity_add(disk);
+}
 
-> +       rac->_index += rac->_batch_count;
-> +       if (!rac->_nr_pages) {
-> +               rac->_batch_count = 0;
-> +               return NULL;
-> +       }
-> +       page = xa_load(&rac->mapping->i_pages, rac->_index);
-> +       rac->_batch_count = hpage_nr_pages(page);
-> 
-> __readahead_batch is much bigger, but it's only used by btrfs and fuse,
-> and it seemed unfair to make everybody pay the cost for a function only
-> used by two filesystems.
+static void disk_release(struct device *dev)                                    
+{                                                                               
+	struct gendisk *disk = dev_to_disk(dev);
 
-Do we expect more filesystems to use these in the future?
+	blk_free_devt(dev->devt);
+	disk_release_events(disk);
+	kfree(disk->random);
+	disk_replace_part_tbl(disk, NULL);
+	hd_free_part(&disk->part0);
+	if (disk->queue)
+		blk_put_queue(disk->queue);
+	kfree(disk);
+}     
 
-These function are really big!
+I admit that all this however it did a poor job at explaining why
+bdgrab()/bdput() was safe in atomic context other than the implicit
+reasoning that we already do that elsewhere in atomic context.
 
-> > The batching API only appears to be used by fuse?  If so, do we really
-> > need it?  Does it provide some functional need, or is it a performance
-> > thing?  If the latter, how significant is it?
-> 
-> I must confess to not knowing the performance impact.  If the code uses
-> xa_load() repeatedly, it costs O(log n) each time as we walk down the tree
-> (mitigated to a large extent by cache, of course).  Using xas_for_each()
-> keeps us at the bottom of the tree and each iteration is O(1).
-> I'm interested to see if filesystem maintainers start to use the batch
-> function or if they're happier sticking with the individual lookups.
-> 
-> The batch API was originally written for use with btrfs, but it was a
-> significant simplification to convert fuse to use it.
+bdgrab() specifically was added to be able to refcount a block device in
+atomic context via commit dddac6a7b445 ("("PM / Hibernate: Replace bdget
+call with simple atomic_inc of i_count"). In its latest incarnation we
+have:
 
-hm, OK.  It's not clear that its inclusion is justified?
+/**
+ * bdgrab -- Grab a reference to an already referenced block device
+ * @bdev:       Block device to grab a reference to.                            
+ */
+struct block_device *bdgrab(struct block_device *bdev)
+{
+	ihold(bdev->bd_inode);                                                  
+	return bdev;                                                            
+}                                                                               
+EXPORT_SYMBOL(bdgrab); 
 
-> > The code adds quite a few (inlined!) VM_BUG_ONs.  Can we plan to remove
-> > them at some stage?  Such as, before Linus shouts at us :)
-> 
-> I'd be happy to remove them.  Various reviewers said things like "are you
-> sure this can't happen?"
+And this in turn:
 
-Yeah, these things tend to live for ever.  Please add a todo to remove
-them after the code has matured?
+/*                                                                              
+ * get additional reference to inode; caller must already hold one.
+ */
+void ihold(struct inode *inode)                                                 
+{                                                                               
+	WARN_ON(atomic_inc_return(&inode->i_count) < 2);                        
+}                                                                               
+EXPORT_SYMBOL(ihold);
 
+However... I'd eventure to say we don't have tribal knowledge documented
+about why bdput() is safe in atomic context when used with bdgrab(),
+including the commit log which added it. So the only thing backing its
+safety is that we already use this combo in atomic context, and if its
+incorrect, other areas would be incorrect as well.
+
+But looking underneath the hood, I see at the end of __blkdev_get():
+
+static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)  
+{
+	...
+	disk = bdev_get_gendisk(bdev, &partno);
+	...
+        /* only one opener holds refs to the module and disk */                 
+	if (!first_open)                                                        
+		put_disk_and_module(disk); 
+	...
+}
+
+So ihold() seems like a way to ensure the caller of bdgrab() won't be
+this first opener. If only one opener holds the ref to the disk and it
+was not us, we musn't be the one to decrease it, and if the disk is
+held, it should mean the block device should be refcounted by it as
+well. More review on this later part is appreciated though.
+
+  Luis
