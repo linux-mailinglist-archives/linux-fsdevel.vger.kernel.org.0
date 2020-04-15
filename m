@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C259A1A9E9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 14:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 315241A9EB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 14:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2898012AbgDOL6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 07:58:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34412 "EHLO mx2.suse.de"
+        id S368076AbgDOMAK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 08:00:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35730 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2897999AbgDOL6L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:58:11 -0400
+        id S368070AbgDOMAF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 08:00:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3A8D2AB64;
-        Wed, 15 Apr 2020 11:58:08 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id DE4A5AF10;
+        Wed, 15 Apr 2020 12:00:01 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 800DE1E1250; Wed, 15 Apr 2020 13:58:07 +0200 (CEST)
-Date:   Wed, 15 Apr 2020 13:58:07 +0200
+        id 362FF1E1250; Wed, 15 Apr 2020 14:00:02 +0200 (CEST)
+Date:   Wed, 15 Apr 2020 14:00:02 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     ira.weiny@intel.com
 Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
@@ -29,7 +29,7 @@ Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH RFC 2/8] fs/ext4: Disallow verity if inode is DAX
-Message-ID: <20200415115807.GD6126@quack2.suse.cz>
+Message-ID: <20200415120002.GE6126@quack2.suse.cz>
 References: <20200414040030.1802884-1-ira.weiny@intel.com>
  <20200414040030.1802884-3-ira.weiny@intel.com>
 MIME-Version: 1.0
@@ -55,13 +55,6 @@ On Mon 13-04-20 21:00:24, ira.weiny@intel.com wrote:
 > (Setting DAX is already disabled if Verity is set first.)
 > 
 > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-Looks good to me. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
 > ---
 >  fs/ext4/verity.c | 3 +++
 >  1 file changed, 3 insertions(+)
@@ -77,6 +70,12 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 > +	if (WARN_ON_ONCE(IS_DAX(inode)))
 > +		return -EINVAL;
 > +
+
+Hum, one question, is there a reason for WARN_ON_ONCE()? If I understand
+correctly, user could normally trigger this, couldn't he?
+
+								Honza
+
 >  	if (ext4_verity_in_progress(inode))
 >  		return -EBUSY;
 >  
