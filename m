@@ -2,185 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7065D1AB138
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 21:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7066B1AB164
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 21:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411770AbgDOTIL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 15:08:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1416840AbgDOSka (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 14:40:30 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14026C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Apr 2020 11:40:30 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id DC23B2A1823
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>
-Cc:     linux-fsdevel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH] Implement utf8 unit tests as a kunit test suite.
-Organization: Collabora
-References: <20200415082826.19325-1-ricardo.canuelo@collabora.com>
-Date:   Wed, 15 Apr 2020 14:40:23 -0400
-In-Reply-To: <20200415082826.19325-1-ricardo.canuelo@collabora.com>
- ("Ricardo
-        =?utf-8?Q?Ca=C3=B1uelo=22's?= message of "Wed, 15 Apr 2020 10:28:26 +0200")
-Message-ID: <851rood23s.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S2441754AbgDOTO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 15:14:56 -0400
+Received: from mga17.intel.com ([192.55.52.151]:15254 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2441746AbgDOTOy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 15:14:54 -0400
+IronPort-SDR: uNPov8B7QUKj5K6qUWagJEFWgCfzzN2VwPe3mG+Yj7kkwtHjqFPA09MxLMuqL8Ghn3jsre/6Do
+ TRsIVMabYTQA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 12:14:52 -0700
+IronPort-SDR: 7PTC/XR0QNy6eWAG1dmEGZdP686/BpC1G/stOZBy1TC/E3yJp34kdFRlNT/1KE0DEUGhlHDlGi
+ aPIm544g1tvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,388,1580803200"; 
+   d="scan'208";a="455008505"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Apr 2020 12:14:52 -0700
+Date:   Wed, 15 Apr 2020 12:14:52 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 2/8] fs/ext4: Disallow verity if inode is DAX
+Message-ID: <20200415191451.GA2305801@iweiny-DESK2.sc.intel.com>
+References: <20200414040030.1802884-1-ira.weiny@intel.com>
+ <20200414040030.1802884-3-ira.weiny@intel.com>
+ <20200415120002.GE6126@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415120002.GE6126@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ricardo Cañuelo <ricardo.canuelo@collabora.com> writes:
+On Wed, Apr 15, 2020 at 02:00:02PM +0200, Jan Kara wrote:
+> On Mon 13-04-20 21:00:24, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Verity and DAX are incompatible.  Changing the DAX mode due to a verity
+> > flag change is wrong without a corresponding address_space_operations
+> > update.
+> > 
+> > Make the 2 options mutually exclusive by returning an error if DAX was
+> > set first.
+> > 
+> > (Setting DAX is already disabled if Verity is set first.)
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  fs/ext4/verity.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+> > index dc5ec724d889..ce3f9a198d3b 100644
+> > --- a/fs/ext4/verity.c
+> > +++ b/fs/ext4/verity.c
+> > @@ -113,6 +113,9 @@ static int ext4_begin_enable_verity(struct file *filp)
+> >  	handle_t *handle;
+> >  	int err;
+> >  
+> > +	if (WARN_ON_ONCE(IS_DAX(inode)))
+> > +		return -EINVAL;
+> > +
+> 
+> Hum, one question, is there a reason for WARN_ON_ONCE()? If I understand
+> correctly, user could normally trigger this, couldn't he?
 
-> This translates the existing utf8 unit test module into a kunit-compliant
-> test suite. No functionality has been added or removed.
->
-> Some names changed to make the file name, the Kconfig option and test
-> suite name less specific, since this source file might hold more utf8
-> tests in the future.
->
-> Signed-off-by: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
-> ---
-> Tested with kunit_tool and at boot time on qemu-system-x86_64
->
->  fs/unicode/Kconfig                          |  18 +-
->  fs/unicode/Makefile                         |   2 +-
->  fs/unicode/{utf8-selftest.c => utf8-test.c} | 207 ++++++++++----------
->  3 files changed, 115 insertions(+), 112 deletions(-)
->  rename fs/unicode/{utf8-selftest.c => utf8-test.c} (59%)
->
-> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-> index 2c27b9a5cd6c..734c25920750 100644
-> --- a/fs/unicode/Kconfig
-> +++ b/fs/unicode/Kconfig
-> @@ -8,7 +8,19 @@ config UNICODE
->  	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
->  	  support.
->  
-> -config UNICODE_NORMALIZATION_SELFTEST
-> -	tristate "Test UTF-8 normalization support"
-> -	depends on UNICODE
-> +config UNICODE_KUNIT_TESTS
-> +	bool "Kunit tests for UTF-8 support"
+Ok.  I did not think this through but I did think about this.  I was following
+the code from the encryption side which issues a warning and was thinking that
+would be a good way to alert the user they are doing something wrong...
 
-Kunit tests for Unicode normalization and casefolding support
+I think you are right about both of them but we also need to put something in
+the verity, dax, and ...  (I can't find a file in Documentation which talks
+about encryption right off) documentation files....  For verity something like.
 
-> +	depends on UNICODE && KUNIT
->  	default n
-> +	help
-> +	  This builds the ext4 KUnit tests.
+<quote>
+Verity and DAX
+--------------
 
-Unicode KUinit tests.
+Verity and DAX are not compatible and attempts to set both of these flags on a
+file will fail.
+</quote>
 
-> +
-> +	  KUnit tests run during boot and output the results to the debug log
-> +	  in TAP format (http://testanything.org/). Only useful for kernel devs
-> +	  running KUnit test harness and are not for inclusion into a production
-> +	  build.
-> +
-> +	  For more information on KUnit and unit tests in general please refer
-> +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-> +
-> +	  If unsure, say N.
-> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-> index b88aecc86550..0e8e2192a715 100644
-> --- a/fs/unicode/Makefile
-> +++ b/fs/unicode/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
->  obj-$(CONFIG_UNICODE) += unicode.o
-> -obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
-> +obj-$(CONFIG_UNICODE_KUNIT_TESTS) += utf8-test.o
->  
->  unicode-y := utf8-norm.o utf8-core.o
->  
-> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-test.c
-> similarity index 59%
-> rename from fs/unicode/utf8-selftest.c
-> rename to fs/unicode/utf8-test.c
-> index 6fe8af7edccb..20d12b1efc42 100644
-> --- a/fs/unicode/utf8-selftest.c
-> +++ b/fs/unicode/utf8-test.c
-> @@ -1,39 +1,25 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Kernel module for testing utf-8 support.
-> + * Kunit tests for utf-8 support.
->   *
-> - * Copyright 2017 Collabora Ltd.
-> + * Copyright 2020 Collabora Ltd.
->   */
->  
-> -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> -
-> -#include <linux/module.h>
-> -#include <linux/printk.h>
-> +#include <kunit/test.h>
->  #include <linux/unicode.h>
-> -#include <linux/dcache.h>
-> -
->  #include "utf8n.h"
->  
-> -unsigned int failed_tests;
-> -unsigned int total_tests;
-> +#define VERSION_STR_LEN 16
+And the same thing in the DAX doc?
 
-Instead of this random len and the snprintf to generate the string at
-runtime, why not just:
+And where would be appropriate for the encrypt doc?
 
-#define LATEST_VERSION_STR "12.1.0"
+Ira
 
-And use it directly, since it is constant.
-
->  /* Tests will be based on this version. */
->  #define latest_maj 12
->  #define latest_min 1
->  #define latest_rev 0
->  
-> -#define _test(cond, func, line, fmt, ...) do {				\
-> -		total_tests++;						\
-> -		if (!cond) {						\
-> -			failed_tests++;					\
-> -			pr_err("test %s:%d Failed: %s%s",		\
-> -			       func, line, #cond, (fmt?":":"."));	\
-> -			if (fmt)					\
-> -				pr_err(fmt, ##__VA_ARGS__);		\
-> -		}							\
-> -	} while (0)
-> -#define test_f(cond, fmt, ...) _test(cond, __func__, __LINE__, fmt, ##__VA_ARGS__)
-> -#define test(cond) _test(cond, __func__, __LINE__, "")
-> +
-> +/************************************************************
-> + * Test data                                                *
-> + ************************************************************/
-
-Please, keep the comment style used in the rest of the file.
-
->  
->  static const struct {
->  	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
-> @@ -86,9 +72,9 @@ static const struct {
->  
->  		.dec = {0x61, 0xCC, 0xA8, 0xcc, 0x88, 0x00},
->  	},
-> -
->  };
->  
-> +
-
-Some noise here
-
-Thanks,
-
--- 
-Gabriel Krisman Bertazi
+> 
+> 								Honza
+> 
+> >  	if (ext4_verity_in_progress(inode))
+> >  		return -EBUSY;
+> >  
+> > -- 
+> > 2.25.1
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
