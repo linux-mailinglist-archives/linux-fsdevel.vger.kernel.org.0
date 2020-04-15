@@ -2,117 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 631A51AB347
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 23:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC82C1AB37E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 23:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442354AbgDOVUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 17:20:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51048 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438890AbgDOVUm (ORCPT
+        id S1730350AbgDOVsi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 17:48:38 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53549 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbgDOVsg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 17:20:42 -0400
-Received: from ip5f5bd698.dynamic.kabel-deutschland.de ([95.91.214.152] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jOpSU-0004QT-Au; Wed, 15 Apr 2020 21:20:34 +0000
-Date:   Wed, 15 Apr 2020 23:20:33 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     syzbot <syzbot+d9ae59d4662c941e39c6@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, christian@brauner.io, guro@fb.com,
-        kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mhocko@suse.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-Subject: Re: [PATCH] proc: Handle umounts cleanly
-Message-ID: <20200415212033.vrkybww6gwbja76x@wittgenstein>
-References: <0000000000001c5eaa05a357f2e1@google.com>
- <878siwioxj.fsf@x220.int.ebiederm.org>
- <20200415193612.7cmmbwfpof6pvsqv@wittgenstein>
- <873694ijvt.fsf@x220.int.ebiederm.org>
+        Wed, 15 Apr 2020 17:48:36 -0400
+Received: by mail-pj1-f65.google.com with SMTP id cl8so419365pjb.3;
+        Wed, 15 Apr 2020 14:48:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=3n/tFi5CGbzTrobjd2A4ZhBvLfQl0w0u7WVPVo0RKxc=;
+        b=ofSc4s+toc3DJr14/HEzNk9tiffwAj5Do6Q7C+5yxQEyEuXccm63/oKPFdFs2NLAoc
+         /SA0icxtD6c0Vts2Hre1WM3A4pXfmL4nr52zChncrSMPxWFzJbLRHNG0PhiXw6CDbcz5
+         mMs958tN7Mnt9Ax4YGIUpFSOEkc4U373Re8DODVEd5OPxC1CGoMyrfApNLGFPvq+ip5Z
+         3J78Yi91Y7t6SosbB5AF0VMKesO23yYmmOKlxEyGbhjPiHHZyGdrrlAL3ODBheHSgINB
+         E41PGLg1hLI4dzMVbJk5WvP19XCQXmQ5eb3RS491ZtYPa76jTHVn9Ybho15GTgaDLDk6
+         pFNA==
+X-Gm-Message-State: AGi0PuYUIVba22D759jVv2z9aVBprmr6TUeP5wwexHJLFJqhVtSe77WI
+        yeQr1f96qw5bJzgGghkULNg=
+X-Google-Smtp-Source: APiQypKVnmZwhQdbvwifV7/L+LDyJ+sn1ettKHycXby9PIfr+6X5Gg0+xpBdXmPV1ae+9LxBKhG1Uw==
+X-Received: by 2002:a17:902:dc86:: with SMTP id n6mr7076951pld.198.1586987315701;
+        Wed, 15 Apr 2020 14:48:35 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:74a5:f25a:9320:53da? ([2601:647:4000:d7:74a5:f25a:9320:53da])
+        by smtp.gmail.com with ESMTPSA id g14sm545735pjd.15.2020.04.15.14.48.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Apr 2020 14:48:34 -0700 (PDT)
+Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
+To:     Eric Sandeen <sandeen@sandeen.net>,
+        Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+References: <20200414041902.16769-1-mcgrof@kernel.org>
+ <20200414041902.16769-3-mcgrof@kernel.org>
+ <55401e02-f61c-25eb-271c-3ec7baf35e28@sandeen.net>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <27552cfd-d903-b224-8e81-538c2714a67d@acm.org>
+Date:   Wed, 15 Apr 2020 14:48:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <55401e02-f61c-25eb-271c-3ec7baf35e28@sandeen.net>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <873694ijvt.fsf@x220.int.ebiederm.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 03:17:26PM -0500, Eric W. Biederman wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
+On 2020-04-15 10:38, Eric Sandeen wrote:
+> On 4/13/20 11:18 PM, Luis Chamberlain wrote:
+>> On commit 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
+>> merged on v4.12 Omar fixed the original blktrace code for request-based
+>> drivers (multiqueue). This however left in place a possible crash, if you
+>> happen to abuse blktrace in a way it was not intended.
+>>
+>> Namely, if you loop adding a device, setup the blktrace with BLKTRACESETUP,
+>> forget to BLKTRACETEARDOWN, and then just remove the device you end up
+>> with a panic:
 > 
-> > On Wed, Apr 15, 2020 at 01:28:24PM -0500, Eric W. Biederman wrote:
-> >> syzbot writes:
-> >> > KASAN: use-after-free Read in dput (2)
-> >> >
-> >> > proc_fill_super: allocate dentry failed
-> >> > ==================================================================
-> >> > BUG: KASAN: use-after-free in fast_dput fs/dcache.c:727 [inline]
-> >> > BUG: KASAN: use-after-free in dput+0x53e/0xdf0 fs/dcache.c:846
-> >> > Read of size 4 at addr ffff88808a618cf0 by task syz-executor.0/8426
-> >> >
-> >> > CPU: 0 PID: 8426 Comm: syz-executor.0 Not tainted 5.6.0-next-20200412-syzkaller #0
-> >> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> >> > Call Trace:
-> >> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >> >  dump_stack+0x188/0x20d lib/dump_stack.c:118
-> >> >  print_address_description.constprop.0.cold+0xd3/0x315 mm/kasan/report.c:382
-> >> >  __kasan_report.cold+0x35/0x4d mm/kasan/report.c:511
-> >> >  kasan_report+0x33/0x50 mm/kasan/common.c:625
-> >> >  fast_dput fs/dcache.c:727 [inline]
-> >> >  dput+0x53e/0xdf0 fs/dcache.c:846
-> >> >  proc_kill_sb+0x73/0xf0 fs/proc/root.c:195
-> >> >  deactivate_locked_super+0x8c/0xf0 fs/super.c:335
-> >> >  vfs_get_super+0x258/0x2d0 fs/super.c:1212
-> >> >  vfs_get_tree+0x89/0x2f0 fs/super.c:1547
-> >> >  do_new_mount fs/namespace.c:2813 [inline]
-> >> >  do_mount+0x1306/0x1b30 fs/namespace.c:3138
-> >> >  __do_sys_mount fs/namespace.c:3347 [inline]
-> >> >  __se_sys_mount fs/namespace.c:3324 [inline]
-> >> >  __x64_sys_mount+0x18f/0x230 fs/namespace.c:3324
-> >> >  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
-> >> >  entry_SYSCALL_64_after_hwframe+0x49/0xb3
-> >> > RIP: 0033:0x45c889
-> >> > Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> >> > RSP: 002b:00007ffc1930ec48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> >> > RAX: ffffffffffffffda RBX: 0000000001324914 RCX: 000000000045c889
-> >> > RDX: 0000000020000140 RSI: 0000000020000040 RDI: 0000000000000000
-> >> > RBP: 000000000076bf00 R08: 0000000000000000 R09: 0000000000000000
-> >> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> >> > R13: 0000000000000749 R14: 00000000004ca15a R15: 0000000000000013
-> >> 
-> >> Looking at the code now that it the internal mount of proc is no
-> >> longer used it is possible to unmount proc.   If proc is unmounted
-> >> the fields of the pid namespace that were used for filesystem
-> >> specific state are not reinitialized.
-> >> 
-> >> Which means that proc_self and proc_thread_self can be pointers to
-> >> already freed dentries.
-> >> 
-> >> The reported user after free appears to be from mounting and
-> >> unmounting proc followed by mounting proc again and using error
-> >> injection to cause the new root dentry allocation to fail.  This in
-> >> turn results in proc_kill_sb running with proc_self and
-> >> proc_thread_self still retaining their values from the previous mount
-> >> of proc.  Then calling dput on either proc_self of proc_thread_self
-> >> will result in double put.  Which KASAN sees as a use after free.
-> >> 
-> >> Solve this by always reinitializing the filesystem state stored
-> >> in the struct pid_namespace, when proc is unmounted.
-> >> 
-> >> Reported-by: syzbot+72868dd424eb66c6b95f@syzkaller.appspotmail.com
-> >> Fixes: 69879c01a0c3 ("proc: Remove the now unnecessary internal mount of proc")
-> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >
-> > Was looking at that earlier right before eod briefly here as well.
-> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> The syzbot report or did you see the failure another way?
+> I think this patch makes this all cleaner anyway, but - without the apparent
+> loop bug mentioned by Bart which allows removal of the loop device while blktrace
+> is active (if I read that right), can this still happen?
 
-Yep, the syzbot report. I haven't seen other issues so far.
+That's a great question. Even if the loop driver fix would be sufficient
+to fix the blktrace debugfs use-after free I think the block layer
+patches from this series are still very valuable. As explained in the
+cover letter this patch series fixes more than only the blktrace debugfs
+use-after-free.
 
-Christian
+Thanks,
+
+Bart.
