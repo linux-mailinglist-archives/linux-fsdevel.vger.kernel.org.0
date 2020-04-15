@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C461AB2B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 22:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFECF1AB2C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 22:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S371289AbgDOUeh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 16:34:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:1286 "EHLO mga12.intel.com"
+        id S2442070AbgDOUf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 16:35:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47253 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S371264AbgDOUee (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 16:34:34 -0400
-IronPort-SDR: 2LyDLe2EYQold9G9rW+6J/c0YZHYE+r3kbkexYNd/oXQoDUDEDLspwKae6l4T6IKBr1VbW/tGd
- d0JoVANzj/lg==
+        id S2442057AbgDOUfr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 16:35:47 -0400
+IronPort-SDR: v2jzf+uZCIhhwil2OtdLqgKtlqGdIXa/vgh3xh4fWHLxA6IwhKdoPHqVXd/EsfJgErqcLvmFq1
+ ZWAgLrv9GNlQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 13:34:33 -0700
-IronPort-SDR: qMIL+PP6t6fk+wubpecDb/RRcv1HkzBy5DZA+Ijw1V370MueFdQ+a7zyHFN7vAwnwmaeEKCaNq
- yqKS9aAUU4Cw==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 13:35:45 -0700
+IronPort-SDR: /55+O5N/UbItG3G97jMjCRmgjrO6760jL2891MlOgBl73B9Ign+1Bxjt8KEJp/URH6OJVIh6Ra
+ cVUrFMAToMQw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,388,1580803200"; 
-   d="scan'208";a="455027705"
+   d="scan'208";a="454056534"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga006.fm.intel.com with ESMTP; 15 Apr 2020 13:34:33 -0700
-Date:   Wed, 15 Apr 2020 13:34:33 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 15 Apr 2020 13:35:44 -0700
+Date:   Wed, 15 Apr 2020 13:35:44 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-kernel@vger.kernel.org,
@@ -35,63 +35,82 @@ Cc:     linux-kernel@vger.kernel.org,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/8] fs/ext4: Disallow verity if inode is DAX
-Message-ID: <20200415203433.GB2309605@iweiny-DESK2.sc.intel.com>
+Subject: Re: [PATCH RFC 3/8] fs/ext4: Disallow encryption if inode is DAX
+Message-ID: <20200415203544.GC2309605@iweiny-DESK2.sc.intel.com>
 References: <20200414040030.1802884-1-ira.weiny@intel.com>
- <20200414040030.1802884-3-ira.weiny@intel.com>
- <20200415120002.GE6126@quack2.suse.cz>
+ <20200414040030.1802884-4-ira.weiny@intel.com>
+ <20200415120241.GF6126@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415120002.GE6126@quack2.suse.cz>
+In-Reply-To: <20200415120241.GF6126@quack2.suse.cz>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 02:00:02PM +0200, Jan Kara wrote:
-> On Mon 13-04-20 21:00:24, ira.weiny@intel.com wrote:
+On Wed, Apr 15, 2020 at 02:02:41PM +0200, Jan Kara wrote:
+> On Mon 13-04-20 21:00:25, ira.weiny@intel.com wrote:
 > > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > Verity and DAX are incompatible.  Changing the DAX mode due to a verity
-> > flag change is wrong without a corresponding address_space_operations
-> > update.
+> > Encryption and DAX are incompatible.  Changing the DAX mode due to a
+> > change in Encryption mode is wrong without a corresponding
+> > address_space_operations update.
 > > 
 > > Make the 2 options mutually exclusive by returning an error if DAX was
 > > set first.
 > > 
-> > (Setting DAX is already disabled if Verity is set first.)
-> > 
 > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 > > ---
-> >  fs/ext4/verity.c | 3 +++
-> >  1 file changed, 3 insertions(+)
+> >  fs/ext4/super.c | 10 +---------
+> >  1 file changed, 1 insertion(+), 9 deletions(-)
 > > 
-> > diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> > index dc5ec724d889..ce3f9a198d3b 100644
-> > --- a/fs/ext4/verity.c
-> > +++ b/fs/ext4/verity.c
-> > @@ -113,6 +113,9 @@ static int ext4_begin_enable_verity(struct file *filp)
-> >  	handle_t *handle;
-> >  	int err;
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 0c7c4adb664e..b14863058115 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -1325,7 +1325,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  	if (inode->i_ino == EXT4_ROOT_INO)
+> >  		return -EPERM;
 > >  
+> > -	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
 > > +	if (WARN_ON_ONCE(IS_DAX(inode)))
-> > +		return -EINVAL;
-> > +
 > 
-> Hum, one question, is there a reason for WARN_ON_ONCE()? If I understand
-> correctly, user could normally trigger this, couldn't he?
+> Also here I don't think WARN_ON_ONCE() is warranted once we allow per-inode
+> setting of DAX. It will then become a regular error condition...
 
-Removed and added to the verity doc.
+Removed.
 Ira
 
 > 
 > 								Honza
 > 
-> >  	if (ext4_verity_in_progress(inode))
-> >  		return -EBUSY;
+> >  		return -EINVAL;
 > >  
+> >  	res = ext4_convert_inline_data(inode);
+> > @@ -1349,10 +1349,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> >  			ext4_clear_inode_state(inode,
+> >  					EXT4_STATE_MAY_INLINE_DATA);
+> > -			/*
+> > -			 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> > -			 * S_DAX may be disabled
+> > -			 */
+> >  			ext4_set_inode_flags(inode);
+> >  		}
+> >  		return res;
+> > @@ -1376,10 +1372,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  				    ctx, len, 0);
+> >  	if (!res) {
+> >  		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> > -		/*
+> > -		 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> > -		 * S_DAX may be disabled
+> > -		 */
+> >  		ext4_set_inode_flags(inode);
+> >  		res = ext4_mark_inode_dirty(handle, inode);
+> >  		if (res)
 > > -- 
 > > 2.25.1
 > > 
