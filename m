@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A0FB1AA36B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 15:11:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E98D1A9D68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 13:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504277AbgDONJc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 09:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55340 "EHLO mail.kernel.org"
+        id S2897191AbgDOLnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 07:43:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2897078AbgDOLfo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:35:44 -0400
+        id S2408988AbgDOLnR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:43:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF26E21569;
-        Wed, 15 Apr 2020 11:35:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA60420775;
+        Wed, 15 Apr 2020 11:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586950543;
+        s=default; t=1586950996;
         bh=nkzQYljAqqsLT0KyQ1yxVxy4hdkqt9fzHI0OYpbHm4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yyBaPze295V3kVtFSGJnSFEySLBr2R6oVC78bKI8L4gZQgEcMKhkcsmwVj+CiWMM0
-         eer7Zd2Xm2OKU/k7nWwO/xIT38/V5h76NpEQpULzH/X2+9o7U00HWb8YGpoaKLBt0k
-         AHcpLCNKU9lUSYygzDfmqCVcJ/xvc6H1leJBlBCg=
+        b=Anmw8uG7B0+4txEgd2Q+Kt/1U9bOOWGqcoW/p1qOhv5+VDCD/zpf+n5+unuoHGH0L
+         Z++n2d88GDhSwM7JPbe/uZav8Sd94XOMxBnbQhy53k87iE7E1BOoYqX8QaNakXFGTb
+         BO9UML0aEKAI34gwiScXXBw6SIW/0R3whfVGpyG8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Domenico Andreoli <domenico.andreoli@linux.com>,
         Marian Klein <mkleinsoft@gmail.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 050/129] hibernate: Allow uswsusp to write to swap
-Date:   Wed, 15 Apr 2020 07:33:25 -0400
-Message-Id: <20200415113445.11881-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 042/106] hibernate: Allow uswsusp to write to swap
+Date:   Wed, 15 Apr 2020 07:41:22 -0400
+Message-Id: <20200415114226.13103-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
-References: <20200415113445.11881-1-sashal@kernel.org>
+In-Reply-To: <20200415114226.13103-1-sashal@kernel.org>
+References: <20200415114226.13103-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
