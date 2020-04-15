@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 315241A9EB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 14:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0021A9EDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 14:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368076AbgDOMAK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 08:00:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35730 "EHLO mx2.suse.de"
+        id S368215AbgDOMCq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 08:02:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36694 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S368070AbgDOMAF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 08:00:05 -0400
+        id S2409739AbgDOMCn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 08:02:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DE4A5AF10;
-        Wed, 15 Apr 2020 12:00:01 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 20792AED8;
+        Wed, 15 Apr 2020 12:02:41 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 362FF1E1250; Wed, 15 Apr 2020 14:00:02 +0200 (CEST)
-Date:   Wed, 15 Apr 2020 14:00:02 +0200
+        id 146861E1250; Wed, 15 Apr 2020 14:02:41 +0200 (CEST)
+Date:   Wed, 15 Apr 2020 14:02:41 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     ira.weiny@intel.com
 Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
@@ -28,57 +28,76 @@ Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/8] fs/ext4: Disallow verity if inode is DAX
-Message-ID: <20200415120002.GE6126@quack2.suse.cz>
+Subject: Re: [PATCH RFC 3/8] fs/ext4: Disallow encryption if inode is DAX
+Message-ID: <20200415120241.GF6126@quack2.suse.cz>
 References: <20200414040030.1802884-1-ira.weiny@intel.com>
- <20200414040030.1802884-3-ira.weiny@intel.com>
+ <20200414040030.1802884-4-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200414040030.1802884-3-ira.weiny@intel.com>
+In-Reply-To: <20200414040030.1802884-4-ira.weiny@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 13-04-20 21:00:24, ira.weiny@intel.com wrote:
+On Mon 13-04-20 21:00:25, ira.weiny@intel.com wrote:
 > From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Verity and DAX are incompatible.  Changing the DAX mode due to a verity
-> flag change is wrong without a corresponding address_space_operations
-> update.
+> Encryption and DAX are incompatible.  Changing the DAX mode due to a
+> change in Encryption mode is wrong without a corresponding
+> address_space_operations update.
 > 
 > Make the 2 options mutually exclusive by returning an error if DAX was
 > set first.
 > 
-> (Setting DAX is already disabled if Verity is set first.)
-> 
 > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 > ---
->  fs/ext4/verity.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/ext4/super.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 > 
-> diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> index dc5ec724d889..ce3f9a198d3b 100644
-> --- a/fs/ext4/verity.c
-> +++ b/fs/ext4/verity.c
-> @@ -113,6 +113,9 @@ static int ext4_begin_enable_verity(struct file *filp)
->  	handle_t *handle;
->  	int err;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 0c7c4adb664e..b14863058115 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1325,7 +1325,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+>  	if (inode->i_ino == EXT4_ROOT_INO)
+>  		return -EPERM;
 >  
+> -	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
 > +	if (WARN_ON_ONCE(IS_DAX(inode)))
-> +		return -EINVAL;
-> +
 
-Hum, one question, is there a reason for WARN_ON_ONCE()? If I understand
-correctly, user could normally trigger this, couldn't he?
+Also here I don't think WARN_ON_ONCE() is warranted once we allow per-inode
+setting of DAX. It will then become a regular error condition...
 
 								Honza
 
->  	if (ext4_verity_in_progress(inode))
->  		return -EBUSY;
+>  		return -EINVAL;
 >  
+>  	res = ext4_convert_inline_data(inode);
+> @@ -1349,10 +1349,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+>  			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+>  			ext4_clear_inode_state(inode,
+>  					EXT4_STATE_MAY_INLINE_DATA);
+> -			/*
+> -			 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> -			 * S_DAX may be disabled
+> -			 */
+>  			ext4_set_inode_flags(inode);
+>  		}
+>  		return res;
+> @@ -1376,10 +1372,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+>  				    ctx, len, 0);
+>  	if (!res) {
+>  		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> -		/*
+> -		 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> -		 * S_DAX may be disabled
+> -		 */
+>  		ext4_set_inode_flags(inode);
+>  		res = ext4_mark_inode_dirty(handle, inode);
+>  		if (res)
 > -- 
 > 2.25.1
 > 
