@@ -2,119 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B16E1A9166
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 05:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82EC41A9177
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Apr 2020 05:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389102AbgDODBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Apr 2020 23:01:52 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48503 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389084AbgDODBu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Apr 2020 23:01:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4926Zd4FkSz9sQx;
-        Wed, 15 Apr 2020 13:01:45 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1586919707;
-        bh=wr6FGrvjjaQN2x9ODC6a9us38dRMb7OMhprJ91sYg7o=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=IJJ65I1WUYqc4ArGbU1X/J2cI7ABjrgXkwER3LkWC4g1d0oxCSmSADvRsSPRkyfYW
-         gkIzCNUUmqgKBDk/clptOgDt8qrFrQ/GmY5fneVv1hTzmVXdk3bUY3CQqqE7LZH3vP
-         obB2+RxmycGha1kc63WwQetad2T7/o6nzLvFd5Qk7Kg2srEAWZpEasVSiPb97+xIQj
-         gQdlhbyvLAcBaHhR8xGrKoadcf2l6Bw0/XVO4ID1bl4Pp/E1XqhoM1P6Uaxfro8Zog
-         2mABH0Xnzx4hIdz9OuqqreRCPhsHvdyT5pU58eVPxIdygYmHGDgi55lHNqeEKBAT7g
-         S67EjCLBvl4yQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christoph Hellwig <hch@lst.de>,
+        id S2389256AbgDODKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Apr 2020 23:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731026AbgDODKp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Apr 2020 23:10:45 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABB1C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Apr 2020 20:10:45 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id n10so910293pff.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Apr 2020 20:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rl9PWj3uTfyqXygouG7eBzkOuRR3ht3SlSVZEdS5vi4=;
+        b=WReb3FooecG/mGVKk7KoTDNmzBB8JA07kS8Wlt7cGOj1b+24cYEuDDpfQIYT19Pgq3
+         D6Lmumf0FVKLo2Mq50BPVQcRiaZfDl6vC92/MGZX/r0LfWfPWUejG4s92xqamybetQPm
+         UmeEt0q1UUwCZuMGpM5Q2JjGxrKiO51WcBNsI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rl9PWj3uTfyqXygouG7eBzkOuRR3ht3SlSVZEdS5vi4=;
+        b=DklaTGQsxPAnkv66EsvZ57/sLMF0jGau/1ZWaePFZNhA0+isoRGu0ULZUyc/dH/3+C
+         La0YrDMITPQPizaHbO8Xo2wxbWiOoXTS50BHTSrHhnkb5qdbeuT5sg74KsW7BSAl/77v
+         4tAg1/WdV32y27+6XGdiR1eoTV9ITVp9Ezl+xX9aogEA42bgdnQzvTTEegBzh7qBCTOY
+         l0GDAlqjrfZEJ4oX49yLLOu4wqcUIOZyicDx2vNA/+omT02L9mt7V3bsDMtP868eq14o
+         CancR/nfDyb7h0BK3kBZLw+I/wc5ALSEiu/8VfmueFAlTsYB1zl2zEqZh1n8sZ/bGwN0
+         7Pyw==
+X-Gm-Message-State: AGi0PuZl4xvQMChTpfOrd996vL9SVxI4fGNofqrfS3+MAiZxc1J6f8U7
+        0nc3EBdT6751UMgl6uk5CiLkRA==
+X-Google-Smtp-Source: APiQypLN7j/9XXU0t6HBqN7MgkhuUOzn37VdNDeJBnJniYxDkolOenYFHYWHDRbtpX384Nu0Yk81cA==
+X-Received: by 2002:a62:e213:: with SMTP id a19mr11074202pfi.180.1586920245009;
+        Tue, 14 Apr 2020 20:10:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 189sm12161684pfg.170.2020.04.14.20.10.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 20:10:44 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 20:10:43 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] binfmt_elf: open code copy_siginfo_to_user to kernelspace buffer
-In-Reply-To: <20200414070142.288696-5-hch@lst.de>
-References: <20200414070142.288696-1-hch@lst.de> <20200414070142.288696-5-hch@lst.de>
-Date:   Wed, 15 Apr 2020 13:01:59 +1000
-Message-ID: <87y2qxih94.fsf@mpe.ellerman.id.au>
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH] test_firmware: remove unnecessary test_fw_mutex in
+ test_dev_config_show_xxx
+Message-ID: <202004142010.C0847F5@keescook>
+References: <20200415002517.4328-1-scott.branden@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415002517.4328-1-scott.branden@broadcom.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
+On Tue, Apr 14, 2020 at 05:25:17PM -0700, Scott Branden wrote:
+> Remove unnecessary use of test_fw_mutex in test_dev_config_show_xxx
+> functions that show simple bool, int, and u8.
 
-> Instead of messing with the address limit just open code the trivial
-> memcpy + memset logic for the native version, and a call to
-> to_compat_siginfo for the compat version.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+I would expect at least a READ_ONCE(), yes?
+
+> 
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 > ---
->  fs/binfmt_elf.c        | 9 +++++----
->  fs/compat_binfmt_elf.c | 6 +++++-
->  2 files changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 13f25e241ac4..607c5a5f855e 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1553,15 +1553,16 @@ static void fill_auxv_note(struct memelfnote *note, struct mm_struct *mm)
->  	fill_note(note, "CORE", NT_AUXV, i * sizeof(elf_addr_t), auxv);
+>  lib/test_firmware.c | 26 +++-----------------------
+>  1 file changed, 3 insertions(+), 23 deletions(-)
+> 
+> diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+> index 0c7fbcf07ac5..9fee2b93a8d1 100644
+> --- a/lib/test_firmware.c
+> +++ b/lib/test_firmware.c
+> @@ -310,27 +310,13 @@ static int test_dev_config_update_bool(const char *buf, size_t size,
+>  	return ret;
 >  }
 >  
-> +#ifndef fill_siginfo_note
->  static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
->  		const kernel_siginfo_t *siginfo)
+> -static ssize_t
+> -test_dev_config_show_bool(char *buf,
+> -			  bool config)
+> +static ssize_t test_dev_config_show_bool(char *buf, bool val)
 >  {
-> -	mm_segment_t old_fs = get_fs();
-> -	set_fs(KERNEL_DS);
-> -	copy_siginfo_to_user((user_siginfo_t __user *) csigdata, siginfo);
-> -	set_fs(old_fs);
-> +	memcpy(csigdata, siginfo, sizeof(struct kernel_siginfo));
-> +	memset((char *)csigdata + sizeof(struct kernel_siginfo), 0,
-> +		SI_EXPANSION_SIZE);
->  	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+> -	bool val;
+> -
+> -	mutex_lock(&test_fw_mutex);
+> -	val = config;
+> -	mutex_unlock(&test_fw_mutex);
+> -
+>  	return snprintf(buf, PAGE_SIZE, "%d\n", val);
 >  }
-> +#endif
 >  
->  #define MAX_FILE_NOTE_SIZE (4*1024*1024)
->  /*
-> diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-> index aaad4ca1217e..ab84e095618b 100644
-> --- a/fs/compat_binfmt_elf.c
-> +++ b/fs/compat_binfmt_elf.c
-> @@ -39,7 +39,11 @@
->   */
->  #define user_long_t		compat_long_t
->  #define user_siginfo_t		compat_siginfo_t
-> -#define copy_siginfo_to_user	copy_siginfo_to_user32
-> +#define fill_siginfo_note(note, csigdata, siginfo)		\
-> +do {									\
-> +	to_compat_siginfo(csigdata, siginfo, compat_siginfo_flags());	\
-> +	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata); \
-> +} while (0)
+> -static ssize_t test_dev_config_show_int(char *buf, int cfg)
+> +static ssize_t test_dev_config_show_int(char *buf, int val)
+>  {
+> -	int val;
+> -
+> -	mutex_lock(&test_fw_mutex);
+> -	val = cfg;
+> -	mutex_unlock(&test_fw_mutex);
+> -
+>  	return snprintf(buf, PAGE_SIZE, "%d\n", val);
+>  }
+>  
+> @@ -354,14 +340,8 @@ static int test_dev_config_update_u8(const char *buf, size_t size, u8 *cfg)
+>  	return size;
+>  }
+>  
+> -static ssize_t test_dev_config_show_u8(char *buf, u8 cfg)
+> +static ssize_t test_dev_config_show_u8(char *buf, u8 val)
+>  {
+> -	u8 val;
+> -
+> -	mutex_lock(&test_fw_mutex);
+> -	val = cfg;
+> -	mutex_unlock(&test_fw_mutex);
+> -
+>  	return snprintf(buf, PAGE_SIZE, "%u\n", val);
+>  }
+>  
+> -- 
+> 2.17.1
+> 
 
-This doesn't build on ppc (cell_defconfig):
-
-  ../fs/binfmt_elf.c: In function 'fill_note_info':
-  ../fs/compat_binfmt_elf.c:44:39: error: implicit declaration of function 'compat_siginfo_flags'; did you mean 'to_compat_siginfo'? [-Werror=implicit-function-d
-  eclaration]
-    to_compat_siginfo(csigdata, siginfo, compat_siginfo_flags()); \
-                                         ^~~~~~~~~~~~~~~~~~~~
-  ../fs/binfmt_elf.c:1846:2: note: in expansion of macro 'fill_siginfo_note'
-    fill_siginfo_note(&info->signote, &info->csigdata, siginfo);
-    ^~~~~~~~~~~~~~~~~
-  cc1: some warnings being treated as errors
-  make[2]: *** [../scripts/Makefile.build:266: fs/compat_binfmt_elf.o] Error 1
-
-
-I guess the empty version from kernel/signal.c needs to move into a
-header somewhere.
-
-cheers
-
+-- 
+Kees Cook
