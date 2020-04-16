@@ -2,131 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F341AB817
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 771E61AB816
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408103AbgDPGez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 02:34:55 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56009 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2408008AbgDPGew (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S2408080AbgDPGew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 16 Apr 2020 02:34:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587018890;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nCd3WtsGaX/OvVWiMxmVzNhR7/RYCqVcgsji7FHaInc=;
-        b=iEjxvon53EQBCZ4UuTHuhi5ifWJ9sr+zxmNWBlTsdTdoK5rCH7fExHx2SfZWhkdcbETMqV
-        HRDj8o7JVp9KID4ve7cGYtV87vKwcsVZZ8K/1R8fODthUOn9VE0sN4uBf3nXMAiVs5cQgS
-        zgZprHiYjt85rpWe52iciWjJb0c09AM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-208-fUDLkM2QNBqVmJ_SYclSCw-1; Thu, 16 Apr 2020 02:34:47 -0400
-X-MC-Unique: fUDLkM2QNBqVmJ_SYclSCw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0CE51005513;
-        Thu, 16 Apr 2020 06:34:44 +0000 (UTC)
-Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47CA7A0997;
-        Thu, 16 Apr 2020 06:34:32 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 14:34:28 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 4/5] mm/swapfile: refcount block and queue before using
- blkcg_schedule_throttle()
-Message-ID: <20200416063428.GE2723777@T590>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-5-mcgrof@kernel.org>
- <20200416062222.GC2723777@T590>
- <20200416062532.GN11244@42.do-not-panic.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:58379 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407924AbgDPGep (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 02:34:45 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200416063438epoutp0473b2562883443794f0a03161b9b82e1b~GOUMHz6cV2081920819epoutp04g
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 06:34:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200416063438epoutp0473b2562883443794f0a03161b9b82e1b~GOUMHz6cV2081920819epoutp04g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1587018878;
+        bh=ypbsvyhjVcYP3b7mJXEBHON652dLD6LimgwxQLEbcVg=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=rtGQAc6KaLvW+YsdH2BqVy2f+H0q97O7WSiuOk59Ko9pKwl8oYr0lHc4fLcJ9uNa5
+         PnlIMlL11oGvBRomJzRlA+6h/hlsTGJhhEoRiUBNpjERS2LGXKtWQ2aQCzYD4WJWrO
+         GZbUtdqlXwBO2DZdZZL3fJ65SpXD9H/btmyvI9aE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200416063438epcas1p19ed71eb6f5562220caa12ba0c522daaf~GOUL2lWLk1555415554epcas1p1m;
+        Thu, 16 Apr 2020 06:34:38 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.166]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 492qFn2THczMqYkp; Thu, 16 Apr
+        2020 06:34:37 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BD.E2.04402.A7CF79E5; Thu, 16 Apr 2020 15:34:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200416063434epcas1p3465ee3316a5d55ab11cfe6d056cd4825~GOUHt8b3c2907429074epcas1p3I;
+        Thu, 16 Apr 2020 06:34:34 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200416063434epsmtrp121f998f476051f5253b7296bd7dddb3c~GOUHs3KOH2862128621epsmtrp11;
+        Thu, 16 Apr 2020 06:34:34 +0000 (GMT)
+X-AuditID: b6c32a35-76bff70000001132-53-5e97fc7a9dab
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        44.4A.04158.97CF79E5; Thu, 16 Apr 2020 15:34:33 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200416063433epsmtip22dd791dee7908fa564fb4d2b9b37af0b~GOUHgt-mx1229512295epsmtip2d;
+        Thu, 16 Apr 2020 06:34:33 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Jason Yan'" <yanaijie@huawei.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sj1557.seo@samsung.com>
+In-Reply-To: <20200414120225.35540-1-yanaijie@huawei.com>
+Subject: RE: [PATCH] exfat: remove the assignment of 0 to bool variable
+Date:   Thu, 16 Apr 2020 15:34:33 +0900
+Message-ID: <003f01d613b9$17864000$4692c000$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416062532.GN11244@42.do-not-panic.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHfREGer/8Wwi5J5+kbn3sveF3gFwD0yP6kqGFCiRA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmk+LIzCtJLcpLzFFi42LZdlhTV7fqz/Q4g1fHxS327D3JYnF51xw2
+        iy3/jrBaLNrTyezA4tFy5C2rR9+WVYwenzfJBTBH5dhkpCampBYppOYl56dk5qXbKnkHxzvH
+        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
+        pRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZJx+O4Gp4DBbxdFjyxkbGKexdjFycEgI
+        mEjsuqDTxcjFISSwg1Hi0qz3bBDOJ0aJxdcWMEM43xglms6uAXI4wTp27H7PApHYyygx5+tR
+        KOclo8TPya9ZQKrYBHQl/v3ZzwZiiwioS7SvvckOYjMLxEss3nEcLM4pYCkx99gusHphAXeJ
+        WzvXMoHYLAKqEq8eHmEEsXmBaiY1XGKHsAUlTs58wgIxR15i+9s5UBcpSPx8uowVYpeVxMdT
+        cxkhakQkZne2gb0gIXCCTaJz2jFGiAYXiW2/P7ND2MISr45vgbKlJF72t7FDAqZa4uN+qPkd
+        jBIvvttC2MYSN9dvAIcds4CmxPpd+hBhRYmdv2HW8km8+9oDDV5eiY42IYgSVYm+S4eZIGxp
+        ia72D+wTGJVmIXlsFpLHZiF5YBbCsgWMLKsYxVILinPTU4sNCwyR43oTIzghapnuYJxyzucQ
+        owAHoxIPr8HLaXFCrIllxZW5hxglOJiVRHh3+E+PE+JNSaysSi3Kjy8qzUktPsRoCgz3icxS
+        osn5wGSdVxJvaGpkbGxsYWJmbmZqrCTOO/V6TpyQQHpiSWp2ampBahFMHxMHp1QDY9H9zDNm
+        2vWGexbm5tnKqEu8UVGJ7yxOcqvxCmuqYj7s7cEjePkHw+EzCU96ZKL1y7vfGGjGh3yWO3fp
+        V0bIzDsHWTLW70tincut5/Vtup/7/8Jd/2fuXmKsf/F48M7v5kuOhrK/2LxL4KTYxAdxec/+
+        yHycYnC++G5/vO6jN3bqp2Wi7j0SVWIpzkg01GIuKk4EAD4pbHeeAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvG7ln+lxBv8Xm1ns2XuSxeLyrjls
+        Flv+HWG1WLSnk9mBxaPlyFtWj74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4Mo4/XYCU8Fhtoqj
+        x5YzNjBOY+1i5OSQEDCR2LH7PUsXIxeHkMBuRom7j09DJaQljp04w9zFyAFkC0scPlwMUfOc
+        UaJ/zTFGkBo2AV2Jf3/2s4HYIgLqEu1rb7KD2MwCiRJnlrSxQjR0MUrsmNYINpRTwFJi7rFd
+        LCC2sIC7xK2da5lAbBYBVYlXD4+ADeUFqpnUcIkdwhaUODnzCQvIEcwCehJtGxkh5stLbH87
+        hxniTgWJn0+XsULcYCXx8dRcqBoRidmdbcwTGIVnIZk0C2HSLCSTZiHpWMDIsopRMrWgODc9
+        t9iwwCgvtVyvODG3uDQvXS85P3cTIzgytLR2MJ44EX+IUYCDUYmHt+P1tDgh1sSy4srcQ4wS
+        HMxKIrw7/KfHCfGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl4uCU
+        amBU+jRXk01edUPEi9xpH5z15bN3ztPeseVqwo6X2YF2vV1vgzvXNL7/Zuiv9WDquhWbZWxS
+        Jn3vUtF5KissrXg1hXveg/q6X4mW751OdH07IO4syfFvLQvr9iese24L65i914u6tsW6MWHC
+        Crc7K1bdlhJY4acU4amnfqKR+bn29Fv/JJN8vr1XYinOSDTUYi4qTgQAnm1OdIgCAAA=
+X-CMS-MailID: 20200416063434epcas1p3465ee3316a5d55ab11cfe6d056cd4825
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200414113819epcas1p4eafa861bec639fcdcb931fb68c1086ce
+References: <CGME20200414113819epcas1p4eafa861bec639fcdcb931fb68c1086ce@epcas1p4.samsung.com>
+        <20200414120225.35540-1-yanaijie@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 06:25:32AM +0000, Luis Chamberlain wrote:
-> On Thu, Apr 16, 2020 at 02:22:22PM +0800, Ming Lei wrote:
-> > On Tue, Apr 14, 2020 at 04:19:01AM +0000, Luis Chamberlain wrote:
-> > > block devices are refcounted so to ensure once its final user goes away it
-> > > can be cleaned up by the lower layers properly. The block device's
-> > > request_queue structure is also refcounted, however, if the last
-> > > blk_put_queue() is called under atomic context the block layer has
-> > > to defer removal.
-> > > 
-> > > By refcounting the block device during the use of blkcg_schedule_throttle(),
-> > > we ensure ensure two things:
-> > > 
-> > > 1) the block device remains available during the call
-> > > 2) we ensure avoid having to deal with the fact we're using the
-> > >    request_queue structure in atomic context, since the last
-> > >    blk_put_queue() will be called upon disk_release(), *after*
-> > >    our own bdput().
-> > > 
-> > > This means this code path is *not* going to remove the request_queue
-> > > structure, as we are ensuring some later upper layer disk_release()
-> > > will be the one to release the request_queue structure for us.
-> > > 
-> > > Cc: Bart Van Assche <bvanassche@acm.org>
-> > > Cc: Omar Sandoval <osandov@fb.com>
-> > > Cc: Hannes Reinecke <hare@suse.com>
-> > > Cc: Nicolai Stange <nstange@suse.de>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Michal Hocko <mhocko@kernel.org>
-> > > Cc: yu kuai <yukuai3@huawei.com>
-> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > > ---
-> > >  mm/swapfile.c | 14 ++++++++++++--
-> > >  1 file changed, 12 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > > index 6659ab563448..9285ff6030ca 100644
-> > > --- a/mm/swapfile.c
-> > > +++ b/mm/swapfile.c
-> > > @@ -3753,6 +3753,7 @@ static void free_swap_count_continuations(struct swap_info_struct *si)
-> > >  void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
-> > >  				  gfp_t gfp_mask)
-> > >  {
-> > > +	struct block_device *bdev;
-> > >  	struct swap_info_struct *si, *next;
-> > >  	if (!(gfp_mask & __GFP_IO) || !memcg)
-> > >  		return;
-> > > @@ -3771,8 +3772,17 @@ void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
-> > >  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
-> > >  				  avail_lists[node]) {
-> > >  		if (si->bdev) {
-> > > -			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
-> > > -						true);
-> > > +			bdev = bdgrab(si->bdev);
-> > 
-> > When swapon, the block_device has been opened in claim_swapfile(),
-> > so no need to worry about the queue being gone here.
+> There is no need to init 'sync' in exfat_set_vol_flags().
+> This also fixes the following coccicheck warning:
 > 
-> Thanks, so why bdev_get_queue() before?
+> fs/exfat/super.c:104:6-10: WARNING: Assignment of 0/1 to bool variable
+> 
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Pushed it to exfat dev.
 
-bdev_get_queue() returns the request queue associated with the
-the block device, and it is just that blkcg_schedule_throttle() needs
-it.
+Thanks for your patch!
+> ---
+>  fs/exfat/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c index
+> 16ed202ef527..b86755468904 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -101,7 +101,7 @@ int exfat_set_vol_flags(struct super_block *sb,
+> unsigned short new_flag)  {
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>  	struct pbr64 *bpb;
+> -	bool sync = 0;
+> +	bool sync;
+> 
+>  	/* flags are not changed */
+>  	if (sbi->vol_flag == new_flag)
+> --
+> 2.21.1
 
-Maybe I misunderstood your question, if yes, please explain it in
-a bit detail.
-
-Thanks,
-Ming
 
