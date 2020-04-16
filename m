@@ -2,98 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F051AB7C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489941AB7DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:21:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436619AbgDPGLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 02:11:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2436573AbgDPGLQ (ORCPT
+        id S2407698AbgDPGVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 02:21:00 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39852 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407384AbgDPGU6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 02:11:16 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA6EC061A0C;
-        Wed, 15 Apr 2020 23:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=V1wMHJ2x48pyw+NR7zdN4GOKdt2x+SXrmagOcNfJte4=; b=Mzvh1yHYOTLa3L3LaVPa5JXfPS
-        Rf9pgkQMbfyhlhjMqkSjUZVyD+TtqIhOyr9qQc/XoeVGxWHqJWpL4kg8L52u9EK4YgmdL8f1aUPIv
-        I222yD1U2T2e0X/oiXB/1infIrckH515ONIedvsmoLFoS9gx28SxhOeKj9d8YaRe/YeX5h0B0gUJi
-        xyxehntxUIVxmCX23CATwOPcWuptTLPJBImxRolnY6jZpCtOFqY9JGAJdywGFUmkLk6cFlPhXP+LA
-        OVVpENRirSjFP7obaAFks1nWIIh9E5caWZ32HZXLcxPFiY53WGqclwB25hklE9P6LkDkw/1gJ79cq
-        +qKexh9A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jOxjc-0004DX-QD; Thu, 16 Apr 2020 06:10:48 +0000
-Date:   Wed, 15 Apr 2020 23:10:48 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        Thu, 16 Apr 2020 02:20:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g32so1165396pgb.6;
+        Wed, 15 Apr 2020 23:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p15xYOQygHaMZBBF5Y1nnqVE33ZTctQDLOOIp9dIoLE=;
+        b=TTox5xiBcelasnIGWX6SIMPF+9VR0ZnaiYHUaJELkhRxLPDLqYtSKxlOiKiBDIqHzo
+         cjoFApG69Z/IMJ0cxPAytqe02eyfaI2JlsvMLDuBSXj+vJrfag9qjn/kGwvvqtBR7vPL
+         PUY4lhDbHy1gonnlVok4ctW1n52G0rKOhfzFdMSrUM/+Uv2xRXxUz+vW8GnDVqRB+FWf
+         YatT0xdjzURqrHrs72Rii0baZeLkls7G9cX2lEgiQGtaRZ3hac1Z/6aPptcVaINvJ4Cu
+         FfPwNNWwL1lTy78RuZRJZXsTqOVsn+rob3butyolVRl9P+gFjqtel4xId136ddgzx/f8
+         Befw==
+X-Gm-Message-State: AGi0PuZsOj47Xje/4cnmXf+AlRlgbfRl7qu2/r1rxwg+jUTWTGZ1KLX4
+        OjmVt1TqYlU+YssLRL6FKd4=
+X-Google-Smtp-Source: APiQypJdFaXOZeMn73PqeNL3aSMM9FGEv7xVBTPP0KhN6MUn3AMyk3tgHrWRUpkeOX/IOxTaJA/Zuw==
+X-Received: by 2002:a62:16d2:: with SMTP id 201mr29586848pfw.295.1587018056780;
+        Wed, 15 Apr 2020 23:20:56 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id g6sm15692090pfr.56.2020.04.15.23.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 23:20:55 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id D4F6F40277; Thu, 16 Apr 2020 06:20:54 +0000 (UTC)
+Date:   Thu, 16 Apr 2020 06:20:54 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
         gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
+        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
         Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 4/5] mm/swapfile: refcount block and queue before using
- blkcg_schedule_throttle()
-Message-ID: <20200416061048.GA1342@infradead.org>
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
+Message-ID: <20200416062054.GL11244@42.do-not-panic.com>
 References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-5-mcgrof@kernel.org>
- <20200414154447.GC25765@infradead.org>
- <20200415054234.GQ11244@42.do-not-panic.com>
- <20200415072712.GB21099@infradead.org>
- <20200415073443.GA21036@infradead.org>
- <20200415131915.GV11244@42.do-not-panic.com>
+ <20200414041902.16769-3-mcgrof@kernel.org>
+ <20200416021036.GA2717677@T590>
+ <20200416052524.GH11244@42.do-not-panic.com>
+ <20200416054750.GA2723777@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415131915.GV11244@42.do-not-panic.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200416054750.GA2723777@T590>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 01:19:15PM +0000, Luis Chamberlain wrote:
-> >  	if (current->throttle_queue)
-> >  		return;
-> > +	if (unlikely(current->flags & PF_KTHREAD))
-> > +		return;
-> >  
-> >  	spin_lock(&swap_avail_lock);
-> >  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
-> >  				  avail_lists[node]) {
-> > -		if (si->bdev) {
-> > -			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
-> > -						true);
-> > -			break;
-> > +		if (!si->bdev)
-> > +			continue;
-> > +		if (blk_get_queue(dev_get_queue(si->bdev))) {
-> > +			current->throttle_queue = dev_get_queue(si->bdev);
-> > +			current->use_memdelay = true;
-> > +			set_notify_resume(current);
-> >  		}
-> > +		break;
-> >  	}
-> >  	spin_unlock(&swap_avail_lock);
-> >  }
+On Thu, Apr 16, 2020 at 01:47:50PM +0800, Ming Lei wrote:
+> On Thu, Apr 16, 2020 at 05:25:24AM +0000, Luis Chamberlain wrote:
+> > On Thu, Apr 16, 2020 at 10:10:36AM +0800, Ming Lei wrote:
+> > > In theory, multiple partitions can be traced concurrently, but looks
+> > > it never works, so it won't cause trouble for multiple partition trace.
+> > > 
+> > > One userspace visible change is that blktrace debugfs dir name is switched 
+> > > to disk name from partition name in case of partition trace, will it
+> > > break some utilities?
+> > 
+> > How is this possible, its not clear to me, we go from:
+> > 
+> > -	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+> > -					    blk_debugfs_root);
+> > 
+> > To this:
+> > 
+> > +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+> > +					    blk_debugfs_root);
+> > 
+> > 
+> > Maybe I am overlooking something.
 > 
-> Sorry, its not clear to me  who calls the respective blk_put_queue()
-> here?
+> Your patch removes the blktrace debugfs dir:
+> 
+> do_blk_trace_setup()
+> 
+> -       dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> -       if (!dir)
+> -               bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> -
+> 
+> Then create blktrace attributes under the dir of q->debugfs_dir.
+> 
+> However, buts->name could be one partition device name, but
 
-If you look at blkcg_schedule_throttle, it only puts the queue that
-was in current->throttle_queue.  But mem_cgroup_throttle_swaprate
-exits early when current->throttle_queue is non-zero (first two lines
-quote above).  So when called from mem_cgroup_throttle_swaprate,
-blkcg_schedule_throttle should never actually put a queue.  Open
-coding the few relevant lines from blkcg_schedule_throttle in
-mem_cgroup_throttle_swaprate makes that obvious.
+I can see how buts->name is set to bdevname() which expands to
+disk_name(bdev->bd_disk, bdev->bd_part->partno, buf).
 
+> q->debugfs_dir has to be disk name.
+
+I can't see this, can you point me to where it is clear the
+request_queue kobject's parent is sure to be the disk name?
+
+If it is different, the issue I don't think should be debugfs, but
+the bigger issue would be that blktrace on two different partitions
+would clash.
+
+Also, the *old* lookup intent on partitions always would fail on mq
+and we'd end up creating a directory.
+
+I think we'd need to create a directory per partition, even when we
+don't use blktrace. That makes this more complex than I'd hope for.
+
+  Luis
