@@ -2,85 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C87401AB5A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEA51AB5B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 04:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388284AbgDPBww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 21:52:52 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2334 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729270AbgDPBwt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 21:52:49 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5F1C1FC782B87A59B108;
-        Thu, 16 Apr 2020 09:52:47 +0800 (CST)
-Received: from [127.0.0.1] (10.166.215.235) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Thu, 16 Apr 2020
- 09:52:37 +0800
-Subject: Re: [PATCH] dcache: unlock inode->i_lock before goto restart tag in,
- d_prune_aliases
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <npiggin@kernel.dk>,
-        <zyan@redhat.com>, <hartleys@visionengravers.com>,
-        Yanxiaodan <yanxiaodan@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "wubo (T)" <wubo40@huawei.com>
-References: <c3a3d3d2-dad4-a4fe-014f-3f5eb3561524@huawei.com>
- <20200416014648.GB816@sol.localdomain>
-From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Message-ID: <e71e65a1-ab70-3ff0-6277-8d7d4db4dfc2@huawei.com>
-Date:   Thu, 16 Apr 2020 09:52:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729874AbgDPCAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 22:00:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729707AbgDPCAI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 22:00:08 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3052E20725;
+        Thu, 16 Apr 2020 02:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587002408;
+        bh=5bHgMxkxq5OoYHIzY8aB3H41HjFShB2x1gkOMnn4UaY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FqdHtB2+f39HOV/1KklFM7kz2IRs+UE4U5NEM24XS9qhVfSivSIuZu2tuH3Xmmil3
+         LUQqY9DdqLqivO4cFa7K7yf8QP2/g9w01Gmuc0HGVKpLdEd7ITU9kG5HwQ7IqQ3RDj
+         YPmJvSZmtXjFmvOcok3d51qugwUjcu7VkPVrgdZ0=
+Date:   Wed, 15 Apr 2020 19:00:06 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 22/34] docs: filesystems: rename path-lookup.txt file
+Message-ID: <20200416020006.GC816@sol.localdomain>
+References: <cover.1586960617.git.mchehab+huawei@kernel.org>
+ <ddee231f968fcf8a9558ff39f251fdd7b2357ff2.1586960617.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200416014648.GB816@sol.localdomain>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.166.215.235]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddee231f968fcf8a9558ff39f251fdd7b2357ff2.1586960617.git.mchehab+huawei@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/4/16 9:46, Eric Biggers wrote:
-> On Wed, Apr 15, 2020 at 09:20:33PM +0800, Zhiqiang Liu wrote:
->> From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
->>
->> coccicheck reports:
->>   fs/dcache.c:1027:1-10: second lock on line 1027
->>
->> In d_prune_aliases, before goto restart we should unlock
->> inode->i_lock.
->>
->> Fixes: 29355c3904e ("d_prune_alias(): just lock the parent and call __dentry_kill()")
->> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
->> Signed-off-by: Feilong Lin <linfeilong@huawei.com>
->> ---
->>  fs/dcache.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/dcache.c b/fs/dcache.c
->> index b280e07e162b..1532ebe9d9ca 100644
->> --- a/fs/dcache.c
->> +++ b/fs/dcache.c
->> @@ -1030,6 +1030,7 @@ void d_prune_aliases(struct inode *inode)
->>  		if (!dentry->d_lockref.count) {
->>  			struct dentry *parent = lock_parent(dentry);
->>  			if (likely(!dentry->d_lockref.count)) {
->> +				spin_unlock(&inode->i_lock);
->>  				__dentry_kill(dentry);
->>  				dput(parent);
->>  				goto restart;
->> -- 
+On Wed, Apr 15, 2020 at 04:32:35PM +0200, Mauro Carvalho Chehab wrote:
+> There are two files called "patch-lookup", with different contents:
+> one is a ReST file, the other one is the text.
 > 
-> Doesn't __dentry_kill() already do the unlock, via dentry_unlink_inode()?
+> As we'll be finishing the conversion of filesystem documents,
+> let's fist rename the text one, in order to avoid messing with
+> the existing ReST file.
 > 
-> - Eric
-> 
-Yes, you are right. Sorry for that. Please ignore this patch.
-> .
-> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  .../filesystems/{path-lookup.txt => path-walking.txt}       | 0
+>  Documentation/filesystems/porting.rst                       | 2 +-
+>  fs/dcache.c                                                 | 6 +++---
+>  fs/namei.c                                                  | 2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+>  rename Documentation/filesystems/{path-lookup.txt => path-walking.txt} (100%)
 
+Wouldn't it make more sense to consolidate path-lookup.rst and path-lookup.txt
+into one file?  The .txt one is less detailed and hasn't been updated since
+2011, so maybe it should just be deleted?  Perhaps there's something useful in
+it that should be salvaged, though.
+
+- Eric
