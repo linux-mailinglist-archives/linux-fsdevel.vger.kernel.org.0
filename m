@@ -2,128 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3EF1AB7BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F051AB7C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407782AbgDPGJx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 02:09:53 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25984 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407719AbgDPGJs (ORCPT
+        id S2436619AbgDPGLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 02:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2436573AbgDPGLQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 02:09:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587017386;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WSD44ootEBXyzkzNcdpXGbzlmx+BBRKBSaXWnZtwryM=;
-        b=dY6dFxT4bgRH6o/sjVHFXRwgls1j1MT4G+kwW1upN2P9hN0bp5o7+kmQn8fFgBNp5vsi3P
-        UJ8+/uiXZoEzLeli6mcxs/aPkGTdpuL8rcOB/N27XdtlPYG/PXJnP+Z5oRFFakCTbM/15g
-        RwhAuZXwxqmJ2VM7S/VsksbqE52Ni8M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-8-KtHJpBBfOye0jlhWDKwoow-1; Thu, 16 Apr 2020 02:09:41 -0400
-X-MC-Unique: KtHJpBBfOye0jlhWDKwoow-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECF3313F9;
-        Thu, 16 Apr 2020 06:09:38 +0000 (UTC)
-Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7C2699E03;
-        Thu, 16 Apr 2020 06:09:26 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 14:09:21 +0800
-From:   Ming Lei <ming.lei@redhat.com>
+        Thu, 16 Apr 2020 02:11:16 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA6EC061A0C;
+        Wed, 15 Apr 2020 23:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=V1wMHJ2x48pyw+NR7zdN4GOKdt2x+SXrmagOcNfJte4=; b=Mzvh1yHYOTLa3L3LaVPa5JXfPS
+        Rf9pgkQMbfyhlhjMqkSjUZVyD+TtqIhOyr9qQc/XoeVGxWHqJWpL4kg8L52u9EK4YgmdL8f1aUPIv
+        I222yD1U2T2e0X/oiXB/1infIrckH515ONIedvsmoLFoS9gx28SxhOeKj9d8YaRe/YeX5h0B0gUJi
+        xyxehntxUIVxmCX23CATwOPcWuptTLPJBImxRolnY6jZpCtOFqY9JGAJdywGFUmkLk6cFlPhXP+LA
+        OVVpENRirSjFP7obaAFks1nWIIh9E5caWZ32HZXLcxPFiY53WGqclwB25hklE9P6LkDkw/1gJ79cq
+        +qKexh9A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jOxjc-0004DX-QD; Thu, 16 Apr 2020 06:10:48 +0000
+Date:   Wed, 15 Apr 2020 23:10:48 -0700
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
         gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
         Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
-Message-ID: <20200416060921.GB2723777@T590>
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 4/5] mm/swapfile: refcount block and queue before using
+ blkcg_schedule_throttle()
+Message-ID: <20200416061048.GA1342@infradead.org>
 References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-3-mcgrof@kernel.org>
- <20200416021036.GA2717677@T590>
- <20200416052524.GH11244@42.do-not-panic.com>
- <20200416054750.GA2723777@T590>
+ <20200414041902.16769-5-mcgrof@kernel.org>
+ <20200414154447.GC25765@infradead.org>
+ <20200415054234.GQ11244@42.do-not-panic.com>
+ <20200415072712.GB21099@infradead.org>
+ <20200415073443.GA21036@infradead.org>
+ <20200415131915.GV11244@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200416054750.GA2723777@T590>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200415131915.GV11244@42.do-not-panic.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 01:47:50PM +0800, Ming Lei wrote:
-> On Thu, Apr 16, 2020 at 05:25:24AM +0000, Luis Chamberlain wrote:
-> > On Thu, Apr 16, 2020 at 10:10:36AM +0800, Ming Lei wrote:
-> > > In theory, multiple partitions can be traced concurrently, but looks
-> > > it never works, so it won't cause trouble for multiple partition trace.
-> > > 
-> > > One userspace visible change is that blktrace debugfs dir name is switched 
-> > > to disk name from partition name in case of partition trace, will it
-> > > break some utilities?
-> > 
-> > How is this possible, its not clear to me, we go from:
-> > 
-> > -	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> > -					    blk_debugfs_root);
-> > 
-> > To this:
-> > 
-> > +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> > +					    blk_debugfs_root);
-> > 
-> > 
-> > Maybe I am overlooking something.
+On Wed, Apr 15, 2020 at 01:19:15PM +0000, Luis Chamberlain wrote:
+> >  	if (current->throttle_queue)
+> >  		return;
+> > +	if (unlikely(current->flags & PF_KTHREAD))
+> > +		return;
+> >  
+> >  	spin_lock(&swap_avail_lock);
+> >  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
+> >  				  avail_lists[node]) {
+> > -		if (si->bdev) {
+> > -			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
+> > -						true);
+> > -			break;
+> > +		if (!si->bdev)
+> > +			continue;
+> > +		if (blk_get_queue(dev_get_queue(si->bdev))) {
+> > +			current->throttle_queue = dev_get_queue(si->bdev);
+> > +			current->use_memdelay = true;
+> > +			set_notify_resume(current);
+> >  		}
+> > +		break;
+> >  	}
+> >  	spin_unlock(&swap_avail_lock);
+> >  }
 > 
-> Your patch removes the blktrace debugfs dir:
-> 
-> do_blk_trace_setup()
-> 
-> -       dir = debugfs_lookup(buts->name, blk_debugfs_root);
-> -       if (!dir)
-> -               bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
-> -
-> 
-> Then create blktrace attributes under the dir of q->debugfs_dir.
-> 
-> However, buts->name could be one partition device name, but
-> q->debugfs_dir has to be disk name.
-> 
-> This change is visible to blktrace utilities.
+> Sorry, its not clear to me  who calls the respective blk_put_queue()
+> here?
 
-Just test the 1st two patches via "blktrace /dev/sda2", follows the
-result, so this way can't be accepted.
-
-[root@ktest-01 ~]# blktrace /dev/sda2
-Thread 0 failed open /sys/kernel/debug/block/sda2/trace0: 2/No such file or directory
-Thread 4 failed open /sys/kernel/debug/block/sda2/trace4: 2/No such file or directory
-Thread 1 failed open /sys/kernel/debug/block/sda2/trace1: 2/No such file or directory
-Thread 2 failed open /sys/kernel/debug/block/sda2/trace2: 2/No such file or directory
-Thread 5 failed open /sys/kernel/debug/block/sda2/trace5: 2/No such file or directory
-Thread 3 failed open /sys/kernel/debug/block/sda2/trace3: 2/No such file or directory
-Thread 6 failed open /sys/kernel/debug/block/sda2/trace6: 2/No such file or directory
-Thread 7 failed open /sys/kernel/debug/block/sda2/trace7: 2/No such file or directory
-FAILED to start thread on CPU 0: 1/Operation not permitted
-FAILED to start thread on CPU 1: 1/Operation not permitted
-FAILED to start thread on CPU 2: 1/Operation not permitted
-FAILED to start thread on CPU 3: 1/Operation not permitted
-FAILED to start thread on CPU 4: 1/Operation not permitted
-FAILED to start thread on CPU 5: 1/Operation not permitted
-FAILED to start thread on CPU 6: 1/Operation not permitted
-FAILED to start thread on CPU 7: 1/Operation not permitted
-
-
-
-Thanks, 
-Ming
+If you look at blkcg_schedule_throttle, it only puts the queue that
+was in current->throttle_queue.  But mem_cgroup_throttle_swaprate
+exits early when current->throttle_queue is non-zero (first two lines
+quote above).  So when called from mem_cgroup_throttle_swaprate,
+blkcg_schedule_throttle should never actually put a queue.  Open
+coding the few relevant lines from blkcg_schedule_throttle in
+mem_cgroup_throttle_swaprate makes that obvious.
 
