@@ -2,154 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A5A21AD23F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 23:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129BE1AD27D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 00:01:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgDPVxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 17:53:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49978 "EHLO
+        id S1728765AbgDPWBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 18:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725960AbgDPVxi (ORCPT
+        by vger.kernel.org with ESMTP id S1728720AbgDPWBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 17:53:38 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B353C061A0F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 14:53:36 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id rh22so2488123ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 14:53:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eUNGgddkQnrL1o2hsZswaMALGVl9JsvHDg1XmEFxRXs=;
-        b=H/3328u8uHV5B3ZeA1mdyZ9xPFs8kyLs8IUIWPozDW9OfdnPF3NpugbioymI6/8jbX
-         tPmBnafFrVmmeM5qCkJe6iYYWMQGGNCaCIBTu9iKoTjKEnoqIk+PcKTpHZgE+/FY0MuQ
-         PeDR0uxOgSOnRc2hQRaU3VDAQAdfVv5922uyfk2kB4XocRvJL9WrovJY8zVDxj8AifvK
-         dQjxlq17MhIeFeAwrQ2ALcslyU4J+63Hv+v7D9gJECfbybcc7t3dDiczFn2juNoagtw4
-         M58yJrok07SL36Kqx67wdtwLyNUDDujZWYGVj6Cp7ofvKM+0LD9BpoiJx/Nn0LZhuM1V
-         WUOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eUNGgddkQnrL1o2hsZswaMALGVl9JsvHDg1XmEFxRXs=;
-        b=l0JRAXfVB070ZWO29oAKCQvY5t5L3EriP+vpksPLyDAtrNF0jtlg70Uws2nayCoV3g
-         e1zkjHQXiehlMCeVuibM1czwtB0LIiH0dgn5JGWWT7V5VvwmCXmFdUNMm5ipKfb8ehLJ
-         szAkU1yygLahuCaHlOeM57yQkF0yEQqzDXRj3cgplfueqNyZ46bw38FNBhX3ynhs09WZ
-         c2E0IAXd1PZPs1DnKHHzRwgPD8/WC248ubY1uuUki+Dvn8ygKewluGoe59BI+16Y3Yhd
-         7/URb1OSqYTobBZywdpEvOeCYIPgwIyJeeWTP7xj65oABsT7VfJziUN27av/SIe++aYT
-         uAGw==
-X-Gm-Message-State: AGi0PubfbayrbWt/xiTivtLGMik3qHLVrFFiFr+ABNCmPd6cKgNfSZ4l
-        yxcpSkHcVIztU5YPLGKZhAxCr/iakaw1I9kyD0W/
-X-Google-Smtp-Source: APiQypL+BE3uA1SW0Bujmyp0BjjA9VEPrFMXVzQljtvXfQzPxFQdYF4edXGWSKCfJiLORwzoe3+Py9YdpYXjI/hRt+E=
-X-Received: by 2002:a17:906:d7a2:: with SMTP id pk2mr118612ejb.272.1587074015141;
- Thu, 16 Apr 2020 14:53:35 -0700 (PDT)
+        Thu, 16 Apr 2020 18:01:33 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFBAC03C1A6;
+        Thu, 16 Apr 2020 15:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=14Ju6mOxlL9LJIOW/FTdgj6GivNAEkcDFvA+NJF0hh4=; b=JYt02rkpIxLfSksSlE8uemCZJq
+        N29XAVZHY7OEQvLCJGet9/lu5zO/JUGTcdn00BySeshPpZCf/rvt9a7GTwJLh6H1xxB5LRy+QyGPZ
+        BW2AFaaBs1sem3PR6wwbngwpAztHsiQKTqy/R4L79NzCmct41xrxivbxMO7w0ZxV0ToiMGIbKnvMc
+        0G7gWn4xcHuLLox0Q8llw7ntoQ1JNfa4wv2md27c7fC/btqps3kYVlOAJXoqIebqSAsIjWbrpG9uo
+        e1Yhwm0NNyim/bJtFBeTOmOQME265mnMLU9/9JVkpFsFi9XCHklAD9kSxEzpIsNYum1HMA/pfVxwO
+        NZXY37Hw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jPCZg-0003U8-Ca; Thu, 16 Apr 2020 22:01:32 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: [PATCH v3 00/11] Make PageWriteback use the PageLocked optimisation
+Date:   Thu, 16 Apr 2020 15:01:19 -0700
+Message-Id: <20200416220130.13343-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-References: <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca>
- <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
- <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca> <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
- <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca> <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
- <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca> <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
- <20200330162156.mzh2tsnovngudlx2@madcap2.tricolour.ca> <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
- <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca> <CAHC9VhR_bKSHDn2WAUgkquu+COwZUanc0RV3GRjMDvpoJ5krjQ@mail.gmail.com>
- <871ronf9x2.fsf@x220.int.ebiederm.org>
-In-Reply-To: <871ronf9x2.fsf@x220.int.ebiederm.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 16 Apr 2020 17:53:23 -0400
-Message-ID: <CAHC9VhR3gbmj5+5MY-whLtStKqDEHgvMRigU9hW0X1kpxF91ag@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>, nhorman@tuxdriver.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 4:36 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
-> > On Mon, Mar 30, 2020 at 1:49 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> On 2020-03-30 13:34, Paul Moore wrote:
-> >> > On Mon, Mar 30, 2020 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > > On 2020-03-30 10:26, Paul Moore wrote:
-> >> > > > On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > > > > On 2020-03-28 23:11, Paul Moore wrote:
-> >> > > > > > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > > > > > > On 2020-03-23 20:16, Paul Moore wrote:
-> >> > > > > > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > > > > > > > > On 2020-03-18 18:06, Paul Moore wrote:
-> >
-> > ...
-> >
-> >> > > Well, every time a record gets generated, *any* record gets generated,
-> >> > > we'll need to check for which audit daemons this record is in scope and
-> >> > > generate a different one for each depending on the content and whether
-> >> > > or not the content is influenced by the scope.
-> >> >
-> >> > That's the problem right there - we don't want to have to generate a
-> >> > unique record for *each* auditd on *every* record.  That is a recipe
-> >> > for disaster.
-> >> >
-> >> > Solving this for all of the known audit records is not something we
-> >> > need to worry about in depth at the moment (although giving it some
-> >> > casual thought is not a bad thing), but solving this for the audit
-> >> > container ID information *is* something we need to worry about right
-> >> > now.
-> >>
-> >> If you think that a different nested contid value string per daemon is
-> >> not acceptable, then we are back to issuing a record that has only *one*
-> >> contid listed without any nesting information.  This brings us back to
-> >> the original problem of keeping *all* audit log history since the boot
-> >> of the machine to be able to track the nesting of any particular contid.
-> >
-> > I'm not ruling anything out, except for the "let's just completely
-> > regenerate every record for each auditd instance".
->
-> Paul I am a bit confused about what you are referring to when you say
-> regenerate every record.
->
-> Are you saying that you don't want to repeat the sequence:
->         audit_log_start(...);
->         audit_log_format(...);
->         audit_log_end(...);
-> for every nested audit daemon?
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-If it can be avoided yes.  Audit performance is already not-awesome,
-this would make it even worse.
+PageWaiters is used by PageWriteback and PageLocked (and no other page
+flags), so it makes sense to use the same codepaths that have already been
+optimised for PageLocked, even if there's probably no real performance
+benefit to be had.
 
-> Or are you saying that you would like to literraly want to send the same
-> skb to each of the nested audit daemons?
+Unfortunately, clear_bit_unlock_is_negative_byte() isn't present on every
+architecture, and the default implementation is only available in filemap.c
+while I want to use it in page-writeback.c.  Rather than move the default
+implementation to a header file, I've done optimised implementations for
+alpha and ia64.  I can't figure out optimised implementations for m68k,
+mips, riscv and s390, so I've just replicated the effect of the generic
+implementation in them.  I leave it to the experts to fix that (... or
+convert over to using asm-generic/bitops/lock.h ...)
 
-Ideally we would reuse the generated audit messages as much as
-possible.  Less work is better.  That's really my main concern here,
-let's make sure we aren't going to totally tank performance when we
-have a bunch of nested audit daemons.
+v3:
+ - Added implementations of clear_bit_unlock_is_negative_byte()
+   to architectures which need it
 
-> Or are you thinking of something else?
+v2: Rebased to 5.7-rc1
+ - Split up patches better
+ - Moved the BUG() from end_page_writeback() to __clear_page_writeback()
+   as requested by Jan Kara.
+ - Converted the BUG() to WARN_ON()
+ - Removed TestClearPageWriteback
 
-As mentioned above, I'm not thinking of anything specific, other than
-let's please not have to regenerate *all* of the audit record strings
-for each instance of an audit daemon, that's going to be a killer.
+Matthew Wilcox (Oracle) (11):
+  alpha: Add clear_bit_unlock_is_negative_byte implementation
+  ia64: Add clear_bit_unlock_is_negative_byte implementation
+  m68k: Add clear_bit_unlock_is_negative_byte implementation
+  mips: Add clear_bit_unlock_is_negative_byte implementation
+  riscv: Add clear_bit_unlock_is_negative_byte implementation
+  s390: Add clear_bit_unlock_is_negative_byte implementation
+  mm: Remove definition of clear_bit_unlock_is_negative_byte
+  mm: Move PG_writeback into the bottom byte
+  mm: Convert writeback BUG to WARN_ON
+  mm: Use clear_bit_unlock_is_negative_byte for PageWriteback
+  mm: Remove TestClearPageWriteback
 
-Maybe we have to regenerate some, if we do, what would that look like
-in code?  How do we handle the regeneration aspect?  I worry that is
-going to be really ugly.
-
-Maybe we finally burn down the audit_log_format(...) function and pass
-structs/TLVs to the audit subsystem and the audit subsystem generates
-the strings in the auditd connection thread.  Some of the record
-strings could likely be shared, others would need to be ACID/auditd
-dependent.
-
-I'm open to any ideas people may have.  We have a problem, let's solve it.
+ arch/alpha/include/asm/bitops.h | 23 ++++++++++++++++++
+ arch/ia64/include/asm/bitops.h  | 20 ++++++++++++++++
+ arch/m68k/include/asm/bitops.h  |  7 ++++++
+ arch/mips/include/asm/bitops.h  |  7 ++++++
+ arch/riscv/include/asm/bitops.h |  7 ++++++
+ arch/s390/include/asm/bitops.h  |  9 +++++++
+ include/linux/page-flags.h      |  8 +++----
+ mm/filemap.c                    | 41 ++++----------------------------
+ mm/page-writeback.c             | 42 ++++++++++++++++++++-------------
+ 9 files changed, 107 insertions(+), 57 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.25.1
