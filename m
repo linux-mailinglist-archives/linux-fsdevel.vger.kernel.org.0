@@ -2,99 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D30841ABFEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 13:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 204671AC0CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 14:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505926AbgDPLoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 07:44:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59710 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633877AbgDPLlm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 07:41:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 97206AF95;
-        Thu, 16 Apr 2020 11:41:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 41F311E1250; Thu, 16 Apr 2020 13:41:39 +0200 (CEST)
-Date:   Thu, 16 Apr 2020 13:41:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        andres@anarazel.de, willy@infradead.org, dhowells@redhat.com,
-        hch@infradead.org, jack@suse.cz, akpm@linux-foundation.org,
-        david@fromorbit.com
-Subject: Re: [PATCH v6 2/2] buffer: record blockdev write errors in
- super_block that it backs
-Message-ID: <20200416114139.GH23739@quack2.suse.cz>
-References: <20200416113453.227229-1-jlayton@kernel.org>
- <20200416113453.227229-3-jlayton@kernel.org>
+        id S2635115AbgDPMMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 08:12:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2634744AbgDPMM0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 08:12:26 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9412C061A0C;
+        Thu, 16 Apr 2020 05:12:25 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id j188so1094170vkc.2;
+        Thu, 16 Apr 2020 05:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=9UKw5GscgAiWbaFyaogHtun3HlxTWK7ujAK5b+6nb5A=;
+        b=KvhE0wh/BoWkZh/vbqAjnW46zESXkHi/3xStk1gicdsOZzCnefVz8OsNJMk8w0z6Da
+         qR5CEINXZFImdzJsOQvtD+ghoTjAnV4pKKBK3Plop/g1LXZQ5hEdhv2jhLp1X6D8xzZF
+         L6jFZTJwbitic2MOhhmdo9V0IsbK0CtRIEgWxTgBD6JU00QsjBNYQYvT0pOGnLGHU7tV
+         kh/a57j3R3EsoTQ5MBRvq+B5T4I7ogO/5a0oMlbe3AUGTMRgxlgeDQy4EzJtGz8Tn6ss
+         VPOs1jQxvywk+jGuEhpVpssloOAVgKpbd9VcxRrX4OAbc/zhs1r7yiSn9d8w3B62HKUA
+         ukhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=9UKw5GscgAiWbaFyaogHtun3HlxTWK7ujAK5b+6nb5A=;
+        b=hpqJ03CMyBkCTAIWPeddSOgUCIiUBthWVIUw3mcZMo1g6paWEf8gc3RFvXvwkgteFa
+         8Q+4xDHhk2tSna5wj1E+t/hRU9cg9NQv7GsqP74wQvjsQTEWPBTZUfxvCyT1h/8HJpf1
+         Hmve4eveJCZkGQPxu2F7CaMislUUbO48iWLlCgFjhmD41LuWCWMOy1yt6xdKccTI/Xep
+         gKhXoxn9LNFgXSJ4yHOTI5WL5dmA6MsX6x8hVngSWwMkSKvBn+qbqXMYUkqLwmGnJU0W
+         aHQI11Lm3VjrAt1MuhFed8iaL6DhvkpaLX4eDn1jTgbJQfgrhkZlrri5BFcD4g9Eku9b
+         u1oQ==
+X-Gm-Message-State: AGi0PuahkW5WZ9v51p9XzXeRcKrxIANLHWaf0afHrOm8gX4NPdeeuiCN
+        LFZ1lEPfv247QOkSQoD1YZTEk46HbbZw8w/3gzk=
+X-Google-Smtp-Source: APiQypLKYcjiCYYIWyYO+Q8kAD5gNoQVCoXjVji7/jQ4NJU12A4C7JaqcgJuczlrhIpwsXEdO5A/dNI9zXWNnfPyU5Q=
+X-Received: by 2002:ac5:c4d0:: with SMTP id a16mr22844151vkl.46.1587039144696;
+ Thu, 16 Apr 2020 05:12:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416113453.227229-3-jlayton@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1564542193-89171-1-git-send-email-yi.zhang@huawei.com>
+In-Reply-To: <1564542193-89171-1-git-send-email-yi.zhang@huawei.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Thu, 16 Apr 2020 14:12:12 +0200
+Message-ID: <CAKgNAkivz=qXpLTPt5qbGHn0_zH-ReQ76LKhnoRd5zZuudu1NQ@mail.gmail.com>
+Subject: Re: [PATCH] io_getevents.2: Add EINVAL for case of timeout parameter
+ out of range
+To:     "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     linux-man <linux-man@vger.kernel.org>, linux-aio@kvack.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        bcrl@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Moyer <jmoyer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        deepa.kernel@gmail.com, wangkefeng.wang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-04-20 07:34:53, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
-> 
-> When syncing out a block device (a'la __sync_blockdev), any error
-> encountered will only be recorded in the bd_inode's mapping. When the
-> blockdev contains a filesystem however, we'd like to also record the
-> error in the super_block that's stored there.
-> 
-> Make mark_buffer_write_io_error also record the error in the
-> corresponding super_block when a writeback error occurs and the block
-> device contains a mounted superblock.
-> 
-> Since superblocks are RCU freed, hold the rcu_read_lock to ensure
-> that the superblock doesn't go away while we're marking it.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hello Zhangyi,
 
-Looks good to me now. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+On Wed, 31 Jul 2019 at 04:57, zhangyi (F) <yi.zhang@huawei.com> wrote:
+>
+> io_[p]getevents syscall should return -EINVAL if timeout is out of
+> range, update description of this error return value.
+>
+> Link: https://lore.kernel.org/lkml/1564451504-27906-1-git-send-email-yi.zhang@huawei.com/
 
 
+It appears that the kernel patch to implement this check was never
+merged. Do you know what happened to it?
+
+Thanks,
+
+Michael
+
+> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Deepa Dinamani <deepa.kernel@gmail.com>
 > ---
->  fs/buffer.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index f73276d746bb..71be7e6cabca 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1154,12 +1154,19 @@ EXPORT_SYMBOL(mark_buffer_dirty);
->  
->  void mark_buffer_write_io_error(struct buffer_head *bh)
->  {
-> +	struct super_block *sb;
-> +
->  	set_buffer_write_io_error(bh);
->  	/* FIXME: do we need to set this in both places? */
->  	if (bh->b_page && bh->b_page->mapping)
->  		mapping_set_error(bh->b_page->mapping, -EIO);
->  	if (bh->b_assoc_map)
->  		mapping_set_error(bh->b_assoc_map, -EIO);
-> +	rcu_read_lock();
-> +	sb = READ_ONCE(bh->b_bdev->bd_super);
-> +	if (sb)
-> +		errseq_set(&sb->s_wb_err, -EIO);
-> +	rcu_read_unlock();
->  }
->  EXPORT_SYMBOL(mark_buffer_write_io_error);
->  
-> -- 
-> 2.25.2
-> 
+>  man2/io_getevents.2 | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/man2/io_getevents.2 b/man2/io_getevents.2
+> index 0eb4b385e..5560bb8ee 100644
+> --- a/man2/io_getevents.2
+> +++ b/man2/io_getevents.2
+> @@ -73,8 +73,9 @@ Interrupted by a signal handler; see
+>  .TP
+>  .B EINVAL
+>  \fIctx_id\fP is invalid.
+> -\fImin_nr\fP is out of range or \fInr\fP is
+> -out of range.
+> +\fImin_nr\fP is out of range or \fInr\fP is out of range, or
+> +\fItimeout\fP is out of range (\fItv_sec\fP was less than zero, or
+> +\fItv_nsec\fP was not less than 1,000,000,000).
+>  .TP
+>  .B ENOSYS
+>  .BR io_getevents ()
+> --
+> 2.20.1
+>
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
