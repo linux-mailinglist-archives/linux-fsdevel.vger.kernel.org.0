@@ -2,41 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 129BE1AD27D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 00:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41D71AD287
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 00:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgDPWBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 18:01:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51240 "EHLO
+        id S1728780AbgDPWBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 18:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728720AbgDPWBd (ORCPT
+        by vger.kernel.org with ESMTP id S1728734AbgDPWBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 18:01:33 -0400
+        Thu, 16 Apr 2020 18:01:34 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFBAC03C1A6;
-        Thu, 16 Apr 2020 15:01:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78649C061A0F;
+        Thu, 16 Apr 2020 15:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=14Ju6mOxlL9LJIOW/FTdgj6GivNAEkcDFvA+NJF0hh4=; b=JYt02rkpIxLfSksSlE8uemCZJq
-        N29XAVZHY7OEQvLCJGet9/lu5zO/JUGTcdn00BySeshPpZCf/rvt9a7GTwJLh6H1xxB5LRy+QyGPZ
-        BW2AFaaBs1sem3PR6wwbngwpAztHsiQKTqy/R4L79NzCmct41xrxivbxMO7w0ZxV0ToiMGIbKnvMc
-        0G7gWn4xcHuLLox0Q8llw7ntoQ1JNfa4wv2md27c7fC/btqps3kYVlOAJXoqIebqSAsIjWbrpG9uo
-        e1Yhwm0NNyim/bJtFBeTOmOQME265mnMLU9/9JVkpFsFi9XCHklAD9kSxEzpIsNYum1HMA/pfVxwO
-        NZXY37Hw==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=aO1fN0fbVh2ayP7yJD7ISd8Eo2lcaZKKQzdebmXo4PQ=; b=tNL7iD41PJak5MbgEcMKlUs8sM
+        HkQ4N6Xn7iLsZU9wAUE9FCT3x8Odr3rQIFtinuDh3Xfjy2rGZ3T+6N+ZrT8hthLKgq0+DcPvx8dVf
+        Jlcpqse1/0M9oOMB5M0C85RIy//qrSW2uzNCVdXJ7p9bJGcFzVyyT5WAj9oVzuIpy+OQLD8eLx0yR
+        3YnWsUnT7lfQmYe7+X6nRWQ+ueUygPi8RAJhiFYZE9pssSwBBj++J/N2/1KX4EY2TqbVmT4CCha1b
+        LmG7YrdMNVCyCQIg9c8OYvX0fLdnAzFGz1XuWf3iu3hlqQCPjCMWgEFpqKyV+Vqt5NqHIEfFM0H2T
+        FIK8R5Ig==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jPCZg-0003U8-Ca; Thu, 16 Apr 2020 22:01:32 +0000
+        id 1jPCZg-0003UB-Da; Thu, 16 Apr 2020 22:01:32 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: [PATCH v3 00/11] Make PageWriteback use the PageLocked optimisation
-Date:   Thu, 16 Apr 2020 15:01:19 -0700
-Message-Id: <20200416220130.13343-1-willy@infradead.org>
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
+Subject: [PATCH v3 01/11] alpha: Add clear_bit_unlock_is_negative_byte implementation
+Date:   Thu, 16 Apr 2020 15:01:20 -0700
+Message-Id: <20200416220130.13343-2-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200416220130.13343-1-willy@infradead.org>
+References: <20200416220130.13343-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -46,54 +48,65 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-PageWaiters is used by PageWriteback and PageLocked (and no other page
-flags), so it makes sense to use the same codepaths that have already been
-optimised for PageLocked, even if there's probably no real performance
-benefit to be had.
+Copy and paste the clear_bit_unlock() implementation, and test the temp
+variable to see if it has bit 7 set.  Saves two instructions: a load
+and a compare:
 
-Unfortunately, clear_bit_unlock_is_negative_byte() isn't present on every
-architecture, and the default implementation is only available in filemap.c
-while I want to use it in page-writeback.c.  Rather than move the default
-implementation to a header file, I've done optimised implementations for
-alpha and ia64.  I can't figure out optimised implementations for m68k,
-mips, riscv and s390, so I've just replicated the effect of the generic
-implementation in them.  I leave it to the experts to fix that (... or
-convert over to using asm-generic/bitops/lock.h ...)
+      860:      01 31 20 44     andnot  t0,0x1,t0
+      864:      00 00 30 b8     stl_c   t0,0(a0)
+      868:      67 1b 20 e4     beq     t0,7608 <generic_file_write_iter+0x218>
+-     86c:      00 00 30 a0     ldl     t0,0(a0)
+-     870:      01 10 30 44     and     t0,0x80,t0
+-     874:      a1 03 e1 43     cmpult  zero,t0,t0
+-     878:      01 00 20 f4     bne     t0,880 <unlock_page+0x40>
+-     87c:      01 80 fa 6b     ret
++     86c:      01 10 30 44     and     t0,0x80,t0
++     870:      03 00 20 f4     bne     t0,880 <unlock_page+0x40>
++     874:      01 80 fa 6b     ret
 
-v3:
- - Added implementations of clear_bit_unlock_is_negative_byte()
-   to architectures which need it
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: linux-alpha@vger.kernel.org
+---
+ arch/alpha/include/asm/bitops.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-v2: Rebased to 5.7-rc1
- - Split up patches better
- - Moved the BUG() from end_page_writeback() to __clear_page_writeback()
-   as requested by Jan Kara.
- - Converted the BUG() to WARN_ON()
- - Removed TestClearPageWriteback
-
-Matthew Wilcox (Oracle) (11):
-  alpha: Add clear_bit_unlock_is_negative_byte implementation
-  ia64: Add clear_bit_unlock_is_negative_byte implementation
-  m68k: Add clear_bit_unlock_is_negative_byte implementation
-  mips: Add clear_bit_unlock_is_negative_byte implementation
-  riscv: Add clear_bit_unlock_is_negative_byte implementation
-  s390: Add clear_bit_unlock_is_negative_byte implementation
-  mm: Remove definition of clear_bit_unlock_is_negative_byte
-  mm: Move PG_writeback into the bottom byte
-  mm: Convert writeback BUG to WARN_ON
-  mm: Use clear_bit_unlock_is_negative_byte for PageWriteback
-  mm: Remove TestClearPageWriteback
-
- arch/alpha/include/asm/bitops.h | 23 ++++++++++++++++++
- arch/ia64/include/asm/bitops.h  | 20 ++++++++++++++++
- arch/m68k/include/asm/bitops.h  |  7 ++++++
- arch/mips/include/asm/bitops.h  |  7 ++++++
- arch/riscv/include/asm/bitops.h |  7 ++++++
- arch/s390/include/asm/bitops.h  |  9 +++++++
- include/linux/page-flags.h      |  8 +++----
- mm/filemap.c                    | 41 ++++----------------------------
- mm/page-writeback.c             | 42 ++++++++++++++++++++-------------
- 9 files changed, 107 insertions(+), 57 deletions(-)
-
+diff --git a/arch/alpha/include/asm/bitops.h b/arch/alpha/include/asm/bitops.h
+index 5adca78830b5..f9af2401bd23 100644
+--- a/arch/alpha/include/asm/bitops.h
++++ b/arch/alpha/include/asm/bitops.h
+@@ -79,6 +79,29 @@ clear_bit_unlock(unsigned long nr, volatile void * addr)
+ 	clear_bit(nr, addr);
+ }
+ 
++static inline bool clear_bit_unlock_is_negative_byte(unsigned int nr,
++						     volatile unsigned long *p)
++{
++	unsigned long temp;
++	int *m = ((int *)p) + (nr >> 5);
++
++	smp_mb();
++	__asm__ __volatile__(
++	"1:	ldl_l %0,%3\n"
++	"	bic %0,%2,%0\n"
++	"	stl_c %0,%1\n"
++	"	beq %0,2f\n"
++	".subsection 2\n"
++	"2:	br 1b\n"
++	".previous"
++	:"=&r" (temp), "=m" (*m)
++	:"Ir" (1UL << (nr & 31)), "m" (*m));
++
++	return temp & 128;
++}
++#define clear_bit_unlock_is_negative_byte \
++	clear_bit_unlock_is_negative_byte
++
+ /*
+  * WARNING: non atomic version.
+  */
 -- 
 2.25.1
+
