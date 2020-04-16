@@ -2,254 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F901ABBCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 10:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF9E1ABCE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 11:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503028AbgDPIzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 04:55:42 -0400
-Received: from mx05.melco.co.jp ([192.218.140.145]:53079 "EHLO
-        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502971AbgDPIwR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 04:52:17 -0400
-Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
-        by mx05.melco.co.jp (Postfix) with ESMTP id 659653A3F41;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received: from mr05.melco.co.jp (unknown [127.0.0.1])
-        by mr05.imss (Postfix) with ESMTP id 492tHx2VgNzRkJW;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
-        by mr05.melco.co.jp (Postfix) with ESMTP id 492tHx2BWLzRkJg;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received: from mf03.melco.co.jp (unknown [133.141.98.183])
-        by mf03_second.melco.co.jp (Postfix) with ESMTP id 492tHx2DkzzRkCV;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf03.melco.co.jp (Postfix) with ESMTP id 492tHx1mJgzRkBs;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 03G8pfNA025279;
-        Thu, 16 Apr 2020 17:51:41 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id 09CBF17E07A;
-        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (tadpost1.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id F135217E079;
-        Thu, 16 Apr 2020 17:51:40 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 03G8pePX013596;
-        Thu, 16 Apr 2020 17:51:40 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] exfat: replace 'time_ms' with 'time_cs'
-Date:   Thu, 16 Apr 2020 17:51:21 +0900
-Message-Id: <20200416085121.57495-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.0
+        id S2503818AbgDPJff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 05:35:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34810 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2503615AbgDPJfc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 05:35:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C7BC9AD0E;
+        Thu, 16 Apr 2020 09:35:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D25621E1250; Thu, 16 Apr 2020 11:35:28 +0200 (CEST)
+Date:   Thu, 16 Apr 2020 11:35:28 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, andres@anarazel.de, willy@infradead.org,
+        dhowells@redhat.com, hch@infradead.org, akpm@linux-foundation.org,
+        david@fromorbit.com
+Subject: Re: [PATCH v5 2/2] buffer: record blockdev write errors in
+ super_block that it backs
+Message-ID: <20200416093528.GC23739@quack2.suse.cz>
+References: <20200415121300.228017-1-jlayton@kernel.org>
+ <20200415121300.228017-3-jlayton@kernel.org>
+ <20200415140642.GK6126@quack2.suse.cz>
+ <b4161f1df3436d7371ab7e88709169e9a391f15d.camel@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4161f1df3436d7371ab7e88709169e9a391f15d.camel@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace "time_ms"  with "time_cs" in the file directory entry structure
-and related functions.
+On Wed 15-04-20 12:22:27, Jeff Layton wrote:
+> On Wed, 2020-04-15 at 16:06 +0200, Jan Kara wrote:
+> > On Wed 15-04-20 08:13:00, Jeff Layton wrote:
+> > > From: Jeff Layton <jlayton@redhat.com>
+> > > 
+> > > When syncing out a block device (a'la __sync_blockdev), any error
+> > > encountered will only be recorded in the bd_inode's mapping. When the
+> > > blockdev contains a filesystem however, we'd like to also record the
+> > > error in the super_block that's stored there.
+> > > 
+> > > Make mark_buffer_write_io_error also record the error in the
+> > > corresponding super_block when a writeback error occurs and the block
+> > > device contains a mounted superblock.
+> > > 
+> > > Since superblocks are RCU freed, hold the rcu_read_lock to ensure
+> > > that the superblock doesn't go away while we're marking it.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/buffer.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/fs/buffer.c b/fs/buffer.c
+> > > index f73276d746bb..2a4a5cc20418 100644
+> > > --- a/fs/buffer.c
+> > > +++ b/fs/buffer.c
+> > > @@ -1154,12 +1154,19 @@ EXPORT_SYMBOL(mark_buffer_dirty);
+> > >  
+> > >  void mark_buffer_write_io_error(struct buffer_head *bh)
+> > >  {
+> > > +	struct super_block *sb;
+> > > +
+> > >  	set_buffer_write_io_error(bh);
+> > >  	/* FIXME: do we need to set this in both places? */
+> > >  	if (bh->b_page && bh->b_page->mapping)
+> > >  		mapping_set_error(bh->b_page->mapping, -EIO);
+> > >  	if (bh->b_assoc_map)
+> > >  		mapping_set_error(bh->b_assoc_map, -EIO);
+> > > +	rcu_read_lock();
+> > > +	sb = bh->b_bdev->bd_super;
+> > 
+> > You still need READ_ONCE() here. Otherwise the dereference below can still
+> > result in refetch and NULL ptr deref.
+> > 
+> > 								Honza
+> > 
+> 
+> Huh? That seems like a really suspicious thing for the compiler/arch to
+> do. We are checking that sb isn't NULL before we dereference it. Doesn't
+> that imply a data dependency? How could the value of "sb" change after
+> that?
 
-The unit of create_time_ms/modify_time_ms in File Directory Entry are not
-'milli-second', but 'centi-second'.
-The exfat specification uses the term '10ms', but instead use 'cs' as in
-"msdos_fs.h".
+Because the compiler is free to optimize the local variable away and
+actually compile the dereference below as bh->b_bdev->bd_super->s_wb_err
+(from C11 standard POV such code is equivalent since in C11 memory model
+it is assumed there are no concurrent accesses). And READ_ONCE() is a way
+to forbid compiler from doing such optimization - through 'volatile'
+keyword it tells the compiler there may be concurrent accesses happening
+and makes sure the value is really fetched into the local variable and used
+from there. There are good articles about this on LWN - I'd give you a link
+but LWN seems to be down today. But the latest article is about KCSAN and
+from there are links to older articles about compiler optimizations.
 
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
-Changes in v3:
- - change time_10ms to time_cs
- - revert calculation formula to original
- - change subject & commit-log
- - rebase to 'linkinjeon/exfat.git' dev branch 
-Changes in v2:
- - fix spelling mistakes in commit-log.
+> I'm also not sure I understand how using READ_ONCE really helps there if
+> we can't count on the value of a local variable not changing.
 
-fs/exfat/dir.c       |  8 ++++----
- fs/exfat/exfat_fs.h  |  4 ++--
- fs/exfat/exfat_raw.h |  4 ++--
- fs/exfat/file.c      |  2 +-
- fs/exfat/inode.c     |  4 ++--
- fs/exfat/misc.c      | 18 +++++++++---------
- fs/exfat/namei.c     |  4 ++--
- 7 files changed, 22 insertions(+), 22 deletions(-)
+I hope I've explained this above.
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 53ae965da..b5a237c33 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -137,12 +137,12 @@ static int exfat_readdir(struct inode *inode, struct exfat_dir_entry *dir_entry)
- 					ep->dentry.file.create_tz,
- 					ep->dentry.file.create_time,
- 					ep->dentry.file.create_date,
--					ep->dentry.file.create_time_ms);
-+					ep->dentry.file.create_time_cs);
- 			exfat_get_entry_time(sbi, &dir_entry->mtime,
- 					ep->dentry.file.modify_tz,
- 					ep->dentry.file.modify_time,
- 					ep->dentry.file.modify_date,
--					ep->dentry.file.modify_time_ms);
-+					ep->dentry.file.modify_time_cs);
- 			exfat_get_entry_time(sbi, &dir_entry->atime,
- 					ep->dentry.file.access_tz,
- 					ep->dentry.file.access_time,
-@@ -461,12 +461,12 @@ int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
- 			&ep->dentry.file.create_tz,
- 			&ep->dentry.file.create_time,
- 			&ep->dentry.file.create_date,
--			&ep->dentry.file.create_time_ms);
-+			&ep->dentry.file.create_time_cs);
- 	exfat_set_entry_time(sbi, &ts,
- 			&ep->dentry.file.modify_tz,
- 			&ep->dentry.file.modify_time,
- 			&ep->dentry.file.modify_date,
--			&ep->dentry.file.modify_time_ms);
-+			&ep->dentry.file.modify_time_cs);
- 	exfat_set_entry_time(sbi, &ts,
- 			&ep->dentry.file.access_tz,
- 			&ep->dentry.file.access_time,
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 4ced4c0d9..f619b9250 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -511,9 +511,9 @@ void exfat_msg(struct super_block *sb, const char *lv, const char *fmt, ...)
- 	exfat_msg(sb, KERN_INFO, fmt, ##__VA_ARGS__)
- 
- void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
--		u8 tz, __le16 time, __le16 date, u8 time_ms);
-+		u8 tz, __le16 time, __le16 date, u8 time_cs);
- void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
--		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms);
-+		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
- unsigned short exfat_calc_chksum_2byte(void *data, int len,
- 		unsigned short chksum, int type);
- void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 2a841010e..8d6c64a75 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -136,8 +136,8 @@ struct exfat_dentry {
- 			__le16 modify_date;
- 			__le16 access_time;
- 			__le16 access_date;
--			__u8 create_time_ms;
--			__u8 modify_time_ms;
-+			__u8 create_time_cs;
-+			__u8 modify_time_cs;
- 			__u8 create_tz;
- 			__u8 modify_tz;
- 			__u8 access_tz;
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 483f68375..5eff50afd 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -165,7 +165,7 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
- 				&ep->dentry.file.modify_tz,
- 				&ep->dentry.file.modify_time,
- 				&ep->dentry.file.modify_date,
--				&ep->dentry.file.modify_time_ms);
-+				&ep->dentry.file.modify_time_cs);
- 		ep->dentry.file.attr = cpu_to_le16(ei->attr);
- 
- 		/* File size should be zero if there is no cluster allocated */
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 06887492f..3f367d081 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -56,12 +56,12 @@ static int __exfat_write_inode(struct inode *inode, int sync)
- 			&ep->dentry.file.create_tz,
- 			&ep->dentry.file.create_time,
- 			&ep->dentry.file.create_date,
--			&ep->dentry.file.create_time_ms);
-+			&ep->dentry.file.create_time_cs);
- 	exfat_set_entry_time(sbi, &inode->i_mtime,
- 			&ep->dentry.file.modify_tz,
- 			&ep->dentry.file.modify_time,
- 			&ep->dentry.file.modify_date,
--			&ep->dentry.file.modify_time_ms);
-+			&ep->dentry.file.modify_time_cs);
- 	exfat_set_entry_time(sbi, &inode->i_atime,
- 			&ep->dentry.file.access_tz,
- 			&ep->dentry.file.access_time,
-diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-index d32beb172..0d521ca24 100644
---- a/fs/exfat/misc.c
-+++ b/fs/exfat/misc.c
-@@ -75,7 +75,7 @@ static void exfat_adjust_tz(struct timespec64 *ts, u8 tz_off)
- 
- /* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70). */
- void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
--		u8 tz, __le16 time, __le16 date, u8 time_ms)
-+		u8 tz, __le16 time, __le16 date, u8 time_cs)
- {
- 	u16 t = le16_to_cpu(time);
- 	u16 d = le16_to_cpu(date);
-@@ -84,10 +84,10 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 			      t >> 11, (t >> 5) & 0x003F, (t & 0x001F) << 1);
- 
- 
--	/* time_ms field represent 0 ~ 199(1990 ms) */
--	if (time_ms) {
--		ts->tv_sec += time_ms / 100;
--		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
-+	/* time_cs field represent 0 ~ 199cs(1990 ms) */
-+	if (time_cs) {
-+		ts->tv_sec += time_cs / 100;
-+		ts->tv_nsec = (time_cs % 100) * 10 * NSEC_PER_MSEC;
- 	}
- 
- 	if (tz & EXFAT_TZ_VALID)
-@@ -100,7 +100,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 
- /* Convert linear UNIX date to a EXFAT time/date pair. */
- void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
--		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms)
-+		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs)
- {
- 	struct tm tm;
- 	u16 t, d;
-@@ -112,9 +112,9 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 	*time = cpu_to_le16(t);
- 	*date = cpu_to_le16(d);
- 
--	/* time_ms field represent 0 ~ 199(1990 ms) */
--	if (time_ms)
--		*time_ms = (tm.tm_sec & 1) * 100 +
-+	/* time_cs field represent 0 ~ 199cs(1990 ms) */
-+	if (time_cs)
-+		*time_cs = (tm.tm_sec & 1) * 100 +
- 			ts->tv_nsec / (10 * NSEC_PER_MSEC);
- 
- 	/*
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 549274fef..27c0fe5c1 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -687,12 +687,12 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
- 				ep->dentry.file.create_tz,
- 				ep->dentry.file.create_time,
- 				ep->dentry.file.create_date,
--				ep->dentry.file.create_time_ms);
-+				ep->dentry.file.create_time_cs);
- 		exfat_get_entry_time(sbi, &info->mtime,
- 				ep->dentry.file.modify_tz,
- 				ep->dentry.file.modify_time,
- 				ep->dentry.file.modify_date,
--				ep->dentry.file.modify_time_ms);
-+				ep->dentry.file.modify_time_cs);
- 		exfat_get_entry_time(sbi, &info->atime,
- 				ep->dentry.file.access_tz,
- 				ep->dentry.file.access_time,
+								Honza
+
+> > > +	if (sb)
+> > > +		errseq_set(&sb->s_wb_err, -EIO);
+> > > +	rcu_read_unlock();
+> > >  }
+> > >  EXPORT_SYMBOL(mark_buffer_write_io_error);
+> > >  
+> > > -- 
+> > > 2.25.2
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 -- 
-2.25.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
