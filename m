@@ -2,103 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B68871AB783
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 07:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09EDC1AB79A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 08:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407200AbgDPFs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 01:48:28 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:20618 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407168AbgDPFsU (ORCPT
+        id S2407261AbgDPGAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 02:00:17 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33195 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407207AbgDPGAP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 01:48:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587016098;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ae5ly7M/OETZeDnJohKJkBFZBczMSVWSQhC8QwiJPZs=;
-        b=UYY6p4PwbvHlbEmYxBq7G9uPRiRA0vsLXFOe+sQgilHFf0khVS8zN/INJLzRXGgu0edg0i
-        XZF8UXUIhV4E0TvUX4AE1eIR2chxhmUWYwlDlselmr5FnrEn9MxY3X5wDHeBRCnT3mU/vM
-        b1fpWeYMIrsfv3ZzFXPEfxPk4fRbQSw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-97-y0juUd9SPm6Dr1B_bF4zJA-1; Thu, 16 Apr 2020 01:48:13 -0400
-X-MC-Unique: y0juUd9SPm6Dr1B_bF4zJA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 09D7B801A09;
-        Thu, 16 Apr 2020 05:48:11 +0000 (UTC)
-Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ED6405C1C5;
-        Thu, 16 Apr 2020 05:47:55 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 13:47:50 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
-Message-ID: <20200416054750.GA2723777@T590>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-3-mcgrof@kernel.org>
- <20200416021036.GA2717677@T590>
- <20200416052524.GH11244@42.do-not-panic.com>
+        Thu, 16 Apr 2020 02:00:15 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c138so1203914pfc.0;
+        Wed, 15 Apr 2020 23:00:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FAXeeAl+06npcabuQvuYuTP3jQapHCqy0Znm1m8x2B8=;
+        b=iP6f3iMHUfMmkbuyoThhrT00qQSQkzJMJmkB8O0Y6zk/6F7bDP1uwppX7Ax1n4pc0m
+         ij1axBsmWvIKBXyZVsPULpNtPE97C1YVNJHXsgMVYkUx/qnO7/xhZJoiIRtRoZsVZ0lV
+         XfcrzdjOqL4ifTecs2St0d40XmxWfmXAg2rHaGFqgMmgSvpzCbwcc+wiEACnfpEgMFZC
+         YfVCzOC1WsULzNqy77dVUy8pnfDfqFx8q1Ng3CO4DBWR6qnuMeGHZbNniN0nCaSjQYKp
+         vks11fANGSBanXTx6szcEvbfU4jKldxecEvXYW0Z/9k+kAbqd/DP/nzg+MiU5NihyX2b
+         jg/w==
+X-Gm-Message-State: AGi0PuaWQf+05rcZJG6RiUM1IEFoxQO/TwtlbKGANikoY+BS79aPoIsh
+        YSL/DhntgM98mh3ZUWHe2uM=
+X-Google-Smtp-Source: APiQypICnolUc2W/UZn/odHanFGW9jsn8iT5iFZCqWPgDqKQJOk8NCqaY2uIAeFAHoAedVh6nx2WBg==
+X-Received: by 2002:a63:a07:: with SMTP id 7mr29039722pgk.261.1587016814132;
+        Wed, 15 Apr 2020 23:00:14 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id z7sm6449944pff.47.2020.04.15.23.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 23:00:12 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id E2FE740277; Thu, 16 Apr 2020 06:00:11 +0000 (UTC)
+Date:   Thu, 16 Apr 2020 06:00:11 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH] test_firmware: remove unnecessary test_fw_mutex in
+ test_dev_config_show_xxx
+Message-ID: <20200416060011.GK11244@42.do-not-panic.com>
+References: <20200415002517.4328-1-scott.branden@broadcom.com>
+ <202004142010.C0847F5@keescook>
+ <e2b95fde-0ab7-c0d1-2c64-cceffc458673@broadcom.com>
+ <202004150943.01DF9E85@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200416052524.GH11244@42.do-not-panic.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <202004150943.01DF9E85@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 05:25:24AM +0000, Luis Chamberlain wrote:
-> On Thu, Apr 16, 2020 at 10:10:36AM +0800, Ming Lei wrote:
-> > In theory, multiple partitions can be traced concurrently, but looks
-> > it never works, so it won't cause trouble for multiple partition trace.
+On Wed, Apr 15, 2020 at 09:44:31AM -0700, Kees Cook wrote:
+> On Wed, Apr 15, 2020 at 09:28:18AM -0700, Scott Branden wrote:
+> > Hi Kees,
 > > 
-> > One userspace visible change is that blktrace debugfs dir name is switched 
-> > to disk name from partition name in case of partition trace, will it
-> > break some utilities?
+> > On 2020-04-14 8:10 p.m., Kees Cook wrote:
+> > > On Tue, Apr 14, 2020 at 05:25:17PM -0700, Scott Branden wrote:
+> > > > Remove unnecessary use of test_fw_mutex in test_dev_config_show_xxx
+> > > > functions that show simple bool, int, and u8.
+> > > I would expect at least a READ_ONCE(), yes?
+> > I don't understand why you need a READ_ONCE when removing a mutex around an
+> > assignment
+> > of a parameter passed into a function being assigned to a local variable.
+> > 
+> > Could you please explain your expectations.
 > 
-> How is this possible, its not clear to me, we go from:
+> Oops, yes, you're right. I misread and was thinking this was reading
+> from a global. This looks fine.
 > 
-> -	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> -					    blk_debugfs_root);
-> 
-> To this:
-> 
-> +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> +					    blk_debugfs_root);
-> 
-> 
-> Maybe I am overlooking something.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Your patch removes the blktrace debugfs dir:
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-do_blk_trace_setup()
-
--       dir = debugfs_lookup(buts->name, blk_debugfs_root);
--       if (!dir)
--               bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
--
-
-Then create blktrace attributes under the dir of q->debugfs_dir.
-
-However, buts->name could be one partition device name, but
-q->debugfs_dir has to be disk name.
-
-This change is visible to blktrace utilities.
-
-Thanks,
-Ming
-
+  Luis
