@@ -2,93 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 746EB1ACE3B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D21A1ACE41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389126AbgDPRCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 13:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731604AbgDPRCI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 13:02:08 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C711AC061A41
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 10:02:06 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id n24so1549897plp.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 10:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jM5h1KFj1L2GXPRZjBV7ijyxLB4BFuJ/vu3Z2ACwOH0=;
-        b=upWStF2+6JIY7WIbqEKUk+gI5CQolvn8tp2lCpTiFpSeX1L+TPFq7VBfGYfr/PXbms
-         /SQYrkACqUfYns0cjwtSFepEft+7s8M4jbd0T/kRWAttVqMMZTeiu2tsEPGtfm+wDcbH
-         LbBB4elRVgQ8QIp3a3juih4HZQ+slHWHTNXyacHtbxZx8ciSGDx0ImYltQj3C8m0wGAk
-         IpPgkdpA5pUJy09YKtzkSFGj6V9YDm6TI096DZ6AyzdOdR2+BJVpIEuyTXXkA8uTk71S
-         NYQFj1eoQqvqBlNu8qs9Kk1wCFxX2DyP/0Tt7MbdSHeRwkmx5COOYiT17fRc+2QOGpFV
-         qNPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jM5h1KFj1L2GXPRZjBV7ijyxLB4BFuJ/vu3Z2ACwOH0=;
-        b=dNWHzaX6SOsmIm1ocPnh46TZHhdqs2Li3r4wRBJ5ZxQPQF4ejXtpPAtyj4iZSdd1QV
-         RQoaLNc0RuFiJT+G4ElhmVLdUuJzpLFt2qpuNE535PRyOF2F4weCgK2AYLak6hVaG1cb
-         61eq0BrV4qWzLzDUTp/YLhykMWtXK2YARxGGZzi4/OagWQUoh9UL2dsyOOX4rPRh9kSw
-         oSjXWb88J9YJHRcIPeTgIQ2yARJztwXNtnqrGzHD56GJgsOZabT9AetDX46vzKwvrbFo
-         C0w3Pr8B3tWIqEjwKvMYq4h6DmQjD/VAAFdRrTEym8+PBVvuV25DR5StNyAq7nKwMmcG
-         LPEg==
-X-Gm-Message-State: AGi0PuZbCCzr4qpThq9wCd/gVgNP57pSOn7JZU6VHt+JOu7J5ukWUcKT
-        tcQDQSkwe2D3mmSm9mrXqdSpcQ==
-X-Google-Smtp-Source: APiQypJqg0pOISaJvxNLbk+rEYy/BAV/B+cdSZie5ezyzvBXT70vsoZhCw53vIeIUdY5Sj/wNtfkhA==
-X-Received: by 2002:a17:90a:af8c:: with SMTP id w12mr6153045pjq.37.1587056525879;
-        Thu, 16 Apr 2020 10:02:05 -0700 (PDT)
-Received: from vader ([2601:602:8b80:8e0::7584])
-        by smtp.gmail.com with ESMTPSA id y186sm4958753pfy.208.2020.04.16.10.02.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 10:02:05 -0700 (PDT)
-Date:   Thu, 16 Apr 2020 10:02:03 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux btrfs Developers List <linux-btrfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH man-pages v4] Document encoded I/O
-Message-ID: <20200416170203.GA696015@vader>
-References: <cover.1582930832.git.osandov@fb.com>
- <00f86ed7c25418599e6067cb1dfb186c90ce7bf3.1582931488.git.osandov@fb.com>
- <CAKgNAkhpET_oK8SKoJhmo1LWk2n0pUXQ-+LfA6=V1cBK485RWw@mail.gmail.com>
+        id S2404251AbgDPRCa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 13:02:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731604AbgDPRC3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 13:02:29 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40830206D9;
+        Thu, 16 Apr 2020 17:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587056549;
+        bh=SskQMVRoUuqxTsTT4M+b0jWWskvnCF4LTgOnJX4qCGM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gyN+pTmtScj5UVmLJ5nyPnYvNtKMRbAlFgQ+Tspk+FzvPi1Xh2D4Dtg0Hqtraieph
+         F8+QstZpki8Sl+s5PjSkqqc5LZgflo4EZcTNFZRZ66roYCEsRT8wOjiZ+CgB2TGypn
+         B9iyPcYSGryhblmos08GuemDKcbb2uK9CMmgMS7o=
+Date:   Thu, 16 Apr 2020 18:02:24 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v2 1/5] mm: Remove definition of
+ clear_bit_unlock_is_negative_byte
+Message-ID: <20200416170224.GB32685@willie-the-truck>
+References: <20200416154606.306-1-willy@infradead.org>
+ <20200416154606.306-2-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKgNAkhpET_oK8SKoJhmo1LWk2n0pUXQ-+LfA6=V1cBK485RWw@mail.gmail.com>
+In-Reply-To: <20200416154606.306-2-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 02:26:01PM +0200, Michael Kerrisk (man-pages) wrote:
-> Hello Omar,
+On Thu, Apr 16, 2020 at 08:46:02AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> (Unless you CC both me and mtk.manpages@gmail.com, it's easily
-> possible that I will miss your man-pages patches.)
+> This local definition hasn't been used since commit 84c6591103db
+> ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using
+> atomic_fetch_*()") which provided a default definition.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  mm/filemap.c | 23 -----------------------
+>  1 file changed, 23 deletions(-)
 
-That's good to know, thanks. Do you mind being CCd on man-pages for
-features that haven't been finalized yet?
+Ok, for my own curiosity I tried building for Alpha because I couldn't for
+the life of me figure it out, and behold:
 
-> What's the status here? I presume the features documented here are not
-> yet merged, right? Is the aim still to have them merged in the future?
+mm/filemap.c: In function 'unlock_page':
+mm/filemap.c:1271:6: error: implicit declaration of function 'clear_bit_unlock_is_negative_byte' [-Werror=implicit-function-declaration]
+  if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[1]: *** [scripts/Makefile.build:267: mm/filemap.o] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1722: mm] Error 2
+make: *** Waiting for unfinished jobs....
 
-They're not yet merged but I'm still working on having them merged. I'm
-still waiting for VFS review.
+I had to enable CONFIG_SMP, so maybe the robot doesn't do that?
 
-Thanks!
+Anyway, it's somewhat reassuring that it broke, if not unfortunate at the same
+time!
+
+Will
