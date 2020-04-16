@@ -2,24 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA9FD1AB53A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF651AB53D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406110AbgDPBHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 21:07:37 -0400
-Received: from sandeen.net ([63.231.237.45]:46244 "EHLO sandeen.net"
+        id S2406128AbgDPBJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 21:09:20 -0400
+Received: from sandeen.net ([63.231.237.45]:46334 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405821AbgDPBHd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 21:07:33 -0400
+        id S2404835AbgDPBJN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 21:09:13 -0400
 Received: from [10.0.0.4] (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id C1B9F170B41;
-        Wed, 15 Apr 2020 20:07:11 -0500 (CDT)
+        by sandeen.net (Postfix) with ESMTPSA id A18A5170B41;
+        Wed, 15 Apr 2020 20:08:52 -0500 (CDT)
+Subject: [PATCH 1/2] exfat: properly set s_time_gran
+From:   Eric Sandeen <sandeen@sandeen.net>
 To:     fsdevel <linux-fsdevel@vger.kernel.org>,
         Namjae Jeon <namjae.jeon@samsung.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: [PATCH 0/2] exfat: timestamp fixes
+References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
 Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
  nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
@@ -62,11 +63,12 @@ Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
  m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
  fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
-Date:   Wed, 15 Apr 2020 20:07:31 -0500
+Message-ID: <5535c58b-aac1-274e-a0bb-6333b33365d1@sandeen.net>
+Date:   Wed, 15 Apr 2020 20:09:11 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -75,13 +77,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I've seen 2 issues w/ exfat timestamps - discovered by xfstests generic/003
+The s_time_gran superblock field indicates the on-disk nanosecond
+granularity of timestamps, and for exfat that seems to be 10ms, so
+set s_time_gran to 10000000ns. Without this, in-memory timestamps
+change when they get re-read from disk.
 
-1) time granularity is set wrong, so subsecond timestamps change when
-   an inode cycles out of memory and is reread from disk
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+---
 
-2) the disk format doesn't seem to support subsecond atime, so a similar
-   problem exists there.e
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 16ed202ef527..4f21bf8b550d 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -541,7 +542,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_magic = EXFAT_SUPER_MAGIC;
+ 	sb->s_op = &exfat_sops;
+ 
+-	sb->s_time_gran = 1;
++	sb->s_time_gran = 10000000;
+ 	sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
+ 	sb->s_time_max = EXFAT_MAX_TIMESTAMP_SECS;
+ 
 
-The last xfstests generic/003 issue is re: change time but exfat doesn't
-really support change times (?) so that'll be a test workaround.
