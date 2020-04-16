@@ -2,73 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94CAF1AC1C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 14:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A501AC1E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 14:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2894470AbgDPMrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 08:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49478 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2894464AbgDPMrs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 08:47:48 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F64C061A0C;
-        Thu, 16 Apr 2020 05:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gvx1/ulNBFgh/kHARyi19ZtC/l/z2neA8FBz9jVLqpk=; b=NDoihVBSGHP6XIKX03JtyTZqVu
-        FNvLRQXbet8JArzLrUXD6VXFVqH32Zw7VCulrZzNCmbhGf+ykm+1awW56g1eEloUf9atUETwFoiHM
-        vGlUyjdgyuZJKiLRIF8TpI1n43GplAqhftw4IqBgdIY1yPA7o7595JzGnhGfVw6cAVby0lHYE2rec
-        C+DIxK8SIjMJ89IrG3WEH2q5cIJgGEs0emzMHC5geCYMhGS/CUUup2x0PLwNGRMieBQ3Vbdq+f6Ys
-        QreRM5iSpOFodIBEkF8miqlFVZXDSePerV4WIGSgZOdt1sIx6ud3uOS0LUmDsin0s/Aom7ulXbN7V
-        ed7361QA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jP3vn-00053L-P0; Thu, 16 Apr 2020 12:47:47 +0000
-Date:   Thu, 16 Apr 2020 05:47:47 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v6 04/11] block: Introduce REQ_OP_ZONE_APPEND
-Message-ID: <20200416124747.GA6588@infradead.org>
-References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
- <20200415090513.5133-5-johannes.thumshirn@wdc.com>
+        id S2894619AbgDPM5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 08:57:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2382 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2894377AbgDPM45 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 08:56:57 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B0FD17830174335B0639;
+        Thu, 16 Apr 2020 20:56:41 +0800 (CST)
+Received: from [127.0.0.1] (10.166.215.198) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.487.0; Thu, 16 Apr 2020
+ 20:56:32 +0800
+Subject: Re: [PATCH] io_getevents.2: Add EINVAL for case of timeout parameter
+ out of range
+To:     <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+CC:     linux-man <linux-man@vger.kernel.org>, <linux-aio@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        <bcrl@kvack.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, <deepa.kernel@gmail.com>,
+        <wangkefeng.wang@huawei.com>
+References: <1564542193-89171-1-git-send-email-yi.zhang@huawei.com>
+ <CAKgNAkivz=qXpLTPt5qbGHn0_zH-ReQ76LKhnoRd5zZuudu1NQ@mail.gmail.com>
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+Message-ID: <799c237c-a5c4-6d67-50b7-057b728f0327@huawei.com>
+Date:   Thu, 16 Apr 2020 20:56:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200415090513.5133-5-johannes.thumshirn@wdc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAKgNAkivz=qXpLTPt5qbGHn0_zH-ReQ76LKhnoRd5zZuudu1NQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.166.215.198]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> @@ -1000,13 +1000,12 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
->  		struct page *page = pages[i];
->  
->  		len = min_t(size_t, PAGE_SIZE - offset, left);
-> -
->  		if (__bio_try_merge_page(bio, page, len, offset, &same_page)) {
->  			if (same_page)
->  				put_page(page);
->  		} else {
->  			if (WARN_ON_ONCE(bio_full(bio, len)))
-> -                                return -EINVAL;
-> +				return -EINVAL;
->  			__bio_add_page(bio, page, len, offset);
+Hi, Michael.
 
-spurious whitespace changes.  They both actually look good to me,
-but don't really belong into this patch.
+On 2020/4/16 20:12, Michael Kerrisk (man-pages) wrote:
+> Hello Zhangyi,
+> 
+> On Wed, 31 Jul 2019 at 04:57, zhangyi (F) <yi.zhang@huawei.com> wrote:
+>>
+>> io_[p]getevents syscall should return -EINVAL if timeout is out of
+>> range, update description of this error return value.
+>>
+>> Link: https://lore.kernel.org/lkml/1564451504-27906-1-git-send-email-yi.zhang@huawei.com/
+> 
+> 
+> It appears that the kernel patch to implement this check was never
+> merged. Do you know what happened to it?
+> 
 
-Otherwise this looks good to me:
+I'm not sure why this patch was not merged and pinged it last mounth,
+but there is no response.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+https://www.spinics.net/lists/linux-fsdevel/msg164111.html
+
+Hi, Al.
+
+Any chance to apply below kernel patch?
+https://lore.kernel.org/lkml/1564451504-27906-1-git-send-email-yi.zhang@huawei.com/
+
+Thanks,
+Yi.
+
+>> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+>> Cc: Jeff Moyer <jmoyer@redhat.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+>> ---
+>>  man2/io_getevents.2 | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/man2/io_getevents.2 b/man2/io_getevents.2
+>> index 0eb4b385e..5560bb8ee 100644
+>> --- a/man2/io_getevents.2
+>> +++ b/man2/io_getevents.2
+>> @@ -73,8 +73,9 @@ Interrupted by a signal handler; see
+>>  .TP
+>>  .B EINVAL
+>>  \fIctx_id\fP is invalid.
+>> -\fImin_nr\fP is out of range or \fInr\fP is
+>> -out of range.
+>> +\fImin_nr\fP is out of range or \fInr\fP is out of range, or
+>> +\fItimeout\fP is out of range (\fItv_sec\fP was less than zero, or
+>> +\fItv_nsec\fP was not less than 1,000,000,000).
+>>  .TP
+>>  .B ENOSYS
+>>  .BR io_getevents ()
+>> --
+>> 2.20.1
+>>
+> 
+> 
+
