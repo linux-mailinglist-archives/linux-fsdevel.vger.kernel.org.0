@@ -2,80 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF121ACE9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B79F71ACF48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 20:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389206AbgDPRXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 13:23:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56628 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388338AbgDPRXA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 13:23:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 79472B13D;
-        Thu, 16 Apr 2020 17:22:58 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 19:22:57 +0200
-From:   Daniel Wagner <dwagner@suse.de>
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6 02/11] block: provide fallbacks for
- blk_queue_zone_is_seq and blk_queue_zone_no
-Message-ID: <20200416172257.4zvks6u2f6c6couu@carbon>
-References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
- <20200415090513.5133-3-johannes.thumshirn@wdc.com>
+        id S2437356AbgDPSCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 14:02:07 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50297 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727794AbgDPSCG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 14:02:06 -0400
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 03GI1hAl008861
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Apr 2020 14:01:43 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id EA2DB42013D; Thu, 16 Apr 2020 14:01:42 -0400 (EDT)
+Date:   Thu, 16 Apr 2020 14:01:42 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 4/8] fs/ext4: Introduce DAX inode flag
+Message-ID: <20200416180142.GE5187@mit.edu>
+References: <20200414040030.1802884-1-ira.weiny@intel.com>
+ <20200414040030.1802884-5-ira.weiny@intel.com>
+ <20200415120846.GG6126@quack2.suse.cz>
+ <20200415203924.GD2309605@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415090513.5133-3-johannes.thumshirn@wdc.com>
+In-Reply-To: <20200415203924.GD2309605@iweiny-DESK2.sc.intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 06:05:04PM +0900, Johannes Thumshirn wrote:
-> blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
-> CONFIG_BLK_DEV_ZONED disabled until now.
+On Wed, Apr 15, 2020 at 01:39:25PM -0700, Ira Weiny wrote:
 > 
-> The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
-> provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/blkdev.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 32868fbedc9e..e47888a7d80b 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -729,6 +729,16 @@ static inline unsigned int blk_queue_nr_zones(struct request_queue *q)
->  {
->  	return 0;
->  }
-> +static inline bool blk_queue_zone_is_seq(struct request_queue *q,
-> +					 sector_t sector)
-> +{
-> +	return false;
-> +}
-> +static inline unsigned int blk_queue_zone_no(struct request_queue *q,
-> +					     sector_t sector)
-> +{
-> +	return 0;
-> +}
+> I'm on top of 5.6 released.  Did this get removed for 5.7?  I've heard there are
+> some boot issues with 5.7-rc1 so I'm holding out for rc2.
 
-nit: blk_queue_zone_no is defined before blk_queue_zone_is_seq in the
-CONFIG_BLK_DEV_ZONED section.
+Yes, it got removed in 5.7-rc1 in commit 4337ecd1fe99.
 
-Besides that,
+The boot issues with 5.7-rc1 is why ext4.git tree is now based off of
+v5.7-rc1-35-g00086336a8d9: Merge tag 'efi-urgent-2020-04-15'....
 
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
+You might want to see if 00086336a8d9 works for you (and if not, let
+the x86 and/or efi folks know).
+
+					- Ted
