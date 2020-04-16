@@ -2,84 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75DD21ACE8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AF121ACE9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbgDPRWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 13:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728101AbgDPRWA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 13:22:00 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BA8C061A0C;
-        Thu, 16 Apr 2020 10:21:59 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id t14so5740735wrw.12;
-        Thu, 16 Apr 2020 10:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6uF4y26rP9r8HAlp2szHdM9nzyjy6h8lehRa7ZcQjQo=;
-        b=rvoatJrJ7cVxIifL+iba64dkSdEHsH4D/LOIdjeOdY5bZVbkBklcxyfjsmFILpvQU/
-         RU4LgeSEmep+bMDElq3h8kLhrSmonGDkzj3RvudxVrCXoNFu+Lp9nAXUc/3hrEmh42w9
-         3L11cxWPRtvqPCYWbsNgg46edKR+dGDmOc2zQ3CTahPgWLjnawpZHYPEWPP7Isut89gY
-         n9huxIOVXIpRJ5YaxvjsR5NIc+wxhWjSPgs4ndB5PjgPfqjIjODqij0gRLZdyYSsUuTZ
-         d/Jd0+CfKxOitlN6TJorLDgsZHJQCHlH92qRKrDeLYZi9SiQg5QzCubY1uXy0IBzPAT5
-         UGow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6uF4y26rP9r8HAlp2szHdM9nzyjy6h8lehRa7ZcQjQo=;
-        b=iL2H+66of3dHUnN/zTtfd6RL4UDq2mR6dtLgZOFABR6PgLgi0YsHr7xwzKy8O33F7O
-         gpJQIMzzwtKxDxWVQVAR974H4FYzhotlkKBt8j2zyH20GYqHDsLp8ZcxAzzUtT5o1XU1
-         62nX26IYHjTa4isZUyj9MnP2nPFZK/LbMbeyw+bNtSF72Pnd75h55RQKTS8LxiXW4Sw7
-         IlTC2/VBbZncIdZexhixGSNMOHSpR5Tp5msXliV6rwGmJ1Nfg7u7jyJR4h4ESR9H4wZd
-         Fjefjdpd+FV2hBEYEM20MBijxGr1uH7HRo4+SAaYk0hgqlmHkgQHYxZrzZE7hzWw6sxY
-         h51Q==
-X-Gm-Message-State: AGi0PuZA8pBkbKAz23DeOqw8reXkj9vTGvR3XlVSyQkTCSe5cnajfMQE
-        pqLGjjpbi+wcKE0OG5izcAVEQc8=
-X-Google-Smtp-Source: APiQypJyaRjovGrgKBAedP0lHhuI2POEmDpa7WbfJQ+dSD087QtNDhdPvycgZDdOys8hYg+ObhvMuQ==
-X-Received: by 2002:adf:f2c5:: with SMTP id d5mr36395970wrp.409.1587057717698;
-        Thu, 16 Apr 2020 10:21:57 -0700 (PDT)
-Received: from avx2 ([46.53.249.183])
-        by smtp.gmail.com with ESMTPSA id b191sm4447928wmd.39.2020.04.16.10.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 10:21:57 -0700 (PDT)
-Date:   Thu, 16 Apr 2020 20:21:55 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: rename "catch" function argument
-Message-ID: <20200416172155.GA2280@avx2>
-References: <20200331210905.GA31680@avx2>
- <20200415210727.c0cf80b5a981292bb15d9858@linux-foundation.org>
+        id S2389206AbgDPRXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 13:23:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56628 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388338AbgDPRXA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 13:23:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 79472B13D;
+        Thu, 16 Apr 2020 17:22:58 +0000 (UTC)
+Date:   Thu, 16 Apr 2020 19:22:57 +0200
+From:   Daniel Wagner <dwagner@suse.de>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 02/11] block: provide fallbacks for
+ blk_queue_zone_is_seq and blk_queue_zone_no
+Message-ID: <20200416172257.4zvks6u2f6c6couu@carbon>
+References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+ <20200415090513.5133-3-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415210727.c0cf80b5a981292bb15d9858@linux-foundation.org>
+In-Reply-To: <20200415090513.5133-3-johannes.thumshirn@wdc.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 09:07:27PM -0700, Andrew Morton wrote:
-> On Wed, 1 Apr 2020 00:09:05 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Wed, Apr 15, 2020 at 06:05:04PM +0900, Johannes Thumshirn wrote:
+> blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
+> CONFIG_BLK_DEV_ZONED disabled until now.
 > 
-> > "catch" is reserved keyword in C++, rename it to something
-> > both gcc and g++ accept.
+> The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
+> provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
 > 
-> Why? Is someone compiling the kernel with g++?
-
-I do!
-https://marc.info/?l=linux-acpi&m=158343373912366&w=4
-
-> > Rename "ign" for symmetry.
-> > 
-> > Signed-off-by: _Z6Alexeyv <adobriyan@gmail.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/blkdev.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> Was this intentional?
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 32868fbedc9e..e47888a7d80b 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -729,6 +729,16 @@ static inline unsigned int blk_queue_nr_zones(struct request_queue *q)
+>  {
+>  	return 0;
+>  }
+> +static inline bool blk_queue_zone_is_seq(struct request_queue *q,
+> +					 sector_t sector)
+> +{
+> +	return false;
+> +}
+> +static inline unsigned int blk_queue_zone_no(struct request_queue *q,
+> +					     sector_t sector)
+> +{
+> +	return 0;
+> +}
 
-In Russia, C++ mangles you! :^)
+nit: blk_queue_zone_no is defined before blk_queue_zone_is_seq in the
+CONFIG_BLK_DEV_ZONED section.
+
+Besides that,
+
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
