@@ -2,37 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 878C21ACB57
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 17:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4C21ACB5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 17:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896197AbgDPPqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 11:46:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49070 "EHLO
+        id S2896234AbgDPPqU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 11:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2442555AbgDPPqN (ORCPT
+        by vger.kernel.org with ESMTP id S2895913AbgDPPqH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 11:46:13 -0400
+        Thu, 16 Apr 2020 11:46:07 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9613CC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 08:46:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5667C061A41
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 08:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=kMLTih8CX/GbD68c1YCwFJOmEFKi+9QpHvxsolCFJz4=; b=Sc6BiJMIFfeDtTxK3dZEyjKYGF
-        21+2xVXAwK0Hl6SI+MezZyD1Je9z5982qOQBkRo1ip6Cv3ygeeNpdH18EG/WbsJHUgeVvkgooZSUM
-        J2lrSueDn4CjTNT4mm9Q77ixHQa5L0LhC8ZHsKPTXS9SDbKrynU820RlJigqZQ3P+tos9Vv8CnGN7
-        LUtFeN+KLIe3sNVZnrPIinCYpGCi9DzZGZb1dVqtwCRL+iFkv630+s50BGLOG+64eTBtLVQJ71JpV
-        uH4IVBydJBRsPI1GUBl1/up5EkFQicGIDxWI9/AdX1lAS9NamrbMJY726ERwElcQtexNmy42tFktN
-        M9pN7P+Q==;
+        bh=oWl7Bo+ZEaJmJs40/6QIbxDCr3XNJEbNu8oUFCyylaw=; b=txZtTD7m3BQq354s1srWGlcQkK
+        4xMPB74sf9g2nvHsBTgyUwTFBs6EMyBJvDZ0zLZ5LsOS5AfDjWburOtaBj1Qgm1+5QsqEZyS/GdG9
+        F+QwJowd05Cas9Ps2oKwAiHSgEec3KN5tAB/K+DLQtxOl2Hr0yRRCThZWQ6DX1AAozEkolsFwKnZc
+        TTX+DYST6sUP6ck5g/5PVvKaUmXQIpdbpM1QXQXY76Y9gb32E4cjiWYNeUuGUSzdQZm2Txv4HE0Pn
+        iPM0w/f6HIseGgLyHDlJ7qRC/4M89JSkciR7FJStRPdchyri12D6yRQ6U7pMj/JWqdRBzAr4NWeaG
+        ixO4kXuA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jP6iN-00006X-Fp; Thu, 16 Apr 2020 15:46:07 +0000
+        id 1jP6iN-00006b-H2; Thu, 16 Apr 2020 15:46:07 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH v2 3/5] mm: Convert writeback BUG to WARN_ON
-Date:   Thu, 16 Apr 2020 08:46:04 -0700
-Message-Id: <20200416154606.306-4-willy@infradead.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: [PATCH v2 4/5] mm: Use clear_bit_unlock_is_negative_byte for PageWriteback
+Date:   Thu, 16 Apr 2020 08:46:05 -0700
+Message-Id: <20200416154606.306-5-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200416154606.306-1-willy@infradead.org>
 References: <20200416154606.306-1-willy@infradead.org>
@@ -45,49 +47,147 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-If this BUG() ever triggers, we'll have a dead system with no particular
-information.  Dumping the page will give us a fighting chance of debugging
-the problem, and I think it's safe for us to just continue if we try
-to clear the writeback bit on a page which already has the writeback
-bit clear.
+We can use clear_bit_unlock_is_negative_byte() for writeback as well as
+the lock bit.  wake_up_page() then has no more callers and can be removed.
+
+Given the other code being executed between the clear and the test,
+this is not going to be as dramatic a win as it was for PageLocked,
+but symmetry between the two is nice and lets us remove some code.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 ---
- mm/filemap.c        | 4 +---
- mm/page-writeback.c | 5 +++++
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ include/linux/page-flags.h |  2 +-
+ mm/filemap.c               | 12 ++----------
+ mm/page-writeback.c        | 37 ++++++++++++++++++++-----------------
+ 3 files changed, 23 insertions(+), 28 deletions(-)
 
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index af7c0ff5f517..96c7d220c8cf 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -545,7 +545,7 @@ static __always_inline void SetPageUptodate(struct page *page)
+ 
+ CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
+ 
+-int test_clear_page_writeback(struct page *page);
++bool __clear_page_writeback(struct page *page);
+ int __test_set_page_writeback(struct page *page, bool keep_write);
+ 
+ #define test_set_page_writeback(page)			\
 diff --git a/mm/filemap.c b/mm/filemap.c
-index b7c5d2402370..401b24d980ba 100644
+index 401b24d980ba..c704d333d3bf 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1293,9 +1293,7 @@ void end_page_writeback(struct page *page)
+@@ -1084,13 +1084,6 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
+ 	spin_unlock_irqrestore(&q->lock, flags);
+ }
+ 
+-static void wake_up_page(struct page *page, int bit)
+-{
+-	if (!PageWaiters(page))
+-		return;
+-	wake_up_page_bit(page, bit);
+-}
+-
+ /*
+  * A choice of three behaviors for wait_on_page_bit_common():
+  */
+@@ -1293,9 +1286,8 @@ void end_page_writeback(struct page *page)
  		rotate_reclaimable_page(page);
  	}
  
--	if (!test_clear_page_writeback(page))
--		BUG();
--
-+	test_clear_page_writeback(page);
- 	smp_mb__after_atomic();
- 	wake_up_page(page, PG_writeback);
+-	test_clear_page_writeback(page);
+-	smp_mb__after_atomic();
+-	wake_up_page(page, PG_writeback);
++	if (__clear_page_writeback(page))
++		wake_up_page_bit(page, PG_writeback);
  }
+ EXPORT_SYMBOL(end_page_writeback);
+ 
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 7326b54ab728..ebaf0d8263a6 100644
+index ebaf0d8263a6..d019d86fc21f 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2718,6 +2718,11 @@ int test_clear_page_writeback(struct page *page)
- 	struct lruvec *lruvec;
- 	int ret;
+@@ -595,7 +595,7 @@ static void wb_domain_writeout_inc(struct wb_domain *dom,
  
-+	if (WARN_ON(!PageWriteback(page))) {
-+		dump_page(page, "!writeback");
-+		return false;
-+	}
+ /*
+  * Increment @wb's writeout completion count and the global writeout
+- * completion count. Called from test_clear_page_writeback().
++ * completion count.
+  */
+ static inline void __wb_writeout_inc(struct bdi_writeback *wb)
+ {
+@@ -2711,12 +2711,19 @@ int clear_page_dirty_for_io(struct page *page)
+ }
+ EXPORT_SYMBOL(clear_page_dirty_for_io);
+ 
+-int test_clear_page_writeback(struct page *page)
++#define clear_writeback_bit(page)	\
++	clear_bit_unlock_is_negative_byte(PG_writeback, &page->flags)
 +
- 	memcg = lock_page_memcg(page);
- 	lruvec = mem_cgroup_page_lruvec(page, page_pgdat(page));
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
++/*
++ * The return value is whether there are waiters pending, not whether
++ * the flag was set.
++ */
++bool __clear_page_writeback(struct page *page)
+ {
+ 	struct address_space *mapping = page_mapping(page);
+ 	struct mem_cgroup *memcg;
+ 	struct lruvec *lruvec;
+-	int ret;
++	bool ret;
+ 
+ 	if (WARN_ON(!PageWriteback(page))) {
+ 		dump_page(page, "!writeback");
+@@ -2731,16 +2738,14 @@ int test_clear_page_writeback(struct page *page)
+ 		unsigned long flags;
+ 
+ 		xa_lock_irqsave(&mapping->i_pages, flags);
+-		ret = TestClearPageWriteback(page);
+-		if (ret) {
+-			__xa_clear_mark(&mapping->i_pages, page_index(page),
++		ret = clear_writeback_bit(page);
++		__xa_clear_mark(&mapping->i_pages, page_index(page),
+ 						PAGECACHE_TAG_WRITEBACK);
+-			if (bdi_cap_account_writeback(bdi)) {
+-				struct bdi_writeback *wb = inode_to_wb(inode);
++		if (bdi_cap_account_writeback(bdi)) {
++			struct bdi_writeback *wb = inode_to_wb(inode);
+ 
+-				dec_wb_stat(wb, WB_WRITEBACK);
+-				__wb_writeout_inc(wb);
+-			}
++			dec_wb_stat(wb, WB_WRITEBACK);
++			__wb_writeout_inc(wb);
+ 		}
+ 
+ 		if (mapping->host && !mapping_tagged(mapping,
+@@ -2749,7 +2754,7 @@ int test_clear_page_writeback(struct page *page)
+ 
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 	} else {
+-		ret = TestClearPageWriteback(page);
++		ret = clear_writeback_bit(page);
+ 	}
+ 	/*
+ 	 * NOTE: Page might be free now! Writeback doesn't hold a page
+@@ -2757,11 +2762,9 @@ int test_clear_page_writeback(struct page *page)
+ 	 * the clearing of PG_writeback. The below can only access
+ 	 * page state that is static across allocation cycles.
+ 	 */
+-	if (ret) {
+-		dec_lruvec_state(lruvec, NR_WRITEBACK);
+-		dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+-		inc_node_page_state(page, NR_WRITTEN);
+-	}
++	dec_lruvec_state(lruvec, NR_WRITEBACK);
++	dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
++	inc_node_page_state(page, NR_WRITTEN);
+ 	__unlock_page_memcg(memcg);
+ 	return ret;
+ }
 -- 
 2.25.1
 
