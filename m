@@ -2,137 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F56F1ACFF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 20:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1BF1AD014
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 21:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgDPSxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 14:53:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35934 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727796AbgDPSxC (ORCPT
+        id S1728970AbgDPTFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 15:05:22 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53537 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727800AbgDPTFV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 14:53:02 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03GIYZvn190107
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 14:53:01 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30ev0w1wup-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 14:53:00 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Thu, 16 Apr 2020 19:52:27 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 16 Apr 2020 19:52:23 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03GIqpnS35586458
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Apr 2020 18:52:51 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5AE9D5204E;
-        Thu, 16 Apr 2020 18:52:51 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.85.81.253])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 226B45204F;
-        Thu, 16 Apr 2020 18:52:48 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-ext4@vger.kernel.org
-Cc:     jack@suse.cz, tytso@mit.edu, adilger@dilger.ca,
-        darrick.wong@oracle.com, hch@infradead.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCHv2 1/1] ext4: Fix overflow case for map.m_len in ext4_iomap_begin_*
-Date:   Fri, 17 Apr 2020 00:22:43 +0530
-X-Mailer: git-send-email 2.21.0
+        Thu, 16 Apr 2020 15:05:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587063919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LcO8LGSRLpNBRQkWwHdMf9RGdRa86XKrk2exP8zF5vE=;
+        b=Wv0HaS3jjHKnJ4Q0Mclt6SZwpx4zwrhGZOuFUNwEWrgMh48i/i+mb9GHbDxKwzt/RzpDgS
+        kDrDmQ/snKp99PFk2cQc2u+C7FpsNlikYVfxPalZU+HamhtYbsu9njEtwkzdq1XmyJLzE5
+        vH0nh652t+BBCRyEnlc6NFkvvdhw2pk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-73-6Ukn1W4mMRGW_C6M9lssZQ-1; Thu, 16 Apr 2020 15:05:17 -0400
+X-MC-Unique: 6Ukn1W4mMRGW_C6M9lssZQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B336107ACCC;
+        Thu, 16 Apr 2020 19:05:16 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-15.rdu2.redhat.com [10.10.116.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B10E10027C3;
+        Thu, 16 Apr 2020 19:05:07 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 4C979220537; Thu, 16 Apr 2020 15:05:07 -0400 (EDT)
+Date:   Thu, 16 Apr 2020 15:05:07 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Liu Bo <bo.liu@linux.alibaba.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 20/20] fuse,virtiofs: Add logic to free up a memory range
+Message-ID: <20200416190507.GC276932@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-21-vgoyal@redhat.com>
+ <20200326000904.GA34937@rsjd01523.et2sqa>
+ <20200327140114.GB32717@redhat.com>
+ <20200327220606.GA119028@rsjd01523.et2sqa>
+ <20200414193045.GB210453@redhat.com>
+ <20200415172229.GA121484@rsjd01523.et2sqa>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20041618-0008-0000-0000-00000371E911
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20041618-0009-0000-0000-00004A93A1F8
-Message-Id: <1a2dc8f198e1225ddd40833de76b60c7ee20d22d.1587024137.git.riteshh@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-16_07:2020-04-14,2020-04-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=906
- lowpriorityscore=0 spamscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 suspectscore=1 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004160129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415172229.GA121484@rsjd01523.et2sqa>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-EXT4_MAX_LOGICAL_BLOCK - map.m_lblk + 1 in case when
-map.m_lblk (offset) is 0 could overflow an unsigned int
-and become 0.
+On Thu, Apr 16, 2020 at 01:22:29AM +0800, Liu Bo wrote:
+> On Tue, Apr 14, 2020 at 03:30:45PM -0400, Vivek Goyal wrote:
+> > On Sat, Mar 28, 2020 at 06:06:06AM +0800, Liu Bo wrote:
+> > > On Fri, Mar 27, 2020 at 10:01:14AM -0400, Vivek Goyal wrote:
+> > > > On Thu, Mar 26, 2020 at 08:09:05AM +0800, Liu Bo wrote:
+> > > > 
+> > > > [..]
+> > > > > > +/*
+> > > > > > + * Find first mapping in the tree and free it and return it. Do not add
+> > > > > > + * it back to free pool. If fault == true, this function should be called
+> > > > > > + * with fi->i_mmap_sem held.
+> > > > > > + */
+> > > > > > +static struct fuse_dax_mapping *inode_reclaim_one_dmap(struct fuse_conn *fc,
+> > > > > > +							 struct inode *inode,
+> > > > > > +							 bool fault)
+> > > > > > +{
+> > > > > > +	struct fuse_inode *fi = get_fuse_inode(inode);
+> > > > > > +	struct fuse_dax_mapping *dmap;
+> > > > > > +	int ret;
+> > > > > > +
+> > > > > > +	if (!fault)
+> > > > > > +		down_write(&fi->i_mmap_sem);
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * Make sure there are no references to inode pages using
+> > > > > > +	 * get_user_pages()
+> > > > > > +	 */
+> > > > > > +	ret = fuse_break_dax_layouts(inode, 0, 0);
+> > > > > 
+> > > > > Hi Vivek,
+> > > > > 
+> > > > > This patch is enabling inline reclaim for fault path, but fault path
+> > > > > has already holds a locked exceptional entry which I believe the above
+> > > > > fuse_break_dax_layouts() needs to wait for, can you please elaborate
+> > > > > on how this can be avoided?
+> > > > > 
+> > > > 
+> > > > Hi Liubo,
+> > > > 
+> > > > Can you please point to the exact lock you are referring to. I will
+> > > > check it out. Once we got rid of needing to take inode lock in
+> > > > reclaim path, that opended the door to do inline reclaim in fault
+> > > > path as well. But I was not aware of this exceptional entry lock.
+> > > 
+> > > Hi Vivek,
+> > > 
+> > > dax_iomap_{pte,pmd}_fault has called grab_mapping_entry to get a
+> > > locked entry, when this fault gets into inline reclaim, would
+> > > fuse_break_dax_layouts wait for the locked exceptional entry which is
+> > > locked in dax_iomap_{pte,pmd}_fault?
+> > 
+> > Hi Liu Bo,
+> > 
+> > This is a good point. Indeed it can deadlock the way code is written
+> > currently.
+> >
+> 
+> It's 100% reproducible on 4.19, but not on 5.x which has xarray for
+> dax_layout_busy_page.
+> 
+> It was weird that on 5.x kernel the deadlock is gone, it turned out
+> that xarray search in dax_layout_busy_page simply skips the empty
+> locked exceptional entry, I didn't get deeper to find out whether it's
+> reasonable, but with that 5.x doesn't run to deadlock.
 
-Fix this.
+I found more problems with enabling inline reclaim in fault path. I
+am holding fi->i_mmap_sem, shared and fuse_break_dax_layouts() can
+drop fi->i_mmap_sem if page is busy. I don't think we can drop and
+reacquire fi->i_mmap_sem while in fault path.
 
-Fixes: d3b6f23f7167 ("ext4: move ext4_fiemap to use iomap framework")
-Reported-and-tested-by: syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
-@Jan,
-I retained your Reviewed by, since there was no logic change, but just couple
-of minor change - missed semicolon and tab space issue.
+Also fuse_break_dax_layouts() does not know if we are holding it
+shared or exclusive.
 
- fs/ext4/inode.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+So I will probably have to go back to disable inline reclaim in
+fault path. If memory range is not available go back up in
+fuse_dax_fault(), drop fi->i_mmap_sem lock and wait on wait queue for
+a range to become free and retry.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e416096fc081..d9feaaad8ab8 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3424,6 +3424,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	int ret;
- 	struct ext4_map_blocks map;
- 	u8 blkbits = inode->i_blkbits;
-+	loff_t len;
- 
- 	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
- 		return -EINVAL;
-@@ -3435,8 +3436,11 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	 * Calculate the first and last logical blocks respectively.
- 	 */
- 	map.m_lblk = offset >> blkbits;
--	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
--			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-+	len = min_t(loff_t, (offset + length - 1) >> blkbits,
-+		    EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-+	if (len > EXT4_MAX_LOGICAL_BLOCK)
-+		len = EXT4_MAX_LOGICAL_BLOCK;
-+	map.m_len = len;
- 
- 	if (flags & IOMAP_WRITE)
- 		ret = ext4_iomap_alloc(inode, &map, flags);
-@@ -3524,6 +3528,7 @@ static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
- 	bool delalloc = false;
- 	struct ext4_map_blocks map;
- 	u8 blkbits = inode->i_blkbits;
-+	loff_t len;
- 
- 	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
- 		return -EINVAL;
-@@ -3541,8 +3546,11 @@ static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
- 	 * Calculate the first and last logical block respectively.
- 	 */
- 	map.m_lblk = offset >> blkbits;
--	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
--			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-+	len = min_t(loff_t, (offset + length - 1) >> blkbits,
-+		    EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-+	if (len > EXT4_MAX_LOGICAL_BLOCK)
-+		len = EXT4_MAX_LOGICAL_BLOCK;
-+	map.m_len = len;
- 
- 	/*
- 	 * Fiemap callers may call for offset beyond s_bitmap_maxbytes.
--- 
-2.21.0
+I can retain the changes I did to break layout for a 2MB range only
+and not the whole file. I think that's a good optimization to retain
+anyway.
+
+Vivek
 
