@@ -2,229 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2E01AB5F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 04:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970211AB652
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 05:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388317AbgDPChA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 22:37:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24935 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387983AbgDPCg4 (ORCPT
+        id S2391351AbgDPDnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 23:43:39 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44332 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729245AbgDPDni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 22:36:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587004614;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wsXQwfnrCmj0LGzc/sAnLb44iyzxNI7JAf2YStv+s3s=;
-        b=N28HWfbxAv+MKqcISec+4KFLy5SJuIvclxmrr5V2dr8rBbSCeKfKkqXR/nMxgs7GotFVlu
-        BoEGNkE/KqPpI3rhVnOErS2Znq4a//KK0pFTpyW7nSFxvn9FzPHBy6AylqzbIxHLWAKb0M
-        R6xIdJPFDaYKNJsKlhtNJ0xBHH6xxFA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-325-cHKJsk4HMgyqSWDUe5ploQ-1; Wed, 15 Apr 2020 22:36:50 -0400
-X-MC-Unique: cHKJsk4HMgyqSWDUe5ploQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9614D8024DA;
-        Thu, 16 Apr 2020 02:36:47 +0000 (UTC)
-Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32C575C1D4;
-        Thu, 16 Apr 2020 02:36:33 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 10:36:29 +0800
-From:   Ming Lei <ming.lei@redhat.com>
+        Wed, 15 Apr 2020 23:43:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b72so1039791pfb.11;
+        Wed, 15 Apr 2020 20:43:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=MF+GTcAP/Qi1eGTnMDQ31INQwaQqeTxesD5C90whNm4=;
+        b=OSNHTeLgm7mfq2H+4Mbf2xG+wk1C2t/IBwmavxqO0EBEuN2WGqif1n9DhZ/czrNHEI
+         B9SiNSXXQOViU1Gs04jpYjPKAO0y3yH2Jko8ctQpph++ShfDhl9f3SHrlMFkDD+sx8t/
+         laj9b/tbS7mRA7WsXbt2HRmj50GT7A0aGk5UiDftQQSyNMQVx7jS2MO1w8UFxb6DcCRo
+         FiCUJAE8tj0ppNkTzyPw8iy31TpJxeobxw7hhCMMyJzOXOXltUJF/h8Ld5K0Uyt/6Beu
+         SLZmzbF2XmMkYtHq1x98SolAcPEx43uGmg1E0iDYpO+oxLg61jKxnbgBHfoqThLhOK1n
+         2D1w==
+X-Gm-Message-State: AGi0PuaLrv2lnb4+V0aw9SObEk8bkOfe3c3RIsxaJsof4Ih6GPY7+jio
+        MULKmfLOCtx2vpzOez9qwVo=
+X-Google-Smtp-Source: APiQypJW/DVeigCfIx/tEMJ1u8JJIZm5hJJ9dvGJdqr8k9BoFgyywcE0DNRRh5Kfl5ObHf8rRTRZ/A==
+X-Received: by 2002:a63:1f0c:: with SMTP id f12mr28638998pgf.245.1587008615446;
+        Wed, 15 Apr 2020 20:43:35 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:91ba:7380:46ae:a781? ([2601:647:4000:d7:91ba:7380:46ae:a781])
+        by smtp.gmail.com with ESMTPSA id u24sm12045079pgo.65.2020.04.15.20.43.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Apr 2020 20:43:34 -0700 (PDT)
+Subject: Re: [PATCH 3/5] blktrace: refcount the request_queue during ioctl
 To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
+Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
         mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
         Hannes Reinecke <hare@suse.com>,
         Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 5/5] block: revert back to synchronous request_queue
- removal
-Message-ID: <20200416023629.GC2717677@T590>
 References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-6-mcgrof@kernel.org>
+ <20200414041902.16769-4-mcgrof@kernel.org>
+ <20200414154044.GB25765@infradead.org>
+ <20200415061649.GS11244@42.do-not-panic.com>
+ <20200415071425.GA21099@infradead.org>
+ <20200415123434.GU11244@42.do-not-panic.com>
+ <73332d32-b095-507f-fb2a-68460533eeb7@acm.org>
+ <20200416011247.GB11244@42.do-not-panic.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <a71d9c9b-72c8-8905-aeba-08e5382f5a81@acm.org>
+Date:   Wed, 15 Apr 2020 20:43:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414041902.16769-6-mcgrof@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20200416011247.GB11244@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 04:19:02AM +0000, Luis Chamberlain wrote:
-> Commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") merged on
-> v4.12 moved the work behind blk_release_queue() into a workqueue after a
-> splat floated around which indicated some work on blk_release_queue()
-> could sleep in blk_exit_rl(). This splat would be possible when a driver
-> called blk_put_queue() or blk_cleanup_queue() (which calls blk_put_queue()
-> as its final call) from an atomic context.
+On 2020-04-15 18:12, Luis Chamberlain wrote:
+> On Wed, Apr 15, 2020 at 07:18:22AM -0700, Bart Van Assche wrote:
+>> blk_get_queue() prevents concurrent freeing of struct request_queue but
+>> does not prevent concurrent blk_cleanup_queue() calls.
 > 
-> blk_put_queue() decrements the refcount for the request_queue
-> kobject, and upon reaching 0 blk_release_queue() is called. Although
-> blk_exit_rl() is now removed through commit db6d9952356 ("block: remove
-> request_list code"), we reserve the right to be able to sleep within
-> blk_release_queue() context. If you see no other way and *have* be
-> in atomic context when you driver calls the last blk_put_queue()
-> you can always just increase your block device's reference count with
-> bdgrab() as this can be done in atomic context and the request_queue
-> removal would be left to upper layers later. We document this bit of
-> tribal knowledge as well now, and adjust kdoc format a bit.
-> 
-> We revert back to synchronous request_queue removal because asynchronous
-> removal creates a regression with expected userspace interaction with
-> several drivers. An example is when removing the loopback driver and
-> issues ioctl from userspace to do so, upon return and if successful one
-> expects the device to be removed. Moving to asynchronous request_queue
-> removal could have broken many scripts which relied on the removal to
-> have been completed if there was no error.
-> 
-> Using asynchronous request_queue removal however has helped us find
-> other bugs, in the future we can test what could break with this
-> arrangement by enabling CONFIG_DEBUG_KOBJECT_RELEASE.
-> 
-> Cc: Bart Van Assche <bvanassche@acm.org>
-> Cc: Omar Sandoval <osandov@fb.com>
-> Cc: Hannes Reinecke <hare@suse.com>
-> Cc: Nicolai Stange <nstange@suse.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: yu kuai <yukuai3@huawei.com>
-> Suggested-by: Nicolai Stange <nstange@suse.de>
-> Fixes: dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  block/blk-core.c       | 19 ++++++++++++++++++-
->  block/blk-sysfs.c      | 38 +++++++++++++++++---------------------
->  include/linux/blkdev.h |  2 --
->  3 files changed, 35 insertions(+), 24 deletions(-)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 5aaae7a1b338..8346c7c59ee6 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -301,6 +301,17 @@ void blk_clear_pm_only(struct request_queue *q)
->  }
->  EXPORT_SYMBOL_GPL(blk_clear_pm_only);
->  
-> +/**
-> + * blk_put_queue - decrement the request_queue refcount
-> + *
-> + * Decrements the refcount to the request_queue kobject, when this reaches
-> + * 0 we'll have blk_release_queue() called. You should avoid calling
-> + * this function in atomic context but if you really have to ensure you
-> + * first refcount the block device with bdgrab() / bdput() so that the
-> + * last decrement happens in blk_cleanup_queue().
-> + *
-> + * @q: the request_queue structure to decrement the refcount for
-> + */
->  void blk_put_queue(struct request_queue *q)
->  {
->  	kobject_put(&q->kobj);
-> @@ -328,10 +339,16 @@ EXPORT_SYMBOL_GPL(blk_set_queue_dying);
->  
->  /**
->   * blk_cleanup_queue - shutdown a request queue
-> - * @q: request queue to shutdown
->   *
->   * Mark @q DYING, drain all pending requests, mark @q DEAD, destroy and
->   * put it.  All future requests will be failed immediately with -ENODEV.
-> + *
-> + * You should not call this function in atomic context. If you need to
-> + * refcount a request_queue in atomic context, instead refcount the
-> + * block device with bdgrab() / bdput().
-> + *
-> + * @q: request queue to shutdown
-> + *
->   */
->  void blk_cleanup_queue(struct request_queue *q)
->  {
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index 0285d67e1e4c..859911191ebc 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -860,22 +860,27 @@ static void blk_exit_queue(struct request_queue *q)
->  	bdi_put(q->backing_dev_info);
->  }
->  
-> -
->  /**
-> - * __blk_release_queue - release a request queue
-> - * @work: pointer to the release_work member of the request queue to be released
-> + * blk_release_queue - release a request queue
-> + *
-> + * This function is called as part of the process when a block device is being
-> + * unregistered. Releasing a request queue starts with blk_cleanup_queue(),
-> + * which set the appropriate flags and then calls blk_put_queue() as the last
-> + * step. blk_put_queue() decrements the reference counter of the request queue
-> + * and once the reference counter reaches zero, this function is called to
-> + * release all allocated resources of the request queue.
->   *
-> - * Description:
-> - *     This function is called when a block device is being unregistered. The
-> - *     process of releasing a request queue starts with blk_cleanup_queue, which
-> - *     set the appropriate flags and then calls blk_put_queue, that decrements
-> - *     the reference counter of the request queue. Once the reference counter
-> - *     of the request queue reaches zero, blk_release_queue is called to release
-> - *     all allocated resources of the request queue.
-> + * This function can sleep, and so we must ensure that the very last
-> + * blk_put_queue() is never called from atomic context.
-> + *
-> + * @kobj: pointer to a kobject, who's container is a request_queue
->   */
-> -static void __blk_release_queue(struct work_struct *work)
-> +static void blk_release_queue(struct kobject *kobj)
->  {
-> -	struct request_queue *q = container_of(work, typeof(*q), release_work);
-> +	struct request_queue *q =
-> +		container_of(kobj, struct request_queue, kobj);
-> +
-> +	might_sleep();
->  
->  	if (test_bit(QUEUE_FLAG_POLL_STATS, &q->queue_flags))
->  		blk_stat_remove_callback(q, q->poll_cb);
-> @@ -905,15 +910,6 @@ static void __blk_release_queue(struct work_struct *work)
->  	call_rcu(&q->rcu_head, blk_free_queue_rcu);
->  }
->  
-> -static void blk_release_queue(struct kobject *kobj)
-> -{
-> -	struct request_queue *q =
-> -		container_of(kobj, struct request_queue, kobj);
-> -
-> -	INIT_WORK(&q->release_work, __blk_release_queue);
-> -	schedule_work(&q->release_work);
-> -}
-> -
->  static const struct sysfs_ops queue_sysfs_ops = {
->  	.show	= queue_attr_show,
->  	.store	= queue_attr_store,
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index cc43c8e6516c..81f7ddb1587e 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -582,8 +582,6 @@ struct request_queue {
->  
->  	size_t			cmd_size;
->  
-> -	struct work_struct	release_work;
-> -
->  #define BLK_MAX_WRITE_HINTS	5
->  	u64			write_hints[BLK_MAX_WRITE_HINTS];
->  };
-> -- 
-> 2.25.1
-> 
+> Wouldn't concurrent blk_cleanup_queue() calls be a bug? If so should
+> I make it clear that it would be or simply prevent it?
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+I think calling blk_cleanup_queue() while the queue refcount > 0 is well
+established behavior. At least the SCSI core triggers that behavior
+since a very long time. I prefer not to change that behavior.
+
+Regarding patch 3/5: how about dropping that patch? If the queue
+refcount can drop to zero while blk_trace_ioctl() is in progress I think
+that should be fixed in the block_device_operations.open callback
+instead of in blk_trace_ioctl().
 
 Thanks,
-Ming
 
+Bart.
