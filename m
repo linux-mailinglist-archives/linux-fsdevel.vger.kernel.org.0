@@ -2,117 +2,312 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D76461AB76B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 07:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C6101AB770
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 07:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406746AbgDPFg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 01:36:27 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39758 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406579AbgDPFgZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 01:36:25 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k15so1166656pfh.6;
-        Wed, 15 Apr 2020 22:36:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0GGMjsf7bes7SO0tixSZYBmOOrlUUrx9KPMpJ3HujiA=;
-        b=PsugiwtkDvY+ipIWYG68EFplwPnqwl+ZNBLDliiWfrjmYfpNCrbWVQlLPCeZFJo1+4
-         cBVu3Y6yasjt919eOIywMIxdlOHVW0ot8RC6U2LwWjCiLshnWGZLE6kJd93fwJkATcfs
-         Npj7eg33OWhAsukQ7k1541FD4OwBuGjhZj83zvRo8eaN0AIKDUAeJNojysalrTjkNmnW
-         Mw2waBTEdmnX4BDqw7G51WAshAtxIQUQkR682g2BADZ09OJC1hKzE76B29Yc38rmf9lp
-         RIxIFu6AK4Y5OxuqE0gReZnlXmqPWhc06G4KFSozUSy+bQ45G5V2DKqHBEDxzh8A+S1a
-         OOEA==
-X-Gm-Message-State: AGi0PuYGZvY3/MkfWuYMaB5d1auMpae+T1dwxRq1aDCcKDHAgHjBh3kZ
-        6YadQLidjV2/CiSyxNYMRhIdCqP7pEQ=
-X-Google-Smtp-Source: APiQypKbKv0BkBHKUzEiqUuVeGbX7gfEsR18Wnsdwe3iyXHjlLh95ibBMf8/BWrc5gEIAQNARJvn0Q==
-X-Received: by 2002:a65:68c7:: with SMTP id k7mr30843871pgt.248.1587015384681;
-        Wed, 15 Apr 2020 22:36:24 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id w5sm15602046pfw.154.2020.04.15.22.36.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 22:36:23 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C714B40277; Thu, 16 Apr 2020 05:36:22 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 05:36:22 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 3/5] blktrace: refcount the request_queue during ioctl
-Message-ID: <20200416053622.GJ11244@42.do-not-panic.com>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-4-mcgrof@kernel.org>
- <20200416023122.GB2717677@T590>
+        id S2406954AbgDPFge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 01:36:34 -0400
+Received: from mga05.intel.com ([192.55.52.43]:7369 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406894AbgDPFgd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 01:36:33 -0400
+IronPort-SDR: 66JoW1F8yG7lSX7cxy1FlRsUh8JTx6rFs5xd5vZ8ju5cx5ZoICKE+rsbtbPjwNCZYvsMoaUDjQ
+ L1VkO6fqG+Ew==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 22:36:31 -0700
+IronPort-SDR: 5bRz58LDr1lHmExHwufRZsFDGqnJtqXyzRZWV8NS4gPL0AjZ1EcJ9LTOdcL9o3XpZj+ibbYYZG
+ yzRYcf1E+gQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,388,1580803200"; 
+   d="scan'208";a="427701180"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga005.jf.intel.com with ESMTP; 15 Apr 2020 22:36:31 -0700
+Date:   Wed, 15 Apr 2020 22:36:31 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V8 11/11] Documentation/dax: Update Usage section
+Message-ID: <20200416053630.GL2309605@iweiny-DESK2.sc.intel.com>
+References: <20200415064523.2244712-1-ira.weiny@intel.com>
+ <20200415064523.2244712-12-ira.weiny@intel.com>
+ <20200415152942.GS6742@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200416023122.GB2717677@T590>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200415152942.GS6742@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 10:31:22AM +0800, Ming Lei wrote:
-> On Tue, Apr 14, 2020 at 04:19:00AM +0000, Luis Chamberlain wrote:
-> > Ensure that the request_queue is refcounted during its full
-> > ioctl cycle. This avoids possible races against removal, given
-> > blk_get_queue() also checks to ensure the queue is not dying.
+On Wed, Apr 15, 2020 at 08:29:42AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 14, 2020 at 11:45:23PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > This small race is possible if you defer removal of the request_queue
-> > and userspace fires off an ioctl for the device in the meantime.
+> > Update the Usage section to reflect the new individual dax selection
+> > functionality.
 > > 
-> > Cc: Bart Van Assche <bvanassche@acm.org>
-> > Cc: Omar Sandoval <osandov@fb.com>
-> > Cc: Hannes Reinecke <hare@suse.com>
-> > Cc: Nicolai Stange <nstange@suse.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: yu kuai <yukuai3@huawei.com>
-> > Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
 > > ---
-> >  kernel/trace/blktrace.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> > Changes from V7:
+> > 	Cleanups/clarifications from Darrick and Dan
 > > 
-> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> > index 15086227592f..17e144d15779 100644
-> > --- a/kernel/trace/blktrace.c
-> > +++ b/kernel/trace/blktrace.c
-> > @@ -701,6 +701,9 @@ int blk_trace_ioctl(struct block_device *bdev, unsigned cmd, char __user *arg)
-> >  	if (!q)
-> >  		return -ENXIO;
+> > Changes from V6:
+> > 	Update to allow setting FS_XFLAG_DAX any time.
+> > 	Update with list of behaviors from Darrick
+> > 	https://lore.kernel.org/lkml/20200409165927.GD6741@magnolia/
+> > 
+> > Changes from V5:
+> > 	Update to reflect the agreed upon semantics
+> > 	https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
+> > ---
+> >  Documentation/filesystems/dax.txt | 166 +++++++++++++++++++++++++++++-
+> >  1 file changed, 163 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
+> > index 679729442fd2..893820c53f49 100644
+> > --- a/Documentation/filesystems/dax.txt
+> > +++ b/Documentation/filesystems/dax.txt
+> > @@ -17,11 +17,171 @@ For file mappings, the storage device is mapped directly into userspace.
+> >  Usage
+> >  -----
 > >  
-> > +	if (!blk_get_queue(q))
-> > +		return -ENXIO;
+> > -If you have a block device which supports DAX, you can make a filesystem
+> > +If you have a block device which supports DAX, you can make a file system
+> >  on it as usual.  The DAX code currently only supports files with a block
+> >  size equal to your kernel's PAGE_SIZE, so you may need to specify a block
+> > -size when creating the filesystem.  When mounting it, use the "-o dax"
+> > -option on the command line or add 'dax' to the options in /etc/fstab.
+> > +size when creating the file system.
 > > +
-> >  	mutex_lock(&q->blk_trace_mutex);
-> >  
-> >  	switch (cmd) {
-> > @@ -729,6 +732,9 @@ int blk_trace_ioctl(struct block_device *bdev, unsigned cmd, char __user *arg)
-> >  	}
-> >  
-> >  	mutex_unlock(&q->blk_trace_mutex);
-> > +
-> > +	blk_put_queue(q);
-> > +
-> >  	return ret;
-> >  }
+> > +Currently 3 filesystems support DAX, ext2, ext4 and xfs.  Enabling DAX on them
 > 
-> Actually when bdev is opened, one extra refcount is held on gendisk, so
-> gendisk won't go away. And __device_add_disk() does grab one extra
-> refcount on request queue, so request queue shouldn't go away when ioctl
-> is running.
+> "...support DAX: ext2, ext4..."
+> 
+> Please put a colon after "DAX" since it's not part of the list.
+> 
+> > +is different.
+> > +
+> > +Enabling DAX on ext4 and ext2
+> > +-----------------------------
+> > +
+> > +When mounting the filesystem, use the "-o dax" option on the command line or
+> > +add 'dax' to the options in /etc/fstab.  This works to enable DAX on all files
+> > +within the filesystem.  It is equivalent to the '-o dax=always' behavior below
+> > +with the exception that the STATX_ATTR_DAX flag is not supported, nor needed,
+> > +as it is always true.
+> 
+> STATX_ATTR_DAX isn't supported?  I thought ext[24] set S_DAX, so the
+> statx flag should work the same as it does on xfs?
 
-Alright, then yes, this should not be needed.
+yea it will work...
 
-  Luis
+> 
+> I also wonder if it's worth mentioning that in the long run ext4 will
+> match the xfs semantics, but maybe that's better left for the ext4 rfc
+> series.
+
+That was my thought.  Leave ext4 for now.
+
+> 
+> > +
+> > +
+> > +Enabling DAX on xfs
+> > +-------------------
+> > +
+> > +Summary
+> > +-------
+> > +
+> > + 1. There exists an in-kernel file access mode flag S_DAX that corresponds to
+> > +    the statx flag STATX_ATTR_DAX.  See the manpage for statx(2) for details
+> > +    about this access mode.
+> > +
+> > + 2. There exists an advisory file inode flag FS_XFLAG_DAX that is
+> > +    inherited from the parent directory FS_XFLAG_DAX inode flag at file
+> > +    creation time.  This advisory flag can be set or cleared at any
+> > +    time, but doing so does not immediately affect the S_DAX state.
+> > +
+> > +    Unless overridden by mount options (see (3)), if FS_XFLAG_DAX is set
+> > +    and the fs is on pmem then it will enable S_DAX at inode load time;
+> > +    if FS_XFLAG_DAX is not set, it will not enable S_DAX.
+> > +
+> > + 3. There exists a dax= mount option.
+> > +
+> > +    "-o dax=never"  means "never set S_DAX, ignore FS_XFLAG_DAX."
+> > +
+> > +    "-o dax=always" means "always set S_DAX (at least on pmem),
+> > +                    and ignore FS_XFLAG_DAX."
+> > +
+> > +    "-o dax"        is an alias for "dax=always".
+> > +
+> > +    "-o dax=inode"  means "follow FS_XFLAG_DAX" and is the default.
+> > +
+> > + 4. There exists an advisory directory inode flag FS_XFLAG_DAX that can
+> > +    be set or cleared at any time.  The flag state is inherited by any files or
+> > +    subdirectories when they are created within that directory.
+> > +
+> > + 5. Programs that require a specific file access mode (DAX or not DAX)
+> > +    can do one of the following:
+> > +
+> > +    (a) Create files in directories that the FS_XFLAG_DAX flag set as
+> > +        needed; or
+> > +
+> > +    (b) Have the administrator set an override via mount option; or
+> > +
+> > +    (c) Set or clear the file's FS_XFLAG_DAX flag as needed.  Programs
+> > +        must then cause the kernel to evict the inode from memory.  This
+> > +        can be done by:
+> > +
+> > +        i>  Closing the file and re-opening the file and using statx to
+> > +            see if the fs has changed the S_DAX flag; and
+> > +
+> > +        ii> If the file still does not have the desired S_DAX access
+> > +            mode, either unmount and remount the filesystem, or close
+> > +            the file and use drop_caches.
+> > +
+> > + 6. It is expected that users who want to squeeze every last bit of performance
+> > +    out of the particular rough and tumble bits of their storage will also be
+> > +    exposed to the difficulties of what happens when the operating system can't
+> > +    totally virtualize those hardware capabilities.  DAX is such a feature.
+> > +
+> > +
+> > +Details
+> > +-------
+> > +
+> > +There are 2 per-file dax flags.  One is a physical inode setting (FS_XFLAG_DAX)
+> > +and the other a currently enabled state (S_DAX).
+> > +
+> > +FS_XFLAG_DAX is maintained, on disk, on individual inodes.  It is preserved
+> > +within the file system.  This 'physical' config setting can be set using an
+> > +ioctl and/or an application such as "xfs_io -c 'chattr [-+]x'".  Files and
+> > +directories automatically inherit FS_XFLAG_DAX from their parent directory
+> > +_when_ _created_.  Therefore, setting FS_XFLAG_DAX at directory creation time
+> > +can be used to set a default behavior for an entire sub-tree.  (Doing so on the
+> > +root directory acts to set a default for the entire file system.)
+> 
+> Urk, I guess I need to push that patch to make mkfs.xfs do this. ;)
+
+I think you should be able to set FS_XFLAG_DAX after mkfs.xfs.  But yea some
+people might like the option...  :-D
+
+> 
+> > +To clarify inheritance here are 3 examples:
+> > +
+> > +Example A:
+> > +
+> > +mkdir -p a/b/c
+> > +xfs_io 'chattr +x' a
+> > +mkdir a/b/c/d
+> > +mkdir a/e
+> > +
+> > +	dax: a,e
+> > +	no dax: b,c,d
+> > +
+> > +Example B:
+> > +
+> > +mkdir a
+> > +xfs_io 'chattr +x' a
+> > +mkdir -p a/b/c/d
+> > +
+> > +	dax: a,b,c,d
+> > +	no dax:
+> > +
+> > +Example C:
+> > +
+> > +mkdir -p a/b/c
+> > +xfs_io 'chattr +x' c
+> > +mkdir a/b/c/d
+> > +
+> > +	dax: c,d
+> > +	no dax: a,b
+> > +
+> > +
+> > +The current enabled state (S_DAX) is set when a file inode is _loaded_ based on
+> > +the underlying media support, the value of FS_XFLAG_DAX, and the file systems
+> > +dax mount option setting.  See below.
+> > +
+> > +statx can be used to query S_DAX.  NOTE that a directory will never have S_DAX
+> > +set and therefore statx will never indicate that S_DAX is set on directories.
+> > +
+> > +NOTE: Setting the FS_XFLAG_DAX (specifically or through inheritance) occurs
+> > +even if the underlying media does not support dax and/or the file system is
+> > +overridden with a mount option.
+> > +
+> > +
+> > +Overriding FS_XFLAG_DAX (dax= mount option)
+> > +-------------------------------------------
+> > +
+> > +There exists a dax mount option.  Using the mount option does not change the
+> > +physical configured state of individual files but overrides the S_DAX operating
+> > +state when inodes are loaded.
+> > +
+> > +Given underlying media support, the dax mount option is a tri-state option
+> > +(never, always, inode) with the following meanings:
+> > +
+> > +   "-o dax=never" means "never set S_DAX, ignore FS_XFLAG_DAX"
+> > +   "-o dax=always" means "always set S_DAX, ignore FS_XFLAG_DAX"
+> > +        "-o dax" by itself means "dax=always" to remain compatible with older
+> > +	         kernels
+> > +   "-o dax=inode" means "follow FS_XFLAG_DAX"
+> > +
+> > +The default state is 'inode'.  Given underlying media support, the following
+> > +algorithm is used to determine the effective mode of the file S_DAX on a
+> > +capable device.
+> > +
+> > +	S_DAX = FS_XFLAG_DAX;
+> > +
+> > +	if (dax_mount == "always")
+> > +		S_DAX = true;
+> > +	else if (dax_mount == "off"
+> > +		S_DAX = false;
+> 
+> The logic in this pseudocode doesn't match the order that's in
+> xfs_inode_enable_dax.
+
+I struggled with this a bit.
+
+> I think the outcome is the same, but it's easier
+> to verify that if the statements are in roughly the same order.
+> 
+> 	if dax=never:
+> 		S_DAX = false
+> 	elif the file system and media don't both support DAX:
+
+The above text does say "Given underlying media support".  Because I wanted to
+make that separate.
+
+> 		S_DAX = false
+> 	elif dax=always:
+> 		S_DAX = true
+> 	else:
+> 		S_DAX = inode flag status
+
+The above text is trying to convey the "override" nature of the flags.  Where
+the code is trying to be a bit more efficient.
+
+Ira
+
+> 
+> --D
+> 
+> > +
+> > +To reiterate: Setting, and inheritance, continues to affect FS_XFLAG_DAX even
+> > +while the file system is mounted with a dax override.  However, in-core inode
+> > +state (S_DAX) will continue to be overridden until the filesystem is remounted
+> > +with dax=inode and the inode is evicted."
+> >  
+> >  
+> >  Implementation Tips for Block Driver Writers
+> > -- 
+> > 2.25.1
+> > 
