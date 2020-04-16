@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE771AB54A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6411AB555
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:18:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgDPBMy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 21:12:54 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:34873 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbgDPBMw (ORCPT
+        id S1729543AbgDPBR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 21:17:27 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43729 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730752AbgDPBRH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 21:12:52 -0400
-Received: by mail-pj1-f65.google.com with SMTP id mn19so649189pjb.0;
-        Wed, 15 Apr 2020 18:12:50 -0700 (PDT)
+        Wed, 15 Apr 2020 21:17:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id z6so723382plk.10;
+        Wed, 15 Apr 2020 18:17:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6RGJvUJSeZs+AqGP/+hRpTOyIR7EwKBAzBmmAfw6j+g=;
-        b=gXLMJpIZwDODnbJgOTKnUnAcjCXuUZK4aGT9KwAAaB72qUw6FOQubr6ObxCXHeHHpv
-         NbFBTzbr6fnYB1CfaBuPjRJv3nt3aJPzyW55c8+SrC4rmzdRGZYzh7oY2TmyCOFdlUG5
-         HERlLL9m03bDpJGl51mWefnfG7cJtV/AFk1nhRUedaWKy97OLIigCD4EuRwLZRpGJ9uB
-         XlEAJ3gtWZJ7b4R4s7q4JdyViCeKmlc8lI0MVt5aUfHN3h2lSGWFLCuNw+maPZB52dsK
-         fHwfVUTs2I3zPDISG0YRds9fK7rGdsQma/F8LvXQmcACXIXy8+uWR2S460fi9AIxBCyU
-         JF2A==
-X-Gm-Message-State: AGi0PuYHuQWw3/2lVRcrjHhkMO8cEKbNuh/ERcPZFho2NK/vKPlgPQ6R
-        1ipcI65i3w4Vy1cIQr0T2v0=
-X-Google-Smtp-Source: APiQypKlxk/W+Q2C4OhNaifz/k6mqtcY/FE1S4DOTOwoBaf22/rB+RYPOVbi0ndi61BGIVJkBF/W3Q==
-X-Received: by 2002:a17:902:7c12:: with SMTP id x18mr7131442pll.250.1586999569702;
-        Wed, 15 Apr 2020 18:12:49 -0700 (PDT)
+        bh=WR6dS8sppVhsHDqaOLN6r5u6vSBUIRk19qqS7mXyQHc=;
+        b=TLo7dUqc8BaE8ldndA2REWP2b3LtqVk8fTTZxT0X047322Rb5bK1y2QMU3jYFbrepb
+         wWukpetp7UHdwOYwXERzPs+1PKVCWvKjeXTPjvmMw1zHYFPN1AP+/QS4ozrVJh5u8UBL
+         Kg9lcH3asjIb0IvK6wW6GjL77LEAwCpe7fWV50AZn0Hdb9F3mNpLXQHYTbOU7XqGDPt8
+         VfuRu3SxnoX86qnJ8DIG5BSfcSWvLXSL4CuFa+2k7eUSr7rw2Enp2Asj1DGQ2PkWxe3D
+         tmX9GT2dpe5FMuVFAlRVJ1P2Xkf8Bw7teex8Icc3PNafjn80ARYtN56l6zUWWuDJ8obQ
+         BNkw==
+X-Gm-Message-State: AGi0Puae75KNUcFiI0C2M1EYydHKh6VOU1q+IerRUR1OGB/iqVEyMRJw
+        dMWa0dKo4e9cmepG00fPW5o=
+X-Google-Smtp-Source: APiQypLfsZVuN4sYX8KfJSMniabfDLJgj3Rsrj4/IDbZiZZSHXaIrSBXDqfPp8TpiuntbH07OtI37g==
+X-Received: by 2002:a17:90b:4c8f:: with SMTP id my15mr2146114pjb.63.1586999824688;
+        Wed, 15 Apr 2020 18:17:04 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id s74sm150560pgc.50.2020.04.15.18.12.48
+        by smtp.gmail.com with ESMTPSA id o11sm8556031pgd.58.2020.04.15.18.17.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 18:12:48 -0700 (PDT)
+        Wed, 15 Apr 2020 18:17:03 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E7A8440277; Thu, 16 Apr 2020 01:12:47 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 01:12:47 +0000
+        id AEA6B40277; Thu, 16 Apr 2020 01:17:02 +0000 (UTC)
+Date:   Thu, 16 Apr 2020 01:17:02 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Bart Van Assche <bvanassche@acm.org>
 Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
@@ -49,73 +49,80 @@ Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
         Hannes Reinecke <hare@suse.com>,
         Michal Hocko <mhocko@kernel.org>
 Subject: Re: [PATCH 3/5] blktrace: refcount the request_queue during ioctl
-Message-ID: <20200416011247.GB11244@42.do-not-panic.com>
+Message-ID: <20200416011702.GC11244@42.do-not-panic.com>
 References: <20200414041902.16769-1-mcgrof@kernel.org>
  <20200414041902.16769-4-mcgrof@kernel.org>
  <20200414154044.GB25765@infradead.org>
  <20200415061649.GS11244@42.do-not-panic.com>
- <20200415071425.GA21099@infradead.org>
- <20200415123434.GU11244@42.do-not-panic.com>
- <73332d32-b095-507f-fb2a-68460533eeb7@acm.org>
+ <49bfcbe0-2630-5c82-f305-fcee489ac9ea@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <73332d32-b095-507f-fb2a-68460533eeb7@acm.org>
+In-Reply-To: <49bfcbe0-2630-5c82-f305-fcee489ac9ea@acm.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 07:18:22AM -0700, Bart Van Assche wrote:
-> On 2020-04-15 05:34, Luis Chamberlain wrote:
-> > On Wed, Apr 15, 2020 at 12:14:25AM -0700, Christoph Hellwig wrote:
-> >> Btw, Isn't blk_get_queue racy as well?  Shouldn't we check
-> >> blk_queue_dying after getting the reference and undo it if the queue is
-> >> indeeed dying?
+On Wed, Apr 15, 2020 at 07:45:18AM -0700, Bart Van Assche wrote:
+> On 2020-04-14 23:16, Luis Chamberlain wrote:
+> > On Tue, Apr 14, 2020 at 08:40:44AM -0700, Christoph Hellwig wrote:
+> >> Hmm, where exactly does the race come in so that it can only happen
+> >> after where you take the reference, but not before it?  I'm probably
+> >> missing something, but that just means it needs to be explained a little
+> >> better :)
 > > 
-> > Yes that race should be possible:
+> >>From the trace on patch 2/5:
 > > 
-> > bool blk_get_queue(struct request_queue *q)                                     
-> > {                                                                               
-> > 	if (likely(!blk_queue_dying(q))) {
-> >        ----------> we can get the queue to go dying here <---------
-> > 		__blk_get_queue(q);
-> > 		return true;
-> > 	}                                                                       
+> >     BLKTRACE_SETUP(loop0) #2
+> >     [   13.933961] == blk_trace_ioctl(2, BLKTRACESETUP) start
+> >     [   13.936758] === do_blk_trace_setup(2) start
+> >     [   13.938944] === do_blk_trace_setup(2) creating directory
+> >     [   13.941029] === do_blk_trace_setup(2) using what debugfs_lookup() gave
+> >     
+> >     ---> From LOOP_CTL_DEL(loop0) #2
+> >     [   13.971046] === blk_trace_cleanup(7) end
+> >     [   13.973175] == __blk_trace_remove(7) end
+> >     [   13.975352] == blk_trace_shutdown(7) end
+> >     [   13.977415] = __blk_release_queue(7) calling blk_mq_debugfs_unregister()
+> >     [   13.980645] ==== blk_mq_debugfs_unregister(7) begin
+> >     [   13.980696] ==== blk_mq_debugfs_unregister(7) debugfs_remove_recursive(q->debugfs_dir)
+> >     [   13.983118] ==== blk_mq_debugfs_unregister(7) end q->debugfs_dir is NULL
+> >     [   13.986945] = __blk_release_queue(7) blk_mq_debugfs_unregister() end
+> >     [   13.993155] = __blk_release_queue(7) end
+> >     
+> >     ---> From BLKTRACE_SETUP(loop0) #2
+> >     [   13.995928] === do_blk_trace_setup(2) end with ret: 0
+> >     [   13.997623] == blk_trace_ioctl(2, BLKTRACESETUP) end
 > > 
-> > 	return false;
-> > }                                                                               
-> > EXPORT_SYMBOL(blk_get_queue);
+> > The BLKTRACESETUP above works on request_queue which later
+> > LOOP_CTL_DEL races on and sweeps the debugfs dir underneath us.
+> > If you use this commit alone though, this doesn't fix the race issue
+> > however, and that's because of both still the debugfs_lookup() use
+> > and that we're still using asynchronous removal at this point.
 > > 
-> > I'll pile up a fix. I've also considered doing a full review of callers
-> > outside of the core block layer using it, and maybe just unexporting
-> > this. It was originally exported due to commit d86e0e83b ("block: export
-> > blk_{get,put}_queue()") to fix a scsi bug, but I can't find such
-> > respective fix. I suspec that using bdgrab()/bdput() seems more likely
-> > what drivers should be using. That would allow us to keep this
-> > functionality internal.
+> > refcounting will just ensure we don't take the request_queue underneath
+> > our noses.
 > 
-> blk_get_queue() prevents concurrent freeing of struct request_queue but
-> does not prevent concurrent blk_cleanup_queue() calls.
+> I think the above trace reveals a bug in the loop driver. The loop
+> driver shouldn't allow the associated request queue to disappear while
+> the loop device is open.
 
-Wouldn't concurrent blk_cleanup_queue() calls be a bug? If so should
-I make it clear that it would be or simply prevent it?
+The bug was *not* in the driver, the bug was in that deferal of removal
+was allowed to be asynchronous, therefore the removal from a userspace
+perspective *finishes*, but its not actually really done. Back when
+the removal was synchronous, the loop driver waited on cleanup, and
+didn't return to userspace until it was really removed.
 
-> Callers of
-> blk_get_queue() may encounter a change of the queue state from normal
-> into dying any time during the blk_get_queue() call or after
-> blk_get_queue() has finished. Maybe I'm overlooking something but I
-> doubt that modifying blk_get_queue() will help.
+This is why I annotated that the move to asynch removal turns out to
+actually be a userspace API regression.
 
-Good point, to fix that race described by Christoph we'd have to take
-into consideration refcounts of the request_queue to prevent queues from
-changing state to dying if the refcount is > 1, however that'd also
-would  mean not allowing the request_queue from ever dying.
+> One may want to have a look at sd_open() in the
+> sd driver. The scsi_disk_get() call in that function not only increases
+> the reference count of the SCSI disk but also of the underlying SCSI device.
 
-One way we could resolve this could be to to keep track of a
-quiesce/dying request, then at that point prevent blk_get_queue() from
-allowing increments, and once the refcount is down to 1, flip the switch
-to dying.
+Are you saying to use this as a template for what a driver should do or
+do you suspect there is a bug there? Not sure what you mean here.
 
   Luis
