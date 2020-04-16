@@ -2,37 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FB791AB532
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9FD1AB53A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391972AbgDPBCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 21:02:11 -0400
-Received: from sandeen.net ([63.231.237.45]:45848 "EHLO sandeen.net"
+        id S2406110AbgDPBHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 21:07:37 -0400
+Received: from sandeen.net ([63.231.237.45]:46244 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbgDPBCJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 21:02:09 -0400
+        id S2405821AbgDPBHd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 21:07:33 -0400
 Received: from [10.0.0.4] (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 25151170B41;
-        Wed, 15 Apr 2020 20:01:46 -0500 (CDT)
-Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-3-mcgrof@kernel.org>
- <55401e02-f61c-25eb-271c-3ec7baf35e28@sandeen.net>
- <20200416005636.GA11244@42.do-not-panic.com>
+        by sandeen.net (Postfix) with ESMTPSA id C1B9F170B41;
+        Wed, 15 Apr 2020 20:07:11 -0500 (CDT)
+To:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>
 From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: [PATCH 0/2] exfat: timestamp fixes
 Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
  nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
@@ -75,12 +62,11 @@ Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
  m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
  fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <924950e6-e016-25b2-4ee1-b5ea9f752c12@sandeen.net>
-Date:   Wed, 15 Apr 2020 20:02:04 -0500
+Message-ID: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
+Date:   Wed, 15 Apr 2020 20:07:31 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200416005636.GA11244@42.do-not-panic.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -89,39 +75,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+I've seen 2 issues w/ exfat timestamps - discovered by xfstests generic/003
 
+1) time granularity is set wrong, so subsecond timestamps change when
+   an inode cycles out of memory and is reread from disk
 
-On 4/15/20 7:56 PM, Luis Chamberlain wrote:
-> On Wed, Apr 15, 2020 at 12:38:26PM -0500, Eric Sandeen wrote:
->> On 4/13/20 11:18 PM, Luis Chamberlain wrote:
->>> On commit 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
->>> merged on v4.12 Omar fixed the original blktrace code for request-based
->>> drivers (multiqueue). This however left in place a possible crash, if you
->>> happen to abuse blktrace in a way it was not intended.
->>>
->>> Namely, if you loop adding a device, setup the blktrace with BLKTRACESETUP,
->>> forget to BLKTRACETEARDOWN, and then just remove the device you end up
->>> with a panic:
->>
->> I think this patch makes this all cleaner anyway, but - without the apparent
->> loop bug mentioned by Bart which allows removal of the loop device while blktrace
->> is active (if I read that right), can this still happen?
-> 
-> I have not tested that, but some modifications of the break-blktrace
-> program could enable us to test that
+2) the disk format doesn't seem to support subsecond atime, so a similar
+   problem exists there.e
 
-FWIW, I modified it to modprobe & rmmod scsi_debug instead of the loop ioctls,
-and the module can't be unloaded after the blktrace is started since it's busy.
-
-Not sure that's equivalent tho.
-
-> however I don't think the race
-> would be possible after patch 3/5 "blktrace: refcount the request_queue
-> during ioctl" is merged, as removal then a pending blktrace would
-> refcount the request_queue and the removal would have to wait until
-> the refcount is decremeneted, until after the blktrace ioctl.
-
-I'm out of my depth in the block layer, not sure who's supposed to take
-refs on what. ;)
-
--Eric
+The last xfstests generic/003 issue is re: change time but exfat doesn't
+really support change times (?) so that'll be a test workaround.
