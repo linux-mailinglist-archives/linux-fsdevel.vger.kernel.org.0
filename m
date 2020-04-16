@@ -2,100 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2BB1AC1AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 14:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94CAF1AC1C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 14:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636262AbgDPMpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 08:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2636256AbgDPMpo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 08:45:44 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC457208E4;
-        Thu, 16 Apr 2020 12:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587041143;
-        bh=3KyXh0MP4mZkOqfe5RfSHynnSjW05VbwhqHccC5ChQc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zeXvRYDpN5hER0ZYWmDihR/9Gyu/Tnb6knJ230KQEP4f8kvJmf59qXXNT1MPZaiZv
-         vXln21iBv+OLcLG6INd/tUlvSZxH/MzlL0SROgo3XICa4569hBblXzQxcc+0Z/pitO
-         ALxF2uK40XUPBwsEcwYbS6Q7RggxXG9Vp9HAXPSY=
-Date:   Thu, 16 Apr 2020 13:45:39 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 1/2] mm: Remove definition of
- clear_bit_unlock_is_negative_byte
-Message-ID: <20200416124536.GA32565@willie-the-truck>
-References: <20200326122429.20710-1-willy@infradead.org>
- <20200326122429.20710-2-willy@infradead.org>
+        id S2894470AbgDPMrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 08:47:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2894464AbgDPMrs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 08:47:48 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F64C061A0C;
+        Thu, 16 Apr 2020 05:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gvx1/ulNBFgh/kHARyi19ZtC/l/z2neA8FBz9jVLqpk=; b=NDoihVBSGHP6XIKX03JtyTZqVu
+        FNvLRQXbet8JArzLrUXD6VXFVqH32Zw7VCulrZzNCmbhGf+ykm+1awW56g1eEloUf9atUETwFoiHM
+        vGlUyjdgyuZJKiLRIF8TpI1n43GplAqhftw4IqBgdIY1yPA7o7595JzGnhGfVw6cAVby0lHYE2rec
+        C+DIxK8SIjMJ89IrG3WEH2q5cIJgGEs0emzMHC5geCYMhGS/CUUup2x0PLwNGRMieBQ3Vbdq+f6Ys
+        QreRM5iSpOFodIBEkF8miqlFVZXDSePerV4WIGSgZOdt1sIx6ud3uOS0LUmDsin0s/Aom7ulXbN7V
+        ed7361QA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jP3vn-00053L-P0; Thu, 16 Apr 2020 12:47:47 +0000
+Date:   Thu, 16 Apr 2020 05:47:47 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v6 04/11] block: Introduce REQ_OP_ZONE_APPEND
+Message-ID: <20200416124747.GA6588@infradead.org>
+References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+ <20200415090513.5133-5-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200326122429.20710-2-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200415090513.5133-5-johannes.thumshirn@wdc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
-
-Sorry I missed this, I'm over on @kernel.org now and don't have access to
-my old @arm.com address anymore.
-
-On Thu, Mar 26, 2020 at 05:24:28AM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This local definition hasn't been used since commit 84c6591103db
-> ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using
-> atomic_fetch_*()") which provided a default definition.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  mm/filemap.c | 23 -----------------------
->  1 file changed, 23 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 80f7e1ae744c..312afbfcb49a 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1248,29 +1248,6 @@ void add_page_wait_queue(struct page *page, wait_queue_entry_t *waiter)
->  }
->  EXPORT_SYMBOL_GPL(add_page_wait_queue);
+> @@ -1000,13 +1000,12 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  		struct page *page = pages[i];
 >  
-> -#ifndef clear_bit_unlock_is_negative_byte
+>  		len = min_t(size_t, PAGE_SIZE - offset, left);
 > -
-> -/*
-> - * PG_waiters is the high bit in the same byte as PG_lock.
-> - *
-> - * On x86 (and on many other architectures), we can clear PG_lock and
-> - * test the sign bit at the same time. But if the architecture does
-> - * not support that special operation, we just do this all by hand
-> - * instead.
-> - *
-> - * The read of PG_waiters has to be after (or concurrently with) PG_locked
-> - * being cleared, but a memory barrier should be unneccssary since it is
-> - * in the same byte as PG_locked.
-> - */
-> -static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem)
-> -{
-> -	clear_bit_unlock(nr, mem);
-> -	/* smp_mb__after_atomic(); */
-> -	return test_bit(PG_waiters, mem);
-> -}
-> -
-> -#endif
-> -
+>  		if (__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+>  			if (same_page)
+>  				put_page(page);
+>  		} else {
+>  			if (WARN_ON_ONCE(bio_full(bio, len)))
+> -                                return -EINVAL;
+> +				return -EINVAL;
+>  			__bio_add_page(bio, page, len, offset);
 
-I'd really like to do this, but I worry that the generic definition still
-isn't available on all architectures depending on how they pull together
-their bitops.h. Have you tried building for alpha or s390? At a quick
-glance, they look like they might fall apart :(
+spurious whitespace changes.  They both actually look good to me,
+but don't really belong into this patch.
 
-Will
+Otherwise this looks good to me:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
