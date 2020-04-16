@@ -2,65 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7771AC566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 16:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7FB11AC5F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 16:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442298AbgDPOSE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 10:18:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40590 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408787AbgDPOSA (ORCPT
+        id S2405616AbgDPObR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 10:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37266 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2394298AbgDPObI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 10:18:00 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 7E8D32A087F
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>
-Cc:     linux-fsdevel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH] Implement utf8 unit tests as a kunit test suite.
-Organization: Collabora
-References: <20200415082826.19325-1-ricardo.canuelo@collabora.com>
-        <851rood23s.fsf@collabora.com>
-        <20200416075146.zo5bcx5eoatbdgvx@rcn-XPS-13-9360>
-Date:   Thu, 16 Apr 2020 10:17:54 -0400
-In-Reply-To: <20200416075146.zo5bcx5eoatbdgvx@rcn-XPS-13-9360> ("Ricardo
-        =?utf-8?Q?Ca=C3=B1uelo=22's?= message of "Thu, 16 Apr 2020 09:51:46 +0200")
-Message-ID: <855zdz5xbh.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Thu, 16 Apr 2020 10:31:08 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBE1EC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 07:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vhhheZDRF5ha3in5VMD/IA78tE/F9ey45sQgR/A8ceU=; b=VnctTWyTPa1YBWxtIZkFBSsr6T
+        CMAO2ezJRjbSywnkl3wpS5BRSull8mEK8dSy13pBuz8YBohxgrMQDHjAB66aOsDTtQi8LGGnet/Xm
+        p2htxmoYt/au7yBV5T9784/31DwfHdN9eVsPOOBqIa/3Rf7otG/KRpOnfB9g9rqDnJn6/Tr1T3Erz
+        bDpRhdRma2xOLvaYh2lQwoEYD1veoVBa6iVuOYeEpMI/z+zpAfm2EdFisaf8jsFrGNvmZhIupjnE8
+        qmF6QkUcyHWuIfa/IzDqIjdLe4sNO03IlIx6Cy5YelfK/pKFIaGrW9MDefSsUoYBq47Y5kTGLYb1W
+        9lfKxf3Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jP5Xl-00056H-Cb; Thu, 16 Apr 2020 14:31:05 +0000
+Date:   Thu, 16 Apr 2020 07:31:05 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 1/2] mm: Remove definition of
+ clear_bit_unlock_is_negative_byte
+Message-ID: <20200416143105.GG5820@bombadil.infradead.org>
+References: <20200326122429.20710-1-willy@infradead.org>
+ <20200326122429.20710-2-willy@infradead.org>
+ <20200416124536.GA32565@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200416124536.GA32565@willie-the-truck>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ricardo Cañuelo <ricardo.canuelo@collabora.com> writes:
+On Thu, Apr 16, 2020 at 01:45:39PM +0100, Will Deacon wrote:
+> Sorry I missed this, I'm over on @kernel.org now and don't have access to
+> my old @arm.com address anymore.
 
+Oops.  Shame they haven't started bouncing it yet, so I didn't know.
 
-> I don't think it's a good idea to have the version specifier hardcoded twice in
-> the same file, one in string form (for utf8_load) and another one in integer
-> form (for the rest of the functions that take the version as a parameter). I
-> think it'd be a better option to use a macro to stringify the version number
-> from the integer constants and avoid the snprintf entirely:
->
-> #define str(s) #s
-> #define VERSION_STR(maj, min, rev) str(maj) "." str(min) "." str(rev)
->
-> ...
->
-> table = utf8_load(VERSION_STR(latest_maj, latest_min, latest_rev));
->
->
-> This way we can define the version constant only once, in integer form, and
-> then the string form will be a constant generated at compile time. Are you ok
-> with this?
+> > -static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem)
+> > -{
+> > -	clear_bit_unlock(nr, mem);
+> > -	/* smp_mb__after_atomic(); */
+> > -	return test_bit(PG_waiters, mem);
+> > -}
+> 
+> I'd really like to do this, but I worry that the generic definition still
+> isn't available on all architectures depending on how they pull together
+> their bitops.h. Have you tried building for alpha or s390? At a quick
+> glance, they look like they might fall apart :(
 
-fine with me.
-
-Thanks,
-
--- 
-Gabriel Krisman Bertazi
+I haven't, but fortunately the 0day build bot has!  It built both s390 and
+alpha successfully (as well as 120+ other configurations).
