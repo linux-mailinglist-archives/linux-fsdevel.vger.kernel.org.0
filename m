@@ -2,138 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAD81ABB99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 10:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F901ABBCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 10:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502782AbgDPIqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 04:46:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34646 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502817AbgDPIqf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 04:46:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4A2BDAF40;
-        Thu, 16 Apr 2020 08:45:38 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F2ED81E1250; Thu, 16 Apr 2020 10:45:37 +0200 (CEST)
-Date:   Thu, 16 Apr 2020 10:45:37 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 14/34] docs: filesystems: convert dnotify.txt to ReST
-Message-ID: <20200416084537.GA23739@quack2.suse.cz>
-References: <cover.1586960617.git.mchehab+huawei@kernel.org>
- <ed628af6cc9fc157c617825c74d6084eb42c7800.1586960617.git.mchehab+huawei@kernel.org>
+        id S2503028AbgDPIzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 04:55:42 -0400
+Received: from mx05.melco.co.jp ([192.218.140.145]:53079 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502971AbgDPIwR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 04:52:17 -0400
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id 659653A3F41;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 492tHx2VgNzRkJW;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 492tHx2BWLzRkJg;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 492tHx2DkzzRkCV;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 492tHx1mJgzRkBs;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received:  from tux532.tad.melco.co.jp
+        by tux532.tad.melco.co.jp (unknown) with ESMTP id 03G8pfNA025279;
+        Thu, 16 Apr 2020 17:51:41 +0900
+Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
+        by postfix.imss70 (Postfix) with ESMTP id 09CBF17E07A;
+        Thu, 16 Apr 2020 17:51:41 +0900 (JST)
+Received: from tux554.tad.melco.co.jp (tadpost1.tad.melco.co.jp [10.168.7.223])
+        by tux390.tad.melco.co.jp (Postfix) with ESMTP id F135217E079;
+        Thu, 16 Apr 2020 17:51:40 +0900 (JST)
+Received: from tux554.tad.melco.co.jp
+        by tux554.tad.melco.co.jp (unknown) with ESMTP id 03G8pePX013596;
+        Thu, 16 Apr 2020 17:51:40 +0900
+From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
+Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] exfat: replace 'time_ms' with 'time_cs'
+Date:   Thu, 16 Apr 2020 17:51:21 +0900
+Message-Id: <20200416085121.57495-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed628af6cc9fc157c617825c74d6084eb42c7800.1586960617.git.mchehab+huawei@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 15-04-20 16:32:27, Mauro Carvalho Chehab wrote:
-> - Add a SPDX header;
-> - Add a document title;
-> - Some whitespace fixes and new line breaks;
-> - Add table markups;
-> - Add it to filesystems/index.rst
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Replace "time_ms"  with "time_cs" in the file directory entry structure
+and related functions.
 
-Looks good to me. I expect you merge this through documentation tree so you
-can add:
+The unit of create_time_ms/modify_time_ms in File Directory Entry are not
+'milli-second', but 'centi-second'.
+The exfat specification uses the term '10ms', but instead use 'cs' as in
+"msdos_fs.h".
 
-Acked-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+---
+Changes in v3:
+ - change time_10ms to time_cs
+ - revert calculation formula to original
+ - change subject & commit-log
+ - rebase to 'linkinjeon/exfat.git' dev branch 
+Changes in v2:
+ - fix spelling mistakes in commit-log.
 
-								Honza
+fs/exfat/dir.c       |  8 ++++----
+ fs/exfat/exfat_fs.h  |  4 ++--
+ fs/exfat/exfat_raw.h |  4 ++--
+ fs/exfat/file.c      |  2 +-
+ fs/exfat/inode.c     |  4 ++--
+ fs/exfat/misc.c      | 18 +++++++++---------
+ fs/exfat/namei.c     |  4 ++--
+ 7 files changed, 22 insertions(+), 22 deletions(-)
 
-
-
-> ---
->  .../filesystems/{dnotify.txt => dnotify.rst}          | 11 ++++++++---
->  Documentation/filesystems/index.rst                   |  1 +
->  MAINTAINERS                                           |  2 +-
->  3 files changed, 10 insertions(+), 4 deletions(-)
->  rename Documentation/filesystems/{dnotify.txt => dnotify.rst} (90%)
-> 
-> diff --git a/Documentation/filesystems/dnotify.txt b/Documentation/filesystems/dnotify.rst
-> similarity index 90%
-> rename from Documentation/filesystems/dnotify.txt
-> rename to Documentation/filesystems/dnotify.rst
-> index 08d575ece45d..a28a1f9ef79c 100644
-> --- a/Documentation/filesystems/dnotify.txt
-> +++ b/Documentation/filesystems/dnotify.rst
-> @@ -1,5 +1,8 @@
-> -		Linux Directory Notification
-> -		============================
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============================
-> +Linux Directory Notification
-> +============================
->  
->  	   Stephen Rothwell <sfr@canb.auug.org.au>
->  
-> @@ -12,6 +15,7 @@ being delivered using signals.
->  The application decides which "events" it wants to be notified about.
->  The currently defined events are:
->  
-> +	=========	=====================================================
->  	DN_ACCESS	A file in the directory was accessed (read)
->  	DN_MODIFY	A file in the directory was modified (write,truncate)
->  	DN_CREATE	A file was created in the directory
-> @@ -19,6 +23,7 @@ The currently defined events are:
->  	DN_RENAME	A file in the directory was renamed
->  	DN_ATTRIB	A file in the directory had its attributes
->  			changed (chmod,chown)
-> +	=========	=====================================================
->  
->  Usually, the application must reregister after each notification, but
->  if DN_MULTISHOT is or'ed with the event mask, then the registration will
-> @@ -36,7 +41,7 @@ especially important if DN_MULTISHOT is specified.  Note that SIGRTMIN
->  is often blocked, so it is better to use (at least) SIGRTMIN + 1.
->  
->  Implementation expectations (features and bugs :-))
-> ----------------------------
-> +---------------------------------------------------
->  
->  The notification should work for any local access to files even if the
->  actual file system is on a remote server.  This implies that remote
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-> index 470b2da2b7b1..960e0cc29491 100644
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@ -26,6 +26,7 @@ algorithms work.
->     directory-locking
->     dax
->     devpts
-> +   dnotify
->  
->     automount-support
->  
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 511d19bcfa1e..eebb55517709 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4995,7 +4995,7 @@ M:	Jan Kara <jack@suse.cz>
->  R:	Amir Goldstein <amir73il@gmail.com>
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/filesystems/dnotify.txt
-> +F:	Documentation/filesystems/dnotify.rst
->  F:	fs/notify/dnotify/
->  F:	include/linux/dnotify.h
->  
-> -- 
-> 2.25.2
-> 
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 53ae965da..b5a237c33 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -137,12 +137,12 @@ static int exfat_readdir(struct inode *inode, struct exfat_dir_entry *dir_entry)
+ 					ep->dentry.file.create_tz,
+ 					ep->dentry.file.create_time,
+ 					ep->dentry.file.create_date,
+-					ep->dentry.file.create_time_ms);
++					ep->dentry.file.create_time_cs);
+ 			exfat_get_entry_time(sbi, &dir_entry->mtime,
+ 					ep->dentry.file.modify_tz,
+ 					ep->dentry.file.modify_time,
+ 					ep->dentry.file.modify_date,
+-					ep->dentry.file.modify_time_ms);
++					ep->dentry.file.modify_time_cs);
+ 			exfat_get_entry_time(sbi, &dir_entry->atime,
+ 					ep->dentry.file.access_tz,
+ 					ep->dentry.file.access_time,
+@@ -461,12 +461,12 @@ int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
+ 			&ep->dentry.file.create_tz,
+ 			&ep->dentry.file.create_time,
+ 			&ep->dentry.file.create_date,
+-			&ep->dentry.file.create_time_ms);
++			&ep->dentry.file.create_time_cs);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			&ep->dentry.file.modify_tz,
+ 			&ep->dentry.file.modify_time,
+ 			&ep->dentry.file.modify_date,
+-			&ep->dentry.file.modify_time_ms);
++			&ep->dentry.file.modify_time_cs);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			&ep->dentry.file.access_tz,
+ 			&ep->dentry.file.access_time,
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 4ced4c0d9..f619b9250 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -511,9 +511,9 @@ void exfat_msg(struct super_block *sb, const char *lv, const char *fmt, ...)
+ 	exfat_msg(sb, KERN_INFO, fmt, ##__VA_ARGS__)
+ 
+ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 tz, __le16 time, __le16 date, u8 time_ms);
++		u8 tz, __le16 time, __le16 date, u8 time_cs);
+ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms);
++		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
+ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 		unsigned short chksum, int type);
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
+diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+index 2a841010e..8d6c64a75 100644
+--- a/fs/exfat/exfat_raw.h
++++ b/fs/exfat/exfat_raw.h
+@@ -136,8 +136,8 @@ struct exfat_dentry {
+ 			__le16 modify_date;
+ 			__le16 access_time;
+ 			__le16 access_date;
+-			__u8 create_time_ms;
+-			__u8 modify_time_ms;
++			__u8 create_time_cs;
++			__u8 modify_time_cs;
+ 			__u8 create_tz;
+ 			__u8 modify_tz;
+ 			__u8 access_tz;
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 483f68375..5eff50afd 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -165,7 +165,7 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
+ 				&ep->dentry.file.modify_tz,
+ 				&ep->dentry.file.modify_time,
+ 				&ep->dentry.file.modify_date,
+-				&ep->dentry.file.modify_time_ms);
++				&ep->dentry.file.modify_time_cs);
+ 		ep->dentry.file.attr = cpu_to_le16(ei->attr);
+ 
+ 		/* File size should be zero if there is no cluster allocated */
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 06887492f..3f367d081 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -56,12 +56,12 @@ static int __exfat_write_inode(struct inode *inode, int sync)
+ 			&ep->dentry.file.create_tz,
+ 			&ep->dentry.file.create_time,
+ 			&ep->dentry.file.create_date,
+-			&ep->dentry.file.create_time_ms);
++			&ep->dentry.file.create_time_cs);
+ 	exfat_set_entry_time(sbi, &inode->i_mtime,
+ 			&ep->dentry.file.modify_tz,
+ 			&ep->dentry.file.modify_time,
+ 			&ep->dentry.file.modify_date,
+-			&ep->dentry.file.modify_time_ms);
++			&ep->dentry.file.modify_time_cs);
+ 	exfat_set_entry_time(sbi, &inode->i_atime,
+ 			&ep->dentry.file.access_tz,
+ 			&ep->dentry.file.access_time,
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index d32beb172..0d521ca24 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -75,7 +75,7 @@ static void exfat_adjust_tz(struct timespec64 *ts, u8 tz_off)
+ 
+ /* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70). */
+ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 tz, __le16 time, __le16 date, u8 time_ms)
++		u8 tz, __le16 time, __le16 date, u8 time_cs)
+ {
+ 	u16 t = le16_to_cpu(time);
+ 	u16 d = le16_to_cpu(date);
+@@ -84,10 +84,10 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 			      t >> 11, (t >> 5) & 0x003F, (t & 0x001F) << 1);
+ 
+ 
+-	/* time_ms field represent 0 ~ 199(1990 ms) */
+-	if (time_ms) {
+-		ts->tv_sec += time_ms / 100;
+-		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
++	/* time_cs field represent 0 ~ 199cs(1990 ms) */
++	if (time_cs) {
++		ts->tv_sec += time_cs / 100;
++		ts->tv_nsec = (time_cs % 100) * 10 * NSEC_PER_MSEC;
+ 	}
+ 
+ 	if (tz & EXFAT_TZ_VALID)
+@@ -100,7 +100,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 
+ /* Convert linear UNIX date to a EXFAT time/date pair. */
+ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+-		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms)
++		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs)
+ {
+ 	struct tm tm;
+ 	u16 t, d;
+@@ -112,9 +112,9 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 	*time = cpu_to_le16(t);
+ 	*date = cpu_to_le16(d);
+ 
+-	/* time_ms field represent 0 ~ 199(1990 ms) */
+-	if (time_ms)
+-		*time_ms = (tm.tm_sec & 1) * 100 +
++	/* time_cs field represent 0 ~ 199cs(1990 ms) */
++	if (time_cs)
++		*time_cs = (tm.tm_sec & 1) * 100 +
+ 			ts->tv_nsec / (10 * NSEC_PER_MSEC);
+ 
+ 	/*
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 549274fef..27c0fe5c1 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -687,12 +687,12 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 				ep->dentry.file.create_tz,
+ 				ep->dentry.file.create_time,
+ 				ep->dentry.file.create_date,
+-				ep->dentry.file.create_time_ms);
++				ep->dentry.file.create_time_cs);
+ 		exfat_get_entry_time(sbi, &info->mtime,
+ 				ep->dentry.file.modify_tz,
+ 				ep->dentry.file.modify_time,
+ 				ep->dentry.file.modify_date,
+-				ep->dentry.file.modify_time_ms);
++				ep->dentry.file.modify_time_cs);
+ 		exfat_get_entry_time(sbi, &info->atime,
+ 				ep->dentry.file.access_tz,
+ 				ep->dentry.file.access_time,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.0
+
