@@ -2,110 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D5E1ABB90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 10:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CAD81ABB99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 10:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502699AbgDPIpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 04:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502559AbgDPIo4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 04:44:56 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410A8C0610D6;
-        Thu, 16 Apr 2020 01:21:59 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id o81so3598184wmo.2;
-        Thu, 16 Apr 2020 01:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=GRj1bNy3dNdnoBw7MW0MU1ceAiClIxWnQUWY2HqaiC4=;
-        b=k41C2LWc6nojxtzqzWo3WaCxaD7Aryp295keNJJ2Jk42EYRvMnSfnjVuI5lcveaaDD
-         5mHdEaxw4+7YoKU0Hew0DLmD0u83Ar4Pc1ShFanWuphFrixVPnHG3dUExE6eEB65jrtT
-         rFJWosWqr7z0RfYzulAARF/0Mk/KwYNea4RDRfKDvuFCmreV07f+gxxXVvIBOfZCLTJV
-         HHG9DKn7lpcXf7a/3+jNZ4v/eGXffZ8BvXBc04B2TdO9M/vKRuHqhqipJUnLevjYMfCc
-         Af92F9WR3LBzL0H4lv5IyqiZugwVhbZpHKItb3tFs1NdnI1E3QvumYO7PgiFAlXL5TSg
-         DJSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=GRj1bNy3dNdnoBw7MW0MU1ceAiClIxWnQUWY2HqaiC4=;
-        b=d4e6afHZsKHG9+fn2rmmF/BAl23x6DlzSTKfL7BCeSbogafnrURYyoY29Y/1Xo0OVS
-         vz0Uo9DQzPd+XbSucm895KbY5pu0+t3IdirB731RPn2ON4bSca2lZPcnyOL6N9elH7AL
-         cIqa5xK9bSojCi2D/cIbcS3Q6s86Jpx8CsWd6Nip32QuuPWL/F128dnk3jFRJud/wfxX
-         xnAvhfA8FflJ6kl5CBHD7h/LL1iQLUc4iHO4ci/PFQCl84h0F+Ust7hszMc+eCNkt9FE
-         jcXhO2j5jxBsfO5wZzsvJf5gheZHi1fhJW/PY7+9baTO8U+v+DqiW9waeEQqFfURxCAt
-         RkXQ==
-X-Gm-Message-State: AGi0PuZgHhmTDLzJAzLuFhLzr7GcF8yzmFncq1XAGPOw1SXqWQsDx6L/
-        CFm/H0IYQnzwG0fwfb+DWSEpsf1Yg54ozRuNo8dewm9tFQI=
-X-Google-Smtp-Source: APiQypIbfCHMM32E+0tY30kGGW/TB28wDgfj2YKPbSVdr0/gZ6TK3K+HlsrYqb1AMsn8gUes95YxM5cZWFK0VFhSHrw=
-X-Received: by 2002:a1c:4085:: with SMTP id n127mr3808059wma.163.1587025317838;
- Thu, 16 Apr 2020 01:21:57 -0700 (PDT)
+        id S2502782AbgDPIqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 04:46:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34646 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502817AbgDPIqf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 04:46:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4A2BDAF40;
+        Thu, 16 Apr 2020 08:45:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F2ED81E1250; Thu, 16 Apr 2020 10:45:37 +0200 (CEST)
+Date:   Thu, 16 Apr 2020 10:45:37 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 14/34] docs: filesystems: convert dnotify.txt to ReST
+Message-ID: <20200416084537.GA23739@quack2.suse.cz>
+References: <cover.1586960617.git.mchehab+huawei@kernel.org>
+ <ed628af6cc9fc157c617825c74d6084eb42c7800.1586960617.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-References: <CGME20200409015934epcas1p442d68b06ec7c5f3ca125c197687c2295@epcas1p4.samsung.com>
- <001201d60e12$8454abb0$8cfe0310$@samsung.com> <20200415164702.xf3t2stjpkjl6das@fiona>
- <000001d6137e$95efb510$c1cf1f30$@samsung.com>
-In-Reply-To: <000001d6137e$95efb510$c1cf1f30$@samsung.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Thu, 16 Apr 2020 10:21:46 +0200
-Message-ID: <CA+icZUVXEnrc2WXkS=TPXhmOm9rYTyAOZq9Z+f+fauvGp2oofg@mail.gmail.com>
-Subject: Re: [ANNOUNCE] exfat-utils-1.0.1 initial version released
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Eric Sandeen <sandeen@sandeen.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed628af6cc9fc157c617825c74d6084eb42c7800.1586960617.git.mchehab+huawei@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 3:15 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
->
-> > Hi,
-> Hi Goldwyn,
->
-> >
-> > On 10:59 09/04, Namjae Jeon wrote:
-> > > The initial version(1.0.1) of exfat-utils is now available.
-> > > This is the official userspace utilities for exfat filesystem of
-> > > linux-kernel.
-> >
-> > For the sake of sanity of the distributions which already carry exfat-
-> > utils based on fuse (https://protect2.fireeye.com/url?k=20c6da2a-7d5874b0-
-> > 20c75165-0cc47a336fae-
-> > 6943064efcd15854&q=1&u=https%3A%2F%2Fgithub.com%2Frelan%2Fexfat), would it
-> > be possible to either change the name of the project to say exfat-progs or
-> > increase the version number to beyond 1.4?
-> >
-> > exfat-progs is more in line with xfsprogs, btrfsprogs or e2fsprogs :)
-> Oh, I see. I agree to rename to exfat-progs. I will work to release version
-> 1.0.2 with that name.
-> Thank you for your opinion!
->
+On Wed 15-04-20 16:32:27, Mauro Carvalho Chehab wrote:
+> - Add a SPDX header;
+> - Add a document title;
+> - Some whitespace fixes and new line breaks;
+> - Add table markups;
+> - Add it to filesystems/index.rst
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi,
+Looks good to me. I expect you merge this through documentation tree so you
+can add:
 
-this Monday I started testing Linux v5.7-rc1 with CONFIG_EXFAT_FS=m
-together with LLVM/Clang v10.
+Acked-by: Jan Kara <jack@suse.cz>
 
-Here I am on Debian/testing AMD64 and wondered how I can do some testing.
+								Honza
 
-In the Debian repositories I found exfat-utils 1.3.0-1.
 
-So good to know this is the wrong user-space tools :-).
 
-+1 for renaming to exfat-progs.
-
-How does someone test EXFAT filesystem with Linux v5.7-rc1?
-I know that xfs-progs ships tests also for EXT4 filesystem.
-
-Thanks in advance.
-
-Regards,
-- Sedat -
+> ---
+>  .../filesystems/{dnotify.txt => dnotify.rst}          | 11 ++++++++---
+>  Documentation/filesystems/index.rst                   |  1 +
+>  MAINTAINERS                                           |  2 +-
+>  3 files changed, 10 insertions(+), 4 deletions(-)
+>  rename Documentation/filesystems/{dnotify.txt => dnotify.rst} (90%)
+> 
+> diff --git a/Documentation/filesystems/dnotify.txt b/Documentation/filesystems/dnotify.rst
+> similarity index 90%
+> rename from Documentation/filesystems/dnotify.txt
+> rename to Documentation/filesystems/dnotify.rst
+> index 08d575ece45d..a28a1f9ef79c 100644
+> --- a/Documentation/filesystems/dnotify.txt
+> +++ b/Documentation/filesystems/dnotify.rst
+> @@ -1,5 +1,8 @@
+> -		Linux Directory Notification
+> -		============================
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +============================
+> +Linux Directory Notification
+> +============================
+>  
+>  	   Stephen Rothwell <sfr@canb.auug.org.au>
+>  
+> @@ -12,6 +15,7 @@ being delivered using signals.
+>  The application decides which "events" it wants to be notified about.
+>  The currently defined events are:
+>  
+> +	=========	=====================================================
+>  	DN_ACCESS	A file in the directory was accessed (read)
+>  	DN_MODIFY	A file in the directory was modified (write,truncate)
+>  	DN_CREATE	A file was created in the directory
+> @@ -19,6 +23,7 @@ The currently defined events are:
+>  	DN_RENAME	A file in the directory was renamed
+>  	DN_ATTRIB	A file in the directory had its attributes
+>  			changed (chmod,chown)
+> +	=========	=====================================================
+>  
+>  Usually, the application must reregister after each notification, but
+>  if DN_MULTISHOT is or'ed with the event mask, then the registration will
+> @@ -36,7 +41,7 @@ especially important if DN_MULTISHOT is specified.  Note that SIGRTMIN
+>  is often blocked, so it is better to use (at least) SIGRTMIN + 1.
+>  
+>  Implementation expectations (features and bugs :-))
+> ----------------------------
+> +---------------------------------------------------
+>  
+>  The notification should work for any local access to files even if the
+>  actual file system is on a remote server.  This implies that remote
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> index 470b2da2b7b1..960e0cc29491 100644
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@ -26,6 +26,7 @@ algorithms work.
+>     directory-locking
+>     dax
+>     devpts
+> +   dnotify
+>  
+>     automount-support
+>  
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 511d19bcfa1e..eebb55517709 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4995,7 +4995,7 @@ M:	Jan Kara <jack@suse.cz>
+>  R:	Amir Goldstein <amir73il@gmail.com>
+>  L:	linux-fsdevel@vger.kernel.org
+>  S:	Maintained
+> -F:	Documentation/filesystems/dnotify.txt
+> +F:	Documentation/filesystems/dnotify.rst
+>  F:	fs/notify/dnotify/
+>  F:	include/linux/dnotify.h
+>  
+> -- 
+> 2.25.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
