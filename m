@@ -2,74 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE681ACE79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75DD21ACE8F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 19:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbgDPRNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 13:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34584 "EHLO
+        id S1728914AbgDPRWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 13:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727880AbgDPRNj (ORCPT
+        by vger.kernel.org with ESMTP id S1728101AbgDPRWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 13:13:39 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBD4C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Apr 2020 10:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mri1NWhCMcPHRYwypLzON75E4Lrzzif/ya45nsbZ/oU=; b=jksf0ahqGNmUWjulQluYS7t4Uc
-        M6kPD3+htw/cx88Rwvq662dmktLMv+WYU+fn6zqchl8XmGi/nvSiTmVeLtezVUCiiqSeSmgdQ+qyR
-        6EYaU37rhDfCqlgYCqlUjS92fxtIuiWOTGTLsPvI+qTElQ6ckyyhCcZHFkTpuH5sGsCaZPnOwI42T
-        PATr/mDK7trq4VrppOkwjK8EKFmYKnHO1GLah4F6Yrefk5W7Dln246W7f08PM3PqO3JFhkp4zzRXZ
-        iqLrT50Atre1PlJvHbOn32MjMtLujjq20RPn1lBqoZaGoGbroLyXbkqXy9lKVNGEugqMUvV9UFdvU
-        k3xvgwxA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jP855-0007ZZ-4z; Thu, 16 Apr 2020 17:13:39 +0000
-Date:   Thu, 16 Apr 2020 10:13:39 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>, lkp@intel.com
-Subject: Re: [PATCH v2 1/5] mm: Remove definition of
- clear_bit_unlock_is_negative_byte
-Message-ID: <20200416171339.GH5820@bombadil.infradead.org>
-References: <20200416154606.306-1-willy@infradead.org>
- <20200416154606.306-2-willy@infradead.org>
- <20200416170224.GB32685@willie-the-truck>
+        Thu, 16 Apr 2020 13:22:00 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BA8C061A0C;
+        Thu, 16 Apr 2020 10:21:59 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id t14so5740735wrw.12;
+        Thu, 16 Apr 2020 10:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6uF4y26rP9r8HAlp2szHdM9nzyjy6h8lehRa7ZcQjQo=;
+        b=rvoatJrJ7cVxIifL+iba64dkSdEHsH4D/LOIdjeOdY5bZVbkBklcxyfjsmFILpvQU/
+         RU4LgeSEmep+bMDElq3h8kLhrSmonGDkzj3RvudxVrCXoNFu+Lp9nAXUc/3hrEmh42w9
+         3L11cxWPRtvqPCYWbsNgg46edKR+dGDmOc2zQ3CTahPgWLjnawpZHYPEWPP7Isut89gY
+         n9huxIOVXIpRJ5YaxvjsR5NIc+wxhWjSPgs4ndB5PjgPfqjIjODqij0gRLZdyYSsUuTZ
+         d/Jd0+CfKxOitlN6TJorLDgsZHJQCHlH92qRKrDeLYZi9SiQg5QzCubY1uXy0IBzPAT5
+         UGow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6uF4y26rP9r8HAlp2szHdM9nzyjy6h8lehRa7ZcQjQo=;
+        b=iL2H+66of3dHUnN/zTtfd6RL4UDq2mR6dtLgZOFABR6PgLgi0YsHr7xwzKy8O33F7O
+         gpJQIMzzwtKxDxWVQVAR974H4FYzhotlkKBt8j2zyH20GYqHDsLp8ZcxAzzUtT5o1XU1
+         62nX26IYHjTa4isZUyj9MnP2nPFZK/LbMbeyw+bNtSF72Pnd75h55RQKTS8LxiXW4Sw7
+         IlTC2/VBbZncIdZexhixGSNMOHSpR5Tp5msXliV6rwGmJ1Nfg7u7jyJR4h4ESR9H4wZd
+         Fjefjdpd+FV2hBEYEM20MBijxGr1uH7HRo4+SAaYk0hgqlmHkgQHYxZrzZE7hzWw6sxY
+         h51Q==
+X-Gm-Message-State: AGi0PuZA8pBkbKAz23DeOqw8reXkj9vTGvR3XlVSyQkTCSe5cnajfMQE
+        pqLGjjpbi+wcKE0OG5izcAVEQc8=
+X-Google-Smtp-Source: APiQypJyaRjovGrgKBAedP0lHhuI2POEmDpa7WbfJQ+dSD087QtNDhdPvycgZDdOys8hYg+ObhvMuQ==
+X-Received: by 2002:adf:f2c5:: with SMTP id d5mr36395970wrp.409.1587057717698;
+        Thu, 16 Apr 2020 10:21:57 -0700 (PDT)
+Received: from avx2 ([46.53.249.183])
+        by smtp.gmail.com with ESMTPSA id b191sm4447928wmd.39.2020.04.16.10.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2020 10:21:57 -0700 (PDT)
+Date:   Thu, 16 Apr 2020 20:21:55 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] proc: rename "catch" function argument
+Message-ID: <20200416172155.GA2280@avx2>
+References: <20200331210905.GA31680@avx2>
+ <20200415210727.c0cf80b5a981292bb15d9858@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200416170224.GB32685@willie-the-truck>
+In-Reply-To: <20200415210727.c0cf80b5a981292bb15d9858@linux-foundation.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 06:02:24PM +0100, Will Deacon wrote:
-> On Thu, Apr 16, 2020 at 08:46:02AM -0700, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > This local definition hasn't been used since commit 84c6591103db
-> > ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using
-> > atomic_fetch_*()") which provided a default definition.
+On Wed, Apr 15, 2020 at 09:07:27PM -0700, Andrew Morton wrote:
+> On Wed, 1 Apr 2020 00:09:05 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 > 
-> Ok, for my own curiosity I tried building for Alpha because I couldn't for
-> the life of me figure it out, and behold:
+> > "catch" is reserved keyword in C++, rename it to something
+> > both gcc and g++ accept.
 > 
-> mm/filemap.c: In function 'unlock_page':
-> mm/filemap.c:1271:6: error: implicit declaration of function 'clear_bit_unlock_is_negative_byte' [-Werror=implicit-function-declaration]
->   if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> cc1: some warnings being treated as errors
-> 
-> I had to enable CONFIG_SMP, so maybe the robot doesn't do that?
-> 
-> Anyway, it's somewhat reassuring that it broke, if not unfortunate at the same
-> time!
+> Why? Is someone compiling the kernel with g++?
 
-Thanks!  The robot says it built two alpha configs,
-randconfig-a001-20200325 and defconfig.  I imagine neither has SMP set.
+I do!
+https://marc.info/?l=linux-acpi&m=158343373912366&w=4
 
-kbuild people, please can you add SMP and non-SMP options to the configs
-you test?
+> > Rename "ign" for symmetry.
+> > 
+> > Signed-off-by: _Z6Alexeyv <adobriyan@gmail.com>
+> 
+> Was this intentional?
+
+In Russia, C++ mangles you! :^)
