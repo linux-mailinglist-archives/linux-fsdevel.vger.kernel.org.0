@@ -2,113 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27EC51AB566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291B71AB581
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Apr 2020 03:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbgDPBUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Apr 2020 21:20:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37743 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729511AbgDPBUq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Apr 2020 21:20:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m16so737183pls.4;
-        Wed, 15 Apr 2020 18:20:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t/UVxcfsOZlATHrxT1BtEcSV7XCXKURmZ3LY2D7NJu8=;
-        b=GRK6vtwHQr7J5X5gTqGepEtXDoAkqfJ2WjCUR9SUFTH5op5ZTalSNcQ7tna/6/ZJQs
-         afGzNMNaL09l6yF0o+ltAy2ExfbmqrE/UbemKRDgzpbUBpT2ve+P3InAK4bvuTRuO00T
-         fN4gYNCxxrpvfrfJFb6g7u8ySOiYKGRKCzOkByz3pGFvkHoToadeuGhThyoiEVDELVJq
-         p3+vTb6OnwhjFHbWZU5Q9BeiuQvKg3bIasZfL5sOByY2YB3tluGAl+yQYVzZ7pXClMnk
-         gdPU1S60ao+2f8HHoX58QuE0LwreD/sPpzE03NBCylLm4dyZ+gj4uWGtSxiam4MUrXkj
-         1wbA==
-X-Gm-Message-State: AGi0Puaip4bddKRY3O/5wr2HMO6rWfxKhYP4+pyv8xzCcCxbsqHOWgLN
-        GsSf06JvUSHGe85MtKVy7DE=
-X-Google-Smtp-Source: APiQypKsoy5OswG4beg+t+DZPY2ToYWmF3rusQi++8/xjuNFf2sr4eDmbcDmFPW16CTt2byhESFlqA==
-X-Received: by 2002:a17:902:9b89:: with SMTP id y9mr6854674plp.75.1587000044633;
-        Wed, 15 Apr 2020 18:20:44 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id c3sm14942152pfa.160.2020.04.15.18.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 18:20:43 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C7B7C40277; Thu, 16 Apr 2020 01:20:42 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 01:20:42 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/5] blktrace: fix debugfs use after free
-Message-ID: <20200416012042.GD11244@42.do-not-panic.com>
-References: <20200414041902.16769-1-mcgrof@kernel.org>
- <20200414041902.16769-3-mcgrof@kernel.org>
- <55401e02-f61c-25eb-271c-3ec7baf35e28@sandeen.net>
- <20200416005636.GA11244@42.do-not-panic.com>
- <924950e6-e016-25b2-4ee1-b5ea9f752c12@sandeen.net>
+        id S1732708AbgDPB3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Apr 2020 21:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732522AbgDPB3E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Apr 2020 21:29:04 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CBC7208E0;
+        Thu, 16 Apr 2020 01:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587000543;
+        bh=hq/+bVXnleESn8mSlWiIeOiFdqP5VlQ1XkbPhFhBPAQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U7Apg3PrInj1bZ5S36DCxeG04p3aKJHJiJwrLO/6Ve1tvjwUnZziTJm8y1phI+4Gq
+         qj09WXqwTPZmoyuQl/UvHjdW2KG4XibW7wv0YzFOJQw378Na5/IhOsJJS4CJTq+Shr
+         P3ndXnQ/1SyJbLjFawUAT8sTOdLs7Go1HtB9nKKE=
+Date:   Wed, 15 Apr 2020 18:29:01 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 2/8] fs/ext4: Disallow verity if inode is DAX
+Message-ID: <20200416012901.GA816@sol.localdomain>
+References: <20200414040030.1802884-1-ira.weiny@intel.com>
+ <20200414040030.1802884-3-ira.weiny@intel.com>
+ <20200415120002.GE6126@quack2.suse.cz>
+ <20200415191451.GA2305801@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <924950e6-e016-25b2-4ee1-b5ea9f752c12@sandeen.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200415191451.GA2305801@iweiny-DESK2.sc.intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 08:02:04PM -0500, Eric Sandeen wrote:
-> 
-> 
-> On 4/15/20 7:56 PM, Luis Chamberlain wrote:
-> > On Wed, Apr 15, 2020 at 12:38:26PM -0500, Eric Sandeen wrote:
-> >> On 4/13/20 11:18 PM, Luis Chamberlain wrote:
-> >>> On commit 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
-> >>> merged on v4.12 Omar fixed the original blktrace code for request-based
-> >>> drivers (multiqueue). This however left in place a possible crash, if you
-> >>> happen to abuse blktrace in a way it was not intended.
-> >>>
-> >>> Namely, if you loop adding a device, setup the blktrace with BLKTRACESETUP,
-> >>> forget to BLKTRACETEARDOWN, and then just remove the device you end up
-> >>> with a panic:
-> >>
-> >> I think this patch makes this all cleaner anyway, but - without the apparent
-> >> loop bug mentioned by Bart which allows removal of the loop device while blktrace
-> >> is active (if I read that right), can this still happen?
+On Wed, Apr 15, 2020 at 12:14:52PM -0700, Ira Weiny wrote:
+> On Wed, Apr 15, 2020 at 02:00:02PM +0200, Jan Kara wrote:
+> > On Mon 13-04-20 21:00:24, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > Verity and DAX are incompatible.  Changing the DAX mode due to a verity
+> > > flag change is wrong without a corresponding address_space_operations
+> > > update.
+> > > 
+> > > Make the 2 options mutually exclusive by returning an error if DAX was
+> > > set first.
+> > > 
+> > > (Setting DAX is already disabled if Verity is set first.)
+> > > 
+> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > > ---
+> > >  fs/ext4/verity.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+> > > index dc5ec724d889..ce3f9a198d3b 100644
+> > > --- a/fs/ext4/verity.c
+> > > +++ b/fs/ext4/verity.c
+> > > @@ -113,6 +113,9 @@ static int ext4_begin_enable_verity(struct file *filp)
+> > >  	handle_t *handle;
+> > >  	int err;
+> > >  
+> > > +	if (WARN_ON_ONCE(IS_DAX(inode)))
+> > > +		return -EINVAL;
+> > > +
 > > 
-> > I have not tested that, but some modifications of the break-blktrace
-> > program could enable us to test that
+> > Hum, one question, is there a reason for WARN_ON_ONCE()? If I understand
+> > correctly, user could normally trigger this, couldn't he?
 > 
-> FWIW, I modified it to modprobe & rmmod scsi_debug instead of the loop ioctls,
-> and the module can't be unloaded after the blktrace is started since it's busy.
+> Ok.  I did not think this through but I did think about this.  I was following
+> the code from the encryption side which issues a warning and was thinking that
+> would be a good way to alert the user they are doing something wrong...
 > 
-> Not sure that's equivalent tho.
-
-Given what Bart mentioned about sd_open, that might be the saving grace
-for blocking async behaviour on scsi. If it only refcounted the
-request_queue as the loop driver it would have been exposed to the
-same bug.
-
-> > however I don't think the race
-> > would be possible after patch 3/5 "blktrace: refcount the request_queue
-> > during ioctl" is merged, as removal then a pending blktrace would
-> > refcount the request_queue and the removal would have to wait until
-> > the refcount is decremeneted, until after the blktrace ioctl.
+> I think you are right about both of them but we also need to put something in
+> the verity, dax, and ...  (I can't find a file in Documentation which talks
+> about encryption right off) documentation files....  For verity something like.
 > 
-> I'm out of my depth in the block layer, not sure who's supposed to take
-> refs on what. ;)
+> <quote>
+> Verity and DAX
+> --------------
+> 
+> Verity and DAX are not compatible and attempts to set both of these flags on a
+> file will fail.
+> </quote>
+> 
+> And the same thing in the DAX doc?
+> 
+> And where would be appropriate for the encrypt doc?
+> 
 
-I'm new to all this code, only been a few weeks looking into it, but am
-trying to do my best ot make sense of it. So the above is what I can
-tell would be needed.
+Documentation/filesystems/fscrypt.rst mentions that DAX isn't supported on
+encrypted files, but it doesn't say what happens if someone tries to do it
+anyway.  Feel free to improve the documentation.
 
-  Luis
+- Eric
