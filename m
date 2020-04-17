@@ -2,100 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E631E1AD809
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B170B1AD81F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 10:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbgDQHxt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 03:53:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729042AbgDQHxt (ORCPT
+        id S1729591AbgDQIAJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 04:00:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36664 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729254AbgDQIAI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 03:53:49 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E14C061A0C;
-        Fri, 17 Apr 2020 00:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=q5yoPHJCkMbeyhbAEdK16CGWUtkEt6yQeeOm9280kIA=; b=mt7rGzwBoRbi0ELfc3cA+epBtT
-        pFHc/KJ2++BbuqlNzuvQGtT9EFknpqUBTHghxHsPIBpyhCaRzRIAfWxs9HX+NLEx+dw2qNOKyjJUX
-        pQrnWj8MVoRiS0y6I3Mekai8z7E9OQnnrwfY3jg9MmaKIapoadc6hvRZqHLw9rep5hFioN2rkYN9r
-        U6kmhyrm/CvT0qHOQwmsbUS4k4mv49TsbX0VD41w5jUo0v5UKSybvBBm80HZIbhNEWza2NpCftCVp
-        NqQ21hJW+QKHRNOiwOJPUlebnxuCEO07I7RKrQLNEelUmYd3o0DLdOC6F0EhmiE4NDo8WkQJgm2V1
-        m7QqotHg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jPLoq-000071-G0; Fri, 17 Apr 2020 07:53:48 +0000
-Date:   Fri, 17 Apr 2020 00:53:48 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Max Kellermann <mk@cm4all.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        trond.myklebust@hammerspace.com, bfields@redhat.com, tytso@mit.edu,
-        viro@zeniv.linux.org.uk, agruenba@redhat.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] nfs/super: check NFS_CAP_ACLS instead of the NFS
- version
-Message-ID: <20200417075348.GD598@infradead.org>
-References: <20200407142243.2032-1-mk@cm4all.com>
- <20200407142243.2032-4-mk@cm4all.com>
+        Fri, 17 Apr 2020 04:00:08 -0400
+Received: by mail-wr1-f65.google.com with SMTP id u13so1963694wrp.3;
+        Fri, 17 Apr 2020 01:00:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=D9Cm8tiUrg/W1Q7McZQji69rvG+FU5ciQYbgQ4VtKtk=;
+        b=SGtUVIxXIHi69ASccsLEdEE/+qnOOfvpEvweULjjGP5mAYpVs1YHHJ54wg6S0YQHrM
+         jAisqQXMIjcYaQ1mWOhIMHkrD/CYaYmYlwYSDX16qHz9InCt32YzXDXLM4uoG5N1vDDi
+         VCp+9oSPfqs/Qm1ewiVxPjnruVAF3O5h/W6ahUa9AWyT2qMAh0zob/tbAAmqJwPWXg3e
+         L5fMLluS8bPYreRQ49d57lT6J7Bi98GTuvNKtH/RC60Va3wvNUAUV0bVjwgvRWfl7/6S
+         YPAtgnmxf9YgfVmQK27QqyYnUdUgxn/xOLh74H+Q7ipdjLg11s8gZ9frJsO3DsMqijiR
+         5CjQ==
+X-Gm-Message-State: AGi0Puagm0BpAITm1xSzKsQHaXgYfeSH+k+uutDoquuoW+16fpLmT8cY
+        JVnYxP+udB/5mdY2h5Q/899+AuYX
+X-Google-Smtp-Source: APiQypK6QkzwwzEqDKqri8AOStqnCVoQcUWo9VpjG6PFJPc06p38N+Xz35zVVtoaK0x1nCOpRAEbSg==
+X-Received: by 2002:adf:c109:: with SMTP id r9mr2483924wre.265.1587110405815;
+        Fri, 17 Apr 2020 01:00:05 -0700 (PDT)
+Received: from localhost (ip-37-188-130-62.eurotel.cz. [37.188.130.62])
+        by smtp.gmail.com with ESMTPSA id n6sm6585346wmc.28.2020.04.17.01.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2020 01:00:05 -0700 (PDT)
+Date:   Fri, 17 Apr 2020 10:00:03 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: implicit AOP_FLAG_NOFS for grab_cache_page_write_begin
+Message-ID: <20200417080003.GH26707@dhcp22.suse.cz>
+References: <20200415070228.GW4629@dhcp22.suse.cz>
+ <20200417072931.GA20822@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200407142243.2032-4-mk@cm4all.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200417072931.GA20822@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 04:22:43PM +0200, Max Kellermann wrote:
-> This sets SB_POSIXACL only if ACL support is really enabled, instead
-> of always setting SB_POSIXACL if the NFS protocol version
-> theoretically supports ACL.
+On Fri 17-04-20 00:29:31, Christoph Hellwig wrote:
+> On Wed, Apr 15, 2020 at 09:02:28AM +0200, Michal Hocko wrote:
+> > Hi,
+> > I have just received a bug report about memcg OOM [1]. The underlying
+> > issue is memcg specific but the stack trace made me look at the write(2)
+> > patch and I have noticed that iomap_write_begin enforces AOP_FLAG_NOFS
+> > which means that all the page cache that has to be allocated is
+> > GFP_NOFS. What is the reason for this? Do all filesystems really need
+> > the reclaim protection? I was hoping that those filesystems which really
+> > need NOFS context would be using the scope API
+> > (memalloc_nofs_{save,restore}.
 > 
-> The code comment says "We will [apply the umask] ourselves", but that
-> happens in posix_acl_create() only if the kernel has POSIX ACL
-> support.  Without it, posix_acl_create() is an empty dummy function.
+> This comes from the historic XFS code, and this commit from Dave
+> in particular:
 > 
-> So let's not pretend we will apply the umask if we can already know
-> that we will never.
+> commit aea1b9532143218f8599ecedbbd6bfbf812385e1
+> Author: Dave Chinner <dchinner@redhat.com>
+> Date:   Tue Jul 20 17:54:12 2010 +1000
 > 
-> This fixes a problem where the umask is always ignored in the NFS
-> client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
-> old regression caused by commit 013cdf1088d723 which itself was not
-> completely wrong, but failed to consider all the side effects by
-> misdesigned VFS code.
+>     xfs: use GFP_NOFS for page cache allocation
 > 
-> Signed-off-by: Max Kellermann <mk@cm4all.com>
-> Reviewed-by: J. Bruce Fields <bfields@redhat.com>
-> Cc: stable@vger.kernel.org
-> ---
->  fs/nfs/super.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-> index dada09b391c6..dab79193f641 100644
-> --- a/fs/nfs/super.c
-> +++ b/fs/nfs/super.c
-> @@ -977,11 +977,14 @@ static void nfs_fill_super(struct super_block *sb, struct nfs_fs_context *ctx)
->  	if (ctx && ctx->bsize)
->  		sb->s_blocksize = nfs_block_size(ctx->bsize, &sb->s_blocksize_bits);
->  
-> -	if (server->nfs_client->rpc_ops->version != 2) {
-> +	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
->  		/* The VFS shouldn't apply the umask to mode bits. We will do
->  		 * so ourselves when necessary.
->  		 */
->  		sb->s_flags |= SB_POSIXACL;
-> +	}
+>     Avoid a lockdep warning by preventing page cache allocation from
+>     recursing back into the filesystem during memory reclaim.
 
-Looks good, but I'd use the opportunity to also fix up the commen to be
-a little less cryptic:
-
-	/*
-	 * If the server supports ACLs, the VFS shouldn't apply the umask to
-	 * the mode bits as we'll do it ourselves when necessary.
-	 */
-	if (NFS_SB(sb)->caps & NFS_CAP_ACLS)
-		sb->s_flags |= SB_POSIXACL;
+Thanks for digging this up! The changelog is not really clear whether
+NOFS is to avoid false possitive lockup warnings or real ones. If the
+former then we have grown __GFP_NOLOCKDEP flag to workaround the problem
+if the later then can we use memalloc_nofs_{save,restore} in the xfs
+specific code please?
+-- 
+Michal Hocko
+SUSE Labs
