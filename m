@@ -2,96 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 124DC1AD764
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6360F1AD76D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbgDQH23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 03:28:29 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45351 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728419AbgDQH20 (ORCPT
+        id S1728980AbgDQH3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 03:29:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbgDQH3h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 03:28:26 -0400
-Received: by mail-ot1-f67.google.com with SMTP id i22so670688otp.12;
-        Fri, 17 Apr 2020 00:28:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CAlxRW45me+SFTqp2fMa5KvZpf6cMRTo76EH5fkTTvc=;
-        b=T8RvlSE0CoW2/ucpNcN3ufjhCCk8wpFi1WceqsbknanNI27mF3UL7sRQ90y9nHLckb
-         GxLtxG/MLWc/7D7FNcVO03/bWn0CRD3wU6g8RBrTVhg2a0kTgkTmqEdOyxWOESZh22T0
-         uGZVyokJR//7/YQYTxnO/hOcjmc+eAvEsOR0pCSoq7Igm6GZvb4zHvDTK4UwnZXB8EeN
-         KAdfmyquu3O45M5wLUfmBq97XXXKqomORgN/UnSY9TUdox4PxPwMJwjHy7mtqu6dRtQv
-         drKIipc35fCwiNQHOPWN61zZpPw33QAoQQX9ERcF3n4pm4jA7l9WP9a2C0mTmWk3hB37
-         +9sg==
-X-Gm-Message-State: AGi0Pua6aUY2Xvm3S2T8ksi7QEXjSlhKvPNzo2NomZxo9a5jVdgPZEMz
-        n/Ly0BfrV2zBFhVNQ+yjQyf4lpDr9fuL6tUlIgo1wQ==
-X-Google-Smtp-Source: APiQypK7KuRAoPktsLMQh2Me8mfNzHEYpwL9p+AMo7Mc+i20vMVMtApNzN65ngvXei2FszcvDlo15xrOTNLy+/p43Ec=
-X-Received: by 2002:a9d:7590:: with SMTP id s16mr1548442otk.250.1587108505576;
- Fri, 17 Apr 2020 00:28:25 -0700 (PDT)
+        Fri, 17 Apr 2020 03:29:37 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D2FC061A0C;
+        Fri, 17 Apr 2020 00:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+AdJjVSPFFgTfj/HyAVB1EqazKksGsV1ZI1hF7Y4UOk=; b=tczxyNyNA3+ZMs0GthRHP3fwnP
+        Sct8xH6GNEXuA/a4VryU2imFJknluHl9Vk8EpzrEwJ3/R7HYflWhJkmVNR9Hh9yqIpF9fG7hSgsuY
+        aNc2r0+qGqvQHPHO0ufRaENKrUuRl2fsrR7j+SkAzF/p9LPCM5D7P5bWjt890h/chUXHYtlnlCs8s
+        M1+p2W+QIJ/9TvQB1suAyP7Hlm/eoI7hvPiv4Zcrj52TZ2nEW9jNjv/d68eKfoQ13/olxgngM2gMQ
+        n52SMP4rb2bFzIsl9lgvXSvLDMyXA8Ikw+iNqKL8GoKb9PpOmWh5GaKuMzjhEU52rujNY7XPkbLK6
+        zb/2AdvA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jPLRL-00008d-3k; Fri, 17 Apr 2020 07:29:31 +0000
+Date:   Fri, 17 Apr 2020 00:29:31 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: implicit AOP_FLAG_NOFS for grab_cache_page_write_begin
+Message-ID: <20200417072931.GA20822@infradead.org>
+References: <20200415070228.GW4629@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20200416220130.13343-1-willy@infradead.org>
-In-Reply-To: <20200416220130.13343-1-willy@infradead.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 17 Apr 2020 09:28:14 +0200
-Message-ID: <CAMuHMdWxhVoPCZ5+=Pf1LFpdE9vPv9GGTqTYMQP9oFz7eCxDaQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Make PageWriteback use the PageLocked optimisation
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415070228.GW4629@dhcp22.suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Wed, Apr 15, 2020 at 09:02:28AM +0200, Michal Hocko wrote:
+> Hi,
+> I have just received a bug report about memcg OOM [1]. The underlying
+> issue is memcg specific but the stack trace made me look at the write(2)
+> patch and I have noticed that iomap_write_begin enforces AOP_FLAG_NOFS
+> which means that all the page cache that has to be allocated is
+> GFP_NOFS. What is the reason for this? Do all filesystems really need
+> the reclaim protection? I was hoping that those filesystems which really
+> need NOFS context would be using the scope API
+> (memalloc_nofs_{save,restore}.
 
-On Fri, Apr 17, 2020 at 12:01 AM Matthew Wilcox <willy@infradead.org> wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> PageWaiters is used by PageWriteback and PageLocked (and no other page
-> flags), so it makes sense to use the same codepaths that have already been
-> optimised for PageLocked, even if there's probably no real performance
-> benefit to be had.
->
-> Unfortunately, clear_bit_unlock_is_negative_byte() isn't present on every
-> architecture, and the default implementation is only available in filemap.c
-> while I want to use it in page-writeback.c.  Rather than move the default
-> implementation to a header file, I've done optimised implementations for
-> alpha and ia64.  I can't figure out optimised implementations for m68k,
-> mips, riscv and s390, so I've just replicated the effect of the generic
-> implementation in them.  I leave it to the experts to fix that (... or
-> convert over to using asm-generic/bitops/lock.h ...)
->
-> v3:
->  - Added implementations of clear_bit_unlock_is_negative_byte()
->    to architectures which need it
+This comes from the historic XFS code, and this commit from Dave
+in particular:
 
-I have two questions here?
-  1. Why not implement arch_clear_bit_unlock_is_negative_byte()
-     instead, so the kasan check in asm-generic is used everywhere?
-  2. Why not add the default implementation to
-     include/asm-generic/bitops/instrumented-lock.h, in case an arch_*()
-     variant is not provided yet?
+commit aea1b9532143218f8599ecedbbd6bfbf812385e1
+Author: Dave Chinner <dchinner@redhat.com>
+Date:   Tue Jul 20 17:54:12 2010 +1000
 
-Note that you did 1 for s390.
-Thanks!
+    xfs: use GFP_NOFS for page cache allocation
 
-Gr{oetje,eeting}s,
+    Avoid a lockdep warning by preventing page cache allocation from
+    recursing back into the filesystem during memory reclaim.
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
