@@ -2,184 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E10451AE3AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 19:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0331AE40C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 19:48:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbgDQRTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 13:19:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:38364 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbgDQRTh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:19:37 -0400
-IronPort-SDR: aEyryLCkhgfAPbbLSBdFjw6ieQacCmrTcjjGIE+toJ7E4OuZzeL1F+7hB6d78l7yuyZTA34FAn
- 2kQHnsVR4uvA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2020 10:19:36 -0700
-IronPort-SDR: PLkem773MNJbcn2ONOYkpbZvrY7xDpNrF167sHCQ6p1V8QhAE99GtvdakzYl9hbOr8WqAiOY9d
- 8jS1H0TzeeTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,395,1580803200"; 
-   d="scan'208";a="428292211"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by orsmga005.jf.intel.com with ESMTP; 17 Apr 2020 10:19:36 -0700
-Date:   Fri, 17 Apr 2020 10:19:36 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/8] fs/ext4: Introduce DAX inode flag
-Message-ID: <20200417171936.GT2309605@iweiny-DESK2.sc.intel.com>
-References: <20200417022036.GQ2309605@iweiny-DESK2.sc.intel.com>
- <324CEF76-20AA-40F5-A31B-6E0B1CCED736@dilger.ca>
+        id S1730020AbgDQRsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 13:48:23 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:19423 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729736AbgDQRsX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Apr 2020 13:48:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1587145702; x=1618681702;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=adV8Gpr8MHweAYhq9tiHEXkdyPEny8cb3eGRce2pzfw=;
+  b=MF8+ckPNL23/FmazpAz2Xah4UptofCUgw6URCNUROoYyS2Wu1wy4ahy3
+   COh6yghUTRDp5kY5zlQn7ww3GJTAvwcvsSyauAQizpc4DuwvGO9/4kLEb
+   nK69532No46LDcR3pnFKqm6o/Ql3js3MtBguoqBfeUE/zI7KWerlwhEe/
+   lpOEapB2KiIdhmuT8ud4hpNMfFNBw9vzkG0OQGxhp2SdsBMsGHPXY6PIA
+   RSw0AYJcTFORW7GDFCvMl+Vg/YgPNLDyudNTLdXoFzPEpGPMQOeoH7/ZW
+   EzE4paYVqRLU2y9VpY/mTjxU1DJxSdgPP35Ni6gz8f/aXWEJSmBjGWF4u
+   A==;
+IronPort-SDR: f1adXbzvecV6U5jHIWZZS5T1yk1nU3gNVVH5XcQLocgZPeBG9HwJTPy4FOrCV8fE7/IcZo4D0A
+ 6b95FELRW25bgHWArws6ZzQO0tOAnoTFetVvEnn0iVgTCV9vB3d+NiqddEENQ9BvNI5bJcJq6L
+ 42Zdql4zMnsavO0ltYjOEQ3WAUXVcWSadNSGUxNJUa3n+vbRUHKREBLJfYm5iKK+ovYJ4239yh
+ Kn0nUTX+hOTUVW8eR7SAWfJJAb2iugMnSfHgGeegCWIa9Zo/RhVlPnb6s6x6ApStPE1mGAStxa
+ aiM=
+X-IronPort-AV: E=Sophos;i="5.72,395,1580745600"; 
+   d="scan'208";a="244253074"
+Received: from mail-dm6nam11lp2172.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.172])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Apr 2020 01:48:21 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fb3S0Fg/7DhJG7SzKhLl4RF/aqtsqYv7iiB+8S5myRS4YZFD/k2nWBklUxH3FUjXmWrQcdUF7LmDjoKDzTM2tbWr4KdM/6TcaUsijUb1+FdJXazhX+Znu8tMCQ5vdmuSRU6grcseBPWTQZ45L1fLiCKBA0G08wjIp2R31EsQPAaJ7XkHUsMFstw6qTZ7pGOLFcBLk+sz4Nw7qx3zUUNkeAPZGcDq1PLMDyu0pvelKgr4fyM4sgS3fvPtSa2gpjJay1AS3eBTJiBpF3GOIl+FsbR2KLuaTlyJFGP0ngb7QmuA30dNGICvvHK/0oVlTIQ25G1+NKuKHfdvNAkSmaFAKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NI+8VuiSZQPh23FSjynwla8g8vjLDcUKZXNngAV3RgY=;
+ b=I638cBDH27CBDXmOq0s02c0A2BcjGOyLpSf7eiAYsETfC3tUT+9rmf33a1pImnxdxzjq5WjJ/1q4b+bhwzLoIW7KyNjjbBI1Lc4/oFD+lhLru4cpxIddHXH6YunBOuS9IAeD4cscjtp924iG4L5IljGFrEPKpawLZqCTf3ND6DUzgNVl9u+BiUKedj09Sx1lmOKTYfVxjdWPsTMmA9w/Gzbqp952Y41SXOOKHIPn3rMvkbYxZQD8PrmSZMbB6p2AmG8FXvhmhba3qb15sMBIZzcc3qltV5AO86Hf/zSHWJVU4vAEx3wPaFD9A/Y0iQOIeMsHkCsPFSyVcd/zP9//Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NI+8VuiSZQPh23FSjynwla8g8vjLDcUKZXNngAV3RgY=;
+ b=ts1BlNwd4te2xHQXSVTy1MTL45WlyPHspGKOamm0Fp3Uekox8yNjdXnuKitj96jNgcZZqnKKjW6lBB0HuVOKOxlSYumZmqSpKzHaNj/U/LNUJo4VVCmhd4Rcd5oOJxLtrRvLibWS9U24lNUlyFS7wVpogIKPLCmsswJyUIoB2+A=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3615.namprd04.prod.outlook.com
+ (2603:10b6:803:47::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.27; Fri, 17 Apr
+ 2020 17:48:20 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2921.027; Fri, 17 Apr 2020
+ 17:48:20 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Daniel Wagner <dwagner@suse.de>
+Subject: Re: [PATCH v7 00/11] Introduce Zone Append for writing to zoned block
+ devices
+Thread-Topic: [PATCH v7 00/11] Introduce Zone Append for writing to zoned
+ block devices
+Thread-Index: AQHWFLHx0jzddk9TS0yhYXDfmQ7NPQ==
+Date:   Fri, 17 Apr 2020 17:48:20 +0000
+Message-ID: <SN4PR0401MB3598F054B867C929827E23F49BD90@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
+ <20200417160326.GK5187@mit.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cdf777e4-6a62-4e4f-aed6-08d7e2f7847f
+x-ms-traffictypediagnostic: SN4PR0401MB3615:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN4PR0401MB36155C9879E21FF34998C8F99BD90@SN4PR0401MB3615.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0376ECF4DD
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(376002)(396003)(136003)(366004)(39860400002)(346002)(9686003)(5660300002)(186003)(4326008)(33656002)(8936002)(53546011)(66946007)(478600001)(2906002)(71200400001)(7696005)(81156014)(316002)(6506007)(76116006)(66476007)(26005)(91956017)(6916009)(66446008)(64756008)(55016002)(54906003)(86362001)(8676002)(66556008)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: /MyVk1Xr4TNOBmlrS2wgEN9T6ayoPVwJR4BgpwHEjrUkNlNZ+G2JkW5TpFApTnHvGoi0qQ9SpKEJtFSHiAMWWRZ6Txps0ZDpXak9ERID+WyluHEjf4kHm7JFREuaXVT6348IuGm1gaqn9DkHOdJbx6QUnFBexmA3oRiuxSagFLYorG64mfssrPHN3djBfgmcqbf/4sX9oL9mptAtZYAUIQEJi4ZcwOD6dvSQHX/x3/QgeVxvvcLhxCKJEI5mplOx5LiRTNBS9C9AtIQQTQaOyI7LiAomV2zDEZQWIl8tJVkohj8K2084+6KgReODZctaTwJxyXjUVaiYk5Wf02S759dhqzCJNjmhFDxFwghamBW96FRtotFmaZvYhOKipelGzc/uZ/ySNqPLtjCtx3H0YNNJiMMT0K7XzyOabaQpxDm00C9oFLre4JI1VjLJ+gN9
+x-ms-exchange-antispam-messagedata: KdQHw4/Q/YAq0F3dTXNG8WRqt+uC1XNDqgpdBW9XKPs/N18SPnCd0Qjfia8o05A9/+CuphPVDQ7BwNUkiplq5qRkVsmedeyoP1Hic7ryA9ubP/z04xkU9u6SBZFVeob4HoOPdj7iv62DtgSsp5zZWA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <324CEF76-20AA-40F5-A31B-6E0B1CCED736@dilger.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdf777e4-6a62-4e4f-aed6-08d7e2f7847f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2020 17:48:20.2422
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jr7mA1IK6sbWD/DTx3LPdNgiKVem/GFITTN5oYhH+xm5NNvdIDnDCesNjzRAqVlEDQa1n6OvL2+j4UBX5f2VSMgiOjXYns4/3c+hThoVuC0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3615
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 12:43:39AM -0600, Andreas Dilger wrote:
-> We still need to store an on-disk DAX flag for Ext4, and at that point it
-> doesn't make sense not to expose it via the standard Ext4 chattr utility.
-> 
-> So having EXT4_DAX_FL (== FS_DAX_FL) is no extra effort to add.
-
-I'll leave it exposed then.
-
-Thanks,
-Ira
-
-> 
-> Cheers, Andreas
-> 
-> > On Apr 16, 2020, at 20:20, Ira Weiny <ira.weiny@intel.com> wrote:
-> > 
-> > ﻿On Thu, Apr 16, 2020 at 06:57:31PM -0700, Darrick J. Wong wrote:
-> >>> On Thu, Apr 16, 2020 at 05:37:19PM -0700, Ira Weiny wrote:
-> >>> On Thu, Apr 16, 2020 at 03:49:37PM -0700, Darrick J. Wong wrote:
-> >>>> On Thu, Apr 16, 2020 at 03:33:27PM -0700, Ira Weiny wrote:
-> >>>>> On Thu, Apr 16, 2020 at 09:25:04AM -0700, Darrick J. Wong wrote:
-> >>>>>> On Mon, Apr 13, 2020 at 09:00:26PM -0700, ira.weiny@intel.com wrote:
-> >>>>>>> From: Ira Weiny <ira.weiny@intel.com>
-> >>>>>>> 
-> >>>>>>> Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
-> >>>>>>> 
-> >>>>>>> Set the flag to be user visible and changeable.  Set the flag to be
-> >>>>>>> inherited.  Allow applications to change the flag at any time.
-> >>>>>>> 
-> >>>>>>> Finally, on regular files, flag the inode to not be cached to facilitate
-> >>>>>>> changing S_DAX on the next creation of the inode.
-> >>>>>>> 
-> >>>>>>> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> >>>>>>> ---
-> >>>>>>> fs/ext4/ext4.h  | 13 +++++++++----
-> >>>>>>> fs/ext4/ioctl.c | 21 ++++++++++++++++++++-
-> >>>>>>> 2 files changed, 29 insertions(+), 5 deletions(-)
-> >>>>>>> 
-> >>>>>>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> >>>>>>> index 61b37a052052..434021fcec88 100644
-> >>>>>>> --- a/fs/ext4/ext4.h
-> >>>>>>> +++ b/fs/ext4/ext4.h
-> >>>>>>> @@ -415,13 +415,16 @@ struct flex_groups {
-> >>>>>>> #define EXT4_VERITY_FL            0x00100000 /* Verity protected inode */
-> >>>>>>> #define EXT4_EA_INODE_FL            0x00200000 /* Inode used for large EA */
-> >>>>>>> #define EXT4_EOFBLOCKS_FL        0x00400000 /* Blocks allocated beyond EOF */
-> >>>>>>> +
-> >>>>>>> +#define EXT4_DAX_FL            0x00800000 /* Inode is DAX */
-> >>>>>> 
-> >>>>>> Sooo, fun fact about ext4 vs. the world--
-> >>>>>> 
-> >>>>>> The GETFLAGS/SETFLAGS ioctl, since it came from ext2, shares the same
-> >>>>>> flag values as the ondisk inode flags in ext*.  Therefore, each of these
-> >>>>>> EXT4_[whatever]_FL values are supposed to have a FS_[whatever]_FL
-> >>>>>> equivalent in include/uapi/linux/fs.h.
-> >>>>> 
-> >>>>> Interesting...
-> >>>>> 
-> >>>>>> 
-> >>>>>> (Note that the "[whatever]" is a straight translation since the same
-> >>>>>> uapi header also defines the FS_XFLAG_[xfswhatever] flag values; ignore
-> >>>>>> those.)
-> >>>>>> 
-> >>>>>> Evidently, FS_NOCOW_FL already took 0x800000, but ext4.h was never
-> >>>>>> updated to note that the value was taken.  I think Ted might be inclined
-> >>>>>> to reserve the ondisk inode bit just in case ext4 ever does support copy
-> >>>>>> on write, though that's his call. :)
-> >>>>> 
-> >>>>> Seems like I should change this...  And I did not realize I was inherently
-> >>>>> changing a bit definition which was exposed to other FS's...
-> >>>> 
-> >>>> <nod> This whole thing is a mess, particularly now that we have two vfs
-> >>>> ioctls to set per-fs inode attributes, both of which were inherited from
-> >>>> other filesystems... :(
-> >>>> 
-> >>> 
-> >>> Ok I've changed it.
-> >>> 
-> >>>> 
-> >>>>>> 
-> >>>>>> Long story short - can you use 0x1000000 for this instead, and add the
-> >>>>>> corresponding value to the uapi fs.h?  I guess that also means that we
-> >>>>>> can change FS_XFLAG_DAX (in the form of FS_DAX_FL in FSSETFLAGS) after
-> >>>>>> that.
-> >>>>> 
-> >>>>> :-/
-> >>>>> 
-> >>>>> Are there any potential users of FS_XFLAG_DAX now?
-> >>>> 
-> >>>> Yes, it's in the userspace ABI so we can't get rid of it.
-> >>>> 
-> >>>> (FWIW there are several flags that exist in both FS_XFLAG_* and FS_*_FL
-> >>>> form.)
-> >>>> 
-> >>>>> From what it looks like, changing FS_XFLAG_DAX to FS_DAX_FL would be pretty
-> >>>>> straight forward.  Just to be sure, looks like XFS converts the FS_[xxx]_FL to
-> >>>>> FS_XFLAGS_[xxx] in xfs_merge_ioc_xflags()?  But it does not look like all the
-> >>>>> FS_[xxx]_FL flags are converted.  Is is that XFS does not support those
-> >>>>> options?  Or is it depending on the VFS layer for some of them?
-> >>>> 
-> >>>> XFS doesn't support most of the FS_*_FL flags.
-> >>> 
-> >>> If FS_XFLAG_DAX needs to continue to be user visible I think we need to keep
-> >>> that flag and we should not expose the EXT4_DAX_FL flag...
-> >>> 
-> >>> I think that works for XFS.
-> >>> 
-> >>> But for ext4 it looks like EXT4_FL_XFLAG_VISIBLE was intended to be used for
-> >>> [GET|SET]XATTR where EXT4_FL_USER_VISIBLE was intended to for [GET|SET]FLAGS...
-> >>> But if I don't add EXT4_DAX_FL in EXT4_FL_XFLAG_VISIBLE my test fails.
-> >>> 
-> >>> I've been playing with the flags and looking at the code and I _thought_ the
-> >>> following patch would ensure that FS_XFLAG_DAX is the only one visible but for
-> >>> some reason FS_XFLAG_DAX can't be set with this patch.  I still need the
-> >>> EXT4_FL_USER_VISIBLE mask altered...  Which I believe would expose EXT4_DAX_FL
-> >>> directly as well.
-> >>> 
-> >>> Jan, Ted?  Any ideas?  Or should we expose EXT4_DAX_FL and FS_XFLAG_DAX in
-> >>> ext4?
-> >> 
-> >> Both flags should be exposed through their respective ioctl interfaces
-> >> in both filesystems.  That way we don't have to add even more verbiage
-> >> to the documentation to instruct userspace programmers on how to special
-> >> case ext4 and XFS for the same piece of functionality.
-> > 
-> > Wouldn't it be more confusing for the user to have 2 different flags which do
-> > the same thing?
-> > 
-> > I would think that using FS_XFLAG_DAX _only_ (for both ext4 and xfs) would be
-> > easier without special cases?
-> > 
-> > Ira
-> > 
+On 17/04/2020 18:04, Theodore Y. Ts'o wrote:=0A=
+> What sort of reordering can take place due to I/O schedulers and or=0A=
+> racing write appends from different CPU's?  Is it purely the=0A=
+> userspace's responsibility to avoid racings writes to a particular=0A=
+> zone?=0A=
+=0A=
+For normal writes (i.e.: REQ_OP_WRITE) the zone will be locked by the =0A=
+I/O scheduler (namely mq-deadline as it's currently the one which does =0A=
+have support for zoned block devices). For REQ_OP_ZONE_APPEND we have a =0A=
+trylock scheme in the SCSI emulation of ZONE_APPEND, which is fine, as =0A=
+SCSI disks are single queue only.=0A=
+=0A=
+A scenario that can of cause happen is concurring REQ_OP_ZONE_APPEND =0A=
+writes from different CPUs to the same zone. This is fine *iff* the sum =0A=
+of all writes stays within the free space of the zone. If one if the =0A=
+writes will cross a zone boundary it'll get EIO, obviously.=0A=
+=0A=
+For "userspace's responsibility", I'd re-phrase this as "a consumer's =0A=
+responsibility", as we don't have an interface which aims at user-space =0A=
+yet. The only consumer this series implements is zonefs, although we did =
+=0A=
+have an AIO implementation for early testing and io_uring shouldn't be =0A=
+too hard to implement.=0A=
