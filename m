@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1941ADD15
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 14:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E70201ADD13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 14:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbgDQMPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728223AbgDQMPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 17 Apr 2020 08:15:52 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:50633 "EHLO
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:50639 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbgDQMPs (ORCPT
+        with ESMTP id S1727845AbgDQMPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 08:15:48 -0400
+        Fri, 17 Apr 2020 08:15:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1587125750; x=1618661750;
+  t=1587125751; x=1618661751;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/pELZdFaBDOCSlhpLmW1NsDce5dkjBcqSqBPgtxDGc4=;
-  b=NQP5EzOAraAAHtDKEJp7eWd8h0YJmBNMOikztMS8Li6h9Hjh2jU25it0
-   XmZfNE60DmE/u3j2GAnczSNE27W6QNhQsmQZd5GWOeSeVAkZ2gq7IuZCA
-   sW6mzlptnbcDxTXEa5g5F7O/3sZOVRpsTxbPcJGtbLSSoZ6OrD5+hKIkz
-   lWstjdrYZKMmL6sDABF51QkiqFIk1NYpe8XbGLlk1alZyaiQHjrEEtrYf
-   auibSl6904aDDEHoLRy9tp6Q6tcOUusniaB294mSBeNZqSf8TNKq3Y39d
-   Fqp9JzkabKj6nO8q9X35iuuDKgzR1V1uNn8JW+wFaq1W2H52+fSUvnVPo
-   A==;
-IronPort-SDR: cwpUUwDFj4xbTmfopd4V7+miE+iYlrmyb4caUf5fjGwmips11Pvi0iDqeMshRYRIL2uneGcOGb
- Qf7m8jCisbpbhp0YJacGNfXoLcOGn0msAVliO3B9Dn8ZBuanDtQ1PY00tvxfHGGtD1B72gnUgm
- MvhZhN6Om73ntMHGqtbmniToBC8maKxLOCnMRxLWCKvcTQh1U0JVNQ98gFNVIt8ReMgnV+lN2q
- qWUInJ5b3hZ1nlIbmN12bGGJUkKqvvPhC6lylkGNnaWiFFsrdMI97mePibNVYNSpq2wiFxbLUY
- deE=
+  bh=rp/9OsypQVA9Jov9x+82RNHkk+PbM/KfEuomMQ2uw8w=;
+  b=Qolbq8Lo9uOHddaxWJNvb71ix03dASDl4c9h1RPXNQUs1ICmuwsxptWC
+   v0hR9PHJeQWZAWJHZMlLyMUReM+DRIYSNS/KRDc0AsjBuFcOVpAPUMe3J
+   HaSYAeHL31YVLdqWLeS6lgp71fxEe/Efi7GXBd+AWI2/5lR7TaR4RMvEW
+   p831rnKXoFBM9LFgSqfCTdL/F8t3YvsnoGwvVGshyjMaik1T82aQlXPe6
+   Z/QYMstRxHw7zxbRceIR7ofa0X3NxvQkY4JMEYJnIuXjNI42m3E+8jIVV
+   ubqJaPbyNmXX1iUol34y7w0UkGRRjlcrtdEAJm4JqKwJAMaw1M1223mIo
+   w==;
+IronPort-SDR: F5YNONMjzsKj6GMFWTMS9jJdaj5/ObJzbxPp6AlX3age/yZ7TAAdY9X3u0wlDdgUYWNJPfOs4E
+ rkzZMrlyTLhX9q2hGTDF8qoRNj+8GR4HlA02lmo68FpcKG9X7YsBrPKsafa9Dhu3ES2S0JUBMy
+ U3LW5HjoHb3nbtboFvmnpzEA236MPI9viEFv2m9laNBz2AuBbkrQidRUlL1F9gie1fPvSD/YeB
+ 3eSavtCgqJkNyWO23hkbGpmHDGTrWg1uocy/Y0QH9wL4qh5jWe5GJNzSBV/A0QfqIKyEAwuBzp
+ M5M=
 X-IronPort-AV: E=Sophos;i="5.72,394,1580745600"; 
-   d="scan'208";a="237989186"
+   d="scan'208";a="237989190"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Apr 2020 20:15:50 +0800
-IronPort-SDR: 5d0Cb1mVcBKFHm3FqcuOIIgGeM7r8tOwejOtdz+AEcaluHX75F/+UBhYEBnFDh2a/KbEr7oTDQ
- bdhCeOCnXUwB0mnOyKnx7TG1lsrIPKchk=
+  by ob1.hgst.iphmx.com with ESMTP; 17 Apr 2020 20:15:51 +0800
+IronPort-SDR: jiBKecB7tyb+aekJxEz+GK3o0vsgqdn4AKHx4UPErX9LK/7Qqvcq2XAOiF5tVpOk2IO+LsJpSl
+ DavzO606E0dAUgjriIOglrw/8OYCJyShM=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2020 05:06:46 -0700
-IronPort-SDR: liTpkeGF1lG49RXI90uJk/vixLqudWjSqAV2T6JkKWifx2cfZHGE5o3O7LBg5B5WZjsjKPrsRP
- axcuwLRS6OxQ==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2020 05:06:48 -0700
+IronPort-SDR: z4sZFldNIYr7WM9G1Ho96dYm8aPmzCNCl/euZB8zO80kJJ9s+EX37MB8H6vvXtwvPNsjM72tkH
+ cdJrzMk+0GrA==
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 17 Apr 2020 05:15:46 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 17 Apr 2020 05:15:48 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -55,9 +55,9 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Daniel Wagner <dwagner@suse.de>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v7 01/11] scsi: free sgtables in case command setup fails
-Date:   Fri, 17 Apr 2020 21:15:26 +0900
-Message-Id: <20200417121536.5393-2-johannes.thumshirn@wdc.com>
+Subject: [PATCH v7 02/11] block: provide fallbacks for blk_queue_zone_is_seq and blk_queue_zone_no
+Date:   Fri, 17 Apr 2020 21:15:27 +0900
+Message-Id: <20200417121536.5393-3-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
 References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
@@ -68,84 +68,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In case scsi_setup_fs_cmnd() fails we're not freeing the sgtables
-allocated by scsi_init_io(), thus we leak the allocated memory.
+blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
+CONFIG_BLK_DEV_ZONED disabled until now.
 
-So free the sgtables allocated by scsi_init_io() in case
-scsi_setup_fs_cmnd() fails.
-
-Technically scsi_setup_scsi_cmnd() does not suffer from this problem, as
-it can only fail if scsi_init_io() fails, so it does not have sgtables
-allocated. But to maintain symmetry and as a measure of defensive
-programming, free the sgtables on scsi_setup_scsi_cmnd() failure as well.
-scsi_mq_free_sgtables() has safeguards against double-freeing of memory so
-this is safe to do.
-
-While we're at it, rename scsi_mq_free_sgtables() to scsi_free_sgtables().
+The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
+provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
 ---
- drivers/scsi/scsi_lib.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ include/linux/blkdev.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 47835c4b4ee0..ad97369ffabd 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -548,7 +548,7 @@ static void scsi_uninit_cmd(struct scsi_cmnd *cmd)
- 	}
- }
- 
--static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
-+static void scsi_free_sgtables(struct scsi_cmnd *cmd)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 32868fbedc9e..e47888a7d80b 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -729,6 +729,16 @@ static inline unsigned int blk_queue_nr_zones(struct request_queue *q)
  {
- 	if (cmd->sdb.table.nents)
- 		sg_free_table_chained(&cmd->sdb.table,
-@@ -560,7 +560,7 @@ static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
- 
- static void scsi_mq_uninit_cmd(struct scsi_cmnd *cmd)
- {
--	scsi_mq_free_sgtables(cmd);
-+	scsi_free_sgtables(cmd);
- 	scsi_uninit_cmd(cmd);
+ 	return 0;
  }
++static inline bool blk_queue_zone_is_seq(struct request_queue *q,
++					 sector_t sector)
++{
++	return false;
++}
++static inline unsigned int blk_queue_zone_no(struct request_queue *q,
++					     sector_t sector)
++{
++	return 0;
++}
+ #endif /* CONFIG_BLK_DEV_ZONED */
  
-@@ -1059,7 +1059,7 @@ blk_status_t scsi_init_io(struct scsi_cmnd *cmd)
- 
- 	return BLK_STS_OK;
- out_free_sgtables:
--	scsi_mq_free_sgtables(cmd);
-+	scsi_free_sgtables(cmd);
- 	return ret;
- }
- EXPORT_SYMBOL(scsi_init_io);
-@@ -1190,6 +1190,7 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
- 		struct request *req)
- {
- 	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(req);
-+	blk_status_t ret;
- 
- 	if (!blk_rq_bytes(req))
- 		cmd->sc_data_direction = DMA_NONE;
-@@ -1199,9 +1200,14 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
- 		cmd->sc_data_direction = DMA_FROM_DEVICE;
- 
- 	if (blk_rq_is_scsi(req))
--		return scsi_setup_scsi_cmnd(sdev, req);
-+		ret = scsi_setup_scsi_cmnd(sdev, req);
- 	else
--		return scsi_setup_fs_cmnd(sdev, req);
-+		ret = scsi_setup_fs_cmnd(sdev, req);
-+
-+	if (ret != BLK_STS_OK)
-+		scsi_free_sgtables(cmd);
-+
-+	return ret;
- }
- 
- static blk_status_t
+ static inline bool rq_is_sync(struct request *rq)
 -- 
 2.24.1
 
