@@ -2,76 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9481AD79C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF201AD7A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbgDQHmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 03:42:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52670 "EHLO mx2.suse.de"
+        id S1728522AbgDQHne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 03:43:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbgDQHmc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 03:42:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CCB5DAECE;
-        Fri, 17 Apr 2020 07:42:29 +0000 (UTC)
-Date:   Fri, 17 Apr 2020 09:42:28 +0200
-From:   Daniel Wagner <dwagner@suse.de>
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v6 04/11] block: Introduce REQ_OP_ZONE_APPEND
-Message-ID: <20200417074228.jxqk2znfqjfhrwf2@carbon>
-References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
- <20200415090513.5133-5-johannes.thumshirn@wdc.com>
+        id S1725768AbgDQHnd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Apr 2020 03:43:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D094206D9;
+        Fri, 17 Apr 2020 07:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587109412;
+        bh=080BsU7aUuQAAPZb/CBi81iN/+0Uhk7GZPCglc2G+Po=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rBSvHHRi5YUb8lnqfONSvXbHwa6YtZzrlkKMItTeWJ16sYnsZZdYi8oGid5bNOt7T
+         qBr95bNxLXJ/xRmCHKHLJbPUaEBHoN3+9gcsKdO9ndf9AF4njCcJVmR0vtkkThwwLs
+         oo/0UFMVgvAzzZBllCkLI2Ypr2j1ufnVJ7ImmF1Q=
+Date:   Fri, 17 Apr 2020 09:43:30 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH 2/6] firmware_loader: remove unused exports
+Message-ID: <20200417074330.GB23015@kroah.com>
+References: <20200417064146.1086644-1-hch@lst.de>
+ <20200417064146.1086644-3-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200415090513.5133-5-johannes.thumshirn@wdc.com>
+In-Reply-To: <20200417064146.1086644-3-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 06:05:06PM +0900, Johannes Thumshirn wrote:
-> @@ -1206,6 +1219,7 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
->  	bool no_tag = false;
->  	int errors, queued;
->  	blk_status_t ret = BLK_STS_OK;
-> +	LIST_HEAD(zone_list);
->  
->  	if (list_empty(list))
->  		return false;
-> @@ -1264,6 +1278,16 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
->  		if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE) {
->  			blk_mq_handle_dev_resource(rq, list);
->  			break;
-> +		} else if (ret == BLK_STS_ZONE_RESOURCE) {
-> +			/*
-> +			 * Move the request to zone_list and keep going through
-> +			 * the dispatch list to find more requests the drive can
-> +			 * accept.
-> +			 */
-> +			blk_mq_handle_zone_resource(rq, &zone_list);
-> +			if (list_empty(list))
-> +				break;
-> +			continue;
->  		}
+On Fri, Apr 17, 2020 at 08:41:42AM +0200, Christoph Hellwig wrote:
+> Neither fw_fallback_config nor firmware_config_table are used by modules.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/base/firmware_loader/fallback_table.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Stupid question. At the end of this function I see:
+I have no objection to this patch, and can take it in my tree, but I
+don't see how it fits in with your larger patch series...
 
-	/*
-	 * If the host/device is unable to accept more work, inform the
-	 * caller of that.
-	 */
-	if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
-		return false;
+thanks,
 
-Why is BLK_STS_ZONE_RESOURCE missing?
-
+greg k-h
