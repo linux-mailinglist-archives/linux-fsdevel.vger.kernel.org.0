@@ -2,31 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 885B91AD7B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A251AD7EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 09:48:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbgDQHqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 03:46:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43654 "EHLO mail.kernel.org"
+        id S1729505AbgDQHsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 03:48:12 -0400
+Received: from verein.lst.de ([213.95.11.211]:56236 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbgDQHqA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 03:46:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC1D6208E4;
-        Fri, 17 Apr 2020 07:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587109560;
-        bh=6WizWOPGcj4Xsk+M2kiEmA/c8eB5Uh9oJTXzQ1TCN7w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xj4JSJa6TyQgwsI+QhjTwYjgDkTFOAYDY2LEFtr+bPZqtb/4DkhBQ7bzfNN/wmD0i
-         JpcgmxoAHQZS70LF/LwLOMtQBNRDJeKgtyadxtn48xiDqwffsyROHBLP6Aael3/hRu
-         5cq9jrDTaWqCzzfao/lJ/OZnkPHLcWueb11rWeXI=
-Date:   Fri, 17 Apr 2020 09:45:58 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kees Cook <keescook@chromium.org>,
+        id S1729049AbgDQHsM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Apr 2020 03:48:12 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E8D2E68BEB; Fri, 17 Apr 2020 09:48:07 +0200 (CEST)
+Date:   Fri, 17 Apr 2020 09:48:07 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -35,31 +25,31 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org
-Subject: Re: [PATCH 6/6] sysctl: pass kernel pointers to ->proc_handler
-Message-ID: <20200417074558.GC23015@kroah.com>
-References: <20200417064146.1086644-1-hch@lst.de>
- <20200417064146.1086644-7-hch@lst.de>
+Subject: Re: [PATCH 2/6] firmware_loader: remove unused exports
+Message-ID: <20200417074807.GA19954@lst.de>
+References: <20200417064146.1086644-1-hch@lst.de> <20200417064146.1086644-3-hch@lst.de> <20200417074330.GB23015@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200417064146.1086644-7-hch@lst.de>
+In-Reply-To: <20200417074330.GB23015@kroah.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 08:41:46AM +0200, Christoph Hellwig wrote:
-> Instead of having all the sysctl handlers deal with user pointers, which
-> is rather hairy in terms of the BPF interaction, copy the input to and
-> from  userspace in common code.  This also means that the strings are
-> always NUL-terminated by the common code, making the API a little bit
-> safer.
+On Fri, Apr 17, 2020 at 09:43:30AM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Apr 17, 2020 at 08:41:42AM +0200, Christoph Hellwig wrote:
+> > Neither fw_fallback_config nor firmware_config_table are used by modules.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  drivers/base/firmware_loader/fallback_table.c | 2 --
+> >  1 file changed, 2 deletions(-)
 > 
-> As most handler just pass through the data to one of the common handlers
-> a lot of the changes are mechnical.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> I have no objection to this patch, and can take it in my tree, but I
+> don't see how it fits in with your larger patch series...
 
-Ah, nice!
-
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+firmware_config_table is a sysctl table, and I looked for users but
+didn't find them.  But yes, it isn't really related and you can take
+it separately.
