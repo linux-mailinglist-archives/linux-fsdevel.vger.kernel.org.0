@@ -2,134 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0D51AD898
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 10:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0721AD8D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 10:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbgDQIcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 04:32:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729650AbgDQIcU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 04:32:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF58E2137B;
-        Fri, 17 Apr 2020 08:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587112338;
-        bh=8Oo4SxaoPhfNmNYW57QZmQMRfnVpjxTqOc+iHAbbQ/8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1KXyNCnXvyew882v7GPf6JQBSdKhUiP+l08UaWXOoSE3vm2T4abn9z3zlkm1eJaaU
-         fnmB7+c/VNZvCNQjM/9D+B9P24ePfbRpp4aCnY9rAyxz1o6a1j2Cq9wfqYDAZ7rW97
-         Mw59enahMv55dCj7Y52+NUW6nk3lHpoRJVq3kYJU=
-Date:   Fri, 17 Apr 2020 10:32:16 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, slyfox@gentoo.org, ast@kernel.org,
-        keescook@chromium.org, josh@joshtriplett.org, ravenexp@gmail.com,
-        chainsaw@gentoo.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] coredump: fix crash when umh is disabled
-Message-ID: <20200417083216.GE140064@kroah.com>
-References: <20200416162859.26518-1-mcgrof@kernel.org>
+        id S1729795AbgDQImQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 04:42:16 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:17996 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729746AbgDQImP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Apr 2020 04:42:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1587112935; x=1618648935;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=48hqmZ93MhrQIYizJCeQZA7RBwRvy3EiKXl76vh9Vks=;
+  b=FusMHqAbRi7+e/d61NM04c65Lq7qKLlSkIJJAQi3K9WFwuSDZWm6Kbvc
+   6Y3kAzqic+RTECrqnkVeGChWyOzjlQIKLT3i0qlftg37zWBaHw9Rl+2jt
+   +PpWD+9HmRhrvSnKJAhmDmJiStfqAUL1wI2Run6AOdPmY45dUg7EIUFUx
+   USSirDahFocx05d9gDCqxmHS4NSCu8hqGe9ipeUSSGC1pw+lzQgjrIjbp
+   6ViKXPyiKsyfHeSoDj7U9SL3n3qJq1x8Vpzku4UwHMKEoocaWmpiaGtCB
+   N51fDhxGc/K7H9COzvVHWCmaxlGrsCGvPZ4BbtPxvb2g+y+uE6ZgBHCy2
+   A==;
+IronPort-SDR: 4xPJoTvQmyJaYBxZBI9JdpTrmXoIyNohbAStsKXTdQjt9pcq1pVMTrJvmq1I13+B1NrruGGUFV
+ Bb+FmoMhAJqLQN8djP5zL+LO64F5aosiKlnQwzyJIZE9c/qUDOUl9CDx+KevIaS8l6Ho9fkAPX
+ 0xBGMewIWXcn47HhCFp18LtTyDENSkjICj/f+G1IJAlT/mUqyXyF7bywcRSv7mQIjMQ6BUt5Xl
+ fOeUxqV9sIiu2Ntf5te4I0D4vf/wm5JvSL8ylqdPHLJozvN0DcT/Pds5N8E+Xx7pe0hJZGtcd7
+ 8nA=
+X-IronPort-AV: E=Sophos;i="5.72,394,1580745600"; 
+   d="scan'208";a="136980107"
+Received: from mail-bn7nam10lp2106.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.106])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Apr 2020 16:42:14 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DMVRj01SmLTQtI3xOt9Kn2TNt6UZ6HzjQK+Xl++JIiIzK1n2GG5w91e7SIpQ+abfAkXlTHL+gIAdQ1sHk/tRpKI8Ml8mQS0KA9OZCWVMFzKV4vCArRhmZgqFDo77hWbto9rVN8MnznGpODqi1Xus2ojBf6crRAAnf7QhCoZ72hHn+KEPbYro6OOQPw8/SG7w89yxMQ0o+t7bx3xPbEfVTH7Gw4F6s5tBXzHElRuDb43VeN2eVngsEOXTrqy+9z3mmioEzNAh8cnHckm0bkxggkQi9GHPgQUVbvsHhbSuZi+WXQPL9Iw/ifdGQOL8M7T28/VuhI2epgXvNL5XRlupjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aqRtSq3NSXOQA6WhyJPfROnaJEPqcUnwhDFjxOGENoo=;
+ b=Y7m97XbFzCmxdC8SUk+Znd+W58fjFa1hP1WzYjlla2kiBLvV3F/BoDTsbLXEoL7CTanNLI9eAEVMTvHzlep8jzudb/yTa9ZJmGiu3qAFIF7xAgrvWiohG30c1HZzR0AdHVFnvSxle5q9Rl9njCyw3jaUQ+V+Jlyaj/JLV4BBjYQX7Nj/ch/ncIqo1KnpAqlyEPJIop53C2dsmVcESw4rqDC8de+6ZWP0Nj/gu8Jr3+xAt7UYQUV8ahAyc3d6wFb7yCtTXGO+529Cn3nTCkpjbq9/BcRYoRo1REmWcZI08DizY6iIYHFVEeWsRQCZ+xiihf+9NhJ4zTVYyVAfbt2+jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aqRtSq3NSXOQA6WhyJPfROnaJEPqcUnwhDFjxOGENoo=;
+ b=xyp2FynePIjx7TESWq5LeOBZoc2wSKnHQDacMcdJScdExrNkqsEWcrqEjjFl4uGLwZNsZxqUZ2t9IogfANBYnfs27Sj631r8yk67jNZ489NQnH8FwFl6zQrOd6HwYXZmbdLYiuJ5ZGTqyitpmE5fKbJQGrAkxdmVbDdkht+wdus=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3678.namprd04.prod.outlook.com
+ (2603:10b6:803:47::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.25; Fri, 17 Apr
+ 2020 08:42:12 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2921.027; Fri, 17 Apr 2020
+ 08:42:12 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Daniel Wagner <dwagner@suse.de>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v6 04/11] block: Introduce REQ_OP_ZONE_APPEND
+Thread-Topic: [PATCH v6 04/11] block: Introduce REQ_OP_ZONE_APPEND
+Thread-Index: AQHWEwUEsEPLapTnp0OqnJ4dRylqQQ==
+Date:   Fri, 17 Apr 2020 08:42:12 +0000
+Message-ID: <SN4PR0401MB35987433364CCC2F8BEE7E689BD90@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200415090513.5133-1-johannes.thumshirn@wdc.com>
+ <20200415090513.5133-5-johannes.thumshirn@wdc.com>
+ <20200417074228.jxqk2znfqjfhrwf2@carbon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 19f08644-fa4c-4ae3-c21e-08d7e2ab391f
+x-ms-traffictypediagnostic: SN4PR0401MB3678:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN4PR0401MB36780C5DA03F2D0B980569949BD90@SN4PR0401MB3678.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:597;
+x-forefront-prvs: 0376ECF4DD
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(376002)(366004)(346002)(39860400002)(396003)(136003)(66946007)(26005)(8936002)(86362001)(2906002)(478600001)(6916009)(33656002)(71200400001)(66476007)(7696005)(6506007)(52536014)(186003)(4326008)(316002)(66556008)(64756008)(66446008)(5660300002)(76116006)(81156014)(53546011)(91956017)(8676002)(4744005)(9686003)(55016002)(54906003);DIR:OUT;SFP:1102;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Yy8BCo/FlZHO535HCcm3TzF62r8G3KlAIvPzB3A3L8EIxrqiyA4hhVHoOQkLdM+LbzHWtG7LTg4yhNRDgATAg+AX7RyMb/aJDTAW3jOy5KqEE9ChQSnBoUn/1C1EudyCznFaAlwBJH7FfFaxskir7I2VTNNhtgbvjsKg+tPTebDPUkc72Veio+ctSfjPSgtJX0DZl9S8uad60Z+tqSi402x5ltr7IghJSdjzgyn10G2qGT+scnb5+ygwGOTpcTiup8l6lDy5db7P6cZIScj0SR/R0MFTQX850A4m5L/TdUFO8deR12q8UgPbud5gC68I/X7qBJrI4jMOrwdQMUpH3NrbVUNC7rabRKCm0aLEmdH7/JR2FUqYqw0ZntcCFJGupgeLt85HjQLzLQKHyWqueKBqpIJ1gHCm5qyx0sOrryYaO3lIQaNce40mWcLKx8+/
+x-ms-exchange-antispam-messagedata: 0/rpVOj7chyUEHygNolyDobTJxbtgStC8OoFuqGZ+IpN4bUCnP886tJk56IwHCQ57yGLrgjFbB1Q8/ElYTQqQaTifv6RKvcylU6m0fMJdyVMbwSfdgRKnWomgBaV7x5wbDAqOsWvaqpNwbT9CHU+ow==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416162859.26518-1-mcgrof@kernel.org>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19f08644-fa4c-4ae3-c21e-08d7e2ab391f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2020 08:42:12.0893
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9F8dpgiHt2vEyLhMRuJSleC1n9S8vUSNh4NCs8PUUlxzvTMIgPmB7G7+/cicwRke6EGHOPResmvufiZUNKUQApqg2lA8EhW+4vllP4O2vo4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3678
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 04:28:59PM +0000, Luis R. Rodriguez wrote:
-> From: Luis Chamberlain <mcgrof@kernel.org>
-> 
-> Commit 64e90a8acb859 ("Introduce STATIC_USERMODEHELPER to mediate
-> call_usermodehelper()") added the optiont to disable all
-> call_usermodehelper() calls by setting STATIC_USERMODEHELPER_PATH to
-> an empty string. When this is done, and crashdump is triggered, it
-> will crash on null pointer dereference, since we make assumptions
-> over what call_usermodehelper_exec() did.
-> 
-> This has been reported by Sergey when one triggers a a coredump
-> with the following configuration:
-> 
-> ```
-> CONFIG_STATIC_USERMODEHELPER=y
-> CONFIG_STATIC_USERMODEHELPER_PATH=""
-> kernel.core_pattern = |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e
-> ```
-> 
-> The way disabling the umh was designed was that call_usermodehelper_exec()
-> would just return early, without an error. But coredump assumes
-> certain variables are set up for us when this happens, and calls
-> ile_start_write(cprm.file) with a NULL file.
-> 
-> [    2.819676] BUG: kernel NULL pointer dereference, address: 0000000000000020
-> [    2.819859] #PF: supervisor read access in kernel mode
-> [    2.820035] #PF: error_code(0x0000) - not-present page
-> [    2.820188] PGD 0 P4D 0
-> [    2.820305] Oops: 0000 [#1] SMP PTI
-> [    2.820436] CPU: 2 PID: 89 Comm: a Not tainted 5.7.0-rc1+ #7
-> [    2.820680] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190711_202441-buildvm-armv7-10.arm.fedoraproject.org-2.fc31 04/01/2014
-> [    2.821150] RIP: 0010:do_coredump+0xd80/0x1060
-> [    2.821385] Code: e8 95 11 ed ff 48 c7 c6 cc a7 b4 81 48 8d bd 28 ff
-> ff ff 89 c2 e8 70 f1 ff ff 41 89 c2 85 c0 0f 84 72 f7 ff ff e9 b4 fe ff
-> ff <48> 8b 57 20 0f b7 02 66 25 00 f0 66 3d 00 8
-> 0 0f 84 9c 01 00 00 44
-> [    2.822014] RSP: 0000:ffffc9000029bcb8 EFLAGS: 00010246
-> [    2.822339] RAX: 0000000000000000 RBX: ffff88803f860000 RCX: 000000000000000a
-> [    2.822746] RDX: 0000000000000009 RSI: 0000000000000282 RDI: 0000000000000000
-> [    2.823141] RBP: ffffc9000029bde8 R08: 0000000000000000 R09: ffffc9000029bc00
-> [    2.823508] R10: 0000000000000001 R11: ffff88803dec90be R12: ffffffff81c39da0
-> [    2.823902] R13: ffff88803de84400 R14: 0000000000000000 R15: 0000000000000000
-> [    2.824285] FS:  00007fee08183540(0000) GS:ffff88803e480000(0000) knlGS:0000000000000000
-> [    2.824767] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    2.825111] CR2: 0000000000000020 CR3: 000000003f856005 CR4: 0000000000060ea0
-> [    2.825479] Call Trace:
-> [    2.825790]  get_signal+0x11e/0x720
-> [    2.826087]  do_signal+0x1d/0x670
-> [    2.826361]  ? force_sig_info_to_task+0xc1/0xf0
-> [    2.826691]  ? force_sig_fault+0x3c/0x40
-> [    2.826996]  ? do_trap+0xc9/0x100
-> [    2.827179]  exit_to_usermode_loop+0x49/0x90
-> [    2.827359]  prepare_exit_to_usermode+0x77/0xb0
-> [    2.827559]  ? invalid_op+0xa/0x30
-> [    2.827747]  ret_from_intr+0x20/0x20
-> [    2.827921] RIP: 0033:0x55e2c76d2129
-> [    2.828107] Code: 2d ff ff ff e8 68 ff ff ff 5d c6 05 18 2f 00 00 01
-> c3 0f 1f 80 00 00 00 00 c3 0f 1f 80 00 00 00 00 e9 7b ff ff ff 55 48 89
-> e5 <0f> 0b b8 00 00 00 00 5d c3 66 2e 0f 1f 84 0
-> 0 00 00 00 00 0f 1f 40
-> [    2.828603] RSP: 002b:00007fffeba5e080 EFLAGS: 00010246
-> [    2.828801] RAX: 000055e2c76d2125 RBX: 0000000000000000 RCX: 00007fee0817c718
-> [    2.829034] RDX: 00007fffeba5e188 RSI: 00007fffeba5e178 RDI: 0000000000000001
-> [    2.829257] RBP: 00007fffeba5e080 R08: 0000000000000000 R09: 00007fee08193c00
-> [    2.829482] R10: 0000000000000009 R11: 0000000000000000 R12: 000055e2c76d2040
-> [    2.829727] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [    2.829964] CR2: 0000000000000020
-> [    2.830149] ---[ end trace ceed83d8c68a1bf1 ]---
-> ```
-> 
-> Cc: <stable@vger.kernel.org> # v4.11+
-> Fixes: 64e90a8acb859 ("Introduce STATIC_USERMODEHELPER to mediate call_usermodehelper()")
-
-Nit, you don't need so many digits, it should be:
-Fixes: 64e90a8acb85 ("Introduce STATIC_USERMODEHELPER to mediate call_usermodehelper()")
-
-> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199795
-> Reported-by: Tony Vroon <chainsaw@gentoo.org>
-> Reported-by: Sergey Kvachonok <ravenexp@gmail.com>
-> Tested-by: Sergei Trofimovich <slyfox@gentoo.org>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  fs/coredump.c | 8 ++++++++
->  kernel/umh.c  | 5 +++++
->  2 files changed, 13 insertions(+)
-
-Anyway, I can take this in my driver core tree if no one else objects.
-
-thanks,
-
-greg k-h
+On 17/04/2020 09:42, Daniel Wagner wrote:=0A=
+> Stupid question. At the end of this function I see:=0A=
+> =0A=
+> 	/*=0A=
+> 	 * If the host/device is unable to accept more work, inform the=0A=
+> 	 * caller of that.=0A=
+> 	 */=0A=
+> 	if (ret =3D=3D BLK_STS_RESOURCE || ret =3D=3D BLK_STS_DEV_RESOURCE)=0A=
+> 		return false;=0A=
+> =0A=
+> Why is BLK_STS_ZONE_RESOURCE missing?=0A=
+=0A=
+Because technically the device can still accept more work, it is just =0A=
+the zone-write lock for one (or more) zone(s) is locked. So we can still =
+=0A=
+try to dispatch work to the device, like reads or writes to other zones =0A=
+in order to not starve any readers or writers to different zones.=0A=
