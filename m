@@ -2,58 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C411AD4B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 05:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A57D1AD4C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Apr 2020 05:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbgDQDE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Apr 2020 23:04:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbgDQDE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Apr 2020 23:04:26 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD3B220771;
-        Fri, 17 Apr 2020 03:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587092665;
-        bh=t1Gf3OX3PZDXPx83cmiGcGH79UfIdFNHEiWH/rKEXWY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e/NWhcwAcuVugGEsODRztzM1QFXDsNs5WDL6qKsNu82oB5cZ1OHF80+ovyRxC8Y+Q
-         AGPIMPo5RRcFjTNWtAFGX2nXpggo205t+asgtNi5GepnEcbDD31Wu1lf81GAM0ImPQ
-         x6WBy3dqdihQSTkHu2gVdJNXw+eEUwQy3SpQMTZQ=
-Date:   Thu, 16 Apr 2020 20:04:24 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: rename "catch" function argument
-Message-Id: <20200416200424.55d0cf47de72efaac445f307@linux-foundation.org>
-In-Reply-To: <20200416172155.GA2280@avx2>
-References: <20200331210905.GA31680@avx2>
-        <20200415210727.c0cf80b5a981292bb15d9858@linux-foundation.org>
-        <20200416172155.GA2280@avx2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727836AbgDQDSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Apr 2020 23:18:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44012 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725859AbgDQDSB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Apr 2020 23:18:01 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11CBBC061A0C;
+        Thu, 16 Apr 2020 20:18:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xmaDAhB15m0ca2yw6/7wplovyJ4mJvftQ1TLrqWm/Bs=; b=uiJbu0G1PjxFYlCSgI8qpa82CM
+        Jf+ghD0cfM+a0KMTUbFMACA5EI30uXjNpMD2zEISEXPmSYXqhyQKEEbwzH9AqUF93nG2bU1CYOzdf
+        uE/0aMhq/Wos8A3WC8t9YU+3Op0i5gKNNEQAk31rtCtemFtzZIR/azxEBpo2EXcKBSQkP6HtuGthY
+        tiQhNZ0SPuOroFAl1dURRnnCTLGW193jGaDnIbzveztLpLC2zHPVjSUNOiJwoV8l6f4CTeySJ3FAl
+        Y1OhirdABmEj06Gq4QJ1bf5rERxHsavdWdgGHxieEQ0RbgyAutTgpaTeiGSmXgCGDBfJeUaOxUD/y
+        hv+0N98g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jPHVg-0002Ji-ML; Fri, 17 Apr 2020 03:17:44 +0000
+Date:   Thu, 16 Apr 2020 20:17:44 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: improve use_mm / unuse_mm v2
+Message-ID: <20200417031744.GI5820@bombadil.infradead.org>
+References: <20200416053158.586887-1-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200416053158.586887-1-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 16 Apr 2020 20:21:55 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Thu, Apr 16, 2020 at 07:31:55AM +0200, Christoph Hellwig wrote:
+> this series improves the use_mm / unuse_mm interface by better
+> documenting the assumptions, and my taking the set_fs manipulations
+> spread over the callers into the core API.
 
-> On Wed, Apr 15, 2020 at 09:07:27PM -0700, Andrew Morton wrote:
-> > On Wed, 1 Apr 2020 00:09:05 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > 
-> > > "catch" is reserved keyword in C++, rename it to something
-> > > both gcc and g++ accept.
-> > 
-> > Why? Is someone compiling the kernel with g++?
-> 
-> I do!
-> https://marc.info/?l=linux-acpi&m=158343373912366&w=4
-> 
+I appreciate all the work you're doing here.
 
-Lol.  But why?
+Do you have plans to introduce a better-named API than set_fs() / get_fs()?
+
+Also, having set_fs() return the previous value of 'fs' would simplify
+a lot of the callers.
