@@ -2,140 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E071AE853
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 00:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1EB1AE85D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 00:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbgDQWjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 18:39:07 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:14012 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728770AbgDQWjG (ORCPT
+        id S1728928AbgDQWo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 18:44:56 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:55900 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbgDQWo4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 18:39:06 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 03HMcVHc019592;
-        Fri, 17 Apr 2020 15:38:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=8awsTdtUXUkacfl7t6lf7HqPpjb5Hk45wGMQI1xpF68=;
- b=lblLDBr1GvRLfQbu3KNaOfZLEqdgbNoIQNAOUV8ZBuI85tVe+DtLSQAZuyVp5B2Unbj0
- kiU80TT6BN8rO0yGLwTjcZ85Obc+lNDErtRLFcQVS/yy5VfwJ0zzA3qymmj2vOD31JrH
- iTTYWnZY/J0NxW8fjNitlsd0Jh6d+L95kws= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net with ESMTP id 30em7utsxy-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 17 Apr 2020 15:38:33 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 17 Apr 2020 15:38:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LsGHhyOtmKznwUo37T/xur5NZlmf0OD7wkuZhlj/bvSByNnZ1AMLLaujyteSuD9kWZrtUdTtTrZn6EqKxiwrKRQEEgLeiw1Np0FM/50ogtLfQD7b1RPmFC0dXkqJfTxiuzVM6FuTiTjnavEZcu2APAwqJyAqX0OftnhXiF84atNO7Iq93aIrSvTgPE+p7EfKeMturXSZ+zSHJW7m1mz6BOR3WESk+XYOz7XE8/6Xnz4gwbB6SbdmYAKiS0hmx02fXOk17bbiVWAvNYmkFx5gABNfu9K/0J7JsojN6hkdfhbIYcbUZkWPz2dyeme5P5jkzdv34seP34ZagMCt/x+DtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8awsTdtUXUkacfl7t6lf7HqPpjb5Hk45wGMQI1xpF68=;
- b=ZadIrsWnDcM2zVpCQ8w7sOo/v5SYUcpDdrOMTZo/eS2GkyHrAGWkVT8VBXQ199QJxzezFJP6N70CyMUptauz+cWe+x731grFKLgs/SHyTQnzs0HASQdQCn2Bho15gJzOVFOP8Mx8TKCI95D1DmTteqRT72eM5XRIpupsikwZ+2vneXxeWnfLn/COpTSFgu3Td+83uBhkvnqZVBFaAZWQoRE6d1u416XmKyWxJc4bpZQLwoVMNetJAAx0TXs37MFTBOjV9Fed3XFmwkU4bBzKXU9PxLN14TAyLPVcvqCu4XBPvaH1gy6cIV4cheHKVpwxetM/bmxzmmVEBn+hrbvMUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8awsTdtUXUkacfl7t6lf7HqPpjb5Hk45wGMQI1xpF68=;
- b=JXpnxhepp3LbjY7/w/FTKIYV6PwpZ1OwyQ4M669ytO/YqNd4+s/RMnSMwQ6JIcHmwMZxf8XsHPxzgzYS6qDpbdfGivzrlTdsTiVgnwgauPaPPOjbTVCct5cW/rR9ZbXf9YuCZiBpBqnId+tDmrrxOikHUN9V3AMvnPKHnkD5BkQ=
-Received: from BYAPR15MB4119.namprd15.prod.outlook.com (2603:10b6:a02:cd::20)
- by BYAPR15MB3333.namprd15.prod.outlook.com (2603:10b6:a03:10c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Fri, 17 Apr
- 2020 22:38:30 +0000
-Received: from BYAPR15MB4119.namprd15.prod.outlook.com
- ([fe80::90d6:ec75:fde:e992]) by BYAPR15MB4119.namprd15.prod.outlook.com
- ([fe80::90d6:ec75:fde:e992%7]) with mapi id 15.20.2900.028; Fri, 17 Apr 2020
- 22:38:30 +0000
-Date:   Fri, 17 Apr 2020 15:38:28 -0700
-From:   Andrey Ignatov <rdna@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>
-Subject: Re: [PATCH 6/6] sysctl: pass kernel pointers to ->proc_handler
-Message-ID: <20200417223828.GA41441@rdna-mbp>
-References: <20200417064146.1086644-1-hch@lst.de>
- <20200417064146.1086644-7-hch@lst.de>
- <20200417193910.GA7011@rdna-mbp>
- <20200417195015.GO5820@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200417195015.GO5820@bombadil.infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-ClientProxiedBy: CO2PR05CA0078.namprd05.prod.outlook.com
- (2603:10b6:102:2::46) To BYAPR15MB4119.namprd15.prod.outlook.com
- (2603:10b6:a02:cd::20)
+        Fri, 17 Apr 2020 18:44:56 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jPZjC-0005JR-PH; Fri, 17 Apr 2020 16:44:54 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jPZjB-0000Gs-Ug; Fri, 17 Apr 2020 16:44:54 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200414070142.288696-1-hch@lst.de>
+Date:   Fri, 17 Apr 2020 17:41:52 -0500
+In-Reply-To: <20200414070142.288696-1-hch@lst.de> (Christoph Hellwig's message
+        of "Tue, 14 Apr 2020 09:01:34 +0200")
+Message-ID: <87r1wl68gf.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2620:10d:c090:400::5:6540) by CO2PR05CA0078.namprd05.prod.outlook.com (2603:10b6:102:2::46) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.6 via Frontend Transport; Fri, 17 Apr 2020 22:38:29 +0000
-X-Originating-IP: [2620:10d:c090:400::5:6540]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 61d6c455-2065-4947-97ef-08d7e3200d51
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3333:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB33331A99E453CC3C536AB771A8D90@BYAPR15MB3333.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:519;
-X-Forefront-PRVS: 0376ECF4DD
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4119.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(7916004)(136003)(346002)(366004)(376002)(396003)(39860400002)(1076003)(316002)(7416002)(16526019)(86362001)(186003)(54906003)(4744005)(81156014)(8676002)(8936002)(52116002)(33656002)(66946007)(66556008)(478600001)(6486002)(6496006)(6916009)(66476007)(5660300002)(4326008)(33716001)(9686003)(2906002);DIR:OUT;SFP:1102;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IZgbSAktu/lNtxM70jMH4ZCg3RCH8ymHj/uzYjYPigDjjXARF7v2ImyU3yrvaSqSW/hN+ZQML306UDT0vrR/4lK6uneWLzlXmLxu7AoKcqQz8kKEWePDtiBw+8bdeWiGLGLb8kWOQQIkVmOWmjC48oYs9gz0fEPyZsBw4aSDxl3hnikQRvw2XqwnSW7fi7OmoTlyxqd11iF2k3DJFD0kkpnmg067Pdl7NGRBT9BK91Tk8WRfD1E7MJmJc9DIHInEdQiY12ZVPyzI4W5C7R+6IOXaix5E6+f1TpZDYGZaw8dKp7ZRtGdRotOz6C1qh4ZLMFN+xyK6VujCr9jqRhFXtWlQwbA+ntMdTHhUp+8BS4sSZx2PS7oFMjwJeSEd6kjTgVHGRAnUF7WdoXIVaQwaKEQuL9k7m7axCSC4g2vXs0LkRJklJHNYa8VjnvPBYxS3
-X-MS-Exchange-AntiSpam-MessageData: S150+3KneqW/WeFesQtLePM0Ez74L4EQSxoVLPM+8H08AylhjujfgF+Frp/h57dFdnuGF7HGcYgvHIehZ4eVj8PNrLS78tKi0dhy2OKmCxqOqwtEWcM88n/Rj8LIaVJe8Bj02MA4mO0SPeyOKdyIzPp8igUlzk+jInflV52WTuKD1ua5mPOKkhfj3tk9E5+b
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61d6c455-2065-4947-97ef-08d7e3200d51
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2020 22:38:30.2691
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bu7PZ9VjFlyqfhXpkMd6fzQyWlrunnpjTyF3Nhjy35+QGqIBieWRqlOtdwBp8xwp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3333
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-17_10:2020-04-17,2020-04-17 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 bulkscore=0 adultscore=0
- impostorscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
- suspectscore=0 priorityscore=1501 phishscore=0 spamscore=0 mlxlogscore=886
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004170166
-X-FB-Internal: deliver
+Content-Type: text/plain
+X-XM-SPF: eid=1jPZjB-0000Gs-Ug;;;mid=<87r1wl68gf.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/NTTejAZTToJnS0iJyxwSeYmg+5kLfBag=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4907]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christoph Hellwig <hch@lst.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 360 ms - load_scoreonly_sql: 0.34 (0.1%),
+        signal_user_changed: 16 (4.4%), b_tie_ro: 12 (3.3%), parse: 1.80
+        (0.5%), extract_message_metadata: 19 (5.2%), get_uri_detail_list: 1.28
+        (0.4%), tests_pri_-1000: 21 (5.9%), tests_pri_-950: 1.81 (0.5%),
+        tests_pri_-900: 1.51 (0.4%), tests_pri_-90: 91 (25.2%), check_bayes:
+        88 (24.5%), b_tokenize: 6 (1.7%), b_tok_get_all: 6 (1.6%),
+        b_comp_prob: 2.1 (0.6%), b_tok_touch_all: 69 (19.3%), b_finish: 1.66
+        (0.5%), tests_pri_0: 187 (52.0%), check_dkim_signature: 0.93 (0.3%),
+        check_dkim_adsp: 3.1 (0.9%), poll_dns_idle: 0.67 (0.2%), tests_pri_10:
+        2.9 (0.8%), tests_pri_500: 12 (3.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: remove set_fs calls from the exec and coredump code v2
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> [Fri, 2020-04-17 12:50 -0700]:
-> On Fri, Apr 17, 2020 at 12:39:10PM -0700, Andrey Ignatov wrote:
-> > Though it breaks tools/testing/selftests/bpf/test_sysctl.c. I spent some
-> > time debugging and found a couple of problems -- see below. But there is
-> > something else .. Still I figured it's a good idea to give an early
-> > heads-up.
-> 
-> "see below"?  Really?  You're going to say that and then make people
-> scroll through thousands of lines of quoted material to find your new
-> contributions?  Please, learn to trim appropriately.
+Christoph Hellwig <hch@lst.de> writes:
 
-Ack.
+> Hi all,
+>
+> this series gets rid of playing with the address limit in the exec and
+> coredump code.  Most of this was fairly trivial, the biggest changes are
+> those to the spufs coredump code.
+>
+> Changes since v1:
+>  - properly spell NUL
+>  - properly handle the compat siginfo case in ELF coredumps
 
-> 
-> Here's about what you should have sent:
+Quick question is exec from a kernel thread within the scope of what you
+are looking at?
 
-Thanks.
+There is a set_fs(USER_DS) in flush_old_exec whose sole purpose appears
+to be to allow exec from kernel threads.  Where the kernel threads
+run with set_fs(KERNEL_DS) until they call exec.
 
--- 
-Andrey Ignatov
+Eric
