@@ -2,94 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB15E1AF275
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D571AF279
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 19:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbgDRQ4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 12:56:33 -0400
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:46524 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbgDRQ4c (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:56:32 -0400
-Received: by mail-pg1-f177.google.com with SMTP id 188so2774214pgj.13;
-        Sat, 18 Apr 2020 09:56:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=lF1y9PfImXqVNxS73yea9ApBpzQgwIai1wUeB4BVWiQ=;
-        b=PQru5Yt0hlhT4YyrL9VMvAn6V8pN1mDKS/I3eMX9l8VPdS03l9ppftU6s/4MinKXs/
-         H7qlxPrA97HpXjFcntDiR3sSyhvBBkklbCTfegYF9/2dNrql6uJbvQjDxqMVnxT7kQsQ
-         EWIlsCr3FJbzMSuN1CyLSQoqfh4YfpQ2qRWxh7ZNqWbsPrdEULIwgNWxe7WaLCKxPye2
-         kPXXD1H4cidLrizOoU3Z0qm7Ch+z2E5+kPj+rVqb2zO6GPGqIwacNC0WlmS7dbqq9Nky
-         b9zHFQkgNVFLDOej690yng73/xSXdJ6OKnGDhILns/VjfngVqdRzP+9NCJvktAClwsWu
-         KDRg==
-X-Gm-Message-State: AGi0PuYfOKlae9x4xvzK+Cy+0Uso42J8g4v8YIx4bXDbDhBJoKBo4MnQ
-        ivNHhTRFliEYNeDfy/kMDpo=
-X-Google-Smtp-Source: APiQypJOPF2JmRD7dAtQFI7xdi4G/i6XBm/wg6SbQ6UgER8Vr2WC4+9wW0jbgqOp0J4e9FFnx8vQmA==
-X-Received: by 2002:a63:4920:: with SMTP id w32mr3378974pga.119.1587228990341;
-        Sat, 18 Apr 2020 09:56:30 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:551:c132:d476:f445? ([2601:647:4000:d7:551:c132:d476:f445])
-        by smtp.gmail.com with ESMTPSA id l9sm8846965pjl.20.2020.04.18.09.56.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Apr 2020 09:56:29 -0700 (PDT)
-Subject: Re: [PATCH v7 07/11] scsi: sd_zbc: factor out sanity checks for zoned
- commands
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>
-References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
- <20200417121536.5393-8-johannes.thumshirn@wdc.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <aba7b0f9-6dd1-bbca-d7d1-8f937d0f2a25@acm.org>
-Date:   Sat, 18 Apr 2020 09:56:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1725903AbgDRRGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 13:06:44 -0400
+Received: from sandeen.net ([63.231.237.45]:32820 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbgDRRGo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 13:06:44 -0400
+Received: from [10.0.0.4] (liberator [10.0.0.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by sandeen.net (Postfix) with ESMTPSA id 7007C323BF7;
+        Sat, 18 Apr 2020 12:06:19 -0500 (CDT)
+Subject: Re: [PATCH 2/2 V2] exfat: truncate atimes to 2s granularity
+From:   Eric Sandeen <sandeen@sandeen.net>
+To:     Namjae Jeon <linkinjeon@kernel.org>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>
+References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
+ <abfc2cdf-0ff1-3334-da03-8fbcc6eda328@sandeen.net>
+ <381e5327-618b-13ab-ebe5-175f99abf7db@sandeen.net>
+ <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
+ <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
+ <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <fd29fb6b-8c92-d4c1-a15e-4e33025175ea@sandeen.net>
+Date:   Sat, 18 Apr 2020 12:06:42 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200417121536.5393-8-johannes.thumshirn@wdc.com>
+In-Reply-To: <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-04-17 05:15, Johannes Thumshirn wrote:
-> Factor sanity checks for zoned commands from sd_zbc_setup_zone_mgmt_cmnd().
-> 
-> This will help with the introduction of an emulated ZONE_APPEND command.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+
+On 4/18/20 11:40 AM, Eric Sandeen wrote:
+> On 4/18/20 11:04 AM, Eric Sandeen wrote:
+>> since access_time has no corresponding 10msIncrement field, my understanding was that it could only have a 2s granularity.
+> 
+> Maybe your concern is whether the other _time fields should also be
+> truncated to 2s even though they have the _ms field?  I don't think so; the
+> s_time_gran already limits in-core timestamp resolution to 10ms, which will
+> be properly translated when the inode is written to disk.
+> 
+> atime has a different granularity though, so s_time_gran doens't help and we
+> must manually change it to 2s whenever we call something like current_time(), which
+> only enforces the 10ms granularity.
+> 
+> So for cases like this:
+> 
+>  	generic_fillattr(inode, stat);
+> +	exfat_truncate_atime(&stat->atime);
+> 
+> or this:
+> 
+>  	inode->i_mtime = inode->i_atime = inode->i_ctime =
+>  		EXFAT_I(inode)->i_crtime = current_time(inode);
+> +	exfat_truncate_atime(&inode->i_atime);
+> 
+> I think it's clearly the right thing to do; anything finer than 2s will be thrown
+> away when the vfs inode atime is translated to the disk format, so we should never
+> hold finer granularity in the in-memory vfs inode.
+> 
+> However, in exfat_get_entry_time() maybe all we need to do is set ts->tv_nsec to 0;
+> that might be clearer.
+
+so maybe this is better - 
+
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index c8b33278d474..2c5629b4e7e6 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -89,7 +89,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 		ts->tv_sec += time_ms / 100;
+ 		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
+ 	} else
+-		exfat_truncate_atime(ts);
++		ts->tv_nsec = 0;
+ 
+ 	if (tz & EXFAT_TZ_VALID)
+ 		/* Adjust timezone to UTC0. */
+
+
+because the conversion should already limit tv_sec to a 2s granularity.
+
+-Eric
