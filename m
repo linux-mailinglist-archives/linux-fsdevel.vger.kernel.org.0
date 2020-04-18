@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A73581AF5B8
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD631AF5B7
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 00:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbgDRWvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728372AbgDRWvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sat, 18 Apr 2020 18:51:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbgDRWvd (ORCPT
+        with ESMTP id S1728362AbgDRWvf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 18:51:33 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC368C061A41
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 15:51:32 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id j20so4381300edj.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 15:51:32 -0700 (PDT)
+        Sat, 18 Apr 2020 18:51:35 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0CBC0610D6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 15:51:33 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id g16so4391280eds.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 15:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cloud.ionos.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LJG/tvH74vPoZBWRmNdYjJBmTLQ93YDBV04Re8a/V+U=;
-        b=KFN2BQBgovkjPW//Nj/G8X+du1tRzLXj3PCGFEzq/F5Zsi2k2lzaSPr7Eim84Z00wY
-         o4Zc/B9YK556Iq9QhV8vk+JD5GbiG6musD/+6BRa8VHL62dCSI+QUoXisnlz9uIMXMHL
-         yiWinSld4vUf9bOMhpCaheaghCuxM9BftbPgd0nAKIvsEAeug2B3rCDtofQvM3+nkGhF
-         oSqB6MiYRP+75flGNSdr2NK6HCegAL+XJ75G/Fjv0QjR27pJNR+BcYg+UX/UXM10NTYj
-         Zc+MD8TwBw0tfPOef1OUjuzMoceCf6+juHrK0ycAyga1RwV58qs7ET/d/p2X775r6S30
-         IXtA==
+        bh=hL6p6zRwYRA8CkbRJsKJgrHbaaCXLqCx5oMrPjaFW4Q=;
+        b=YIJwwQnMLeEO1MmhiXMMg2q4Jy+N/8huIrljqa3VGIl5RwQUL4vBgWq9lK2vWImONh
+         jWSOhP8RMEvHfb+GZexYyHOPRiKSPLIJnRhINkYKgcrpkThi9io5dqEvw0HPvJJpRs4B
+         HxArufN8+hphijbsEfJXX2AKrXXOvenOPFu1SGXxBJJhu02+SHsNDtORcnxJU3kivGq7
+         9IcsOz0Ra+Zmtj7CJ4JwJtIQG4Te4CS7DF4eM+fMaZku8D7MoRhlN4IfUNZktWmc4ZNS
+         +RVBa3fNdE6MKNX4Bs12OkzqEAqVNXT5qO2HK9yDakaOnvAyJTLvXAqrq0fb1woTcN+K
+         FJ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LJG/tvH74vPoZBWRmNdYjJBmTLQ93YDBV04Re8a/V+U=;
-        b=KQzSQK60qdcEFjWzCMClSQawtYKiECM2yT03iCdBtHdWX7YqWkJU/+4FpIojXoYHDR
-         1nsXu3FdEjwvUnJSLAZX8GBuwTj1gMITpK4sIQGNrs5RDIUb2xOb+30tTCon90pMVGKA
-         r+NeZJBIL+0NVtfUtPe6oUAM0MzT6KS3HL5LuXvkx/ylHMuG6bC7CgKkkwhbBBMvQLhW
-         d0g9tOCqrMFcEZwc0XguAWFl0VvGHlGOOthz/sICN/+4x7lLXcpCKZYyr8Sfu/1pHVCx
-         Jr1pyIOXeO3HOkVJhXX1Iz8f1SP3mPyajRwTpA/0Z7kR/dRd3AXceI/2sOzVhM8Uscuy
-         jdzA==
-X-Gm-Message-State: AGi0PuYt9NgDq/SgWESOlkcD3AHOZRQIyKL0cENCF9vRU/G5n9XbZZzP
-        Ijf9Z82Qdb0cstvEWFsl2+PLf0537ClN/g==
-X-Google-Smtp-Source: APiQypJovF9nvn1Yr9ZkK7hvEAqP4GrPPtpF1BNuB0WcmsdP6W/7lfIf/XIOf4WoWYBYdHzCtr5a9g==
-X-Received: by 2002:aa7:d056:: with SMTP id n22mr8533808edo.281.1587250291361;
-        Sat, 18 Apr 2020 15:51:31 -0700 (PDT)
+        bh=hL6p6zRwYRA8CkbRJsKJgrHbaaCXLqCx5oMrPjaFW4Q=;
+        b=L/TEiYH5ostHvq3ynKmomWGDRm9HidN9KvoU0UJUSVY7v4Q3uf4ETC5CksZJSP+YRm
+         Y7NWwMIne2hCHHKQ5qnOge1/QLp2Ghx3S6Jda9+f+usEl+8a5DTDSZTeRi/VnT1ia2qM
+         mYU6Ofq+TPfcG1A6Ay0zULK+AVpVmpbp1AxWr1huJy8SDxMestzy/bBMQUkguDCf2XJ9
+         4NO4k9Jz/UtbNkydLs/VqpxZn/saEYCd1a4SKgbujr95O0je3QkMTnUGqIxF62E8zc1/
+         brcaqU4ridBLVtgJ9cTfTyHJnhGMhSeC231vrN+Wu7Zp2jzBNUjyFu2CszsGEqPrabty
+         PZkg==
+X-Gm-Message-State: AGi0PuaKC2U7z6BikTGtNNNeIQOfZR3x4GoicrIkLpJgKvKaU3ZibQkU
+        T2T9salYVGL/WMWctPWeqPkGNKedtDDkKQ==
+X-Google-Smtp-Source: APiQypLpKv/mTEh9SN92IJaogbdrwreOw8sLFoEw7Zo0QJRoelWBcQh18FKDlsMwRdrWQm2i7h2N+w==
+X-Received: by 2002:a05:6402:290:: with SMTP id l16mr8164945edv.207.1587250292396;
+        Sat, 18 Apr 2020 15:51:32 -0700 (PDT)
 Received: from ls00508.pb.local ([2001:1438:4010:2540:6c58:b8bc:cdc6:2e2d])
-        by smtp.gmail.com with ESMTPSA id g21sm2616767ejm.79.2020.04.18.15.51.30
+        by smtp.gmail.com with ESMTPSA id g21sm2616767ejm.79.2020.04.18.15.51.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Apr 2020 15:51:30 -0700 (PDT)
+        Sat, 18 Apr 2020 15:51:31 -0700 (PDT)
 From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        devel@lists.orangefs.org
-Subject: [RFC PATCH 4/5] orangefs: call __clear_page_buffers to simplify code
-Date:   Sun, 19 Apr 2020 00:51:22 +0200
-Message-Id: <20200418225123.31850-5-guoqing.jiang@cloud.ionos.com>
+        Song Liu <song@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH 5/5] md-bitmap: don't duplicate code for __clear_page_buffers
+Date:   Sun, 19 Apr 2020 00:51:23 +0200
+Message-Id: <20200418225123.31850-6-guoqing.jiang@cloud.ionos.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
 References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
@@ -64,78 +62,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since __clear_page_buffers is exported, we can call __clear_page_buffers
-to simplify code in the four places.
+After __clear_page_buffers is exported, we can use it directly instead of
+copy the implementation.
 
-Cc: Mike Marshall <hubcap@omnibond.com>
-Cc: Martin Brandenburg <martin@omnibond.com>
-Cc: devel@lists.orangefs.org
+Cc: Song Liu <song@kernel.org>
+Cc: linux-raid@vger.kernel.org
 Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
 ---
-The order for set_page_private and ClearPagePrivate is swapped in
-__clear_page_buffers, not sure it is identical or not, so this is
-RFC.
+ drivers/md/md-bitmap.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Thanks,
-Guoqing
-
- fs/orangefs/inode.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
-
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 12ae630fbed7..8e1591d8bf24 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/bvec.h>
-+#include <linux/buffer_head.h>
- #include "protocol.h"
- #include "orangefs-kernel.h"
- #include "orangefs-bufmap.h"
-@@ -64,9 +65,7 @@ static int orangefs_writepage_locked(struct page *page,
- 	}
- 	if (wr) {
- 		kfree(wr);
--		set_page_private(page, 0);
--		ClearPagePrivate(page);
--		put_page(page);
-+		__clear_page_buffers(page);
- 	}
- 	return ret;
+diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+index b952bd45bd6a..a1464417ada6 100644
+--- a/drivers/md/md-bitmap.c
++++ b/drivers/md/md-bitmap.c
+@@ -324,14 +324,6 @@ static void end_bitmap_write(struct buffer_head *bh, int uptodate)
+ 		wake_up(&bitmap->write_wait);
  }
-@@ -460,17 +459,13 @@ static void orangefs_invalidatepage(struct page *page,
  
- 	if (offset == 0 && length == PAGE_SIZE) {
- 		kfree((struct orangefs_write_range *)page_private(page));
--		set_page_private(page, 0);
--		ClearPagePrivate(page);
--		put_page(page);
-+		__clear_page_buffers(page);
- 		return;
- 	/* write range entirely within invalidate range (or equal) */
- 	} else if (page_offset(page) + offset <= wr->pos &&
- 	    wr->pos + wr->len <= page_offset(page) + offset + length) {
- 		kfree((struct orangefs_write_range *)page_private(page));
--		set_page_private(page, 0);
--		ClearPagePrivate(page);
--		put_page(page);
-+		__clear_page_buffers(page);
- 		/* XXX is this right? only caller in fs */
- 		cancel_dirty_page(page);
- 		return;
-@@ -537,9 +532,7 @@ static void orangefs_freepage(struct page *page)
+-/* copied from buffer.c */
+-static void
+-__clear_page_buffers(struct page *page)
+-{
+-	ClearPagePrivate(page);
+-	set_page_private(page, 0);
+-	put_page(page);
+-}
+ static void free_buffers(struct page *page)
  {
- 	if (PagePrivate(page)) {
- 		kfree((struct orangefs_write_range *)page_private(page));
--		set_page_private(page, 0);
--		ClearPagePrivate(page);
--		put_page(page);
-+		__clear_page_buffers(page);
- 	}
- }
- 
+ 	struct buffer_head *bh;
 -- 
 2.17.1
 
