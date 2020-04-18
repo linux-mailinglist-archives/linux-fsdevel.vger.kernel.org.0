@@ -2,78 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 329201AF266
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817D01AF26D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbgDRQkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 12:40:52 -0400
-Received: from sandeen.net ([63.231.237.45]:59758 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbgDRQkv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:40:51 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id E4EF9323BF7;
-        Sat, 18 Apr 2020 11:40:26 -0500 (CDT)
-Subject: Re: [PATCH 2/2 V2] exfat: truncate atimes to 2s granularity
-From:   Eric Sandeen <sandeen@sandeen.net>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>
-References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
- <abfc2cdf-0ff1-3334-da03-8fbcc6eda328@sandeen.net>
- <381e5327-618b-13ab-ebe5-175f99abf7db@sandeen.net>
- <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
- <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
-Date:   Sat, 18 Apr 2020 11:40:49 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.7.0
+        id S1726625AbgDRQqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 12:46:49 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47074 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbgDRQqt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 12:46:49 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 188so2766161pgj.13;
+        Sat, 18 Apr 2020 09:46:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GWknpOiP7uvC2PT0tJKduvW5TIp5mEE0CRJpCWZXxRw=;
+        b=BLKDhuJrtkKSUfzL9KMXas5jnnVLNARgEiSunL7+jQdGe2OJ7xTCxrXWhLlluOMHFC
+         AfDBThk/j2/sEKWuBpDYVHU9dlZQ8tGMv1OihJA9eCpDXqOuDMM1s4HLr8QhaAsno0c4
+         3mu+vuMH9Oe1pk18hnKzKyKx3EVQDvPxpcRDMhK5GiTHBkZcJjOQxP2eZge2Mo8v5TgI
+         1VA1EpEutBlS68IpbPyj0y6DbMpYkzB1u1LxEDaZwprHQ2+jxtFREHyEqG7X2MG2hQ4Q
+         CICIzE9dkvRfZjpTXVZZ5l4551RGcN0gzbj2PbzBmPfo3MW4sCHVpNowQ1mQ/kwsFntv
+         zEqg==
+X-Gm-Message-State: AGi0PubzrTqSKjYfTIGKBmF1A9W0Az3plfBg8ZuxUlVfRe2MbBSSLBV8
+        kM0ex/XXpb8i/pheTz2/WOE=
+X-Google-Smtp-Source: APiQypIrflAd9+tX0/9gTKSPIFlgllNyiimfnNEuue0C5WqRMWn+iI7/okl9Rv8x3c5gksvzJVNxyg==
+X-Received: by 2002:a62:7d11:: with SMTP id y17mr8671286pfc.127.1587228408072;
+        Sat, 18 Apr 2020 09:46:48 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:551:c132:d476:f445? ([2601:647:4000:d7:551:c132:d476:f445])
+        by smtp.gmail.com with ESMTPSA id n9sm9066458pjt.29.2020.04.18.09.46.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Apr 2020 09:46:47 -0700 (PDT)
+Subject: Re: [PATCH v7 04/11] block: Introduce REQ_OP_ZONE_APPEND
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>
+References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
+ <20200417121536.5393-5-johannes.thumshirn@wdc.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <373bc820-95f2-5728-c102-c4ca9fa8eea5@acm.org>
+Date:   Sat, 18 Apr 2020 09:46:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
+In-Reply-To: <20200417121536.5393-5-johannes.thumshirn@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,34 +86,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/20 11:04 AM, Eric Sandeen wrote:
-> since access_time has no corresponding 10msIncrement field, my understanding was that it could only have a 2s granularity.
+On 2020-04-17 05:15, Johannes Thumshirn wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> Define REQ_OP_ZONE_APPEND to append-write sectors to a zone of a zoned
+> block device. This is a no-merge write operation.
+> 
+> A zone append write BIO must:
+> * Target a zoned block device
+> * Have a sector position indicating the start sector of the target zone
 
-Maybe your concern is whether the other _time fields should also be
-truncated to 2s even though they have the _ms field?  I don't think so; the
-s_time_gran already limits in-core timestamp resolution to 10ms, which will
-be properly translated when the inode is written to disk.
+Why the start sector instead of any sector in the target zone? Wouldn't
+the latter make it easier to write software that uses REQ_OP_ZONE_APPEND?
 
-atime has a different granularity though, so s_time_gran doens't help and we
-must manually change it to 2s whenever we call something like current_time(), which
-only enforces the 10ms granularity.
+> * The target zone must be a sequential write zone
+> * The BIO must not cross a zone boundary
+> * The BIO size must not be split to ensure that a single range of LBAs
+>   is written with a single command.
 
-So for cases like this:
+"BIO size must" -> "BIO must"?
 
- 	generic_fillattr(inode, stat);
-+	exfat_truncate_atime(&stat->atime);
+> diff --git a/block/bio.c b/block/bio.c
+> index 0f0e337e46b4..97baadc6d964 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -1006,7 +1006,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  				put_page(page);
+>  		} else {
+>  			if (WARN_ON_ONCE(bio_full(bio, len)))
+> -                                return -EINVAL;
+> +				 return -EINVAL;
+>  			__bio_add_page(bio, page, len, offset);
+>  		}
+>  		offset = 0;
 
-or this:
+Has the 'return' statement been indented correctly? I see a tab and a
+space in front of that statement instead of only a tab.
 
- 	inode->i_mtime = inode->i_atime = inode->i_ctime =
- 		EXFAT_I(inode)->i_crtime = current_time(inode);
-+	exfat_truncate_atime(&inode->i_atime);
+> @@ -1451,6 +1501,10 @@ struct bio *bio_split(struct bio *bio, int sectors,
+>  	BUG_ON(sectors <= 0);
+>  	BUG_ON(sectors >= bio_sectors(bio));
+>  
+> +	/* Zone append commands cannot be split */
+> +	if (WARN_ON_ONCE(bio_op(bio) == REQ_OP_ZONE_APPEND))
+> +		return NULL;
+> +
+>  	split = bio_clone_fast(bio, gfp, bs);
+>  	if (!split)
+>  		return NULL;
 
-I think it's clearly the right thing to do; anything finer than 2s will be thrown
-away when the vfs inode atime is translated to the disk format, so we should never
-hold finer granularity in the in-memory vfs inode.
+Zone append commands -> Zone append bio's?
 
-However, in exfat_get_entry_time() maybe all we need to do is set ts->tv_nsec to 0;
-that might be clearer.
+> +/*
+> + * Check write append to a zoned block device.
+> + */
+> +static inline blk_status_t blk_check_zone_append(struct request_queue *q,
+> +						 struct bio *bio)
+> +{
+> +	sector_t pos = bio->bi_iter.bi_sector;
+> +	int nr_sectors = bio_sectors(bio);
+> +
+> +	/* Only applicable to zoned block devices */
+> +	if (!blk_queue_is_zoned(q))
+> +		return BLK_STS_NOTSUPP;
+> +
+> +	/* The bio sector must point to the start of a sequential zone */
+> +	if (pos & (blk_queue_zone_sectors(q) - 1) ||
+> +	    !blk_queue_zone_is_seq(q, pos))
+> +		return BLK_STS_IOERR;
+> +
+> +	/*
+> +	 * Not allowed to cross zone boundaries. Otherwise, the BIO will be
+> +	 * split and could result in non-contiguous sectors being written in
+> +	 * different zones.
+> +	 */
+> +	if (blk_queue_zone_no(q, pos) != blk_queue_zone_no(q, pos + nr_sectors))
+> +		return BLK_STS_IOERR;
 
--Eric
+Can the above statement be simplified into the following?
+
+	if (nr_sectors > q->limits.chunk_sectors)
+		return BLK_STS_IOERR;
+
+> +	/* Make sure the BIO is small enough and will not get split */
+> +	if (nr_sectors > q->limits.max_zone_append_sectors)
+> +		return BLK_STS_IOERR;
+
+Do we really need a new request queue limit parameter? In which cases
+will max_zone_append_sectors differ from the zone size?
+
+Thanks,
+
+Bart.
