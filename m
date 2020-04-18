@@ -2,97 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 749F21AF40A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 21:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5A51AF41F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 21:13:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbgDRTAX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 15:00:23 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51687 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727789AbgDRTAW (ORCPT
+        id S1728045AbgDRTNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 15:13:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726751AbgDRTNl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 15:00:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587236421;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=w0Gisw9hWUsG7t2w9OL7DQLlQmWjB8dYgMJG70gQDSw=;
-        b=a4Ta2E5+yaJoGONQxs8KxGyA7mkdoORM3CBb2+i7P+5DiyiQe28KhgfCDP6IS3PUtOEmUG
-        2eMu0lN61ee7KcSmnBi9OAeMTtaEI7SQGUv0jQRs3r4CBF4HC2lSU9UFG0ei2vb38E9g/k
-        RrtdrW5qACr9b29KAJVQyuTXFVEt68A=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-24-BYVo8lhcOiee7_7XhfvY5w-1; Sat, 18 Apr 2020 15:00:17 -0400
-X-MC-Unique: BYVo8lhcOiee7_7XhfvY5w-1
-Received: by mail-qk1-f197.google.com with SMTP id k13so5548030qkg.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 12:00:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w0Gisw9hWUsG7t2w9OL7DQLlQmWjB8dYgMJG70gQDSw=;
-        b=DQyfzyoj8DsWANDfdXkIXWRiwGbd67yW97vVyo5w59yvJQmVZI2w1Yhw4OiCsT/s7o
-         Z2Jsi5n/AAlX8vG/rVFZG5FPGUu1Y8y/5+LWtwcDGXV2gEU+bVhvQAJSmI6iw5OhRV7Y
-         H5XghalDGXPBO5dPlX6QlCniXLhDrQXru4uwpbpPw1fWtpZL45AXJGjUnNXpfwheqjY7
-         WUy7BU5j+lpmVszA4p+hMEeyOqb3rOr0f6svLNyA1bQDZ246i1PmfV1PvlafyZCKqjE/
-         TbCWsKHhlr2G0Lao2X2R6xqXHCeMVSW1zalDU4YZFj/XGLPIfCMbNqPgBCTZ2XjBKE//
-         5kCQ==
-X-Gm-Message-State: AGi0PuYEiUuxL2xtJdFGnPlVdFGOJlzKy+3odwkLYE86VXAMY1Vt9lq2
-        FHXjxshQI9L+5370kdrq0QucTOFQieaFcEQXa8/VCAeYDARUC1241rKZC4j1Z3FPjbVCEnqMp8C
-        4ubUmutyyJGjyM0186a4FEL7vENfvCAqgIfO0yTFJjw==
-X-Received: by 2002:a37:d0a:: with SMTP id 10mr8976655qkn.288.1587236417119;
-        Sat, 18 Apr 2020 12:00:17 -0700 (PDT)
-X-Google-Smtp-Source: APiQypI2nHN5tNsMq4pPm5ciYHRA5VRWl7aSSu5+P9HKsSo/yFjTBtNzBH3IvuFjBQ139wkhhgPpEk79Jxs2c07SmRA=
-X-Received: by 2002:a37:d0a:: with SMTP id 10mr8976624qkn.288.1587236416872;
- Sat, 18 Apr 2020 12:00:16 -0700 (PDT)
+        Sat, 18 Apr 2020 15:13:41 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C8AC061A0C;
+        Sat, 18 Apr 2020 12:13:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1Xuy0hbaik5jnBw+JX74GiEbxwfdlzrwJ6CXAcCNKJ0=; b=Pbh2gwHBC+0n9j0XheYbIXwFQj
+        DLH/6PgobmCWmxlogha43zhUGSOtU89tXwjVH0o1Rho/S2T2EjJTPG70nmSsvSMvvLuonOlXdkiEF
+        yGJpGvfRz2PkLCG7L7Uy3m9lgzRa8kBf6U42WpkqqxMc3bt3hK4TRhmhD0zC1q2wsbCa9130nX/Tr
+        BTyG4Wi0/MtCFbctxHGNP3IoIr9AwF92URUTCaCCqCq81Wkivc6Os9SxUDznfhAgxmUgbP9sTqTjg
+        OQaGKDbNC89jhx9AoLbm18DH/xji73LaoYjLqiNC454x2nCt2c/0XKhdkme0M37SQxFbl37OzjXm7
+        wpboRveg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jPsuI-0002hx-99; Sat, 18 Apr 2020 19:13:38 +0000
+Date:   Sat, 18 Apr 2020 12:13:38 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        Zzy Wysm <zzy@zzywysm.com>
+Subject: Re: [PATCH 7/9] drivers/base: fix empty-body warnings in
+ devcoredump.c
+Message-ID: <20200418191338.GR5820@bombadil.infradead.org>
+References: <20200418184111.13401-1-rdunlap@infradead.org>
+ <20200418184111.13401-8-rdunlap@infradead.org>
+ <20200418185033.GQ5820@bombadil.infradead.org>
+ <b88d6f8b-e6af-7071-cefa-dc12e79116b6@infradead.org>
+ <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
 MIME-Version: 1.0
-References: <20200416143532.11743-1-mszeredi@redhat.com> <c47459a5-3323-121e-ec66-4a8eb2a8afca@samba.org>
-In-Reply-To: <c47459a5-3323-121e-ec66-4a8eb2a8afca@samba.org>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Sat, 18 Apr 2020 21:00:05 +0200
-Message-ID: <CAOssrKe7RNyReAFLoQGBDm79qMdXEubhP5QhG_+UmGZXgeXBkA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: add faccessat2 syscall
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 8:36 PM Stefan Metzmacher <metze@samba.org> wrote:
->
-> Hi Miklos,
->
-> > POSIX defines faccessat() as having a fourth "flags" argument, while the
-> > linux syscall doesn't have it.  Glibc tries to emulate AT_EACCESS and
-> > AT_SYMLINK_NOFOLLOW, but AT_EACCESS emulation is broken.
-> >
-> > Add a new faccessat(2) syscall with the added flags argument and implement
-> > both flags.
-> >
-> > The value of AT_EACCESS is defined in glibc headers to be the same as
-> > AT_REMOVEDIR.  Use this value for the kernel interface as well, together
-> > with the explanatory comment.
->
-> It would be nice if resolv_flags would also be passed in addition to the
-> at flags.
-> See:https://lore.kernel.org/linux-api/CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com/
->
-> We should avoid expecting yet another syscall in near future.
+On Sat, Apr 18, 2020 at 11:55:05AM -0700, Joe Perches wrote:
+> On Sat, 2020-04-18 at 11:53 -0700, Randy Dunlap wrote:
+> > On 4/18/20 11:50 AM, Matthew Wilcox wrote:
+> > > On Sat, Apr 18, 2020 at 11:41:09AM -0700, Randy Dunlap wrote:
+> > > > @@ -294,11 +295,11 @@ void dev_coredumpm(struct device *dev, s
+> > > >  
+> > > >  	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
+> > > >  			      "failing_device"))
+> > > > -		/* nothing - symlink will be missing */;
+> > > > +		do_empty(); /* nothing - symlink will be missing */
+> > > >  
+> > > >  	if (sysfs_create_link(&dev->kobj, &devcd->devcd_dev.kobj,
+> > > >  			      "devcoredump"))
+> > > > -		/* nothing - symlink will be missing */;
+> > > > +		do_empty(); /* nothing - symlink will be missing */
+> > > >  
+> > > >  	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
+> > > >  	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
+> > > 
+> > > Could just remove the 'if's?
+> > > 
+> > > +	sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
+> > > +			"failing_device");
+> > > 
+> > 
+> > OK.
+> 
+> sysfs_create_link is __must_check
 
-What is the objection against
+Oh, I missed the declaration -- I just saw the definition.  This is a
+situation where __must_check hurts us and it should be removed.
 
-openat(... O_PATH)
-foobarat(fd, AT_EMPTY_PATH, ...)
+Or this code is wrong and it should be
 
-?
+	WARN(sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
+			"failing_device");
 
-Thanks,
-Miklos
+like drivers/pci/controller/vmd.c and drivers/i2c/i2c-mux.c
 
+Either way, the do_empty() construct feels like the wrong way of covering
+up the warning.
