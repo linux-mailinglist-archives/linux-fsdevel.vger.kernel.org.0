@@ -2,124 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 198C11AF401
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 20:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 749F21AF40A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 21:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbgDRS7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 14:59:15 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:46386 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbgDRS7O (ORCPT
+        id S1726086AbgDRTAX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 15:00:23 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51687 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727789AbgDRTAW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 14:59:14 -0400
-Received: by mail-il1-f198.google.com with SMTP id g17so4712358iln.13
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 11:59:14 -0700 (PDT)
+        Sat, 18 Apr 2020 15:00:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587236421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=w0Gisw9hWUsG7t2w9OL7DQLlQmWjB8dYgMJG70gQDSw=;
+        b=a4Ta2E5+yaJoGONQxs8KxGyA7mkdoORM3CBb2+i7P+5DiyiQe28KhgfCDP6IS3PUtOEmUG
+        2eMu0lN61ee7KcSmnBi9OAeMTtaEI7SQGUv0jQRs3r4CBF4HC2lSU9UFG0ei2vb38E9g/k
+        RrtdrW5qACr9b29KAJVQyuTXFVEt68A=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-24-BYVo8lhcOiee7_7XhfvY5w-1; Sat, 18 Apr 2020 15:00:17 -0400
+X-MC-Unique: BYVo8lhcOiee7_7XhfvY5w-1
+Received: by mail-qk1-f197.google.com with SMTP id k13so5548030qkg.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 12:00:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lNGjideo7zFgJ779fKErVM6LqcZZT6w673OoXDkI/mI=;
-        b=iNodtGs821jJBdGdYOmO+vqhZwC+M2MHYjJnltua4MMcC3PZ2OoNTNEYnBq8QsN6Nc
-         P/MWPXwo6OwHCsqwTCVtuCKWXzY5K/F0stjCsT/3fA3hffziiB8gmbQAmfif8LdUpqV7
-         U+QA+uJ4bUs+eDxmGtXQ4K/q1zfl/S2fTMWKFn9yf29bAaKc3rxzyv5rtbSw1YwpdeoO
-         WF+ppMr0ASQ5rsAAUV71UJTDgWv+xRLhEdAqGUMVHy89PSQSLd3eiGMXsmTI96dQTinl
-         rvtRNDU3D+SpvfCY7eB677CPH5f2epn0OEz0HOab74Vd7C0fVhE0EMVRf8WAfMHV/g9A
-         h3jw==
-X-Gm-Message-State: AGi0PubUy0gX6WVLcRn1oP9nKJ0CKOgCPbV/X00HPF0D65gOzIRNS1SB
-        XqcYctQsNx8Z92CmqnwaOeww76gVJM8sOLtM/eq3uHq9PT6T
-X-Google-Smtp-Source: APiQypJ5LYYPmMiPhlLhndVNdNt2z1uXUt7Gts90Wfw8pxmW97GBxS/uMNXRXyuwqX8Z76kEamWgGZE98MyMCuOYIiL4zLfDMOkR
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w0Gisw9hWUsG7t2w9OL7DQLlQmWjB8dYgMJG70gQDSw=;
+        b=DQyfzyoj8DsWANDfdXkIXWRiwGbd67yW97vVyo5w59yvJQmVZI2w1Yhw4OiCsT/s7o
+         Z2Jsi5n/AAlX8vG/rVFZG5FPGUu1Y8y/5+LWtwcDGXV2gEU+bVhvQAJSmI6iw5OhRV7Y
+         H5XghalDGXPBO5dPlX6QlCniXLhDrQXru4uwpbpPw1fWtpZL45AXJGjUnNXpfwheqjY7
+         WUy7BU5j+lpmVszA4p+hMEeyOqb3rOr0f6svLNyA1bQDZ246i1PmfV1PvlafyZCKqjE/
+         TbCWsKHhlr2G0Lao2X2R6xqXHCeMVSW1zalDU4YZFj/XGLPIfCMbNqPgBCTZ2XjBKE//
+         5kCQ==
+X-Gm-Message-State: AGi0PuYEiUuxL2xtJdFGnPlVdFGOJlzKy+3odwkLYE86VXAMY1Vt9lq2
+        FHXjxshQI9L+5370kdrq0QucTOFQieaFcEQXa8/VCAeYDARUC1241rKZC4j1Z3FPjbVCEnqMp8C
+        4ubUmutyyJGjyM0186a4FEL7vENfvCAqgIfO0yTFJjw==
+X-Received: by 2002:a37:d0a:: with SMTP id 10mr8976655qkn.288.1587236417119;
+        Sat, 18 Apr 2020 12:00:17 -0700 (PDT)
+X-Google-Smtp-Source: APiQypI2nHN5tNsMq4pPm5ciYHRA5VRWl7aSSu5+P9HKsSo/yFjTBtNzBH3IvuFjBQ139wkhhgPpEk79Jxs2c07SmRA=
+X-Received: by 2002:a37:d0a:: with SMTP id 10mr8976624qkn.288.1587236416872;
+ Sat, 18 Apr 2020 12:00:16 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:c004:: with SMTP id q4mr8533307ild.93.1587236353725;
- Sat, 18 Apr 2020 11:59:13 -0700 (PDT)
-Date:   Sat, 18 Apr 2020 11:59:13 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000009dcd905a3954340@google.com>
-Subject: INFO: rcu detected stall in io_uring_release
-From:   syzbot <syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20200416143532.11743-1-mszeredi@redhat.com> <c47459a5-3323-121e-ec66-4a8eb2a8afca@samba.org>
+In-Reply-To: <c47459a5-3323-121e-ec66-4a8eb2a8afca@samba.org>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Sat, 18 Apr 2020 21:00:05 +0200
+Message-ID: <CAOssrKe7RNyReAFLoQGBDm79qMdXEubhP5QhG_+UmGZXgeXBkA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: add faccessat2 syscall
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat, Apr 18, 2020 at 8:36 PM Stefan Metzmacher <metze@samba.org> wrote:
+>
+> Hi Miklos,
+>
+> > POSIX defines faccessat() as having a fourth "flags" argument, while the
+> > linux syscall doesn't have it.  Glibc tries to emulate AT_EACCESS and
+> > AT_SYMLINK_NOFOLLOW, but AT_EACCESS emulation is broken.
+> >
+> > Add a new faccessat(2) syscall with the added flags argument and implement
+> > both flags.
+> >
+> > The value of AT_EACCESS is defined in glibc headers to be the same as
+> > AT_REMOVEDIR.  Use this value for the kernel interface as well, together
+> > with the explanatory comment.
+>
+> It would be nice if resolv_flags would also be passed in addition to the
+> at flags.
+> See:https://lore.kernel.org/linux-api/CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com/
+>
+> We should avoid expecting yet another syscall in near future.
 
-syzbot found the following crash on:
+What is the objection against
 
-HEAD commit:    8f3d9f35 Linux 5.7-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=115720c3e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d351a1019ed81a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=66243bb7126c410cefe6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+openat(... O_PATH)
+foobarat(fd, AT_EMPTY_PATH, ...)
 
-Unfortunately, I don't have any reproducer for this crash yet.
+?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
+Thanks,
+Miklos
 
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (10500 ticks this GP) idle=57e/1/0x4000000000000002 softirq=44329/44329 fqs=5245 
-	(t=10502 jiffies g=79401 q=2096)
-NMI backtrace for cpu 0
-CPU: 0 PID: 23184 Comm: syz-executor.5 Not tainted 5.7.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
- trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
- rcu_dump_cpu_stacks+0x19b/0x1e5 kernel/rcu/tree_stall.h:254
- print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
- check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
- rcu_pending kernel/rcu/tree.c:3225 [inline]
- rcu_sched_clock_irq.cold+0x55d/0xcfa kernel/rcu/tree.c:2296
- update_process_times+0x25/0x60 kernel/time/timer.c:1727
- tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
- tick_sched_timer+0x4e/0x140 kernel/time/tick-sched.c:1320
- __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
- __hrtimer_run_queues+0x5ca/0xed0 kernel/time/hrtimer.c:1584
- hrtimer_interrupt+0x312/0x770 kernel/time/hrtimer.c:1646
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113 [inline]
- smp_apic_timer_interrupt+0x15b/0x600 arch/x86/kernel/apic/apic.c:1138
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5a0 fs/io_uring.c:7301
-Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 3a ea 9d ff f3 90 <41> 80 3c 24 00 0f 85 53 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
-RSP: 0018:ffffc9000897fdf0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: ffff888024082080 RBX: ffff88808df8e000 RCX: 1ffff9200112ffab
-RDX: 0000000000000000 RSI: ffffffff81d549c6 RDI: ffff88808df8e300
-RBP: ffffed1011bf1c2c R08: 0000000000000001 R09: ffffed1011bf1c61
-R10: ffff88808df8e307 R11: ffffed1011bf1c60 R12: ffffed1011bf1c22
-R13: ffff88808df8e160 R14: ffff88808df8e110 R15: ffffffff81d54ed0
- io_uring_release+0x3e/0x50 fs/io_uring.c:7324
- __fput+0x33e/0x880 fs/file_table.c:280
- task_work_run+0xf4/0x1b0 kernel/task_work.c:123
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_usermode_loop+0x2fa/0x360 arch/x86/entry/common.c:165
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
- do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x416421
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffc3c9f63d0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000416421
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 01ffffffffffffff
-R10: 0000000000770b20 R11: 0000000000000293 R12: 000000000076bfa0
-R13: 0000000000770b30 R14: 0000000000000001 R15: 000000000076bfac
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
