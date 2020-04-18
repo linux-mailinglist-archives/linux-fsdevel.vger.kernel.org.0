@@ -2,64 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFFE71AE90E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 03:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C881AE911
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 03:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbgDRBBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Apr 2020 21:01:12 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33574 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725768AbgDRBBM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Apr 2020 21:01:12 -0400
-Received: from callcc.thunk.org (pool-100-0-195-244.bstnma.fios.verizon.net [100.0.195.244])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 03I10t0J015868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Apr 2020 21:00:56 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4C6E442013D; Fri, 17 Apr 2020 21:00:55 -0400 (EDT)
-Date:   Fri, 17 Apr 2020 21:00:55 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Daniel Wagner <dwagner@suse.de>
-Subject: Re: [PATCH v7 00/11] Introduce Zone Append for writing to zoned
- block devices
-Message-ID: <20200418010055.GO5187@mit.edu>
-References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
- <20200417160326.GK5187@mit.edu>
- <SN4PR0401MB3598F054B867C929827E23F49BD90@SN4PR0401MB3598.namprd04.prod.outlook.com>
+        id S1726039AbgDRBBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Apr 2020 21:01:19 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2401 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbgDRBBT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Apr 2020 21:01:19 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A47E78BB899F881ED6C9;
+        Sat, 18 Apr 2020 09:01:14 +0800 (CST)
+Received: from [127.0.0.1] (10.166.215.235) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Sat, 18 Apr 2020
+ 09:01:06 +0800
+Subject: Re: [PATCH] buffer: remove useless comment and
+ WB_REASON_FREE_MORE_MEM, reason.
+To:     Jan Kara <jack@suse.cz>
+CC:     <viro@zeniv.linux.org.uk>, <rostedt@goodmis.org>,
+        <mingo@redhat.com>, "Jens Axboe" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <tj@kernel.org>,
+        <bigeasy@linutronix.de>, linfeilong <linfeilong@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        renxudong <renxudong1@huawei.com>
+References: <5844aa66-de1e-278b-5491-b7e6839640e9@huawei.com>
+ <20200414150929.GD28226@quack2.suse.cz>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <81bf1cd4-0319-bc62-dbdf-701d39edd23a@huawei.com>
+Date:   Sat, 18 Apr 2020 09:01:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB3598F054B867C929827E23F49BD90@SN4PR0401MB3598.namprd04.prod.outlook.com>
+In-Reply-To: <20200414150929.GD28226@quack2.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.166.215.235]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 05:48:20PM +0000, Johannes Thumshirn wrote:
-> For "userspace's responsibility", I'd re-phrase this as "a consumer's 
-> responsibility", as we don't have an interface which aims at user-space 
-> yet. The only consumer this series implements is zonefs, although we did 
-> have an AIO implementation for early testing and io_uring shouldn't be 
-> too hard to implement.
+friendly ping...
 
-Ah, I had assumed that userspace interface exposed would be opening
-the block device with the O_APPEND flag.  (Which raises interesting
-questions if the block device is also opened without O_APPEND and some
-other thread was writing to the same zone, in which case the order in
-which requests are processed would control whether the I/O would
-fail.)
-
-					- Ted
+On 2020/4/14 23:09, Jan Kara wrote:
+> On Mon 13-04-20 13:12:10, Zhiqiang Liu wrote:
+>> From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+>>
+>> free_more_memory func has been completely removed in commit bc48f001de12
+>> ("buffer: eliminate the need to call free_more_memory() in __getblk_slow()")
+>>
+>> So comment and `WB_REASON_FREE_MORE_MEM` reason about free_more_memory
+>> are no longer needed.
+>>
+>> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+> 
+> Thanks. The patch looks good to me. You can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+>> ---
+>>  fs/buffer.c                      | 2 +-
+>>  include/linux/backing-dev-defs.h | 1 -
+>>  include/trace/events/writeback.h | 1 -
+>>  3 files changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/fs/buffer.c b/fs/buffer.c
+>> index b8d28370cfd7..07ab0405f3f5 100644
+>> --- a/fs/buffer.c
+>> +++ b/fs/buffer.c
+>> @@ -973,7 +973,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+>>  	struct page *page;
+>>  	struct buffer_head *bh;
+>>  	sector_t end_block;
+>> -	int ret = 0;		/* Will call free_more_memory() */
+>> +	int ret = 0;
+>>  	gfp_t gfp_mask;
+>>
+>>  	gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS) | gfp;
+>> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+>> index 4fc87dee005a..ee577a83cfe6 100644
+>> --- a/include/linux/backing-dev-defs.h
+>> +++ b/include/linux/backing-dev-defs.h
+>> @@ -54,7 +54,6 @@ enum wb_reason {
+>>  	WB_REASON_SYNC,
+>>  	WB_REASON_PERIODIC,
+>>  	WB_REASON_LAPTOP_TIMER,
+>> -	WB_REASON_FREE_MORE_MEM,
+>>  	WB_REASON_FS_FREE_SPACE,
+>>  	/*
+>>  	 * There is no bdi forker thread any more and works are done
+>> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+>> index d94def25e4dc..85a33bea76f1 100644
+>> --- a/include/trace/events/writeback.h
+>> +++ b/include/trace/events/writeback.h
+>> @@ -36,7 +36,6 @@
+>>  	EM( WB_REASON_SYNC,			"sync")			\
+>>  	EM( WB_REASON_PERIODIC,			"periodic")		\
+>>  	EM( WB_REASON_LAPTOP_TIMER,		"laptop_timer")		\
+>> -	EM( WB_REASON_FREE_MORE_MEM,		"free_more_memory")	\
+>>  	EM( WB_REASON_FS_FREE_SPACE,		"fs_free_space")	\
+>>  	EMe(WB_REASON_FORKER_THREAD,		"forker_thread")
+>>
+>> -- 
+>> 2.19.1
+>>
+>>
 
