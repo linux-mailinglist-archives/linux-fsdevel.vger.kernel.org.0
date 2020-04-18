@@ -2,175 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 424481AEC2E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 13:48:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EED91AEC46
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 13:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbgDRLr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 07:47:59 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:34200 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgDRLr6 (ORCPT
+        id S1725887AbgDRL7B convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 07:59:01 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:60032 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbgDRL7B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 07:47:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03IBiRl5096448;
-        Sat, 18 Apr 2020 11:47:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=81gTzqIjlHBm7QAubrLSzvHClUl9G4hCGInOrxEy1uU=;
- b=hyR3wxbbq99P3U4oKqLG0qsVhsZ3X6XJQAV9I/kjDU6DQ+val8+dJnlx3RP7LU1iV2dm
- RCi4MRsxCYRXqwN0RN0Y/WtBXgRi3+jjInIKGhczqlcLGS7ujElhIbY5La5HOk6MPVe1
- jpV5nFxqta/pwf+N9DosRlL/8U75tIm+qlsNacla3rIuZRp3d9/Lkn4t/uzGc4PibP1g
- 2+Od9dLbdgdM/cnaXAvLJqu87C60e0maid9przZ1lUoNss/NWfCaEAff97GJz2tZ33Zg
- RRJxZPV2DvyGOU+Vk9dFGhaDQjQiVlBn9z4ZfrGbsxjJ1wb1MwirRKl2ZFH+6S7O3ytK nQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 30fxkjr79d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 18 Apr 2020 11:47:43 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03IBg0Y2044227;
-        Sat, 18 Apr 2020 11:47:43 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 30fpnrttd8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 18 Apr 2020 11:47:43 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 03IBlfw8003405;
-        Sat, 18 Apr 2020 11:47:41 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 18 Apr 2020 04:47:40 -0700
-Date:   Sat, 18 Apr 2020 14:47:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
+        Sat, 18 Apr 2020 07:59:01 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jPm7f-0007nX-II; Sat, 18 Apr 2020 05:58:59 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jPm7e-0001Xl-Io; Sat, 18 Apr 2020 05:58:59 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-Message-ID: <20200418114725.GF12862@kadam>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-7-scott.branden@broadcom.com>
- <20200220104321.GX7838@kadam>
- <63c9dcda-7a31-78a7-1d11-9d9af38add46@broadcom.com>
- <20200418114516.GE12862@kadam>
+        linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>
+References: <20200414070142.288696-1-hch@lst.de>
+        <20200414070142.288696-3-hch@lst.de>
+        <87pnc5akhk.fsf@x220.int.ebiederm.org>
+        <87k12dakfx.fsf_-_@x220.int.ebiederm.org>
+        <c51c6192-2ea4-62d8-dd22-305f7a1e0dd3@c-s.fr>
+Date:   Sat, 18 Apr 2020 06:55:56 -0500
+In-Reply-To: <c51c6192-2ea4-62d8-dd22-305f7a1e0dd3@c-s.fr> (Christophe Leroy's
+        message of "Sat, 18 Apr 2020 10:05:19 +0200")
+Message-ID: <87v9lx3t4j.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200418114516.GE12862@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9594 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004180096
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9594 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 impostorscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004180096
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1jPm7e-0001Xl-Io;;;mid=<87v9lx3t4j.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18UJp5X1nu8GvTzwVNg4DhYMBf3vdPs/94=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        XMGappySubj_01,XMNoVowels,XMSubLong,XM_B_Unicode,XM_B_Unicode3
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1268]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+        *  0.0 XM_B_Unicode3 BODY: Testing for specific types of unicode
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Christophe Leroy <christophe.leroy@c-s.fr>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 521 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.9%), parse: 1.11
+        (0.2%), extract_message_metadata: 15 (2.8%), get_uri_detail_list: 1.79
+        (0.3%), tests_pri_-1000: 13 (2.5%), tests_pri_-950: 1.21 (0.2%),
+        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 79 (15.1%), check_bayes:
+        77 (14.8%), b_tokenize: 8 (1.6%), b_tok_get_all: 18 (3.5%),
+        b_comp_prob: 2.9 (0.6%), b_tok_touch_all: 44 (8.5%), b_finish: 0.89
+        (0.2%), tests_pri_0: 380 (73.0%), check_dkim_signature: 0.54 (0.1%),
+        check_dkim_adsp: 3.4 (0.6%), poll_dns_idle: 1.15 (0.2%), tests_pri_10:
+        2.6 (0.5%), tests_pri_500: 13 (2.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] signal: Factor copy_siginfo_to_external32 from copy_siginfo_to_user32
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 02:45:16PM +0300, Dan Carpenter wrote:
-> On Fri, Apr 17, 2020 at 02:49:11PM -0700, Scott Branden wrote:
-> > > > +static int bcm_vk_dma_alloc(struct device *dev,
-> > > > +			    struct bcm_vk_dma *dma,
-> > > > +			    int direction,
-> > > > +			    struct _vk_data *vkdata)
-> > > > +{
-> > > > +	dma_addr_t addr, sg_addr;
-> > > > +	int err;
-> > > > +	int i;
-> > > > +	int offset;
-> > > > +	uint32_t size;
-> > > > +	uint32_t remaining_size;
-> > > > +	uint32_t transfer_size;
-> > > > +	uint64_t data;
-> > > > +	unsigned long first, last;
-> > > > +	struct _vk_data *sgdata;
-> > > > +
-> > > > +	/* Get 64-bit user address */
-> > > > +	data = get_unaligned(&(vkdata->address));
-> > > Extra parens.
-> > removed
-> > > 
-> > > > +
-> > > > +	/* offset into first page */
-> > > > +	offset = offset_in_page(data);
-> > > > +
-> > > > +	/* Calculate number of pages */
-> > > > +	first = (data & PAGE_MASK) >> PAGE_SHIFT;
-> > > > +	last  = ((data + vkdata->size - 1) & PAGE_MASK) >> PAGE_SHIFT;
-> > > > +	dma->nr_pages = last - first + 1;
-> > > > +
-> > > > +	/* Allocate DMA pages */
-> > > > +	dma->pages = kmalloc_array(dma->nr_pages,
-> > > > +				   sizeof(struct page *),
-> > > > +				   GFP_KERNEL);
-> > > > +	if (dma->pages == NULL)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	dev_dbg(dev, "Alloc DMA Pages [0x%llx+0x%x => %d pages]\n",
-> > > > +		data, vkdata->size, dma->nr_pages);
-> > > > +
-> > > > +	dma->direction = direction;
-> > > > +
-> > > > +	/* Get user pages into memory */
-> > > > +	err = get_user_pages_fast(data & PAGE_MASK,
-> > > > +				  dma->nr_pages,
-> > > > +				  direction == DMA_FROM_DEVICE,
-> > > > +				  dma->pages);
-> > > > +	if (err != dma->nr_pages) {
-> > > > +		dma->nr_pages = (err >= 0) ? err : 0;
-> > > > +		dev_err(dev, "get_user_pages_fast, err=%d [%d]\n",
-> > > > +			err, dma->nr_pages);
-> > > > +		return err < 0 ? err : -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	/* Max size of sg list is 1 per mapped page + fields at start */
-> > > > +	dma->sglen = (dma->nr_pages * sizeof(*sgdata)) +
-> > > > +		     (sizeof(uint32_t) * SGLIST_VKDATA_START);
-> > > > +
-> > > > +	/* Allocate sglist */
-> > > > +	dma->sglist = dma_alloc_coherent(dev,
-> > > > +					 dma->sglen,
-> > > > +					 &dma->handle,
-> > > > +					 GFP_KERNEL);
-> > > 
-> > > 	dma->sglist = dma_alloc_coherent(dev, dma->sglen, &dma->handle,
-> > > 					 GFP_KERNEL);
-> > done
-> > > 
-> > > 
-> > > 
-> > > > +	if (!dma->sglist)
-> > > > +		return -ENOMEM;
-> > > No cleanup?
-> > what needs to be cleaned up?
-> 
-> dma->pages should be freed probably?  And a put_user_pages_fast()?
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Sorry put_user_pages_fast() isn't a function.  My bad.
+> Le 17/04/2020 à 23:09, Eric W. Biederman a écrit :
+>>
+>> To remove the use of set_fs in the coredump code there needs to be a
+>> way to convert a kernel siginfo to a userspace compat siginfo.
+>>
+>> Call that function copy_siginfo_to_compat and factor it out of
+>> copy_siginfo_to_user32.
+>
+> I find it a pitty to do that.
+>
+> The existing function could have been easily converted to using
+> user_access_begin() + user_access_end() and use unsafe_put_user() to copy to
+> userspace to avoid copying through a temporary structure on the stack.
+>
+> With your change, it becomes impossible to do that.
 
-regards,
-dan carpenter
+I don't follow.  You don't like temporary structures in the coredump
+code or temporary structures in copy_siginfo_to_user32?
+
+A temporary structure in copy_siginfo_to_user is pretty much required
+so that it can be zeroed to guarantee we don't pass a structure with
+holes to userspace.
+
+The implementation of copy_siginfo_to_user32 used to use the equivalent
+of user_access_begin() and user_access_end() and the code was a mess
+that was very difficult to reason about.  I recall their being holes
+in the structure that were being copied to userspace.
+
+Meanwhile if you are going to set all of the bytes a cache hot temporary
+structure is quite cheap.
+
+> Is that really an issue to use that set_fs() in the coredump code ?
+
+Using set_fs() is pretty bad and something that we would like to remove
+from the kernel entirely.  The fewer instances of set_fs() we have the
+better.
+
+I forget all of the details but set_fs() is both a type violation and an
+attack point when people are attacking the kernel.  The existence of
+set_fs() requires somethings that should be constants to be variables.
+Something about that means that our current code is difficult to protect
+from spectre style vulnerabilities.
+
+There was a very good thread about it all in I think 2018 but
+unfortunately I can't find it now.
+
+Eric
