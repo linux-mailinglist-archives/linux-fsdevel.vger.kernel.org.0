@@ -2,104 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F10291AF3E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 20:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BBF1AF3FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 20:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbgDRSzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 14:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43452 "EHLO
+        id S1728179AbgDRS5e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 14:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726307AbgDRSzm (ORCPT
+        by vger.kernel.org with ESMTP id S1726086AbgDRS5d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 14:55:42 -0400
+        Sat, 18 Apr 2020 14:57:33 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147D7C061A0C;
-        Sat, 18 Apr 2020 11:55:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76398C061A0C;
+        Sat, 18 Apr 2020 11:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
         Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=Fw5l4YeyjM9q5bGtc9HETB0eI3KSL+di5A5JibSeUVA=; b=ZSd4gPvRX+1EcEyWBtmo2xeq+k
-        YGKz4bmzRQ0lBLMGURF5oh6CYWK4W10L7kKdDnAI5hJvRsl3/cWENuwUZYgrll4QOeY8IG2KAIwKm
-        DmODoHeVwqhNbpPD2mueD4eauFer8yFIuqk42bawnd9he64bV/jQfHVxkRxNmOAMcICHspMdvF49L
-        mwjxdxSsr1vLxgUV9OSBDAPsxY5sxHKI3ovi3k6+D0MPLbEOgd5u2ipYWdww6+1xj13RRsP3BbZTP
-        5/uu3l5yRFjedkT+1vldVo7jjG4LvH/c3xDAix8dZm74bZ5+P4Sk4RUlA1MpmcdYVcPWYAQRtLCOh
-        CMd3C1UQ==;
+        bh=v6goMSiM3JqD5eRdn45ZDeyVAxJCt3W7fqpeEGrJJtc=; b=KyiJJMamxfOIjVFL72tLsYD7re
+        sd31vDw2o9XAGj4cjlL0iY4LlaG6HfVp+RX/eAnF8cs7BFGA7rm1P50OIDl4CJaSxdZP9IFpIodWa
+        qKFndBfM+66S0aonynhdQTK/wJPSVS1Y4GHEToI5QjfeKxEM5UcdrBqdzJ3gwI+cd+itnETKujVao
+        no3xr+EdUuBl8Nn1gwFz9atcofq1XkfodTx5dSOb3avPvgI/1CgyqkUdIR/uY0+1yXAWS0ASg6Ion
+        xZd3LmWJA+40BpAwWMUlGbYNQaWIgBlBDowZN86RmjMlnIBdG8kobJ5e86SBZIZs/svVAtt0wyDuC
+        yjEBGuCw==;
 Received: from [2601:1c0:6280:3f0::19c2]
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jPscv-0000Nr-Nv; Sat, 18 Apr 2020 18:55:41 +0000
-Subject: Re: [PATCH 2/9] fs: fix empty-body warning in posix_acl.c
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id 1jPseh-0000VM-7j; Sat, 18 Apr 2020 18:57:31 +0000
+Subject: Re: [PATCH 6/9] nfsd: fix empty-body warning in nfs4state.c
+To:     Joe Perches <joe@perches.com>, Chuck Lever <chuck.lever@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-usb@vger.kernel.org, Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         Johannes Berg <johannes@sipsolutions.net>,
         Dan Williams <dan.j.williams@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        target-devel <target-devel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         Zzy Wysm <zzy@zzywysm.com>
 References: <20200418184111.13401-1-rdunlap@infradead.org>
- <20200418184111.13401-3-rdunlap@infradead.org>
- <CAHk-=wjSzuTyyBkmMDG4fx_sXzLJsh+9Xk-ubgbpJzJq_kzPsA@mail.gmail.com>
+ <20200418184111.13401-7-rdunlap@infradead.org>
+ <CDCF7717-7CBC-47CA-9E83-3A18ECB3AB89@oracle.com>
+ <6c796219ea79d87093409f2dd1d3bf8e4a157ed7.camel@perches.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <722a746a-1438-60e3-04b2-c13eda2ad168@infradead.org>
-Date:   Sat, 18 Apr 2020 11:55:38 -0700
+Message-ID: <c13ddc03-dfb4-9664-ce38-fc56389b67cd@infradead.org>
+Date:   Sat, 18 Apr 2020 11:57:28 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjSzuTyyBkmMDG4fx_sXzLJsh+9Xk-ubgbpJzJq_kzPsA@mail.gmail.com>
+In-Reply-To: <6c796219ea79d87093409f2dd1d3bf8e4a157ed7.camel@perches.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/20 11:53 AM, Linus Torvalds wrote:
-> On Sat, Apr 18, 2020 at 11:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On 4/18/20 11:53 AM, Joe Perches wrote:
+> On Sat, 2020-04-18 at 14:45 -0400, Chuck Lever wrote:
+>>> On Apr 18, 2020, at 2:41 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>>
+>>> Fix gcc empty-body warning when -Wextra is used:
+>>>
+>>> ../fs/nfsd/nfs4state.c:3898:3: warning: suggest braces around empty body in an ‘else’ statement [-Wempty-body]
+>>>
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: "J. Bruce Fields" <bfields@fieldses.org>
+>>> Cc: Chuck Lever <chuck.lever@oracle.com>
+>>> Cc: linux-nfs@vger.kernel.org
 >>
->> Fix gcc empty-body warning when -Wextra is used:
+>> I have a patch in my queue that addresses this particular warning,
+>> but your change works for me too.
+>>
+>> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+>>
+>> Unless Bruce objects.
+>>
+>>
+>>> ---
+>>> fs/nfsd/nfs4state.c |    3 ++-
+>>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> --- linux-next-20200417.orig/fs/nfsd/nfs4state.c
+>>> +++ linux-next-20200417/fs/nfsd/nfs4state.c
+>>> @@ -34,6 +34,7 @@
+>>>
+>>> #include <linux/file.h>
+>>> #include <linux/fs.h>
+>>> +#include <linux/kernel.h>
+>>> #include <linux/slab.h>
+>>> #include <linux/namei.h>
+>>> #include <linux/swap.h>
+>>> @@ -3895,7 +3896,7 @@ nfsd4_setclientid(struct svc_rqst *rqstp
+>>> 		copy_clid(new, conf);
+>>> 		gen_confirm(new, nn);
+>>> 	} else /* case 4 (new client) or cases 2, 3 (client reboot): */
+>>> -		;
+>>> +		do_empty();
+>>> 	new->cl_minorversion = 0;
+>>> 	gen_callback(new, setclid, rqstp);
+>>> 	add_to_unconfirmed(new);
 > 
-> Please don't do this.
+> This empty else seems silly and could likely be better handled by
+> a comment above the first if, something like:
 > 
-> First off, "do_empty()" adds nothing but confusion. Now it
-> syntactically looks like it does something, and it's a new pattern to
-> everybody. I've never seen it before.
+> 	/* for now only handle case 1: probable callback update */
+> 	if (conf && same_verf(&conf->cl_verifier, &clverifier)) {
+> 		copy_clid(new, conf);
+> 		gen_confirm(new, nn);
+> 	}
 > 
-> Secondly, even if we were to do this, then the patch would be wrong:
-> 
->>         if (cmpxchg(p, ACL_NOT_CACHED, sentinel) != ACL_NOT_CACHED)
->> -               /* fall through */ ;
->> +               do_empty(); /* fall through */
-> 
-> That comment made little sense before, but it makes _no_ sense now.
-> 
-> What fall-through? I'm guessing it meant to say "nothing", and
-> somebody was confused. With "do_empty()", it's even more confusing.
-> 
-> Thirdly, there's a *reason* why "-Wextra" isn't used.
-> 
-> The warnings enabled by -Wextra are usually complete garbage, and
-> trying to fix them often makes the code worse. Exactly like here.
+> with no else use.
 
-OK, no problem.  That's why PATCH 0/9 says RFC.
+I'll just let Chuck handle it with his current patch,
+whatever it is.
 
-Oops. Crap. It was *supposed* to say RFC. :(
-
+thanks.
 -- 
 ~Randy
 
