@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CDC1AEFF8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 16:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7622C1AEFD0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 16:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbgDROqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 10:46:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56302 "EHLO mail.kernel.org"
+        id S1728933AbgDROo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 10:44:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728819AbgDROob (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 10:44:31 -0400
+        id S1728924AbgDROo6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 10:44:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D322322250;
-        Sat, 18 Apr 2020 14:44:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9BB522250;
+        Sat, 18 Apr 2020 14:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587221070;
+        s=default; t=1587221097;
         bh=YykEE0lTA5/lA1VLVm0ni2OOnqaYS3dSAahqYqP6bEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gvC8w3BsaKXQqFJSEqDJa2WwYalb5HoaGe7bXz0Y2U5L0ciZN6IJ5WPzeUV6zSzH5
-         i9bk6vQQSJQ1QpKVpklwwqg7MQlhGA3F25n/1UybeglZ0V7EYy9DKn8KHOCTa45ozs
-         cowf+OqXLG32VJgJzXZDl4/0Y1AY+hb3oljT3Mz0=
+        b=uaPBKnGonOhy0xg+S41M5FnjKjuW9Cb5UMH71Ac8qB1j1fRcpqzVmRASLbirP1FVI
+         e112svIcJuvtcjs6cpMkY+zS/rSux0bgISeYIHKpGFuK8fVDXjD5FNHH+IVayvL9VZ
+         oE4izO49EdOpaKC295UByGTC0kkmKJCMQRTayXRs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Simon Gander <simon@tuxera.com>,
@@ -30,12 +30,12 @@ Cc:     Simon Gander <simon@tuxera.com>,
         Anton Altaparmakov <anton@tuxera.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 19/23] hfsplus: fix crash and filesystem corruption when deleting files
-Date:   Sat, 18 Apr 2020 10:44:01 -0400
-Message-Id: <20200418144405.10565-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 16/19] hfsplus: fix crash and filesystem corruption when deleting files
+Date:   Sat, 18 Apr 2020 10:44:33 -0400
+Message-Id: <20200418144436.10818-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200418144405.10565-1-sashal@kernel.org>
-References: <20200418144405.10565-1-sashal@kernel.org>
+In-Reply-To: <20200418144436.10818-1-sashal@kernel.org>
+References: <20200418144436.10818-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
