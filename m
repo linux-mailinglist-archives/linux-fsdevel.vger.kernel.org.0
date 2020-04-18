@@ -2,109 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5A51AF41F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 21:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE241AF43C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 21:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbgDRTNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 15:13:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        id S1727927AbgDRTYM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 15:24:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726751AbgDRTNl (ORCPT
+        by vger.kernel.org with ESMTP id S1726086AbgDRTYL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 15:13:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C8AC061A0C;
-        Sat, 18 Apr 2020 12:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1Xuy0hbaik5jnBw+JX74GiEbxwfdlzrwJ6CXAcCNKJ0=; b=Pbh2gwHBC+0n9j0XheYbIXwFQj
-        DLH/6PgobmCWmxlogha43zhUGSOtU89tXwjVH0o1Rho/S2T2EjJTPG70nmSsvSMvvLuonOlXdkiEF
-        yGJpGvfRz2PkLCG7L7Uy3m9lgzRa8kBf6U42WpkqqxMc3bt3hK4TRhmhD0zC1q2wsbCa9130nX/Tr
-        BTyG4Wi0/MtCFbctxHGNP3IoIr9AwF92URUTCaCCqCq81Wkivc6Os9SxUDznfhAgxmUgbP9sTqTjg
-        OQaGKDbNC89jhx9AoLbm18DH/xji73LaoYjLqiNC454x2nCt2c/0XKhdkme0M37SQxFbl37OzjXm7
-        wpboRveg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jPsuI-0002hx-99; Sat, 18 Apr 2020 19:13:38 +0000
-Date:   Sat, 18 Apr 2020 12:13:38 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sat, 18 Apr 2020 15:24:11 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12165C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 12:24:10 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id q8so4327636eja.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 12:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M5L2K70fxOQxP+uWdRM/yMA+3xinlowUvRSVTNSTLNw=;
+        b=VUI+VnT1NDQO7RfejypC/A0x1WOF6JlDgQOx4uVj0o8myo36afYqYoAB1bDh9hMclE
+         y2579x/RBIr7L8eyYz+tWMdcXNGl1k4dVtK8zltRzr1OvNlhqXGfw7OPYoGf+9sgrfJ0
+         nPVwr3eWFbVskZYoGSYtK1N/R40NufLSxc2Ks=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M5L2K70fxOQxP+uWdRM/yMA+3xinlowUvRSVTNSTLNw=;
+        b=KWx4HLNlCYkEqogck5S1fK/nVbSkeqogBWZ0/THDz/IDpUyHNV1Do06/nvkzCEJeNS
+         Gt5TtGWvDIm+0Xa027R48063F31Kb9zZOy/8h+L15L72r5l5lSDt6Sod8Ql8hV4f91mN
+         erfTFkNfDTPxvTOtHdWR60Zejpb/qcEn0jYzvUx3iKYsW624bM9lSDH6mjWc0wCpC5FS
+         BMIyHK9OnDt0fbH5eV6DOWCo0KWEaYTOteqsPHTutyr6qllkBNtSRgDYl7CLsJtkJ9yU
+         e9LINx5GkMi2u1JDWyMyb3uHM7m2jGgTJthFatXuaD0xmP9ZlfUXjXqsl/VW0/WLWslr
+         MtBg==
+X-Gm-Message-State: AGi0PuYTB0Uaw6wI9/iVG7E+6lP/v5gKQqQSV9KfleWcJt5BDO5irvsO
+        q05LcI1zzKFNaQei6NGWl/qOWAoeV4I=
+X-Google-Smtp-Source: APiQypIifcwiSMBbrp6uut/EwCyfLKPKowcs/1IuYUBdSddNtMciyzva3pWvDYYMKakHfMtI+vNFzA==
+X-Received: by 2002:a17:906:6409:: with SMTP id d9mr8752184ejm.317.1587237848375;
+        Sat, 18 Apr 2020 12:24:08 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id u6sm4000183ejb.68.2020.04.18.12.24.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Apr 2020 12:24:08 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id u13so7060957wrp.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 12:24:08 -0700 (PDT)
+X-Received: by 2002:a2e:1418:: with SMTP id u24mr5613429ljd.265.1587237373258;
+ Sat, 18 Apr 2020 12:16:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200418184111.13401-1-rdunlap@infradead.org> <20200418184111.13401-8-rdunlap@infradead.org>
+ <20200418185033.GQ5820@bombadil.infradead.org> <b88d6f8b-e6af-7071-cefa-dc12e79116b6@infradead.org>
+ <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
+In-Reply-To: <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 18 Apr 2020 12:15:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi4QU90W1j1VVUrqdrkrq-0XPA06sjGUm-g1VHRB-35YA@mail.gmail.com>
+Message-ID: <CAHk-=wi4QU90W1j1VVUrqdrkrq-0XPA06sjGUm-g1VHRB-35YA@mail.gmail.com>
+Subject: Re: [PATCH 7/9] drivers/base: fix empty-body warnings in devcoredump.c
+To:     Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
         Johannes Berg <johannes@sipsolutions.net>,
         Dan Williams <dan.j.williams@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
+        Dave Jiang <dave.jiang@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        target-devel <target-devel@vger.kernel.org>,
         Zzy Wysm <zzy@zzywysm.com>
-Subject: Re: [PATCH 7/9] drivers/base: fix empty-body warnings in
- devcoredump.c
-Message-ID: <20200418191338.GR5820@bombadil.infradead.org>
-References: <20200418184111.13401-1-rdunlap@infradead.org>
- <20200418184111.13401-8-rdunlap@infradead.org>
- <20200418185033.GQ5820@bombadil.infradead.org>
- <b88d6f8b-e6af-7071-cefa-dc12e79116b6@infradead.org>
- <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 11:55:05AM -0700, Joe Perches wrote:
-> On Sat, 2020-04-18 at 11:53 -0700, Randy Dunlap wrote:
-> > On 4/18/20 11:50 AM, Matthew Wilcox wrote:
-> > > On Sat, Apr 18, 2020 at 11:41:09AM -0700, Randy Dunlap wrote:
-> > > > @@ -294,11 +295,11 @@ void dev_coredumpm(struct device *dev, s
-> > > >  
-> > > >  	if (sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
-> > > >  			      "failing_device"))
-> > > > -		/* nothing - symlink will be missing */;
-> > > > +		do_empty(); /* nothing - symlink will be missing */
-> > > >  
-> > > >  	if (sysfs_create_link(&dev->kobj, &devcd->devcd_dev.kobj,
-> > > >  			      "devcoredump"))
-> > > > -		/* nothing - symlink will be missing */;
-> > > > +		do_empty(); /* nothing - symlink will be missing */
-> > > >  
-> > > >  	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
-> > > >  	schedule_delayed_work(&devcd->del_wk, DEVCD_TIMEOUT);
-> > > 
-> > > Could just remove the 'if's?
-> > > 
-> > > +	sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
-> > > +			"failing_device");
-> > > 
-> > 
-> > OK.
-> 
+On Sat, Apr 18, 2020 at 11:57 AM Joe Perches <joe@perches.com> wrote:
+>
 > sysfs_create_link is __must_check
 
-Oh, I missed the declaration -- I just saw the definition.  This is a
-situation where __must_check hurts us and it should be removed.
+The way to handle __must_check if you really really don't want to test
+and have good reasons is
 
-Or this code is wrong and it should be
+ (a) add a big comment about why this case ostensibly doesn't need the check
 
-	WARN(sysfs_create_link(&devcd->devcd_dev.kobj, &dev->kobj,
-			"failing_device");
+ (b) cast a test of it to '(void)' or something (I guess we could add
+a helper for this). So something like
 
-like drivers/pci/controller/vmd.c and drivers/i2c/i2c-mux.c
+        /* We will always clean up, we don't care whether this fails
+or succeeds */
+        (void)!!sysfs_create_link(...)
 
-Either way, the do_empty() construct feels like the wrong way of covering
-up the warning.
+There are other alternatives (like using WARN_ON_ONCE() instead, for
+example). So it depends on the code. Which is why that comment is
+important to show why the code chose that option.
+
+However, I wonder if in this case we should just remove the
+__must_check. Greg? It goes back a long long time.
+
+Particularly for the "nowarn" version of that function. I'm not seeing
+why you'd have to care, particularly if you don't even care about the
+link already existing..
+
+            Linus
