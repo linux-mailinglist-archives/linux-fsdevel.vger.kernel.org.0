@@ -2,40 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF2E1AF202
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A8E1AF206
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgDRQC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 12:02:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36541 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbgDRQC4 (ORCPT
+        id S1726465AbgDRQDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 12:03:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37762 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbgDRQDd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:02:56 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o185so2208141pgo.3;
-        Sat, 18 Apr 2020 09:02:55 -0700 (PDT)
+        Sat, 18 Apr 2020 12:03:33 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r4so2744892pgg.4;
+        Sat, 18 Apr 2020 09:03:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=dj8lEaoE6e4YhmuN/RNuMwlwOm9tt21HvHz1R+SzXXY=;
-        b=dDQXYrE1uk6syZEhiM6M62d4BDY2cGcHr5TqES3FFYw86hMxwh6UyC9y9yvaXIqAo2
-         /4TLNvPTEOsEpa/EkTsTDcnup29fu7gjeyNTE4BAyv3uMzyPJSA4tHQHcG7fhseZoFHW
-         Qb34a8OYzoeevAwxTRXlRdQByIkqhbVEBIuYNGbBPwlRlg8MAkzLMv/vu/h6BkSNxWA8
-         tB1ETC1MRFDL/SQIQSsV41jwyesYUrifv24GkZwKBopZEFedvAfRHesv+QgSgzl0u7Ju
-         1gDm6+ZaaSL3mbJ9gq8IkIW5e5vxbBDgShPRGm/0GDdFknO9gQncI7OtwlEHPPDbcru1
-         qm3w==
-X-Gm-Message-State: AGi0Puahm07Ic5PCq2GNVe2we2PFXsfAb/iDH0vceuv7VtbPheFgUACj
-        uUfk1obfpjAtvo/loTC2sl0=
-X-Google-Smtp-Source: APiQypIRb0Wzi2LWy8v0BRKXYlawkazyiLiR4WYqeAKtbG7btR+Rp71LHassaloIwListT0Fh/qoPA==
-X-Received: by 2002:a63:296:: with SMTP id 144mr8367864pgc.110.1587225775161;
-        Sat, 18 Apr 2020 09:02:55 -0700 (PDT)
+        bh=zoZtAILUfUQX92tEGLE18ESVtwdo2kiFNl6/6QW1N8U=;
+        b=eywi6SgGF+8ylGHcD0dwm9tmRbls035KGJODibdGR3R8ldcO0RiC5zrAJQPcyo7q1M
+         zWNr6FAIwknRemU+1oUirlP0sAHD6bQp27PikRGK00EGv1kRRKEnP1srMNomnrG1NUdM
+         6g3+4TUGZLGkf/KE/9yF0sJQfzlNenxpOP9rdXqXcmn+wO5fmAh60GPWuVfPdgB4BASf
+         W6Rc04uSCy7nCKf7w5lDf3p1vGrM5FpcnXYbND0VvN3Z+ZlEm8878tgYyxJ46kwFB5qx
+         cpmsC7AjIuDm6NZ1tbubfUMjMPOkswTRDE1YUUx8Bjs3h2hRUpnfMuhhbhbQi7JPWhBh
+         axng==
+X-Gm-Message-State: AGi0Pua1TrBUwR7zv14j7F46ChyoOIbsrsEej2HEhJKM8agnX8Hwr55S
+        VxoCAMKdYoDnKPX1c0Vmu0ccsF4+4Xc=
+X-Google-Smtp-Source: APiQypKG30prnAGMBNDsCBxHQ7X3onWOtEEO2yeCyekxj9Ca6LScuOq4sGOUe/DvW58WldVoprWF8w==
+X-Received: by 2002:a62:7b03:: with SMTP id w3mr2465072pfc.313.1587225812461;
+        Sat, 18 Apr 2020 09:03:32 -0700 (PDT)
 Received: from ?IPv6:2601:647:4000:d7:551:c132:d476:f445? ([2601:647:4000:d7:551:c132:d476:f445])
-        by smtp.gmail.com with ESMTPSA id b2sm20832321pgg.77.2020.04.18.09.02.53
+        by smtp.gmail.com with ESMTPSA id v4sm22532109pfb.31.2020.04.18.09.03.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Apr 2020 09:02:54 -0700 (PDT)
-Subject: Re: [PATCH v7 01/11] scsi: free sgtables in case command setup fails
+        Sat, 18 Apr 2020 09:03:31 -0700 (PDT)
+Subject: Re: [PATCH v7 02/11] block: provide fallbacks for
+ blk_queue_zone_is_seq and blk_queue_zone_no
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -47,7 +48,7 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
         Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>
 References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
- <20200417121536.5393-2-johannes.thumshirn@wdc.com>
+ <20200417121536.5393-3-johannes.thumshirn@wdc.com>
 From:   Bart Van Assche <bvanassche@acm.org>
 Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
@@ -72,12 +73,12 @@ Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
  mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
  goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <de79e1ab-0407-205e-3272-532f0484b49f@acm.org>
-Date:   Sat, 18 Apr 2020 09:02:53 -0700
+Message-ID: <63dc4014-85ea-d1b8-e7d8-003c06ee27b9@acm.org>
+Date:   Sat, 18 Apr 2020 09:03:30 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200417121536.5393-2-johannes.thumshirn@wdc.com>
+In-Reply-To: <20200417121536.5393-3-johannes.thumshirn@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,35 +88,10 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020-04-17 05:15, Johannes Thumshirn wrote:
-> @@ -1190,6 +1190,7 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
->  		struct request *req)
->  {
->  	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(req);
-> +	blk_status_t ret;
->  
->  	if (!blk_rq_bytes(req))
->  		cmd->sc_data_direction = DMA_NONE;
-> @@ -1199,9 +1200,14 @@ static blk_status_t scsi_setup_cmnd(struct scsi_device *sdev,
->  		cmd->sc_data_direction = DMA_FROM_DEVICE;
->  
->  	if (blk_rq_is_scsi(req))
-> -		return scsi_setup_scsi_cmnd(sdev, req);
-> +		ret = scsi_setup_scsi_cmnd(sdev, req);
->  	else
-> -		return scsi_setup_fs_cmnd(sdev, req);
-> +		ret = scsi_setup_fs_cmnd(sdev, req);
-> +
-> +	if (ret != BLK_STS_OK)
-> +		scsi_free_sgtables(cmd);
-> +
-> +	return ret;
->  }
+> blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
+> CONFIG_BLK_DEV_ZONED disabled until now.
+> 
+> The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
+> provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
 
-If this patch fixes the bug reported in
-https://bugzilla.kernel.org/show_bug.cgi?id=205595, please mention this.
-
-How about adding __must_check to scsi_setup_fs_cmnd()?
-
-Thanks,
-
-Bart.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
