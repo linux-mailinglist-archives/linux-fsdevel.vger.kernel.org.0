@@ -2,97 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 296AA1AF526
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 23:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 074FF1AF539
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 23:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgDRVez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 17:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbgDRVez (ORCPT
+        id S1728115AbgDRVpj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 17:45:39 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38158 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbgDRVpi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 17:34:55 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E51CC061A0C;
-        Sat, 18 Apr 2020 14:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FCIeSzEYM5cBJ5QKnrFD/l00gE1X3fxUAHuUbbJXvBo=; b=FMVHKdYlsA9pIzaGaKXdrCKQ2l
-        I5qMwSv8W26YQHn8pkLFkbDTL7P1UIggv9p2FQ5hpD4CNVvt+5NvrIp9bO0X/pwct0cpK26xkmoAV
-        zPGPKBEiugEyGBL6l6O84S25liLBXajlKfZ2YwMZJvMzDhVbbtJEGMkq+ZSRTztR/XHiFwlhXvG6E
-        0cJczkw97qiwu9FKK5xM0C7jeFJ28jL0SnwSoiN90PHQN+dVbHcM6yRFPsSIY2etDSOsDrQKprDUD
-        8kax0MIOyNglB9MM2fOqUwlP3ufTdw3bbZlngow+RTjJXZPR08/Nyg1q/2MGyMc/ZrYlbp9UkiSSO
-        2+Q4WGkg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jPv6y-0006Vw-1j; Sat, 18 Apr 2020 21:34:52 +0000
-Date:   Sat, 18 Apr 2020 14:34:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH] ipc: Convert ipcs_idr to XArray
-Message-ID: <20200418213451.GS5820@bombadil.infradead.org>
-References: <20200326151418.27545-1-willy@infradead.org>
- <20200418131509.fb3c19bf450d618be797c030@linux-foundation.org>
+        Sat, 18 Apr 2020 17:45:38 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y25so2989933pfn.5;
+        Sat, 18 Apr 2020 14:45:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2AAPHCGhMy5VItzDoJpxjkkLgCbtnvq0NCPyMd1E3BM=;
+        b=tb9w/aQcuIm+0H/4IB8P1JfP8dzvcMYzC2nTShSWZbbymfI5hwqylHw3zUyz7hMOU9
+         BhDRRZxAW3DiYaC0Mv/77BqJTDOCHg1Nbdyznm70qb1w0G/zGJb16c/jdb0qXp32BhU8
+         sEMPVuN2Rr/bGMCpTHVqBAAjdyhnDfQ05AO0TDqRUA87sJ5tYvekuonYc3aa93Qo5ktb
+         8IWry/hGxr/++//XND9hisg75fnNBZn9TCwjy5JLO/G3pG0Eh+vq3Pmq4VIo817x0E/R
+         NeJaJeGxrADRAIrcc03aWXFC3XfHSiL/MkSjzyiAUYSCBka1LFHSz4Dhrj78moVEqELg
+         Kjfw==
+X-Gm-Message-State: AGi0PubeOUT9PDcKto4lxHx4CMMyxd+q5x1GXfPdvMIE0nsPUGMLS6e9
+        07nfeQn89axrEnS5wMgwdCY=
+X-Google-Smtp-Source: APiQypLlj3kmCKoHewkm1Hz+20vdn1A4jy5H9lZfMxh2Nxs40ZEubwdTcclJQ0Z2AlahHID9agkJEg==
+X-Received: by 2002:aa7:9a52:: with SMTP id x18mr9614111pfj.139.1587246336719;
+        Sat, 18 Apr 2020 14:45:36 -0700 (PDT)
+Received: from [100.124.15.238] ([104.129.198.228])
+        by smtp.gmail.com with ESMTPSA id i73sm13635656pfe.80.2020.04.18.14.45.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Apr 2020 14:45:35 -0700 (PDT)
+Subject: Re: [PATCH v7 11/11] zonefs: use REQ_OP_ZONE_APPEND for sync DIO
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Daniel Wagner <dwagner@suse.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
+ <20200417121536.5393-12-johannes.thumshirn@wdc.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <8d7c021f-d518-b6e4-7308-daaf9a1c7992@acm.org>
+Date:   Sat, 18 Apr 2020 14:45:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200418131509.fb3c19bf450d618be797c030@linux-foundation.org>
+In-Reply-To: <20200417121536.5393-12-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 01:15:09PM -0700, Andrew Morton wrote:
-> > --- a/ipc/util.c
-> > +++ b/ipc/util.c
-> > @@ -104,12 +104,20 @@ static const struct rhashtable_params ipc_kht_params = {
-> >  	.automatic_shrinking	= true,
-> >  };
-> >  
-> > +#ifdef CONFIG_CHECKPOINT_RESTORE
+On 4/17/20 5:15 AM, Johannes Thumshirn wrote:
+> Synchronous direct I/O to a sequential write only zone can be issued using
+> the new REQ_OP_ZONE_APPEND request operation. As dispatching multiple
+> BIOs can potentially result in reordering, we cannot support asynchronous
+> IO via this interface.
 > 
-> The code grew a few additional CONFIG_CHECKPOINT_RESTORE ifdefs. 
-> What's going on here?  Why is CRIU special in ipc/?
+> We also can only dispatch up to queue_max_zone_append_sectors() via the
+> new zone-append method and have to return a short write back to user-space
+> in case an IO larger than queue_max_zone_append_sectors() has been issued.
 
-"grew a few"?  I added (this) one and deleted two others.  From in the
-middle of functions, like we usually prefer.
+Is this patch the only patch that adds a user space interface through 
+which REQ_OP_ZONE_APPEND operations can be submitted? Has it been 
+considered to make it possible to submit REQ_OP_ZONE_APPEND operations 
+through the asynchronous I/O mechanism?
 
-I mean, this is why we need something like this:
+Thanks,
 
-@@ -17,11 +17,11 @@ struct ipc_ids {
-...
- #ifdef CONFIG_CHECKPOINT_RESTORE
--       int next_id;
-+       int restore_id;
- #endif
-
-> > +#define set_restore_id(ids, x)	ids->restore_id = x
-> > +#define get_restore_id(ids)	ids->restore_id
-> > +#else
-> > +#define set_restore_id(ids, x)	do { } while (0)
-> > +#define get_restore_id(ids)	(-1)
-> > +#endif
-> 
-> Well these are ugly.  Can't all this be done in C?
-
-Would you rather see it done as:
-
-static inline void set_restore_id(struct ipc_ids *ids, int id)
-{
-#ifdef CONFIG_CHECKPOINT_RESTORE
-	ids->restore_id = id;
-#endif
-}
-
-static inline int get_restore_id(struct ipc_ids *ids)
-{
-#ifdef CONFIG_CHECKPOINT_RESTORE
-	return ids->restore_id;
-#else
-	return -1;
-#endif
-}
+Bart.
