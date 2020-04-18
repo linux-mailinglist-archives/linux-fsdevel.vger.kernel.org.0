@@ -2,137 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D571AF279
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 19:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41F51AF2DB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 19:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbgDRRGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 13:06:44 -0400
-Received: from sandeen.net ([63.231.237.45]:32820 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbgDRRGo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 13:06:44 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 7007C323BF7;
-        Sat, 18 Apr 2020 12:06:19 -0500 (CDT)
-Subject: Re: [PATCH 2/2 V2] exfat: truncate atimes to 2s granularity
-From:   Eric Sandeen <sandeen@sandeen.net>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>
-References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
- <abfc2cdf-0ff1-3334-da03-8fbcc6eda328@sandeen.net>
- <381e5327-618b-13ab-ebe5-175f99abf7db@sandeen.net>
- <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
- <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
- <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <fd29fb6b-8c92-d4c1-a15e-4e33025175ea@sandeen.net>
-Date:   Sat, 18 Apr 2020 12:06:42 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.7.0
+        id S1727782AbgDRR0E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 13:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57950 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbgDRR0D (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 13:26:03 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9780FC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 10:26:03 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id b8so2739847pfp.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 10:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=OMU4gc4xJrsz9oC2mAccr/thZgznAgM1yG5wcPECHkg=;
+        b=hGVK77kM162LwI61a0prF7TRDY3sTb+b5wvtpmeTOvBZSjhXTZ4KtYe+4KIMRdV7i7
+         sATr30xlpwsSy5LoneFDQ5Lm4qNwy1XZPOpsYs7AdIdCkSILl9o/eKhblnMatJ/DQ099
+         6O0bWbR+0j5NV+t/XiLqUMrAO+Rybib+2O03c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=OMU4gc4xJrsz9oC2mAccr/thZgznAgM1yG5wcPECHkg=;
+        b=Ol4mTKbj8F/ytqe9s6chEpkTQO3O2gyQlvnpQI4APKCTW5Q0XfMTwnfkBMjFZk4D1k
+         dePt+7+jJGSyr5Z0lhHLXGWGj6YK4lr10aJ7c9VTkMGTnsPTqIw3YZ49p5SFD8xdpoQ4
+         nEgYXteIyrBTeqVmsrYjY3lV/Nr3ybmRbyoLA8q/Y+q8PdVQePUF936RCuc08XBX+Zna
+         tctpJvOTeC8JhhKcVQ11BdUBlE8fi9D5akyt9pqwyeWH8/DssUJVBlAHTrOoS0r5cwha
+         aHzLvFr/D2K4MVP8Gfn0LUlq0iVdfHC+WJxA9IPPQcugDWsoRvBXSsYeadQQYURiOqXP
+         s53w==
+X-Gm-Message-State: AGi0PuaxnhthSBjgh2E5+j0RyA8foyNM7fCzA5N5ooc+Zq1tiDEJQevx
+        OKetPALirK/j7s5QtXtERiWcfQ==
+X-Google-Smtp-Source: APiQypI6VuVoh62mvFQq+xqE0yByeQ09p8pjSnT53bNRHnXhxn5ZoHPk2hUCiKeRmM+zA4cvz4Ls8Q==
+X-Received: by 2002:a62:d086:: with SMTP id p128mr9463319pfg.241.1587230762967;
+        Sat, 18 Apr 2020 10:26:02 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id u13sm9211650pjb.45.2020.04.18.10.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Apr 2020 10:26:02 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Desmond Yan <desmond.yan@broadcom.com>,
+        James Hu <james.hu@broadcom.com>
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-7-scott.branden@broadcom.com>
+ <20200220104321.GX7838@kadam>
+ <63c9dcda-7a31-78a7-1d11-9d9af38add46@broadcom.com>
+ <20200418114516.GE12862@kadam> <20200418114725.GF12862@kadam>
+Message-ID: <c781505e-5bbd-a259-4c2d-4481db3fabde@broadcom.com>
+Date:   Sat, 18 Apr 2020 10:25:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200418114725.GF12862@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Thanks Dan, I'll send out new version as soon as my other patch (you had 
+requested for test_fx mutex cleanups)
+https://lore.kernel.org/linux-arm-msm/20200415002517.4328-1-scott.branden@broadcom.com/
+
+hits the linux-next tree so this patch series will apply cleanly to 
+linux-next.
 
 
-On 4/18/20 11:40 AM, Eric Sandeen wrote:
-> On 4/18/20 11:04 AM, Eric Sandeen wrote:
->> since access_time has no corresponding 10msIncrement field, my understanding was that it could only have a 2s granularity.
-> 
-> Maybe your concern is whether the other _time fields should also be
-> truncated to 2s even though they have the _ms field?  I don't think so; the
-> s_time_gran already limits in-core timestamp resolution to 10ms, which will
-> be properly translated when the inode is written to disk.
-> 
-> atime has a different granularity though, so s_time_gran doens't help and we
-> must manually change it to 2s whenever we call something like current_time(), which
-> only enforces the 10ms granularity.
-> 
-> So for cases like this:
-> 
->  	generic_fillattr(inode, stat);
-> +	exfat_truncate_atime(&stat->atime);
-> 
-> or this:
-> 
->  	inode->i_mtime = inode->i_atime = inode->i_ctime =
->  		EXFAT_I(inode)->i_crtime = current_time(inode);
-> +	exfat_truncate_atime(&inode->i_atime);
-> 
-> I think it's clearly the right thing to do; anything finer than 2s will be thrown
-> away when the vfs inode atime is translated to the disk format, so we should never
-> hold finer granularity in the in-memory vfs inode.
-> 
-> However, in exfat_get_entry_time() maybe all we need to do is set ts->tv_nsec to 0;
-> that might be clearer.
-
-so maybe this is better - 
-
-diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-index c8b33278d474..2c5629b4e7e6 100644
---- a/fs/exfat/misc.c
-+++ b/fs/exfat/misc.c
-@@ -89,7 +89,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 		ts->tv_sec += time_ms / 100;
- 		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
- 	} else
--		exfat_truncate_atime(ts);
-+		ts->tv_nsec = 0;
- 
- 	if (tz & EXFAT_TZ_VALID)
- 		/* Adjust timezone to UTC0. */
 
 
-because the conversion should already limit tv_sec to a 2s granularity.
+On 2020-04-18 4:47 a.m., Dan Carpenter wrote:
+> On Sat, Apr 18, 2020 at 02:45:16PM +0300, Dan Carpenter wrote:
+>> On Fri, Apr 17, 2020 at 02:49:11PM -0700, Scott Branden wrote:
+>>>>> +static int bcm_vk_dma_alloc(struct device *dev,
+>>>>> +			    struct bcm_vk_dma *dma,
+>>>>> +			    int direction,
+>>>>> +			    struct _vk_data *vkdata)
+>>>>> +{
+>>>>> +	dma_addr_t addr, sg_addr;
+>>>>> +	int err;
+>>>>> +	int i;
+>>>>> +	int offset;
+>>>>> +	uint32_t size;
+>>>>> +	uint32_t remaining_size;
+>>>>> +	uint32_t transfer_size;
+>>>>> +	uint64_t data;
+>>>>> +	unsigned long first, last;
+>>>>> +	struct _vk_data *sgdata;
+>>>>> +
+>>>>> +	/* Get 64-bit user address */
+>>>>> +	data = get_unaligned(&(vkdata->address));
+>>>> Extra parens.
+>>> removed
+>>>>> +
+>>>>> +	/* offset into first page */
+>>>>> +	offset = offset_in_page(data);
+>>>>> +
+>>>>> +	/* Calculate number of pages */
+>>>>> +	first = (data & PAGE_MASK) >> PAGE_SHIFT;
+>>>>> +	last  = ((data + vkdata->size - 1) & PAGE_MASK) >> PAGE_SHIFT;
+>>>>> +	dma->nr_pages = last - first + 1;
+>>>>> +
+>>>>> +	/* Allocate DMA pages */
+>>>>> +	dma->pages = kmalloc_array(dma->nr_pages,
+>>>>> +				   sizeof(struct page *),
+>>>>> +				   GFP_KERNEL);
+>>>>> +	if (dma->pages == NULL)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	dev_dbg(dev, "Alloc DMA Pages [0x%llx+0x%x => %d pages]\n",
+>>>>> +		data, vkdata->size, dma->nr_pages);
+>>>>> +
+>>>>> +	dma->direction = direction;
+>>>>> +
+>>>>> +	/* Get user pages into memory */
+>>>>> +	err = get_user_pages_fast(data & PAGE_MASK,
+>>>>> +				  dma->nr_pages,
+>>>>> +				  direction == DMA_FROM_DEVICE,
+>>>>> +				  dma->pages);
+>>>>> +	if (err != dma->nr_pages) {
+>>>>> +		dma->nr_pages = (err >= 0) ? err : 0;
+>>>>> +		dev_err(dev, "get_user_pages_fast, err=%d [%d]\n",
+>>>>> +			err, dma->nr_pages);
+>>>>> +		return err < 0 ? err : -EINVAL;
+>>>>> +	}
+>>>>> +
+>>>>> +	/* Max size of sg list is 1 per mapped page + fields at start */
+>>>>> +	dma->sglen = (dma->nr_pages * sizeof(*sgdata)) +
+>>>>> +		     (sizeof(uint32_t) * SGLIST_VKDATA_START);
+>>>>> +
+>>>>> +	/* Allocate sglist */
+>>>>> +	dma->sglist = dma_alloc_coherent(dev,
+>>>>> +					 dma->sglen,
+>>>>> +					 &dma->handle,
+>>>>> +					 GFP_KERNEL);
+>>>> 	dma->sglist = dma_alloc_coherent(dev, dma->sglen, &dma->handle,
+>>>> 					 GFP_KERNEL);
+>>> done
+>>>>
+>>>>> +	if (!dma->sglist)
+>>>>> +		return -ENOMEM;
+>>>> No cleanup?
+>>> what needs to be cleaned up?
+>> dma->pages should be freed probably?  And a put_user_pages_fast()?
+> Sorry put_user_pages_fast() isn't a function.  My bad.
+>
+> regards,
+> dan carpenter
 
--Eric
