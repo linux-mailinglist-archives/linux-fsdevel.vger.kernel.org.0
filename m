@@ -2,21 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AB8C1AF21D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 329201AF266
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Apr 2020 18:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbgDRQE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 12:04:28 -0400
-Received: from sandeen.net ([63.231.237.45]:58002 "EHLO sandeen.net"
+        id S1726036AbgDRQkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 12:40:52 -0400
+Received: from sandeen.net ([63.231.237.45]:59758 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726356AbgDRQE1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:04:27 -0400
+        id S1725893AbgDRQkv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 12:40:51 -0400
 Received: from [10.0.0.4] (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id A6E6348C682;
-        Sat, 18 Apr 2020 11:04:02 -0500 (CDT)
+        by sandeen.net (Postfix) with ESMTPSA id E4EF9323BF7;
+        Sat, 18 Apr 2020 11:40:26 -0500 (CDT)
 Subject: Re: [PATCH 2/2 V2] exfat: truncate atimes to 2s granularity
+From:   Eric Sandeen <sandeen@sandeen.net>
 To:     Namjae Jeon <linkinjeon@kernel.org>
 Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
         Namjae Jeon <namjae.jeon@samsung.com>
@@ -24,7 +25,7 @@ References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
  <abfc2cdf-0ff1-3334-da03-8fbcc6eda328@sandeen.net>
  <381e5327-618b-13ab-ebe5-175f99abf7db@sandeen.net>
  <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
+ <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
 Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
  nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
@@ -67,12 +68,12 @@ Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
  m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
  fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
-Date:   Sat, 18 Apr 2020 11:04:25 -0500
+Message-ID: <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
+Date:   Sat, 18 Apr 2020 11:40:49 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
+In-Reply-To: <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -81,66 +82,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/20 8:03 AM, Namjae Jeon wrote:
-> 2020-04-16 13:11 GMT+09:00, Eric Sandeen <sandeen@sandeen.net>:
-> Hi Eric,
-> 
->> exfat atimes are restricted to only 2s granularity so after
->> we set an atime, round it down to the nearest 2s and set the
->> sub-second component of the timestamp to 0.
-> Is there any reason why only atime is truncated with 2s granularity ?
+On 4/18/20 11:04 AM, Eric Sandeen wrote:
+> since access_time has no corresponding 10msIncrement field, my understanding was that it could only have a 2s granularity.
 
-You're the expert, so I might be wrong! :)
+Maybe your concern is whether the other _time fields should also be
+truncated to 2s even though they have the _ms field?  I don't think so; the
+s_time_gran already limits in-core timestamp resolution to 10ms, which will
+be properly translated when the inode is written to disk.
 
-My reading of the spec & code is that every timestamp has 2s granularity, in the
-main time field, and some timestamps also have another field with 10ms granularity,
-which can range from 0 to 199, i.e. 0 to 1990 ms, i.e. 0 to 1.99 seconds in the _ms
-field.  i.e. the _ms fields can add more than 1 second to the timestamp, right?
+atime has a different granularity though, so s_time_gran doens't help and we
+must manually change it to 2s whenever we call something like current_time(), which
+only enforces the 10ms granularity.
 
-                struct {
-                        __u8 num_ext;
-                        __le16 checksum;
-                        __le16 attr;
-                        __le16 reserved1;
-                        __le16 create_time;
-                        __le16 create_date;
-                        __le16 modify_time;
-                        __le16 modify_date;
-                        __le16 access_time;
-                        __le16 access_date;
-                        __u8 create_time_ms;
-                        __u8 modify_time_ms;
-                        __u8 create_tz;
-                        __u8 modify_tz;
-                        __u8 access_tz;
-                        __u8 reserved2[7];
-                } __packed file; /* file directory entry */
+So for cases like this:
 
-and per the publiished spec,
+ 	generic_fillattr(inode, stat);
++	exfat_truncate_atime(&stat->atime);
 
-7.4.8.1 DoubleSeconds Field
+or this:
 
-The DoubleSeconds field shall describe the seconds portion of the Timestamp field, in two-second multiples.
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime =
+ 		EXFAT_I(inode)->i_crtime = current_time(inode);
++	exfat_truncate_atime(&inode->i_atime);
 
-The valid range of values for this field shall be:
+I think it's clearly the right thing to do; anything finer than 2s will be thrown
+away when the vfs inode atime is translated to the disk format, so we should never
+hold finer granularity in the in-memory vfs inode.
 
-    0, which represents 0 seconds
-
-    29, which represents 58 seconds
-
-7.4.9 10msIncrement Fields
-
-10msIncrement fields shall provide additional time resolution to their corresponding Timestamp fields in ten-millisecond multiples.
-
-The valid range of values for these fields shall be:
-
-    At least 0, which represents 0 milliseconds
-
-    At most 199, which represents 1990 milliseconds
-
-
-since access_time has no corresponding 10msIncrement field, my understanding was that it could only have a 2s granularity.
-
-Happy to have the patch dropped or corrected if I read this wrong, though.
+However, in exfat_get_entry_time() maybe all we need to do is set ts->tv_nsec to 0;
+that might be clearer.
 
 -Eric
