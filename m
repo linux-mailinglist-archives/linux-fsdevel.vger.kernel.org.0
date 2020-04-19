@@ -2,89 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B830C1AFEE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 01:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7191AFEEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 01:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725964AbgDSXUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 19:20:52 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:46249 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725834AbgDSXUw (ORCPT
+        id S1726054AbgDSXkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 19:40:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45731 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbgDSXkv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 19:20:52 -0400
-Received: from dread.disaster.area (pa49-180-0-232.pa.nsw.optusnet.com.au [49.180.0.232])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 09D587EBBD3;
-        Mon, 20 Apr 2020 09:20:47 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jQJF0-0006bP-BD; Mon, 20 Apr 2020 09:20:46 +1000
-Date:   Mon, 20 Apr 2020 09:20:46 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
-Message-ID: <20200419232046.GC9765@dread.disaster.area>
-References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
- <20200419031443.GT5820@bombadil.infradead.org>
+        Sun, 19 Apr 2020 19:40:51 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w11so4134746pga.12;
+        Sun, 19 Apr 2020 16:40:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3pB9t58pK0EznN9S4Sd0+htiX+z00NIIdr4sNq8MWCA=;
+        b=eQaEenyGHp/rkbaX5tp/zQ3kyEOEYl5wiyWsiESCVhGVeJZVy8ukOEYFW2SXJochg3
+         9kis/JAS7Uuf7XemKlrqltk8ldLVcoGaPuVOUfl6en5fv0UT4wFFWeR28/nMOVNpO8ak
+         orjU1A/ex3EKCh9SY+b9IXyj/PZCp4sTAY4ka8gl1ErY3HXJP+UJCP2sX/8nQai9Qzbe
+         foHt616t4LQZYlqhBlcXKQJgO8xjyhRuSMJB05iOnU0+icPhOajKNxhHpoI8M/hfQdoV
+         KUMmr+arEG/IwOUzkWlU3UfjYLMhyNITVdfpBOIheg+jqn58H352oC+Va1trkHR9Gqzt
+         OxOg==
+X-Gm-Message-State: AGi0PuY7UAUtycrzt4XJ7FYnDvpd949Jm6uyC7mGRyCrcfLf40Hitgm/
+        rmuKjuiLjDnSjr0XihJ8Po567rhL0WU=
+X-Google-Smtp-Source: APiQypL0M8AzubBb/6HiLPC5OQyscP2rx0fUGaKDKO6l3uGUZ9dFwn1hO/YwT+koWYrl57dC2MDzaA==
+X-Received: by 2002:aa7:8d81:: with SMTP id i1mr14698377pfr.34.1587339649205;
+        Sun, 19 Apr 2020 16:40:49 -0700 (PDT)
+Received: from [100.124.11.78] ([104.129.198.54])
+        by smtp.gmail.com with ESMTPSA id o21sm11906838pjr.37.2020.04.19.16.40.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Apr 2020 16:40:48 -0700 (PDT)
+Subject: Re: [PATCH v2 10/10] block: put_device() if device_add() fails
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-11-mcgrof@kernel.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <85a18bcf-4bd0-a529-6c3c-46fcd23a350e@acm.org>
+Date:   Sun, 19 Apr 2020 16:40:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200419031443.GT5820@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=XYjVcjsg+1UI/cdbgX7I7g==:117 a=XYjVcjsg+1UI/cdbgX7I7g==:17
-        a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10 a=7-415B0cAAAA:8
-        a=co7JyoCZfjF-YrSjuUMA:9 a=YayftM2Ymln1wajj:21 a=U_Hll0i7KD7Z4FYa:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200419194529.4872-11-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 08:14:43PM -0700, Matthew Wilcox wrote:
-> On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
-> > When reading md code, I find md-bitmap.c copies __clear_page_buffers from
-> > buffer.c, and after more search, seems there are some places in fs could
-> > use this function directly. So this patchset tries to export the function
-> > and use it to cleanup code.
-> 
-> OK, I see why you did this, but there are a couple of problems with it.
-> 
-> One is just a sequencing problem; between exporting __clear_page_buffers()
-> and removing it from the md code, the md code won't build.
-> 
-> More seriously, most of this code has nothing to do with buffers.  It
-> uses page->private for its own purposes.
-> 
-> What I would do instead is add:
-> 
-> clear_page_private(struct page *page)
-> {
-> 	ClearPagePrivate(page);
-> 	set_page_private(page, 0);
-> 	put_page(page);
-> }
-> 
-> to include/linux/mm.h, then convert all callers of __clear_page_buffers()
-> to call that instead.
+On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+> Through code inspection I've found that we don't put_device() if
+> device_add() fails, and this must be done to decrement its refcount.
 
-While I think this is the right direction, I don't like the lack of
-symmetry between set_page_private() and clear_page_private() this
-creates.  i.e. set_page_private() just assigned page->private, while
-clear_page_private clears both a page flag and page->private, and it
-also drops a page reference, too.
-
-Anyone expecting to use set/clear_page_private as a matched pair (as
-the names suggest they are) is in for a horrible surprise...
-
-This is a public service message brought to you by the Department
-of We Really Suck At API Design.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
