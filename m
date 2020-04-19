@@ -2,100 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7BC1AF9BF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 14:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E0B1AFA69
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 15:15:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbgDSMDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 08:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725841AbgDSMDJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 08:03:09 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEB2F21841;
-        Sun, 19 Apr 2020 12:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587297788;
-        bh=x2vOiaCnxxSwfQdLjmqVJM8lbr3nu9ilx4uLADcHgbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BQIo366fubUyRRR8gy2ghwhRQu0Kwnh4p0dbM2JbxKVFUDW8yZ1SDgiYSl5JqwVeR
-         wZ5SL8Ku8jXAHvkI6SEOWx2BKIwYfUnNkbRnpiO/xRR81S6FYbEAx2Q4OceLmb8Ctn
-         LwJSFTVsq/8XLc3RC94BktgRcZXJ/hdv3QPM50lA=
-Date:   Sun, 19 Apr 2020 14:03:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joe Perches <joe@perches.com>, Rafael Wysocki <rafael@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        target-devel <target-devel@vger.kernel.org>,
-        Zzy Wysm <zzy@zzywysm.com>
-Subject: Re: [PATCH 7/9] drivers/base: fix empty-body warnings in
- devcoredump.c
-Message-ID: <20200419120304.GA3668771@kroah.com>
-References: <20200418184111.13401-1-rdunlap@infradead.org>
- <20200418184111.13401-8-rdunlap@infradead.org>
- <20200418185033.GQ5820@bombadil.infradead.org>
- <b88d6f8b-e6af-7071-cefa-dc12e79116b6@infradead.org>
- <d018321b0f281ff29efb04dd1496c8e6499812fb.camel@perches.com>
- <CAHk-=wi4QU90W1j1VVUrqdrkrq-0XPA06sjGUm-g1VHRB-35YA@mail.gmail.com>
+        id S1725949AbgDSNPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 09:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbgDSNPH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Apr 2020 09:15:07 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB4CC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 06:15:07 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id j2so8613913wrs.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 06:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.ionos.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=/5D1HJQCdtvBqKyZeiaC+xwJ/7LTAOg0hEOsLd16cec=;
+        b=VSahUVOhOBhExsY4KQlmPOzVmW3osQuhNWv08iOfW1hASIdiDNknvINhL3OJAooz1G
+         fWdDLB4d7TFOBD5QvlXE6tLhm8KA6Z5O0GL3VJmvHRK3MYyfpVbglnGCxEGE7JVArT9d
+         YL4dgMuI46PNLrPthUGAtfVTrk51qPeKUBH86Kw0mvjx17r7gZZMxKYlHrQg3zDtetYZ
+         WK/37nRd0yT8n+1Z53LBNhJnIo2UKUCz1L0zsWnGaPzkwJCwXgNZno+IPxCu7r5Gp5NK
+         IoEUwpzJSwWipXpLQ2+/cEGnZrpz4EmFbD/3loeTmWeu8EzNZ3i0o+OX9ZhMx4sbY+TV
+         gcTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/5D1HJQCdtvBqKyZeiaC+xwJ/7LTAOg0hEOsLd16cec=;
+        b=lOndJC11D4RRDo5qwjuRBZ15pMGpOBSUmFJWJTe43moqVfM5+RIVmPRAiQ9rpAijbZ
+         1jCwIHi7mvhHwg3zCt+CCYt5ojdyGURY1dqf2Yskm+lDdSuLOzGIphc61k/Oimq8cIhl
+         jI+Z/lqL89J7YxqVbQJZ5UJt/SHXL+fxNlQSZNZH7s7m4rdlWmUbWqflOvzHKXArqdXV
+         C3Z3713NqEvxEII6pIbIzvTDre1GvIERHeaFj7R3C0ZUoJHG5Y5s30uHUR9+IZ+BJqXI
+         Rx8GlshHMO+ely6qDkvD0upTEufNyMM++zAKxk2O1oM0ZdwbjaX1rSlIGHbsqpFBFSlE
+         x2wQ==
+X-Gm-Message-State: AGi0PuaXjB0//YRIk4xjEcJ4WjJ7fgWX5fbYCKEvGq2LY5GObsLCQZM8
+        cFkpL9ogM/DGSJvOX+o+crEeM7a5DtQ=
+X-Google-Smtp-Source: APiQypIFB6Og1u+d9xTwzQFys+yfDQP1kzAmsIrEihoqmhorQuxzRWoWLIvGHH01pZ27aUP+81WKvQ==
+X-Received: by 2002:adf:82b1:: with SMTP id 46mr12676984wrc.44.1587302106043;
+        Sun, 19 Apr 2020 06:15:06 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:48da:6b00:34d4:fc5b:d862:dbd2? ([2001:16b8:48da:6b00:34d4:fc5b:d862:dbd2])
+        by smtp.gmail.com with ESMTPSA id q10sm36672783wrv.95.2020.04.19.06.15.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Apr 2020 06:15:05 -0700 (PDT)
+Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
+ <20200419031443.GT5820@bombadil.infradead.org>
+From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Message-ID: <b4454f80-95c4-3164-e650-4abb7637fc98@cloud.ionos.com>
+Date:   Sun, 19 Apr 2020 15:15:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi4QU90W1j1VVUrqdrkrq-0XPA06sjGUm-g1VHRB-35YA@mail.gmail.com>
+In-Reply-To: <20200419031443.GT5820@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 12:15:57PM -0700, Linus Torvalds wrote:
-> On Sat, Apr 18, 2020 at 11:57 AM Joe Perches <joe@perches.com> wrote:
-> >
-> > sysfs_create_link is __must_check
-> 
-> The way to handle __must_check if you really really don't want to test
-> and have good reasons is
-> 
->  (a) add a big comment about why this case ostensibly doesn't need the check
-> 
->  (b) cast a test of it to '(void)' or something (I guess we could add
-> a helper for this). So something like
-> 
->         /* We will always clean up, we don't care whether this fails
-> or succeeds */
->         (void)!!sysfs_create_link(...)
-> 
-> There are other alternatives (like using WARN_ON_ONCE() instead, for
-> example). So it depends on the code. Which is why that comment is
-> important to show why the code chose that option.
-> 
-> However, I wonder if in this case we should just remove the
-> __must_check. Greg? It goes back a long long time.
+On 19.04.20 05:14, Matthew Wilcox wrote:
+> On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
+>> When reading md code, I find md-bitmap.c copies __clear_page_buffers from
+>> buffer.c, and after more search, seems there are some places in fs could
+>> use this function directly. So this patchset tries to export the function
+>> and use it to cleanup code.
+> OK, I see why you did this, but there are a couple of problems with it.
+>
+> One is just a sequencing problem; between exporting __clear_page_buffers()
+> and removing it from the md code, the md code won't build.
 
-Yeah, maybe it is time to remove it, the gyrations people go through to
-remove the warning when they "know" they are doing it right feels pretty
-bad compared to forcing people to check things for "normal" calls to the
-function.
+Thank for reminder, I missed that.
 
-thanks,
+> More seriously, most of this code has nothing to do with buffers.  It
+> uses page->private for its own purposes.
+>
+> What I would do instead is add:
+>
+> clear_page_private(struct page *page)
+> {
+> 	ClearPagePrivate(page);
+> 	set_page_private(page, 0);
+> 	put_page(page);
+> }
+>
+> to include/linux/mm.h, then convert all callers of __clear_page_buffers()
+> to call that instead.
+>
 
-greg k-h
+Thanks for your suggestion!
+
+Thanks,
+Guoqing
+
