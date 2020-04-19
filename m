@@ -2,60 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 733041AFE78
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F851AFE9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 00:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbgDSVzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 17:55:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42208 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbgDSVzr (ORCPT
+        id S1726025AbgDSWW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 18:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41684 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725953AbgDSWW4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 17:55:47 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r20so3970153pfh.9;
-        Sun, 19 Apr 2020 14:55:46 -0700 (PDT)
+        Sun, 19 Apr 2020 18:22:56 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8445DC061A41
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 15:22:56 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id hi11so2996308pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 15:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WZGGvjnGunABiy25qrhz6ksRUn1sXB4cu8ILhBoEIw4=;
+        b=q361Dw3uF5Qr1t4y5v+dPldxAaxHS8ShKiBGG9s7RVfzTEnTG5VLizSByAFZb1rMpb
+         ayBMS4rffRqTEtTGq2GcohUU29nxm4JKb9Jy5YuH4M4v07exxqLF3Ya15BzgFws3bGTa
+         cWV1MEg+VFSJUKMHu8BHH6cyJOvBubkmQ2UaSzQFLXCfiapBdMcZb2j7MlepzaTnhlnI
+         ROEhJvJXGkqhZ/AjMcEbWz+7k/7F4jFOuj8/yE7edpR+U1yixc08d+SqPbFZtY3Xs4sK
+         dsxKekAYVfOXOuF/pdJghZiesUM7RdHfCFYAb1u+pcI/CUtsrY5VVycGGZnrYTGI00Re
+         oUqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Br4qVD6vNcOTeGAPUTvXdaMBJRDE1FMGq+EEBulVyKA=;
-        b=HvvLL0OcZZ1bO0VhqygCu2a/3agaSD8bIGaoA5TyCemvfAvwMCUOWEpKw0GwvpHoVF
-         wVqxvbHAOA1o1YUJiBWHctCaanntEF8zi7PP9ohtah8I4MTGZZ/jRoW5QFl5AbdncZmo
-         IYK/LA6ZWY7pV5Zw1rv69RopcPv3dTNobpM2Vw88Jqhs1GV/zLsJ5g3hkFXDGUL6JulW
-         GvZ7YUO95/kD0GhEtORikQBld6wbQL69dcX+xFLczky0RVdz/QeR7bcd0FpYSzyCMo3u
-         1SPUbHMo/Av9FJofP0O/dLZxPgbhHBTHBc3I0SeRytLeb3fOmTDZyQHuaQVH2zAXmRRx
-         3dHQ==
-X-Gm-Message-State: AGi0PuYibJc/+rGrYfXM8hKy+Ycu24G/ZOEFfXmFm66lb4Zh2dl/3yit
-        qFOgBrx6NHB+tHalI4WuceU=
-X-Google-Smtp-Source: APiQypILUJeV066/FeccQlF/yOmA6aYxTTF0zi1MK6KK770wqgS/jEy9+PKiMhVDohfqUAoAFP9Tjw==
-X-Received: by 2002:aa7:8429:: with SMTP id q9mr13601282pfn.205.1587333345858;
-        Sun, 19 Apr 2020 14:55:45 -0700 (PDT)
-Received: from [100.124.11.78] ([104.129.198.64])
-        by smtp.gmail.com with ESMTPSA id 80sm24479420pgb.45.2020.04.19.14.55.43
+        bh=WZGGvjnGunABiy25qrhz6ksRUn1sXB4cu8ILhBoEIw4=;
+        b=VSYjHOUg5u8gq4ieCscgzCP323wIbj8N823EJbz6J/8BOmZ91ogRGjQoHPog862RqD
+         VeYakmQ75NvNSwbZXqX07M/anyYAUth2X3evAJQ6QMFhXjj3A5ciT4YCrPJy5Aedrhlo
+         ILATYcuFWFVtMQXtKYwRwpX+ENs+VjDITqnhKa1nefyem314OsYVnGdO8USleeqDeGOu
+         l3FiUHF4rWlUhIl9MwnaPwXAn2NE0mKuXiT7D3GrH+ufmhqi63cYVXaVJ6Vsuj/+3Q1v
+         Qwo8J7VDTxOPQmkXKFsEF1VkQML6bixHpmi+1Wd33bDmz6nJstK03kePtFJXxDi23MUY
+         g5iw==
+X-Gm-Message-State: AGi0Pua37D/iKRTtGWUIOnnVH1HiyggArSm4zHlz9fdHqRUwZG3ckJhd
+        4U3x+yThSrMpnsgMQTYd+pg9aA==
+X-Google-Smtp-Source: APiQypLVocmgSAnp2tycKBAS6H3WFAfrUrUN7XSJV8KonygiDW2GikHzh3bDUBJj0YUm49eMWZW93g==
+X-Received: by 2002:a17:90a:8d0f:: with SMTP id c15mr16391639pjo.100.1587334975940;
+        Sun, 19 Apr 2020 15:22:55 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id e66sm21780994pfa.69.2020.04.19.15.22.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Apr 2020 14:55:44 -0700 (PDT)
-Subject: Re: [PATCH v2 03/10] blktrace: fix debugfs use after free
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-4-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <91c82e6a-24ce-0b7d-e6e4-e8aa89f3fb79@acm.org>
-Date:   Sun, 19 Apr 2020 14:55:42 -0700
+        Sun, 19 Apr 2020 15:22:55 -0700 (PDT)
+Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <cover.1586830316.git.josh@joshtriplett.org>
+ <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
+ <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b7dae79b-4c5f-65f6-0960-617070357201@kernel.dk>
+Date:   Sun, 19 Apr 2020 16:22:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200419194529.4872-4-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -63,69 +75,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/19/20 12:45 PM, Luis Chamberlain wrote:
-> +int __must_check blk_queue_debugfs_register(struct request_queue *q)
-> +{
-> +	struct dentry *dir = NULL;
-> +
-> +	/* This can happen if we have a bug in the lower layers */
+On 4/19/20 4:44 AM, Aleksa Sarai wrote:
+> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
+>> Inspired by the X protocol's handling of XIDs, allow userspace to select
+>> the file descriptor opened by openat2, so that it can use the resulting
+>> file descriptor in subsequent system calls without waiting for the
+>> response to openat2.
+>>
+>> In io_uring, this allows sequences like openat2/read/close without
+>> waiting for the openat2 to complete. Multiple such sequences can
+>> overlap, as long as each uses a distinct file descriptor.
+> 
+> I'm not sure I understand this explanation -- how can you trigger a
+> syscall with an fd that hasn't yet been registered (unless you're just
+> hoping the race goes in your favour)?
 
-What does "this" refer to? Which layers does "lower layers" refer to? 
-Most software developers consider a module that calls directly into 
-another module as a higher layer (callbacks through function pointers do 
-not count; see also https://en.wikipedia.org/wiki/Modular_programming). 
-According to that definition block drivers are a software layer 
-immediately above the block layer core.
+io_uring can do chains of requests, where each link in the chain isn't
+started until the previous one has completed. Hence if you know what fd
+that openat2 will return, you can submit a chain ala:
 
-How about changing that comment into the following to make it 
-unambiguous (if this is what you meant)?
+<open file X, give me fd Y><read from fd Y><close fd Y>
 
-	/*
-	 * Check whether the debugfs directory already exists. This can
-	 * only happen as the result of a bug in a block driver.
-	 */
+as a single submission. This isn't possible to do currently, as the read
+will depend on the output of the open, and we have no good way of
+knowing what that fd will be.
 
-> +	dir = debugfs_lookup(kobject_name(q->kobj.parent), blk_debugfs_root);
-> +	if (dir) {
-> +		pr_warn("%s: registering request_queue debugfs directory twice is not allowed\n",
-> +			kobject_name(q->kobj.parent));
-> +		dput(dir);
-> +		return -EALREADY;
-> +	}
-> +
-> +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> +					    blk_debugfs_root);
-> +	if (!q->debugfs_dir)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
+-- 
+Jens Axboe
 
-kobject_name(q->kobj.parent) is used three times in the above function. 
-How about introducing a local variable that holds the result of that 
-expression?
-
-> +static bool blk_trace_target_disk(const char *target, const char *diskname)
-> +{
-> +	if (strlen(target) != strlen(diskname))
-> +		return false;
-> +
-> +	if (!strncmp(target, diskname,
-> +		     min_t(size_t, strlen(target), strlen(diskname))))
-> +		return true;
-> +
-> +	return false;
-> +}
-
-The above code looks weird to me. When the second if-statement is 
-reached, it is guaranteed that 'target' and 'diskname' have the same 
-length. So why to calculate the minimum length in the second 
-if-statement of two strings that have the same length?
-
-Independent of what the purpose of the above code is, can that code be 
-rewritten such that it does not depend on the details of how names are 
-assigned to disks and partitions? Would disk_get_part() be useful here?
-
-Thanks,
-
-Bart.
