@@ -2,76 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0B11AF729
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 07:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9531AF76E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 08:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725939AbgDSFQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 01:16:27 -0400
-Received: from sonic307-37.consmr.mail.ne1.yahoo.com ([66.163.190.60]:41733
-        "EHLO sonic307-37.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725819AbgDSFQ1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 01:16:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1587273386; bh=EE5KmZfn+FhHPKg6HDMjuPQl02xYs/YXlEDU6CDvLqo=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=lYKsslkX6edtbR8PA879u9pUDi/L63ItI49iYAfLUqTRQbLpx84Tul5gjklzZWQAA5rC7xylHZ8ZpOAPJXM/ghn3FybcIewCGPpan/Jnx3HQ+Ed+jcanmPgAUikn4pu3SxibWdc+IRWkWR+35vzar+fiG8qznXFk4GoJ5ws6EvrldgsDUE55tagqB9/6uA4eYDXS5M9TpkTZAgrC8ZT+5TxS35gCMh0kBURi7y+pYozxLnT2QcTnz4rPirG0X2AKomqslX5I7ncEh5kifX00NMupe/NWHYpROVPdp5vl8VFxn6Taun0kUY4uUjUMDJskbH9YEyFBNUC65BYrpt+NMw==
-X-YMail-OSG: N_6BpMEVRDvd.miR6A7lED5GPdAEx7ojsA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Sun, 19 Apr 2020 05:16:26 +0000
-Received: by smtp410.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID b56449d512ead8487e4fcc13b444aa07;
-          Sun, 19 Apr 2020 05:14:24 +0000 (UTC)
-Date:   Sun, 19 Apr 2020 13:14:14 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
-Message-ID: <20200419051404.GA30986@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
- <20200419031443.GT5820@bombadil.infradead.org>
+        id S1726011AbgDSGCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 02:02:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbgDSGCu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Apr 2020 02:02:50 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4A4B2076A;
+        Sun, 19 Apr 2020 06:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587276170;
+        bh=r2AgjpwBy563/SvDhTEdOgTQsrTjb6KChd2dLbtCIIs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pTMv1wODwFpdjz0FVgzA+p2WSCpvCxj18+/q3aiIPhhtKR+jsjHHIdl5zJ2q2+RA3
+         +Tdmi8jGAiqk3VTvUYzIU3dTg9Q3SKwo6y6sZDkWyGvygbRRccfGpH1VpT4kAcKc5E
+         4lTNQxLSLwDJyeMo2kAEPugwsa59XjBdxg3VhiTs=
+Date:   Sun, 19 Apr 2020 08:02:47 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-usb@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        Zzy Wysm <zzy@zzywysm.com>
+Subject: Re: [PATCH 7/9] drivers/base: fix empty-body warnings in
+ devcoredump.c
+Message-ID: <20200419060247.GA3535909@kroah.com>
+References: <20200418184111.13401-1-rdunlap@infradead.org>
+ <20200418184111.13401-8-rdunlap@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200419031443.GT5820@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Mailer: WebService/1.1.15651 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200418184111.13401-8-rdunlap@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 08:14:43PM -0700, Matthew Wilcox wrote:
-> On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
-> > When reading md code, I find md-bitmap.c copies __clear_page_buffers from
-> > buffer.c, and after more search, seems there are some places in fs could
-> > use this function directly. So this patchset tries to export the function
-> > and use it to cleanup code.
+On Sat, Apr 18, 2020 at 11:41:09AM -0700, Randy Dunlap wrote:
+> Fix gcc empty-body warning when -Wextra is used:
 > 
-> OK, I see why you did this, but there are a couple of problems with it.
+> ../drivers/base/devcoredump.c:297:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> ../drivers/base/devcoredump.c:301:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
 > 
-> One is just a sequencing problem; between exporting __clear_page_buffers()
-> and removing it from the md code, the md code won't build.
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  drivers/base/devcoredump.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> More seriously, most of this code has nothing to do with buffers.  It
-> uses page->private for its own purposes.
-> 
-> What I would do instead is add:
-> 
-> clear_page_private(struct page *page)
-> {
-> 	ClearPagePrivate(page);
-> 	set_page_private(page, 0);
-> 	put_page(page);
-> }
-> 
-> to include/linux/mm.h, then convert all callers of __clear_page_buffers()
-> to call that instead.
+> --- linux-next-20200417.orig/drivers/base/devcoredump.c
+> +++ linux-next-20200417/drivers/base/devcoredump.c
+> @@ -9,6 +9,7 @@
+>   *
+>   * Author: Johannes Berg <johannes@sipsolutions.net>
+>   */
+> +#include <linux/kernel.h>
 
-Agreed with the new naming (__clear_page_buffers is confusing), that is not
-only for initial use buffer head, but a generic convention for all unlocked
-PagePrivate pages (such migration & reclaim paths indicate that).
+Why the need for this .h file being added for reformatting the code?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/mm.h?h=v5.7-rc1#n990
+thanks,
 
-Thanks,
-Gao Xiang
-
-
-> 
+greg k-h
