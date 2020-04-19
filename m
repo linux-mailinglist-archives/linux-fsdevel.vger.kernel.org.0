@@ -2,90 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C141AFE62
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733041AFE78
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgDSVSK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 17:18:10 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56782 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725988AbgDSVSK (ORCPT
+        id S1726059AbgDSVzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 17:55:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42208 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbgDSVzr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 17:18:10 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-196-qkGxLyqRNSu7MfwxJtx5NA-1; Sun, 19 Apr 2020 22:18:06 +0100
-X-MC-Unique: qkGxLyqRNSu7MfwxJtx5NA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sun, 19 Apr 2020 22:18:06 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sun, 19 Apr 2020 22:18:06 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Aleksa Sarai' <cyphar@cyphar.com>,
-        Josh Triplett <josh@joshtriplett.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
-Subject: RE: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-Thread-Topic: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-Thread-Index: AQHWFjeEcgUetSiAV0WbnffNc+KTs6iAvc2Q
-Date:   Sun, 19 Apr 2020 21:18:05 +0000
-Message-ID: <7f02bf52254443e380c33cae7c1fd5f0@AcuMS.aculab.com>
-References: <cover.1586830316.git.josh@joshtriplett.org>
- <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
- <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
-In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Sun, 19 Apr 2020 17:55:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r20so3970153pfh.9;
+        Sun, 19 Apr 2020 14:55:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Br4qVD6vNcOTeGAPUTvXdaMBJRDE1FMGq+EEBulVyKA=;
+        b=HvvLL0OcZZ1bO0VhqygCu2a/3agaSD8bIGaoA5TyCemvfAvwMCUOWEpKw0GwvpHoVF
+         wVqxvbHAOA1o1YUJiBWHctCaanntEF8zi7PP9ohtah8I4MTGZZ/jRoW5QFl5AbdncZmo
+         IYK/LA6ZWY7pV5Zw1rv69RopcPv3dTNobpM2Vw88Jqhs1GV/zLsJ5g3hkFXDGUL6JulW
+         GvZ7YUO95/kD0GhEtORikQBld6wbQL69dcX+xFLczky0RVdz/QeR7bcd0FpYSzyCMo3u
+         1SPUbHMo/Av9FJofP0O/dLZxPgbhHBTHBc3I0SeRytLeb3fOmTDZyQHuaQVH2zAXmRRx
+         3dHQ==
+X-Gm-Message-State: AGi0PuYibJc/+rGrYfXM8hKy+Ycu24G/ZOEFfXmFm66lb4Zh2dl/3yit
+        qFOgBrx6NHB+tHalI4WuceU=
+X-Google-Smtp-Source: APiQypILUJeV066/FeccQlF/yOmA6aYxTTF0zi1MK6KK770wqgS/jEy9+PKiMhVDohfqUAoAFP9Tjw==
+X-Received: by 2002:aa7:8429:: with SMTP id q9mr13601282pfn.205.1587333345858;
+        Sun, 19 Apr 2020 14:55:45 -0700 (PDT)
+Received: from [100.124.11.78] ([104.129.198.64])
+        by smtp.gmail.com with ESMTPSA id 80sm24479420pgb.45.2020.04.19.14.55.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Apr 2020 14:55:44 -0700 (PDT)
+Subject: Re: [PATCH v2 03/10] blktrace: fix debugfs use after free
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-4-mcgrof@kernel.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <91c82e6a-24ce-0b7d-e6e4-e8aa89f3fb79@acm.org>
+Date:   Sun, 19 Apr 2020 14:55:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200419194529.4872-4-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Aleksa Sarai
-> Sent: 19 April 2020 11:44
-> 
-> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
-> > Inspired by the X protocol's handling of XIDs, allow userspace to select
-> > the file descriptor opened by openat2, so that it can use the resulting
-> > file descriptor in subsequent system calls without waiting for the
-> > response to openat2.
-> >
-> > In io_uring, this allows sequences like openat2/read/close without
-> > waiting for the openat2 to complete. Multiple such sequences can
-> > overlap, as long as each uses a distinct file descriptor.
-> 
-> I'm not sure I understand this explanation -- how can you trigger a
-> syscall with an fd that hasn't yet been registered (unless you're just
-> hoping the race goes in your favour)?
+On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+> +int __must_check blk_queue_debugfs_register(struct request_queue *q)
+> +{
+> +	struct dentry *dir = NULL;
+> +
+> +	/* This can happen if we have a bug in the lower layers */
 
-I suspect (there are no comments in the io_uring code to say what it does)
-that the io_uring code uses a thread of the user process to sequentially
-execute IO requests that the main application has added to a queue.
+What does "this" refer to? Which layers does "lower layers" refer to? 
+Most software developers consider a module that calls directly into 
+another module as a higher layer (callbacks through function pointers do 
+not count; see also https://en.wikipedia.org/wiki/Modular_programming). 
+According to that definition block drivers are a software layer 
+immediately above the block layer core.
 
-So it might make sense to queue up open/read/close.
-But that ought to be within the io_uring code.
+How about changing that comment into the following to make it 
+unambiguous (if this is what you meant)?
 
-	David
+	/*
+	 * Check whether the debugfs directory already exists. This can
+	 * only happen as the result of a bug in a block driver.
+	 */
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+> +	dir = debugfs_lookup(kobject_name(q->kobj.parent), blk_debugfs_root);
+> +	if (dir) {
+> +		pr_warn("%s: registering request_queue debugfs directory twice is not allowed\n",
+> +			kobject_name(q->kobj.parent));
+> +		dput(dir);
+> +		return -EALREADY;
+> +	}
+> +
+> +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+> +					    blk_debugfs_root);
+> +	if (!q->debugfs_dir)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
 
+kobject_name(q->kobj.parent) is used three times in the above function. 
+How about introducing a local variable that holds the result of that 
+expression?
+
+> +static bool blk_trace_target_disk(const char *target, const char *diskname)
+> +{
+> +	if (strlen(target) != strlen(diskname))
+> +		return false;
+> +
+> +	if (!strncmp(target, diskname,
+> +		     min_t(size_t, strlen(target), strlen(diskname))))
+> +		return true;
+> +
+> +	return false;
+> +}
+
+The above code looks weird to me. When the second if-statement is 
+reached, it is guaranteed that 'target' and 'diskname' have the same 
+length. So why to calculate the minimum length in the second 
+if-statement of two strings that have the same length?
+
+Independent of what the purpose of the above code is, can that code be 
+rewritten such that it does not depend on the details of how names are 
+assigned to disks and partitions? Would disk_get_part() be useful here?
+
+Thanks,
+
+Bart.
