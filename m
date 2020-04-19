@@ -2,120 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5042E1AF5C1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 00:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E671AF65C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 05:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgDRWzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Apr 2020 18:55:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbgDRWzk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Apr 2020 18:55:40 -0400
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E5842072C
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 22:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587250539;
-        bh=5m9YaqFXTzw6Js+p8N08wBdua5MaC4xad5htqkThn+o=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=L+ITSg6n+tEEwcJQYZle0SvFbX+7L7vtqvnhH9ya5bHYheiXDB2rYQ6TO6Shs3IfK
-         +K4xB/VTZTUXEE86Grjxfwgzl5nrUwQLjNvXDtnL8szvkq57LZNqpFZS6opgI1Jlrr
-         s6Pm1kKzNAjzi9B7G6d22ldYx6ik+vSC4qdnL7hM=
-Received: by mail-ot1-f45.google.com with SMTP id z17so4759891oto.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 15:55:39 -0700 (PDT)
-X-Gm-Message-State: AGi0PubYQcWXZjYAhigeNnixR2zxzKUcmEbRum7JFlV8XMhaE+9J+Zmh
-        ZE5t0uhfvgzkgWUkBq81pVIlLCkzXngx23GfBa0=
-X-Google-Smtp-Source: APiQypL4IP+kPd+ozM3vMWWiSqFGW+eUfgoCYUYvb0Bn7DXG5LHnXJzdz8hskrx23VsGkXGWDoxB3FuqXuLiYF1OM4w=
-X-Received: by 2002:a05:6830:1b7a:: with SMTP id d26mr4358158ote.120.1587250538517;
- Sat, 18 Apr 2020 15:55:38 -0700 (PDT)
+        id S1725903AbgDSDOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Apr 2020 23:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35418 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725877AbgDSDOs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Apr 2020 23:14:48 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2E0C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Apr 2020 20:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=y++SqS8nECS3a8Sm4kXuXS/brL8CTqTt7OycVrBfW18=; b=NmfvHnW5KXzBKXoQFxljf/4egX
+        RHaF8/r5WJWov6AqXEuiT2L7Db05TSjFFIDWOPA15yoswASj2m896CqZu3T1uAdkZdN7DNcxykmRa
+        Ntoc/DY1Q2xpM/aS1kimMFKpnoE1GPs8c27Pd8bcnW+G0TKNcq11il2rgislkjdp0LDtMIhInP1Za
+        uoprAh42WhL1Z8zRyn3PGS/3xiM60nc7zDOZDGHiE8vrBfJZh9Lv/QU3o89mHqTxxUIrY9AqKpg+3
+        SIwowTewNLI+ULRTzpx44/G0MRmbfTDk9RWstxn1vo5M91EXm5kopuG++n4BpXL6no0yrZpYaGRf1
+        tEnsui5A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jQ0Ps-0005KZ-25; Sun, 19 Apr 2020 03:14:44 +0000
+Date:   Sat, 18 Apr 2020 20:14:43 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
+Message-ID: <20200419031443.GT5820@bombadil.infradead.org>
+References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:5744:0:0:0:0:0 with HTTP; Sat, 18 Apr 2020 15:55:38
- -0700 (PDT)
-In-Reply-To: <fd29fb6b-8c92-d4c1-a15e-4e33025175ea@sandeen.net>
-References: <ef3cdac4-9967-a225-fb04-4dbb4c7037a9@sandeen.net>
- <abfc2cdf-0ff1-3334-da03-8fbcc6eda328@sandeen.net> <381e5327-618b-13ab-ebe5-175f99abf7db@sandeen.net>
- <CAKYAXd8f_4nodeTf8OHQvXCwzDSfGciw9FSd42dygeYK7A+5qw@mail.gmail.com>
- <9d3c760c-9b1d-b8e7-a24b-2d6f11975cf7@sandeen.net> <380a03f3-b7da-8b54-6350-c0a81bf7a58f@sandeen.net>
- <fd29fb6b-8c92-d4c1-a15e-4e33025175ea@sandeen.net>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sun, 19 Apr 2020 07:55:38 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-A5E4NFjoxuG3Y0uCVUFjZD6DjHo6j43ZYuXbUXcD+8A@mail.gmail.com>
-Message-ID: <CAKYAXd-A5E4NFjoxuG3Y0uCVUFjZD6DjHo6j43ZYuXbUXcD+8A@mail.gmail.com>
-Subject: Re: [PATCH 2/2 V2] exfat: truncate atimes to 2s granularity
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-04-19 2:06 GMT+09:00, Eric Sandeen <sandeen@sandeen.net>:
->
->
-> On 4/18/20 11:40 AM, Eric Sandeen wrote:
->> On 4/18/20 11:04 AM, Eric Sandeen wrote:
->>> since access_time has no corresponding 10msIncrement field, my
->>> understanding was that it could only have a 2s granularity.
->>
->> Maybe your concern is whether the other _time fields should also be
->> truncated to 2s even though they have the _ms field?  I don't think so;
->> the
->> s_time_gran already limits in-core timestamp resolution to 10ms, which
->> will
->> be properly translated when the inode is written to disk.
->>
->> atime has a different granularity though, so s_time_gran doens't help and
->> we
->> must manually change it to 2s whenever we call something like
->> current_time(), which
->> only enforces the 10ms granularity.
->>
->> So for cases like this:
->>
->>  	generic_fillattr(inode, stat);
->> +	exfat_truncate_atime(&stat->atime);
->>
->> or this:
->>
->>  	inode->i_mtime = inode->i_atime = inode->i_ctime =
->>  		EXFAT_I(inode)->i_crtime = current_time(inode);
->> +	exfat_truncate_atime(&inode->i_atime);
->>
->> I think it's clearly the right thing to do; anything finer than 2s will be
->> thrown
->> away when the vfs inode atime is translated to the disk format, so we
->> should never
->> hold finer granularity in the in-memory vfs inode.
->>
->> However, in exfat_get_entry_time() maybe all we need to do is set
->> ts->tv_nsec to 0;
->> that might be clearer.
->
-> so maybe this is better -
->
-> diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-> index c8b33278d474..2c5629b4e7e6 100644
-> --- a/fs/exfat/misc.c
-> +++ b/fs/exfat/misc.c
-> @@ -89,7 +89,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi,
-> struct timespec64 *ts,
->  		ts->tv_sec += time_ms / 100;
->  		ts->tv_nsec = (time_ms % 100) * 10 * NSEC_PER_MSEC;
->  	} else
-> -		exfat_truncate_atime(ts);
-> +		ts->tv_nsec = 0;
->
->  	if (tz & EXFAT_TZ_VALID)
->  		/* Adjust timezone to UTC0. */
->
->
-> because the conversion should already limit tv_sec to a 2s granularity.
-Right. I will update it and replace it with old one.
-Thanks!
->
-> -Eric
->
+On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
+> When reading md code, I find md-bitmap.c copies __clear_page_buffers from
+> buffer.c, and after more search, seems there are some places in fs could
+> use this function directly. So this patchset tries to export the function
+> and use it to cleanup code.
+
+OK, I see why you did this, but there are a couple of problems with it.
+
+One is just a sequencing problem; between exporting __clear_page_buffers()
+and removing it from the md code, the md code won't build.
+
+More seriously, most of this code has nothing to do with buffers.  It
+uses page->private for its own purposes.
+
+What I would do instead is add:
+
+clear_page_private(struct page *page)
+{
+	ClearPagePrivate(page);
+	set_page_private(page, 0);
+	put_page(page);
+}
+
+to include/linux/mm.h, then convert all callers of __clear_page_buffers()
+to call that instead.
+
