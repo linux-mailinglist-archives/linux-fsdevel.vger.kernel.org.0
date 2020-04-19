@@ -2,105 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BD81AFE1B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 22:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 217FF1AFE4A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgDSUce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 16:32:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53036 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbgDSUcd (ORCPT
+        id S1726006AbgDSVG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 17:06:28 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:52318 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbgDSVG1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 16:32:33 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E797C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 13:32:33 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id h2so8687201wmb.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 13:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.ionos.com; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=qSqsSs0rb0H1r9BkPiuZ1Ep6lM6NUuOWVUYglRsbmfk=;
-        b=JuNDh96ICq4c4dBOlrwoLODjg93nj3QiNsfn7Jzpdj66pdrd/2otiyiuz9V+6piAnd
-         sSeqiPrakUpmWArGDgGIn1Wt5MmdHsIIEaKBhMZ9smAdc1xR/doVoCu7n1K/W1dsbyHR
-         sJcS0NnqAOgH5FpAhLXmqYK4LWoV9tvmHv0W0Da9xGfaom/F5bUZL3OeUqN7Tp2ryi8U
-         RvqigA/tq8cShmAHKhF20A+CdxZnLahgPS6oVyD/K3ZXYYngA4f/twVqh0U/lTLYkhP+
-         +hX/unY/KcCVKMK2bBh5jpqSeoD0piuaaJraQ21ulLL2NVgESq17UKJ8731NcAjopSYa
-         WQIg==
+        Sun, 19 Apr 2020 17:06:27 -0400
+Received: by mail-pj1-f66.google.com with SMTP id ng8so3646766pjb.2;
+        Sun, 19 Apr 2020 14:06:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=qSqsSs0rb0H1r9BkPiuZ1Ep6lM6NUuOWVUYglRsbmfk=;
-        b=A5HQHwnTelsZEkLfSxWmSDdOX2o1FqdiWoDWIMpy5TkN3C5M5/NenRpNCrbjdNIXCM
-         cLjcGqduMkwmmVLF5sML/0TvleNbKWzphZ8RRtTRHbrn5XP21XHPBRXVoBqp7MTYqe1z
-         fgdv33lmLTUc8lT6a2/4T1c/l8bLSJ51nSwxsk4CptxPJ8j988llV/j7Ekgl70ZNIBpL
-         9uhrvVFHTa6xAF+/Z8h+4Hs/w72dIUiPFd0o/q6Bp0/jev/5HC2SfwjqVQaCPK6GP1Pl
-         k6QbyvZCYaouo06E2rQthNOCykTfHH9y+h/CSiRsaMU1lRmTAT1/+o5v3e7HgxQudE2K
-         4tPQ==
-X-Gm-Message-State: AGi0PuZA3ed0tfBPnML4Yjdi1TeahTZfzUDiKTj46axjREk+M33UqNd/
-        MMQkZWP4yM6u97mcseLPnWkaGQ==
-X-Google-Smtp-Source: APiQypJ6HblZpXPqGo2v53k1bFp3Fwcx5LyA3cT02QkPqILaqop4QI5ZO3jnNwYbk7vePk9pfnamlg==
-X-Received: by 2002:a7b:cf2b:: with SMTP id m11mr13303196wmg.147.1587328352353;
-        Sun, 19 Apr 2020 13:32:32 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:48da:6b00:34d4:fc5b:d862:dbd2? ([2001:16b8:48da:6b00:34d4:fc5b:d862:dbd2])
-        by smtp.gmail.com with ESMTPSA id j13sm42797393wro.51.2020.04.19.13.32.25
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3vDmbp1+PZxXf563uiTMcQIb8UZnQcQngCnrvzYbYcs=;
+        b=G5RvBth67OZLldbxpYUAD6MYHqAijTaFdf+U/5nJBPDHZCfC8cwKhH3Ui6G3svbrMH
+         9y/1fk3V4FY3iZb7djZ5H+BKEsmsLozu/+c0rExBnI7ZjUgpadhGNzrLcOtrtI5W7Tia
+         Aj/Joar3eo9CyPTlMCn6MTEcsqQmdiuvWbUdgYHy8q9EoRMpPm2vDjtEHdwcAkqBNFEj
+         XyMiQV1lut2AXOU2h1aD8j2EUzAazJgJrEBFIenqBum6rXlg+NaG6BB2HWM7ay+WaNha
+         lzteFwPKm14PEBxVc4CH4zctOFnjiYlPks0whyCEbgde3Z6Ju2VqVAnru+Ja6Uz51/NA
+         5mYQ==
+X-Gm-Message-State: AGi0Pua6Y2BUJ39nQv5P9ZushKH/QmDJNlBIL0AxLVc8See4sK6qxBg3
+        uGT5lycZmHCWR3KWjTGUIpg=
+X-Google-Smtp-Source: APiQypKwJRdVf5cy9asI9oImq/zCCB2rcM63JFOccHnrrUFWGvh8plEXHEUKCSGnBfsHJvdQeCYePw==
+X-Received: by 2002:a17:90a:1b26:: with SMTP id q35mr18374454pjq.149.1587330386845;
+        Sun, 19 Apr 2020 14:06:26 -0700 (PDT)
+Received: from [100.124.11.78] ([104.129.198.66])
+        by smtp.gmail.com with ESMTPSA id x10sm9228352pgq.79.2020.04.19.14.06.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Apr 2020 13:32:26 -0700 (PDT)
-Subject: Re: [PATCH 2/5] btrfs: call __clear_page_buffers to simplify code
-To:     dsterba@suse.cz, linux-fsdevel@vger.kernel.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
- <20200418225123.31850-3-guoqing.jiang@cloud.ionos.com>
- <20200419194656.GA18421@suse.cz>
-From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Message-ID: <57717269-b51d-179c-f4ea-7526f9b8b678@cloud.ionos.com>
-Date:   Sun, 19 Apr 2020 22:32:25 +0200
+        Sun, 19 Apr 2020 14:06:26 -0700 (PDT)
+Subject: Re: [PATCH v2 01/10] block: move main block debugfs initialization to
+ its own file
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-2-mcgrof@kernel.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <eab0ce38-6285-733b-655d-69451e6aa8ac@acm.org>
+Date:   Sun, 19 Apr 2020 14:06:23 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200419194656.GA18421@suse.cz>
+In-Reply-To: <20200419194529.4872-2-mcgrof@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.04.20 21:46, David Sterba wrote:
-> On Sun, Apr 19, 2020 at 12:51:20AM +0200, Guoqing Jiang wrote:
->> Some places can be replaced with __clear_page_buffers after the function
->> is exported.
->>
->> Cc: Chris Mason <clm@fb.com>
->> Cc: Josef Bacik <josef@toxicpanda.com>
->> Cc: David Sterba <dsterba@suse.com>
->> Cc: linux-btrfs@vger.kernel.org
->> Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
->> ---
->>   fs/btrfs/disk-io.c   |  5 ++---
->>   fs/btrfs/extent_io.c |  6 ++----
->>   fs/btrfs/inode.c     | 14 ++++----------
->>   3 files changed, 8 insertions(+), 17 deletions(-)
->>
->> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
->> index a6cb5cbbdb9f..0f1e5690e8a4 100644
->> --- a/fs/btrfs/disk-io.c
->> +++ b/fs/btrfs/disk-io.c
->> @@ -17,6 +17,7 @@
->>   #include <linux/error-injection.h>
->>   #include <linux/crc32c.h>
->>   #include <linux/sched/mm.h>
->> +#include <linux/buffer_head.h>
-> I'm not really thrilled to see buffer_head.h being added back, we're on
-> the track to remove buffer_head usage completely and adding it just for
-> one helper does not seem great to me.
+On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+> make_request-based drivers and and request-based drivers share some
+> some debugfs code. By moving this into its own file it makes it easier
+> to expand and audit this shared code.
 
-Thanks for your reply, will drop this one.
+If this patch is reposted, please change "some some" into "some".
 
 Thanks,
-Guoqing
+
+Bart.
