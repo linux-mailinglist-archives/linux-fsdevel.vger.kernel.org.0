@@ -2,72 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F851AFE9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 00:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF4441AFE9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 00:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbgDSWW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 18:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725953AbgDSWW4 (ORCPT
+        id S1726055AbgDSWXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 18:23:36 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38484 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbgDSWXg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 18:22:56 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8445DC061A41
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 15:22:56 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id hi11so2996308pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 15:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WZGGvjnGunABiy25qrhz6ksRUn1sXB4cu8ILhBoEIw4=;
-        b=q361Dw3uF5Qr1t4y5v+dPldxAaxHS8ShKiBGG9s7RVfzTEnTG5VLizSByAFZb1rMpb
-         ayBMS4rffRqTEtTGq2GcohUU29nxm4JKb9Jy5YuH4M4v07exxqLF3Ya15BzgFws3bGTa
-         cWV1MEg+VFSJUKMHu8BHH6cyJOvBubkmQ2UaSzQFLXCfiapBdMcZb2j7MlepzaTnhlnI
-         ROEhJvJXGkqhZ/AjMcEbWz+7k/7F4jFOuj8/yE7edpR+U1yixc08d+SqPbFZtY3Xs4sK
-         dsxKekAYVfOXOuF/pdJghZiesUM7RdHfCFYAb1u+pcI/CUtsrY5VVycGGZnrYTGI00Re
-         oUqA==
+        Sun, 19 Apr 2020 18:23:36 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y25so4002446pfn.5;
+        Sun, 19 Apr 2020 15:23:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WZGGvjnGunABiy25qrhz6ksRUn1sXB4cu8ILhBoEIw4=;
-        b=VSYjHOUg5u8gq4ieCscgzCP323wIbj8N823EJbz6J/8BOmZ91ogRGjQoHPog862RqD
-         VeYakmQ75NvNSwbZXqX07M/anyYAUth2X3evAJQ6QMFhXjj3A5ciT4YCrPJy5Aedrhlo
-         ILATYcuFWFVtMQXtKYwRwpX+ENs+VjDITqnhKa1nefyem314OsYVnGdO8USleeqDeGOu
-         l3FiUHF4rWlUhIl9MwnaPwXAn2NE0mKuXiT7D3GrH+ufmhqi63cYVXaVJ6Vsuj/+3Q1v
-         Qwo8J7VDTxOPQmkXKFsEF1VkQML6bixHpmi+1Wd33bDmz6nJstK03kePtFJXxDi23MUY
-         g5iw==
-X-Gm-Message-State: AGi0Pua37D/iKRTtGWUIOnnVH1HiyggArSm4zHlz9fdHqRUwZG3ckJhd
-        4U3x+yThSrMpnsgMQTYd+pg9aA==
-X-Google-Smtp-Source: APiQypLVocmgSAnp2tycKBAS6H3WFAfrUrUN7XSJV8KonygiDW2GikHzh3bDUBJj0YUm49eMWZW93g==
-X-Received: by 2002:a17:90a:8d0f:: with SMTP id c15mr16391639pjo.100.1587334975940;
-        Sun, 19 Apr 2020 15:22:55 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id e66sm21780994pfa.69.2020.04.19.15.22.54
+        bh=PxxckLMR2d23G7JoN6ozKi6ERyzYCtE5BsAkT8xkLNU=;
+        b=QqQQiz3OpOQReE1Q2jwf/c85i8xCPktW9WOr5FoOxCQyC1qtu+jtotqAtlte4MKmdu
+         pi/kqpGTGsLK2YyLi1agBZMVLa4bJd2NHG/9HeE0yGOwkhE+x4uk0LiVlrKjwsB1Ok66
+         AsxdpEJjL9xdA0naosS9WcekQLTc8sDu2XvGapGMvvarFEbEznvvtzAOrIe0A5U0qKbw
+         hk2d9L5nW02Ggw+jeXhA3VSShIlUI4+ZJIRI+c9OvpVssJp/rSP8TJFa8/f7iOJBKCm2
+         OduyQuSZ3w6BnH8bobw9roQkeD4+M60TsFnIq1LRFagg/jdO9Ilg8z+T5UIebMPIWdez
+         CbCg==
+X-Gm-Message-State: AGi0PuYIdCD6agVH8ZcXeHJDXybdblXpBAOTnaC1aSJcdGd9YshlPbkd
+        nNlMMmOHWyxODnwJ3aYtXIw=
+X-Google-Smtp-Source: APiQypJKXdia+liMhX0/hlemOsS2zbQv5lseIECGPkTjiAMuvfNJzjg5PKXUFzaG+2drmrCSZSz94w==
+X-Received: by 2002:aa7:9484:: with SMTP id z4mr14283395pfk.144.1587335015542;
+        Sun, 19 Apr 2020 15:23:35 -0700 (PDT)
+Received: from [100.124.11.78] ([104.129.199.4])
+        by smtp.gmail.com with ESMTPSA id 135sm26218134pfu.207.2020.04.19.15.23.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Apr 2020 15:22:55 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-To:     Aleksa Sarai <cyphar@cyphar.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <cover.1586830316.git.josh@joshtriplett.org>
- <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
- <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b7dae79b-4c5f-65f6-0960-617070357201@kernel.dk>
-Date:   Sun, 19 Apr 2020 16:22:52 -0600
+        Sun, 19 Apr 2020 15:23:34 -0700 (PDT)
+Subject: Re: [PATCH v2 04/10] block: revert back to synchronous request_queue
+ removal
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-5-mcgrof@kernel.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
+Date:   Sun, 19 Apr 2020 15:23:31 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200419194529.4872-5-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -75,31 +63,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/19/20 4:44 AM, Aleksa Sarai wrote:
-> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
->> Inspired by the X protocol's handling of XIDs, allow userspace to select
->> the file descriptor opened by openat2, so that it can use the resulting
->> file descriptor in subsequent system calls without waiting for the
->> response to openat2.
->>
->> In io_uring, this allows sequences like openat2/read/close without
->> waiting for the openat2 to complete. Multiple such sequences can
->> overlap, as long as each uses a distinct file descriptor.
-> 
-> I'm not sure I understand this explanation -- how can you trigger a
-> syscall with an fd that hasn't yet been registered (unless you're just
-> hoping the race goes in your favour)?
+On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+> +/**
+> + * blk_put_queue - decrement the request_queue refcount
+> + *
+> + * @q: the request_queue structure to decrement the refcount for
+> + *
 
-io_uring can do chains of requests, where each link in the chain isn't
-started until the previous one has completed. Hence if you know what fd
-that openat2 will return, you can submit a chain ala:
+How about following the example from 
+Documentation/doc-guide/kernel-doc.rst and not leaving a blank line 
+above the function argument documentation?
 
-<open file X, give me fd Y><read from fd Y><close fd Y>
+> + * Decrements the refcount to the request_queue kobject, when this reaches
+                               ^^
+                               of?
+> + * 0 we'll have blk_release_queue() called. You should avoid calling
+> + * this function in atomic context but if you really have to ensure you
+> + * first refcount the block device with bdgrab() / bdput() so that the
+> + * last decrement happens in blk_cleanup_queue().
+> + */
 
-as a single submission. This isn't possible to do currently, as the read
-will depend on the output of the open, and we have no good way of
-knowing what that fd will be.
+Is calling bdgrab() and bdput() an option from a context in which it is 
+not guaranteed that the block device is open?
 
--- 
-Jens Axboe
+Does every context that calls blk_put_queue() also call blk_cleanup_queue()?
 
+How about avoiding confusion by changing the last sentence of that 
+comment into something like the following: "The last reference must not 
+be dropped from atomic context. If it is necessary to call 
+blk_put_queue() from atomic context, make sure that that call does not 
+decrease the request queue refcount to zero."
+
+>   /**
+>    * blk_cleanup_queue - shutdown a request queue
+> + *
+>    * @q: request queue to shutdown
+>    *
+
+How about following the example from 
+Documentation/doc-guide/kernel-doc.rst and not leaving a blank line 
+above the function argument documentation?
+
+>    * Mark @q DYING, drain all pending requests, mark @q DEAD, destroy and
+>    * put it.  All future requests will be failed immediately with -ENODEV.
+> + *
+> + * You should not call this function in atomic context. If you need to
+> + * refcount a request_queue in atomic context, instead refcount the
+> + * block device with bdgrab() / bdput().
+
+Surrounding blk_cleanup_queue() with bdgrab() / bdput() does not help. 
+This blk_cleanup_queue() must not be called from atomic context.
+
+>   /**
+> - * __blk_release_queue - release a request queue
+> - * @work: pointer to the release_work member of the request queue to be released
+> + * blk_release_queue - release a request queue
+> + *
+> + * This function is called as part of the process when a block device is being
+> + * unregistered. Releasing a request queue starts with blk_cleanup_queue(),
+> + * which set the appropriate flags and then calls blk_put_queue() as the last
+> + * step. blk_put_queue() decrements the reference counter of the request queue
+> + * and once the reference counter reaches zero, this function is called to
+> + * release all allocated resources of the request queue.
+>    *
+> - * Description:
+> - *     This function is called when a block device is being unregistered. The
+> - *     process of releasing a request queue starts with blk_cleanup_queue, which
+> - *     set the appropriate flags and then calls blk_put_queue, that decrements
+> - *     the reference counter of the request queue. Once the reference counter
+> - *     of the request queue reaches zero, blk_release_queue is called to release
+> - *     all allocated resources of the request queue.
+> + * This function can sleep, and so we must ensure that the very last
+> + * blk_put_queue() is never called from atomic context.
+> + *
+> + * @kobj: pointer to a kobject, who's container is a request_queue
+>    */
+
+Please follow the style used elsewhere in the kernel and move function 
+argument documentation just below the line with the function name.
+
+Thanks,
+
+Bart.
