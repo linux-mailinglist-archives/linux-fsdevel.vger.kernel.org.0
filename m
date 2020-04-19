@@ -2,69 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF311AFE50
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4CE1AFE5E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 23:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725994AbgDSVLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 17:11:37 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42021 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbgDSVLg (ORCPT
+        id S1726048AbgDSVRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 17:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726009AbgDSVRM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 17:11:36 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g6so4015273pgs.9;
-        Sun, 19 Apr 2020 14:11:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C7h+slJzaOOCm5ilaZtNlrSSL1NQaxEFbMPqFtrHmfA=;
-        b=GADc50Iyy6PcJBKLxMg5AaZM8KQaV3SnvWfNRh/m2hOtuT5FZP+22DtlsQaHtb2+db
-         nV8iDSeVfolwfgDEimHDLH3gVl9kU6sytkBj/HgZvZA5WajD4a8AFmIj1kXmTRSE1Y7k
-         lRaz6h2nmsxxcv4GUDjTRTgFQn9QObdCyCPXED8J7Hlh5zEBsfQFbfCs1HwzHKFAIOpz
-         +fQ9pyqcpjIPFWqRp+0meNCqACL96Zj6pWZi8WshfBpQGC1Gh00857KFkloZqgfX1iVi
-         epG3ne6avFvtx1ub10QkvsHasgFHUNL/8ZFXK10088eSn5TCsolHs0zXk91mgIk7r833
-         wIMw==
-X-Gm-Message-State: AGi0PuagOAi3ed6JXsJ0Y7yMNxNCdUMGOtzzNzF+evdqfrUHcvm98EaL
-        rWciWy+eJL22PQsuWyagS2tisJwZX+w=
-X-Google-Smtp-Source: APiQypJxk2QSVrkL9cmFour823yUEb2xji+EHimzyAE7WsAoDYVROUkbqxgYFFzOeCB1v34V42DQdg==
-X-Received: by 2002:aa7:9a52:: with SMTP id x18mr13547868pfj.139.1587330694432;
-        Sun, 19 Apr 2020 14:11:34 -0700 (PDT)
-Received: from [100.124.11.78] ([104.129.198.66])
-        by smtp.gmail.com with ESMTPSA id k63sm11871301pjb.6.2020.04.19.14.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Apr 2020 14:11:33 -0700 (PDT)
-Subject: Re: [PATCH v2 02/10] blktrace: move blktrace debugfs creation to
- helper function
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-3-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <beadd64b-cdad-bd6d-ebe1-43b5969c3cf3@acm.org>
-Date:   Sun, 19 Apr 2020 14:11:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Sun, 19 Apr 2020 17:17:12 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EBB4C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Apr 2020 14:17:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=1HlEwYF4wLAxHEp+7gRMdgZfwDtzlR2lp+Xg0n8pkXY=; b=tP2Hy4ZnyvT+ETMNngCJoLK5bN
+        aJe5sFQBDf9K+M0DUmhS4GJYd218kbxm/I0i3qI4c02nzIRROlIGmBhLGt6glzk9xNsZB0+0Nq6Dl
+        9RYuVxPNOIXysEJ1gIRjqqIxGSZsNj53Lzend4/m0RQhUtd/mEyh33jEwoggCozQdV7Mf4C81mnH2
+        +OkZu7CbN783zDuUf3kT2zLYY9tdeBlCjCtRE1jWpRM80UBNOe7IG62Abzycdt9CvgI0asFfqw/nj
+        7DFB3wWLBfOsgpeeY7itR3arOkuepT0btmbLqbK8r8lxXgZftzl5ODQZoRJMA0Lq0I0VU48XnloKr
+        NC7qazLA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jQHJL-0003EM-NA; Sun, 19 Apr 2020 21:17:07 +0000
+Date:   Sun, 19 Apr 2020 14:17:07 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
+Message-ID: <20200419211707.GY5820@bombadil.infradead.org>
+References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
+ <20200419031443.GT5820@bombadil.infradead.org>
+ <e412762b-3121-b69f-2b4b-263e888a171c@cloud.ionos.com>
 MIME-Version: 1.0
-In-Reply-To: <20200419194529.4872-3-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e412762b-3121-b69f-2b4b-263e888a171c@cloud.ionos.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/19/20 12:45 PM, Luis Chamberlain wrote:
-> Move the work to create the debugfs directory used into a helper.
-> It will make further checks easier to read. This commit introduces
-> no functional changes.
+On Sun, Apr 19, 2020 at 10:31:26PM +0200, Guoqing Jiang wrote:
+> On 19.04.20 05:14, Matthew Wilcox wrote:
+> > On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
+> > > When reading md code, I find md-bitmap.c copies __clear_page_buffers from
+> > > buffer.c, and after more search, seems there are some places in fs could
+> > > use this function directly. So this patchset tries to export the function
+> > > and use it to cleanup code.
+> > OK, I see why you did this, but there are a couple of problems with it.
+> > 
+> > One is just a sequencing problem; between exporting __clear_page_buffers()
+> > and removing it from the md code, the md code won't build.
+> 
+> Seems the build option BLK_DEV_MD is depended on BLOCK, and buffer.c
+> is relied on the same option.
+> 
+> ifeq ($(CONFIG_BLOCK),y)/x
+> obj-y +=        buffer.o block_dev.o direct-io.o mpage.o
+> else
+> obj-y +=        no-block.o
+> endif
+> 
+> So I am not sure it is necessary to move the function to include/linux/mm.h
+> if there is no sequencing problem, thanks for your any further suggestion.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+The sequencing problem is that there will be _two_ definitions of
+__clear_page_buffers().
 
+The reason it should go in mm.h is that it's a very simple function
+and it will be better to inline it than call an external function.
+The two things are not related to each other.
