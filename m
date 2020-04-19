@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7F21AF914
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 11:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 710AA1AF922
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 11:55:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbgDSJrH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 05:47:07 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:20269 "EHLO pegase1.c-s.fr"
+        id S1725939AbgDSJy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 05:54:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:22141 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbgDSJrH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 05:47:07 -0400
+        id S1725832AbgDSJy4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Apr 2020 05:54:56 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 494lNP3gtMz9tyDp;
-        Sun, 19 Apr 2020 11:47:01 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 494lYR3Xc3z9tyDn;
+        Sun, 19 Apr 2020 11:54:51 +0200 (CEST)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=VOe4N8r5; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=GMo5yCAo; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WZtesNUcJGZq; Sun, 19 Apr 2020 11:47:01 +0200 (CEST)
+        with ESMTP id nAxBIwYGtWFH; Sun, 19 Apr 2020 11:54:51 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 494lNP2TXsz9tyDn;
-        Sun, 19 Apr 2020 11:47:01 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 494lYR2Jrbz9tyDm;
+        Sun, 19 Apr 2020 11:54:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1587289621; bh=RaXJ481mUi0DrviGOH+SkNVnZ2LQzKruVx+D2GV8ZOM=;
+        t=1587290091; bh=SLDSEP4XrdF5pJ0VblHWXGRy2Y2Yp8jccdJto8CbGTc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VOe4N8r5t969r8fxlMuXcUxzMYzBUsuFSfUW2XhIzUu7MpXItbVhlqB095uOkgU/l
-         lioa8xJ0ZOzk1wkoG81P1woBSK39GM50P4XzCZHwfqClIvrU37btIjyDPPuhbLnXVM
-         otq6qm9vH2HX20sBV+snNzhRspQiy4NnvEXEK5XA=
+        b=GMo5yCAoAVsWdEb2nyZuGs/NcpmrR+c2viuYh+CDDCjDG1lIiDMq2G0pmSZt72ixe
+         Nk4oU7rpwicZO+eB/vvr2dnukKPFj//Ec4hCZumhU5k0eGF6SaCEn/t//2hPYX1I9R
+         8JM1OIFgJImOH1tnT7v7AWgzpBxrn7PMltFf9/5U=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 620498B76F;
-        Sun, 19 Apr 2020 11:47:04 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 94BBE8B76F;
+        Sun, 19 Apr 2020 11:54:54 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id jYx07x_1XUos; Sun, 19 Apr 2020 11:47:04 +0200 (CEST)
+        with ESMTP id IH0yUOqJJstY; Sun, 19 Apr 2020 11:54:54 +0200 (CEST)
 Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 244FD8B752;
-        Sun, 19 Apr 2020 11:47:01 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EADAD8B752;
+        Sun, 19 Apr 2020 11:54:53 +0200 (CEST)
 Subject: Re: [PATCH 1/2] signal: Factor copy_siginfo_to_external32 from
  copy_siginfo_to_user32
-To:     Christoph Hellwig <hch@lst.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christoph Hellwig <hch@lst.de>
 Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,14 +55,14 @@ References: <20200414070142.288696-1-hch@lst.de>
  <20200414070142.288696-3-hch@lst.de> <87pnc5akhk.fsf@x220.int.ebiederm.org>
  <87k12dakfx.fsf_-_@x220.int.ebiederm.org>
  <c51c6192-2ea4-62d8-dd22-305f7a1e0dd3@c-s.fr>
- <87v9lx3t4j.fsf@x220.int.ebiederm.org> <20200419081353.GF12222@lst.de>
+ <87v9lx3t4j.fsf@x220.int.ebiederm.org>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <d5f0bbdc-8b31-fc4c-a5b9-b63cba4ebffe@c-s.fr>
-Date:   Sun, 19 Apr 2020 11:46:55 +0200
+Message-ID: <f35ddc94-e046-a807-9f58-04887aefe374@c-s.fr>
+Date:   Sun, 19 Apr 2020 11:54:41 +0200
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200419081353.GF12222@lst.de>
+In-Reply-To: <87v9lx3t4j.fsf@x220.int.ebiederm.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: fr
 Content-Transfer-Encoding: 8bit
@@ -73,32 +73,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-Le 19/04/2020 à 10:13, Christoph Hellwig a écrit :
-> On Sat, Apr 18, 2020 at 06:55:56AM -0500, Eric W. Biederman wrote:
->>> Is that really an issue to use that set_fs() in the coredump code ?
->>
->> Using set_fs() is pretty bad and something that we would like to remove
->> from the kernel entirely.  The fewer instances of set_fs() we have the
->> better.
->>
->> I forget all of the details but set_fs() is both a type violation and an
->> attack point when people are attacking the kernel.  The existence of
->> set_fs() requires somethings that should be constants to be variables.
->> Something about that means that our current code is difficult to protect
->> from spectre style vulnerabilities.
+Le 18/04/2020 à 13:55, Eric W. Biederman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
 > 
-> Yes, set_fs requires variable based address checking in the uaccess
-> routines for architectures with a shared address space, or even entirely
-> different code for architectures with separate kernel and user address
-> spaces.  My plan is to hopefully kill set_fs in its current form a few
-> merge windows down the road.  We'll probably still need some form of
-> it to e.g. mark a thread as kernel thread vs also being able to execute
-> user code, but it will be much ore limited than before, called from very
-> few places and actually be a no-op for many architectures.
+>> Le 17/04/2020 à 23:09, Eric W. Biederman a écrit :
+>>>
+>>> To remove the use of set_fs in the coredump code there needs to be a
+>>> way to convert a kernel siginfo to a userspace compat siginfo.
+>>>
+>>> Call that function copy_siginfo_to_compat and factor it out of
+>>> copy_siginfo_to_user32.
+>>
+>> I find it a pitty to do that.
+>>
+>> The existing function could have been easily converted to using
+>> user_access_begin() + user_access_end() and use unsafe_put_user() to copy to
+>> userspace to avoid copying through a temporary structure on the stack.
+>>
+>> With your change, it becomes impossible to do that.
 > 
+> I don't follow.  You don't like temporary structures in the coredump
+> code or temporary structures in copy_siginfo_to_user32?
 
-Oh nice. Some time ago I proposed a patch to change set_fs() to a 
-flip/flop flag based logic, see 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/dd2876b808ea38eb7b7f760ecd6ce06096c61fb5.1580295551.git.christophe.leroy@c-s.fr/
+In copy_siginfo_to_user32()
 
-But if we manage to get rid of it completely, that's even better.
+> 
+> A temporary structure in copy_siginfo_to_user is pretty much required
+> so that it can be zeroed to guarantee we don't pass a structure with
+> holes to userspace.
+
+Why ? We can zeroize the user structure directly, either with 
+clear_user() or with some not yet existing unsafe_clear_user() or 
+equivalent.
+
+> 
+> The implementation of copy_siginfo_to_user32 used to use the equivalent
+> of user_access_begin() and user_access_end() and the code was a mess
+> that was very difficult to reason about.  I recall their being holes
+> in the structure that were being copied to userspace.
+> 
+> Meanwhile if you are going to set all of the bytes a cache hot temporary
+> structure is quite cheap.
+
+But how can we be sure it is cache hot ? As we are using memset() to 
+zeroize it, it won't be loaded from memory as it will use dcbz 
+instruction, but at some point in time it will get flushed back to 
+memory, that's consuming anyway. Unless we invalidate it after the copy, 
+but that becomes complex.
+
+Christophe
