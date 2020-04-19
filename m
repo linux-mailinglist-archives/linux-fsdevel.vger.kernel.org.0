@@ -2,59 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D309D1AF8A2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 10:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AF71AF8A8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Apr 2020 10:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725910AbgDSIN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 04:13:57 -0400
-Received: from verein.lst.de ([213.95.11.211]:35756 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgDSIN5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 04:13:57 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id A967968BEB; Sun, 19 Apr 2020 10:13:53 +0200 (CEST)
-Date:   Sun, 19 Apr 2020 10:13:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
+        id S1726009AbgDSIPy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 04:15:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725446AbgDSIPy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Apr 2020 04:15:54 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4604DC061A0C;
+        Sun, 19 Apr 2020 01:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5ESkbM+8vdIgFeaQKLQyxVIJU96HxbIdvJ6LQfSPcow=; b=pvwx1GcXIeC3t5uPawsWBkdVHQ
+        iiXxl+0atw1Ow7dCeTaEPlV5pGZmU5NeEHgiD6GauX1slXAECXQsFNE9NMWu2519ywz/b+wff/WOX
+        TMC/+MPMdjO3TT0Rftrna/Ci0Cahq1lB09MN0hgPjg6UlZQSvFQvI8Hl6eF9ZnaIwxOSfJg5ri8Io
+        KIuagSQHqNGIuLyx0OKk7Kr7BqpWFvOxOSCJWQS71I0fmCgMrFQjcaFVpza7oTJ7VbiVVU4LRpdAF
+        8xATbPDeZWMvxCY4UHfmtjy1TJqqQqEx8Dbn+J6I61UlAQZJU8HDszvtYFjQWk5yWngyPZTufulmD
+        TFNoMHog==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jQ57G-0008EZ-Na; Sun, 19 Apr 2020 08:15:50 +0000
+Date:   Sun, 19 Apr 2020 01:15:50 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>
-Subject: Re: [PATCH 1/2] signal: Factor copy_siginfo_to_external32 from
- copy_siginfo_to_user32
-Message-ID: <20200419081353.GF12222@lst.de>
-References: <20200414070142.288696-1-hch@lst.de> <20200414070142.288696-3-hch@lst.de> <87pnc5akhk.fsf@x220.int.ebiederm.org> <87k12dakfx.fsf_-_@x220.int.ebiederm.org> <c51c6192-2ea4-62d8-dd22-305f7a1e0dd3@c-s.fr> <87v9lx3t4j.fsf@x220.int.ebiederm.org>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        Zzy Wysm <zzy@zzywysm.com>
+Subject: Re: [PATCH 8/9] dax: fix empty-body warnings in bus.c
+Message-ID: <20200419081550.GA22341@infradead.org>
+References: <20200418184111.13401-1-rdunlap@infradead.org>
+ <20200418184111.13401-9-rdunlap@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v9lx3t4j.fsf@x220.int.ebiederm.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200418184111.13401-9-rdunlap@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 06:55:56AM -0500, Eric W. Biederman wrote:
-> > Is that really an issue to use that set_fs() in the coredump code ?
-> 
-> Using set_fs() is pretty bad and something that we would like to remove
-> from the kernel entirely.  The fewer instances of set_fs() we have the
-> better.
-> 
-> I forget all of the details but set_fs() is both a type violation and an
-> attack point when people are attacking the kernel.  The existence of
-> set_fs() requires somethings that should be constants to be variables.
-> Something about that means that our current code is difficult to protect
-> from spectre style vulnerabilities.
+On Sat, Apr 18, 2020 at 11:41:10AM -0700, Randy Dunlap wrote:
+>  				rc = -ENOMEM;
+>  		} else
+> -			/* nothing to remove */;
+> +			do_empty(); /* nothing to remove */
+>  	} else if (action == ID_REMOVE) {
+>  		list_del(&dax_id->list);
+>  		kfree(dax_id);
+>  	} else
+> -		/* dax_id already added */;
+> +		do_empty(); /* dax_id already added */
 
-Yes, set_fs requires variable based address checking in the uaccess
-routines for architectures with a shared address space, or even entirely
-different code for architectures with separate kernel and user address
-spaces.  My plan is to hopefully kill set_fs in its current form a few
-merge windows down the road.  We'll probably still need some form of
-it to e.g. mark a thread as kernel thread vs also being able to execute
-user code, but it will be much ore limited than before, called from very
-few places and actually be a no-op for many architectures.
+This is just nasty.  Please just always turn this bogus warning off
+as the existing code is a perfectly readable idiom while the new code
+is just nasty crap for no good reason at all.
