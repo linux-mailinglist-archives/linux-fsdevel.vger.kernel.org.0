@@ -2,71 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 195F21B17FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06151B1818
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgDTVGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726722AbgDTVGC (ORCPT
+        id S1727059AbgDTVLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 17:11:18 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40292 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbgDTVLR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:06:02 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD879C061A0C;
-        Mon, 20 Apr 2020 14:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bzkBd5/DmyxuIeGg8WVcx1ykVacx8pGIZb2Q1x9nRo4=; b=DNIGqrjjXa9rfJIlYQ6/w0oTOL
-        Zc36hX2DDii8dVOYNhs5X+FwLalCu6gBAL25BNJGwZhQKZqCMvbBFtyXkAPb/GfMoyqArNR5ZEpXH
-        ihxm8GqaAGtSGf31R3h7K53d0IRvylDPBQ71hVxr29VHXbklaCkr3QlZEAlF8Ukw7ToMw8PdeJQ+s
-        kNW7oZ8wpyh5W7IvXdJ0hsLoPYItHUrRvSO41pj8WY0rMNQR/WNVm281PeZLAtkFfBaFPHfKjxcdV
-        AKqz2sfrALlIpxh4RCun4nkGSnx3BdmcHk4n6IuVHQKiHNc2FdTU3duyKsZUR2skvT9bxd2rfIvye
-        69f090gA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jQdc5-0000US-Tt; Mon, 20 Apr 2020 21:05:57 +0000
-Date:   Mon, 20 Apr 2020 14:05:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
-        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk
-Subject: Re: [PATCH 01/15] sched: make nr_running() return "unsigned int"
-Message-ID: <20200420210557.GG5820@bombadil.infradead.org>
-References: <20200420205743.19964-1-adobriyan@gmail.com>
+        Mon, 20 Apr 2020 17:11:17 -0400
+Received: by mail-pj1-f67.google.com with SMTP id a22so401176pjk.5;
+        Mon, 20 Apr 2020 14:11:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wrPH749mUN8hliBUrahYDBfQbFobH/RtFO+RluKgR0c=;
+        b=LivDrY5Ouu2czO0qIGWzXiVMlitkGzsLsQF2wFYUanuha55j6R1l/v3f6fbr5Yn97V
+         a1Nf1cKwKMlxNBx8gvh0B9TxG4lOjU8tn5EVF9NpQb6fvWIIlkndzF045ASxLmEFjgwo
+         Izmjb7PYRGKCrAHCZmYWquUI0m4pbaIP0OkP3ADy4jb/fJyqiVvA6xUqB0le0qSfKkaf
+         HGKGzxXrnYLD64A2zGsu3vVflmLlAp5HV+BJ02o4cXHRuwcObLIUWZL33s4I/kDOkUlR
+         ZMtAiHQiP9UPIibIM1t8GIN9FU7FyrXU7ilHN0xgyoMFSjZgH+hkSyJUnybkp4myk0+J
+         FtwA==
+X-Gm-Message-State: AGi0PuavJARo54tgWtDazrPA9nPgNBAIy9bluHK6W300PLR36cs+t77P
+        HZ9tmlDaRI8GylWusyvkoSCkLtEtyZs=
+X-Google-Smtp-Source: APiQypLpcT/SUkIQmuuXSrPoqK0E8Cp2xLvNfCZASPQMFboRu2ZZ34NFyvthqIVZYVdzDqs93Z4ZTg==
+X-Received: by 2002:a17:90b:3751:: with SMTP id ne17mr1574517pjb.114.1587417077115;
+        Mon, 20 Apr 2020 14:11:17 -0700 (PDT)
+Received: from [100.124.9.192] ([104.129.199.10])
+        by smtp.gmail.com with ESMTPSA id 71sm394670pfw.111.2020.04.20.14.11.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Apr 2020 14:11:16 -0700 (PDT)
+Subject: Re: [PATCH v2 04/10] block: revert back to synchronous request_queue
+ removal
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-5-mcgrof@kernel.org>
+ <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
+ <20200420185943.GM11244@42.do-not-panic.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <eba2a91b-62a6-839d-df54-2a1cf8262652@acm.org>
+Date:   Mon, 20 Apr 2020 14:11:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200420205743.19964-1-adobriyan@gmail.com>
+In-Reply-To: <20200420185943.GM11244@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 11:57:29PM +0300, Alexey Dobriyan wrote:
-> I don't anyone have been crazy enough to spawn 2^32 threads.
-> It'd require absurd amounts of physical memory,  and bump into futex pid
-> limit anyway.
+On 4/20/20 11:59 AM, Luis Chamberlain wrote:
+> On Sun, Apr 19, 2020 at 03:23:31PM -0700, Bart Van Assche wrote:
+>> On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+>>> + * Decrements the refcount to the request_queue kobject, when this reaches
+>>> + * 0 we'll have blk_release_queue() called. You should avoid calling
+>>> + * this function in atomic context but if you really have to ensure you
+>>> + * first refcount the block device with bdgrab() / bdput() so that the
+>>> + * last decrement happens in blk_cleanup_queue().
+>>> + */
+>>
+>> Is calling bdgrab() and bdput() an option from a context in which it is not
+>> guaranteed that the block device is open?
 > 
-> Meanwhile save few bits on REX prefixes and some stack space for upcoming
-> print_integer() stuff.
+> If the block device is not open, nope. For that blk_get_queue() can
+> be used, and is used by the block layer. This begs the question:
 > 
-> And remove "extern" from prototypes while I'm at it.
+> Do we have *drivers* which requires access to the request_queue from
+> atomic context when the block device is not open?
 
-It seems like there's a few more places to fix in this regard?
+Instead of trying to answer that question, how about changing the 
+references to bdgrab() and bdput() into references to blk_get_queue() 
+and blk_put_queue()? I think if that change is made that we won't have 
+to research what the answer to the bdgrab()/bdput() question is.
 
-kernel/sched/fair.c:static u64 __sched_period(unsigned long nr_running)
-kernel/sched/sched.h:   unsigned long           dl_nr_running;
-kernel/sched/core.c:unsigned long nr_iowait_cpu(int cpu)
-kernel/sched/core.c:unsigned long nr_iowait(void)
-kernel/sched/loadavg.c: long nr_active, delta = 0;
-kernel/sched/sched.h:   unsigned long           rt_nr_migratory;
-kernel/sched/sched.h:   unsigned long           rt_nr_total;
-kernel/sched/sched.h:   unsigned long           rt_nr_boosted;
-kernel/sched/sched.h:   unsigned long           dl_nr_running;
-kernel/sched/sched.h:   unsigned long           dl_nr_migratory;
-kernel/sched/sched.h:   unsigned long           nr_uninterruptible;
+Thanks,
 
+Bart.
