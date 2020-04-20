@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCB21B17C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 22:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8F81B17B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 22:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgDTU6r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 16:58:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54984 "EHLO
+        id S1727857AbgDTU6U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 16:58:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbgDTU6R (ORCPT
+        with ESMTP id S1727820AbgDTU6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 16:58:17 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E34C061A0C;
-        Mon, 20 Apr 2020 13:58:17 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id x18so13971900wrq.2;
-        Mon, 20 Apr 2020 13:58:17 -0700 (PDT)
+        Mon, 20 Apr 2020 16:58:18 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E78C061A0F;
+        Mon, 20 Apr 2020 13:58:18 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id b11so13929852wrs.6;
+        Mon, 20 Apr 2020 13:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SHn0IUO/wMyWf4dmZUNBbUc0aQhvnXEYVuFtFRS3HPk=;
-        b=sYOvvc8pHTWkwLYyRhZCTaQv3HQfMB2rRRWZeysxNcQYbmmUOp2p3z72BwtJKY42cO
-         D9O4GMHQugm296ZulvGVy0+bGU4QYzNx8wYsTtxch2rQk1pGGo8AUetdwwzkg2mRKPMI
-         So4vh3Kn155oQtk193g2rUc5BHZ2DRoNrUtEqT1p9T1TZ0e41zhabPWE2PYPe92Tm7Nh
-         O59mOM3iTwUAmkO4rPafQr8wG/VpIOXxY61N4mh9C0MI8xSONe68JPzqCDOjRi0o4UtO
-         3FlMKKGoq2fd1gc0ocdRS+E5OdTykTDNftuMU95Foie7gc8he7WYm7uqQ7+CzfKHpXVX
-         lkHA==
+        bh=1QRT1wzQMBmwwO+9Yk8Tpugr8OoDuhlvGMhmG6vAGJg=;
+        b=VErFtc8p5FgVeV8QdilC2z2fbaXoDv1sAJ2HJ6HfBg0NvTE5SxKcxkMi4QjrhWQZGg
+         06buzM1cahhmxIeYk0841s2YLJugZTpE0Q4S0Y3QVD2dJeH0gT+Es1BaaXpqN9+m+R/3
+         Ij7ryhVlFwha5TH3Q6E1JOpyXHeF6oGXAPA1ojHZQBIGWeqJsw0vxmLCe6hRYTQMFQb7
+         iVpcvVq6LHq0Flml+wMu1kDbY/hjxYwIi+DSp3G3fhB5guV+aPOFnDIeZuSfE54a6/xn
+         TJERmfZP4kuyP8EY+6P03MuaJ7dI9w//VylifFrm2sFE4AJjdBmNflscjDjH2gutX40O
+         WqHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SHn0IUO/wMyWf4dmZUNBbUc0aQhvnXEYVuFtFRS3HPk=;
-        b=eno/8QSMYAb2omJEbKdVJ80Q3EedQLwHwKf7nUPW2odXfl0eByWY81oS3aDEdtBlXe
-         OVZVQu/5+rrrFaEylRCMf3j2lckNJjhZbSN9JNN81KkVMUeTJO8BTVk6JsMJkr23dyKR
-         odDZw/91LsV3VOe7VGCiH/hmj5F1D04zQrwvtC6J1hJpeHXkpbJqY46AaEl3kp1aVRET
-         a19XnSPCzQcZYLTx8nj0PAUYdnhgr/WwncOMnHI4DiR70zzlnU8MRgbrxYun9kWZ9AK4
-         fUSetp/ax/AhN1UwNgjdLJ/51KOAbUlBQirvIOO48gultjGrYr5SZv2X3MSLBwsbYJVf
-         e6sA==
-X-Gm-Message-State: AGi0PuZsocrNEg+2t0LYxROvxNpT3XU5aHQozt3DQwPYK4QBj8VjVbpJ
-        czE5sq9iWpfRLXBKc3RoMg==
-X-Google-Smtp-Source: APiQypLKNc2450WVam91XBOVv47aWlD4TeLe7WSZEd1VlY2LCaKg56Ic/Ldct6oBg/DIOV9rh1Ftiw==
-X-Received: by 2002:a5d:4ac6:: with SMTP id y6mr20438480wrs.212.1587416296043;
+        bh=1QRT1wzQMBmwwO+9Yk8Tpugr8OoDuhlvGMhmG6vAGJg=;
+        b=ka4Lt7gpwVxVQC1tYHWbVid3UqTAuKDWDktoKSUHJeTCSY11lqCzb58+bErllbMtP9
+         j7BhQnQidr7USDo53+YeoRwRympJFCX02xn6MxNhuFIFSinqiAbv9jVwvYm40zxF4YcY
+         Y+NazAD5OY4QK3ruLrni2Ed5RKJIzqMCqvdNAk/8hRoon9KJxDfXEKX7vgcYkll2M20/
+         Ekgmr4hf1lEq7gqCV6FevwH1V1ayRxtKgYdvoV3CsRzOBQqUTpQr+oh7BCqntR7Sxy/z
+         Z0nGD3Z0KrAUVy7O3sSVq6fcEBU9RPy4FAWWFHx0dP1s8OWbyqzdm8gTAR6BGG9N5U0t
+         0xwA==
+X-Gm-Message-State: AGi0PuanPKiSJGPUZZ3aO72RqmwbyqQFv9qdYk9ZOlAUFopmjkbEXVy6
+        LOt5KKgKjL3RNLrvK7O3SQ==
+X-Google-Smtp-Source: APiQypJBSz5LvNopVn2RdIRZMSwcIYUjBLodra6RphmAEVV9nHKmGlP/m2QDhq9pp0T9AZNnJLOLEQ==
+X-Received: by 2002:adf:91e1:: with SMTP id 88mr21203077wri.67.1587416296986;
         Mon, 20 Apr 2020 13:58:16 -0700 (PDT)
 Received: from avx2.telecom.by ([46.53.249.74])
-        by smtp.gmail.com with ESMTPSA id m8sm863069wrx.54.2020.04.20.13.58.15
+        by smtp.gmail.com with ESMTPSA id m8sm863069wrx.54.2020.04.20.13.58.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 13:58:15 -0700 (PDT)
+        Mon, 20 Apr 2020 13:58:16 -0700 (PDT)
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     adobriyan@gmail.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, pmladek@suse.com,
         rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
         andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk
-Subject: [PATCH 09/15] proc: s/p/tsk/
-Date:   Mon, 20 Apr 2020 23:57:37 +0300
-Message-Id: <20200420205743.19964-9-adobriyan@gmail.com>
+Subject: [PATCH 10/15] print_integer, proc: rewrite /proc/*/fd via print_integer()
+Date:   Mon, 20 Apr 2020 23:57:38 +0300
+Message-Id: <20200420205743.19964-10-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200420205743.19964-1-adobriyan@gmail.com>
 References: <20200420205743.19964-1-adobriyan@gmail.com>
@@ -67,56 +67,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"p" will be used for pointeg to string start, use "tsk" as the best
-identifier name.
-
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- fs/proc/fd.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/proc/fd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 81882a13212d..e098302b5101 100644
+index e098302b5101..059a3404c785 100644
 --- a/fs/proc/fd.c
 +++ b/fs/proc/fd.c
-@@ -228,16 +228,16 @@ static struct dentry *proc_lookupfd_common(struct inode *dir,
- static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 			      instantiate_t instantiate)
- {
--	struct task_struct *p = get_proc_task(file_inode(file));
-+	struct task_struct *tsk = get_proc_task(file_inode(file));
- 	struct files_struct *files;
- 	unsigned int fd;
+@@ -247,8 +247,8 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 	     fd++, ctx->pos++) {
+ 		struct file *f;
+ 		struct fd_data data;
+-		char name[10 + 1];
+-		unsigned int len;
++		char buf[10];
++		char *p = buf + sizeof(buf);
  
--	if (!p)
-+	if (!tsk)
- 		return -ENOENT;
+ 		f = fcheck_files(files, fd);
+ 		if (!f)
+@@ -257,9 +257,9 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 		rcu_read_unlock();
+ 		data.fd = fd;
  
- 	if (!dir_emit_dots(file, ctx))
- 		goto out;
--	files = get_files_struct(p);
-+	files = get_files_struct(tsk);
- 	if (!files)
- 		goto out;
- 
-@@ -259,7 +259,7 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 
- 		len = snprintf(name, sizeof(name), "%u", fd);
+-		len = snprintf(name, sizeof(name), "%u", fd);
++		p = _print_integer_u32(p, fd);
  		if (!proc_fill_cache(file, ctx,
--				     name, len, instantiate, p,
-+				     name, len, instantiate, tsk,
+-				     name, len, instantiate, tsk,
++				     p, buf + sizeof(buf) - p, instantiate, tsk,
  				     &data))
  			goto out_fd_loop;
  		cond_resched();
-@@ -269,7 +269,7 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- out_fd_loop:
- 	put_files_struct(files);
- out:
--	put_task_struct(p);
-+	put_task_struct(tsk);
- 	return 0;
- }
- 
 -- 
 2.24.1
 
