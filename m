@@ -2,186 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F16FF1B1820
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C781B183B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgDTVOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725774AbgDTVOj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:14:39 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47531C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 14:14:39 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id u16so1209303wmc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 14:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.ionos.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=NAulTysQBFtR68qPZ0m2iZ5pjwCCHBTIxhmw9tr1qow=;
-        b=WfHr0abJY9WK4R3n5w9I1fbRXt/wV0VVmqV56e5Jicswk7IFi2190o7+55tI8cK4Xa
-         FzwclF1tAnBdb3ZX5vJaqwZmDgZaQHQCzG8kOXFk2AJwS1rsWGCvY33LXoLS8qnky+rq
-         L2HMNG+FVjYN9JIqlmgmJ/xboSTJDiWHceOCsAqRJpjvaNosV+V2DQ0SNktCx6g6j9u0
-         NrPclX2mr0JuXtWokAGrfShjktb1oc6qozoA5BT5ckIOJxAjcVxSyb21VmkJzFgZwmYx
-         b+OGcskGDetKCcueHIDhkJSRNycoqqfz/ohPT5oVJgVpj9k9zEEC1/eJk60nVJSfGDfK
-         q3pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=NAulTysQBFtR68qPZ0m2iZ5pjwCCHBTIxhmw9tr1qow=;
-        b=jwolqwRozzD9d4hlL/cPM6QRdws3234joSIR3f79IZVQ8DsO4T0JxhJxqafRjNvDF5
-         cymGMb3B6jTPfo+yN5Jjb3Ww9Kp0sRzjlk7vaTJZHozW/oXSRHHwWVX9uBG32qSOWVPq
-         oPHAkT+DG696N5RUzfP1ATbpDboJpUEUB5Q9vaMoCupKo94dhpE7zodRXPQnKwLRBxxp
-         WNuC//iVRfbzNwHhH5wpUSr7a3d6llLwJwyz4ZMFDIDSlG68myY5j8eaH/Fa1vaStVIM
-         BHWbaf/9nCDUfQ/HFh7gl02yOofJ7lUKDCtAIJM4fJfc5jhbUuDjpff1sLRuKXR43GgF
-         ++9A==
-X-Gm-Message-State: AGi0Puae5VvDKwyeCnEDwxaNZJw3xQvPVUVGLIQsaXP/2l2lLZ7g9gQn
-        Opkx71yO0ftxgewJvGqSmwBL5DwUHl2e4g==
-X-Google-Smtp-Source: APiQypJFX+O4iZvIjwDh/03KC5rd26Ffx497WdEjSPmxcYp6QdtLfMtYLM5sVggkGnb2ys3NItYKbQ==
-X-Received: by 2002:a05:600c:2c04:: with SMTP id q4mr1272476wmg.7.1587417277148;
-        Mon, 20 Apr 2020 14:14:37 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:48ef:dc00:34d4:fc5b:d862:dbd2? ([2001:16b8:48ef:dc00:34d4:fc5b:d862:dbd2])
-        by smtp.gmail.com with ESMTPSA id a1sm894226wrn.80.2020.04.20.14.14.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2020 14:14:36 -0700 (PDT)
-Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org
-References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
- <20200419031443.GT5820@bombadil.infradead.org>
- <20200419232046.GC9765@dread.disaster.area>
- <20200420003025.GZ5820@bombadil.infradead.org>
-From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Message-ID: <e889cb45-486b-118c-d087-90fed5353460@cloud.ionos.com>
-Date:   Mon, 20 Apr 2020 23:14:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727814AbgDTVTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 17:19:12 -0400
+Received: from mga14.intel.com ([192.55.52.115]:57830 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726021AbgDTVTL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Apr 2020 17:19:11 -0400
+IronPort-SDR: +kFQLJz3JbzohDVGfJn8HZNRlJTptPxYSr3IzO8RHzY7G5UqMbW6oYNLhtPQQPLE8K8nI+WxDh
+ POUDLBDQwd6A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2020 14:19:10 -0700
+IronPort-SDR: N+UnUbuQt2NFXNexHyrJRjVokIjWea2GWPhSfgYmGBB4Z2iIrJFrtFA38tYn9lnTcwYduYX+uU
+ NvoSwysYb2hQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,407,1580803200"; 
+   d="scan'208";a="255071506"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 20 Apr 2020 14:19:08 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jQdot-0027ua-1f; Tue, 21 Apr 2020 00:19:11 +0300
+Date:   Tue, 21 Apr 2020 00:19:11 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
+        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        linux@rasmusvillemoes.dk
+Subject: Re: [PATCH 03/15] print_integer: new and improved way of printing
+ integers
+Message-ID: <20200420211911.GC185537@smile.fi.intel.com>
+References: <20200420205743.19964-1-adobriyan@gmail.com>
+ <20200420205743.19964-3-adobriyan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200420003025.GZ5820@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200420205743.19964-3-adobriyan@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.04.20 02:30, Matthew Wilcox wrote:
-> On Mon, Apr 20, 2020 at 09:20:46AM +1000, Dave Chinner wrote:
->> On Sat, Apr 18, 2020 at 08:14:43PM -0700, Matthew Wilcox wrote:
->>> On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
->>>> When reading md code, I find md-bitmap.c copies __clear_page_buffers from
->>>> buffer.c, and after more search, seems there are some places in fs could
->>>> use this function directly. So this patchset tries to export the function
->>>> and use it to cleanup code.
->>> OK, I see why you did this, but there are a couple of problems with it.
->>>
->>> One is just a sequencing problem; between exporting __clear_page_buffers()
->>> and removing it from the md code, the md code won't build.
->>>
->>> More seriously, most of this code has nothing to do with buffers.  It
->>> uses page->private for its own purposes.
->>>
->>> What I would do instead is add:
->>>
->>> clear_page_private(struct page *page)
->>> {
->>> 	ClearPagePrivate(page);
->>> 	set_page_private(page, 0);
->>> 	put_page(page);
->>> }
->>>
->>> to include/linux/mm.h, then convert all callers of __clear_page_buffers()
->>> to call that instead.
->> While I think this is the right direction, I don't like the lack of
->> symmetry between set_page_private() and clear_page_private() this
->> creates.  i.e. set_page_private() just assigned page->private, while
->> clear_page_private clears both a page flag and page->private, and it
->> also drops a page reference, too.
->>
->> Anyone expecting to use set/clear_page_private as a matched pair (as
->> the names suggest they are) is in for a horrible surprise...
+On Mon, Apr 20, 2020 at 11:57:31PM +0300, Alexey Dobriyan wrote:
+> Time honored way to print integers via vsnprintf() or equivalent has
+> unavoidable slowdown of parsing format string. This can't be fixed in C,
+> without introducing external preprocessor.
+> 
+> seq_put_decimal_ull() partially saves the day, but there are a lot of
+> branches inside and overcopying still.
+> 
+> _print_integer_*() family of functions is meant to make printing
+> integers as fast as possible by deleting format string parsing and doing
+> as little work as possible.
+> 
+> It is based on the following observations:
+> 
+> 1) memcpy is done in forward direction
+> 	it can be done backwards but nobody does that,
+> 
+> 2) digits can be extracted in a very simple loop which costs only
+> 	1 multiplication and shift (division by constant is not division)
+> 
+> All the above asks for the following signature, semantics and pattern of
+> printing out beloved /proc files:
+> 
+> 	/* seq_printf(seq, "%u %llu\n", A, b); */
+> 
+> 	char buf[10 + 1 + 20 + 1];
+> 	char *p = buf + sizeof(buf);
+> 
+> 	*--p = '\n';
+> 	p = _print_integer_u64(p, B);
+> 	*--p = ' ';
+> 	p = _print_integer_u32(p, A);
+> 
+> 	seq_write(seq, p, buf + sizeof(buf) - p);
+> 
+> 1) stack buffer capable of holding the biggest string is allocated.
+> 
+> 2) "p" is pointer to start of the string. Initially it points past
+> 	the end of the buffer WHICH IS NOT NUL-TERMINATED!
+> 
+> 3) _print_integer_*() actually prints an integer from right to left
+> 	and returns new start of the string.
+> 
+> 			     <--------|
+> 				123
+> 				^
+> 				|
+> 				+-- p
+> 
+> 4) 1 character is printed with
+> 
+> 	*--p = 'x';
+> 
+> 	It generates very efficient code as multiple writes can be
+> 	merged.
+> 
+> 5) fixed string is printed with
+> 
+> 	p = memcpy(p - 3, "foo", 3);
+> 
+> 	Complers know what memcpy() does and write-combine it.
+> 	4/8-byte writes become 1 instruction and are very efficient.
+> 
+> 6) Once everything is printed, the result is written to seq_file buffer.
+> 	It does only one overflow check and 1 copy.
+> 
+> This generates very efficient code (and small!).
+> 
+> In regular seq_printf() calls, first argument and format string are
+> constantly reloaded. Format string will most likely with [rip+...] which
+> is quite verbose.
+> 
+> seq_put_decimal_ull() will do branches (and even more branches
+> with "width" argument)
+> 
 
-Dave, thanks for the valuable suggestion!
+> 	TODO
+> 	benchmark with mainline because nouveau is broken for me -(
+> 	vsnprintf() changes make the code slower
 
->> This is a public service message brought to you by the Department
->> of We Really Suck At API Design.
-> Oh, blast.  I hadn't noticed that.  And we're horribly inconsistent
-> with how we use set_page_private() too -- rb_alloc_aux_page() doesn't
-> increment the page's refcount, for example.
->
-> So, new (pair of) names:
->
-> set_fs_page_private()
-> clear_fs_page_private()
+Exactly main point of this exercise. I don't believe that algos in vsprintf.c
+are too dumb to use division per digit (yes, division by constant which is not
+power of two is a heavy operation).
 
-Hmm, maybe it is better to keep the original name (set/clear_page_private).
-Because,
 
-1. it would be weird for other subsystems (not belong to fs scope) to 
-call the
-function which is supposed to be used in fs, though we can add a wrapper
-for other users out of fs.
+> +noinline
+> +char *_print_integer_u32(char *p, u32 x)
+> +{
+> +	do {
+> +		*--p = '0' + (x % 10);
+> +	} while (x /= 10);
+> +	return p;
+> +}
 
-2. no function in mm.h is named like *fs*.
+> +noinline
+> +char *_print_integer_u64(char *p, u64 x)
+> +{
+> +	while (x >= 100 * 1000 * 1000) {
+> +		u32 r;
+> +
+> +		x = div_u64_rem(x, 100 * 1000 * 1000, &r);
+> +		p = memset(p - 8, '0', 8);
+> +		(void)_print_integer_u32(p + 8, r);
+> +	}
+> +	return _print_integer_u32(p, x);
+> +}
 
-> since it really seems like it's only page cache pages which need to
-> follow the rules about setting PagePrivate and incrementing the refcount.
-> Also, I think I'd like to see them take/return a void *:
->
-> void *set_fs_page_private(struct page *page, void *data)
-> {
-> 	get_page(page);
-> 	set_page_private(page, (unsigned long)data);
-> 	SetPagePrivate(page);
-> 	return data;
-> }
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Seems  some functions could probably use the above helper, such as
-iomap_page_create, iomap_migrate_page, get_page_bootmem and
-  f2fs_set_page_private etc.
-
-> void *clear_fs_page_private(struct page *page)
-> {
-> 	void *data = (void *)page_private(page);
->
-> 	if (!PagePrivate(page))
-> 		return NULL;
-> 	ClearPagePrivate(page);
-> 	set_page_private(page, 0);
-> 	put_page(page);
-> 	return data;
-> }
->
-> That makes iomap simpler:
->
->   static void
->   iomap_page_release(struct page *page)
->   {
-> -	struct iomap_page *iop = to_iomap_page(page);
-> +	struct iomap_page *iop = clear_fs_page_private(page);
->
->   	if (!iop)
->   		return;
->   	WARN_ON_ONCE(atomic_read(&iop->read_count));
->   	WARN_ON_ONCE(atomic_read(&iop->write_count));
-> -	ClearPagePrivate(page);
-> -	set_page_private(page, 0);
-> -	put_page(page);
->   	kfree(iop);
->   }
->
-
-Really appreciate for your input though the thing is a little beyond my
-original intention ;-), will try to send a new version after reading more
-fs code.
-
-Best Regards,
-Guoqing
 
