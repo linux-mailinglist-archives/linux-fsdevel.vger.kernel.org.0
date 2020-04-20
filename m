@@ -2,168 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE771B0777
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 13:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC481B0780
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 13:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgDTLda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 07:33:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49700 "EHLO mail.kernel.org"
+        id S1726262AbgDTLgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 07:36:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725550AbgDTLda (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 07:33:30 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1725886AbgDTLgT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Apr 2020 07:36:19 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D10C206D4;
-        Mon, 20 Apr 2020 11:33:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5BEB206D4;
+        Mon, 20 Apr 2020 11:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587382409;
-        bh=a4JxLNVo8P5vCvCI7Om1mehKcLGZ7e7TRLza9xWNdoE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pGhBdYubKbyovlT2nxysTjsdDCwQpXt+BVqmZw52jimOFTYmuqVef4g80auy1TM/E
-         z/6lTqUE5WNttvW3iysSWugSBmh6kV9LzG9cZ6LtAKO2TEq03792ch3J55+w9JwsL0
-         qAD9je7PfKy1u5WwDy0CpjvBXklx3AMC3und6GCU=
-Message-ID: <d80c659f7755dadf218ba03f23da277811840475.camel@kernel.org>
-Subject: Re: [RFC PATCH xfstests] generic: test reporting of wb errors via
- syncfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     guaneryu@gmail.com, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 20 Apr 2020 07:33:27 -0400
-In-Reply-To: <20200417153620.GA13463@bfoster>
-References: <20200414120740.293998-1-jlayton@kernel.org>
-         <20200417153620.GA13463@bfoster>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        s=default; t=1587382578;
+        bh=Ttxo4ShYqlkWnXjbFggOt9MCuzR3OQsdnOZ8YyHwteQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pZyvrt/ONGuKXMLNymKIUlRFlsD0HNaWXlOnui9JnS6bIFEmXyZHqV9GuDgieyS0v
+         cBo2FFAnsC1Vg0yjQU9nqQkBIvr/BkDhEd2KFbun69AzJA8kv+9wGz43GHneF/LMr1
+         uryFwmhZ3w/t3ulsRV3irbD2gs6+mTw3FD/x9+cM=
+Date:   Mon, 20 Apr 2020 13:36:16 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] blk-debugfs: upgrade warns to BUG_ON() if
+ directory is already found
+Message-ID: <20200420113616.GA3906674@kroah.com>
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-7-mcgrof@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200419194529.4872-7-mcgrof@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-04-17 at 11:36 -0400, Brian Foster wrote:
-> On Tue, Apr 14, 2020 at 08:07:40AM -0400, Jeff Layton wrote:
-> > From: Jeff Layton <jlayton@redhat.com>
-> > 
-> > Add a test for new syncfs error reporting behavior. When an inode fails
-> > to be written back, ensure that a subsequent call to syncfs() will also
-> > report an error.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  tests/generic/999     | 98 +++++++++++++++++++++++++++++++++++++++++++
-> >  tests/generic/999.out |  8 ++++
-> >  tests/generic/group   |  1 +
-> >  3 files changed, 107 insertions(+)
-> >  create mode 100755 tests/generic/999
-> >  create mode 100644 tests/generic/999.out
-> > 
-> > diff --git a/tests/generic/999 b/tests/generic/999
-> > new file mode 100755
-> > index 000000000000..7383ce24c8fd
-> > --- /dev/null
-> > +++ b/tests/generic/999
-> > @@ -0,0 +1,98 @@
-> > +#! /bin/bash
-> > +# FS QA Test No. 999
-> > +#
-> > +# Open a file and write to it and fsync. Then, flip the data device to throw
-> > +# errors, write to it again and do an fdatasync. Then open an O_RDONLY fd on
-> > +# the same file and call syncfs against it and ensure that an error is reported.
-> > +# Then call syncfs again and ensure that no error is reported. Finally, repeat
-> > +# the open and syncfs and ensure that there is no error reported.
-> > +#
-> > +#-----------------------------------------------------------------------
-> > +# Copyright (c) 2020, Jeff Layton <jlayton@kernel.org>
-> > +#
-> > +# This program is free software; you can redistribute it and/or
-> > +# modify it under the terms of the GNU General Public License as
-> > +# published by the Free Software Foundation.
-> > +#
-> > +# This program is distributed in the hope that it would be useful,
-> > +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > +# GNU General Public License for more details.
-> > +#
-> > +# You should have received a copy of the GNU General Public License
-> > +# along with this program; if not, write the Free Software Foundation,
-> > +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> > +#-----------------------------------------------------------------------
+On Sun, Apr 19, 2020 at 07:45:25PM +0000, Luis Chamberlain wrote:
+> Now that we have moved release_queue from being asynchronous to
+> synchronous, and fixed how we use the debugfs directory with blktrace
+> we should no longer have expected races with device removal/addition
+> and other operations with the debugfs directory.
 > 
-> I think the big copyright hunk has been replaced with the
-> SPDX-License-Identifier thing (see other tests for reference).
+> If races do happen however, we want to be informed of *how* this races
+> happens rather than dealing with a debugfs splat, so upgrading this to a
+> BUG_ON() should capture better information about how this can happen
+> in the future.
 > 
-
-Thanks. Will fix.
-
-> > +
-> > +seq=`basename $0`
-> > +seqres=$RESULT_DIR/$seq
-> > +echo "QA output created by $seq"
-> > +
-> > +here=`pwd`
-> > +tmp=/tmp/$$
-> > +status=1    # failure is the default!
-> > +trap "_cleanup; exit \$status" 0 1 2 3 15
-> > +
-> > +_cleanup()
-> > +{
-> > +	cd /
-> > +	rm -f $tmp.*
-> > +	_dmerror_cleanup
-> > +}
-> > +
-> > +# get standard environment, filters and checks
-> > +. ./common/rc
-> > +. ./common/filter
-> > +. ./common/dmerror
-> > +
-> > +# real QA test starts here
-> > +_supported_os Linux
-> > +_require_scratch_nocheck
-> > +# This test uses "dm" without taking into account the data could be on
-> > +# realtime subvolume, thus the test will fail with rtinherit=1
-> > +_require_no_rtinherit
-> > +_require_dm_target error
-> > +
-> > +rm -f $seqres.full
-> > +
-> > +echo "Format and mount"
-> > +_scratch_mkfs > $seqres.full 2>&1
-> > +_dmerror_init
-> > +_dmerror_mount
-> > +
-> > +datalen=65536
-> > +_require_fs_space $SCRATCH_MNT $datalen
+> This is specially true these days with funky reproducers in userspace
+> for which we have no access to, but only a bug splat.
 > 
-> That seems unnecessary for such a small value. BTW, any reason this
-> needs to write more than a page?
+> Note that on addition the gendisk kobject is used as the parent for the
+> request_queue kobject, and upon removal, now that request_queue removal
+> is synchronous, blk_unregister_queue() is called prior to the gendisk
+> device_del(). This means we expect to see a sysfs clash first now prior
+> to running into a race with the debugfs dentry; so this bug would be
+> considered highly unlikely.
 > 
-
-No reason for that size. I think I just copied that from generic/487
-since I started with that one as a template. I'll cut it down to a page.
-
-Should I not bother calling _require_fs_space here since it's so small?
-I wasn't sure how strict that was...
-
-> > +
-> > +# use fd 5 to hold file open
-> > +testfile=$SCRATCH_MNT/syncfs-reports-errors
-> > +exec 5>$testfile
-> > +
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  block/blk-debugfs.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 > 
-> Also what's the reason for holding an fd on the test file like this?
-> Does this affect error reporting behavior in some way? Otherwise the
-> rest looks reasonable to me.
-> 
+> diff --git a/block/blk-debugfs.c b/block/blk-debugfs.c
+> index d84038bce0a5..761318dcbf40 100644
+> --- a/block/blk-debugfs.c
+> +++ b/block/blk-debugfs.c
+> @@ -19,16 +19,8 @@ void blk_debugfs_register(void)
+>  
+>  int __must_check blk_queue_debugfs_register(struct request_queue *q)
+>  {
+> -	struct dentry *dir = NULL;
+> -
+>  	/* This can happen if we have a bug in the lower layers */
+> -	dir = debugfs_lookup(kobject_name(q->kobj.parent), blk_debugfs_root);
+> -	if (dir) {
+> -		pr_warn("%s: registering request_queue debugfs directory twice is not allowed\n",
+> -			kobject_name(q->kobj.parent));
+> -		dput(dir);
+> -		return -EALREADY;
+> -	}
+> +	BUG_ON(debugfs_lookup(kobject_name(q->kobj.parent), blk_debugfs_root));
 
-Again, copied from 487. It's not necessary for this test. I'll switch
-that to just "touch testfile" at the start and get rid of the follow-on
-close.
+So you are willing to crash the whole kernel and throw all of
+userspace's data away if this happens?
 
-Thanks for the review!
--- 
-Jeff Layton <jlayton@kernel.org>
+Ick, no, don't do that, handle the issue correctly and move on.
 
+As proof you shouldn't be doing this, that BUG_ON will trigger if
+debugfs is not enabled, which might be a bit mean for all users of those
+kernels :(
+
+Hard NAK from me, sorry.
+
+greg k-h
