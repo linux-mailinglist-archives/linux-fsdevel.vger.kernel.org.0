@@ -2,95 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 505F01B18D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A84FF1B193B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 00:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbgDTVvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:51:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45274 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbgDTVvu (ORCPT
+        id S1726294AbgDTWO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 18:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbgDTWO2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:51:50 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w65so5590197pfc.12;
-        Mon, 20 Apr 2020 14:51:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VgKKIxe7DirK2QHauC8VINdT+s5Rf3r97F/D9e91FTk=;
-        b=H96w90Jl+0udPwrk0fCuqQ5ZsyVIC8IZoYI77IhJGNEG2sEptZpqUxkctZwCQMARnF
-         6vyPxwKIy7SDQqZqCnSMMSRvV2tyQuhMeOjvjuUva0z1/TKyhHR7/23Uu2zd3psGuYjL
-         DhZzOrD9H0/aPIPYA2HahtqVugVmODTF37HulnZByflKnEhGgVc0PJK9f57fTmVZ98Mf
-         UfOHTumgzsM8VeVN/Psj/geeHP68s5RzL2LlGXKlCz1qbj10OEy8rEVou2uIYucL5uDe
-         +jx+bcdAftS3XBhF+7nctnCWFeSOZrupZ5yUqzy3Oz+HjgYcdoZeF7gBJngY2f7XYOWY
-         WBcQ==
-X-Gm-Message-State: AGi0PuZzuoRhA1o+6Ize/xHNEXBfusvlsZXE+VuAP6LOqNWvtGDMIQom
-        KXJY0RV1o/AUJi/TxdF58Q8=
-X-Google-Smtp-Source: APiQypJn1hT4fbB9tcubgpiWGRaRQPxvG+yu2nN4pARSrEYvbs5rxdCSMPSxa0mg9FkB0ytg6Ag33w==
-X-Received: by 2002:aa7:9302:: with SMTP id 2mr18486299pfj.256.1587419509699;
-        Mon, 20 Apr 2020 14:51:49 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id z15sm355748pjt.20.2020.04.20.14.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 14:51:48 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 0A6DB4028E; Mon, 20 Apr 2020 21:51:48 +0000 (UTC)
-Date:   Mon, 20 Apr 2020 21:51:47 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2 04/10] block: revert back to synchronous request_queue
- removal
-Message-ID: <20200420215147.GP11244@42.do-not-panic.com>
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-5-mcgrof@kernel.org>
- <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
- <20200420185943.GM11244@42.do-not-panic.com>
- <eba2a91b-62a6-839d-df54-2a1cf8262652@acm.org>
+        Mon, 20 Apr 2020 18:14:28 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661DEC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 15:14:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=4cy2nicD54RdFxFlkOql6PT20Lca8D8SAOxtSFRsuWU=; b=DRtpcfWV24V2l/APTj0VQmLKkx
+        DYEpNTg2Jmy8X/ZmCPSkGUff1t44SHRhnNXYoZZFPA96xEYXvmc0AKtSZzE0UrcCqDDWGb4Vlrcd8
+        NIYtcLupVyqk0QS1YIMlIobjFtZz2jIo4L4R2UHV4KUORKo1bekZH2bbvw2cdE9dI3dlih2lEHRnb
+        XW1Lu2SkJyTm9Ybng/sOufduQxKAlL9tEl/9Lmi7EbL876jwSGrT6vq8/cdHeJIpgaxVvF51Yirym
+        3lWiKwXut1Efr2eBXF4+0bO76tGRvLWUZ2QX7/e2ohQ5TGkyLGO9lRo9pzEK913GXyyO6TApUDN+Y
+        JXfbh0FA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jQegK-0007dq-Kr; Mon, 20 Apr 2020 22:14:24 +0000
+Date:   Mon, 20 Apr 2020 15:14:24 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
+Message-ID: <20200420221424.GH5820@bombadil.infradead.org>
+References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
+ <20200419031443.GT5820@bombadil.infradead.org>
+ <20200419232046.GC9765@dread.disaster.area>
+ <20200420003025.GZ5820@bombadil.infradead.org>
+ <e889cb45-486b-118c-d087-90fed5353460@cloud.ionos.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <eba2a91b-62a6-839d-df54-2a1cf8262652@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e889cb45-486b-118c-d087-90fed5353460@cloud.ionos.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 02:11:13PM -0700, Bart Van Assche wrote:
-> On 4/20/20 11:59 AM, Luis Chamberlain wrote:
-> > On Sun, Apr 19, 2020 at 03:23:31PM -0700, Bart Van Assche wrote:
-> > > On 4/19/20 12:45 PM, Luis Chamberlain wrote:
-> > > > + * Decrements the refcount to the request_queue kobject, when this reaches
-> > > > + * 0 we'll have blk_release_queue() called. You should avoid calling
-> > > > + * this function in atomic context but if you really have to ensure you
-> > > > + * first refcount the block device with bdgrab() / bdput() so that the
-> > > > + * last decrement happens in blk_cleanup_queue().
-> > > > + */
-> > > 
-> > > Is calling bdgrab() and bdput() an option from a context in which it is not
-> > > guaranteed that the block device is open?
-> > 
-> > If the block device is not open, nope. For that blk_get_queue() can
-> > be used, and is used by the block layer. This begs the question:
-> > 
-> > Do we have *drivers* which requires access to the request_queue from
-> > atomic context when the block device is not open?
+On Mon, Apr 20, 2020 at 11:14:35PM +0200, Guoqing Jiang wrote:
+> On 20.04.20 02:30, Matthew Wilcox wrote:
+> > On Mon, Apr 20, 2020 at 09:20:46AM +1000, Dave Chinner wrote:
+> > > Anyone expecting to use set/clear_page_private as a matched pair (as
+> > > the names suggest they are) is in for a horrible surprise...
 > 
-> Instead of trying to answer that question, how about changing the references
-> to bdgrab() and bdput() into references to blk_get_queue() and
-> blk_put_queue()? I think if that change is made that we won't have to
-> research what the answer to the bdgrab()/bdput() question is.
+> Dave, thanks for the valuable suggestion!
+> 
+> > Oh, blast.  I hadn't noticed that.  And we're horribly inconsistent
+> > with how we use set_page_private() too -- rb_alloc_aux_page() doesn't
+> > increment the page's refcount, for example.
+> > 
+> > So, new (pair of) names:
+> > 
+> > set_fs_page_private()
+> > clear_fs_page_private()
+> 
+> Hmm, maybe it is better to keep the original name (set/clear_page_private).
 
-Yeah that's fine, now at least we'd have documented what should be avoided.
+No.  Changing the semantics of set_page_private() without changing the
+function signature is bad because it makes patches silently break when
+applied to trees on either side of the change.  So we need a new name.
 
-  Luis
+> 1. it would be weird for other subsystems (not belong to fs scope) to call
+> the
+> function which is supposed to be used in fs, though we can add a wrapper
+> for other users out of fs.
+> 
+> 2. no function in mm.h is named like *fs*.
+
+perhaps it should be in pagemap.h since it's for pagecache pages.
+
+> > since it really seems like it's only page cache pages which need to
+> > follow the rules about setting PagePrivate and incrementing the refcount.
+> > Also, I think I'd like to see them take/return a void *:
+> > 
+> > void *set_fs_page_private(struct page *page, void *data)
+> > {
+> > 	get_page(page);
+> > 	set_page_private(page, (unsigned long)data);
+> > 	SetPagePrivate(page);
+> > 	return data;
+> > }
+> 
+> Seems  some functions could probably use the above helper, such as
+> iomap_page_create, iomap_migrate_page, get_page_bootmem and
+>  f2fs_set_page_private etc.
+
+Yes.
+
+> Really appreciate for your input though the thing is a little beyond my
+> original intention ;-), will try to send a new version after reading more
+> fs code.
+
+That's kind of the way things go ... you start pulling on one thread
+and all of a sudden, you're weaving a new coat ;-)
