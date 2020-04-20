@@ -2,148 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFF01B14F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 20:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4CD1B14FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 20:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgDTSot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 14:44:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37414 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbgDTSos (ORCPT
+        id S1726736AbgDTSpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 14:45:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbgDTSpq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 14:44:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r4so5512733pgg.4;
-        Mon, 20 Apr 2020 11:44:48 -0700 (PDT)
+        Mon, 20 Apr 2020 14:45:46 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A6AC061A0C;
+        Mon, 20 Apr 2020 11:45:46 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id f19so12215674iog.5;
+        Mon, 20 Apr 2020 11:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aIdTVhP9rgDLUFkHf5qfuDoinqZQ+gQIBHYoc4Bjl9M=;
+        b=hkpX7hU+myep0WT6W5XgX8M0XPsoMxdtnKVyZamEABUByk1fvRMC+iQW7oCNg1q4Va
+         OSDZq+/Mcgh7TgEWfp3obxX7pYgGuGMgOTfEvWeQYxhsc+8fWB8Lfsa/d5i6+mO4miSK
+         +5my5dr8nP4tO+Qb7JUt7c8nTtd8cMf2C1hmdf9cykvxHs+i/E2webgveQd8DsvopMTu
+         vkLldmdPbSR1aXRBRNp6IXXo6JDCGkFWduJ5CqowukdCd4VrOXSjisWIBcr0hF5WLZuC
+         ftdQm6LcQ7bjXRsJNlqBHQsbHFf85kdpdlkzrhLQ/h5bm21Udigp2xNEa0ZERcKtI4Wl
+         v4Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FUfNLpNHPYCuu6qXvFrOeL6KdE2kN6fmlQUEM0ie7Is=;
-        b=o4wv3tyzRaLoHSyQmnT8fEqT9ZTeJBjAqdE1Yn8xU1ALPxF+sm41Oo47x2qWhPBPK5
-         LLOGQRw9J9DuGOXd/VtNeUKLN4I9VJZUYpfDjjI14EwK07mWcG+aYJYypEwD3/Jw37nw
-         Ngo0xfN6jq7tmVpN9G578NT8nC6rX9qkgkznZMJ8PeHBmhMLs0wHN4tG/1jAqKvHqhz0
-         PxKw36uagaOnP7YkaPCO5C8TzJm2ICecN1kE8j1lBrAhSEPnJV5/vD0xpI1CzE1ZxoTM
-         lfC2Vj5ZyqpD9i/wpIH4kX7/dsnqnxfPbM2dllVFDWCc1wz4V12jI89qiLb2Dr3L7W1K
-         auDQ==
-X-Gm-Message-State: AGi0PuaKRb1pLimUGtE9nxs6nWfNorTps6D6/b54KP+L932DB7MsBHCI
-        Bb5XFtn5sR6ZtdHTQ22V5Pc=
-X-Google-Smtp-Source: APiQypI49bd4lok0sfjqJQ6PNeDCZHCQZDa8a1IiCSMa0/uVW4qkkeflkikFnQEGOovYxyx6W7LuDw==
-X-Received: by 2002:a62:cf81:: with SMTP id b123mr17473835pfg.84.1587408287775;
-        Mon, 20 Apr 2020 11:44:47 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p64sm92874pjp.7.2020.04.20.11.44.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 11:44:46 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 825824028E; Mon, 20 Apr 2020 18:44:45 +0000 (UTC)
-Date:   Mon, 20 Apr 2020 18:44:45 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] blktrace: add checks for created debugfs files
- on setup
-Message-ID: <20200420184445.GK11244@42.do-not-panic.com>
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-9-mcgrof@kernel.org>
- <38240225-e48e-3035-0baa-4929948b23a3@acm.org>
- <20200419230537.GG11244@42.do-not-panic.com>
- <c69b67d1-f887-600b-f3ab-54ab0b7dcb13@acm.org>
- <20200420114038.GE3906674@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aIdTVhP9rgDLUFkHf5qfuDoinqZQ+gQIBHYoc4Bjl9M=;
+        b=bOWvaNYjEpa0PLObH+svGcoUgrEFEcHnT1ezk6yV5Nj0dc4A5tJO8BF3mvpc+gklOv
+         FiCKUeg5bLvV9rkElB+X6++q3AdW3bmKEKOn9dS6IO1XpI1ZKr0UHktXRykO3CVPS1rM
+         gAITkzIGlZf2HqpvxiiEQltuOxVN1IeQeMfznUklE2qe0a8s+puP6703Q88zMPLo82gp
+         cDUHfQSPipIeaQVbCue9/5C1dJQxqxmo7/GKk5oQsYo8k3p13IDAcHGsFhUrvLyjYsAe
+         pGhCvkxlNa/1bDrjgly7MYj1K0g2Mh3fJliT8YYga1+EdpVB+LxhDJuRldmOz0ZISrdi
+         d6BQ==
+X-Gm-Message-State: AGi0PuaefT0Lcwr6abgKI4bVLP217SFq/OSabyyk17mOsVh6EWCXnZNU
+        +g8HNrsmA+2vhyRMEtX54qoIkgElS+7OsHNgVC4=
+X-Google-Smtp-Source: APiQypJSy4nllIMZSZPuDVGpSraEbV2DbEd7NFocHwkKG06j6eNg0FvmW8ccjBYMSj21hMpggekesSn1MWPcet20/Ls=
+X-Received: by 2002:a02:4b03:: with SMTP id q3mr16703386jaa.30.1587408345790;
+ Mon, 20 Apr 2020 11:45:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200420114038.GE3906674@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-14-amir73il@gmail.com>
+ <CAKgNAkiVcjQfATKWwGNPDFucMEN4jJnQ5q6JHRzDihK1ZDnH8A@mail.gmail.com>
+In-Reply-To: <CAKgNAkiVcjQfATKWwGNPDFucMEN4jJnQ5q6JHRzDihK1ZDnH8A@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 20 Apr 2020 21:45:34 +0300
+Message-ID: <CAOQ4uxhx24iHDQHv02ei05eopVLQ-ytp9oepTy0q3xUDGr0dEw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] fanotify: report name info for FAN_DIR_MODIFY event
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 01:40:38PM +0200, Greg KH wrote:
-> On Sun, Apr 19, 2020 at 04:17:46PM -0700, Bart Van Assche wrote:
-> > On 4/19/20 4:05 PM, Luis Chamberlain wrote:
-> > > On Sun, Apr 19, 2020 at 03:57:58PM -0700, Bart Van Assche wrote:
-> > > > On 4/19/20 12:45 PM, Luis Chamberlain wrote:
-> > > > > Even though debugfs can be disabled, enabling BLK_DEV_IO_TRACE will
-> > > > > select DEBUG_FS, and blktrace exposes an API which userspace uses
-> > > > > relying on certain files created in debugfs. If files are not created
-> > > > > blktrace will not work correctly, so we do want to ensure that a
-> > > > > blktrace setup creates these files properly, and otherwise inform
-> > > > > userspace.
-> > > > > 
-> > > > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > > > > ---
-> > > > >    kernel/trace/blktrace.c | 8 +++++---
-> > > > >    1 file changed, 5 insertions(+), 3 deletions(-)
-> > > > > 
-> > > > > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> > > > > index 9cc0153849c3..fc32a8665ce8 100644
-> > > > > --- a/kernel/trace/blktrace.c
-> > > > > +++ b/kernel/trace/blktrace.c
-> > > > > @@ -552,17 +552,19 @@ static int blk_trace_create_debugfs_files(struct blk_user_trace_setup *buts,
-> > > > >    					  struct dentry *dir,
-> > > > >    					  struct blk_trace *bt)
-> > > > >    {
-> > > > > -	int ret = -EIO;
-> > > > > -
-> > > > >    	bt->dropped_file = debugfs_create_file("dropped", 0444, dir, bt,
-> > > > >    					       &blk_dropped_fops);
-> > > > > +	if (!bt->dropped_file)
-> > > > > +		return -ENOMEM;
-> > > > >    	bt->msg_file = debugfs_create_file("msg", 0222, dir, bt, &blk_msg_fops);
-> > > > > +	if (!bt->msg_file)
-> > > > > +		return -ENOMEM;
-> > > > >    	bt->rchan = relay_open("trace", dir, buts->buf_size,
-> > > > >    				buts->buf_nr, &blk_relay_callbacks, bt);
-> > > > >    	if (!bt->rchan)
-> > > > > -		return ret;
-> > > > > +		return -EIO;
-> > > > >    	return 0;
-> > > > >    }
-> > > > 
-> > > > I should have had a look at this patch before I replied to the previous
-> > > > patch.
-> > > > 
-> > > > Do you agree that the following code can be triggered by
-> > > > debugfs_create_file() and also that debugfs_create_file() never returns
-> > > > NULL?
-> > > 
-> > > If debugfs is enabled, and not that we know it is in this blktrace code,
-> > > as we select it, it can return ERR_PTR(-ERROR) if an error occurs.
-> > 
-> > This is what I found in include/linux/debugfs.h in case debugfs is disabled:
-> > 
-> > static inline struct dentry *debugfs_create_file(const char *name,
-> > 	umode_t mode, struct dentry *parent, void *data,
-> > 	const struct file_operations *fops)
-> > {
-> > 	return ERR_PTR(-ENODEV);
-> > }
-> > 
-> > I have not found any code path that can cause debugfs_create_file() to
-> > return NULL. Did I perhaps overlook something? If not, it's not clear to me
-> > why the above patch adds checks that check whether debugfs_create_file()
-> > returns NULL?
-> 
-> Short answer, yes, it can return NULL.  Correct answer is, you don't
-> care, don't check the value and don't do anything about it.  It's
-> debugging code, userspace doesn't care, so just keep moving on.
+On Thu, Apr 16, 2020 at 3:16 PM Michael Kerrisk (man-pages)
+<mtk.manpages@gmail.com> wrote:
+>
+> Hello Amir,
+>
+> On Mon, 17 Feb 2020 at 15:10, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > Report event FAN_DIR_MODIFY with name in a variable length record similar
+> > to how fid's are reported.  With name info reporting implemented, setting
+> > FAN_DIR_MODIFY in mark mask is now allowed.
+>
+> I see this was merged for 5.7. Would you be able to send a man-pages
+> patch that documents this new feature please.
+>
 
-Thing is this code *exposes* knobs to userspace for an API that *does*
-exepect those files to exist. That is, blktrace *relies* on these
-debugfs files to exist. So the kconfig which enables blktrace
-CONFIG_BLK_DEV_IO_TRACE selects DEBUG_FS.
+Sorry, I missed your email.
+Just posted the patches.
+I never know when in development cycle you expect to get the man page patches...
 
-So typically we don't care if these files were created or not on regular
-drivers, but in this case this code is only compiled when debugfs is
-enabled and CONFIG_BLK_DEV_IO_TRACE, and the userspace interaction with
-debugfs *expects* these files.
-
-So what do you recommend?
-
-  Luis
+Thanks,
+Amir.
