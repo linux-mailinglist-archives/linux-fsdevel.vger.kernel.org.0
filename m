@@ -2,180 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD6D1B116A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 18:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A731B11E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 18:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbgDTQVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 12:21:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbgDTQVq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 12:21:46 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B10F6206F6;
-        Mon, 20 Apr 2020 16:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587399705;
-        bh=o7H7p9C34Zj4HiBiChZy4lv4JR1+Er9KahAD2vdeJQQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zfYWtmsSpLORpj5tatrKtFiBIP49pq5B7A2x1EpDVfOT55ljfqqJxE3LoPBiRDnhW
-         4TnvRl7xpTCfVaCpo5JZx5jNYiOdXfHQ9pdo0FREDLwIILc9fJR/I0D2qWdyiVh1zd
-         a0xjmMw2g6PAmMRVpzHV/xCx6h0Ywawf+XP1fNKk=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     fstests@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, guaneryu@gmail.com,
-        bfoster@redhat.com, viro@zeniv.linux.org.uk
-Subject: [RFC PATCH v2] generic: test reporting of wb errors via syncfs
-Date:   Mon, 20 Apr 2020 12:21:43 -0400
-Message-Id: <20200420162143.28170-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.25.3
-In-Reply-To: <20200414120740.293998-1-jlayton@kernel.org>
-References: <20200414120740.293998-1-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726954AbgDTQky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 12:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41804 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726743AbgDTQkG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Apr 2020 12:40:06 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D8B6C061A41
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 09:28:30 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id t14so12920389wrw.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 09:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=y6BXvIfk0R/gZ0twMeBQX3iT31MGytnoVIMSO2j5UM0=;
+        b=aum878dLf5/Y73XSxFsTat47TJHjOeeg6LINMRbsCZDiJlT48QPf0++SYSxzUx6CvN
+         bP3h04KO1U856CbHH3qzKQxtE2Stix58x5qHJ4KxpWNlK7l9DFAVmhwM9jnbliYXnJmb
+         VzRvCxVX2K9PVqBCJYdvPhCKFzQBjxMWyUR+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y6BXvIfk0R/gZ0twMeBQX3iT31MGytnoVIMSO2j5UM0=;
+        b=NII65ZJWKB5tuI0GpFlA7UOqAFIQSCUvvtrAiRjYGyc6qqJzC19jXJc+RqPxjEDR17
+         l2C2nSGflB7DDDzFeaJ/fu+n6I5dBPqkWVThtC6XOUUSc4akxnN/xx8qNZUDoAQAsClX
+         DtpfThrAUQ28fg0PR2JmAunH7xyN8geJmdxISkEXAX234z+AcOx0H9p9PI6mmyNUMSK2
+         d0PKD0vuujm3kCCrHxw9OVycJJo72BMnWSKtvllRVSTimUQzEHBsxNKgzn3hBHS1cYn4
+         uLCsGRZntxLnRUwEWh33Z4NCAwoxctPLq2qIAScM8rPUyUtAqw8TWpbjzNhJg1eCGAs0
+         3H1Q==
+X-Gm-Message-State: AGi0PuaS3f1DIukUHZBQkFEvMwK/WQgk3bG1YjODvVAI4mGVW5B0Nxuj
+        6zRuexYLeeyYlbC7lFgDyjfy1Q==
+X-Google-Smtp-Source: APiQypK0GeQ9aWgjyRkEgInVfvj7aKu6g0F7ig6yHsVbodIn5FHUwC9TJ6Lfy8OKLglWlXCBO27LYw==
+X-Received: by 2002:a05:6000:110a:: with SMTP id z10mr19362693wrw.389.1587400108867;
+        Mon, 20 Apr 2020 09:28:28 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id 36sm14882wrc.35.2020.04.20.09.28.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2020 09:28:27 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v3 0/7] firmware: add partial read support in request_firmware_into_buf
+Date:   Mon, 20 Apr 2020 09:28:02 -0700
+Message-Id: <20200420162809.17529-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+This patch series adds partial read support in request_firmware_into_buf.
+In order to accept the enhanced API it has been requested that kernel
+selftests and upstreamed driver utilize the API enhancement and so
+are included in this patch series.
 
-Add a test for new syncfs error reporting behavior. When an inode fails
-to be written back, ensure that a subsequent call to syncfs() will also
-report an error.
+Also in this patch series is the addition of a new Broadcom VK driver
+utilizing the new request_firmware_into_buf enhanced API.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- tests/generic/999     | 79 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/999.out |  8 +++++
- tests/generic/group   |  1 +
- 3 files changed, 88 insertions(+)
- create mode 100755 tests/generic/999
- create mode 100644 tests/generic/999.out
+Changes from v2:
+ - remove unnecessary code and mutex locks in lib/test_firmware.c
+ - remove VK_IOCTL_ACCESS_BAR support from driver and use pci sysfs instead
+ - remove bitfields
+ - remove Kconfig default m
+ - adjust formatting and some naming based on feedback
+ - fix error handling conditions
+ - use appropriate return codes
+ - use memcpy_toio instead of direct access to PCIE bar
+ - 
 
-v2:
-- update license comment
-- only write a page of data
-- don't bother testing for enough scratch space
-- don't hold file open over test
+Scott Branden (7):
+  fs: introduce kernel_pread_file* support
+  firmware: add offset to request_firmware_into_buf
+  test_firmware: add partial read support for request_firmware_into_buf
+  firmware: test partial file reads of request_firmware_into_buf
+  bcm-vk: add bcm_vk UAPI
+  misc: bcm-vk: add Broadcom VK driver
+  MAINTAINERS: bcm-vk: add maintainer for Broadcom VK Driver
 
-Thanks to Brian Foster for the review! This is testing a proposed
-behavior change and is dependent on this patchset being merged:
+ MAINTAINERS                                   |    7 +
+ drivers/base/firmware_loader/firmware.h       |    5 +
+ drivers/base/firmware_loader/main.c           |   52 +-
+ drivers/misc/Kconfig                          |    1 +
+ drivers/misc/Makefile                         |    1 +
+ drivers/misc/bcm-vk/Kconfig                   |   41 +
+ drivers/misc/bcm-vk/Makefile                  |   12 +
+ drivers/misc/bcm-vk/bcm_vk.h                  |  406 +++++
+ drivers/misc/bcm-vk/bcm_vk_dev.c              | 1179 ++++++++++++++
+ drivers/misc/bcm-vk/bcm_vk_legacy.c           |   89 ++
+ drivers/misc/bcm-vk/bcm_vk_msg.c              | 1420 +++++++++++++++++
+ drivers/misc/bcm-vk/bcm_vk_msg.h              |  215 +++
+ drivers/misc/bcm-vk/bcm_vk_sg.c               |  271 ++++
+ drivers/misc/bcm-vk/bcm_vk_sg.h               |   60 +
+ drivers/misc/bcm-vk/bcm_vk_tty.c              |  323 ++++
+ drivers/soc/qcom/mdt_loader.c                 |    7 +-
+ fs/exec.c                                     |   96 +-
+ include/linux/firmware.h                      |    8 +-
+ include/linux/fs.h                            |   20 +
+ include/uapi/linux/misc/bcm_vk.h              |   99 ++
+ lib/test_firmware.c                           |  144 +-
+ .../selftests/firmware/fw_filesystem.sh       |   80 +
+ 22 files changed, 4487 insertions(+), 49 deletions(-)
+ create mode 100644 drivers/misc/bcm-vk/Kconfig
+ create mode 100644 drivers/misc/bcm-vk/Makefile
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk.h
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_dev.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_legacy.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.h
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.c
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.h
+ create mode 100644 drivers/misc/bcm-vk/bcm_vk_tty.c
+ create mode 100644 include/uapi/linux/misc/bcm_vk.h
 
-    vfs: have syncfs() return error when there are writeback errors
-
-We'll probably want to wait until its fate is clear before merging this.
-
-diff --git a/tests/generic/999 b/tests/generic/999
-new file mode 100755
-index 000000000000..cdc0772d0774
---- /dev/null
-+++ b/tests/generic/999
-@@ -0,0 +1,79 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+# Copyright (c) 2020, Jeff Layton. All rights reserved.
-+# FS QA Test No. 999
-+#
-+# Open a file and write to it and fsync. Then, flip the data device to throw
-+# errors, write to it again and do an fdatasync. Then open an O_RDONLY fd on
-+# the same file and call syncfs against it and ensure that an error is reported.
-+# Then call syncfs again and ensure that no error is reported. Finally, repeat
-+# the open and syncfs and ensure that there is no error reported.
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1    # failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+	_dmerror_cleanup
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/dmerror
-+
-+# real QA test starts here
-+_supported_os Linux
-+_require_scratch_nocheck
-+# This test uses "dm" without taking into account the data could be on
-+# realtime subvolume, thus the test will fail with rtinherit=1
-+_require_no_rtinherit
-+_require_dm_target error
-+
-+rm -f $seqres.full
-+
-+echo "Format and mount"
-+_scratch_mkfs > $seqres.full 2>&1
-+_dmerror_init
-+_dmerror_mount
-+
-+
-+# create file
-+testfile=$SCRATCH_MNT/syncfs-reports-errors
-+touch $testfile
-+
-+# write a page of data to file, and call fsync
-+datalen=$(getconf PAGE_SIZE)
-+$XFS_IO_PROG -c "pwrite -W -q 0 $datalen" $testfile
-+
-+# flip device to non-working mode
-+_dmerror_load_error_table
-+
-+# rewrite the data and call fdatasync
-+$XFS_IO_PROG -c "pwrite -w -q 0 $datalen" $testfile
-+
-+# heal the device error
-+_dmerror_load_working_table
-+
-+# open again and call syncfs twice
-+echo "One of the following syncfs calls should fail with EIO:"
-+$XFS_IO_PROG -r -c syncfs -c syncfs $testfile
-+echo "done"
-+
-+echo "This syncfs call should succeed:"
-+$XFS_IO_PROG -r -c syncfs $testfile
-+echo "done"
-+
-+# success, all done
-+_dmerror_cleanup
-+
-+status=0
-+exit
-diff --git a/tests/generic/999.out b/tests/generic/999.out
-new file mode 100644
-index 000000000000..950a2ba42503
---- /dev/null
-+++ b/tests/generic/999.out
-@@ -0,0 +1,8 @@
-+QA output created by 999
-+Format and mount
-+fdatasync: Input/output error
-+One of the following syncfs calls should fail with EIO:
-+syncfs: Input/output error
-+done
-+This syncfs call should succeed:
-+done
-diff --git a/tests/generic/group b/tests/generic/group
-index 718575baeef9..9bcf296fc3dd 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -598,3 +598,4 @@
- 594 auto quick quota
- 595 auto quick encrypt
- 596 auto quick
-+999 auto quick
 -- 
-2.25.3
+2.17.1
 
