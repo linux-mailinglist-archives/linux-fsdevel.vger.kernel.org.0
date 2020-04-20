@@ -2,94 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B06151B1818
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AE41B1822
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgDTVLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:11:18 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40292 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbgDTVLR (ORCPT
+        id S1726893AbgDTVOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 17:14:43 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:49317 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgDTVOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:11:17 -0400
-Received: by mail-pj1-f67.google.com with SMTP id a22so401176pjk.5;
-        Mon, 20 Apr 2020 14:11:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wrPH749mUN8hliBUrahYDBfQbFobH/RtFO+RluKgR0c=;
-        b=LivDrY5Ouu2czO0qIGWzXiVMlitkGzsLsQF2wFYUanuha55j6R1l/v3f6fbr5Yn97V
-         a1Nf1cKwKMlxNBx8gvh0B9TxG4lOjU8tn5EVF9NpQb6fvWIIlkndzF045ASxLmEFjgwo
-         Izmjb7PYRGKCrAHCZmYWquUI0m4pbaIP0OkP3ADy4jb/fJyqiVvA6xUqB0le0qSfKkaf
-         HGKGzxXrnYLD64A2zGsu3vVflmLlAp5HV+BJ02o4cXHRuwcObLIUWZL33s4I/kDOkUlR
-         ZMtAiHQiP9UPIibIM1t8GIN9FU7FyrXU7ilHN0xgyoMFSjZgH+hkSyJUnybkp4myk0+J
-         FtwA==
-X-Gm-Message-State: AGi0PuavJARo54tgWtDazrPA9nPgNBAIy9bluHK6W300PLR36cs+t77P
-        HZ9tmlDaRI8GylWusyvkoSCkLtEtyZs=
-X-Google-Smtp-Source: APiQypLpcT/SUkIQmuuXSrPoqK0E8Cp2xLvNfCZASPQMFboRu2ZZ34NFyvthqIVZYVdzDqs93Z4ZTg==
-X-Received: by 2002:a17:90b:3751:: with SMTP id ne17mr1574517pjb.114.1587417077115;
-        Mon, 20 Apr 2020 14:11:17 -0700 (PDT)
-Received: from [100.124.9.192] ([104.129.199.10])
-        by smtp.gmail.com with ESMTPSA id 71sm394670pfw.111.2020.04.20.14.11.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2020 14:11:16 -0700 (PDT)
-Subject: Re: [PATCH v2 04/10] block: revert back to synchronous request_queue
- removal
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-5-mcgrof@kernel.org>
- <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
- <20200420185943.GM11244@42.do-not-panic.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <eba2a91b-62a6-839d-df54-2a1cf8262652@acm.org>
-Date:   Mon, 20 Apr 2020 14:11:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 20 Apr 2020 17:14:43 -0400
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7894D200002;
+        Mon, 20 Apr 2020 21:14:36 +0000 (UTC)
+Date:   Mon, 20 Apr 2020 14:14:34 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+Message-ID: <20200420211434.GC3515@localhost>
+References: <cover.1586830316.git.josh@joshtriplett.org>
+ <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
+ <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20200420185943.GM11244@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/20/20 11:59 AM, Luis Chamberlain wrote:
-> On Sun, Apr 19, 2020 at 03:23:31PM -0700, Bart Van Assche wrote:
->> On 4/19/20 12:45 PM, Luis Chamberlain wrote:
->>> + * Decrements the refcount to the request_queue kobject, when this reaches
->>> + * 0 we'll have blk_release_queue() called. You should avoid calling
->>> + * this function in atomic context but if you really have to ensure you
->>> + * first refcount the block device with bdgrab() / bdput() so that the
->>> + * last decrement happens in blk_cleanup_queue().
->>> + */
->>
->> Is calling bdgrab() and bdput() an option from a context in which it is not
->> guaranteed that the block device is open?
+On Sun, Apr 19, 2020 at 08:44:04PM +1000, Aleksa Sarai wrote:
+> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
+> > Inspired by the X protocol's handling of XIDs, allow userspace to select
+> > the file descriptor opened by openat2, so that it can use the resulting
+> > file descriptor in subsequent system calls without waiting for the
+> > response to openat2.
+> > 
+> > In io_uring, this allows sequences like openat2/read/close without
+> > waiting for the openat2 to complete. Multiple such sequences can
+> > overlap, as long as each uses a distinct file descriptor.
 > 
-> If the block device is not open, nope. For that blk_get_queue() can
-> be used, and is used by the block layer. This begs the question:
+> I'm not sure I understand this explanation -- how can you trigger a
+> syscall with an fd that hasn't yet been registered (unless you're just
+> hoping the race goes in your favour)?
+
+See the response from Jens for an explanation of how this works in
+io_uring.
+
+> > Add a new O_SPECIFIC_FD open flag to enable this behavior, only accepted
+> > by openat2 for now (ignored by open/openat like all unknown flags). Add
+> > an fd field to struct open_how (along with appropriate padding, and
+> > verify that the padding is 0 to allow replacing the padding with a field
+> > in the future).
+> > 
+> > The file table has a corresponding new function
+> > get_specific_unused_fd_flags, which gets the specified file descriptor
+> > if O_SPECIFIC_FD is set (and the fd isn't -1); otherwise it falls back
+> > to get_unused_fd_flags, to simplify callers.
+> > 
+> > The specified file descriptor must not already be open; if it is,
+> > get_specific_unused_fd_flags will fail with -EBUSY. This helps catch
+> > userspace errors.
+> > 
+> > When O_SPECIFIC_FD is set, and fd is not -1, openat2 will use the
+> > specified file descriptor rather than finding the lowest available one.
 > 
-> Do we have *drivers* which requires access to the request_queue from
-> atomic context when the block device is not open?
+> I still don't like that you can enable this feature with O_SPECIFIC_FD
+> but then disable it by specifying fd as -1. I understand why this is
+> needed for pipe2() and socketpair() and that's totally fine, but I don't
+> think it makes sense for openat2() or other interfaces where there's
+> only one fd being returned -- what does it mean to say "give me a
+> specific fd, but actually I don't care what it is"?
+> 
+> I know this is a trade-off between consistency of O_SPECIFIC_FD
+> interfaces and having wart-less interfaces for each syscall, but I don't
+> think it breaks consistency to say "syscalls that only give you one fd
+> don't have a second way of disabling the feature -- just don't pass
+> O_SPECIFIC_FD".
 
-Instead of trying to answer that question, how about changing the 
-references to bdgrab() and bdput() into references to blk_get_queue() 
-and blk_put_queue()? I think if that change is made that we won't have 
-to research what the answer to the bdgrab()/bdput() question is.
+I think there's value in the orthogonality, and -1 can never be a valid
+file descriptor. If this becomes a sticking point, it could certainly be
+changed (just modify pipe2 to remove the O_SPECIFIC_FD flag if passed
+-1), but at the same time, I'd rather have this logic implemented once
+with a uniform semantic no matter what syscall uses it.
 
-Thanks,
+> >  struct open_how {
+> >  	__u64 flags;
+> >  	__u64 mode;
+> >  	__u64 resolve;
+> > +	__u32 fd;
+> > +	__u32 pad; /* Must be 0 in the current version */
+> 
+> Small nit: This field should be called __padding to make it more
+> explicit it's something internal and shouldn't be looked at by
+> userspace. And the comment should just be "must be zeroed".
 
-Bart.
+Good point. Done in v5.
+
+> > --- a/tools/testing/selftests/openat2/openat2_test.c
+> > +++ b/tools/testing/selftests/openat2/openat2_test.c
+> > @@ -40,7 +40,7 @@ struct struct_test {
+> >  	int err;
+> >  };
+> >  
+> > -#define NUM_OPENAT2_STRUCT_TESTS 7
+> > +#define NUM_OPENAT2_STRUCT_TESTS 8
+> >  #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+> >  
+> >  void test_openat2_struct(void)
+> > @@ -52,6 +52,9 @@ void test_openat2_struct(void)
+> >  		{ .name = "normal struct",
+> >  		  .arg.inner.flags = O_RDONLY,
+> >  		  .size = sizeof(struct open_how) },
+> > +		{ .name = "v0 struct",
+> > +		  .arg.inner.flags = O_RDONLY,
+> > +		  .size = OPEN_HOW_SIZE_VER0 },
+> >  		/* Bigger struct, with zeroed out end. */
+> >  		{ .name = "bigger struct (zeroed out)",
+> >  		  .arg.inner.flags = O_RDONLY,
+> > @@ -155,7 +158,7 @@ struct flag_test {
+> >  	int err;
+> >  };
+> >  
+> > -#define NUM_OPENAT2_FLAG_TESTS 23
+> > +#define NUM_OPENAT2_FLAG_TESTS 29
+> >  
+> >  void test_openat2_flags(void)
+> >  {
+> > @@ -223,6 +226,24 @@ void test_openat2_flags(void)
+> >  		{ .name = "invalid how.resolve and O_PATH",
+> >  		  .how.flags = O_PATH,
+> >  		  .how.resolve = 0x1337, .err = -EINVAL },
+> > +
+> > +		/* O_SPECIFIC_FD tests */
+> > +		{ .name = "O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 42 },
+> > +		{ .name = "O_SPECIFIC_FD if fd exists",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 2,
+> > +		  .err = -EBUSY },
+> > +		{ .name = "O_SPECIFIC_FD with fd -1",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = -1 },
+> > +		{ .name = "fd without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = 42,
+> > +		  .err = -EINVAL },
+> > +		{ .name = "fd -1 without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = -1,
+> > +		  .err = -EINVAL },
+> > +		{ .name = "existing fd without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = 2,
+> > +		  .err = -EINVAL },
+> 
+> It would be good to add a test to make sure that a non-zero value of
+> how->__padding also gives -EINVAL.
+
+Done in v5.
+
+- Josh Triplett
