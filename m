@@ -2,144 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 960A31B1867
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8EFC1B189B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbgDTV1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:27:23 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35383 "EHLO mga11.intel.com"
+        id S1727864AbgDTVnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 17:43:20 -0400
+Received: from ms.lwn.net ([45.79.88.28]:53958 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbgDTV1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:27:23 -0400
-IronPort-SDR: TEs/9Fnz7hcwNvlBPeJ4OVtvGPzLhNLQFtRw305M0D7cs5XyEVbTF+dRAgUgrnlluBdl7hcVhx
- KmFfpZ3Vg6hw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2020 14:27:22 -0700
-IronPort-SDR: inL+gV1iNgpp4Pg9Jrp7kPw0b7fxvNXaWpgLg9468RJgLqjzIFFXB084vJwePYH/m1c+jM1v90
- Dxza4s6gBnMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,407,1580803200"; 
-   d="scan'208";a="258483635"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006.jf.intel.com with ESMTP; 20 Apr 2020 14:27:20 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jQdwp-0027yy-Co; Tue, 21 Apr 2020 00:27:23 +0300
-Date:   Tue, 21 Apr 2020 00:27:23 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
-        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
-        linux@rasmusvillemoes.dk
-Subject: Re: [PATCH 03/15] print_integer: new and improved way of printing
- integers
-Message-ID: <20200420212723.GE185537@smile.fi.intel.com>
-References: <20200420205743.19964-1-adobriyan@gmail.com>
- <20200420205743.19964-3-adobriyan@gmail.com>
- <20200420211911.GC185537@smile.fi.intel.com>
+        id S1725989AbgDTVnT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Apr 2020 17:43:19 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 632E4823;
+        Mon, 20 Apr 2020 21:43:17 +0000 (UTC)
+Date:   Mon, 20 Apr 2020 15:43:16 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yuti Amonkar <yamonkar@cadence.com>,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-crypto@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-afs@lists.infradead.org,
+        ecryptfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ocfs2-devel@oss.oracle.com, linux-pci@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-spi@vger.kernel.org,
+        Sandeep Maheswaram <sanm@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-usb@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Matthias Brugger <mbrugger@suse.com>, netdev@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2 00/33] Documentation fixes for Kernel 5.8
+Message-ID: <20200420154316.28e42905@lwn.net>
+In-Reply-To: <cover.1586881715.git.mchehab+huawei@kernel.org>
+References: <cover.1586881715.git.mchehab+huawei@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200420211911.GC185537@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 21, 2020 at 12:19:11AM +0300, Andy Shevchenko wrote:
-> On Mon, Apr 20, 2020 at 11:57:31PM +0300, Alexey Dobriyan wrote:
-> > Time honored way to print integers via vsnprintf() or equivalent has
-> > unavoidable slowdown of parsing format string. This can't be fixed in C,
-> > without introducing external preprocessor.
-> > 
-> > seq_put_decimal_ull() partially saves the day, but there are a lot of
-> > branches inside and overcopying still.
-> > 
-> > _print_integer_*() family of functions is meant to make printing
-> > integers as fast as possible by deleting format string parsing and doing
-> > as little work as possible.
-> > 
-> > It is based on the following observations:
-> > 
-> > 1) memcpy is done in forward direction
-> > 	it can be done backwards but nobody does that,
-> > 
-> > 2) digits can be extracted in a very simple loop which costs only
-> > 	1 multiplication and shift (division by constant is not division)
-> > 
-> > All the above asks for the following signature, semantics and pattern of
-> > printing out beloved /proc files:
-> > 
-> > 	/* seq_printf(seq, "%u %llu\n", A, b); */
-> > 
-> > 	char buf[10 + 1 + 20 + 1];
-> > 	char *p = buf + sizeof(buf);
-> > 
-> > 	*--p = '\n';
-> > 	p = _print_integer_u64(p, B);
-> > 	*--p = ' ';
-> > 	p = _print_integer_u32(p, A);
-> > 
-> > 	seq_write(seq, p, buf + sizeof(buf) - p);
-> > 
-> > 1) stack buffer capable of holding the biggest string is allocated.
-> > 
-> > 2) "p" is pointer to start of the string. Initially it points past
-> > 	the end of the buffer WHICH IS NOT NUL-TERMINATED!
-> > 
-> > 3) _print_integer_*() actually prints an integer from right to left
-> > 	and returns new start of the string.
-> > 
-> > 			     <--------|
-> > 				123
-> > 				^
-> > 				|
-> > 				+-- p
-> > 
-> > 4) 1 character is printed with
-> > 
-> > 	*--p = 'x';
-> > 
-> > 	It generates very efficient code as multiple writes can be
-> > 	merged.
-> > 
-> > 5) fixed string is printed with
-> > 
-> > 	p = memcpy(p - 3, "foo", 3);
-> > 
-> > 	Complers know what memcpy() does and write-combine it.
-> > 	4/8-byte writes become 1 instruction and are very efficient.
-> > 
-> > 6) Once everything is printed, the result is written to seq_file buffer.
-> > 	It does only one overflow check and 1 copy.
-> > 
-> > This generates very efficient code (and small!).
-> > 
-> > In regular seq_printf() calls, first argument and format string are
-> > constantly reloaded. Format string will most likely with [rip+...] which
-> > is quite verbose.
-> > 
-> > seq_put_decimal_ull() will do branches (and even more branches
-> > with "width" argument)
-> > 
+On Tue, 14 Apr 2020 18:48:26 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Patches 1 to 5 contain changes to the documentation toolset:
 > 
-> > 	TODO
-> > 	benchmark with mainline because nouveau is broken for me -(
-> > 	vsnprintf() changes make the code slower
+> - The first 3 patches help to reduce a lot the number of reported
+>   kernel-doc issues, by making the tool more smart.
 > 
-> Exactly main point of this exercise. I don't believe that algos in vsprintf.c
-> are too dumb to use division per digit (yes, division by constant which is not
-> power of two is a heavy operation).
+> - Patches 4 and 5 are meant to partially address the PDF
+>   build, with now requires Sphinx version 2.4 or upper.
 > 
+> The remaining patches fix broken references detected by
+> this tool:
+> 
+>         ./scripts/documentation-file-ref-check
+> 
+> and address other random errors due to tags being mis-interpreted
+> or mis-used.
+> 
+> They are independent each other, but some may depend on
+> the kernel-doc improvements.
+> 
+> PS.: Due to the large number of C/C, I opted to keep a smaller
+> set of C/C at this first e-mail (only e-mails with "L:" tag from
+> MAINTAINERS file).
 
-And second point here, why not to use existing algos from vsprintf.c?
+OK, I've applied this set, minus #17 which was applied elsewhere.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
 
-
+jon
