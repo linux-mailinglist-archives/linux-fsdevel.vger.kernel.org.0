@@ -2,196 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 168CB1B071F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 13:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9CC1B073E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 13:19:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgDTLOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 07:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
+        id S1726164AbgDTLTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 07:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726123AbgDTLOa (ORCPT
+        by vger.kernel.org with ESMTP id S1725773AbgDTLTa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 07:14:30 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A61FC0610D5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:14:30 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id q8so7579748eja.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:14:30 -0700 (PDT)
+        Mon, 20 Apr 2020 07:19:30 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9413DC061A10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:19:29 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id g14so7707305otg.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=okPBkG9vtS/wVdJh/KDIc+hdg6krV+bND5agW6vUaRM=;
-        b=IDveWlOS7Tzhrdb36+hZpTST6wjOAPrAj2jj5uib3vbWbabqwzW9IWuAtw8h4eTBNA
-         9a9lkdgEJOm6Eb3fwCtOVTxrVmphaH2PGWy9bhlS9QBo4VsFK/CUgj6vV9uyCovU0arA
-         5Kj1tMT4D5sNr37XYcPWFQo9UnIzxN1guBg1w=
+        bh=e29Sh5IimfCKpqH0hBK++S43Pnt0kxeDo73Bk32ebac=;
+        b=eKT98z0rlqPd4Kddmlbg2xii0nzNK7Sm2cE/Q6/CBrjGOOjyYbLacaC4mYzeDR8qth
+         NYoIsJE4FH1XfuGxFDuyzVazcMc0nCSjEa9a4BoVe6619W6MbmSZiDGTwBJLCugjX94j
+         D++G15LhNNY0COTf7B9pMxjnmtdEZE97ilXLn6lh33Dn7MvW638xIp/BR1nPmPfMviBj
+         FNpPjQkGh5S1hvic5k0OhT1PISv5NGV872ANVVrLN6U9lQn+WmLvNxb4D1kstjbjuRyG
+         Wqu/og9QYMpF+EUzjWCQLy6X/P3KWKVVBWPwxR1/geHYWXhhugNMNhDt7ZGW+Ch5fDZt
+         CTWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=okPBkG9vtS/wVdJh/KDIc+hdg6krV+bND5agW6vUaRM=;
-        b=D/ddkrXk4ugKOI3YbwyV+GQ41S78s6lFggdN9GldT20lAs9NyF8ce30S+v1wlcDjM3
-         SllirgUlCQf6ZTTZYMYD9y4zzG3DnzLGgcyobIdfgEWCHblph1dijFV/bybxqdbo4FQf
-         Ompx7YymhomWM2FOn5kJ00P2WEflqUc6t6Bni+YEs+LIftTY165KIChAKYMNgPFxhBGs
-         W+keQ/uOSxEaCU4r+2YDbmyCJduUcTRkhTMftwTlqKwqDSUDAl7oyCjastkEW2y/28ot
-         f1y7o4FrSI9SRzZMS+OATXzqjYlQbsDkjrhbNPjuMEOfGFHpFLpHX+W7YaFbcExXXabP
-         euMg==
-X-Gm-Message-State: AGi0Pua1O2cPXkHTvzzEHgTvpUhAPaEW8unysEPY4vQvXhGCjZKV5Ysy
-        j132fKwiQnS043hC8mg4UiWoE0cLELV37q+HJxRahg==
-X-Google-Smtp-Source: APiQypIVhtjPPYqBEymAM1SkD4SYcU1V6bmTKvyt+63wSYT0tOjvuXxym8edoJZS6GcpMs4Nq+7PF2DextVY/K9Ax1g=
-X-Received: by 2002:a17:906:841a:: with SMTP id n26mr16038100ejx.43.1587381268754;
- Mon, 20 Apr 2020 04:14:28 -0700 (PDT)
+        bh=e29Sh5IimfCKpqH0hBK++S43Pnt0kxeDo73Bk32ebac=;
+        b=OIfrZr/f6rJxO3KDc6zIcPveE5DafP+m+/0No7Bg8/VBwIZCAGNrqyZfgt/nFpTQee
+         vVlvU1IM+wc9m0uNx60UV694XeE2CyoF8gp6okeNDJQYZRPIiIKpfdT1MhNRJqYse/EV
+         1OoMyGU+iCnk82Eyeu+/HYoqNThYNRzZcVwV8mROgPakkBCliQkq3pQjnn2l7/fjYa+s
+         STZD/dQXqFRG18gjpiLqBK10lCcYivsgUeg8eUf1CTrW3GxGnsHYcKEV30U6bkUanwXo
+         jZcSVuzWWpkme8KvKel/TRgovPDyDIguxbMj3vpbxoBTyj+82KwLOf4JZ+vRHcYgzsW5
+         CAow==
+X-Gm-Message-State: AGi0PuagvCuzmO/rryivIzYRkysOAqY0rIjhUxEVfN+qdEf5Z3dfrCQh
+        NjxxClrp0qmSCKQXHfCY2C7IeAFrGJyrgespiWTobg==
+X-Google-Smtp-Source: APiQypISlIaSdLEv9rD1htlLD8VkbzpN2m6GxaJB8UzqhFJFyFLfmU6fCYcTBRnsKquAseuGmbeStBgIrDCH+Py5D9A=
+X-Received: by 2002:a05:6830:22dc:: with SMTP id q28mr8665535otc.221.1587381568875;
+ Mon, 20 Apr 2020 04:19:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200414150233.24495-1-willy@infradead.org> <20200414150233.24495-25-willy@infradead.org>
-In-Reply-To: <20200414150233.24495-25-willy@infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 20 Apr 2020 13:14:17 +0200
-Message-ID: <CAJfpegsZF=TFQ67vABkE5ghiZoTZF+=_u8tM5U_P6jZeAmv23A@mail.gmail.com>
-Subject: Re: [PATCH v11 24/25] fuse: Convert from readpages to readahead
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        William Kucharski <william.kucharski@oracle.com>
+References: <20200331133536.3328-1-linus.walleij@linaro.org>
+In-Reply-To: <20200331133536.3328-1-linus.walleij@linaro.org>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Mon, 20 Apr 2020 12:19:17 +0100
+Message-ID: <CAFEAcA9Gep1HN+7WJHencp9g2uUBLhagxdgjHf-16AOdP5oOjg@mail.gmail.com>
+Subject: Re: [PATCH] fcntl: Add 32bit filesystem mode
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 5:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, 31 Mar 2020 at 14:37, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> It was brought to my attention that this bug from 2018 was
+> still unresolved: 32 bit emulators like QEMU were given
+> 64 bit hashes when running 32 bit emulation on 64 bit systems.
 >
-> Implement the new readahead operation in fuse by using __readahead_batch()
-> to fill the array of pages in fuse_args_pages directly.  This lets us
-> inline fuse_readpages_fill() into fuse_readahead().
+> This adds a fcntl() operation to set the underlying filesystem
+> into 32bit mode even if the file hanle was opened using 64bit
+> mode without the compat syscalls.
 >
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> ---
->  fs/fuse/file.c | 99 ++++++++++++++------------------------------------
->  1 file changed, 27 insertions(+), 72 deletions(-)
+> Programs that need the 32 bit file system behavior need to
+> issue a fcntl() system call such as in this example:
 >
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 9d67b830fb7a..db82fb29dd39 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -915,84 +915,39 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
->         fuse_readpages_end(fc, &ap->args, err);
->  }
+>   #define F_SET_FILE_32BIT_FS (1024 + 15)
 >
-> -struct fuse_fill_data {
-> -       struct fuse_io_args *ia;
-> -       struct file *file;
-> -       struct inode *inode;
-> -       unsigned int nr_pages;
-> -       unsigned int max_pages;
-> -};
-> -
-> -static int fuse_readpages_fill(void *_data, struct page *page)
-> +static void fuse_readahead(struct readahead_control *rac)
->  {
-> -       struct fuse_fill_data *data = _data;
-> -       struct fuse_io_args *ia = data->ia;
-> -       struct fuse_args_pages *ap = &ia->ap;
-> -       struct inode *inode = data->inode;
-> +       struct inode *inode = rac->mapping->host;
->         struct fuse_conn *fc = get_fuse_conn(inode);
-> +       unsigned int i, max_pages, nr_pages = 0;
+>   int main(int argc, char** argv) {
+>     DIR* dir;
+>     int err;
+>     int fd;
 >
-> -       fuse_wait_on_page_writeback(inode, page->index);
-> -
-> -       if (ap->num_pages &&
-> -           (ap->num_pages == fc->max_pages ||
-> -            (ap->num_pages + 1) * PAGE_SIZE > fc->max_read ||
-> -            ap->pages[ap->num_pages - 1]->index + 1 != page->index)) {
-> -               data->max_pages = min_t(unsigned int, data->nr_pages,
-> -                                       fc->max_pages);
-> -               fuse_send_readpages(ia, data->file);
-> -               data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
-> -               if (!ia) {
-> -                       unlock_page(page);
-> -                       return -ENOMEM;
-> -               }
-> -               ap = &ia->ap;
-> -       }
-> -
-> -       if (WARN_ON(ap->num_pages >= data->max_pages)) {
-> -               unlock_page(page);
-> -               fuse_io_free(ia);
-> -               return -EIO;
-> -       }
-> -
-> -       get_page(page);
-> -       ap->pages[ap->num_pages] = page;
-> -       ap->descs[ap->num_pages].length = PAGE_SIZE;
-> -       ap->num_pages++;
-> -       data->nr_pages--;
-> -       return 0;
-> -}
-> -
-> -static int fuse_readpages(struct file *file, struct address_space *mapping,
-> -                         struct list_head *pages, unsigned nr_pages)
-> -{
-> -       struct inode *inode = mapping->host;
-> -       struct fuse_conn *fc = get_fuse_conn(inode);
-> -       struct fuse_fill_data data;
-> -       int err;
-> -
-> -       err = -EIO;
->         if (is_bad_inode(inode))
-> -               goto out;
-> +               return;
->
-> -       data.file = file;
-> -       data.inode = inode;
-> -       data.nr_pages = nr_pages;
-> -       data.max_pages = min_t(unsigned int, nr_pages, fc->max_pages);
-> -;
-> -       data.ia = fuse_io_alloc(NULL, data.max_pages);
-> -       err = -ENOMEM;
-> -       if (!data.ia)
-> -               goto out;
-> +       max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
->
-> -       err = read_cache_pages(mapping, pages, fuse_readpages_fill, &data);
-> -       if (!err) {
-> -               if (data.ia->ap.num_pages)
-> -                       fuse_send_readpages(data.ia, file);
-> -               else
-> -                       fuse_io_free(data.ia);
-> +       for (;;) {
-> +               struct fuse_io_args *ia;
-> +               struct fuse_args_pages *ap;
-> +
-> +               nr_pages = readahead_count(rac) - nr_pages;
+>     dir = opendir("/boot");
+>     fd = dirfd(dir);
+>     err = fcntl(fd, F_SET_FILE_32BIT_FS);
+>     if (err) {
+>       printf("fcntl() failed! err=%d\n", err);
+>       return 1;
+>     }
+>     printf("dir=%p\n", dir);
+>     printf("readdir(dir)=%p\n", readdir(dir));
+>     printf("errno=%d: %s\n", errno, strerror(errno));
+>     return 0;
+>   }
 
-Hmm.  I see what's going on here, but it's confusing.   Why is
-__readahead_batch() decrementing the readahead count at the start,
-rather than at the end?
+I gave this a try with a modified QEMU, but it doesn't seem
+to fix the problem. Here's the relevant chunk of the strace
+output from stracing a QEMU that's running a 32-bit guest
+binary that issues a getdents64 and fails (it's the 'readdir-bug'
+test case from the launchpad bug):
 
-At the very least it needs a comment about why nr_pages is calculated this way.
+openat(AT_FDCWD, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3
+fcntl(3, 0x40f /* F_??? */, 0x3)        = 0
+fstat(3, {st_dev=makedev(0, 16), st_ino=4637237, st_mode=S_IFDIR|0755,
+st_nlink=12, st_uid=1000, st_gid=1000, st_blksize=8192, st_blocks=8,
+st_size=4096, st_atime=1587380917 /*
+2020-04-20T11:08:37.756174607+0000 */, st_atime_nsec=756174607,
+st_mtime=1587380910 /* 2020-04-20T11:08:30.356230179+0000 */,
+st_mtime_nsec=356230179, st_ctime=1587380910 /*
+2020-04-20T11:08:30.356230179+0000 */, st_ctime_nsec=356230179}) = 0
+fstat(1, {st_dev=makedev(0, 2), st_ino=9017, st_mode=S_IFCHR|0600,
+st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=0,
+st_rdev=makedev(5, 1), st_atime=1587381196 /* 2020-04-20T11:13:16+0000
+*/, st_atime_nsec=0, st_mtime=1587381196 /* 2020-04-20T11:13:16+0000
+*/, st_mtime_nsec=0, st_ctime=1587381042 /*
+2020-04-20T11:10:42.484981152+0000 */, st_ctime_nsec=484981152}) = 0
+ioctl(1, TCGETS, {c_iflags=0x2502, c_oflags=0x5, c_cflags=0xcbd,
+c_lflags=0x8a3b, c_line=0,
+c_cc="\x03\x1c\x7f\x15\x04\x00\x01\x00\x11\x13\x1a\x00\x12\x0f\x17\x16\x00\x00\x00"})
+= 0
+write(1, "dir=0x76128\n", 12)           = 12
+getdents64(3, [{d_ino=1, d_off=273341893525646730, d_reclen=24,
+d_type=DT_DIR, d_name=".."}, {d_ino=4637239, d_off=849308795555391993,
+d_reclen=24, d_type=DT_DIR, d_name="etc"}, {d_ino=4587984,
+d_off=1620709961571101518, d_reclen=24, d_type=DT_LNK, d_name="usr"},
+{d_ino=4637238, d_off=2787937917159437645, d_reclen=24, d_type=DT_DIR,
+d_name="dev"}, {d_ino=4637244, d_off=3015508490233103491, d_reclen=24,
+d_type=DT_DIR, d_name="sys"}, {d_ino=4587608,
+d_off=3551089360661460833, d_reclen=24, d_type=DT_LNK, d_name="lib"},
+{d_ino=4637246, d_off=3857320197951442970, d_reclen=24, d_type=DT_DIR,
+d_name="var"}, {d_ino=4637242, d_off=4103122318823701457, d_reclen=24,
+d_type=DT_DIR, d_name="proc"}, {d_ino=4587541,
+d_off=4252201186220906002, d_reclen=24, d_type=DT_LNK, d_name="bin"},
+{d_ino=4637245, d_off=4386533378951587638, d_reclen=24, d_type=DT_DIR,
+d_name="tmp"}, {d_ino=4637241, d_off=4883206313583644962, d_reclen=24,
+d_type=DT_DIR, d_name="host"}, {d_ino=4637237,
+d_off=4941119754928488586, d_reclen=24, d_type=DT_DIR, d_name="."},
+{d_ino=4637243, d_off=5301154723342888169, d_reclen=24, d_type=DT_DIR,
+d_name="root"}, {d_ino=4587838, d_off=6989908915879243400,
+d_reclen=32, d_type=DT_LNK, d_name="lib64"}, {d_ino=4587679,
+d_off=7356513223657690979, d_reclen=32, d_type=DT_REG,
+d_name="strace.log"}, {d_ino=4587847, d_off=7810090083157553519,
+d_reclen=24, d_type=DT_LNK, d_name="sbin"}, {d_ino=4637240,
+d_off=8254997891991845677, d_reclen=24, d_type=DT_DIR, d_name="home"},
+{d_ino=4637248, d_off=9223372036854775807, d_reclen=24, d_type=DT_DIR,
+d_name="virt"}], 32768) = 448
+write(1, "readdir(dir)=(nil)\n", 19)    = 19
+write(1, "errno=75: Value too large for de"..., 48) = 48
+exit_group(0)                           = ?
 
-> +               if (nr_pages > max_pages)
-> +                       nr_pages = max_pages;
-> +               if (nr_pages == 0)
-> +                       break;
-> +               ia = fuse_io_alloc(NULL, nr_pages);
-> +               if (!ia)
-> +                       return;
-> +               ap = &ia->ap;
-> +               nr_pages = __readahead_batch(rac, ap->pages, nr_pages);
-> +               for (i = 0; i < nr_pages; i++) {
-> +                       fuse_wait_on_page_writeback(inode,
-> +                                                   readahead_index(rac) + i);
 
-What's wrong with ap->pages[i]->index?  Are we trying to wean off using ->index?
+We open fd 3 to read '.'; we issue the new fcntl, which
+succeeds. Then there's some unrelated stuff operating on
+stdout. Then we do a getdents64(), but the d_off values
+we get back are still 64 bits. The guest binary doesn't
+like those, so it fails. My expectation was that we would
+get back d_off values here that were in the 32 bit range.
 
-Thanks,
-Miklos
+(To be clear, the guest binary here is doing a getdents64(),
+which QEMU translates into a host getdents64().)
+
+thanks
+-- PMM
