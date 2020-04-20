@@ -2,177 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 884C11B128B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 19:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE8F1B1366
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 19:43:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgDTRGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 13:06:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
+        id S1726802AbgDTRnl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 13:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725784AbgDTRGE (ORCPT
+        by vger.kernel.org with ESMTP id S1726319AbgDTRnk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 13:06:04 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91D2C061A0C;
-        Mon, 20 Apr 2020 10:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=rWfkeNl+tPQgsDgysGAPqfogci/QDhLeDrzw1N/HSZo=; b=QUQYVCugWbDdKvcHEcXNg1l/KP
-        ZRAYCB/7IyL34lxTlxTlaikOlyXjYOUULc8yAHxj6nf9Zprs8WpyNTKwy+rsJLuLHD9oH8pEUbrDr
-        T/EiYZ0uGs5k7DWs32dYc4RbTNDWb53SWwDcIncs0+WamwsRHgyQOLEGzRRPRDrnaxw0trnMQuZmY
-        UK4i42q47h3IxnBuIoM0Oh639W7T095DekGWNn+P9xIs3mW2sGfs+wbiJFDTEDmmNJnhrtcnbQX4F
-        AgamhDQssECFsKBdu70I7XHOCBH1pIIsk+S+qVzPayhUBTb3bOGqgNrK4DYuO36J0EmoNIdnL7qm8
-        v9Xk9PHg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jQZrv-0002kf-ML; Mon, 20 Apr 2020 17:06:03 +0000
-Date:   Mon, 20 Apr 2020 10:06:03 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] ipc: Convert ipcs_idr to XArray
-Message-ID: <20200420170603.GC5820@bombadil.infradead.org>
-References: <20200326151418.27545-1-willy@infradead.org>
- <80ab3182-5a17-7434-9007-33eb1da46d85@colorfullife.com>
+        Mon, 20 Apr 2020 13:43:40 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E738C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 10:43:40 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id ng8so180072pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 10:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UbWvOzsjdwKmCuURzqakr712Hwz970Vkw5PGIrntIJg=;
+        b=jQBTeSx5RVM7KT1U22GJEb3DH2uZPfcy8Q8n8Z4yMQbR4xX77sT7UNorH68BHXQklv
+         iqyP+lyhtbiw1Z8E6mrIAOVUfrKDbExPTw1eCNreicq7+fmKaKDC0t3L5Z68emnhhiQY
+         F68qqIHfXsfIWhK8AMTQ6lJSl/wFSmFVqe+Fs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UbWvOzsjdwKmCuURzqakr712Hwz970Vkw5PGIrntIJg=;
+        b=KVMzJN9FsSqbO4jBvxKtfbh6lIju7geytjNx7CYiWjZ6C7ScOOmnoG8scTZJ8eQ6PL
+         rf/jXyU45b4Cu+rZUqG/g12dCE+FokYHfXPQLDQHKgapsKvvFXjFU8LG1GeLc+wLC768
+         fWSeanv648FyNa3IMHuUjW2/GLWDkqgSUosqynX90cpjX2bNigqzwv9b0rHiYRymxT7K
+         RoBuUAZDnvbZ7fpaICSfYimTqTzU1WgkG0VKyf2RcXG2imd6dvkacxvJqa83ULcqyRw+
+         Of5v15pBAsUYTS9DAb3Uf1R4z3QRneCrD9E/2LSFmHeagf0KZXg+hA78TglNE9NpYAeI
+         PlYw==
+X-Gm-Message-State: AGi0PuZ/KYdJ17Qt7o1hXOqMxa9AWrsu7gHifFUagRoJuvdTxYwEaR51
+        TwZD1FAybiDWRenLzExDSRY6Sw==
+X-Google-Smtp-Source: APiQypLBX8wx/oUkDoqkb/2Bm8ippA2jak1OrscI29iIv8/MVYRimaZ8XN8jTccr1R5iuIwy3W5LTA==
+X-Received: by 2002:a17:902:6b01:: with SMTP id o1mr18181334plk.100.1587404619781;
+        Mon, 20 Apr 2020 10:43:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id v26sm106522pff.45.2020.04.20.10.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2020 10:43:38 -0700 (PDT)
+Date:   Mon, 20 Apr 2020 10:43:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        David Windsor <dave@nullcore.net>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rik van Riel <riel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Michal Kubecek <mkubecek@suse.cz>
+Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
+ as usercopy caches
+Message-ID: <202004201043.538A7B3F2@keescook>
+References: <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
+ <202001281457.FA11CC313A@keescook>
+ <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
+ <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
+ <20200129170939.GA4277@infradead.org>
+ <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
+ <202001300945.7D465B5F5@keescook>
+ <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
+ <7d810f6d-8085-ea2f-7805-47ba3842dc50@suse.cz>
+ <548e6212-7b3c-5925-19f2-699af451fd16@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <80ab3182-5a17-7434-9007-33eb1da46d85@colorfullife.com>
+In-Reply-To: <548e6212-7b3c-5925-19f2-699af451fd16@suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 05:35:20PM +0200, Manfred Spraul wrote:
-> > -		max_idx = max(ids->in_use*3/2, ipc_min_cycle);
-> > -		max_idx = min(max_idx, ipc_mni);
-> > -
-> > -		/* allocate the idx, with a NULL struct kern_ipc_perm */
-> > -		idx = idr_alloc_cyclic(&ids->ipcs_idr, NULL, 0, max_idx,
-> > -					GFP_NOWAIT);
-> > -
-> > -		if (idx >= 0) {
-> > -			/*
-> > -			 * idx got allocated successfully.
-> > -			 * Now calculate the sequence number and set the
-> > -			 * pointer for real.
-> > -			 */
-> > -			if (idx <= ids->last_idx) {
-> > +		min_idx = ids->next_idx;
-> > +		new->seq = ids->seq;
-> > +
-> > +		/* Modified version of __xa_alloc */
-> > +		do {
-> > +			xas.xa_index = min_idx;
-> > +			xas_find_marked(&xas, max_idx, XA_FREE_MARK);
-> > +			if (xas.xa_node == XAS_RESTART && min_idx > 0) {
-> >   				ids->seq++;
-> >   				if (ids->seq >= ipcid_seq_max())
-> >   					ids->seq = 0;
-> > +				new->seq = ids->seq;
-> > +				xas.xa_index = 0;
-> > +				min_idx = 0;
-> > +				xas_find_marked(&xas, max_idx, XA_FREE_MARK);
-> >   			}
+On Mon, Apr 20, 2020 at 09:53:20AM +0200, Jiri Slaby wrote:
+> On 07. 04. 20, 10:00, Vlastimil Babka wrote:
+> > From d5190e4e871689a530da3c3fd327be45a88f006a Mon Sep 17 00:00:00 2001
+> > From: Vlastimil Babka <vbabka@suse.cz>
+> > Date: Tue, 7 Apr 2020 09:58:00 +0200
+> > Subject: [PATCH] usercopy: Mark dma-kmalloc caches as usercopy caches
+> > 
+> > We have seen a "usercopy: Kernel memory overwrite attempt detected to SLUB
+> > object 'dma-kmalloc-1 k' (offset 0, size 11)!" error on s390x, as IUCV uses
+> > kmalloc() with __GFP_DMA because of memory address restrictions.
+> > The issue has been discussed [2] and it has been noted that if all the kmalloc
+> > caches are marked as usercopy, there's little reason not to mark dma-kmalloc
+> > caches too. The 'dma' part merely means that __GFP_DMA is used to restrict
+> > memory address range.
+> > 
+> > As Jann Horn put it [3]:
+> > 
+> > "I think dma-kmalloc slabs should be handled the same way as normal
+> > kmalloc slabs. When a dma-kmalloc allocation is freshly created, it is
+> > just normal kernel memory - even if it might later be used for DMA -,
+> > and it should be perfectly fine to copy_from_user() into such
+> > allocations at that point, and to copy_to_user() out of them at the
+> > end. If you look at the places where such allocations are created, you
+> > can see things like kmemdup(), memcpy() and so on - all normal
+> > operations that shouldn't conceptually be different from usercopy in
+> > any relevant way."
+> > 
+> > Thus this patch marks the dma-kmalloc-* caches as usercopy.
+> > 
+> > [1] https://bugzilla.suse.com/show_bug.cgi?id=1156053
+> > [2] https://lore.kernel.org/kernel-hardening/bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz/
+> > [3] https://lore.kernel.org/kernel-hardening/CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com/
+> > 
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> Is is nessary to have that many details of xarray in ipc/util?
+> Friendly ping.
 > 
-> This function is not performance critical.
-> 
-> The core requirement is that ipc_obtain_object_check() must scale.
-> 
-> Would it be possible to use something like
-> 
->     xa_alloc(,entry=NULL,)
-> 
->     new->seq = ...
-> 
->     xa_store(,entry=new,);
+> Acked-by: Jiri Slaby <jslaby@suse.cz>
 
-Yes, that would absolutely be possible, and some users do exactly that.
-I thought that creating a new message queue / semaphore set / shared
-memory segment would be performance sensitive.
+Should this go via -mm?
 
-> > -			ids->last_idx = idx;
-> > -
-> > -			new->seq = ids->seq;
-> > -			/* no need for smp_wmb(), this is done
-> > -			 * inside idr_replace, as part of
-> > -			 * rcu_assign_pointer
-> > -			 */
-> 
-> Could you leave the memory barrier comments in the code?
-> 
-> The rcu_assign_pointer() is the first hands-off from semget() or msgget().
-> 
-> Before the rcu_assign_pointer, e.g. semop() calls would return -EINVAL;
-> 
-> After the rcu_assign_pointer, semwhatever() must work - and e.g. the
-> permission checks are lockless.
+-Kees
 
-How about simply:
-			/* xa_store contains a memory barrier */
+> 
+> > ---
+> >  mm/slab_common.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index 5282f881d2f5..ae9486160594 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -1303,7 +1303,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+> >  			kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
+> >  				kmalloc_info[i].name[KMALLOC_DMA],
+> >  				kmalloc_info[i].size,
+> > -				SLAB_CACHE_DMA | flags, 0, 0);
+> > +				SLAB_CACHE_DMA | flags, 0,
+> > +				kmalloc_info[i].size);
+> >  		}
+> >  	}
+> >  #endif
+> > 
+> 
+> thanks,
+> -- 
+> js
+> suse labs
 
-> > -			idr_replace(&ids->ipcs_idr, new, idx);
-> > -		}
-> > +			if (xas.xa_node == XAS_RESTART)
-> > +				xas_set_err(&xas, -ENOSPC);
-> > +			else
-> > +				new->id = (new->seq << ipcmni_seq_shift()) +
-> > +					xas.xa_index;
-> 
-> Setting new->id should remain at the end, outside any locking:
-> 
-> The variable has no special protection, access is only allowed after proper
-> locking, thus no need to have the initialization in the middle.
-> 
-> What is crucial is that the final value of new->seq is visible to all cpus
-> before a storing the pointer.
-
-The IPC locking is weird.  Most users spin_lock the xarray/idr/radix
-tree for modifications, and on the read-side use RCU to protect the
-lookup and a refcount on the object looked up in it (after which,
-RCU is unlocked).  IPC seems to hold the RCU lock much longer, and it
-has a per-object spinlock rather than refcount.  And it has an rwsem.
-It feels like it could be much simpler, but I haven't had time to dig
-into it and figure out why it's so different from all the other users.
-Maybe it's just older code.
-
-> > +			xas_store(&xas, new);
-> > +			xas_clear_mark(&xas, XA_FREE_MARK);
-> > +		} while (__xas_nomem(&xas, GFP_KERNEL));
-> > +
-> 
-> Just for my curiosity:
-> 
-> If the xas is in an invalid state, then xas_store() will not store anything.
-> Thus the loop will not store "new" multiple times, it will be stored only
-> once.
-
-Correct, although we're going to delete this loop entirely.
-
-> @@ -472,7 +487,7 @@ void ipc_rmid(struct ipc_ids *ids, struct kern_ipc_perm
-> *ipcp)
-> >   			idx--;
-> >   			if (idx == -1)
-> >   				break;
-> > -		} while (!idr_find(&ids->ipcs_idr, idx));
-> > +		} while (!xa_load(&ids->ipcs, idx));
-> >   		ids->max_idx = idx;
-> >   	}
-> >   }
-> 
-> Is there an xa_find_last() function?
-> 
-> It is outside of any hot path, I have a patch that does a binary search with
-> idr_get_next().
-> 
-> If there is no xa_find_last(), then I would rebase that patch.
-
-There is not currently an xa_find_last().  It shouldn't be too hard
-to add; start at the top of the tree and walk backwards in each node
-until finding a non-NULL entry.  Of course, it'll need documentation
-and test cases.
+-- 
+Kees Cook
