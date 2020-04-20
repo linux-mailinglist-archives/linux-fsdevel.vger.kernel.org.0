@@ -2,127 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDBF91B152A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 20:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE7C1B153F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 20:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgDTSxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 14:53:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbgDTSxA (ORCPT
+        id S1726690AbgDTS7r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 14:59:47 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38963 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbgDTS7r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 14:53:00 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E3CC061A0C;
-        Mon, 20 Apr 2020 11:52:59 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id d17so13480638wrg.11;
-        Mon, 20 Apr 2020 11:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YDv7ccUA+77rJK6WcpIOdQAqm/WbduDoaoFBYXn+9nk=;
-        b=Sx9OvAhxW+inqKWH1HdiW8xMmPU5RoWqbFum6ToezCGd6UruC6sQ1moOyw7Dgh+oi0
-         aIPV3DxAWv4OYkGx/98H80C2CrIMAKQsNHFuvVsGxWgCT/EVZR4fx4LXCLxf4HA5c4aL
-         3QQq3pPateWwit2CNa+FadRkEKEn4XUc+yX00UvOTFlm1cYSLCBhxQBnwjcF3hChsPwy
-         1ySMhB01J/Na4515hb5sZN7frUOhxPd92PI1+hmFuqCEqBziPydHaP9JiiWFUSYEAJGG
-         xKyIK7a1cJDqltaMfofpKSEuvR0lDCcRmd/5Tp+RiHe6fhkLe81h1tFzxafVVOAhP+Qb
-         h7uw==
+        Mon, 20 Apr 2020 14:59:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o10so2293232pgb.6;
+        Mon, 20 Apr 2020 11:59:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YDv7ccUA+77rJK6WcpIOdQAqm/WbduDoaoFBYXn+9nk=;
-        b=nAjlJ9JoemyO+BkSLbSRZu2cxq36tNNhWxcreL9osagD0ITA8a0uztP6R9G0GZw8x2
-         vswBQLT7DZ8YPxEQMkPZkoLBab2xNRqzlHQWDhpIxrJu+5CyU1sRekYm+N6UR+t3DyiA
-         3OkZnhch5JS8F/VAJEPQHql0bY7lB1ONZ+8542QfkpVVV94Qd2uuyW9aOzhdMPzDcv/i
-         X1WA9h5rjl/i6CUHz/nZqCBACv8aWVww+ApdEK+x4XiQW2r0QLqOX8Ym63NjUt5Ke8ej
-         PElW/z+PxGpPGjA0GLdlU7Dyqls0i1X3N5OiTRPMjVrewSUmsL+Sq1ugDUuJA9Jv4TP7
-         bdjg==
-X-Gm-Message-State: AGi0PuaBqeBWMytkIM3ikqRerq7dEuSyDnjzUi+Vxr/WvtOxOtUpRH3J
-        LlXFl6Q+g6ewI/ibTNXMc0o=
-X-Google-Smtp-Source: APiQypK9OLvGCGpyh6W2T2xf9o5uVt/UoFrOnuIUdLKEwU0scYoOoaGCFJq4Z5+fpjamSUP5wBrYaA==
-X-Received: by 2002:adf:a15d:: with SMTP id r29mr19010580wrr.134.1587408778508;
-        Mon, 20 Apr 2020 11:52:58 -0700 (PDT)
-Received: from dumbo (tor-exit-2.zbau.f3netze.de. [2a0b:f4c0:16c:2::1])
-        by smtp.gmail.com with ESMTPSA id y70sm370563wmc.36.2020.04.20.11.52.57
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vS2me64bhaGvoztRtUly6DA31qoyPEKTQSmzN2e1rQk=;
+        b=ZI5MyxmiG2WZxAePNBijeq4h2FEWvxUx7jI6B2LJT5VLQ9QhrX8+ka77LSBElnbdHu
+         /N+PX7id9MmDJHdZ7Dk08AgzVWRPqc/yyFmkgU7wx9MbogDhUnfYbZdZmclaLMDCbAe4
+         CtLBqDJNgCoF9Bj6eAsUVPjLConV8HqE5wORjMl0QCoiu4rK1cs58zzRIZe9a+Gmk+18
+         Rf3Yp78l3fqMd0VwE8vnBnYVzw5uygNlyDhrSqUjwW6I7G/bgthZE04RMgWtwaMy8IoQ
+         MNHg+2f/KmtWJBLeRteI7LJhIPcL1ONaXDGligajmh14ItsQwwlXrQ+f7olWrDuxlY5c
+         JlSg==
+X-Gm-Message-State: AGi0PuZu5J8CsF70sePZrdvPH/MiK8qjV/eOO588LTC4lxQb1M6OShT6
+        rHXeupOsWZx2F7SXh6QIP6U=
+X-Google-Smtp-Source: APiQypIQvFYPd6xQOO0w3rk4A7NGs+6svQg3+sz428y5VoLXlRjvqH2v49EKU+VVVY1Y+J5i0+5Bww==
+X-Received: by 2002:a63:f252:: with SMTP id d18mr2658296pgk.448.1587409185565;
+        Mon, 20 Apr 2020 11:59:45 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id c28sm202924pfp.200.2020.04.20.11.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 11:52:57 -0700 (PDT)
-Received: from cavok by dumbo with local (Exim 4.92)
-        (envelope-from <cavok@dumbo>)
-        id 1jQbXL-0002cQ-Pl; Mon, 20 Apr 2020 20:52:55 +0200
-Date:   Mon, 20 Apr 2020 20:52:55 +0200
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
- active
-Message-ID: <20200420185255.GA20916@dumbo>
-References: <20200229170825.GX8045@magnolia>
- <20200229180716.GA31323@dumbo>
- <20200229183820.GA8037@magnolia>
- <20200229200200.GA10970@dumbo>
- <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+        Mon, 20 Apr 2020 11:59:44 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 98A6F4028E; Mon, 20 Apr 2020 18:59:43 +0000 (UTC)
+Date:   Mon, 20 Apr 2020 18:59:43 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v2 04/10] block: revert back to synchronous request_queue
+ removal
+Message-ID: <20200420185943.GM11244@42.do-not-panic.com>
+References: <20200419194529.4872-1-mcgrof@kernel.org>
+ <20200419194529.4872-5-mcgrof@kernel.org>
+ <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+In-Reply-To: <749d56bd-1d66-e47b-a356-8d538e9c99b4@acm.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, Apr 19, 2020 at 03:23:31PM -0700, Bart Van Assche wrote:
+> On 4/19/20 12:45 PM, Luis Chamberlain wrote:
+> > +/**
+> > + * blk_put_queue - decrement the request_queue refcount
+> > + *
+> > + * @q: the request_queue structure to decrement the refcount for
+> > + *
+> 
+> How about following the example from Documentation/doc-guide/kernel-doc.rst
+> and not leaving a blank line above the function argument documentation?
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure.
 
-On Sun, Mar 01, 2020 at 10:35:36PM +0100, Rafael J. Wysocki wrote:
-> On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli <domenico.andreoli@linu=
-x.com> wrote:
-> >
-> > Maybe user-space hibernation should be a separate option.
->=20
-> That actually is not a bad idea at all in my view.
+> > + * Decrements the refcount to the request_queue kobject, when this reaches
+>                               ^^
+>                               of?
+> > + * 0 we'll have blk_release_queue() called. You should avoid calling
+> > + * this function in atomic context but if you really have to ensure you
+> > + * first refcount the block device with bdgrab() / bdput() so that the
+> > + * last decrement happens in blk_cleanup_queue().
+> > + */
+> 
+> Is calling bdgrab() and bdput() an option from a context in which it is not
+> guaranteed that the block device is open?
 
-I prepared a patch for this:
-https://lore.kernel.org/linux-pm/20200413190843.044112674@gmail.com/
+If the block device is not open, nope. For that blk_get_queue() can
+be used, and is used by the block layer. This begs the question:
 
-Regards,
-Domenico
+Do we have *drivers* which requires access to the request_queue from
+atomic context when the block device is not open?
 
---=20
-rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
-ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+> Does every context that calls blk_put_queue() also call blk_cleanup_queue()?
 
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
+Nope.
 
------BEGIN PGP SIGNATURE-----
+> How about avoiding confusion by changing the last sentence of that comment
+> into something like the following: "The last reference must not be dropped
+> from atomic context. If it is necessary to call blk_put_queue() from atomic
+> context, make sure that that call does not decrease the request queue
+> refcount to zero."
 
-iQIzBAABCgAdFiEEQ0d58WdvR3VfrFIt+pSrUd21xpcFAl6d73wACgkQ+pSrUd21
-xpe+wg//dI1cjQ4YgLAir3TKqx3SMxN3CevJQ6BV1YTeWZx5ItlG5z90hVtUb3Ae
-DUmVPHe9ERrjyjFoADDejz2bzdT8LLNtnIQwmRfH3Dc2IeN9Fzmt0EAV1mb3l8jD
-yp3RkOMPcuVi6pZV2O1OyFhAS1ptfPnvEIXXuqxfA1ay9yo3x3IS7CR3bzkllI8S
-Ei4XhUruz8WqI9EERa8RYYTa1R+XDalHOs0i926sZHzP56YlXncNlCmsL6SA9YrX
-zrZ32EtdRLdgROBoSN78WupaubrqoJ5yvSovcwJVdWU4OhzO34/0wY2fCOK7giqh
-2btBvabIcGu0QbPRyxJanQNPvnRXyAaoHwnqjKbxcDVgdePFAJJ2g7nWrT4MJNU2
-WNQxrWCMo9l9CrtRwavLwcRCrURKi4J52Z8DZXcQ9Qqe+hoZtddgTrHLTPpqEpi8
-UFxgLaTRhGGY+LcV7Hbir5XrQGWF7CJDpRRC79fsBTjBbkx40/w8ZeVhxlZ17QLh
-krNIzSKBJsatR58BH0rFb5UaRzePTrbsIZ/bjiiCR+ymOkoUp68asncnsxLTPve/
-3cdrZz+LKHTdk0r/OzEToQN87A+NyeePXnKNjTpDOzk4k7GWQgyr/dgZerkAeXJr
-8GpP4+1xfAJqaIjkcXMrRND+TExDiDqICuAIdVL9PgGBv3s2HG8=
-=O3pE
------END PGP SIGNATURE-----
+This would be fine, if not for the fact that it seems worthy to also ask
+ourselves if we even need blk_get_queue() / blk_put_queue() exported for
+drivers.
 
---NzB8fVQJ5HfG6fxh--
+I haven't yet finalized my review of this, but planting the above
+comment cements the idea further that it is possible. Granted, I think
+its fine as -- that is our current use case and best practice. Removing
+the export for blk_get_queue() / blk_put_queue() should entail reviewing
+each driver caller and ensuring that it is not needed. And that is not
+done yet, and should be considered a separate effort.
+
+> >   /**
+> >    * blk_cleanup_queue - shutdown a request queue
+> > + *
+> >    * @q: request queue to shutdown
+> >    *
+> 
+> How about following the example from Documentation/doc-guide/kernel-doc.rst
+> and not leaving a blank line above the function argument documentation?
+
+Will do.
+
+> >    * Mark @q DYING, drain all pending requests, mark @q DEAD, destroy and
+> >    * put it.  All future requests will be failed immediately with -ENODEV.
+> > + *
+> > + * You should not call this function in atomic context. If you need to
+> > + * refcount a request_queue in atomic context, instead refcount the
+> > + * block device with bdgrab() / bdput().
+> 
+> Surrounding blk_cleanup_queue() with bdgrab() / bdput() does not help. This
+> blk_cleanup_queue() must not be called from atomic context.
+
+I'll just remove that.
+
+> 
+> >   /**
+> > - * __blk_release_queue - release a request queue
+> > - * @work: pointer to the release_work member of the request queue to be released
+> > + * blk_release_queue - release a request queue
+> > + *
+> > + * This function is called as part of the process when a block device is being
+> > + * unregistered. Releasing a request queue starts with blk_cleanup_queue(),
+> > + * which set the appropriate flags and then calls blk_put_queue() as the last
+> > + * step. blk_put_queue() decrements the reference counter of the request queue
+> > + * and once the reference counter reaches zero, this function is called to
+> > + * release all allocated resources of the request queue.
+> >    *
+> > - * Description:
+> > - *     This function is called when a block device is being unregistered. The
+> > - *     process of releasing a request queue starts with blk_cleanup_queue, which
+> > - *     set the appropriate flags and then calls blk_put_queue, that decrements
+> > - *     the reference counter of the request queue. Once the reference counter
+> > - *     of the request queue reaches zero, blk_release_queue is called to release
+> > - *     all allocated resources of the request queue.
+> > + * This function can sleep, and so we must ensure that the very last
+> > + * blk_put_queue() is never called from atomic context.
+> > + *
+> > + * @kobj: pointer to a kobject, who's container is a request_queue
+> >    */
+> 
+> Please follow the style used elsewhere in the kernel and move function
+> argument documentation just below the line with the function name.
+
+Sure, thanks for the review.
+
+  Luis
