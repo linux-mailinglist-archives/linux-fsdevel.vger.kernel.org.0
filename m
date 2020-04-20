@@ -2,195 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 031A41B08B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 14:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D7A1B0BA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 14:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbgDTMFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 08:05:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
+        id S1729781AbgDTM5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 08:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725944AbgDTMFK (ORCPT
+        by vger.kernel.org with ESMTP id S1726991AbgDTM5Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 08:05:10 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F21CC061A0C;
-        Mon, 20 Apr 2020 05:05:10 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id n17so7691613ejh.7;
-        Mon, 20 Apr 2020 05:05:10 -0700 (PDT)
+        Mon, 20 Apr 2020 08:57:16 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA5BC061A0C;
+        Mon, 20 Apr 2020 05:57:15 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id 131so7796994lfh.11;
+        Mon, 20 Apr 2020 05:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=6c6O1wwYwJaoqXoO8GZUPNWMilZA1Gv+nhWPnSzgWDc=;
-        b=fPcrtHjSQDl8DlVnsTiupNvncJPOAUQouyM35zYWIgk58NT/cChPqhv+kGZmvDDP8c
-         h2EYKkE+/F2kMCPxy5geoAXEzSw9ic6eEgNZqmGNK+x+EV5WCL+d3RtQ+qGWG9VGHIiW
-         /QsDKSMZA3GpDFU1Ru9TwPzcVup5IXJKAvFqi4jwLjOyW3dkY5nFH8dcH3P2NURKa/Sj
-         Tz+KwZ/k8QACD7fvNRASUikLP86VtnAj2yQKqk4WA1LAB04F/7vuQdsb7/leS7ZUgD7J
-         /hyrqigki2RleIL3wdWBrU95zKS8ZFCA38t5xT9IS0dgIWEtmFbj21S4o7HZXo6KB3Hp
-         r5hg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tPm2xK5bXSP7N2DNmYSwv/w1hgHQV6Cc27y/pzZWfQY=;
+        b=B0oZRtfsKT7z9b3Vnxi9c3bmbk/Nj8q1tD10VTGCsuYbEzUjoz7Q30/MfNtaZQFpgb
+         0FoasdcaN9HKu5elzPTO1bmNS3Sip5ei0B9PB4vrm5eqLfURo8KldRjIrb3FB4eKE5Za
+         ohV8ap6wPiYCT26sK2gy2cWRfdCJII3i7qh923rXHkgLTzNuL3bfIZdzHpru0rl9A+3c
+         pWqVSuq7by22grwljlYs5d6fuLlBdDFf1xlDJ4SlcjcdmvbNMuKEYelVDf0yeTm+Zgyi
+         W8qq37vSfnmu+VgI4KBDFCHM2tEGL7Hjaqf0pTH/q77rWMdJADethOlL6kITp/0GR2CT
+         /KHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=6c6O1wwYwJaoqXoO8GZUPNWMilZA1Gv+nhWPnSzgWDc=;
-        b=R6kDw9lkdFNNax8c4mTjc9FNoahBc8pzuZCOaq5z4zV1esanXXRLasrwNmTm3GFKi3
-         TeXOZA6nj320+e2idEUfZrMK/fHo6qTWqSSRMNd+b9zBMbPZL08jse47LoIPtmFa15l8
-         ArD8GCc+UmPcD0lluPdKyPQH58k1995mvbhf87LK08H2mE0+AYcKQ4JTR0vFWfKAI6K9
-         AAQsMXe11+6kfy/+yG+LurrthYK5x3XdiHg6AU6KSJjeQ7NPiDnC2iRy9MPgBR5kezrN
-         irce+9oh06OO59YlCHLG733ZkyVyBeodpO818INzlhLnpmIXYE/w/XxhYulqsEmXdQXe
-         0XjQ==
-X-Gm-Message-State: AGi0PubwQhel9WDJEtJ9Is9XjYd7v9nagjIBaggZ1M+YwTfV+AJqPUhY
-        8SPi7TDih94qHTo62pIZSw3kFe2Rqg3dtWx3JqM=
-X-Google-Smtp-Source: APiQypLVnAYHnuZPZntL2kKg0JfFWH4H2pVuyaSrFdXByBXAiDaZXjiPvVMTApWknOtgqyYYyVtduCDDa2+lgWlaIw8=
-X-Received: by 2002:a17:906:add7:: with SMTP id lb23mr16554858ejb.6.1587384308776;
- Mon, 20 Apr 2020 05:05:08 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tPm2xK5bXSP7N2DNmYSwv/w1hgHQV6Cc27y/pzZWfQY=;
+        b=PgZCYpNVh0yP0z/lzWgkVYKPvavbSqB5J+tABgIFL3jBvmrWYsSH9zl/C8TfFCRH4C
+         ubL4MZGz8Sg0LGogYtt1ITStZXeS+jXpepjEmFBYwNZgKUlO9ntuEJhESpxl5+N3tOTK
+         aj5RFTXxZFVr8U9aMcHkXxEnYkzYObu1w/ccec/MQft+/FKwLRVsV+fIGfvYeF53rki7
+         HRFa4vkXBTJjUX6T05bj1ezlhjJae2HCyJZxhivwm6/X7rBiy2V3hnTeZicAeN/fUxD9
+         AqMe5lBeY8LBBLSkgXloZGMx9oRUxqoFYuMQb1j7aa1atxZJDpEmjT4pP5/d+MI1bXA+
+         UFpA==
+X-Gm-Message-State: AGi0PuYJUkN3C+bZlHyenx8gKP0CeYS4LZ6I9l07SN/vbQ6H/NaC5VDL
+        xq3WhyrrYaO+vYMLEIMoJj0=
+X-Google-Smtp-Source: APiQypIC+ldoKXDKJzz2e+OC3ev8yJpC22Qj1o+rjgeQ5HKOAXbZ8o48IGcUY4rEcOpJOSRobdqb+g==
+X-Received: by 2002:a19:f614:: with SMTP id x20mr10421974lfe.84.1587387433857;
+        Mon, 20 Apr 2020 05:57:13 -0700 (PDT)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id d3sm846814lfq.63.2020.04.20.05.57.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Apr 2020 05:57:13 -0700 (PDT)
+Subject: Re: INFO: rcu detected stall in io_uring_release
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000009dcd905a3954340@google.com>
+ <20200419040626.628-1-hdanton@sina.com> <20200420114719.GA2659@kadam>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <98a6f295-c7b4-390b-c618-b5f0043f4c1a@gmail.com>
+Date:   Mon, 20 Apr 2020 15:57:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <d2979d75-5e45-b145-9ca5-2c315d8ead9c@redhat.com>
- <708b8e2a-2bc2-df38-ec9c-c605203052b5@sandeen.net> <7d74cc3b-52cc-be60-0a69-1a5ee1499f47@sandeen.net>
-In-Reply-To: <7d74cc3b-52cc-be60-0a69-1a5ee1499f47@sandeen.net>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Mon, 20 Apr 2020 14:04:57 +0200
-Message-ID: <CAKgNAkgLekaA6jBtUYTD2F=7u_GgBbXDvq-jc8RCBswYvvZmtg@mail.gmail.com>
-Subject: Re: [PATCH 2/2 V2] man2: New page documenting filesystem get/set
- label ioctls
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     Eric Sandeen <sandeen@redhat.com>,
-        fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200420114719.GA2659@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Eric,
+On 4/20/2020 2:47 PM, Dan Carpenter wrote:
+> On Sun, Apr 19, 2020 at 12:06:26PM +0800, Hillf Danton wrote:
+>>
+>> Sat, 18 Apr 2020 11:59:13 -0700
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    8f3d9f35 Linux 5.7-rc1
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=115720c3e00000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=5d351a1019ed81a2
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=66243bb7126c410cefe6
+>>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>>>
+>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
+>>>
+>>> rcu: INFO: rcu_preempt self-detected stall on CPU
+>>> rcu: 	0-....: (10500 ticks this GP) idle=57e/1/0x4000000000000002 softirq=44329/44329 fqs=5245 
+>>> 	(t=10502 jiffies g=79401 q=2096)
+>>> NMI backtrace for cpu 0
+>>> CPU: 0 PID: 23184 Comm: syz-executor.5 Not tainted 5.7.0-rc1-syzkaller #0
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>>> Call Trace:
+>>>  <IRQ>
+>>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+>>>  nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+>>>  nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
+>>>  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+>>>  rcu_dump_cpu_stacks+0x19b/0x1e5 kernel/rcu/tree_stall.h:254
+>>>  print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
+>>>  check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
+>>>  rcu_pending kernel/rcu/tree.c:3225 [inline]
+>>>  rcu_sched_clock_irq.cold+0x55d/0xcfa kernel/rcu/tree.c:2296
+>>>  update_process_times+0x25/0x60 kernel/time/timer.c:1727
+>>>  tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
+>>>  tick_sched_timer+0x4e/0x140 kernel/time/tick-sched.c:1320
+>>>  __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+>>>  __hrtimer_run_queues+0x5ca/0xed0 kernel/time/hrtimer.c:1584
+>>>  hrtimer_interrupt+0x312/0x770 kernel/time/hrtimer.c:1646
+>>>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113 [inline]
+>>>  smp_apic_timer_interrupt+0x15b/0x600 arch/x86/kernel/apic/apic.c:1138
+>>>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+>>>  </IRQ>
+>>> RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5a0 fs/io_uring.c:7301
+>>> Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 3a ea 9d ff f3 90 <41> 80 3c 24 00 0f 85 53 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
+>>> RSP: 0018:ffffc9000897fdf0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+>>> RAX: ffff888024082080 RBX: ffff88808df8e000 RCX: 1ffff9200112ffab
+>>> RDX: 0000000000000000 RSI: ffffffff81d549c6 RDI: ffff88808df8e300
+>>> RBP: ffffed1011bf1c2c R08: 0000000000000001 R09: ffffed1011bf1c61
+>>> R10: ffff88808df8e307 R11: ffffed1011bf1c60 R12: ffffed1011bf1c22
+>>> R13: ffff88808df8e160 R14: ffff88808df8e110 R15: ffffffff81d54ed0
+>>>  io_uring_release+0x3e/0x50 fs/io_uring.c:7324
+>>>  __fput+0x33e/0x880 fs/file_table.c:280
+>>>  task_work_run+0xf4/0x1b0 kernel/task_work.c:123
+>>>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>>>  exit_to_usermode_loop+0x2fa/0x360 arch/x86/entry/common.c:165
+>>>  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>>>  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+>>>  do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
+>>>  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+>>
+>> Make io ring ctx's percpu_ref balanced.
+>>
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -5904,6 +5904,7 @@ static int io_submit_sqes(struct io_ring
+>>  fail_req:
+>>  			io_cqring_add_event(req, err);
+>>  			io_double_put_req(req);
+>> +			--submitted;
+>>  			break;
+>>  		}
+> 
+> 
+> fs/io_uring.c
+>   5880          for (i = 0; i < nr; i++) {
+>   5881                  const struct io_uring_sqe *sqe;
+>   5882                  struct io_kiocb *req;
+>   5883                  int err;
+>   5884  
+>   5885                  sqe = io_get_sqe(ctx);
+>   5886                  if (unlikely(!sqe)) {
+>   5887                          io_consume_sqe(ctx);
+>   5888                          break;
+>   5889                  }
+>   5890                  req = io_alloc_req(ctx, statep);
+>   5891                  if (unlikely(!req)) {
+>   5892                          if (!submitted)
+>   5893                                  submitted = -EAGAIN;
+>   5894                          break;
+>   5895                  }
+>   5896  
+>   5897                  err = io_init_req(ctx, req, sqe, statep, async);
+>                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> On the success path io_init_req() takes some references like:
+> 
+> 	get_cred(req->work.creds);
 
-So it seems like this feature eventually got merged in Linux 4.18. Is
-this page up to date with what went into the kernel?
+If a req have got into io_init_req(), than it'll be put at some point
+with io_put_req(). io_req_work_drop_env() called from there will clean
+up req->work.creds.
 
-Thanks,
+>  
+> That one is probably buggy and should be put if the call to:
+> 
+> 	return io_req_set_file(state, req, fd, sqe_flags);
+> 
+> fails...  But io_req_set_file() takes some other references if it
+> succeeds like percpu_ref_get(req->fixed_file_refs); and it's not clear
+> that those are released if io_submit_sqe() fails.
 
-Michael
+The same should happen with req->fixed_file_refs, though I don't
+remember in details.
 
-On Thu, 10 May 2018 at 19:29, Eric Sandeen <sandeen@sandeen.net> wrote:
->
-> This documents the proposed new vfs-level ioctls which can
-> get or set a mounted filesytem's label.
->
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> ---
->
-> V2: make primary file ioctl_getfslabel, link ioctl_setfslabel to it
->     note that getfslabel requires CAP_SYS_ADMIN
->
-> diff --git a/man2/ioctl_getfslabel.2 b/man2/ioctl_getfslabel.2
-> new file mode 100644
-> index 0000000..2c3375c
-> --- /dev/null
-> +++ b/man2/ioctl_getfslabel.2
-> @@ -0,0 +1,87 @@
-> +.\" Copyright (c) 2018, Red Hat, Inc.  All rights reserved.
-> +.\"
-> +.\" %%%LICENSE_START(GPLv2+_DOC_FULL)
-> +.\" This is free documentation; you can redistribute it and/or
-> +.\" modify it under the terms of the GNU General Public License as
-> +.\" published by the Free Software Foundation; either version 2 of
-> +.\" the License, or (at your option) any later version.
-> +.\"
-> +.\" The GNU General Public License's references to "object code"
-> +.\" and "executables" are to be interpreted as the output of any
-> +.\" document formatting or typesetting system, including
-> +.\" intermediate and printed output.
-> +.\"
-> +.\" This manual is distributed in the hope that it will be useful,
-> +.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +.\" GNU General Public License for more details.
-> +.\"
-> +.\" You should have received a copy of the GNU General Public
-> +.\" License along with this manual; if not, see
-> +.\" <http://www.gnu.org/licenses/>.
-> +.\" %%%LICENSE_END
-> +.TH IOCTL-FSLABEL 2 2018-05-02 "Linux" "Linux Programmer's Manual"
-> +.SH NAME
-> +ioctl_fslabel \- get or set a filesystem label
-> +.SH SYNOPSIS
-> +.br
-> +.B #include <sys/ioctl.h>
-> +.br
-> +.B #include <linux/fs.h>
-> +.sp
-> +.BI "int ioctl(int " fd ", FS_IOC_GETFSLABEL, char " label [FSLABEL_MAX]);
-> +.br
-> +.BI "int ioctl(int " fd ", FS_IOC_SETFSLABEL, char " label [FSLABEL_MAX]);
-> +.SH DESCRIPTION
-> +If a filesystem supports online label manipulation, these
-> +.BR ioctl (2)
-> +operations can be used to get or set the filesystem label for the filesystem
-> +on which
-> +.B fd
-> +resides.
-> +The
-> +.B FS_IOC_SETFSLABEL
-> +operation requires privilege
-> +.RB ( CAP_SYS_ADMIN ).
-> +.SH RETURN VALUE
-> +On success zero is returned.  On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.PP
-> +.SH ERRORS
-> +Error codes can be one of, but are not limited to, the following:
-> +.TP
-> +.B EINVAL
-> +The specified label exceeds the maximum label length for the filesystem.
-> +.TP
-> +.B ENOTTY
-> +This can appear if the filesystem does not support online label manipulation.
-> +.TP
-> +.B EPERM
-> +The calling process does not have sufficient permissions to set the label.
-> +.TP
-> +.B EFAULT
-> +.I label
-> +references an inaccessible memory area.
-> +.SH VERSIONS
-> +These ioctl operations first appeared in Linux 4.18.
-> +They were previously known as
-> +.B BTRFS_IOC_GET_FSLABEL
-> +and
-> +.B BTRFS_IOC_SET_FSLABEL
-> +and were private to Btrfs.
-> +.SH CONFORMING TO
-> +This API is Linux-specific.
-> +.SH NOTES
-> +The maximum string length for this interface is
-> +.BR FSLABEL_MAX ,
-> +including the terminating null byte (\(aq\\0\(aq).
-> +Filesystems have differing maximum label lengths, which may or
-> +may not include the terminating null.  The string provided to
-> +.B FS_IOC_SETFSLABEL
-> +must always be null-terminated, and the string returned by
-> +.B FS_IOC_GETFSLABEL
-> +will always be null-terminated.
-> +.SH SEE ALSO
-> +.BR ioctl (2),
-> +.BR blkid (8)
-> diff --git a/man2/ioctl_setfslabel.2 b/man2/ioctl_setfslabel.2
-> new file mode 100644
-> index 0000000..2119835
-> --- /dev/null
-> +++ b/man2/ioctl_setfslabel.2
-> @@ -0,0 +1 @@
-> +.so man2/ioctl_getfslabel.2
->
+> 
+>   5898                  io_consume_sqe(ctx);
+>   5899                  /* will complete beyond this point, count as submitted */
+>   5900                  submitted++;
 
+Regarding, "--submitted" patch -- we take 1 ctx->refs per request, which
+is put in io_put_req(). So after a request passes the line above (5900),
+it's ref will be eventually dropped in io_put_req() and friends.
+
+And it's a bit more peculiar because io_submit_sqes() batch-takes N refs
+first, and then puts unused back at the end.
+
+>   5901  
+>   5902                  if (unlikely(err)) {
+>   5903  fail_req:
+>   5904                          io_cqring_add_event(req, err);
+>   5905                          io_double_put_req(req);
+>   5906                          break;
+>   5907                  }
+>   5908  
+>   5909                  trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
+>   5910                                                  true, async);
+>   5911                  err = io_submit_sqe(req, sqe, statep, &link);
+>                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> here
+> 
+>   5912                  if (err)
+>   5913                          goto fail_req;
+>   5914          }
+> 
+> regards,
+> dan carpenter
+> 
 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Pavel Begunkov
