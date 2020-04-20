@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F1B1B17BF
+	by mail.lfdr.de (Postfix) with ESMTP id 71AE81B17C0
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 22:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgDTU6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728224AbgDTU6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 20 Apr 2020 16:58:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727862AbgDTU6U (ORCPT
+        with ESMTP id S1727881AbgDTU6V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 16:58:20 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4664CC061A0C;
-        Mon, 20 Apr 2020 13:58:20 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id u13so13947701wrp.3;
-        Mon, 20 Apr 2020 13:58:20 -0700 (PDT)
+        Mon, 20 Apr 2020 16:58:21 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F83C061A0C;
+        Mon, 20 Apr 2020 13:58:21 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id r26so1192970wmh.0;
+        Mon, 20 Apr 2020 13:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rbAoCP52MeCYJlfngXJjvybzdgBDDy01LdpgvCAcisE=;
-        b=JzZ5T8t4f9OST5eZKKWm/yOKPpyUjXWNLU6pGtTMjHfND/YjbqKuEzIIduSWTiR8Dk
-         FiPjmJfBeFvcqvz/gn1zjzxT6h6DoZwtPOy9vXWEDphV5sqtRHbIDqe7UyN9e5YXlnpp
-         SKCvjkwodR/znk9R37Ei5nWw6A9OEpmZVIWr35hZoEhwTjBefmbCUXgFoAOLJQsKklcW
-         IUX4A3qwJG5gmcXIA4wFnHPhTzryk2AOrNbkSZjY3zeA+JS1zEgDBhlySP3dGWmn0U1I
-         vmkNPcAarHXlaru2YcIt8egr2Y0YkuuTuPtKHJa/2x9CQp65wV6JatuQUXXZKjOa36zz
-         rczg==
+        bh=0CEMq9p3y53YSLRVr6wlGedagkBpUr96QW3htu5fn8M=;
+        b=ulZuFGYbZXWjjqMRKVh4G+DDgM8jrPd5lgC6lLQ7x3eNkKNQt3ZJ/Iu6BPH8ckFMVr
+         emmEcdw/62JMEmpP4hAZmTISbZKbVASjZTp8Y8p8FWs+0ZqCDfHt0T8s2AGCwVXSbRsL
+         LTdNk9Pio9cToWJI9SvZRMq+Lsb1L5ARq9qrc94ImCbq/QVvBRLfys8+o7vi0khsSzhY
+         +ONPwmhnhHq3HxKJrcphuZc6rVei0zTeL4Pyi9k3jR7iSNtaUhp46uxEcp5IUyj5Z2I0
+         7WNb8GL+U9gLPq8VYo/Evi11Pi/mif6iDOf9uPT0aZOu8JTr+ryHJsYqxwn9mPpTetkA
+         t/lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rbAoCP52MeCYJlfngXJjvybzdgBDDy01LdpgvCAcisE=;
-        b=fgm8X2RzkMsAGr4ltjEvKg4NHidDmqj6bdxltXDrafxE6Ui9pz9PayFBBmhErW6Pal
-         KE0ugjhLzq8tQgIRbaLTQsUKghzDGFnDo1vBBHhpUJ6UQbcggzCBe5BKzxOjEDmXZrn3
-         XPE1sfHWmJ/vRPwf/BzRnGna1acF4qYfz/igqjXCWJ+YaWqKozHe2km2V34So7nZ19ou
-         RHslEF/0h7nSepGcrWkzHyNzDRmzVymMWbKaTQSpd74f14cJVlNzwh7AXphsrB9K77Fu
-         gpUuRhyxsezlc5Z/S0KQ8pXd65LJgECIZBswmcp+wndZknAxP6TUQUd4YFuEw+9KNbo5
-         heEg==
-X-Gm-Message-State: AGi0PuaBO9M9HWicRFEPi4WrOxWC8zBQ5nJdNdEHihsAoDQSTUsBr2ii
-        ea3f31N+jIG+D8YAPJstYlZueM4=
-X-Google-Smtp-Source: APiQypJD5Gts7e2cQFU736NA18aanHlMYyfFC1Peyq1wNGMbg6tcCOUM5gphXeBY+gQOnmhNAzYxKA==
-X-Received: by 2002:a5d:4752:: with SMTP id o18mr20355680wrs.283.1587416299088;
-        Mon, 20 Apr 2020 13:58:19 -0700 (PDT)
+        bh=0CEMq9p3y53YSLRVr6wlGedagkBpUr96QW3htu5fn8M=;
+        b=Ed9IQZSkmckbnrltp5PMSZYlFd5g0bIjbWMvRA+S0Q0KaxL67w5ARDKB1u03oy0n0U
+         En3RqKE+nG/EqQdqd+rbLAc1+/P090sq8KPVRtOixGXqGPQf/pq5eQV8ht+Dqd+lUmY9
+         2wbOlhJGHsKO+sn9EJYh2uvkgcmZFdfT1riq/dVCVLwjBHGIXZD3mkiPLCI4qKP7FANe
+         jX0d+L5y1v09CMaZkHEJ8W17WzxIZyaYWcstN1x/bn3gQnGHym1gdRwqPZr4Yh/Ceiyl
+         CGN6F1kAhikjVwcifsHWD+FAgCxWpEw3DIfb/5yRqs3PljF0FdpTTHigRzLCZMnnTrxI
+         /tIg==
+X-Gm-Message-State: AGi0PuZxSjrOOv27z6ln69D/00CfrWx/FfzOOzrkB7I8WjIwXu22pa87
+        uFNYd7WhOvSiQjseP3h/WA==
+X-Google-Smtp-Source: APiQypKXrGH1q/hccGZ4dOO6jGl50did0fsnoStDobiZ8ykrGUvRJGDFPKznv34CYl+tcim6mTBu5w==
+X-Received: by 2002:a1c:6a0b:: with SMTP id f11mr1243151wmc.123.1587416300040;
+        Mon, 20 Apr 2020 13:58:20 -0700 (PDT)
 Received: from avx2.telecom.by ([46.53.249.74])
-        by smtp.gmail.com with ESMTPSA id m8sm863069wrx.54.2020.04.20.13.58.18
+        by smtp.gmail.com with ESMTPSA id m8sm863069wrx.54.2020.04.20.13.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 13:58:18 -0700 (PDT)
+        Mon, 20 Apr 2020 13:58:19 -0700 (PDT)
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     adobriyan@gmail.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, pmladek@suse.com,
         rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
         andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk
-Subject: [PATCH 12/15] print_integer, proc: rewrite /proc/*/statm via print_integer()
-Date:   Mon, 20 Apr 2020 23:57:40 +0300
-Message-Id: <20200420205743.19964-12-adobriyan@gmail.com>
+Subject: [PATCH 13/15] print_integer, printf: rewrite num_to_str() via print_integer()
+Date:   Mon, 20 Apr 2020 23:57:41 +0300
+Message-Id: <20200420205743.19964-13-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200420205743.19964-1-adobriyan@gmail.com>
 References: <20200420205743.19964-1-adobriyan@gmail.com>
@@ -67,58 +67,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+In my opinion, num_to_str() is more understandable this way.
+
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- fs/proc/array.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ lib/vsprintf.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 6986f9f68ab7..16d66538fa61 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -695,24 +695,28 @@ int proc_pid_statm(struct seq_file *m, struct pid_namespace *ns,
- 		unsigned long shared = 0;
- 		unsigned long text = 0;
- 		unsigned long data = 0;
-+		char buf[5 * LEN_UL + 9];
-+		char *p = buf + sizeof(buf);
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 7c488a1ce318..df2b5ce08fe9 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -51,6 +51,7 @@
  
- 		size = task_statm(mm, &shared, &text, &data, &resident);
- 		mmput(mm);
+ #include <linux/string_helpers.h>
+ #include "kstrtox.h"
++#include "print-integer.h"
  
--		/*
--		 * For quick read, open code by putting numbers directly
--		 * expected format is
--		 * seq_printf(m, "%lu %lu %lu %lu 0 %lu 0\n",
--		 *               size, resident, shared, text, data);
--		 */
--		seq_put_decimal_ull(m, "", size);
--		seq_put_decimal_ull(m, " ", resident);
--		seq_put_decimal_ull(m, " ", shared);
--		seq_put_decimal_ull(m, " ", text);
--		seq_put_decimal_ull(m, " ", 0);
--		seq_put_decimal_ull(m, " ", data);
--		seq_put_decimal_ull(m, " ", 0);
--		seq_putc(m, '\n');
-+		*--p = '\n';
-+		*--p = '0';
-+		*--p = ' ';
-+		p = _print_integer_ul(p, data);
-+		*--p = ' ';
-+		*--p = '0';
-+		*--p = ' ';
-+		p = _print_integer_ul(p, text);
-+		*--p = ' ';
-+		p = _print_integer_ul(p, shared);
-+		*--p = ' ';
-+		p = _print_integer_ul(p, resident);
-+		*--p = ' ';
-+		p = _print_integer_ul(p, size);
-+
-+		seq_write(m, p, buf + sizeof(buf) - p);
+ /**
+  * simple_strtoull - convert a string to an unsigned long long
+@@ -343,33 +344,24 @@ char *put_dec(char *buf, unsigned long long n)
+  */
+ int num_to_str(char *buf, int size, unsigned long long num, unsigned int width)
+ {
+-	/* put_dec requires 2-byte alignment of the buffer. */
+-	char tmp[sizeof(num) * 3] __aligned(2);
+-	int idx, len;
++	char tmp[20];
++	char *p = tmp + sizeof(tmp);
++	ptrdiff_t len;
+ 
+-	/* put_dec() may work incorrectly for num = 0 (generate "", not "0") */
+-	if (num <= 9) {
+-		tmp[0] = '0' + num;
+-		len = 1;
+-	} else {
+-		len = put_dec(tmp, num) - tmp;
+-	}
++	p = _print_integer_u64(p, num);
++	len = tmp + sizeof(tmp) - p;
+ 
+ 	if (len > size || width > size)
+ 		return 0;
+ 
+ 	if (width > len) {
+-		width = width - len;
+-		for (idx = 0; idx < width; idx++)
+-			buf[idx] = ' ';
++		memset(buf, ' ', width - len);
++		memcpy(buf + width - len, p, len);
++		return width;
  	} else {
- 		seq_write(m, "0 0 0 0 0 0 0\n", 14);
+-		width = 0;
++		memcpy(buf, p, len);
++		return len;
  	}
+-
+-	for (idx = 0; idx < len; ++idx)
+-		buf[idx + width] = tmp[len - idx - 1];
+-
+-	return len + width;
+ }
+ 
+ #define SIGN	1		/* unsigned/signed, must be 1 */
 -- 
 2.24.1
 
