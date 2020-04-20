@@ -2,100 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC631B198C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 00:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D64CB1B19A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 00:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgDTWck (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 18:32:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        id S1726341AbgDTWlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 18:41:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725918AbgDTWcj (ORCPT
+        with ESMTP id S1725958AbgDTWlX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 18:32:39 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D53C061A0C;
-        Mon, 20 Apr 2020 15:32:38 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id a22so491294pjk.5;
-        Mon, 20 Apr 2020 15:32:38 -0700 (PDT)
+        Mon, 20 Apr 2020 18:41:23 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84352C061A0C;
+        Mon, 20 Apr 2020 15:41:23 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id c16so10125395qtv.1;
+        Mon, 20 Apr 2020 15:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=noDocHhO4G8oMefT5gpQpa0JPLicJQEKjA5ekI12B1U=;
-        b=SC51ozKMnXWwNxC+FS+H5K7L8wxrpZjyqGMyZlomlkxBt36rCzlZcvsGyOdEkp0qOK
-         acaAbyVZD88rywT5ryrqu6eT6ug82y+7gOsQxfaK2UZl4rV1W9YO5V6hJpajm7qBQJ7Q
-         +Zgu3JJJ4o24eDla+44Bh00sdZjWQBXItQe7/2Enccnm6PiSL6mjJ1CohRG51qf+6FxN
-         bl7nakvc/wodoO6sEqUEBX+BYp8DehrnOpOUkHt91nVImMC4qsSRJzZblesEp+KJHHNV
-         5PYZweupEdYPotyRLOjW0WYpJccNDY8JbTC+X9oMf/lsHyRYouD/z+KyItHoy4uIgL/y
-         dq2g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DYVGKptuNao3T/Cw5MVydseWWvnB3P8P6bY7urNsYE4=;
+        b=ZTvAXfQirkhPYwWin4gaTNuQ42l+Obs3whqemoax3hucfHKWlC19ImBWdeBO0MYz9S
+         KrjfYP5kNdW+Sg5lblu5swpCyPtMN/naDZ2SlCHqd+5jkTR7aMofBNTfCBzhFPcxS3TB
+         tbPix1/O9HErM8CNUqIyTj8QqgF3AO4ZCfjCAKlc3HLIj5a0cYQ68ebLK8yX3baCZihs
+         L0iJTd31iGBMC91rn/1DaFPSOakptQYq5ZT5FC16X+JZTM2GMDNsZ34n93sI1+2FybVF
+         NxG/Rqg8po4ejbaExawn8ZKMfICTrgTxHOBJOAGW85lEjsUcfSf9AgItY4xRQvkI+Nm+
+         dpNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=noDocHhO4G8oMefT5gpQpa0JPLicJQEKjA5ekI12B1U=;
-        b=YxA5hzG27Lygikfb+NrH+3GFzFqxxcvcPNJ283ILp35NQOQhPA/mUHrJHv+qVnM2Y2
-         1OsdCPYskJOPLxaeUSc01cCWZNqwZo3US/WnpwBqXmJjZDJE8LZLOpDovDGuZqMIArdq
-         jQYW55VOBYDoGbKbXjOPJ6nbze6TJrDazUZUP48p4iK+EowDUCRdYX+Mi3Jp8I2976Cq
-         DVe68U5+5hHWpSnxZbK6lzdkvjz9dTGrLQiGzjgFZp0Vj6tPDhaPZcH2qziuMo682WHa
-         lHMQhY3GpmcTq5GDcPB9e6vOqEANxkqg624teLaejOL9rqiAYjTJS80yJaLiQKm2dXiC
-         8Tsw==
-X-Gm-Message-State: AGi0PuYnonl8NsiQybryBCIwoDYRjFx/K/vFoXpBFR41LZ3dPpE6cDFE
-        NSPiILKv9s+qb922gLnJMrNcpzr81lWFJg==
-X-Google-Smtp-Source: APiQypJlolvJeJBU5vXJhR1b+75YkPTrpnQY59XSAneQ8A2V37o0PI7hVckQTjVTNrBnofyBTzwoIA==
-X-Received: by 2002:a17:902:dc86:: with SMTP id n6mr19235047pld.198.1587421957359;
-        Mon, 20 Apr 2020 15:32:37 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:459a:cd47:8130:d7ac? ([2404:7a87:83e0:f800:459a:cd47:8130:d7ac])
-        by smtp.gmail.com with ESMTPSA id q63sm485622pfb.178.2020.04.20.15.32.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2020 15:32:36 -0700 (PDT)
-Subject: Re: [PATCH v3] exfat: replace 'time_ms' with 'time_cs'
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Tetsuhiro Kohada' <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200416085144epcas1p1527b8df86453c7566b1a4d5a85689e69@epcas1p1.samsung.com>
- <20200416085121.57495-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
- <003601d61461$7140be60$53c23b20$@samsung.com>
- <b250254c-3b88-9457-652d-f96c4c15e454@gmail.com>
- <000001d616be$9f4513b0$ddcf3b10$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <b1efef64-f335-2e9a-0902-b080690d6209@gmail.com>
-Date:   Tue, 21 Apr 2020 07:32:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        bh=DYVGKptuNao3T/Cw5MVydseWWvnB3P8P6bY7urNsYE4=;
+        b=nx07pM4s/AynQQIhdFNIqt68+qUIaGelLikkq0AO0aApJHNig/g13VIMXtFKQWqsS7
+         sPfBhJrRQxIK08Q9tsnce2z9dWQi5vIG7tUckiJixI5yRS5ZuUig2mVtqABfwqGZM015
+         uNTBrRwYarW6/dytvlAjEZsRAQ4DY1wIBODIrD7i4GzQrt9TE28Noak1O3Qa9UFVL+ut
+         zGW/k+txTjDe0HEyBPSOx+HKI7eeIwbDfP2ie//eIvdpZvPonqLaoEoN9Y2ufi9GfZiO
+         Zq/I4QOOqDSc4z/Z7ahpI8jDjnLrQiK5zh7/4d+3ycUW4FU756xfLpGS1ga8lUboDQ2D
+         RbFw==
+X-Gm-Message-State: AGi0PuZeCu2lHMXiqHBddUbllegsIVe3XOYibJHfAYBno+BNAK1HULQP
+        iCfajYJMh/Vj/QyOUyjMHaI=
+X-Google-Smtp-Source: APiQypLCIw7/eZknDKLM+t8IKYdj7N+Co65p6dBEo98Q2IzOK0LygWK0Y7J1AaH2soSrsIhgmgtdEA==
+X-Received: by 2002:ac8:19fd:: with SMTP id s58mr18784474qtk.354.1587422482527;
+        Mon, 20 Apr 2020 15:41:22 -0700 (PDT)
+Received: from dschatzberg-fedora-PC0Y6AEN.thefacebook.com ([2620:10d:c091:480::1:b0d9])
+        by smtp.gmail.com with ESMTPSA id j90sm511052qte.20.2020.04.20.15.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2020 15:41:21 -0700 (PDT)
+From:   Dan Schatzberg <schatzberg.dan@gmail.com>
+Cc:     Dan Schatzberg <schatzberg.dan@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-block@vger.kernel.org (open list:BLOCK LAYER),
+        linux-kernel@vger.kernel.org (open list),
+        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
+        infrastructure)),
+        cgroups@vger.kernel.org (open list:CONTROL GROUP (CGROUP)),
+        linux-mm@kvack.org (open list:CONTROL GROUP - MEMORY RESOURCE
+        CONTROLLER (MEMCG))
+Subject: [PATCH 0/4] Charge loop device i/o to issuing cgroup
+Date:   Mon, 20 Apr 2020 18:39:28 -0400
+Message-Id: <20200420223936.6773-1-schatzberg.dan@gmail.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-In-Reply-To: <000001d616be$9f4513b0$ddcf3b10$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for your advise.
+Changes since V4:
 
-On 2020/04/20 11:51, Namjae Jeon wrote:
->> Can you give me some advice?
-> Your address in author line of this patch seems to be different with Your Signed-off-by.
-> 
-> From: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
-> !=
-> Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-> 
-> What is correct one between the two?
+Only patches 1 and 2 have changed.
 
-"dc.MitsubishiElectric.co.jp" is the correct domain name.
+* Fixed irq lock ordering bug
+* Simplified loop detach
+* Added support for nesting memalloc_use_memcg
 
-> I guess you should fix your mail address in your .gitconfig
-> Or manually add From: your address under subject in your patch like this.
+Changes since V3:
 
-Both user.email of .gitconfig and from field in patch use "dc.MitsubishiElectric.co.jp".
-I don't know why it changed to lower case.
+* Fix race on loop device destruction and deferred worker cleanup
+* Ensure charge on shmem_swapin_page works just like getpage
+* Minor style changes
 
-For now, change to private gmail and post again.
+Changes since V2:
 
-Thanks.
+* Deferred destruction of workqueue items so in the common case there
+  is no allocation needed
+
+Changes since V1:
+
+* Split out and reordered patches so cgroup charging changes are
+  separate from kworker -> workqueue change
+
+* Add mem_css to struct loop_cmd to simplify logic
+
+The loop device runs all i/o to the backing file on a separate kworker
+thread which results in all i/o being charged to the root cgroup. This
+allows a loop device to be used to trivially bypass resource limits
+and other policy. This patch series fixes this gap in accounting.
+
+A simple script to demonstrate this behavior on cgroupv2 machine:
+
+'''
+#!/bin/bash
+set -e
+
+CGROUP=/sys/fs/cgroup/test.slice
+LOOP_DEV=/dev/loop0
+
+if [[ ! -d $CGROUP ]]
+then
+    sudo mkdir $CGROUP
+fi
+
+grep oom_kill $CGROUP/memory.events
+
+# Set a memory limit, write more than that limit to tmpfs -> OOM kill
+sudo unshare -m bash -c "
+echo \$\$ > $CGROUP/cgroup.procs;
+echo 0 > $CGROUP/memory.swap.max;
+echo 64M > $CGROUP/memory.max;
+mount -t tmpfs -o size=512m tmpfs /tmp;
+dd if=/dev/zero of=/tmp/file bs=1M count=256" || true
+
+grep oom_kill $CGROUP/memory.events
+
+# Set a memory limit, write more than that limit through loopback
+# device -> no OOM kill
+sudo unshare -m bash -c "
+echo \$\$ > $CGROUP/cgroup.procs;
+echo 0 > $CGROUP/memory.swap.max;
+echo 64M > $CGROUP/memory.max;
+mount -t tmpfs -o size=512m tmpfs /tmp;
+truncate -s 512m /tmp/backing_file
+losetup $LOOP_DEV /tmp/backing_file
+dd if=/dev/zero of=$LOOP_DEV bs=1M count=256;
+losetup -D $LOOP_DEV" || true
+
+grep oom_kill $CGROUP/memory.events
+'''
+
+Naively charging cgroups could result in priority inversions through
+the single kworker thread in the case where multiple cgroups are
+reading/writing to the same loop device. This patch series does some
+minor modification to the loop driver so that each cgroup can make
+forward progress independently to avoid this inversion.
+
+With this patch series applied, the above script triggers OOM kills
+when writing through the loop device as expected.
+
+Dan Schatzberg (4):
+  loop: Use worker per cgroup instead of kworker
+  mm: support nesting memalloc_use_memcg()
+  mm: Charge active memcg when no mm is set
+  loop: Charge i/o to mem and blk cg
+
+ drivers/block/loop.c                 | 246 ++++++++++++++++++++++-----
+ drivers/block/loop.h                 |  14 +-
+ fs/buffer.c                          |   6 +-
+ fs/notify/fanotify/fanotify.c        |   5 +-
+ fs/notify/inotify/inotify_fsnotify.c |   5 +-
+ include/linux/memcontrol.h           |   6 +
+ include/linux/sched/mm.h             |  28 +--
+ kernel/cgroup/cgroup.c               |   1 +
+ mm/memcontrol.c                      |  11 +-
+ mm/shmem.c                           |   4 +-
+ 10 files changed, 246 insertions(+), 80 deletions(-)
+
+-- 
+2.24.1
+
