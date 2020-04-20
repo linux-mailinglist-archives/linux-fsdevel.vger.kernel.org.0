@@ -2,113 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03BC91AFF81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 03:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20DB1AFFAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 04:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgDTBbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Apr 2020 21:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42182 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725949AbgDTBbE (ORCPT
+        id S1726100AbgDTCHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Apr 2020 22:07:00 -0400
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:46500 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbgDTCHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Apr 2020 21:31:04 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6125BC061A0C;
-        Sun, 19 Apr 2020 18:31:03 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id t9so1722031pjw.0;
-        Sun, 19 Apr 2020 18:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1qntJfTQVW2R5B/BZXP8n8jq5XEP710G+Kb7QjDlEEQ=;
-        b=k5AmKImn7KnzGnT/lWSdv8VX3CIj8spL4RyLMQd8HGJxiXy77oPkqozWBzp5ILJKoB
-         WW0eEcH2eIiOxwIC5DOVe5gCzW89E3KUq9R0MbsASNOePmn6tIhsvExsdGOU94kEaeK1
-         goV0DiyfVW98J/N1PvBAnIa9mH7PBqXEELyQNpJGXRJthAE4ECVzLJl8FOS0IvTno1vh
-         LLy9qv4lygAnjf8zzpJiExCmq+M3b6CsQPgtQrzfXp60lOqnIgZk/wwp2xry5l86ntfE
-         MjwVvT8eANo059zfDXoyxrUEBjcXMOMuFFgnCorTEzWUHXC7H0D7LePh12VsuUvqyUxa
-         8GuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1qntJfTQVW2R5B/BZXP8n8jq5XEP710G+Kb7QjDlEEQ=;
-        b=ifw2FGZ3DRLA9OkQLEnKcKiDfy18yKvL93F5aBIJM77fm8oW+lSFZNGykYSZq56syr
-         mbphCPAtTnuI5VRH6Qm4vOmnZhxLYzZUa38MOcLPUUm6cw6pnzS9auNfahjzBOJ6JP1H
-         AEqzqJJi8gxVYGL2bh9AA7u5xcBzV/dB4KWCgR6lxGQ91Y19d6/dPt/rGTNeUA64jcW4
-         m7aar6dTlSK00PeQ+kSpdR6O1vafz/eePJiuwAlGy0U2zNOVGWKLqbV0cX1ck4mEOXZP
-         PfUU1qMD5I2f0h6jfOCdh2GHsFUjWoZS6L+YQiyQTZnn54y6GWqdorbJ8mpH6X6TJMsE
-         D9RA==
-X-Gm-Message-State: AGi0PuZxVO1ZwEfSlBvTU0WuCKxinqm4p12E9JpAIQAvq6il4dfPFwNt
-        hN14UnhHiAZHlA03J5dL/yPvrF+VAMu9AQ==
-X-Google-Smtp-Source: APiQypJtGX6ti+FmScXgNNGNQDgAbN5PeCH/OOo+A6WHAH0Gh4hrHTS9FyZXO+Ifmjp6k+NAz7Jhaw==
-X-Received: by 2002:a17:90b:374f:: with SMTP id ne15mr9508017pjb.181.1587346262714;
-        Sun, 19 Apr 2020 18:31:02 -0700 (PDT)
-Received: from ?IPv6:::1? ([2404:7a87:83e0:f800:d9be:3496:1edd:1106])
-        by smtp.gmail.com with ESMTPSA id a22sm20373159pfg.169.2020.04.19.18.31.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 Apr 2020 18:31:02 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Subject: Re: [PATCH v3] exfat: replace 'time_ms' with 'time_cs'
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Tetsuhiro Kohada' <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200416085144epcas1p1527b8df86453c7566b1a4d5a85689e69@epcas1p1.samsung.com>
- <20200416085121.57495-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
- <003601d61461$7140be60$53c23b20$@samsung.com>
-Message-ID: <b250254c-3b88-9457-652d-f96c4c15e454@gmail.com>
-Date:   Mon, 20 Apr 2020 10:31:01 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sun, 19 Apr 2020 22:07:00 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4959755FpdzQlCW;
+        Mon, 20 Apr 2020 04:06:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id ViTbMQLm6i7Q; Mon, 20 Apr 2020 04:06:51 +0200 (CEST)
+Date:   Mon, 20 Apr 2020 12:06:42 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+Message-ID: <20200420020642.xzkqikia6kmslkjh@yavin.dot.cyphar.com>
+References: <cover.1586830316.git.josh@joshtriplett.org>
+ <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
+ <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
+ <b7dae79b-4c5f-65f6-0960-617070357201@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <003601d61461$7140be60$53c23b20$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Avast (VPS 200419-0, 2020/04/19), Outbound message
-X-Antivirus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nl3aoloccd36jfpc"
+Content-Disposition: inline
+In-Reply-To: <b7dae79b-4c5f-65f6-0960-617070357201@kernel.dk>
+X-Rspamd-Queue-Id: 57B701756
+X-Rspamd-Score: -8.16 / 15.00 / 15.00
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/04/17 11:39, Namjae Jeon wrote:
->> Replace "time_ms"  with "time_cs" in the file directory entry structure
->> and related functions.
->>
->> The unit of create_time_ms/modify_time_ms in File Directory Entry are not
->> 'milli-second', but 'centi-second'.
->> The exfat specification uses the term '10ms', but instead use 'cs' as in
->> "msdos_fs.h".
->>
->> Signed-off-by: Tetsuhiro Kohada
->> <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
->> ---
-> I have run checkpatch.pl on your patch.
-> It give a following warning.
-> 
-> WARNING: Missing Signed-off-by: line by nominal patch author 'Tetsuhiro
-> Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>'
-> total: 0 errors, 1 warnings, 127 lines checked
-> 
-> Please fix it.
 
-I want to fix it, but I'm not sure what's wrong.
-The my patch has the following line:
+--nl3aoloccd36jfpc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+On 2020-04-19, Jens Axboe <axboe@kernel.dk> wrote:
+> On 4/19/20 4:44 AM, Aleksa Sarai wrote:
+> > On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
+> >> Inspired by the X protocol's handling of XIDs, allow userspace to sele=
+ct
+> >> the file descriptor opened by openat2, so that it can use the resulting
+> >> file descriptor in subsequent system calls without waiting for the
+> >> response to openat2.
+> >>
+> >> In io_uring, this allows sequences like openat2/read/close without
+> >> waiting for the openat2 to complete. Multiple such sequences can
+> >> overlap, as long as each uses a distinct file descriptor.
+> >=20
+> > I'm not sure I understand this explanation -- how can you trigger a
+> > syscall with an fd that hasn't yet been registered (unless you're just
+> > hoping the race goes in your favour)?
+>=20
+> io_uring can do chains of requests, where each link in the chain isn't
+> started until the previous one has completed. Hence if you know what fd
+> that openat2 will return, you can submit a chain ala:
+>=20
+> <open file X, give me fd Y><read from fd Y><close fd Y>
+>=20
+> as a single submission. This isn't possible to do currently, as the read
+> will depend on the output of the open, and we have no good way of
+> knowing what that fd will be.
 
-Both my real name and email address are correct.
-Can you give me some advice?
+Ah! I was aware of io_uring's chaining feature but thought it had access
+to the return of the previous stage -- now this makes much more sense.
+Thanks.
 
-*** Currently I can't use office email, so I'm sending it from private email instead.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--nl3aoloccd36jfpc
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-このEメールはアバスト アンチウイルスによりウイルススキャンされています。
-https://www.avast.com/antivirus
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXp0DrwAKCRCdlLljIbnQ
+EmOYAP4lkf0v9STwr5KoDYWT6PbyBkxhHUVVy9D52d30Gd/h6gD/eZQuaYg8dEjF
+EJpgo1J1EPiK6PIgD34KjQNKv8C7fQ0=
+=hBJk
+-----END PGP SIGNATURE-----
+
+--nl3aoloccd36jfpc--
