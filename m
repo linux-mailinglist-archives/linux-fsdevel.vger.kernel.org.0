@@ -2,166 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00AE41B1822
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F16FF1B1820
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 23:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgDTVOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 17:14:43 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:49317 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgDTVOn (ORCPT
+        id S1726725AbgDTVOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 17:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725774AbgDTVOj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 17:14:43 -0400
-Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7894D200002;
-        Mon, 20 Apr 2020 21:14:36 +0000 (UTC)
-Date:   Mon, 20 Apr 2020 14:14:34 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-Message-ID: <20200420211434.GC3515@localhost>
-References: <cover.1586830316.git.josh@joshtriplett.org>
- <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
- <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
+        Mon, 20 Apr 2020 17:14:39 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47531C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 14:14:39 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id u16so1209303wmc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 14:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.ionos.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=NAulTysQBFtR68qPZ0m2iZ5pjwCCHBTIxhmw9tr1qow=;
+        b=WfHr0abJY9WK4R3n5w9I1fbRXt/wV0VVmqV56e5Jicswk7IFi2190o7+55tI8cK4Xa
+         FzwclF1tAnBdb3ZX5vJaqwZmDgZaQHQCzG8kOXFk2AJwS1rsWGCvY33LXoLS8qnky+rq
+         L2HMNG+FVjYN9JIqlmgmJ/xboSTJDiWHceOCsAqRJpjvaNosV+V2DQ0SNktCx6g6j9u0
+         NrPclX2mr0JuXtWokAGrfShjktb1oc6qozoA5BT5ckIOJxAjcVxSyb21VmkJzFgZwmYx
+         b+OGcskGDetKCcueHIDhkJSRNycoqqfz/ohPT5oVJgVpj9k9zEEC1/eJk60nVJSfGDfK
+         q3pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=NAulTysQBFtR68qPZ0m2iZ5pjwCCHBTIxhmw9tr1qow=;
+        b=jwolqwRozzD9d4hlL/cPM6QRdws3234joSIR3f79IZVQ8DsO4T0JxhJxqafRjNvDF5
+         cymGMb3B6jTPfo+yN5Jjb3Ww9Kp0sRzjlk7vaTJZHozW/oXSRHHwWVX9uBG32qSOWVPq
+         oPHAkT+DG696N5RUzfP1ATbpDboJpUEUB5Q9vaMoCupKo94dhpE7zodRXPQnKwLRBxxp
+         WNuC//iVRfbzNwHhH5wpUSr7a3d6llLwJwyz4ZMFDIDSlG68myY5j8eaH/Fa1vaStVIM
+         BHWbaf/9nCDUfQ/HFh7gl02yOofJ7lUKDCtAIJM4fJfc5jhbUuDjpff1sLRuKXR43GgF
+         ++9A==
+X-Gm-Message-State: AGi0Puae5VvDKwyeCnEDwxaNZJw3xQvPVUVGLIQsaXP/2l2lLZ7g9gQn
+        Opkx71yO0ftxgewJvGqSmwBL5DwUHl2e4g==
+X-Google-Smtp-Source: APiQypJFX+O4iZvIjwDh/03KC5rd26Ffx497WdEjSPmxcYp6QdtLfMtYLM5sVggkGnb2ys3NItYKbQ==
+X-Received: by 2002:a05:600c:2c04:: with SMTP id q4mr1272476wmg.7.1587417277148;
+        Mon, 20 Apr 2020 14:14:37 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:48ef:dc00:34d4:fc5b:d862:dbd2? ([2001:16b8:48ef:dc00:34d4:fc5b:d862:dbd2])
+        by smtp.gmail.com with ESMTPSA id a1sm894226wrn.80.2020.04.20.14.14.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Apr 2020 14:14:36 -0700 (PDT)
+Subject: Re: [PATCH 0/5] export __clear_page_buffers to cleanup code
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20200418225123.31850-1-guoqing.jiang@cloud.ionos.com>
+ <20200419031443.GT5820@bombadil.infradead.org>
+ <20200419232046.GC9765@dread.disaster.area>
+ <20200420003025.GZ5820@bombadil.infradead.org>
+From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Message-ID: <e889cb45-486b-118c-d087-90fed5353460@cloud.ionos.com>
+Date:   Mon, 20 Apr 2020 23:14:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
+In-Reply-To: <20200420003025.GZ5820@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 19, 2020 at 08:44:04PM +1000, Aleksa Sarai wrote:
-> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
-> > Inspired by the X protocol's handling of XIDs, allow userspace to select
-> > the file descriptor opened by openat2, so that it can use the resulting
-> > file descriptor in subsequent system calls without waiting for the
-> > response to openat2.
-> > 
-> > In io_uring, this allows sequences like openat2/read/close without
-> > waiting for the openat2 to complete. Multiple such sequences can
-> > overlap, as long as each uses a distinct file descriptor.
-> 
-> I'm not sure I understand this explanation -- how can you trigger a
-> syscall with an fd that hasn't yet been registered (unless you're just
-> hoping the race goes in your favour)?
+On 20.04.20 02:30, Matthew Wilcox wrote:
+> On Mon, Apr 20, 2020 at 09:20:46AM +1000, Dave Chinner wrote:
+>> On Sat, Apr 18, 2020 at 08:14:43PM -0700, Matthew Wilcox wrote:
+>>> On Sun, Apr 19, 2020 at 12:51:18AM +0200, Guoqing Jiang wrote:
+>>>> When reading md code, I find md-bitmap.c copies __clear_page_buffers from
+>>>> buffer.c, and after more search, seems there are some places in fs could
+>>>> use this function directly. So this patchset tries to export the function
+>>>> and use it to cleanup code.
+>>> OK, I see why you did this, but there are a couple of problems with it.
+>>>
+>>> One is just a sequencing problem; between exporting __clear_page_buffers()
+>>> and removing it from the md code, the md code won't build.
+>>>
+>>> More seriously, most of this code has nothing to do with buffers.  It
+>>> uses page->private for its own purposes.
+>>>
+>>> What I would do instead is add:
+>>>
+>>> clear_page_private(struct page *page)
+>>> {
+>>> 	ClearPagePrivate(page);
+>>> 	set_page_private(page, 0);
+>>> 	put_page(page);
+>>> }
+>>>
+>>> to include/linux/mm.h, then convert all callers of __clear_page_buffers()
+>>> to call that instead.
+>> While I think this is the right direction, I don't like the lack of
+>> symmetry between set_page_private() and clear_page_private() this
+>> creates.  i.e. set_page_private() just assigned page->private, while
+>> clear_page_private clears both a page flag and page->private, and it
+>> also drops a page reference, too.
+>>
+>> Anyone expecting to use set/clear_page_private as a matched pair (as
+>> the names suggest they are) is in for a horrible surprise...
 
-See the response from Jens for an explanation of how this works in
-io_uring.
+Dave, thanks for the valuable suggestion!
 
-> > Add a new O_SPECIFIC_FD open flag to enable this behavior, only accepted
-> > by openat2 for now (ignored by open/openat like all unknown flags). Add
-> > an fd field to struct open_how (along with appropriate padding, and
-> > verify that the padding is 0 to allow replacing the padding with a field
-> > in the future).
-> > 
-> > The file table has a corresponding new function
-> > get_specific_unused_fd_flags, which gets the specified file descriptor
-> > if O_SPECIFIC_FD is set (and the fd isn't -1); otherwise it falls back
-> > to get_unused_fd_flags, to simplify callers.
-> > 
-> > The specified file descriptor must not already be open; if it is,
-> > get_specific_unused_fd_flags will fail with -EBUSY. This helps catch
-> > userspace errors.
-> > 
-> > When O_SPECIFIC_FD is set, and fd is not -1, openat2 will use the
-> > specified file descriptor rather than finding the lowest available one.
-> 
-> I still don't like that you can enable this feature with O_SPECIFIC_FD
-> but then disable it by specifying fd as -1. I understand why this is
-> needed for pipe2() and socketpair() and that's totally fine, but I don't
-> think it makes sense for openat2() or other interfaces where there's
-> only one fd being returned -- what does it mean to say "give me a
-> specific fd, but actually I don't care what it is"?
-> 
-> I know this is a trade-off between consistency of O_SPECIFIC_FD
-> interfaces and having wart-less interfaces for each syscall, but I don't
-> think it breaks consistency to say "syscalls that only give you one fd
-> don't have a second way of disabling the feature -- just don't pass
-> O_SPECIFIC_FD".
+>> This is a public service message brought to you by the Department
+>> of We Really Suck At API Design.
+> Oh, blast.  I hadn't noticed that.  And we're horribly inconsistent
+> with how we use set_page_private() too -- rb_alloc_aux_page() doesn't
+> increment the page's refcount, for example.
+>
+> So, new (pair of) names:
+>
+> set_fs_page_private()
+> clear_fs_page_private()
 
-I think there's value in the orthogonality, and -1 can never be a valid
-file descriptor. If this becomes a sticking point, it could certainly be
-changed (just modify pipe2 to remove the O_SPECIFIC_FD flag if passed
--1), but at the same time, I'd rather have this logic implemented once
-with a uniform semantic no matter what syscall uses it.
+Hmm, maybe it is better to keep the original name (set/clear_page_private).
+Because,
 
-> >  struct open_how {
-> >  	__u64 flags;
-> >  	__u64 mode;
-> >  	__u64 resolve;
-> > +	__u32 fd;
-> > +	__u32 pad; /* Must be 0 in the current version */
-> 
-> Small nit: This field should be called __padding to make it more
-> explicit it's something internal and shouldn't be looked at by
-> userspace. And the comment should just be "must be zeroed".
+1. it would be weird for other subsystems (not belong to fs scope) to 
+call the
+function which is supposed to be used in fs, though we can add a wrapper
+for other users out of fs.
 
-Good point. Done in v5.
+2. no function in mm.h is named like *fs*.
 
-> > --- a/tools/testing/selftests/openat2/openat2_test.c
-> > +++ b/tools/testing/selftests/openat2/openat2_test.c
-> > @@ -40,7 +40,7 @@ struct struct_test {
-> >  	int err;
-> >  };
-> >  
-> > -#define NUM_OPENAT2_STRUCT_TESTS 7
-> > +#define NUM_OPENAT2_STRUCT_TESTS 8
-> >  #define NUM_OPENAT2_STRUCT_VARIATIONS 13
-> >  
-> >  void test_openat2_struct(void)
-> > @@ -52,6 +52,9 @@ void test_openat2_struct(void)
-> >  		{ .name = "normal struct",
-> >  		  .arg.inner.flags = O_RDONLY,
-> >  		  .size = sizeof(struct open_how) },
-> > +		{ .name = "v0 struct",
-> > +		  .arg.inner.flags = O_RDONLY,
-> > +		  .size = OPEN_HOW_SIZE_VER0 },
-> >  		/* Bigger struct, with zeroed out end. */
-> >  		{ .name = "bigger struct (zeroed out)",
-> >  		  .arg.inner.flags = O_RDONLY,
-> > @@ -155,7 +158,7 @@ struct flag_test {
-> >  	int err;
-> >  };
-> >  
-> > -#define NUM_OPENAT2_FLAG_TESTS 23
-> > +#define NUM_OPENAT2_FLAG_TESTS 29
-> >  
-> >  void test_openat2_flags(void)
-> >  {
-> > @@ -223,6 +226,24 @@ void test_openat2_flags(void)
-> >  		{ .name = "invalid how.resolve and O_PATH",
-> >  		  .how.flags = O_PATH,
-> >  		  .how.resolve = 0x1337, .err = -EINVAL },
-> > +
-> > +		/* O_SPECIFIC_FD tests */
-> > +		{ .name = "O_SPECIFIC_FD",
-> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 42 },
-> > +		{ .name = "O_SPECIFIC_FD if fd exists",
-> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 2,
-> > +		  .err = -EBUSY },
-> > +		{ .name = "O_SPECIFIC_FD with fd -1",
-> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = -1 },
-> > +		{ .name = "fd without O_SPECIFIC_FD",
-> > +		  .how.flags = O_RDONLY, .how.fd = 42,
-> > +		  .err = -EINVAL },
-> > +		{ .name = "fd -1 without O_SPECIFIC_FD",
-> > +		  .how.flags = O_RDONLY, .how.fd = -1,
-> > +		  .err = -EINVAL },
-> > +		{ .name = "existing fd without O_SPECIFIC_FD",
-> > +		  .how.flags = O_RDONLY, .how.fd = 2,
-> > +		  .err = -EINVAL },
-> 
-> It would be good to add a test to make sure that a non-zero value of
-> how->__padding also gives -EINVAL.
+> since it really seems like it's only page cache pages which need to
+> follow the rules about setting PagePrivate and incrementing the refcount.
+> Also, I think I'd like to see them take/return a void *:
+>
+> void *set_fs_page_private(struct page *page, void *data)
+> {
+> 	get_page(page);
+> 	set_page_private(page, (unsigned long)data);
+> 	SetPagePrivate(page);
+> 	return data;
+> }
 
-Done in v5.
+Seems  some functions could probably use the above helper, such as
+iomap_page_create, iomap_migrate_page, get_page_bootmem and
+  f2fs_set_page_private etc.
 
-- Josh Triplett
+> void *clear_fs_page_private(struct page *page)
+> {
+> 	void *data = (void *)page_private(page);
+>
+> 	if (!PagePrivate(page))
+> 		return NULL;
+> 	ClearPagePrivate(page);
+> 	set_page_private(page, 0);
+> 	put_page(page);
+> 	return data;
+> }
+>
+> That makes iomap simpler:
+>
+>   static void
+>   iomap_page_release(struct page *page)
+>   {
+> -	struct iomap_page *iop = to_iomap_page(page);
+> +	struct iomap_page *iop = clear_fs_page_private(page);
+>
+>   	if (!iop)
+>   		return;
+>   	WARN_ON_ONCE(atomic_read(&iop->read_count));
+>   	WARN_ON_ONCE(atomic_read(&iop->write_count));
+> -	ClearPagePrivate(page);
+> -	set_page_private(page, 0);
+> -	put_page(page);
+>   	kfree(iop);
+>   }
+>
+
+Really appreciate for your input though the thing is a little beyond my
+original intention ;-), will try to send a new version after reading more
+fs code.
+
+Best Regards,
+Guoqing
+
