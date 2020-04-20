@@ -2,134 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E37E51B06D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 12:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 168CB1B071F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Apr 2020 13:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbgDTKqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 06:46:33 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:39578 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgDTKqc (ORCPT
+        id S1726167AbgDTLOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 07:14:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726123AbgDTLOa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 06:46:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1587379592; x=1618915592;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=WesWpgnwluaT1A3i8S/Vtx+Pq+BHytHqxQ45Pt2LfDE=;
-  b=pj50cOud6Xa3feU9E5QzBLuxgo0fDQmy/0t4WRayj6/BA3PTqzeCfFb/
-   mEcmdZGRop2GQR8x1Y79kmxYATmBUmPkX/xoO94j+sWDHkaj71NRO6ejw
-   SE/PR7QGmSweMwsQBELdiEzp7GNoz5Kitv4zSsjJENawKUJ0j8/1rAeLV
-   nLO8XxkdA5zAqJTtR/NJASOgS49aUy5md7Rv7zONGftsrnPCgU6jIe5Zh
-   XgJbpprjnKWKH0Cn2ERsb9efuf37A42aro/JJkDhQNdggQtmOQLhKFv2Z
-   qfO0ratpX/MCKkWJqmUI49J9L4PNfSyW5ZiAt+efsxhN6s4tvYAewDvAu
-   w==;
-IronPort-SDR: Z4OWQCng631NLMqKzqt9Uh249dIOzrpBzp2MzCVsYSWb1bBaxtjp3LqVXdAocZaps/rFGMFbv0
- NtJrg//N++fua4JdHJINtcVPA5omsvy5lQq3kfJ+e9mnFPnM5OiALVPJ+zZ+DoMwfeKFhPkB47
- 3D9ngnLzhcUeAuiw/xayGzMzgyeJEH+45tZ0xSviN8IedNZ77xl+gDAqADitVYNM/pPz6G40db
- 7e/yFd4wjvXD8kJ06FfKJA9L4LPYrR3KefBygzG7nIYozOEPt0xz8TUUfczboV/N6YBPaO9z99
- Wag=
-X-IronPort-AV: E=Sophos;i="5.72,406,1580745600"; 
-   d="scan'208";a="136010138"
-Received: from mail-co1nam11lp2169.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.169])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Apr 2020 18:46:22 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CXCcnv/UfCNYBHO+Rm9qHPhe2/TRGsHL2iAfVmMR+EdUuBUul3BI2hVK0fDm8A8yo4RnKdGnMzQAqDccva/w/0rrfbt/+jVp5fDE/NrQEUcjDoFh9zGvXjqRGdbJ/a16z+f04SRd4mZnNJj3HHFZLKjoH1iSITV4cjkjLQ6n7X2F+Vn8OXt2995fwn2stJ/9/Lqa1p5U+2PGuuSeeFP7vxpHGhBVJJ2oUD0hWlWTNsLtIJGtfpWRvdSqzr1q54s2F/CVz9QEekZJ1OpEw3t5FlLy9W/Me9oqa1fg4XFOmexXtVDMjw0yn9J/KlR91Jrb5mZZ/l74i/g+nG+VrTlarg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Dm4Okxwmld26ng7ZdQb0wwSZF6YUAaBIVSgOMQ5DI4=;
- b=fJ3eDtJTmmbAcyfoCHbjdRu2TSVmB/8GEBR9KrofjPZdmqtFfklnUDmKAJJx9PWXKd/1gZ3boFSXyy/49+CbGtNQfrv87uD1tr5EK2CgGpFWAsaSBTBNPN5p3JDUjA6nv2+oBrmkyvrfIFgv39c5rs4oN8m6xGBWN2qWKYRSuY7QhMEr3d0pN24mLcYLfJdOStDspO6yrij0NOGFd7VbawNSg8LuLK+8CRaEaB1vcIsUpI7fsFIwPag9D2kBjVNdX62noIJ873302UWShDyRtWvUc8/PVKyAUoYBL2yc6sknT5AgU+2hIHiZ5BXzR/isTjtmZe6LnU7063/gTbMvRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 20 Apr 2020 07:14:30 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A61FC0610D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:14:30 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id q8so7579748eja.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 04:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Dm4Okxwmld26ng7ZdQb0wwSZF6YUAaBIVSgOMQ5DI4=;
- b=kJwzyT3H979CnRncQcvrcvr760qqu5ir8Nmpny44Rr2TnBTWuQOFetS9z4KHSP6bz0or3Sq1YtcFTYbDDfWygYSTiSv57bb4o1TbX8aPHF+aCfZNlBjDK2ylI3B1APKOC8aeD2tCwIGfNlwgLkmmiLv45rwskXTqneYPAPi2mRI=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3630.namprd04.prod.outlook.com
- (2603:10b6:803:47::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.27; Mon, 20 Apr
- 2020 10:46:21 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2921.027; Mon, 20 Apr 2020
- 10:46:21 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-CC:     "hch@infradead.org" <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v7 01/11] scsi: free sgtables in case command setup fails
-Thread-Topic: [PATCH v7 01/11] scsi: free sgtables in case command setup fails
-Thread-Index: AQHWFLHyAOekOpGZiECrfGFghLCsTQ==
-Date:   Mon, 20 Apr 2020 10:46:21 +0000
-Message-ID: <SN4PR0401MB3598B2774CD52FAB68C726249BD40@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
- <20200417121536.5393-2-johannes.thumshirn@wdc.com>
- <de79e1ab-0407-205e-3272-532f0484b49f@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 48878d3c-0127-4124-900f-08d7e518108f
-x-ms-traffictypediagnostic: SN4PR0401MB3630:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB363005E876573EBCDADD8A429BD40@SN4PR0401MB3630.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 03793408BA
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(376002)(136003)(39860400002)(346002)(396003)(366004)(91956017)(8936002)(81156014)(8676002)(76116006)(66946007)(66476007)(9686003)(52536014)(26005)(6506007)(186003)(4326008)(33656002)(86362001)(53546011)(66446008)(64756008)(66556008)(55016002)(7416002)(2906002)(478600001)(4744005)(316002)(54906003)(110136005)(7696005)(71200400001)(5660300002);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZS9Q8G6ZF3SfP9VGNRcNchGl1FBMCNgUYsPUVA+nHhm/GzS8A4w5DFoJvXBXhw/S8t8hWQMOD7r+kvosnfDdo4q5cFuICSaMWg4REjVtP60OhcGG96nDpNv8yWM78UwevECVbnzQUlqRA9fDJNfBFDA0V7CxuAGD7owBkP432pFXy4UdV/T5Rl6FwbiSEbxI07A1xh4sGHblEcVVQJ5ZMd6GGOL+hmYelCXmj6N67S/xIyBLNebUE9Ie57g2R9bUnOM92lUb3QCqBruwVKKm4T07xuZX6ZrxfHT0s2yhE28t+pgPyZbUpFaLvXzJOBmEUw1e1TodYgttBATIN1E1MG5MzIAcqFF1sgfXKyeGwvRvxi6uReJvQZlRiE5xLhoO8hHicmCrqF6D1vWBzFmArUb2GnL2ZYxjV1l5Qz0jAux0/AH6O/tqBsv8KZ58kuGz
-x-ms-exchange-antispam-messagedata: Dd81dMhXzktCbWred1zjuDD8dRFN6RZMSt/QXvClH8N9VTI4mirS9QFY9lhjYzY/KIQC2tbOAlLJRzSAWEPVKj9uHUFngP1omV7lwo642L0En+VQPU8JemuZwZkYVCnvgf0SLVEUOnKmvwNqer+Mqg==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=okPBkG9vtS/wVdJh/KDIc+hdg6krV+bND5agW6vUaRM=;
+        b=IDveWlOS7Tzhrdb36+hZpTST6wjOAPrAj2jj5uib3vbWbabqwzW9IWuAtw8h4eTBNA
+         9a9lkdgEJOm6Eb3fwCtOVTxrVmphaH2PGWy9bhlS9QBo4VsFK/CUgj6vV9uyCovU0arA
+         5Kj1tMT4D5sNr37XYcPWFQo9UnIzxN1guBg1w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=okPBkG9vtS/wVdJh/KDIc+hdg6krV+bND5agW6vUaRM=;
+        b=D/ddkrXk4ugKOI3YbwyV+GQ41S78s6lFggdN9GldT20lAs9NyF8ce30S+v1wlcDjM3
+         SllirgUlCQf6ZTTZYMYD9y4zzG3DnzLGgcyobIdfgEWCHblph1dijFV/bybxqdbo4FQf
+         Ompx7YymhomWM2FOn5kJ00P2WEflqUc6t6Bni+YEs+LIftTY165KIChAKYMNgPFxhBGs
+         W+keQ/uOSxEaCU4r+2YDbmyCJduUcTRkhTMftwTlqKwqDSUDAl7oyCjastkEW2y/28ot
+         f1y7o4FrSI9SRzZMS+OATXzqjYlQbsDkjrhbNPjuMEOfGFHpFLpHX+W7YaFbcExXXabP
+         euMg==
+X-Gm-Message-State: AGi0Pua1O2cPXkHTvzzEHgTvpUhAPaEW8unysEPY4vQvXhGCjZKV5Ysy
+        j132fKwiQnS043hC8mg4UiWoE0cLELV37q+HJxRahg==
+X-Google-Smtp-Source: APiQypIVhtjPPYqBEymAM1SkD4SYcU1V6bmTKvyt+63wSYT0tOjvuXxym8edoJZS6GcpMs4Nq+7PF2DextVY/K9Ax1g=
+X-Received: by 2002:a17:906:841a:: with SMTP id n26mr16038100ejx.43.1587381268754;
+ Mon, 20 Apr 2020 04:14:28 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48878d3c-0127-4124-900f-08d7e518108f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2020 10:46:21.4088
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LHGFwGH+PWypcKFTtSKfiFiPuPKpFDyOMdVT/UWJ7Yfy/vY++n09jhOoOpg0SKms6Krp8ICPZ6T/ySvcESGQ62tFgu2pSCR4sTP/bWMugB4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3630
+References: <20200414150233.24495-1-willy@infradead.org> <20200414150233.24495-25-willy@infradead.org>
+In-Reply-To: <20200414150233.24495-25-willy@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 20 Apr 2020 13:14:17 +0200
+Message-ID: <CAJfpegsZF=TFQ67vABkE5ghiZoTZF+=_u8tM5U_P6jZeAmv23A@mail.gmail.com>
+Subject: Re: [PATCH v11 24/25] fuse: Convert from readpages to readahead
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18/04/2020 18:02, Bart Van Assche wrote:=0A=
-> How about adding __must_check to scsi_setup_fs_cmnd()?=0A=
-=0A=
-I'm actually not sure if __must_check helps us anything given that with =0A=
-this patch applied:=0A=
-=0A=
-johannes@redsun60:linux(zone-append-wip)$ git --no-pager grep -n \=0A=
-                                        scsi_setup_fs_cmnd drivers/scsi=0A=
-drivers/scsi/scsi_lib.c:1173:=0A=
-static blk_status_t scsi_setup_fs_cmnd(struct scsi_device *sdev,=0A=
-drivers/scsi/scsi_lib.c:1205:=0A=
-ret =3D scsi_setup_fs_cmnd(sdev, req);=0A=
-=0A=
-there's only one caller of scsi_setup_fs_cmnd(), in the same file, 32 =0A=
-lines below the implementation.=0A=
-=0A=
-I do agree about the Link or an eventual Cc: stable, but I think Martin =0A=
-or Jens can add this when applying the patch.=0A=
+On Tue, Apr 14, 2020 at 5:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> Implement the new readahead operation in fuse by using __readahead_batch()
+> to fill the array of pages in fuse_args_pages directly.  This lets us
+> inline fuse_readpages_fill() into fuse_readahead().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> ---
+>  fs/fuse/file.c | 99 ++++++++++++++------------------------------------
+>  1 file changed, 27 insertions(+), 72 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 9d67b830fb7a..db82fb29dd39 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -915,84 +915,39 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+>         fuse_readpages_end(fc, &ap->args, err);
+>  }
+>
+> -struct fuse_fill_data {
+> -       struct fuse_io_args *ia;
+> -       struct file *file;
+> -       struct inode *inode;
+> -       unsigned int nr_pages;
+> -       unsigned int max_pages;
+> -};
+> -
+> -static int fuse_readpages_fill(void *_data, struct page *page)
+> +static void fuse_readahead(struct readahead_control *rac)
+>  {
+> -       struct fuse_fill_data *data = _data;
+> -       struct fuse_io_args *ia = data->ia;
+> -       struct fuse_args_pages *ap = &ia->ap;
+> -       struct inode *inode = data->inode;
+> +       struct inode *inode = rac->mapping->host;
+>         struct fuse_conn *fc = get_fuse_conn(inode);
+> +       unsigned int i, max_pages, nr_pages = 0;
+>
+> -       fuse_wait_on_page_writeback(inode, page->index);
+> -
+> -       if (ap->num_pages &&
+> -           (ap->num_pages == fc->max_pages ||
+> -            (ap->num_pages + 1) * PAGE_SIZE > fc->max_read ||
+> -            ap->pages[ap->num_pages - 1]->index + 1 != page->index)) {
+> -               data->max_pages = min_t(unsigned int, data->nr_pages,
+> -                                       fc->max_pages);
+> -               fuse_send_readpages(ia, data->file);
+> -               data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
+> -               if (!ia) {
+> -                       unlock_page(page);
+> -                       return -ENOMEM;
+> -               }
+> -               ap = &ia->ap;
+> -       }
+> -
+> -       if (WARN_ON(ap->num_pages >= data->max_pages)) {
+> -               unlock_page(page);
+> -               fuse_io_free(ia);
+> -               return -EIO;
+> -       }
+> -
+> -       get_page(page);
+> -       ap->pages[ap->num_pages] = page;
+> -       ap->descs[ap->num_pages].length = PAGE_SIZE;
+> -       ap->num_pages++;
+> -       data->nr_pages--;
+> -       return 0;
+> -}
+> -
+> -static int fuse_readpages(struct file *file, struct address_space *mapping,
+> -                         struct list_head *pages, unsigned nr_pages)
+> -{
+> -       struct inode *inode = mapping->host;
+> -       struct fuse_conn *fc = get_fuse_conn(inode);
+> -       struct fuse_fill_data data;
+> -       int err;
+> -
+> -       err = -EIO;
+>         if (is_bad_inode(inode))
+> -               goto out;
+> +               return;
+>
+> -       data.file = file;
+> -       data.inode = inode;
+> -       data.nr_pages = nr_pages;
+> -       data.max_pages = min_t(unsigned int, nr_pages, fc->max_pages);
+> -;
+> -       data.ia = fuse_io_alloc(NULL, data.max_pages);
+> -       err = -ENOMEM;
+> -       if (!data.ia)
+> -               goto out;
+> +       max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
+>
+> -       err = read_cache_pages(mapping, pages, fuse_readpages_fill, &data);
+> -       if (!err) {
+> -               if (data.ia->ap.num_pages)
+> -                       fuse_send_readpages(data.ia, file);
+> -               else
+> -                       fuse_io_free(data.ia);
+> +       for (;;) {
+> +               struct fuse_io_args *ia;
+> +               struct fuse_args_pages *ap;
+> +
+> +               nr_pages = readahead_count(rac) - nr_pages;
+
+Hmm.  I see what's going on here, but it's confusing.   Why is
+__readahead_batch() decrementing the readahead count at the start,
+rather than at the end?
+
+At the very least it needs a comment about why nr_pages is calculated this way.
+
+> +               if (nr_pages > max_pages)
+> +                       nr_pages = max_pages;
+> +               if (nr_pages == 0)
+> +                       break;
+> +               ia = fuse_io_alloc(NULL, nr_pages);
+> +               if (!ia)
+> +                       return;
+> +               ap = &ia->ap;
+> +               nr_pages = __readahead_batch(rac, ap->pages, nr_pages);
+> +               for (i = 0; i < nr_pages; i++) {
+> +                       fuse_wait_on_page_writeback(inode,
+> +                                                   readahead_index(rac) + i);
+
+What's wrong with ap->pages[i]->index?  Are we trying to wean off using ->index?
+
+Thanks,
+Miklos
