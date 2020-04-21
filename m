@@ -2,39 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D14841B2D6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DAEB1B2D63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbgDUQ4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 12:56:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        id S1729442AbgDUQzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 12:55:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729040AbgDUQyq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 12:54:46 -0400
+        id S1729092AbgDUQyr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 12:54:47 -0400
 Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FFFA2076C;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E3E82084D;
         Tue, 21 Apr 2020 16:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1587488084;
-        bh=li9M5Mt1eWOEw3qJYSXZWdFD0JuizqN8a+ReSeFY7Ew=;
+        bh=2aRdoHfJoUwCH8fSp3Qny7RnOOZMeRrEZLn7MbAbT+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sLx3NN1ULklZfupIlZtXm/xGMzj8EqmK9OxVXVNEV8k8T1xQGyomo5ux+Rqhe5vyv
-         FWiipv6g/lseb76qiDs/fbIDzv90yhjswiDFbQmevPGfucT4MBXVhO8TC01LbBLSfC
-         7nrssqASQrtkqmmXlZ3x3G1km7RUgAYNuXMjM0b8=
+        b=I2y9p9M5NSJ4LVQYJXlZO6kCfxe64fUeT+zF42CSY4XXqpd91QTw9dtRgOtlF1FPe
+         2z/nn0RahQnmyZOciXiglLZDakP4MFsneObJBEYVeHsGBRfznEV6uTJs9kukIZBwZC
+         FZBz/Ixh+oelFLQgEKwgJiNaxWy5VDl2ygDE7xFg=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jQwAU-00CmEH-Ek; Tue, 21 Apr 2020 18:54:42 +0200
+        id 1jQwAU-00CmEg-Jt; Tue, 21 Apr 2020 18:54:42 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 12/29] docs: filesystems: convert dnotify.txt to ReST
-Date:   Tue, 21 Apr 2020 18:54:23 +0200
-Message-Id: <63bf7009a782fccc0faf45f786550cb1d171a100.1587487612.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 17/29] docs: filesystems: convert mandatory-locking.txt to ReST
+Date:   Tue, 21 Apr 2020 18:54:28 +0200
+Message-Id: <e3094aef0253df8d0599735894ad5bfa08eff25e.1587487612.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <cover.1587487612.git.mchehab+huawei@kernel.org>
 References: <cover.1587487612.git.mchehab+huawei@kernel.org>
@@ -46,88 +48,106 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 - Add a SPDX header;
-- Add a document title;
+- Adjust document title;
 - Some whitespace fixes and new line breaks;
-- Add table markups;
-- Add it to filesystems/index.rst
+- Use notes markups;
+- Add it to filesystems/index.rst.
 
-Acked-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../filesystems/{dnotify.txt => dnotify.rst}          | 11 ++++++++---
- Documentation/filesystems/index.rst                   |  1 +
- MAINTAINERS                                           |  2 +-
- 3 files changed, 10 insertions(+), 4 deletions(-)
- rename Documentation/filesystems/{dnotify.txt => dnotify.rst} (90%)
+ Documentation/filesystems/index.rst           |  1 +
+ Documentation/filesystems/locks.rst           |  2 +-
+ ...tory-locking.txt => mandatory-locking.rst} | 25 ++++++++++++-------
+ fs/locks.c                                    |  2 +-
+ 4 files changed, 19 insertions(+), 11 deletions(-)
+ rename Documentation/filesystems/{mandatory-locking.txt => mandatory-locking.rst} (91%)
 
-diff --git a/Documentation/filesystems/dnotify.txt b/Documentation/filesystems/dnotify.rst
-similarity index 90%
-rename from Documentation/filesystems/dnotify.txt
-rename to Documentation/filesystems/dnotify.rst
-index 08d575ece45d..a28a1f9ef79c 100644
---- a/Documentation/filesystems/dnotify.txt
-+++ b/Documentation/filesystems/dnotify.rst
-@@ -1,5 +1,8 @@
--		Linux Directory Notification
--		============================
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================
-+Linux Directory Notification
-+============================
- 
- 	   Stephen Rothwell <sfr@canb.auug.org.au>
- 
-@@ -12,6 +15,7 @@ being delivered using signals.
- The application decides which "events" it wants to be notified about.
- The currently defined events are:
- 
-+	=========	=====================================================
- 	DN_ACCESS	A file in the directory was accessed (read)
- 	DN_MODIFY	A file in the directory was modified (write,truncate)
- 	DN_CREATE	A file was created in the directory
-@@ -19,6 +23,7 @@ The currently defined events are:
- 	DN_RENAME	A file in the directory was renamed
- 	DN_ATTRIB	A file in the directory had its attributes
- 			changed (chmod,chown)
-+	=========	=====================================================
- 
- Usually, the application must reregister after each notification, but
- if DN_MULTISHOT is or'ed with the event mask, then the registration will
-@@ -36,7 +41,7 @@ especially important if DN_MULTISHOT is specified.  Note that SIGRTMIN
- is often blocked, so it is better to use (at least) SIGRTMIN + 1.
- 
- Implementation expectations (features and bugs :-))
-----------------------------
-+---------------------------------------------------
- 
- The notification should work for any local access to files even if the
- actual file system is on a remote server.  This implies that remote
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 14179987bd4b..be47953cce00 100644
+index 96190e268c11..02d52b536baf 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -25,6 +25,7 @@ algorithms work.
-    locking
-    directory-locking
-    devpts
-+   dnotify
+@@ -29,6 +29,7 @@ algorithms work.
+    fiemap
+    files
+    locks
++   mandatory-locking
  
     automount-support
  
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d7b40cce090b..4c8fc51d3955 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5006,7 +5006,7 @@ M:	Jan Kara <jack@suse.cz>
- R:	Amir Goldstein <amir73il@gmail.com>
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
--F:	Documentation/filesystems/dnotify.txt
-+F:	Documentation/filesystems/dnotify.rst
- F:	fs/notify/dnotify/
- F:	include/linux/dnotify.h
+diff --git a/Documentation/filesystems/locks.rst b/Documentation/filesystems/locks.rst
+index 10f67fb9ce07..c5ae858b1aac 100644
+--- a/Documentation/filesystems/locks.rst
++++ b/Documentation/filesystems/locks.rst
+@@ -58,7 +58,7 @@ fcntl(), with all the problems that implies.
+ ---------------------------------------
  
+ Mandatory locking, as described in
+-'Documentation/filesystems/mandatory-locking.txt' was prior to this release a
++'Documentation/filesystems/mandatory-locking.rst' was prior to this release a
+ general configuration option that was valid for all mounted filesystems.  This
+ had a number of inherent dangers, not the least of which was the ability to
+ freeze an NFS server by asking it to read a file for which a mandatory lock
+diff --git a/Documentation/filesystems/mandatory-locking.txt b/Documentation/filesystems/mandatory-locking.rst
+similarity index 91%
+rename from Documentation/filesystems/mandatory-locking.txt
+rename to Documentation/filesystems/mandatory-locking.rst
+index a251ca33164a..9ce73544a8f0 100644
+--- a/Documentation/filesystems/mandatory-locking.txt
++++ b/Documentation/filesystems/mandatory-locking.rst
+@@ -1,8 +1,13 @@
+-	Mandatory File Locking For The Linux Operating System
++.. SPDX-License-Identifier: GPL-2.0
++
++=====================================================
++Mandatory File Locking For The Linux Operating System
++=====================================================
+ 
+ 		Andy Walker <andy@lysaker.kvaerner.no>
+ 
+ 			   15 April 1996
++
+ 		     (Updated September 2007)
+ 
+ 0. Why you should avoid mandatory locking
+@@ -53,15 +58,17 @@ possible on existing user code. The scheme is based on marking individual files
+ as candidates for mandatory locking, and using the existing fcntl()/lockf()
+ interface for applying locks just as if they were normal, advisory locks.
+ 
+-Note 1: In saying "file" in the paragraphs above I am actually not telling
+-the whole truth. System V locking is based on fcntl(). The granularity of
+-fcntl() is such that it allows the locking of byte ranges in files, in addition
+-to entire files, so the mandatory locking rules also have byte level
+-granularity.
++.. Note::
+ 
+-Note 2: POSIX.1 does not specify any scheme for mandatory locking, despite
+-borrowing the fcntl() locking scheme from System V. The mandatory locking
+-scheme is defined by the System V Interface Definition (SVID) Version 3.
++   1. In saying "file" in the paragraphs above I am actually not telling
++      the whole truth. System V locking is based on fcntl(). The granularity of
++      fcntl() is such that it allows the locking of byte ranges in files, in
++      addition to entire files, so the mandatory locking rules also have byte
++      level granularity.
++
++   2. POSIX.1 does not specify any scheme for mandatory locking, despite
++      borrowing the fcntl() locking scheme from System V. The mandatory locking
++      scheme is defined by the System V Interface Definition (SVID) Version 3.
+ 
+ 2. Marking a file for mandatory locking
+ ---------------------------------------
+diff --git a/fs/locks.c b/fs/locks.c
+index b8a31c1c4fff..1d4f4d5da704 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -61,7 +61,7 @@
+  *
+  *  Initial implementation of mandatory locks. SunOS turned out to be
+  *  a rotten model, so I implemented the "obvious" semantics.
+- *  See 'Documentation/filesystems/mandatory-locking.txt' for details.
++ *  See 'Documentation/filesystems/mandatory-locking.rst' for details.
+  *  Andy Walker (andy@lysaker.kvaerner.no), April 06, 1996.
+  *
+  *  Don't allow mandatory locks on mmap()'ed files. Added simple functions to
 -- 
 2.25.2
 
