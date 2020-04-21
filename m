@@ -2,228 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A351B1F62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 09:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F621B1FD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 09:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbgDUHAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 03:00:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbgDUHAv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 03:00:51 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59138206A5;
-        Tue, 21 Apr 2020 07:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587452450;
-        bh=zj9d9cwdHZ5qHikaJDBubllxAlkLIGcOH7Hj3crnKcA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TMK6nl0EyaFuaRtNuMsz/e5jUwPHi2u02DWp2g2sLTfVNXzMWYILZOM6BCKprGkE9
-         8q8w0L+SDJwuCI+QnBVkBTOjUnHqyH9jqEdAfZdiUJsRrHOgGPo0tmntLaBRl8HKJF
-         I1zhcg99WhKMQsTb606k/nO+lmvevgM/peUuU1BI=
-Date:   Tue, 21 Apr 2020 09:00:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 03/10] blktrace: fix debugfs use after free
-Message-ID: <20200421070048.GD347130@kroah.com>
-References: <20200419194529.4872-1-mcgrof@kernel.org>
- <20200419194529.4872-4-mcgrof@kernel.org>
- <20200420201615.GC302402@kroah.com>
- <20200420204156.GO11244@42.do-not-panic.com>
+        id S1727941AbgDUHbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 03:31:02 -0400
+Received: from sonic309-49.consmr.mail.ne1.yahoo.com ([66.163.184.175]:41879
+        "EHLO sonic309-49.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727854AbgDUHbC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 03:31:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1587454261; bh=8SaBe657SUqzMIHOQXCqE8E7juFfQ/VceplMPZo+D8w=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=KpaZLk24UVqPwIBYC2dgf14lue+EQnfVzZFTJmxMC6TsT7WKiMhtq08Fetju5nTIV7GNbh+7nSybfvPnBgN8i47khQXY2HmIZwMOVXi4SCV3ErhFWLgDWLc2qBmEGV/6gKpYAGFLOSpKngk5Fx2V55XG7FOC/CX3KhYAWpkwIEl+fBOolBaLqdW199swuNwiic9emeccaeytk3kqWy82b4F21pRQo4rUC1hG14VNbemWbF7qNmIuidaA/IETfF1jZ+UTturFaZOLzhTfNo+5e2YDhl/8PsxH+52Lu72oiczyuSUxS+PZ3ZjnFSgA0E0917mBCFV3SeEDzDu6/f1cVQ==
+X-YMail-OSG: ZLEfS2sVM1lk0I6iQYW5PaC27I6c61k7i1jV62cC4k.LmLL85pmV5Bd1SzzocJs
+ sRfj94Pu4n3wFv1H_bhWjKvopCKSTupX0RCYaDhBaUw4l2N0pSafWoYv1p7Gw8PadYcrpqeTJkmo
+ x.vFg3ICrxKeHJe5A2VjBgVUEF_eugMhyT2Kzqr946MYTvBF0X25MXIHn.W6.2gGmuFxfVNfaJbk
+ wf1cvUYnRTlz9VbmQ8jqsBWcWWybpFhhWarQb6ys_3OK4WNIHvOc4acXtDGYtFUo9mGbPDdixfii
+ .HyxC5mNMUnl7mF5dDGXJk.NzpSa9FZzkes7m9A7H764xLIzf5hXzgHq73Dw8qQTc6ZysClNsbE7
+ Cqg9zJzR_MaVhtU0.wAbKgwJzQHR1iJ55jaOcg0byMOZ0uoQBJAH6TuYXoONFmR8od58M32mpPWr
+ kURn0vEpDgo6ziJSLwNCffWjfg29YmK5biUHIxwVkaZMtJMwypJqiKONdSszFXqeKZfkZ43yMVzk
+ NPsOGpF.B8McUrusJ8bU8V5_Pw64P2MzyRG_xOqHU4PEVJ8QcHSUKutvC17bM3hlbXN2URZlENMd
+ d8Vf1DHE0kXtkkPZ4VOiSoIDBZgLuWkasmiahU4upu6la7rTzo9lzmbxZtBgCASkn1ZknrsBuanq
+ s4gwFJJjx5JRJ0M1OfPm.ljypeTz2C8k.2sDFGlFcZsVpIqoi40CLTwWZeDTLPR4EziHpb3AWhiQ
+ Wny4DBpwdRD7gPOjsiGO6w9OZAtrGiJd3daH7ELv6V9EsinNln6wYjpf.P03ZtSSeGVjLpj3gwC5
+ 4ZQ6xDPuavzeSH5cPOYSWdDTfO.IUhjmAJhRjKlmSu6B5Wa6rtLrtlScqypRMQAKGuAV8YduU5KI
+ 8eYtkpmUVzCmZgEhtfKGxS2GYC7jxikiAGdV2ElykH1jwQOXG9_6MJeHgM_S7wG.sIVzW5BvY46S
+ U3gM0PK5AVuKU8r8W4jpC5_MOIUbRM1UFWE9AR4pGtumwfhniOhER3TyiCVZI2xKHrkD432P83Gd
+ mZN3fPspYLogkNTC4Pp5BnehwQnuS7.Q1LEDG7K4yXIHWEWw5JIZ46YoZm5pXFYVnPVa0w84MN_.
+ 8ErDK4fqws8tDW_ASdgJBiWOupx35rpfu.rPF2224lydresvTjLnTIf8lFnhXN7BgaLoaBZcuELo
+ 7d7.6T.VinNDGuXqbdmE_ducuAYaeJ7cmmW3_ZpH5nIJXxXTPL1SLIUhl1cz6mcX_baEL4kuRe7G
+ QBHv3bahyaZqtCrIWnR0n7wmtRNy2FEYSnHq3oUlt19LRQgWfoZcQe_GuDMFKfNB5Pxuoy3b4KVt
+ CFMHhQXta0y6ZgvoOw5i9EEPCWKsh5_gwAwF5XcK3wkcG3LGE6p37DRvSe3ZA6rk.EbJd2mEQghM
+ kIyy4lSay2M49R9IvFN5a5UPkXOLi14eHbk.8BNbLJhtErNaT725b8ay_JaMv_czB0ue.SfOtgpY
+ XWyRQdpzwRYjzGhxb6.MNFQCTSQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Apr 2020 07:31:01 +0000
+Received: by smtp407.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 98aed6c61d98e300b5dca39559149029;
+          Tue, 21 Apr 2020 07:28:59 +0000 (UTC)
+Date:   Tue, 21 Apr 2020 15:28:51 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v11 19/25] erofs: Convert compressed files from readpages
+ to readahead
+Message-ID: <20200421072839.GA13867@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20200414150233.24495-1-willy@infradead.org>
+ <20200414150233.24495-20-willy@infradead.org>
+ <20200420224210.dff005bc62957a4d81d58226@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200420204156.GO11244@42.do-not-panic.com>
+In-Reply-To: <20200420224210.dff005bc62957a4d81d58226@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: WebService/1.1.15739 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 08:41:56PM +0000, Luis Chamberlain wrote:
-> On Mon, Apr 20, 2020 at 10:16:15PM +0200, Greg KH wrote:
-> > On Sun, Apr 19, 2020 at 07:45:22PM +0000, Luis Chamberlain wrote:
+Hi Andrew,
+
+On Mon, Apr 20, 2020 at 10:42:10PM -0700, Andrew Morton wrote:
+> On Tue, 14 Apr 2020 08:02:27 -0700 Matthew Wilcox <willy@infradead.org> wrote:
+> 
 > > 
-> > This patch triggered gmail's spam detection, your changelog text is
-> > whack...
-> 
-> Oh? What do you think triggered it?
-
-No idea.
-
-> 
-> > > diff --git a/block/blk-debugfs.c b/block/blk-debugfs.c
-> > > index 19091e1effc0..d84038bce0a5 100644
-> > > --- a/block/blk-debugfs.c
-> > > +++ b/block/blk-debugfs.c
-> > > @@ -3,6 +3,9 @@
-> > >  /*
-> > >   * Shared request-based / make_request-based functionality
-> > >   */
-> > > +
-> > > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > > +
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/blkdev.h>
-> > >  #include <linux/debugfs.h>
-> > > @@ -13,3 +16,30 @@ void blk_debugfs_register(void)
-> > >  {
-> > >  	blk_debugfs_root = debugfs_create_dir("block", NULL);
-> > >  }
-> > > +
-> > > +int __must_check blk_queue_debugfs_register(struct request_queue *q)
-> > > +{
-> > > +	struct dentry *dir = NULL;
-> > > +
-> > > +	/* This can happen if we have a bug in the lower layers */
-> > > +	dir = debugfs_lookup(kobject_name(q->kobj.parent), blk_debugfs_root);
-> > > +	if (dir) {
-> > > +		pr_warn("%s: registering request_queue debugfs directory twice is not allowed\n",
-> > > +			kobject_name(q->kobj.parent));
-> > > +		dput(dir);
-> > > +		return -EALREADY;
-> > > +	}
-> > > +
-> > > +	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
-> > > +					    blk_debugfs_root);
-> > > +	if (!q->debugfs_dir)
-> > > +		return -ENOMEM;
+> > Use the new readahead operation in erofs.
 > > 
-> > Why doesn't the directory just live in the request queue, or somewhere
-> > else, so that you save it when it is created and then that's it.  No
-> > need to "look it up" anywhere else.
 > 
-> Its already there. And yes, after my changes it is technically possible
-> to just re-use it directly. But this is complicated by a few things. One
-> is that at this point in time, asynchronous request_queue removal is
-> still possible, and so a race was exposed where a requeust_queue may be
-> lingering but its old device is gone. That race is fixed by reverting us
-> back to synchronous request_queue removal, therefore ensuring that the
-> debugfs dir exists so long as the device does.
+> Well this is exciting.
 > 
-> I can remove the debugfs_lookup() *after* we revert to synchronous
-> request_queue removal, or we just re-order the patches so that the
-> revert happens first. That should simplify this patch.
+> fs/erofs/data.c: In function erofs_raw_access_readahead:
+> fs/erofs/data.c:149:18: warning: last_block may be used uninitialized in this function [-Wmaybe-uninitialized]
+> 	*last_block + 1 != current_block) {
 > 
-> The code in this patch was designed to help dispute the logic behind
-> the CVE, in particular it shows exactly where debugfs_dir *is* the
-> one found by debugfs_lookup(), and shows the real issue behind the
-> removal.
+> It seems to be a preexisting bug, which your patch prompted gcc-7.2.0
+> to notice.
 > 
-> But yeah, now that that is done, I hope its clear to all, and I think
-> this patch can be simplified if we just revert the async requeust_queue
-> removal first.
+> erofs_read_raw_page() goes in and uses *last_block, but neither of its
+> callers has initialized it.  Could the erofs maintainers please take a
+> look?
 
-Don't try to "dispute" crazyness, that's not what kernel code is for.
-Just do the right thing, and simply saving off the pointer to the
-debugfs file when created is the "correct" thing to do, no matter what.
-No race conditions or anything else can happen when you do that.
+simply because last_block doesn't need to be initialized at first,
+because bio == NULL in the begining anyway. I believe this is a gcc
+false warning because some gcc versions raised some before (many gccs
+don't, including my current gcc (Debian 8.3.0-6) 8.3.0).
 
-> > Or do you do that in later patches?  I only see this one at the moment,
-> > sorry...
-> > 
-> > >  static struct dentry *blk_trace_debugfs_dir(struct blk_user_trace_setup *buts,
-> > > +					    struct request_queue *q,
-> > >  					    struct blk_trace *bt)
-> > >  {
-> > >  	struct dentry *dir = NULL;
-> > >  
-> > > +	/* This can only happen if we have a bug on our lower layers */
-> > > +	if (!q->kobj.parent) {
-> > > +		pr_warn("%s: request_queue parent is gone\n", buts->name);
-> > 
-> > A kobject always has a parent, unless it has not been registered yet, so
-> > I don't know what you are testing could ever happen.
-> 
-> Or it has been kobject_del()'d?
+in detail,
 
-If that happened, how in the world are you in this function anyway, as
-the request_queue is an invalid pointer at that point in time???
+146         /* note that for readpage case, bio also equals to NULL */
+147         if (bio &&
+148             /* not continuous */
+149             *last_block + 1 != current_block) {
+150 submit_bio_retry:
+151                 submit_bio(bio);
+152                 bio = NULL;
+153         }
 
-> A deferred requeust_queue removal shows this is possible, the parent is
-> taken underneath from us because the refcounting of this kobject is
-> already kobject_del()'d, and its actual removal scheduled for later.
-> The parent is taken underneath from us prior to the scheduled removal
-> completing.
+bio will be NULL and will bypass the next condition at first.
+after that,
 
-No, a parent's reference is always valid while the child pointer is
-alive.
+155         if (!bio) {
 
-There is an odd race condition right now that we are working on fixing
-if you notice another lkml thread, but that race will soon be fixed.  So
-no need for every single user in the kernel to try to test for something
-like this (hint, this check is still wrong as with this logic, what
-could prevent parent from going away right _after_ you check it???)
+...
 
-Just remove this invalid check please.
+221                 bio = bio_alloc(GFP_NOIO, nblocks);
 
-> > > +		return NULL;
-> > > +	}
-> > > +
-> > > +	/*
-> > > +	 * From a sysfs kobject perspective, the request_queue sits on top of
-> > > +	 * the gendisk, which has the name of the disk. We always create a
-> > > +	 * debugfs directory upon init for this gendisk kobject, so we re-use
-> > > +	 * that if blktrace is going to be done for it.
-> > > +	 */
-> > > +	if (blk_trace_target_disk(buts->name, kobject_name(q->kobj.parent))) {
-> > > +		if (!q->debugfs_dir) {
-> > > +			pr_warn("%s: expected request_queue debugfs_dir is not set\n",
-> > > +				buts->name);
-> > 
-> > What is userspace supposed to be able to do if they see this warning?
-> 
-> Userspace doesn't parse warnings, but the NULL ensures it won't crash
-> the kernel. The warn informs the kernel of a possible block layer bug.
+...
 
-Again, the code should not care if the pointer is NULL, as only debugfs
-deals with those pointers (and it can handle a NULL pointer just fine.)
+}
 
-> > > +			return NULL;
-> > > +		}
-> > > +		/*
-> > > +		 * debugfs_lookup() is used to ensure the directory is not
-> > > +		 * taken from underneath us. We must dput() it later once
-> > > +		 * done with it within blktrace.
-> > > +		 */
-> > > +		dir = debugfs_lookup(buts->name, blk_debugfs_root);
-> > > +		if (!dir) {
-> > > +			pr_warn("%s: expected request_queue debugfs_dir dentry is gone\n",
-> > > +				buts->name);
-> > 
-> > Again, can't we just save the pointer when we create it and not have to
-> > look it up again?
-> 
-> Only if we do the revert of the requeust_queue removal first.
+...
 
-Your end goal should be no more debugfs_lookup() calls.  Hopefully by
-the end of this patch series, that is the result.
+230         err = bio_add_page(bio, page, PAGE_SIZE, 0);
+231         /* out of the extent or bio is full */
+232         if (err < PAGE_SIZE)
+233                 goto submit_bio_retry;
+234
+235         *last_block = current_block;
 
-> > > +			return NULL;
-> > > +		}
-> > > +		 /*
-> > > +		 * This is a reaffirmation that debugfs_lookup() shall always
-> > > +		 * return the same dentry if it was already set.
-> > > +		 */
-> > 
-> > I'm all for reaffirmation and the like, but really, is this needed???
-> 
-> To those who were still not sure that the issue was not a debugfs issue
-> I hoped this to make it clear. But indeed, if we revert back to
-> synchronous request_queue removal, that should simplify this.
+so bio != NULL, and last_block will be assigned then as well.
 
-Again, don't pander to crazies :)
+Thanks,
+Gao Xiang
 
-thanks,
 
-greg k-h
