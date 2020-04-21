@@ -2,248 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA011B1A4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 01:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A2C91B1A9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 02:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbgDTXv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 19:51:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725550AbgDTXv5 (ORCPT
+        id S1726067AbgDUAT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 20:19:29 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35569 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725550AbgDUAT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 19:51:57 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00D4C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 16:51:57 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id g2so4570077plo.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Apr 2020 16:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=kPK7FroCaPWeTbgHL3ANvERWsJ3ML8gxxkK6YSEQlD4=;
-        b=IZFCGXzFDWUSuXh6CehF1rwZ+PMBagcwTYXw0B4lm/tqcif035HOxIky9bhx04uX75
-         jKoLBR4HxVz1w67DjhC4OZ5cea3x4NvY/JBmJfD1gxCxm+Y8eiLgzIKSitXco8D3Asu4
-         ue1LBMHxbHY55IHmh4ehhD0ih+66E84RETlerJsLVxmV8GGGaIl8Z3+CP37lKy5ob5L1
-         rBypXp7MGllHsPklmOYpVhNRwl0wKegJVq9sftI4l16+/CCOkdY7uEpQT8kGYnEueJOV
-         x8Zrh8vjzCbGCMdAQ/hhCQxAqzjhm3iAzMHqReBEgkVQmTZ+DzwpoLBpJR73cGR6uioA
-         OrdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=kPK7FroCaPWeTbgHL3ANvERWsJ3ML8gxxkK6YSEQlD4=;
-        b=Xeof9mADLQmsyKY5Rd3Nw9E14WsbA3x247YOae2lBZwlvois1cc9OSBw/0pnBOZ0bS
-         vvJ0yZH1895Ya1SDgqPM2anme3TIkQhOzf3fflfrIECb8LLvPH/tVfn9JDYM54YQAtU6
-         ckqyey/D9CX5EYuNSsOQ7OsFARI5dlWaDgXiR/2idT2EpO3c7DGJxO1J06PaWx17qORA
-         K+PFYFVitAqUK7LgnK69MKvwPFuRubQnDK/1n9OlD5ElWGjyJ1CveE9lkxtsOHxwWG+S
-         qdIvb8Mt/qY4swzAMRPzgFUIwzXI8+0JlSdxbjEvPWPrNuiV6gBUXiT7RAhmzYni49Nz
-         qiIQ==
-X-Gm-Message-State: AGi0PuZGlK33J/R/qthLJXl+qGsjRzoJ/s5V2LS9h4icQo1cFTUe62Je
-        yum50/DehIXeUbT0MVmUYeGyFQ==
-X-Google-Smtp-Source: APiQypIQgZLRzCqT3IWv6EoKM+KrOr3Kiyb/dBQMsaKQcrw2hHLp64SwIeng70//CydmyJ+1g9lNlA==
-X-Received: by 2002:a17:90a:c786:: with SMTP id gn6mr2161323pjb.147.1587426717303;
-        Mon, 20 Apr 2020 16:51:57 -0700 (PDT)
-Received: from [192.168.10.160] (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id 13sm620570pfv.95.2020.04.20.16.51.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Apr 2020 16:51:56 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <FA73C1DA-B07F-43D5-A9A8-FBC0BAE400CA@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_64F94122-2784-458A-A3F2-F89454A55F98";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] fcntl: Add 32bit filesystem mode
-Date:   Mon, 20 Apr 2020 17:51:52 -0600
-In-Reply-To: <CAFEAcA-No3Z95+UQJZWTxDesd-z_Y5XnyHs6NMpzDo3RVOHQ4w@mail.gmail.com>
-Cc:     Florian Weimer <fw@deneb.enyo.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Andy Lutomirski <luto@kernel.org>
-To:     Peter Maydell <peter.maydell@linaro.org>
-References: <20200331133536.3328-1-linus.walleij@linaro.org>
- <CAFEAcA9Gep1HN+7WJHencp9g2uUBLhagxdgjHf-16AOdP5oOjg@mail.gmail.com>
- <87v9luwgc6.fsf@mid.deneb.enyo.de>
- <CAFEAcA-No3Z95+UQJZWTxDesd-z_Y5XnyHs6NMpzDo3RVOHQ4w@mail.gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        Mon, 20 Apr 2020 20:19:29 -0400
+Received: from dread.disaster.area (pa49-180-0-232.pa.nsw.optusnet.com.au [49.180.0.232])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2C5783A43C6;
+        Tue, 21 Apr 2020 10:19:24 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jQgdH-00074C-Bj; Tue, 21 Apr 2020 10:19:23 +1000
+Date:   Tue, 21 Apr 2020 10:19:23 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V8 10/11] fs/xfs: Change
+ xfs_ioctl_setattr_dax_invalidate()
+Message-ID: <20200421001923.GS9800@dread.disaster.area>
+References: <20200415064523.2244712-1-ira.weiny@intel.com>
+ <20200415064523.2244712-11-ira.weiny@intel.com>
+ <20200420023131.GC9800@dread.disaster.area>
+ <20200420183617.GB2838440@iweiny-DESK2.sc.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200420183617.GB2838440@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=XYjVcjsg+1UI/cdbgX7I7g==:117 a=XYjVcjsg+1UI/cdbgX7I7g==:17
+        a=kj9zAlcOel0A:10 a=cl8xLZFz6L8A:10 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
+        a=7-415B0cAAAA:8 a=v_MXh98pven9RYxNG_0A:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Apr 20, 2020 at 11:36:17AM -0700, Ira Weiny wrote:
+> On Mon, Apr 20, 2020 at 12:31:31PM +1000, Dave Chinner wrote:
+> > On Tue, Apr 14, 2020 at 11:45:22PM -0700, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > > -out_unlock:
+> > > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
+> > > -	return error;
+> > > +	if (mp->m_flags & XFS_MOUNT_DAX_ALWAYS ||
+> > > +	    mp->m_flags & XFS_MOUNT_DAX_NEVER)
+> > > +		return;
+> > 
+> > 	if (mp->m_flags & (XFS_MOUNT_DAX_ALWAYS | XFS_MOUNT_DAX_NEVER))
+> > 		return;
+> > > +	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
+> > > +	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > +	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
+> > > +		flag_inode_dontcache(inode);
+> > 
+> > This doesn't set the XFS inode's "don't cache" flag, despite it
+> > having one that serves exactly the same purpose.  IOWs, if the XFS_IDONTCACHE
+> > flag is now redundant, please replace it's current usage with this new flag
+> > and get rid of the XFS inode flag. i.e.  the only place we set XFS_IDONTCACHE
+> > can be replaced with a call to this mark_inode_dontcache() call...
+> 
+> I agree, and I would have removed XFS_IDONTCACHE, except I was not convinced
+> that XFS_IDONTCACHE was redundant.
+> 
+> Currently XFS_IDONTCACHE can be cleared if the inode is found in the cache and
+> I was unable to convince myself that it would be ok to remove it.  I mentioned
+> this to Darrick in V7.
+> 
+> https://lore.kernel.org/lkml/20200413194432.GD1649878@iweiny-DESK2.sc.intel.com/
+> 
+> What am I missing with this code?
+> 
+> xfs_iget_cache_hit():
+> ...
+>         if (!(flags & XFS_IGET_INCORE))
+> 		xfs_iflags_clear(ip, XFS_ISTALE | XFS_IDONTCACHE);
+> ...
+> 
+> Why is XFS_IDONTCACHE not 'sticky'?
+> And why does xfs_iget_cache_hit() clear it
 
---Apple-Mail=_64F94122-2784-458A-A3F2-F89454A55F98
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Because it was designed to do exactly what bulkstat required, and
+nothing else.  xfs_iget() is an internal filesystem interface, not a
+VFS level interface. Hence we can make up whatever semantics we
+want. And if we get a cache hit, we have multiple references to the
+inode so we probably should cache it regardless of whether the
+original lookup said "I'm a one-shot wonder, so don't cache me".
 
+IOWs, it's a classic "don't cache unless a second reference comes
+along during the current life cycle" algorithm.
 
-> =46rom 73471e01733dd1d998ff3cd41edebb4c78793193 Mon Sep 17 00:00:00 =
-2001
-> From: Peter Maydell <peter.maydell@linaro.org>
-> Date: Mon, 20 Apr 2020 11:54:22 +0100
-> Subject: [RFC] linux-user: Use new F_SET_FILE_32BIT_FS fcntl for =
-32-bit guests
->=20
-> If the guest is 32 bit then there is a potential problem if the
-> host gives us back a 64-bit sized value that we can't fit into
-> the ABI the guest requires. This is a theoretical issue for many
-> syscalls, but a real issue for directory reads where the host
-> is using ext3 or ext4. There the 'offset' values retured via
-> the getdents syscall are hashes, and on a 64-bit system they
-> will always fill the full 64 bits.
->=20
-> Use the F_SET_FILE_32BIT_FS fcntl to tell the kernel to stick
-> to 32-bit sized hashes for fds used by the guest.
->=20
-> Signed-off-by: Peter Maydell <peter.maydell@linaro.org>
+This isn't actually a frequently travelled path - bulkstat is a
+pretty rare thing to be doing - so the behaviour is "be nice to the
+cache because we can do it easily", not a hard requirement.
 
-Another question I had here is whether the filesystem needs to provide
-32-bit values for other syscalls, such as stat() and statfs()?  For
-ext4, stat() is not going to return a 64-bit inode number, but other
-filesystems might (e.g. Lustre has a mode to do this).  Similarly,
-should statfs() scale up f_bsize until it can return a 32-bit f_blocks
-value?  We also had to do this ages ago for Lustre when 32-bit clients
-couldn't handle > 16TB filesystems, but that is a single disk today.
+> rather than fail when XFS_IDONTCACHE is set?
 
-Should that be added into F_SET_FILE_32BIT_FS also?
+Because then it would be impossible to access an inode that has
+IDONTCACHE set on it. e.g. bulkstat an inode, now you can't open()
+it because it has XFS_IDONTCACHE set and VFS pathwalk lookups fail
+trying to resolve the inode number to a struct inode....
 
-Cheers, Andreas
+Same goes for I_DONTCACHE - this does not prevent new lookups from
+taking references to the inode while it is still referenced. i.e.
+the reference count can still go up after the flag is set. The flag
+only takes effect when the reference count goes to zero.
 
-> ---
-> RFC patch because it depends on the kernel patch to provide
-> F_SET_FILE_32BIT_FS, which is still under discussion. All this
-> patch does is call the fcntl for every fd the guest opens.
->=20
-> linux-user/syscall.c | 27 +++++++++++++++++++++++++++
-> 1 file changed, 27 insertions(+)
->=20
-> diff --git a/linux-user/syscall.c b/linux-user/syscall.c
-> index 674f70e70a5..8966d4881bd 100644
-> --- a/linux-user/syscall.c
-> +++ b/linux-user/syscall.c
-> @@ -884,6 +884,28 @@ static inline int host_to_target_sock_type(int =
-host_type)
->     return target_type;
-> }
->=20
-> +/*
-> + * If the guest is using a 32 bit ABI then we should try to ask the =
-kernel
-> + * to provide 32-bit offsets in getdents syscalls, as otherwise some
-> + * filesystems will return 64-bit hash values which we can't fit into
-> + * the field sizes the guest ABI mandates.
-> + */
-> +#ifndef F_SET_FILE_32BIT_FS
-> +#define F_SET_FILE_32BIT_FS (1024 + 15)
-> +#endif
-> +
-> +static inline void request_32bit_fs(int fd)
-> +{
-> +#if HOST_LONG_BITS > TARGET_ABI_BITS
-> +    /*
-> +     * Ignore errors, which are likely due to the host kernel being =
-too
-> +     * old to support this fcntl. We'll try anyway, which might or =
-might
-> +     * not work, depending on the guest code and on the host =
-filesystem.
-> +     */
-> +    fcntl(fd, F_SET_FILE_32BIT_FS);
-> +#endif
-> +}
-> +
-> static abi_ulong target_brk;
-> static abi_ulong target_original_brk;
-> static abi_ulong brk_page;
-> @@ -7704,6 +7726,7 @@ static abi_long do_syscall1(void *cpu_env, int
-> num, abi_long arg1,
->                                   target_to_host_bitmask(arg2,
-> fcntl_flags_tbl),
->                                   arg3));
->         fd_trans_unregister(ret);
-> +        request_32bit_fs(ret);
->         unlock_user(p, arg1, 0);
->         return ret;
-> #endif
-> @@ -7714,6 +7737,7 @@ static abi_long do_syscall1(void *cpu_env, int
-> num, abi_long arg1,
->                                   target_to_host_bitmask(arg3,
-> fcntl_flags_tbl),
->                                   arg4));
->         fd_trans_unregister(ret);
-> +        request_32bit_fs(ret);
->         unlock_user(p, arg2, 0);
->         return ret;
-> #if defined(TARGET_NR_name_to_handle_at) && =
-defined(CONFIG_OPEN_BY_HANDLE)
-> @@ -7725,6 +7749,7 @@ static abi_long do_syscall1(void *cpu_env, int
-> num, abi_long arg1,
->     case TARGET_NR_open_by_handle_at:
->         ret =3D do_open_by_handle_at(arg1, arg2, arg3);
->         fd_trans_unregister(ret);
-> +        request_32bit_fs(ret);
->         return ret;
-> #endif
->     case TARGET_NR_close:
-> @@ -7769,6 +7794,7 @@ static abi_long do_syscall1(void *cpu_env, int
-> num, abi_long arg1,
->             return -TARGET_EFAULT;
->         ret =3D get_errno(creat(p, arg2));
->         fd_trans_unregister(ret);
-> +        request_32bit_fs(ret);
->         unlock_user(p, arg1, 0);
->         return ret;
-> #endif
-> @@ -12393,6 +12419,7 @@ static abi_long do_syscall1(void *cpu_env, int
-> num, abi_long arg1,
->         }
->         ret =3D get_errno(memfd_create(p, arg2));
->         fd_trans_unregister(ret);
-> +        request_32bit_fs(ret);
->         unlock_user(p, arg1, 0);
->         return ret;
-> #endif
-> --
-> 2.20.1
+Hence the only difference between XFS_IDONTCACHE and I_DONTCACHE is
+the behaviour when cache hits on existing XFS_IDONTCACHE inodes
+occur. It's not going to make a significant difference to cache
+residency if we leave the I_DONTCACHE flag in place, because the
+vast majority of inodes with that flag (from bulkstat) are still
+one-shot wonders and hence the reclaim decision is still the
+overwhelmingly correct decision to be making...
 
+And, realistically, we have a second layer of inode caching in XFS
+(the cluster buffers) and so it's likely if we evict and reclaim an
+inode just before it gets re-used, then we'll hit the buffer cache
+anyway. i.e. we still avoid the IO to read the inode back into
+memory, we just burn a little more CPU re-instantiating it from the
+buffer....
 
-Cheers, Andreas
+Cheers,
 
-
-
-
-
-
---Apple-Mail=_64F94122-2784-458A-A3F2-F89454A55F98
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl6eNZkACgkQcqXauRfM
-H+C2Rg//WIhBY2K+idPg4SqGPqUmkxjgNa5FLYv3VD4Hf9G5kUdSpkUbQG1zAZaM
-+D1KAmXgMGEMJ4/T+XPB8R2zAOuHt3fdzQEu84u2OI0v/2oC9vdln89pfVe46YZP
-BPSmuIYevFo9ybJw3kMzSwj7OpJHpKY0fWZ/lfkQijHlbE1GoTqToTCIfRpunlEH
-P3lStjiDhhi3o8Zms2TRiJa5SfNojUanWJBzPvUXXzN7roqKdJfb4UpqYAri0ZCr
-VI32nNtMGYorT2Rb4KLGvbj8kgqpF2heuiCHDFJU1/7ozj/C8a6qzJzTbWvktCql
-XuyYEjela/VX1JjSxENYSwuOF/XYVQaEMSL346IkjGe4FDv3vVoNG+iMXgcsEhCx
-q+M5sbWsRqL02yZ40buAFqUfP5heGyE8FzKNqXnfCOJEkyPZ7625lsmD1xLWxQOM
-ZhfTLsaxhT1ETNdkydHUQcorsArywKABPk4i4MihzV9ADLYJuW84MtBRxNQs1mOu
-N2YesKlObHOoJjWbw6hIH7o2x5mQ5Mw7QkYZY/bll2bcdr4fd0SEfaZV4k4DvlME
-uhSgY2OvyLtMIc55aN8xpIeRdDFk8fe+wf+nFwQr+qglHSSDnd3+HyYU2BmFILo0
-FiCbO/5ZhQ8cX9b5Mo4YIhN9kMZaRK1RRemDYI+lcupBw8ApGlI=
-=iebv
------END PGP SIGNATURE-----
-
---Apple-Mail=_64F94122-2784-458A-A3F2-F89454A55F98--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
