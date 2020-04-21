@@ -2,86 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2E51B1AF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 02:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 340731B1B34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 03:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgDUAwP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Apr 2020 20:52:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56456 "EHLO mail.kernel.org"
+        id S1726018AbgDUBVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Apr 2020 21:21:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36846 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726017AbgDUAwP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Apr 2020 20:52:15 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD93208E4;
-        Tue, 21 Apr 2020 00:52:12 +0000 (UTC)
-Date:   Mon, 20 Apr 2020 20:52:10 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200420205210.7217651c@oasis.local.home>
-In-Reply-To: <20200420151941.47ualxul5seqwdgh@e107158-lin.cambridge.arm.com>
-References: <20200403123020.13897-1-qais.yousef@arm.com>
-        <20200414182152.GB20442@darkstar>
-        <54ac2709-54e5-7a33-a6af-0a07e272365c@arm.com>
-        <20200420151941.47ualxul5seqwdgh@e107158-lin.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725897AbgDUBVN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Apr 2020 21:21:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 85D4EAEBE;
+        Tue, 21 Apr 2020 01:21:09 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Date:   Tue, 21 Apr 2020 11:20:53 +1000
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        Zzy Wysm <zzy@zzywysm.com>
+Subject: Re: [PATCH 5/9] usb: fix empty-body warning in sysfs.c
+In-Reply-To: <Pine.LNX.4.44L0.2004181549020.8036-100000@netrider.rowland.org>
+References: <Pine.LNX.4.44L0.2004181549020.8036-100000@netrider.rowland.org>
+Message-ID: <87368xskga.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 20 Apr 2020 16:19:42 +0100
-Qais Yousef <qais.yousef@arm.com> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > root@h960:~# find / -name "*util_clamp*"
-> > /proc/sys/kernel/sched_rt_default_util_clamp_min
-> > /proc/sys/kernel/sched_util_clamp_max
-> > /proc/sys/kernel/sched_util_clamp_min
-> > 
-> > IMHO, keeping the common 'sched_util_clamp_' would be helpful here, e.g.
-> > 
-> > /proc/sys/kernel/sched_util_clamp_rt_default_min  
-> 
-> All RT related knobs are prefixed with 'sched_rt'. I kept the 'util_clamp_min'
-> coherent with the current sysctl (sched_util_clamp_min). Quentin suggested
-> adding 'default' to be more obvious, so I ended up with
-> 
-> 	'sched_rt' + '_default' + '_util_clamp_min'.
-> 
-> I think this is the logical and most consistent form. Given that Patrick seems
-> to be okay with the 'default' now, does this look good to you too?
+On Sat, Apr 18 2020, Alan Stern wrote:
 
-There's only two files with "sched_rt" and they are tightly coupled
-(they define how much an RT task may use the CPU).
+> On Sat, 18 Apr 2020, Matthew Wilcox wrote:
+>
+>> On Sat, Apr 18, 2020 at 11:41:07AM -0700, Randy Dunlap wrote:
+>> > +++ linux-next-20200327/drivers/usb/core/sysfs.c
+>> > @@ -1263,7 +1263,7 @@ void usb_create_sysfs_intf_files(struct
+>> >  	if (!alt->string && !(udev->quirks & USB_QUIRK_CONFIG_INTF_STRINGS))
+>> >  		alt->string =3D usb_cache_string(udev, alt->desc.iInterface);
+>> >  	if (alt->string && device_create_file(&intf->dev, &dev_attr_interfac=
+e))
+>> > -		;	/* We don't actually care if the function fails. */
+>> > +		do_empty(); /* We don't actually care if the function fails. */
+>> >  	intf->sysfs_files_created =3D 1;
+>> >  }
+>>=20
+>> Why not just?
+>>=20
+>> +	if (alt->string)
+>> +		device_create_file(&intf->dev, &dev_attr_interface);
+>
+> This is another __must_check function call.
+>
+> The reason we don't care if the call fails is because the file
+> being created holds the USB interface string descriptor, something
+> which is purely informational and hardly ever gets set (and no doubt
+> gets used even less often).
+>
+> Is this another situation where the comment should be expanded and the=20
+> code modified to include a useless test and cast-to-void?
+>
+> Or should device_create_file() not be __must_check after all?
 
-My question is, is this "sched_rt_default_util_clamp_min" related in
-any way to those other two files that start with "sched_rt", or is it
-more related to the files that start with "sched_util_clamp"?
+One approach to dealing with __must_check function that you don't want
+to check is to cause failure to call
+   pr_debug("usb: interface descriptor file not created");
+or similar.  It silences the compiler, serves as documentation, and
+creates a message that is almost certainly never seen.
 
-If the latter, then I would suggest using
-"sched_util_clamp_min_rt_default", as it looks to be more related to
-the "sched_util_clamp_min" than to anything else.
+This is what I did in drivers/md/md.c...
 
--- Steve
+	if (mddev->kobj.sd &&
+	    sysfs_create_group(&mddev->kobj, &md_bitmap_group))
+		pr_debug("pointless warning\n");
+
+(I give better warnings elsewhere - I must have run out of patience by
+ this point).
+
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl6eSnUACgkQOeye3VZi
+gbn4EQ//WLEH1OYjzYF3ZAV16KgjXghaIeaNMOhGWUi79iqI/c9Zfe7VUDBPE5ip
+xTdZh+pKAubrzHjja6sbwXCEpY1XaGBeyKxl8lc/w8bsG6yMdN0n3eP7jgMucCtN
+U7DuAjjSjFvMLYDUBs6jhPbko+Qse3InDgyZH0gTueYI1QMmSag7EZs0xdvv6dAz
+NgtTQbJ7MBv3CQTg3Y+O6pMvRQbwSYuUb118jv9BH5ktkRmfJ5lP0LGfDD1d/AeR
+Z9oH8asOZK2ZprUXg6cuI/lf1kxFCNDGwXI9x0eDWpyt8akceeXLsxhg7Jw2KlZA
+Ry4UOB//Ehxq5ZtqxQAcHNzbfXJM1JaZjbyk+Im8F3q0/i2aE2/9pGvREe91rX3u
+gq2UO+5djv+TxKg1nZcFIHV/ycfdw4HWT6jKnYwOTahceJxkcswrRYqWBDePNqws
+oeWTPfUxQIIMUAYl0Zsf8EXLCqKvOmVqRI3cY2jIZHOJraynmtfL+/FRsg3PNu5T
+m5nSJbLvQMzITNuBTOf8BvdeAasCfR6v4RlIJYbonBJxXtUrXL7yeX0FclVpJ98+
+noaE1F/eUxnG5t+n3Gr6C9ttT/avXsr7Gm7okuNwkY1vvZSoXbFPZG0VIW0SiLWY
+kiqSFLeEDXCaNk4yYZlcNe17qTuJiZxx4RnTkF1IykZIcQv8haE=
+=K7Ae
+-----END PGP SIGNATURE-----
+--=-=-=--
