@@ -2,85 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC881B2211
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 10:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3800B1B22F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 11:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgDUIyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 04:54:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41498 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbgDUIyu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 04:54:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CC380ACD0;
-        Tue, 21 Apr 2020 08:54:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 395121E124D; Tue, 21 Apr 2020 10:54:48 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     Ted Tso <tytso@mit.edu>
-Cc:     <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 3/3] ext4: Avoid freeing inodes on dirty list
-Date:   Tue, 21 Apr 2020 10:54:45 +0200
-Message-Id: <20200421085445.5731-4-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200421085445.5731-1-jack@suse.cz>
-References: <20200421085445.5731-1-jack@suse.cz>
+        id S1727911AbgDUJgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 05:36:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726600AbgDUJgw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 05:36:52 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0EBC061A41
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Apr 2020 02:36:51 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id d16so9469509edv.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Apr 2020 02:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VvQfXYa7OuQRubb/pe1NKM1WDL58usuh9DmpVkQdaXA=;
+        b=HtF4fSRlF5BL+Rp3ZBD/jsftUDAEZ06/Ef78AW4EYdxqpH7Hah/bo4k3KdHLLfhnKV
+         IEIvmq5e4KsYJROS71rXPIlzo30jtTPwQVycMuz6yOoM9rsfOhj9WEUsw145a6aK1Jvk
+         iqaIZtdWYGbUI5NUZXZENdkHOilOUU6jzikwM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VvQfXYa7OuQRubb/pe1NKM1WDL58usuh9DmpVkQdaXA=;
+        b=eh4IRG+w1TSfjEFPQwzG190GCXOxaDvL5DSQxVwKtKHCNwKm/8aX5XwZkgmBLcsvQJ
+         BL+um00Xz4UUehbbVwp9Rpe61JvycADd1+1OxbpzyhIqj9q0MEaw7GGN+qElxXgxTV5L
+         AsaknOFx3lDNLcaWOM9UIEAe+uAsm6dhTAF4iHp7nMOZEA9uAhlxU/q/ZdO+9oGZnlUU
+         yNVgfiN5sXUucsDLs2t1BX23wZ8bUvSNBSs65iYh3wTyl5eaJgxxXKo+tYm4LnDqF2lR
+         vTpHnv6xwX6nYJBJVZGOe6MBTW7+op6Wt79nNiG/wp/JOEU3qissb3QIVPWTppmjlBdv
+         TozQ==
+X-Gm-Message-State: AGi0Pub1ir+/7yJInlxX+3cadslcrcL/qQ4CbhwpstzE6GovgHjgb4oX
+        b3+HnBH4MxAo/czt56gtus+vdMa4ntTTwhMtugq5Qw==
+X-Google-Smtp-Source: APiQypItc+QOKYRaC4wg++htE0Gc6LcZ8EgCgsTAG5CToiNPUvzzsuYG1iJV8Eg2YL+hR21Hk80UqqtI7Wbcu/Jn0S4=
+X-Received: by 2002:a05:6402:3121:: with SMTP id dd1mr12660866edb.168.1587461810483;
+ Tue, 21 Apr 2020 02:36:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <158642098777.5635.10501704178160375549.stgit@buzz>
+In-Reply-To: <158642098777.5635.10501704178160375549.stgit@buzz>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 21 Apr 2020 11:36:39 +0200
+Message-ID: <CAJfpegvrRxYsN5L1GSWTCZgmBR4kf00YeD9JNx=fEd4fDKuOtg@mail.gmail.com>
+Subject: Re: [PATCH] ovl: skip overlayfs superblocks at global sync
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When we are evicting inode with journalled data, we may race with
-transaction commit in the following way:
+On Thu, Apr 9, 2020 at 10:29 AM Konstantin Khlebnikov
+<khlebnikov@yandex-team.ru> wrote:
+>
+> Stacked filesystems like overlayfs has no own writeback, but they have to
+> forward syncfs() requests to backend for keeping data integrity.
+>
+> During global sync() each overlayfs instance calls method ->sync_fs()
+> for backend although it itself is in global list of superblocks too.
+> As a result one syscall sync() could write one superblock several times
+> and send multiple disk barriers.
+>
+> This patch adds flag SB_I_SKIP_SYNC into sb->sb_iflags to avoid that.
+>
+> Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-CPU0					CPU1
-jbd2_journal_commit_transaction()	evict(inode)
-					  inode_io_list_del()
-					  inode_wait_for_writeback()
-  process BJ_Forget list
-    __jbd2_journal_insert_checkpoint()
-    __jbd2_journal_refile_buffer()
-      __jbd2_journal_unfile_buffer()
-        if (test_clear_buffer_jbddirty(bh))
-          mark_buffer_dirty(bh)
-	    __mark_inode_dirty(inode)
-					  ext4_evict_inode(inode)
-					    frees the inode
+Thanks, applied.
 
-This results in use-after-free issues in the writeback code (or
-the assertion added in the previous commit triggering).
-
-Fix the problem by removing inode from writeback lists once all the page
-cache is evicted and so inode cannot be added to writeback lists again.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/inode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e416096fc081..d8a9d3da678c 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -220,6 +220,16 @@ void ext4_evict_inode(struct inode *inode)
- 		ext4_begin_ordered_truncate(inode, 0);
- 	truncate_inode_pages_final(&inode->i_data);
- 
-+	/*
-+	 * For inodes with journalled data, transaction commit could have
-+	 * dirtied the inode. Flush worker is ignoring it because of I_FREEING
-+	 * flag but we still need to remove the inode from the writeback lists.
-+	 */
-+	if (!list_empty_careful(&inode->i_io_list)) {
-+		WARN_ON_ONCE(!ext4_should_journal_data(inode));
-+		inode_io_list_del(inode);
-+	}
-+
- 	/*
- 	 * Protect us against freezing - iput() caller didn't have to have any
- 	 * protection against it
--- 
-2.16.4
-
+Miklos
