@@ -2,77 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E816B1B2CD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9481B2D06
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbgDUQi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 12:38:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbgDUQi6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 12:38:58 -0400
-Received: from coco.lan (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A821206D5;
-        Tue, 21 Apr 2020 16:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587487137;
-        bh=Z+iXSNoxMMh6k0ZZ96p69jLyHmPAVJrD+POZJQ+L2rQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RgIYok+CEJ2RoIptu0si1PEi+Dz3iNTBreOTnCK4qOY2Zlz4c30hmoKV4g7WOrONM
-         +VkKUdzNGq+l49INAs5Azf1Lt0hf7GAsQcMJBClcHJ22jyu1kGqQz+ogcdwgRM59pL
-         mEvnkxoNGYoA56ewNidm70NrDcOT+kHeMwXM30Go=
-Date:   Tue, 21 Apr 2020 18:38:52 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1728400AbgDUQqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 12:46:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728165AbgDUQqA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 12:46:00 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505D2C061A41;
+        Tue, 21 Apr 2020 09:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6VSSPJCcevYsGUKgN4kM18lxCeXB2g2KawPNFpxhfTw=; b=SKTLs75QLUp1ncUNRj/fn4XbLB
+        AYZZtGG0i8SAqhc8Lz5wcbe10h1cWVUvxxaAtCBMRWO+HhiVMYLsxXuT6oxbVtL2DlTJtvQ8NhiHp
+        yBsXJ8tZcPuzsogjkFQripCy2rDJEXY3AuGv2T1Ir+EuHYS65ppKC8WmBShkCkzhElAUNf2DXKGJo
+        +xp22i3wieCJvZl6bJNkfRHjQOYtXPHq9/6nIUwtJI/h4EeuOsIJpVXggI6qvQhQ0AeHnzt/n7Dhu
+        RPIS9/C8fi8K0C+4cK5+q9JTXNw8q+MoKMexFuQrsAJLFspDHP0IG1VKiZAwSsDdmBZzwp3DUawN3
+        Lpm5lS3A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jQw1y-0003am-Pt; Tue, 21 Apr 2020 16:45:54 +0000
+Date:   Tue, 21 Apr 2020 09:45:54 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        bugzilla-daemon@bugzilla.kernel.org, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 22/34] docs: filesystems: rename path-lookup.txt file
-Message-ID: <20200421183852.133b3a09@coco.lan>
-In-Reply-To: <20200416020006.GC816@sol.localdomain>
-References: <cover.1586960617.git.mchehab+huawei@kernel.org>
-        <ddee231f968fcf8a9558ff39f251fdd7b2357ff2.1586960617.git.mchehab+huawei@kernel.org>
-        <20200416020006.GC816@sol.localdomain>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Subject: Re: [Bug 207367] Accraid / aptec / Microsemi / ext4 / larger then
+ 16TB
+Message-ID: <20200421164554.GA3271@infradead.org>
+References: <bug-207367-13602@https.bugzilla.kernel.org/>
+ <bug-207367-13602-zdl9QZH6DN@https.bugzilla.kernel.org/>
+ <20200421042039.BF8074C046@d06av22.portsmouth.uk.ibm.com>
+ <20200421050850.GB27860@dread.disaster.area>
+ <20200421080405.GA4149@infradead.org>
+ <20200421162910.GB5118@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200421162910.GB5118@quack2.suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Wed, 15 Apr 2020 19:00:06 -0700
-Eric Biggers <ebiggers@kernel.org> escreveu:
+On Tue, Apr 21, 2020 at 06:29:10PM +0200, Jan Kara wrote:
+> Well, there are two problems with this - firstly, ocfs2 is also using jbd2
+> and it knows nothing about iomap. So that would have to be implemented.
+> Secondly, you have to somehow pass iomap ops to jbd2 so it all boils down
+> to passing some callback to jbd2 during journal init to map blocks anyway
+> as Dave said. And then it is upto filesystem to do the mapping - usually
+> directly using its internal block mapping function - so no need for iomap
+> AFAICT.
 
-> On Wed, Apr 15, 2020 at 04:32:35PM +0200, Mauro Carvalho Chehab wrote:
-> > There are two files called "patch-lookup", with different contents:
-> > one is a ReST file, the other one is the text.
-> > 
-> > As we'll be finishing the conversion of filesystem documents,
-> > let's fist rename the text one, in order to avoid messing with
-> > the existing ReST file.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  .../filesystems/{path-lookup.txt => path-walking.txt}       | 0
-> >  Documentation/filesystems/porting.rst                       | 2 +-
-> >  fs/dcache.c                                                 | 6 +++---
-> >  fs/namei.c                                                  | 2 +-
-> >  4 files changed, 5 insertions(+), 5 deletions(-)
-> >  rename Documentation/filesystems/{path-lookup.txt => path-walking.txt} (100%)  
-> 
-> Wouldn't it make more sense to consolidate path-lookup.rst and path-lookup.txt
-> into one file?  The .txt one is less detailed and hasn't been updated since
-> 2011, so maybe it should just be deleted?  Perhaps there's something useful in
-> it that should be salvaged, though.
-
-I'll keep this (and the next patch) on a separate branch. I'll try to take
-a look on it later and see if I can help checking if there are something
-there still useful, merging at path-lookup.rst.
-
-Thanks,
-Mauro
+You'll need to describe the mapping some how.  So why not reuse an
+existing mechanism instead of creating a new ad-hoc one?
