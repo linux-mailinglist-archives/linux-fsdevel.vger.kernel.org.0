@@ -2,21 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED7A1B2025
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 09:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9A91B2072
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 09:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbgDUHmu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 03:42:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:45118 "EHLO verein.lst.de"
+        id S1728091AbgDUHzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 03:55:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:45190 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728233AbgDUHms (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 03:42:48 -0400
+        id S1725992AbgDUHzi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 03:55:38 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1C8B568CEC; Tue, 21 Apr 2020 09:42:42 +0200 (CEST)
-Date:   Tue, 21 Apr 2020 09:42:41 +0200
+        id 58CB668C4E; Tue, 21 Apr 2020 09:55:34 +0200 (CEST)
+Date:   Tue, 21 Apr 2020 09:55:34 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
+Cc:     Andrey Ignatov <rdna@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -27,45 +28,20 @@ Cc:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org
 Subject: Re: [PATCH 6/6] sysctl: pass kernel pointers to ->proc_handler
-Message-ID: <20200421074241.GB15772@lst.de>
-References: <20200417064146.1086644-1-hch@lst.de> <20200417064146.1086644-7-hch@lst.de> <20200417181718.GN5820@bombadil.infradead.org>
+Message-ID: <20200421075534.GC15772@lst.de>
+References: <20200417064146.1086644-1-hch@lst.de> <20200417064146.1086644-7-hch@lst.de> <20200417193910.GA7011@rdna-mbp> <20200417195015.GO5820@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200417181718.GN5820@bombadil.infradead.org>
+In-Reply-To: <20200417195015.GO5820@bombadil.infradead.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 11:17:18AM -0700, Matthew Wilcox wrote:
-> >  	if (error)
-> > -		goto out;
-> > +		goto out_free_buf;
-> >  
-> >  	/* careful: calling conventions are nasty here */
-> 
-> I think this comment can go now ;-)
+On Fri, Apr 17, 2020 at 12:50:15PM -0700, Matthew Wilcox wrote:
+> > cur_val is allocated separately below to read current value of sysctl
+> > and not interfere with user-passed buffer. 
 
-It actually long predates the set_fs that was only added for BPF,
-and goes back to:
-
-330d57fb98a91 ("[PATCH] Fix sysctl unregistration oops (CVE-2005-2709)")
-in the history.git tree.
-
-> > -	} else {
-> > -		error = table->proc_handler(table, write, buf, &count, ppos);
-> > -	}
-> > +	error = table->proc_handler(table, write, kbuf, &count, ppos);
-> > +	if (error)
-> > +		goto out_free_buf;
-> > +
-> > +	error = -EFAULT;
-> > +	if (copy_to_user(ubuf, kbuf, count))
-> > +		goto out_free_buf;
-> 
-> Can we skip this if !write?  Indeed, don't we have to in case the user has
-> passed a pointer to a read-only memory page?
-
-Indeed.
+Ok, I'll fix this up.
