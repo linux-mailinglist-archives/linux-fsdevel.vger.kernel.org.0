@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D13031B2B64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 17:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F3E71B2B76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 17:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgDUPm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 11:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
+        id S1728956AbgDUPmy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 11:42:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725990AbgDUPm0 (ORCPT
+        by vger.kernel.org with ESMTP id S1725994AbgDUPm0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 21 Apr 2020 11:42:26 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59CD5C0610D6;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6BBC061BD3;
         Tue, 21 Apr 2020 08:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=SORsRPhtytui9rgjjhHugK9i10g6qzh4zoIcUMIo6qc=; b=QjI/7kcvcAV9LVG6XxPF7jyZJV
-        8Db+cQyihzXdIEIkCylbFuHMaTIxg6nGmhc5HFYNOlaS7JhA2Ml13qy+rtH2A0qmVmuHIhhpxx2zJ
-        VcMatYxNQxeI5PwUEkXvQq5ra1Ze+bp1e5g3cX/+bPnu97kfDJHPDgjjX962YG1H+AHHcEeaxOEK9
-        I5AGaYTRxAIKKkEnO9D06YxRlRI3g545WCmT1lT5SVxhJvDeUMBA/Xg7u206wjE6aZhsds3YSH1Eo
-        2cr/qpazPo1FTXbSecXVbT67ofXwRxL1uNQ8gRvO9zWYfntn1ajB27Qw7IUHwgKOak3yYirptk+ww
-        /MYj3enQ==;
+        bh=YqMqPP1bOJuWh6c5f5C8pIdJ2QOwE49mdXnpeXx3pPw=; b=Ablbdcopf5wKVWPixh/dTU//dL
+        L92coUpHhBLLLbeitIb+DO1MQ5AGRCdKR9Ldgqdj3+vxyEfr6I6FRgneJ4nx4aozlUxKcR2pN7H5I
+        In37t0a19ykta1JWUROQY+KHZnuMIARQah2kibWbIoYj4/na6zTtSIh9zkgtMfSHnmOTI4jT7WbER
+        khZKrfmNMER8Dl343KxNE87vpCMrOxDjmMYTg8x3bR3k7qe3ivGqRrKuad1He+X4LiW42bHTO3KPv
+        mYsmlvP2CKnBC0rJcWGRTnL8GVNoHUJl7WTV8yF5PlLI5wc7Z+Y0snq03c2EApeKKqck2vvUUP2Gt
+        CfzjJf+A==;
 Received: from [2001:4bb8:191:e12c:c70:4a89:bc61:3] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jQv2N-0007qr-84; Tue, 21 Apr 2020 15:42:15 +0000
+        id 1jQv2Q-0007rY-0D; Tue, 21 Apr 2020 15:42:18 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
@@ -35,9 +35,9 @@ Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] binfmt_elf: femove the set_fs in fill_siginfo_note
-Date:   Tue, 21 Apr 2020 17:42:00 +0200
-Message-Id: <20200421154204.252921-4-hch@lst.de>
+Subject: [PATCH 4/7] binfmt_elf: remove the set_fs(KERNEL_DS) in elf_core_dump
+Date:   Tue, 21 Apr 2020 17:42:01 +0200
+Message-Id: <20200421154204.252921-5-hch@lst.de>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200421154204.252921-1-hch@lst.de>
 References: <20200421154204.252921-1-hch@lst.de>
@@ -49,79 +49,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+There is no logic in elf_core_dump itself, or in the various arch helpers
+called from it which use uaccess routines on kernel pointers except for
+the file writes thate are nicely encapsulated by using __kernel_write in
+dump_emit.
 
-The code in binfmt_elf.c is differnt from the rest of the code that
-processes siginfo, as it sends siginfo from a kernel buffer to a file
-rather than from kernel memory to userspace buffers.  To remove it's
-use of set_fs the code needs some different siginfo helpers.
-
-Add the helper copy_siginfo_to_external to copy from the kernel's
-internal siginfo layout to a buffer in the siginfo layout that
-userspace expects.
-
-Modify fill_siginfo_note to use copy_siginfo_to_external instead of
-set_fs and copy_siginfo_to_user.
-
-Update compat_binfmt_elf.c to use the previously added
-copy_siginfo_to_external32 to handle the compat case.
-
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/binfmt_elf.c        | 5 +----
- fs/compat_binfmt_elf.c | 2 +-
- include/linux/signal.h | 8 ++++++++
- 3 files changed, 10 insertions(+), 5 deletions(-)
+ fs/binfmt_elf.c | 40 +++++++++++++---------------------------
+ 1 file changed, 13 insertions(+), 27 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 13f25e241ac4..a1f57e20c3cf 100644
+index a1f57e20c3cf..b29b84595b09 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
-@@ -1556,10 +1556,7 @@ static void fill_auxv_note(struct memelfnote *note, struct mm_struct *mm)
- static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
- 		const kernel_siginfo_t *siginfo)
+@@ -1355,7 +1355,6 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
+ 	    vma->vm_pgoff == 0 && (vma->vm_flags & VM_READ)) {
+ 		u32 __user *header = (u32 __user *) vma->vm_start;
+ 		u32 word;
+-		mm_segment_t fs = get_fs();
+ 		/*
+ 		 * Doing it this way gets the constant folded by GCC.
+ 		 */
+@@ -1368,14 +1367,8 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
+ 		magic.elfmag[EI_MAG1] = ELFMAG1;
+ 		magic.elfmag[EI_MAG2] = ELFMAG2;
+ 		magic.elfmag[EI_MAG3] = ELFMAG3;
+-		/*
+-		 * Switch to the user "segment" for get_user(),
+-		 * then put back what elf_core_dump() had in place.
+-		 */
+-		set_fs(USER_DS);
+ 		if (unlikely(get_user(word, header)))
+ 			word = 0;
+-		set_fs(fs);
+ 		if (word == magic.cmp)
+ 			return PAGE_SIZE;
+ 	}
+@@ -2183,7 +2176,6 @@ static void fill_extnum_info(struct elfhdr *elf, struct elf_shdr *shdr4extnum,
+ static int elf_core_dump(struct coredump_params *cprm)
  {
--	mm_segment_t old_fs = get_fs();
+ 	int has_dumped = 0;
+-	mm_segment_t fs;
+ 	int segs, i;
+ 	size_t vma_data_size = 0;
+ 	struct vm_area_struct *vma, *gate_vma;
+@@ -2236,9 +2228,6 @@ static int elf_core_dump(struct coredump_params *cprm)
+ 
+ 	has_dumped = 1;
+ 
+-	fs = get_fs();
 -	set_fs(KERNEL_DS);
--	copy_siginfo_to_user((user_siginfo_t __user *) csigdata, siginfo);
--	set_fs(old_fs);
-+	copy_siginfo_to_external(csigdata, siginfo);
- 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
- }
+-
+ 	offset += sizeof(elf);				/* Elf header */
+ 	offset += segs * sizeof(struct elf_phdr);	/* Program headers */
  
-diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-index aaad4ca1217e..fa0e24e1b726 100644
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -39,7 +39,7 @@
-  */
- #define user_long_t		compat_long_t
- #define user_siginfo_t		compat_siginfo_t
--#define copy_siginfo_to_user	copy_siginfo_to_user32
-+#define copy_siginfo_to_external	copy_siginfo_to_external32
+@@ -2250,7 +2239,7 @@ static int elf_core_dump(struct coredump_params *cprm)
  
- /*
-  * The machine-dependent core note format types are defined in elfcore-compat.h,
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index 05bacd2ab135..6bb1a3f0258c 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -24,6 +24,14 @@ static inline void clear_siginfo(kernel_siginfo_t *info)
+ 		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
+ 		if (!phdr4note)
+-			goto end_coredump;
++			goto cleanup;
  
- #define SI_EXPANSION_SIZE (sizeof(struct siginfo) - sizeof(struct kernel_siginfo))
+ 		fill_elf_note_phdr(phdr4note, sz, offset);
+ 		offset += sz;
+@@ -2265,7 +2254,7 @@ static int elf_core_dump(struct coredump_params *cprm)
+ 	vma_filesz = kvmalloc(array_size(sizeof(*vma_filesz), (segs - 1)),
+ 			      GFP_KERNEL);
+ 	if (!vma_filesz)
+-		goto end_coredump;
++		goto cleanup;
  
-+static inline void copy_siginfo_to_external(siginfo_t *to,
-+					    const kernel_siginfo_t *from)
-+{
-+	memcpy(to, from, sizeof(*from));
-+	memset(((char *)to) + sizeof(struct kernel_siginfo), 0,
-+		SI_EXPANSION_SIZE);
-+}
-+
- int copy_siginfo_to_user(siginfo_t __user *to, const kernel_siginfo_t *from);
- int copy_siginfo_from_user(kernel_siginfo_t *to, const siginfo_t __user *from);
+ 	for (i = 0, vma = first_vma(current, gate_vma); vma != NULL;
+ 			vma = next_vma(vma, gate_vma)) {
+@@ -2283,17 +2272,17 @@ static int elf_core_dump(struct coredump_params *cprm)
+ 	if (e_phnum == PN_XNUM) {
+ 		shdr4extnum = kmalloc(sizeof(*shdr4extnum), GFP_KERNEL);
+ 		if (!shdr4extnum)
+-			goto end_coredump;
++			goto cleanup;
+ 		fill_extnum_info(&elf, shdr4extnum, e_shoff, segs);
+ 	}
  
+ 	offset = dataoff;
+ 
+ 	if (!dump_emit(cprm, &elf, sizeof(elf)))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	/* Write program headers for segments dump */
+ 	for (i = 0, vma = first_vma(current, gate_vma); vma != NULL;
+@@ -2315,22 +2304,22 @@ static int elf_core_dump(struct coredump_params *cprm)
+ 		phdr.p_align = ELF_EXEC_PAGESIZE;
+ 
+ 		if (!dump_emit(cprm, &phdr, sizeof(phdr)))
+-			goto end_coredump;
++			goto cleanup;
+ 	}
+ 
+ 	if (!elf_core_write_extra_phdrs(cprm, offset))
+-		goto end_coredump;
++		goto cleanup;
+ 
+  	/* write out the notes section */
+ 	if (!write_note_info(&info, cprm))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	if (elf_coredump_extra_notes_write(cprm))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	/* Align to page */
+ 	if (!dump_skip(cprm, dataoff - cprm->pos))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	for (i = 0, vma = first_vma(current, gate_vma); vma != NULL;
+ 			vma = next_vma(vma, gate_vma)) {
+@@ -2352,22 +2341,19 @@ static int elf_core_dump(struct coredump_params *cprm)
+ 			} else
+ 				stop = !dump_skip(cprm, PAGE_SIZE);
+ 			if (stop)
+-				goto end_coredump;
++				goto cleanup;
+ 		}
+ 	}
+ 	dump_truncate(cprm);
+ 
+ 	if (!elf_core_write_extra_data(cprm))
+-		goto end_coredump;
++		goto cleanup;
+ 
+ 	if (e_phnum == PN_XNUM) {
+ 		if (!dump_emit(cprm, shdr4extnum, sizeof(*shdr4extnum)))
+-			goto end_coredump;
++			goto cleanup;
+ 	}
+ 
+-end_coredump:
+-	set_fs(fs);
+-
+ cleanup:
+ 	free_note_info(&info);
+ 	kfree(shdr4extnum);
 -- 
 2.26.1
 
