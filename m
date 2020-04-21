@@ -2,120 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54FF61B2B6C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 17:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B238F1B2B81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 17:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbgDUPmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 11:42:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725990AbgDUPmc (ORCPT
+        id S1726530AbgDUPoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 11:44:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48790 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbgDUPoI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 11:42:32 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146ACC061A10;
-        Tue, 21 Apr 2020 08:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=sVwaFClzqjGZ+FqtXLOlSAncx+c5tNQ9nKwgCGYxGrk=; b=aMVmZjx8qtoHWqDV98gfyoHnre
-        9AAhkLuZ7OjqDA95FcEPweOIxfKBqhAZXua8WX0DP1jYn/QEwwBASjN3tW/+tDbjmr98BxiwfiXjE
-        eJAKtcNLDwSA6pqU7E32byy09dYHDKiwHS5+hsi3rM0xRxcAMU3ogFeTeaHrHMnD3zYsn8drxBOYT
-        TvprYI7ED7y3smCoueSB2ffrZ9Ud0HmEw+/7xvj7AUHxObxK+2b6OuvoAx/EDgXzkvDvX6usht68E
-        kJI2rSFibfNjDHcQBfaiPfXIrxmw/aRwrqDXFHm16F6esjMu/PfHwCcIw83UJrjlGm8s+SPZFZT1Q
-        vNE6jbyg==;
-Received: from [2001:4bb8:191:e12c:c70:4a89:bc61:3] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jQv2Y-0007tO-D4; Tue, 21 Apr 2020 15:42:26 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] exec: open code copy_string_kernel
-Date:   Tue, 21 Apr 2020 17:42:04 +0200
-Message-Id: <20200421154204.252921-8-hch@lst.de>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200421154204.252921-1-hch@lst.de>
-References: <20200421154204.252921-1-hch@lst.de>
+        Tue, 21 Apr 2020 11:44:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03LFYLpu158456;
+        Tue, 21 Apr 2020 15:43:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=eOpQsTy+r52WApbn5F48tilahuPcKCpRcdAW8A4UlGA=;
+ b=S2Ei/2rA/w6p0BxCFzMel9pG0tGXIyv5DeGr5XvUhFbU/FjplPPc6aqDy4JxcbEku14D
+ Ve4KWY5YmbeBuXRXCsbf7lWvIDxvAxl5bn20O+GNaQ32NHoyZHCqMQSHMKcRBb10fCGM
+ o/51uH2YV97a00SwX+fh06iFH6xzm0JyHmkZcBNw44/EwVbYwCA7g+aAK9IOk0hCuZIl
+ 1TMs2+mIycw+CdB0kyCDrT5jTqCO4edVKXuYma4P0FKbRvw+UO0hPGFNIPhOCTvXX/Ob
+ XRbS6J5OBxfcOj96IpHq8uQPVw8U98ESv9zgk42yaYDfgyZ0UU5Cyh2ro1iggUA/fBsM Dw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 30grpgj7g9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Apr 2020 15:43:42 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03LFbbiG157058;
+        Tue, 21 Apr 2020 15:43:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 30gb90aye7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Apr 2020 15:43:42 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03LFhcFu029521;
+        Tue, 21 Apr 2020 15:43:38 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Apr 2020 08:43:37 -0700
+Date:   Tue, 21 Apr 2020 08:43:33 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Domenico Andreoli <domenico.andreoli@linux.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
+ active
+Message-ID: <20200421154333.GG6749@magnolia>
+References: <20200229170825.GX8045@magnolia>
+ <20200229180716.GA31323@dumbo>
+ <20200229183820.GA8037@magnolia>
+ <20200229200200.GA10970@dumbo>
+ <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+ <20200420185255.GA20916@dumbo>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200420185255.GA20916@dumbo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9598 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004210121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9598 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 bulkscore=0 clxscore=1011
+ malwarescore=0 phishscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004210121
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently copy_string_kernel is just a wrapper around copy_strings that
-simplifies the calling conventions and uses set_fs to allow passing a
-kernel pointer.  But due to the fact the we only need to handle a single
-kernel argument pointer, the logic can be sigificantly simplified while
-getting rid of the set_fs.
+On Mon, Apr 20, 2020 at 08:52:55PM +0200, Domenico Andreoli wrote:
+> On Sun, Mar 01, 2020 at 10:35:36PM +0100, Rafael J. Wysocki wrote:
+> > On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli <domenico.andreoli@linux.com> wrote:
+> > >
+> > > Maybe user-space hibernation should be a separate option.
+> > 
+> > That actually is not a bad idea at all in my view.
+> 
+> I prepared a patch for this:
+> https://lore.kernel.org/linux-pm/20200413190843.044112674@gmail.com/
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/exec.c | 43 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+If you succeed in making uswsusp a kconfig option, can you amend the
+"!hibernation available()" test in blkdev_write_iter so that users of
+in-kernel hibernate are protected against userspace swap device
+scribbles, please?
 
-diff --git a/fs/exec.c b/fs/exec.c
-index b2a77d5acede..ea90af1fb236 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -592,17 +592,42 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
-  */
- int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
- {
--	int r;
--	mm_segment_t oldfs = get_fs();
--	struct user_arg_ptr argv = {
--		.ptr.native = (const char __user *const  __user *)&arg,
--	};
-+	int len = strnlen(arg, MAX_ARG_STRLEN) + 1 /* terminating NUL */;
-+	unsigned long pos = bprm->p;
-+
-+	if (len == 0)
-+		return -EFAULT;
-+	if (!valid_arg_len(bprm, len))
-+		return -E2BIG;
-+
-+	/* We're going to work our way backwards. */
-+	arg += len;
-+	bprm->p -= len;
-+	if (IS_ENABLED(CONFIG_MMU) && bprm->p < bprm->argmin)
-+		return -E2BIG;
-+
-+	while (len > 0) {
-+		unsigned int bytes_to_copy = min_t(unsigned int, len,
-+				min_not_zero(offset_in_page(pos), PAGE_SIZE));
-+		struct page *page;
-+		char *kaddr;
- 
--	set_fs(KERNEL_DS);
--	r = copy_strings(1, argv, bprm);
--	set_fs(oldfs);
-+		pos -= bytes_to_copy;
-+		arg -= bytes_to_copy;
-+		len -= bytes_to_copy;
- 
--	return r;
-+		page = get_arg_page(bprm, pos, 1);
-+		if (!page)
-+			return -E2BIG;
-+		kaddr = kmap_atomic(page);
-+		flush_arg_page(bprm, pos & PAGE_MASK, page);
-+		memcpy(kaddr + offset_in_page(pos), arg, bytes_to_copy);
-+		flush_kernel_dcache_page(page);
-+		kunmap_atomic(kaddr);
-+		put_arg_page(page);
-+	}
-+
-+	return 0;
- }
- EXPORT_SYMBOL(copy_string_kernel);
- 
--- 
-2.26.1
+--D
+
+> Regards,
+> Domenico
+> 
+> -- 
+> rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+> ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+
 
