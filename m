@@ -2,363 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7DE1B3191
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 23:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A09C71B3199
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 23:12:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgDUVIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 17:08:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
+        id S1726116AbgDUVMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 17:12:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:24972 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbgDUVIj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 17:08:39 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F091F206D9;
-        Tue, 21 Apr 2020 21:08:37 +0000 (UTC)
-Date:   Tue, 21 Apr 2020 17:08:36 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
-        sergey.senozhatsky@gmail.com, linux@rasmusvillemoes.dk
-Subject: Re: [PATCH 03/15] print_integer: new and improved way of printing
- integers
-Message-ID: <20200421170836.4aafcbc2@gandalf.local.home>
-In-Reply-To: <20200421164924.GB8735@avx2>
-References: <20200420205743.19964-1-adobriyan@gmail.com>
-        <20200420205743.19964-3-adobriyan@gmail.com>
-        <20200420211911.GC185537@smile.fi.intel.com>
-        <20200420212723.GE185537@smile.fi.intel.com>
-        <20200420215417.6e2753ee@oasis.local.home>
-        <20200421164924.GB8735@avx2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725850AbgDUVMj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 17:12:39 -0400
+IronPort-SDR: 9oETLL7C1MIYWnDhyGd3TXxYVwagYWscmVxKugSYeBqYZmZTGPvfsQeH7smeXxgtVJPqdMsYBb
+ Ignnpmd89VKg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 14:12:38 -0700
+IronPort-SDR: atT7CDRdJWr96xt7Wf0s7aW4IZ8bN3Kgnv8gR1SNBrNSnn+lWjhTYwJUti2BQOVos/TjTZlvLy
+ s10ukQSE8daA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,411,1580803200"; 
+   d="scan'208";a="247279049"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Apr 2020 14:12:37 -0700
+Date:   Tue, 21 Apr 2020 14:12:37 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V9 08/11] fs: Lift XFS_IDONTCACNE to the VFS layer
+Message-ID: <20200421211237.GB3372712@iweiny-DESK2.sc.intel.com>
+References: <20200421191754.3372370-1-ira.weiny@intel.com>
+ <20200421191754.3372370-9-ira.weiny@intel.com>
+ <20200421202314.GB6742@magnolia>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/xbI+jYb6tEPw5+QvHxltnyb"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200421202314.GB6742@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---MP_/xbI+jYb6tEPw5+QvHxltnyb
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+On Tue, Apr 21, 2020 at 01:23:14PM -0700, Darrick J. Wong wrote:
+> > Subject: [PATCH V9 08/11] fs: Lift XFS_IDONTCACNE to the VFS layer
+> 
+> This still has a misspelling in the subject line.
 
-On Tue, 21 Apr 2020 19:49:24 +0300
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > Exactly. The code in _print_integer_u32() doesn't look as fast as the
-> > code in vsprintf() that happens to use lookup tables and converts
-> > without any loops.
-> >=20
-> > Hint, loops are bad, they cause the CPU to slow down. =20
->=20
-> Oh, come on! Loops make code fit into icache and =CE=BCop decode cache.
+Sorry...  My reliance on spell check is thwarted by macros again!  ;-)
 
-Depends on the architecture.
-
->=20
-> > Anyway, this patch series would require a pretty good improvement, as
-> > the code replacing the sprintf() usages is pretty ugly compared to a
-> > simple sprintf() call. =20
->=20
-> No! Fast code must look ugly. Or in other words if you try to optimise
-> integer printing to death you'll probably end with something like
-> _print_integer().
-
-As I stated, it will require a "pretty good improvement". There's always a
-trade off. If the improvement is noticeable for real life cases, then ugly
-code is worth it. If we are making ugly code for a benefit of something
-that never shows outside of noise, then the net cost (less maintainable
-code), is not worth it.
-
->=20
-> When the very first patch changed /proc/stat to seq_put_decimal_ull()
-> the speed up was 66% (or 33%). That's how slow printing was back then.
-> It can be made slightly faster even now.
-
-I'd like to see the tests that your ran (to reproduce them myself).
-
-The first patch was making a 64bit number into 32bit number, thus
-shortening the work by half.
-
->=20
-> > Randomly picking patch 6:
-> >=20
-> >  static int loadavg_proc_show(struct seq_file *m, void *v)
-> >  {
-> >  	unsigned long avnrun[3];
-> > =20
-> >  	get_avenrun(avnrun, FIXED_1/200, 0);
-> > =20
-> > 	seq_printf(m, "%lu.%02lu %lu.%02lu %lu.%02lu %u/%d %d\n",
-> > 		LOAD_INT(avnrun[0]), LOAD_FRAC(avnrun[0]),
-> > 		LOAD_INT(avnrun[1]), LOAD_FRAC(avnrun[1]),
-> > 		LOAD_INT(avnrun[2]), LOAD_FRAC(avnrun[2]),
-> > 		nr_running(), nr_threads,
-> > 		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
+> 
+> On Tue, Apr 21, 2020 at 12:17:50PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > DAX effective mode (S_DAX) changes requires inode eviction.
+> > 
+> > XFS has an advisory flag (XFS_IDONTCACHE) to prevent caching of the
+> > inode if no other additional references are taken.  We lift this flag to
+> > the VFS layer and change the behavior slightly by allowing the flag to
+> > remain even if multiple references are taken.
+> > 
+> > This will expedite the eviction of inodes to change S_DAX.
+> > 
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Changes from V8:
+> > 	Remove XFS_IDONTCACHE
+> > ---
+> >  fs/xfs/xfs_icache.c | 4 ++--
+> >  fs/xfs/xfs_inode.h  | 2 +-
+> >  fs/xfs/xfs_super.c  | 2 +-
+> >  include/linux/fs.h  | 6 +++++-
+> >  4 files changed, 9 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> > index 17a0b86fe701..de76f7f60695 100644
+> > --- a/fs/xfs/xfs_icache.c
+> > +++ b/fs/xfs/xfs_icache.c
+> > @@ -477,7 +477,7 @@ xfs_iget_cache_hit(
+> >  		xfs_ilock(ip, lock_flags);
+> >  
+> >  	if (!(flags & XFS_IGET_INCORE))
+> > -		xfs_iflags_clear(ip, XFS_ISTALE | XFS_IDONTCACHE);
+> > +		xfs_iflags_clear(ip, XFS_ISTALE);
+> >  	XFS_STATS_INC(mp, xs_ig_found);
+> >  
 > >  	return 0;
+> > @@ -559,7 +559,7 @@ xfs_iget_cache_miss(
+> >  	 */
+> >  	iflags = XFS_INEW;
+> >  	if (flags & XFS_IGET_DONTCACHE)
+> > -		iflags |= XFS_IDONTCACHE;
+> > +		VFS_I(ip)->i_state |= I_DONTCACHE;
+> >  	ip->i_udquot = NULL;
+> >  	ip->i_gdquot = NULL;
+> >  	ip->i_pdquot = NULL;
+> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > index 83073c883fbf..52b8ee21a0b1 100644
+> > --- a/fs/xfs/xfs_inode.h
+> > +++ b/fs/xfs/xfs_inode.h
+> > @@ -218,7 +218,7 @@ static inline bool xfs_inode_has_cow_data(struct xfs_inode *ip)
+> >  #define XFS_IFLOCK		(1 << __XFS_IFLOCK_BIT)
+> >  #define __XFS_IPINNED_BIT	8	 /* wakeup key for zero pin count */
+> >  #define XFS_IPINNED		(1 << __XFS_IPINNED_BIT)
+> > -#define XFS_IDONTCACHE		(1 << 9) /* don't cache the inode long term */
+> > +/* Was XFS_IDONTCACHE 9 */
+> >  #define XFS_IEOFBLOCKS		(1 << 10)/* has the preallocblocks tag set */
+> 
+> These are incore state flags, you can change XFS_IEOFBLOCKS to (1 << 9).
+
+Sounds good changed.
+
+Thanks,
+Ira
+
+> 
+> --D
+> 
+> >  /*
+> >   * If this unlinked inode is in the middle of recovery, don't let drop_inode
+> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > index 0d0f74786799..2e165e226e15 100644
+> > --- a/fs/xfs/xfs_super.c
+> > +++ b/fs/xfs/xfs_super.c
+> > @@ -742,7 +742,7 @@ xfs_fs_drop_inode(
+> >  		return 0;
+> >  	}
+> >  
+> > -	return generic_drop_inode(inode) || (ip->i_flags & XFS_IDONTCACHE);
+> > +	return generic_drop_inode(inode);
 > >  }
-> >=20
-> >   *vs*=20
-> >=20
-> >  static int loadavg_proc_show(struct seq_file *m, void *v)
+> >  
+> >  static void
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index a87cc5845a02..44bd45af760f 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2156,6 +2156,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+> >   *
+> >   * I_CREATING		New object's inode in the middle of setting up.
+> >   *
+> > + * I_DONTCACHE		Evict inode as soon as it is not used anymore.
+> > + *
+> >   * Q: What is the difference between I_WILL_FREE and I_FREEING?
+> >   */
+> >  #define I_DIRTY_SYNC		(1 << 0)
+> > @@ -2178,6 +2180,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+> >  #define I_WB_SWITCH		(1 << 13)
+> >  #define I_OVL_INUSE		(1 << 14)
+> >  #define I_CREATING		(1 << 15)
+> > +#define I_DONTCACHE		(1 << 16)
+> >  
+> >  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+> >  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> > @@ -3049,7 +3052,8 @@ extern int inode_needs_sync(struct inode *inode);
+> >  extern int generic_delete_inode(struct inode *inode);
+> >  static inline int generic_drop_inode(struct inode *inode)
 > >  {
-> >  	unsigned long avnrun[3];
-> > 	char buf[3 * (LEN_UL + 1 + 2 + 1) + 10 + 1 + 10 + 1 + 10 + 1];
-> > 	char *p =3D buf + sizeof(buf);
-> > 	int i;
-> >=20
-> > 	*--p =3D '\n';
-> > 	p =3D _print_integer_u32(p, idr_get_cursor(&task_active_pid_ns(current=
-)->idr) - 1);
-> > 	*--p =3D ' ';
-> > 	p =3D _print_integer_u32(p, nr_threads);
-> > 	*--p =3D '/';
-> > 	p =3D _print_integer_u32(p, nr_running());
-> >=20
-> >  	get_avenrun(avnrun, FIXED_1/200, 0);
-> > 	for (i =3D 2; i >=3D 0; i--) {
-> > 		*--p =3D ' ';
-> > 		--p;		/* overwritten */
-> > 		*--p =3D '0';	/* conditionally overwritten */
-> > 		(void)_print_integer_u32(p + 2, LOAD_FRAC(avnrun[i]));
-> > 		*--p =3D '.';
-> > 		p =3D _print_integer_ul(p, LOAD_INT(avnrun[i]));
-> > 	}
-> > =20
-> > 	seq_write(m, p, buf + sizeof(buf) - p);
-> >  	return 0;
+> > -	return !inode->i_nlink || inode_unhashed(inode);
+> > +	return !inode->i_nlink || inode_unhashed(inode) ||
+> > +		(inode->i_state & I_DONTCACHE);
 > >  }
-> >=20
-> >=20
-> > I much rather keep the first version. =20
->=20
-> I did the benchmarks (without stack protector though), everything except
-> /proc/cpuinfo and /proc/meminfo became faster. This requires investigation
-> and I can drop vsprintf() changes until then.
->=20
-> Now given that /proc/uptime format cast in stone, code may look a bit ugly
-> and unusual but it won't require maintainance
-
-Please share what you did as your benchmarks. If this is as good of a
-performance as you claim, then these changes would be worth looking into.
-
-
-So I applied your entire series, added the following patch:
-
-diff --git a/include/linux/spinlock_api_smp.h
-b/include/linux/spinlock_api_smp.h index 19a9be9d97ee..17c582d77ab7 100644
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -152,9 +152,16 @@ static inline void __raw_spin_unlock(raw_spinlock_t
-*lock) preempt_enable();
- }
-=20
-+extern u64 sched_clock(void);
- static inline void __raw_spin_unlock_irqrestore(raw_spinlock_t *lock,
- 					    unsigned long flags)
- {
-+	char buf[32];
-+	u64 start, stop;
-+	start =3D sched_clock();
-+	sprintf(buf,"%lld", (unsigned long)lock);
-+	stop =3D sched_clock();
-+	trace_printk("time: %lld '%s'\n", stop - start, buf);
- 	spin_release(&lock->dep_map, _RET_IP_);
- 	do_raw_spin_unlock(lock);
- 	local_irq_restore(flags);
-
-
-Then after boot up, I did the following:
-
- # trace-cmd stop
- # trace-cmd extract
-
-Which captured the traces:
-
-          <idle>-0     [003]     5.405208: bprint:               _raw_spin_=
-unlock_irqrestore: time: 799 '-110308271193088'
-          <idle>-0     [003]     5.405210: bprint:               _raw_spin_=
-unlock_irqrestore: time: 273 '-110308271193088'
-          <idle>-0     [003]     5.412235: bprint:               _raw_spin_=
-unlock_irqrestore: time: 1138 '-110308271193088'
-          <idle>-0     [003]     5.412236: bprint:               _raw_spin_=
-unlock_irqrestore: time: 213 '-110308271193088'
-          <idle>-0     [003]     5.414241: bprint:               _raw_spin_=
-unlock_irqrestore: time: 1094 '-110308271193088'
-          <idle>-0     [003]     5.414243: bprint:               _raw_spin_=
-unlock_irqrestore: time: 182 '-110308271193088'
-          <idle>-0     [003]     5.418241: bprint:               _raw_spin_=
-unlock_irqrestore: time: 1113 '-110308271193088'
-
-
-Where "time: X", X is the delta in nanoseconds around the sprintf() call.
-
-The I ran the attached perl program on the output, and got the following
-results:
-
-Before your patches:
-
- # trace-cmd report | ./report.pl
-full_total =3D 52844823
-  average:   255.902176229032
-  std:       439.269729814847
-
-And with your patches:
-
- # trace-cmd report | ./report.pl
-full_total =3D 84725476
-  average:   407.873274762306
-  std:       555.755670463724
-
-As the standard deviation is bigger than the average, it appears to be all
-in the noise.
-
-Then I decided to see if it affects "ps -eux"
-
-Original:
-
-# perf stat -r 100 ps -eux > /dev/null
-
- Performance counter stats for 'ps -eux' (100 runs):
-
-              8.92 msec task-clock                #    0.937 CPUs utilized =
-           ( +-  0.90% )
-                 5      context-switches          #    0.545 K/sec         =
-           ( +-  1.24% )
-                 0      cpu-migrations            #    0.000 K/sec         =
-        =20
-               259      page-faults               #    0.029 M/sec         =
-           ( +-  0.07% )
-        32,973,751      cycles                    #    3.698 GHz           =
-           ( +-  0.09% )
-        17,254,307      stalled-cycles-frontend   #   52.33% frontend cycle=
-s idle     ( +-  0.17% )
-        38,707,960      instructions              #    1.17  insn per cycle=
-        =20
-                                                  #    0.45  stalled cycles=
- per insn  ( +-  0.01% )
-         8,153,197      branches                  #  914.274 M/sec         =
-           ( +-  0.01% )
-           114,992      branch-misses             #    1.41% of all branche=
-s          ( +-  0.12% )
-
-         0.0095170 +- 0.0000829 seconds time elapsed  ( +-  0.87% )
-
-With your patches:
-
-# perf stat -r 100 ps -eux > /dev/null
-
- Performance counter stats for 'ps -eux' (100 runs):
-
-              8.86 msec task-clock                #    0.918 CPUs utilized =
-           ( +-  1.06% )
-                 5      context-switches          #    0.527 K/sec         =
-           ( +-  1.22% )
-                 0      cpu-migrations            #    0.001 K/sec         =
-           ( +-100.00% )
-               259      page-faults               #    0.029 M/sec         =
-           ( +-  0.08% )
-        32,699,168      cycles                    #    3.692 GHz           =
-           ( +-  0.12% )
-        16,995,861      stalled-cycles-frontend   #   51.98% frontend cycle=
-s idle     ( +-  0.21% )
-        38,114,396      instructions              #    1.17  insn per cycle=
-        =20
-                                                  #    0.45  stalled cycles=
- per insn  ( +-  0.03% )
-         7,985,526      branches                  #  901.625 M/sec         =
-           ( +-  0.03% )
-           112,852      branch-misses             #    1.41% of all branche=
-s          ( +-  0.17% )
-
-          0.009652 +- 0.000276 seconds time elapsed  ( +-  2.86% )
-
-Not really much difference.
-
-Then what about just catting /proc/$$/stat, and do a 1000 runs!
-
-Original:
-
-# perf stat -r 1000 cat /proc/$$/stat > /dev/null
-
- Performance counter stats for 'cat /proc/1622/stat' (1000 runs):
-
-              0.34 msec task-clock                #    0.680 CPUs utilized =
-           ( +-  0.21% )
-                 0      context-switches          #    0.071 K/sec         =
-           ( +- 20.18% )
-                 0      cpu-migrations            #    0.000 K/sec         =
-        =20
-                65      page-faults               #    0.192 M/sec         =
-           ( +-  0.07% )
-           993,486      cycles                    #    2.934 GHz           =
-           ( +-  0.07% )
-           577,903      stalled-cycles-frontend   #   58.17% frontend cycle=
-s idle     ( +-  0.09% )
-           936,489      instructions              #    0.94  insn per cycle=
-        =20
-                                                  #    0.62  stalled cycles=
- per insn  ( +-  0.07% )
-           202,912      branches                  #  599.213 M/sec         =
-           ( +-  0.07% )
-             6,976      branch-misses             #    3.44% of all branche=
-s          ( +-  0.11% )
-
-        0.00049797 +- 0.00000111 seconds time elapsed  ( +-  0.22% )
-
-
-With your patches:
-
-# perf stat -r 1000 cat /proc/$$/stat > /dev/null
-
- Performance counter stats for 'cat /proc/1624/stat' (1000 runs):
-
-              0.34 msec task-clock                #    0.664 CPUs utilized =
-           ( +-  0.23% )
-                 0      context-switches          #    0.018 K/sec         =
-           ( +- 40.72% )
-                 0      cpu-migrations            #    0.000 K/sec         =
-        =20
-                65      page-faults               #    0.190 M/sec         =
-           ( +-  0.07% )
-           988,430      cycles                    #    2.892 GHz           =
-           ( +-  0.07% )
-           574,841      stalled-cycles-frontend   #   58.16% frontend cycle=
-s idle     ( +-  0.09% )
-           933,852      instructions              #    0.94  insn per cycle=
-        =20
-                                                  #    0.62  stalled cycles=
- per insn  ( +-  0.07% )
-           202,096      branches                  #  591.297 M/sec         =
-           ( +-  0.07% )
-             6,836      branch-misses             #    3.38% of all branche=
-s          ( +-  0.09% )
-
-        0.00051476 +- 0.00000557 seconds time elapsed  ( +-  1.08% )
-
-
-They are pretty much identical.
-
-What's the purpose of all these changes again? There was no cover letter.
-
--- Steve
-
---MP_/xbI+jYb6tEPw5+QvHxltnyb
-Content-Type: application/x-perl
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=report.pl
-
-IyEvdXNyL2Jpbi9wZXJsIC13CgpteSBAbGlzdDsKbXkgJHRvdGFsOwoKd2hpbGUgKDw+KSB7Cglj
-aG9tcDsKCWlmICgvdGltZTpccyooXFMqKS8pIHsKCQkkbGlzdFskI2xpc3QgKyAxXSA9ICQxOwoJ
-CSR0b3RhbCArPSAkMTsKCX0KfQoKbXkgJGNudCA9ICQjbGlzdCArIDE7CmlmICghJGNudCkgewoJ
-cHJpbnQgIm5vdGhpbmcgdG8gcmVwb3J0XG4iOwoJZXhpdDsKfQpteSAkYXZnID0gJHRvdGFsIC8g
-JGNudDsKCm15ICRzdGQgPSAwOwokY250ID0gMDsKZm9yZWFjaCBteSAkdmFsIChAbGlzdCkgewoJ
-bXkgJGRlbHRhID0gJHZhbCAtICRhdmc7Cgkkc3RkICs9ICRkZWx0YSAqICRkZWx0YTsKCSRjbnQr
-KzsKfQpteSAkZnVsbF9zdGQgPSBzcXJ0KCRjbnQgPyAkc3RkIC8gJGNudCA6IDApOwoKcHJpbnRm
-IDw8RU9GOwoKZnVsbF90b3RhbCA9ICR0b3RhbAogIGF2ZXJhZ2U6ICAgJGF2ZwogIHN0ZDogICAg
-ICAgJGZ1bGxfc3RkCgpFT0YK
-
---MP_/xbI+jYb6tEPw5+QvHxltnyb--
+> >  
+> >  extern struct inode *ilookup5_nowait(struct super_block *sb,
+> > -- 
+> > 2.25.1
+> > 
