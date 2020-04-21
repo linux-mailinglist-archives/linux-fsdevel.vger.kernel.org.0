@@ -2,41 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FBB1B2FFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 21:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB4F1B301F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 21:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbgDUTSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 15:18:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49007 "EHLO mga11.intel.com"
+        id S1726151AbgDUTSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 15:18:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:59462 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbgDUTSN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 15:18:13 -0400
-IronPort-SDR: yYv38XHyt/cKgHWA3b8ubYR+AECcfOzNHUzQn8WJuZ2J/ajWdFZrk4tC4gReF2u8EQQ9jDdi9o
- YuP4BvCry4wQ==
+        id S1726389AbgDUTSP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 15:18:15 -0400
+IronPort-SDR: 2VrBZg3YsGpoPuY2e4ha4l7iDFxHrFko0Qo1L4PyjSw3w48v9gt7XS8PugHzn9Yofj2BJugiZr
+ 5O5XQ0jcnjYA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 12:18:12 -0700
-IronPort-SDR: RNyeQvJRRiWz4GybeOvV74pRNWVqHDmHUGNclIoLJx+FuTtposP4Ih6Lx7qcye3L1G3zv9IIuC
- UEPJ6dk8iUkw==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 12:18:15 -0700
+IronPort-SDR: BY38aG1IpsxE4DTwk6ImkdNLOfNRE9D4dSXAL6UoulrmXSK7Qvp2nHQw4RDpYkfMKSltb57JuY
+ uLuNRQ68kYLA==
 X-IronPort-AV: E=Sophos;i="5.72,411,1580803200"; 
-   d="scan'208";a="291693639"
+   d="scan'208";a="334376226"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 12:18:11 -0700
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 12:18:14 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH V9 03/11] fs/stat: Define DAX statx attribute
-Date:   Tue, 21 Apr 2020 12:17:45 -0700
-Message-Id: <20200421191754.3372370-4-ira.weiny@intel.com>
+Subject: [PATCH V9 04/11] fs/xfs: Change XFS_MOUNT_DAX to XFS_MOUNT_DAX_ALWAYS
+Date:   Tue, 21 Apr 2020 12:17:46 -0700
+Message-Id: <20200421191754.3372370-5-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200421191754.3372370-1-ira.weiny@intel.com>
 References: <20200421191754.3372370-1-ira.weiny@intel.com>
@@ -49,77 +48,88 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-In order for users to determine if a file is currently operating in DAX
-state (effective DAX).  Define a statx attribute value and set that
-attribute if the effective DAX flag is set.
+In prep for the new tri-state mount option which then introduces
+XFS_MOUNT_DAX_NEVER.
 
-To go along with this we propose the following addition to the statx man
-page:
-
-STATX_ATTR_DAX
-
-	The file is in the DAX (cpu direct access) state.  DAX state
-	attempts to minimize software cache effects for both I/O and
-	memory mappings of this file.  It requires a file system which
-	has been configured to support DAX.
-
-	DAX generally assumes all accesses are via cpu load / store
-	instructions which can minimize overhead for small accesses, but
-	may adversely affect cpu utilization for large transfers.
-
-	File I/O is done directly to/from user-space buffers and memory
-	mapped I/O may be performed with direct memory mappings that
-	bypass kernel page cache.
-
-	While the DAX property tends to result in data being transferred
-	synchronously, it does not give the same guarantees of O_SYNC
-	where data and the necessary metadata are transferred together.
-
-	A DAX file may support being mapped with the MAP_SYNC flag,
-	which enables a program to use CPU cache flush instructions to
-	persist CPU store operations without an explicit fsync(2).  See
-	mmap(2) for more information.
-
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
-Changes from V2:
-	Update man page text with comments from Darrick, Jan, Dan, and
-	Dave.
+Changes from v8
+	Move bit to 26
 ---
- fs/stat.c                 | 3 +++
- include/uapi/linux/stat.h | 1 +
- 2 files changed, 4 insertions(+)
+ fs/xfs/xfs_iops.c  | 2 +-
+ fs/xfs/xfs_mount.h | 3 +--
+ fs/xfs/xfs_super.c | 8 ++++----
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 030008796479..894699c74dde 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	if (IS_AUTOMOUNT(inode))
- 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index f7a99b3bbcf7..462f89af479a 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1248,7 +1248,7 @@ xfs_inode_supports_dax(
+ 		return false;
  
-+	if (IS_DAX(inode))
-+		stat->attributes |= STATX_ATTR_DAX;
-+
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(path, stat, request_mask,
- 					    query_flags);
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index ad80a5c885d5..e5f9d5517f6b 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -169,6 +169,7 @@ struct statx {
- #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
- #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
- #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
-+#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+ 	/* DAX mount option or DAX iflag must be set. */
+-	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
++	if (!(mp->m_flags & XFS_MOUNT_DAX_ALWAYS) &&
+ 	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
+ 		return false;
  
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index b2e4598fdf7d..f6123fb0113c 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -237,8 +237,7 @@ typedef struct xfs_mount {
+ #define XFS_MOUNT_FILESTREAMS	(1ULL << 24)	/* enable the filestreams
+ 						   allocator */
+ #define XFS_MOUNT_NOATTR2	(1ULL << 25)	/* disable use of attr2 format */
+-
+-#define XFS_MOUNT_DAX		(1ULL << 62)	/* TEST ONLY! */
++#define XFS_MOUNT_DAX_ALWAYS	(1ULL << 26)
  
- #endif /* _UAPI_LINUX_STAT_H */
+ /*
+  * Max and min values for mount-option defined I/O
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 424bb9a2d532..ce169d1c7474 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -129,7 +129,7 @@ xfs_fs_show_options(
+ 		{ XFS_MOUNT_GRPID,		",grpid" },
+ 		{ XFS_MOUNT_DISCARD,		",discard" },
+ 		{ XFS_MOUNT_LARGEIO,		",largeio" },
+-		{ XFS_MOUNT_DAX,		",dax" },
++		{ XFS_MOUNT_DAX_ALWAYS,		",dax" },
+ 		{ 0, NULL }
+ 	};
+ 	struct xfs_mount	*mp = XFS_M(root->d_sb);
+@@ -1261,7 +1261,7 @@ xfs_fc_parse_param(
+ 		return 0;
+ #ifdef CONFIG_FS_DAX
+ 	case Opt_dax:
+-		mp->m_flags |= XFS_MOUNT_DAX;
++		mp->m_flags |= XFS_MOUNT_DAX_ALWAYS;
+ 		return 0;
+ #endif
+ 	default:
+@@ -1454,7 +1454,7 @@ xfs_fc_fill_super(
+ 	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+ 		sb->s_flags |= SB_I_VERSION;
+ 
+-	if (mp->m_flags & XFS_MOUNT_DAX) {
++	if (mp->m_flags & XFS_MOUNT_DAX_ALWAYS) {
+ 		bool rtdev_is_dax = false, datadev_is_dax;
+ 
+ 		xfs_warn(mp,
+@@ -1468,7 +1468,7 @@ xfs_fc_fill_super(
+ 		if (!rtdev_is_dax && !datadev_is_dax) {
+ 			xfs_alert(mp,
+ 			"DAX unsupported by block device. Turning off DAX.");
+-			mp->m_flags &= ~XFS_MOUNT_DAX;
++			mp->m_flags &= ~XFS_MOUNT_DAX_ALWAYS;
+ 		}
+ 		if (xfs_sb_version_hasreflink(&mp->m_sb)) {
+ 			xfs_alert(mp,
 -- 
 2.25.1
 
