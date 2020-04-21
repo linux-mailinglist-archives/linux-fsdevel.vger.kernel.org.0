@@ -2,167 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4071B2D1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0CF1B2D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Apr 2020 18:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbgDUQt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 12:49:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725963AbgDUQt2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 12:49:28 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A01C061A41;
-        Tue, 21 Apr 2020 09:49:28 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id h2so4317119wmb.4;
-        Tue, 21 Apr 2020 09:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=T410BgQnQuXKYxEscOwjOVqkA5eP3x59KmpAyvDkg4s=;
-        b=l0Bm/taxusuNTxZw1FbXGtXDpfSusKDst3J4oiI9sMkyBNO92zGgBZEvRDjytEhR6X
-         sB/4KTOtNLlSxcjR6/4guGlb5P5XX8fKUqAAPtLWS5GFAfm106bRNkpHF8/mZoJTe04u
-         dtqfbHV4XrVi1WAtZ7jce6ZnnbjqSAvv0uB1+VwHUMFZ8YhkKTPvPQMbdIudkIjGQzIx
-         oAwj6DIDHJhxi8hmuNAZsSlYkXuinZzdmnU0ZwjzHUrCgyFEE1BgIMc4ng71EE9W3edY
-         7440FDFYLkQpT0FVi6xrpzsUsvqqDL+iDRBuX9UTajdAA3Kqfe+n6oHBe0o21cyL4Yri
-         xYJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=T410BgQnQuXKYxEscOwjOVqkA5eP3x59KmpAyvDkg4s=;
-        b=pOcuCpSNqY5DZ5O2tRyPU0bq3XmdECqjo0nKTJftjG6Vzq24tYzyZay4O2WJs0T0x/
-         k4+qe0RNeT9xZNExyI2v2+1wiJlLHV/UQDIyMcPtdyYGv6UTiA2r2Dq+6X7ofph9P0Hb
-         NMWMDpp7KQloXmTmfTBqnl1jYik4eAvIHOhzeuhDLwYSLgkqZtcWikMoOfx/jnABdlo2
-         GCggvVlYaDuAedpvHHdh0KNGfKiWqRG311MbhlJcK2owG/K5EM0i+AMxIaMUICPDhobh
-         e2KNB/Dtt/jSFxafDHlsn3t8euVF5Tc2UdgIkPDBCyYvRz0nrV2NNnjpjATMDPfZoepU
-         QY/g==
-X-Gm-Message-State: AGi0PubDin/liPWfcYf9dAwkL8sQK5y2+TQ0poDKDsqueWTyzUQoOwEw
-        x83B9awDSsEqiwwH5c0loQ==
-X-Google-Smtp-Source: APiQypImaX4lCCdm1ARp3k//LAraQn8166oj7y7Phe1pcfSwcjV1Xs/Aq5v8GXULdw9f5bdOUeyq9g==
-X-Received: by 2002:a1c:544c:: with SMTP id p12mr5730030wmi.88.1587487766805;
-        Tue, 21 Apr 2020 09:49:26 -0700 (PDT)
-Received: from avx2 ([46.53.252.84])
-        by smtp.gmail.com with ESMTPSA id h3sm4336863wrm.73.2020.04.21.09.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2020 09:49:26 -0700 (PDT)
-Date:   Tue, 21 Apr 2020 19:49:24 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
-        sergey.senozhatsky@gmail.com, linux@rasmusvillemoes.dk
-Subject: Re: [PATCH 03/15] print_integer: new and improved way of printing
- integers
-Message-ID: <20200421164924.GB8735@avx2>
-References: <20200420205743.19964-1-adobriyan@gmail.com>
- <20200420205743.19964-3-adobriyan@gmail.com>
- <20200420211911.GC185537@smile.fi.intel.com>
- <20200420212723.GE185537@smile.fi.intel.com>
- <20200420215417.6e2753ee@oasis.local.home>
+        id S1729127AbgDUQyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 12:54:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbgDUQyp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 12:54:45 -0400
+Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF7A32072D;
+        Tue, 21 Apr 2020 16:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587488084;
+        bh=I+poV6aWdrEtdHBUr6m4gEt4rVr2SFuzXvvDAKP9Sho=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qB58J7CdaJxDgs3IwR1BILA82/V832qHRtvohLy/Kb2dIF+RDago1sOUyA3wcPGJm
+         THLL/xW1xsSn7snwNLctffrsALp7GFFpR5aKSAh6XUVIxbQC8PeapfYgVMPAaXblew
+         /vob6Aoa4APmTstwu4eEJlbcEEo5polgmbJysOSA=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jQwAU-00CmDK-0s; Tue, 21 Apr 2020 18:54:42 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        linux-cachefs@redhat.com, David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>, codalist@coda.cs.cmu.edu,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Joel Becker <jlbec@evilplan.org>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Amir Goldstein <amir73il@gmail.com>, coda@cs.cmu.edu,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-usb@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 00/29] fs: convert remaining docs to ReST file format
+Date:   Tue, 21 Apr 2020 18:54:11 +0200
+Message-Id: <cover.1587487612.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200420215417.6e2753ee@oasis.local.home>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 09:54:17PM -0400, Steven Rostedt wrote:
-> On Tue, 21 Apr 2020 00:27:23 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > >   
-> > > > 	TODO
-> > > > 	benchmark with mainline because nouveau is broken for me -(
-> > > > 	vsnprintf() changes make the code slower  
-> > > 
-> > > Exactly main point of this exercise. I don't believe that algos in vsprintf.c
-> > > are too dumb to use division per digit (yes, division by constant which is not
-> > > power of two is a heavy operation).
-> > >   
-> > 
-> > And second point here, why not to use existing algos from vsprintf.c?
-> 
-> Exactly. The code in _print_integer_u32() doesn't look as fast as the
-> code in vsprintf() that happens to use lookup tables and converts
-> without any loops.
-> 
-> Hint, loops are bad, they cause the CPU to slow down.
+This patch series convert the remaining files under Documentation/filesystems
+to the ReST file format (except for dax.txt and patch-lookup.txt). 
 
-Oh, come on! Loops make code fit into icache and μop decode cache.
+It is based on linux-next (next-2020021).
 
-> Anyway, this patch series would require a pretty good improvement, as
-> the code replacing the sprintf() usages is pretty ugly compared to a
-> simple sprintf() call.
+PS.: I opted to add mainly ML from the output of get_maintainers.pl to the c/c
+list of patch 00/34, because  otherwise the number of c/c would be too many,
+with would very likely cause ML servers to reject it.
 
-No! Fast code must look ugly. Or in other words if you try to optimise
-integer printing to death you'll probably end with something like
-_print_integer().
+The results of those changes (together with other changes from my pending
+doc patches) are available at:
 
-When the very first patch changed /proc/stat to seq_put_decimal_ull()
-the speed up was 66% (or 33%). That's how slow printing was back then.
-It can be made slightly faster even now.
+   https://www.infradead.org/~mchehab/kernel_docs/filesystems/index.html
 
-> Randomly picking patch 6:
-> 
->  static int loadavg_proc_show(struct seq_file *m, void *v)
->  {
->  	unsigned long avnrun[3];
->  
->  	get_avenrun(avnrun, FIXED_1/200, 0);
->  
-> 	seq_printf(m, "%lu.%02lu %lu.%02lu %lu.%02lu %u/%d %d\n",
-> 		LOAD_INT(avnrun[0]), LOAD_FRAC(avnrun[0]),
-> 		LOAD_INT(avnrun[1]), LOAD_FRAC(avnrun[1]),
-> 		LOAD_INT(avnrun[2]), LOAD_FRAC(avnrun[2]),
-> 		nr_running(), nr_threads,
-> 		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
->  	return 0;
->  }
-> 
->   *vs* 
-> 
->  static int loadavg_proc_show(struct seq_file *m, void *v)
->  {
->  	unsigned long avnrun[3];
-> 	char buf[3 * (LEN_UL + 1 + 2 + 1) + 10 + 1 + 10 + 1 + 10 + 1];
-> 	char *p = buf + sizeof(buf);
-> 	int i;
-> 
-> 	*--p = '\n';
-> 	p = _print_integer_u32(p, idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
-> 	*--p = ' ';
-> 	p = _print_integer_u32(p, nr_threads);
-> 	*--p = '/';
-> 	p = _print_integer_u32(p, nr_running());
-> 
->  	get_avenrun(avnrun, FIXED_1/200, 0);
-> 	for (i = 2; i >= 0; i--) {
-> 		*--p = ' ';
-> 		--p;		/* overwritten */
-> 		*--p = '0';	/* conditionally overwritten */
-> 		(void)_print_integer_u32(p + 2, LOAD_FRAC(avnrun[i]));
-> 		*--p = '.';
-> 		p = _print_integer_ul(p, LOAD_INT(avnrun[i]));
-> 	}
->  
-> 	seq_write(m, p, buf + sizeof(buf) - p);
->  	return 0;
->  }
-> 
-> 
-> I much rather keep the first version.
+And the series is also on my git tree:
 
-I did the benchmarks (without stack protector though), everything except
-/proc/cpuinfo and /proc/meminfo became faster. This requires investigation
-and I can drop vsprintf() changes until then.
+  https://git.linuxtv.org/mchehab/experimental.git/log/?h=fs_docs
 
-Now given that /proc/uptime format cast in stone, code may look a bit ugly
-and unusual but it won't require maintainance
+If you prefer, feel free to merge the patches via the filesystems git tree(s).
+
+- 
+
+v2:
+
+   - Removed dax.txt, in order to prevent a merge conflict with a dax patchset;
+   - Removed patch-lookup.txt conversion, due to patch-lookup.rst.
+     (I'll revisit this on some future)
+   - Removed a patch that was already merged;
+   - Added some Acked-by.
+
+
+Mauro Carvalho Chehab (29):
+  docs: filesystems: convert caching/object.txt to ReST
+  docs: filesystems: convert caching/fscache.txt to ReST format
+  docs: filesystems: caching/netfs-api.txt: convert it to ReST
+  docs: filesystems: caching/operations.txt: convert it to ReST
+  docs: filesystems: caching/cachefiles.txt: convert to ReST
+  docs: filesystems: caching/backend-api.txt: convert it to ReST
+  docs: filesystems: convert cifs/cifsroot.txt to ReST
+  docs: filesystems: convert configfs.txt to ReST
+  docs: filesystems: convert automount-support.txt to ReST
+  docs: filesystems: convert coda.txt to ReST
+  docs: filesystems: convert devpts.txt to ReST
+  docs: filesystems: convert dnotify.txt to ReST
+  docs: filesystems: convert fiemap.txt to ReST
+  docs: filesystems: convert files.txt to ReST
+  docs: filesystems: convert fuse-io.txt to ReST
+  docs: filesystems: convert locks.txt to ReST
+  docs: filesystems: convert mandatory-locking.txt to ReST
+  docs: filesystems: convert mount_api.txt to ReST
+  docs: filesystems: convert quota.txt to ReST
+  docs: filesystems: convert seq_file.txt to ReST
+  docs: filesystems: convert sharedsubtree.txt to ReST
+  docs: filesystems: split spufs.txt into 3 separate files
+  docs: filesystems: convert spufs/spu_create.txt to ReST
+  docs: filesystems: convert spufs/spufs.txt to ReST
+  docs: filesystems: convert spufs/spu_run.txt to ReST
+  docs: filesystems: convert sysfs-pci.txt to ReST
+  docs: filesystems: convert sysfs-tagging.txt to ReST
+  docs: filesystems: convert xfs-delayed-logging-design.txt to ReST
+  docs: filesystems: convert xfs-self-describing-metadata.txt to ReST
+
+ Documentation/admin-guide/sysctl/kernel.rst   |    2 +-
+ ...ount-support.txt => automount-support.rst} |   23 +-
+ .../{backend-api.txt => backend-api.rst}      |  165 +-
+ .../{cachefiles.txt => cachefiles.rst}        |  139 +-
+ Documentation/filesystems/caching/fscache.rst |  565 ++++++
+ Documentation/filesystems/caching/fscache.txt |  448 -----
+ Documentation/filesystems/caching/index.rst   |   14 +
+ .../caching/{netfs-api.txt => netfs-api.rst}  |  172 +-
+ .../caching/{object.txt => object.rst}        |   43 +-
+ .../{operations.txt => operations.rst}        |   45 +-
+ .../cifs/{cifsroot.txt => cifsroot.rst}       |   56 +-
+ Documentation/filesystems/coda.rst            | 1670 ++++++++++++++++
+ Documentation/filesystems/coda.txt            | 1676 -----------------
+ .../{configfs/configfs.txt => configfs.rst}   |  129 +-
+ Documentation/filesystems/devpts.rst          |   36 +
+ Documentation/filesystems/devpts.txt          |   26 -
+ .../filesystems/{dnotify.txt => dnotify.rst}  |   11 +-
+ .../filesystems/{fiemap.txt => fiemap.rst}    |  133 +-
+ .../filesystems/{files.txt => files.rst}      |   15 +-
+ .../filesystems/{fuse-io.txt => fuse-io.rst}  |    6 +
+ Documentation/filesystems/index.rst           |   23 +
+ .../filesystems/{locks.txt => locks.rst}      |   14 +-
+ ...tory-locking.txt => mandatory-locking.rst} |   25 +-
+ .../{mount_api.txt => mount_api.rst}          |  329 ++--
+ Documentation/filesystems/proc.rst            |    2 +-
+ .../filesystems/{quota.txt => quota.rst}      |   41 +-
+ .../{seq_file.txt => seq_file.rst}            |   61 +-
+ .../{sharedsubtree.txt => sharedsubtree.rst}  |  394 ++--
+ Documentation/filesystems/spufs/index.rst     |   13 +
+ .../filesystems/spufs/spu_create.rst          |  131 ++
+ Documentation/filesystems/spufs/spu_run.rst   |  138 ++
+ .../{spufs.txt => spufs/spufs.rst}            |  304 +--
+ .../{sysfs-pci.txt => sysfs-pci.rst}          |   23 +-
+ .../{sysfs-tagging.txt => sysfs-tagging.rst}  |   22 +-
+ ...ign.txt => xfs-delayed-logging-design.rst} |   65 +-
+ ...a.txt => xfs-self-describing-metadata.rst} |  182 +-
+ Documentation/iio/iio_configfs.rst            |    2 +-
+ Documentation/usb/gadget_configfs.rst         |    4 +-
+ MAINTAINERS                                   |   14 +-
+ fs/cachefiles/Kconfig                         |    4 +-
+ fs/coda/Kconfig                               |    2 +-
+ fs/configfs/inode.c                           |    2 +-
+ fs/configfs/item.c                            |    2 +-
+ fs/fscache/Kconfig                            |    8 +-
+ fs/fscache/cache.c                            |    8 +-
+ fs/fscache/cookie.c                           |    2 +-
+ fs/fscache/object.c                           |    4 +-
+ fs/fscache/operation.c                        |    2 +-
+ fs/locks.c                                    |    2 +-
+ include/linux/configfs.h                      |    2 +-
+ include/linux/fs_context.h                    |    2 +-
+ include/linux/fscache-cache.h                 |    4 +-
+ include/linux/fscache.h                       |   42 +-
+ include/linux/lsm_hooks.h                     |    2 +-
+ 54 files changed, 3844 insertions(+), 3405 deletions(-)
+ rename Documentation/filesystems/{automount-support.txt => automount-support.rst} (92%)
+ rename Documentation/filesystems/caching/{backend-api.txt => backend-api.rst} (87%)
+ rename Documentation/filesystems/caching/{cachefiles.txt => cachefiles.rst} (90%)
+ create mode 100644 Documentation/filesystems/caching/fscache.rst
+ delete mode 100644 Documentation/filesystems/caching/fscache.txt
+ create mode 100644 Documentation/filesystems/caching/index.rst
+ rename Documentation/filesystems/caching/{netfs-api.txt => netfs-api.rst} (91%)
+ rename Documentation/filesystems/caching/{object.txt => object.rst} (95%)
+ rename Documentation/filesystems/caching/{operations.txt => operations.rst} (90%)
+ rename Documentation/filesystems/cifs/{cifsroot.txt => cifsroot.rst} (72%)
+ create mode 100644 Documentation/filesystems/coda.rst
+ delete mode 100644 Documentation/filesystems/coda.txt
+ rename Documentation/filesystems/{configfs/configfs.txt => configfs.rst} (87%)
+ create mode 100644 Documentation/filesystems/devpts.rst
+ delete mode 100644 Documentation/filesystems/devpts.txt
+ rename Documentation/filesystems/{dnotify.txt => dnotify.rst} (90%)
+ rename Documentation/filesystems/{fiemap.txt => fiemap.rst} (70%)
+ rename Documentation/filesystems/{files.txt => files.rst} (95%)
+ rename Documentation/filesystems/{fuse-io.txt => fuse-io.rst} (95%)
+ rename Documentation/filesystems/{locks.txt => locks.rst} (91%)
+ rename Documentation/filesystems/{mandatory-locking.txt => mandatory-locking.rst} (91%)
+ rename Documentation/filesystems/{mount_api.txt => mount_api.rst} (79%)
+ rename Documentation/filesystems/{quota.txt => quota.rst} (81%)
+ rename Documentation/filesystems/{seq_file.txt => seq_file.rst} (92%)
+ rename Documentation/filesystems/{sharedsubtree.txt => sharedsubtree.rst} (72%)
+ create mode 100644 Documentation/filesystems/spufs/index.rst
+ create mode 100644 Documentation/filesystems/spufs/spu_create.rst
+ create mode 100644 Documentation/filesystems/spufs/spu_run.rst
+ rename Documentation/filesystems/{spufs.txt => spufs/spufs.rst} (57%)
+ rename Documentation/filesystems/{sysfs-pci.txt => sysfs-pci.rst} (92%)
+ rename Documentation/filesystems/{sysfs-tagging.txt => sysfs-tagging.rst} (72%)
+ rename Documentation/filesystems/{xfs-delayed-logging-design.txt => xfs-delayed-logging-design.rst} (97%)
+ rename Documentation/filesystems/{xfs-self-describing-metadata.txt => xfs-self-describing-metadata.rst} (83%)
+
+-- 
+2.25.2
+
+
