@@ -2,51 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA21C1B4ADE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 18:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4ED1B4B0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 18:55:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgDVQvH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 12:51:07 -0400
-Received: from namei.org ([65.99.196.166]:52046 "EHLO namei.org"
+        id S1726826AbgDVQzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 12:55:41 -0400
+Received: from namei.org ([65.99.196.166]:52066 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbgDVQvG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 12:51:06 -0400
+        id S1726337AbgDVQzl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 12:55:41 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 03MGo4UJ013061;
-        Wed, 22 Apr 2020 16:50:04 GMT
-Date:   Thu, 23 Apr 2020 02:50:04 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 03MGtWHf013311;
+        Wed, 22 Apr 2020 16:55:32 GMT
+Date:   Thu, 23 Apr 2020 02:55:32 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
-cc:     linux-fsdevel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
-        Uma Krishnan <ukrishn@linux.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+To:     Daniel Colascione <dancol@google.com>
+cc:     Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Moore <paul@paul-moore.com>,
+        Nick Kralevich <nnk@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Lokesh Gidra <lokeshgidra@google.com>,
         John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v2 2/7] libfs: wrap simple_pin_fs/simple_release_fs
- arguments in a struct
-In-Reply-To: <20200421135119.30007-3-eesposit@redhat.com>
-Message-ID: <alpine.LRH.2.21.2004230246380.12318@namei.org>
-References: <20200421135119.30007-1-eesposit@redhat.com> <20200421135119.30007-3-eesposit@redhat.com>
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
+In-Reply-To: <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.2004230253530.12318@namei.org>
+References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com> <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -55,19 +41,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 21 Apr 2020, Emanuele Giuseppe Esposito wrote:
+On Mon, 13 Apr 2020, Daniel Colascione wrote:
 
-> Simplify passing the count and mount to simple_pin_fs and
-> simple_release_fs by wrapping them in the simple_fs struct,
-> in preparation for adding more high level operations to
-> fs/libfs.c
+> On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
+> >
+> > Changes from the fourth version of the patch:
 > 
-> There is no functional change intended.
 > 
-> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+> Is there anything else that needs to be done before merging this patch series?
 
-
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+The vfs changes need review and signoff from the vfs folk, the SELinux 
+changes by either Paul or Stephen, and we also need signoff on the LSM 
+hooks from other major LSM authors (Casey and John, at a minimum).
 
 
 -- 
