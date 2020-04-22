@@ -2,303 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B0C1B4D6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 21:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D8591B4F0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 23:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgDVTfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 15:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725961AbgDVTfJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 15:35:09 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D848C03C1AA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Apr 2020 12:35:09 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id b62so3748015qkf.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Apr 2020 12:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :cc:to;
-        bh=XUOj5ckwWLz2lEgwmqsauan+bflvXqJRztDKf8tU8MA=;
-        b=o1sj58VO5UXoRTDnFsVS6sjH247RYcCfp9v8AZQfqxzqFUV/n3OoDnc53qs4cQT9BJ
-         89Hdut3hRtAYSbwn6pFsTXlPJPgHxIywpNwCvym8MjfMRwHKu4WislZCAr5TcrGEgF2R
-         8xCtaJL9aP3mpc8PPbCqeDLKl4M0cm4Iz9QdKxOvCa7wNBYNaMBgwgwMdC2mLl+oAUOR
-         rA9gH8+cMyduhj6Lj58QwjJdVU0RB/Nz28iFrxsLTlJTaEKvXI5YoXgvSw7gfhyivc8v
-         1QVDGXusj3eSZkN2p7aWQy1O0IxMMmT56eJhmaJVK7zUHqlmqqc4i2KsrJGvDT//dg0D
-         2B5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=XUOj5ckwWLz2lEgwmqsauan+bflvXqJRztDKf8tU8MA=;
-        b=GTc4CR8HlBxLee5kBH2h6SAyRAm9QJc4Y1eFIxA2sa+HwDcCAKTB7CjGmDepDn+b3s
-         hbXboUpTCO4Ph2C5IowCssIo2nULwU4+MYLxyXtNBdjkJMaWP/t6dCD5Uss6CcmQGGRv
-         9OglnYHlYp4nIV2k3Yd6FODCWOE07EHeAawx1vtEfcdq+VTJFuPNDFWjJCMzvUkmxp+1
-         JCkxmOBUt/+LjxfC0H6Zu+iAv2MJfsfYSSEE/K7A8viQ5d24wInYSLkdcHRytWR9pYkR
-         kv4vlKemVYhz+lMH65AOHYVOsqo4NW8SQxpIZPyZqOUDL94kAuly7QHC4yFZ6KjTxB4/
-         xYgA==
-X-Gm-Message-State: AGi0PuY37xBn+WUAKvs1Jw+YAl7jFZV90cJnSzt1chBin2JPRSuAdvSG
-        dbmLOIjPVJ9ju86nP4AzLvi48g==
-X-Google-Smtp-Source: APiQypJtFpia/b9WJAjqdz0qbTKPrcNxYq2W3l1uSEcDwDd8r2V3oibM6z9SaNtVJ8x+4uQFj8hIPw==
-X-Received: by 2002:a37:638d:: with SMTP id x135mr19003866qkb.366.1587584108007;
-        Wed, 22 Apr 2020 12:35:08 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id e133sm58554qkb.128.2020.04.22.12.35.06
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Apr 2020 12:35:07 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: out-of-bounds in pid_nr_ns() due to "proc: modernize proc to support
- multiple private instances"
-Message-Id: <06B50A1C-406F-4057-BFA8-3A7729EA7469@lca.pw>
-Date:   Wed, 22 Apr 2020 15:35:05 -0400
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        id S1726692AbgDVVVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 17:21:14 -0400
+Received: from mga09.intel.com ([134.134.136.24]:54635 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbgDVVVN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 17:21:13 -0400
+IronPort-SDR: W4F/DzAkp5HA+3tf09hnSLmlWRaYV5EztENc3429g0WMDJFxTUWA5dVpa7Kn08ydlWc9X5rLNg
+ U4PpaF046OMw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 14:21:12 -0700
+IronPort-SDR: 1V3aydwcj2RFc/ViuLoh/Pg4suCfr/h0jIK5zkCV7nn86S2pikVUlwWtCoNyaKdsG+vxPshR3W
+ E/Au24YAYQfQ==
+X-IronPort-AV: E=Sophos;i="5.73,304,1583222400"; 
+   d="scan'208";a="292070841"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 14:21:11 -0700
+From:   ira.weiny@intel.com
+To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>
+Subject: [PATCH V10 00/11] XFS - Enable per-file/per-directory DAX operations V10
+Date:   Wed, 22 Apr 2020 14:20:51 -0700
+Message-Id: <20200422212102.3757660-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reverted the whole series from linux-next,
+From: Ira Weiny <ira.weiny@intel.com>
 
-20d3928579da proc: use named enums for better readability
-e9fc842e1fb6 proc: use human-readable values for hidepid
-3ef9b8afc054 docs: proc: add documentation for "hidepid=3D4" and =
-"subset=3Dpid" options and new mount behavior
-f1031df957fa proc: add option to mount only a pids subset
-9153c0921a1e proc: instantiate only pids that we can ptrace on =
-'hidepid=3D4' mount option
-1ef97cee07dd proc: allow to mount many instances of proc in one pid =
-namespace
-39f8e6256b4b proc: rename struct proc_fs_info to proc_fs_opts=20
+Changes from V9:
+	Slight reorder of series to put Documentation sooner
+	modify i_state under i_lock
+	Change name of xfs_ioctl_setattr_dax_invalidate() ->
+		xfs_ioctl_setattr_prepare_dax()
+	Do not report default dax=inode mount mode
+	Move XFS_IEOFBLOCKS to '9'
+	Fixup some doc typos
+	Fix xfs style indentation
+	Fix commit mispelling
 
-fixed out-of-bounds in pid_nr_ns() while reading proc files.
+At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
+consumption due to their inability to detect whether the kernel will
+instantiate page cache for a file, and cases where a global dax enable via a
+mount option is too coarse.
 
-=3D=3D=3D arm64 =3D=3D=3D
-[12140.366814] LTP: starting proc01 (proc01 -m 128)
-[12149.580943] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[12149.589521] BUG: KASAN: out-of-bounds in pid_nr_ns+0x2c/0x90
-pid_nr_ns at kernel/pid.c:456
-[12149.595939] Read of size 4 at addr 1bff000bfa8c0388 by task =
-proc01/50298
-[12149.603392] Pointer tag: [1b], memory tag: [fe]
+The following patch series enables the use of DAX on individual files and/or
+directories on xfs, and lays some groundwork to do so in ext4.  It further
+enhances the dax mount option to be a tri-state of 'always', 'never', or
+'iflag' (default).  Furthermore, it maintians '-o dax' to be equivalent to '-o
+dax=always'.
 
-[12149.610906] CPU: 69 PID: 50298 Comm: proc01 Tainted: G             L  =
-  5.7.0-rc2-next-20200422 #6
-[12149.620585] Hardware name: HPE Apollo 70             /C01_APACHE_MB   =
-      , BIOS L50_5.13_1.11 06/18/2019
-[12149.631074] Call trace:
-[12149.634304]  dump_backtrace+0x0/0x22c
-[12149.638745]  show_stack+0x28/0x34
-[12149.642839]  dump_stack+0x104/0x194
-[12149.647110]  print_address_description+0x70/0x3a4
-[12149.652576]  __kasan_report+0x188/0x238
-[12149.657169]  kasan_report+0x3c/0x58
-[12149.661430]  check_memory_region+0x98/0xa0
-[12149.666303]  __hwasan_load4_noabort+0x18/0x20
-[12149.671431]  pid_nr_ns+0x2c/0x90
-[12149.675446]  locks_translate_pid+0xf4/0x1a0
-[12149.680382]  locks_show+0x68/0x110
-[12149.684536]  seq_read+0x380/0x930
-[12149.688604]  pde_read+0x5c/0x78
-[12149.692498]  proc_reg_read+0x74/0xc0
-[12149.696813]  __vfs_read+0x84/0x1d0
-[12149.700939]  vfs_read+0xec/0x124
-[12149.704889]  ksys_read+0xb0/0x120
-[12149.708927]  __arm64_sys_read+0x54/0x88
-[12149.713485]  do_el0_svc+0x128/0x1dc
-[12149.717697]  el0_sync_handler+0x150/0x250
-[12149.722428]  el0_sync+0x164/0x180
+The insight at LSF/MM was to separate the per-mount or per-file "physical"
+(FS_XFLAG_DAX) capability switch from an "effective" (S_DAX) attribute for the
+file.
 
-[12149.728672] Allocated by task 1:
-[12149.732624]  __kasan_kmalloc+0x124/0x188
-[12149.737269]  kasan_kmalloc+0x10/0x18
-[12149.741568]  kmem_cache_alloc_trace+0x2e4/0x3d4
-[12149.746820]  proc_fill_super+0x48/0x1fc
-[12149.751377]  vfs_get_super+0xcc/0x170
-[12149.755760]  get_tree_nodev+0x28/0x34
-[12149.760143]  proc_get_tree+0x24/0x30
-[12149.764439]  vfs_get_tree+0x54/0x158
-[12149.768736]  do_mount+0x80c/0xaf0
-[12149.772774]  __arm64_sys_mount+0xe0/0x18c
-[12149.777504]  do_el0_svc+0x128/0x1dc
-[12149.781715]  el0_sync_handler+0x150/0x250
-[12149.786445]  el0_sync+0x164/0x180
+At LSF/MM we discussed the difficulties of switching the DAX state of a file
+with active mappings / page cache.  It was thought the races could be avoided
+by limiting DAX state flips to 0-length files.
 
-[12149.792687] Freed by task 0:
-[12149.796285] (stack is not available)
+However, this turns out to not be true.[3][5] This is because address space
+operations (a_ops) may be in use at any time the inode is referenced.
 
-[12149.802792] The buggy address belongs to the object at =
-ffff000bfa8c0300
-                which belongs to the cache kmalloc-128 of size 128
-[12149.816727] The buggy address is located 8 bytes to the right of
-                128-byte region [ffff000bfa8c0300, ffff000bfa8c0380)
-[12149.830223] The buggy address belongs to the page:
-[12149.835740] page:ffffffe002dea300 refcount:1 mapcount:0 =
-mapping:0000000037c9e9b5 index:0x31ff000bfa8c9e00
-[12149.846027] flags: 0x5ffffffe000200(slab)
-[12149.850765] raw: 005ffffffe000200 ffffffe022175788 ffffffe02215b788 =
-17ff0087a0020480
-[12149.859232] raw: 31ff000bfa8c9e00 0000000000660065 00000001ffffffff =
-0000000000000000
-[12149.867693] page dumped because: kasan: bad access detected
-[12149.873984] page_owner tracks the page as allocated
-[12149.879585] page last allocated via order 0, migratetype Unmovable, =
-gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY)
-[12149.891438]  post_alloc_hook+0x94/0xd4
-[12149.895908]  prep_new_page+0x34/0xcc
-[12149.900206]  get_page_from_freelist+0x4c4/0x60c
-[12149.905458]  __alloc_pages_nodemask+0x1c0/0x2e8
-[12149.910712]  alloc_page_interleave+0x38/0x18c
-[12149.915791]  alloc_pages_current+0x80/0xe0
-[12149.920610]  alloc_slab_page+0x154/0x3b4
-[12149.925254]  new_slab+0xc8/0x5f4
-[12149.929203]  ___slab_alloc+0x248/0x440
-[12149.933675]  kmem_cache_alloc_trace+0x368/0x3d4
-[12149.938928]  ftrace_free_mem+0x258/0x7ac
-[12149.943575]  ftrace_free_init_mem+0x20/0x28
-[12149.948482]  kernel_init+0x1c/0x204
-[12149.952692]  ret_from_fork+0x10/0x18
-[12149.956986] page_owner free stack trace missing
+For this reason direct manipulation of the FS_XFLAG_DAX is allowed but the
+operation of the file (S_DAX) is not immediately changed.
 
-[12149.964443] Memory state around the buggy address:
-[12149.969956]  ffff000bfa8c0100: fe fe fe fe fe fe fe fe fe fe fe fe fe =
-fe fe fe
-[12149.977899]  ffff000bfa8c0200: fe fe fe fe fe fe fe fe fe fe fe fe fe =
-fe fe fe
-[12149.985841] >ffff000bfa8c0300: 1b 1b 1b fe fe fe fe fe fe fe fe fe fe =
-fe fe fe
-[12149.993781]                                            ^
-[12149.999814]  ffff000bfa8c0400: fe fe fe fe fe fe fe fe fe fe fe fe fe =
-fe fe fe
-[12150.007757]  ffff000bfa8c0500: fe fe fe fe fe fe fe fe 6c 6c 6c 6c 6c =
-6c 6c 6c
-[12150.015697] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[12150.023638] Disabling lock debugging due to kernel taint
+Details of when and how DAX state can be changed on a file is included in a
+documentation patch.
 
-=3D=3D=3D s390 =3D=3D=3D
-[14452.527006] LTP: starting proc01 (proc01 -m 128)
-[14455.663026] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14455.664078] BUG: KASAN: slab-out-of-bounds in pid_nr_ns+0x34/0xa8
-[14455.664120] Read of size 4 at addr 000000000dabacc8 by task =
-proc01/41628
+It should be noted that FS_XFLAG_DAX inheritance is not shown in this patch set
+as it was maintained from previous work on XFS.  FS_XFLAG_DAX and it's
+inheritance will need to be added to other file systems for user control. 
 
-[14455.664205] CPU: 1 PID: 41628 Comm: proc01 Not tainted =
-5.7.0-rc2-next-20200422 #2
-[14455.664248] Hardware name: IBM 2964 N96 400 (z/VM 6.4.0)
-[14455.664288] Call Trace:
-[14455.664335]  [<00000000084be28a>] show_stack+0x11a/0x1c8=20
-[14455.664382]  [<0000000008b147f4>] dump_stack+0x134/0x180=20
-[14455.664434]  [<00000000088b56c4>] =
-print_address_description.isra.9+0x5c/0x3e8=20
-[14455.664480]  [<00000000088b5cac>] __kasan_report+0x114/0x140=20
-[14455.664523]  [<00000000088b4bf4>] kasan_report+0x4c/0x58=20
-[14455.666150]  [<0000000008532a24>] pid_nr_ns+0x34/0xa8=20
-[14455.666203]  [<00000000089ee806>] locks_translate_pid+0xee/0x1c8=20
-[14455.666246]  [<00000000089eeea4>] locks_show+0x84/0x130=20
-[14455.666295]  [<0000000008958c3e>] seq_read+0x25e/0x7f0=20
-[14455.666343]  [<0000000008a14e70>] proc_reg_read+0x100/0x168=20
-[14455.666389]  [<000000000890fa22>] vfs_read+0x92/0x150=20
-[14455.666432]  [<000000000890feda>] ksys_read+0xe2/0x188=20
-[14455.666483]  [<0000000008e671d0>] system_call+0xd8/0x2b4=20
-[14455.666525] 5 locks held by proc01/41628:
-[14455.666562]  #0: 000000003e0e0c10 (&p->lock){+.+.}-{3:3}, at: =
-seq_read+0x5e/0x7f0
-[14455.666630]  #1: 00000000095deff0 (file_rwsem){++++}-{0:0}, at: =
-locks_start+0x66/0x98
-[14455.666695]  #2: 00000000095deed8 (blocked_lock_lock){+.+.}-{2:2}, =
-at: locks_start+0x72/0x98
-[14455.673879]  #3: 0000000009393b60 (rcu_read_lock){....}-{1:2}, at: =
-locks_translate_pid+0x5e/0x1c8
-[14455.673967]  #4: 00000000095367d0 (report_lock){....}-{2:2}, at: =
-__kasan_report+0x6e/0x140
 
-[14455.674077] Allocated by task 1:
-[14455.674128]  stack_trace_save+0xba/0xd0
-[14455.674169]  save_stack+0x30/0x58
-[14455.674211]  __kasan_kmalloc.isra.19+0xd4/0xe8
-[14455.674253]  kmem_cache_alloc_trace+0x246/0x390
-[14455.674296]  proc_fill_super+0x60/0x2e0
-[14455.674339]  vfs_get_super+0x10a/0x1a8
-[14455.674379]  vfs_get_tree+0x5e/0x158
-[14455.674424]  do_mount+0xbd2/0xe28
-[14455.674465]  __s390x_sys_mount+0xe2/0xf8
-[14455.674509]  system_call+0xd8/0x2b4
+[1] https://lwn.net/Articles/787973/
+[2] https://lwn.net/Articles/787233/
+[3] https://lkml.org/lkml/2019/10/20/96
+[4] https://patchwork.kernel.org/patch/11310511/
+[5] https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
 
-[14455.674582] Freed by task 1:
-[14455.674622]  stack_trace_save+0xba/0xd0
-[14455.674663]  save_stack+0x30/0x58
-[14455.674704]  __kasan_slab_free+0x130/0x198
-[14455.674745]  slab_free_freelist_hook+0x7a/0x240
-[14455.674786]  kfree+0x10a/0x508
-[14455.674831]  __kthread_create_on_node+0x206/0x2f0
-[14455.674873]  kthread_create_on_node+0xa0/0xb8
-[14455.674915]  init_rescuer.part.13+0x66/0xf8
-[14455.674966]  workqueue_init+0x40e/0x658
-[14455.675010]  kernel_init_freeable+0x21e/0x590
-[14455.675056]  kernel_init+0x22/0x180
-[14455.675096]  ret_from_fork+0x30/0x34
 
-[14455.675296] The buggy address belongs to the object at =
-000000000dabac40
-                which belongs to the cache kmalloc-64 of size 64
-[14455.675345] The buggy address is located 72 bytes to the right of
-                64-byte region [000000000dabac40, 000000000dabac80)
-[14455.675391] The buggy address belongs to the page:
-[14455.675441] page:000003d08036ae80 refcount:1 mapcount:0 =
-mapping:00000000c06a91d7 index:0xdabae40
-[14455.675489] flags: 0x1fffe00000000200(slab)
-[14455.675536] raw: 1fffe00000000200 000003d0817ad788 000003d080c04908 =
-000000000ff8c600
-[14455.675582] raw: 000000000dabae40 0006001000000000 ffffffff00000001 =
-0000000000000000
-[14455.675624] page dumped because: kasan: bad access detected
-[14455.675666] page_owner tracks the page as allocated
-[14455.675707] page last allocated via order 0, migratetype Unmovable, =
-gfp_mask 0x0()
-[14455.675753]  stack_trace_save+0xba/0xd0
-[14455.675797]  register_early_stack+0x8c/0xb8
-[14455.675840]  init_page_owner+0x60/0x510
-[14455.675881]  kernel_init_freeable+0x278/0x590
-[14455.675919] page_owner free stack trace missing
+To: linux-kernel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-api@vger.kernel.org
 
-[14455.675993] Memory state around the buggy address:
-[14455.676034]  000000000dabab80: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc
-[14455.676078]  000000000dabac00: fc fc fc fc fc fc fc fc 00 00 00 00 00 =
-fc fc fc
-[14455.676122] >000000000dabac80: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc
-[14455.676171]                                               ^
-[14455.676213]  000000000dabad00: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc
-[14455.676257]  000000000dabad80: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc
-[14455.676299] =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14455.676339] Disabling lock debugging due to kernel taint
+Changes from V8:
+	Rebase to 5.7-rc2
+	Change ALWAYS/NEVER bits to be 26/27
+	Remove XFS_IDONTCACHE -> lift to I_DONTCACHE
+		use mark_inode_dontcache() in XFS
+	create xfs_dax_mode enum
+	use xfs signature styles
+	Change xfs_inode_enabe_dax() -> xfs_inode_should_enable()
+		Based on feedback to ext4 series
+	Fix locking of DCACHE_DONTCACHE
+	Change flag_inode_dontcache() -> mark_inode_dontcache()
+	Change xfs_ioctl_setattr_dax_invalidate() -> xfs_ioctl_dax_check_set_cache()
+	Documentation cleanups
+	Clean up all commit messages
 
+Changes from V7:
+	Add DCACHE_DONTCACHE
+	If mount override don't worry about inode caching
+	Change mount flags to NEVER/ALWAYS
+	Clean up xfs_inode_enable_dax()
+	Clarify comments
+	Update documentation
+
+Changes from V6:
+	Incorporate feedback on patches
+	Add ability to change FS_XFLAG_DAX on files at any time.
+		Add a don't cache flag to the VFS layer
+		Preserve internal XFS IDONTCACHE behavior for bulkstat
+		operations
+
+Changes from V5:
+	* make dax mount option a tri-state
+	* Reject changes to FS_XFLAG_DAX for regular files
+		- Allow only on directories
+	* Update documentation
+
+Changes from V4:
+	* Open code the aops lock rather than add it to the xfs_ilock()
+	  subsystem (Darrick's comments were obsoleted by this change)
+	* Fix lkp build suggestions and bugs
+
+Changes from V3:
+	* Remove global locking...  :-D
+	* put back per inode locking and remove pre-mature optimizations
+	* Fix issues with Directories having IS_DAX() set
+	* Fix kernel crash issues reported by Jeff
+	* Add some clean up patches
+	* Consolidate diflags to iflags functions
+	* Update/add documentation
+	* Reorder/rename patches quite a bit
+
+Changes from V2:
+
+	* Move i_dax_sem to be a global percpu_rw_sem rather than per inode
+		Internal discussions with Dan determined this would be easier,
+		just as performant, and slightly less overhead that having it
+		in the SB as suggested by Jan
+	* Fix locking order in comments and throughout code
+	* Change "mode" to "state" throughout commits
+	* Add CONFIG_FS_DAX wrapper to disable inode_[un]lock_state() when not
+		configured
+	* Add static branch for which is activated by a device which supports
+		DAX in XFS
+	* Change "lock/unlock" to up/down read/write as appropriate
+		Previous names were over simplified
+	* Update comments/documentation
+
+	* Remove the xfs specific lock to the vfs (global) layer.
+	* Fix i_dax_sem locking order and comments
+
+	* Move 'i_mapped' count from struct inode to struct address_space and
+		rename it to mmap_count
+	* Add inode_has_mappings() call
+
+	* Fix build issues
+	* Clean up syntax spacing and minor issues
+	* Update man page text for STATX_ATTR_DAX
+	* Add reviewed-by's
+	* Rebase to 5.6
+
+	Rename patch:
+		from: fs/xfs: Add lock/unlock state to xfs
+		to: fs/xfs: Add write DAX lock to xfs layer
+	Add patch:
+		fs/xfs: Clarify lockdep dependency for xfs_isilocked()
+	Drop patch:
+		fs/xfs: Fix truncate up
+
+Ira Weiny (11):
+  fs/xfs: Remove unnecessary initialization of i_rwsem
+  fs: Remove unneeded IS_DAX() check in io_is_direct()
+  fs/stat: Define DAX statx attribute
+  Documentation/dax: Update Usage section
+  fs/xfs: Change XFS_MOUNT_DAX to XFS_MOUNT_DAX_ALWAYS
+  fs/xfs: Make DAX mount option a tri-state
+  fs/xfs: Create function xfs_inode_should_enable_dax()
+  fs/xfs: Combine xfs_diflags_to_linux() and xfs_diflags_to_iflags()
+  fs: Lift XFS_IDONTCACHE to the VFS layer
+  fs: Introduce DCACHE_DONTCACHE
+  fs/xfs: Update xfs_ioctl_setattr_dax_invalidate()
+
+ Documentation/filesystems/dax.txt | 164 +++++++++++++++++++++++++++++-
+ drivers/block/loop.c              |   6 +-
+ fs/dcache.c                       |   4 +
+ fs/inode.c                        |  15 +++
+ fs/stat.c                         |   3 +
+ fs/xfs/xfs_icache.c               |   8 +-
+ fs/xfs/xfs_inode.h                |   4 +-
+ fs/xfs/xfs_ioctl.c                | 141 ++++---------------------
+ fs/xfs/xfs_iops.c                 |  72 ++++++++-----
+ fs/xfs/xfs_mount.h                |   4 +-
+ fs/xfs/xfs_super.c                |  53 ++++++++--
+ include/linux/dcache.h            |   2 +
+ include/linux/fs.h                |  14 +--
+ include/uapi/linux/stat.h         |   1 +
+ 14 files changed, 319 insertions(+), 172 deletions(-)
+
+-- 
+2.25.1
 
