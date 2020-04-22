@@ -2,105 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 381191B490C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2241A1B4955
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 18:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgDVPop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 11:44:45 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:43428 "EHLO albireo.enyo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbgDVPoo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 11:44:44 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1jRHYE-00031Q-Ug; Wed, 22 Apr 2020 15:44:38 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1jRHYE-0006oS-Ox; Wed, 22 Apr 2020 17:44:38 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Mark Wielaard <mark@klomp.org>
-Cc:     Josh Triplett <josh@joshtriplett.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mtk.manpages@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-man@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] fs: pipe2: Support O_SPECIFIC_FD
-References: <cover.1587531463.git.josh@joshtriplett.org>
-        <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
-Date:   Wed, 22 Apr 2020 17:44:38 +0200
-In-Reply-To: <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
-        (Josh Triplett's message of "Tue, 21 Apr 2020 22:20:20 -0700")
-Message-ID: <877dy7ikyh.fsf@mid.deneb.enyo.de>
+        id S1726151AbgDVQBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 12:01:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbgDVQBH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 12:01:07 -0400
+X-Greylist: delayed 3563 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 22 Apr 2020 09:01:07 PDT
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B466C03C1A9;
+        Wed, 22 Apr 2020 09:01:07 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jRHnc-008Yo8-Vd; Wed, 22 Apr 2020 16:00:33 +0000
+Date:   Wed, 22 Apr 2020 17:00:32 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Nate Karstens <nate.karstens@garmin.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
+Subject: Re: Implement close-on-fork
+Message-ID: <20200422160032.GL23230@ZenIV.linux.org.uk>
+References: <20200420071548.62112-1-nate.karstens@garmin.com>
+ <20200422150107.GK23230@ZenIV.linux.org.uk>
+ <20200422151815.GT5820@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200422151815.GT5820@bombadil.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Josh Triplett:
+On Wed, Apr 22, 2020 at 08:18:15AM -0700, Matthew Wilcox wrote:
+> On Wed, Apr 22, 2020 at 04:01:07PM +0100, Al Viro wrote:
+> > On Mon, Apr 20, 2020 at 02:15:44AM -0500, Nate Karstens wrote:
+> > > Series of 4 patches to implement close-on-fork. Tests have been
+> > > published to https://github.com/nkarstens/ltp/tree/close-on-fork.
+> > > 
+> > > close-on-fork addresses race conditions in system(), which
+> > > (depending on the implementation) is non-atomic in that it
+> > > first calls a fork() and then an exec().
+> > > 
+> > > This functionality was approved by the Austin Common Standards
+> > > Revision Group for inclusion in the next revision of the POSIX
+> > > standard (see issue 1318 in the Austin Group Defect Tracker).
+> > 
+> > What exactly the reasons are and why would we want to implement that?
+> > 
+> > Pardon me, but going by the previous history, "The Austin Group Says It's
+> > Good" is more of a source of concern regarding the merits, general sanity
+> > and, most of all, good taste of a proposal.
+> > 
+> > I'm not saying that it's automatically bad, but you'll have to go much
+> > deeper into the rationale of that change before your proposal is taken
+> > seriously.
+> 
+> https://www.mail-archive.com/austin-group-l@opengroup.org/msg05324.html
+> might be useful
 
-> This allows the caller of pipe2 to specify one or both file descriptors
-> rather than having them automatically use the lowest available file
-> descriptor. The caller can specify either file descriptor as -1 to
-> allow that file descriptor to use the lowest available.
->
-> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
-> ---
->  fs/pipe.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 16fb72e9abf7..4681a0d1d587 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -936,19 +936,19 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
->  	int error;
->  	int fdw, fdr;
->  
-> -	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT))
-> +	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT | O_SPECIFIC_FD))
->  		return -EINVAL;
->  
->  	error = create_pipe_files(files, flags);
->  	if (error)
->  		return error;
->  
-> -	error = get_unused_fd_flags(flags);
-> +	error = get_specific_unused_fd_flags(fd[0], flags);
->  	if (error < 0)
->  		goto err_read_pipe;
->  	fdr = error;
->  
-> -	error = get_unused_fd_flags(flags);
-> +	error = get_specific_unused_fd_flags(fd[1], flags);
->  	if (error < 0)
->  		goto err_fdr;
->  	fdw = error;
-> @@ -969,7 +969,11 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
->  int do_pipe_flags(int *fd, int flags)
->  {
->  	struct file *files[2];
-> -	int error = __do_pipe_flags(fd, files, flags);
-> +	int error;
-> +
-> +	if (flags & O_SPECIFIC_FD)
-> +		return -EINVAL;
-> +	error = __do_pipe_flags(fd, files, flags);
->  	if (!error) {
->  		fd_install(fd[0], files[0]);
->  		fd_install(fd[1], files[1]);
-> @@ -987,6 +991,10 @@ static int do_pipe2(int __user *fildes, int flags)
->  	int fd[2];
->  	int error;
->  
-> +	if (flags & O_SPECIFIC_FD)
-> +		if (copy_from_user(fd, fildes, sizeof(fd)))
-> +			return -EFAULT;
-> +
->  	error = __do_pipe_flags(fd, files, flags);
->  	if (!error) {
->  		if (unlikely(copy_to_user(fildes, fd, sizeof(fd)))) {
+*snort*
 
-Mark, I think this will need (or at least benefit from) some valgrind
-changes.
+Alan Coopersmith in that thread:
+|| https://lwn.net/Articles/785430/ suggests AIX, BSD, & MacOS have also defined
+|| it, and though it's been proposed multiple times for Linux, never adopted there.
+
+Now, look at the article in question.  You'll see that it should've been
+"someone's posting in the end of comments thread under LWN article says that
+apparently it exists on AIX, BSD, ..."
+
+The strength of evidence aside, that got me curious; I have checked the
+source of FreeBSD, NetBSD and OpenBSD.  No such thing exists in either of
+their kernels, so at least that part can be considered an urban legend.
+
+As for the original problem...  what kind of exclusion is used between
+the reaction to netlink notifications (including closing every socket,
+etc.) and actual IO done on those sockets?
+
