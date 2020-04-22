@@ -2,90 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BD01B35A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 05:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2321B35B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 05:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgDVDl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Apr 2020 23:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726294AbgDVDl2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Apr 2020 23:41:28 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5635C0610D6;
-        Tue, 21 Apr 2020 20:41:26 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id k28so433491lfe.10;
-        Tue, 21 Apr 2020 20:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+aIQ7CAWOBcU4ts0/fedMSy1OdIZkB+G+ss8GRXa6l8=;
-        b=quZ3GSH+esBmeLJV8D7JiyC3UPdJ0/5yQxctsMpeaF/D8vgU4N2v3gHtHOedzCBT2z
-         tZlfa3q1E+t33luzTRHSk5REzYwU0E45OkQ1hZ/vnO/FwhMVSRQDdY3QXFrTvu1wziYR
-         DuEYDWxbh2sCeBK38DN8lztLAUw3iaMHi/PdBKjIBqa4cZzcX/TI2x5BGdIVFe1qtogI
-         ZcU9zamOpuKRc5GFGguB+e92b/wywvu6kko8ennoddy4QYDlnUPC1iaybqEg9MwDFhHe
-         +yhoo0yXbZbAl66aDlOfWtJfp16Y9UxUMvyIeTMDrd8czfK8Se6t5bEjM7pQBXTuXIam
-         pWtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+aIQ7CAWOBcU4ts0/fedMSy1OdIZkB+G+ss8GRXa6l8=;
-        b=C/b0F9KKrOc5njzYTtaIOSGpTGVRFUcqetucHtPEkjR1m5MOBIyFS6cNH8sFfG4Y+e
-         +5+qRnGuZqxoWcvZ5Wftu4C83UnpH0h43ApaG36Mq4ol6bs1C4DqF1J1CWnCUJdzCKoF
-         D+NqRxKcoG7GQdLkwbV9OoEQdp0l6lSZ7l0SkEDAaE5LOVnZIzYmCV55rilEMfQV7D+D
-         1xTGzvA47qcxuBdy/Lc3AGTqOcvBwpwm49jSyIGX2HaQyeAvvzrQvKPO8EcLyZhrqY+I
-         wgJ6QViC2xzD825YohRlvOfn5uWaEq0WdjjAjSOLhpFF1dKfdZyFDNrniFwKPtGQk4Wb
-         VWLQ==
-X-Gm-Message-State: AGi0PuaChg1+gL3lAaKDmuJNjKwSGSLE1bguu881WxUDUAIMNy4tRun2
-        m9acQDXYCMLcomFafEs0ah2UYs+G2KWMsX2HVkE=
-X-Google-Smtp-Source: APiQypI6wnLRl5s6t4tdi3/cwsUKlabwjgDKHYpmJWgDL18pOtOH9PlAvqqm5FalEfxT3wk0dwtXpypKwHapAbghghg=
-X-Received: by 2002:ac2:41d9:: with SMTP id d25mr15774262lfi.204.1587526885412;
- Tue, 21 Apr 2020 20:41:25 -0700 (PDT)
+        id S1726447AbgDVDqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Apr 2020 23:46:10 -0400
+Received: from mga04.intel.com ([192.55.52.120]:52549 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726228AbgDVDqK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Apr 2020 23:46:10 -0400
+IronPort-SDR: 6Ut0L7yFzfrB6TRQQ5x4/0IbWFB4BtN6O3EFQjNrdYJ8FMKv8+rFCoA3QIUrfyVyO8gw2I7+gB
+ DI+XOCQDS56A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 20:46:10 -0700
+IronPort-SDR: /eKAMA4Z+MGLgmc7pg47zfyleZZfStf928BZ4SShuUGk9rZzdCpDBrU1XUAGBDYUIyMNfIvWzv
+ f+akZuFVWrlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,412,1580803200"; 
+   d="scan'208";a="402401206"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga004.jf.intel.com with ESMTP; 21 Apr 2020 20:46:09 -0700
+Date:   Tue, 21 Apr 2020 20:46:09 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V9 09/11] fs: Introduce DCACHE_DONTCACHE
+Message-ID: <20200422034609.GH3372712@iweiny-DESK2.sc.intel.com>
+References: <20200421191754.3372370-1-ira.weiny@intel.com>
+ <20200421191754.3372370-10-ira.weiny@intel.com>
+ <20200421202519.GC6742@magnolia>
+ <20200422023407.GH23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20200420071548.62112-1-nate.karstens@garmin.com>
- <20200420071548.62112-2-nate.karstens@garmin.com> <36dce9b4-a0bf-0015-f6bc-1006938545b1@gmail.com>
- <CABa6K_HWsy9DdjsKXE2d_JrC+OsNuW+OALS+-_HiV3r2XgC1bw@mail.gmail.com>
-In-Reply-To: <CABa6K_HWsy9DdjsKXE2d_JrC+OsNuW+OALS+-_HiV3r2XgC1bw@mail.gmail.com>
-From:   Changli Gao <xiaosuo@gmail.com>
-Date:   Wed, 22 Apr 2020 11:41:14 +0800
-Message-ID: <CABa6K_Ev9d8wsb6HRCRPceOF7grDDjm41cV_CTjOiMHwoNsjTw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fs: Implement close-on-fork
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Nate Karstens <nate.karstens@garmin.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
-        sparclinux@vger.kernel.org,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200422023407.GH23230@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 11:38 AM Changli Gao <xiaosuo@gmail.com> wrote:
-> At the same time, we'd better extend other syscalls, which set the
-> FD_CLOEXEC when  creating FDs. i.e. open, pipe3...
->
+On Wed, Apr 22, 2020 at 03:34:07AM +0100, Al Viro wrote:
+> On Tue, Apr 21, 2020 at 01:25:19PM -0700, Darrick J. Wong wrote:
+> 
+> > > DCACHE_DONTCACHE indicates a dentry should not be cached on final
+> > > dput().
+> > > 
+> > > Also add a helper function to mark DCACHE_DONTCACHE on all dentries
+> > > pointing to a specific inode when that inode is being set I_DONTCACHE.
+> > > 
+> > > This facilitates dropping dentry references to inodes sooner which
+> > > require eviction to swap S_DAX mode.
+> 
+> Explain, please.  Questions:
+> 
+> 1) does that ever happen to directories?
 
-Ignore me, I missed the latter patches.
+Directories never get S_DAX set.  So the eviction only needs to happen on
+inodes.  But that can't happen without dentries also dropping their references.
 
+> 2) how much trouble do we get if such inode is *NOT* evicted for, say, several
+> days?
 
+No trouble at all.  Users understand that changing the FS_XFLAG_DAX setting
+does _not_ immediately result in S_DAX changing.
 
--- 
-Regards,
-Changli Gao(xiaosuo@gmail.com)
+It is intended that applications requiring a change of mode would flip the
+FS_XFLAG_DAX close the file and wait for the eviction (or force it through a
+drop cache if they have permission).
+
+Ira
+
