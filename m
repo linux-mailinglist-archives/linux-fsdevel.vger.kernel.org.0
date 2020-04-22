@@ -2,260 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B601B3BAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 11:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA8781B3EB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 12:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgDVJrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 05:47:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33782 "EHLO mx2.suse.de"
+        id S1730731AbgDVKan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 06:30:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33356 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgDVJrZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:47:25 -0400
+        id S1731058AbgDVKa0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:30:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 430DAABCC;
-        Wed, 22 Apr 2020 09:47:22 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D54451E0B00; Wed, 22 Apr 2020 11:47:21 +0200 (CEST)
-Date:   Wed, 22 Apr 2020 11:47:21 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V9 11/11] Documentation/dax: Update Usage section
-Message-ID: <20200422094721.GG8775@quack2.suse.cz>
-References: <20200421191754.3372370-1-ira.weiny@intel.com>
- <20200421191754.3372370-12-ira.weiny@intel.com>
+        by mx2.suse.de (Postfix) with ESMTP id 96307AB5F;
+        Wed, 22 Apr 2020 10:30:22 +0000 (UTC)
+Subject: Re: [PATCH 3/5] sysctl: remove all extern declaration from sysctl.c
+To:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20200421171539.288622-1-hch@lst.de>
+ <20200421171539.288622-4-hch@lst.de>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <13b10b87-6753-7e7c-fa56-20d7793250d6@suse.cz>
+Date:   Wed, 22 Apr 2020 12:30:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200421191754.3372370-12-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200421171539.288622-4-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 21-04-20 12:17:53, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> Update the Usage section to reflect the new individual dax selection
-> functionality.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On 4/21/20 7:15 PM, Christoph Hellwig wrote:
+> Extern declarations in .c files are a bad style and can lead to
+> mismatches.  Use existing definitions in headers where they exist,
+> and otherwise move the external declarations to suitable header
+> files.
 
-Looks good to me. You can add:
+Your cleanup reminds me of this Andrew's sigh from last week [1].
+I'm not saying your series should do that too, just wondering if some of the
+moves you are doing now would be better suited for the hypothetical new header
+to avoid moving them again later (but I admit I haven't looked closer).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[1]
+https://lore.kernel.org/linux-api/20200417174654.9af0c51afb5d9e35e5519113@linux-foundation.org/
 
-								Honza
-
-> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
-> Changes from V8:
-> 	Updates from Darrick
+>  include/linux/coredump.h |  6 ++++++
+>  include/linux/file.h     |  2 ++
+>  include/linux/mm.h       |  2 ++
+>  include/linux/mmzone.h   |  2 ++
+>  include/linux/sysctl.h   |  8 +++++++
+>  kernel/sysctl.c          | 45 +++-------------------------------------
+>  6 files changed, 23 insertions(+), 42 deletions(-)
 > 
-> Changes from V7:
-> 	Cleanups/clarifications from Darrick and Dan
-> 
-> Changes from V6:
-> 	Update to allow setting FS_XFLAG_DAX any time.
-> 	Update with list of behaviors from Darrick
-> 	https://lore.kernel.org/lkml/20200409165927.GD6741@magnolia/
-> 
-> Changes from V5:
-> 	Update to reflect the agreed upon semantics
-> 	https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
-> ---
->  Documentation/filesystems/dax.txt | 164 +++++++++++++++++++++++++++++-
->  1 file changed, 161 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
-> index 679729442fd2..8f4ab08be715 100644
-> --- a/Documentation/filesystems/dax.txt
-> +++ b/Documentation/filesystems/dax.txt
-> @@ -17,11 +17,169 @@ For file mappings, the storage device is mapped directly into userspace.
->  Usage
->  -----
+> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+> index abf4b4e65dbb..0fe8f3131e97 100644
+> --- a/include/linux/coredump.h
+> +++ b/include/linux/coredump.h
+> @@ -22,4 +22,10 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
+>  static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
+>  #endif
 >  
-> -If you have a block device which supports DAX, you can make a filesystem
-> +If you have a block device which supports DAX, you can make a file system
->  on it as usual.  The DAX code currently only supports files with a block
->  size equal to your kernel's PAGE_SIZE, so you may need to specify a block
-> -size when creating the filesystem.  When mounting it, use the "-o dax"
-> -option on the command line or add 'dax' to the options in /etc/fstab.
-> +size when creating the file system.
+> +extern int core_uses_pid;
+> +extern char core_pattern[];
+> +extern unsigned int core_pipe_limit;
+> +extern int pid_max;
+> +extern int pid_max_min, pid_max_max;
 > +
-> +Currently 3 filesystems support DAX: ext2, ext4 and xfs.  Enabling DAX on them
-> +is different.
-> +
-> +Enabling DAX on ext4 and ext2
-> +-----------------------------
-> +
-> +When mounting the filesystem, use the "-o dax" option on the command line or
-> +add 'dax' to the options in /etc/fstab.  This works to enable DAX on all files
-> +within the filesystem.  It is equivalent to the '-o dax=always' behavior below.
-> +
-> +
-> +Enabling DAX on xfs
-> +-------------------
-> +
-> +Summary
-> +-------
-> +
-> + 1. There exists an in-kernel file access mode flag S_DAX that corresponds to
-> +    the statx flag STATX_ATTR_DAX.  See the manpage for statx(2) for details
-> +    about this access mode.
-> +
-> + 2. There exists an advisory file inode flag FS_XFLAG_DAX that is
-> +    inherited from the parent directory FS_XFLAG_DAX inode flag at file
-> +    creation time.  This advisory flag can be set or cleared at any
-> +    time, but doing so does not immediately affect the S_DAX state.
-> +
-> +    Unless overridden by mount options (see (3)), if FS_XFLAG_DAX is set
-> +    and the fs is on pmem then it will enable S_DAX at inode load time;
-> +    if FS_XFLAG_DAX is not set, it will not enable S_DAX.
-> +
-> + 3. There exists a dax= mount option.
-> +
-> +    "-o dax=never"  means "never set S_DAX, ignore FS_XFLAG_DAX."
-> +
-> +    "-o dax=always" means "always set S_DAX (at least on pmem),
-> +                    and ignore FS_XFLAG_DAX."
-> +
-> +    "-o dax"        is an alias for "dax=always".
-> +
-> +    "-o dax=inode"  means "follow FS_XFLAG_DAX" and is the default.
-> +
-> + 4. There exists an advisory directory inode flag FS_XFLAG_DAX that can
-> +    be set or cleared at any time.  The flag state is inherited by any files or
-> +    subdirectories when they are created within that directory.
-> +
-> + 5. Programs that require a specific file access mode (DAX or not DAX)
-> +    can do one of the following:
-> +
-> +    (a) Create files in directories that the FS_XFLAG_DAX flag set as
-> +        needed; or
-> +
-> +    (b) Have the administrator set an override via mount option; or
-> +
-> +    (c) Set or clear the file's FS_XFLAG_DAX flag as needed.  Programs
-> +        must then cause the kernel to evict the inode from memory.  This
-> +        can be done by:
-> +
-> +        i>  Closing the file and re-opening the file and using statx to
-> +            see if the fs has changed the S_DAX flag; and
-> +
-> +        ii> If the file still does not have the desired S_DAX access
-> +            mode, either unmount and remount the filesystem, or close
-> +            the file and use drop_caches.
-> +
-> + 6. It is expected that users who want to squeeze every last bit of performance
-> +    out of the particular rough and tumble bits of their storage will also be
-> +    exposed to the difficulties of what happens when the operating system can't
-> +    totally virtualize those hardware capabilities.  DAX is such a feature.
-> +
-> +
-> +Details
-> +-------
-> +
-> +There are 2 per-file dax flags.  One is a physical inode setting (FS_XFLAG_DAX)
-> +and the other a currently enabled state (S_DAX).
-> +
-> +FS_XFLAG_DAX is maintained, on disk, on individual inodes.  It is preserved
-> +within the file system.  This 'physical' config setting can be set using an
-> +ioctl and/or an application such as "xfs_io -c 'chattr [-+]x'".  Files and
-> +directories automatically inherit FS_XFLAG_DAX from their parent directory
-> +_when_ _created_.  Therefore, setting FS_XFLAG_DAX at directory creation time
-> +can be used to set a default behavior for an entire sub-tree.  (Doing so on the
-> +root directory acts to set a default for the entire file system.)
-> +
-> +To clarify inheritance here are 3 examples:
-> +
-> +Example A:
-> +
-> +mkdir -p a/b/c
-> +xfs_io 'chattr +x' a
-> +mkdir a/b/c/d
-> +mkdir a/e
-> +
-> +	dax: a,e
-> +	no dax: b,c,d
-> +
-> +Example B:
-> +
-> +mkdir a
-> +xfs_io 'chattr +x' a
-> +mkdir -p a/b/c/d
-> +
-> +	dax: a,b,c,d
-> +	no dax:
-> +
-> +Example C:
-> +
-> +mkdir -p a/b/c
-> +xfs_io 'chattr +x' c
-> +mkdir a/b/c/d
-> +
-> +	dax: c,d
-> +	no dax: a,b
-> +
-> +
-> +The current enabled state (S_DAX) is set when a file inode is _loaded_ based on
-> +the underlying media support, the value of FS_XFLAG_DAX, and the file systems
-> +dax mount option setting.  See below.
-> +
-> +statx can be used to query S_DAX.  NOTE that a directory will never have S_DAX
-> +set and therefore statx will never indicate that S_DAX is set on directories.
-> +
-> +NOTE: Setting the FS_XFLAG_DAX (specifically or through inheritance) occurs
-> +even if the underlying media does not support dax and/or the file system is
-> +overridden with a mount option.
-> +
-> +
-> +Overriding FS_XFLAG_DAX (dax= mount option)
-> +-------------------------------------------
-> +
-> +There exists a dax mount option.  Using the mount option does not change the
-> +physical configured state of individual files but overrides the S_DAX operating
-> +state when inodes are loaded.
-> +
-> +Given underlying media support, the dax mount option is a tri-state option
-> +(never, always, inode) with the following meanings:
-> +
-> +   "-o dax=never" means "never set S_DAX, ignore FS_XFLAG_DAX"
-> +   "-o dax=always" means "always set S_DAX, ignore FS_XFLAG_DAX"
-> +        "-o dax" by itself means "dax=always" to remain compatible with older
-> +	         kernels
-> +   "-o dax=inode" means "follow FS_XFLAG_DAX"
-> +
-> +The default state is 'inode'.  Given underlying media support, the following
-> +algorithm is used to determine the effective mode of the file S_DAX on a
-> +capable device.
-> +
-> +	S_DAX = FS_XFLAG_DAX;
-> +
-> +	if (dax_mount == "always")
-> +		S_DAX = true;
-> +	else if (dax_mount == "off"
-> +		S_DAX = false;
-> +
-> +To reiterate: Setting, and inheritance, continues to affect FS_XFLAG_DAX even
-> +while the file system is mounted with a dax override.  However, in-core inode
-> +state (S_DAX) will continue to be overridden until the filesystem is remounted
-> +with dax=inode and the inode is evicted."
+>  #endif /* _LINUX_COREDUMP_H */
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index 142d102f285e..122f80084a3e 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -94,4 +94,6 @@ extern void fd_install(unsigned int fd, struct file *file);
+>  extern void flush_delayed_fput(void);
+>  extern void __fput_sync(struct file *);
 >  
+> +extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+> +
+>  #endif /* __LINUX_FILE_H */
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 5a323422d783..9c4e7e76dedd 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3140,5 +3140,7 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
+>  				      pgoff_t first_index, pgoff_t nr);
+>  #endif
 >  
->  Implementation Tips for Block Driver Writers
-> -- 
-> 2.25.1
+> +extern int sysctl_nr_trim_pages;
+> +
+>  #endif /* __KERNEL__ */
+>  #endif /* _LINUX_MM_H */
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index f37bb8f187fc..b2af594ef0f7 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -909,6 +909,7 @@ static inline int is_highmem(struct zone *zone)
+>  
+>  /* These two functions are used to setup the per zone pages min values */
+>  struct ctl_table;
+> +
+>  int min_free_kbytes_sysctl_handler(struct ctl_table *, int,
+>  					void __user *, size_t *, loff_t *);
+>  int watermark_scale_factor_sysctl_handler(struct ctl_table *, int,
+> @@ -925,6 +926,7 @@ int sysctl_min_slab_ratio_sysctl_handler(struct ctl_table *, int,
+>  
+>  extern int numa_zonelist_order_handler(struct ctl_table *, int,
+>  			void __user *, size_t *, loff_t *);
+> +extern int percpu_pagelist_fraction;
+>  extern char numa_zonelist_order[];
+>  #define NUMA_ZONELIST_ORDER_LEN	16
+>  
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index 02fa84493f23..36143ca40b56 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -207,7 +207,15 @@ void unregister_sysctl_table(struct ctl_table_header * table);
+>  
+>  extern int sysctl_init(void);
+>  
+> +extern int pwrsw_enabled;
+> +extern int unaligned_enabled;
+> +extern int unaligned_dump_stack;
+> +extern int no_unaligned_warning;
+> +
+>  extern struct ctl_table sysctl_mount_point[];
+> +extern struct ctl_table random_table[];
+> +extern struct ctl_table firmware_config_table[];
+> +extern struct ctl_table epoll_table[];
+>  
+>  #else /* CONFIG_SYSCTL */
+>  static inline struct ctl_table_header *register_sysctl_table(struct ctl_table * table)
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 99d27acf4646..31b934865ebc 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -68,6 +68,9 @@
+>  #include <linux/bpf.h>
+>  #include <linux/mount.h>
+>  #include <linux/userfaultfd_k.h>
+> +#include <linux/coredump.h>
+> +#include <linux/latencytop.h>
+> +#include <linux/pid.h>
+>  
+>  #include "../lib/kstrtox.h"
+>  
+> @@ -103,22 +106,6 @@
+>  
+>  #if defined(CONFIG_SYSCTL)
+>  
+> -/* External variables not in a header file. */
+> -extern int suid_dumpable;
+> -#ifdef CONFIG_COREDUMP
+> -extern int core_uses_pid;
+> -extern char core_pattern[];
+> -extern unsigned int core_pipe_limit;
+> -#endif
+> -extern int pid_max;
+> -extern int pid_max_min, pid_max_max;
+> -extern int percpu_pagelist_fraction;
+> -extern int latencytop_enabled;
+> -extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+> -#ifndef CONFIG_MMU
+> -extern int sysctl_nr_trim_pages;
+> -#endif
+> -
+>  /* Constants used for minimum and  maximum */
+>  #ifdef CONFIG_LOCKUP_DETECTOR
+>  static int sixty = 60;
+> @@ -160,24 +147,6 @@ static unsigned long hung_task_timeout_max = (LONG_MAX/HZ);
+>  #ifdef CONFIG_INOTIFY_USER
+>  #include <linux/inotify.h>
+>  #endif
+> -#ifdef CONFIG_SPARC
+> -#endif
+> -
+> -#ifdef CONFIG_PARISC
+> -extern int pwrsw_enabled;
+> -#endif
+> -
+> -#ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
+> -extern int unaligned_enabled;
+> -#endif
+> -
+> -#ifdef CONFIG_IA64
+> -extern int unaligned_dump_stack;
+> -#endif
+> -
+> -#ifdef CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
+> -extern int no_unaligned_warning;
+> -#endif
+>  
+>  #ifdef CONFIG_PROC_SYSCTL
+>  
+> @@ -243,14 +212,6 @@ static struct ctl_table vm_table[];
+>  static struct ctl_table fs_table[];
+>  static struct ctl_table debug_table[];
+>  static struct ctl_table dev_table[];
+> -extern struct ctl_table random_table[];
+> -#ifdef CONFIG_EPOLL
+> -extern struct ctl_table epoll_table[];
+> -#endif
+> -
+> -#ifdef CONFIG_FW_LOADER_USER_HELPER
+> -extern struct ctl_table firmware_config_table[];
+> -#endif
+>  
+>  #if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+>      defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
