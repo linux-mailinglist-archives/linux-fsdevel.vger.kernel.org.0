@@ -2,93 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B371B4907
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 381191B490C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgDVPok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 11:44:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53620 "EHLO mail.kernel.org"
+        id S1726722AbgDVPop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 11:44:45 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:43428 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbgDVPoj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 11:44:39 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE9092076E;
-        Wed, 22 Apr 2020 15:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587570279;
-        bh=j6NY4BFiEsKARRJ64QkWadZPG9mu5NACrc/yxCpqHFA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fZz9j/PMKPB+EDM7VJ1dl6F54xCJj27F8j+vV30/KLVPdzLEl4TljSqnjzfPVJYgg
-         xBKTUGK/X0OJ6DaWuvmD3NQF0FrzJLO8CebiN0XcA7Z7OR6MA17nTV3JlWSceLSLQ8
-         nfnUFNMpzKnf7pAw6/PIX6sx2ipj8OzUmZtOEM+w=
-Date:   Wed, 22 Apr 2020 16:44:36 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v10 00/13] arm64: Branch Target Identification support
-Message-ID: <20200422154436.GJ4898@sirena.org.uk>
-References: <20200316165055.31179-1-broonie@kernel.org>
+        id S1726124AbgDVPoo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 11:44:44 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jRHYE-00031Q-Ug; Wed, 22 Apr 2020 15:44:38 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jRHYE-0006oS-Ox; Wed, 22 Apr 2020 17:44:38 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mark Wielaard <mark@klomp.org>
+Cc:     Josh Triplett <josh@joshtriplett.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mtk.manpages@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] fs: pipe2: Support O_SPECIFIC_FD
+References: <cover.1587531463.git.josh@joshtriplett.org>
+        <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
+Date:   Wed, 22 Apr 2020 17:44:38 +0200
+In-Reply-To: <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
+        (Josh Triplett's message of "Tue, 21 Apr 2020 22:20:20 -0700")
+Message-ID: <877dy7ikyh.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="I/5syFLg1Ed7r+1G"
-Content-Disposition: inline
-In-Reply-To: <20200316165055.31179-1-broonie@kernel.org>
-X-Cookie: A stitch in time saves nine.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+* Josh Triplett:
 
---I/5syFLg1Ed7r+1G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> This allows the caller of pipe2 to specify one or both file descriptors
+> rather than having them automatically use the lowest available file
+> descriptor. The caller can specify either file descriptor as -1 to
+> allow that file descriptor to use the lowest available.
+>
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> ---
+>  fs/pipe.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 16fb72e9abf7..4681a0d1d587 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -936,19 +936,19 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+>  	int error;
+>  	int fdw, fdr;
+>  
+> -	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT))
+> +	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT | O_SPECIFIC_FD))
+>  		return -EINVAL;
+>  
+>  	error = create_pipe_files(files, flags);
+>  	if (error)
+>  		return error;
+>  
+> -	error = get_unused_fd_flags(flags);
+> +	error = get_specific_unused_fd_flags(fd[0], flags);
+>  	if (error < 0)
+>  		goto err_read_pipe;
+>  	fdr = error;
+>  
+> -	error = get_unused_fd_flags(flags);
+> +	error = get_specific_unused_fd_flags(fd[1], flags);
+>  	if (error < 0)
+>  		goto err_fdr;
+>  	fdw = error;
+> @@ -969,7 +969,11 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+>  int do_pipe_flags(int *fd, int flags)
+>  {
+>  	struct file *files[2];
+> -	int error = __do_pipe_flags(fd, files, flags);
+> +	int error;
+> +
+> +	if (flags & O_SPECIFIC_FD)
+> +		return -EINVAL;
+> +	error = __do_pipe_flags(fd, files, flags);
+>  	if (!error) {
+>  		fd_install(fd[0], files[0]);
+>  		fd_install(fd[1], files[1]);
+> @@ -987,6 +991,10 @@ static int do_pipe2(int __user *fildes, int flags)
+>  	int fd[2];
+>  	int error;
+>  
+> +	if (flags & O_SPECIFIC_FD)
+> +		if (copy_from_user(fd, fildes, sizeof(fd)))
+> +			return -EFAULT;
+> +
+>  	error = __do_pipe_flags(fd, files, flags);
+>  	if (!error) {
+>  		if (unlikely(copy_to_user(fildes, fd, sizeof(fd)))) {
 
-On Mon, Mar 16, 2020 at 04:50:42PM +0000, Mark Brown wrote:
-> This patch series implements support for ARMv8.5-A Branch Target
-> Identification (BTI), which is a control flow integrity protection
-> feature introduced as part of the ARMv8.5-A extensions.
-
-I've not resent this since the branch is still sitting in the arm64 tree
-but it's also not in -next at the minute - is there anything you're
-waiting for from my end here?
-
---I/5syFLg1Ed7r+1G
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6gZmMACgkQJNaLcl1U
-h9AYVQf/ajN/x5F2wiYIKFjzo2+jXBlUnF9FczZVVrXFDW2YeidwJw/eKCefOPQY
-5HHDihIrHZBRdOrdnQ7UE8UIfQZMI8oOguL84O4O6IwCnwTZpEOuNhYHjCS1qMUI
-nAHZjSGlSnKBp4MwttY/LRRomyGW74ukfnOU91v91LR6Aakw31PUIQZ8EDOT84jC
-0hMnIjzmaA9LzLQRrMMQqSLi5FdLg4ps9NEb4zVklz94U/mzf4l+GzZczg6eJI1S
-JUz9EwBdrJIwPCRdBoHCQbrVCuiCbvDjhobVK0tKRycjOFvWXh0nDWRWFwfZiD68
-dpJmkHE2POaVhBEWnwhUJ57489SMCA==
-=z9OW
------END PGP SIGNATURE-----
-
---I/5syFLg1Ed7r+1G--
+Mark, I think this will need (or at least benefit from) some valgrind
+changes.
