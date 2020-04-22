@@ -2,68 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1EC81B4802
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B131B4831
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:06:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgDVPBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 11:01:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50776 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbgDVPBo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 11:01:44 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E41C03C1A9;
-        Wed, 22 Apr 2020 08:01:44 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRGs7-008WRP-P8; Wed, 22 Apr 2020 15:01:07 +0000
-Date:   Wed, 22 Apr 2020 16:01:07 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Nate Karstens <nate.karstens@garmin.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
-Subject: Re: Implement close-on-fork
-Message-ID: <20200422150107.GK23230@ZenIV.linux.org.uk>
-References: <20200420071548.62112-1-nate.karstens@garmin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200420071548.62112-1-nate.karstens@garmin.com>
+        id S1725935AbgDVPDG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 11:03:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57988 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbgDVPDF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 11:03:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 189F3AD39;
+        Wed, 22 Apr 2020 15:03:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 54CCA1E0E56; Wed, 22 Apr 2020 17:03:03 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/23 v2] mm: Speedup page cache truncation
+Date:   Wed, 22 Apr 2020 17:02:33 +0200
+Message-Id: <20200422150256.23473-1-jack@suse.cz>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 02:15:44AM -0500, Nate Karstens wrote:
-> Series of 4 patches to implement close-on-fork. Tests have been
-> published to https://github.com/nkarstens/ltp/tree/close-on-fork.
-> 
-> close-on-fork addresses race conditions in system(), which
-> (depending on the implementation) is non-atomic in that it
-> first calls a fork() and then an exec().
-> 
-> This functionality was approved by the Austin Common Standards
-> Revision Group for inclusion in the next revision of the POSIX
-> standard (see issue 1318 in the Austin Group Defect Tracker).
+Hello,
 
-What exactly the reasons are and why would we want to implement that?
+this is a second version of my patches to avoid clearing marks from xas_store()
+and thus fix regression in page cache truncation.
 
-Pardon me, but going by the previous history, "The Austin Group Says It's
-Good" is more of a source of concern regarding the merits, general sanity
-and, most of all, good taste of a proposal.
+Changes since v1
+- rebased on 5.7-rc2
+- drop xas_for_each_marked() fix as it was already merged
+- reworked the whole series based on Matthew's feedback - we now create new
+  function xas_store_noinit() and use it instead of changing xas_store()
+  behavior. Note that for xas_store_range() and __xa_cmpxchg() I didn't bother
+  to change names although they stop clearing marks as well. This is because
+  there are only very few callers so it's easy to verify them, also chances of
+  a clash with other patch introducing new callers are very small.
 
-I'm not saying that it's automatically bad, but you'll have to go much
-deeper into the rationale of that change before your proposal is taken
-seriously.
+Original motivation:
+
+Conversion of page cache to xarray (commit 69b6c1319b6 "mm: Convert truncate to
+XArray" in particular) has regressed performance of page cache truncation
+by about 10% (see my original report here [1]). This patch series aims at
+improving the truncation to get some of that regression back.
+
+The first patch fixes a long standing bug with xas_for_each_marked() that I've
+uncovered when debugging my patches. The remaining patches then work towards
+the ability to stop clearing marks in xas_store() which improves truncation
+performance by about 6%.
+
+The patches have passed radix_tree tests in tools/testing and also fstests runs
+for ext4 & xfs.
+
+								Honza
+
+[1] https://lore.kernel.org/linux-mm/20190226165628.GB24711@quack2.suse.cz
