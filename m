@@ -2,60 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4ED1B4B0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 18:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69ADC1B4B11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 18:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgDVQzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 12:55:41 -0400
-Received: from namei.org ([65.99.196.166]:52066 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726337AbgDVQzl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 12:55:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 03MGtWHf013311;
-        Wed, 22 Apr 2020 16:55:32 GMT
-Date:   Thu, 23 Apr 2020 02:55:32 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Daniel Colascione <dancol@google.com>
-cc:     Tim Murray <timmurray@google.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        Nick Kralevich <nnk@google.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
-In-Reply-To: <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.2004230253530.12318@namei.org>
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com> <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726886AbgDVQ4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 12:56:05 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:28405 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726724AbgDVQ4F (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 12:56:05 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-100-3Htmdqx8M26lXy7JzYFCfA-1; Wed, 22 Apr 2020 17:56:01 +0100
+X-MC-Unique: 3Htmdqx8M26lXy7JzYFCfA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 22 Apr 2020 17:55:58 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 22 Apr 2020 17:55:58 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Bernd Petrovitsch' <bernd@petrovitsch.priv.at>,
+        "Karstens, Nate" <Nate.Karstens@garmin.com>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Changli Gao <xiaosuo@gmail.com>
+Subject: RE: [PATCH 1/4] fs: Implement close-on-fork
+Thread-Topic: [PATCH 1/4] fs: Implement close-on-fork
+Thread-Index: AQHWGMN8ssv9Cm82zkePzv5DmgsrOaiFW04w
+Date:   Wed, 22 Apr 2020 16:55:58 +0000
+Message-ID: <337320db094d4426a621858fa0f6d7fd@AcuMS.aculab.com>
+References: <20200420071548.62112-1-nate.karstens@garmin.com>
+ <20200420071548.62112-2-nate.karstens@garmin.com>
+ <fa6c5c9c7c434f878c94a7c984cd43ba@garmin.com>
+ <20200422154356.GU5820@bombadil.infradead.org>
+ <6ed7bd08892b4311b70636658321904f@garmin.com>
+ <97f05204-a27c-7cc8-429a-edcf6eebaa11@petrovitsch.priv.at>
+In-Reply-To: <97f05204-a27c-7cc8-429a-edcf6eebaa11@petrovitsch.priv.at>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 13 Apr 2020, Daniel Colascione wrote:
-
-> On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
-> >
-> > Changes from the fourth version of the patch:
-> 
-> 
-> Is there anything else that needs to be done before merging this patch series?
-
-The vfs changes need review and signoff from the vfs folk, the SELinux 
-changes by either Paul or Stephen, and we also need signoff on the LSM 
-hooks from other major LSM authors (Casey and John, at a minimum).
-
-
--- 
-James Morris
-<jmorris@namei.org>
+RnJvbTogQmVybmQgUGV0cm92aXRzY2gNCj4gU2VudDogMjIgQXByaWwgMjAyMCAxNzozMg0KLi4u
+DQo+IEFwYXJ0IGZyb20gdGhhdCwgc3lzdGVtKCkgaXMgYSBQSVRBIGV2ZW4gb24NCj4gc2luZ2xl
+L25vbi10aHJlYWRlZCBhcHBzLg0KDQpOb3Qgb25seSB0aGF0LCBpdCBpcyBibG9vZHkgZGFuZ2Vy
+b3VzIGJlY2F1c2UgKHR5cGljYWxseSkNCnNoZWxsIGlzIGRvaW5nIHBvc3Qgc3Vic3RpdHV0aW9u
+IHN5bnRheCBhbmFseXNpcy4NCg0KSWYgeW91IG5lZWQgdG8gcnVuIGFuIGV4dGVybmFsIHByb2Nl
+c3MgeW91IG5lZWQgdG8gZ2VuZXJhdGUNCmFuIGFydltdIGFycmF5IGNvbnRhaW5pbmcgdGhlIHBh
+cmFtZXRlcnMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJy
+YW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lz
+dHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
