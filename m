@@ -2,83 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8E31B4901
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B371B4907
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbgDVPoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 11:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbgDVPoE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 11:44:04 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1F5C03C1A9;
-        Wed, 22 Apr 2020 08:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=d189Ht66WkNhS7qEev42XSV+pMJKpBQ+6wQXP4iX/B0=; b=nw4Xj1fY4FG1c+4lbVWravMDJg
-        FmJrQLxqg8GzrzqGIYlmpd4sbmocteJxuRA0UlFGIAtBEPVd8EtW0bO+XUYXYRGqoYWTkELYcq7Hk
-        PiOmvar7kH7mjR6YHZlQIIEtCU3WK6WpmPL7AhpJ4kxkDAz4qoGMAoc677HYTMwbqm2+mXtbjI6bO
-        EHSSg8CVovE2aDqNn3EGvysLCibViHIEs/7lXsfKT+1Y0ADQDs8wU6mWsqdT/ZR44ibgrGt87y0G3
-        T5VUBSvN8BIwJxipP0FAkplmTKSsCTDs/mUN5D9Fv6HicsQ2PmqoTca6GAbQZYAiUKDKA+kAGudKu
-        /vf0E95w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRHXY-0001vC-BB; Wed, 22 Apr 2020 15:43:56 +0000
-Date:   Wed, 22 Apr 2020 08:43:56 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Karstens, Nate" <Nate.Karstens@garmin.com>
+        id S1726683AbgDVPok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 11:44:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbgDVPoj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 11:44:39 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE9092076E;
+        Wed, 22 Apr 2020 15:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587570279;
+        bh=j6NY4BFiEsKARRJ64QkWadZPG9mu5NACrc/yxCpqHFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fZz9j/PMKPB+EDM7VJ1dl6F54xCJj27F8j+vV30/KLVPdzLEl4TljSqnjzfPVJYgg
+         xBKTUGK/X0OJ6DaWuvmD3NQF0FrzJLO8CebiN0XcA7Z7OR6MA17nTV3JlWSceLSLQ8
+         nfnUFNMpzKnf7pAw6/PIX6sx2ipj8OzUmZtOEM+w=
+Date:   Wed, 22 Apr 2020 16:44:36 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Changli Gao <xiaosuo@gmail.com>
-Subject: Re: [PATCH 1/4] fs: Implement close-on-fork
-Message-ID: <20200422154356.GU5820@bombadil.infradead.org>
-References: <20200420071548.62112-1-nate.karstens@garmin.com>
- <20200420071548.62112-2-nate.karstens@garmin.com>
- <fa6c5c9c7c434f878c94a7c984cd43ba@garmin.com>
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 00/13] arm64: Branch Target Identification support
+Message-ID: <20200422154436.GJ4898@sirena.org.uk>
+References: <20200316165055.31179-1-broonie@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="I/5syFLg1Ed7r+1G"
 Content-Disposition: inline
-In-Reply-To: <fa6c5c9c7c434f878c94a7c984cd43ba@garmin.com>
+In-Reply-To: <20200316165055.31179-1-broonie@kernel.org>
+X-Cookie: A stitch in time saves nine.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 03:36:09PM +0000, Karstens, Nate wrote:
-> There was some skepticism about whether our practice of
-> closing/reopening sockets was advisable. Regardless, it does expose what
-> I believe to be something that was overlooked in the forking process
-> model. We posted two solutions to the Austin Group defect tracker:
 
-I don't think it was "overlooked" at all.  It's not safe to call system()
-from a threaded app.  That's all.  It's right there in the DESCRIPTION:
+--I/5syFLg1Ed7r+1G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   The system() function need not be thread-safe.
-https://pubs.opengroup.org/onlinepubs/9699919799/functions/system.html
+On Mon, Mar 16, 2020 at 04:50:42PM +0000, Mark Brown wrote:
+> This patch series implements support for ARMv8.5-A Branch Target
+> Identification (BTI), which is a control flow integrity protection
+> feature introduced as part of the ARMv8.5-A extensions.
 
-> Ultimately the Austin Group felt that close-on-fork
-> was the preferred approach. I think it's also worth
-> pointing that out Solaris reportedly has this feature
-> (https://www.mail-archive.com/austin-group-l@opengroup.org/msg05359.html).
+I've not resent this since the branch is still sitting in the arm64 tree
+but it's also not in -next at the minute - is there anything you're
+waiting for from my end here?
 
-I am perplexed that the Austin Group thought this was a good idea.
+--I/5syFLg1Ed7r+1G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6gZmMACgkQJNaLcl1U
+h9AYVQf/ajN/x5F2wiYIKFjzo2+jXBlUnF9FczZVVrXFDW2YeidwJw/eKCefOPQY
+5HHDihIrHZBRdOrdnQ7UE8UIfQZMI8oOguL84O4O6IwCnwTZpEOuNhYHjCS1qMUI
+nAHZjSGlSnKBp4MwttY/LRRomyGW74ukfnOU91v91LR6Aakw31PUIQZ8EDOT84jC
+0hMnIjzmaA9LzLQRrMMQqSLi5FdLg4ps9NEb4zVklz94U/mzf4l+GzZczg6eJI1S
+JUz9EwBdrJIwPCRdBoHCQbrVCuiCbvDjhobVK0tKRycjOFvWXh0nDWRWFwfZiD68
+dpJmkHE2POaVhBEWnwhUJ57489SMCA==
+=z9OW
+-----END PGP SIGNATURE-----
+
+--I/5syFLg1Ed7r+1G--
