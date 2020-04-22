@@ -2,67 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A991B47F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 16:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1EC81B4802
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 17:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbgDVO7n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 10:59:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50454 "EHLO
+        id S1727857AbgDVPBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 11:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgDVO7n (ORCPT
+        with ESMTP id S1725934AbgDVPBo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 10:59:43 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E7FC03C1A9;
-        Wed, 22 Apr 2020 07:59:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3wiOlfuET1e01r1zvjRWWoC2fuMUHigHjGVaVH8nUb8=; b=I1fdJitkAE8vmrzgpzZ7MnV2/S
-        K3URUqqRY1BjUGUiINf2H78+s4hQ+NoIkjZhJoADkDKOMyhPb2AckGBLueqmWoJ3fD+iFBB2KdizQ
-        ilQw0iP2AOAe6TK+lXK0HDgySWKgzdaH6GeYajWajHOsh9S83C5dS0wCGTzhjpK5TCeQm4xGXapVf
-        G7ujKmAxhWjU24+2i8eM6LpOAuZMfRW0GeROlr8sBqvizHGxVTCRNVsF+daVAvzCHLucBQ0/0mxZf
-        l1ohhRY819ZmiYcu/Ak1fnjh1BlsIGaQ0kiFpxSxr3oFtJL5EgNDWrhx/LTFQShJ9ltUjWnGLMm5y
-        d3XvFMOw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRGqY-0007IK-Gd; Wed, 22 Apr 2020 14:59:30 +0000
-Date:   Wed, 22 Apr 2020 07:59:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kbuild test robot <lkp@intel.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        bjorn.andersson@linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        kbuild-all@lists.01.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dan Carpenter <error27@gmail.com>
-Subject: Re: [PATCH v3 6/7] misc: bcm-vk: add Broadcom VK driver
-Message-ID: <20200422145930.GA12731@infradead.org>
-References: <20200420162809.17529-7-scott.branden@broadcom.com>
- <202004221945.LY6x0DQD%lkp@intel.com>
- <20200422113558.GJ2659@kadam>
+        Wed, 22 Apr 2020 11:01:44 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E41C03C1A9;
+        Wed, 22 Apr 2020 08:01:44 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jRGs7-008WRP-P8; Wed, 22 Apr 2020 15:01:07 +0000
+Date:   Wed, 22 Apr 2020 16:01:07 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Nate Karstens <nate.karstens@garmin.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
+Subject: Re: Implement close-on-fork
+Message-ID: <20200422150107.GK23230@ZenIV.linux.org.uk>
+References: <20200420071548.62112-1-nate.karstens@garmin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200422113558.GJ2659@kadam>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200420071548.62112-1-nate.karstens@garmin.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 02:35:58PM +0300, Dan Carpenter wrote:
-> Sorry, you asked me about this earlier.  You will need to add
-> -D__CHECK_ENDIAN__ to enable these Sparse warnings.
+On Mon, Apr 20, 2020 at 02:15:44AM -0500, Nate Karstens wrote:
+> Series of 4 patches to implement close-on-fork. Tests have been
+> published to https://github.com/nkarstens/ltp/tree/close-on-fork.
+> 
+> close-on-fork addresses race conditions in system(), which
+> (depending on the implementation) is non-atomic in that it
+> first calls a fork() and then an exec().
+> 
+> This functionality was approved by the Austin Common Standards
+> Revision Group for inclusion in the next revision of the POSIX
+> standard (see issue 1318 in the Austin Group Defect Tracker).
 
-Endian checking has been enabled by default for quite a while.
+What exactly the reasons are and why would we want to implement that?
+
+Pardon me, but going by the previous history, "The Austin Group Says It's
+Good" is more of a source of concern regarding the merits, general sanity
+and, most of all, good taste of a proposal.
+
+I'm not saying that it's automatically bad, but you'll have to go much
+deeper into the rationale of that change before your proposal is taken
+seriously.
