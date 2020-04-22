@@ -2,120 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A10391B4540
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 14:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F5E1B4606
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 15:13:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgDVMgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 08:36:21 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:44814 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgDVMgV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 08:36:21 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jREbz-0000ox-TI; Wed, 22 Apr 2020 06:36:19 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jREbz-0006MT-03; Wed, 22 Apr 2020 06:36:19 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
+        id S1726592AbgDVNNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 09:13:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:49866 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726468AbgDVNNx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 09:13:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBD7031B;
+        Wed, 22 Apr 2020 06:13:51 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EFAD3F6CF;
+        Wed, 22 Apr 2020 06:13:49 -0700 (PDT)
+Date:   Wed, 22 Apr 2020 14:13:47 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-References: <20200417064146.1086644-1-hch@lst.de>
-        <20200417064146.1086644-5-hch@lst.de>
-Date:   Wed, 22 Apr 2020 07:33:11 -0500
-In-Reply-To: <20200417064146.1086644-5-hch@lst.de> (Christoph Hellwig's
-        message of "Fri, 17 Apr 2020 08:41:44 +0200")
-Message-ID: <87d07z4s54.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200422131346.sfjntmurigv6uajb@e107158-lin.cambridge.arm.com>
+References: <20200403123020.13897-1-qais.yousef@arm.com>
+ <292dbd54-e590-dc4f-41e6-5f86e478c0ee@arm.com>
+ <20200420151341.7zni3bwroso2kpdc@e107158-lin.cambridge.arm.com>
+ <de020088-3b06-3674-dab9-244ae577cc54@arm.com>
+ <20200421112733.4jbguidgbqwzhv23@e107158-lin.cambridge.arm.com>
+ <45236ccd-24d2-3b99-cd9b-bac13cfaceab@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jREbz-0006MT-03;;;mid=<87d07z4s54.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/34tuHHASgF60MVP0xOvnRF+fIQ45pLt8=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Christoph Hellwig <hch@lst.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 476 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (2.3%), b_tie_ro: 9 (2.0%), parse: 0.79 (0.2%),
-         extract_message_metadata: 17 (3.5%), get_uri_detail_list: 0.98 (0.2%),
-         tests_pri_-1000: 16 (3.4%), tests_pri_-950: 1.59 (0.3%),
-        tests_pri_-900: 1.17 (0.2%), tests_pri_-90: 110 (23.2%), check_bayes:
-        108 (22.7%), b_tokenize: 8 (1.6%), b_tok_get_all: 6 (1.3%),
-        b_comp_prob: 2.2 (0.5%), b_tok_touch_all: 88 (18.4%), b_finish: 1.20
-        (0.3%), tests_pri_0: 300 (63.0%), check_dkim_signature: 0.72 (0.2%),
-        check_dkim_adsp: 2.5 (0.5%), poll_dns_idle: 0.41 (0.1%), tests_pri_10:
-        2.2 (0.5%), tests_pri_500: 12 (2.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 4/6] sysctl: remove all extern declaration from sysctl.c
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <45236ccd-24d2-3b99-cd9b-bac13cfaceab@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
-
-> Extern declarations in .c files are a bad style and can lead to
-> mismatches.  Use existing definitions in headers where they exist,
-> and otherwise move the external declarations to suitable header
-> files.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/coredump.h |  6 ++++++
->  include/linux/file.h     |  2 ++
->  include/linux/mm.h       |  2 ++
->  include/linux/mmzone.h   |  2 ++
->  include/linux/sysctl.h   |  8 +++++++
->  kernel/sysctl.c          | 45 +++-------------------------------------
->  6 files changed, 23 insertions(+), 42 deletions(-)
->
-> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-> index abf4b4e65dbb..0fe8f3131e97 100644
-> --- a/include/linux/coredump.h
-> +++ b/include/linux/coredump.h
-> @@ -22,4 +22,10 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
->  static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
->  #endif
+On 04/22/20 12:59, Dietmar Eggemann wrote:
+> On 21/04/2020 13:27, Qais Yousef wrote:
+> > On 04/21/20 13:18, Dietmar Eggemann wrote:
+> >> On 20/04/2020 17:13, Qais Yousef wrote:
+> >>> On 04/20/20 10:29, Dietmar Eggemann wrote:
+> >>>> On 03.04.20 14:30, Qais Yousef wrote:
+> >>>>
+> >>>> [...]
+> >>>>
+> >>>>> @@ -924,6 +945,14 @@ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+> >>>>>  	return uc_req;
+> >>>>>  }
+> >>>>>  
+> >>>>> +static void uclamp_rt_sync_default_util_min(struct task_struct *p)
+> >>>>> +{
+> >>>>> +	struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
+> >>>>> +
+> >>>>> +	if (!uc_se->user_defined)
+> >>>>> +		uclamp_se_set(uc_se, sysctl_sched_rt_default_uclamp_util_min, false);
+> >>>>> +}
+> >>>>> +
+> >>>>>  unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+> >>>>>  {
+> >>>>>  	struct uclamp_se uc_eff;
+> >>>>> @@ -1030,6 +1059,12 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+> >>>>>  	if (unlikely(!p->sched_class->uclamp_enabled))
+> >>>>>  		return;
+> >>>>>  
+> >>>>> +	/*
+> >>>>> +	 * When sysctl_sched_rt_default_uclamp_util_min value is changed by the
+> >>>>> +	 * user, we apply any new value on the next wakeup, which is here.
+> >>>>> +	 */
+> >>>>> +	uclamp_rt_sync_default_util_min(p);
+> >>>>> +
+> >>>>
+> >>>> Does this have to be an extra function? Can we not reuse
+> >>>> uclamp_tg_restrict() by slightly rename it to uclamp_restrict()?
+> 
+> Btw, there was an issue in my little snippet. I used uc_req.user_defined
+> uninitialized in uclamp_restrict().
+> 
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index f3706dad32ce..7e6b2b7cd1e5 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -903,12 +903,11 @@ uclamp_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+>  	struct uclamp_se uc_req, __maybe_unused uc_max;
 >  
-> +extern int core_uses_pid;
-> +extern char core_pattern[];
-> +extern unsigned int core_pipe_limit;
-> +extern int pid_max;
-> +extern int pid_max_min, pid_max_max;
+> -	if (unlikely(rt_task(p)) && clamp_id == UCLAMP_MIN &&
+> -	    !uc_req.user_defined) {
+> +	if (unlikely(rt_task(p)) && clamp_id == UCLAMP_MIN) {
+>  		struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
+>  		int rt_min = sysctl_sched_rt_default_uclamp_util_min;
+>  
+> -		if (uc_se->value != rt_min) {
+> +		if (!uc_se->user_defined && uc_se->value != rt_min) {
+>  			uclamp_se_set(uc_se, rt_min, false);
+>  			printk("uclamp_restrict() [%s %d] p->uclamp_req[%d].value=%d\n",
+>  			       p->comm, p->pid, clamp_id, uc_se->value);
+> 
+> >>> Hmm the thing is that we're not restricting here. In contrary we're boosting,
+> >>> so the name would be misleading.
+> >>
+> >> I always thought that we're restricting p->uclamp_req[UCLAMP_MIN].value (default 1024) to
+> >> sysctl_sched_rt_default_uclamp_util_min (0-1024)?
+> > 
+> > The way I look at it is that we're *setting* it to
+> > sysctl_sched_rt_default_uclamp_util_min if !user_defined.
+> > 
+> > The restriction mechanism that ensures this set value doesn't escape
+> > cgroup/global restrictions setup.
+> 
+> I guess we overall agree here. 
+> 
+> I see 3 restriction levels: (!user_defined) task -> taskgroup -> system
+> 
+> I see sysctl_sched_rt_default_uclamp_util_min (min_rt_default) as a
+> restriction on task level.
 
-These last two pid_max, pid_max_mind and pid_max_max would make more
-sense in pid.h as they have nothing to do with coredumps.
+Hmm from code perspective it is a request. One that is applied by default if
+the user didn't make any request.
 
-> +
->  #endif /* _LINUX_COREDUMP_H */
+Since restriction has a different meaning from code point of view, I think
+interchanging both could be confusing.
+
+A restriction from the code view is that you can request 1024, but if cgroup or
+global settings doesn't allow you, the system will automatically crop it.
+
+The new sysctl doesn't result in any cropping. It is equivalent to a user
+making a sched_setattr() call to change UCLAMP_MIN value of a task. It's just
+this request is applied automatically by default, if !user_defined.
+
+But if you meant your high level view of how it works you think of it as
+a restriction, then yeah, it could be abstracted in this way. The terminology
+just conflicts with the code.
+
+> 
+> It's true that the task level restriction is setting the value at the same time.
+> 
+> For CFS (id=UCLAMP_[MIN\|MAX]) and RT (id=UCLAMP_MAX) we use
+> uclamp_none(id) and those values (0, 1024) are fixed so these task level
+> values don't need to be further restricted.
+
+I wouldn't think of these as restriction. They're default requests, if
+I understood what you're saying correctly, by default:
+
+	cfs_task->util_min = 0
+	cfs_task->util_max = 1024
+
+	rt_task->util_min = 1024
+	rt_task->util_max = 1024
+
+Which are the requested value.
+
+sysctl_util_clamp_{min,max} are the default restriction which by default would
+allow the tasks to request any value within the full range.
+
+The root taskgroup will inherit this value by default. And new cgroups will
+inherit from the root taskgroup.
+
+> 
+> For RT (id=UCLAMP_MIN) we use 'min_rt_default' and since it can change
+> we have to check the task level restriction in 'uclamp_eff_get() ->
+> uclamp_(tg)_restrict()'.
+
+Yes. If we take the approach to apply the default request in uclamp_eff_get(),
+then this must be applied before uclamp_tg_restrict() call.
+
+> 
+> root@h960:~# echo 999 > /proc/sys/kernel/sched_rt_default_util_clamp_min
+> 
+> [ 2540.507236] uclamp_eff_get() [rtkit-daemon 419] tag=0 uclamp_id=0 uc_req.value=1024
+> [ 2540.514947] uclamp_eff_get() [rtkit-daemon 419] tag=1 uclamp_id=0 uc_req.value=1024
+> [ 2548.015208] uclamp_restrict() [rtkit-daemon 419] p->uclamp_req[0].value=999
+> 
+> root@h960:~# echo 666 > /proc/sys/kernel/sched_util_clamp_min
+> 
+> [ 2548.022219] uclamp_eff_get() [rtkit-daemon 419] tag=0 uclamp_id=0 uc_req.value=999
+> [ 2548.029825] uclamp_eff_get() [rtkit-daemon 419] tag=1 uclamp_id=0 uc_req.value=999
+> [ 2553.479509] uclamp_eff_get() [rtkit-daemon 419] tag=0 uclamp_id=0 uc_max.value=666
+> [ 2553.487131] uclamp_eff_get() [rtkit-daemon 419] tag=1 uclamp_id=0 uc_max.value=666
+> 
+> Haven't tried to put an rt task into a taskgroup other than root.
+
+I do run a test that Patrick had which checks for cgroup values. One of the
+tests checks if RT are boosted to max, and it fails when I change the default
+RT max-boost value :)
+
+I think we're in agreement, but the terminology is probably making things a bit
+confusing.
+
+Thanks
+
+--
+Qais Yousef
