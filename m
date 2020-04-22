@@ -2,75 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AEC1B373B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 08:09:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF3AC1B37BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Apr 2020 08:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbgDVGJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 02:09:26 -0400
-Received: from verein.lst.de ([213.95.11.211]:50333 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgDVGJ0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 02:09:26 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 113CA68C4E; Wed, 22 Apr 2020 08:09:23 +0200 (CEST)
-Date:   Wed, 22 Apr 2020 08:09:22 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH 5/5] sysctl: pass kernel pointers to ->proc_handler
-Message-ID: <20200422060922.GA22775@lst.de>
-References: <20200421171539.288622-1-hch@lst.de> <20200421171539.288622-6-hch@lst.de> <20200421191615.GE23230@ZenIV.linux.org.uk> <20200422024626.GI23230@ZenIV.linux.org.uk>
+        id S1726437AbgDVGog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 02:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbgDVGof (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Apr 2020 02:44:35 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC103C03C1A6;
+        Tue, 21 Apr 2020 23:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=R3Wcm6CbR/G6SLD4XVnk7GpiQZBdrcFoabboLjiCXlQ=; b=NQJRNZk+/BeYMRqupYqT78Xm3c
+        lUHnX1+AoijrHjRNNPRMqd69eOFSctktIO/ZIi232xkEOjE7IKKc3qy/cDK6GKxexH6xqtHuGC8Wj
+        Qf+1BoxBR5jrLE8abr6u4QZ7Tg8SXsjoyID0NawIg+a995SvhAeciWRQh7MGc1knkwEd4L2SrwP7w
+        dSUNSgSynR4vKot2UhL11knNyxFmtrA9PZspvbvAJGO6WClEg9BOm57RRiE3fxqo3gqiP2FWBvPwg
+        G9uWfO08I77P5IXANZE9CvFR676D7PN9EZvqEem9VMFMZfNOwwnoIPzF3IiwXBWcWu/HtQMjcBuWy
+        qQSzRiQg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jR97X-0004Z0-Bx; Wed, 22 Apr 2020 06:44:31 +0000
+Date:   Tue, 21 Apr 2020 23:44:31 -0700
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v7 01/11] scsi: free sgtables in case command setup fails
+Message-ID: <20200422064431.GG20318@infradead.org>
+References: <20200417121536.5393-1-johannes.thumshirn@wdc.com>
+ <20200417121536.5393-2-johannes.thumshirn@wdc.com>
+ <de79e1ab-0407-205e-3272-532f0484b49f@acm.org>
+ <SN4PR0401MB3598B2774CD52FAB68C726249BD40@SN4PR0401MB3598.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200422024626.GI23230@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <SN4PR0401MB3598B2774CD52FAB68C726249BD40@SN4PR0401MB3598.namprd04.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 03:46:26AM +0100, Al Viro wrote:
-> > Better allocate count + 1 bytes here, that way a lot of insanity in the
-> > instances can be simply converted to snprintf().  Yes, I know it'll bring
-> > the Church Of Avoiding The Abomination Of Sprintf out of the woodwork,
-> > but...
+On Mon, Apr 20, 2020 at 10:46:21AM +0000, Johannes Thumshirn wrote:
+> On 18/04/2020 18:02, Bart Van Assche wrote:
+> > How about adding __must_check to scsi_setup_fs_cmnd()?
 > 
-> FWIW, consider e.g. net/sunrpc/sysctl.c:
-> 
-> Nevermind that the read side should be simply
-> 		int err = proc_douintvec(table, write, buffer, lenp, ppos);
-> 		/* Display the RPC tasks on writing to rpc_debug */
-> 		if (!err && strcmp(table->procname, "rpc_debug") == 0)
-> 			rpc_show_tasks(&init_net);
-> 		return err;
-> the write side would become
-> 		len = snprintf(buffer, *lenp + 1, "0x%04x\n",
-> 				*(unsigned int *)table->data);
-> 		if (len > *lenp)
-> 			len = *lenp;
-> 		*lenp -= len;
-> 		*ppos += len;
-> 		return 0;
-> and I really wonder if lifting the trailing boilerplate into the caller would've
-> been better.  Note that e.g. gems like
->                         if (!first)
->                                 err = proc_put_char(&buffer, &left, '\t');
->                         if (err)
->                                 break;
->                         err = proc_put_long(&buffer, &left, lval, neg);
->                         if (err)
->                                 break;
-> are due to lack of snprintf-to-user; now, lose the "to user" part and we suddenly
-> can be rid of that stuff...
+> I'm actually not sure if __must_check helps us anything given that with 
+> this patch applied:
 
-That sounds pretty sensible, but can we do that as an extra step?
-That is in merge window N just move to passing kernel pointers, check
-for fall out.  In merge window N + 1 start allocatin the extra byte and
-switch at least the common helpers for snprintf?
+It doesn't.  __must_check on static functions with a single caller does
+not make any sense.
