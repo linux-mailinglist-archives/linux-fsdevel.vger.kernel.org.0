@@ -2,102 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 550471B52AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 04:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F074B1B5333
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 05:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgDWCor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Apr 2020 22:44:47 -0400
-Received: from mgwkm03.jp.fujitsu.com ([202.219.69.170]:30664 "EHLO
-        mgwkm03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbgDWCor (ORCPT
+        id S1726686AbgDWDmF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Apr 2020 23:42:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726002AbgDWDmF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Apr 2020 22:44:47 -0400
-X-Greylist: delayed 671 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Apr 2020 22:44:44 EDT
-Received: from kw-mxq.gw.nic.fujitsu.com (unknown [192.168.231.130]) by mgwkm03.jp.fujitsu.com with smtp
-         id 0abc_3579_5544f71c_4878_43bc_a3de_fa2088113603;
-        Thu, 23 Apr 2020 11:33:27 +0900
-Received: from m3050.s.css.fujitsu.com (msm.b.css.fujitsu.com [10.134.21.208])
-        by kw-mxq.gw.nic.fujitsu.com (Postfix) with ESMTP id BF869AC00FD;
-        Thu, 23 Apr 2020 11:33:26 +0900 (JST)
-Received: from [10.133.121.138] (VPC-Y08P0560080.g01.fujitsu.local [10.133.121.138])
-        by m3050.s.css.fujitsu.com (Postfix) with ESMTP id A3A30403;
-        Thu, 23 Apr 2020 11:33:26 +0900 (JST)
-Subject: Re: [PATCH V10 04/11] Documentation/dax: Update Usage section
-To:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <20200422212102.3757660-1-ira.weiny@intel.com>
- <20200422212102.3757660-5-ira.weiny@intel.com>
-From:   Yasunori Goto <y-goto@fujitsu.com>
-Message-ID: <2282176d-60c5-0e4b-3cf9-7a7682de380d@fujitsu.com>
-Date:   Thu, 23 Apr 2020 11:33:26 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 22 Apr 2020 23:42:05 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A767C03C1AA;
+        Wed, 22 Apr 2020 20:42:05 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id e6so1889303pjt.4;
+        Wed, 22 Apr 2020 20:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6dQMHfeBacBwJMLmSY5DUMnEsFdGOS3CmUiYfT4KgF0=;
+        b=JGmM6JKDbTONFrJRe9See27RegDlwxrdEZuIMaIPzy1PY3qv4rRy3fWUXW3vLHcii3
+         5ycJdOxJpZR9aLc0u0M9lBYAYHuMWNL+w8NP8kMfpMZhbY93Y+4XCJpSt1/oab/oJOMS
+         93xd0lC8U+q8ubqR3f8tacuaqnU/G/HWvMN/2mtztiRc4AOPSkF63s/kkOtykAvfdds9
+         AxcGbHF5A5uRpNjxD8++/FmAROIoqYUuQ3YKkS3hHN2XpRVcf9annuvvrcHKijviAs8n
+         xje51oP4NyzETyK8hZkmEoPfhhPqJoq+shcaWMGrl0Tqa+BAC0cTeyh1bDSe2GfsK8Ux
+         +oLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6dQMHfeBacBwJMLmSY5DUMnEsFdGOS3CmUiYfT4KgF0=;
+        b=pg+7TDNwqNlRNnHdCw5hirUtdCtVd7PVs1UJCizsJQc++rBfTSGtn5taXzBIhjGWJk
+         TH5kq2UCyNfanKmawcxzMN0mIjSj93UIeLMxfb840Ma3vVMEqAOeWoVVWvepPgTl10o/
+         Dec/JoJuJ8nRUwyb4xUKK+52NnpvIzL7AO9LmzvI9hJ4HurIzDS2XhX++TPkPuNaHLdz
+         HKapeQuOD2ULyZXR2brgR6c1iTS7NUB8bUhAHtqdK5RU5XejbzH9ePZzs518tyWV4eUg
+         uSb2luPN2t+gQSJdcxupTI8eZnDsj8YspGsbU5yOUu5pcJS60vMBtvnWGMz2tnOSIw4j
+         rspg==
+X-Gm-Message-State: AGi0PubR4kr8913Eqx3UpEqpGcgEI4ym+QhcQqVTciDD07YuZ+OjggWT
+        5xLo6emCbHMIUfHJgRmfwVchlYC/
+X-Google-Smtp-Source: APiQypLbHSJekuXcR7QyZDnfGmSetVxhk0+1wwtWC6xR8Xktz7g1M0GF3+ne/iSuxAlUDij07qHkwg==
+X-Received: by 2002:a17:90a:ba09:: with SMTP id s9mr2133288pjr.20.1587613324188;
+        Wed, 22 Apr 2020 20:42:04 -0700 (PDT)
+Received: from localhost (146.85.30.125.dy.iij4u.or.jp. [125.30.85.146])
+        by smtp.gmail.com with ESMTPSA id w16sm674566pgf.94.2020.04.22.20.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Apr 2020 20:42:03 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Thu, 23 Apr 2020 12:42:01 +0900
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, pmladek@suse.com,
+        sergey.senozhatsky@gmail.com, linux@rasmusvillemoes.dk
+Subject: Re: [PATCH 03/15] print_integer: new and improved way of printing
+ integers
+Message-ID: <20200423034201.GF246741@jagdpanzerIV.localdomain>
+References: <20200420205743.19964-1-adobriyan@gmail.com>
+ <20200420205743.19964-3-adobriyan@gmail.com>
+ <20200420211911.GC185537@smile.fi.intel.com>
+ <20200420212723.GE185537@smile.fi.intel.com>
+ <20200420215417.6e2753ee@oasis.local.home>
+ <20200421164924.GB8735@avx2>
 MIME-Version: 1.0
-In-Reply-To: <20200422212102.3757660-5-ira.weiny@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200421164924.GB8735@avx2>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On (20/04/21 19:49), Alexey Dobriyan wrote:
+> 
+> I did the benchmarks (without stack protector though), everything except
+> /proc/cpuinfo and /proc/meminfo became faster.
+> 
 
-I'm trying use your patch now, and I have a small comment in this document.
+Why does /proc/cpuinfo and /proc/meminfo performance matter?
 
-On 2020/04/23 6:20, ira.weiny@intel.com wrote:
-
-> +To clarify inheritance here are 3 examples:
-> +
-> +Example A:
-> +
-> +mkdir -p a/b/c
-> +xfs_io 'chattr +x' a
-
-Probably, "-c" is necessary here.
-
-xfs_io -c 'chattr +x' a
-
-
-> +mkdir a/b/c/d
-> +mkdir a/e
-> +
-> +	dax: a,e
-> +	no dax: b,c,d
-> +
-> +Example B:
-> +
-> +mkdir a
-> +xfs_io 'chattr +x' a
-ditto
-> +mkdir -p a/b/c/d
-> +
-> +	dax: a,b,c,d
-> +	no dax:
-> +
-> +Example C:
-> +
-> +mkdir -p a/b/c
-> +xfs_io 'chattr +x' c
-ditto
-> +mkdir a/b/c/d
-> +
-> +	dax: c,d
-> +	no dax: a,b
-> +
-> +
-
----
-
-Yasunori Goto
-
+	-ss
