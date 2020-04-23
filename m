@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E791B5611
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 09:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B2D1B561B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 09:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgDWHlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 03:41:10 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:19762 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbgDWHlE (ORCPT
+        id S1727090AbgDWHlX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 03:41:23 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:60208 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbgDWHlV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 03:41:04 -0400
+        Thu, 23 Apr 2020 03:41:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1587627664; x=1619163664;
+  t=1587627680; x=1619163680;
   h=from:to:cc:subject:date:message-id:references:
    content-transfer-encoding:mime-version;
-  bh=0/POSmkwr2oHePniK8x5FMw8VXx3cYejE6zS1/IRdm8=;
-  b=eCmCf3ECZY2dA6aCFjEBpdp5IyFhE2konlEnlQ0bcDwn+1LYMmeeuZsM
-   3rZxV2Ngd4UsXVaJXySMhvC8dYjtc0cPMdvv/qMc1ybgKK0OCiqgc16nE
-   Xi93ab5ty5jEzHpUYX9FGJjovbTedFnWJTFkawbitoyvtzjBQ1xffP3qi
-   J4x4QimKQdlgTteMszE7jjrtCLKgsSg+mYavyU5szg5WCEPSXNl+9d77k
-   Yl8alvK5KdA7ndSiO7aaj156L/JhUWmmCAW1hIcaqRPSmmnk4bYrmYtZZ
-   G8WtS+xgbP3kSzrgHP6sKUmjA+FZw9w7lT7ebGdjYJJhwtEK9kda8bMqf
-   Q==;
-IronPort-SDR: 6yD7o0yDf+bDk7LQ0MgAeNYGgdEbCpOnLnV1mG1HHEnTJ0aqUiCGVwO9wO0a2kpSFB7Q3aw56f
- 0hEA+HjzPaaQ44QPSk4+GUkMCwo8u5f91WLRvu+Wsi80OXUVDZD/b257JY6hIAoERhfQbb+CKE
- WgZzcpspMjPt3gkkMd/64k2USiSJKrOGXkvmBx09XDxDKPiaJs9v2jCWUi3F43D/0UORp3pfVB
- LZ5t73q3rNAXbv7noZRf8aBxLuUyzXGPPhkmFSWBZ4jegimiLlybd4zhe4u3lRHXgoPFs+MCjz
- fbM=
+  bh=mufLU23stVOiOHq+VHBnnyA/Ezqdo9vTOQHF7wrV5Fg=;
+  b=JdfjsW7FpyB+uhVPXS/YgmU7zI+TOosDMwqkoA9pw1oC854NPCN5xcJo
+   M2+xh7/K/bDuXV8lMHlLT4ocDHeuDiUjpgkS2GWWPduZ3SYdstFnsxbhb
+   ZrKjQlYzffgLuJ3knlt2xuCF9PEJN46u1nHTO3bnzTAkKSvH+vIQdZ0JS
+   UAnvzRE1O8t0Z1VBCP7g6pQK4oxqWgciye2I9F+ImkH6jqSYZlLICSH4C
+   5J47OW3mrk5Rbr+MQ2xfuWCaveAXLrpb1Uazlgat3k059VeU7jsVqy2i4
+   9yOHElQMyLm/HeymgZ82yah04V7zmxPvqkxWn7Y8jDAenC5Ep7FHlqWfC
+   w==;
+IronPort-SDR: ebBvlPJaLlcsdlK9ei/sHdl0Sw4hCftLzwzYPLnG9cfvYlmqHdf6LrShJUrbua5Vjnezmb0Q7a
+ jw5p+94HLlwjFTquVMZ7kVsuulnvtd1mY36BNGvolY/wIINiwciKjKNPuODhcYiuuR4cIZRNvV
+ bWuTCkfX3GULveSubKUfM4Ac0/NDjj0K8jzmZh3uxNShpaNQ8aP8GR8vPxNFvouRqHupeNYqNp
+ cjgoiJh+cuVPTuHjEQELQD5y0wvqT+5MEozCrcNZ8cbYQT157KC4+/vWo2IKtkM3yID5LyXrOo
+ KMM=
 X-IronPort-AV: E=Sophos;i="5.73,306,1583164800"; 
-   d="scan'208";a="136261975"
-Received: from mail-co1nam11lp2174.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.174])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Apr 2020 15:41:03 +0800
+   d="scan'208";a="244686277"
+Received: from mail-co1nam11lp2176.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.176])
+  by ob1.hgst.iphmx.com with ESMTP; 23 Apr 2020 15:41:19 +0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cYNoQoNhAc661BSoXh0KMib653uCP1X/dj1hFBOL64UlEz2CkAZ1fCC8+Jxjkb1Sgua9bI9Gso+PJoJdO6Zaf4zJvawuimtVQQGwXkGM7/6vtkzIgfDbBAPhV6yQLccYOYqak0yzxtnf34VCemOAPnuyBHpvp2Hbz/S9HzohwajMEDW7HV7ijku7jkeoftDi9u0Q+o/VjpE8uDXyUy9/vQCPYPCkS5FEuZNh7Spp7AxNrjxOjnTGVwR4lCMScfj6HvDiFNqQi2vyW0R5Awp8Vm6yWBflhPb58cy6RWXgsBzouTs7npWOgCJLuHNclWZJLsGrmbIjwo6uOdQi7QP54Q==
+ b=gR0eMaYcScHB4NEjywRM5Uo3a5IyKMV+kdG00QYOAJKM3VIfiyHSrr5R7ylZ3bg3/q9iLWtghnecVjekyOP492S+3TywedlISGTEsXgTMXta1UVZgAdzoB00QXpK9y5LbCPgCeU3Y1+fRuA0qwsA0iyD4M/OM00BWri6yd/xCk7FpKecIODJ2P1hp71FfUDJCaHoRgx8ODxikao9VoeoPdM1j6Ed8NyqO/u6/qaMYWdKW32mQfGqe/IV95CKQe8+Ls/w63nuZBSNoLqXs7o/FJZ2n8WDsC8HDBWdHuvZAzE+SwvYNSNJkvJxf+6IitBPVGN8Szw8vHWTGzGlHP5P/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7AOcDA8Y/zPRjhgsa5GexEZnArT1QaWtZlVNJyQiFls=;
- b=aQqheUvYdY2+IlWkOTi5lePA7m3VCmVQqyCbFx0WmGtcJx288533iYiAh6J32C9BETdvF68xQlIH6AUuWZWw/XlFaprWf2JsJFMK8xO8B9k7DDdgAPSp/66aWyNS6NOM47+Na3l0WrmxCleGKM5q3WYVLI/JbayyS7aH2KtGtwBjZmHUEKbZa5ZtetqOTwcm5/zvWVmOWZqO6oejj5ETkQWgF8RWxikxLH9UZY74IrN4A0d/Cg29bK2hvtXqgNYLvrN8O+uQ8jXcUDkTd7A5LUaKRPMsG23hfJ7QMzPs2KSPBeAcz/lHhcpcISH4Bx09J3tkQczb3dQZ5HuU82EI8Q==
+ bh=9gvKykOMpPqOSrhFmQw5nmH5JMyQcSK1YoxMOfvA8rg=;
+ b=PsYXkrNuWHdr/2cH130x4OOZKsKOM2UXfJGq89dP2Jg08D7Ji8T8dTWBuZZRWxydyPkH4MkiqMpeXarOJpRln30ro8FkC3OdWY6ZPrUQHr7M/OonqdD7G8atRgOE/PkXQ965vW0MGgQ4Iz00OfAxlR6+PtPkkrSPHj8oi9J+Z9ark60tgK71TyPnvMM2mOziu2JawlB+UC0eOoK57PB5umYL4BKf9SQKPUbF9HaLpto6ypi5WUA2mrIUNW/MM7YE5HnECRCTKssfLXc9/VFXvliZRneJynjzqn3VSgVtTBGyoLXrrbbPPoOu19t/ukR1daABnepsEX/xbIRjIj/4wQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
  header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7AOcDA8Y/zPRjhgsa5GexEZnArT1QaWtZlVNJyQiFls=;
- b=AOXLn4t81EPO6jMcJvXZhwrezg8e5iMlgdiD9fcFRkLxdAdSsVIYgQjaabJPWOnXfJNXDywmjT4RrmshjJ0oMXtSCb1vrf/KMM2r21zw1QevbOXA+WtmAjlY4Yk1uG5BA9v2wWC5DReppRLJwB6bNR+xQChgNPgXOCCpESSPUgo=
+ bh=9gvKykOMpPqOSrhFmQw5nmH5JMyQcSK1YoxMOfvA8rg=;
+ b=QO/t1mXJ69d0UEdfW2VMLZXVmacEJklwK/4SopUAAa3nmS3Id6QY4RWQA326fTE4BdjX0fBg70JsM+aUAJLEfbdtae5jZOztJP1PfZ0BYF2kvoHALiG1PosIph0nnv0pYbBvmPdFq2QMThf1TTBy3u7Ab14xg0t+b4LlwPpF7S4=
 Received: from BY5PR04MB6900.namprd04.prod.outlook.com (2603:10b6:a03:229::20)
  by BY5PR04MB7076.namprd04.prod.outlook.com (2603:10b6:a03:222::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.25; Thu, 23 Apr
- 2020 07:41:02 +0000
+ 2020 07:41:18 +0000
 Received: from BY5PR04MB6900.namprd04.prod.outlook.com
  ([fe80::b574:3071:da2f:7606]) by BY5PR04MB6900.namprd04.prod.outlook.com
  ([fe80::b574:3071:da2f:7606%8]) with mapi id 15.20.2937.012; Thu, 23 Apr 2020
- 07:41:02 +0000
+ 07:41:18 +0000
 From:   Damien Le Moal <Damien.LeMoal@wdc.com>
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 CC:     Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
@@ -67,13 +67,13 @@ CC:     Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
         "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/7] ide-cd: rename cdrom_read_tocentry
-Thread-Topic: [PATCH 2/7] ide-cd: rename cdrom_read_tocentry
-Thread-Index: AQHWGT798MX6FeAfwkaUCw/6MK5hLg==
-Date:   Thu, 23 Apr 2020 07:41:02 +0000
-Message-ID: <BY5PR04MB6900BB75766839E435B5B472E7D30@BY5PR04MB6900.namprd04.prod.outlook.com>
+Subject: Re: [PATCH 3/7] cdrom: factor out a cdrom_read_tocentry helper
+Thread-Topic: [PATCH 3/7] cdrom: factor out a cdrom_read_tocentry helper
+Thread-Index: AQHWGT77oq3lF2gDFEqy0zN3qm+k1A==
+Date:   Thu, 23 Apr 2020 07:41:18 +0000
+Message-ID: <BY5PR04MB6900ABB062D1941B97EA8F3EE7D30@BY5PR04MB6900.namprd04.prod.outlook.com>
 References: <20200423071224.500849-1-hch@lst.de>
- <20200423071224.500849-3-hch@lst.de>
+ <20200423071224.500849-4-hch@lst.de>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -83,29 +83,29 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [129.253.182.57]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: adcd9026-56e1-4081-da2c-08d7e759ac8a
+x-ms-office365-filtering-correlation-id: fb2bb0a2-045e-4afb-a4a7-08d7e759b5f0
 x-ms-traffictypediagnostic: BY5PR04MB7076:
-x-microsoft-antispam-prvs: <BY5PR04MB7076E793264C657A79FB3C86E7D30@BY5PR04MB7076.namprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <BY5PR04MB70768401A281031EEC9FD914E7D30@BY5PR04MB7076.namprd04.prod.outlook.com>
 wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
+x-ms-oob-tlc-oobclassifiers: OLM:2276;
 x-forefront-prvs: 03827AF76E
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6900.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(346002)(366004)(39860400002)(136003)(376002)(396003)(52536014)(8936002)(66476007)(33656002)(7416002)(5660300002)(81156014)(86362001)(316002)(64756008)(66556008)(186003)(66446008)(8676002)(110136005)(66946007)(26005)(4326008)(76116006)(9686003)(54906003)(6506007)(55016002)(53546011)(2906002)(7696005)(478600001)(71200400001);DIR:OUT;SFP:1102;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2Tpt/vmBwyiG7VQNbuGE5wIGajeBzdPPQ6cM7bg0P9AA559hAUd/VEvzBu4FcsxV+O//q1WDoTBRS0XDK7Bx0XovxuybxIyLMoWd9bqBm95VVk3qGN2WcwzNV+/VoI/GSDicHGl0GbwHaU7M124bAl9t+rLuPsI4OOS3h6OsMNPYAuJh9x+wXHoZnOSwbyIZc76vf7IDhEXjR7RSlt6EYhMQ6HUZDSAyLdJKZIkeAEgDjZjV41HboSkfZJ8MIxMPWs4mzNk8QR12NcmuFoj2en062vY3Vno0zfxeA+oVjB4RSiobAsQO42aQKkfccsWIj7vMDJh2r9rA8Rs+p6NEpPaBjJAuVMowHzV03aL2x3uphibOUBejvMFFfrmdoPmRk/X6u4aJksU9wfbooCCGMQmpCDaMuPipmV0TtSPso3C95INw+nSJqDG1EaeiVvVj
-x-ms-exchange-antispam-messagedata: Lb/dUtv5wdiRRN0o7yk+jafDh9KVMSGoiLAKWsoj69fy+XYgyFLMJ/38brBNXx0ysuLVSzG0qNpZnxm0kb6Vwn1060FamJLz//R1bOPMBDwh048LShhdTfeHaxUTzhD6XspWCmWel5L+uuxpKobNig==
+x-microsoft-antispam-message-info: FNbQYspY/fdrQ/R+oVICW9kZ5LGQEvQaPmsXiIK1qvooFzmwSFwexnLe6ykCL5Y//qXj8uLHXSd26ZB+psgquZr2F388JoBMauB7F/GX7+V0VYT0i1CsEsTfw+DRi/yYzUlNXwWccg3zbBuzFBAfTlBsAhLuucmVkeEglsXeKHemPK0YMSsYyjg9OPA4r4aFl+k3iWrqPTtmqdamZ0HEpI0/pZw19rsn46Y3WfNq56U4aIjluduFR6C7H8ftycfgwTsd9ybx/3aUzFFLGAEBg3y0dsib94fBqvFTdYdZsI/+BpI2AMLOIitH7vZ+BUz4jyk9Ef3Jm31+PHcmJPze3n+N0QJFWA06BLj5M8z1aiXKJkahOQ4KELtzvq4CiPrU/ueOiOv0Ejg99EYExXjw7qdeeKUipyr7THub32pGaQ26QzM/Gu9ryEPO63GISmYj
+x-ms-exchange-antispam-messagedata: 4uhxaEzfXAuy3wMB25t1K3Y80WLB60PALddCMIkB3eVPh6iVyXzTCqXD4EuI8uHKfGY7jWjIIBkBU2fHpBkpxOgrfI/hNDcrZdDbnY9U00h13PhXlG92qfkH4JIZmAeecvmJDShBW7G5kTniu/WTiA==
 x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: adcd9026-56e1-4081-da2c-08d7e759ac8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2020 07:41:02.6582
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb2bb0a2-045e-4afb-a4a7-08d7e759b5f0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2020 07:41:18.5064
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: guvGmuu9Fkv1PbbZFbTqvWSgODOKSiUbAbAa950MMSC/c0+2RA5g06810Kzqup1pIWKYl8rMhg2b9sYGWGkzcA==
+X-MS-Exchange-CrossTenant-userprincipalname: ebzzItZs6cvcHSZUMUvEMwbdSz6k9dOk7UcZ4/wMK3UG/I0cBL3Y2qrjSChUcO2CVGvqdFYYg4d2M/5W/FON7A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB7076
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -113,81 +113,99 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020/04/23 16:15, Christoph Hellwig wrote:=0A=
-> Give the cdrom_read_tocentry function and ide_ prefix to not conflict=0A=
-> with the soon to be added generic function.=0A=
+> Factor out a version of the CDROMREADTOCENTRY ioctl handler that can=0A=
+> be called directly from kernel space.=0A=
 > =0A=
 > Signed-off-by: Christoph Hellwig <hch@lst.de>=0A=
 > ---=0A=
->  drivers/ide/ide-cd.c | 14 +++++++-------=0A=
->  1 file changed, 7 insertions(+), 7 deletions(-)=0A=
+>  drivers/cdrom/cdrom.c | 39 ++++++++++++++++++++++-----------------=0A=
+>  include/linux/cdrom.h |  3 +++=0A=
+>  2 files changed, 25 insertions(+), 17 deletions(-)=0A=
 > =0A=
-> diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c=0A=
-> index 40e124eb918a..7f17f8303988 100644=0A=
-> --- a/drivers/ide/ide-cd.c=0A=
-> +++ b/drivers/ide/ide-cd.c=0A=
-> @@ -1034,8 +1034,8 @@ static int cdrom_read_capacity(ide_drive_t *drive, =
-unsigned long *capacity,=0A=
+> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c=0A=
+> index a1d2112fd283..c91d1e138214 100644=0A=
+> --- a/drivers/cdrom/cdrom.c=0A=
+> +++ b/drivers/cdrom/cdrom.c=0A=
+> @@ -2666,32 +2666,37 @@ static int cdrom_ioctl_read_tochdr(struct cdrom_d=
+evice_info *cdi,=0A=
 >  	return 0;=0A=
 >  }=0A=
 >  =0A=
-> -static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_=
-flag,=0A=
-> -				int format, char *buf, int buflen)=0A=
-> +static int ide_cdrom_read_tocentry(ide_drive_t *drive, int trackno,=0A=
-> +		int msf_flag, int format, char *buf, int buflen)=0A=
+> +int cdrom_read_tocentry(struct cdrom_device_info *cdi,=0A=
+> +		struct cdrom_tocentry *entry)=0A=
+> +{=0A=
+> +	u8 requested_format =3D entry->cdte_format;=0A=
+> +	int ret;=0A=
+> +=0A=
+> +	if (requested_format !=3D CDROM_MSF && requested_format !=3D CDROM_LBA)=
+=0A=
+> +		return -EINVAL;=0A=
+> +=0A=
+> +	/* make interface to low-level uniform */=0A=
+> +	entry->cdte_format =3D CDROM_MSF;=0A=
+> +	ret =3D cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, entry);=0A=
+> +	if (!ret)=0A=
+> +		sanitize_format(&entry->cdte_addr, &entry->cdte_format,=0A=
+> +				requested_format);=0A=
+> +	return ret;=0A=
+> +}=0A=
+> +EXPORT_SYMBOL_GPL(cdrom_read_tocentry);=0A=
+> +=0A=
+>  static int cdrom_ioctl_read_tocentry(struct cdrom_device_info *cdi,=0A=
+>  		void __user *argp)=0A=
 >  {=0A=
->  	unsigned char cmd[BLK_MAX_CDB];=0A=
+>  	struct cdrom_tocentry entry;=0A=
+> -	u8 requested_format;=0A=
+>  	int ret;=0A=
 >  =0A=
-> @@ -1104,7 +1104,7 @@ int ide_cd_read_toc(ide_drive_t *drive)=0A=
->  				     sectors_per_frame << SECTOR_SHIFT);=0A=
+> -	/* cd_dbg(CD_DO_IOCTL, "entering CDROMREADTOCENTRY\n"); */=0A=
+> -=0A=
+>  	if (copy_from_user(&entry, argp, sizeof(entry)))=0A=
+>  		return -EFAULT;=0A=
+> -=0A=
+> -	requested_format =3D entry.cdte_format;=0A=
+> -	if (requested_format !=3D CDROM_MSF && requested_format !=3D CDROM_LBA)=
+=0A=
+> -		return -EINVAL;=0A=
+> -	/* make interface to low-level uniform */=0A=
+> -	entry.cdte_format =3D CDROM_MSF;=0A=
+> -	ret =3D cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, &entry);=0A=
+> -	if (ret)=0A=
+> -		return ret;=0A=
+> -	sanitize_format(&entry.cdte_addr, &entry.cdte_format, requested_format)=
+;=0A=
+> -=0A=
+> -	if (copy_to_user(argp, &entry, sizeof(entry)))=0A=
+> +	ret =3D cdrom_read_tocentry(cdi, &entry);=0A=
+> +	if (!ret && copy_to_user(argp, &entry, sizeof(entry)))=0A=
+>  		return -EFAULT;=0A=
+> -	/* cd_dbg(CD_DO_IOCTL, "CDROMREADTOCENTRY successful\n"); */=0A=
+> -	return 0;=0A=
+> +	return ret;=0A=
+>  }=0A=
 >  =0A=
->  	/* first read just the header, so we know how long the TOC is */=0A=
-> -	stat =3D cdrom_read_tocentry(drive, 0, 1, 0, (char *) &toc->hdr,=0A=
-> +	stat =3D ide_cdrom_read_tocentry(drive, 0, 1, 0, (char *) &toc->hdr,=0A=
->  				    sizeof(struct atapi_toc_header));=0A=
->  	if (stat)=0A=
->  		return stat;=0A=
-> @@ -1121,7 +1121,7 @@ int ide_cd_read_toc(ide_drive_t *drive)=0A=
->  		ntracks =3D MAX_TRACKS;=0A=
+>  static int cdrom_ioctl_play_msf(struct cdrom_device_info *cdi,=0A=
+> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h=0A=
+> index 4f74ce050253..008c4d79fa33 100644=0A=
+> --- a/include/linux/cdrom.h=0A=
+> +++ b/include/linux/cdrom.h=0A=
+> @@ -94,6 +94,9 @@ struct cdrom_device_ops {=0A=
+>  			       struct packet_command *);=0A=
+>  };=0A=
 >  =0A=
->  	/* now read the whole schmeer */=0A=
-> -	stat =3D cdrom_read_tocentry(drive, toc->hdr.first_track, 1, 0,=0A=
-> +	stat =3D ide_cdrom_read_tocentry(drive, toc->hdr.first_track, 1, 0,=0A=
->  				  (char *)&toc->hdr,=0A=
->  				   sizeof(struct atapi_toc_header) +=0A=
->  				   (ntracks + 1) *=0A=
-> @@ -1141,7 +1141,7 @@ int ide_cd_read_toc(ide_drive_t *drive)=0A=
->  		 * Heiko Ei=DFfeldt.=0A=
->  		 */=0A=
->  		ntracks =3D 0;=0A=
-> -		stat =3D cdrom_read_tocentry(drive, CDROM_LEADOUT, 1, 0,=0A=
-> +		stat =3D ide_cdrom_read_tocentry(drive, CDROM_LEADOUT, 1, 0,=0A=
->  					   (char *)&toc->hdr,=0A=
->  					   sizeof(struct atapi_toc_header) +=0A=
->  					   (ntracks + 1) *=0A=
-> @@ -1181,7 +1181,7 @@ int ide_cd_read_toc(ide_drive_t *drive)=0A=
->  =0A=
->  	if (toc->hdr.first_track !=3D CDROM_LEADOUT) {=0A=
->  		/* read the multisession information */=0A=
-> -		stat =3D cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,=0A=
-> +		stat =3D ide_cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,=0A=
->  					   sizeof(ms_tmp));=0A=
->  		if (stat)=0A=
->  			return stat;=0A=
-> @@ -1195,7 +1195,7 @@ int ide_cd_read_toc(ide_drive_t *drive)=0A=
->  =0A=
->  	if (drive->atapi_flags & IDE_AFLAG_TOCADDR_AS_BCD) {=0A=
->  		/* re-read multisession information using MSF format */=0A=
-> -		stat =3D cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,=0A=
-> +		stat =3D ide_cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,=0A=
->  					   sizeof(ms_tmp));=0A=
->  		if (stat)=0A=
->  			return stat;=0A=
+> +int cdrom_read_tocentry(struct cdrom_device_info *cdi,=0A=
+> +		struct cdrom_tocentry *entry);=0A=
+> +=0A=
+>  /* the general block_device operations structure: */=0A=
+>  extern int cdrom_open(struct cdrom_device_info *cdi, struct block_device=
+ *bdev,=0A=
+>  			fmode_t mode);=0A=
 > =0A=
 =0A=
 Looks OK to me.=0A=
 =0A=
 Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
+=0A=
 =0A=
 -- =0A=
 Damien Le Moal=0A=
