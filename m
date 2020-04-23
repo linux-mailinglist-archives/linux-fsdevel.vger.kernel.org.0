@@ -2,139 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBE301B6561
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 22:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DBF1B6571
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 22:31:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbgDWU2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 16:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43752 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgDWU2i (ORCPT
+        id S1726081AbgDWUbq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 16:31:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39271 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbgDWUbq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 16:28:38 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 686DCC09B042
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 13:28:38 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id l19so7624385lje.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 13:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=giPR15AGo2ieKRr3YuoUOrhNULDHeEPLry+vrqvhGiE=;
-        b=JQhx257sPEWqT9zRF6PD8JqbodRaG1MGCuGlHa53uJha8lI8D96q5xrXYbWjmV6xLd
-         oywtHlBFUsxfiEyxeaj+g1ToDxzvFWnhXvi/Cn4OihPXDgNMAC9boLNLxKuDK6PnpbS7
-         xmyHWYFSP2mhTikwCZUYiiY3pVwTxO/itjoVs=
+        Thu, 23 Apr 2020 16:31:46 -0400
+Received: by mail-pl1-f194.google.com with SMTP id k18so2809502pll.6;
+        Thu, 23 Apr 2020 13:31:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=giPR15AGo2ieKRr3YuoUOrhNULDHeEPLry+vrqvhGiE=;
-        b=taGFwT/OGsSostYq6B92Fct4IcAYwCD8IPe2PcCgeT44w0YAvRoSwfApcG7vYT3DqH
-         3IAtcPf3HCYe/zcLHgOPUlZjiqAXVhJ7I99qQbulSE65C0MR/DIRmYXzWWwJihSTrn2O
-         GlOq4oOEiqsELwohViSfm4HznJofhq6ugc1v8DbloPvvWZoeGxajMAAeFBwgHJE6s1mz
-         BqdF4RpUVwG1bkyG0n0lqxg6JOiMAKJM9TfD7NbKY7Nr0geQ9rLnzg3o1F6/55rfCPvX
-         l57TP15HaCMV4mXIYYV7P0sJkKUivzj2Y5URxQ6yziRfFkgO9dMW7gtTnyQHDwZ5s5Jx
-         ZdIg==
-X-Gm-Message-State: AGi0PuYcQOUzFSDCzbAuIGzVpX3CnnytQduj+NmHqkxx8N6tZ5UAYQ78
-        gr29VCTYHypoGl0T3ROrm3g/I6I9LK0=
-X-Google-Smtp-Source: APiQypI8Cp0tw6dtiKBPu6P/R6Sr8VrXKyWMrnR4xEKV5gqxzD+HwVuRjHWvAsQNdoDm4gOsc+zCFQ==
-X-Received: by 2002:a05:651c:1104:: with SMTP id d4mr3511696ljo.128.1587673716078;
-        Thu, 23 Apr 2020 13:28:36 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 4sm2689243ljf.79.2020.04.23.13.28.34
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2020 13:28:34 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id a21so7632337ljb.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 13:28:34 -0700 (PDT)
-X-Received: by 2002:a2e:8512:: with SMTP id j18mr3533041lji.201.1587673714229;
- Thu, 23 Apr 2020 13:28:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y6Yd6vxHdKXfNCR7irTzdhZ+vT9Aep8/YD4m/YAtVdw=;
+        b=qNOB7/UTbJ0WPrPane5g72b+wI2CWnElQ+1GsyFof6hilH9nn57dITTjHfdxCiCq2f
+         5CW9lFkGUfxwqNK5P6nFR3TXevhfMAoOjC5ioZ7mlMd9Xly6jj2W37URq7SU6xwBa9gW
+         hATHcnqRvCLuCBjWcLMWjQVQBCv07Q+7XrteTSZjliOFdS6cZTq3d4V6Lu0ksbGz8DFK
+         8EGfVu1D7L/YrfTb8WjXG8lhE7OX/jopd6NEAkSvv2xSlFNsqwQdOcE3ebME0AIaeucx
+         yjd9ecWpdZiIOa7AaRNbMcpc1mPli/q/LmHr160WqLicZHqWDdOfBVMeppvvGj+B3RoI
+         Ffyg==
+X-Gm-Message-State: AGi0PuZj7qNgxi3/QtXksAyipn6LwILKAob98lK7w+/vW/Jm4hjcpHea
+        4cAf/bpZQSDMust7kIL6hfk=
+X-Google-Smtp-Source: APiQypKOj073Uw8F/aSZ3X0Bvrwz5W+5tF3TTJN6agQwB0Is8Rf+PdYFuKSeUpk4MYviekLU7vhFUg==
+X-Received: by 2002:a17:90a:6488:: with SMTP id h8mr2613636pjj.51.1587673904498;
+        Thu, 23 Apr 2020 13:31:44 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id e11sm881707pfl.85.2020.04.23.13.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2020 13:31:43 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 62B10402A1; Thu, 23 Apr 2020 20:31:42 +0000 (UTC)
+From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
+To:     gregkh@linuxfoundation.org
+Cc:     akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, linux-wireless@vger.kernel.org,
+        keescook@chromium.org, shuah@kernel.org, mfuzzey@parkeon.com,
+        zohar@linux.vnet.ibm.com, dhowells@redhat.com,
+        pali.rohar@gmail.com, tiwai@suse.de, arend.vanspriel@broadcom.com,
+        zajec5@gmail.com, nbroeking@me.com, markivx@codeaurora.org,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] firmware_loader: re-export fw_fallback_config into firmware_loader's own namespace
+Date:   Thu, 23 Apr 2020 20:31:40 +0000
+Message-Id: <20200423203140.19510-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
- <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 23 Apr 2020 13:28:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgXEJdkgGzZQzBDGk7ijjVdAVXe=G-mkFSVng_Hpwd4tQ@mail.gmail.com>
-Message-ID: <CAHk-=wgXEJdkgGzZQzBDGk7ijjVdAVXe=G-mkFSVng_Hpwd4tQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid exactly
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 12:42 PM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
-> +{
-> +       /* pid_links[PIDTYPE_PID].next is always NULL */
-> +       struct pid *npid = READ_ONCE(ntask->thread_pid);
-> +       struct pid *opid = READ_ONCE(otask->thread_pid);
-> +
-> +       rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
-> +       rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
-> +       rcu_assign_pointer(ntask->thread_pid, opid);
-> +       rcu_assign_pointer(otask->thread_pid, npid);
-> +       WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
-> +       WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
-> +       WRITE_ONCE(ntask->pid, pid_nr(opid));
-> +       WRITE_ONCE(otask->pid, pid_nr(npid));
-> +}
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-This function is _very_ hard to read as written.
+Christoph's recent patch "firmware_loader: remove unused exports", which
+is not merged upstream yet, removed two exported symbols. One is fine to
+remove since only built-in code uses it but the other is incorrect.
 
-It really wants a helper function to do the swapping per hlist_head
-and hlist_node, I think. And "opid/npid" is very hard to see, and the
-naming doesn't make much sense (if it's an "exchange", then why is it
-"old/new" - they're symmetric).
+If CONFIG_FW_LOADER=m so the firmware_loader is modular but
+CONFIG_FW_LOADER_USER_HELPER=y we fail at mostpost with:
 
-At least something like
+ERROR: modpost: "fw_fallback_config" [drivers/base/firmware_loader/firmware_class.ko] undefined!
 
-        struct hlist_head *old_pid_hlist = opid->tasks + PIDTYPE_PID;
-        struct hlist_head *new_pid_hlist = npid->tasks + PIDTYPE_PID;
-        struct hlist_node *old_pid_node = otask->pid_links + PIDTYPE_PID;
-        struct hlist_node *new_pid_node = ntask->pid_links + PIDTYPE_PID;
+This happens because the variable fw_fallback_config is built into the
+kernel if CONFIG_FW_LOADER_USER_HELPER=y always, so we need to grant
+access to the firmware loader module by exporting it.
 
-        struct hlist_node *old_first_node = old_pid_hlist->first;
-        struct hlist_node *new_first_node = new_pid_hlist->first;
+Instead of just exporting it as we used to, take advantage of the new
+kernel symbol namespacing functionality, and export the symbol only to
+the firmware loader private namespace. This would prevent misuses from
+other drivers and makes it clear the goal is to keep this private to
+the firmware loader alone.
 
-and then trying to group up the first/pprev/thread_pid/pid  accesses
-so that you them together, and using a helper function that does the
-whole switch, so that you'd have
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: "firmware_loader: remove unused exports"
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/fallback.c       | 3 +++
+ drivers/base/firmware_loader/fallback_table.c | 1 +
+ 2 files changed, 4 insertions(+)
 
-        /* Move new node to old hlist, and update thread_pid/pid fields */
-        insert_pid_pointers(old_pid_hlist, new_pid_node, new_first_node);
-        rcu_assign_pointer(ntask->thread_pid, opid);
-        WRITE_ONCE(ntask->pid, pid_nr(opid));
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 1e9c96e3ed63..d9ac7296205e 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -9,6 +9,7 @@
+ #include <linux/umh.h>
+ #include <linux/sysctl.h>
+ #include <linux/vmalloc.h>
++#include <linux/module.h>
+ 
+ #include "fallback.h"
+ #include "firmware.h"
+@@ -17,6 +18,8 @@
+  * firmware fallback mechanism
+  */
+ 
++MODULE_IMPORT_NS(FIRMWARE_LOADER_PRIVATE);
++
+ extern struct firmware_fallback_config fw_fallback_config;
+ 
+ /* These getters are vetted to use int properly */
+diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+index 0a737349f78f..46a731dede6f 100644
+--- a/drivers/base/firmware_loader/fallback_table.c
++++ b/drivers/base/firmware_loader/fallback_table.c
+@@ -21,6 +21,7 @@ struct firmware_fallback_config fw_fallback_config = {
+ 	.loading_timeout = 60,
+ 	.old_timeout = 60,
+ };
++EXPORT_SYMBOL_NS_GPL(fw_fallback_config, FIRMWARE_LOADER_PRIVATE);
+ 
+ #ifdef CONFIG_SYSCTL
+ struct ctl_table firmware_config_table[] = {
+-- 
+2.25.1
 
-        /* Move old new to new hlist, and update thread_pid/pid fields */
-        insert_pid_pointers(new_pid_hlist, old_pid_node, old_first_node);
-        rcu_assign_pointer(otask->thread_pid, npid);
-        WRITE_ONCE(otask->pid, pid_nr(npid));
-
-or something roughly like that.
-
-(And the above still uses "old/new", which as mentioned sounds wrong
-to me. Maybe it should just be "a_xyz" and "b_xyz"? Also note that I
-did this in my MUA, so I could have gotten the names and types wrong
-etc).
-
-I think that would make it look at least _slightly_ less like random
-line noise and easier to follow.
-
-But maybe even a rcu_hlist_swap() helper? We have one for regular
-lists. Do we really have to do it all written out, not do it with a
-"remove and reinsert" model?
-
-                Linus
