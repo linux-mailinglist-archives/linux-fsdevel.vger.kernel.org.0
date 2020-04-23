@@ -2,170 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1DB1B5761
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 10:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FDC1B5779
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 10:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgDWIk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 04:40:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44290 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbgDWIk4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 04:40:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EA591AFDC;
-        Thu, 23 Apr 2020 08:40:53 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id ED3521E0E61; Thu, 23 Apr 2020 10:40:51 +0200 (CEST)
-Date:   Thu, 23 Apr 2020 10:40:51 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH V10 10/11] fs: Introduce DCACHE_DONTCACHE
-Message-ID: <20200423084051.GC3737@quack2.suse.cz>
-References: <20200422212102.3757660-1-ira.weiny@intel.com>
- <20200422212102.3757660-11-ira.weiny@intel.com>
+        id S1726335AbgDWItO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 04:49:14 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:36145 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgDWItN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 04:49:13 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200423084910epoutp038dcb7905fbc08731b7f34fea1c951830~IZqpAWcpc0338203382epoutp03Q
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 08:49:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200423084910epoutp038dcb7905fbc08731b7f34fea1c951830~IZqpAWcpc0338203382epoutp03Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1587631750;
+        bh=KwdIFH/L5SIr+QnGowAwrh8gTyuooEa0C2RIgzHAXto=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=CpOMfkYJ3yRxrfeJgUmVrIOhL9B4UIAmHp78jawGm65OEqnuYSlZGx3cyho9LqOFg
+         47ybqGPOaLcJ2iC6tTQcg9+U3KdQOlguAVITzNCqWzFom96WamxVY4VDo6Awt/rKor
+         UxNXW3kJmJrmYwMdHidIhClRB7ddwYZcqCpJ7olo=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200423084909epcas1p4da55aa560d9389b7bc730155969caf2f~IZqo03bo51221312213epcas1p4-;
+        Thu, 23 Apr 2020 08:49:09 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.164]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4979vm5mL7zMqYkf; Thu, 23 Apr
+        2020 08:49:08 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        70.94.04648.48651AE5; Thu, 23 Apr 2020 17:49:08 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200423084908epcas1p1b5d43c33b263b30844fc03a341f67413~IZqnfniHt2361123611epcas1p1G;
+        Thu, 23 Apr 2020 08:49:08 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200423084908epsmtrp18addace45fb4525f4bc94ac0687d24d5~IZqnea3jc1033910339epsmtrp18;
+        Thu, 23 Apr 2020 08:49:08 +0000 (GMT)
+X-AuditID: b6c32a37-1dbff70000001228-d3-5ea1568410ab
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        78.A0.04158.48651AE5; Thu, 23 Apr 2020 17:49:08 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200423084908epsmtip1f4a453c8fa0c376dd19e06b0c5b22915~IZqnQk8zp1130711307epsmtip1H;
+        Thu, 23 Apr 2020 08:49:08 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'LKML'" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Cc:     "'Hyunchul Lee'" <hyc.lee@gmail.com>,
+        "'Eric Sandeen'" <sandeen@sandeen.net>,
+        "'Sedat Dilek'" <sedat.dilek@gmail.com>,
+        "'Goldwyn Rodrigues'" <rgoldwyn@suse.de>
+Subject: [ANNOUNCE] exfatprogs-1.0.2 version released
+Date:   Thu, 23 Apr 2020 17:49:08 +0900
+Message-ID: <004701d6194c$0d238990$276a9cb0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200422212102.3757660-11-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdYZSpFQSutFdpomSvqOYdc5YaaMqA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUgUcRTH+e3Mzk7SxrRavbZrd0IqaS/X1dXcEIxYSEqQTDrWBndQcfZg
+        ZxUPJIVcTcWjiHC7ERSFylQ8OpAMSekQ7LILlZJSMa0w7cDa3THyv897v+9739/7/R6JyeoI
+        OZlpd7MuO8PRRBDecX+HSnUy+apF+9ijMb4YmZEY79wdwI1Pb10gjDXT10XGkmdhxutn+/E4
+        wtztfScxt9ePicxtDwvM31o3J+KHudgMlrGyLgVrT3NYM+3pJnpfUmp8qiFSq1Ppoo1RtMLO
+        2FgTvSchUbU3k/NZ04ochsv2pRIZnqc1u2Ndjmw3q8hw8G4TzTqtnFOndap5xsZn29PVaQ5b
+        jE6rDTf4lMe5jOKpcbGzKih3pu+MqAhdIsvRChKoCJhceCMpR0GkjOpC8OhcNSEEXxF0DPUh
+        IfiOoLGkWvSv5O3IgNjPMuouguf9JkE0geBO5TzyHxCUChZ/9xB+DqESYPbnsMgvwqhGBHWj
+        UwFRMGWAtsmngU44FQrVf9oDLKWioer9PVzg1TBQ9yHAGLUFOqcvYMItFPBjvEEsGKihvrMG
+        EzQhcP6UB/ObAdVPQNlIw1LBHng+WkIIHAyTD9olAsthotrjY9LHBfClZ0lehuDTvElgPby6
+        0SL2SzBqB9y4pRHSSuj+dREJtqvg81ylWOgihTKPTJCEQtXQ/aV32wDlpbNLpmZoLp6S1CCl
+        d9mQ3mVDepcN4/1vfAXhzWgt6+Rt6Syvc+qXf3YrCqxlWFQXanmS0IsoEtErpSnKKxaZmMnh
+        82y9CEiMDpG2jF2yyKRWJi+fdTlSXdkcy/cig+8PajH5mjSHb8nt7lSdIVyv1xsjIqMiDXp6
+        nfTsS84io9IZN5vFsk7W9a9ORK6QF6EY/cL81ab9Zw7lmCPaR8ur8IYkSXT4aGnTkcUGRntw
+        Wl0o8tRneeZmB0l5Fx43c+CN5ck7RfLNMfVMZu22oYjB8V3hx273POgrGNx+7/VE/OJHvlWZ
+        8lITaeFOb1qfrLnsVp5c2Pgod2dtPmGpGFZbk04k7ry8tXB3m6T2aEXTNRrnMxhdGObimb+s
+        m1oOrAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSnG5L2MI4g45+YYtr99+zW+zZe5LF
+        4vKuOWwWE96uY7JovaJlsW7qCRYHNo+ds+6ye2xZ/JDJY/Ppao/Pm+QCWKK4bFJSczLLUov0
+        7RK4MhpfP2Ut6OOqeH90MlMD4zyOLkZODgkBE4k790+ydjFycQgJ7GaU6F21ihUiIS1x7MQZ
+        5i5GDiBbWOLw4WKImueMEvvPvGUGqWET0JX492c/G4gtIuAn8WvZGyaQImaBlYwSu7f3gg0S
+        FjCV2PzqMpjNIqAq0f9/C5jNK2Ap0ff4IAuELShxcuYTFpBlzAJ6Em0bGUHCzALyEtvfzmGG
+        uEdB4ufTZawQu/QkFm+fwAxRIyIxu7ONeQKj4Cwkk2YhTJqFZNIsJB0LGFlWMUqmFhTnpucW
+        GxYY5aWW6xUn5haX5qXrJefnbmIEx4CW1g7GEyfiDzEKcDAq8fBGKC6IE2JNLCuuzD3EKMHB
+        rCTCu+HhvDgh3pTEyqrUovz4otKc1OJDjNIcLErivPL5xyKFBNITS1KzU1MLUotgskwcnFIN
+        jDIvdrXd22hj8v+UDNvZ7eeWy2xgub5s9s37236eqNBpMM+SObbqdZjqr3Dz2YbfOyeFGn2P
+        UCubvV5c4rT9jNcKs9Wf7qkytbB0Ociw2qBM7fWR8I3yc/9ttTt09Oi9iLlmS/epnehvncf7
+        JsT6rmKYwNWSqc2Fy3dOetEj47vyxEeFBapT93grsRRnJBpqMRcVJwIA15nMUX0CAAA=
+X-CMS-MailID: 20200423084908epcas1p1b5d43c33b263b30844fc03a341f67413
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200423084908epcas1p1b5d43c33b263b30844fc03a341f67413
+References: <CGME20200423084908epcas1p1b5d43c33b263b30844fc03a341f67413@epcas1p1.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-04-20 14:21:01, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> DCACHE_DONTCACHE indicates a dentry should not be cached on final
-> dput().
-> 
-> Also add a helper function to mark DCACHE_DONTCACHE on all dentries
-> pointing to a specific inode when that inode is being set I_DONTCACHE.
-> 
-> This facilitates dropping dentry references to inodes sooner which
-> require eviction to swap S_DAX mode.
-> 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+This is the second release of exfatprogs since the initial version(1.0.1).
+We have received various feedbacks and patches since the previous release
+and applied them in this release. Thanks for feedback and patches!
 
-The patch looks good to me. You can add:
+According to Goldwyn's comments, We renamed the project name from
+exfat-utils to exfatprogs. However, There is an opinion that just renaming
+the name is not enough. Because the binary names(mkfs.exfat, fsck.exfat)
+still are same with ones in current exfat-utils RPM package.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+If that's real problem, We are considering a long jump with 2.0.0 when adding
+repair feature.
 
-								Honza
+Any feedback is welcome!:)
 
-> 
-> ---
-> Changes from V9:
-> 	modify i_state under i_lock
-> 	Update comment
-> 		"Purge from memory on final dput()"
-> 
-> Changes from V8:
-> 	Update commit message
-> 	Use mark_inode_dontcache in XFS
-> 	Fix locking...  can't use rcu here.
-> 	Change name to mark_inode_dontcache
-> ---
->  fs/dcache.c            |  4 ++++
->  fs/inode.c             | 15 +++++++++++++++
->  fs/xfs/xfs_icache.c    |  2 +-
->  include/linux/dcache.h |  2 ++
->  include/linux/fs.h     |  1 +
->  5 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index b280e07e162b..0030fabab2c4 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -647,6 +647,10 @@ static inline bool retain_dentry(struct dentry *dentry)
->  		if (dentry->d_op->d_delete(dentry))
->  			return false;
->  	}
-> +
-> +	if (unlikely(dentry->d_flags & DCACHE_DONTCACHE))
-> +		return false;
-> +
->  	/* retain; LRU fodder */
->  	dentry->d_lockref.count--;
->  	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST)))
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 93d9252a00ab..316355433797 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1526,6 +1526,21 @@ int generic_delete_inode(struct inode *inode)
->  }
->  EXPORT_SYMBOL(generic_delete_inode);
->  
-> +void mark_inode_dontcache(struct inode *inode)
-> +{
-> +	struct dentry *de;
-> +
-> +	spin_lock(&inode->i_lock);
-> +	hlist_for_each_entry(de, &inode->i_dentry, d_u.d_alias) {
-> +		spin_lock(&de->d_lock);
-> +		de->d_flags |= DCACHE_DONTCACHE;
-> +		spin_unlock(&de->d_lock);
-> +	}
-> +	inode->i_state |= I_DONTCACHE;
-> +	spin_unlock(&inode->i_lock);
-> +}
-> +EXPORT_SYMBOL(mark_inode_dontcache);
-> +
->  /*
->   * Called when we're dropping the last reference
->   * to an inode.
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index de76f7f60695..3c8f44477804 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -559,7 +559,7 @@ xfs_iget_cache_miss(
->  	 */
->  	iflags = XFS_INEW;
->  	if (flags & XFS_IGET_DONTCACHE)
-> -		VFS_I(ip)->i_state |= I_DONTCACHE;
-> +		mark_inode_dontcache(VFS_I(ip));
->  	ip->i_udquot = NULL;
->  	ip->i_gdquot = NULL;
->  	ip->i_pdquot = NULL;
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index c1488cc84fd9..a81f0c3cf352 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -177,6 +177,8 @@ struct dentry_operations {
->  
->  #define DCACHE_REFERENCED		0x00000040 /* Recently used, don't discard. */
->  
-> +#define DCACHE_DONTCACHE		0x00000080 /* Purge from memory on final dput() */
-> +
->  #define DCACHE_CANT_MOUNT		0x00000100
->  #define DCACHE_GENOCIDE			0x00000200
->  #define DCACHE_SHRINK_LIST		0x00000400
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 44bd45af760f..064168ec2e0b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3055,6 +3055,7 @@ static inline int generic_drop_inode(struct inode *inode)
->  	return !inode->i_nlink || inode_unhashed(inode) ||
->  		(inode->i_state & I_DONTCACHE);
->  }
-> +extern void mark_inode_dontcache(struct inode *inode);
->  
->  extern struct inode *ilookup5_nowait(struct super_block *sb,
->  		unsigned long hashval, int (*test)(struct inode *, void *),
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The major changes in this release:
+ * Rename project name to exfatprogs.
+ * label.exfat: Add support for label.exfat to set/get exfat volume label.
+ * Replace iconv library by standard C functions mbstowcs() and wcrtomb().
+ * Fix the build warnings/errors and add warning options.
+ * Fix several bugs(memory leak, wrong endian conversion, zero out beyond end of file) and cleanup codes
+ * Fix issues on big endian system and on 32bit system.
+ * Add support for Android build system.
+
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
+
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/tag/1.0.2
+
