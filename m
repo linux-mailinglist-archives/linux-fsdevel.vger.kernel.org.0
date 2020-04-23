@@ -2,47 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B56FA1B59FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 13:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA52C1B5A3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 13:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbgDWLFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 07:05:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46262 "EHLO mx2.suse.de"
+        id S1727919AbgDWLQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 07:16:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53384 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbgDWLFy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 07:05:54 -0400
+        id S1727077AbgDWLQj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 07:16:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AF96BB08C;
-        Thu, 23 Apr 2020 11:05:51 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id D5D67B080;
+        Thu, 23 Apr 2020 11:16:36 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F2BF91E1293; Thu, 23 Apr 2020 13:05:51 +0200 (CEST)
-Date:   Thu, 23 Apr 2020 13:05:51 +0200
+        id C274F1E1293; Thu, 23 Apr 2020 13:16:36 +0200 (CEST)
+Date:   Thu, 23 Apr 2020 13:16:36 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tim Waugh <tim@cyberelk.net>,
-        Borislav Petkov <bp@alien8.de>, Jan Kara <jack@suse.com>,
-        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] udf: stop using ioctl_by_bdev
-Message-ID: <20200423110551.GF3737@quack2.suse.cz>
-References: <20200423071224.500849-1-hch@lst.de>
- <20200423071224.500849-8-hch@lst.de>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger@dilger.ca, darrick.wong@oracle.com, hch@infradead.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Murphy Zhou <jencce.kernel@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/5] ext4: Fix EXT4_MAX_LOGICAL_BLOCK macro
+Message-ID: <20200423111636.GH3737@quack2.suse.cz>
+References: <cover.1587555962.git.riteshh@linux.ibm.com>
+ <e31dbabc453d1f227371bed6e0cc2f3493b4955f.1587555962.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200423071224.500849-8-hch@lst.de>
+In-Reply-To: <e31dbabc453d1f227371bed6e0cc2f3493b4955f.1587555962.git.riteshh@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 23-04-20 09:12:24, Christoph Hellwig wrote:
-> Instead just call the CD-ROM layer functionality directly.
+On Thu 23-04-20 16:17:53, Ritesh Harjani wrote:
+> ext4 supports max number of logical blocks in a file to be 0xffffffff.
+> (This is since ext4_extent's ee_block is __le32).
+> This means that EXT4_MAX_LOGICAL_BLOCK should be 0xfffffffe (starting
+> from 0 logical offset). This patch fixes this.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> The issue was seen when ext4 moved to iomap_fiemap API and when
+> overlayfs was mounted on top of ext4. Since overlayfs was missing
+> filemap_check_ranges(), so it could pass a arbitrary huge length which
+> lead to overflow of map.m_len logic.
+> 
+> This patch fixes that.
+> 
+> Fixes: d3b6f23f7167 ("ext4: move ext4_fiemap to use iomap framework")
+> Reported-by: syzbot+77fa5bdb65cc39711820@syzkaller.appspotmail.com
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
 The patch looks good to me. You can add:
 
@@ -50,71 +67,26 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+
 > ---
->  fs/udf/lowlevel.c | 29 +++++++++++++----------------
->  1 file changed, 13 insertions(+), 16 deletions(-)
+>  fs/ext4/ext4.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/udf/lowlevel.c b/fs/udf/lowlevel.c
-> index 5c7ec121990d..f1094cdcd6cd 100644
-> --- a/fs/udf/lowlevel.c
-> +++ b/fs/udf/lowlevel.c
-> @@ -27,41 +27,38 @@
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 91eb4381cae5..ad2dbf6e4924 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -722,7 +722,7 @@ enum {
+>  #define EXT4_MAX_BLOCK_FILE_PHYS	0xFFFFFFFF
 >  
->  unsigned int udf_get_last_session(struct super_block *sb)
->  {
-> +	struct cdrom_device_info *cdi = disk_to_cdi(sb->s_bdev->bd_disk);
->  	struct cdrom_multisession ms_info;
-> -	unsigned int vol_desc_start;
-> -	struct block_device *bdev = sb->s_bdev;
-> -	int i;
+>  /* Max logical block we can support */
+> -#define EXT4_MAX_LOGICAL_BLOCK		0xFFFFFFFF
+> +#define EXT4_MAX_LOGICAL_BLOCK		0xFFFFFFFE
 >  
-> -	vol_desc_start = 0;
-> -	ms_info.addr_format = CDROM_LBA;
-> -	i = ioctl_by_bdev(bdev, CDROMMULTISESSION, (unsigned long)&ms_info);
-> +	if (!cdi) {
-> +		udf_debug("CDROMMULTISESSION not supported.\n");
-> +		return 0;
-> +	}
->  
-> -	if (i == 0) {
-> +	ms_info.addr_format = CDROM_LBA;
-> +	if (cdrom_multisession(cdi, &ms_info) == 0) {
->  		udf_debug("XA disk: %s, vol_desc_start=%d\n",
->  			  ms_info.xa_flag ? "yes" : "no", ms_info.addr.lba);
->  		if (ms_info.xa_flag) /* necessary for a valid ms_info.addr */
-> -			vol_desc_start = ms_info.addr.lba;
-> -	} else {
-> -		udf_debug("CDROMMULTISESSION not supported: rc=%d\n", i);
-> +			return ms_info.addr.lba;
->  	}
-> -	return vol_desc_start;
-> +	return 0;
->  }
->  
->  unsigned long udf_get_last_block(struct super_block *sb)
->  {
->  	struct block_device *bdev = sb->s_bdev;
-> +	struct cdrom_device_info *cdi = disk_to_cdi(bdev->bd_disk);
->  	unsigned long lblock = 0;
->  
->  	/*
-> -	 * ioctl failed or returned obviously bogus value?
-> +	 * The cdrom layer call failed or returned obviously bogus value?
->  	 * Try using the device size...
->  	 */
-> -	if (ioctl_by_bdev(bdev, CDROM_LAST_WRITTEN, (unsigned long) &lblock) ||
-> -	    lblock == 0)
-> +	if (!cdi || cdrom_get_last_written(cdi, &lblock) || lblock == 0)
->  		lblock = i_size_read(bdev->bd_inode) >> sb->s_blocksize_bits;
->  
->  	if (lblock)
->  		return lblock - 1;
-> -	else
-> -		return 0;
-> +	return 0;
->  }
+>  /*
+>   * Structure of an inode on the disk
 > -- 
-> 2.26.1
+> 2.21.0
 > 
 -- 
 Jan Kara <jack@suse.com>
