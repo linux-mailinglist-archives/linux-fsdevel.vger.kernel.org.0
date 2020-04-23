@@ -2,109 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D02FF1B53E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 07:06:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7087C1B5429
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 07:24:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgDWFF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 01:05:59 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18180 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbgDWFF6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 01:05:58 -0400
-IronPort-SDR: Y57X/DpYbBwZsYAu72v3nflOw9HDXIo+5lw7p9S48WkK6tc/Lz/l3IHFJ5c0F0cinGZC1xd4Qt
- I2A60v+nv74w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 22:05:58 -0700
-IronPort-SDR: R8/hwfbiquKx9lajTQNsTcvgWmgTd/VNiubmA7RVKIQGmk0QnYQGE4AemX6LmFqL0s28JKVffz
- 70/jtdRlPJJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,305,1583222400"; 
-   d="scan'208";a="255868475"
-Received: from unknown (HELO iweiny-DESK2.sc.intel.com) ([10.3.52.147])
-  by orsmga003.jf.intel.com with ESMTP; 22 Apr 2020 22:05:57 -0700
-Date:   Wed, 22 Apr 2020 22:05:57 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Yasunori Goto <y-goto@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH V10 04/11] Documentation/dax: Update Usage section
-Message-ID: <20200423050557.GG3758470@iweiny-DESK2.sc.intel.com>
-References: <20200422212102.3757660-1-ira.weiny@intel.com>
- <20200422212102.3757660-5-ira.weiny@intel.com>
- <2282176d-60c5-0e4b-3cf9-7a7682de380d@fujitsu.com>
+        id S1726615AbgDWFYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 01:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43572 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725854AbgDWFYg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 01:24:36 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CB5C03C1AB;
+        Wed, 22 Apr 2020 22:24:35 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id f19so5106621iog.5;
+        Wed, 22 Apr 2020 22:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lHhB9hcSkC379vsdgiDLPZBRxAMpvpMAKOY03SWCDKU=;
+        b=CnN0Oy0DhFpBLR4yXWEroayRGTCvWEoGEIW0y3znyFdXJuBpn+itSmm8QdJW71a9DC
+         tJCQhYmFhLPXcEWOXOEkYKLgwpZwPnkWZloRCnEHfn/zkNwdlegyKyVxF4DafE24N+pB
+         q8T6WHu9iK86mZx659rc1Bq3r8bdUIudXrpz2IL7HSSr8NyR6s182mVtq4HKiBlKj0im
+         Kw7kAHffiHxEEot61ZIv0n25iQpUZuwVtUxObqOHHQYxl/iAJz0YUteWInYkKeiHu8rZ
+         2sJT7cvLu4yhf6lp/+1T6w8+Pa0q9l2CxGPfM1KfNSAPJNPAdbZYsTkzSken/v0p3mrB
+         b2aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lHhB9hcSkC379vsdgiDLPZBRxAMpvpMAKOY03SWCDKU=;
+        b=eCjGXJlEXZbg4LI2NeFI5PrPCeMbjQB4zKCE/51MI0+S0DJCqlBzKrp2Aer4Im24sT
+         icuPynu8496+ys72DvltGG2nKZqF4ZlRLjwUb7KsCa4aoZA+TvKioUoVF7nkzu12eTiM
+         oCrXzxuHvnNXni6ZrcagOBiDNE04FiP3P3vmcjQz5qlGGeZk5UlQ8xkE2z9FYp4sQ9uo
+         RzjHBKj6p9Oa71eK81k+dECAqnQiqGjzfnKBfirJhFeYXRqejAVcM54b6Zyabvaj2AUW
+         1aA7TyVPHMf2bwwirlPavOfhXFFgHQqiV+5bhZzl+VxMlx8npGEMcnxQfB41NvD/JQx+
+         H3/w==
+X-Gm-Message-State: AGi0Pua34ZKINTDgzODDJn2Dtc6tRDHsL6/6dDY1u0DnlFgLYkCTUsWp
+        nqAZkhsC1Yx+ugWOK78UKnGWMcEC9GbWlh5du8wgww==
+X-Google-Smtp-Source: APiQypKCdVoF7c+9mG5LACGahDiXeCZ+C0X+kYX7Cnypq4uFInUtDvl04W72tnXp1eXclxj+2dTlmAFW7yWVK5U5pno=
+X-Received: by 2002:a6b:ef03:: with SMTP id k3mr2087744ioh.203.1587619474830;
+ Wed, 22 Apr 2020 22:24:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2282176d-60c5-0e4b-3cf9-7a7682de380d@fujitsu.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20200423044050.162093-1-joel@joelfernandes.org> <20200423044518.GA162422@google.com>
+In-Reply-To: <20200423044518.GA162422@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 23 Apr 2020 08:24:23 +0300
+Message-ID: <CAOQ4uxgifK_XTkJO69-hQvR4xQGPgHNGKJPv6-MNgHcQat5UBQ@mail.gmail.com>
+Subject: Re: [RFC] fs: Use slab constructor to initialize conn objects in fsnotify
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 11:33:26AM +0900, Yasunori Goto wrote:
-> Hello,
-> 
-> I'm trying use your patch now, and I have a small comment in this document.
-> 
-> On 2020/04/23 6:20, ira.weiny@intel.com wrote:
-> 
-> > +To clarify inheritance here are 3 examples:
-> > +
-> > +Example A:
-> > +
-> > +mkdir -p a/b/c
-> > +xfs_io 'chattr +x' a
-> 
-> Probably, "-c" is necessary here.
-> 
-> xfs_io -c 'chattr +x' a
+On Thu, Apr 23, 2020 at 7:45 AM Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> On Thu, Apr 23, 2020 at 12:40:50AM -0400, Joel Fernandes (Google) wrote:
+> > While reading the famous slab paper [1], I noticed that the conn->lock
+> > spinlock and conn->list hlist in fsnotify code is being initialized
+> > during every object allocation. This seems a good fit for the
+> > constructor within the slab to take advantage of the slab design. Move
+> > the initializtion to that.
+> >
+> >        spin_lock_init(&conn->lock);
+> >        INIT_HLIST_HEAD(&conn->list);
+> >
+> > [1] https://pdfs.semanticscholar.org/1acc/3a14da69dd240f2fbc11d00e09610263bdbd.pdf
+> >
+>
+> The commit message could be better. Just to clarify, doing it this way is
+> more efficient because the object will only have its spinlock init and hlist
+> init happen during object construction, not object allocation.
+>
 
-Yes! Thanks!
-> 
-> 
-> > +mkdir a/b/c/d
-> > +mkdir a/e
-> > +
-> > +	dax: a,e
-> > +	no dax: b,c,d
-> > +
-> > +Example B:
-> > +
-> > +mkdir a
-> > +xfs_io 'chattr +x' a
-> ditto
-> > +mkdir -p a/b/c/d
-> > +
-> > +	dax: a,b,c,d
-> > +	no dax:
-> > +
-> > +Example C:
-> > +
-> > +mkdir -p a/b/c
-> > +xfs_io 'chattr +x' c
-> ditto
+This change may be correct, but completely unjustified IMO.
+conn objects are very rarely allocated, from user syscall path only.
+I see no reason to micro optimize this.
 
-Thank you!  Updated.
-Ira
+Perhaps there is another justification to do this, but not efficiency.
 
-> > +mkdir a/b/c/d
-> > +
-> > +	dax: c,d
-> > +	no dax: a,b
-> > +
-> > +
-> 
-> ---
-> 
-> Yasunori Goto
-> 
+Thanks,
+Amir.
