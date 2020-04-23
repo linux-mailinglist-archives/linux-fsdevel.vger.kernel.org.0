@@ -2,103 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3CA61B5650
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 09:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA961B5656
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 09:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgDWHp7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 03:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37266 "EHLO
+        id S1726692AbgDWHrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 03:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbgDWHp6 (ORCPT
+        with ESMTP id S1726322AbgDWHrW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 03:45:58 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6063CC08E934
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 00:45:58 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id x1so3979456ejd.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 00:45:58 -0700 (PDT)
+        Thu, 23 Apr 2020 03:47:22 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F76C03C1AB
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 00:47:20 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id v63so2535677pfb.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 00:47:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U/O9lRdDqfFxIFgSwAyPR5AZJG0gGagWbgZwtyqIE1s=;
-        b=SZbvfAg3vKXVp2Bj6SzEbypHd8TcS8FOnLIPN3m3fIltj+7zvfKqbglHePHyiMIw4d
-         L7y2aQxIghQZ2RRQ8vGfkRng0rgqzmFWYSV1Mdju6SgL14AawzPKICoHD1TS3SAs4iGA
-         h5xqKiP5EjUypnsMeu7Jrk9alecd94GKN2TUk=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6afMVNKrwhHvItapD8+y1UIvImlGm4AxbJB6yoQNwMs=;
+        b=SCM8dRONky/8rS2rqCqHeCYbuvaHYu0hB+ukSIBDw5JHli4+P+L+832bN+2L1uPNo9
+         rNrh6C0/55Wv9BMrYnjW/VTq2A94ue2PTVzwWI/HVmFxKevj5eQSiR1B7kuKN4nbulSa
+         g2sakG58rB9FEpRr1/vbTznToVZr2VzRGvMYs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U/O9lRdDqfFxIFgSwAyPR5AZJG0gGagWbgZwtyqIE1s=;
-        b=cRYD6PEe8joixqWSO0yfO6zHu5bvC6P6BckXzqpfy+Mfi8VQbU84/N1Gt39/MPvdJw
-         xX2VQ7QQinaMuBbeAwNXk4rPVonpxsYewOG6R+IiV/Y74UQo6fdC/lYAOWyySqX7m7uU
-         YpiUqbFQAlntnl5VYBHDzh2ifjTBj1OA6cNUwp8qfpngILZauUJ010EdSvupT8u81/zt
-         gOpjK0Yll0C2Z0w9fWj8lWUf73msrTw1/IKbhbuBuLGzEsVvw/TvKFeaOEVjKcHmkfjl
-         spAT4bl59s2fLHN6vdfrw12xaNk9BoKXx4flR/4NiUwZVt01tfo9xtaEcwYzL6MZRxNw
-         ZA8g==
-X-Gm-Message-State: AGi0PuYyJS7DXu1ijzA3aEWryFP7V6pug5rl+WampJvFaLdG7MLtkMx+
-        8mA1yuZINGuAbIs7KaBHz+VDU2HE+C2WJnNdNuVJdQ==
-X-Google-Smtp-Source: APiQypKsThakU7JoMtp5/87/sxEV0VDVpFD50A8Cf/ebgOwE+JP84OLXxIBKseZGsaecLUzBmkryqccqlSh/P2MUMK4=
-X-Received: by 2002:a17:906:3399:: with SMTP id v25mr1527743eja.217.1587627956915;
- Thu, 23 Apr 2020 00:45:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6afMVNKrwhHvItapD8+y1UIvImlGm4AxbJB6yoQNwMs=;
+        b=TYcwGUwFHh7g/2ylIQxSdP13FJki2P/I6vUa9DeZsOwJlV9H8tWIfGm0rH87uywIR0
+         Owe4i8AuLOMLIqDS5oM+SeAWEal9Q3r1A4CmttimUjggy0vLfbVI0iRVeUg/jCsayza2
+         ppd7AWpxB1u1xWelxatq+C3gOb9R2XkQyuHr7ghGar08CaPXoqUlfBRzFurbgLQPj0Gb
+         aYf0qpx7mdppwNCBikSK1DdZg+qtY5VuN/VdtdPUv3wr1qfCI+YOdXtQqNIOz7AivKMr
+         P+2KA6Ddo310LIFJnFlSlPAjxMSpKq521yV66//rMMwYCPWUTv8y8KdpVbbWUUDMAQAR
+         CMWw==
+X-Gm-Message-State: AGi0Pubv86Ns2aVhHL/UOCq07nzPkpJh1bP4YQTTgCjshYzLC4mkBBKE
+        J9Z6vpJamCyYjLjwVW4B7sQUSA==
+X-Google-Smtp-Source: APiQypIS4YQaXK5NOp0wFurhL/ElLKR9UXu1gwC+x0GnqdUE+BXokQb5UInvjOzt/kTWxXJ8ZiCqmQ==
+X-Received: by 2002:a63:651:: with SMTP id 78mr2701573pgg.129.1587628039456;
+        Thu, 23 Apr 2020 00:47:19 -0700 (PDT)
+Received: from localhost ([2401:fa00:8f:2:1c5:cb1a:7c95:326])
+        by smtp.gmail.com with ESMTPSA id o7sm1804692pfg.74.2020.04.23.00.47.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Apr 2020 00:47:18 -0700 (PDT)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     =Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH] fuse: Mark fscrypt ioctls as unrestricted
+Date:   Thu, 23 Apr 2020 16:47:06 +0900
+Message-Id: <20200423074706.107016-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.26.1.301.g55bc3eb7cb9-goog
 MIME-Version: 1.0
-References: <cover.1587531463.git.josh@joshtriplett.org> <9873b8bd7d14ff8cd2a5782b434b39f076679eeb.1587531463.git.josh@joshtriplett.org>
- <CAKgNAkjo3AeA78XqK-RRGqJHNy1H8SbcjQQQs7+jDwuFgq4YSg@mail.gmail.com>
- <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com>
- <20200423004807.GC161058@localhost> <CAJfpegtSYKsApx2Dc6VGmc5Fm4SsxtAWAP-Zs052umwK1CjJmQ@mail.gmail.com>
- <20200423044226.GH161058@localhost> <CAJfpeguaVYo-Lf-5Bi=EYJYWdmCfo3BqZA=kj9E5UmDb0mBc1w@mail.gmail.com>
- <20200423073310.GA169998@localhost>
-In-Reply-To: <20200423073310.GA169998@localhost>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 23 Apr 2020 09:45:45 +0200
-Message-ID: <CAJfpegtXj4bSbhpx+=z=R0_ZT8uPEJAAev0O+DVg3AX242e=-g@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>, io-uring@vger.kernel.org,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 9:33 AM Josh Triplett <josh@joshtriplett.org> wrote:
+The definitions for these 2 ioctls have been reversed: "get" is marked
+as a write ioctl and "set" is marked as a read ioctl.  Moreover, since
+these are now part of the public kernel interface they can never be
+fixed because fixing them might break userspace applications compiled
+with the older headers.
 
-> > What are the plans for those syscalls that don't easily lend
-> > themselves to this modification (such as accept(2))?
->
-> accept4 has a flags argument with more flags available, so it'd be
-> entirely possible to cleanly extend it further without introducing a new
-> version.
+Since the fuse module strictly enforces the ioctl encodings, it will
+reject any attempt by the fuse server to correctly implement these
+ioctls.  Instead, check if the process is trying to make one of these
+ioctls and mark it unrestricted.  This will allow the server to fix the
+encoding by reading/writing the correct data.
 
-Variable argument syscalls, you are thinking?
+Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+---
+ fs/fuse/file.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> > I mean, you could open the file descriptor outside of io_uring in such
-> > cases, no?
->
-> I would prefer to not introduce that limitation in the first place, and
-> instead open normal file descriptors.
->
-> > The point of O_SPECIFIC_FD is to be able to perform short
-> > sequences of open/dosomething/close without having to block and having
-> > to issue separate syscalls.
->
-> "close" is not a required component. It's entirely possible to use
-> io_uring to open a file descriptor, do various things with it, and then
-> leave it open for subsequent usage via either other io_uring chains or
-> standalone syscalls.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 9d67b830fb7a2..9b6d993323d53 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -18,6 +18,7 @@
+ #include <linux/swap.h>
+ #include <linux/falloc.h>
+ #include <linux/uio.h>
++#include <linux/fscrypt.h>
+ 
+ static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
+ 				      struct fuse_page_desc **desc)
+@@ -2751,6 +2752,16 @@ long fuse_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg,
+ 
+ 	fuse_page_descs_length_init(ap.descs, 0, fc->max_pages);
+ 
++	/*
++	 * These commands are encoded backwards so it is literally impossible
++	 * for a fuse server to implement them. Instead, mark them unrestricted
++	 * so that the server can deal with the broken encoding itself.
++	 */
++	if (cmd == FS_IOC_GET_ENCRYPTION_POLICY ||
++	    cmd == FS_IOC_SET_ENCRYPTION_POLICY) {
++		flags |= FUSE_IOCTL_UNRESTRICTED;
++	}
++
+ 	/*
+ 	 * If restricted, initialize IO parameters as encoded in @cmd.
+ 	 * RETRY from server is not allowed.
+-- 
+2.26.1.301.g55bc3eb7cb9-goog
 
-If this use case arraises, we could add an op to dup/move a private
-descriptor to a public one.  io_uring can return values, right?
-
-Still not convinced...
-
-Thanks,
-Miklos
