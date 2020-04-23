@@ -2,188 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1961B64A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 21:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A9B1B64EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 22:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgDWTmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 15:42:52 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:44078 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbgDWTmv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 15:42:51 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRhkI-0007IC-E3; Thu, 23 Apr 2020 13:42:50 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRhkH-00022D-GR; Thu, 23 Apr 2020 13:42:50 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        id S1726390AbgDWUCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 16:02:19 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:47380 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbgDWUCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 16:02:18 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 3A8DC20459;
+        Thu, 23 Apr 2020 20:01:42 +0000 (UTC)
+Date:   Thu, 23 Apr 2020 22:01:36 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
-        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
-Date:   Thu, 23 Apr 2020 14:39:41 -0500
-In-Reply-To: <87ftcv1nqe.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Wed, 22 Apr 2020 11:36:41 -0500")
-Message-ID: <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v13 2/7] proc: allow to mount many instances of proc in
+ one pid namespace
+Message-ID: <20200423200136.zrjzv6d6zghnvvrx@comp-core-i7-2640m-0182e6>
+References: <20200419141057.621356-3-gladkov.alexey@gmail.com>
+ <20200423112858.95820-1-gladkov.alexey@gmail.com>
+ <87lfmmz9bs.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jRhkH-00022D-GR;;;mid=<87wo66vvnm.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19+p1OI9uD+ggl4NnOJQC9jcVE7p3h3y1M=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;LKML <linux-kernel@vger.kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 526 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.9%), parse: 0.86
-        (0.2%), extract_message_metadata: 10 (2.0%), get_uri_detail_list: 1.91
-        (0.4%), tests_pri_-1000: 13 (2.5%), tests_pri_-950: 1.32 (0.3%),
-        tests_pri_-900: 1.20 (0.2%), tests_pri_-90: 182 (34.6%), check_bayes:
-        180 (34.2%), b_tokenize: 10 (1.9%), b_tok_get_all: 30 (5.7%),
-        b_comp_prob: 4.0 (0.8%), b_tok_touch_all: 130 (24.8%), b_finish: 1.37
-        (0.3%), tests_pri_0: 294 (55.8%), check_dkim_signature: 0.50 (0.1%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 1.09 (0.2%), tests_pri_10:
-        2.3 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid exactly
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfmmz9bs.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 23 Apr 2020 20:02:13 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Apr 23, 2020 at 07:16:07AM -0500, Eric W. Biederman wrote:
+> 
+> I took a quick look and there is at least one other use in security/tomoyo/realpath.c:
+> 
+> static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+> 				   const int buflen)
+> {
+> 	struct super_block *sb = dentry->d_sb;
+> 	char *pos = tomoyo_get_dentry_path(dentry, buffer, buflen);
+> 
+> 	if (IS_ERR(pos))
+> 		return pos;
+> 	/* Convert from $PID to self if $PID is current thread. */
+> 	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> 		char *ep;
+> 		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> 
+> 		if (*ep == '/' && pid && pid ==
+> 		    task_tgid_nr_ns(current, sb->s_fs_info)) {
+> 			pos = ep - 5;
+> 			if (pos < buffer)
+> 				goto out;
+> 			memmove(pos, "/self", 5);
+> 		}
+> 		goto prepend_filesystem_name;
+> 	}
 
-When the thread group leader changes during exec and the old leaders
-thread is reaped proc_flush_pid will flush the dentries for the entire
-process because the leader still has it's original pid.
+Ooops. I missed this one. I thought I found all such cases.
 
-Fix this by exchanging the pids in an rcu safe manner,
-and wrapping the code to do that up in a helper exchange_tids.
+> Can you make the fixes to locks.c and tomoyo a couple of standalone
+> fixes that should be inserted before your patch?
 
-When I removed switch_exec_pids and introduced this behavior
-in d73d65293e3e ("[PATCH] pidhash: kill switch_exec_pids") there
-really was nothing that cared as flushing happened with
-the cached dentry and de_thread flushed both of them on exec.
+Sure.
 
-This lack of fully exchanging pids became a problem a few months later
-when I introduced 48e6484d4902 ("[PATCH] proc: Rewrite the proc dentry
-flush on exit optimization").  Which overlooked the de_thread case
-was no longer swapping pids, and I was looking up proc dentries
-by task->pid.
+> On the odd chance there is a typo they will bisect better, as well
+> as just keeping this patch and it's description from expanding in size.
+> So that things are small enough for people to really look at and review.
+> 
+> The fix itself looks fine.
+> 
+> Thank you,
+> Eric
+> 
+> 
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+> 
+> > Fixed getting proc_pidns in the lock_get_status() and locks_show() directly from
+> > the superblock, which caused a crash:
+> >
+> > === arm64 ===
+> > [12140.366814] LTP: starting proc01 (proc01 -m 128)
+> > [12149.580943] ==================================================================
+> > [12149.589521] BUG: KASAN: out-of-bounds in pid_nr_ns+0x2c/0x90 pid_nr_ns at kernel/pid.c:456
+> > [12149.595939] Read of size 4 at addr 1bff000bfa8c0388 by task = proc01/50298
+> > [12149.603392] Pointer tag: [1b], memory tag: [fe]
+> >
+> > [12149.610906] CPU: 69 PID: 50298 Comm: proc01 Tainted: G L 5.7.0-rc2-next-20200422 #6
+> > [12149.620585] Hardware name: HPE Apollo 70 /C01_APACHE_MB , BIOS L50_5.13_1.11 06/18/2019
+> > [12149.631074] Call trace:
+> > [12149.634304]  dump_backtrace+0x0/0x22c
+> > [12149.638745]  show_stack+0x28/0x34
+> > [12149.642839]  dump_stack+0x104/0x194
+> > [12149.647110]  print_address_description+0x70/0x3a4
+> > [12149.652576]  __kasan_report+0x188/0x238
+> > [12149.657169]  kasan_report+0x3c/0x58
+> > [12149.661430]  check_memory_region+0x98/0xa0
+> > [12149.666303]  __hwasan_load4_noabort+0x18/0x20
+> > [12149.671431]  pid_nr_ns+0x2c/0x90
+> > [12149.675446]  locks_translate_pid+0xf4/0x1a0
+> > [12149.680382]  locks_show+0x68/0x110
+> > [12149.684536]  seq_read+0x380/0x930
+> > [12149.688604]  pde_read+0x5c/0x78
+> > [12149.692498]  proc_reg_read+0x74/0xc0
+> > [12149.696813]  __vfs_read+0x84/0x1d0
+> > [12149.700939]  vfs_read+0xec/0x124
+> > [12149.704889]  ksys_read+0xb0/0x120
+> > [12149.708927]  __arm64_sys_read+0x54/0x88
+> > [12149.713485]  do_el0_svc+0x128/0x1dc
+> > [12149.717697]  el0_sync_handler+0x150/0x250
+> > [12149.722428]  el0_sync+0x164/0x180
+> >
+> > [12149.728672] Allocated by task 1:
+> > [12149.732624]  __kasan_kmalloc+0x124/0x188
+> > [12149.737269]  kasan_kmalloc+0x10/0x18
+> > [12149.741568]  kmem_cache_alloc_trace+0x2e4/0x3d4
+> > [12149.746820]  proc_fill_super+0x48/0x1fc
+> > [12149.751377]  vfs_get_super+0xcc/0x170
+> > [12149.755760]  get_tree_nodev+0x28/0x34
+> > [12149.760143]  proc_get_tree+0x24/0x30
+> > [12149.764439]  vfs_get_tree+0x54/0x158
+> > [12149.768736]  do_mount+0x80c/0xaf0
+> > [12149.772774]  __arm64_sys_mount+0xe0/0x18c
+> > [12149.777504]  do_el0_svc+0x128/0x1dc
+> > [12149.781715]  el0_sync_handler+0x150/0x250
+> > [12149.786445]  el0_sync+0x164/0x180
+> 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index b8a31c1c4fff..399c5dbb72c4 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  {
+> >  	struct inode *inode = NULL;
+> >  	unsigned int fl_pid;
+> > -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
+> > +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
+> >  
+> >  	fl_pid = locks_translate_pid(fl, proc_pidns);
+> >  	/*
+> > @@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
+> >  {
+> >  	struct locks_iterator *iter = f->private;
+> >  	struct file_lock *fl, *bfl;
+> > -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
+> > +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
+> >  
+> >  	fl = hlist_entry(v, struct file_lock, fl_link);
+> >  
+> 
+> Eric
+> 
 
-The current behavior isn't properly a bug as everything in proc will
-continue to work correctly just a little bit less efficiently.  Fix
-this just so there are no little surprise corner cases waiting to bite
-people.
-
--- Oleg points out this could be an issue in next_tgid in proc where
-   has_group_leader_pid is called, and reording some of the assignments
-   should fix that.
-
--- Oleg points out this will break the 10 year old hack in __exit_signal.c
->	/*
->	 * This can only happen if the caller is de_thread().
->	 * FIXME: this is the temporary hack, we should teach
->	 * posix-cpu-timers to handle this case correctly.
->	 */
->	if (unlikely(has_group_leader_pid(tsk)))
->		posix_cpu_timers_exit_group(tsk);
-
-The code in next_tgid has been changed to use PIDTYPE_TGID,
-and the posix cpu timers code has been fixed so it does not
-need the 10 year old hack, so this should be safe to merge
-now.
-
-Fixes: 48e6484d4902 ("[PATCH] proc: Rewrite the proc dentry flush on exit optimization").
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- fs/exec.c           |  5 +----
- include/linux/pid.h |  1 +
- kernel/pid.c        | 16 ++++++++++++++++
- 3 files changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 06b4c550af5d..9b60f927afd7 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1186,11 +1186,8 @@ static int de_thread(struct task_struct *tsk)
- 
- 		/* Become a process group leader with the old leader's pid.
- 		 * The old leader becomes a thread of the this thread group.
--		 * Note: The old leader also uses this pid until release_task
--		 *       is called.  Odd but simple and correct.
- 		 */
--		tsk->pid = leader->pid;
--		change_pid(tsk, PIDTYPE_PID, task_pid(leader));
-+		exchange_tids(tsk, leader);
- 		transfer_pid(leader, tsk, PIDTYPE_TGID);
- 		transfer_pid(leader, tsk, PIDTYPE_PGID);
- 		transfer_pid(leader, tsk, PIDTYPE_SID);
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index cc896f0fc4e3..2159ffca63fc 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -102,6 +102,7 @@ extern void attach_pid(struct task_struct *task, enum pid_type);
- extern void detach_pid(struct task_struct *task, enum pid_type);
- extern void change_pid(struct task_struct *task, enum pid_type,
- 			struct pid *pid);
-+extern void exchange_tids(struct task_struct *task, struct task_struct *old);
- extern void transfer_pid(struct task_struct *old, struct task_struct *new,
- 			 enum pid_type);
- 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index c835b844aca7..4ece32d8791a 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -363,6 +363,22 @@ void change_pid(struct task_struct *task, enum pid_type type,
- 	attach_pid(task, type);
- }
- 
-+void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
-+{
-+	/* pid_links[PIDTYPE_PID].next is always NULL */
-+	struct pid *npid = READ_ONCE(ntask->thread_pid);
-+	struct pid *opid = READ_ONCE(otask->thread_pid);
-+
-+	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
-+	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
-+	rcu_assign_pointer(ntask->thread_pid, opid);
-+	rcu_assign_pointer(otask->thread_pid, npid);
-+	WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
-+	WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
-+	WRITE_ONCE(ntask->pid, pid_nr(opid));
-+	WRITE_ONCE(otask->pid, pid_nr(npid));
-+}
-+
- /* transfer_pid is an optimization of attach_pid(new), detach_pid(old) */
- void transfer_pid(struct task_struct *old, struct task_struct *new,
- 			   enum pid_type type)
 -- 
-2.20.1
+Rgrds, legion
 
