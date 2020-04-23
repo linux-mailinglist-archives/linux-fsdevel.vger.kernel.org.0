@@ -2,80 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF60D1B5F20
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 17:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 589FF1B5F47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 17:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbgDWP1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 11:27:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56628 "EHLO mx2.suse.de"
+        id S1729158AbgDWPcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 11:32:18 -0400
+Received: from mga14.intel.com ([192.55.52.115]:44822 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbgDWP1J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:27:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2B68BABEA;
-        Thu, 23 Apr 2020 15:27:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 049761E0E52; Thu, 23 Apr 2020 17:27:07 +0200 (CEST)
-Date:   Thu, 23 Apr 2020 17:27:06 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Cc:     tj@kernel.org, linux-fsdevel@vger.kernel.org,
-        joseph qi <joseph.qi@linux.alibaba.com>
-Subject: Re: Does have race between __mark_inode_dirty() and evict()
-Message-ID: <20200423152706.GA28707@quack2.suse.cz>
-References: <fdf7f9da-4516-f5c3-c5c9-06a1a3f8e55a@linux.alibaba.com>
+        id S1729077AbgDWPcS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 11:32:18 -0400
+IronPort-SDR: wGpumx6aAVtdNwY7GVG1VfUmcwdVeLluBx86/AWP6ixeRzZx6WnS/3DmGB1zyRSzR21/Ap5hbe
+ SiXOfYolh2HA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 08:32:17 -0700
+IronPort-SDR: XrHw8gpSJ9gzIHLjmItp/h+zc1p9bjoGVh+Zkzv0k4Qk/sA7OcL2RW+qIfKI2TD67lisEWx7vp
+ ibzO/GNRtNgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,307,1583222400"; 
+   d="scan'208";a="291217883"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Apr 2020 08:32:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 70CCE402; Thu, 23 Apr 2020 18:32:15 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-fsdevel@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] zonefs: Replace uuid_copy() with import_uuid()
+Date:   Thu, 23 Apr 2020 18:32:11 +0300
+Message-Id: <20200423153211.17223-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdf7f9da-4516-f5c3-c5c9-06a1a3f8e55a@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+There is a specific API to treat raw data as UUID, i.e. import_uuid().
+Use it instead of uuid_copy() with explicit casting.
 
-On Mon 20-04-20 14:23:19, Xiaoguang Wang wrote:
-> Recently we run into a NULL pointer dereference panic in our internal 4.9
-> kernel it panics because inode->i_wb has become zero in
-> wbc_attach_and_unlock_inode(), and by crash tools analysis, inode's
-> dirtied_when is zero, but dirtied_time_when is not zero, seems that this
-> inode has been used after free. Looking into both 4.9 and upstream codes,
-> seems that there maybe a race:
-> 
-> __mark_inode_dirty(...)
-> {
->     spin_lock(&inode->i_lock);
->     ...
->     if (inode->i_state & I_FREEING)
->         goto out_unlock_inode;
->     ...
->     if (!was_dirty) {
->         struct bdi_writeback *wb;
->         struct list_head *dirty_list;
->         bool wakeup_bdi = false;
-> 
->         wb = locked_inode_to_wb_and_lock_list(inode);
->         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->        this function will unlock inode->i_ilock firstly and then relock,
->        but once the inode->i_ilock is unlocked, evict() may run in, set
->        I_FREEING flag, and free the inode, and later
->        locked_inode_to_wb_and_lock_list relocks inode->i_ilock again, but
->        will not check the I_FREEING flag again, so the use after free for
->        this inode would happen.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ fs/zonefs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If someone is calling __mark_inode_dirty(), he should be holding inode
-reference (either directly or indirectly through having dentry reference,
-file open, ...) which prevents the scenario you suggest.
-
-But I've just recently tracked down a very similarly looking issue reported
-to me. I've submitted patches to fix it here [1].
-
-[1] https://lore.kernel.org/linux-ext4/20200421085445.5731-1-jack@suse.cz
-
-								Honza
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index dba874a61fc5c3..82af1f2bd8c85b 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -1266,7 +1266,7 @@ static int zonefs_read_super(struct super_block *sb)
+ 		goto unmap;
+ 	}
+ 
+-	uuid_copy(&sbi->s_uuid, (uuid_t *)super->s_uuid);
++	import_uuid(&sbi->s_uuid, super->s_uuid);
+ 	ret = 0;
+ 
+ unmap:
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.26.1
+
