@@ -2,92 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A5E1B63B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 20:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F91F1B649E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 21:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730416AbgDWS1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 14:27:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730280AbgDWS0v (ORCPT
+        id S1726399AbgDWTlX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 15:41:23 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:43014 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgDWTlW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 14:26:51 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35825C09B04B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id b12so7489983ion.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
-        b=g40sBMuaO0eKdotmx6qgQBl63DKBmrekz5bvyEQHA4wVZtcqrxc+aFVgh/QD84O9VQ
-         7GeGJGwCstc5CQBYUut5JFB/SR9hiHRBoNucBdQ5+M/xcZE7LYnQNVriX94nlJDQQ53M
-         WWNnGuPMmJMtuCxOc6M3BOG48McWyi9pwkfv1qCbwmDhh95byI3UmcGK9ZJ59xQm/kqA
-         giNgZwxUHu+XTIAoqn/uu1orK63Ur+6hMBQW2TB101zb0oJ5HpVThkCq6id/TjpQtg27
-         HPMb1DcYsj7bM6wQaeV1UkPK6mgUhECRFNV10F5zDhvx1RXP4ikb8uuEIGMKOSNWVb51
-         vLew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
-        b=HQqttIn7tCMDFxYjdqLd7ezhoqJRym4gnMAJgEe+csG4JP4s+sPcDyjozLM6Uy+qvz
-         gIQ6G1gy80+SSYus62Y6QHoYuV2KvL2JNv4QBREwcxv7SuQhx1fmPbb4GS/+UKL1bbqO
-         HUttFYvurHYenlo7+ddOi2/Kla78ULc9aCaZJ/Ae4MQfS1GZOcCCzVLYpnpq7b/wDWKi
-         aVpTa/+oBrccVg8K7EBZFfgxDMR/eu6F12A4fRpNqU4cpiSrZSQSt/G07mKUamDuDqKv
-         rXq0OBo1cuSmGQxd6uyx6vr7cuCffXWChadc4IJOzbeEfE63QAmwxNDM/iMRpkiH/CRO
-         GL3g==
-X-Gm-Message-State: AGi0PuajgL0WnMfocBUk6amsnCwWb/4tt3gfhJMlwlVnxji6Cw2gGKWp
-        xglx5Y3nxulDePvxhN0XbemySoUHGMdaa6C54A==
-X-Google-Smtp-Source: APiQypKZ88CB7WlyCjo0k9+cU4PX0VcggKkKtzSKgRJHkcPGizF0yZXAjzEMBgo6XH4xzBXv0KAOMjPM9p1sgpp6/70=
-X-Received: by 2002:a5e:9416:: with SMTP id q22mr2547966ioj.93.1587666410194;
- Thu, 23 Apr 2020 11:26:50 -0700 (PDT)
+        Thu, 23 Apr 2020 15:41:22 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jRhir-0006qh-LG; Thu, 23 Apr 2020 13:41:21 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jRhiq-0001Ot-TI; Thu, 23 Apr 2020 13:41:21 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
+        <20200423175432.GA18034@redhat.com>
+Date:   Thu, 23 Apr 2020 14:38:12 -0500
+In-Reply-To: <20200423175432.GA18034@redhat.com> (Oleg Nesterov's message of
+        "Thu, 23 Apr 2020 19:54:33 +0200")
+Message-ID: <878simxaaj.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a02:c845:0:0:0:0:0 with HTTP; Thu, 23 Apr 2020 11:26:49
- -0700 (PDT)
-Reply-To: boa.benin107@yahoo.com
-From:   "Mrs. Angella Michelle" <info.zennitbankplcnigerian@gmail.com>
-Date:   Thu, 23 Apr 2020 20:26:49 +0200
-Message-ID: <CABHzvr=N78snvtMHePMOa+RLFdcZEjXLPkuhkojt4VoZGNzBsQ@mail.gmail.com>
-Subject: Contact Bank of Africa-Benin to receive your payment funds transfer
- amount of $12.800.000,00 Million USD,approved this morning by IMF.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1jRhiq-0001Ot-TI;;;mid=<878simxaaj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19dCJ+VAndkjtlTXMjXhU69eKISG5HCfXc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSlimDrugH,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4387]
+        *  1.0 XMSlimDrugH Weight loss drug headers
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 363 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 11 (3.1%), b_tie_ro: 10 (2.7%), parse: 0.81
+        (0.2%), extract_message_metadata: 2.6 (0.7%), get_uri_detail_list:
+        0.71 (0.2%), tests_pri_-1000: 17 (4.8%), tests_pri_-950: 1.95 (0.5%),
+        tests_pri_-900: 1.69 (0.5%), tests_pri_-90: 61 (16.9%), check_bayes:
+        59 (16.4%), b_tokenize: 9 (2.5%), b_tok_get_all: 6 (1.6%),
+        b_comp_prob: 2.2 (0.6%), b_tok_touch_all: 38 (10.4%), b_finish: 1.36
+        (0.4%), tests_pri_0: 211 (58.1%), check_dkim_signature: 1.60 (0.4%),
+        check_dkim_adsp: 3.9 (1.1%), poll_dns_idle: 0.70 (0.2%), tests_pri_10:
+        2.4 (0.7%), tests_pri_500: 44 (12.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 0/2] proc: Calling proc_flush_task exactly once per task
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Attn Dear.
-Contact Bank of Africa-Benin to receive your payment funds transfer amount =
-of
-$12.800.000,00 Million USD,approved this morning by IMF.
-Happy to inform you, we have finally deposited your payment funds
-$12.8 million us dollars with the Paying Bank of Africa-Benin
-to transfer the payment amount of $12.800,000,00 Million Us Dollars to you
-Contact the bank immediately you receive this email now.
-Director Bank of Africa-Benin: Dr. Festus Obiara
-Email id:  boa.benin107@yahoo.com
-Tel/mobile, (229) 62819378
-BOA-BENIN | GROUPE BANK OF AFRICA, boa-benin
-Avenue Jean-Paul II - 08 BP 0879 - Cotonou - B=C3=A9nin
-Phone:(229) 62819378.
-2020 GROUPE BANK OF AFRICA
-Be advised to re-confirm your bank details to this bank as listed.
-Your account Holder's name----------------
-Bank Name----------------------------------------------------------
-Bank address----------------------------------------------
-Account Numbers---------------------------------------
-Rounting-----------------------------------------------------------------
-Your direct Phone Numbers----------------------------------------------
-Note,I have paid the deposit and insurance fees for you
-But the only money you are to send to this bank is $150.00 us dollars
-Been for the wire transfer fees of your funds
-Contact Him now to receive your transfer deposited this morning
-I wait for your reply upon confirmation
-Mrs. Angella Michelle
-Editor, Zenith Bank- Companies Benin
-mrsa9389@gmail.com
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> On 04/22, Eric W. Biederman wrote:
+>>
+>> Eric W. Biederman (2):
+>>       proc: Use PIDTYPE_TGID in next_tgid
+>>       proc: Ensure we see the exit of each process tid exactly once
+>>
+>>  fs/exec.c           |  5 +----
+>>  fs/proc/base.c      | 16 ++--------------
+>>  include/linux/pid.h |  1 +
+>>  kernel/pid.c        | 16 ++++++++++++++++
+>>  4 files changed, 20 insertions(+), 18 deletions(-)
+>>
+>> ---
+>> Oleg if these look good I will add these onto my branch of proc changes
+>> that includes Alexey's changes.
+>
+> Eric, sorry, where can I find these 2 patches?
+
+Did I not post them?  Apologies.  I will post them now.
+
+Eric
