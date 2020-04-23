@@ -2,88 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84C411B6002
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 17:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB701B6121
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 18:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgDWP6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 11:58:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44140 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729072AbgDWP6z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:58:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7C3EBAD0E;
-        Thu, 23 Apr 2020 15:58:53 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id ABCA71E0E52; Thu, 23 Apr 2020 17:58:53 +0200 (CEST)
-Date:   Thu, 23 Apr 2020 17:58:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 09/11] mm: Convert writeback BUG to WARN_ON
-Message-ID: <20200423155853.GC28707@quack2.suse.cz>
-References: <20200416220130.13343-1-willy@infradead.org>
- <20200416220130.13343-10-willy@infradead.org>
+        id S1729679AbgDWQmF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 12:42:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729407AbgDWQmF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 12:42:05 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15AB9C09B041
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 09:42:05 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id f13so7572166wrm.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Apr 2020 09:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/1CcdkRUwx63HleiGeZTKTaCxseRNyvJ5A6FdUWWQWQ=;
+        b=HXXxp8E0dp0W0Nhm//KnMYEEEBseVYZ9jh0gAum7IO+I0zHLPhgjUcbeINHLfz8hIr
+         GHEGkXtXcd3ML4uQZY7Exxl6n8xFsHj4OHB7rwNezzrfGfuO/HSn7yEOIdodLzWLLD0q
+         ZL5q7nLCF/Y5YiTa49oorlWGD5m7qx65NMFgYCKhGbL9F3NzvWee8nozVAzHLa8Ke5TY
+         RK/2G3z1x/Ao9su5F2xnShZczB0NWOzVwhIlhLhQSqG89qGtIUPreUeufQRZSMQj2VA2
+         y2b243dQZPt9J1aXPWrmzlxtCjJaOhTirZLM3FVnxlEK8AopedmJWJRlsmDwk8Qet/jW
+         Rmyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/1CcdkRUwx63HleiGeZTKTaCxseRNyvJ5A6FdUWWQWQ=;
+        b=uFCGN2iLjnkKriJNroXfxS2Z5VHfldeZ6W1OZwYqE7iksFzRWx621SXKPSUNGQQz9E
+         p3jLJSjgHxYFKBJLRdwcHfWQa5qdvqkKrMXhKGVBvuTOx2aWD+jVgONq+3AaxNJ/DN2y
+         kVUqzte36+ftysyKH1q7mZOIYLcrsUP2n0nIBPr+QGQiwKedXUjLgu60OziijjsOCxOV
+         Eb6Rb/oEYzuDHlkSMB8K+gtW/5YmQZjH3Klj/7iGkuL+Yy8BJp/PDGCZS7O0B6ApkMOY
+         aukfvYOe3zPo599C7ji/4OSHPLXrey4+BdPjqLsyj+AcoSrg6Jtl3jHYdTPiHDrPquzq
+         7G6Q==
+X-Gm-Message-State: AGi0PuYLaKPlpFXOZCssX0P1j4zDldlobugBNyo7KHRhDkAzbF5XG4AT
+        31buovrlr6T0z5NNL9ITrv1wcBCI/7OjiVWKEgg=
+X-Google-Smtp-Source: APiQypJMNBM7UzJ8vmAXewtCeQ5o//8/B0hb2WeBI+DB5Fy/QWyd+5tZpJHwryvUVqEj+G9AI6+AcLUk8NcsnARY6MU=
+X-Received: by 2002:a5d:5082:: with SMTP id a2mr5771262wrt.224.1587660123862;
+ Thu, 23 Apr 2020 09:42:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416220130.13343-10-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200423153211.17223-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20200423153211.17223-1-andriy.shevchenko@linux.intel.com>
+From:   Johannes Thumshirn <morbidrsa@gmail.com>
+Date:   Thu, 23 Apr 2020 18:41:53 +0200
+Message-ID: <CAGH8bx7ACF=JTN4Ry_E41QCRHsbRCoQqQrvGiqCBMQ8tx3u0dA@mail.gmail.com>
+Subject: Re: [PATCH v1] zonefs: Replace uuid_copy() with import_uuid()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-04-20 15:01:28, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> If this BUG() ever triggers, we'll have a dead system with no particular
-> information.  Dumping the page will give us a fighting chance of debugging
-> the problem, and I think it's safe for us to just continue if we try
-> to clear the writeback bit on a page which already has the writeback
-> bit clear.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/filemap.c        | 4 +---
->  mm/page-writeback.c | 5 +++++
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index b7c5d2402370..401b24d980ba 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1293,9 +1293,7 @@ void end_page_writeback(struct page *page)
->  		rotate_reclaimable_page(page);
->  	}
->  
-> -	if (!test_clear_page_writeback(page))
-> -		BUG();
-> -
-> +	test_clear_page_writeback(page);
->  	smp_mb__after_atomic();
->  	wake_up_page(page, PG_writeback);
->  }
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 7326b54ab728..ebaf0d8263a6 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2718,6 +2718,11 @@ int test_clear_page_writeback(struct page *page)
->  	struct lruvec *lruvec;
->  	int ret;
->  
-> +	if (WARN_ON(!PageWriteback(page))) {
-> +		dump_page(page, "!writeback");
-> +		return false;
-> +	}
-> +
+On Thu, Apr 23, 2020 at 5:32 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> There is a specific API to treat raw data as UUID, i.e. import_uuid().
+> Use it instead of uuid_copy() with explicit casting.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-WARN_ON_ONCE() here perhaps? I don't think dumping more pages will bring
-that much value...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Looks good,
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
