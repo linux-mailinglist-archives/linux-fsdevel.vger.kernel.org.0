@@ -2,142 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF841B5DF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 16:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7103D1B5E20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 16:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbgDWOgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 10:36:44 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56686 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbgDWOgo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 10:36:44 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03NESqx4043325;
-        Thu, 23 Apr 2020 14:36:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : content-type :
- content-transfer-encoding : mime-version : subject : message-id : date :
- cc : to; s=corp-2020-01-29;
- bh=vhc1qxRXMx+iuW9x2FbtF55Pq5hnzBq07HQyTGBkbI4=;
- b=M0IdiOuhleGgSwvuxcumRfGfShs+bWWU8BddaDiKGgCPDw8xDeNALaru/oA5jLPbUJv4
- K28p+Iwq9GCqEU0d0Svz/QuCmf+16GiQ6jzP8XW35seZDKetC2uDbpcqCYVIia/xcmiq
- 3SBNHz1nM186Am/qu3zQ8CPrXD8i5YOLGqDGNsj4tMel0bV0BxULUqdJG3qiWcH8zLm/
- /XYQt8SPYNE/Eb/c9MhsGEDbg9pgxItsTyEU6HuSKlvHT7EhtXKcmrwe0YNJJvfj3Wef
- soFHNnKGs7I3O2H5LuQ1bRumFiuupTdxJGiY+iF6cpceJyv8UjHnTmP1s/pqyy4yGyQk zQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 30grpgwd7j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Apr 2020 14:36:41 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03NEXfYh016068;
-        Thu, 23 Apr 2020 14:36:41 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 30k7qv81my-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Apr 2020 14:36:41 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03NEae1Z028661;
-        Thu, 23 Apr 2020 14:36:40 GMT
-Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 23 Apr 2020 07:36:40 -0700
-From:   Chuck Lever <chuck.lever@oracle.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: [GIT PULL] Please pull first round of NFS server -rc fixes for v5.7
-Message-Id: <AC510313-C744-4F22-82F7-F75F20F4B073@oracle.com>
-Date:   Thu, 23 Apr 2020 10:36:39 -0400
-Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9599 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 suspectscore=2 bulkscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004230116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9599 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=2 bulkscore=0 clxscore=1015
- malwarescore=0 phishscore=0 spamscore=0 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004230116
+        id S1728359AbgDWOoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 10:44:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54418 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbgDWOoQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Apr 2020 10:44:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 75C7BAAC7;
+        Thu, 23 Apr 2020 14:44:14 +0000 (UTC)
+Date:   Thu, 23 Apr 2020 09:44:11 -0500
+From:   'Goldwyn Rodrigues' <rgoldwyn@suse.de>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     'LKML' <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, 'Hyunchul Lee' <hyc.lee@gmail.com>,
+        'Eric Sandeen' <sandeen@sandeen.net>,
+        'Sedat Dilek' <sedat.dilek@gmail.com>
+Subject: Re: [ANNOUNCE] exfatprogs-1.0.2 version released
+Message-ID: <20200423144411.hmby6ux2utdrqsls@fiona>
+References: <CGME20200423084908epcas1p1b5d43c33b263b30844fc03a341f67413@epcas1p1.samsung.com>
+ <004701d6194c$0d238990$276a9cb0$@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <004701d6194c$0d238990$276a9cb0$@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus-
+Hi Namjae,
 
-As promised, here is the first set of 5.7-rc fixes for NFS server =
-issues.
-These were all unresolved at the time the 5.7 window opened, and needed
-some additional time to ensure they were correctly addressed. They are
-ready now.
+On 17:49 23/04, Namjae Jeon wrote:
+> This is the second release of exfatprogs since the initial version(1.0.1).
+> We have received various feedbacks and patches since the previous release
+> and applied them in this release. Thanks for feedback and patches!
+> 
+> According to Goldwyn's comments, We renamed the project name from
+> exfat-utils to exfatprogs. However, There is an opinion that just renaming
+> the name is not enough. Because the binary names(mkfs.exfat, fsck.exfat)
+> still are same with ones in current exfat-utils RPM package.
+> 
+> If that's real problem, We are considering a long jump with 2.0.0 when adding
+> repair feature.
+> 
+> Any feedback is welcome!:)
 
-At the moment I know of one more urgent issue regarding the NFS server.
-A fix has been tested and is under review. I expect to send one more
-"5.7-rc fixes" PR, containing this fix (which now consists of 3 =
-patches).
+I agree with Eric. We can add "Conflicts" flag to make sure there are
+conflicting capabilities in packages.
 
+> 
+> The major changes in this release:
+>  * Rename project name to exfatprogs.
+>  * label.exfat: Add support for label.exfat to set/get exfat volume label.
+>  * Replace iconv library by standard C functions mbstowcs() and wcrtomb().
+>  * Fix the build warnings/errors and add warning options.
+>  * Fix several bugs(memory leak, wrong endian conversion, zero out beyond end of file) and cleanup codes
+>  * Fix issues on big endian system and on 32bit system.
+>  * Add support for Android build system.
+> 
+> The git tree is at:
+>       https://github.com/exfatprogs/exfatprogs
+> 
+> The tarballs can be found at:
+>       https://github.com/exfatprogs/exfatprogs/releases/tag/1.0.2
+> 
 
-The following changes since commit =
-8f3d9f354286745c751374f5f1fcafee6b3f3136:
+Can we follow the standard of source tarballs be
+<projectname>-<version>.tar.gz? In this case, exfat-1.0.2.tar.gz
+instead of 1.0.2.tar.gz?
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.linux-nfs.org/projects/cel/cel-2.6.git tags/nfsd-5.7-rc-1
-
-for you to fetch changes up to 23cf1ee1f1869966b75518c59b5cbda4c6c92450:
-
-  svcrdma: Fix leak of svc_rdma_recv_ctxt objects (2020-04-17 12:40:38 =
--0400)
-
-----------------------------------------------------------------
-Fixes:
-
-- Address several use-after-free and memory leak bugs
-
-- Prevent a backchannel livelock
-
-----------------------------------------------------------------
-Chuck Lever (3):
-      SUNRPC: Fix backchannel RPC soft lockups
-      svcrdma: Fix trace point use-after-free race
-      svcrdma: Fix leak of svc_rdma_recv_ctxt objects
-
-Vasily Averin (1):
-      nfsd: memory corruption in nfsd4_lock()
-
-Yihao Wu (1):
-      SUNRPC/cache: Fix unsafe traverse caused double-free in =
-cache_purge
-
- fs/nfsd/nfs4callback.c                     |  4 +++-
- fs/nfsd/nfs4state.c                        |  2 ++
- include/linux/sunrpc/svc_rdma.h            |  1 +
- include/trace/events/rpcrdma.h             | 50 =
-++++++++++++++++++++++++++++++++++++--------------
- net/sunrpc/cache.c                         |  5 +++--
- net/sunrpc/svc_xprt.c                      |  5 ++---
- net/sunrpc/svcsock.c                       |  4 ++++
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c |  2 ++
- net/sunrpc/xprtrdma/svc_rdma_recvfrom.c    | 22 ++++++++++++++++++++++
- net/sunrpc/xprtrdma/svc_rdma_rw.c          |  3 +--
- net/sunrpc/xprtrdma/svc_rdma_sendto.c      | 29 =
-++++++++++++-----------------
- net/sunrpc/xprtrdma/svc_rdma_transport.c   |  5 -----
- net/sunrpc/xprtsock.c                      |  1 +
- 13 files changed, 89 insertions(+), 44 deletions(-)
-
---
-Chuck Lever
-
-
-
+-- 
+Goldwyn
