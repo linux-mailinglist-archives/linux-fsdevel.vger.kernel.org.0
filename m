@@ -2,133 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9161E1B53B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 06:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 998211B53C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Apr 2020 06:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgDWElB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 00:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726162AbgDWElA (ORCPT
+        id S1726537AbgDWEmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Apr 2020 00:42:36 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:41873 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbgDWEmg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 00:41:00 -0400
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 903BBC03C1AB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Apr 2020 21:41:00 -0700 (PDT)
-Received: by mail-qv1-xf42.google.com with SMTP id p13so2207635qvt.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Apr 2020 21:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GhnxqN9CabrJDTRLrZH4BYssyupAS+5LbE1odxMWHKQ=;
-        b=ymGQm9PAKUkPPMecNDR0Z7iD5NAolQZ9CFhElnv4TI/6sCmRDjJk0MfeiEe0Iti7UL
-         i509QSKqeP+hwyppiLrTOkpartVsjD+nu4Hm2DUOhCGKhzl65Ar0nPiOmXCFCyeMJLoY
-         FQESDpWKa3QWdsBSTt9OzSFiCOJBqWuGn5rUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GhnxqN9CabrJDTRLrZH4BYssyupAS+5LbE1odxMWHKQ=;
-        b=ZrA+D9IdrBmLQmN3xPoeQo5A+Z5NO6BlEM5jrjQxKFosYi3hihPD96F83v/xmsTraA
-         djTJ7RcWucXkGPlZ2NS/zj5ouqCrrREqLZztWeyuD+q716O1o39s5oeVDo9PThGFKNYU
-         VZiEdyWVEE9NmlQLT43p02YLQl7CrRc5d2X/iRkSRKhxaLBIVUjSHM07JaKHDorJQyd5
-         uRXumXifKr9R8Y3mdo3DADiEmzUO2sHiF4rwC5uhN/1CZC9i5iySQDjs2Ebq0CTNk9jM
-         a/dW3rBuWKyFIBnEZY3zz2IDsGHieKYQn3jARAO0vXadDC+Jsab6eT7RuUaJivLXlj4p
-         8ySw==
-X-Gm-Message-State: AGi0PuaChFFjn5eyAIItk0M1jY4/X6XUW2Bv8cy9pXm513OUfl5Cobb2
-        yMDgUTdJj/5xOPuhVg+v6v49/g==
-X-Google-Smtp-Source: APiQypJuAiZWPo0bjJKUmv5REHrynKXgeGsjPCxFEpPfaWC1KSRLeDL4dCDzJRvYujqYBrXzSTJWhg==
-X-Received: by 2002:a0c:ed42:: with SMTP id v2mr2379627qvq.94.1587616859609;
-        Wed, 22 Apr 2020 21:40:59 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id v62sm924150qkb.85.2020.04.22.21.40.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2020 21:40:59 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC] fs: Use slab constructor to initialize conn objects in fsnotify
-Date:   Thu, 23 Apr 2020 00:40:50 -0400
-Message-Id: <20200423044050.162093-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.26.1.301.g55bc3eb7cb9-goog
+        Thu, 23 Apr 2020 00:42:36 -0400
+X-Originating-IP: 50.39.163.217
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 4D0E620004;
+        Thu, 23 Apr 2020 04:42:28 +0000 (UTC)
+Date:   Wed, 22 Apr 2020 21:42:26 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>, io-uring@vger.kernel.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+Message-ID: <20200423044226.GH161058@localhost>
+References: <cover.1587531463.git.josh@joshtriplett.org>
+ <9873b8bd7d14ff8cd2a5782b434b39f076679eeb.1587531463.git.josh@joshtriplett.org>
+ <CAKgNAkjo3AeA78XqK-RRGqJHNy1H8SbcjQQQs7+jDwuFgq4YSg@mail.gmail.com>
+ <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com>
+ <20200423004807.GC161058@localhost>
+ <CAJfpegtSYKsApx2Dc6VGmc5Fm4SsxtAWAP-Zs052umwK1CjJmQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtSYKsApx2Dc6VGmc5Fm4SsxtAWAP-Zs052umwK1CjJmQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While reading the famous slab paper [1], I noticed that the conn->lock
-spinlock and conn->list hlist in fsnotify code is being initialized
-during every object allocation. This seems a good fit for the
-constructor within the slab to take advantage of the slab design. Move
-the initializtion to that.
+On Thu, Apr 23, 2020 at 06:24:14AM +0200, Miklos Szeredi wrote:
+> On Thu, Apr 23, 2020 at 2:48 AM Josh Triplett <josh@joshtriplett.org> wrote:
+> > On Wed, Apr 22, 2020 at 09:55:56AM +0200, Miklos Szeredi wrote:
+> > > On Wed, Apr 22, 2020 at 8:06 AM Michael Kerrisk (man-pages)
+> > > <mtk.manpages@gmail.com> wrote:
+> > > >
+> > > > [CC += linux-api]
+> > > >
+> > > > On Wed, 22 Apr 2020 at 07:20, Josh Triplett <josh@joshtriplett.org> wrote:
+> > > > >
+> > > > > Inspired by the X protocol's handling of XIDs, allow userspace to select
+> > > > > the file descriptor opened by openat2, so that it can use the resulting
+> > > > > file descriptor in subsequent system calls without waiting for the
+> > > > > response to openat2.
+> > > > >
+> > > > > In io_uring, this allows sequences like openat2/read/close without
+> > > > > waiting for the openat2 to complete. Multiple such sequences can
+> > > > > overlap, as long as each uses a distinct file descriptor.
+> > >
+> > > If this is primarily an io_uring feature, then why burden the normal
+> > > openat2 API with this?
+> >
+> > This feature was inspired by io_uring; it isn't exclusively of value
+> > with io_uring. (And io_uring doesn't normally change the semantics of
+> > syscalls.)
+> 
+> What's the use case of O_SPECIFIC_FD beyond io_uring?
 
-       spin_lock_init(&conn->lock);
-       INIT_HLIST_HEAD(&conn->list);
+Avoiding a call to dup2 and close, if you need something as a specific
+file descriptor, such as when setting up to exec something, or when
+debugging a program.
 
-[1] https://pdfs.semanticscholar.org/1acc/3a14da69dd240f2fbc11d00e09610263bdbd.pdf
+I don't expect it to be as widely used as with io_uring, but I also
+don't want io_uring versions of syscalls to diverge from the underlying
+syscalls, and this would be a heavy divergence.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
-I've only build-tested. I am not very familiar with this code, so I
-kindly request the maintainers/reviewers to take a look and see if it
-makes sense. From what I see, the ->list is always empty during
-allocation. The spinlock allocation also seems unnecesary.
+> > > This would also allow Implementing a private fd table for io_uring.
+> > > I.e. add a flag interpreted by file ops (IORING_PRIVATE_FD), including
+> > > openat2 and freely use the private fd space without having to worry
+> > > about interactions with other parts of the system.
+> >
+> > I definitely don't want to add a special kind of file descriptor that
+> > doesn't work in normal syscalls taking file descriptors. A file
+> > descriptor allocated via O_SPECIFIC_FD is an entirely normal file
+> > descriptor, and works anywhere a file descriptor normally works.
+> 
+> What's the use case of allocating a file descriptor within io_uring
+> and using it outside of io_uring?
 
-
- fs/notify/fsnotify.c | 15 +++++++++++++--
- fs/notify/mark.c     |  2 --
- 2 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 46f2255800091..55ed450da3295 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -385,6 +385,14 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- }
- EXPORT_SYMBOL_GPL(fsnotify);
- 
-+static void fsnotify_ctor(void *addr)
-+{
-+	struct fsnotify_mark_connector *conn = addr;
-+
-+	spin_lock_init(&conn->lock);
-+	INIT_HLIST_HEAD(&conn->list);
-+}
-+
- static __init int fsnotify_init(void)
- {
- 	int ret;
-@@ -395,8 +403,11 @@ static __init int fsnotify_init(void)
- 	if (ret)
- 		panic("initializing fsnotify_mark_srcu");
- 
--	fsnotify_mark_connector_cachep = KMEM_CACHE(fsnotify_mark_connector,
--						    SLAB_PANIC);
-+	fsnotify_mark_connector_cachep =
-+		kmem_cache_create("fsnotify_mark_connector",
-+				  sizeof(struct fsnotify_mark_connector),
-+				  __alignof__(struct fsnotify_mark_connector),
-+				  SLAB_PANIC, fsnotify_ctor);
- 
- 	return 0;
- }
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 1d96216dffd19..d388e7f45e2ea 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -479,8 +479,6 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
- 	conn = kmem_cache_alloc(fsnotify_mark_connector_cachep, GFP_KERNEL);
- 	if (!conn)
- 		return -ENOMEM;
--	spin_lock_init(&conn->lock);
--	INIT_HLIST_HEAD(&conn->list);
- 	conn->type = type;
- 	conn->obj = connp;
- 	/* Cache fsid of filesystem containing the object */
--- 
-2.26.1.301.g55bc3eb7cb9-goog
+Calling a syscall not provided via io_uring. Calling a library that
+doesn't use io_uring. Passing the file descriptor via UNIX socket to
+another program. Passing the file descriptor via exec to another
+program. Userspace is modular, and file descriptors are widely used.
