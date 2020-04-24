@@ -2,122 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5F51B7953
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 17:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30C61B7960
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 17:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbgDXPTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 11:19:53 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46367 "EHLO
+        id S1727920AbgDXPUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 11:20:17 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58122 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726900AbgDXPTw (ORCPT
+        by vger.kernel.org with ESMTP id S1727868AbgDXPUR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 11:19:52 -0400
+        Fri, 24 Apr 2020 11:20:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587741591;
+        s=mimecast20190719; t=1587741615;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Hup8zMplhzCtriOS6DgGXays5t9vNVweQrUya2JH8v4=;
-        b=ex7Yp2MGjsfz/1Z8cSmtbuuWDRQHRmrMGGuFjlTkPsJ4GCZ3zMBHIPee/OUwZKDjifesCn
-        2fDHa+tKnRs9AXjvZ0Pg6ywuvaSuC2+/HKYfhehPAV5hQwrYPtRGy6JtVPLg/Qso2UvOC5
-        M+xrN/Y0LvxkGlC85jloecE4QOn0uaM=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2Z+Gadu21Z2xRE8cYGvxOo9yHCfq6rp1d/CEGZW+78A=;
+        b=aqmz4vwAPmkiZEGN+0bX1y5cauBrTueqpvKSOIHAIMzV+fqp+0IA7MlaQk+MfUVFiB5bsB
+        D7jBDZUdLZ7WNzzVdVMrsxSiGoe9kcF7epNcxmUkZV1W8xtw5spftnUL6q/HYm3rDSG346
+        DlrEn8V1A5U2aiidpvCp6uwGF8WmMoQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-3lctEr2_M3277HjaZZgtFw-1; Fri, 24 Apr 2020 11:19:49 -0400
-X-MC-Unique: 3lctEr2_M3277HjaZZgtFw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-392-hUBQ_FouPRuxm-87spewCA-1; Fri, 24 Apr 2020 11:19:56 -0400
+X-MC-Unique: hUBQ_FouPRuxm-87spewCA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5CED71009633;
-        Fri, 24 Apr 2020 15:19:48 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79D5B107ACCA;
+        Fri, 24 Apr 2020 15:19:55 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C3925D9D5;
-        Fri, 24 Apr 2020 15:19:47 +0000 (UTC)
-Subject: [PATCH 0/8] afs: NAT-mitigation and other bits
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5AD0260CD0;
+        Fri, 24 Apr 2020 15:19:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/8] afs: Always include dir in bulk status fetch from
+ afs_do_lookup()
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
 Cc:     Dave Botsch <botsch@cnf.cornell.edu>,
         Jeffrey Altman <jaltman@auristor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com
-Date:   Fri, 24 Apr 2020 16:19:46 +0100
-Message-ID: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
+Date:   Fri, 24 Apr 2020 16:19:53 +0100
+Message-ID: <158774159361.3619859.14445546902173034503.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
+References: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.21
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+When a lookup is done in an AFS directory, the filesystem will speculate
+and fetch up to 49 other statuses for files in the same directory and fetch
+those as well, turning them into inodes or updating inodes that already
+exist.
 
-The primary part of this patchset, is intended to help deal with the
-effects of using an AFS client that is communicating with a server through
-some sort of NAT or firewall, whereby if the just right amount of time
-lapses before a third party change is made, the client thinks it still has
-a valid callback, but the server's attempt to notify the client of the
-change bounces because the NAT/firewall window has closed.  The problem is
-that kafs does insufficient probing to maintain the firewall window.
+However, occasionally, a callback break might go missing due to NAT timing
+out, but the afs filesystem doesn't then realise that the directory is not
+up to date.
 
-The effect is mitigated in the following ways:
+Alleviate this by using one of the status slots to check the directory in
+which the lookup is being done.
 
- (1) When an FS.InlineBulkStatus op is sent to the server during a file
-     lookup, the FID of the directory being looked up in will now get
-     included in the list of vnodes to query.  This will find out more
-     quickly if the dir has changed.
-
- (2) The fileserver is now polled regularly by an independent, timed
-     manager rather than only being polled by the rotation algorithm when
-     someone does a VFS operation that performs an RPC call.
-
-I have included some other bits in the patchset also:
-
- (1) Apply uninterruptibility a bit more thoroughly.  There are more places
-     that need it yet, but they're harder to fix.
-
- (2) Use the serverUnique field from the VLDB record to trigger a recheck
-     of a fileserver's endpoints rather than doing it on a timed basis
-     separately for each fileserver.  This reduces the number of VL RPCs
-     performed, albeit it's a minor reduction.
-
- (3) Note when we have detected the epoch from the fileserver so that the
-     code that checks it actually does its stuff.
-
- (4) Remove some unused bits in the code.
-
-Note that I've spotted some bugs in the fileserver rotation algorithm, but
-that's going to need its own rewrite as the structure of it is wrong.
-
-David
+Reported-by: Dave Botsch <botsch@cnf.cornell.edu>
+Suggested-by: Jeffrey Altman <jaltman@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (8):
-      afs: Always include dir in bulk status fetch from afs_do_lookup()
-      afs: Make record checking use TASK_UNINTERRUPTIBLE when appropriate
-      afs: Use the serverUnique field in the UVLDB record to reduce rpc ops
-      afs: Fix to actually set AFS_SERVER_FL_HAVE_EPOCH
-      afs: Remove some unused bits
-      afs: Split the usage count on struct afs_server
-      afs: Actively poll fileservers to maintain NAT or firewall openings
-      afs: Show more information in /proc/net/afs/servers
 
+ fs/afs/dir.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
- fs/afs/cmservice.c         |    8 +
- fs/afs/dir.c               |    9 +
- fs/afs/fs_probe.c          |  280 +++++++++++++++++++++++++++++++++-----------
- fs/afs/fsclient.c          |   24 ++--
- fs/afs/internal.h          |   58 ++++++---
- fs/afs/main.c              |    5 +
- fs/afs/proc.c              |   18 ++-
- fs/afs/rotate.c            |   13 +-
- fs/afs/rxrpc.c             |    2 
- fs/afs/server.c            |  201 +++++++++++++++++++-------------
- fs/afs/server_list.c       |    7 +
- fs/afs/vl_rotate.c         |    4 -
- fs/afs/vlclient.c          |    1 
- fs/afs/volume.c            |   32 +++--
- include/trace/events/afs.h |   22 +++
- 15 files changed, 455 insertions(+), 229 deletions(-)
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index d1e1caa23c8b..3c486340b220 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -658,7 +658,8 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
+ 
+ 	cookie->ctx.actor = afs_lookup_filldir;
+ 	cookie->name = dentry->d_name;
+-	cookie->nr_fids = 1; /* slot 0 is saved for the fid we actually want */
++	cookie->nr_fids = 2; /* slot 0 is saved for the fid we actually want
++			      * and slot 1 for the directory */
+ 
+ 	read_seqlock_excl(&dvnode->cb_lock);
+ 	dcbi = rcu_dereference_protected(dvnode->cb_interest,
+@@ -709,7 +710,11 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
+ 	if (!cookie->inodes)
+ 		goto out_s;
+ 
+-	for (i = 1; i < cookie->nr_fids; i++) {
++	cookie->fids[1] = dvnode->fid;
++	cookie->statuses[1].cb_break = afs_calc_vnode_cb_break(dvnode);
++	cookie->inodes[1] = igrab(&dvnode->vfs_inode);
++
++	for (i = 2; i < cookie->nr_fids; i++) {
+ 		scb = &cookie->statuses[i];
+ 
+ 		/* Find any inodes that already exist and get their
 
 
