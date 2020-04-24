@@ -2,51 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 324C71B795F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 17:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87DA1B7962
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 17:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbgDXPUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 11:20:16 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38204 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726717AbgDXPUQ (ORCPT
+        id S1727982AbgDXPUW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 11:20:22 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42351 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727962AbgDXPUV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 11:20:16 -0400
+        Fri, 24 Apr 2020 11:20:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587741613;
+        s=mimecast20190719; t=1587741620;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=sZ5w/L3tPVdKgoyCnnsGoBHIdbs3808BsYQYQ9jJR1I=;
-        b=JRgnngOJz16iCEu1W8bHV3QK90S/AGBoLXOy1X0Z4XTDXkqv5R6MjY3wzXNI2jtPp7Sd6q
-        5jzmWDFPY6bgoy+F9AYLHnn+uEVQe248ofDbN1bMDQC3w5GbdnWP6jmS6Ocxys1byg/vFe
-        rDJ0ypATZaF7K4w5Ok6PP+HUvc9KJ3M=
+        bh=bLArxLt5J+HGf6waK/sSvqkLaTxB3mfg5kFgnvOW+fI=;
+        b=HzNH9iByZC9ucWuA+TFpqAp90Zc6AdUE5bH89qwKCL0ICY6/ShLqYV0e/+19493w0BxKGi
+        WALzCEx8qf9TrbcLj8P4tMpo5fc2xua6DbHo7ZMOoDl5B+15maN9TDqULGXrj5ZhLP5i6E
+        G277icluO04eQQLZNAADrXLR3EzCo8U=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-401-zIWu_L2-MyObM6aN_tiKZQ-1; Fri, 24 Apr 2020 11:20:12 -0400
-X-MC-Unique: zIWu_L2-MyObM6aN_tiKZQ-1
+ us-mta-419-mCTsx_R4PL-hTT-7nDYHfQ-1; Fri, 24 Apr 2020 11:20:18 -0400
+X-MC-Unique: mCTsx_R4PL-hTT-7nDYHfQ-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DD272835B41;
-        Fri, 24 Apr 2020 15:20:10 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A92C8800D24;
+        Fri, 24 Apr 2020 15:20:17 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4263960606;
-        Fri, 24 Apr 2020 15:20:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0DD96084A;
+        Fri, 24 Apr 2020 15:20:16 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/8] afs: Use the serverUnique field in the UVLDB record to
- reduce rpc ops
+Subject: [PATCH 4/8] afs: Fix to actually set AFS_SERVER_FL_HAVE_EPOCH
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
-Cc:     Jeffrey Altman <jaltman@auristor.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com
-Date:   Fri, 24 Apr 2020 16:20:07 +0100
-Message-ID: <158774160751.3619859.14799985205086911414.stgit@warthog.procyon.org.uk>
+Date:   Fri, 24 Apr 2020 16:20:16 +0100
+Message-ID: <158774161611.3619859.10748767826695181897.stgit@warthog.procyon.org.uk>
 In-Reply-To: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
 References: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.21
@@ -59,177 +57,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The U-version VLDB volume record retrieved by the VL.GetEntryByNameU rpc op
-carries a change counter (the serverUnique field) for each fileserver
-listed in the record as backing that volume.  This is incremented whenever
-the registration details for a fileserver change (such as its address
-list).  Note that the same value will be seen in all UVLDB records that
-refer to that fileserver.
+AFS keeps track of the epoch value from the rxrpc protocol to note (a) when
+a fileserver appears to have restarted and (b) when different endpoints of
+a fileserver do not appear to be associated with the same fileserver
+(ie. all probes back from a fileserver from all of its interfaces should
+carry the same epoch).
 
-This should be checked before calling the VL server to re-query the address
-list for a fileserver.  If it's the same, there's no point doing the query.
+However, the AFS_SERVER_FL_HAVE_EPOCH flag that indicates that we've
+received the server's epoch is never set, though it is used.
 
-Reported-by: Jeffrey Altman <jaltman@auristor.com>
+Fix this to set the flag when we first receive an epoch value from a probe
+sent to the filesystem client from the fileserver.
+
+Fixes: 3bf0fb6f33dd ("afs: Probe multiple fileservers simultaneously")
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/internal.h    |    5 +++--
- fs/afs/server.c      |   26 ++++++++++++++------------
- fs/afs/server_list.c |    3 ++-
- fs/afs/vlclient.c    |    1 +
- 4 files changed, 20 insertions(+), 15 deletions(-)
+ fs/afs/cmservice.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 15ae9c7f9c00..2d4e0c4e23a4 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -471,6 +471,7 @@ struct afs_vldb_entry {
- #define AFS_VLDB_QUERY_ERROR	4		/* - VL server returned error */
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 6765949b3aab..380ad5ace7cf 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -169,7 +169,7 @@ static int afs_record_cm_probe(struct afs_call *call, struct afs_server *server)
  
- 	uuid_t			fs_server[AFS_NMAXNSERVERS];
-+	u32			addr_version[AFS_NMAXNSERVERS]; /* Registration change counters */
- 	u8			fs_mask[AFS_NMAXNSERVERS];
- #define AFS_VOL_VTM_RW	0x01 /* R/W version of the volume is available (on this server) */
- #define AFS_VOL_VTM_RO	0x02 /* R/O version of the volume is available (on this server) */
-@@ -498,7 +499,6 @@ struct afs_server {
- 	struct hlist_node	proc_link;	/* Link in net->fs_proc */
- 	struct afs_server	*gc_next;	/* Next server in manager's list */
- 	time64_t		put_time;	/* Time at which last put */
--	time64_t		update_at;	/* Time at which to next update the record */
- 	unsigned long		flags;
- #define AFS_SERVER_FL_NOT_READY	1		/* The record is not ready for use */
- #define AFS_SERVER_FL_NOT_FOUND	2		/* VL server says no such server */
-@@ -511,6 +511,7 @@ struct afs_server {
- #define AFS_SERVER_FL_IS_YFS	9		/* Server is YFS not AFS */
- #define AFS_SERVER_FL_NO_RM2	10		/* Fileserver doesn't support YFS.RemoveFile2 */
- #define AFS_SERVER_FL_HAVE_EPOCH 11		/* ->epoch is valid */
-+#define AFS_SERVER_FL_NEEDS_UPDATE 12		/* Fileserver address list is out of date */
- 	atomic_t		usage;
- 	u32			addr_version;	/* Address list version */
- 	u32			cm_epoch;	/* Server RxRPC epoch */
-@@ -1243,7 +1244,7 @@ extern spinlock_t afs_server_peer_lock;
- extern struct afs_server *afs_find_server(struct afs_net *,
- 					  const struct sockaddr_rxrpc *);
- extern struct afs_server *afs_find_server_by_uuid(struct afs_net *, const uuid_t *);
--extern struct afs_server *afs_lookup_server(struct afs_cell *, struct key *, const uuid_t *);
-+extern struct afs_server *afs_lookup_server(struct afs_cell *, struct key *, const uuid_t *, u32);
- extern struct afs_server *afs_get_server(struct afs_server *, enum afs_server_trace);
- extern void afs_put_server(struct afs_net *, struct afs_server *, enum afs_server_trace);
- extern void afs_manage_servers(struct work_struct *);
-diff --git a/fs/afs/server.c b/fs/afs/server.c
-index 11b90ac7ea30..9e50ccde5d37 100644
---- a/fs/afs/server.c
-+++ b/fs/afs/server.c
-@@ -12,7 +12,6 @@
- #include "protocol_yfs.h"
+ 	spin_lock(&server->probe_lock);
  
- static unsigned afs_server_gc_delay = 10;	/* Server record timeout in seconds */
--static unsigned afs_server_update_delay = 30;	/* Time till VLDB recheck in secs */
- static atomic_t afs_server_debug_id;
- 
- static void afs_inc_servers_outstanding(struct afs_net *net)
-@@ -218,7 +217,6 @@ static struct afs_server *afs_alloc_server(struct afs_net *net,
- 	RCU_INIT_POINTER(server->addresses, alist);
- 	server->addr_version = alist->version;
- 	server->uuid = *uuid;
--	server->update_at = ktime_get_real_seconds() + afs_server_update_delay;
- 	rwlock_init(&server->fs_lock);
- 	INIT_HLIST_HEAD(&server->cb_volumes);
- 	rwlock_init(&server->cb_break_lock);
-@@ -264,7 +262,7 @@ static struct afs_addr_list *afs_vl_lookup_addrs(struct afs_cell *cell,
-  * Get or create a fileserver record.
-  */
- struct afs_server *afs_lookup_server(struct afs_cell *cell, struct key *key,
--				     const uuid_t *uuid)
-+				     const uuid_t *uuid, u32 addr_version)
- {
- 	struct afs_addr_list *alist;
- 	struct afs_server *server, *candidate;
-@@ -272,8 +270,11 @@ struct afs_server *afs_lookup_server(struct afs_cell *cell, struct key *key,
- 	_enter("%p,%pU", cell->net, uuid);
- 
- 	server = afs_find_server_by_uuid(cell->net, uuid);
--	if (server)
-+	if (server) {
-+		if (server->addr_version != addr_version)
-+			set_bit(AFS_SERVER_FL_NEEDS_UPDATE, &server->flags);
- 		return server;
-+	}
- 
- 	alist = afs_vl_lookup_addrs(cell, key, uuid);
- 	if (IS_ERR(alist))
-@@ -558,7 +559,6 @@ static noinline bool afs_update_server_record(struct afs_fs_cursor *fc, struct a
- 		write_unlock(&server->fs_lock);
- 	}
- 
--	server->update_at = ktime_get_real_seconds() + afs_server_update_delay;
- 	afs_put_addrlist(discard);
- 	_leave(" = t");
- 	return true;
-@@ -569,8 +569,6 @@ static noinline bool afs_update_server_record(struct afs_fs_cursor *fc, struct a
-  */
- bool afs_check_server_record(struct afs_fs_cursor *fc, struct afs_server *server)
- {
--	time64_t now = ktime_get_real_seconds();
--	long diff;
- 	bool success;
- 	int ret, retries = 0;
- 
-@@ -579,13 +577,16 @@ bool afs_check_server_record(struct afs_fs_cursor *fc, struct afs_server *server
- 	ASSERT(server);
- 
- retry:
--	diff = READ_ONCE(server->update_at) - now;
--	if (diff > 0) {
--		_leave(" = t [not now %ld]", diff);
--		return true;
--	}
-+	if (test_bit(AFS_SERVER_FL_UPDATING, &server->flags))
-+		goto wait;
-+	if (test_bit(AFS_SERVER_FL_NEEDS_UPDATE, &server->flags))
-+		goto update;
-+	_leave(" = t [good]");
-+	return true;
- 
-+update:
- 	if (!test_and_set_bit_lock(AFS_SERVER_FL_UPDATING, &server->flags)) {
-+		clear_bit(AFS_SERVER_FL_NEEDS_UPDATE, &server->flags);
- 		success = afs_update_server_record(fc, server);
- 		clear_bit_unlock(AFS_SERVER_FL_UPDATING, &server->flags);
- 		wake_up_bit(&server->flags, AFS_SERVER_FL_UPDATING);
-@@ -593,6 +594,7 @@ bool afs_check_server_record(struct afs_fs_cursor *fc, struct afs_server *server
- 		return success;
- 	}
- 
-+wait:
- 	ret = wait_on_bit(&server->flags, AFS_SERVER_FL_UPDATING,
- 			  (fc->flags & AFS_FS_CURSOR_INTR) ?
- 			  TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
-diff --git a/fs/afs/server_list.c b/fs/afs/server_list.c
-index 888d91d195d9..f567732df5cc 100644
---- a/fs/afs/server_list.c
-+++ b/fs/afs/server_list.c
-@@ -51,7 +51,8 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
- 		if (!(vldb->fs_mask[i] & type_mask))
- 			continue;
- 
--		server = afs_lookup_server(cell, key, &vldb->fs_server[i]);
-+		server = afs_lookup_server(cell, key, &vldb->fs_server[i],
-+					   vldb->addr_version[i]);
- 		if (IS_ERR(server)) {
- 			ret = PTR_ERR(server);
- 			if (ret == -ENOENT ||
-diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
-index 516e9a3bb5b4..972dc5512f33 100644
---- a/fs/afs/vlclient.c
-+++ b/fs/afs/vlclient.c
-@@ -82,6 +82,7 @@ static int afs_deliver_vl_get_entry_by_name_u(struct afs_call *call)
- 		for (j = 0; j < 6; j++)
- 			uuid->node[j] = (u8)ntohl(xdr->node[j]);
- 
-+		entry->addr_version[n] = ntohl(uvldb->serverUnique[i]);
- 		entry->nr_servers++;
- 	}
- 
+-	if (!test_bit(AFS_SERVER_FL_HAVE_EPOCH, &server->flags)) {
++	if (!test_and_set_bit(AFS_SERVER_FL_HAVE_EPOCH, &server->flags)) {
+ 		server->cm_epoch = call->epoch;
+ 		server->probe.cm_epoch = call->epoch;
+ 		goto out;
 
 
