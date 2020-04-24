@@ -2,56 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 424C11B718C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 12:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 070861B719F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 12:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbgDXKHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 06:07:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57976 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726896AbgDXKHk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 06:07:40 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92536C09B045;
-        Fri, 24 Apr 2020 03:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=JZ246RQwd02JYzuM1b+RWAonKx
-        DRZ7L+Vv8fdC9oP+Qbe+SeM4qP3NoV8X75zGRQ3J0NeMljNN0+vSO3MjrySZvCBqkMyyFL1YVqI5F
-        IT/0+sN9MLMAANiNydE4bIQQjyEWhXag+GtBIygYO3HwAfI+2F/aSKFzoDPTtXWif5SpyS+23Eo4P
-        J4JJI9q8pQYSbswH+r7P5uIvhlrkw4izX15do9nrtNODLbb4FZKxbCQpeTIz5iKNvtQzSCNnPCmOU
-        DVZaff8p6c92yuYhXj2w4y0IYHlRDm4n2zHRCYa9Scc0DL3BfRP4fKgbyk9+27p/gGhbuR1Ww8/m5
-        CKUJDv7g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRvFE-0000TJ-AP; Fri, 24 Apr 2020 10:07:40 +0000
-Date:   Fri, 24 Apr 2020 03:07:40 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jan Kara <jack@suse.com>, tytso@mit.edu,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 2/2] iomap: bmap: Remove the WARN and return the proper
- block address
-Message-ID: <20200424100740.GB456@infradead.org>
-References: <cover.1587670914.git.riteshh@linux.ibm.com>
- <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
+        id S1726798AbgDXKL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 06:11:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44062 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726698AbgDXKL1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 06:11:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D8C84AED7;
+        Fri, 24 Apr 2020 10:11:23 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 24 Apr 2020 12:11:23 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Khazhismel Kumykov <khazhy@google.com>
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org, r@hev.cc,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eventpoll: fix missing wakeup for ovflist in
+ ep_poll_callback
+In-Reply-To: <20200424025057.118641-1-khazhy@google.com>
+References: <20200424025057.118641-1-khazhy@google.com>
+Message-ID: <2bd5fcb37337dd7248a5cb245bf8dde9@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+Hi Khazhismel,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+That seems to be correct. The patch you refer 339ddb53d373
+relies on callback path, which *should* wake up, not the path
+which harvests events (thus unnecessary wakeups).  When we add
+a new event to the ->ovflist nobody wakes up the waiters,
+thus missing wakeup. You are right.
+
+May I suggest a small change in order to avoid one new goto?
+We can add a new event in either ->ovflist or ->rdllist and
+then wakeup should happen. So simple 'else if' branch should
+do things right, something like the following:
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 8c596641a72b..7d566667c6ad 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1171,6 +1171,10 @@ static inline bool chain_epi_lockless(struct 
+epitem *epi)
+  {
+         struct eventpoll *ep = epi->ep;
+
++       /* Fast preliminary check */
++       if (epi->next != EP_UNACTIVE_PTR)
++               return false;
++
+         /* Check that the same epi has not been just chained from 
+another CPU */
+         if (cmpxchg(&epi->next, EP_UNACTIVE_PTR, NULL) != 
+EP_UNACTIVE_PTR)
+                 return false;
+@@ -1237,16 +1241,13 @@ static int ep_poll_callback(wait_queue_entry_t 
+*wait, unsigned mode, int sync, v
+          * chained in ep->ovflist and requeued later on.
+          */
+         if (READ_ONCE(ep->ovflist) != EP_UNACTIVE_PTR) {
+-               if (epi->next == EP_UNACTIVE_PTR &&
+-                   chain_epi_lockless(epi))
++               if (chain_epi_lockless(epi))
+                         ep_pm_stay_awake_rcu(epi);
+-               goto out_unlock;
+         }
+-
+-       /* If this file is already in the ready list we exit soon */
+-       if (!ep_is_linked(epi) &&
+-           list_add_tail_lockless(&epi->rdllink, &ep->rdllist)) {
+-               ep_pm_stay_awake_rcu(epi);
++       /* Otherwise take usual path and add event to ready list */
++       else if (!ep_is_linked(epi)) {
++               if (list_add_tail_lockless(&epi->rdllink, &ep->rdllist))
++                       ep_pm_stay_awake_rcu(epi);
+         }
+
+
+I also moved 'epi->next == EP_UNACTIVE_PTR' check directly
+to the chain_epi_lockless, where it should be.
+
+This is minor, of course, you are free to keep it as is.
+
+Reviewed-by: Roman Penyaev <rpenyaev@suse.de>
+
+--
+Roman
+
+
+On 2020-04-24 04:50, Khazhismel Kumykov wrote:
+> In the event that we add to ovflist, before 339ddb53d373 we would be
+> woken up by ep_scan_ready_list, and did no wakeup in ep_poll_callback.
+> With that wakeup removed, if we add to ovflist here, we may never wake
+> up. Rather than adding back the ep_scan_ready_list wakeup - which was
+> resulting un uncessary wakeups, trigger a wake-up in ep_poll_callback.
+> 
+> We noticed that one of our workloads was missing wakeups starting with
+> 339ddb53d373 and upon manual inspection, this wakeup seemed missing to
+> me. With this patch added, we no longer see missing wakeups. I haven't
+> yet tried to make a small reproducer, but the existing kselftests in
+> filesystem/epoll passed for me with this patch.
+> 
+> Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested 
+> epoll")
+> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+> ---
+>  fs/eventpoll.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 8c596641a72b..40cc89559cf6 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1240,7 +1240,7 @@ static int ep_poll_callback(wait_queue_entry_t
+> *wait, unsigned mode, int sync, v
+>  		if (epi->next == EP_UNACTIVE_PTR &&
+>  		    chain_epi_lockless(epi))
+>  			ep_pm_stay_awake_rcu(epi);
+> -		goto out_unlock;
+> +		goto out_wakeup_unlock;
+>  	}
+> 
+>  	/* If this file is already in the ready list we exit soon */
+> @@ -1249,6 +1249,7 @@ static int ep_poll_callback(wait_queue_entry_t
+> *wait, unsigned mode, int sync, v
+>  		ep_pm_stay_awake_rcu(epi);
+>  	}
+> 
+> +out_wakeup_unlock:
+>  	/*
+>  	 * Wake up ( if active ) both the eventpoll wait list and the 
+> ->poll()
+>  	 * wait list.
+
