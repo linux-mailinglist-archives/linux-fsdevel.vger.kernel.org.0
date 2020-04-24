@@ -2,90 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B47231B7CC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C761B7CF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbgDXR3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 13:29:25 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41128 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727988AbgDXR3Y (ORCPT
+        id S1729059AbgDXRgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 13:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728850AbgDXRfr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 13:29:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587749363;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5vIOxP7fG+TeLcOzSq+qdoMyg4FKNqoorzxBOlNsN/4=;
-        b=ha6uPj9vWRgzgOUW9ZR2OtRSzDMn28SjxLcHScMAwyH8SmMfduYA+Jx//brhuTrtKfCpWG
-        NiAEsTr57fuBPdnPQD5uOk/IodRxelXlGa2sZf/NudUNPLd38qqz+u60mQDC0ydk1gPys6
-        H0Xl0+3S5O+XID9JLIJ0PEBe0r8r+bE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267--Wp-HxUqNuyc1d_IjMnhrQ-1; Fri, 24 Apr 2020 13:29:19 -0400
-X-MC-Unique: -Wp-HxUqNuyc1d_IjMnhrQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 097041005510;
-        Fri, 24 Apr 2020 17:29:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.22])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 02075610EC;
-        Fri, 24 Apr 2020 17:29:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 24 Apr 2020 19:29:17 +0200 (CEST)
-Date:   Fri, 24 Apr 2020 19:29:15 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 1/2] proc: Use PIDTYPE_TGID in next_tgid
-Message-ID: <20200424172914.GA26802@redhat.com>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
- <87ftcv1nqe.fsf@x220.int.ebiederm.org>
- <87368uxa8x.fsf_-_@x220.int.ebiederm.org>
+        Fri, 24 Apr 2020 13:35:47 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCEEC09B04B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:46 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id u6so10781759ljl.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=17Kg1dRas/M0sQXVRI4F1cdrQ//6hjmUk/mclI6heeY=;
+        b=d+qcaZcbU1H0AzDGp+UTOcPWUOR9HjuA25jpYxyTWS0ttqCFnGFEDZb7W8gtA+8q7Q
+         DUnPsJgjbJ8jo2hCYbfGpWCBX4F5xcNqH+cIGSxuDfBaMWgLONIW6hJ8WQHyGftwdtXB
+         H8XP2ZEiiiYTC5NDB9zm0db/DQyW0/Ezlxt8k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=17Kg1dRas/M0sQXVRI4F1cdrQ//6hjmUk/mclI6heeY=;
+        b=b4+dMJeS7y6kZ61Bd3rLMrS2jou06ZKfP0EIzQyaoNbWKGmuAzXQj/CBLfumXe9NwY
+         qpmwwv3pzpzRsU2cOjeY8hW+SuthDFkwqVuD3QHBrYTpDeLLdAxrsD+3Lxc4cKaGrrB/
+         9UxPVPwME3CgJ9hmhd/6az5hiDzjAJmvfDtD3RaooOb5hM0Pfp/AJ/wNmu43gv7ILMrh
+         G0CuRCO5+qhzw8jHNZLbErQjKyy6ptf57p/8zeyigQYwAaH/ayISWFpJfy29bnoP3e2X
+         Byy9Y/BmYRaqfEZa0YUvPpzehCDFmsNt00wztoU1yMyUxK9WZYHgmGvJw6sD1mY+U+iM
+         9aNw==
+X-Gm-Message-State: AGi0PublKcAmyTwy9419lKK3x9FEL4xoidEnA6asGj+sf3eJNjHmqYLz
+        j5Lwhh3LJxL+eztwXR6CeFYOqWJdVQY=
+X-Google-Smtp-Source: APiQypIFlpX5HciQhusw5TwvNjOIV2R4vjSSJa9UYp2i/ms0X+5xj0tgT2Ys0mg5N1sTUG2mHda/Pg==
+X-Received: by 2002:a2e:8752:: with SMTP id q18mr6529420ljj.72.1587749744714;
+        Fri, 24 Apr 2020 10:35:44 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id o23sm5166097ljh.63.2020.04.24.10.35.43
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Apr 2020 10:35:44 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id t11so8356341lfe.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:43 -0700 (PDT)
+X-Received: by 2002:a19:240a:: with SMTP id k10mr7152809lfk.30.1587749743463;
+ Fri, 24 Apr 2020 10:35:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87368uxa8x.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <3632016.1587744742@warthog.procyon.org.uk>
+In-Reply-To: <3632016.1587744742@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Apr 2020 10:35:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi_0Fye2U+AXjScpgd_hh=pFu3GJvgsUqCk-4=ckcHhhw@mail.gmail.com>
+Message-ID: <CAHk-=wi_0Fye2U+AXjScpgd_hh=pFu3GJvgsUqCk-4=ckcHhhw@mail.gmail.com>
+Subject: Re: [GIT PULL] afs: Miscellaneous fixes
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04/23, Eric W. Biederman wrote:
+On Fri, Apr 24, 2020 at 9:12 AM David Howells <dhowells@redhat.com> wrote:
 >
-> @@ -3360,20 +3360,8 @@ static struct tgid_iter next_tgid(struct pid_namespace *ns, struct tgid_iter ite
->  	pid = find_ge_pid(iter.tgid, ns);
->  	if (pid) {
->  		iter.tgid = pid_nr_ns(pid, ns);
-> -		iter.task = pid_task(pid, PIDTYPE_PID);
-> -		/* What we to know is if the pid we have find is the
-> -		 * pid of a thread_group_leader.  Testing for task
-> -		 * being a thread_group_leader is the obvious thing
-> -		 * todo but there is a window when it fails, due to
-> -		 * the pid transfer logic in de_thread.
-> -		 *
-> -		 * So we perform the straight forward test of seeing
-> -		 * if the pid we have found is the pid of a thread
-> -		 * group leader, and don't worry if the task we have
-> -		 * found doesn't happen to be a thread group leader.
-> -		 * As we don't care in the case of readdir.
-> -		 */
-> -		if (!iter.task || !has_group_leader_pid(iter.task)) {
-> +		iter.task = pid_task(pid, PIDTYPE_TGID);
-> +		if (!iter.task) {
->  			iter.tgid += 1;
->  			goto retry;
->  		}
+>  (3) Make a couple of waits uninterruptible if they're done for an
+>      operation that isn't supposed to be interruptible.
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+Should they not even be killable?
 
+Anyway, pulled.
+
+             Linus
