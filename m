@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F36D11B7181
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 12:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424C11B718C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 12:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbgDXKHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 06:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57918 "EHLO
+        id S1726900AbgDXKHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 06:07:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726289AbgDXKHU (ORCPT
+        by vger.kernel.org with ESMTP id S1726896AbgDXKHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 06:07:20 -0400
+        Fri, 24 Apr 2020 06:07:40 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F1DC09B045;
-        Fri, 24 Apr 2020 03:07:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92536C09B045;
+        Fri, 24 Apr 2020 03:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Tp5Mwh7r6IJcLAecCyqpJ/TIyjlhLNkCAk6T+XXKm0U=; b=eAhRMSwilNFW7B7zKTBZ5alNKJ
-        fPFREmSw0xGNKNBzK63sZg1a8xpj8CJScj/VFUbRZx1x1NAI5Fm7fHAmBMl5pyeTQfDWTF7DQOL7F
-        9HwgWkueNAYejVuEyAhJAeIYAjIkCNLaHnVj1NgOOu4ypyjJO7Ljcwh01WYh1enEfR8BfimD5u5jt
-        1E8TEyq8yUJRI5PdA8rSafyMhUwNbcAMeuv6b31PjFl3sqakCabOOS7qd85J6tc0bBViPQ4z8lZ5U
-        V4f1BYJ7HhnPZ6KQbVS5s8mc6eH1hUx4pjz0aVVffEu/E6MEjZhZNjVyidcCw7fHc8PGB3Xy3LI9X
-        bIz6dzRw==;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=JZ246RQwd02JYzuM1b+RWAonKx
+        DRZ7L+Vv8fdC9oP+Qbe+SeM4qP3NoV8X75zGRQ3J0NeMljNN0+vSO3MjrySZvCBqkMyyFL1YVqI5F
+        IT/0+sN9MLMAANiNydE4bIQQjyEWhXag+GtBIygYO3HwAfI+2F/aSKFzoDPTtXWif5SpyS+23Eo4P
+        J4JJI9q8pQYSbswH+r7P5uIvhlrkw4izX15do9nrtNODLbb4FZKxbCQpeTIz5iKNvtQzSCNnPCmOU
+        DVZaff8p6c92yuYhXj2w4y0IYHlRDm4n2zHRCYa9Scc0DL3BfRP4fKgbyk9+27p/gGhbuR1Ww8/m5
+        CKUJDv7g==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRvEt-0000Ni-Cx; Fri, 24 Apr 2020 10:07:19 +0000
-Date:   Fri, 24 Apr 2020 03:07:19 -0700
+        id 1jRvFE-0000TJ-AP; Fri, 24 Apr 2020 10:07:40 +0000
+Date:   Fri, 24 Apr 2020 03:07:40 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Ritesh Harjani <riteshh@linux.ibm.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -37,34 +37,20 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jan Kara <jack@suse.com>, tytso@mit.edu,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 1/2] fibmap: Warn and return an error in case of block >
- INT_MAX
-Message-ID: <20200424100719.GA456@infradead.org>
+Subject: Re: [PATCH 2/2] iomap: bmap: Remove the WARN and return the proper
+ block address
+Message-ID: <20200424100740.GB456@infradead.org>
 References: <cover.1587670914.git.riteshh@linux.ibm.com>
- <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
+ <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
+In-Reply-To: <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
-
-On Fri, Apr 24, 2020 at 12:52:17PM +0530, Ritesh Harjani wrote:
-> We better warn the fibmap user and not return a truncated and therefore
-> an incorrect block map address if the bmap() returned block address
-> is greater than INT_MAX (since user supplied integer pointer).
-> 
-> It's better to WARN all user of ioctl_fibmap() and return a proper error
-> code rather than silently letting a FS corruption happen if the user tries
-> to fiddle around with the returned block map address.
-> 
-> We fix this by returning an error code of -ERANGE and returning 0 as the
-> block mapping address in case if it is > INT_MAX.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
 Looks good,
 
