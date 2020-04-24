@@ -2,103 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6F31B6C6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 06:09:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CDC61B6D99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 07:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbgDXEJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 00:09:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725823AbgDXEJG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 00:09:06 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BB0C09B045;
-        Thu, 23 Apr 2020 21:09:06 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 497gf41Q18z9sSh;
-        Fri, 24 Apr 2020 14:09:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1587701344;
-        bh=3BTSk4sjDI4VDtA4QcqlpHfqwVft8oWPVuJUoLtTKek=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=peEcD9/Bx/jrDaJvgqEdcVpav38EIqqVX+s+YKbAT5kkoGuW/xPq4+kSCXgnISeFn
-         CI5Hidn4Pk65DerlY4HtBpI6ABpyKcXTrw37MuXZsJIGLHHYNMrZLTM3zB0NcYjmf6
-         WjhVpUqliNJoS2wdN6F5DRzNUE4eTN1ebklgBm0lDy9RHLeIHv/p2vsNcqRKmz+v8T
-         +Ql1Z+r53Pc7lcEqAI0NCFfCmarjNZnxdiKPQJjoBTjL8ZHbFtR2ofyYR5+s73QXNf
-         QeZUKsSRh6gIloNbM2yHq2qYoFfrwfvCNNekPdHP/PbCUdLkkYncOkwzw9E8HzMt96
-         l1DwO4qXJTeeQ==
-Date:   Fri, 24 Apr 2020 14:08:53 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Jakub Kicinski <kubakici@wp.pl>, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, maco@android.com, andy.gross@linaro.org,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        markivx@codeaurora.org, broonie@kernel.org,
-        dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] firmware_loader: re-export fw_fallback_config into
- firmware_loader's own namespace
-Message-ID: <20200424140853.5d001d8d@canb.auug.org.au>
-In-Reply-To: <20200424031959.GB11244@42.do-not-panic.com>
-References: <20200423203140.19510-1-mcgrof@kernel.org>
-        <20200423180544.60d12af0@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <20200424021420.GZ11244@42.do-not-panic.com>
-        <20200424131556.1dbe18aa@canb.auug.org.au>
-        <20200424031959.GB11244@42.do-not-panic.com>
+        id S1726577AbgDXFzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 01:55:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:40659 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbgDXFzR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 01:55:17 -0400
+IronPort-SDR: OTsL7GHDmk4IOlFPJ83MIa4CqvJUssd29nxNnaLHN5pwCaz41pHukT3NYNIvfQr0iLnnQfstY4
+ zBT+w+zgJHtw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 22:55:17 -0700
+IronPort-SDR: Wu2Yjz+iBs/lqXxpfWg5oqiMgwsxTdBMbyVV3M3en0Zx/O1+ymKy3bS2I+DKabJzGQWxyckY3f
+ R9LOgGSUyKjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,310,1583222400"; 
+   d="scan'208";a="280698972"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Apr 2020 22:55:17 -0700
+Date:   Thu, 23 Apr 2020 22:55:16 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH V10 04/11] Documentation/dax: Update Usage section
+Message-ID: <20200424055516.GD4088835@iweiny-DESK2.sc.intel.com>
+References: <20200422212102.3757660-1-ira.weiny@intel.com>
+ <20200422212102.3757660-5-ira.weiny@intel.com>
+ <20200423222720.GS27860@dread.disaster.area>
+ <20200423232548.GA4088835@iweiny-DESK2.sc.intel.com>
+ <20200424021516.GB2040@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wE.85jsJZ4nTyPbO82kgXnL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200424021516.GB2040@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/wE.85jsJZ4nTyPbO82kgXnL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 24, 2020 at 12:15:16PM +1000, Dave Chinner wrote:
+> On Thu, Apr 23, 2020 at 04:25:48PM -0700, Ira Weiny wrote:
 
-Hi Luis,
+[snap]
 
-On Fri, 24 Apr 2020 03:19:59 +0000 Luis Chamberlain <mcgrof@kernel.org> wro=
-te:
->
-> Cool, but once merged on Linus' tree, I think it gets yet-another-commit
-> ID right? So someone looking for:
+> > > > +        ii> If the file still does not have the desired S_DAX access
+> > > > +            mode, either unmount and remount the filesystem, or close
+> > > > +            the file and use drop_caches.
+> > > 
+> > > .... don't have permissions to do either of these things...
+> > > 
+> > > Essentially, you may as well say "reboot the machine" at this point,
+> > > because it's effectively the same thing from a production workload
+> > > point of view...
+> > > 
+> > > Realistically, I'm not sure we should even say "programs must cause
+> > > eviction", because that's something they cannot do directly without
+> > > admin privileges nor is it something we want to occur randomly on
+> > > production machines during production. i.e. this is something that
+> > > should only be done in scheduled downtime by an administrator, not
+> > > attempted by applications because DAX isn't immediately available.
+> > > The admin is in charge here, not the "program".
+> > 
+> > I agree with everything you say.
+> > 
+> > But I feel a bit stuck here.  Without some type of documentation we are not
+> > allowing FS_XFLAG_DAX to be changed on a file by the user.  Which is what we
+> > were proposing before and we all disliked.
+> 
+> For production systems, the admin is the "user" we are taking about.
+> The program itself shouldn't be choosing the method of file data
+> access; that's up to the administrator in charge of the system to
+> set the policy how they want it to be set.
+> 
+> i.e. there's a difference between the user/admin taking action to
+> change a data access policy, and the application taking actions to
+> override the policy that the admin has set.
+> 
+> What I'm trying to say is that setting/clearing the DAX flags is an
+> -admin operation-, and part of the consideration of that admin
+> operation is when the change should take effect.
+> 
+> i.e. refering to "programs" as if they control the access mode is
+> entirely the wrong way to be looking at persistent inode flags. They
+> are an administration policy mechanism that belongs to the data set,
+> not the application (or "program"). Managing data set storage and
+> access policy is something administrators do, not the application...
 
-No, Linus merges Greg's tree directly, so all the commits remain the same.
+Ok.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> > So I feel like we need to say something about getting the inodes evicted.
+> > perhaps by a 'drop cache' even requested of the admin???
+> > 
+> > Maybe this?
+> > 
+> > 
+> >  4. Programs that require a specific file access mode (DAX or not DAX)
+> >     can do one of the following:
+> > 
+> >     (a) Set the parent directory FS_XFLAG_DAX as needed before file are
+> >         created; or
+> > 
+> >     (b) Have the administrator set the desired behaviour via mount option; or
+> > 
+> >     (c) Set or clear the file's FS_XFLAG_DAX flag as needed and wait for the
+> >         inode to be evicted from memory.
+> > 
+> >         i> the only effective way of ensuring this is to request the admin drop
+> >            the file system caches.
+> 
+> 4. The DAX policy can be changed via:
+> 
+> 	a) Set the parent directory FS_XFLAG_DAX as needed before
+> 	   files are created
+> 
+> 	b) Set the appropriate dax="foo" mount option
+> 
+> 	c) Change the FS_XFLAG_DAX on existing regular files and
+> 	   directories. This has runtime constraints and limitations
+> 	   that are described in 5) below.
+> 
+> 5. When changing the DAX policy via toggling the persistent
+> FS_XFLAG_DAX flag, the change in behaviour for existing regular
+> files may not occur immediately. If the change must take effect
+> immediately, the administrator needs to:
+> 
+> 	1. stop the application so there are no active references to
+> 	   the data set the policy change will affect
+> 	2. evict the data set from kernel caches so it will be
+> 	   re-instantiated when the application is restarted. This can
+> 	   be acheived by:
+> 		a. drop-caches
+> 		b. a filesystem unmount and mount cycle
+> 		c. a system reboot
+> 
+> Hence if DAX access policy changes are required to take immediate
+> effect, scheduled system-wide downtime will be required to guarantee
+> the new policy change takes effect when the application is
+> restarted.
+> 
+> 
+> > <quote>
+> > Enabling DAX on xfs
+> > -------------------
+> > 
+> > Summary
+> > -------
+> > 
+> >  1. There exists an in-kernel file access mode flag S_DAX that corresponds to
+> >     the statx flag STATX_ATTR_DAX.  See the manpage for statx(2) for details
+> >     about this access mode.
+> > 
+> >  2. There exists a regular file and directory inode flag FS_XFLAG_DAX.  It is
+> >     inherited from the parent directory FS_XFLAG_DAX inode flag at creation
+> >     time.  This advisory flag can be set or cleared at any time, but doing so
+> >     does not immediately affect the S_DAX state.
+> 
+> 2. There exists a persistent flag FS_XFLAG_DAX that can be applied to
+> regular files and directories. This advisory flag can be set or
+> cleared at any time, but doing so does not immediately affect the
+> S_DAX state.
 
---Sig_/wE.85jsJZ4nTyPbO82kgXnL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Done.
 
------BEGIN PGP SIGNATURE-----
+> 
+> 3. If the persistent FS_XFLAG_DAX flag is set on a directory, this
+> flag will be inherited by all regular files and sub directories that
+> are subsequently created in this directory. Files and subdirectories
+> that exist at the time this flag is set or cleared on the parent
+> directory are not modified by this modification of the parent
+> directory.
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6iZlUACgkQAVBC80lX
-0GzmMwf/aZZRSQ8nx5S414xzj4iE0Cc6Ymxcx9fxaz1fG+4PEnYinI1lSIZiqtHX
-1vU1GzcYx+54L5lIfeUpUfGpVekVfUzvjVK08N5JSFbs+MSfNm21l0h3F3DRC07N
-pMzKd/YXwfil1rTlYWEDaGobkmKzVNM4XbbDT1mbNUa9zcD3QJLNy/gTiRpUKvI8
-3bIFzCEuP7wbGcK7DLJ6KpdoBSPG/T6rR7e5/fwOXT/1FEC2b94oIOy2aeofbT9p
-PiELaayXqS+8ysYVM5p9vB8hL5qskMhTFbR6G+77fc6VYqQl2yw6fjMNOi1lazdp
-yuWoF6kN2yFBV3bmD0YlpsOlyvcoDg==
-=zShb
------END PGP SIGNATURE-----
+Done.
 
---Sig_/wE.85jsJZ4nTyPbO82kgXnL--
+> 
+> > 
+> >  3. There exists dax mount options which can override FS_XFLAG_DAX in the
+> >     setting of the S_DAX flag.  Given underlying storage which supports DAX the
+> >     following hold.
+> > 
+> >     "-o dax=inode"  means "follow FS_XFLAG_DAX" and is the default.
+> > 
+> >     "-o dax=never"  means "never set S_DAX, ignore FS_XFLAG_DAX."
+> > 
+> >     "-o dax=always" means "always set S_DAX ignore FS_XFLAG_DAX."
+> > 
+> >     "-o dax"        is a legacy option which is an alias for "dax=always".
+> >     		    This may be removed in the future so "-o dax=always" is
+> > 		    the preferred method for specifying this behavior.
+> > 
+> >     NOTE: Setting and inheritance affect FS_XFLAG_DAX at all times even when
+> >     the file system is mounted with a dax option.  However, in-core inode
+> >     state (S_DAX) will continue to be overridden until the file system is
+> 
+> s/continue to//
+
+Done.
+
+> 
+> >     remounted with dax=inode and the inode is evicted.
+> 
+> evicted from kernel memory.
+
+Done.
+
+> 
+> > 
+> >  4. Programs that require a specific file access mode (DAX or not DAX)
+> >     can do one of the following:
+> > 
+> >     (a) Set the parent directory FS_XFLAG_DAX as needed before file are
+> >         created; or
+> > 
+> >     (b) Have the administrator set the desired behaviour via mount option; or
+> > 
+> >     (c) Set or clear the file's FS_XFLAG_DAX flag as needed and wait for the
+> >         inode to be evicted from memory.
+> > 
+> > 	i> the only effective way of ensuring this is to request the admin drop
+> > 	   the file system caches.
+> 
+> See my comments above.
+
+Done. thanks!
+
+> 
+> > 
+> > 
+> > Details
+> > -------
+> > 
+> > There are 2 per-file dax flags.  One is a persistent inode setting (FS_XFLAG_DAX)
+> > and the other is a volatile flag indicating the active state of the feature
+> > (S_DAX).
+> > 
+> > FS_XFLAG_DAX is preserved within the file system.  This persistent config
+> > setting can be set, cleared and/or queried using the FS_IOC_FS[GS]ETXATTR ioctl
+> > (see ioctl_xfs_fsgetxattr(2)) or an utility such as 'xfs_io'.
+> > 'chattr [-+]x'".
+> 
+> Stray line.
+
+Thanks for the review!  V11 should be out soon.
+
+Ira
+
+> 
+> Cheers,
+> 
+> Dave.
+> 
+> -- 
+> Dave Chinner
+> david@fromorbit.com
