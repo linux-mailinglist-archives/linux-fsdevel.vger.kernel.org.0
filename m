@@ -2,55 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD2C1B730D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 13:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FE0E1B7427
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 14:24:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbgDXL1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 07:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbgDXL1Y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 07:27:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D88C09B045;
-        Fri, 24 Apr 2020 04:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BaUnhm35mfRc1JfopP3T5A1oElwrEEtPp+xIJRuYYo4=; b=QiA54ST77KjVPv6mdDJJj6wZEa
-        AWqPVRGZ7+Z112KY06YZpGSENhgZOTIlroXEb9Mw42MrUh9mG9qsP647bC1USfTOJiLBqPaF4BbEn
-        9qjEX8vFB12X5O1wifC5UUMwRBqW0FQcu5H/Pp7ani0Gc7U/8CPADi0eHvK6/4noVlHDnGIMdJbSp
-        FAkSIc/3ybD2JKte+Ru5tbdyN5lSt7WMb/5mBK10D+kLR/yI/3hhO3NxpW2apYbM7kCMz6LvlaT7w
-        VRzBueYVMsozVr/r6XWekrSczlIwDH1zGwZsw5Ns8jlPkxHxNly99blm8B6S++2gBYlQqccRC15v7
-        x+9S/p0A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jRwUL-0007nc-Vm; Fri, 24 Apr 2020 11:27:21 +0000
-Date:   Fri, 24 Apr 2020 04:27:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Huacai Chen <chenhc@lemote.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>, linux-mips@vger.kernel.org
-Subject: Re: [PATCH] fs/seq_file.c: Rename the "Fill" label to avoid build
- failure
-Message-ID: <20200424112721.GE13910@bombadil.infradead.org>
-References: <1587716944-28250-1-git-send-email-chenhc@lemote.com>
+        id S1728487AbgDXMYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 08:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728477AbgDXMYi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 08:24:38 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C21920700;
+        Fri, 24 Apr 2020 12:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587731077;
+        bh=DHDc8HltG1BdWiLHKwuKbNTHzHVBSNJSqnUSXAbGIkY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZmCBCtmqZYFv9jo52Njgf/8cM5336w1GJDY6bfo0NPzIX8sQRYkq9ODyTZlCwUJqS
+         SUYhtyw9lsAgpCOz4VAt9lLGiEkhk5+DzxHdPGPQvm/f3cSiF+aYDxZjsCpyk5yZbT
+         TN+9MgV7kENYUapNUWjsqfg2gM0yAfQy41nidSu0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Roman Gushchin <guro@fb.com>, Andreas Dilger <adilger@dilger.ca>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 14/21] ext4: use non-movable memory for superblock readahead
+Date:   Fri, 24 Apr 2020 08:24:12 -0400
+Message-Id: <20200424122419.10648-14-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200424122419.10648-1-sashal@kernel.org>
+References: <20200424122419.10648-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1587716944-28250-1-git-send-email-chenhc@lemote.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 04:29:04PM +0800, Huacai Chen wrote:
-> MIPS define a "Fill" macro as a cache operation in cacheops.h, this
-> will cause build failure under some special configurations. To avoid
-> this failure we rename the "Fill" label in seq_file.c.
+From: Roman Gushchin <guro@fb.com>
 
-You should rename the Fill macro in the mips header instead.
-I'd suggest Fill_R4000 of R4000_Fill.
+[ Upstream commit d87f639258a6a5980183f11876c884931ad93da2 ]
+
+Since commit a8ac900b8163 ("ext4: use non-movable memory for the
+superblock") buffers for ext4 superblock were allocated using
+the sb_bread_unmovable() helper which allocated buffer heads
+out of non-movable memory blocks. It was necessarily to not block
+page migrations and do not cause cma allocation failures.
+
+However commit 85c8f176a611 ("ext4: preload block group descriptors")
+broke this by introducing pre-reading of the ext4 superblock.
+The problem is that __breadahead() is using __getblk() underneath,
+which allocates buffer heads out of movable memory.
+
+It resulted in page migration failures I've seen on a machine
+with an ext4 partition and a preallocated cma area.
+
+Fix this by introducing sb_breadahead_unmovable() and
+__breadahead_gfp() helpers which use non-movable memory for buffer
+head allocations and use them for the ext4 superblock readahead.
+
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Fixes: 85c8f176a611 ("ext4: preload block group descriptors")
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Link: https://lore.kernel.org/r/20200229001411.128010-1-guro@fb.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/buffer.c                 | 11 +++++++++++
+ fs/ext4/inode.c             |  2 +-
+ fs/ext4/super.c             |  2 +-
+ include/linux/buffer_head.h |  8 ++++++++
+ 4 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index bdca7b10e239b..cae7f24a0410e 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1398,6 +1398,17 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
+ }
+ EXPORT_SYMBOL(__breadahead);
+ 
++void __breadahead_gfp(struct block_device *bdev, sector_t block, unsigned size,
++		      gfp_t gfp)
++{
++	struct buffer_head *bh = __getblk_gfp(bdev, block, size, gfp);
++	if (likely(bh)) {
++		ll_rw_block(REQ_OP_READ, REQ_RAHEAD, 1, &bh);
++		brelse(bh);
++	}
++}
++EXPORT_SYMBOL(__breadahead_gfp);
++
+ /**
+  *  __bread_gfp() - reads a specified block and returns the bh
+  *  @bdev: the block_device to read from
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 10838b28c5bbd..c8a1c68c33ae5 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4593,7 +4593,7 @@ static int __ext4_get_inode_loc(struct inode *inode,
+ 			if (end > table)
+ 				end = table;
+ 			while (b <= end)
+-				sb_breadahead(sb, b++);
++				sb_breadahead_unmovable(sb, b++);
+ 		}
+ 
+ 		/*
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index f5646bcad7702..074b9d43e24d8 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4145,7 +4145,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* Pre-read the descriptors into the buffer cache */
+ 	for (i = 0; i < db_count; i++) {
+ 		block = descriptor_loc(sb, logical_sb_block, i);
+-		sb_breadahead(sb, block);
++		sb_breadahead_unmovable(sb, block);
+ 	}
+ 
+ 	for (i = 0; i < db_count; i++) {
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index afa37f807f12c..2e1077ea77db0 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -187,6 +187,8 @@ struct buffer_head *__getblk_gfp(struct block_device *bdev, sector_t block,
+ void __brelse(struct buffer_head *);
+ void __bforget(struct buffer_head *);
+ void __breadahead(struct block_device *, sector_t block, unsigned int size);
++void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
++		  gfp_t gfp);
+ struct buffer_head *__bread_gfp(struct block_device *,
+ 				sector_t block, unsigned size, gfp_t gfp);
+ void invalidate_bh_lrus(void);
+@@ -319,6 +321,12 @@ sb_breadahead(struct super_block *sb, sector_t block)
+ 	__breadahead(sb->s_bdev, block, sb->s_blocksize);
+ }
+ 
++static inline void
++sb_breadahead_unmovable(struct super_block *sb, sector_t block)
++{
++	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
++}
++
+ static inline struct buffer_head *
+ sb_getblk(struct super_block *sb, sector_t block)
+ {
+-- 
+2.20.1
+
