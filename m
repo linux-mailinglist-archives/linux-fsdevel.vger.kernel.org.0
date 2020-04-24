@@ -2,79 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C761B7CF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40A81B7D1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbgDXRgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 13:36:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728850AbgDXRfr (ORCPT
+        id S1728876AbgDXRjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 13:39:40 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56026 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727796AbgDXRji (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 13:35:47 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCEEC09B04B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:46 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id u6so10781759ljl.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=17Kg1dRas/M0sQXVRI4F1cdrQ//6hjmUk/mclI6heeY=;
-        b=d+qcaZcbU1H0AzDGp+UTOcPWUOR9HjuA25jpYxyTWS0ttqCFnGFEDZb7W8gtA+8q7Q
-         DUnPsJgjbJ8jo2hCYbfGpWCBX4F5xcNqH+cIGSxuDfBaMWgLONIW6hJ8WQHyGftwdtXB
-         H8XP2ZEiiiYTC5NDB9zm0db/DQyW0/Ezlxt8k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=17Kg1dRas/M0sQXVRI4F1cdrQ//6hjmUk/mclI6heeY=;
-        b=b4+dMJeS7y6kZ61Bd3rLMrS2jou06ZKfP0EIzQyaoNbWKGmuAzXQj/CBLfumXe9NwY
-         qpmwwv3pzpzRsU2cOjeY8hW+SuthDFkwqVuD3QHBrYTpDeLLdAxrsD+3Lxc4cKaGrrB/
-         9UxPVPwME3CgJ9hmhd/6az5hiDzjAJmvfDtD3RaooOb5hM0Pfp/AJ/wNmu43gv7ILMrh
-         G0CuRCO5+qhzw8jHNZLbErQjKyy6ptf57p/8zeyigQYwAaH/ayISWFpJfy29bnoP3e2X
-         Byy9Y/BmYRaqfEZa0YUvPpzehCDFmsNt00wztoU1yMyUxK9WZYHgmGvJw6sD1mY+U+iM
-         9aNw==
-X-Gm-Message-State: AGi0PublKcAmyTwy9419lKK3x9FEL4xoidEnA6asGj+sf3eJNjHmqYLz
-        j5Lwhh3LJxL+eztwXR6CeFYOqWJdVQY=
-X-Google-Smtp-Source: APiQypIFlpX5HciQhusw5TwvNjOIV2R4vjSSJa9UYp2i/ms0X+5xj0tgT2Ys0mg5N1sTUG2mHda/Pg==
-X-Received: by 2002:a2e:8752:: with SMTP id q18mr6529420ljj.72.1587749744714;
-        Fri, 24 Apr 2020 10:35:44 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id o23sm5166097ljh.63.2020.04.24.10.35.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2020 10:35:44 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id t11so8356341lfe.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 10:35:43 -0700 (PDT)
-X-Received: by 2002:a19:240a:: with SMTP id k10mr7152809lfk.30.1587749743463;
- Fri, 24 Apr 2020 10:35:43 -0700 (PDT)
+        Fri, 24 Apr 2020 13:39:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587749977;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZgQK9XAbwzLmLV+qfkziGOTjqm2qDmPdwhUEm9j9Saw=;
+        b=NV04DR+MnPuM/6LzAMtZuowx6YwAOD0b+iqpx7rdMkoIAfNY/knm5PIFqV8VoCjyNHhlIa
+        R2EdnXxGlszPYdz/P9XbQLx/+40tfP1q9waEYs/3+pzqZvShFM745qaMqV8LZcN14Wgb+4
+        YQax+CjzHv+QaInljsOXkvCURq7kaEs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-sMY4QfKLNsezFEmtfeffSA-1; Fri, 24 Apr 2020 13:39:33 -0400
+X-MC-Unique: sMY4QfKLNsezFEmtfeffSA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA670800D24;
+        Fri, 24 Apr 2020 17:39:31 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A6B311001B2C;
+        Fri, 24 Apr 2020 17:39:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 Apr 2020 19:39:31 +0200 (CEST)
+Date:   Fri, 24 Apr 2020 19:39:28 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid
+ exactly
+Message-ID: <20200424173927.GB26802@redhat.com>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+ <87ftcv1nqe.fsf@x220.int.ebiederm.org>
+ <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <3632016.1587744742@warthog.procyon.org.uk>
-In-Reply-To: <3632016.1587744742@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 24 Apr 2020 10:35:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_0Fye2U+AXjScpgd_hh=pFu3GJvgsUqCk-4=ckcHhhw@mail.gmail.com>
-Message-ID: <CAHk-=wi_0Fye2U+AXjScpgd_hh=pFu3GJvgsUqCk-4=ckcHhhw@mail.gmail.com>
-Subject: Re: [GIT PULL] afs: Miscellaneous fixes
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 9:12 AM David Howells <dhowells@redhat.com> wrote:
+On 04/23, Eric W. Biederman wrote:
 >
->  (3) Make a couple of waits uninterruptible if they're done for an
->      operation that isn't supposed to be interruptible.
+> When the thread group leader changes during exec and the old leaders
+> thread is reaped proc_flush_pid
 
-Should they not even be killable?
+This is off-topic, but let me mention this before I forget...
 
-Anyway, pulled.
+Note that proc_flush_pid() does nothing if CONFIG_PROC_FS=n, this mean
+that in this case release_task() leaks thread_pid.
 
-             Linus
+> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
+> +{
+> +	/* pid_links[PIDTYPE_PID].next is always NULL */
+> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
+> +	struct pid *opid = READ_ONCE(otask->thread_pid);
+> +
+> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
+> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
+> +	rcu_assign_pointer(ntask->thread_pid, opid);
+> +	rcu_assign_pointer(otask->thread_pid, npid);
+> +	WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
+> +	WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
+> +	WRITE_ONCE(ntask->pid, pid_nr(opid));
+> +	WRITE_ONCE(otask->pid, pid_nr(npid));
+> +}
+
+Oh, at first glance this breaks posix-cpu-timers.c:lookup_task(), the last
+user of has_group_leader_pid().
+
+I think that we should change lookup_task() to return "struct *pid", this
+should simplify the code... Note that none of its callers needs task_struct.
+
+And, instead of thread_group_leader/has_group_leader_pid checks we should
+use pid_has_task(TGID).
+
+After that, this patch should kill has_group_leader_pid().
+
+What do you think?
+
+Oleg.
+
