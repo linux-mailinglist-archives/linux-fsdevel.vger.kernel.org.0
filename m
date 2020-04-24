@@ -2,201 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB13D1B6BFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 05:36:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6F31B6C6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 06:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgDXDgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Apr 2020 23:36:17 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:37994 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgDXDgR (ORCPT
+        id S1726126AbgDXEJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 00:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725823AbgDXEJG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Apr 2020 23:36:17 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRp8S-0003fD-Ei; Thu, 23 Apr 2020 21:36:16 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRp8R-0007ZJ-Fb; Thu, 23 Apr 2020 21:36:16 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
-        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
-        <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-        <CAHk-=wgXEJdkgGzZQzBDGk7ijjVdAVXe=G-mkFSVng_Hpwd4tQ@mail.gmail.com>
-Date:   Thu, 23 Apr 2020 22:33:06 -0500
-In-Reply-To: <CAHk-=wgXEJdkgGzZQzBDGk7ijjVdAVXe=G-mkFSVng_Hpwd4tQ@mail.gmail.com>
-        (Linus Torvalds's message of "Thu, 23 Apr 2020 13:28:18 -0700")
-Message-ID: <87tv19tv65.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 24 Apr 2020 00:09:06 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BB0C09B045;
+        Thu, 23 Apr 2020 21:09:06 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 497gf41Q18z9sSh;
+        Fri, 24 Apr 2020 14:09:00 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1587701344;
+        bh=3BTSk4sjDI4VDtA4QcqlpHfqwVft8oWPVuJUoLtTKek=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=peEcD9/Bx/jrDaJvgqEdcVpav38EIqqVX+s+YKbAT5kkoGuW/xPq4+kSCXgnISeFn
+         CI5Hidn4Pk65DerlY4HtBpI6ABpyKcXTrw37MuXZsJIGLHHYNMrZLTM3zB0NcYjmf6
+         WjhVpUqliNJoS2wdN6F5DRzNUE4eTN1ebklgBm0lDy9RHLeIHv/p2vsNcqRKmz+v8T
+         +Ql1Z+r53Pc7lcEqAI0NCFfCmarjNZnxdiKPQJjoBTjL8ZHbFtR2ofyYR5+s73QXNf
+         QeZUKsSRh6gIloNbM2yHq2qYoFfrwfvCNNekPdHP/PbCUdLkkYncOkwzw9E8HzMt96
+         l1DwO4qXJTeeQ==
+Date:   Fri, 24 Apr 2020 14:08:53 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Jakub Kicinski <kubakici@wp.pl>, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, maco@android.com, andy.gross@linaro.org,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        markivx@codeaurora.org, broonie@kernel.org,
+        dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] firmware_loader: re-export fw_fallback_config into
+ firmware_loader's own namespace
+Message-ID: <20200424140853.5d001d8d@canb.auug.org.au>
+In-Reply-To: <20200424031959.GB11244@42.do-not-panic.com>
+References: <20200423203140.19510-1-mcgrof@kernel.org>
+        <20200423180544.60d12af0@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <20200424021420.GZ11244@42.do-not-panic.com>
+        <20200424131556.1dbe18aa@canb.auug.org.au>
+        <20200424031959.GB11244@42.do-not-panic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jRp8R-0007ZJ-Fb;;;mid=<87tv19tv65.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+K74FabDAcvn7I1S0sCNkQEUS9knirSzk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 605 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 12 (2.0%), b_tie_ro: 10 (1.7%), parse: 1.23
-        (0.2%), extract_message_metadata: 17 (2.9%), get_uri_detail_list: 3.8
-        (0.6%), tests_pri_-1000: 22 (3.7%), tests_pri_-950: 1.27 (0.2%),
-        tests_pri_-900: 1.00 (0.2%), tests_pri_-90: 123 (20.3%), check_bayes:
-        120 (19.8%), b_tokenize: 11 (1.8%), b_tok_get_all: 56 (9.3%),
-        b_comp_prob: 3.2 (0.5%), b_tok_touch_all: 46 (7.7%), b_finish: 0.90
-        (0.1%), tests_pri_0: 414 (68.4%), check_dkim_signature: 0.61 (0.1%),
-        check_dkim_adsp: 2.3 (0.4%), poll_dns_idle: 0.34 (0.1%), tests_pri_10:
-        3.0 (0.5%), tests_pri_500: 7 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid exactly
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; boundary="Sig_/wE.85jsJZ4nTyPbO82kgXnL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+--Sig_/wE.85jsJZ4nTyPbO82kgXnL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Apr 23, 2020 at 12:42 PM Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->>
->> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
->> +{
->> +       /* pid_links[PIDTYPE_PID].next is always NULL */
->> +       struct pid *npid = READ_ONCE(ntask->thread_pid);
->> +       struct pid *opid = READ_ONCE(otask->thread_pid);
->> +
->> +       rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
->> +       rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
->> +       rcu_assign_pointer(ntask->thread_pid, opid);
->> +       rcu_assign_pointer(otask->thread_pid, npid);
->> +       WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
->> +       WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
->> +       WRITE_ONCE(ntask->pid, pid_nr(opid));
->> +       WRITE_ONCE(otask->pid, pid_nr(npid));
->> +}
->
-> This function is _very_ hard to read as written.
->
-> It really wants a helper function to do the swapping per hlist_head
-> and hlist_node, I think. And "opid/npid" is very hard to see, and the
-> naming doesn't make much sense (if it's an "exchange", then why is it
-> "old/new" - they're symmetric).
->
-> At least something like
->
->         struct hlist_head *old_pid_hlist = opid->tasks + PIDTYPE_PID;
->         struct hlist_head *new_pid_hlist = npid->tasks + PIDTYPE_PID;
->         struct hlist_node *old_pid_node = otask->pid_links + PIDTYPE_PID;
->         struct hlist_node *new_pid_node = ntask->pid_links + PIDTYPE_PID;
->
->         struct hlist_node *old_first_node = old_pid_hlist->first;
->         struct hlist_node *new_first_node = new_pid_hlist->first;
->
-> and then trying to group up the first/pprev/thread_pid/pid  accesses
-> so that you them together, and using a helper function that does the
-> whole switch, so that you'd have
->
->         /* Move new node to old hlist, and update thread_pid/pid fields */
->         insert_pid_pointers(old_pid_hlist, new_pid_node, new_first_node);
->         rcu_assign_pointer(ntask->thread_pid, opid);
->         WRITE_ONCE(ntask->pid, pid_nr(opid));
->
->         /* Move old new to new hlist, and update thread_pid/pid fields */
->         insert_pid_pointers(new_pid_hlist, old_pid_node, old_first_node);
->         rcu_assign_pointer(otask->thread_pid, npid);
->         WRITE_ONCE(otask->pid, pid_nr(npid));
->
-> or something roughly like that.
->
-> (And the above still uses "old/new", which as mentioned sounds wrong
-> to me. Maybe it should just be "a_xyz" and "b_xyz"? Also note that I
-> did this in my MUA, so I could have gotten the names and types wrong
-> etc).
->
-> I think that would make it look at least _slightly_ less like random
-> line noise and easier to follow.
->
-> But maybe even a rcu_hlist_swap() helper? We have one for regular
-> lists. Do we really have to do it all written out, not do it with a
-> "remove and reinsert" model?
+Hi Luis,
 
-At one point my brain I had forgetten that xchg can not take two memory
-arguments and had hoped to be able to provide stronger guarnatees than I
-can.  Which is where I think the structure of exchange_pids came from.
+On Fri, 24 Apr 2020 03:19:59 +0000 Luis Chamberlain <mcgrof@kernel.org> wro=
+te:
+>
+> Cool, but once merged on Linus' tree, I think it gets yet-another-commit
+> ID right? So someone looking for:
 
-I do agree the clearer we can write things, the easier it is for
-someone else to come along and follow.
+No, Linus merges Greg's tree directly, so all the commits remain the same.
 
-We can not use a remove and reinser model because that does break rcu
-accesses, and complicates everything else.  With a swap model we have
-the struct pids pointer at either of the tasks that are swapped but
-never at nothing.  With a remove/reinsert model we have to deal the
-addittional possibility of the pids not pointing at a thread at all
-which can result in things like signals not being delivered at all.
+--=20
+Cheers,
+Stephen Rothwell
 
-I played with it a bit and the best I have been able to come up is:
+--Sig_/wE.85jsJZ4nTyPbO82kgXnL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-	void hlist_swap_before_rcu(struct hlist_node *left, struct hlist_node *right)
-	{
-		struct hlist_node **lpprev = left->pprev;
-		struct hlist_node **rpprev = right->pprev;
-	
-		rcu_assign_pointer(*lpprev, right);
-		rcu_assign_pointer(*rpprev, left);
-		WRITE_ONCE(left->pprev,  rpprev);
-		WRITE_ONCE(right->pprev, lpprev);
-	}
-	
-	void exchange_tids(struct task_struct *left, struct task_struct *right)
-	{
-		struct hlist_node *lnode = &left->pid_links[PIDTYPE_PID];
-		struct hlist_node *rnode = &right->pid_links[PIDTYPE_PID];
-		struct pid *lpid, *rpid;
-	
-		/* Replace the single entry tid lists with each other */
-		hlist_swap_before_rcu(lnode, rnode);
+-----BEGIN PGP SIGNATURE-----
 
-		/* Swap thread_pid */
-		rpid = left->thread_pid;
-		lpid = right->thread_pid;
-		rcu_assign_pointer(left->thread_pid, lpid);
-		rcu_assign_pointer(right->thread_pid, rpid);
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6iZlUACgkQAVBC80lX
+0GzmMwf/aZZRSQ8nx5S414xzj4iE0Cc6Ymxcx9fxaz1fG+4PEnYinI1lSIZiqtHX
+1vU1GzcYx+54L5lIfeUpUfGpVekVfUzvjVK08N5JSFbs+MSfNm21l0h3F3DRC07N
+pMzKd/YXwfil1rTlYWEDaGobkmKzVNM4XbbDT1mbNUa9zcD3QJLNy/gTiRpUKvI8
+3bIFzCEuP7wbGcK7DLJ6KpdoBSPG/T6rR7e5/fwOXT/1FEC2b94oIOy2aeofbT9p
+PiELaayXqS+8ysYVM5p9vB8hL5qskMhTFbR6G+77fc6VYqQl2yw6fjMNOi1lazdp
+yuWoF6kN2yFBV3bmD0YlpsOlyvcoDg==
+=zShb
+-----END PGP SIGNATURE-----
 
-                /* Swap the cached pid value */
-		WRITE_ONCE(left->pid, pid_nr(lpid));
-		WRITE_ONCE(right->pid, pid_nr(rpid));
-	}
-
-hlists because they are not doubly linked can legitimately swap their
-beginnings or their tails.  Something that regular lists can not,
-and I think that is exactly the general purpose semantic I want.
-
-Does that look a little more readable?
-
-Eric
+--Sig_/wE.85jsJZ4nTyPbO82kgXnL--
