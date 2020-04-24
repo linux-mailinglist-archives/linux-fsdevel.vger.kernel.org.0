@@ -2,171 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 013711B7D75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 20:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0741B7DA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 20:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbgDXSC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 14:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726908AbgDXSC4 (ORCPT
+        id S1728816AbgDXSNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 14:13:54 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:47536 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbgDXSNy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 14:02:56 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDF3C09B048
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 11:02:56 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id j14so8434463lfg.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 11:02:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z13IEYz83XdBeUibWdG7wclkW3og2+VosmLRfwAtAdA=;
-        b=WsMshc2mIdVUt3yh9Dd3vA9NAUPuyxr+K526tt3N6H9SWCUwoLVukf7frGTwCg48QE
-         DZUzz3sWj1a8QHzrAGEPyboToxOGmPzCgGA1IDa8Ud0ufbf5qTjMtiFJwutkwG32h2SQ
-         ovIx45Wunn4iKR1DL6i7Xis6NIaAz1s2wwEGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z13IEYz83XdBeUibWdG7wclkW3og2+VosmLRfwAtAdA=;
-        b=Tsv93eZmKQG6+wTuDCvbDgb8OZHxNKKy4uih9c+/PgFMwJoor20BK7PQn5dDVBAokA
-         +HiRudS9Am7RDmoprS8GwuzrrYGcKmftx0QaxPz45cC3aXO4BdL/k8fq79mSFkRUeDf0
-         B85foS86w4w6NL1OZVxJkbn+r8jj3aE6kaAoqGy9yR+fY8ExlffP8e2Qu4djD68MJd13
-         4p8XSBvel7vRICH/7Vgh8y4rGBzWHESftMfzDk2H7ZXGwP78jYoPJFmsN2lVIJcex9mi
-         URKvLGlYeimICO2sHS5cOOz0T4GirZjeCmUY6VATD49OFTjfWHnKagxlnins2i1O9vFz
-         UY3g==
-X-Gm-Message-State: AGi0PuaLerP3X+5SVBzgHF7DtNsNjc+jgD8+4qR6hlQGoQhB2uyj77Nx
-        zjFp07piqBZBsOv8LPsPg0hFBt75W2U=
-X-Google-Smtp-Source: APiQypLYRl27CB1UNrGnJkNu9NKaVszNpxVY/F//+h7b8mEIA1abAOQ6QzV7l9thkS20GEAiF6qwjQ==
-X-Received: by 2002:a05:6512:31c1:: with SMTP id j1mr7235795lfe.14.1587751373601;
-        Fri, 24 Apr 2020 11:02:53 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id x29sm4880078lfn.64.2020.04.24.11.02.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2020 11:02:52 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id a21so10882117ljb.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 11:02:52 -0700 (PDT)
-X-Received: by 2002:a2e:814e:: with SMTP id t14mr6506692ljg.204.1587751371830;
- Fri, 24 Apr 2020 11:02:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
- <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
- <CAHk-=wgXEJdkgGzZQzBDGk7ijjVdAVXe=G-mkFSVng_Hpwd4tQ@mail.gmail.com> <87tv19tv65.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87tv19tv65.fsf@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 24 Apr 2020 11:02:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj-K3fqdMr-r8WgS8RKPuZOuFbPXCEUe9APrdShn99xsA@mail.gmail.com>
-Message-ID: <CAHk-=wj-K3fqdMr-r8WgS8RKPuZOuFbPXCEUe9APrdShn99xsA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid exactly
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
+        Fri, 24 Apr 2020 14:13:54 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jS2pk-0001i0-LL; Fri, 24 Apr 2020 12:13:52 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jS2pi-0008NB-5O; Fri, 24 Apr 2020 12:13:52 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Alexey Gladkov <legion@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
+        <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
+        <20200424173927.GB26802@redhat.com>
+Date:   Fri, 24 Apr 2020 13:10:40 -0500
+In-Reply-To: <20200424173927.GB26802@redhat.com> (Oleg Nesterov's message of
+        "Fri, 24 Apr 2020 19:39:28 +0200")
+Message-ID: <87h7x8sqjj.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jS2pi-0008NB-5O;;;mid=<87h7x8sqjj.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18vFbjen3QEL+8U6HAHWr3unr7JC5DnSxc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,NO_DNS_FOR_FROM,T_TM2_M_HEADER_IN_MSG,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4986]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 NO_DNS_FOR_FROM DNS: Envelope sender has no MX or A DNS records
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1699 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.6 (0.3%), b_tie_ro: 3.2 (0.2%), parse: 1.08
+        (0.1%), extract_message_metadata: 4.5 (0.3%), get_uri_detail_list: 2.2
+        (0.1%), tests_pri_-1000: 2.2 (0.1%), tests_pri_-950: 1.08 (0.1%),
+        tests_pri_-900: 0.85 (0.0%), tests_pri_-90: 61 (3.6%), check_bayes: 60
+        (3.5%), b_tokenize: 6 (0.3%), b_tok_get_all: 7 (0.4%), b_comp_prob:
+        1.76 (0.1%), b_tok_touch_all: 43 (2.5%), b_finish: 0.68 (0.0%),
+        tests_pri_0: 1606 (94.5%), check_dkim_signature: 0.38 (0.0%),
+        check_dkim_adsp: 1228 (72.3%), poll_dns_idle: 1225 (72.1%),
+        tests_pri_10: 2.6 (0.2%), tests_pri_500: 7 (0.4%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid exactly
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 8:36 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> On 04/23, Eric W. Biederman wrote:
+>>
+>> When the thread group leader changes during exec and the old leaders
+>> thread is reaped proc_flush_pid
 >
-> At one point my brain I had forgetten that xchg can not take two memory
-> arguments and had hoped to be able to provide stronger guarnatees than I
-> can.  Which is where I think the structure of exchange_pids came from.
-
-Note that even if we were to have a "exchange two memory locations
-atomically" instruction (and we don't - even a "double cmpxchg" is
-actually just a double-_sized_ one, not a two different locations
-one), I'm not convinced it makes sense.
-
-There's no way to _walk_ two lists atomically. Any user will only ever
-walk one or the other, so it's not sensible to try to make the two
-list updates be atomic.
-
-And if a user for some reason walks both, the walking itself will
-obviously then be racy - it does one or the other first, and can see
-either the old state, or the new state - or see _neither_ (ie if you
-walk it twice, you might see neither task, or you might see both, just
-depending on order or walk).
-
-> I do agree the clearer we can write things, the easier it is for
-> someone else to come along and follow.
-
-Your alternate write of the function seems a bit more readable to me,
-even if the main effect might be just that it was split up a bit and
-added a few comments and whitespace.
-
-So I'm more happier with that one. That said:
-
-> We can not use a remove and reinser model because that does break rcu
-> accesses, and complicates everything else.  With a swap model we have
-> the struct pids pointer at either of the tasks that are swapped but
-> never at nothing.
-
-I'm not suggesting removing the pid entirely - like making task->pid
-be NULL. I'm literally suggesting just doing the RCU list operations
-as "remove and re-insert".
-
-And that shouldn't break anything, for the same reason that an atomic
-exchange doesn't make sense: you can only ever walk one of the lists
-at a time. And regardless of how you walk it, you might not see the
-new state (or the old state) reliably.
-
-Put another way:
-
->         void hlist_swap_before_rcu(struct hlist_node *left, struct hlist_node *right)
->         {
->                 struct hlist_node **lpprev = left->pprev;
->                 struct hlist_node **rpprev = right->pprev;
+> This is off-topic, but let me mention this before I forget...
 >
->                 rcu_assign_pointer(*lpprev, right);
->                 rcu_assign_pointer(*rpprev, left);
+> Note that proc_flush_pid() does nothing if CONFIG_PROC_FS=n, this mean
+> that in this case release_task() leaks thread_pid.
 
-These are the only two assignments that matter for anything that walks
-the list (the pprev ones are for things that change the list, and they
-have to have exclusions in place).
+Good catch.  Wow.  I seem to be introducing almost as many bugs as I am
+fixing right now.  Ouch.
 
-And those two writes cannot be atomic anyway, so you fundamentally
-will always be in the situation that a walker can miss one of the
-tasks.
-
-Which is why I think it would be ok to just do the RCU list swap as a
-"remove left, remove right, add left, add right" operation. It doesn't
-seem fundamentally different to a walker than the "switch left/right"
-operation, and it seems much simpler.
-
-Is there something I'm missing?
-
-But I'm *not* suggesting that we change these simple parts to be
-"remove thread_pid or pid pointer, and then insert a new one":
-
->                 /* Swap thread_pid */
->                 rpid = left->thread_pid;
->                 lpid = right->thread_pid;
->                 rcu_assign_pointer(left->thread_pid, lpid);
->                 rcu_assign_pointer(right->thread_pid, rpid);
+>> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
+>> +{
+>> +	/* pid_links[PIDTYPE_PID].next is always NULL */
+>> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
+>> +	struct pid *opid = READ_ONCE(otask->thread_pid);
+>> +
+>> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
+>> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
+>> +	rcu_assign_pointer(ntask->thread_pid, opid);
+>> +	rcu_assign_pointer(otask->thread_pid, npid);
+>> +	WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
+>> +	WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
+>> +	WRITE_ONCE(ntask->pid, pid_nr(opid));
+>> +	WRITE_ONCE(otask->pid, pid_nr(npid));
+>> +}
 >
->                 /* Swap the cached pid value */
->                 WRITE_ONCE(left->pid, pid_nr(lpid));
->                 WRITE_ONCE(right->pid, pid_nr(rpid));
->         }
+> Oh, at first glance this breaks posix-cpu-timers.c:lookup_task(), the last
+> user of has_group_leader_pid().
+>
+> I think that we should change lookup_task() to return "struct *pid", this
+> should simplify the code... Note that none of its callers needs task_struct.
+>
+> And, instead of thread_group_leader/has_group_leader_pid checks we should
+> use pid_has_task(TGID).
 
-because I agree that for things that don't _walk_ the list, but just
-look up "thread_pid" vs "pid" atomically but asynchronously, we
-obviously need to get one or the other, not some kind of "empty"
-state.
+Somehow I thought we could get away without fiddling with that right
+now, but on second glance I can see the races.
 
-> Does that look a little more readable?
+I played with this earlier and I agree returning a struct pid *
+is desirable.  I will see if I can track down the patches I was
+playing with as that definitely needs to get fixed first.
 
-Regardless, I find your new version at least a lot more readable, so
-I'm ok with it.
+> After that, this patch should kill has_group_leader_pid().
+>
+> What do you think?
 
-It looks like Oleg found an independent issue, though.
+I agree completely.  has_group_leader_pid is the same as
+thread_group_leader after this so should be removed.  Especially as it
+won't have any users.
 
-                  Linus
+There are several other potential cleanups as well.  Such as not
+using a hlist for PIDTYPE_PID.  Which would allow us to run the hlists
+through struct signal_struct instead.  I think that would clean things
+up but that touches so many things it may just be pointless code churn.
+
+Just for mentioning I am thinking we should rename PIDTYPE_PID to
+PIDTYPE_TID just to create a distance in peoples minds between
+the kernel concepts and the user space concepts.
+
+Eric
+
