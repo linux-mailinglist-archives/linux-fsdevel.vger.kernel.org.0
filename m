@@ -2,104 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E40A81B7D1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3485F1B7D49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 19:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbgDXRjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 13:39:40 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56026 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727796AbgDXRji (ORCPT
+        id S1728508AbgDXRu2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 13:50:28 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41486 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbgDXRu2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 13:39:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587749977;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZgQK9XAbwzLmLV+qfkziGOTjqm2qDmPdwhUEm9j9Saw=;
-        b=NV04DR+MnPuM/6LzAMtZuowx6YwAOD0b+iqpx7rdMkoIAfNY/knm5PIFqV8VoCjyNHhlIa
-        R2EdnXxGlszPYdz/P9XbQLx/+40tfP1q9waEYs/3+pzqZvShFM745qaMqV8LZcN14Wgb+4
-        YQax+CjzHv+QaInljsOXkvCURq7kaEs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-sMY4QfKLNsezFEmtfeffSA-1; Fri, 24 Apr 2020 13:39:33 -0400
-X-MC-Unique: sMY4QfKLNsezFEmtfeffSA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA670800D24;
-        Fri, 24 Apr 2020 17:39:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.22])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A6B311001B2C;
-        Fri, 24 Apr 2020 17:39:29 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 24 Apr 2020 19:39:31 +0200 (CEST)
-Date:   Fri, 24 Apr 2020 19:39:28 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 2/2] proc: Ensure we see the exit of each process tid
- exactly
-Message-ID: <20200424173927.GB26802@redhat.com>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
- <87ftcv1nqe.fsf@x220.int.ebiederm.org>
- <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
+        Fri, 24 Apr 2020 13:50:28 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03OHmomj134954;
+        Fri, 24 Apr 2020 17:50:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=DWVlIf5mYZCVzyqUXeahD+T71Oe9wN0qoPC1nsa6ZEU=;
+ b=Wic9SnakIOrdtXgbiLArQULRol0LPr4BC1E2yKdb57XexeCCHSYc75DC4qD3xg7MkLsX
+ CRrdcr2Xu4KC3F84Aptrvmkdl5sTy3oeeJ6cZU2YnCheQeDE1F2P0Dt5s47FlKoekI7A
+ q6341zQF2rQM8c+GAnKB5wYb1Y7LHYnHoY5jXqS5PCcQXN+3+AVu0scGUEfDDKy8QWY4
+ p3iwMzFr35LXPY7YCpHiFwMN+SfdCvcJ5X4VAUKjkigUdZm86iPEX0VRLhthPRmf0ldA
+ ahiv2E4yQCiGM3VdVC3YGBuZWJiEI2JInS+b2NVZQ9Pe3u4H9lisnygjhKLgVjVC1loG cA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 30ketdnq94-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Apr 2020 17:50:19 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03OHldRt078223;
+        Fri, 24 Apr 2020 17:48:19 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 30k7qxjw26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Apr 2020 17:48:19 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03OHmHI4016218;
+        Fri, 24 Apr 2020 17:48:17 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Apr 2020 10:48:16 -0700
+Date:   Fri, 24 Apr 2020 10:48:15 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jan Kara <jack@suse.com>, tytso@mit.edu,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: bmap: Remove the WARN and return the proper
+ block address
+Message-ID: <20200424174815.GF6733@magnolia>
+References: <cover.1587670914.git.riteshh@linux.ibm.com>
+ <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9601 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004240136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9601 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1011 suspectscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004240136
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04/23, Eric W. Biederman wrote:
->
-> When the thread group leader changes during exec and the old leaders
-> thread is reaped proc_flush_pid
+On Fri, Apr 24, 2020 at 12:52:18PM +0530, Ritesh Harjani wrote:
+> iomap_bmap() could be called from either of these two paths.
+> Either when a user is calling an ioctl_fibmap() interface to get
+> the block mapping address or by some filesystem via use of bmap()
+> internal kernel API.
+> bmap() kernel API is well equipped with handling of u64 addresses.
+> 
+> WARN condition in iomap_bmap_actor() was mainly added to warn all
+> the fibmap users. But now that in previous patch we have directly added
+> this WARN condition for all fibmap users and also made sure to return 0
+> as block map address in case if addr > INT_MAX. 
+> So we can now remove this logic from here.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> ---
+>  fs/iomap/fiemap.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+> index bccf305ea9ce..d55e8f491a5e 100644
+> --- a/fs/iomap/fiemap.c
+> +++ b/fs/iomap/fiemap.c
+> @@ -117,10 +117,7 @@ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
+>  
+>  	if (iomap->type == IOMAP_MAPPED) {
+>  		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
+> -		if (addr > INT_MAX)
+> -			WARN(1, "would truncate bmap result\n");
 
-This is off-topic, but let me mention this before I forget...
+Frankly I would've combined these two patches to make it more obvious
+that we're hoisting a FIBMAP constraint check from iomap into the ioctl
+handler.
 
-Note that proc_flush_pid() does nothing if CONFIG_PROC_FS=n, this mean
-that in this case release_task() leaks thread_pid.
+--D
 
-> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
-> +{
-> +	/* pid_links[PIDTYPE_PID].next is always NULL */
-> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
-> +	struct pid *opid = READ_ONCE(otask->thread_pid);
-> +
-> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(ntask->thread_pid, opid);
-> +	rcu_assign_pointer(otask->thread_pid, npid);
-> +	WRITE_ONCE(ntask->pid_links[PIDTYPE_PID].pprev, &opid->tasks[PIDTYPE_PID].first);
-> +	WRITE_ONCE(otask->pid_links[PIDTYPE_PID].pprev, &npid->tasks[PIDTYPE_PID].first);
-> +	WRITE_ONCE(ntask->pid, pid_nr(opid));
-> +	WRITE_ONCE(otask->pid, pid_nr(npid));
-> +}
-
-Oh, at first glance this breaks posix-cpu-timers.c:lookup_task(), the last
-user of has_group_leader_pid().
-
-I think that we should change lookup_task() to return "struct *pid", this
-should simplify the code... Note that none of its callers needs task_struct.
-
-And, instead of thread_group_leader/has_group_leader_pid checks we should
-use pid_has_task(TGID).
-
-After that, this patch should kill has_group_leader_pid().
-
-What do you think?
-
-Oleg.
-
+> -		else
+> -			*bno = addr;
+> +		*bno = addr;
+>  	}
+>  	return 0;
+>  }
+> -- 
+> 2.21.0
+> 
