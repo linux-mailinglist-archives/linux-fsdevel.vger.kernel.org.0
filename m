@@ -2,156 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE0E1B7427
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 14:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5F51B7953
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 17:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgDXMYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 08:24:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728477AbgDXMYi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 08:24:38 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727049AbgDXPTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 11:19:53 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46367 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726900AbgDXPTw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 11:19:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587741591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Hup8zMplhzCtriOS6DgGXays5t9vNVweQrUya2JH8v4=;
+        b=ex7Yp2MGjsfz/1Z8cSmtbuuWDRQHRmrMGGuFjlTkPsJ4GCZ3zMBHIPee/OUwZKDjifesCn
+        2fDHa+tKnRs9AXjvZ0Pg6ywuvaSuC2+/HKYfhehPAV5hQwrYPtRGy6JtVPLg/Qso2UvOC5
+        M+xrN/Y0LvxkGlC85jloecE4QOn0uaM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-3lctEr2_M3277HjaZZgtFw-1; Fri, 24 Apr 2020 11:19:49 -0400
+X-MC-Unique: 3lctEr2_M3277HjaZZgtFw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C21920700;
-        Fri, 24 Apr 2020 12:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587731077;
-        bh=DHDc8HltG1BdWiLHKwuKbNTHzHVBSNJSqnUSXAbGIkY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZmCBCtmqZYFv9jo52Njgf/8cM5336w1GJDY6bfo0NPzIX8sQRYkq9ODyTZlCwUJqS
-         SUYhtyw9lsAgpCOz4VAt9lLGiEkhk5+DzxHdPGPQvm/f3cSiF+aYDxZjsCpyk5yZbT
-         TN+9MgV7kENYUapNUWjsqfg2gM0yAfQy41nidSu0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>, Andreas Dilger <adilger@dilger.ca>,
-        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/21] ext4: use non-movable memory for superblock readahead
-Date:   Fri, 24 Apr 2020 08:24:12 -0400
-Message-Id: <20200424122419.10648-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200424122419.10648-1-sashal@kernel.org>
-References: <20200424122419.10648-1-sashal@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5CED71009633;
+        Fri, 24 Apr 2020 15:19:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C3925D9D5;
+        Fri, 24 Apr 2020 15:19:47 +0000 (UTC)
+Subject: [PATCH 0/8] afs: NAT-mitigation and other bits
+From:   David Howells <dhowells@redhat.com>
+To:     linux-afs@lists.infradead.org
+Cc:     Dave Botsch <botsch@cnf.cornell.edu>,
+        Jeffrey Altman <jaltman@auristor.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Fri, 24 Apr 2020 16:19:46 +0100
+Message-ID: <158774158625.3619859.10579201535876583842.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.21
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit d87f639258a6a5980183f11876c884931ad93da2 ]
+The primary part of this patchset, is intended to help deal with the
+effects of using an AFS client that is communicating with a server through
+some sort of NAT or firewall, whereby if the just right amount of time
+lapses before a third party change is made, the client thinks it still has
+a valid callback, but the server's attempt to notify the client of the
+change bounces because the NAT/firewall window has closed.  The problem is
+that kafs does insufficient probing to maintain the firewall window.
 
-Since commit a8ac900b8163 ("ext4: use non-movable memory for the
-superblock") buffers for ext4 superblock were allocated using
-the sb_bread_unmovable() helper which allocated buffer heads
-out of non-movable memory blocks. It was necessarily to not block
-page migrations and do not cause cma allocation failures.
+The effect is mitigated in the following ways:
 
-However commit 85c8f176a611 ("ext4: preload block group descriptors")
-broke this by introducing pre-reading of the ext4 superblock.
-The problem is that __breadahead() is using __getblk() underneath,
-which allocates buffer heads out of movable memory.
+ (1) When an FS.InlineBulkStatus op is sent to the server during a file
+     lookup, the FID of the directory being looked up in will now get
+     included in the list of vnodes to query.  This will find out more
+     quickly if the dir has changed.
 
-It resulted in page migration failures I've seen on a machine
-with an ext4 partition and a preallocated cma area.
+ (2) The fileserver is now polled regularly by an independent, timed
+     manager rather than only being polled by the rotation algorithm when
+     someone does a VFS operation that performs an RPC call.
 
-Fix this by introducing sb_breadahead_unmovable() and
-__breadahead_gfp() helpers which use non-movable memory for buffer
-head allocations and use them for the ext4 superblock readahead.
+I have included some other bits in the patchset also:
 
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-Fixes: 85c8f176a611 ("ext4: preload block group descriptors")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Link: https://lore.kernel.org/r/20200229001411.128010-1-guro@fb.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ (1) Apply uninterruptibility a bit more thoroughly.  There are more places
+     that need it yet, but they're harder to fix.
+
+ (2) Use the serverUnique field from the VLDB record to trigger a recheck
+     of a fileserver's endpoints rather than doing it on a timed basis
+     separately for each fileserver.  This reduces the number of VL RPCs
+     performed, albeit it's a minor reduction.
+
+ (3) Note when we have detected the epoch from the fileserver so that the
+     code that checks it actually does its stuff.
+
+ (4) Remove some unused bits in the code.
+
+Note that I've spotted some bugs in the fileserver rotation algorithm, but
+that's going to need its own rewrite as the structure of it is wrong.
+
+David
 ---
- fs/buffer.c                 | 11 +++++++++++
- fs/ext4/inode.c             |  2 +-
- fs/ext4/super.c             |  2 +-
- include/linux/buffer_head.h |  8 ++++++++
- 4 files changed, 21 insertions(+), 2 deletions(-)
+David Howells (8):
+      afs: Always include dir in bulk status fetch from afs_do_lookup()
+      afs: Make record checking use TASK_UNINTERRUPTIBLE when appropriate
+      afs: Use the serverUnique field in the UVLDB record to reduce rpc ops
+      afs: Fix to actually set AFS_SERVER_FL_HAVE_EPOCH
+      afs: Remove some unused bits
+      afs: Split the usage count on struct afs_server
+      afs: Actively poll fileservers to maintain NAT or firewall openings
+      afs: Show more information in /proc/net/afs/servers
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index bdca7b10e239b..cae7f24a0410e 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1398,6 +1398,17 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
- }
- EXPORT_SYMBOL(__breadahead);
- 
-+void __breadahead_gfp(struct block_device *bdev, sector_t block, unsigned size,
-+		      gfp_t gfp)
-+{
-+	struct buffer_head *bh = __getblk_gfp(bdev, block, size, gfp);
-+	if (likely(bh)) {
-+		ll_rw_block(REQ_OP_READ, REQ_RAHEAD, 1, &bh);
-+		brelse(bh);
-+	}
-+}
-+EXPORT_SYMBOL(__breadahead_gfp);
-+
- /**
-  *  __bread_gfp() - reads a specified block and returns the bh
-  *  @bdev: the block_device to read from
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 10838b28c5bbd..c8a1c68c33ae5 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4593,7 +4593,7 @@ static int __ext4_get_inode_loc(struct inode *inode,
- 			if (end > table)
- 				end = table;
- 			while (b <= end)
--				sb_breadahead(sb, b++);
-+				sb_breadahead_unmovable(sb, b++);
- 		}
- 
- 		/*
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index f5646bcad7702..074b9d43e24d8 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4145,7 +4145,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	/* Pre-read the descriptors into the buffer cache */
- 	for (i = 0; i < db_count; i++) {
- 		block = descriptor_loc(sb, logical_sb_block, i);
--		sb_breadahead(sb, block);
-+		sb_breadahead_unmovable(sb, block);
- 	}
- 
- 	for (i = 0; i < db_count; i++) {
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index afa37f807f12c..2e1077ea77db0 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -187,6 +187,8 @@ struct buffer_head *__getblk_gfp(struct block_device *bdev, sector_t block,
- void __brelse(struct buffer_head *);
- void __bforget(struct buffer_head *);
- void __breadahead(struct block_device *, sector_t block, unsigned int size);
-+void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
-+		  gfp_t gfp);
- struct buffer_head *__bread_gfp(struct block_device *,
- 				sector_t block, unsigned size, gfp_t gfp);
- void invalidate_bh_lrus(void);
-@@ -319,6 +321,12 @@ sb_breadahead(struct super_block *sb, sector_t block)
- 	__breadahead(sb->s_bdev, block, sb->s_blocksize);
- }
- 
-+static inline void
-+sb_breadahead_unmovable(struct super_block *sb, sector_t block)
-+{
-+	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
-+}
-+
- static inline struct buffer_head *
- sb_getblk(struct super_block *sb, sector_t block)
- {
--- 
-2.20.1
+
+ fs/afs/cmservice.c         |    8 +
+ fs/afs/dir.c               |    9 +
+ fs/afs/fs_probe.c          |  280 +++++++++++++++++++++++++++++++++-----------
+ fs/afs/fsclient.c          |   24 ++--
+ fs/afs/internal.h          |   58 ++++++---
+ fs/afs/main.c              |    5 +
+ fs/afs/proc.c              |   18 ++-
+ fs/afs/rotate.c            |   13 +-
+ fs/afs/rxrpc.c             |    2 
+ fs/afs/server.c            |  201 +++++++++++++++++++-------------
+ fs/afs/server_list.c       |    7 +
+ fs/afs/vl_rotate.c         |    4 -
+ fs/afs/vlclient.c          |    1 
+ fs/afs/volume.c            |   32 +++--
+ include/trace/events/afs.h |   22 +++
+ 15 files changed, 455 insertions(+), 229 deletions(-)
+
 
