@@ -2,59 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC0901B70AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 11:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD231B7151
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 11:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgDXJV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 05:21:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39218 "EHLO mx2.suse.de"
+        id S1726714AbgDXJ5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 05:57:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34426 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbgDXJV1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 05:21:27 -0400
+        id S1726193AbgDXJ5s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 05:57:48 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3DC11ACC3;
-        Fri, 24 Apr 2020 09:21:25 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 21EACACD8;
+        Fri, 24 Apr 2020 09:57:46 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 229841E128C; Fri, 24 Apr 2020 11:21:25 +0200 (CEST)
-Date:   Fri, 24 Apr 2020 11:21:25 +0200
+        id 349F21E128C; Fri, 24 Apr 2020 11:57:46 +0200 (CEST)
+Date:   Fri, 24 Apr 2020 11:57:46 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] isofs: stop using ioctl_by_bdev
-Message-ID: <20200424092125.GA13069@quack2.suse.cz>
-References: <20200423071224.500849-1-hch@lst.de>
- <20200423071224.500849-7-hch@lst.de>
- <20200423110347.GE3737@quack2.suse.cz>
- <20200424065253.GB23754@lst.de>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jan Kara <jack@suse.com>, tytso@mit.edu,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 1/2] fibmap: Warn and return an error in case of block >
+ INT_MAX
+Message-ID: <20200424095746.GB13069@quack2.suse.cz>
+References: <cover.1587670914.git.riteshh@linux.ibm.com>
+ <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200424065253.GB23754@lst.de>
+In-Reply-To: <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 24-04-20 08:52:53, Christoph Hellwig wrote:
-> On Thu, Apr 23, 2020 at 01:03:47PM +0200, Jan Kara wrote:
-> > There's no error handling in the caller and this function actually returns
-> > unsigned int... So I believe you need to return 0 here to maintain previous
-> > behavior (however suspicious it may be)?
+On Fri 24-04-20 12:52:17, Ritesh Harjani wrote:
+> We better warn the fibmap user and not return a truncated and therefore
+> an incorrect block map address if the bmap() returned block address
+> is greater than INT_MAX (since user supplied integer pointer).
 > 
-> Indeed, and I don't think it is suspicious at all - if we have no CDROM
-> info we should assume session 0, which is the same as for non-CDROM
-> devices.  Fixed for the next version.
+> It's better to WARN all user of ioctl_fibmap() and return a proper error
+> code rather than silently letting a FS corruption happen if the user tries
+> to fiddle around with the returned block map address.
+> 
+> We fix this by returning an error code of -ERANGE and returning 0 as the
+> block mapping address in case if it is > INT_MAX.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-Right, I've realized that once I've checked UDF version and thought about
-it for a while...
+The patch looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/ioctl.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index f1d93263186c..3489f3a12c1d 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -71,6 +71,11 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
+>  	block = ur_block;
+>  	error = bmap(inode, &block);
+>  
+> +	if (block > INT_MAX) {
+> +		error = -ERANGE;
+> +		WARN(1, "would truncate fibmap result\n");
+> +	}
+> +
+>  	if (error)
+>  		ur_block = 0;
+>  	else
+> -- 
+> 2.21.0
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
