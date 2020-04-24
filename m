@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD231B7151
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 11:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D891B715C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 11:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbgDXJ5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 05:57:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34426 "EHLO mx2.suse.de"
+        id S1726799AbgDXJ7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 05:59:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36590 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbgDXJ5s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 05:57:48 -0400
+        id S1726193AbgDXJ7r (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 05:59:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 21EACACD8;
-        Fri, 24 Apr 2020 09:57:46 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 77463AA7C;
+        Fri, 24 Apr 2020 09:59:45 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 349F21E128C; Fri, 24 Apr 2020 11:57:46 +0200 (CEST)
-Date:   Fri, 24 Apr 2020 11:57:46 +0200
+        id 8CC761E128C; Fri, 24 Apr 2020 11:59:45 +0200 (CEST)
+Date:   Fri, 24 Apr 2020 11:59:45 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Ritesh Harjani <riteshh@linux.ibm.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -27,61 +27,63 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jan Kara <jack@suse.com>, tytso@mit.edu,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 1/2] fibmap: Warn and return an error in case of block >
- INT_MAX
-Message-ID: <20200424095746.GB13069@quack2.suse.cz>
+Subject: Re: [PATCH 2/2] iomap: bmap: Remove the WARN and return the proper
+ block address
+Message-ID: <20200424095945.GC13069@quack2.suse.cz>
 References: <cover.1587670914.git.riteshh@linux.ibm.com>
- <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
+ <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e34d1ac05d29aeeb982713a807345a0aaafc7fe0.1587670914.git.riteshh@linux.ibm.com>
+In-Reply-To: <e2e09c5d840458b4ace6f9b31429ceefd9c1df01.1587670914.git.riteshh@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 24-04-20 12:52:17, Ritesh Harjani wrote:
-> We better warn the fibmap user and not return a truncated and therefore
-> an incorrect block map address if the bmap() returned block address
-> is greater than INT_MAX (since user supplied integer pointer).
+On Fri 24-04-20 12:52:18, Ritesh Harjani wrote:
+> iomap_bmap() could be called from either of these two paths.
+> Either when a user is calling an ioctl_fibmap() interface to get
+> the block mapping address or by some filesystem via use of bmap()
+> internal kernel API.
+> bmap() kernel API is well equipped with handling of u64 addresses.
 > 
-> It's better to WARN all user of ioctl_fibmap() and return a proper error
-> code rather than silently letting a FS corruption happen if the user tries
-> to fiddle around with the returned block map address.
-> 
-> We fix this by returning an error code of -ERANGE and returning 0 as the
-> block mapping address in case if it is > INT_MAX.
+> WARN condition in iomap_bmap_actor() was mainly added to warn all
+> the fibmap users. But now that in previous patch we have directly added
+> this WARN condition for all fibmap users and also made sure to return 0
+> as block map address in case if addr > INT_MAX. 
+> So we can now remove this logic from here.
 > 
 > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-The patch looks good to me. You can add:
+Yes, I agree it's better to hadle the overflow in the ioctl than in the iomap
+actor. The patch looks good to me. You can add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/ioctl.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  fs/iomap/fiemap.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index f1d93263186c..3489f3a12c1d 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -71,6 +71,11 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
->  	block = ur_block;
->  	error = bmap(inode, &block);
+> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+> index bccf305ea9ce..d55e8f491a5e 100644
+> --- a/fs/iomap/fiemap.c
+> +++ b/fs/iomap/fiemap.c
+> @@ -117,10 +117,7 @@ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
 >  
-> +	if (block > INT_MAX) {
-> +		error = -ERANGE;
-> +		WARN(1, "would truncate fibmap result\n");
-> +	}
-> +
->  	if (error)
->  		ur_block = 0;
->  	else
+>  	if (iomap->type == IOMAP_MAPPED) {
+>  		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
+> -		if (addr > INT_MAX)
+> -			WARN(1, "would truncate bmap result\n");
+> -		else
+> -			*bno = addr;
+> +		*bno = addr;
+>  	}
+>  	return 0;
+>  }
 > -- 
 > 2.21.0
 > 
