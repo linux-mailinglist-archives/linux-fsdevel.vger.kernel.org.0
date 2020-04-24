@@ -2,96 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F5F1B6FA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 10:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 458061B70A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Apr 2020 11:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgDXIUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 04:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbgDXIT7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 04:19:59 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77495C09B045
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 01:19:59 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id a31so1769760pje.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Apr 2020 01:19:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=t1Arj/gzrMBw1kx2rzm1Fk8kWjfNHCa+Y2zL2kb2ExY=;
-        b=GQywM6aV/luppcnShqKJylRbQSbOE598XV+TVKYmAhaEZftW/7tt2mnjHXve1NE5wk
-         tQlMO01InSnJOVhVOXHu6oP3eSWK/7E7NUYQJERUr5f7eQ7bCDyIGdFLqCrr7d0DWRK7
-         meiVAEwT6vr7l3WaUgCD37vUmUyaADnAXTARvXffMDCO2TmL+ogpGLcBhBrHB0K69ZjN
-         sZeUyyIB0AsBrB4nS5uxad+KutwL8Glb2vlpolaw2fpGlJ59LefECnXLY+yCttochb2E
-         c6Y/X03rJZFwFKH4ZXIVcNS5GwOpARIzTM5+ztsc3vQjtj7Z4UPrjrSR1JHJlIxIulxq
-         JP4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=t1Arj/gzrMBw1kx2rzm1Fk8kWjfNHCa+Y2zL2kb2ExY=;
-        b=PeUWpyhwdGhlWKNsYzakbK419AiX3QTm9mbJn6Y18jme8G5rdPDt6BCAF96m3tB/mI
-         lq0/BWZizoftEt9+5KjXdea7sRB2ju/NcRfEHFnTRVOt+kyUjuR1TtRZDoCetdCXkdqV
-         6OmArXwOmIPQ/yBq9SdgIykvUnzHd4TkS6q+GNFdkYr3UXSat9/gM8D7DCa+67pYrGpq
-         j1640cii7atMF8QsS3vIXKGFKu/Ux1hSKAv3xU54yThI3q6WJ16eMNvAoPjwM7F5Tk4k
-         /B88Ekb4fJANKN38OJnDPEnslF4Hk0xnCXJjsnekWxhurm+nL1Ut7RdPe5ZmZCfjjB1x
-         W5KA==
-X-Gm-Message-State: AGi0Pub+AEtk3jZmqRpWcBoH+qRW1MVmenRym5uyZScUjQJMi+JcglOa
-        pN+0ZAnqxXD3lLAuQIaNJVs=
-X-Google-Smtp-Source: APiQypLUv5gL/wzz5AQ++jS50++V6g7C/ieTQjBNoPxHqYW6BO7Nn301DKLlpCvF+363Zth1/ixpvw==
-X-Received: by 2002:a17:902:a40b:: with SMTP id p11mr8241740plq.304.1587716398846;
-        Fri, 24 Apr 2020 01:19:58 -0700 (PDT)
-Received: from software.domain.org (28.144.92.34.bc.googleusercontent.com. [34.92.144.28])
-        by smtp.gmail.com with ESMTPSA id f10sm4253503pju.34.2020.04.24.01.19.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Apr 2020 01:19:58 -0700 (PDT)
-From:   Huacai Chen <chenhc@lemote.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
-        Huacai Chen <chenhc@lemote.com>
-Subject: [PATCH] fs/seq_file.c: Rename the "Fill" label to avoid build failure
-Date:   Fri, 24 Apr 2020 16:29:04 +0800
-Message-Id: <1587716944-28250-1-git-send-email-chenhc@lemote.com>
-X-Mailer: git-send-email 2.7.0
+        id S1726628AbgDXJVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Apr 2020 05:21:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbgDXJVW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Apr 2020 05:21:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E18B20724;
+        Fri, 24 Apr 2020 09:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587720081;
+        bh=oMdVEGseu3X/uVHRcbF5bwxXym0BrmbiTesm/lnUwAY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SUjtBfnhnrnzWa6W6RINqmGOPrcrjJv7CIwkZIfNi9fbEITE82prDj298vVf38/7u
+         dmi7pkaadA69Zro+u4mHv91OBsx8Hzb5zPVnkkimxORXQHCQlFQZPEumUJJOrVuaeO
+         22yCx35mZauNiPsuor/b1+9me7fbc8DeI0NUyBHI=
+Date:   Fri, 24 Apr 2020 11:21:19 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc:     akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, linux-wireless@vger.kernel.org,
+        keescook@chromium.org, shuah@kernel.org, mfuzzey@parkeon.com,
+        zohar@linux.vnet.ibm.com, dhowells@redhat.com,
+        pali.rohar@gmail.com, tiwai@suse.de, arend.vanspriel@broadcom.com,
+        zajec5@gmail.com, nbroeking@me.com, markivx@codeaurora.org,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] firmware_loader: re-export fw_fallback_config into
+ firmware_loader's own namespace
+Message-ID: <20200424092119.GA360114@kroah.com>
+References: <20200423203140.19510-1-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200423203140.19510-1-mcgrof@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-MIPS define a "Fill" macro as a cache operation in cacheops.h, this
-will cause build failure under some special configurations. To avoid
-this failure we rename the "Fill" label in seq_file.c.
+On Thu, Apr 23, 2020 at 08:31:40PM +0000, Luis R. Rodriguez wrote:
+> From: Luis Chamberlain <mcgrof@kernel.org>
+> 
+> Christoph's recent patch "firmware_loader: remove unused exports", which
+> is not merged upstream yet, removed two exported symbols. One is fine to
+> remove since only built-in code uses it but the other is incorrect.
+> 
+> If CONFIG_FW_LOADER=m so the firmware_loader is modular but
+> CONFIG_FW_LOADER_USER_HELPER=y we fail at mostpost with:
+> 
+> ERROR: modpost: "fw_fallback_config" [drivers/base/firmware_loader/firmware_class.ko] undefined!
+> 
+> This happens because the variable fw_fallback_config is built into the
+> kernel if CONFIG_FW_LOADER_USER_HELPER=y always, so we need to grant
+> access to the firmware loader module by exporting it.
+> 
+> Instead of just exporting it as we used to, take advantage of the new
+> kernel symbol namespacing functionality, and export the symbol only to
+> the firmware loader private namespace. This would prevent misuses from
+> other drivers and makes it clear the goal is to keep this private to
+> the firmware loader alone.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: "firmware_loader: remove unused exports"
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  drivers/base/firmware_loader/fallback.c       | 3 +++
+>  drivers/base/firmware_loader/fallback_table.c | 1 +
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> index 1e9c96e3ed63..d9ac7296205e 100644
+> --- a/drivers/base/firmware_loader/fallback.c
+> +++ b/drivers/base/firmware_loader/fallback.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/umh.h>
+>  #include <linux/sysctl.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/module.h>
+>  
+>  #include "fallback.h"
+>  #include "firmware.h"
+> @@ -17,6 +18,8 @@
+>   * firmware fallback mechanism
+>   */
+>  
+> +MODULE_IMPORT_NS(FIRMWARE_LOADER_PRIVATE);
+> +
+>  extern struct firmware_fallback_config fw_fallback_config;
+>  
+>  /* These getters are vetted to use int properly */
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
----
- fs/seq_file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+While nice, that does not fix the existing build error that people are
+having, right?
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 70f5fdf..4e6c56be 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -213,7 +213,7 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
- 			continue;
- 		}
- 		if (m->count < m->size)
--			goto Fill;
-+			goto Fillbuf;
- 		m->op->stop(m, p);
- 		kvfree(m->buf);
- 		m->count = 0;
-@@ -225,7 +225,7 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
- 	m->op->stop(m, p);
- 	m->count = 0;
- 	goto Done;
--Fill:
-+Fillbuf:
- 	/* they want more? let's try to get some more */
- 	while (1) {
- 		size_t offs = m->count;
--- 
-2.7.0
+> diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+> index 0a737349f78f..46a731dede6f 100644
+> --- a/drivers/base/firmware_loader/fallback_table.c
+> +++ b/drivers/base/firmware_loader/fallback_table.c
+> @@ -21,6 +21,7 @@ struct firmware_fallback_config fw_fallback_config = {
+>  	.loading_timeout = 60,
+>  	.old_timeout = 60,
+>  };
+> +EXPORT_SYMBOL_NS_GPL(fw_fallback_config, FIRMWARE_LOADER_PRIVATE);
 
+
+How about you send a patch that just reverts the single symbol change
+first, and then a follow-on patch that does this namespace addition.  I
+can queue the first one up now, for 5.7-final, and the second one for
+5.8-rc1.
+
+thanks,
+
+greg k-h
