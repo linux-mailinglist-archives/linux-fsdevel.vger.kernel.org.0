@@ -2,53 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 646221B855C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 11:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D531B85C3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 12:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbgDYJpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Apr 2020 05:45:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39234 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726060AbgDYJpA (ORCPT
+        id S1726107AbgDYKtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Apr 2020 06:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726053AbgDYKtz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Apr 2020 05:45:00 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03P9W6lQ122788;
-        Sat, 25 Apr 2020 05:44:42 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30me41wet8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 25 Apr 2020 05:44:42 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 03P9ifbV145693;
-        Sat, 25 Apr 2020 05:44:41 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30me41wesr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 25 Apr 2020 05:44:41 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03P9eC8m027554;
-        Sat, 25 Apr 2020 09:44:39 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma01fra.de.ibm.com with ESMTP id 30mcu88b21-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 25 Apr 2020 09:44:39 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03P9ibWq53870994
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 25 Apr 2020 09:44:37 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17E9A4C04A;
-        Sat, 25 Apr 2020 09:44:37 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E2564C044;
-        Sat, 25 Apr 2020 09:44:33 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.79.185.245])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 25 Apr 2020 09:44:33 +0000 (GMT)
+        Sat, 25 Apr 2020 06:49:55 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03576C09B04A;
+        Sat, 25 Apr 2020 03:49:54 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id w6so11816118ilg.1;
+        Sat, 25 Apr 2020 03:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gMcPi5VjfPl8mPXcZ/holvg8POywsqDxfT7fng+NEug=;
+        b=ABhkI+gBjawXjYOy4NgUZ0bwfzqurQvvoFX0E+rwvV2MvD1H5wgdpyqOG9E725RKEo
+         1ZbzxgXRlp7ArpqalO7i27/RRlQRCB8TmzOPMf3M3m2p/D+4v4t6JEK8iQiOww0FAEVY
+         Hywcuo2zXdVUhok96kgi67yv3FX/+v3KEaikL5mZEaCNJezHVUSGMPKE22nQ0zmwpXbN
+         rEE9jxERLrD5VqtH9KNRW1moAqihtcQSRx8aiZzSNpvlywAQVPyCJn19zd3+EEWdfQFM
+         bPHdkd4JNgXOeNO+Wj5KD/UMXSTtxcVMmWNBx02+u0EHldpvDC4QvEK3wZfUUTktRtdA
+         0GcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gMcPi5VjfPl8mPXcZ/holvg8POywsqDxfT7fng+NEug=;
+        b=o/uM5t/21fr61WZ8mMR2Ed/tZZ96rSsIU7d0NhD25oXdf/W7MaAt54Wu4rWTo3wTj/
+         hPtTYghlI8B6B8aNwoFcwL1R1Khbl97i0n7wiZWy0rylJL0aEhc9pzJ+mYwh+EqRrFs3
+         smMz+WjEizLWuKZ5iKhP9Dlir1DooMfFfQhshjHpvxnX8Z6V1BcrP77aECZJ1A4bcmSP
+         Pj2M/d2VpL1d3z6pZXN5/fVqWPTT8FuGyju8o7XRqAEXxCR2/qCa5VO2bZy9aon3nPKg
+         1JmfL6sQj5/TMVQFYqnzSFNo2LbAjZS02AQ+ysWImMXVs5KXmPjfnWMlSLFZxlAdCBNr
+         M/Tg==
+X-Gm-Message-State: AGi0PuZhy+nQpUBm48SvWaswNSoRV2ehks7t/s3QxBGOX5XgVRyrzlGf
+        m3Qvkj1TxzjcHTXQgdmkBZW+PgzrCM0ebQsvzjs=
+X-Google-Smtp-Source: APiQypKo5VY/NJGbMJ88ZgPvlocPrZAHeEf44NKIx/HeafSwt/R0Sv6ybsWvheL8DVHl8G1l5L5YlyZkXcoZIu1IFek=
+X-Received: by 2002:a92:9e11:: with SMTP id q17mr13265129ili.137.1587811794273;
+ Sat, 25 Apr 2020 03:49:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1587555962.git.riteshh@linux.ibm.com> <20200424101153.GC456@infradead.org>
+ <20200424232024.A39974C046@d06av22.portsmouth.uk.ibm.com> <CAOQ4uxgiome-BnHDvDC=vHfidf4Ru3jqzOki0Z_YUkinEeYCRQ@mail.gmail.com>
+ <20200425094350.GA11881@infradead.org>
+In-Reply-To: <20200425094350.GA11881@infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 25 Apr 2020 13:49:43 +0300
+Message-ID: <CAOQ4uxg2KOVBxqF400KW3VaQEaX4JGqfb_vCW=esTMkJqZWwvA@mail.gmail.com>
 Subject: Re: [PATCH 0/5] ext4/overlayfs: fiemap related fixes
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         Ext4 <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>,
         Theodore Tso <tytso@mit.edu>,
         Andreas Dilger <adilger@dilger.ca>,
@@ -60,71 +66,35 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         overlayfs <linux-unionfs@vger.kernel.org>
-References: <cover.1587555962.git.riteshh@linux.ibm.com>
- <20200424101153.GC456@infradead.org>
- <20200424232024.A39974C046@d06av22.portsmouth.uk.ibm.com>
- <CAOQ4uxgiome-BnHDvDC=vHfidf4Ru3jqzOki0Z_YUkinEeYCRQ@mail.gmail.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Sat, 25 Apr 2020 15:14:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxgiome-BnHDvDC=vHfidf4Ru3jqzOki0Z_YUkinEeYCRQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200425094433.8E2564C044@d06av22.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-25_05:2020-04-24,2020-04-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- spamscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004250077
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Apr 25, 2020 at 12:43 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Sat, Apr 25, 2020 at 12:11:59PM +0300, Amir Goldstein wrote:
+> > FWIW, I agree with you.
+> > And seems like Jan does as well, since he ACKed all your patches.
+> > Current patches would be easier to backport to stable kernels.
+>
+> Honestly, the proper fix is pretty much trivial.  I wrote it up this
+> morning over coffee:
+>
+>     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/fiemap-fix
+>
+> Still needs more testing, though.
 
+Very slick!
 
-On 4/25/20 2:41 PM, Amir Goldstein wrote:
-> On Sat, Apr 25, 2020 at 2:20 AM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
->>
->> Hello Christoph,
->>
->> Thanks for your review comments.
->>
->> On 4/24/20 3:41 PM, Christoph Hellwig wrote:
->>> I think the right fix is to move fiemap_check_ranges into all the ->fiemap
->>
->> I do welcome your suggestion here. But I am not sure of what you are
->> suggesting should be done as a 1st round of changes for the immediate
->> reported problem.
->> So currently these patches take the same approach on overlayfs on how
->> VFS does it. So as a fix to the overlayfs over ext4 reported problems in
->> thread [1] & [2]. I think these patches are doing the right thing.
->>
->> Also maybe I am biased in some way because as I see these are the right
->> fixes with minimal changes only at places which does have a direct
->> problem.
->>
-> 
-> FWIW, I agree with you.
-> And seems like Jan does as well, since he ACKed all your patches.
-> Current patches would be easier to backport to stable kernels.
-> 
-> Plus, if we are going to cleanup the fiemap interface, need to look into
-> FIEMAP_FLAG_SYNC handling.
-> Does it makes sense to handle this flag in vfs ioctl code and other flags
-> by filesystem code?
-> See, iomap_fiemap() takes care of FIEMAP_FLAG_SYNC in addition
-> to ioctl_fiemap(), so I would think that FIEMAP_FLAG_SYNC should
-> probably be removed from ioctl_fiemap() and handled by
-> generic_block_fiemap() and other filesystem specific implementation.
+I still think Ritesh's patches are easier for backporting because they are
+mostly contained within the ext4/overlayfs subsystems and your patch
+can follow up as interface cleanup.
 
-Yes, and that too. I too wanted to re-look on the above mentioned part.
-Thanks for penning it down.
+I would use as generic helper name generic_fiemap_checks()
+akin to generic_write_checks() and generic_remap_file_range_prep() =>
+generic_remap_checks().
 
--ritesh
+Thanks,
+Amir.
