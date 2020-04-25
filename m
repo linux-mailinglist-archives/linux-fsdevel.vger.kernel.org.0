@@ -2,72 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2AF71B834A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 04:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 163521B83F4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 08:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbgDYCq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Apr 2020 22:46:59 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44407 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgDYCq7 (ORCPT
+        id S1726098AbgDYGmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Apr 2020 02:42:08 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:51245 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725837AbgDYGmI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Apr 2020 22:46:59 -0400
-Received: by mail-io1-f66.google.com with SMTP id z2so12528161iol.11;
-        Fri, 24 Apr 2020 19:46:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3Pj3afjV5Qj8mX7qM7FlJgGFDjLluq/R+Lw5J5hb+Kw=;
-        b=UBeagu/7o9FaNu3GeUNyIdK1PN8SPH5asf1CKRiF+vXciCKI1XDMmJ6SK+70VWnCVx
-         +CO+0XzocAudezo0NRbCfLkMs4CjfS/DnWDr5WbIkRzcRQJEvgAZokvwTEl6PMukfD91
-         qK+yiOY/r5Tnxbi2kfTcgaiZmWKaOcYAchPiSg9fFlzCa+uczUmxnqIBSV41Piqefh1N
-         NNx5HNFswcvyAgN1GUogjDYQAFm2DShhJesY1xvPsVyui/K/UT3yRC9wyXY0OdmntGQj
-         uqReKPa24kfpwaa+bGw6VnbcW0sx5SSysey87vC+fKuiLsbLbCAJpi5c21WA1UQpuLq3
-         E8dg==
-X-Gm-Message-State: AGi0PuarCDJA9vXeDAJ8Lt8+moKRcjbtNbB1bINeEfvoEUfy9sohZl/T
-        JGBEm1jL3B8MiuySjORXMZoRJ8ibPLl1RE8MynE=
-X-Google-Smtp-Source: APiQypKf9Cn4w+5zns7bDshCGdvmdkV/r30NuCSpzB9EJOet7H3hY2rSUpqZM5JI+Xc2FDNK13Bt79kISv3ZU0Q9CLg=
-X-Received: by 2002:a05:6638:401:: with SMTP id q1mr10949165jap.50.1587782818750;
- Fri, 24 Apr 2020 19:46:58 -0700 (PDT)
+        Sat, 25 Apr 2020 02:42:08 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R511e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TwaVxwH_1587796923;
+Received: from 30.5.152.35(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TwaVxwH_1587796923)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 25 Apr 2020 14:42:03 +0800
+Subject: Re: [PATCH 1/3] fs: Avoid leaving freed inode on dirty list
+To:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Eric Sandeen <sandeen@sandeen.net>
+References: <20200421085445.5731-1-jack@suse.cz>
+ <20200421085445.5731-2-jack@suse.cz>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <7ffc64ad-4741-27ca-ba9d-3d23af0a9216@linux.alibaba.com>
+Date:   Sat, 25 Apr 2020 14:42:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <1587716944-28250-1-git-send-email-chenhc@lemote.com> <20200424112721.GE13910@bombadil.infradead.org>
-In-Reply-To: <20200424112721.GE13910@bombadil.infradead.org>
-From:   Huacai Chen <chenhc@lemote.com>
-Date:   Sat, 25 Apr 2020 10:54:23 +0800
-Message-ID: <CAAhV-H4obH6BS7TNJzpZvxhBo6W8qRamOh8K92rk1OaB4PxosA@mail.gmail.com>
-Subject: Re: [PATCH] fs/seq_file.c: Rename the "Fill" label to avoid build failure
-To:     Matthew Wilcox <willy@infradead.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200421085445.5731-2-jack@suse.cz>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Matthew,
+hi,
 
-Thank you for your comments,
+> evict() can race with writeback_sb_inodes() and so
+> list_empty(&inode->i_io_list) check can race with list_move() from
+> redirty_tail() possibly resulting in list_empty() returning false and
+                                                     ^^^^^^^^^^^^^^^
+                                                     returning true?
+if (!list_empty(&inode->i_io_list))
+     inode_io_list_del(inode);
+so "!list_empty(&inode->i_io_list)" returns false, and will not remove
+inode for wb->b_dirty list.
+> thus we end up leaving freed inode in wb->b_dirty list leading to
+> use-after-free issues.
+> 
+> Fix the problem by using list_empty_careful() check and add assert that
+> inode's i_io_list is empty in clear_inode() to catch the problem earlier
+> in the future.
+ From list_empty_careful()'s comments, using list_empty_careful() without
+synchronization can only be safe if the only activity that can happen to the
+list entry is list_del_init(), but list_move() does not use list_del_init().
 
-On Fri, Apr 24, 2020 at 7:27 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Fri, Apr 24, 2020 at 04:29:04PM +0800, Huacai Chen wrote:
-> > MIPS define a "Fill" macro as a cache operation in cacheops.h, this
-> > will cause build failure under some special configurations. To avoid
-> > this failure we rename the "Fill" label in seq_file.c.
->
-> You should rename the Fill macro in the mips header instead.
-> I'd suggest Fill_R4000 of R4000_Fill.
+static inline void list_move(struct list_head *list, struct list_head *head)
+{
+	__list_del_entry(list);
+	list_add(list, head);
+}
 
-Hi, Thomas,
+So I wonder whether list_empty(&inode->i_io_list) check in evict() can race with
+list_move() from redirty_tail()?
 
-What do you think about this? If you agree to rename the "Fill" macro
-in cacheops.h, I want to rename it to Fill_I, because it has the same
-coding style as other cache operations in cacheops.h.
-
-Thanks,
-Huacai
+Regards,
+Xiaoguang Wang
+> 
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>   fs/inode.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 93d9252a00ab..a73c8a7aa71a 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -534,6 +534,7 @@ void clear_inode(struct inode *inode)
+>   	BUG_ON(!(inode->i_state & I_FREEING));
+>   	BUG_ON(inode->i_state & I_CLEAR);
+>   	BUG_ON(!list_empty(&inode->i_wb_list));
+> +	BUG_ON(!list_empty(&inode->i_io_list));
+>   	/* don't need i_lock here, no concurrent mods to i_state */
+>   	inode->i_state = I_FREEING | I_CLEAR;
+>   }
+> @@ -559,7 +560,13 @@ static void evict(struct inode *inode)
+>   	BUG_ON(!(inode->i_state & I_FREEING));
+>   	BUG_ON(!list_empty(&inode->i_lru));
+>   
+> -	if (!list_empty(&inode->i_io_list))
+> +	/*
+> +	 * We are the only holder of the inode so it cannot be marked dirty.
+> +	 * Flusher thread won't start new writeback but there can be still e.g.
+> +	 * redirty_tail() running from writeback_sb_inodes(). So we have to be
+> +	 * careful to remove inode from dirty/io list in all the cases.
+> +	 */
+> +	if (!list_empty_careful(&inode->i_io_list))
+>   		inode_io_list_del(inode);
+>   
+>   	inode_sb_list_del(inode);
+> 
