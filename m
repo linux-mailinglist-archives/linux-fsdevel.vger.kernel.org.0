@@ -2,78 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F3C1B8491
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 10:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3CD1B84EC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 10:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbgDYIO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Apr 2020 04:14:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbgDYIO7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Apr 2020 04:14:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D30C2071C;
-        Sat, 25 Apr 2020 08:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587802498;
-        bh=M/mbF7EtEsrt+Ekl8CDrUxehtR6wkl9tYW3cNKGfgHA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q44T9fiNBYMX0iT5oV7P/Ty1WF9StvtGtMfuGCx5GIJ7WO5SLeGhuTgGaJbHtJ/0t
-         F/mdUQKudvKz01efde2WiEcLHvK9E8f2AaHr82zZ2O237nF0/Qtz3m2OCCeGMkPITc
-         wM/7G8bNniycF2bs06Ft2R6CoslrkW/HLVY7/X4E=
-Date:   Sat, 25 Apr 2020 10:14:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] firmware_loader: revert removal of the
- fw_fallback_config export
-Message-ID: <20200425081455.GA2049758@kroah.com>
-References: <20200424184916.22843-1-mcgrof@kernel.org>
+        id S1726126AbgDYIyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Apr 2020 04:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45504 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbgDYIyh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 Apr 2020 04:54:37 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15007C09B04A;
+        Sat, 25 Apr 2020 01:54:37 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id o127so13080119iof.0;
+        Sat, 25 Apr 2020 01:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XpUgeIr/Sb1mNoyDa9dRYqt5Z8fi7wWrSG5Np2rqPKs=;
+        b=rSqYBD0+QgTGF1wshchySMo/sX09uAJj81nvpjgdWbL8MUM/1NUH+CpjTCDt7g/0xF
+         Qtg7w2TemG/FlXVH0Ss5kdO0YKE5l0SBV2qJjJT1XOVcKdjlLzUsgQ8tlZjQ7OTxJSgd
+         9vVbePNHtgfm775LuR0iS8q+QFfU0ARTI12mokYqqqYDkSYswJetHI8RTurWUAt7gvty
+         dd/XEB5CcTlQ8W+68pDZtAnRon3+YNx83tFL5s+XQUWCzcqxEhwGPUZc13p39sTHdB0K
+         BpGTlrylopCQZy4rqj6cwxyT6CAYjFP55PIELWhpW4XyJHlsgQPwkr4dPrmTZHukbRkb
+         KXxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XpUgeIr/Sb1mNoyDa9dRYqt5Z8fi7wWrSG5Np2rqPKs=;
+        b=kLIbJAe7jAhcgjZb5BQ/LQX+CKpneAUzQUdJlSY5PSxJWl1Qk4AavxEPWgw0q23bZV
+         VF08LAgneBBHt0fOJyYvpW/HjuILd6qZDZgfNrH5YX4xp5FZFuU3TgKSIeeZT7wuOu54
+         ywA+bbrenS3xnuh/8O27FMAGgLo/z3PsFAiOnTMbvgLNPX8pA8hQB4XiZt7oDkJMQjJE
+         M/teKo9cyfDCayH5lISghi0CWw8yDidEBMvgfH+uKe0VHZsm9N+69BYv+hqN/6XrH9YP
+         A+pmx8ZLxe2F/cjoEOnmjDFlfdG0Bt8eEOamGgKTCmpGce+4lORSr1hW5k9HmuanPac7
+         v87g==
+X-Gm-Message-State: AGi0PuZ0fQTYUtGYee7ymIUXcp7gm2EC6E0XeBylxhiyiCwkppqTsCrw
+        Q1Ts6YInE7d25dMhlcdj5yKLLHpcngsk4MBmX3I=
+X-Google-Smtp-Source: APiQypL58IIi642njWgZmKReL3wevwHQsLNJKMGmGJe80b9V3wEY9QxGzn5auiFY3Fy8fNdf/Cf7CqjRwNog5VD3dpc=
+X-Received: by 2002:a02:c9cb:: with SMTP id c11mr11389577jap.93.1587804876312;
+ Sat, 25 Apr 2020 01:54:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200424184916.22843-1-mcgrof@kernel.org>
+References: <cover.1587555962.git.riteshh@linux.ibm.com> <39b4bf94f6723831a9798237bb1b4ae14da04d98.1587555962.git.riteshh@linux.ibm.com>
+In-Reply-To: <39b4bf94f6723831a9798237bb1b4ae14da04d98.1587555962.git.riteshh@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 25 Apr 2020 11:54:25 +0300
+Message-ID: <CAOQ4uximFUoL3-ovymF=jX=w-xy8Kf-B9=eJvJ9TZG=0spxwnQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] overlayfs: Check for range bounds before calling i_op->fiemap()
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     Ext4 <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Murphy Zhou <jencce.kernel@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 06:49:15PM +0000, Luis R. Rodriguez wrote:
-> From: Luis Chamberlain <mcgrof@kernel.org>
-> 
-> Christoph's patch removed two unsused exported symbols, however, one
-> symbol is used by the firmware_loader itself.  If CONFIG_FW_LOADER=m so
-> the firmware_loader is modular but CONFIG_FW_LOADER_USER_HELPER=y we fail
-> the build at mostpost.
-> 
-> ERROR: modpost: "fw_fallback_config" [drivers/base/firmware_loader/firmware_class.ko] undefined!
-> 
-> This happens because the variable fw_fallback_config is built into the
-> kernel if CONFIG_FW_LOADER_USER_HELPER=y always, so we need to grant
-> access to the firmware loader module by exporting it.
-> 
-> Revert only one hunk from his patch.
-> 
-> Fixes: 739604734bd8e4ad71 ("firmware_loader: remove unused exports")
+On Thu, Apr 23, 2020 at 1:48 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+>
+> Underlying fs may not be able to handle the length in fiemap
+> beyond sb->s_maxbytes. So similar to how VFS ioctl does it,
+> add fiemap_check_ranges() check in ovl_fiemap() as well
+> before calling underlying fs i_op->fiemap() call.
+>
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> ---
+>  fs/overlayfs/inode.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index 79e8994e3bc1..9bcd2e96faad 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -455,16 +455,21 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>         int err;
+>         struct inode *realinode = ovl_inode_real(inode);
+>         const struct cred *old_cred;
+> +       u64 length;
 
-Fixes: 739604734bd8 ("firmware_loader: remove unused exports")
+To be more clear, I would call that reallen, but apart from that, you may add:
 
-No need to be over-eager with the number of digits...
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-I'll fix this up when I apply it, thanks.
-
-greg k-h
+Thanks,
+Amir.
