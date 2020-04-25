@@ -2,102 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F10A41B87F7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 19:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EA931B881B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Apr 2020 19:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbgDYRHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Apr 2020 13:07:14 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:60381 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726146AbgDYRHN (ORCPT
+        id S1726177AbgDYR3U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Apr 2020 13:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726145AbgDYR3U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Apr 2020 13:07:13 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 2B8385C0172;
-        Sat, 25 Apr 2020 13:07:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sat, 25 Apr 2020 13:07:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm2; bh=+C2VjyQ2cmYFmQIGbS0PPo36mP
-        R3PNjT64EnXqiAICA=; b=eGgl9IwMZh5zq6lvo3Ao7SMrzL20kG8RvjcZ/Bcy8U
-        7ZoSmdobk8QW7FRVzefYd/KLyH2Hk1jeYHcpEExViJHcF/jnk+5gITxpFBl39Mbe
-        c1tZZaqk+Q8Ys5Eby+utZFrBqbXK1q4orbPlEsvVzOXHbU8sCiuFRV4pGZVAz1jz
-        V2xJfohWHfZXc5ZWzFm6eJzJfETIc94xE0/0qvFPMyYNU2JwKwJ9s07bt8VD9/zu
-        S+Z1c3grdqzPYdp1DQmt7kF5ZAIoRN9p7PSilh/hS96K0Z+J2jm8WV78qtTPefMu
-        Hl7cBia0+eIsFnM/Ka6iZO9d+CSg2B6j+bZVPsa8j6Vg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+C2Vjy
-        Q2cmYFmQIGbS0PPo36mPR3PNjT64EnXqiAICA=; b=RY113c8Omdc0T/KoVapopj
-        TqOwNuJ+M7Bt7R8R5e2utKXIW8SZT4L0XUgPjhjFyr+yOvoFaDW8jEyR+ZfgOgKA
-        NMemI8FeirXwMrixWsgHj/r3f6etRmXpn4DMJvNuK40PdjsoZYtEujcm3f1gr1qo
-        x9g+yUiS7DcmN7c4KNCoVxfH/AjWBZ2/pu5zdi5kJn3SB2OC+7hSAGdp2Lnkow2g
-        C8qbB8IgU7lh02r7wTNRo10JBtTW6b7Hy9uOjsjKl9nxOTRtCzH6bD2OiGFRFV3w
-        foMzt56xFWDdvSKb3me9RZSuUGaTzj424iz7UUv3jfTEo9mM40RPqVtfMIRNBJ1g
-        ==
-X-ME-Sender: <xms:QG6kXkrOOiidkOkxjcRGSpEFK_AQ907hCaxX_kDN59ZvdXd4HTOL7g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrheeggdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkfgfgggtgfesthhqtddttd
-    erjeenucfhrhhomheppfhikhholhgruhhsucftrghthhcuoefpihhkohhlrghushesrhgr
-    thhhrdhorhhgqeenucfkphepudekhedrfedrleegrdduleegnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdr
-    ohhrgh
-X-ME-Proxy: <xmx:QG6kXqPZ-VrTeIbwY4TBAQWLeVjjcJFv77S8I7_Ve4_R0FPYfSqANw>
-    <xmx:QG6kXs-WdkpIwON_E8-1ucUZw4lUrGeNPRn5BLTaaMQmWNLWeyC4eA>
-    <xmx:QG6kXgVn8cXqnAp9VVNrMGNMgFVpEzBbHEY3IkcLga456EyHvzupzQ>
-    <xmx:QW6kXtcbUwuZxlwfTy_MYE7EMASvrD3CnoRUaNbxOVE7GZbuT2G_uQ>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9F4F03065DC2;
-        Sat, 25 Apr 2020 13:07:12 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id AEF6F1BF;
-        Sat, 25 Apr 2020 17:07:11 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 6C908E0096; Sat, 25 Apr 2020 18:06:16 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Subject: [fuse] Getting visibility into reads from page cache
-Mail-Copies-To: never
-Mail-Followup-To: linux-fsdevel@vger.kernel.org, fuse-devel
-        <fuse-devel@lists.sourceforge.net>
-Date:   Sat, 25 Apr 2020 18:06:16 +0100
-Message-ID: <87k123h4vr.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 25 Apr 2020 13:29:20 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018D5C09B04D
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Apr 2020 10:29:19 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id e8so12564098ilm.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Apr 2020 10:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lonelycoder.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=W8PtJHuos4f7kE/zqDG6OHkG/lAdIycvdAHU7I6Bdno=;
+        b=QAwk7HOufak0isMR0bjJqbvMbKHyAHp5rmb1AZZeIfyjmONJ2V0D8uD2dk+tv2MxGO
+         81ybYAC6sdDrRW/6YDk0UQpcZSJqHNAAzL5FXoqGwgLfOQ8XvEGsuX88O6c06rdoNudf
+         voV7rmelAsRf8RZSUEeKli0puf7wNajWrwbzRG64X62ysj0PymVqdMZwgX33Zu8tpXQE
+         tCZoYeZQu3VGJwyBn03svenk3eBovEqyUYpQ9IKz+jQ0i5GPsXfgmVBoLZu7QB98xXi4
+         KX4hHSAdp7L9ELMMqSJxYYo2sMfNqFgJwxa2etgT/fVPgpWiMkMv6bYmpJaoJQjQAwPg
+         5WRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=W8PtJHuos4f7kE/zqDG6OHkG/lAdIycvdAHU7I6Bdno=;
+        b=DA8bizpEe410rkNMd73XW/FPzxO6vsLN5NCNNol+wfgEpRyKhu+22DOuxgaXlf/HeA
+         tNQMMz9IYO+9srkKxXUULEDDJewGHAdmjaRSw9pF5LOE43r4e58MUO/jH/bwO6vIubzX
+         OBI4TlCl0htfiRqvxDfXE/0Zmb5RaHRUtI76NkKDGdYlP9b4Lh0hAIHforALQHppjKcl
+         02GaIOX1hFGET2VSp5M4XLqKEASfWG97/7Yvzig610tIJioHzT9wB1sL+Im6+57Pb7sp
+         Vqjs2SuSFMMVRpD0eUDmEG5JFJoGjGKYiqCZfafH4cklfI+3B0vMUk1vH56E5WmoLv5z
+         0CUw==
+X-Gm-Message-State: AGi0PuZIkliRsPCWOwWCbiZ4G9sO2XE0pJ1tUnAdMWwgo38klgB982Zp
+        crqNHUCnGOGSLrHKST7kc6PcfqZBPx4s1+ZOLvH/cf/r2zg=
+X-Google-Smtp-Source: APiQypKUEt9xF/24tAPEr9tI40zNE61VwJcz1azwPnHbzgJ7a7o4nnCN3OabPx9epXiZsMJgbnKzEDGrC33aDPXrhyY=
+X-Received: by 2002:a92:985d:: with SMTP id l90mr14575191ili.108.1587835758992;
+ Sat, 25 Apr 2020 10:29:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From:   Andreas Smas <andreas@lonelycoder.com>
+Date:   Sat, 25 Apr 2020 10:29:08 -0700
+Message-ID: <CAObFT-S27KXFGomqPZdXA8oJDe6QxmoT=T6CBgD9R9UHNmakUQ@mail.gmail.com>
+Subject: io_uring, IORING_OP_RECVMSG and ancillary data
+To:     axboe@kernel.dk, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi,
 
-For debugging purposes, I would like to get information about read
-requests for FUSE filesystems that are answered from the page cache
-(i.e., that never make it to the FUSE userspace daemon).
+Tried to use io_uring with OP_RECVMSG with ancillary buffers (for my
+particular use case I'm using SO_TIMESTAMP for incoming UDP packets).
 
-What would be the easiest way to accomplish that?
+These submissions fail with EINVAL due to the check in __sys_recvmsg_sock().
 
-For now I'd be happy with seeing regular reads and knowing when an
-application uses mmap (so that I know that I might be missing reads).
+The following hack fixes the problem for me and I get valid timestamps
+back. Not suggesting this is the real fix as I'm not sure what the
+implications of this is.
 
+Any insight into this would be much appreciated.
 
-Not having done any real kernel-level work, I would start by looking
-into using some tracing framework to hook into the relevant kernel
-function. However, I thought I'd ask here first to make sure that I'm
-not heading into the completely wrong direction.
+Thanks,
+Andreas
 
-
-Best,
--Nikolaus
-
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+diff --git a/net/socket.c b/net/socket.c
+index 2dd739fba866..689f41f4156e 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2637,10 +2637,6 @@ long __sys_recvmsg_sock(struct socket *sock,
+struct msghdr *msg,
+                        struct user_msghdr __user *umsg,
+                        struct sockaddr __user *uaddr, unsigned int flags)
+ {
+-       /* disallow ancillary data requests from this path */
+-       if (msg->msg_control || msg->msg_controllen)
+-               return -EINVAL;
+-
+        return ____sys_recvmsg(sock, msg, umsg, uaddr, flags, 0);
+ }
