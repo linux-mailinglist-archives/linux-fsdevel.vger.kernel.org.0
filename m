@@ -2,96 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C2601B90E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Apr 2020 16:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C77F01B9146
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Apr 2020 17:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbgDZOdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Apr 2020 10:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbgDZOdn (ORCPT
+        id S1726155AbgDZPvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Apr 2020 11:51:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725818AbgDZPvF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Apr 2020 10:33:43 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D9AC061A0F;
-        Sun, 26 Apr 2020 07:33:42 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id r14so7477880pfg.2;
-        Sun, 26 Apr 2020 07:33:42 -0700 (PDT)
+        Sun, 26 Apr 2020 11:51:05 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4DBC061A0F;
+        Sun, 26 Apr 2020 08:51:04 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id 7so5871025pjo.0;
+        Sun, 26 Apr 2020 08:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HfHjVgi++7EfIVCntmGsu3iQ24Hd2wLCepiTOzuKJAY=;
-        b=FT3N2KntlqZX4SWoQy31VFT1xAhTxmkqJADP5jbdIry4miYnkqAJ1vvXCV9HR0dupc
-         g86HFiPrNA9NOhS72GWPXZbn7Xs9HtK/cbFDTGq2BR4Yp8C0tZgzfJ4tvZmYgyBYIB9L
-         yAwOgIW568Bv49WtXP7nbid5AUHKLai45k1aN5nyJUbzFHfWSESUnCt/Z8KM+HkzGGHP
-         CNCJJW4qkUm6QXYiPz9HlbbXjgI5LS8LWS/Faow1v4OyUR2pO3KTIL505rFm5aUyKhmu
-         Au4bjoi2jNLPH2s80vJJ4QrCBTD5VUNIbW3l1s9gx0jrUG1UX/en0/etrYr5k1UTL+nB
-         D1rQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0tREdJmgxZBE3LuxNv5lLUb9+sRKgXBjmxyZW6AGnrE=;
+        b=sDZrN2+0H3oWhbgC3FN3dRrI+vnpl/bE9yHq8HRC57KvZN2rYMU2YRLxV5qkKH1pVy
+         2CEb2u+YbK6heFjgQNutKPxZDTi5bZft3ysYJscFcqPkt8EWoFfFqhuyhD0IhGc8xijs
+         6wBlKoRXKVlSpCr6KqKzheomL5/Rk8Uw0UScYFq1VovEbNlisshNYBWu+C6YDqSBequT
+         Nf1a7uOegzBkQrYV5IEgEwdyvM4q9w7PHzBJ0CpZzGPF6MdO/lGw3QUREHszldPK3GpU
+         3qL0nrO8xVS4zdE/prR/cCJxxB3lAoKG3awGlwXr7pm9T42nRAtkMY+zlPZstgEgzkuG
+         OVZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HfHjVgi++7EfIVCntmGsu3iQ24Hd2wLCepiTOzuKJAY=;
-        b=djm9J1+FPW7D1cmCMcjtZ3S3ZioAFOPNIsJjyPiNstiJoX3zb+0Sd3wN/QR01HsmqA
-         3fwiPw95PiwsNfa03ZLjTBzq7gQ4IlV4EcErv55/4eF54/w4myk+4jLayGMkp4L9csRs
-         YGkjGX/sd3HOUpQfCIngZul0kT+e7CPUpS62spI3yscNGtPNg4SxlF6QPseHvpfE3T4b
-         yocwgCsUFcNPNR9HEfIaneMnjdrvGTAekYDa2ek8XMvDqgKhPhu1paJv8aWGrHw0CKTd
-         bObxoUzTwYgudWXsjQiy4oRkQj5J/W611doe9yftLNTWUW4p01NOGzvoWcvq+ec/2O52
-         GClQ==
-X-Gm-Message-State: AGi0PuaP9dbep04L9Kp17Tf/f1TTFb5jEvD1tlUn/4amdW/o2xPiCPru
-        7jk6IMmKuBA7jZ9xrs2H0bc=
-X-Google-Smtp-Source: APiQypLqMAHWZL71lfSHmPgo7qd4gE7rnNC3md1i+YhL5haoblrAIYmd8Psx2JgKhU0Sp5yOgsaU9Q==
-X-Received: by 2002:a62:15d8:: with SMTP id 207mr18423105pfv.140.1587911621942;
-        Sun, 26 Apr 2020 07:33:41 -0700 (PDT)
-Received: from ubuntu.localdomain ([220.116.27.194])
-        by smtp.gmail.com with ESMTPSA id x66sm10065808pfb.173.2020.04.26.07.33.39
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0tREdJmgxZBE3LuxNv5lLUb9+sRKgXBjmxyZW6AGnrE=;
+        b=J+ORCmupeyj3uD6Bw5dJFOI4X6Ios2IAmNio4K4lpPwh/im9BPvrj1bUJ99u11KGkO
+         +368kKWlKsLW6phX19dWFPLmlEZDPxTk2o2Ci+LZyCdqrN3nKiPA4TGIKebuq9IXqpKM
+         qUD1TX1t6e+oDgfyb8k+djZy7+RWRJDOOM1JZ+RkJJxp8zOIjpLIKtB/O2NFlBbmJ4oz
+         hXsqQ+4pvc2EaCgvspGMniGlFjIoYNp/EzivLUHkF2ptCVTAaGb1GPFXwSJsRFcUGLKn
+         x4q3DTaGaaCYVy0HWGFPQrORfBs+4coC0qYoyWkiM+37Y2Hq+S/tZaL9/9/A0U9xgBKa
+         n76Q==
+X-Gm-Message-State: AGi0Puad/gRXHfvymfzVjwphgNS4Lo/DEpF9QWJqOxz7rCoTPsj4Zbm7
+        +i9f+syGJQXAcER2Xaak1cQ=
+X-Google-Smtp-Source: APiQypK/TQCrX63vJaNJa+pMMCMrbYitizNxouXhoQm6uhpCCnnkEGp/tWQ1QRiNM4UdLfeHiDtWOw==
+X-Received: by 2002:a17:90a:23cd:: with SMTP id g71mr17811667pje.174.1587916263895;
+        Sun, 26 Apr 2020 08:51:03 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:400::5:9db4])
+        by smtp.gmail.com with ESMTPSA id j5sm1088560pfh.58.2020.04.26.08.51.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Apr 2020 07:33:41 -0700 (PDT)
-From:   youngjun <her0gyugyu@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, youngjun <her0gyugyu@gmail.com>
-Subject: [PATCH] inotify: Fix error return code assignment flow.
-Date:   Sun, 26 Apr 2020 07:33:16 -0700
-Message-Id: <20200426143316.29877-1-her0gyugyu@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 26 Apr 2020 08:51:02 -0700 (PDT)
+Date:   Sun, 26 Apr 2020 08:51:00 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: pass kernel pointers to the sysctl ->proc_handler method v3
+Message-ID: <20200426155100.bcbqnrilk45ugzva@ast-mbp>
+References: <20200424064338.538313-1-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200424064338.538313-1-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If error code is initialized -EINVAL, there is no need to assign -EINVAL.
+On Fri, Apr 24, 2020 at 08:43:33AM +0200, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series changes the sysctl ->proc_handler methods to take kernel
+> pointers.  This simplifies some of the pointer handling in the methods
+> (which could probably be further simplified now), and gets rid of the
+> set_fs address space overrides used by bpf.
+> 
+> Changes since v2:
+>  - free the buffer modified by BPF
+>  - move pid_max and friends to pid.h
+> 
+> Changes since v1:
+>  - drop a patch merged by Greg
+>  - don't copy data out on a write
+>  - fix buffer allocation in bpf
 
-Signed-off-by: youngjun <her0gyugyu@gmail.com>
----
- fs/notify/inotify/inotify_user.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 81ffc8629fc4..f88bbcc9efeb 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -764,20 +764,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
- 	struct fsnotify_group *group;
- 	struct inotify_inode_mark *i_mark;
- 	struct fd f;
--	int ret = 0;
-+	int ret = -EINVAL;
- 
- 	f = fdget(fd);
- 	if (unlikely(!f.file))
- 		return -EBADF;
- 
- 	/* verify that this is indeed an inotify instance */
--	ret = -EINVAL;
- 	if (unlikely(f.file->f_op != &inotify_fops))
- 		goto out;
- 
- 	group = f.file->private_data;
- 
--	ret = -EINVAL;
- 	i_mark = inotify_idr_find(group, wd);
- 	if (unlikely(!i_mark))
- 		goto out;
--- 
-2.17.1
-
+The set looks good to me.
+Should I take it via bpf-next tree ?
