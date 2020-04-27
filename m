@@ -2,185 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E95F1BAE76
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 21:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2EF21BAE82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 21:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgD0TuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 15:50:15 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:53344 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgD0TuP (ORCPT
+        id S1726552AbgD0Txe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 15:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726205AbgD0Txe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 15:50:15 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jT9lX-0006L6-BZ; Mon, 27 Apr 2020 13:50:07 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jT9lV-0003xk-91; Mon, 27 Apr 2020 13:50:07 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
-        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
-        <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
-        <20200424173927.GB26802@redhat.com>
-        <87mu6ymkea.fsf_-_@x220.int.ebiederm.org>
-        <87blnemj5t.fsf_-_@x220.int.ebiederm.org>
-        <87zhaxqkwa.fsf@nanos.tec.linutronix.de>
-Date:   Mon, 27 Apr 2020 14:46:51 -0500
-In-Reply-To: <87zhaxqkwa.fsf@nanos.tec.linutronix.de> (Thomas Gleixner's
-        message of "Mon, 27 Apr 2020 12:32:21 +0200")
-Message-ID: <87a72wd844.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 27 Apr 2020 15:53:34 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381D7C0610D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 12:53:33 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id x2so5790740pfx.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 12:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5AiPUPtxCiQvboDcS7WV9GxwIxTvQgyLFjgwai7neR0=;
+        b=VIdN1O5xc19M9dx4Ci9nIupBEOXDT9KwVNDlCxEDwM05P2iT/hQRjSznkp5TLDcm6s
+         QEvcgEo5+ebBnToE6VumN4utl8SJuzcsEgM0/VlhYaBQw2D5Y2Y9Ou5dSa9O02Rh9w1/
+         Fow3X0E+zzTGF5XkVy6TfZ8P15H0kd7YnWI5prpdfhHXKYz+YGIEGJJmLCZ4tDcBcoJV
+         5xnRP/NqHQzaR4iPk28TS4j1ug0P6gj3Fvpt79/ybPMSH5HgmKmBqgszwSaJUoyzJ8qD
+         KsSl4hQMfgxlF4pW2B7MPpbY66nqhKvKaklkoC+dxpxdzlzxTiA3cp+p0DOaoWaKqGWq
+         MXhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5AiPUPtxCiQvboDcS7WV9GxwIxTvQgyLFjgwai7neR0=;
+        b=XemuiVs85Ya5Gd2dsJY9yOoW/5226iakprpdKCPEIK2E2bZJBYvV4krLmtQD4fafDX
+         Se8M3HPo5yffXJdY77X4OW82IuI+8KYFxaCYU5KPd6lfVudbXQckIcTmSJp9MKlSiT6g
+         3KCgeoenqxEfjLuNkyiEFKSvMhaFMpj76FwOhP6bt6j8PBsRhKu6YVNCjH+nmbrBgyI1
+         35e8/1LoZm1Q5DEBRBsSfuToh+y3Qs6qO5pF4jx+cltiWhKsSBxOek6iui7pQyQqE8Z+
+         wUmjnRzXOAi6+wT6gnPXoPHOC1uVZ5j7NdyUT2oo+Wgs/PhbiD8XUYjgOIdOmf0RYNjm
+         d4+w==
+X-Gm-Message-State: AGi0PubL9zCbSbIdhdc42BMqCL8bV5zWKrCP8N9LAKXJbxTpEB3snF2l
+        YsftvbiVBSCvPtEooiBO8e1vwQ==
+X-Google-Smtp-Source: APiQypJKxxqFqmpZHyA+DwcGbOmZlh/e2LGW5KFClgYxJ5y7OTNePNAmOF27D1Nz+qI/9ioAWOZV6A==
+X-Received: by 2002:aa7:9802:: with SMTP id e2mr25259557pfl.213.1588017212490;
+        Mon, 27 Apr 2020 12:53:32 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id i9sm13075644pfk.199.2020.04.27.12.53.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Apr 2020 12:53:31 -0700 (PDT)
+Subject: Re: io_uring, IORING_OP_RECVMSG and ancillary data
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jann Horn <jannh@google.com>
+Cc:     Andreas Smas <andreas@lonelycoder.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <CAObFT-S27KXFGomqPZdXA8oJDe6QxmoT=T6CBgD9R9UHNmakUQ@mail.gmail.com>
+ <f75d30ff-53ec-c3a1-19b2-956735d44088@kernel.dk>
+ <CAG48ez32nkvLsWStjenGmZdLaSPKWEcSccPKqgPtJwme8ZxxuQ@mail.gmail.com>
+ <bd37ec95-2b0b-40fc-8c86-43805e2990aa@kernel.dk>
+Message-ID: <45d7558a-d0c8-4d3f-c63a-33fd2fb073a5@kernel.dk>
+Date:   Mon, 27 Apr 2020 13:53:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jT9lV-0003xk-91;;;mid=<87a72wd844.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18j5AH/+MVgbJoMSFliM5bTtu8iUZh+Nco=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4893]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Thomas Gleixner <tglx@linutronix.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1680 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 11 (0.7%), b_tie_ro: 10 (0.6%), parse: 1.58
-        (0.1%), extract_message_metadata: 23 (1.3%), get_uri_detail_list: 3.6
-        (0.2%), tests_pri_-1000: 22 (1.3%), tests_pri_-950: 1.83 (0.1%),
-        tests_pri_-900: 1.48 (0.1%), tests_pri_-90: 329 (19.6%), check_bayes:
-        327 (19.4%), b_tokenize: 9 (0.5%), b_tok_get_all: 147 (8.8%),
-        b_comp_prob: 2.7 (0.2%), b_tok_touch_all: 163 (9.7%), b_finish: 0.93
-        (0.1%), tests_pri_0: 333 (19.8%), check_dkim_signature: 1.31 (0.1%),
-        check_dkim_adsp: 2.6 (0.2%), poll_dns_idle: 932 (55.5%), tests_pri_10:
-        2.0 (0.1%), tests_pri_500: 951 (56.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v3 2/6] posix-cpu-timers: Use PIDTYPE_TGID to simplify the logic in lookup_task
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <bd37ec95-2b0b-40fc-8c86-43805e2990aa@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->> Using pid_task(find_vpid(N), PIDTYPE_TGID) guarantees that if a task
->> is found it is at that moment the thread group leader.  Which removes
->> the need for the follow on test has_group_leader_pid.
+On 4/27/20 1:29 PM, Jens Axboe wrote:
+> On 4/27/20 1:20 PM, Jann Horn wrote:
+>> On Sat, Apr 25, 2020 at 10:23 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>> On 4/25/20 11:29 AM, Andreas Smas wrote:
+>>>> Hi,
+>>>>
+>>>> Tried to use io_uring with OP_RECVMSG with ancillary buffers (for my
+>>>> particular use case I'm using SO_TIMESTAMP for incoming UDP packets).
+>>>>
+>>>> These submissions fail with EINVAL due to the check in __sys_recvmsg_sock().
+>>>>
+>>>> The following hack fixes the problem for me and I get valid timestamps
+>>>> back. Not suggesting this is the real fix as I'm not sure what the
+>>>> implications of this is.
+>>>>
+>>>> Any insight into this would be much appreciated.
+>>>
+>>> It was originally disabled because of a security issue, but I do think
+>>> it's safe to enable again.
+>>>
+>>> Adding the io-uring list and Jann as well, leaving patch intact below.
+>>>
+>>>> diff --git a/net/socket.c b/net/socket.c
+>>>> index 2dd739fba866..689f41f4156e 100644
+>>>> --- a/net/socket.c
+>>>> +++ b/net/socket.c
+>>>> @@ -2637,10 +2637,6 @@ long __sys_recvmsg_sock(struct socket *sock,
+>>>> struct msghdr *msg,
+>>>>                         struct user_msghdr __user *umsg,
+>>>>                         struct sockaddr __user *uaddr, unsigned int flags)
+>>>>  {
+>>>> -       /* disallow ancillary data requests from this path */
+>>>> -       if (msg->msg_control || msg->msg_controllen)
+>>>> -               return -EINVAL;
+>>>> -
+>>>>         return ____sys_recvmsg(sock, msg, umsg, uaddr, flags, 0);
+>>>>  }
 >>
->> I have reorganized the rest of the code in lookup_task for clarity,
->> and created a common return for most of the code.
->
-> Sorry, it's way harder to read than the very explicit exits which were
-> there before.
+>> I think that's hard to get right. In particular, unix domain sockets
+>> can currently pass file descriptors in control data - so you'd need to
+>> set the file_table flag for recvmsg and sendmsg. And I'm not sure
+>> whether, to make this robust, there should be a whitelist of types of
+>> control messages that are permitted to be used with io_uring, or
+>> something like that...
+>>
+>> I think of ancillary buffers as being kind of like ioctl handlers in
+>> this regard.
+> 
+> Good point. I'll send out something that hopefully will be enough to
+> be useful, whole not allowing anything randomly.
 
-My biggest gripe is the gettime and the ordinary !thread case should
-be sharing code and they are not.  I know historically why they don't
-but for all practical purposes has_group_leader_pid and
-thread_group_leader are the same test.
+That things is a bit of a mess... How about something like this for
+starters?
 
 
->> The special case for clock_gettime with "pid == gettid" is not my
->> favorite.  I strongly suspect it isn't used as gettid is such a pain,
->> and passing 0 is much easier.  Still it is easier to keep this special
->> case than to do the reasarch that will show it isn't used.
->
-> It might be not your favorite, but when I refactored the code I learned
-> the hard way that one of the test suites has assumptions that
-> clock_gettime(PROCESS) works from any task of a group and not just for
-> the group leader. Sure we could fix the test suite, but test code tends
-> to be copied ...
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 084dfade5cda..40aa5b38367e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3570,6 +3570,37 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return ret;
+ }
+ 
++static bool __io_net_allow_cmsg(struct cmsghdr *cmsg)
++{
++	switch (cmsg->cmsg_level) {
++	case SOL_SOCKET:
++		if (cmsg->cmsg_type != SCM_RIGHTS &&
++		    cmsg->cmsg_type != SCM_CREDENTIALS)
++			return true;
++		return false;
++	case SOL_IP:
++	case SOL_TCP:
++	case SOL_IPV6:
++	case SOL_ICMPV6:
++	case SOL_SCTP:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static bool io_net_allow_cmsg(struct msghdr *msg)
++{
++	struct cmsghdr *cmsg;
++
++	for_each_cmsghdr(cmsg, msg) {
++		if (!__io_net_allow_cmsg(cmsg))
++			return false;
++	}
++
++	return true;
++}
++
+ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	struct io_async_msghdr *kmsg = NULL;
+@@ -3604,6 +3635,11 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ 				return ret;
+ 		}
+ 
++		if (!io_net_allow_cmsg(&kmsg->msg)) {
++			ret = -EINVAL;
++			goto err;
++		}
++
+ 		flags = req->sr_msg.msg_flags;
+ 		if (flags & MSG_DONTWAIT)
+ 			req->flags |= REQ_F_NOWAIT;
+@@ -3617,6 +3653,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ 			ret = -EINTR;
+ 	}
+ 
++err:
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+@@ -3840,6 +3877,11 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 				return ret;
+ 		}
+ 
++		if (!io_net_allow_cmsg(&kmsg->msg)) {
++			ret = -EINVAL;
++			goto err;
++		}
++
+ 		kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
+ 		if (IS_ERR(kbuf)) {
+ 			return PTR_ERR(kbuf);
+@@ -3863,6 +3905,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 			ret = -EINTR;
+ 	}
+ 
++err:
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+diff --git a/net/socket.c b/net/socket.c
+index 2dd739fba866..78cdf9a8cf73 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2425,10 +2425,6 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
+ long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
+ 			unsigned int flags)
+ {
+-	/* disallow ancillary data requests from this path */
+-	if (msg->msg_control || msg->msg_controllen)
+-		return -EINVAL;
+-
+ 	return ____sys_sendmsg(sock, msg, flags, NULL, 0);
+ }
+ 
+@@ -2637,10 +2633,6 @@ long __sys_recvmsg_sock(struct socket *sock, struct msghdr *msg,
+ 			struct user_msghdr __user *umsg,
+ 			struct sockaddr __user *uaddr, unsigned int flags)
+ {
+-	/* disallow ancillary data requests from this path */
+-	if (msg->msg_control || msg->msg_controllen)
+-		return -EINVAL;
+-
+ 	return ____sys_recvmsg(sock, msg, umsg, uaddr, flags, 0);
+ }
 
-Do you know which test suite?
-It would be nice to see such surprising code with my own eyes.
-
-I completely agree that clock_gettime(PROCESS) should work for any task
-of a group.  I would think anything with a constant like that would just
-be passing in 0, which is trivial.  Looking up your threadid seems like
-extra work.
-
-Mostly my complaint is that the gettime subcase is an awkward special
-case.  Added in 33ab0fec3352 ("posix-timers: Consolidate
-posix_cpu_clock_get()") and the only justification for changing the
-userspace ABI was that it made things less awkward to combine to
-branches of code.
-
->>  /*
->>   * Functions for validating access to tasks.
->>   */
->> -static struct task_struct *lookup_task(const pid_t pid, bool thread,
->> +static struct task_struct *lookup_task(const pid_t which_pid, bool thread,
->>  				       bool gettime)
->>  {
->>  	struct task_struct *p;
->> +	struct pid *pid;
->>  
->>  	/*
->>  	 * If the encoded PID is 0, then the timer is targeted at current
->>  	 * or the process to which current belongs.
->>  	 */
->> -	if (!pid)
->> +	if (!which_pid)
->>  		return thread ? current : current->group_leader;
->>  
->> -	p = find_task_by_vpid(pid);
->> -	if (!p)
->> -		return p;
->> -
->> -	if (thread)
->> -		return same_thread_group(p, current) ? p : NULL;
->> -
->> -	if (gettime) {
->> +	pid = find_vpid(which_pid);
->> +	if (thread) {
->> +		p = pid_task(pid, PIDTYPE_PID);
->> +		if (p && !same_thread_group(p, current))
->> +			p = NULL;
->> +	} else {
->>  		/*
->>  		 * For clock_gettime(PROCESS) the task does not need to be
->>  		 * the actual group leader. tsk->sighand gives
->> @@ -76,13 +75,13 @@ static struct task_struct *lookup_task(const pid_t pid, bool thread,
->>  		 * reference on it and store the task pointer until the
->>  		 * timer is destroyed.
->
-> Btw, this comment is wrong since
->
->      55e8c8eb2c7b ("posix-cpu-timers: Store a reference to a pid not a task")
-
-It is definitely stale.  It continues to describe the motive for
-limiting ourselves to a thread_group_leader.
-
-I am cooking up a patch to tweak that comment, and get replace of
-has_group_leader_pid.  Since it is unnecessary I just want to decouple
-that work from this patchset.
-
-Eric
-
+-- 
+Jens Axboe
 
