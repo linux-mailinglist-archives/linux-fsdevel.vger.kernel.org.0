@@ -2,63 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF471BA397
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 14:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37E31BA39C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 14:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbgD0M2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 08:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgD0M2l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 08:28:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91EAC0610D5;
-        Mon, 27 Apr 2020 05:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wzixkdd1MP05tKyiJudvvJUbNJ4oUXlhwu6lo0T90lk=; b=h4uZN/H6Mu3d0zPdDsclCVH32p
-        44gY3nD6XgbLkqBBMl44AzSP/BJE3KBzRAPQwmBogEvavTEhIQUL3ocaF+cw7UkzuVAwITD4seBgk
-        Pp8Hl1+tIQ8RODfstqU0/krSNx7E830cBVrxSyf5dfg0gpQoKrJKe2M5AynwMKOl0n3mi6Pl4oFKf
-        efaEddM5vpsfG757hkc2v8IEonhVlf8jAZ4wp/U05w15FPDDSa7fkY0VDdkD1WHqV691GKsmZEkS8
-        SOQI03I+FKN/fUWcflc8dcvjdXytbEbhLDXDLTXiJZruWD/RddNBs2RHT5uDy951iViKV1ctgL7yg
-        iJXmOD4A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jT2sG-0003WE-Dr; Mon, 27 Apr 2020 12:28:36 +0000
-Date:   Mon, 27 Apr 2020 05:28:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@lst.de,
-        rgoldwyn@suse.de, qi.fuli@fujitsu.com, y-goto@fujitsu.com
-Subject: Re: [RFC PATCH 0/8] dax: Add a dax-rmap tree to support reflink
-Message-ID: <20200427122836.GD29705@bombadil.infradead.org>
-References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+        id S1727001AbgD0MbD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 08:31:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43490 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbgD0MbD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 08:31:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2A168AD93;
+        Mon, 27 Apr 2020 12:31:01 +0000 (UTC)
+Subject: Re: [PATCH v8 04/11] block: Introduce REQ_OP_ZONE_APPEND
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20200427113153.31246-1-johannes.thumshirn@wdc.com>
+ <20200427113153.31246-5-johannes.thumshirn@wdc.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <6aaf3d41-c097-b5da-9539-c34b1a02a644@suse.de>
+Date:   Mon, 27 Apr 2020 14:30:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+In-Reply-To: <20200427113153.31246-5-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
-> This patchset is a try to resolve the shared 'page cache' problem for
-> fsdax.
+On 4/27/20 1:31 PM, Johannes Thumshirn wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> In order to track multiple mappings and indexes on one page, I
-> introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
-> will be associated more than once if is shared.  At the second time we
-> associate this entry, we create this rb-tree and store its root in
-> page->private(not used in fsdax).  Insert (->mapping, ->index) when
-> dax_associate_entry() and delete it when dax_disassociate_entry().
+> Define REQ_OP_ZONE_APPEND to append-write sectors to a zone of a zoned
+> block device. This is a no-merge write operation.
+> 
+> A zone append write BIO must:
+> * Target a zoned block device
+> * Have a sector position indicating the start sector of the target zone
+> * The target zone must be a sequential write zone
+> * The BIO must not cross a zone boundary
+> * The BIO size must not be split to ensure that a single range of LBAs
+>    is written with a single command.
+> 
+> Implement these checks in generic_make_request_checks() using the
+> helper function blk_check_zone_append(). To avoid write append BIO
+> splitting, introduce the new max_zone_append_sectors queue limit
+> attribute and ensure that a BIO size is always lower than this limit.
+> Export this new limit through sysfs and check these limits in bio_full().
+> 
+> Also when a LLDD can't dispatch a request to a specific zone, it
+> will return BLK_STS_ZONE_RESOURCE indicating this request needs to
+> be delayed, e.g.  because the zone it will be dispatched to is still
+> write-locked. If this happens set the request aside in a local list
+> to continue trying dispatching requests such as READ requests or a
+> WRITE/ZONE_APPEND requests targetting other zones. This way we can
+> still keep a high queue depth without starving other requests even if
+> one request can't be served due to zone write-locking.
+> 
+> Finally, make sure that the bio sector position indicates the actual
+> write position as indicated by the device on completion.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> [ jth: added zone-append specific add_page and merge_page helpers ]
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   block/bio.c               | 62 ++++++++++++++++++++++++++++++++++++---
+>   block/blk-core.c          | 52 ++++++++++++++++++++++++++++++++
+>   block/blk-mq.c            | 27 +++++++++++++++++
+>   block/blk-settings.c      | 23 +++++++++++++++
+>   block/blk-sysfs.c         | 13 ++++++++
+>   drivers/scsi/scsi_lib.c   |  1 +
+>   include/linux/blk_types.h | 14 +++++++++
+>   include/linux/blkdev.h    | 11 +++++++
+>   8 files changed, 199 insertions(+), 4 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Do we really want to track all of this on a per-page basis?  I would
-have thought a per-extent basis was more useful.  Essentially, create
-a new address_space for each shared extent.  Per page just seems like
-a huge overhead.
+Cheers,
+
+Hannes
+
+
+-- 
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                               +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
