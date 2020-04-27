@@ -2,41 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E0341B98B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 09:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1641B982A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 09:15:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbgD0Hcq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 03:32:46 -0400
-Received: from mail.tversu.net ([82.179.131.67]:57303 "EHLO mail.tversu.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726243AbgD0Hcp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 03:32:45 -0400
-X-Greylist: delayed 1806 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Apr 2020 03:32:45 EDT
-Received: from [192.168.8.101] (197.211.61.167) by ex2013mbx01.tversu.net
- (192.168.21.12) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Mon, 27 Apr
- 2020 10:02:36 +0300
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726599AbgD0HPR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 03:15:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbgD0HPR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 03:15:17 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A0DC061A0F;
+        Mon, 27 Apr 2020 00:15:17 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jSxyu-00CcTO-MI; Mon, 27 Apr 2020 07:15:08 +0000
+Date:   Mon, 27 Apr 2020 08:15:08 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: pass kernel pointers to the sysctl ->proc_handler method v3
+Message-ID: <20200427071508.GV23230@ZenIV.linux.org.uk>
+References: <20200424064338.538313-1-hch@lst.de>
+ <20200426155958.GS23230@ZenIV.linux.org.uk>
+ <20200427053616.GC15905@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Vorschlag..
-To:     Recipients <Ignatev.DI@tversu.ru>
-From:   Yi Huiman <Ignatev.DI@tversu.ru>
-Date:   Mon, 27 Apr 2020 08:02:35 +0100
-Reply-To: <info@huiman.cf>
-Message-ID: <ae238537602045ebaaf85e090084850a@ex2013mbx01.tversu.net>
-X-Originating-IP: [197.211.61.167]
-X-ClientProxiedBy: ex2013cas01.tversu.net (82.179.131.67) To
- ex2013mbx01.tversu.net (192.168.21.12)
-X-KSE-AntiSpam-Interceptor-Info: trusted connection
-X-KSE-ServerInfo: ex2013mbx01.tversu.net, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean
-X-KSE-Dlp-Interceptor-Info: license violation
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200427053616.GC15905@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I have a Proposal for you
+On Mon, Apr 27, 2020 at 07:36:16AM +0200, Christoph Hellwig wrote:
+> On Sun, Apr 26, 2020 at 04:59:58PM +0100, Al Viro wrote:
+> > OK, I can live with that; further work can live on top of that, anyway.
+> > How are we going to handle that?  I can put it into never-rebased branch
+> > in vfs.git (#work.sysctl), so that people could pull that.
+> > 
+> > FWIW, I'm putting together more uaccess stuff (will probably hit -next
+> > tonight or tomorrow); this would fit well there...
+> 
+> Sounds good to me.  The first patch isn't really needed for the series
+> and could go in through the bpf tree.
+
+OK, ##2--5 are in #work.sysctl, based at 5.7-rc1
