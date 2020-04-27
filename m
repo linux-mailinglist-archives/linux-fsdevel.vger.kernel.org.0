@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B7D1BA626
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 16:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D451BA625
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 16:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgD0OSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 10:18:37 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:36633 "EHLO
+        id S1727979AbgD0OSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 10:18:40 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:30722 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727855AbgD0OSg (ORCPT
+        by vger.kernel.org with ESMTP id S1727897AbgD0OSj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 10:18:36 -0400
+        Mon, 27 Apr 2020 10:18:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587997113;
+        s=mimecast20190719; t=1587997116;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=eXBh56e/cVjJYDBi4/WWQN3ZOpbJ4iri789A7MlSYT4=;
-        b=GdLtMT92ocPAt0pKpKN5IE+9P2wOW+kr5WnmCUjIUXJhU+3mRKQtiYXsDC1gpqGJGeqIvc
-        OzhjOxr8SA/FOT5BoYx8nGyZcFP+YuMbORHnmVDJi/9Z5xqUv0xjIBrIdw2fVuTLyju9u5
-        ZdOo8o1sIM7xSLpqfHAU95R23FlscOU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-13eYywvsOzuTc8MmTd2yXA-1; Mon, 27 Apr 2020 10:18:31 -0400
-X-MC-Unique: 13eYywvsOzuTc8MmTd2yXA-1
-Received: by mail-wm1-f70.google.com with SMTP id h6so7214456wmi.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 07:18:31 -0700 (PDT)
+        bh=5L7dmd+muhxT9zSwfl7wYYfNHtOAJ1eTklrP4NFviso=;
+        b=MOmAQS0katmJl64UuiloXEItBB5Jrf7gUq3v77r3g+tQ0xHh94qvP0qNQLJAscKfJAa3wT
+        w3VTeGsaRHhtp5FGK95IKcClN9EXoReyP7pKC8VFznHcoXiPUjFN26xEJxkeQzQxRkfI6Q
+        3Q4LdhBH3ot4FamUtfQ7KXpkqi7sFoE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-411-OuoAyN7LPjaSe1fYav5Upg-1; Mon, 27 Apr 2020 10:18:32 -0400
+X-MC-Unique: OuoAyN7LPjaSe1fYav5Upg-1
+Received: by mail-wr1-f70.google.com with SMTP id s11so10559299wru.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 07:18:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eXBh56e/cVjJYDBi4/WWQN3ZOpbJ4iri789A7MlSYT4=;
-        b=niGVRLwNZXu8Up2Qt4IqGlmOOKRx15a9ao9aGDiHE5b84KYvsVp5iiqwx+kJIj/Kdt
-         fV0NrBb7/jWngwpZFpNFSMm6udczljytSV3vH+CYW3OLiDhsYNEYBx3AtZfTuDgUQQd/
-         jy61pG4loP2sXiQ6Qz6FTEX+zWKBt/pUQGayMZlsx79cNFoboBuUIBQStsAMZF5FhZ54
-         u/dnGm7ZFq+mRFbpGiVL/gLPHi5qS+ieUA4iOky5NU0/YIW2xdZ59r3Dwi2x0xFijsj6
-         5c2J3ijY0iQHvlba6Dx/vfMQrFiGawtUKEbhugVcxhb1eSuawAGg++IQTZDH+xcrwC3m
-         bgZw==
-X-Gm-Message-State: AGi0Pub9+IOtn3YkaVerVIoGEGEmrWO5OcvRbk+x3GrWVUZae8Jrlo2C
-        NAH5Y7K8pCzpcVLkv6TAqyngijb4RtaMuRsLlRPybOLP9ZEaVqFdZKqKv+M01pxeOrS9alxD8Vg
-        NTiRMjuLCdyJYF+Fkn1I00PVpAA==
-X-Received: by 2002:adf:f98e:: with SMTP id f14mr27339857wrr.253.1587997109772;
-        Mon, 27 Apr 2020 07:18:29 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJ8vPCMrKQz05i3LpJNlEx9PWnqzC/jC7kqfVpEpnkAve0tGVXLHNJYwEzBjoISKlDyUNkc7Q==
-X-Received: by 2002:adf:f98e:: with SMTP id f14mr27339822wrr.253.1587997109250;
-        Mon, 27 Apr 2020 07:18:29 -0700 (PDT)
+        bh=5L7dmd+muhxT9zSwfl7wYYfNHtOAJ1eTklrP4NFviso=;
+        b=kX5crw/lLT2VcE7vHWx3cIiYQ6ivKeg+Mdi+TO7wtUIzGthgjmgz4FLvGv3oGWM/7N
+         y2nHH6HU+iS//7Sf7IJ82rF3uhtnlzQof6Z3rWSttsplCMESHo5d1TFuK8hlMu+ZJoOX
+         V3ronAqIYUe8iB86Tt29yEnF/1KW1YWJMg2dMNCfkHWL55Ko1XK63JxcEU5yX7v4R4r9
+         FLkhkqbFLngANmDbkU2Fo/BnymzPTp59xcmnOkAkQXSnOoyVYk5XcoBC+Q9BM5MXn4Pz
+         5jou1/T+3JCLajJUNAxCOGJi64pEs7Nme4W0Te0DH+q7NBoWmRqg0Zv4klGsDmRyPrPZ
+         IYeA==
+X-Gm-Message-State: AGi0PuasgULlp7YIxWfeZyTE6nisy7CUyRk95MKPwCgsiPmV9fYcUD7k
+        E1ar9c4H8+GFBD6YY7Pxx9UVqNG1zX4sg7dTkEVF8tcGye+BLO3mTkX+MM9epPyVBf9qoc1YyWs
+        7xTM6xYey4HjwxD8IYxBLT1ZXbw==
+X-Received: by 2002:a05:600c:da:: with SMTP id u26mr27138388wmm.48.1587997111154;
+        Mon, 27 Apr 2020 07:18:31 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKrIFP9sR/EDBVVHm/fpgAwBKx0HFBvm/N4Nv/zaQWUbDy+SzDopDzwb5HQIOgz+IlTEs2cZg==
+X-Received: by 2002:a05:600c:da:: with SMTP id u26mr27138330wmm.48.1587997110465;
+        Mon, 27 Apr 2020 07:18:30 -0700 (PDT)
 Received: from localhost.localdomain.com ([194.230.155.207])
-        by smtp.gmail.com with ESMTPSA id 1sm15914570wmz.13.2020.04.27.07.18.28
+        by smtp.gmail.com with ESMTPSA id 1sm15914570wmz.13.2020.04.27.07.18.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2020 07:18:28 -0700 (PDT)
+        Mon, 27 Apr 2020 07:18:29 -0700 (PDT)
 From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, mst@redhat.com,
         borntraeger@de.ibm.com, Paolo Bonzini <pbonzini@redhat.com>,
         Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Subject: [RFC PATCH 4/5] statsfs fs: virtual fs to show stats to the end-user
-Date:   Mon, 27 Apr 2020 16:18:15 +0200
-Message-Id: <20200427141816.16703-5-eesposit@redhat.com>
+Subject: [RFC PATCH 5/5] kvm_main: replace debugfs with statsfs
+Date:   Mon, 27 Apr 2020 16:18:16 +0200
+Message-Id: <20200427141816.16703-6-eesposit@redhat.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200427141816.16703-1-eesposit@redhat.com>
 References: <20200427141816.16703-1-eesposit@redhat.com>
@@ -69,721 +69,873 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add virtual fs that maps statsfs sources with directories, and values
-(simple or aggregates) to files.
+Use statsfs API instead of debugfs to create sources and add values.
 
-Every time a file is read/cleared, the fs internally invokes the statsfs
-API to get/set the requested value.
+This also requires to change all architecture files to replace the old
+debugfs_entries with statsfs_vcpu_entries and statsfs_vm_entries.
 
-fs/statsfs/inode.cis pretty much similar to what is done in
-fs/debugfs/inode.c, with the exception that the API is only
-composed by statsfs_create_file, statsfs_create_dir and statsfs_remove.
+The files/folders name and organization is kept unchanged, and a symlink
+in sys/kernel/debugfs/kvm is left for backward compatibility.
 
 Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
 ---
- fs/statsfs/Makefile        |   2 +-
- fs/statsfs/inode.c         | 337 +++++++++++++++++++++++++++++++++++++
- fs/statsfs/internal.h      |  15 ++
- fs/statsfs/statsfs.c       | 162 ++++++++++++++++++
- include/linux/statsfs.h    |  12 ++
- include/uapi/linux/magic.h |   1 +
- tools/lib/api/fs/fs.c      |  21 +++
- 7 files changed, 549 insertions(+), 1 deletion(-)
- create mode 100644 fs/statsfs/inode.c
+ arch/arm64/kvm/guest.c          |   2 +-
+ arch/mips/kvm/mips.c            |   2 +-
+ arch/powerpc/kvm/book3s.c       |   6 +-
+ arch/powerpc/kvm/booke.c        |   8 +-
+ arch/s390/kvm/kvm-s390.c        |  16 +-
+ arch/x86/include/asm/kvm_host.h |   2 +-
+ arch/x86/kvm/Makefile           |   2 +-
+ arch/x86/kvm/debugfs.c          |  64 -------
+ arch/x86/kvm/statsfs.c          |  49 +++++
+ arch/x86/kvm/x86.c              |   6 +-
+ include/linux/kvm_host.h        |  39 +---
+ virt/kvm/arm/arm.c              |   2 +-
+ virt/kvm/kvm_main.c             | 314 ++++----------------------------
+ 13 files changed, 130 insertions(+), 382 deletions(-)
+ delete mode 100644 arch/x86/kvm/debugfs.c
+ create mode 100644 arch/x86/kvm/statsfs.c
 
-diff --git a/fs/statsfs/Makefile b/fs/statsfs/Makefile
-index f546e3f03a12..5df4513a2f34 100644
---- a/fs/statsfs/Makefile
-+++ b/fs/statsfs/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--statsfs-objs	:= statsfs.o
-+statsfs-objs	:= inode.o statsfs.o
- statsfs-tests-objs	:= statsfs-tests.o
+diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+index 8417b200bec9..be024740aa67 100644
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -29,7 +29,7 @@
  
- obj-$(CONFIG_STATS_FS)	+= statsfs.o
-diff --git a/fs/statsfs/inode.c b/fs/statsfs/inode.c
+ #include "trace.h"
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("halt_successful_poll", halt_successful_poll),
+ 	VCPU_STAT("halt_attempted_poll", halt_attempted_poll),
+ 	VCPU_STAT("halt_poll_invalid", halt_poll_invalid),
+diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
+index fdf1c14d9205..13266b0f5d2d 100644
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -39,7 +39,7 @@
+ #define VECTORSPACING 0x100	/* for EI/VI mode */
+ #endif
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("wait", wait_exits),
+ 	VCPU_STAT("cache", cache_exits),
+ 	VCPU_STAT("signal", signal_exits),
+diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+index 37508a356f28..5b1a78747267 100644
+--- a/arch/powerpc/kvm/book3s.c
++++ b/arch/powerpc/kvm/book3s.c
+@@ -38,7 +38,7 @@
+ 
+ /* #define EXIT_DEBUG */
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("exits", sum_exits),
+ 	VCPU_STAT("mmio", mmio_exits),
+ 	VCPU_STAT("sig", signal_exits),
+@@ -66,6 +66,10 @@ struct kvm_stats_debugfs_item debugfs_entries[] = {
+ 	VCPU_STAT("pthru_all", pthru_all),
+ 	VCPU_STAT("pthru_host", pthru_host),
+ 	VCPU_STAT("pthru_bad_aff", pthru_bad_aff),
++	{ NULL }
++};
++
++struct statsfs_value statsfs_vm_entries[] = {
+ 	VM_STAT("largepages_2M", num_2M_pages, .mode = 0444),
+ 	VM_STAT("largepages_1G", num_1G_pages, .mode = 0444),
+ 	{ NULL }
+diff --git a/arch/powerpc/kvm/booke.c b/arch/powerpc/kvm/booke.c
+index c2984cb6dfa7..ef3e3bbab2d8 100644
+--- a/arch/powerpc/kvm/booke.c
++++ b/arch/powerpc/kvm/booke.c
+@@ -35,7 +35,12 @@
+ 
+ unsigned long kvmppc_booke_handlers;
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vm_entries[] = {
++	VM_STAT("remote_tlb_flush", remote_tlb_flush),
++	{ NULL }
++};
++
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("mmio", mmio_exits),
+ 	VCPU_STAT("sig", signal_exits),
+ 	VCPU_STAT("itlb_r", itlb_real_miss_exits),
+@@ -54,7 +59,6 @@ struct kvm_stats_debugfs_item debugfs_entries[] = {
+ 	VCPU_STAT("halt_wakeup", halt_wakeup),
+ 	VCPU_STAT("doorbell", dbell_exits),
+ 	VCPU_STAT("guest doorbell", gdbell_exits),
+-	VM_STAT("remote_tlb_flush", remote_tlb_flush),
+ 	{ NULL }
+ };
+ 
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index dbeb7da07f18..c22378fdc1a2 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -57,7 +57,16 @@
+ #define VCPU_IRQS_MAX_BUF (sizeof(struct kvm_s390_irq) * \
+ 			   (KVM_MAX_VCPUS + LOCAL_IRQS))
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vm_entries[] = {
++	VM_STAT("inject_float_mchk", inject_float_mchk),
++	VM_STAT("inject_io", inject_io),
++	VM_STAT("inject_pfault_done", inject_pfault_done),
++	VM_STAT("inject_service_signal", inject_service_signal),
++	VM_STAT("inject_virtio", inject_virtio),
++	{ NULL }
++};
++
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("userspace_handled", exit_userspace),
+ 	VCPU_STAT("exit_null", exit_null),
+ 	VCPU_STAT("exit_validity", exit_validity),
+@@ -95,18 +104,13 @@ struct kvm_stats_debugfs_item debugfs_entries[] = {
+ 	VCPU_STAT("inject_ckc", inject_ckc),
+ 	VCPU_STAT("inject_cputm", inject_cputm),
+ 	VCPU_STAT("inject_external_call", inject_external_call),
+-	VM_STAT("inject_float_mchk", inject_float_mchk),
+ 	VCPU_STAT("inject_emergency_signal", inject_emergency_signal),
+-	VM_STAT("inject_io", inject_io),
+ 	VCPU_STAT("inject_mchk", inject_mchk),
+-	VM_STAT("inject_pfault_done", inject_pfault_done),
+ 	VCPU_STAT("inject_program", inject_program),
+ 	VCPU_STAT("inject_restart", inject_restart),
+-	VM_STAT("inject_service_signal", inject_service_signal),
+ 	VCPU_STAT("inject_set_prefix", inject_set_prefix),
+ 	VCPU_STAT("inject_stop_signal", inject_stop_signal),
+ 	VCPU_STAT("inject_pfault_init", inject_pfault_init),
+-	VM_STAT("inject_virtio", inject_virtio),
+ 	VCPU_STAT("instruction_epsw", instruction_epsw),
+ 	VCPU_STAT("instruction_gs", instruction_gs),
+ 	VCPU_STAT("instruction_io_other", instruction_io_other),
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 42a2d0d3984a..b360ce4b3c5e 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -35,7 +35,7 @@
+ #include <asm/kvm_vcpu_regs.h>
+ #include <asm/hyperv-tlfs.h>
+ 
+-#define __KVM_HAVE_ARCH_VCPU_DEBUGFS
++#define __KVM_HAVE_ARCH_VCPU_STATSFS
+ 
+ #define KVM_MAX_VCPUS 288
+ #define KVM_SOFT_MAX_VCPUS 240
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index a789759b7261..117b2f7e9c92 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -11,7 +11,7 @@ kvm-$(CONFIG_KVM_ASYNC_PF)	+= $(KVM)/async_pf.o
+ 
+ kvm-y			+= x86.o emulate.o i8259.o irq.o lapic.o \
+ 			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
+-			   hyperv.o debugfs.o mmu/mmu.o mmu/page_track.o
++			   hyperv.o statsfs.o mmu/mmu.o mmu/page_track.o
+ 
+ kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
+ kvm-amd-y		+= svm/svm.o svm/vmenter.o svm/pmu.o svm/nested.o svm/avic.o svm/sev.o
+diff --git a/arch/x86/kvm/debugfs.c b/arch/x86/kvm/debugfs.c
+deleted file mode 100644
+index 018aebce33ff..000000000000
+--- a/arch/x86/kvm/debugfs.c
++++ /dev/null
+@@ -1,64 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Kernel-based Virtual Machine driver for Linux
+- *
+- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+- */
+-#include <linux/kvm_host.h>
+-#include <linux/debugfs.h>
+-#include "lapic.h"
+-
+-static int vcpu_get_timer_advance_ns(void *data, u64 *val)
+-{
+-	struct kvm_vcpu *vcpu = (struct kvm_vcpu *) data;
+-	*val = vcpu->arch.apic->lapic_timer.timer_advance_ns;
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_timer_advance_ns_fops, vcpu_get_timer_advance_ns, NULL, "%llu\n");
+-
+-static int vcpu_get_tsc_offset(void *data, u64 *val)
+-{
+-	struct kvm_vcpu *vcpu = (struct kvm_vcpu *) data;
+-	*val = vcpu->arch.tsc_offset;
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_offset_fops, vcpu_get_tsc_offset, NULL, "%lld\n");
+-
+-static int vcpu_get_tsc_scaling_ratio(void *data, u64 *val)
+-{
+-	struct kvm_vcpu *vcpu = (struct kvm_vcpu *) data;
+-	*val = vcpu->arch.tsc_scaling_ratio;
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_scaling_fops, vcpu_get_tsc_scaling_ratio, NULL, "%llu\n");
+-
+-static int vcpu_get_tsc_scaling_frac_bits(void *data, u64 *val)
+-{
+-	*val = kvm_tsc_scaling_ratio_frac_bits;
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_scaling_frac_fops, vcpu_get_tsc_scaling_frac_bits, NULL, "%llu\n");
+-
+-void kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
+-{
+-	debugfs_create_file("tsc-offset", 0444, vcpu->debugfs_dentry, vcpu,
+-			    &vcpu_tsc_offset_fops);
+-
+-	if (lapic_in_kernel(vcpu))
+-		debugfs_create_file("lapic_timer_advance_ns", 0444,
+-				    vcpu->debugfs_dentry, vcpu,
+-				    &vcpu_timer_advance_ns_fops);
+-
+-	if (kvm_has_tsc_control) {
+-		debugfs_create_file("tsc-scaling-ratio", 0444,
+-				    vcpu->debugfs_dentry, vcpu,
+-				    &vcpu_tsc_scaling_fops);
+-		debugfs_create_file("tsc-scaling-ratio-frac-bits", 0444,
+-				    vcpu->debugfs_dentry, vcpu,
+-				    &vcpu_tsc_scaling_frac_fops);
+-	}
+-}
+diff --git a/arch/x86/kvm/statsfs.c b/arch/x86/kvm/statsfs.c
 new file mode 100644
-index 000000000000..f774c6618017
+index 000000000000..31f58b5694ca
 --- /dev/null
-+++ b/fs/statsfs/inode.c
-@@ -0,0 +1,337 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/arch/x86/kvm/statsfs.c
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ *  inode.c - part of statsfs, a tiny little statsfs file system
++ * Kernel-based Virtual Machine driver for Linux
 + *
-+ *  Copyright (C) 2020 Emanuele Giuseppe Esposito <eesposit@redhat.com>
-+ *  Copyright (C) 2020 Redhat
++ * Copyright 2016 Red Hat, Inc. and/or its affiliates.
 + */
-+#define pr_fmt(fmt)	"statsfs: " fmt
-+
-+#include <linux/module.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/init.h>
++#include <linux/kvm_host.h>
 +#include <linux/statsfs.h>
-+#include <linux/string.h>
-+#include <linux/seq_file.h>
-+#include <linux/parser.h>
-+#include <linux/magic.h>
-+#include <linux/slab.h>
++#include "lapic.h"
 +
-+#include "internal.h"
++#define VCPU_ARCH_STATSFS(n, s, x, ...)								\
++			{ n, offsetof(struct s, x), .aggr_kind = STATSFS_SUM, ##__VA_ARGS__ }
 +
-+#define STATSFS_DEFAULT_MODE	0700
-+
-+static struct simple_fs statsfs;
-+static bool statsfs_registered;
-+
-+struct statsfs_mount_opts {
-+	kuid_t uid;
-+	kgid_t gid;
-+	umode_t mode;
++struct statsfs_value statsfs_vcpu_tsc_offset[] = {
++	VCPU_ARCH_STATSFS("tsc-offset", kvm_vcpu_arch, tsc_offset,
++						.type = STATSFS_S64, .mode = 0444),
++	{ NULL }
 +};
 +
-+enum {
-+	Opt_uid,
-+	Opt_gid,
-+	Opt_mode,
-+	Opt_err
++struct statsfs_value statsfs_vcpu_arch_lapic_timer[] = {
++	VCPU_ARCH_STATSFS("lapic_timer_advance_ns", kvm_timer, timer_advance_ns,
++						.type = STATSFS_U64, .mode = 0444),
++	{ NULL }
 +};
 +
-+static const match_table_t tokens = {
-+	{Opt_uid, "uid=%u"},
-+	{Opt_gid, "gid=%u"},
-+	{Opt_mode, "mode=%o"},
-+	{Opt_err, NULL}
++struct statsfs_value statsfs_vcpu_arch_tsc_ratio[] = {
++	VCPU_ARCH_STATSFS("tsc-scaling-ratio", kvm_vcpu_arch, tsc_scaling_ratio,
++						.type = STATSFS_U64, .mode = 0444),
++	{ NULL }
 +};
 +
-+struct statsfs_fs_info {
-+	struct statsfs_mount_opts mount_opts;
++struct statsfs_value statsfs_vcpu_arch_tsc_frac[] = {
++	{ "tsc-scaling-ratio-frac-bits", 0, .type = STATSFS_U64, .mode = 0444 },
++	{ NULL } /* base is &kvm_tsc_scaling_ratio_frac_bits */
 +};
 +
-+static int statsfs_parse_options(char *data, struct statsfs_mount_opts *opts)
++void kvm_arch_create_vcpu_statsfs(struct kvm_vcpu *vcpu)
 +{
-+	substring_t args[MAX_OPT_ARGS];
-+	int option;
-+	int token;
-+	kuid_t uid;
-+	kgid_t gid;
-+	char *p;
++	statsfs_source_add_values(vcpu->statsfs_src, statsfs_vcpu_tsc_offset, &vcpu->arch);
 +
-+	opts->mode = STATSFS_DEFAULT_MODE;
++	if (lapic_in_kernel(vcpu))
++		statsfs_source_add_values(vcpu->statsfs_src, statsfs_vcpu_arch_lapic_timer, &vcpu->arch.apic->lapic_timer);
 +
-+	while ((p = strsep(&data, ",")) != NULL) {
-+		if (!*p)
-+			continue;
-+
-+		token = match_token(p, tokens, args);
-+		switch (token) {
-+		case Opt_uid:
-+			if (match_int(&args[0], &option))
-+				return -EINVAL;
-+			uid = make_kuid(current_user_ns(), option);
-+			if (!uid_valid(uid))
-+				return -EINVAL;
-+			opts->uid = uid;
-+			break;
-+		case Opt_gid:
-+			if (match_int(&args[0], &option))
-+				return -EINVAL;
-+			gid = make_kgid(current_user_ns(), option);
-+			if (!gid_valid(gid))
-+				return -EINVAL;
-+			opts->gid = gid;
-+			break;
-+		case Opt_mode:
-+			if (match_octal(&args[0], &option))
-+				return -EINVAL;
-+			opts->mode = option & S_IALLUGO;
-+			break;
-+		/*
-+		 * We might like to report bad mount options here;
-+		 * but traditionally statsfs has ignored all mount options
-+		 */
-+		}
++	if (kvm_has_tsc_control) {
++		statsfs_source_add_values(vcpu->statsfs_src, statsfs_vcpu_arch_tsc_ratio, &vcpu->arch);
++		statsfs_source_add_values(vcpu->statsfs_src, statsfs_vcpu_arch_tsc_frac,
++								&kvm_tsc_scaling_ratio_frac_bits);
 +	}
-+
-+	return 0;
 +}
-+
-+static int statsfs_apply_options(struct super_block *sb)
-+{
-+	struct statsfs_fs_info *fsi = sb->s_fs_info;
-+	struct inode *inode = d_inode(sb->s_root);
-+	struct statsfs_mount_opts *opts = &fsi->mount_opts;
-+
-+	inode->i_mode &= ~S_IALLUGO;
-+	inode->i_mode |= opts->mode;
-+
-+	inode->i_uid = opts->uid;
-+	inode->i_gid = opts->gid;
-+
-+	return 0;
-+}
-+
-+static int statsfs_remount(struct super_block *sb, int *flags, char *data)
-+{
-+	int err;
-+	struct statsfs_fs_info *fsi = sb->s_fs_info;
-+
-+	sync_filesystem(sb);
-+	err = statsfs_parse_options(data, &fsi->mount_opts);
-+	if (err)
-+		goto fail;
-+
-+	statsfs_apply_options(sb);
-+
-+fail:
-+	return err;
-+}
-+
-+static int statsfs_show_options(struct seq_file *m, struct dentry *root)
-+{
-+	struct statsfs_fs_info *fsi = root->d_sb->s_fs_info;
-+	struct statsfs_mount_opts *opts = &fsi->mount_opts;
-+
-+	if (!uid_eq(opts->uid, GLOBAL_ROOT_UID))
-+		seq_printf(m, ",uid=%u",
-+			   from_kuid_munged(&init_user_ns, opts->uid));
-+	if (!gid_eq(opts->gid, GLOBAL_ROOT_GID))
-+		seq_printf(m, ",gid=%u",
-+			   from_kgid_munged(&init_user_ns, opts->gid));
-+	if (opts->mode != STATSFS_DEFAULT_MODE)
-+		seq_printf(m, ",mode=%o", opts->mode);
-+
-+	return 0;
-+}
-+
-+
-+static void statsfs_free_inode(struct inode *inode)
-+{
-+	kfree(inode->i_private);
-+	free_inode_nonrcu(inode);
-+}
-+
-+static const struct super_operations statsfs_super_operations = {
-+	.statfs		= simple_statfs,
-+	.remount_fs	= statsfs_remount,
-+	.show_options	= statsfs_show_options,
-+	.free_inode	= statsfs_free_inode,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 35723dafedeb..53e4e8edeaee 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -190,7 +190,7 @@ static u64 __read_mostly host_xss;
+ u64 __read_mostly supported_xss;
+ EXPORT_SYMBOL_GPL(supported_xss);
+ 
+-struct kvm_stats_debugfs_item debugfs_entries[] = {
++struct statsfs_value statsfs_vcpu_entries[] = {
+ 	VCPU_STAT("pf_fixed", pf_fixed),
+ 	VCPU_STAT("pf_guest", pf_guest),
+ 	VCPU_STAT("tlb_flush", tlb_flush),
+@@ -217,6 +217,10 @@ struct kvm_stats_debugfs_item debugfs_entries[] = {
+ 	VCPU_STAT("nmi_injections", nmi_injections),
+ 	VCPU_STAT("req_event", req_event),
+ 	VCPU_STAT("l1d_flush", l1d_flush),
++	{ NULL }
 +};
 +
-+static int statsfs_fill_super(struct super_block *sb, void *data, int silent)
-+{
-+	static const struct tree_descr statsfs_files[] = {{""}};
-+	struct statsfs_fs_info *fsi;
-+	int err;
-+
-+	fsi = kzalloc(sizeof(struct statsfs_fs_info), GFP_KERNEL);
-+	sb->s_fs_info = fsi;
-+	if (!fsi) {
-+		err = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	err = statsfs_parse_options(data, &fsi->mount_opts);
-+	if (err)
-+		goto fail;
-+
-+	err  =  simple_fill_super(sb, STATSFS_MAGIC, statsfs_files);
-+	if (err)
-+		goto fail;
-+
-+	sb->s_op = &statsfs_super_operations;
-+
-+	statsfs_apply_options(sb);
-+
-+	return 0;
-+
-+fail:
-+	kfree(fsi);
-+	sb->s_fs_info = NULL;
-+	return err;
-+}
-+
-+static struct dentry *statsfs_mount(struct file_system_type *fs_type,
-+			int flags, const char *dev_name,
-+			void *data)
-+{
-+	return mount_single(fs_type, flags, data, statsfs_fill_super);
-+}
-+
-+static struct file_system_type statsfs_fs_type = {
-+	.owner =	THIS_MODULE,
-+	.name =		"statsfs",
-+	.mount =	statsfs_mount,
-+	.kill_sb =	kill_litter_super,
-+};
-+MODULE_ALIAS_FS("statsfs");
-+
-+
-+/**
-+ * statsfs_create_file - create a file in the statsfs filesystem
-+ * @val: a pointer to a statsfs_value containing all the infos of
-+ * the file to create (name, permission)
-+ * @src: a pointer to a statsfs_source containing the dentry of where
-+ * to add this file
-+ *
-+ * This function will return a pointer to a dentry if it succeeds.  This
-+ * pointer must be passed to the statsfs_remove() function when the file is
-+ * to be removed (no automatic cleanup happens if your module is unloaded,
-+ * you are responsible here.)  If an error occurs, ERR_PTR(-ERROR) will be
-+ * returned.
-+ *
-+ * Val and src will be also inglobated in a ststsfs_data_inode struct
-+ * that will be internally stored as inode->i_private and used in the
-+ * get/set attribute functions (see statsfs_ops in statsfs.c).
-+ */
-+struct dentry *statsfs_create_file(struct statsfs_value *val, struct statsfs_source *src)
-+{
-+	struct dentry *dentry;
-+	struct inode *inode;
-+	struct statsfs_data_inode *val_inode;
-+
-+	val_inode = kzalloc(sizeof(struct statsfs_data_inode), GFP_KERNEL);
-+	if (!val_inode) {
-+		printk(KERN_ERR
-+			"Kzalloc failure in statsfs_create_files (ENOMEM)\n");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	val_inode->src = src;
-+	val_inode->val = val;
-+
-+
-+	dentry = simplefs_create_file(&statsfs, &statsfs_fs_type,
-+				      val->name, statsfs_val_get_mode(val),
-+					  src->source_dentry, val_inode, &inode);
-+	if (IS_ERR(dentry))
-+		return dentry;
-+
-+	inode->i_fop = &statsfs_ops;
-+
-+	return simplefs_finish_dentry(dentry, inode);
-+}
-+/**
-+ * statsfs_create_dir - create a directory in the statsfs filesystem
-+ * @name: a pointer to a string containing the name of the directory to
-+ *        create.
-+ * @parent: a pointer to the parent dentry for this file.  This should be a
-+ *          directory dentry if set.  If this parameter is NULL, then the
-+ *          directory will be created in the root of the statsfs filesystem.
-+ *
-+ * This function creates a directory in statsfs with the given name.
-+ *
-+ * This function will return a pointer to a dentry if it succeeds.  This
-+ * pointer must be passed to the statsfs_remove() function when the file is
-+ * to be removed (no automatic cleanup happens if your module is unloaded,
-+ * you are responsible here.)  If an error occurs, ERR_PTR(-ERROR) will be
-+ * returned.
-+ */
-+struct dentry *statsfs_create_dir(const char *name, struct dentry *parent)
-+{
-+	struct dentry *dentry;
-+	struct inode *inode;
-+
-+	dentry = simplefs_create_dir(&statsfs, &statsfs_fs_type,
-+				     name, 0755, parent, &inode);
-+	if (IS_ERR(dentry))
-+		return dentry;
-+
-+	inode->i_op = &simple_dir_inode_operations;
-+	return simplefs_finish_dentry(dentry, inode);
-+}
-+
-+static void remove_one(struct dentry *victim)
-+{
-+	simple_release_fs(&statsfs);
-+}
-+
-+/**
-+ * statsfs_remove - recursively removes a directory
-+ * @dentry: a pointer to a the dentry of the directory to be removed.  If this
-+ *          parameter is NULL or an error value, nothing will be done.
-+ *
-+ * This function recursively removes a directory tree in statsfs that
-+ * was previously created with a call to another statsfs function
-+ * (like statsfs_create_file() or variants thereof.)
-+ *
-+ * This function is required to be called in order for the file to be
-+ * removed, no automatic cleanup of files will happen when a module is
-+ * removed, you are responsible here.
-+ */
-+void statsfs_remove(struct dentry *dentry)
-+{
-+	if (IS_ERR_OR_NULL(dentry))
-+		return;
-+
-+	simple_pin_fs(&statsfs, &statsfs_fs_type);
-+	simple_recursive_removal(dentry, remove_one);
-+	simple_release_fs(&statsfs);
-+}
-+/**
-+ * statsfs_initialized - Tells whether statsfs has been registered
-+ */
-+bool statsfs_initialized(void)
-+{
-+	return statsfs_registered;
-+}
-+EXPORT_SYMBOL_GPL(statsfs_initialized);
-+
-+static int __init statsfs_init(void)
-+{
-+	int retval;
-+
-+	retval = sysfs_create_mount_point(kernel_kobj, "statsfs");
-+	if (retval)
-+		return retval;
-+
-+	retval = register_filesystem(&statsfs_fs_type);
-+	if (retval)
-+		sysfs_remove_mount_point(kernel_kobj, "statsfs");
-+	else
-+		statsfs_registered = true;
-+
-+	return retval;
-+}
-+core_initcall(statsfs_init);
-diff --git a/fs/statsfs/internal.h b/fs/statsfs/internal.h
-index f124683a2ded..64211f252d6c 100644
---- a/fs/statsfs/internal.h
-+++ b/fs/statsfs/internal.h
-@@ -15,6 +15,21 @@ struct statsfs_value_source {
- 	struct list_head list_element;
++struct statsfs_value statsfs_vm_entries[] = {
+ 	VM_STAT("mmu_shadow_zapped", mmu_shadow_zapped),
+ 	VM_STAT("mmu_pte_write", mmu_pte_write),
+ 	VM_STAT("mmu_pte_updated", mmu_pte_updated),
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 3845f857ef7b..2b47d01e6ed7 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -27,6 +27,7 @@
+ #include <linux/refcount.h>
+ #include <linux/nospec.h>
+ #include <asm/signal.h>
++#include <linux/statsfs.h>
+ 
+ #include <linux/kvm.h>
+ #include <linux/kvm_para.h>
+@@ -318,7 +319,7 @@ struct kvm_vcpu {
+ 	bool preempted;
+ 	bool ready;
+ 	struct kvm_vcpu_arch arch;
+-	struct dentry *debugfs_dentry;
++	struct statsfs_source *statsfs_src;
  };
  
-+struct statsfs_data_inode {
-+	struct statsfs_source *src;
-+	struct statsfs_value *val;
-+};
-+
-+extern const struct file_operations statsfs_ops;
-+
-+struct dentry *statsfs_create_file(struct statsfs_value *val,
-+				   struct statsfs_source *src);
-+
-+struct dentry *statsfs_create_dir(const char *name, struct dentry *parent);
-+
-+void statsfs_remove(struct dentry *dentry);
-+#define statsfs_remove_recursive statsfs_remove
-+
- int statsfs_val_get_mode(struct statsfs_value *val);
+ static inline int kvm_vcpu_exiting_guest_mode(struct kvm_vcpu *vcpu)
+@@ -498,8 +499,7 @@ struct kvm {
+ 	long tlbs_dirty;
+ 	struct list_head devices;
+ 	u64 manual_dirty_log_protect;
+-	struct dentry *debugfs_dentry;
+-	struct kvm_stat_data **debugfs_stat_data;
++	struct statsfs_source *statsfs_src;
+ 	struct srcu_struct srcu;
+ 	struct srcu_struct irq_srcu;
+ 	pid_t userspace_pid;
+@@ -880,8 +880,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu);
+ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu);
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu);
  
- #endif /* _STATSFS_INTERNAL_H_ */
-diff --git a/fs/statsfs/statsfs.c b/fs/statsfs/statsfs.c
-index 0ad1d985be46..5a56a2cef581 100644
---- a/fs/statsfs/statsfs.c
-+++ b/fs/statsfs/statsfs.c
-@@ -17,16 +17,114 @@ struct statsfs_aggregate_value {
- 	uint32_t count, count_zero;
- };
+-#ifdef __KVM_HAVE_ARCH_VCPU_DEBUGFS
+-void kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu);
++#ifdef __KVM_HAVE_ARCH_VCPU_STATSFS
++void kvm_arch_create_vcpu_statsfs(struct kvm_vcpu *vcpu);
+ #endif
  
-+static void statsfs_source_remove_files(struct statsfs_source *src);
-+
- static int is_val_signed(struct statsfs_value *val)
- {
- 	return val->type & STATSFS_SIGN;
+ int kvm_arch_hardware_enable(void);
+@@ -1110,33 +1110,14 @@ static inline bool kvm_is_error_gpa(struct kvm *kvm, gpa_t gpa)
+ 	return kvm_is_error_hva(hva);
  }
  
-+static int statsfs_attr_get(void *data, u64 *val)
-+{
-+	int r = -EFAULT;
-+	struct statsfs_data_inode *val_inode =
-+		(struct statsfs_data_inode *)data;
-+
-+	r = statsfs_source_get_value(val_inode->src, val_inode->val, val);
-+	return r;
-+}
-+
-+static int statsfs_attr_clear(void *data, u64 val)
-+{
-+	int r = -EFAULT;
-+	struct statsfs_data_inode *val_inode =
-+		(struct statsfs_data_inode *)data;
-+
-+	if (val)
-+		return -EINVAL;
-+
-+	r = statsfs_source_clear(val_inode->src, val_inode->val);
-+	return r;
-+}
-+
- int statsfs_val_get_mode(struct statsfs_value *val)
- {
- 	return val->mode ? val->mode : 0644;
+-enum kvm_stat_kind {
+-	KVM_STAT_VM,
+-	KVM_STAT_VCPU,
+-};
+-
+-struct kvm_stat_data {
+-	struct kvm *kvm;
+-	struct kvm_stats_debugfs_item *dbgfs_item;
+-};
+-
+-struct kvm_stats_debugfs_item {
+-	const char *name;
+-	int offset;
+-	enum kvm_stat_kind kind;
+-	int mode;
+-};
+-
+-#define KVM_DBGFS_GET_MODE(dbgfs_item)                                         \
+-	((dbgfs_item)->mode ? (dbgfs_item)->mode : 0644)
+-
+ #define VM_STAT(n, x, ...) 													\
+-	{ n, offsetof(struct kvm, stat.x), KVM_STAT_VM, ## __VA_ARGS__ }
++	{ n, offsetof(struct kvm, stat.x), STATSFS_U64, STATSFS_SUM, ## __VA_ARGS__ }
+ #define VCPU_STAT(n, x, ...)												\
+-	{ n, offsetof(struct kvm_vcpu, stat.x), KVM_STAT_VCPU, ## __VA_ARGS__ }
++	{ n, offsetof(struct kvm_vcpu, stat.x), STATSFS_U64, STATSFS_SUM, ## __VA_ARGS__ }
+ 
+-extern struct kvm_stats_debugfs_item debugfs_entries[];
+-extern struct dentry *kvm_debugfs_dir;
++extern struct statsfs_value statsfs_vcpu_entries[];
++extern struct statsfs_value statsfs_vm_entries[];
++extern struct statsfs_source *kvm_statsfs_dir;
+ 
+ #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 48d0ec44ad77..7301f6cf4fcc 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -140,7 +140,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 	return ret;
  }
  
-+static int statsfs_attr_data_open(struct inode *inode, struct file *file)
-+{
-+	struct statsfs_data_inode *val_inode;
-+	char *fmt;
-+
-+	val_inode = (struct statsfs_data_inode *)inode->i_private;
-+
-+	/* Inodes hold a  pointer to the source which is not included in the
-+	 * refcount, so they files be opened while destroy is running, but
-+	 * values are removed (base_addr = NULL) before the source is destroyed.
-+	 */
-+	if (!kref_get_unless_zero(&val_inode->src->refcount))
-+		return -ENOENT;
-+
-+	if (is_val_signed(val_inode->val))
-+		fmt = "%lld\n";
-+	else
-+		fmt = "%llu\n";
-+
-+	if (simple_attr_open(inode, file, statsfs_attr_get,
-+			     statsfs_val_get_mode(val_inode->val) & 0222 ?
-+				     statsfs_attr_clear :
-+				     NULL,
-+			     fmt)) {
-+		statsfs_source_put(val_inode->src);
-+		return -ENOMEM;
-+	}
-+	return 0;
-+}
-+
-+static int statsfs_attr_release(struct inode *inode, struct file *file)
-+{
-+	struct statsfs_data_inode *val_inode;
-+
-+	val_inode = (struct statsfs_data_inode *)inode->i_private;
-+
-+	simple_attr_release(inode, file);
-+	statsfs_source_put(val_inode->src);
-+
-+	return 0;
-+}
-+
-+const struct file_operations statsfs_ops = {
-+	.owner = THIS_MODULE,
-+	.open = statsfs_attr_data_open,
-+	.release = statsfs_attr_release,
-+	.read = simple_attr_read,
-+	.write = simple_attr_write,
-+	.llseek = no_llseek,
-+};
-+
-+/* Called with rwsem held for writing */
-+static void statsfs_source_remove_files_locked(struct statsfs_source *src)
-+{
-+	struct statsfs_source *child;
-+
-+	if (src->source_dentry == NULL)
-+		return;
-+
-+	list_for_each_entry(child, &src->subordinates_head, list_element)
-+		statsfs_source_remove_files(child);
-+
-+	statsfs_remove_recursive(src->source_dentry);
-+	src->source_dentry = NULL;
-+}
-+
-+static void statsfs_source_remove_files(struct statsfs_source *src)
-+{
-+	down_write(&src->rwsem);
-+	statsfs_source_remove_files_locked(src);
-+	up_write(&src->rwsem);
-+}
-+
- static struct statsfs_value *find_value(struct statsfs_value_source *src,
- 					struct statsfs_value *val)
+-int kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
++int kvm_arch_create_vcpu_statsfs(struct kvm_vcpu *vcpu)
  {
-@@ -59,6 +157,61 @@ search_value_in_source(struct statsfs_source *src, struct statsfs_value *arg,
- 	return NULL;
- }
- 
-+/* Called with rwsem held for writing */
-+static void statsfs_create_files_locked(struct statsfs_source *source)
-+{
-+	struct statsfs_value_source *val_src;
-+	struct statsfs_value *val;
-+
-+	if (!source->source_dentry)
-+		return;
-+
-+	list_for_each_entry(val_src, &source->values_head, list_element) {
-+		if (val_src->files_created)
-+			continue;
-+
-+		for (val = val_src->values; val->name; val++)
-+			statsfs_create_file(val, source);
-+
-+		val_src->files_created = true;
-+	}
-+}
-+
-+/* Called with rwsem held for writing */
-+static void statsfs_create_files_recursive_locked(struct statsfs_source *source,
-+						  struct dentry *parent_dentry)
-+{
-+	struct statsfs_source *child;
-+
-+	/* first check values in this folder, since it might be new */
-+	if (!source->source_dentry) {
-+		source->source_dentry =
-+			statsfs_create_dir(source->name, parent_dentry);
-+	}
-+
-+	statsfs_create_files_locked(source);
-+
-+	list_for_each_entry(child, &source->subordinates_head, list_element) {
-+		if (child->source_dentry == NULL) {
-+			/* assume that if child has a folder,
-+			 * also the sub-child have that.
-+			 */
-+			down_write(&child->rwsem);
-+			statsfs_create_files_recursive_locked(
-+				child, source->source_dentry);
-+			up_write(&child->rwsem);
-+		}
-+	}
-+}
-+
-+void statsfs_source_register(struct statsfs_source *source)
-+{
-+	down_write(&source->rwsem);
-+	statsfs_create_files_recursive_locked(source, NULL);
-+	up_write(&source->rwsem);
-+}
-+EXPORT_SYMBOL_GPL(statsfs_source_register);
-+
- /* Called with rwsem held for writing */
- static struct statsfs_value_source *create_value_source(void *base)
- {
-@@ -96,6 +249,9 @@ int statsfs_source_add_values(struct statsfs_source *source,
- 	/* add the val_src to the source list */
- 	list_add(&val_src->list_element, &source->values_head);
- 
-+	/* create child if it's the case */
-+	statsfs_create_files_locked(source);
-+
- 	up_write(&source->rwsem);
- 
  	return 0;
-@@ -109,6 +265,10 @@ void statsfs_source_add_subordinate(struct statsfs_source *source,
- 
- 	statsfs_source_get(sub);
- 	list_add(&sub->list_element, &source->subordinates_head);
-+	if (source->source_dentry) {
-+		statsfs_create_files_recursive_locked(sub,
-+						      source->source_dentry);
-+	}
- 
- 	up_write(&source->rwsem);
  }
-@@ -127,6 +287,7 @@ statsfs_source_remove_subordinate_locked(struct statsfs_source *source,
- 		if (src_entry == sub) {
- 			WARN_ON(strcmp(src_entry->name, sub->name) != 0);
- 			list_del_init(&src_entry->list_element);
-+			statsfs_source_remove_files(src_entry);
- 			statsfs_source_put(src_entry);
- 			return;
- 		}
-@@ -572,6 +733,7 @@ static void statsfs_source_destroy(struct kref *kref_source)
- 		statsfs_source_remove_subordinate_locked(source, child);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 74bdb7bf3295..4cb140371a84 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -25,6 +25,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/reboot.h>
+ #include <linux/debugfs.h>
++#include <linux/statsfs.h>
+ #include <linux/highmem.h>
+ #include <linux/file.h>
+ #include <linux/syscore_ops.h>
+@@ -109,11 +110,8 @@ static struct kmem_cache *kvm_vcpu_cache;
+ static __read_mostly struct preempt_ops kvm_preempt_ops;
+ static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_running_vcpu);
+ 
+-struct dentry *kvm_debugfs_dir;
+-EXPORT_SYMBOL_GPL(kvm_debugfs_dir);
+-
+-static int kvm_debugfs_num_entries;
+-static const struct file_operations stat_fops_per_vm;
++struct statsfs_source *kvm_statsfs_dir;
++EXPORT_SYMBOL_GPL(kvm_statsfs_dir);
+ 
+ static long kvm_vcpu_ioctl(struct file *file, unsigned int ioctl,
+ 			   unsigned long arg);
+@@ -356,6 +354,8 @@ static void kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
+ 
+ void kvm_vcpu_destroy(struct kvm_vcpu *vcpu)
+ {
++	statsfs_source_revoke(vcpu->statsfs_src);
++	statsfs_source_put(vcpu->statsfs_src);
+ 	kvm_arch_vcpu_destroy(vcpu);
+ 
+ 	/*
+@@ -601,52 +601,27 @@ static void kvm_free_memslots(struct kvm *kvm, struct kvm_memslots *slots)
+ 	kvfree(slots);
+ }
+ 
+-static void kvm_destroy_vm_debugfs(struct kvm *kvm)
++static void kvm_destroy_vm_statsfs(struct kvm *kvm)
+ {
+-	int i;
+-
+-	if (!kvm->debugfs_dentry)
+-		return;
+-
+-	debugfs_remove_recursive(kvm->debugfs_dentry);
+-
+-	if (kvm->debugfs_stat_data) {
+-		for (i = 0; i < kvm_debugfs_num_entries; i++)
+-			kfree(kvm->debugfs_stat_data[i]);
+-		kfree(kvm->debugfs_stat_data);
+-	}
++	statsfs_source_remove_subordinate(kvm_statsfs_dir, kvm->statsfs_src);
++	statsfs_source_revoke(kvm->statsfs_src);
++	statsfs_source_put(kvm->statsfs_src);
+ }
+ 
+-static int kvm_create_vm_debugfs(struct kvm *kvm, int fd)
++static int kvm_create_vm_statsfs(struct kvm *kvm, int fd)
+ {
+ 	char dir_name[ITOA_MAX_LEN * 2];
+-	struct kvm_stat_data *stat_data;
+-	struct kvm_stats_debugfs_item *p;
+ 
+-	if (!debugfs_initialized())
++	if (!statsfs_initialized())
+ 		return 0;
+ 
+ 	snprintf(dir_name, sizeof(dir_name), "%d-%d", task_pid_nr(current), fd);
+-	kvm->debugfs_dentry = debugfs_create_dir(dir_name, kvm_debugfs_dir);
++	kvm->statsfs_src = statsfs_source_create(dir_name);
++	statsfs_source_add_subordinate(kvm_statsfs_dir, kvm->statsfs_src);
+ 
+-	kvm->debugfs_stat_data = kcalloc(kvm_debugfs_num_entries,
+-					 sizeof(*kvm->debugfs_stat_data),
+-					 GFP_KERNEL_ACCOUNT);
+-	if (!kvm->debugfs_stat_data)
+-		return -ENOMEM;
++	statsfs_source_add_values(kvm->statsfs_src, statsfs_vm_entries, kvm);
+ 
+-	for (p = debugfs_entries; p->name; p++) {
+-		stat_data = kzalloc(sizeof(*stat_data), GFP_KERNEL_ACCOUNT);
+-		if (!stat_data)
+-			return -ENOMEM;
+-
+-		stat_data->kvm = kvm;
+-		stat_data->dbgfs_item = p;
+-		kvm->debugfs_stat_data[p - debugfs_entries] = stat_data;
+-		debugfs_create_file(p->name, KVM_DBGFS_GET_MODE(p),
+-				    kvm->debugfs_dentry, stat_data,
+-				    &stat_fops_per_vm);
+-	}
++	statsfs_source_add_values(kvm->statsfs_src, statsfs_vcpu_entries, NULL);
+ 	return 0;
+ }
+ 
+@@ -783,7 +758,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+ 	struct mm_struct *mm = kvm->mm;
+ 
+ 	kvm_uevent_notify_change(KVM_EVENT_DESTROY_VM, kvm);
+-	kvm_destroy_vm_debugfs(kvm);
++	kvm_destroy_vm_statsfs(kvm);
+ 	kvm_arch_sync_events(kvm);
+ 	mutex_lock(&kvm_lock);
+ 	list_del(&kvm->vm_list);
+@@ -2946,7 +2921,6 @@ static int kvm_vcpu_release(struct inode *inode, struct file *filp)
+ {
+ 	struct kvm_vcpu *vcpu = filp->private_data;
+ 
+-	debugfs_remove_recursive(vcpu->debugfs_dentry);
+ 	kvm_put_kvm(vcpu->kvm);
+ 	return 0;
+ }
+@@ -2970,19 +2944,22 @@ static int create_vcpu_fd(struct kvm_vcpu *vcpu)
+ 	return anon_inode_getfd(name, &kvm_vcpu_fops, vcpu, O_RDWR | O_CLOEXEC);
+ }
+ 
+-static void kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
++static void kvm_create_vcpu_statsfs(struct kvm_vcpu *vcpu)
+ {
+-#ifdef __KVM_HAVE_ARCH_VCPU_DEBUGFS
+ 	char dir_name[ITOA_MAX_LEN * 2];
+ 
+-	if (!debugfs_initialized())
++	if (!statsfs_initialized())
+ 		return;
+ 
+ 	snprintf(dir_name, sizeof(dir_name), "vcpu%d", vcpu->vcpu_id);
+-	vcpu->debugfs_dentry = debugfs_create_dir(dir_name,
+-						  vcpu->kvm->debugfs_dentry);
+ 
+-	kvm_arch_create_vcpu_debugfs(vcpu);
++	vcpu->statsfs_src = statsfs_source_create(dir_name);
++	statsfs_source_add_subordinate(vcpu->kvm->statsfs_src, vcpu->statsfs_src);
++
++	statsfs_source_add_values(vcpu->statsfs_src, statsfs_vcpu_entries, vcpu);
++
++#ifdef __KVM_HAVE_ARCH_VCPU_STATSFS
++	kvm_arch_create_vcpu_statsfs(vcpu);
+ #endif
+ }
+ 
+@@ -3031,8 +3008,6 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
+ 	if (r)
+ 		goto vcpu_free_run_page;
+ 
+-	kvm_create_vcpu_debugfs(vcpu);
+-
+ 	mutex_lock(&kvm->lock);
+ 	if (kvm_get_vcpu_by_id(kvm, id)) {
+ 		r = -EEXIST;
+@@ -3061,11 +3036,11 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
+ 
+ 	mutex_unlock(&kvm->lock);
+ 	kvm_arch_vcpu_postcreate(vcpu);
++	kvm_create_vcpu_statsfs(vcpu);
+ 	return r;
+ 
+ unlock_vcpu_destroy:
+ 	mutex_unlock(&kvm->lock);
+-	debugfs_remove_recursive(vcpu->debugfs_dentry);
+ 	kvm_arch_vcpu_destroy(vcpu);
+ vcpu_free_run_page:
+ 	free_page((unsigned long)vcpu->run);
+@@ -3839,7 +3814,7 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+ 	 * cases it will be called by the final fput(file) and will take
+ 	 * care of doing kvm_put_kvm(kvm).
+ 	 */
+-	if (kvm_create_vm_debugfs(kvm, r) < 0) {
++	if (kvm_create_vm_statsfs(kvm, r) < 0) {
+ 		put_unused_fd(r);
+ 		fput(file);
+ 		return -ENOMEM;
+@@ -4295,214 +4270,6 @@ struct kvm_io_device *kvm_io_bus_get_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+ }
+ EXPORT_SYMBOL_GPL(kvm_io_bus_get_dev);
+ 
+-static int kvm_debugfs_open(struct inode *inode, struct file *file,
+-			   int (*get)(void *, u64 *), int (*set)(void *, u64),
+-			   const char *fmt)
+-{
+-	struct kvm_stat_data *stat_data = (struct kvm_stat_data *)
+-					  inode->i_private;
+-
+-	/* The debugfs files are a reference to the kvm struct which
+-	 * is still valid when kvm_destroy_vm is called.
+-	 * To avoid the race between open and the removal of the debugfs
+-	 * directory we test against the users count.
+-	 */
+-	if (!refcount_inc_not_zero(&stat_data->kvm->users_count))
+-		return -ENOENT;
+-
+-	if (simple_attr_open(inode, file, get,
+-		    KVM_DBGFS_GET_MODE(stat_data->dbgfs_item) & 0222
+-		    ? set : NULL,
+-		    fmt)) {
+-		kvm_put_kvm(stat_data->kvm);
+-		return -ENOMEM;
+-	}
+-
+-	return 0;
+-}
+-
+-static int kvm_debugfs_release(struct inode *inode, struct file *file)
+-{
+-	struct kvm_stat_data *stat_data = (struct kvm_stat_data *)
+-					  inode->i_private;
+-
+-	simple_attr_release(inode, file);
+-	kvm_put_kvm(stat_data->kvm);
+-
+-	return 0;
+-}
+-
+-static int kvm_get_stat_per_vm(struct kvm *kvm, size_t offset, u64 *val)
+-{
+-	*val = *(ulong *)((void *)kvm + offset);
+-
+-	return 0;
+-}
+-
+-static int kvm_clear_stat_per_vm(struct kvm *kvm, size_t offset)
+-{
+-	*(ulong *)((void *)kvm + offset) = 0;
+-
+-	return 0;
+-}
+-
+-static int kvm_get_stat_per_vcpu(struct kvm *kvm, size_t offset, u64 *val)
+-{
+-	int i;
+-	struct kvm_vcpu *vcpu;
+-
+-	*val = 0;
+-
+-	kvm_for_each_vcpu(i, vcpu, kvm)
+-		*val += *(u64 *)((void *)vcpu + offset);
+-
+-	return 0;
+-}
+-
+-static int kvm_clear_stat_per_vcpu(struct kvm *kvm, size_t offset)
+-{
+-	int i;
+-	struct kvm_vcpu *vcpu;
+-
+-	kvm_for_each_vcpu(i, vcpu, kvm)
+-		*(u64 *)((void *)vcpu + offset) = 0;
+-
+-	return 0;
+-}
+-
+-static int kvm_stat_data_get(void *data, u64 *val)
+-{
+-	int r = -EFAULT;
+-	struct kvm_stat_data *stat_data = (struct kvm_stat_data *)data;
+-
+-	switch (stat_data->dbgfs_item->kind) {
+-	case KVM_STAT_VM:
+-		r = kvm_get_stat_per_vm(stat_data->kvm,
+-					stat_data->dbgfs_item->offset, val);
+-		break;
+-	case KVM_STAT_VCPU:
+-		r = kvm_get_stat_per_vcpu(stat_data->kvm,
+-					  stat_data->dbgfs_item->offset, val);
+-		break;
+-	}
+-
+-	return r;
+-}
+-
+-static int kvm_stat_data_clear(void *data, u64 val)
+-{
+-	int r = -EFAULT;
+-	struct kvm_stat_data *stat_data = (struct kvm_stat_data *)data;
+-
+-	if (val)
+-		return -EINVAL;
+-
+-	switch (stat_data->dbgfs_item->kind) {
+-	case KVM_STAT_VM:
+-		r = kvm_clear_stat_per_vm(stat_data->kvm,
+-					  stat_data->dbgfs_item->offset);
+-		break;
+-	case KVM_STAT_VCPU:
+-		r = kvm_clear_stat_per_vcpu(stat_data->kvm,
+-					    stat_data->dbgfs_item->offset);
+-		break;
+-	}
+-
+-	return r;
+-}
+-
+-static int kvm_stat_data_open(struct inode *inode, struct file *file)
+-{
+-	__simple_attr_check_format("%llu\n", 0ull);
+-	return kvm_debugfs_open(inode, file, kvm_stat_data_get,
+-				kvm_stat_data_clear, "%llu\n");
+-}
+-
+-static const struct file_operations stat_fops_per_vm = {
+-	.owner = THIS_MODULE,
+-	.open = kvm_stat_data_open,
+-	.release = kvm_debugfs_release,
+-	.read = simple_attr_read,
+-	.write = simple_attr_write,
+-	.llseek = no_llseek,
+-};
+-
+-static int vm_stat_get(void *_offset, u64 *val)
+-{
+-	unsigned offset = (long)_offset;
+-	struct kvm *kvm;
+-	u64 tmp_val;
+-
+-	*val = 0;
+-	mutex_lock(&kvm_lock);
+-	list_for_each_entry(kvm, &vm_list, vm_list) {
+-		kvm_get_stat_per_vm(kvm, offset, &tmp_val);
+-		*val += tmp_val;
+-	}
+-	mutex_unlock(&kvm_lock);
+-	return 0;
+-}
+-
+-static int vm_stat_clear(void *_offset, u64 val)
+-{
+-	unsigned offset = (long)_offset;
+-	struct kvm *kvm;
+-
+-	if (val)
+-		return -EINVAL;
+-
+-	mutex_lock(&kvm_lock);
+-	list_for_each_entry(kvm, &vm_list, vm_list) {
+-		kvm_clear_stat_per_vm(kvm, offset);
+-	}
+-	mutex_unlock(&kvm_lock);
+-
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vm_stat_fops, vm_stat_get, vm_stat_clear, "%llu\n");
+-
+-static int vcpu_stat_get(void *_offset, u64 *val)
+-{
+-	unsigned offset = (long)_offset;
+-	struct kvm *kvm;
+-	u64 tmp_val;
+-
+-	*val = 0;
+-	mutex_lock(&kvm_lock);
+-	list_for_each_entry(kvm, &vm_list, vm_list) {
+-		kvm_get_stat_per_vcpu(kvm, offset, &tmp_val);
+-		*val += tmp_val;
+-	}
+-	mutex_unlock(&kvm_lock);
+-	return 0;
+-}
+-
+-static int vcpu_stat_clear(void *_offset, u64 val)
+-{
+-	unsigned offset = (long)_offset;
+-	struct kvm *kvm;
+-
+-	if (val)
+-		return -EINVAL;
+-
+-	mutex_lock(&kvm_lock);
+-	list_for_each_entry(kvm, &vm_list, vm_list) {
+-		kvm_clear_stat_per_vcpu(kvm, offset);
+-	}
+-	mutex_unlock(&kvm_lock);
+-
+-	return 0;
+-}
+-
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_stat_fops, vcpu_stat_get, vcpu_stat_clear,
+-			"%llu\n");
+-
+-static const struct file_operations *stat_fops[] = {
+-	[KVM_STAT_VCPU] = &vcpu_stat_fops,
+-	[KVM_STAT_VM]   = &vm_stat_fops,
+-};
+-
+ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
+ {
+ 	struct kobj_uevent_env *env;
+@@ -4537,34 +4304,32 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
  	}
+ 	add_uevent_var(env, "PID=%d", kvm->userspace_pid);
  
-+	statsfs_source_remove_files_locked(source);
+-	if (!IS_ERR_OR_NULL(kvm->debugfs_dentry)) {
++	if (!IS_ERR_OR_NULL(kvm->statsfs_src->source_dentry)) {
+ 		char *tmp, *p = kmalloc(PATH_MAX, GFP_KERNEL_ACCOUNT);
  
- 	up_write(&source->rwsem);
- 	kfree(source->name);
-diff --git a/include/linux/statsfs.h b/include/linux/statsfs.h
-index 3f01f094946d..f6e8eead1124 100644
---- a/include/linux/statsfs.h
-+++ b/include/linux/statsfs.h
-@@ -87,6 +87,18 @@ struct statsfs_source {
-  */
- struct statsfs_source *statsfs_source_create(const char *fmt, ...);
- 
-+/**
-+ * statsfs_source_register - register a source in the statsfs filesystem
-+ * @source: a pointer to the source that will be registered
-+ *
-+ * TAdd the given folder as direct child of /sys/kernel/statsfs.
-+ * It also starts to recursively search its own child and create all folders
-+ * and files if they weren't already. All subsequent add_subordinate calls
-+ * on the same source that is used in this function will create corresponding
-+ * files and directories.
-+ */
-+void statsfs_source_register(struct statsfs_source *source);
+ 		if (p) {
+-			tmp = dentry_path_raw(kvm->debugfs_dentry, p, PATH_MAX);
++			tmp = dentry_path_raw(kvm->statsfs_src->source_dentry, p, PATH_MAX);
+ 			if (!IS_ERR(tmp))
+ 				add_uevent_var(env, "STATS_PATH=%s", tmp);
+ 			kfree(p);
+ 		}
+ 	}
 +
- /**
-  * statsfs_source_add_values - adds values to the given source
-  * @source: a pointer to the source that will receive the values
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index d78064007b17..46c66ea3fc9e 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -10,6 +10,7 @@
- #define CRAMFS_MAGIC		0x28cd3d45	/* some random number */
- #define CRAMFS_MAGIC_WEND	0x453dcd28	/* magic number with the wrong endianess */
- #define DEBUGFS_MAGIC          0x64626720
-+#define STATSFS_MAGIC          0x73746174
- #define SECURITYFS_MAGIC	0x73636673
- #define SELINUX_MAGIC		0xf97cff8c
- #define SMACK_MAGIC		0x43415d53	/* "SMAC" */
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 027b18f7ed8c..6fe306206dfb 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -35,6 +35,10 @@
- #define TRACEFS_MAGIC          0x74726163
- #endif
+ 	/* no need for checks, since we are adding at most only 5 keys */
+ 	env->envp[env->envp_idx++] = NULL;
+ 	kobject_uevent_env(&kvm_dev.this_device->kobj, KOBJ_CHANGE, env->envp);
+ 	kfree(env);
+ }
  
-+#ifndef STATSFS_MAGIC
-+#define STATSFS_MAGIC          0x73746174
-+#endif
-+
- #ifndef HUGETLBFS_MAGIC
- #define HUGETLBFS_MAGIC        0x958458f6
- #endif
-@@ -76,6 +80,16 @@ static const char * const tracefs__known_mountpoints[] = {
- 	0,
- };
+-static void kvm_init_debug(void)
++static void kvm_init_statsfs(void)
+ {
+-	struct kvm_stats_debugfs_item *p;
++	kvm_statsfs_dir = statsfs_source_create("kvm");
++	/* symlink to debugfs */
++	debugfs_create_symlink("kvm", NULL, "/sys/kernel/statsfs/kvm");
++	statsfs_source_register(kvm_statsfs_dir);
  
-+#ifndef STATSFS_DEFAULT_PATH
-+#define STATSFS_DEFAULT_PATH "/sys/kernel/statsfs"
-+#endif
-+
-+static const char * const statsfs__known_mountpoints[] = {
-+	STATSFS_DEFAULT_PATH,
-+	"/statsfs",
-+	0,
-+};
-+
- static const char * const hugetlbfs__known_mountpoints[] = {
- 	0,
- };
-@@ -100,6 +114,7 @@ enum {
- 	FS__TRACEFS = 3,
- 	FS__HUGETLBFS = 4,
- 	FS__BPF_FS = 5,
-+	FS__STATSFS = 6,
- };
+-	kvm_debugfs_dir = debugfs_create_dir("kvm", NULL);
+-
+-	kvm_debugfs_num_entries = 0;
+-	for (p = debugfs_entries; p->name; ++p, kvm_debugfs_num_entries++) {
+-		debugfs_create_file(p->name, KVM_DBGFS_GET_MODE(p),
+-				    kvm_debugfs_dir, (void *)(long)p->offset,
+-				    stat_fops[p->kind]);
+-	}
++	statsfs_source_add_values(kvm_statsfs_dir, statsfs_vcpu_entries, NULL);
++	statsfs_source_add_values(kvm_statsfs_dir, statsfs_vm_entries, NULL);
+ }
  
- #ifndef TRACEFS_MAGIC
-@@ -127,6 +142,11 @@ static struct fs fs__entries[] = {
- 		.mounts	= tracefs__known_mountpoints,
- 		.magic	= TRACEFS_MAGIC,
- 	},
-+	[FS__STATSFS] = {
-+		.name	= "statsfs",
-+		.mounts	= statsfs__known_mountpoints,
-+		.magic	= STATSFS_MAGIC,
-+	},
- 	[FS__HUGETLBFS] = {
- 		.name	= "hugetlbfs",
- 		.mounts = hugetlbfs__known_mountpoints,
-@@ -297,6 +317,7 @@ FS(sysfs,   FS__SYSFS);
- FS(procfs,  FS__PROCFS);
- FS(debugfs, FS__DEBUGFS);
- FS(tracefs, FS__TRACEFS);
-+FS(statsfs, FS__STATSFS);
- FS(hugetlbfs, FS__HUGETLBFS);
- FS(bpf_fs, FS__BPF_FS);
+ static int kvm_suspend(void)
+@@ -4738,7 +4503,7 @@ int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
+ 	kvm_preempt_ops.sched_in = kvm_sched_in;
+ 	kvm_preempt_ops.sched_out = kvm_sched_out;
  
+-	kvm_init_debug();
++	kvm_init_statsfs();
+ 
+ 	r = kvm_vfio_ops_init();
+ 	WARN_ON(r);
+@@ -4767,7 +4532,8 @@ EXPORT_SYMBOL_GPL(kvm_init);
+ 
+ void kvm_exit(void)
+ {
+-	debugfs_remove_recursive(kvm_debugfs_dir);
++	statsfs_source_revoke(kvm_statsfs_dir);
++	statsfs_source_put(kvm_statsfs_dir);
+ 	misc_deregister(&kvm_dev);
+ 	kmem_cache_destroy(kvm_vcpu_cache);
+ 	kvm_async_pf_deinit();
 -- 
 2.25.2
 
