@@ -2,133 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C3581BAAEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 19:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A022D1BABCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 19:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgD0RQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 13:16:01 -0400
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com ([66.163.185.38]:37326
-        "EHLO sonic313-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726252AbgD0RQB (ORCPT
+        id S1726402AbgD0R61 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 13:58:27 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48676 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726385AbgD0R61 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 13:16:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1588007760; bh=DbsQgiQ7jFkqiGUOueNLUsQEY4h8CqVP+e1O0N4SXO8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=d3HTlCL/kRxILbQ0xopaP54B3mA+pVbcioUIWEFQUGBq//PXt6iFkr3vCeQIyNZJrban/Yv26a0oePYHZ3bZN2g66uxJ0gzS5sOl4tMtcW6aUpXD/whkWkdAtneaIXIKxwSNSRqai91T3U3/CwsOLHVlYx8B25lL1V1IzD7Q2TCKTiSHEiFT58BLTTHkAZiftjU+86gMMeCxIsH+yQAlz+yemGDOmHQaVznw3jg6479c1NE39Nduo44rz0GYIbiAW2xTSo862/87ExOippgBSeB8WOdtYC3WePiNu3EI9l2HHx5sJEIbhqQWXofjWD2LngiFEMeC2SAAMd4ALn0WBw==
-X-YMail-OSG: QlXZjUcVM1mxlifsA2eR1Cshu2wWRzKsrEI4MVRowC_y5Q9McFsrKpp8njpWhe8
- 6CsMkfvhFGc2.wGjkTInHr4m6Kl86bber66byEgwvlsGLU5uGBZ1ygweDZvzuAQi9LkGqeQIiKZn
- bj5CfaoQO07FEJirlyq9kYe7MwtppKTlBFK7xsBMtHSV7yoCvPm.U9Xv5p1w.1f9yDbFS0VmCidS
- 0VN9QbPKqBaumj._VBglsOTzlTVn9015PxzI7FRbhA9Wa1_hbGncU7NE1vHozHEgqpPBWrKmO1D6
- ZW7aGnd8kK2mnGUa2kBpWpMRLDKkFtHsEaaVFQDA6eHNKIDHEj3u3rpSZR5dH8Sj372W74WAe_Ir
- zM3cp336htmRIjJ6WvkLzFbjK8AKcXEbbqAY2fJN0yAqYfeuopVjpXGeT9xRnUm4c2xf6T4JKTkO
- aHKx22M6aExPT2t3YU7xKCT9sE5vZoPaiokLeN.zt9KweU3pwQBQJGt8_VjhWMnLR3W62l.m.pi6
- l7xoQDAu0dm9g822RrM9yiaj3IJuRkE6YgMzXmhmrHeOzY43DNmN2ouNywpJvfEy2FbwPUUrhF3R
- gIfvonGvFroA_9J0p_BbwSEZtCo47bbyx9IrpDC3gmI5fFJZa42nNZOcdHvN61Ymun9swNAZHSDm
- jK987PwuFsSNWRUpwlFBMajEtfRNqpCkDswIqYhgBVI_EUIFlPz9C1DFork4_X3Al0SoY6sbLVq0
- BoPvhKHen41b4tiEgaY4TEk0W3Aa2xF_xqUYdD6CalpspWIt1g5wKzlTtCFJLtwNqRJoDZh_Na68
- 4wmmboMVoFi1u03ugCogqd0Lx9MXam7HLkBkq9VbKolUZ_dnhdydBaEGgOEQqFevzDI6cYj5MqY3
- 26N_upFxq5coJVbmsVd59fg79KMfCy8pQSnK6oV4eLba03cCvte4xnn4ehaU6I57sQjLHogsAp4f
- BFhIr6UmH6j_y5PFBFMSPaqH6VBt4VXT0Gfq4aoP3n1gmh22Uj2lPmI2Ge8AZ7ly.IZ_AWrUt2Tp
- hJnxW56ZA4UT09t_9w04KPXkmzS7sf8nOHoLZQGUQccLMZk.PdefimxE5Keeqf7KZ05gu5dKOKk_
- rYDvaLfLOIlWEfbC1oDQinu27TP9QOEE9OuElNz2qDIs8tsdM5uho.DMHyeY7n3yCozFm8vFQ8YW
- QNetMLpdhKAPh2eO6wfEJyvZIKP0k90nMqFe.M5mADp6tVYbyhm7A_IuXvGxDA9rqxPG6.l1tqDv
- yhctlPKbI8SiMEPBstKxHYMuC8QawTiCnxPiIaC9y4u4fLL23GqrzoTL0S0JqukDnFirOogMxFxZ
- N1j_iu8TS9HXVR92I8sjvBUaUotENCdXaHRFREMS1HxTDCGrGNMK3nFdzK.oCXHQNajM3hAFzNdP
- trK1ojFZN096UrdIlb00CQGXyN.3LjEyFezKz8likmRKV
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Mon, 27 Apr 2020 17:16:00 +0000
-Received: by smtp406.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 5c417b4721e3b6d7d6ee1e185595c6b4;
-          Mon, 27 Apr 2020 17:15:58 +0000 (UTC)
-Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
-To:     James Morris <jmorris@namei.org>,
-        Daniel Colascione <dancol@google.com>
-Cc:     Tim Murray <timmurray@google.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        Nick Kralevich <nnk@google.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200326200634.222009-1-dancol@google.com>
- <20200401213903.182112-1-dancol@google.com>
- <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
- <alpine.LRH.2.21.2004230253530.12318@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <02468636-c981-2502-d4f4-58afbf8506b1@schaufler-ca.com>
-Date:   Mon, 27 Apr 2020 10:15:57 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 27 Apr 2020 13:58:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588010305;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=j5szEPVymC4ndC8RJO9oa6y1UYRoV+3+bMcnppRK97Q=;
+        b=KEjACS/en4JJ53ed21SGXAoqLqKDzIHEDEp2u25x9OfkIHv/Nrtc5oJA3cwWccQeO4/W/z
+        dxBcB6B/18zqIJ8gtqbPzhp3+SCeEIj0mHyVKgictLdCpUgyTbTrZ1fE4a/CYhp1PFJ4Ae
+        ombvsWlTeQtHBXV0USpsZ7Ig0Z+v+NU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-ibtlmwTwM9OYMwimsNBSrg-1; Mon, 27 Apr 2020 13:58:21 -0400
+X-MC-Unique: ibtlmwTwM9OYMwimsNBSrg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9892B1895A28;
+        Mon, 27 Apr 2020 17:58:20 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-140.rdu2.redhat.com [10.10.114.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 548BF5D9DA;
+        Mon, 27 Apr 2020 17:58:15 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9844722036A; Mon, 27 Apr 2020 13:58:14 -0400 (EDT)
+Date:   Mon, 27 Apr 2020 13:58:14 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>
+Subject: Re: [PATCH 1/2] fuse: virtiofs: Fix nullptr dereference
+Message-ID: <20200427175814.GC146096@redhat.com>
+References: <20200424062540.23679-1-chirantan@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2004230253530.12318@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.15756 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200424062540.23679-1-chirantan@chromium.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/22/2020 9:55 AM, James Morris wrote:
-> On Mon, 13 Apr 2020, Daniel Colascione wrote:
->
->> On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
->>> Changes from the fourth version of the patch:
->>
->> Is there anything else that needs to be done before merging this patch series?
-> The vfs changes need review and signoff from the vfs folk, the SELinux 
-> changes by either Paul or Stephen, and we also need signoff on the LSM 
-> hooks from other major LSM authors (Casey and John, at a minimum).
+On Fri, Apr 24, 2020 at 03:25:39PM +0900, Chirantan Ekbote wrote:
+> virtiofs device implementations are allowed to provide more than one
+> request queue.  In this case `fsvq->fud` would not be initialized,
+> leading to a nullptr dereference later during driver initialization.
+> 
+> Make sure that `fsvq->fud` is initialized for all request queues even if
+> the driver doesn't use them.
+> 
+> Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+> ---
+>  fs/fuse/virtio_fs.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index bade747689033..d3c38222a7e4e 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1066,10 +1066,13 @@ static int virtio_fs_fill_super(struct super_block *sb)
+>  	}
+>  
+>  	err = -ENOMEM;
+> -	/* Allocate fuse_dev for hiprio and notification queues */
+> -	for (i = 0; i < VQ_REQUEST; i++) {
+> +	/* Allocate fuse_dev for all queues except the first request queue. */
+> +	for (i = 0; i < fs->nvqs; i++) {
+>  		struct virtio_fs_vq *fsvq = &fs->vqs[i];
+>  
+> +		if (i == VQ_REQUEST)
+> +			continue;
+> +
 
-You can add my
+These special conditions of initializing fuse device for one queue
+fusing fill_super_common() and rest of the queues outside of it, are
+bothering me. I am proposing a separate patch where all fuse device
+initialization/cleanup is done by the caller. It makes code look
+cleaner and easier to understand.
 
-	Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Vivek
 
-for this patchset.
+>  		fsvq->fud = fuse_dev_alloc();
+>  		if (!fsvq->fud)
+>  			goto err_free_fuse_devs;
+> -- 
+> 2.26.2.303.gf8c07b1a785-goog
+> 
 
