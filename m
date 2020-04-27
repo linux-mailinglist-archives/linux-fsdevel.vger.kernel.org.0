@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E95041BAEBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 22:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E2E11BAEC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 22:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbgD0UGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 16:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59190 "EHLO
+        id S1726837AbgD0UGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 16:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726789AbgD0UGq (ORCPT
+        by vger.kernel.org with ESMTP id S1725919AbgD0UGs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 16:06:46 -0400
+        Mon, 27 Apr 2020 16:06:48 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F02BC0610D5;
-        Mon, 27 Apr 2020 13:06:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5482EC0610D5;
+        Mon, 27 Apr 2020 13:06:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=gpWRZElREATeZwYUTenSdTJqeed7o42EBJOpC8zP8hc=; b=VOhp/uhefZFEynocz44DtCEVFz
-        dxGTK36xP2DXbc1N3eQSPLjTl4PzLLqwkIrVXlGPbwrGI4idMF/OjFjtEwiqE2c7M6+ghuQxp5x70
-        381dxchwc1hP5Nmwt+aMkY9IIH8eqhtOZR9/E0pz5IwN91Qhowp/LBLZ+KyzFZ1JWftARQLKib6A9
-        a1XA9JyhfXCjofbd498H+U3O9OQxTDUPUM5cfFSoexrjA+tdYbZU2plopx4IVUavWoIFYNDZhMYOY
-        R7MQ2sPJlp+YKQLjAPOTLyBJ0uHy0nmDd9/8W1xDO9adntJjS8lrUJzt19cB+TmPnZD3wIInsaLZ/
-        fPiBrn6Q==;
+        bh=tRh2egFE5bL+lOO5QZcFzobBLROoVTEyjp5GB1YlRSI=; b=B4917ULyuyzDL/PEWb5k2c845z
+        OgAxxZzldO+FXYvaMWPFOyGIUHo8cXALBoKkBANOp7XIBAwXpMpNKM3j6xb1xqSyp9+m6yK/8FWnc
+        37Myv1SWyyKMbTUkFz89+OIMrl4cm4xNayxW6RyzX8VMU8relvPuDfiSqWXTIq1HnkoGoXTgPk2Y0
+        l//xBrLBYmdoczVvQxLsGfD4a84xKVhvHJCbHdaZBOxC2tG8ilUrTH9esfyLfarZpWZ1JDR1Zoz0c
+        pM7U2MY08y9CDb70vyjdwMs6j3SpSI5MLaEyUID//Wf2HuMJlbhp8uB8618d4ilXVG5Cz+O5SDCLI
+        /HZ2tx/A==;
 Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTA1R-00017b-BT; Mon, 27 Apr 2020 20:06:33 +0000
+        id 1jTA1T-000189-Ol; Mon, 27 Apr 2020 20:06:36 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
@@ -36,9 +36,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] signal: factor copy_siginfo_to_external32 from copy_siginfo_to_user32
-Date:   Mon, 27 Apr 2020 22:06:22 +0200
-Message-Id: <20200427200626.1622060-3-hch@lst.de>
+Subject: [PATCH 3/5] binfmt_elf: remove the set_fs in fill_siginfo_note
+Date:   Mon, 27 Apr 2020 22:06:23 +0200
+Message-Id: <20200427200626.1622060-4-hch@lst.de>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200427200626.1622060-1-hch@lst.de>
 References: <20200427200626.1622060-1-hch@lst.de>
@@ -52,194 +52,76 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-To remove the use of set_fs in the coredump code there needs to be a
-way to convert a kernel siginfo to a userspace compat siginfo.
+The code in binfmt_elf.c is differnt from the rest of the code that
+processes siginfo, as it sends siginfo from a kernel buffer to a file
+rather than from kernel memory to userspace buffers.  To remove it's
+use of set_fs the code needs some different siginfo helpers.
 
-Call that function copy_siginfo_to_compat and factor it out of
-copy_siginfo_to_user32.
+Add the helper copy_siginfo_to_external to copy from the kernel's
+internal siginfo layout to a buffer in the siginfo layout that
+userspace expects.
 
-The existence of x32 complicates this code.  On x32 SIGCHLD uses 64bit
-times for utime and stime.  As only SIGCHLD is affected and SIGCHLD
-never causes a coredump I have avoided handling that case.
+Modify fill_siginfo_note to use copy_siginfo_to_external instead of
+set_fs and copy_siginfo_to_user.
+
+Update compat_binfmt_elf.c to use the previously added
+copy_siginfo_to_external32 to handle the compat case.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/compat.h |   2 +
- kernel/signal.c        | 113 ++++++++++++++++++++++-------------------
- 2 files changed, 62 insertions(+), 53 deletions(-)
+ fs/binfmt_elf.c        | 5 +----
+ fs/compat_binfmt_elf.c | 2 +-
+ include/linux/signal.h | 8 ++++++++
+ 3 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 0480ba4db5929..adbfe8f688d92 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -402,6 +402,8 @@ long compat_get_bitmap(unsigned long *mask, const compat_ulong_t __user *umask,
- 		       unsigned long bitmap_size);
- long compat_put_bitmap(compat_ulong_t __user *umask, unsigned long *mask,
- 		       unsigned long bitmap_size);
-+void copy_siginfo_to_external32(struct compat_siginfo *to,
-+		const struct kernel_siginfo *from);
- int copy_siginfo_from_user32(kernel_siginfo_t *to, const struct compat_siginfo __user *from);
- int copy_siginfo_to_user32(struct compat_siginfo __user *to, const kernel_siginfo_t *from);
- int get_compat_sigevent(struct sigevent *event,
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 284fc1600063b..244c69c4261e0 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3235,94 +3235,101 @@ int copy_siginfo_from_user(kernel_siginfo_t *to, const siginfo_t __user *from)
- }
- 
- #ifdef CONFIG_COMPAT
--int copy_siginfo_to_user32(struct compat_siginfo __user *to,
--			   const struct kernel_siginfo *from)
--#if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
-+void copy_siginfo_to_external32(struct compat_siginfo *to,
-+				const struct kernel_siginfo *from)
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 13f25e241ac46..a1f57e20c3cf2 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1556,10 +1556,7 @@ static void fill_auxv_note(struct memelfnote *note, struct mm_struct *mm)
+ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+ 		const kernel_siginfo_t *siginfo)
  {
--	return __copy_siginfo_to_user32(to, from, in_x32_syscall());
--}
--int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
--			     const struct kernel_siginfo *from, bool x32_ABI)
--#endif
--{
--	struct compat_siginfo new;
--	memset(&new, 0, sizeof(new));
-+	/*
-+	 * This function does not work properly for SIGCHLD on x32,
-+	 * but it does not need to as SIGCHLD never causes a coredump.
-+	 */
-+	memset(to, 0, sizeof(*to));
- 
--	new.si_signo = from->si_signo;
--	new.si_errno = from->si_errno;
--	new.si_code  = from->si_code;
-+	to->si_signo = from->si_signo;
-+	to->si_errno = from->si_errno;
-+	to->si_code  = from->si_code;
- 	switch(siginfo_layout(from->si_signo, from->si_code)) {
- 	case SIL_KILL:
--		new.si_pid = from->si_pid;
--		new.si_uid = from->si_uid;
-+		to->si_pid = from->si_pid;
-+		to->si_uid = from->si_uid;
- 		break;
- 	case SIL_TIMER:
--		new.si_tid     = from->si_tid;
--		new.si_overrun = from->si_overrun;
--		new.si_int     = from->si_int;
-+		to->si_tid     = from->si_tid;
-+		to->si_overrun = from->si_overrun;
-+		to->si_int     = from->si_int;
- 		break;
- 	case SIL_POLL:
--		new.si_band = from->si_band;
--		new.si_fd   = from->si_fd;
-+		to->si_band = from->si_band;
-+		to->si_fd   = from->si_fd;
- 		break;
- 	case SIL_FAULT:
--		new.si_addr = ptr_to_compat(from->si_addr);
-+		to->si_addr = ptr_to_compat(from->si_addr);
- #ifdef __ARCH_SI_TRAPNO
--		new.si_trapno = from->si_trapno;
-+		to->si_trapno = from->si_trapno;
- #endif
- 		break;
- 	case SIL_FAULT_MCEERR:
--		new.si_addr = ptr_to_compat(from->si_addr);
-+		to->si_addr = ptr_to_compat(from->si_addr);
- #ifdef __ARCH_SI_TRAPNO
--		new.si_trapno = from->si_trapno;
-+		to->si_trapno = from->si_trapno;
- #endif
--		new.si_addr_lsb = from->si_addr_lsb;
-+		to->si_addr_lsb = from->si_addr_lsb;
- 		break;
- 	case SIL_FAULT_BNDERR:
--		new.si_addr = ptr_to_compat(from->si_addr);
-+		to->si_addr = ptr_to_compat(from->si_addr);
- #ifdef __ARCH_SI_TRAPNO
--		new.si_trapno = from->si_trapno;
-+		to->si_trapno = from->si_trapno;
- #endif
--		new.si_lower = ptr_to_compat(from->si_lower);
--		new.si_upper = ptr_to_compat(from->si_upper);
-+		to->si_lower = ptr_to_compat(from->si_lower);
-+		to->si_upper = ptr_to_compat(from->si_upper);
- 		break;
- 	case SIL_FAULT_PKUERR:
--		new.si_addr = ptr_to_compat(from->si_addr);
-+		to->si_addr = ptr_to_compat(from->si_addr);
- #ifdef __ARCH_SI_TRAPNO
--		new.si_trapno = from->si_trapno;
-+		to->si_trapno = from->si_trapno;
- #endif
--		new.si_pkey = from->si_pkey;
-+		to->si_pkey = from->si_pkey;
- 		break;
- 	case SIL_CHLD:
--		new.si_pid    = from->si_pid;
--		new.si_uid    = from->si_uid;
--		new.si_status = from->si_status;
--#ifdef CONFIG_X86_X32_ABI
--		if (x32_ABI) {
--			new._sifields._sigchld_x32._utime = from->si_utime;
--			new._sifields._sigchld_x32._stime = from->si_stime;
--		} else
--#endif
--		{
--			new.si_utime = from->si_utime;
--			new.si_stime = from->si_stime;
--		}
-+		to->si_pid    = from->si_pid;
-+		to->si_uid    = from->si_uid;
-+		to->si_status = from->si_status;
-+		to->si_utime = from->si_utime;
-+		to->si_stime = from->si_stime;
- 		break;
- 	case SIL_RT:
--		new.si_pid = from->si_pid;
--		new.si_uid = from->si_uid;
--		new.si_int = from->si_int;
-+		to->si_pid = from->si_pid;
-+		to->si_uid = from->si_uid;
-+		to->si_int = from->si_int;
- 		break;
- 	case SIL_SYS:
--		new.si_call_addr = ptr_to_compat(from->si_call_addr);
--		new.si_syscall   = from->si_syscall;
--		new.si_arch      = from->si_arch;
-+		to->si_call_addr = ptr_to_compat(from->si_call_addr);
-+		to->si_syscall   = from->si_syscall;
-+		to->si_arch      = from->si_arch;
- 		break;
- 	}
-+}
- 
-+int copy_siginfo_to_user32(struct compat_siginfo __user *to,
-+			   const struct kernel_siginfo *from)
-+#if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
-+{
-+	return __copy_siginfo_to_user32(to, from, in_x32_syscall());
-+}
-+int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
-+			     const struct kernel_siginfo *from, bool x32_ABI)
-+#endif
-+{
-+	struct compat_siginfo new;
-+
-+	copy_siginfo_to_external32(&new, from);
-+#ifdef CONFIG_X86_X32_ABI
-+	if (x32_ABI && from->si_signo == SIGCHLD) {
-+		new._sifields._sigchld_x32._utime = from->si_utime;
-+		new._sifields._sigchld_x32._stime = from->si_stime;
-+	}
-+#endif
- 	if (copy_to_user(to, &new, sizeof(struct compat_siginfo)))
- 		return -EFAULT;
--
- 	return 0;
+-	mm_segment_t old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	copy_siginfo_to_user((user_siginfo_t __user *) csigdata, siginfo);
+-	set_fs(old_fs);
++	copy_siginfo_to_external(csigdata, siginfo);
+ 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
  }
+ 
+diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
+index aaad4ca1217ef..fa0e24e1b7267 100644
+--- a/fs/compat_binfmt_elf.c
++++ b/fs/compat_binfmt_elf.c
+@@ -39,7 +39,7 @@
+  */
+ #define user_long_t		compat_long_t
+ #define user_siginfo_t		compat_siginfo_t
+-#define copy_siginfo_to_user	copy_siginfo_to_user32
++#define copy_siginfo_to_external	copy_siginfo_to_external32
+ 
+ /*
+  * The machine-dependent core note format types are defined in elfcore-compat.h,
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 05bacd2ab1350..6bb1a3f0258c2 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -24,6 +24,14 @@ static inline void clear_siginfo(kernel_siginfo_t *info)
+ 
+ #define SI_EXPANSION_SIZE (sizeof(struct siginfo) - sizeof(struct kernel_siginfo))
+ 
++static inline void copy_siginfo_to_external(siginfo_t *to,
++					    const kernel_siginfo_t *from)
++{
++	memcpy(to, from, sizeof(*from));
++	memset(((char *)to) + sizeof(struct kernel_siginfo), 0,
++		SI_EXPANSION_SIZE);
++}
++
+ int copy_siginfo_to_user(siginfo_t __user *to, const kernel_siginfo_t *from);
+ int copy_siginfo_from_user(kernel_siginfo_t *to, const siginfo_t __user *from);
  
 -- 
 2.26.1
