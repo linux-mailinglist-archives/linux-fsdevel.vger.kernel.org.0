@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0091BAC36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 20:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C238F1BAC3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 20:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgD0SUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 14:20:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42150 "EHLO
+        id S1726420AbgD0SUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 14:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726426AbgD0SUE (ORCPT
+        by vger.kernel.org with ESMTP id S1726213AbgD0SUG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 14:20:04 -0400
+        Mon, 27 Apr 2020 14:20:06 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFC6C0610D5;
-        Mon, 27 Apr 2020 11:20:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99ABC0610D5;
+        Mon, 27 Apr 2020 11:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=14Ywug4UU4xAaFTeHUAnnbpAB8PBwYfeGeoa3aNof3g=; b=NuOYCajUFNapjRPTLSPOV7z4q1
-        yZWrBtUzlh/NZR37EJFL9JweJ8IhWb3xQGiExUXCxs4/tNJBf/0X37b8O3TNFraV6EctLlXQJ99CT
-        VQgRQp5KNnPC8ijCOGwuiBBintRfoJl1saxpT+L3D3Kfacyg6Rsczk7jhzQUPPeoIl7ReqYwns8Rc
-        HoBnz5ltjIHoh0OIKqlSNo91m6mXH7/+rdPeUM6Zk1sNlxFMBtxj+lKdaC6gUltXyXzj0Pta+Eob7
-        zgs2kLeLvpt6gbHf0YluYP4vY6kHJbZ1FGq2G7egSkGMRAmMxLklCu0Y5XhLsVgyisI6X+uYWTQVy
-        H7rIMfNA==;
+        bh=UzizbhEUz8RFxwkADEYr7j5yKrh6yIY3xrVXEDanUrk=; b=epLNIeY9zq6tBu3JyCXigmVnwK
+        RNZdUCH8Wj9Q+DCMHeft7u+qSKWMlkW7oDXKSPKgng3qXQK3pTlDyG2om8s2hcKNojjqJVJfm+tlu
+        283Ehv3LUmd8NmVsvVh3Otmh+9poPZW2QEhG0xxVTz9P3Z9QZDjKGvZT1bgwcP7hNtWpkRit4Kiit
+        uGjvkSwGYGf2UKs4pRXu9oYAS94CJFdLrNBKm9i1XvaiFFAUtTPft2eUh/+v6aTALETsmCeyhhYGq
+        Rx22KqmKspn8HcU+yHcKSg9c+6Y68iJ4PuDTneW+oEkabqBFk7UQ+PS0y8f6jMi4tqf7KVFQvF7ni
+        w/s66fSA==;
 Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jT8MO-0002A7-0z; Mon, 27 Apr 2020 18:20:04 +0000
+        id 1jT8MQ-0002h6-Dj; Mon, 27 Apr 2020 18:20:06 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-ext4@vger.kernel.org, viro@zeniv.linux.org.uk
 Cc:     jack@suse.cz, tytso@mit.edu, adilger@dilger.ca,
         riteshh@linux.ibm.com, amir73il@gmail.com,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH 02/11] ext4: fix fiemap size checks for bitmap files
-Date:   Mon, 27 Apr 2020 20:19:48 +0200
-Message-Id: <20200427181957.1606257-3-hch@lst.de>
+Subject: [PATCH 03/11] ext4: split _ext4_fiemap
+Date:   Mon, 27 Apr 2020 20:19:49 +0200
+Message-Id: <20200427181957.1606257-4-hch@lst.de>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200427181957.1606257-1-hch@lst.de>
 References: <20200427181957.1606257-1-hch@lst.de>
@@ -47,131 +47,127 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an extra validation of the len parameter, as for ext4 some files
-might have smaller file size limits than others.  This also means the
-redundant size check in ext4_ioctl_get_es_cache can go away, as all
-size checking is done in the shared fiemap handler.
+The fiemap and EXT4_IOC_GET_ES_CACHE cases share almost no code, so split
+them into entirely separate functions.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/extents.c | 31 +++++++++++++++++++++++++++++++
- fs/ext4/ioctl.c   | 33 ++-------------------------------
- 2 files changed, 33 insertions(+), 31 deletions(-)
+ fs/ext4/extents.c | 72 +++++++++++++++++++++++------------------------
+ 1 file changed, 35 insertions(+), 37 deletions(-)
 
 diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index f2b577b315a09..2b4b94542e34d 100644
+index 2b4b94542e34d..d2a2a3ba5c44a 100644
 --- a/fs/ext4/extents.c
 +++ b/fs/ext4/extents.c
-@@ -4832,6 +4832,28 @@ static const struct iomap_ops ext4_iomap_xattr_ops = {
- 	.iomap_begin		= ext4_iomap_xattr_begin,
- };
+@@ -4854,11 +4854,9 @@ static int ext4_fiemap_check_ranges(struct inode *inode, u64 start, u64 *len)
+ 	return 0;
+ }
  
-+static int ext4_fiemap_check_ranges(struct inode *inode, u64 start, u64 *len)
-+{
-+	u64 maxbytes;
-+
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-+		maxbytes = inode->i_sb->s_maxbytes;
-+	else
-+		maxbytes = EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
-+
-+	if (*len == 0)
-+		return -EINVAL;
-+	if (start > maxbytes)
-+		return -EFBIG;
-+
-+	/*
-+	 * Shrink request scope to what the fs can actually handle.
-+	 */
-+	if (*len > maxbytes || (maxbytes - *len) < start)
-+		*len = maxbytes - start;
-+	return 0;
-+}
-+
- static int _ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			__u64 start, __u64 len, bool from_es_cache)
+-static int _ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+-			__u64 start, __u64 len, bool from_es_cache)
++int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
++		u64 start, u64 len)
  {
-@@ -4852,6 +4874,15 @@ static int _ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	if (fiemap_check_flags(fieinfo, ext4_fiemap_flags))
+-	ext4_lblk_t start_blk;
+-	u32 ext4_fiemap_flags = FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR;
+ 	int error = 0;
+ 
+ 	if (fieinfo->fi_flags & FIEMAP_FLAG_CACHE) {
+@@ -4868,10 +4866,7 @@ static int _ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		fieinfo->fi_flags &= ~FIEMAP_FLAG_CACHE;
+ 	}
+ 
+-	if (from_es_cache)
+-		ext4_fiemap_flags &= FIEMAP_FLAG_XATTR;
+-
+-	if (fiemap_check_flags(fieinfo, ext4_fiemap_flags))
++	if (fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR))
  		return -EBADR;
  
-+	/*
-+	 * For bitmap files the maximum size limit could be smaller than
-+	 * s_maxbytes, so check len here manually instead of just relying on the
-+	 * generic check.
-+	 */
+ 	/*
+@@ -4885,40 +4880,20 @@ static int _ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 
+ 	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
+ 		fieinfo->fi_flags &= ~FIEMAP_FLAG_XATTR;
+-		error = iomap_fiemap(inode, fieinfo, start, len,
+-				     &ext4_iomap_xattr_ops);
+-	} else if (!from_es_cache) {
+-		error = iomap_fiemap(inode, fieinfo, start, len,
+-				     &ext4_iomap_report_ops);
+-	} else {
+-		ext4_lblk_t len_blks;
+-		__u64 last_blk;
+-
+-		start_blk = start >> inode->i_sb->s_blocksize_bits;
+-		last_blk = (start + len - 1) >> inode->i_sb->s_blocksize_bits;
+-		if (last_blk >= EXT_MAX_BLOCKS)
+-			last_blk = EXT_MAX_BLOCKS-1;
+-		len_blks = ((ext4_lblk_t) last_blk) - start_blk + 1;
+-
+-		/*
+-		 * Walk the extent tree gathering extent information
+-		 * and pushing extents back to the user.
+-		 */
+-		error = ext4_fill_es_cache_info(inode, start_blk, len_blks,
+-						fieinfo);
++		return iomap_fiemap(inode, fieinfo, start, len,
++				    &ext4_iomap_xattr_ops);
+ 	}
+-	return error;
+-}
+ 
+-int ext4_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+-		__u64 start, __u64 len)
+-{
+-	return _ext4_fiemap(inode, fieinfo, start, len, false);
++	return iomap_fiemap(inode, fieinfo, start, len, &ext4_iomap_report_ops);
+ }
+ 
+ int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		      __u64 start, __u64 len)
+ {
++	ext4_lblk_t start_blk, len_blks;
++	__u64 last_blk;
++	int error = 0;
++
+ 	if (ext4_has_inline_data(inode)) {
+ 		int has_inline;
+ 
+@@ -4929,9 +4904,32 @@ int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			return 0;
+ 	}
+ 
+-	return _ext4_fiemap(inode, fieinfo, start, len, true);
+-}
++	if (fieinfo->fi_flags & FIEMAP_FLAG_CACHE) {
++		error = ext4_ext_precache(inode);
++		if (error)
++			return error;
++		fieinfo->fi_flags &= ~FIEMAP_FLAG_CACHE;
++	}
++
++	if (fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC))
++		return -EBADR;
+ 
 +	error = ext4_fiemap_check_ranges(inode, start, &len);
 +	if (error)
 +		return error;
 +
- 	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
- 		fieinfo->fi_flags &= ~FIEMAP_FLAG_XATTR;
- 		error = iomap_fiemap(inode, fieinfo, start, len,
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index bfc1281fc4cbc..0746532ba463d 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -733,29 +733,6 @@ static void ext4_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
- 		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
- }
++	start_blk = start >> inode->i_sb->s_blocksize_bits;
++	last_blk = (start + len - 1) >> inode->i_sb->s_blocksize_bits;
++	if (last_blk >= EXT_MAX_BLOCKS)
++		last_blk = EXT_MAX_BLOCKS-1;
++	len_blks = ((ext4_lblk_t) last_blk) - start_blk + 1;
++
++	/*
++	 * Walk the extent tree gathering extent information
++	 * and pushing extents back to the user.
++	 */
++	return ext4_fill_es_cache_info(inode, start_blk, len_blks, fieinfo);
++}
  
--/* copied from fs/ioctl.c */
--static int fiemap_check_ranges(struct super_block *sb,
--			       u64 start, u64 len, u64 *new_len)
--{
--	u64 maxbytes = (u64) sb->s_maxbytes;
--
--	*new_len = len;
--
--	if (len == 0)
--		return -EINVAL;
--
--	if (start > maxbytes)
--		return -EFBIG;
--
--	/*
--	 * Shrink request scope to what the fs can actually handle.
--	 */
--	if (len > maxbytes || (maxbytes - len) < start)
--		*new_len = maxbytes - start;
--
--	return 0;
--}
--
- /* So that the fiemap access checks can't overflow on 32 bit machines. */
- #define FIEMAP_MAX_EXTENTS	(UINT_MAX / sizeof(struct fiemap_extent))
- 
-@@ -765,8 +742,6 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	struct fiemap __user *ufiemap = (struct fiemap __user *) arg;
- 	struct fiemap_extent_info fieinfo = { 0, };
- 	struct inode *inode = file_inode(filp);
--	struct super_block *sb = inode->i_sb;
--	u64 len;
- 	int error;
- 
- 	if (copy_from_user(&fiemap, ufiemap, sizeof(fiemap)))
-@@ -775,11 +750,6 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	if (fiemap.fm_extent_count > FIEMAP_MAX_EXTENTS)
- 		return -EINVAL;
- 
--	error = fiemap_check_ranges(sb, fiemap.fm_start, fiemap.fm_length,
--				    &len);
--	if (error)
--		return error;
--
- 	fieinfo.fi_flags = fiemap.fm_flags;
- 	fieinfo.fi_extents_max = fiemap.fm_extent_count;
- 	fieinfo.fi_extents_start = ufiemap->fm_extents;
-@@ -792,7 +762,8 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	if (fieinfo.fi_flags & FIEMAP_FLAG_SYNC)
- 		filemap_write_and_wait(inode->i_mapping);
- 
--	error = ext4_get_es_cache(inode, &fieinfo, fiemap.fm_start, len);
-+	error = ext4_get_es_cache(inode, &fieinfo, fiemap.fm_start,
-+			fiemap.fm_length);
- 	fiemap.fm_flags = fieinfo.fi_flags;
- 	fiemap.fm_mapped_extents = fieinfo.fi_extents_mapped;
- 	if (copy_to_user(ufiemap, &fiemap, sizeof(fiemap)))
+ /*
+  * ext4_access_path:
 -- 
 2.26.1
 
