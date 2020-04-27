@@ -2,78 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FEC1BA391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 14:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF471BA397
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 14:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgD0M23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 08:28:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42276 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgD0M22 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 08:28:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C06C1AB89;
-        Mon, 27 Apr 2020 12:28:25 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 33DE7DA781; Mon, 27 Apr 2020 14:27:41 +0200 (CEST)
-Date:   Mon, 27 Apr 2020 14:27:41 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC PATCH 3/9] btrfs: use set/clear_fs_page_private
-Message-ID: <20200427122740.GZ18421@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org
-References: <20200426214925.10970-1-guoqing.jiang@cloud.ionos.com>
- <20200426214925.10970-4-guoqing.jiang@cloud.ionos.com>
- <20200426222054.GA2005@dread.disaster.area>
- <20200427055428.GB16709@infradead.org>
+        id S1727098AbgD0M2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 08:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbgD0M2l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 08:28:41 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91EAC0610D5;
+        Mon, 27 Apr 2020 05:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Wzixkdd1MP05tKyiJudvvJUbNJ4oUXlhwu6lo0T90lk=; b=h4uZN/H6Mu3d0zPdDsclCVH32p
+        44gY3nD6XgbLkqBBMl44AzSP/BJE3KBzRAPQwmBogEvavTEhIQUL3ocaF+cw7UkzuVAwITD4seBgk
+        Pp8Hl1+tIQ8RODfstqU0/krSNx7E830cBVrxSyf5dfg0gpQoKrJKe2M5AynwMKOl0n3mi6Pl4oFKf
+        efaEddM5vpsfG757hkc2v8IEonhVlf8jAZ4wp/U05w15FPDDSa7fkY0VDdkD1WHqV691GKsmZEkS8
+        SOQI03I+FKN/fUWcflc8dcvjdXytbEbhLDXDLTXiJZruWD/RddNBs2RHT5uDy951iViKV1ctgL7yg
+        iJXmOD4A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jT2sG-0003WE-Dr; Mon, 27 Apr 2020 12:28:36 +0000
+Date:   Mon, 27 Apr 2020 05:28:36 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        dan.j.williams@intel.com, david@fromorbit.com, hch@lst.de,
+        rgoldwyn@suse.de, qi.fuli@fujitsu.com, y-goto@fujitsu.com
+Subject: Re: [RFC PATCH 0/8] dax: Add a dax-rmap tree to support reflink
+Message-ID: <20200427122836.GD29705@bombadil.infradead.org>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200427055428.GB16709@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 26, 2020 at 10:54:28PM -0700, Christoph Hellwig wrote:
-> On Mon, Apr 27, 2020 at 08:20:54AM +1000, Dave Chinner wrote:
-> > >  void set_page_extent_mapped(struct page *page)
-> > >  {
-> > > -	if (!PagePrivate(page)) {
-> > > -		SetPagePrivate(page);
-> > > -		get_page(page);
-> > > -		set_page_private(page, EXTENT_PAGE_PRIVATE);
-> > > -	}
-> > > +	if (!PagePrivate(page))
-> > > +		set_fs_page_private(page, (void *)EXTENT_PAGE_PRIVATE);
-> > 
-> > Change the definition of EXTENT_PAGE_PRIVATE so the cast is not
-> > needed? Nothing ever reads EXTENT_PAGE_PRIVATE; it's only there to
-> > set the private flag for other code to check and release the extent
-> > mapping reference to the page...
+On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
+> This patchset is a try to resolve the shared 'page cache' problem for
+> fsdax.
 > 
-> IIRC there as a patch on the btrfs list to remove EXTENT_PAGE_PRIVATE,
-> it might be better to not bother changing it.  Maybe the btrfs
-> maintainers remember this better.
+> In order to track multiple mappings and indexes on one page, I
+> introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
+> will be associated more than once if is shared.  At the second time we
+> associate this entry, we create this rb-tree and store its root in
+> page->private(not used in fsdax).  Insert (->mapping, ->index) when
+> dax_associate_entry() and delete it when dax_disassociate_entry().
 
-The patch removing it is part of patchset adding full iomap support to
-btrfs,
-(https://lore.kernel.org/linux-btrfs/20190905150650.21089-4-rgoldwyn@suse.de/)
-but it'll still take some time so I'm OK with using the
-set_fs_page_private helper and adding the cast to EXTENT_PAGE_PRIVATE
-definition.
+Do we really want to track all of this on a per-page basis?  I would
+have thought a per-extent basis was more useful.  Essentially, create
+a new address_space for each shared extent.  Per page just seems like
+a huge overhead.
