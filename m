@@ -2,20 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC761BA2F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 13:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 269FF1BA2F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 13:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbgD0Lww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 07:52:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52360 "EHLO mx2.suse.de"
+        id S1726953AbgD0LxN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 07:53:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52456 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgD0Lww (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 07:52:52 -0400
+        id S1726260AbgD0LxM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 07:53:12 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1C237AB89;
-        Mon, 27 Apr 2020 11:52:49 +0000 (UTC)
-Subject: Re: [PATCH v8 01/11] scsi: free sgtables in case command setup fails
+        by mx2.suse.de (Postfix) with ESMTP id C021AAC5F;
+        Mon, 27 Apr 2020 11:53:09 +0000 (UTC)
+Subject: Re: [PATCH v8 02/11] block: provide fallbacks for
+ blk_queue_zone_is_seq and blk_queue_zone_no
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -25,16 +26,17 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bvanassche@acm.org>
 References: <20200427113153.31246-1-johannes.thumshirn@wdc.com>
- <20200427113153.31246-2-johannes.thumshirn@wdc.com>
+ <20200427113153.31246-3-johannes.thumshirn@wdc.com>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <bd91d878-b20f-4064-81d8-ad0d345382a5@suse.de>
-Date:   Mon, 27 Apr 2020 13:52:47 +0200
+Message-ID: <3f03e7b7-77ad-eff5-5e97-a4436eb0500a@suse.de>
+Date:   Mon, 27 Apr 2020 13:53:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200427113153.31246-2-johannes.thumshirn@wdc.com>
+In-Reply-To: <20200427113153.31246-3-johannes.thumshirn@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -44,29 +46,42 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 4/27/20 1:31 PM, Johannes Thumshirn wrote:
-> In case scsi_setup_fs_cmnd() fails we're not freeing the sgtables
-> allocated by scsi_init_io(), thus we leak the allocated memory.
+> blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
+> CONFIG_BLK_DEV_ZONED disabled until now.
 > 
-> So free the sgtables allocated by scsi_init_io() in case
-> scsi_setup_fs_cmnd() fails.
+> The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
+> provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
 > 
-> Technically scsi_setup_scsi_cmnd() does not suffer from this problem, as
-> it can only fail if scsi_init_io() fails, so it does not have sgtables
-> allocated. But to maintain symmetry and as a measure of defensive
-> programming, free the sgtables on scsi_setup_scsi_cmnd() failure as well.
-> scsi_mq_free_sgtables() has safeguards against double-freeing of memory so
-> this is safe to do.
-> 
-> While we're at it, rename scsi_mq_free_sgtables() to scsi_free_sgtables().
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=205595
 > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Daniel Wagner <dwagner@suse.de>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 > ---
->   drivers/scsi/scsi_lib.c | 16 +++++++++++-----
->   1 file changed, 11 insertions(+), 5 deletions(-)
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>   include/linux/blkdev.h | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index f00bd4042295..91c6e413bf6b 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -721,6 +721,16 @@ static inline unsigned int blk_queue_nr_zones(struct request_queue *q)
+>   {
+>   	return 0;
+>   }
+> +static inline bool blk_queue_zone_is_seq(struct request_queue *q,
+> +					 sector_t sector)
+> +{
+> +	return false;
+> +}
+> +static inline unsigned int blk_queue_zone_no(struct request_queue *q,
+> +					     sector_t sector)
+> +{
+> +	return 0;
+> +}
+>   #endif /* CONFIG_BLK_DEV_ZONED */
+>   
+>   static inline bool rq_is_sync(struct request *rq)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
