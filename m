@@ -2,118 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C79201BA035
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 11:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FEC1BA067
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 11:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbgD0JnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 05:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726349AbgD0JnT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 05:43:19 -0400
-Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3322C0610D5;
-        Mon, 27 Apr 2020 02:43:19 -0700 (PDT)
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jT0IF-0007ll-Iz; Mon, 27 Apr 2020 11:43:15 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id EAECA100606; Mon, 27 Apr 2020 11:43:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v3 1/6] posix-cpu-timers: Always call __get_task_for_clock holding rcu_read_lock
-In-Reply-To: <87h7x6mj6h.fsf_-_@x220.int.ebiederm.org>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com> <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org> <20200424173927.GB26802@redhat.com> <87mu6ymkea.fsf_-_@x220.int.ebiederm.org> <87h7x6mj6h.fsf_-_@x220.int.ebiederm.org>
-Date:   Mon, 27 Apr 2020 11:43:14 +0200
-Message-ID: <87368ps1ql.fsf@nanos.tec.linutronix.de>
+        id S1726867AbgD0Jus (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 05:50:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46542 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbgD0Jus (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 05:50:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9A11FABC2;
+        Mon, 27 Apr 2020 09:50:45 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 64CBB1E129C; Mon, 27 Apr 2020 11:50:45 +0200 (CEST)
+Date:   Mon, 27 Apr 2020 11:50:45 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tim Waugh <tim@cyberelk.net>,
+        Borislav Petkov <bp@alien8.de>, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>
+Subject: Re: [PATCH 6/7] isofs: stop using ioctl_by_bdev
+Message-ID: <20200427095045.GA15107@quack2.suse.cz>
+References: <20200425075706.721917-1-hch@lst.de>
+ <20200425075706.721917-7-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200425075706.721917-7-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+On Sat 25-04-20 09:57:05, Christoph Hellwig wrote:
+> Instead just call the CDROM layer functionality directly, and turn the
+> hot mess in isofs_get_last_session into remotely readable code.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
 
-> This allows the getref flag to be removed and the callers can
-> than take a task reference if needed.
+Looks good to me. You can add:
 
-That changelog lacks any form of information why this should be
-changed. I can see the point vs. patch 2, but pretty please put coherent
-explanations into each patch.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+								Honza
+
 > ---
->  kernel/time/posix-cpu-timers.c | 41 +++++++++++++++++-----------------
->  1 file changed, 21 insertions(+), 20 deletions(-)
->
-> diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-> index 2fd3b3fa68bf..eba41c70f0f0 100644
-> --- a/kernel/time/posix-cpu-timers.c
-> +++ b/kernel/time/posix-cpu-timers.c
-> @@ -86,36 +86,34 @@ static struct task_struct *lookup_task(const pid_t pid, bool thread,
->  }
+>  fs/isofs/inode.c | 54 +++++++++++++++++++++++-------------------------
+>  1 file changed, 26 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+> index 62c0462dc89f3..276107cdaaf13 100644
+> --- a/fs/isofs/inode.c
+> +++ b/fs/isofs/inode.c
+> @@ -544,43 +544,41 @@ static int isofs_show_options(struct seq_file *m, struct dentry *root)
 >  
->  static struct task_struct *__get_task_for_clock(const clockid_t clock,
-> -						bool getref, bool gettime)
-> +						bool gettime)
+>  static unsigned int isofs_get_last_session(struct super_block *sb, s32 session)
 >  {
->  	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
->  	const pid_t pid = CPUCLOCK_PID(clock);
-> -	struct task_struct *p;
+> -	struct cdrom_multisession ms_info;
+> -	unsigned int vol_desc_start;
+> -	struct block_device *bdev = sb->s_bdev;
+> -	int i;
+> +	struct cdrom_device_info *cdi = disk_to_cdi(sb->s_bdev->bd_disk);
+> +	unsigned int vol_desc_start = 0;
 >  
->  	if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
->  		return NULL;
+> -	vol_desc_start=0;
+> -	ms_info.addr_format=CDROM_LBA;
+>  	if (session > 0) {
+> -		struct cdrom_tocentry Te;
+> -		Te.cdte_track=session;
+> -		Te.cdte_format=CDROM_LBA;
+> -		i = ioctl_by_bdev(bdev, CDROMREADTOCENTRY, (unsigned long) &Te);
+> -		if (!i) {
+> +		struct cdrom_tocentry te;
+> +
+> +		if (!cdi)
+> +			return 0;
+> +
+> +		te.cdte_track = session;
+> +		te.cdte_format = CDROM_LBA;
+> +		if (cdrom_read_tocentry(cdi, &te) == 0) {
+>  			printk(KERN_DEBUG "ISOFS: Session %d start %d type %d\n",
+> -				session, Te.cdte_addr.lba,
+> -				Te.cdte_ctrl&CDROM_DATA_TRACK);
+> -			if ((Te.cdte_ctrl&CDROM_DATA_TRACK) == 4)
+> -				return Te.cdte_addr.lba;
+> +				session, te.cdte_addr.lba,
+> +				te.cdte_ctrl & CDROM_DATA_TRACK);
+> +			if ((te.cdte_ctrl & CDROM_DATA_TRACK) == 4)
+> +				return te.cdte_addr.lba;
+>  		}
 >  
-> -	rcu_read_lock();
-> -	p = lookup_task(pid, thread, gettime);
-> -	if (p && getref)
-> -		get_task_struct(p);
-> -	rcu_read_unlock();
-> -	return p;
-> +	return lookup_task(pid, thread, gettime);
+>  		printk(KERN_ERR "ISOFS: Invalid session number or type of track\n");
+>  	}
+> -	i = ioctl_by_bdev(bdev, CDROMMULTISESSION, (unsigned long) &ms_info);
+> -	if (session > 0)
+> -		printk(KERN_ERR "ISOFS: Invalid session number\n");
+> -#if 0
+> -	printk(KERN_DEBUG "isofs.inode: CDROMMULTISESSION: rc=%d\n",i);
+> -	if (i==0) {
+> -		printk(KERN_DEBUG "isofs.inode: XA disk: %s\n",ms_info.xa_flag?"yes":"no");
+> -		printk(KERN_DEBUG "isofs.inode: vol_desc_start = %d\n", ms_info.addr.lba);
+> -	}
+> -#endif
+> -	if (i==0)
+> +
+> +	if (cdi) {
+> +		struct cdrom_multisession ms_info;
+> +
+> +		ms_info.addr_format = CDROM_LBA;
+> +		if (cdrom_multisession(cdi, &ms_info) == 0) {
+>  #if WE_OBEY_THE_WRITTEN_STANDARDS
+> -		if (ms_info.xa_flag) /* necessary for a valid ms_info.addr */
+> +			/* necessary for a valid ms_info.addr */
+> +			if (ms_info.xa_flag)
+>  #endif
+> -			vol_desc_start=ms_info.addr.lba;
+> +				vol_desc_start = ms_info.addr.lba;
+> +		}
+> +	}
+> +
+>  	return vol_desc_start;
 >  }
 >  
->  static inline struct task_struct *get_task_for_clock(const clockid_t clock)
->  {
-> -	return __get_task_for_clock(clock, true, false);
-> +	return __get_task_for_clock(clock, false);
->  }
->  
->  static inline struct task_struct *get_task_for_clock_get(const clockid_t clock)
->  {
-> -	return __get_task_for_clock(clock, true, true);
-> +	return __get_task_for_clock(clock, true);
->  }
->  
->  static inline int validate_clock_permissions(const clockid_t clock)
->  {
-> -	return __get_task_for_clock(clock, false, false) ? 0 : -EINVAL;
-> +	int ret;
-
-New line between declarations and code please.
-
-> +	rcu_read_lock();
-> +	ret = __get_task_for_clock(clock, false) ? 0 : -EINVAL;
-> +	rcu_read_unlock();
-> +	return ret;
->  }
-
-Thanks,
-
-        tglx
+> -- 
+> 2.26.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
