@@ -2,117 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D9221BA151
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA0A1BA17D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgD0Kc0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 06:32:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        id S1727002AbgD0Ki5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 06:38:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726604AbgD0Kc0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726504AbgD0Ki4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 06:32:26 -0400
-Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03DC7C0610D5;
-        Mon, 27 Apr 2020 03:32:26 -0700 (PDT)
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jT13m-0000By-43; Mon, 27 Apr 2020 12:32:22 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 20933100606; Mon, 27 Apr 2020 12:32:21 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v3 2/6] posix-cpu-timers: Use PIDTYPE_TGID to simplify the logic in lookup_task
-In-Reply-To: <87blnemj5t.fsf_-_@x220.int.ebiederm.org>
-References: <20200419141057.621356-1-gladkov.alexey@gmail.com> <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org> <20200424173927.GB26802@redhat.com> <87mu6ymkea.fsf_-_@x220.int.ebiederm.org> <87blnemj5t.fsf_-_@x220.int.ebiederm.org>
-Date:   Mon, 27 Apr 2020 12:32:21 +0200
-Message-ID: <87zhaxqkwa.fsf@nanos.tec.linutronix.de>
+        Mon, 27 Apr 2020 06:38:56 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044C9C0610D5;
+        Mon, 27 Apr 2020 03:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Sw+Gz0B1RPAiyQjtRtSaz9HX0MO96kOBToT1rHJ/CnQ=; b=kxOmwFjWfczqIhl2MpNpVzUU7u
+        NOZr4eVIT5rOYv4QZ0kXVdGssHpI3JnKHaXyhbJ4l9YGB5vSg8A+Exd1p0dkEP+SkENA/s52XleY0
+        qYjArcX12b5+x5tknzbxIT4ZH8DLYbhi3JPhwqQ4ZlTc1gWtZ6O9qJwek/B0Ow2dudfviR3ImuGXT
+        KlTjJcXe7I+xwmg1HjhYdpqj4vgml0606SeajgkhTDHKZiF5g8PbKK3fcVJ7RfsjUTPuTBJus8TGc
+        gGsV91mCXhq+1RgtogkVcYqrrnOKgpm5RrG35LbQf+okwPEdmGnbVyL8hQ7mkpSE8u4BXoGwHnldH
+        o4bCwjDA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jT1A6-0008KE-9g; Mon, 27 Apr 2020 10:38:54 +0000
+Date:   Mon, 27 Apr 2020 03:38:54 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Ext4 <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Murphy Zhou <jencce.kernel@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: [PATCH 0/5] ext4/overlayfs: fiemap related fixes
+Message-ID: <20200427103854.GA30463@infradead.org>
+References: <cover.1587555962.git.riteshh@linux.ibm.com>
+ <20200424101153.GC456@infradead.org>
+ <20200424232024.A39974C046@d06av22.portsmouth.uk.ibm.com>
+ <CAOQ4uxgiome-BnHDvDC=vHfidf4Ru3jqzOki0Z_YUkinEeYCRQ@mail.gmail.com>
+ <20200425094350.GA11881@infradead.org>
+ <CAOQ4uxg2KOVBxqF400KW3VaQEaX4JGqfb_vCW=esTMkJqZWwvA@mail.gmail.com>
+ <20200427062810.GA12930@infradead.org>
+ <CAOQ4uxicztq5toBst2tEO4MfbrTPyhyP8KVwki36V9fZ=24RCw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxicztq5toBst2tEO4MfbrTPyhyP8KVwki36V9fZ=24RCw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
-> Using pid_task(find_vpid(N), PIDTYPE_TGID) guarantees that if a task
-> is found it is at that moment the thread group leader.  Which removes
-> the need for the follow on test has_group_leader_pid.
->
-> I have reorganized the rest of the code in lookup_task for clarity,
-> and created a common return for most of the code.
+On Mon, Apr 27, 2020 at 01:15:22PM +0300, Amir Goldstein wrote:
+> On Mon, Apr 27, 2020 at 9:28 AM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Sat, Apr 25, 2020 at 01:49:43PM +0300, Amir Goldstein wrote:
+> > > I would use as generic helper name generic_fiemap_checks()
+> > > akin to generic_write_checks() and generic_remap_file_range_prep() =>
+> > > generic_remap_checks().
+> >
+> > None of the other fiemap helpers use the redundant generic_ prefix.
+> 
+> Fine. I still don't like the name _validate() so much because it implies
+> yes or no, not length truncating.
+> 
+> What's more, if we decide that FIEMAP_FLAG_SYNC handling should
+> be done inside this generic helper, we would definitely need to rename it
+> again. So how about going for something a bit more abstract like
+> fiemap_prep() or whatever.
 
-Sorry, it's way harder to read than the very explicit exits which were
-there before.
+Ok, I'll rename it to fiemap_prep.
 
-> The special case for clock_gettime with "pid == gettid" is not my
-> favorite.  I strongly suspect it isn't used as gettid is such a pain,
-> and passing 0 is much easier.  Still it is easier to keep this special
-> case than to do the reasarch that will show it isn't used.
+> 
+> What is your take about FIEMAP_FLAG_SYNC handling btw?
 
-It might be not your favorite, but when I refactored the code I learned
-the hard way that one of the test suites has assumptions that
-clock_gettime(PROCESS) works from any task of a group and not just for
-the group leader. Sure we could fix the test suite, but test code tends
-to be copied ...
-
->  /*
->   * Functions for validating access to tasks.
->   */
-> -static struct task_struct *lookup_task(const pid_t pid, bool thread,
-> +static struct task_struct *lookup_task(const pid_t which_pid, bool thread,
->  				       bool gettime)
->  {
->  	struct task_struct *p;
-> +	struct pid *pid;
->  
->  	/*
->  	 * If the encoded PID is 0, then the timer is targeted at current
->  	 * or the process to which current belongs.
->  	 */
-> -	if (!pid)
-> +	if (!which_pid)
->  		return thread ? current : current->group_leader;
->  
-> -	p = find_task_by_vpid(pid);
-> -	if (!p)
-> -		return p;
-> -
-> -	if (thread)
-> -		return same_thread_group(p, current) ? p : NULL;
-> -
-> -	if (gettime) {
-> +	pid = find_vpid(which_pid);
-> +	if (thread) {
-> +		p = pid_task(pid, PIDTYPE_PID);
-> +		if (p && !same_thread_group(p, current))
-> +			p = NULL;
-> +	} else {
->  		/*
->  		 * For clock_gettime(PROCESS) the task does not need to be
->  		 * the actual group leader. tsk->sighand gives
-> @@ -76,13 +75,13 @@ static struct task_struct *lookup_task(const pid_t pid, bool thread,
->  		 * reference on it and store the task pointer until the
->  		 * timer is destroyed.
-
-Btw, this comment is wrong since
-
-     55e8c8eb2c7b ("posix-cpu-timers: Store a reference to a pid not a task")
-
-Thanks,
-
-        tglx
+Oh, I hadn't really noticed that mess.  Taking it into fiemap_prep
+might make most sense, so that it nominally is under fs control for
+e.g. locking purposes.
