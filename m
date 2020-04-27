@@ -2,52 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C31661B96DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 07:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C537F1B9717
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 08:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbgD0F51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 01:57:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726221AbgD0F51 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 01:57:27 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A80CC061A0F;
-        Sun, 26 Apr 2020 22:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7zElAvoUBkSCcndQ+mZNHBtIxRc2td7Rq7fW1hfPztY=; b=OapiYWlEmna+aaE+vjReoQWnqh
-        iYK6z5lAmhnykIOVbybn3iQ7hHeZ53/ShWroCls3IXOv0Zkpm2ec/U1vJWXxjV71Er8ji6/VOdnLW
-        GeMvGb9SXY0U02rDNufTmoxsudBnfQf/uQeaavGwnxdR6Doec19IkDbdZ2WNcAkGFPMWGQdbDWkIO
-        mfwNXtLL2RPBr1w4pd095jmkbhFhUlOhn2IA51vxSP9LtpIP+ePK847OhKMisZdOWHlYssJakjm0c
-        4qeHj/EZoNtju88tdV77lACF1hENIN95TnuoY3G8rQSc2vjycDMu4/txj+7fVgVWEyc6KbLGEikuA
-        c4aNa4DQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jSwlj-00082h-5q; Mon, 27 Apr 2020 05:57:27 +0000
-Date:   Sun, 26 Apr 2020 22:57:27 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, willy@infradead.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 6/9] iomap: use set/clear_fs_page_private
-Message-ID: <20200427055727.GA30480@infradead.org>
-References: <20200426214925.10970-1-guoqing.jiang@cloud.ionos.com>
- <20200426214925.10970-7-guoqing.jiang@cloud.ionos.com>
+        id S1726567AbgD0GQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 02:16:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42184 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbgD0GQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 02:16:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0E0A7AC6D;
+        Mon, 27 Apr 2020 06:16:00 +0000 (UTC)
+Subject: Re: [PATCH 1/7] block: add a cdrom_device_info pointer to struct
+ gendisk
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>
+References: <20200425075706.721917-1-hch@lst.de>
+ <20200425075706.721917-2-hch@lst.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <262e6cc4-a0e7-821c-9e51-03a2ed5cba86@suse.de>
+Date:   Mon, 27 Apr 2020 08:15:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200426214925.10970-7-guoqing.jiang@cloud.ionos.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200425075706.721917-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FYI, you've only Cced the xfs list on this one patch.  Please Cc the
-whole list to everyone, otherwise a person just on the xfs list has
-no idea what your helpers added in patch 1 actually do.
+On 4/25/20 9:57 AM, Christoph Hellwig wrote:
+> Add a pointer to the CDROM information structure to struct gendisk.
+> This will allow various removable media file systems to call directly
+> into the CDROM layer instead of abusing ioctls with kernel pointers.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>   drivers/block/paride/pcd.c | 2 +-
+>   drivers/cdrom/cdrom.c      | 5 ++++-
+>   drivers/cdrom/gdrom.c      | 2 +-
+>   drivers/ide/ide-cd.c       | 3 +--
+>   drivers/scsi/sr.c          | 3 +--
+>   include/linux/cdrom.h      | 2 +-
+>   include/linux/genhd.h      | 9 +++++++++
+>   7 files changed, 18 insertions(+), 8 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                               +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
