@@ -2,199 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA461B9AC6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 10:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241721B9FD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 11:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbgD0ItK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 04:49:10 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:3131 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726801AbgD0Isn (ORCPT
+        id S1726504AbgD0J03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 05:26:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726537AbgD0J03 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 04:48:43 -0400
-X-IronPort-AV: E=Sophos;i="5.73,323,1583164800"; 
-   d="scan'208";a="90547660"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 27 Apr 2020 16:48:37 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id C716A4BCC89B;
-        Mon, 27 Apr 2020 16:37:57 +0800 (CST)
-Received: from G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 27 Apr 2020 16:48:40 +0800
-Received: from localhost.localdomain (10.167.225.141) by
- G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Mon, 27 Apr 2020 16:48:39 +0800
-From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>,
-        <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-Subject: [RFC PATCH 8/8] fs/xfs: support dedupe for fsdax
-Date:   Mon, 27 Apr 2020 16:47:50 +0800
-Message-ID: <20200427084750.136031-9-ruansy.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
-References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+        Mon, 27 Apr 2020 05:26:29 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC0CC0610D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 02:26:29 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id k8so13541186ejv.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 02:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=2+nrkvzlycDjC6Q5oyQFCIiuHCsvZXVHmDNkwcZBpMg=;
+        b=Fz2YUAwoMsneNCC+y/OWMaVGw0XvrCmXDkAFKj1YQ02eJOWJfWZN6pZ1rxBIt/1CsF
+         9XqTH1uvh2BU74pZgPE+c2XAjFEtrtmjUAWfpUaVw+sf7i2gQKigWc4tp+sqyBZjWjJb
+         RY/CUdEJBvBSg9n9QyiB4A57mW24mzwW97c8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=2+nrkvzlycDjC6Q5oyQFCIiuHCsvZXVHmDNkwcZBpMg=;
+        b=H50TmsjUyEuZ8TLAeXOIxT2zcefun3lSBiQroEMbOKs7VSBGbMFmwNxeqgOsT0W6zb
+         6UWYteIa4jeouW4KHAtMQamI4tG8ET/u/yIAVApw37M6hq0nfeEMgQVYYiyZHTK3wcH2
+         xhIVtrcb4yNoqY5xUG7zrX7y/YdkS/bcO84J/Y6JRO9VqsvbOEWYjLo37QCJVVjnxyF9
+         Peb+u5sLIiPxJ+iY3eRmrz3S3X+RFF4vuSs021YgIrUTN/4ceqjGTMAJ1Na/K3L5J/Fh
+         GZYEFx9niQsi8Qf57DzZ+Tie17PGIFjmKn8SSeV59Z0Cg/8q4PMIqXbhcU5eXF0aYzer
+         ieaA==
+X-Gm-Message-State: AGi0PuZ9X/9wuNVB0jlaxn0Zue65BY2qiEj3+RkfdZLyFsmb93WWe9VF
+        aMHPIggv+b74ALkHQinFtvxsNpadxZbuJmEIgiPwDlK90821gQ==
+X-Google-Smtp-Source: APiQypLe8lxIvr6C9UirI8cogF8XKvSBvCQFguD600j/FHGqafHlZE07LJL04wQpqh8HoFnE6abcC4WK6mb17roIAz8=
+X-Received: by 2002:a17:906:340a:: with SMTP id c10mr19169424ejb.218.1587979587805;
+ Mon, 27 Apr 2020 02:26:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: C716A4BCC89B.A09FE
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+References: <87k123h4vr.fsf@vostro.rath.org>
+In-Reply-To: <87k123h4vr.fsf@vostro.rath.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 27 Apr 2020 11:26:16 +0200
+Message-ID: <CAJfpeguqV=++b-PF6o6Y-pLvPioHrM-4mWE2rUqoFbmB7685FA@mail.gmail.com>
+Subject: Re: [fuse] Getting visibility into reads from page cache
+To:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use xfs_break_layouts() to break files' layouts when locking them.  And
-call dax_file_range_compare() function to compare range for files both
-DAX.
+On Sat, Apr 25, 2020 at 7:07 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> Hello,
+>
+> For debugging purposes, I would like to get information about read
+> requests for FUSE filesystems that are answered from the page cache
+> (i.e., that never make it to the FUSE userspace daemon).
+>
+> What would be the easiest way to accomplish that?
+>
+> For now I'd be happy with seeing regular reads and knowing when an
+> application uses mmap (so that I know that I might be missing reads).
+>
+>
+> Not having done any real kernel-level work, I would start by looking
+> into using some tracing framework to hook into the relevant kernel
+> function. However, I thought I'd ask here first to make sure that I'm
+> not heading into the completely wrong direction.
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
----
- fs/xfs/xfs_reflink.c | 77 ++++++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 32 deletions(-)
+Bpftrace is a nice high level tracing tool.
 
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index f87ab78dd421..efbe3464ae85 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -1185,47 +1185,41 @@ xfs_reflink_remap_blocks(
-  * back out both locks.
-  */
- static int
--xfs_iolock_two_inodes_and_break_layout(
--	struct inode		*src,
--	struct inode		*dest)
-+xfs_reflink_remap_lock_and_break_layouts(
-+	struct file		*file_in,
-+	struct file		*file_out)
- {
- 	int			error;
-+	struct inode		*inode_in = file_inode(file_in);
-+	struct xfs_inode	*src = XFS_I(inode_in);
-+	struct inode		*inode_out = file_inode(file_out);
-+	struct xfs_inode	*dest = XFS_I(inode_out);
-+	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
- 
--	if (src > dest)
-+	if (inode_in > inode_out) {
-+		swap(inode_in, inode_out);
- 		swap(src, dest);
--
--retry:
--	/* Wait to break both inodes' layouts before we start locking. */
--	error = break_layout(src, true);
--	if (error)
--		return error;
--	if (src != dest) {
--		error = break_layout(dest, true);
--		if (error)
--			return error;
- 	}
- 
--	/* Lock one inode and make sure nobody got in and leased it. */
--	inode_lock(src);
--	error = break_layout(src, false);
-+	inode_lock(inode_in);
-+	xfs_ilock(src, XFS_MMAPLOCK_EXCL);
-+	error = xfs_break_layouts(inode_in, &iolock, BREAK_UNMAP);
-+	xfs_iunlock(src, XFS_MMAPLOCK_EXCL);
- 	if (error) {
--		inode_unlock(src);
--		if (error == -EWOULDBLOCK)
--			goto retry;
-+		inode_unlock(inode_in);
- 		return error;
- 	}
- 
--	if (src == dest)
-+	if (inode_in == inode_out)
- 		return 0;
- 
--	/* Lock the other inode and make sure nobody got in and leased it. */
--	inode_lock_nested(dest, I_MUTEX_NONDIR2);
--	error = break_layout(dest, false);
-+	inode_lock_nested(inode_out, I_MUTEX_NONDIR2);
-+	xfs_ilock(dest, XFS_MMAPLOCK_EXCL);
-+	error = xfs_break_layouts(inode_out, &iolock, BREAK_UNMAP);
-+	xfs_iunlock(dest, XFS_MMAPLOCK_EXCL);
- 	if (error) {
--		inode_unlock(src);
--		inode_unlock(dest);
--		if (error == -EWOULDBLOCK)
--			goto retry;
-+		inode_unlock(inode_in);
-+		inode_unlock(inode_out);
- 		return error;
- 	}
- 
-@@ -1244,6 +1238,11 @@ xfs_reflink_remap_unlock(
- 	struct xfs_inode	*dest = XFS_I(inode_out);
- 	bool			same_inode = (inode_in == inode_out);
- 
-+	if (inode_in > inode_out) {
-+		swap(inode_in, inode_out);
-+		swap(src, dest);
-+	}
-+
- 	xfs_iunlock(dest, XFS_MMAPLOCK_EXCL);
- 	if (!same_inode)
- 		xfs_iunlock(src, XFS_MMAPLOCK_EXCL);
-@@ -1274,6 +1273,14 @@ xfs_reflink_zero_posteof(
- 			&xfs_buffered_write_iomap_ops);
- }
- 
-+int xfs_reflink_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-+					  struct inode *dest, loff_t destoff,
-+					  loff_t len, bool *is_same)
-+{
-+	return dax_file_range_compare(src, srcoff, dest, destoff, len, is_same,
-+				      &xfs_read_iomap_ops);
-+}
-+
- /*
-  * Prepare two files for range cloning.  Upon a successful return both inodes
-  * will have the iolock and mmaplock held, the page cache of the out file will
-@@ -1318,9 +1325,10 @@ xfs_reflink_remap_prep(
- 	struct xfs_inode	*dest = XFS_I(inode_out);
- 	bool			same_inode = (inode_in == inode_out);
- 	ssize_t			ret;
-+	compare_range_t		cmp;
- 
- 	/* Lock both files against IO */
--	ret = xfs_iolock_two_inodes_and_break_layout(inode_in, inode_out);
-+	ret = xfs_reflink_remap_lock_and_break_layouts(file_in, file_out);
- 	if (ret)
- 		return ret;
- 	if (same_inode)
-@@ -1335,12 +1343,17 @@ xfs_reflink_remap_prep(
- 	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
- 		goto out_unlock;
- 
--	/* Don't share DAX file data for now. */
--	if (IS_DAX(inode_in) || IS_DAX(inode_out))
-+	/* Don't share DAX file data with non-DAX file. */
-+	if (IS_DAX(inode_in) != IS_DAX(inode_out))
- 		goto out_unlock;
- 
-+	if (IS_DAX(inode_in))
-+		cmp = xfs_reflink_dedupe_file_range_compare;
-+	else
-+		cmp = vfs_dedupe_file_range_compare;
-+
- 	ret = generic_remap_file_range_prep(file_in, pos_in, file_out, pos_out,
--			len, remap_flags, vfs_dedupe_file_range_compare);
-+			len, remap_flags, cmp);
- 	if (ret < 0 || *len == 0)
- 		goto out_unlock;
- 
--- 
-2.26.2
+E.g.
 
+  sudo bpftrace -e 'kretprobe:fuse_file_read_iter { printf ("fuse
+read: %d\n", retval); }'
 
-
+Thanks,
+Miklos
