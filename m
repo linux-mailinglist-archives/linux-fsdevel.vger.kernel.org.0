@@ -2,95 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9841BA0E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 780F71BA0E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbgD0KPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 06:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726485AbgD0KPe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 06:15:34 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A636CC0610D5;
-        Mon, 27 Apr 2020 03:15:34 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id w4so18150356ioc.6;
-        Mon, 27 Apr 2020 03:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c5TY/mwD/RA8DX5ZqGo5gg7LysXNyHl/nVVQo7w3HRw=;
-        b=Qo4ov3FrVvhj8isQB5ei9o7XBURKKJX//Hd97BRir+dXdNRCzNsfUB0xnoHAGsujoq
-         /7Y95BjvEiKNd7+x7ZC+OsohXmpgzxhX12S+HPK21LWLTSZyWAstaqqH8+dimIZcRrQQ
-         yPS5Q3U+w/6XMyJyMVgBovg5BJLhR7LpbKkq16eVXgoZVFkzBQPXMrMWzYOBv284TS3t
-         FoEv/ENgXMjjLn4pitMlnbYOFixUhwP7XUtPWMBkGalw2AlocVa+ctsizEeSlMtfrTz5
-         K0632982wTjkz2N2abZkK7vxcQDyhZ8/E3sse+BFhr7+eMs2OLH/MY3JPzgQlSe2Va1K
-         Gy8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c5TY/mwD/RA8DX5ZqGo5gg7LysXNyHl/nVVQo7w3HRw=;
-        b=KARTWL6aF1KF+hUZBx+Y0IAVyNYDi42aa6ixyFCmwrhWnQ+wuh/1hISYrRCVxUxwh+
-         1NWRwVgw0+8iIMgLTAJRNNPh7uBUde/ok+y+3/2PsW606XQ0PSC30gtYxhl2Rux4cFyi
-         FWFJz5M8OcAwYMLFZOEqhIS2w2t+COW7F495ZTqBEq8co/dhUvqjDzC051AYLiLph7GW
-         UYZPeBfBxnQz9niZ2zUpOyT+pKRBRToMTSz9NLJgeH9rEvmJB8DwfGdugXFjEj20UtKY
-         4UWT31G3SrP55zhpOEcGKYY/lBanRq1X5V/+Z1+gQSLJa8k3NJaCGjIreWcxuiutxy0V
-         Fsig==
-X-Gm-Message-State: AGi0Pub8zoqJDJowQp0V0eos0wifX5bDCnD5DppI0UGogwpDA/gImtB+
-        Ic+hocOmn/dESqNWxBYe+e7broouKWFO6wQXKz0=
-X-Google-Smtp-Source: APiQypJ1W2+iixdw+5g/zRv18McNzkZG+pKgxyRs5otoG5BwkbPaVZEjgJ+czLqpaybgWTCQiFYs+WqK1hgecpG57qA=
-X-Received: by 2002:a02:4b03:: with SMTP id q3mr19258125jaa.30.1587982534004;
- Mon, 27 Apr 2020 03:15:34 -0700 (PDT)
+        id S1726537AbgD0KPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 06:15:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58650 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbgD0KPY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 06:15:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AF0FBAF0C;
+        Mon, 27 Apr 2020 10:15:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 105041E129C; Mon, 27 Apr 2020 12:15:22 +0200 (CEST)
+Date:   Mon, 27 Apr 2020 12:15:22 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     youngjun <her0gyugyu@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] inotify: Fix error return code assignment flow.
+Message-ID: <20200427101522.GD15107@quack2.suse.cz>
+References: <20200426143316.29877-1-her0gyugyu@gmail.com>
 MIME-Version: 1.0
-References: <cover.1587555962.git.riteshh@linux.ibm.com> <20200424101153.GC456@infradead.org>
- <20200424232024.A39974C046@d06av22.portsmouth.uk.ibm.com> <CAOQ4uxgiome-BnHDvDC=vHfidf4Ru3jqzOki0Z_YUkinEeYCRQ@mail.gmail.com>
- <20200425094350.GA11881@infradead.org> <CAOQ4uxg2KOVBxqF400KW3VaQEaX4JGqfb_vCW=esTMkJqZWwvA@mail.gmail.com>
- <20200427062810.GA12930@infradead.org>
-In-Reply-To: <20200427062810.GA12930@infradead.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 27 Apr 2020 13:15:22 +0300
-Message-ID: <CAOQ4uxicztq5toBst2tEO4MfbrTPyhyP8KVwki36V9fZ=24RCw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] ext4/overlayfs: fiemap related fixes
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        Ext4 <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Murphy Zhou <jencce.kernel@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200426143316.29877-1-her0gyugyu@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 9:28 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Sat, Apr 25, 2020 at 01:49:43PM +0300, Amir Goldstein wrote:
-> > I would use as generic helper name generic_fiemap_checks()
-> > akin to generic_write_checks() and generic_remap_file_range_prep() =>
-> > generic_remap_checks().
->
-> None of the other fiemap helpers use the redundant generic_ prefix.
+On Sun 26-04-20 07:33:16, youngjun wrote:
+> If error code is initialized -EINVAL, there is no need to assign -EINVAL.
+> 
+> Signed-off-by: youngjun <her0gyugyu@gmail.com>
 
-Fine. I still don't like the name _validate() so much because it implies
-yes or no, not length truncating.
+Thanks. I've added the cleanup to my tree,
 
-What's more, if we decide that FIEMAP_FLAG_SYNC handling should
-be done inside this generic helper, we would definitely need to rename it
-again. So how about going for something a bit more abstract like
-fiemap_prep() or whatever.
+								Honza
 
-What is your take about FIEMAP_FLAG_SYNC handling btw?
-
-Thanks,
-Amir.
+> ---
+>  fs/notify/inotify/inotify_user.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 81ffc8629fc4..f88bbcc9efeb 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -764,20 +764,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
+>  	struct fsnotify_group *group;
+>  	struct inotify_inode_mark *i_mark;
+>  	struct fd f;
+> -	int ret = 0;
+> +	int ret = -EINVAL;
+>  
+>  	f = fdget(fd);
+>  	if (unlikely(!f.file))
+>  		return -EBADF;
+>  
+>  	/* verify that this is indeed an inotify instance */
+> -	ret = -EINVAL;
+>  	if (unlikely(f.file->f_op != &inotify_fops))
+>  		goto out;
+>  
+>  	group = f.file->private_data;
+>  
+> -	ret = -EINVAL;
+>  	i_mark = inotify_idr_find(group, wd);
+>  	if (unlikely(!i_mark))
+>  		goto out;
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
