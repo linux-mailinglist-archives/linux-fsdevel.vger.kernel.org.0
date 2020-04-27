@@ -2,81 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 780F71BA0E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D9221BA151
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 12:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbgD0KPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 06:15:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58650 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbgD0KPY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 06:15:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AF0FBAF0C;
-        Mon, 27 Apr 2020 10:15:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 105041E129C; Mon, 27 Apr 2020 12:15:22 +0200 (CEST)
-Date:   Mon, 27 Apr 2020 12:15:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     youngjun <her0gyugyu@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] inotify: Fix error return code assignment flow.
-Message-ID: <20200427101522.GD15107@quack2.suse.cz>
-References: <20200426143316.29877-1-her0gyugyu@gmail.com>
+        id S1727080AbgD0Kc0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 06:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726604AbgD0Kc0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 06:32:26 -0400
+Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03DC7C0610D5;
+        Mon, 27 Apr 2020 03:32:26 -0700 (PDT)
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jT13m-0000By-43; Mon, 27 Apr 2020 12:32:22 +0200
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 20933100606; Mon, 27 Apr 2020 12:32:21 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v3 2/6] posix-cpu-timers: Use PIDTYPE_TGID to simplify the logic in lookup_task
+In-Reply-To: <87blnemj5t.fsf_-_@x220.int.ebiederm.org>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com> <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org> <20200424173927.GB26802@redhat.com> <87mu6ymkea.fsf_-_@x220.int.ebiederm.org> <87blnemj5t.fsf_-_@x220.int.ebiederm.org>
+Date:   Mon, 27 Apr 2020 12:32:21 +0200
+Message-ID: <87zhaxqkwa.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200426143316.29877-1-her0gyugyu@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 26-04-20 07:33:16, youngjun wrote:
-> If error code is initialized -EINVAL, there is no need to assign -EINVAL.
-> 
-> Signed-off-by: youngjun <her0gyugyu@gmail.com>
+ebiederm@xmission.com (Eric W. Biederman) writes:
+> Using pid_task(find_vpid(N), PIDTYPE_TGID) guarantees that if a task
+> is found it is at that moment the thread group leader.  Which removes
+> the need for the follow on test has_group_leader_pid.
+>
+> I have reorganized the rest of the code in lookup_task for clarity,
+> and created a common return for most of the code.
 
-Thanks. I've added the cleanup to my tree,
+Sorry, it's way harder to read than the very explicit exits which were
+there before.
 
-								Honza
+> The special case for clock_gettime with "pid == gettid" is not my
+> favorite.  I strongly suspect it isn't used as gettid is such a pain,
+> and passing 0 is much easier.  Still it is easier to keep this special
+> case than to do the reasarch that will show it isn't used.
 
-> ---
->  fs/notify/inotify/inotify_user.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-> index 81ffc8629fc4..f88bbcc9efeb 100644
-> --- a/fs/notify/inotify/inotify_user.c
-> +++ b/fs/notify/inotify/inotify_user.c
-> @@ -764,20 +764,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
->  	struct fsnotify_group *group;
->  	struct inotify_inode_mark *i_mark;
->  	struct fd f;
-> -	int ret = 0;
-> +	int ret = -EINVAL;
+It might be not your favorite, but when I refactored the code I learned
+the hard way that one of the test suites has assumptions that
+clock_gettime(PROCESS) works from any task of a group and not just for
+the group leader. Sure we could fix the test suite, but test code tends
+to be copied ...
+
+>  /*
+>   * Functions for validating access to tasks.
+>   */
+> -static struct task_struct *lookup_task(const pid_t pid, bool thread,
+> +static struct task_struct *lookup_task(const pid_t which_pid, bool thread,
+>  				       bool gettime)
+>  {
+>  	struct task_struct *p;
+> +	struct pid *pid;
 >  
->  	f = fdget(fd);
->  	if (unlikely(!f.file))
->  		return -EBADF;
+>  	/*
+>  	 * If the encoded PID is 0, then the timer is targeted at current
+>  	 * or the process to which current belongs.
+>  	 */
+> -	if (!pid)
+> +	if (!which_pid)
+>  		return thread ? current : current->group_leader;
 >  
->  	/* verify that this is indeed an inotify instance */
-> -	ret = -EINVAL;
->  	if (unlikely(f.file->f_op != &inotify_fops))
->  		goto out;
->  
->  	group = f.file->private_data;
->  
-> -	ret = -EINVAL;
->  	i_mark = inotify_idr_find(group, wd);
->  	if (unlikely(!i_mark))
->  		goto out;
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> -	p = find_task_by_vpid(pid);
+> -	if (!p)
+> -		return p;
+> -
+> -	if (thread)
+> -		return same_thread_group(p, current) ? p : NULL;
+> -
+> -	if (gettime) {
+> +	pid = find_vpid(which_pid);
+> +	if (thread) {
+> +		p = pid_task(pid, PIDTYPE_PID);
+> +		if (p && !same_thread_group(p, current))
+> +			p = NULL;
+> +	} else {
+>  		/*
+>  		 * For clock_gettime(PROCESS) the task does not need to be
+>  		 * the actual group leader. tsk->sighand gives
+> @@ -76,13 +75,13 @@ static struct task_struct *lookup_task(const pid_t pid, bool thread,
+>  		 * reference on it and store the task pointer until the
+>  		 * timer is destroyed.
+
+Btw, this comment is wrong since
+
+     55e8c8eb2c7b ("posix-cpu-timers: Store a reference to a pid not a task")
+
+Thanks,
+
+        tglx
