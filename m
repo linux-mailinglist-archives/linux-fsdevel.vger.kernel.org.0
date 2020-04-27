@@ -2,75 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE5E1BAC54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 20:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 551A61BADCC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 21:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbgD0SU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 14:20:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726228AbgD0SU1 (ORCPT
+        id S1726737AbgD0TV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 15:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbgD0TV0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 14:20:27 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E78C0610D5;
-        Mon, 27 Apr 2020 11:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=wiK8u2lq86CLEJk2sltbigywC//kREoH6b7fL3RvaWg=; b=e/+8k00mqcfTWYriIXfKmf08/X
-        cQxqOE8yNydgrjrrrKWwgly2dHrXjiBqyTXmKWRHBJS9w0akmq6ev/XlfCMVKlZh+WG0+SeEn2iuc
-        tyWpKVRryZhwPw00d2lopNc+GmJ0hMCbPsVKYcil/ahewVx9w/3xJlA3nKQnwhATWn3VnOBbL/+hC
-        wsLbovhP0ghZmJeBsxQe2mpf9/GUlRddt1v9gHfOk36fp2+e0oLEmJEPJ3p/YwqxhdKrSbSnIomX4
-        bNsQVzoJNTdna1zZJVX4yulr1OfZ7kmN21IXPBxrOR6dMyz+hDaCtwMnx2kdSdf2yA+qLCCzamQCH
-        H6oVRfmg==;
-Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jT8Mk-0004d4-Lg; Mon, 27 Apr 2020 18:20:27 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-ext4@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     jack@suse.cz, tytso@mit.edu, adilger@dilger.ca,
-        riteshh@linux.ibm.com, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH 11/11] ext4: remove the access_ok() check in ext4_ioctl_get_es_cache
-Date:   Mon, 27 Apr 2020 20:19:57 +0200
-Message-Id: <20200427181957.1606257-12-hch@lst.de>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200427181957.1606257-1-hch@lst.de>
-References: <20200427181957.1606257-1-hch@lst.de>
+        Mon, 27 Apr 2020 15:21:26 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8693CC03C1A7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 12:21:26 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id y4so18872442ljn.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 12:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4cHgSjEPoMmt6ubw7HV3nxIOaw6puMj10ujckObz/P0=;
+        b=UQUgfZyduAwD1OnLyiVfz4s33exIjMboLOFxlytve5HtAd+QlLtYzkDsnn/qa/t6ia
+         gc5XiMfQN/sHa/YwJT0xMBkNGhLRAZv3xq4wJvE1fQgx8UTOxnynaE9mD69V9JqqKdlc
+         VKU/3gqso5favCjBFi20I5ifYDGkAMD2HJrKUjUq87+HUo1BWSGYvR3TbFjzVrLJj+bK
+         K5eOcdxIqWiD9xXI/tLtB39GyaPntAi8sFIgBDXQL8GC24z4wg/i5okJite0RPvxxbVX
+         rAhwiOarh6Nka6L+19G/gvYIB4drAaVUQrvcCAEwM1EcSsdhPuEa5N/AqHNo3oGx+OOp
+         /Nng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4cHgSjEPoMmt6ubw7HV3nxIOaw6puMj10ujckObz/P0=;
+        b=eIOcPTw3tHqJ3EoezZwddjH+zD+eHXlMN/QpJ8eD+c5zKkftK3+nu6jY8ZwDVQiPdA
+         ajKcftBa31IGadngLplp/Sv2ZO9EL6mrqFQoB37UHiaUoxXRpHIRph17tHXOKzpPiajK
+         suTpBwbQB6NpzsZ7AJsoCoQFUEglgmIVW5xdZhOLlmAOGZza6Auh5vmuIxI3hTXPz0uD
+         a2OheLy6qbCFc2qgh8eXuP+A6yIwIoUHwdOQEfDJyNBWEt26s3G8kr4TuygEHXa3NJhB
+         kF44MUc1gV45LrbSGWBlUdQEg08JLNjhsREjGaaSy8FsMp03+Lm1JYgin3QVaNZumxMe
+         0ZwQ==
+X-Gm-Message-State: AGi0PuauPsS0vkOhw3gNFXxSRRdkti2LemyJXjQ6AeNQT7a7XgH3aSnf
+        BQuAvjuXO+dgnTPaPpKZYtYeh/J0Zq7MEIIHbXXeKQ==
+X-Google-Smtp-Source: APiQypKGflSj7oYxM9EC6zirKMxaj+YhMYZpG7rZCM7q1jgEZhFt6XAgesu7rliUn/XjBXxFEQqbNjgsTbNCmsE2fOo=
+X-Received: by 2002:a2e:8999:: with SMTP id c25mr15466764lji.73.1588015284701;
+ Mon, 27 Apr 2020 12:21:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <CAObFT-S27KXFGomqPZdXA8oJDe6QxmoT=T6CBgD9R9UHNmakUQ@mail.gmail.com>
+ <f75d30ff-53ec-c3a1-19b2-956735d44088@kernel.dk>
+In-Reply-To: <f75d30ff-53ec-c3a1-19b2-956735d44088@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 27 Apr 2020 21:20:57 +0200
+Message-ID: <CAG48ez32nkvLsWStjenGmZdLaSPKWEcSccPKqgPtJwme8ZxxuQ@mail.gmail.com>
+Subject: Re: io_uring, IORING_OP_RECVMSG and ancillary data
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Andreas Smas <andreas@lonelycoder.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-access_ok just checks we are fed a proper user pointer.  We also do that
-in copy_to_user itself, so no need to do this early.
+On Sat, Apr 25, 2020 at 10:23 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 4/25/20 11:29 AM, Andreas Smas wrote:
+> > Hi,
+> >
+> > Tried to use io_uring with OP_RECVMSG with ancillary buffers (for my
+> > particular use case I'm using SO_TIMESTAMP for incoming UDP packets).
+> >
+> > These submissions fail with EINVAL due to the check in __sys_recvmsg_sock().
+> >
+> > The following hack fixes the problem for me and I get valid timestamps
+> > back. Not suggesting this is the real fix as I'm not sure what the
+> > implications of this is.
+> >
+> > Any insight into this would be much appreciated.
+>
+> It was originally disabled because of a security issue, but I do think
+> it's safe to enable again.
+>
+> Adding the io-uring list and Jann as well, leaving patch intact below.
+>
+> > diff --git a/net/socket.c b/net/socket.c
+> > index 2dd739fba866..689f41f4156e 100644
+> > --- a/net/socket.c
+> > +++ b/net/socket.c
+> > @@ -2637,10 +2637,6 @@ long __sys_recvmsg_sock(struct socket *sock,
+> > struct msghdr *msg,
+> >                         struct user_msghdr __user *umsg,
+> >                         struct sockaddr __user *uaddr, unsigned int flags)
+> >  {
+> > -       /* disallow ancillary data requests from this path */
+> > -       if (msg->msg_control || msg->msg_controllen)
+> > -               return -EINVAL;
+> > -
+> >         return ____sys_recvmsg(sock, msg, umsg, uaddr, flags, 0);
+> >  }
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/ext4/ioctl.c | 5 -----
- 1 file changed, 5 deletions(-)
+I think that's hard to get right. In particular, unix domain sockets
+can currently pass file descriptors in control data - so you'd need to
+set the file_table flag for recvmsg and sendmsg. And I'm not sure
+whether, to make this robust, there should be a whitelist of types of
+control messages that are permitted to be used with io_uring, or
+something like that...
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 0746532ba463d..7fded54d2dba9 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -754,11 +754,6 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	fieinfo.fi_extents_max = fiemap.fm_extent_count;
- 	fieinfo.fi_extents_start = ufiemap->fm_extents;
- 
--	if (fiemap.fm_extent_count != 0 &&
--	    !access_ok(fieinfo.fi_extents_start,
--		       fieinfo.fi_extents_max * sizeof(struct fiemap_extent)))
--		return -EFAULT;
--
- 	if (fieinfo.fi_flags & FIEMAP_FLAG_SYNC)
- 		filemap_write_and_wait(inode->i_mapping);
- 
--- 
-2.26.1
-
+I think of ancillary buffers as being kind of like ioctl handlers in
+this regard.
