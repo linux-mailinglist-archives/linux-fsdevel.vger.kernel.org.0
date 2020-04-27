@@ -2,173 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 432721BAEC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 22:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC321BAED0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Apr 2020 22:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgD0UGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 16:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
+        id S1726791AbgD0UI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 16:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726789AbgD0UGv (ORCPT
+        by vger.kernel.org with ESMTP id S1726641AbgD0UI3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 16:06:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C95C0610D5;
-        Mon, 27 Apr 2020 13:06:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=HvsuEE5+Vpf11RhZiIeD024n91SKgo+pyfBY5PqLiHs=; b=fz44ydA9lpLx6+mZRQa+jdunmM
-        2xFuVgrbgquFBgLBTB0qhCVkbWljLk7X4dPlF7J4ybyPZozZD1qrxtRJ3VPoA/mgtFeFJtv3RJtjM
-        geoHbg0cLo4+wcMK71JhpYf/XfXJBhjDvehe8oo+Di0E9PJ9KTYO1Mjp0NFDKb9FQi+3dWIURdVKr
-        EmjYzBi4tgSUfVvz8ndaGuAFsY02irEX5Et7pDslGVdUnIgcUzKIFKApOwUQtPjeQYmS25C+BZPJd
-        Mxk3KwE1i5I+dcnCksa1cpOyXnLi0Y6ve9y/kQyWaJd9B2ODWGM2IwBkC9h/Cew0TFfvatych1ed0
-        Z5Bf0NEg==;
-Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTA1Y-00019J-QF; Mon, 27 Apr 2020 20:06:41 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] binfmt_elf_fdpic: remove the set_fs(KERNEL_DS) in elf_fdpic_core_dump
-Date:   Mon, 27 Apr 2020 22:06:25 +0200
-Message-Id: <20200427200626.1622060-6-hch@lst.de>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200427200626.1622060-1-hch@lst.de>
-References: <20200427200626.1622060-1-hch@lst.de>
+        Mon, 27 Apr 2020 16:08:29 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E236C0610D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 13:08:29 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id h11so7385856plr.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 13:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1ShJY97ZCiJN26A/m9Pl13+gxvYlJRi5H/MBiRQCKAA=;
+        b=pPb/6UyxYym50tDXhyX1a2Dt0ycYdFDEFleuNy9likSHZM1YDH/Mwy/APDqV/HMClC
+         Y99Jvj/GcprY0ku8mhhvp2uqwuEYkzr4P+OMwIYuchQEK7Z8Bm5iuR1+7WjAvYI9wqkx
+         p6Li2CEx9EuPpX5CDgKzcqdBwU2ZB0dAoGSRUR0qe/GIWo10QkZ+AU0N/itvqQ1BEsAr
+         I7FfxRXZ74oMcclJ2CTp77m4lrecsIOYhh7uhjl/vCUnEOtRS11RqVqDGkVmp4IOtsvg
+         ktPmQqeCBRPFr3m9H9rH2Lr9OdV65yFCwef0lNvU6WDuOkWlfn/vtKHfFXD7y3HjYte2
+         RGyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1ShJY97ZCiJN26A/m9Pl13+gxvYlJRi5H/MBiRQCKAA=;
+        b=YwkDUxhOk3MncoRbn+MiJ0IT5+2ZXWITYbmjhhSAi2hrDvvmmCDw7KQjayBS0B461E
+         cthfSPQ6de5dU64cx/5c9cXPTfcCRU8uhsMn0AUWTU+7+lWjB0+xJpOfeoPK2989BVq2
+         Iqn5FD2FRgkPxKf8ysl7rYF7dH3RzAL4JKMvFnIQqsE1RygTXvK2VGkOQp7vyP8CaJag
+         TyRIbYC+rWAaNX109sKcKx0SR2IqRFcovY4/v1918G+clf/ZZYQ9ox3MgDMChA+pcFTv
+         /KwwWG8G5q7Qf2aC4Mj0kOnXPKnUngLoLQ8VnK5R2OHbK4D8cSEaA7P5flNzVE4AJokH
+         qmVA==
+X-Gm-Message-State: AGi0PuYP1K7ecUYDxvVrOOdroujFpyYxYzrpGQgh9vYdxBEigIB9TWHi
+        y7pgwHnQOJJUec9l2v0Imh+6Ew==
+X-Google-Smtp-Source: APiQypKcScA7Ko4tejh9itu5hKiarr5afUS+iaM7D2DRTjJkJ4oHtScMvoMG59upANfBpyoSmGb0HQ==
+X-Received: by 2002:a17:90b:8d7:: with SMTP id ds23mr432561pjb.39.1588018108641;
+        Mon, 27 Apr 2020 13:08:28 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id g40sm113985pje.38.2020.04.27.13.08.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Apr 2020 13:08:28 -0700 (PDT)
+Subject: Re: io_uring, IORING_OP_RECVMSG and ancillary data
+To:     Jann Horn <jannh@google.com>
+Cc:     Andreas Smas <andreas@lonelycoder.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <CAObFT-S27KXFGomqPZdXA8oJDe6QxmoT=T6CBgD9R9UHNmakUQ@mail.gmail.com>
+ <f75d30ff-53ec-c3a1-19b2-956735d44088@kernel.dk>
+ <CAG48ez32nkvLsWStjenGmZdLaSPKWEcSccPKqgPtJwme8ZxxuQ@mail.gmail.com>
+ <bd37ec95-2b0b-40fc-8c86-43805e2990aa@kernel.dk>
+ <45d7558a-d0c8-4d3f-c63a-33fd2fb073a5@kernel.dk>
+ <CAG48ez0pHbz3qvjQ+N6r0HfAgSYdDnV1rGy3gCzcuyH6oiMhBQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <217dc782-161f-7aea-2d18-4e88526b8e1d@kernel.dk>
+Date:   Mon, 27 Apr 2020 14:08:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAG48ez0pHbz3qvjQ+N6r0HfAgSYdDnV1rGy3gCzcuyH6oiMhBQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no logic in elf_fdpic_core_dump itself or in the various arch
-helpers called from it which use uaccess routines on kernel pointers
-except for the file writes thate are nicely encapsulated by using
-__kernel_write in dump_emit.
+On 4/27/20 2:03 PM, Jann Horn wrote:
+> On Mon, Apr 27, 2020 at 9:53 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 4/27/20 1:29 PM, Jens Axboe wrote:
+>>> On 4/27/20 1:20 PM, Jann Horn wrote:
+>>>> On Sat, Apr 25, 2020 at 10:23 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>> On 4/25/20 11:29 AM, Andreas Smas wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Tried to use io_uring with OP_RECVMSG with ancillary buffers (for my
+>>>>>> particular use case I'm using SO_TIMESTAMP for incoming UDP packets).
+>>>>>>
+>>>>>> These submissions fail with EINVAL due to the check in __sys_recvmsg_sock().
+>>>>>>
+>>>>>> The following hack fixes the problem for me and I get valid timestamps
+>>>>>> back. Not suggesting this is the real fix as I'm not sure what the
+>>>>>> implications of this is.
+>>>>>>
+>>>>>> Any insight into this would be much appreciated.
+>>>>>
+>>>>> It was originally disabled because of a security issue, but I do think
+>>>>> it's safe to enable again.
+>>>>>
+>>>>> Adding the io-uring list and Jann as well, leaving patch intact below.
+>>>>>
+>>>>>> diff --git a/net/socket.c b/net/socket.c
+>>>>>> index 2dd739fba866..689f41f4156e 100644
+>>>>>> --- a/net/socket.c
+>>>>>> +++ b/net/socket.c
+>>>>>> @@ -2637,10 +2637,6 @@ long __sys_recvmsg_sock(struct socket *sock,
+>>>>>> struct msghdr *msg,
+>>>>>>                         struct user_msghdr __user *umsg,
+>>>>>>                         struct sockaddr __user *uaddr, unsigned int flags)
+>>>>>>  {
+>>>>>> -       /* disallow ancillary data requests from this path */
+>>>>>> -       if (msg->msg_control || msg->msg_controllen)
+>>>>>> -               return -EINVAL;
+>>>>>> -
+>>>>>>         return ____sys_recvmsg(sock, msg, umsg, uaddr, flags, 0);
+>>>>>>  }
+>>>>
+>>>> I think that's hard to get right. In particular, unix domain sockets
+>>>> can currently pass file descriptors in control data - so you'd need to
+>>>> set the file_table flag for recvmsg and sendmsg. And I'm not sure
+>>>> whether, to make this robust, there should be a whitelist of types of
+>>>> control messages that are permitted to be used with io_uring, or
+>>>> something like that...
+>>>>
+>>>> I think of ancillary buffers as being kind of like ioctl handlers in
+>>>> this regard.
+>>>
+>>> Good point. I'll send out something that hopefully will be enough to
+>>> be useful, whole not allowing anything randomly.
+>>
+>> That things is a bit of a mess... How about something like this for
+>> starters?
+> [...]
+>> +static bool io_net_allow_cmsg(struct msghdr *msg)
+>> +{
+>> +       struct cmsghdr *cmsg;
+>> +
+>> +       for_each_cmsghdr(cmsg, msg) {
+> 
+> Isn't this going to dereference a userspace pointer? ->msg_control has
+> not been copied into the kernel at this point, right?
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/binfmt_elf_fdpic.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+Possibly... Totally untested, maybe I forgot to mention that :-)
+I'll check.
 
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 240f666635437..c62c17a5c34a9 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -1549,7 +1549,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- {
- #define	NUM_NOTES	6
- 	int has_dumped = 0;
--	mm_segment_t fs;
- 	int segs;
- 	int i;
- 	struct vm_area_struct *vma;
-@@ -1678,9 +1677,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 			  "LINUX", ELF_CORE_XFPREG_TYPE, sizeof(*xfpu), xfpu);
- #endif
- 
--	fs = get_fs();
--	set_fs(KERNEL_DS);
--
- 	offset += sizeof(*elf);				/* Elf header */
- 	offset += segs * sizeof(struct elf_phdr);	/* Program headers */
- 
-@@ -1695,7 +1691,7 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 
- 		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
- 		if (!phdr4note)
--			goto end_coredump;
-+			goto cleanup;
- 
- 		fill_elf_note_phdr(phdr4note, sz, offset);
- 		offset += sz;
-@@ -1711,17 +1707,17 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 	if (e_phnum == PN_XNUM) {
- 		shdr4extnum = kmalloc(sizeof(*shdr4extnum), GFP_KERNEL);
- 		if (!shdr4extnum)
--			goto end_coredump;
-+			goto cleanup;
- 		fill_extnum_info(elf, shdr4extnum, e_shoff, segs);
- 	}
- 
- 	offset = dataoff;
- 
- 	if (!dump_emit(cprm, elf, sizeof(*elf)))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	/* write program headers for segments dump */
- 	for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
-@@ -1745,16 +1741,16 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 		phdr.p_align = ELF_EXEC_PAGESIZE;
- 
- 		if (!dump_emit(cprm, &phdr, sizeof(phdr)))
--			goto end_coredump;
-+			goto cleanup;
- 	}
- 
- 	if (!elf_core_write_extra_phdrs(cprm, offset))
--		goto end_coredump;
-+		goto cleanup;
- 
-  	/* write out the notes section */
- 	for (i = 0; i < numnote; i++)
- 		if (!writenote(notes + i, cprm))
--			goto end_coredump;
-+			goto cleanup;
- 
- 	/* write out the thread status notes section */
- 	list_for_each(t, &thread_list) {
-@@ -1763,21 +1759,21 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 
- 		for (i = 0; i < tmp->num_notes; i++)
- 			if (!writenote(&tmp->notes[i], cprm))
--				goto end_coredump;
-+				goto cleanup;
- 	}
- 
- 	if (!dump_skip(cprm, dataoff - cprm->pos))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!elf_fdpic_dump_segments(cprm))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (!elf_core_write_extra_data(cprm))
--		goto end_coredump;
-+		goto cleanup;
- 
- 	if (e_phnum == PN_XNUM) {
- 		if (!dump_emit(cprm, shdr4extnum, sizeof(*shdr4extnum)))
--			goto end_coredump;
-+			goto cleanup;
- 	}
- 
- 	if (cprm->file->f_pos != offset) {
-@@ -1787,9 +1783,6 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
- 		       cprm->file->f_pos, offset);
- 	}
- 
--end_coredump:
--	set_fs(fs);
--
- cleanup:
- 	while (!list_empty(&thread_list)) {
- 		struct list_head *tmp = thread_list.next;
+The question was more "in principle" if this was a viable approach. The
+whole cmsg_type and cmsg_level is really a mess.
+
 -- 
-2.26.1
+Jens Axboe
 
