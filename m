@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3711BBD68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 14:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A17BB1BBD76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 14:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbgD1MVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 08:21:18 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:52726 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgD1MVR (ORCPT
+        id S1726684AbgD1MWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 08:22:35 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:52196 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgD1MWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 08:21:17 -0400
+        Tue, 28 Apr 2020 08:22:35 -0400
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jTPEi-0006os-K2; Tue, 28 Apr 2020 06:21:16 -0600
+        id 1jTPFy-0003Ok-26; Tue, 28 Apr 2020 06:22:34 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jTPEh-0001LA-S1; Tue, 28 Apr 2020 06:21:16 -0600
+        id 1jTPFx-0001RA-3Z; Tue, 28 Apr 2020 06:22:33 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -43,43 +43,43 @@ References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
         <878sihgfzh.fsf@x220.int.ebiederm.org>
         <CAHk-=wjSM9mgsDuX=ZTy2L+S7wGrxZMcBn054As_Jyv8FQvcvQ@mail.gmail.com>
         <87sggnajpv.fsf_-_@x220.int.ebiederm.org>
-Date:   Tue, 28 Apr 2020 07:18:01 -0500
+Date:   Tue, 28 Apr 2020 07:19:18 -0500
 In-Reply-To: <87sggnajpv.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Tue, 28 Apr 2020 07:16:44 -0500")
-Message-ID: <87mu6vajnq.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87h7x3ajll.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jTPEh-0001LA-S1;;;mid=<87mu6vajnq.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+Anr6qsqTLzFB5xXd0dlDeNH9ArfARscA=
+X-XM-SPF: eid=1jTPFx-0001RA-3Z;;;mid=<87h7x3ajll.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19xBeyjONRsiGZZw00Q0+732yg+SgZZji8=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMGappySubj_01 autolearn=disabled
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
         version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
-        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
         *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
 X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 330 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (3.3%), b_tie_ro: 10 (2.9%), parse: 0.87
-        (0.3%), extract_message_metadata: 11 (3.2%), get_uri_detail_list: 1.12
-        (0.3%), tests_pri_-1000: 14 (4.1%), tests_pri_-950: 1.24 (0.4%),
-        tests_pri_-900: 1.00 (0.3%), tests_pri_-90: 87 (26.4%), check_bayes:
-        86 (25.9%), b_tokenize: 7 (2.0%), b_tok_get_all: 6 (1.7%),
-        b_comp_prob: 1.80 (0.5%), b_tok_touch_all: 69 (20.8%), b_finish: 0.86
-        (0.3%), tests_pri_0: 190 (57.4%), check_dkim_signature: 0.54 (0.2%),
-        check_dkim_adsp: 2.5 (0.8%), poll_dns_idle: 0.71 (0.2%), tests_pri_10:
-        3.2 (1.0%), tests_pri_500: 9 (2.8%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v4 1/2] rculist: Add hlists_swap_heads_rcu
+X-Spam-Timing: total 523 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (2.1%), b_tie_ro: 9 (1.8%), parse: 0.94 (0.2%),
+         extract_message_metadata: 12 (2.2%), get_uri_detail_list: 2.5 (0.5%),
+        tests_pri_-1000: 13 (2.5%), tests_pri_-950: 1.26 (0.2%),
+        tests_pri_-900: 0.99 (0.2%), tests_pri_-90: 70 (13.4%), check_bayes:
+        69 (13.1%), b_tokenize: 11 (2.0%), b_tok_get_all: 10 (1.9%),
+        b_comp_prob: 2.6 (0.5%), b_tok_touch_all: 42 (8.1%), b_finish: 0.79
+        (0.2%), tests_pri_0: 386 (73.9%), check_dkim_signature: 0.60 (0.1%),
+        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 0.40 (0.1%), tests_pri_10:
+        3.6 (0.7%), tests_pri_500: 21 (4.1%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v4 2/2] proc: Ensure we see the exit of each process tid exactly once
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -89,54 +89,114 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Using the struct pid to refer to two tasks in de_thread was a clever
-idea and ultimately too clever, as it has lead to proc_flush_task
-being called inconsistently.
+When the thread group leader changes during exec and the old leaders
+thread is reaped proc_flush_pid will flush the dentries for the entire
+process because the leader still has it's original pid.
 
-To support rectifying this add hlists_swap_heads_rcu.  An hlist
-primitive that just swaps the hlist heads of two lists.  This is
-exactly what is needed for exchanging the pids of two tasks.
+Fix this by exchanging the pids in an rcu safe manner,
+and wrapping the code to do that up in a helper exchange_tids.
 
-Only consideration of correctness of the code has been given,
-as the caller is expected to be a slowpath.
+When I removed switch_exec_pids and introduced this behavior
+in d73d65293e3e ("[PATCH] pidhash: kill switch_exec_pids") there
+really was nothing that cared as flushing happened with
+the cached dentry and de_thread flushed both of them on exec.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+This lack of fully exchanging pids became a problem a few months later
+when I introduced 48e6484d4902 ("[PATCH] proc: Rewrite the proc dentry
+flush on exit optimization").  Which overlooked the de_thread case
+was no longer swapping pids, and I was looking up proc dentries
+by task->pid.
+
+The current behavior isn't properly a bug as everything in proc will
+continue to work correctly just a little bit less efficiently.  Fix
+this just so there are no little surprise corner cases waiting to bite
+people.
+
+-- Oleg points out this could be an issue in next_tgid in proc where
+   has_group_leader_pid is called, and reording some of the assignments
+   should fix that.
+
+-- Oleg points out this will break the 10 year old hack in __exit_signal.c
+>	/*
+>	 * This can only happen if the caller is de_thread().
+>	 * FIXME: this is the temporary hack, we should teach
+>	 * posix-cpu-timers to handle this case correctly.
+>	 */
+>	if (unlikely(has_group_leader_pid(tsk)))
+>		posix_cpu_timers_exit_group(tsk);
+
+The code in next_tgid has been changed to use PIDTYPE_TGID,
+and the posix cpu timers code has been fixed so it does not
+need the 10 year old hack, so this should be safe to merge
+now.
+
+Fixes: 48e6484d4902 ("[PATCH] proc: Rewrite the proc dentry flush on exit optimization").
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- include/linux/rculist.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ fs/exec.c           |  5 +----
+ include/linux/pid.h |  1 +
+ kernel/pid.c        | 19 +++++++++++++++++++
+ 3 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 8214cdc715f2..67867e0d4cec 100644
---- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -506,6 +506,27 @@ static inline void hlist_replace_rcu(struct hlist_node *old,
- 	WRITE_ONCE(old->pprev, LIST_POISON2);
+diff --git a/fs/exec.c b/fs/exec.c
+index 06b4c550af5d..9b60f927afd7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1186,11 +1186,8 @@ static int de_thread(struct task_struct *tsk)
+ 
+ 		/* Become a process group leader with the old leader's pid.
+ 		 * The old leader becomes a thread of the this thread group.
+-		 * Note: The old leader also uses this pid until release_task
+-		 *       is called.  Odd but simple and correct.
+ 		 */
+-		tsk->pid = leader->pid;
+-		change_pid(tsk, PIDTYPE_PID, task_pid(leader));
++		exchange_tids(tsk, leader);
+ 		transfer_pid(leader, tsk, PIDTYPE_TGID);
+ 		transfer_pid(leader, tsk, PIDTYPE_PGID);
+ 		transfer_pid(leader, tsk, PIDTYPE_SID);
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index cc896f0fc4e3..2159ffca63fc 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -102,6 +102,7 @@ extern void attach_pid(struct task_struct *task, enum pid_type);
+ extern void detach_pid(struct task_struct *task, enum pid_type);
+ extern void change_pid(struct task_struct *task, enum pid_type,
+ 			struct pid *pid);
++extern void exchange_tids(struct task_struct *task, struct task_struct *old);
+ extern void transfer_pid(struct task_struct *old, struct task_struct *new,
+ 			 enum pid_type);
+ 
+diff --git a/kernel/pid.c b/kernel/pid.c
+index c835b844aca7..6d5d0a5bda82 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -363,6 +363,25 @@ void change_pid(struct task_struct *task, enum pid_type type,
+ 	attach_pid(task, type);
  }
  
-+/**
-+ * hlists_swap_heads_rcu - swap the lists the hlist heads point to
-+ * @left:  The hlist head on the left
-+ * @right: The hlist head on the right
-+ *
-+ * The lists start out as [@left  ][node1 ... ] and
-+                          [@right ][node2 ... ]
-+ * The lists end up as    [@left  ][node2 ... ]
-+ *                        [@right ][node1 ... ]
-+ */
-+static inline void hlists_swap_heads_rcu(struct hlist_head *left, struct hlist_head *right)
++void exchange_tids(struct task_struct *left, struct task_struct *right)
 +{
-+	struct hlist_node *node1 = left->first;
-+	struct hlist_node *node2 = right->first;
++	struct pid *pid1 = left->thread_pid;
++	struct pid *pid2 = right->thread_pid;
++	struct hlist_head *head1 = &pid1->tasks[PIDTYPE_PID];
++	struct hlist_head *head2 = &pid2->tasks[PIDTYPE_PID];
 +
-+	rcu_assign_pointer(left->first, node2);
-+	rcu_assign_pointer(right->first, node1);
-+	WRITE_ONCE(node2->pprev, &left->first);
-+	WRITE_ONCE(node1->pprev, &right->first);
++	/* Swap the single entry tid lists */
++	hlists_swap_heads_rcu(head1, head2);
++
++	/* Swap the per task_struct pid */
++	rcu_assign_pointer(left->thread_pid, pid2);
++	rcu_assign_pointer(right->thread_pid, pid1);
++
++	/* Swap the cached value */
++	WRITE_ONCE(left->pid, pid_nr(pid2));
++	WRITE_ONCE(right->pid, pid_nr(pid1));
 +}
 +
- /*
-  * return the first or the next element in an RCU protected hlist
-  */
+ /* transfer_pid is an optimization of attach_pid(new), detach_pid(old) */
+ void transfer_pid(struct task_struct *old, struct task_struct *new,
+ 			   enum pid_type type)
 -- 
 2.20.1
 
