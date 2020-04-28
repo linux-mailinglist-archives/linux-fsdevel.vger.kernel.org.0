@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 735A81BB4C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 05:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 105FD1BB4D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 05:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgD1Dmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 23:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
+        id S1726284AbgD1DvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 23:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbgD1Dmm (ORCPT
+        with ESMTP id S1726270AbgD1DvB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 23:42:42 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC42C03C1A9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:42 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id n17so16010537ejh.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:42 -0700 (PDT)
+        Mon, 27 Apr 2020 23:51:01 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A021C03C1AC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:51:01 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id f8so15693205lfe.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Q1Hl4EoAQeecS6RJeMB353EzxseO3r7Hp2yIzNObp3I=;
-        b=SplrAUntYpA62B1N75YvHPdEO4shjtitO6O7fp81NGqZCL/liBkn4YGhS2ufiW89mA
-         6QRtLc38lw6xNb2vgvLJDvqC9mE3aqUJAqwD+PeOfBSBP94LeZ1hMSN6COmTdIaxaQpS
-         UpK5WWl4Kpc44DM72q0SRTuLkDG5Cy7pTFjlU=
+        bh=VVBS2zR8u10QnId+SjIws+E/mbDlgxt11FVLpUCy9Fk=;
+        b=fSI/ijUiq7Zsrz+mYpIid9wBMr+ufvXZJdEGYfYAV6Wa7WrfJcI8pP8JyJG39ryg8H
+         oS3R8qQuk5cLe0fU2CCWNj05+kTTXNRrrHruAKyDUm0TOEQcvdS9B6OBB0/HcU2kGNsZ
+         OclGbGyiNhfGDIr+gFIj8hC2fmRzB7XJRVfjs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Q1Hl4EoAQeecS6RJeMB353EzxseO3r7Hp2yIzNObp3I=;
-        b=JAu7Qxh2bnGMAlDHkTvfQ1fZ/xhWk1AcnukhVSQfeiY3Z1VAgj0YhI6bUwcliOk+ys
-         lBUr8hklCGDW5HwladtOEQZcwy0+nVUK3RzNh6bCfZVo9HlRqH/ug7sve/MPsVPc3t7g
-         zARbrqmkh1+X2BnsitpCcG63itpYCXlT9t+mEEiT1sjx8vuovk5+ncNtSmF+ltGHdWiV
-         kj5c6xY9vvNcdirT+2GSevw3K4z5yLQeF6T0lt+oHvJ8SSJv7nt8kxRJCVVCfxcUts44
-         7WJ5MxnI6dnQvsqZDkQcSUCRfiS1mTzPAzotCp0cA6FqHZxIW9GwbP4ssyt3+q+M/GAY
-         JjLQ==
-X-Gm-Message-State: AGi0Pub9J+xD30ZlSYUhKzcg3iXucoA6MN09LK8ol7nK2PTMTP03SdBM
-        RhRLJ/sAfFBCXi2CKEoF8wOVLVgyo4k=
-X-Google-Smtp-Source: APiQypK2ham0Bh3U1L4UbRNqHktYl/5o4Mjkh2HHkCULRVrlM7UhRJQAWEb/T+QIirsZaBtm4H5VzQ==
-X-Received: by 2002:a17:906:25cb:: with SMTP id n11mr23277840ejb.37.1588045360730;
-        Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id y23sm360858eju.85.2020.04.27.20.42.40
+        bh=VVBS2zR8u10QnId+SjIws+E/mbDlgxt11FVLpUCy9Fk=;
+        b=p1nvSar7zMHG1q3QFLwmOHbDYBH9vs4mWnRHDmJ5ynIwqyFeC5gvOqAjb9Iro9tWC5
+         uk+tnYoJS/Rs68J50WYHdfs71TXOrRMUyat+KltcbMfBmj6/WBGiWZuZPSJacs5J45yE
+         LR7gHrOdhOI759FZt2BiOv+Ecti6LlGWlyw+g3/tKpBkvadL8LFhk0/zARzlXCcSfq32
+         qVxjfDyHXBZKI01wJHz2s4zlN+H6/9L8ev+8Z39M61V8oUhtUIxe2Qpvm1FPTaA7yTyA
+         0Qr6AcwBNGAsQ7DJjvqRgb1EPjZu8wZHuDAnbM+GQ/dw/79veOHNzg2bZJUZqZpwIzd7
+         Jqig==
+X-Gm-Message-State: AGi0PuYbtZYHrgY2vraDdgPyrZRy/doXEjhDpIFxp1y4qbAs0VlixuJm
+        2vqpvE0Hg3ZnssLvXmb399t+k/x4/Zk=
+X-Google-Smtp-Source: APiQypJPa93LuCePJBnLDhldHN1TRTcm+wrzeguPPgx8mmSy1vDEtXZuyz9hzYDKaHK0FGca8+PjzA==
+X-Received: by 2002:a19:c216:: with SMTP id l22mr16626626lfc.172.1588045858802;
+        Mon, 27 Apr 2020 20:50:58 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id n23sm11714531ljj.48.2020.04.27.20.50.56
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id s10so15345998edy.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
-X-Received: by 2002:a19:9109:: with SMTP id t9mr18095968lfd.10.1588044961861;
- Mon, 27 Apr 2020 20:36:01 -0700 (PDT)
+        Mon, 27 Apr 2020 20:50:57 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id b2so19877747ljp.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:50:56 -0700 (PDT)
+X-Received: by 2002:a2e:7308:: with SMTP id o8mr16201494ljc.16.1588045856507;
+ Mon, 27 Apr 2020 20:50:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200428032745.133556-1-jannh@google.com> <20200428032745.133556-3-jannh@google.com>
-In-Reply-To: <20200428032745.133556-3-jannh@google.com>
+References: <20200428032745.133556-1-jannh@google.com> <20200428032745.133556-6-jannh@google.com>
+In-Reply-To: <20200428032745.133556-6-jannh@google.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 27 Apr 2020 20:35:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
-Message-ID: <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] coredump: Fix handling of partial writes in dump_emit()
+Date:   Mon, 27 Apr 2020 20:50:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgBNSQhH1gyjo+Z2NFy4tOQnBQB4rra-jh+3XTpOjnThQ@mail.gmail.com>
+Message-ID: <CAHk-=wgBNSQhH1gyjo+Z2NFy4tOQnBQB4rra-jh+3XTpOjnThQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] mm/gup: Take mmap_sem in get_dump_page()
 To:     Jann Horn <jannh@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
@@ -83,15 +83,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Apr 27, 2020 at 8:28 PM Jann Horn <jannh@google.com> wrote:
 >
-> After a partial write, we have to update the input buffer pointer.
+> Properly take the mmap_sem before calling into the GUP code from
+> get_dump_page(); and play nice, allowing __get_user_pages_locked() to drop
+> the mmap_sem if it has to sleep.
 
-Interesting. It seems this partial write case never triggers (except
-for actually killing the core-dump).
+This makes my skin crawl.
 
-Or did you find a case where it actually matters?
+The only reason for this all is that page cache flushing.
 
-Your fix is obviously correct, but it also makes me go "that function
-clearly never actually worked for partial writes, maybe we shouldn't
-even bother?"
+My gut feeling is that it should be done by get_user_pages() anyway,
+since all the other users presumably want it to be coherent in the
+cache.
 
-             Linus
+And in fact, looking at __get_user_pages(), it already does that
+
+                if (pages) {
+                        pages[i] = page;
+                        flush_anon_page(vma, page, start);
+                        flush_dcache_page(page);
+                        ctx.page_mask = 0;
+                }
+
+and I think that the get_dump_page() logic is unnecessary to begin with.
+
+               Linus
