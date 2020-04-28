@@ -2,102 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F299C1BB613
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 07:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B506B1BB62F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 08:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbgD1Fwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 01:52:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726042AbgD1Fwt (ORCPT
+        id S1726284AbgD1GKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 02:10:06 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:27722 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726210AbgD1GKG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 01:52:49 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C89DC03C1AA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 22:52:49 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id l11so15844389lfc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 22:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3FFyhFGwSR5hCCAOzKWLB8ijhIIWqMIumwJnODZevkI=;
-        b=iPpk6l/jcA1BeDumj4n6myfu973lYILM4XQEUj2U9UO9NMB5cveMhC0qpE7+ppX0Bl
-         NwwXr3ZGwsusuav6BpzkvqFgO+dDUQglvmVXTDQ34IUs8a2xp5D4asH6xNcUEEJimtrk
-         4mtm5HgQpZnnJB3kKT+YlVYWlQz4UCEN0OFbe/rh+0C7PyKRYbDsrVajTzK6hSclaXf9
-         o1Q7WzNZJ0dH3MybAy06ZSF5gjc5YwjwPRYVGKunKe3DPdG91fHg0qpIwDWdOtTqhqnc
-         iqMeT2xCdTZTQFZQroCmrRgQNoR1D0MlyHpyegg+Vs7bRSY3iiysohCImS46eC/xpdrW
-         JKcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3FFyhFGwSR5hCCAOzKWLB8ijhIIWqMIumwJnODZevkI=;
-        b=pYqjlU3C5uKuXapeGtYug4+p7tlFOVHzPWNKj8nzrS5v8NVGdYL1iya7Ah8aVyFJGT
-         peYjfGifRe5n5lNvoJwBRBje6+Ip1+PL4IuwEj1Ssbh99sYtVJTOhaADCOU8kUEPPspG
-         ZKQuwmCa0IYc9d2rl/ALhZnqAAB9UNFxVUcqXxMHqpz57ZtapUBEYNhdtA0/XcTLgdWP
-         aFVp2fvSh4c5PgkQ8ABS6fnLDShlah/NSyBVmaYdZxArYOZ0gO0NZVfzw5wuMMiJcmku
-         30jFnqsI+hy/9dsUahEWTkI4Z0khXoqYZ6/Z2CQeYhUysqlB7QnlFO+uTnzoJzWAjj0x
-         rIUA==
-X-Gm-Message-State: AGi0PubSPufJP9Ki0GbMC9ZD33FVmCWOcrgMl1w0yo7gGFja5UISBs8i
-        SeZ5ibL4rjGeoGZ2nyU79LjJW+l6Yhr6xgB5RcJwqg==
-X-Google-Smtp-Source: APiQypLsGvxVV4G5Cnrl0vPMdgLPCcQHgc3r4oAY763aqzMS5nENJMiQ8OSQP6fW4gw42184cs8u8oZQg2fi/pBykaA=
-X-Received: by 2002:ac2:5dc6:: with SMTP id x6mr17919772lfq.108.1588053167164;
- Mon, 27 Apr 2020 22:52:47 -0700 (PDT)
+        Tue, 28 Apr 2020 02:10:06 -0400
+X-IronPort-AV: E=Sophos;i="5.73,326,1583164800"; 
+   d="scan'208";a="90612535"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 28 Apr 2020 14:09:50 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id A9EE050A9991;
+        Tue, 28 Apr 2020 14:09:48 +0800 (CST)
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 28 Apr 2020 14:09:47 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local ([fe80::15e2:f6f4:7314:fd88])
+ by G08CNEXMBPEKD05.g08.fujitsu.local ([fe80::15e2:f6f4:7314:fd88%14]) with
+ mapi id 15.00.1497.000; Tue, 28 Apr 2020 14:09:47 +0800
+From:   "Ruan, Shiyang" <ruansy.fnst@cn.fujitsu.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "Qi, Fuli" <qi.fuli@fujitsu.com>,
+        "Gotou, Yasunori" <y-goto@fujitsu.com>
+Subject: =?utf-8?B?5Zue5aSNOiBSZTogW1JGQyBQQVRDSCAwLzhdIGRheDogQWRkIGEgZGF4LXJt?=
+ =?utf-8?Q?ap_tree_to_support_reflink?=
+Thread-Topic: Re: [RFC PATCH 0/8] dax: Add a dax-rmap tree to support reflink
+Thread-Index: AQHWHHCrvTehP1uFMkqHUwaMK6beO6iMX8EAgAEofYA=
+Date:   Tue, 28 Apr 2020 06:09:47 +0000
+Message-ID: <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+ <20200427122836.GD29705@bombadil.infradead.org>
+In-Reply-To: <20200427122836.GD29705@bombadil.infradead.org>
+Reply-To: "Ruan, Shiyang" <ruansy.fnst@cn.fujitsu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.167.225.141]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <431D96282EC2FB4DA394D352951FF28C@fujitsu.local>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200428032745.133556-1-jannh@google.com> <20200428032745.133556-3-jannh@google.com>
- <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Apr 2020 07:52:20 +0200
-Message-ID: <CAG48ez0Nz8Bnty2aKdsUeMoXkjc_Bcxr+EcStZ7LBTOgRt1mrQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] coredump: Fix handling of partial writes in dump_emit()
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-yoursite-MailScanner-ID: A9EE050A9991.AE63C
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 5:36 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Apr 27, 2020 at 8:28 PM Jann Horn <jannh@google.com> wrote:
-> >
-> > After a partial write, we have to update the input buffer pointer.
->
-> Interesting. It seems this partial write case never triggers (except
-> for actually killing the core-dump).
->
-> Or did you find a case where it actually matters?
->
-> Your fix is obviously correct, but it also makes me go "that function
-> clearly never actually worked for partial writes, maybe we shouldn't
-> even bother?"
-
-Hmm, yeah... I can't really think of cases where write handlers can
-spuriously return early without having a pending signal, and a second
-write is likely to succeed... I just know that there are some things
-that are notorious for returning short *reads* (e.g. pipes, sockets,
-/proc/$pid/maps).
-
-Al's commit message refers to pipes specifically; but even at commit
-2507a4fbd48a, I don't actually see where pipe_write() could return a
-short write without a page allocation failure or something like that.
-
-So maybe you're right and we should just get rid of it...
+DQrlnKggMjAyMC80LzI3IDIwOjI4OjM2LCAiTWF0dGhldyBXaWxjb3giIDx3
+aWxseUBpbmZyYWRlYWQub3JnPiDlhpnpgZM6DQoNCj5PbiBNb24sIEFwciAy
+NywgMjAyMCBhdCAwNDo0Nzo0MlBNICswODAwLCBTaGl5YW5nIFJ1YW4gd3Jv
+dGU6DQo+PiAgVGhpcyBwYXRjaHNldCBpcyBhIHRyeSB0byByZXNvbHZlIHRo
+ZSBzaGFyZWQgJ3BhZ2UgY2FjaGUnIHByb2JsZW0gZm9yDQo+PiAgZnNkYXgu
+DQo+Pg0KPj4gIEluIG9yZGVyIHRvIHRyYWNrIG11bHRpcGxlIG1hcHBpbmdz
+IGFuZCBpbmRleGVzIG9uIG9uZSBwYWdlLCBJDQo+PiAgaW50cm9kdWNlZCBh
+IGRheC1ybWFwIHJiLXRyZWUgdG8gbWFuYWdlIHRoZSByZWxhdGlvbnNoaXAu
+ICBBIGRheCBlbnRyeQ0KPj4gIHdpbGwgYmUgYXNzb2NpYXRlZCBtb3JlIHRo
+YW4gb25jZSBpZiBpcyBzaGFyZWQuICBBdCB0aGUgc2Vjb25kIHRpbWUgd2UN
+Cj4+ICBhc3NvY2lhdGUgdGhpcyBlbnRyeSwgd2UgY3JlYXRlIHRoaXMgcmIt
+dHJlZSBhbmQgc3RvcmUgaXRzIHJvb3QgaW4NCj4+ICBwYWdlLT5wcml2YXRl
+KG5vdCB1c2VkIGluIGZzZGF4KS4gIEluc2VydCAoLT5tYXBwaW5nLCAtPmlu
+ZGV4KSB3aGVuDQo+PiAgZGF4X2Fzc29jaWF0ZV9lbnRyeSgpIGFuZCBkZWxl
+dGUgaXQgd2hlbiBkYXhfZGlzYXNzb2NpYXRlX2VudHJ5KCkuDQo+DQo+RG8g
+d2UgcmVhbGx5IHdhbnQgdG8gdHJhY2sgYWxsIG9mIHRoaXMgb24gYSBwZXIt
+cGFnZSBiYXNpcz8gIEkgd291bGQNCj5oYXZlIHRob3VnaHQgYSBwZXItZXh0
+ZW50IGJhc2lzIHdhcyBtb3JlIHVzZWZ1bC4gIEVzc2VudGlhbGx5LCBjcmVh
+dGUNCj5hIG5ldyBhZGRyZXNzX3NwYWNlIGZvciBlYWNoIHNoYXJlZCBleHRl
+bnQuICBQZXIgcGFnZSBqdXN0IHNlZW1zIGxpa2UNCj5hIGh1Z2Ugb3Zlcmhl
+YWQuDQo+DQpQZXItZXh0ZW50IHRyYWNraW5nIGlzIGEgbmljZSBpZGVhIGZv
+ciBtZS4gIEkgaGF2ZW4ndCB0aG91Z2h0IG9mIGl0IA0KeWV0Li4uDQoNCkJ1
+dCB0aGUgZXh0ZW50IGluZm8gaXMgbWFpbnRhaW5lZCBieSBmaWxlc3lzdGVt
+LiAgSSB0aGluayB3ZSBuZWVkIGEgd2F5IA0KdG8gb2J0YWluIHRoaXMgaW5m
+byBmcm9tIEZTIHdoZW4gYXNzb2NpYXRpbmcgYSBwYWdlLiAgTWF5IGJlIGEg
+Yml0IA0KY29tcGxpY2F0ZWQuICBMZXQgbWUgdGhpbmsgYWJvdXQgaXQuLi4N
+Cg0KDQotLQ0KVGhhbmtzLA0KUnVhbiBTaGl5YW5nLgoK
