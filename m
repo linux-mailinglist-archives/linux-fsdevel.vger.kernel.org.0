@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A1D41BB2B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A101BB2B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgD1AV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 20:21:58 -0400
-Received: from mga03.intel.com ([134.134.136.65]:52928 "EHLO mga03.intel.com"
+        id S1726505AbgD1AV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 20:21:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:16476 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbgD1AVx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 20:21:53 -0400
-IronPort-SDR: Z++leLlhYFsJN4LsVSFL+TVo1OPjEHtZl0+F7qVJewe3Gi6HxJbQ4SI6+SnuDWx0N2/kumXh4F
- cJchzrm/0scg==
+        id S1726490AbgD1AVy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 20:21:54 -0400
+IronPort-SDR: 3vWwRIdM05wiWKlVS/B0qckbhlC/5rwEy4mFLHktWLQRK8J1u56XXPf+W5LcYPc5ftDIU5oZ1W
+ b071gugKGrlQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:52 -0700
-IronPort-SDR: FazWKlPef8llcIyHpMdLw8WvjPnwI2ghe9liwaqjxP0xrAUv2n4anikCOZBLyz02titprEG1On
- +AuJ5mBqB3ng==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:53 -0700
+IronPort-SDR: EBMto9saUZg0SHzhh9Esk6dkcfxfoqkZdSB7xasDw+wNWUVpbPtxfPMfee3gcUJeu7/B3YYy35
+ 8vgFtfxw9ckg==
 X-IronPort-AV: E=Sophos;i="5.73,325,1583222400"; 
-   d="scan'208";a="431980382"
+   d="scan'208";a="404501302"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:52 -0700
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:53 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jan Kara <jack@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Subject: [PATCH V11 09/11] fs: Lift XFS_IDONTCACHE to the VFS layer
-Date:   Mon, 27 Apr 2020 17:21:40 -0700
-Message-Id: <20200428002142.404144-10-ira.weiny@intel.com>
+Subject: [PATCH V11 10/11] fs: Introduce DCACHE_DONTCACHE
+Date:   Mon, 27 Apr 2020 17:21:41 -0700
+Message-Id: <20200428002142.404144-11-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200428002142.404144-1-ira.weiny@intel.com>
 References: <20200428002142.404144-1-ira.weiny@intel.com>
@@ -49,114 +49,115 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-DAX effective mode (S_DAX) changes requires inode eviction.
+DCACHE_DONTCACHE indicates a dentry should not be cached on final
+dput().
 
-XFS has an advisory flag (XFS_IDONTCACHE) to prevent caching of the
-inode if no other additional references are taken.  We lift this flag to
-the VFS layer and change the behavior slightly by allowing the flag to
-remain even if multiple references are taken.
+Also add a helper function to mark DCACHE_DONTCACHE on all dentries
+pointing to a specific inode when that inode is being set I_DONTCACHE.
 
-This will expedite the eviction of inodes to change S_DAX.
+This facilitates dropping dentry references to inodes sooner which
+require eviction to swap S_DAX mode.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
+Changes from V10:
+	rename to d_mark_dontcache()
+	Move function to fs/dcache.c
+
 Changes from V9:
-	Fix misspelling in commit subject
-	move XFS_IEOFBLOCKS to '9'
+	modify i_state under i_lock
+	Update comment
+		"Purge from memory on final dput()"
 
 Changes from V8:
-	Remove XFS_IDONTCACHE
+	Update commit message
+	Use mark_inode_dontcache in XFS
+	Fix locking...  can't use rcu here.
+	Change name to mark_inode_dontcache
 ---
- fs/xfs/xfs_icache.c | 4 ++--
- fs/xfs/xfs_inode.h  | 3 +--
- fs/xfs/xfs_super.c  | 2 +-
- include/linux/fs.h  | 6 +++++-
- 4 files changed, 9 insertions(+), 6 deletions(-)
+ fs/dcache.c            | 19 +++++++++++++++++++
+ fs/xfs/xfs_icache.c    |  2 +-
+ include/linux/dcache.h |  2 ++
+ include/linux/fs.h     |  1 +
+ 4 files changed, 23 insertions(+), 1 deletion(-)
 
+diff --git a/fs/dcache.c b/fs/dcache.c
+index b280e07e162b..0d07fb335b78 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -647,6 +647,10 @@ static inline bool retain_dentry(struct dentry *dentry)
+ 		if (dentry->d_op->d_delete(dentry))
+ 			return false;
+ 	}
++
++	if (unlikely(dentry->d_flags & DCACHE_DONTCACHE))
++		return false;
++
+ 	/* retain; LRU fodder */
+ 	dentry->d_lockref.count--;
+ 	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST)))
+@@ -656,6 +660,21 @@ static inline bool retain_dentry(struct dentry *dentry)
+ 	return true;
+ }
+ 
++void d_mark_dontcache(struct inode *inode)
++{
++	struct dentry *de;
++
++	spin_lock(&inode->i_lock);
++	hlist_for_each_entry(de, &inode->i_dentry, d_u.d_alias) {
++		spin_lock(&de->d_lock);
++		de->d_flags |= DCACHE_DONTCACHE;
++		spin_unlock(&de->d_lock);
++	}
++	inode->i_state |= I_DONTCACHE;
++	spin_unlock(&inode->i_lock);
++}
++EXPORT_SYMBOL(d_mark_dontcache);
++
+ /*
+  * Finish off a dentry we've decided to kill.
+  * dentry->d_lock must be held, returns with it unlocked.
 diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 17a0b86fe701..de76f7f60695 100644
+index de76f7f60695..888646d74d7d 100644
 --- a/fs/xfs/xfs_icache.c
 +++ b/fs/xfs/xfs_icache.c
-@@ -477,7 +477,7 @@ xfs_iget_cache_hit(
- 		xfs_ilock(ip, lock_flags);
- 
- 	if (!(flags & XFS_IGET_INCORE))
--		xfs_iflags_clear(ip, XFS_ISTALE | XFS_IDONTCACHE);
-+		xfs_iflags_clear(ip, XFS_ISTALE);
- 	XFS_STATS_INC(mp, xs_ig_found);
- 
- 	return 0;
 @@ -559,7 +559,7 @@ xfs_iget_cache_miss(
  	 */
  	iflags = XFS_INEW;
  	if (flags & XFS_IGET_DONTCACHE)
--		iflags |= XFS_IDONTCACHE;
-+		VFS_I(ip)->i_state |= I_DONTCACHE;
+-		VFS_I(ip)->i_state |= I_DONTCACHE;
++		d_mark_dontcache(VFS_I(ip));
  	ip->i_udquot = NULL;
  	ip->i_gdquot = NULL;
  	ip->i_pdquot = NULL;
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 83073c883fbf..d8ce3eaa246e 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -218,8 +218,7 @@ static inline bool xfs_inode_has_cow_data(struct xfs_inode *ip)
- #define XFS_IFLOCK		(1 << __XFS_IFLOCK_BIT)
- #define __XFS_IPINNED_BIT	8	 /* wakeup key for zero pin count */
- #define XFS_IPINNED		(1 << __XFS_IPINNED_BIT)
--#define XFS_IDONTCACHE		(1 << 9) /* don't cache the inode long term */
--#define XFS_IEOFBLOCKS		(1 << 10)/* has the preallocblocks tag set */
-+#define XFS_IEOFBLOCKS		(1 << 9) /* has the preallocblocks tag set */
- /*
-  * If this unlinked inode is in the middle of recovery, don't let drop_inode
-  * truncate and free the inode.  This can happen if we iget the inode during
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index e80bd2c4c279..6f91c13fb6ea 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -737,7 +737,7 @@ xfs_fs_drop_inode(
- 		return 0;
- 	}
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index c1488cc84fd9..a81f0c3cf352 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -177,6 +177,8 @@ struct dentry_operations {
  
--	return generic_drop_inode(inode) || (ip->i_flags & XFS_IDONTCACHE);
-+	return generic_drop_inode(inode);
- }
+ #define DCACHE_REFERENCED		0x00000040 /* Recently used, don't discard. */
  
- static void
++#define DCACHE_DONTCACHE		0x00000080 /* Purge from memory on final dput() */
++
+ #define DCACHE_CANT_MOUNT		0x00000100
+ #define DCACHE_GENOCIDE			0x00000200
+ #define DCACHE_SHRINK_LIST		0x00000400
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a87cc5845a02..44bd45af760f 100644
+index 44bd45af760f..7c3e8c0306e0 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2156,6 +2156,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-  *
-  * I_CREATING		New object's inode in the middle of setting up.
-  *
-+ * I_DONTCACHE		Evict inode as soon as it is not used anymore.
-+ *
-  * Q: What is the difference between I_WILL_FREE and I_FREEING?
-  */
- #define I_DIRTY_SYNC		(1 << 0)
-@@ -2178,6 +2180,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
- #define I_WB_SWITCH		(1 << 13)
- #define I_OVL_INUSE		(1 << 14)
- #define I_CREATING		(1 << 15)
-+#define I_DONTCACHE		(1 << 16)
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-@@ -3049,7 +3052,8 @@ extern int inode_needs_sync(struct inode *inode);
- extern int generic_delete_inode(struct inode *inode);
- static inline int generic_drop_inode(struct inode *inode)
- {
--	return !inode->i_nlink || inode_unhashed(inode);
-+	return !inode->i_nlink || inode_unhashed(inode) ||
-+		(inode->i_state & I_DONTCACHE);
+@@ -3055,6 +3055,7 @@ static inline int generic_drop_inode(struct inode *inode)
+ 	return !inode->i_nlink || inode_unhashed(inode) ||
+ 		(inode->i_state & I_DONTCACHE);
  }
++extern void d_mark_dontcache(struct inode *inode);
  
  extern struct inode *ilookup5_nowait(struct super_block *sb,
+ 		unsigned long hashval, int (*test)(struct inode *, void *),
 -- 
 2.25.1
 
