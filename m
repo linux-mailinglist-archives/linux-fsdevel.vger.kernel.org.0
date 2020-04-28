@@ -2,304 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A7D1BC790
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 20:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 863491BCB90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 20:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgD1SKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 14:10:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50714 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728672AbgD1SKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 14:10:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1368FAED8;
-        Tue, 28 Apr 2020 18:10:28 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 28 Apr 2020 20:10:28 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     Khazhismel Kumykov <khazhy@google.com>,
+        id S1729619AbgD1S6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 14:58:02 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:39868 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728934AbgD1S6A (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 14:58:00 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jTVQc-00065Q-TV; Tue, 28 Apr 2020 12:57:58 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jTVQc-00082d-3W; Tue, 28 Apr 2020 12:57:58 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, Heiher <r@hev.cc>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] eventpoll: fix missing wakeup for ovflist in
- ep_poll_callback
-In-Reply-To: <a2f22c3c-c25a-4bda-8339-a7bdaf17849e@akamai.com>
-References: <20200424025057.118641-1-khazhy@google.com>
- <20200424190039.192373-1-khazhy@google.com>
- <66f26e74-6c7b-28c2-8b3f-faf8ea5229d4@akamai.com>
- <CACGdZYLD9ZqJNVktHUVe6N4t28VKy-Z76ZcCdsAOJHZRXaYGSA@mail.gmail.com>
- <a2f22c3c-c25a-4bda-8339-a7bdaf17849e@akamai.com>
-Message-ID: <c365a245574d4a4ed8a922018bcf4f45@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+        <87ftcv1nqe.fsf@x220.int.ebiederm.org>
+        <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
+        <20200424173927.GB26802@redhat.com>
+        <87mu6ymkea.fsf_-_@x220.int.ebiederm.org>
+        <875zdmmj4y.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=whvktUC9VbzWLDw71BHbV4ofkkuAYsrB5Rmxnhc-=kSeQ@mail.gmail.com>
+        <878sihgfzh.fsf@x220.int.ebiederm.org>
+        <CAHk-=wjSM9mgsDuX=ZTy2L+S7wGrxZMcBn054As_Jyv8FQvcvQ@mail.gmail.com>
+        <87sggnajpv.fsf_-_@x220.int.ebiederm.org>
+        <20200428180540.GB29960@redhat.com>
+Date:   Tue, 28 Apr 2020 13:54:43 -0500
+In-Reply-To: <20200428180540.GB29960@redhat.com> (Oleg Nesterov's message of
+        "Tue, 28 Apr 2020 20:05:41 +0200")
+Message-ID: <875zdj8mq4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jTVQc-00082d-3W;;;mid=<875zdj8mq4.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18ie873QmSJRuG7xLnHvzMNPbq5XK7pRSI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4687]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 369 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 12 (3.2%), b_tie_ro: 10 (2.8%), parse: 1.01
+        (0.3%), extract_message_metadata: 3.4 (0.9%), get_uri_detail_list:
+        1.26 (0.3%), tests_pri_-1000: 3.5 (1.0%), tests_pri_-950: 1.22 (0.3%),
+        tests_pri_-900: 0.98 (0.3%), tests_pri_-90: 148 (40.1%), check_bayes:
+        147 (39.7%), b_tokenize: 6 (1.6%), b_tok_get_all: 6 (1.7%),
+        b_comp_prob: 1.98 (0.5%), b_tok_touch_all: 129 (34.9%), b_finish: 0.93
+        (0.3%), tests_pri_0: 182 (49.3%), check_dkim_signature: 0.59 (0.2%),
+        check_dkim_adsp: 2.4 (0.7%), poll_dns_idle: 0.67 (0.2%), tests_pri_10:
+        2.2 (0.6%), tests_pri_500: 6 (1.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v4 0/2] proc: Ensure we see the exit of each process tid exactly
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-04-27 22:38, Jason Baron wrote:
-> On 4/25/20 4:59 PM, Khazhismel Kumykov wrote:
->> On Sat, Apr 25, 2020 at 9:17 AM Jason Baron <jbaron@akamai.com> wrote:
->>> 
->>> 
->>> 
->>> On 4/24/20 3:00 PM, Khazhismel Kumykov wrote:
->>>> In the event that we add to ovflist, before 339ddb53d373 we would be
->>>> woken up by ep_scan_ready_list, and did no wakeup in 
->>>> ep_poll_callback.
->>>> With that wakeup removed, if we add to ovflist here, we may never 
->>>> wake
->>>> up. Rather than adding back the ep_scan_ready_list wakeup - which 
->>>> was
->>>> resulting in unnecessary wakeups, trigger a wake-up in 
->>>> ep_poll_callback.
->>> 
->>> I'm just curious which 'wakeup' we are talking about here? There is:
->>> wake_up(&ep->wq) for the 'ep' and then there is the nested one via:
->>> ep_poll_safewake(ep, epi). It seems to me that its only about the 
->>> later
->>> one being missing not both? Is your workload using nested epoll?
->>> 
->>> If so, it might make sense to just do the later, since the point of
->>> the original patch was to minimize unnecessary wakeups.
->> 
->> The missing wake-ups were when we added to ovflist instead of rdllist.
->> Both are "the ready list" together - so I'd think we'd want the same
->> wakeups regardless of which specific list we added to.
->> ep_poll_callback isn't nested specific?
->> 
-> 
-> So I was thinking that ep_poll() would see these events on the
-> ovflist without an explicit wakeup, b/c the overflow list being active
-> implies that the ep_poll() path would add them to the rdllist in
-> ep_scan_read_list(). Thus, it will see the events either in the
-> current ep_poll() context or via a subsequent syscall to epoll_wait().
-> 
-> However, there are other paths that can call ep_scan_ready_list() thus
-> I agree with you that both wakeups here are necessary.
-> 
-> I do think are are still (smaller) potential races in 
-> ep_scan_ready_list()
-> where we have:
-> 
->         write_lock_irq(&ep->lock);
->         list_splice_init(&ep->rdllist, &txlist);
->         WRITE_ONCE(ep->ovflist, NULL);
->         write_unlock_irq(&ep->lock);
-> 
-> And in the ep_poll path we have:
-> 
-> static inline int ep_events_available(struct eventpoll *ep)
-> {
->         return !list_empty_careful(&ep->rdllist) ||
->                 READ_ONCE(ep->ovflist) != EP_UNACTIVE_PTR;
-> }
-> 
-> 
-> Seems to me that first bit needs to be the following, since
-> ep_events_available() is now checked in a lockless way:
-> 
-> 
->         write_lock_irq(&ep->lock);
-> 	WRITE_ONCE(ep->ovflist, NULL);
-> 	smp_wmb();
->         list_splice_init(&ep->rdllist, &txlist);
->         write_unlock_irq(&ep->lock);
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> On 04/28, Eric W. Biederman wrote:
+>>
+>> In short I don't think this change will introduce any regressions.
+>>
+>> Eric W. Biederman (2):
+>>       rculist: Add hlists_swap_heads_rcu
+>>       proc: Ensure we see the exit of each process tid exactly once
+>
+> Eric, sorry, I got lost.
+>
+> Both changes look good to me, feel free to add my ack, but I presume
+> this is on top of next_tgid/lookup_task changes ? If yes, why did not
+> you remove has_group_leader_pid?
+
+On top of next_tgid.
+
+Upon a close examination there are not any current bugs in
+posix-cpu-timers nor is there anything that exchange_tids
+will make worse.
+
+I am preparing a follow on patchset to kill has_group_leader_pid.
+
+I am preparing a further follow on patchset to see if I can get that
+code to start returning pids, because that is cheaper and clearer.
 
 
-Hi Jason,
+I pushed those changes a little farther out so I could maintain focus on
+what I am accomplishing.
 
-For the first chunk you refer the order seems irrelevant.
-Either you see something not empty, you go take the lock
-and then check lists under the lock, either you see all
-lists are empty.
+Adding exchange_tids was difficult because I had to audit pretty much
+all of the pid use in the kernel to see if the small change in behavior
+would make anything worse.   The rest of the changes should be simpler
+and more localized so I hope they go faster.
 
-> 
-> And also this bit:
-> 
->         WRITE_ONCE(ep->ovflist, EP_UNACTIVE_PTR);
-> 
->         /*
->          * Quickly re-inject items left on "txlist".
->          */
->         list_splice(&txlist, &ep->rdllist);
-> 
-> Should I think better be reversed as well to:
-> 
-> list_splice(&txlist, &ep->rdllist);
-> smp_wmb();
-> WRITE_ONCE(ep->ovflist, EP_UNACTIVE_PTR);
-
-But this one is much more interesting.  I understand what you
-are trying to achieve: we can't leave both lists empty for the
-short period of time, if there is something left the caller
-of ep_events_available() should be able to see one of the lists
-is not empty, otherwise it can be too late.
-
-But the problem you've spotted is much worse. Some remains
-can be in the txlist (this can happen if caller of epoll_wait
-wants to harvest only 1 event, but there are more in the ->rdlist).
-And we again get the lost wakeup.
-
-Problem is reproduced by the test below.  The idea is simple:
-we have 10 threads and 10 event fds. Each thread can harvest
-only 1 event. 1 producer fires all 10 events at once and waits
-that all 10 events will be observed by 10 threads.
-
-The fix is basically a revert of 339ddb53d373 with 1 major
-exception: we do wakeups from ep_scan_ready_list() but
-if txlist is not empty && if ep_scan_ready_list() is called
-from the routine, which sends events, not reads it
-(thus we protect ourselves from repeated wake ups)
-
-I will send the code a bit later.
-
---
-Roman
-
----- test -------
-
-enum {
-	EPOLL60_EVENTS_NR = 10,
-};
-
-struct epoll60_ctx {
-	volatile int stopped;
-	int ready;
-	int waiters;
-	int epfd;
-	int evfd[EPOLL60_EVENTS_NR];
-};
-
-static inline int count_waiters(struct epoll60_ctx *ctx)
-{
-	return __atomic_load_n(&ctx->waiters, __ATOMIC_ACQUIRE);
-}
-
-static void *epoll60_wait_thread(void *ctx_)
-{
-	struct epoll60_ctx *ctx = ctx_;
-	struct epoll_event e;
-	uint64_t v;
-	int ret;
-
-	while (!ctx->stopped) {
-		/* Mark we are ready */
-		__atomic_fetch_add(&ctx->ready, 1, __ATOMIC_ACQUIRE);
-
-		/* Start when all are ready */
-		while (__atomic_load_n(&ctx->ready, __ATOMIC_ACQUIRE) &&
-		       !ctx->stopped);
-
-		/* Account this waiter */
-		__atomic_fetch_add(&ctx->waiters, 1, __ATOMIC_ACQUIRE);
-again_wait:
-		ret = epoll_wait(ctx->epfd, &e, 1, 1000);
-		if (ret != 1) {
-			/* Should be stopped, otherwise we lost wakeup */
-			assert(ctx->stopped);
-			return NULL;
-		}
-
-		ret = read(e.data.fd, &v, sizeof(v));
-		if (ret != sizeof(v)) {
-			/* Event was stollen by other thread */
-			goto again_wait;
-		}
-		__atomic_fetch_sub(&ctx->waiters, 1, __ATOMIC_RELEASE);
-	}
-
-	return NULL;
-}
-
-static inline unsigned long long msecs(void)
-{
-	struct timespec ts;
-	unsigned long long msecs;
-
-	clock_gettime(CLOCK_REALTIME, &ts);
-	msecs = ts.tv_sec * 1000ull;
-	msecs += ts.tv_nsec / 1000000ull;
-
-	return msecs;
-}
-
-TEST(epoll60)
-{
-	struct epoll60_ctx ctx = { 0 };
-	pthread_t waiters[ARRAY_SIZE(ctx.evfd)];
-	struct epoll_event e;
-	int i, n, ret;
-
-	signal(SIGUSR1, signal_handler);
-
-	ctx.epfd = epoll_create1(0);
-	ASSERT_GE(ctx.epfd, 0);
-
-	/* Create event fds */
-	for (i = 0; i < ARRAY_SIZE(ctx.evfd); i++) {
-		ctx.evfd[i] = eventfd(0, EFD_NONBLOCK);
-		ASSERT_GE(ctx.evfd[i], 0);
-
-		e.events = EPOLLIN | EPOLLERR;
-		e.data.fd = ctx.evfd[i];
-		ASSERT_EQ(epoll_ctl(ctx.epfd, EPOLL_CTL_ADD, ctx.evfd[i], &e), 0);
-	}
-
-	/* Create waiter threads */
-	for (i = 0; i < ARRAY_SIZE(waiters); i++)
-		ASSERT_EQ(pthread_create(&waiters[i], NULL,
-					 epoll60_wait_thread, &ctx), 0);
-
-	for (i = 0; i < 300; i++) {
-		uint64_t v = 1, ms;
-
-		/* Wait for all to be ready */
-		while (__atomic_load_n(&ctx.ready, __ATOMIC_ACQUIRE) !=
-		       ARRAY_SIZE(ctx.evfd))
-			;
-
-		/* Steady, go */
-		__atomic_fetch_sub(&ctx.ready, ARRAY_SIZE(ctx.evfd),
-				   __ATOMIC_ACQUIRE);
-
-		/* Wait all have gone to kernel */
-		while (count_waiters(&ctx) != ARRAY_SIZE(ctx.evfd))
-			;
-
-		/* 1ms should be enough to schedule out */
-		usleep(1000);
-
-		/* Quickly signal all handles at once */
-		for (n = 0; n < ARRAY_SIZE(ctx.evfd); n++) {
-			ret = write(ctx.evfd[n], &v, sizeof(v));
-			ASSERT_EQ(ret, sizeof(v));
-		}
-
-		/* Busy loop for 1s and wait for all waiters to wake up */
-		ms = msecs();
-		while (count_waiters(&ctx) && msecs() < ms + 3000)
-			;
-
-		ASSERT_EQ(count_waiters(&ctx), 0);
-	}
-	ctx.stopped = 1;
-	/* Stop waiters */
-	for (i = 0; i < ARRAY_SIZE(waiters); i++) {
-		pthread_kill(waiters[i], SIGUSR1);
-		pthread_join(waiters[i], NULL);
-	}
-
-	for (i = 0; i < ARRAY_SIZE(waiters); i++)
-		close(ctx.evfd[i]);
-	close(ctx.epfd);
-}
-
+Eric
 
