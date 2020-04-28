@@ -2,85 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4B21BB406
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 04:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA7D1BB41B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 04:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbgD1CfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 22:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726263AbgD1CfW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 22:35:22 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6122C03C1A8;
-        Mon, 27 Apr 2020 19:35:21 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id e8so18799171ilm.7;
-        Mon, 27 Apr 2020 19:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XqzJSOJpdYSsCChr8x81qTvX8o/i/uPADfwV9zdGIhg=;
-        b=WPXiYjyy/GSVdx9UjBPdU18nw9d7u5oIETB4xefgzpWWUC8eD9epCjJasJKHSMji85
-         to5QrauuYvBJaoQ7vZfyX4DtNs2z1O1NFW156HA96mt1/WwUyfpAN81WEJdghuZaHjqY
-         VOYhQ0NlZr2MfHcn2M9tnEQPWHKBKi3dvxYfE1NIjo5i6HiJDwbESkX/nvpxEkKVHYdZ
-         4obs7f8EDe4Eu+K+zoJjsjAhBTZi12cl46tJiLjOFAcxZpXLIsBwf9MccW+8LN7Sq0Or
-         DeAkS1SHK7kT56YRTzK2rsI4HHxfUG5dkMxkM0FV/yIxu/2LMHsGIGXHEDXdOykm5IGY
-         mhNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XqzJSOJpdYSsCChr8x81qTvX8o/i/uPADfwV9zdGIhg=;
-        b=aW/z2li81jxR2j5L70FMkhbWyja7/OMIqt6tbvywvXAark9Fb1Qr7r6XBkQ0j9aGNg
-         +z7Liv3KzqYPruQv6cdo62pSBAFvqDuA3jWxqR+yQXkZpKsAQgjImnv6qhPvFZplOB/0
-         +bJ1G+CoM02kLGIyTx8ubZ7ebfXn00VF8YJAftVETH4xHq+vY2V90lUL8sySerJAy0J7
-         6hOxA8Aw6eqJJi1Vl7hwV8+bATW3yYuWUKvo7tx0LLUGR8QLFNScFKyZmBiloN55P5YR
-         sl7KjU2QIYtp4Q4kCGHuRoJkXhIh5lkQAPqy/ZBVAVvxZRVS3GZyCHSwD546wx0qCVNO
-         JXVQ==
-X-Gm-Message-State: AGi0PuYIqfh6bhJiMxZ0sI/Kb3wyp1Y3/i/Hn67ht9IFT0rvQTuRcSkH
-        I/2UKY9oiRdwr8gaQkr00qpYO/6H+3qqkpvojis=
-X-Google-Smtp-Source: APiQypLEYtAFe7MUWhoRnfEmnQC6Qku7YQncL0Rd1TbTnZCJk8AAKqo26HyBj1sptVPxVMSV3HfbTl+V7O/cRIcxEM4=
-X-Received: by 2002:a92:9e11:: with SMTP id q17mr25022469ili.137.1588041321115;
- Mon, 27 Apr 2020 19:35:21 -0700 (PDT)
+        id S1726343AbgD1CqR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 22:46:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726264AbgD1CqQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 22:46:16 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0F79206D9;
+        Tue, 28 Apr 2020 02:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588041976;
+        bh=5m8r1IGjxlxCRpj6aIK48lhOdzD/MmpN0dyJZAgoIhI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rcz7obW4+GLyHh9wb59v7RqJvV8A87h5PViMuZbVkoMO8FhrrV+5cv0wZ8c6bDviT
+         EXtDtywwaVt0YUWODJzuRJwJxOAW5n4wDKpzAnjQDoZXKZIvmjU/c1QeN5PuEBnUJN
+         R0ND6s1V2Hd1BJngTdPgQ9c0O/E8jNK0MN0AZJ0I=
+Date:   Mon, 27 Apr 2020 19:46:14 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v10 02/12] block: Keyslot Manager for Inline Encryption
+Message-ID: <20200428024614.GA251491@gmail.com>
+References: <20200408035654.247908-1-satyat@google.com>
+ <20200408035654.247908-3-satyat@google.com>
+ <20200422092250.GA12290@infradead.org>
+ <20200428021441.GA52406@google.com>
 MIME-Version: 1.0
-References: <20200427181957.1606257-1-hch@lst.de> <20200427181957.1606257-9-hch@lst.de>
-In-Reply-To: <20200427181957.1606257-9-hch@lst.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 28 Apr 2020 05:35:10 +0300
-Message-ID: <CAOQ4uxhY28otTkkkN7=2QQaONu6GwLcePE=q6J+po9Fv=HXFSw@mail.gmail.com>
-Subject: Re: [PATCH 08/11] fs: move fiemap range validation into the file
- systems instances
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ext4 <linux-ext4@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200428021441.GA52406@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 9:20 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Replace fiemap_check_flags with a fiemap_validate helpers that also takes
+On Tue, Apr 28, 2020 at 02:14:41AM +0000, Satya Tangirala wrote:
+> > > +int blk_ksm_evict_key(struct blk_keyslot_manager *ksm,
+> > > +		      const struct blk_crypto_key *key)
+> > > +{
+> > > +	struct blk_ksm_keyslot *slot;
+> > > +	int err = 0;
+> > > +
+> > > +	blk_ksm_hw_enter(ksm);
+> > > +	slot = blk_ksm_find_keyslot(ksm, key);
+> > > +	if (!slot)
+> > > +		goto out_unlock;
+> > > +
+> > > +	if (atomic_read(&slot->slot_refs) != 0) {
+> > > +		err = -EBUSY;
+> > > +		goto out_unlock;
+> > > +	}
+> > 
+> > This check looks racy.
+> Yes, this could in theory race with blk_ksm_put_slot (e.g. if it's
+> called while there's still IO in flight/IO that just finished) - But
+> it's currently only called by fscrypt when a key is being destroyed,
+> which only happens after all the inodes using that key are evicted, and
+> no data is in flight, so when this function is called, slot->slot_refs
+> will be 0. In particular, this function should only be called when the
+> key isn't being used for IO anymore. I'll add a WARN_ON_ONCE and also
+> make the assumption clearer. We could also instead make this wait for
+> the slot_refs to become 0 and then evict the key instead of just
+> returning -EBUSY as it does now, but I'm not sure if it's really what
+> we want to do/worth doing right now...
 
-Leftover fiemap_validate
+Note that we're holding down_write(&ksm->lock) here, which synchronizes with
+someone getting the keyslot (in particular, incrementing its refcount from 0)
+because that uses down_read(&ksm->lock).
 
-> the inode and mapped range, and performs the sanity check and truncation
-> previously done in fiemap_check_range.  This way the validation is inside
-> the file system itself and thus properly works for the stacked overlayfs
-> case as well.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+So I don't think there's a race.  The behavior is just that if someone tries to
+evict a key that's still in-use, then we'll correctly fail to evict the key.
 
+"Evicting a key that's still in-use" isn't supposed to happen, so printing a
+warning is a good idea.  But I think it needs to be pr_warn_once(), not
+WARN_ON_ONCE(), because WARN_ON_ONCE() is for kernel bugs only, not userspace
+bugs.  It's theoretically possible for userspace to cause the same key to be
+used multiple times on the same disk but via different blk_crypto_key's.  The
+keyslot manager will put these in the same keyslot, but there will be a separate
+eviction attempt for each blk_crypto_key.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+For example, with fscrypt with -o inlinecrypt and blk-crypto-fallback, userspace
+could create an encrypted file using FSCRYPT_MODE_ADIANTUM and flags == 0, then
+get its encryption nonce and derive the file's encryption key.  Then in another
+directory, they could set FSCRYPT_MODE_ADIANTUM and flags ==
+FSCRYPT_POLICY_FLAG_DIRECT_KEY, and use the other file's encryption key as the
+*master* key.
 
-Thanks for fixing this,
-Amir.
+That would be totally insane for userspace to do.  But it's possible, so we
+can't use WARN_ON_ONCE().
+
+- Eric
