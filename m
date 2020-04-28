@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9131BB2D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7B51BB2CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgD1AWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 20:22:39 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16476 "EHLO mga18.intel.com"
+        id S1726453AbgD1AVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 20:21:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:25937 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbgD1AVt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726437AbgD1AVt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 27 Apr 2020 20:21:49 -0400
-IronPort-SDR: otWHwsYP7gJC3Nedz6AbXqXhkUeVc5uPDXCHZ+L0kQVVteh2pfSR7lMCPyRP+Bveh/tYzgz0i9
- BLJquHBI3eig==
+IronPort-SDR: lxeA3nddhOyj3TpVgPZrZADMcByzzPZANcMjVYlpKaCQEbtIpnfXQYfFjfF5NKuRxMoeokIFWb
+ T33oMnu9BRmg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:48 -0700
-IronPort-SDR: CzElres2me3QpcebS4hq61xayp3+MnEtKbHg/B4tNmZEW4TkWo5aykndJ3RyIAZQsROOEfosir
- v8KDoWQIoJgg==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:48 -0700
+IronPort-SDR: BbR0PGu6WVS4hJkrnhrV8J087o4SM0ZVukT2QA2I6ye/QNUrtFChOb0DDwKEL4jVba1zBGtV9D
+ TtZ9PYNWwsFQ==
 X-IronPort-AV: E=Sophos;i="5.73,325,1583222400"; 
-   d="scan'208";a="275659926"
+   d="scan'208";a="247559446"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:47 -0700
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:48 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Ira Weiny <ira.weiny@intel.com>,
         Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Subject: [PATCH V11 02/11] fs: Remove unneeded IS_DAX() check in io_is_direct()
-Date:   Mon, 27 Apr 2020 17:21:33 -0700
-Message-Id: <20200428002142.404144-3-ira.weiny@intel.com>
+Subject: [PATCH V11 03/11] fs/stat: Define DAX statx attribute
+Date:   Mon, 27 Apr 2020 17:21:34 -0700
+Message-Id: <20200428002142.404144-4-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200428002142.404144-1-ira.weiny@intel.com>
 References: <20200428002142.404144-1-ira.weiny@intel.com>
@@ -50,84 +50,77 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Remove the check because DAX now has it's own read/write methods and
-file systems which support DAX check IS_DAX() prior to IOCB_DIRECT on
-their own.  Therefore, it does not matter if the file state is DAX when
-the iocb flags are created.
+In order for users to determine if a file is currently operating in DAX
+state (effective DAX).  Define a statx attribute value and set that
+attribute if the effective DAX flag is set.
 
-Also remove io_is_direct() as it is just a simple flag check.
+To go along with this we propose the following addition to the statx man
+page:
+
+STATX_ATTR_DAX
+
+	The file is in the DAX (cpu direct access) state.  DAX state
+	attempts to minimize software cache effects for both I/O and
+	memory mappings of this file.  It requires a file system which
+	has been configured to support DAX.
+
+	DAX generally assumes all accesses are via cpu load / store
+	instructions which can minimize overhead for small accesses, but
+	may adversely affect cpu utilization for large transfers.
+
+	File I/O is done directly to/from user-space buffers and memory
+	mapped I/O may be performed with direct memory mappings that
+	bypass kernel page cache.
+
+	While the DAX property tends to result in data being transferred
+	synchronously, it does not give the same guarantees of O_SYNC
+	where data and the necessary metadata are transferred together.
+
+	A DAX file may support being mapped with the MAP_SYNC flag,
+	which enables a program to use CPU cache flush instructions to
+	persist CPU store operations without an explicit fsync(2).  See
+	mmap(2) for more information.
 
 Reviewed-by: Dave Chinner <dchinner@redhat.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
-Changes from v8:
-	Rebase to latest Linus tree
-
-Changes from v6:
-	remove io_is_direct() as well.
-	Remove Reviews since this is quite a bit different.
-
-Changes from v3:
-	Reword commit message.
-	Reordered to be a 'pre-cleanup' patch
+Changes from V2:
+	Update man page text with comments from Darrick, Jan, Dan, and
+	Dave.
 ---
- drivers/block/loop.c | 6 +++---
- include/linux/fs.h   | 7 +------
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ fs/stat.c                 | 3 +++
+ include/uapi/linux/stat.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index da693e6a834e..14372df0f354 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -634,8 +634,8 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+diff --git a/fs/stat.c b/fs/stat.c
+index 030008796479..894699c74dde 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	if (IS_AUTOMOUNT(inode))
+ 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
  
- static inline void loop_update_dio(struct loop_device *lo)
- {
--	__loop_update_dio(lo, io_is_direct(lo->lo_backing_file) |
--			lo->use_dio);
-+	__loop_update_dio(lo, (lo->lo_backing_file->f_flags & O_DIRECT) |
-+				lo->use_dio);
- }
++	if (IS_DAX(inode))
++		stat->attributes |= STATX_ATTR_DAX;
++
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(path, stat, request_mask,
+ 					    query_flags);
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index ad80a5c885d5..e5f9d5517f6b 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -169,6 +169,7 @@ struct statx {
+ #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+ #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+ #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
++#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
  
- static void loop_reread_partitions(struct loop_device *lo,
-@@ -1028,7 +1028,7 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	if (!(lo_flags & LO_FLAGS_READ_ONLY) && file->f_op->fsync)
- 		blk_queue_write_cache(lo->lo_queue, true, false);
  
--	if (io_is_direct(lo->lo_backing_file) && inode->i_sb->s_bdev) {
-+	if ((lo->lo_backing_file->f_flags & O_DIRECT) && inode->i_sb->s_bdev) {
- 		/* In case of direct I/O, match underlying block size */
- 		unsigned short bsize = bdev_logical_block_size(
- 			inode->i_sb->s_bdev);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4f6f59b4f22a..a87cc5845a02 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3394,11 +3394,6 @@ extern void setattr_copy(struct inode *inode, const struct iattr *attr);
- 
- extern int file_update_time(struct file *file);
- 
--static inline bool io_is_direct(struct file *filp)
--{
--	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
--}
--
- static inline bool vma_is_dax(const struct vm_area_struct *vma)
- {
- 	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
-@@ -3423,7 +3418,7 @@ static inline int iocb_flags(struct file *file)
- 	int res = 0;
- 	if (file->f_flags & O_APPEND)
- 		res |= IOCB_APPEND;
--	if (io_is_direct(file))
-+	if (file->f_flags & O_DIRECT)
- 		res |= IOCB_DIRECT;
- 	if ((file->f_flags & O_DSYNC) || IS_SYNC(file->f_mapping->host))
- 		res |= IOCB_DSYNC;
+ #endif /* _UAPI_LINUX_STAT_H */
 -- 
 2.25.1
 
