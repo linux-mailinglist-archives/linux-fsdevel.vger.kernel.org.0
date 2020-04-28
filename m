@@ -2,115 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3851D1BB635
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 08:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 527241BB6F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 08:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbgD1GLW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 02:11:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726413AbgD1GLV (ORCPT
+        id S1726309AbgD1Gn2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 02:43:28 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:46019 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725917AbgD1Gn2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 02:11:21 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86182C03C1AA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 23:11:19 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id l11so15876114lfc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 23:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fjR2WXsg1WuSqX8WD5c+nhnalPJJVRAV+Xn9CSGG1bY=;
-        b=cdP0uVyDLEuTHWB46kef943mTKZiv/Grb+3pidmYUxbnYjhqmBibE45csv9aQ88lot
-         AJ3IDfIwUFyKZ0ltlC/7Xz/eIBrBQ9fKuiYosWuO9jxHiT7plltOgrcHcyVpxe7QmbFJ
-         +/ZAj1QUE0+7MbjnRNVVxQdmpxWa3++ZAydGa9ZaoAwMf5FQMxsgbkOQjpNYPiBk1sY+
-         4yiGOkjuYSnheFG1MggDO6unAQSkGnM4raGCF4V8kQa2tBeFbthnB+CXJOmDktWBOEtl
-         eTb5TN7/Nnq4dr6LqUU6zAA7IbwWt3mzS4YUp1+NK/1MBrYrdLqkTHc4pCWe0R/ARh+9
-         +0pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fjR2WXsg1WuSqX8WD5c+nhnalPJJVRAV+Xn9CSGG1bY=;
-        b=nBuhdUZ/rDKQzR4HD47gATEizKEUO+t6J09W99WpzY5BXhK13vJD2kLDBEhvfoid1O
-         xhqAX8fLjWnuul2FHIJrUX/cr8+B/g13d43bcdmQLCdQFoY3l3rkqUdqjDz+Ac+kvNXa
-         BJcdr0BXCRjf3MY5df+H3kq4b8PW3LbRZ1fhAoa82Ze79XV9cswuv7XEpkUdzrqvb20L
-         3vO8VC2plnwVJ+PF9ojWgtZBM7j9GayPqQFOsFR8rjOvByR0n5P8g2OA28t3+kWnjfLa
-         Fk29/RT7gZU/iL00ROCMBkHnAEDBW20vzvtNc7W1MxLAiPM+WfIjx0awIZomq2b+iko9
-         14kw==
-X-Gm-Message-State: AGi0PubegHdNir8jeIt7EOi0rM4w+i3TEPPjoiR3Jh0ceKwqTJTEb6Z5
-        oDXw6Uba/JsNdp6qvfmQfgx3pNZSwZzyaC7ycfEIjg==
-X-Google-Smtp-Source: APiQypLIie/TYTkh1e9E9TFpjYomoyBZT+NMzXY2V+G8zBhTAdtjDWAqu5o9w5HGdoenyRP931MOYycHK/t36nWbs+Q=
-X-Received: by 2002:a19:e04a:: with SMTP id g10mr17744131lfj.164.1588054277719;
- Mon, 27 Apr 2020 23:11:17 -0700 (PDT)
+        Tue, 28 Apr 2020 02:43:28 -0400
+Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DD45E82080A;
+        Tue, 28 Apr 2020 16:43:19 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jTJxe-0002vq-9O; Tue, 28 Apr 2020 16:43:18 +1000
+Date:   Tue, 28 Apr 2020 16:43:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Ruan, Shiyang" <ruansy.fnst@cn.fujitsu.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "Qi, Fuli" <qi.fuli@fujitsu.com>,
+        "Gotou, Yasunori" <y-goto@fujitsu.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBSZQ==?= =?utf-8?Q?=3A?= [RFC PATCH 0/8]
+ dax: Add a dax-rmap tree to support reflink
+Message-ID: <20200428064318.GG2040@dread.disaster.area>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+ <20200427122836.GD29705@bombadil.infradead.org>
+ <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
 MIME-Version: 1.0
-References: <20200428032745.133556-1-jannh@google.com> <20200428032745.133556-6-jannh@google.com>
- <CAHk-=wgBNSQhH1gyjo+Z2NFy4tOQnBQB4rra-jh+3XTpOjnThQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgBNSQhH1gyjo+Z2NFy4tOQnBQB4rra-jh+3XTpOjnThQ@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Apr 2020 08:10:51 +0200
-Message-ID: <CAG48ez3kLgXQBOnSJJ+XuYpM__XnKc_AqJMoiPBhFbTdmoWxag@mail.gmail.com>
-Subject: Re: [PATCH 5/5] mm/gup: Take mmap_sem in get_dump_page()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
+        a=IkcTkHD0fZMA:10 a=cl8xLZFz6L8A:10 a=5KLPUuaC_9wA:10 a=JfrnYn6hAAAA:8
+        a=7-415B0cAAAA:8 a=Kw4piam9Eq2nsQd2tG8A:9 a=93mTbiTF0b_u7Sz-:21
+        a=KFoNIqDtwUuuseL_:21 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22 a=pHzHmUro8NiASowvMSCR:22
+        a=n87TN5wuljxrRezIQYnT:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 5:50 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Apr 27, 2020 at 8:28 PM Jann Horn <jannh@google.com> wrote:
+On Tue, Apr 28, 2020 at 06:09:47AM +0000, Ruan, Shiyang wrote:
+> 
+> 在 2020/4/27 20:28:36, "Matthew Wilcox" <willy@infradead.org> 写道:
+> 
+> >On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
+> >>  This patchset is a try to resolve the shared 'page cache' problem for
+> >>  fsdax.
+> >>
+> >>  In order to track multiple mappings and indexes on one page, I
+> >>  introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
+> >>  will be associated more than once if is shared.  At the second time we
+> >>  associate this entry, we create this rb-tree and store its root in
+> >>  page->private(not used in fsdax).  Insert (->mapping, ->index) when
+> >>  dax_associate_entry() and delete it when dax_disassociate_entry().
 > >
-> > Properly take the mmap_sem before calling into the GUP code from
-> > get_dump_page(); and play nice, allowing __get_user_pages_locked() to drop
-> > the mmap_sem if it has to sleep.
->
-> This makes my skin crawl.
->
-> The only reason for this all is that page cache flushing.
->
-> My gut feeling is that it should be done by get_user_pages() anyway,
-> since all the other users presumably want it to be coherent in the
-> cache.
->
-> And in fact, looking at __get_user_pages(), it already does that
->
->                 if (pages) {
->                         pages[i] = page;
->                         flush_anon_page(vma, page, start);
->                         flush_dcache_page(page);
->                         ctx.page_mask = 0;
->                 }
->
-> and I think that the get_dump_page() logic is unnecessary to begin with.
+> >Do we really want to track all of this on a per-page basis?  I would
+> >have thought a per-extent basis was more useful.  Essentially, create
+> >a new address_space for each shared extent.  Per page just seems like
+> >a huge overhead.
+> >
+> Per-extent tracking is a nice idea for me.  I haven't thought of it 
+> yet...
+> 
+> But the extent info is maintained by filesystem.  I think we need a way 
+> to obtain this info from FS when associating a page.  May be a bit 
+> complicated.  Let me think about it...
 
-Ah! And even though flush_cache_page() is broader than
-flush_dcache_page(), that's actually unnecessary, right? Since the
-kernel only wants to read from the page, and therefore e.g. the icache
-is irrelevant?
+That's why I want the -user of this association- to do a filesystem
+callout instead of keeping it's own naive tracking infrastructure.
+The filesystem can do an efficient, on-demand reverse mapping lookup
+from it's own extent tracking infrastructure, and there's zero
+runtime overhead when there are no errors present.
 
-Yay! :) I did think this was a bit gnarly, and it's nice to know that
-this can be simplified.
+At the moment, this "dax association" is used to "report" a storage
+media error directly to userspace. I say "report" because what it
+does is kill userspace processes dead. The storage media error
+actually needs to be reported to the owner of the storage media,
+which in the case of FS-DAX is the filesytem.
 
-(And now I'm going to avert my eyes from the GUP code before I start
-thinking too hard about how much it sucks that FOLL_LONGTERM doesn't
-drop the mmap_sem across the access and how much I dislike the whole
-idea of FOLL_LONGTERM in general...)
+That way the filesystem can then look up all the owners of that bad
+media range (i.e. the filesystem block it corresponds to) and take
+appropriate action. e.g.
+
+- if it falls in filesytem metadata, shutdown the filesystem
+- if it falls in user data, call the "kill userspace dead" routines
+  for each mapping/index tuple the filesystem finds for the given
+  LBA address that the media error occurred.
+
+Right now if the media error is in filesystem metadata, the
+filesystem isn't even told about it. The filesystem can't even shut
+down - the error is just dropped on the floor and it won't be until
+the filesystem next tries to reference that metadata that we notice
+there is an issue.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
