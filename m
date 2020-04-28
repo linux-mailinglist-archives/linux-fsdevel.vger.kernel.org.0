@@ -2,140 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1379B1BC579
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 18:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4F51BC5D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 18:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgD1QmE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 12:42:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:55340 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbgD1QmE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 12:42:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F311CC14;
-        Tue, 28 Apr 2020 09:42:02 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E3B23F305;
-        Tue, 28 Apr 2020 09:42:00 -0700 (PDT)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Qais Yousef <qais.yousef@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 2/2] Documentation/sysctl: Document uclamp sysctl knobs
-Date:   Tue, 28 Apr 2020 17:41:34 +0100
-Message-Id: <20200428164134.5588-2-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200428164134.5588-1-qais.yousef@arm.com>
-References: <20200428164134.5588-1-qais.yousef@arm.com>
+        id S1728312AbgD1Qxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 12:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728250AbgD1Qxn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 12:53:43 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7BBC03C1AC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 09:53:43 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id l11so17505308lfc.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 09:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q5Z4HlhTNB53SfOmbfxYbxhFeMg9kSBe7UiylTe1sK4=;
+        b=U0vubYq04Lq1/qZe+lISORyl0P83N1X2JC1zPH/anIzO/2qgQ9RdChTPhMz9JkQYQN
+         MMuZWyY2quEr7OcLglD7hQLA6m85JwzjLomr38fhVcQFFEJcRWEnwXzAfHtni2RnkvwQ
+         x6lDYp88Dq7d9rzV+kA7s7TFN7/nBiIe2xQ8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q5Z4HlhTNB53SfOmbfxYbxhFeMg9kSBe7UiylTe1sK4=;
+        b=Q3Gdi+KJP6y3bOPUNK/YogD4hgiDhK0xP28cg9BuZD7K6G8eTtIbv3M+YWhYNvmY9d
+         yB14o6HaMSg63VH+iXqglZHan14PZPCAbTKD71Ggk8Q97NgSVp7sfaZP5nA3818CSI2v
+         akaz30sp1R6zyPtKGJfrlIu9IysoSstkwH/1jWsmCg9oVQ60msUDT1NrYR9qs+jXttOJ
+         isthkOI32fJtLPxi35G7rapS9VVURBcVKID3nlgyz4k/ygW9cwN5s0lI5CwgovW4WGeS
+         mcBexbZEe0uSp/505wfGpTdd+SItiRZdGHrQ+iGtsppR5i2Ku+pDPnHKVgX98401SRqs
+         SuUQ==
+X-Gm-Message-State: AGi0PubFKiS0clEj7AE1Z+n4rFzEaBXV3oGW5Z4lxbq/hCyEPjZ4fiNR
+        naJnfYWvWvCB6qgeZB3XWlEACSL3XeY=
+X-Google-Smtp-Source: APiQypJOIheJwi+x09R02eKVDWEPGU3jUPB3v2rZvWUrXUArjQPYzHjKW01pMc0BM9dL2x58f4E5Qg==
+X-Received: by 2002:a05:6512:cc:: with SMTP id c12mr1197720lfp.188.1588092820559;
+        Tue, 28 Apr 2020 09:53:40 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id u12sm12862420ljo.102.2020.04.28.09.53.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2020 09:53:39 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id h6so17538428lfc.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 09:53:39 -0700 (PDT)
+X-Received: by 2002:ac2:4892:: with SMTP id x18mr1932440lfc.142.1588092818583;
+ Tue, 28 Apr 2020 09:53:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+ <87ftcv1nqe.fsf@x220.int.ebiederm.org> <87wo66vvnm.fsf_-_@x220.int.ebiederm.org>
+ <20200424173927.GB26802@redhat.com> <87mu6ymkea.fsf_-_@x220.int.ebiederm.org>
+ <875zdmmj4y.fsf_-_@x220.int.ebiederm.org> <CAHk-=whvktUC9VbzWLDw71BHbV4ofkkuAYsrB5Rmxnhc-=kSeQ@mail.gmail.com>
+ <878sihgfzh.fsf@x220.int.ebiederm.org> <CAHk-=wjSM9mgsDuX=ZTy2L+S7wGrxZMcBn054As_Jyv8FQvcvQ@mail.gmail.com>
+ <87sggnajpv.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87sggnajpv.fsf_-_@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 28 Apr 2020 09:53:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiBYMoimvtc_DrwKN5EaQ98AmPryqYX6a-UE_VGP6LMrw@mail.gmail.com>
+Message-ID: <CAHk-=wiBYMoimvtc_DrwKN5EaQ98AmPryqYX6a-UE_VGP6LMrw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] proc: Ensure we see the exit of each process tid exactly
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Uclamp exposes 3 sysctl knobs:
+On Tue, Apr 28, 2020 at 5:20 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> In short I don't think this change will introduce any regressions.
 
-	* sched_util_clamp_min
-	* sched_util_clamp_max
-	* sched_util_clamp_min_rt_default
+I think the series looks fine, but I also think the long explanation
+(that I snipped in this reply) in the cover letter should be there in
+the kernel tree.
 
-Document them in sysctl/kernel.rst.
+So if you send me this as a single pull request, with that explanation
+(either in the email or in the signed tag - although you don't seem to
+use tags normally - so that we have that extra commentary for
+posterity, that sounds good.
 
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Jonathan Corbet <corbet@lwn.net>
-CC: Juri Lelli <juri.lelli@redhat.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Ben Segall <bsegall@google.com>
-CC: Mel Gorman <mgorman@suse.de>
-CC: Luis Chamberlain <mcgrof@kernel.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Iurii Zaikin <yzaikin@google.com>
-CC: Quentin Perret <qperret@google.com>
-CC: Valentin Schneider <valentin.schneider@arm.com>
-CC: Patrick Bellasi <patrick.bellasi@matbug.net>
-CC: Pavan Kondeti <pkondeti@codeaurora.org>
-CC: linux-doc@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
----
- Documentation/admin-guide/sysctl/kernel.rst | 48 +++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+That said, this fix seems to not matter for normal operation, so
+unless it's holding up something important, maybe it's 5.8 material?
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 0d427fd10941..e7255f71493c 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -940,6 +940,54 @@ Enables/disables scheduler statistics. Enabling this feature
- incurs a small amount of overhead in the scheduler but is
- useful for debugging and performance tuning.
- 
-+sched_util_clamp_min:
-+=====================
-+
-+Max allowed *minimum* utilization.
-+
-+Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-+value.
-+
-+It means that any requested uclamp.min value cannot be greater than
-+sched_util_clamp_min, ie: it is restricted to the range
-+[0:sched_util_clamp_min].
-+
-+sched_util_clamp_max:
-+=====================
-+
-+Max allowed *maximum* utilization.
-+
-+Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-+value.
-+
-+It means that any requested uclamp.max value cannot be greater than
-+sched_util_clamp_max, ie: it is restricted to the range
-+[0:sched_util_clamp_max].
-+
-+sched_util_clamp_min_rt_default:
-+================================
-+
-+By default Linux is tuned for performance. Which means that RT tasks always run
-+at the highest frequency and most capable (highest capacity) CPU (in
-+heterogeneous systems).
-+
-+Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-+SCHED_CAPACITY_SCALE (1024) by default. Which effectively boosts the tasks to
-+run at the highest frequency and bias them to run on the biggest CPU.
-+
-+This knob allows admins to change the default behavior when uclamp is being
-+used. In battery powered devices particularly, running at the maximum
-+capacity and frequency will increase energy consumption and shorten the battery
-+life.
-+
-+This knob is only effective for RT tasks which the user hasn't modified their
-+requested uclamp.min value via sched_setattr() syscall.
-+
-+This knob will not escape the constraint imposed by sched_util_clamp_min
-+defined above.
-+
-+Any modification is applied lazily on the next opportunity the scheduler needs
-+to calculate the effective value of uclamp.min of the task.
- 
- seccomp
- =======
--- 
-2.17.1
-
+                Linus
