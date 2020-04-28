@@ -2,54 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E289D1BCE80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 23:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7E21BCE8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 23:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbgD1VS7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 17:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726279AbgD1VS7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 17:18:59 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FC7C03C1AC;
-        Tue, 28 Apr 2020 14:18:58 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTXd1-00Dlr7-U7; Tue, 28 Apr 2020 21:18:56 +0000
-Date:   Tue, 28 Apr 2020 22:18:55 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] vfs.git fixes
-Message-ID: <20200428211855.GZ23230@ZenIV.linux.org.uk>
+        id S1726472AbgD1VVo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 17:21:44 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:52356 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726274AbgD1VVo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 17:21:44 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jTXfa-0000qq-1U; Tue, 28 Apr 2020 21:21:34 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jTXeO-000142-Bl; Tue, 28 Apr 2020 23:20:20 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Jann Horn <jannh@google.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala?= =?iso-8859-1?Q?=FCn?= 
+        <mickael.salaun@ssi.gouv.fr>, Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+References: <20200428175129.634352-1-mic@digikod.net>
+        <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
+Date:   Tue, 28 Apr 2020 23:20:20 +0200
+In-Reply-To: <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
+        (Jann Horn's message of "Tue, 28 Apr 2020 21:21:48 +0200")
+Message-ID: <87blnb48a3.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Two old bugs...
+* Jann Horn:
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
+> the dynamic linker.
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-
-for you to fetch changes up to b0d3869ce9eeacbb1bbd541909beeef4126426d5:
-
-  propagate_one(): mnt_set_mountpoint() needs mount_lock (2020-04-27 10:37:14 -0400)
-
-----------------------------------------------------------------
-Al Viro (2):
-      dlmfs_file_write(): fix the bogosity in handling non-zero *ppos
-      propagate_one(): mnt_set_mountpoint() needs mount_lock
-
- fs/ocfs2/dlmfs/dlmfs.c | 27 ++++++++++++---------------
- fs/pnode.c             |  9 ++++-----
- 2 files changed, 16 insertions(+), 20 deletions(-)
+Absolutely.  In typical configurations, the kernel does not enforce
+that executable mappings must be backed by files which are executable.
+It's most obvious with using an explicit loader invocation to run
+executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
+than trying to reimplement the kernel permission checks (or what some
+believe they should be) in userspace.
