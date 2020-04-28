@@ -2,146 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6B01BB7D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D0E1BB7F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgD1HjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 03:39:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726565AbgD1HjB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 03:39:01 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03S7VbEu123945;
-        Tue, 28 Apr 2020 03:38:46 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30mhr6hm4d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Apr 2020 03:38:46 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03S7Vbup007529;
-        Tue, 28 Apr 2020 07:38:44 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 30mcu58n7e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Apr 2020 07:38:44 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03S7cfvh3277088
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Apr 2020 07:38:41 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45AB55204E;
-        Tue, 28 Apr 2020 07:38:41 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.199.43.36])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BFDE652051;
-        Tue, 28 Apr 2020 07:38:38 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jan Kara <jack@suse.com>, tytso@mit.edu,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        linux-ext4@vger.kernel.org, Ritesh Harjani <riteshh@linux.ibm.com>,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
-Subject: [PATCHv2] fibmap: Warn and return an error in case of block > INT_MAX
-Date:   Tue, 28 Apr 2020 13:08:31 +0530
-Message-Id: <58f0c64a3f2dbd363fb93371435f6bcaeeb7abe4.1588058868.git.riteshh@linux.ibm.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726386AbgD1Hp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 03:45:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50279 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726253AbgD1Hp4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 03:45:56 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 49BDGT61qhz9v0Yh;
+        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=UBR5gAQ5; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Jm5mmlEvRnDf; Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 49BDGT4QTyz9v0Yg;
+        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1588059953; bh=/2fZZkU1LY2pi9G08Gg14D8HOq4abGxDwLX+kqPlt1o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UBR5gAQ53YJN7ELul96h9s1XA1XXA+4fvsvJ+j3pt0+0nKvRCMh3AZyL/IBPKVzuA
+         j3Gc+fUrI76w6umT2wOmN3GTPm/U0ZjnNCv4YC/kSlVhGQRyeNlBqhuRQjCUJuX8ff
+         HU7o4PADGi6vHlzTQ7FuNK5gQHJ7lzZ6KlCoAPp8=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9CC8B8B7EF;
+        Tue, 28 Apr 2020 09:45:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id rlSWOtbbJT9w; Tue, 28 Apr 2020 09:45:54 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DE3628B7ED;
+        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
+Subject: Re: [PATCH 2/7] signal: factor copy_siginfo_to_external32 from
+ copy_siginfo_to_user32
+To:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeremy Kerr <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+References: <20200421154204.252921-1-hch@lst.de>
+ <20200421154204.252921-3-hch@lst.de>
+ <20200425214724.a9a00c76edceff7296df7874@linux-foundation.org>
+ <20200426074039.GA31501@lst.de>
+ <20200427154050.e431ad7fb228610cc6b95973@linux-foundation.org>
+ <20200428070935.GE18754@lst.de>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <ddbaba35-9cc5-dfb9-3cae-51b026de5b65@c-s.fr>
+Date:   Tue, 28 Apr 2020 09:45:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <20200428070935.GE18754@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-28_03:2020-04-27,2020-04-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 mlxscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=999
- impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2004280060
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We better warn the fibmap user and not return a truncated and therefore
-an incorrect block map address if the bmap() returned block address
-is greater than INT_MAX (since user supplied integer pointer).
 
-It's better to pr_warn() all user of ioctl_fibmap() and return a proper
-error code rather than silently letting a FS corruption happen if the
-user tries to fiddle around with the returned block map address.
 
-We fix this by returning an error code of -ERANGE and returning 0 as the
-block mapping address in case if it is > INT_MAX.
+Le 28/04/2020 à 09:09, Christoph Hellwig a écrit :
+> On Mon, Apr 27, 2020 at 03:40:50PM -0700, Andrew Morton wrote:
+>>> https://www.spinics.net/lists/kernel/msg3473847.html
+>>> https://www.spinics.net/lists/kernel/msg3473840.html
+>>> https://www.spinics.net/lists/kernel/msg3473843.html
+>>
+>> OK, but that doesn't necessitate the above monstrosity?  How about
+>>
+>> static int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+>> 			     const struct kernel_siginfo *from, bool x32_ABI)
+>> {
+>> 	struct compat_siginfo new;
+>> 	copy_siginfo_to_external32(&new, from);
+>> 	...
+>> }
+>>
+>> int copy_siginfo_to_user32(struct compat_siginfo __user *to,
+>> 			   const struct kernel_siginfo *from)
+>> {
+>> #if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
+>> 	return __copy_siginfo_to_user32(to, from, in_x32_syscall());
+>> #else
+>> 	return __copy_siginfo_to_user32(to, from, 0);
+>> #endif
+>> }
+>>
+>> Or something like that - I didn't try very hard.  We know how to do
+>> this stuff, and surely this thing isn't how!
+> 
+> I guess that might be a worthwhile middle ground.  Still not a fan of
+> all these ifdefs..
+> 
 
-Now iomap_bmap() could be called from either of these two paths.
-Either when a user is calling an ioctl_fibmap() interface to get
-the block mapping address or by some filesystem via use of bmap()
-internal kernel API.
-bmap() kernel API is well equipped with handling of u64 addresses.
+Can't we move the small X32 specific part out of 
+__copy_siginfo_to_user32(), in an arch specific helper that voids for 
+other architectures ?
 
-WARN condition in iomap_bmap_actor() was mainly added to warn all
-the fibmap users. But now that we have directly added this warning
-for all fibmap users and also made sure to return 0 as block map address
-in case if addr > INT_MAX.
-So we can now remove this logic from iomap_bmap_actor().
+Something like:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
-v1 -> v2: 
-1. Improved error log msg.
-2. Clubbed both iomap change and fibmap change into 1 patch.
-3. Added Reviewed-by tags.
+		if (!arch_special_something(&new, from)) {
+			new.si_utime = from->si_utime;
+			new.si_stime = from->si_stime;
+		}
 
- fs/ioctl.c        | 8 ++++++++
- fs/iomap/fiemap.c | 5 +----
- 2 files changed, 9 insertions(+), 4 deletions(-)
+Then the arch_special_something() does what it wants in x86 and returns 
+1, and for architectures not implementating it, a generic version return 
+0 all the time.
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index f1d93263186c..adc1e8178c43 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -55,6 +55,7 @@ EXPORT_SYMBOL(vfs_ioctl);
- static int ioctl_fibmap(struct file *filp, int __user *p)
- {
- 	struct inode *inode = file_inode(filp);
-+	struct super_block *sb = inode->i_sb;
- 	int error, ur_block;
- 	sector_t block;
- 
-@@ -71,6 +72,13 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
- 	block = ur_block;
- 	error = bmap(inode, &block);
- 
-+	if (block > INT_MAX) {
-+		error = -ERANGE;
-+		pr_warn_ratelimited("[%s/%d] FS (%s): would truncate fibmap result\n",
-+				    current->comm, task_pid_nr(current),
-+				    sb->s_id);
-+	}
-+
- 	if (error)
- 		ur_block = 0;
- 	else
-diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index bccf305ea9ce..d55e8f491a5e 100644
---- a/fs/iomap/fiemap.c
-+++ b/fs/iomap/fiemap.c
-@@ -117,10 +117,7 @@ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
- 
- 	if (iomap->type == IOMAP_MAPPED) {
- 		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
--		if (addr > INT_MAX)
--			WARN(1, "would truncate bmap result\n");
--		else
--			*bno = addr;
-+		*bno = addr;
- 	}
- 	return 0;
- }
--- 
-2.21.0
-
+Christophe
