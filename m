@@ -2,137 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BCCC1BB4AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 05:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735A81BB4C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 05:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgD1D2V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 23:28:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43274 "EHLO
+        id S1726271AbgD1Dmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 23:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbgD1D2Q (ORCPT
+        with ESMTP id S1726047AbgD1Dmm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 23:28:16 -0400
-Received: from mail-qv1-xf49.google.com (mail-qv1-xf49.google.com [IPv6:2607:f8b0:4864:20::f49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B499DC09B050
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:28:16 -0700 (PDT)
-Received: by mail-qv1-xf49.google.com with SMTP id x26so16566361qvd.20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:28:16 -0700 (PDT)
+        Mon, 27 Apr 2020 23:42:42 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC42C03C1A9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:42 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id n17so16010537ejh.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=S74qc3gT0+GaAOfxP9OW8h7LX2dHXzF9FcHNnI79iRU=;
-        b=IidsVYIWxuA6ZMq4mduyFOFvGK2ppYXoJH0wqJkIqqc+oYorXd4D8TC5648uk83yp9
-         Wk6TRGHazyI7/dl0YaKYN69J4JYYCXH0CXmm45CYpg5crMvD0sBEhoVk0OCbke9ON03l
-         t++54shNE4fldweicnAFUG7BlPQRKlLvBj3ELH6NgoiG7tKyqU09KfhIbfcLrXBCqA5+
-         ERaEY1qXQhMRhOoex9Yt2JzsgbxA1o9//qxW7Rl64iVEwEvm2M5aNBfC/sbBWFTgc2W9
-         OB2UUdMDfKlny1MscN1lZUlNUVq8y5d3lfxTGrfnTL+k4Xh6lfcXpgzN0XvkrZqCgzwF
-         SQ4g==
+        bh=Q1Hl4EoAQeecS6RJeMB353EzxseO3r7Hp2yIzNObp3I=;
+        b=SplrAUntYpA62B1N75YvHPdEO4shjtitO6O7fp81NGqZCL/liBkn4YGhS2ufiW89mA
+         6QRtLc38lw6xNb2vgvLJDvqC9mE3aqUJAqwD+PeOfBSBP94LeZ1hMSN6COmTdIaxaQpS
+         UpK5WWl4Kpc44DM72q0SRTuLkDG5Cy7pTFjlU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=S74qc3gT0+GaAOfxP9OW8h7LX2dHXzF9FcHNnI79iRU=;
-        b=eYUMuelqNja3EdORWaq073in9F4usRUnTbyd2fNdvYZZn6GVfLVcfXj920GZvVFeV3
-         q6xfw/vDuwriviG+1DVlS2XouhmvGSV/DMZSWad8EwRzuAPdqyw/kkgxnRLbTIojE451
-         oQBc1nekTTh7yE89/KrracYrA4pZHL6r6U0DlDojaBr5nKouKEbTN5UFhi91m/j2GI2U
-         SWZliiz2PlvnAvKP0WPwH/SE6A6OBz7KrNb1tX8e/hSvlGNH4XYcDkQNOjxA6bAp1E5O
-         bEU5E79MRgRyuf68T40ZBqCgW5QJATi913gxMJ2Prdy95uQ/h4KEgsyT2qcUBT5raMUV
-         r/fQ==
-X-Gm-Message-State: AGi0PuYv3naVEXel2TByhSCdsjR4roGzrpCm1kzVaD0+WgGlCr9I1UTQ
-        ScaxEmHk7LpbXoGWoWGeAdSB338jZQ==
-X-Google-Smtp-Source: APiQypKNWrwmeyovNjE39gEB3tk3kbcuILr7RYV7vdkJNUwXcv+LEB33zDblKbOqInzqOcSp3nptjlK/lg==
-X-Received: by 2002:a0c:99ca:: with SMTP id y10mr18997354qve.217.1588044495889;
- Mon, 27 Apr 2020 20:28:15 -0700 (PDT)
-Date:   Tue, 28 Apr 2020 05:27:45 +0200
-In-Reply-To: <20200428032745.133556-1-jannh@google.com>
-Message-Id: <20200428032745.133556-6-jannh@google.com>
-Mime-Version: 1.0
-References: <20200428032745.133556-1-jannh@google.com>
-X-Mailer: git-send-email 2.26.2.303.gf8c07b1a785-goog
-Subject: [PATCH 5/5] mm/gup: Take mmap_sem in get_dump_page()
-From:   Jann Horn <jannh@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q1Hl4EoAQeecS6RJeMB353EzxseO3r7Hp2yIzNObp3I=;
+        b=JAu7Qxh2bnGMAlDHkTvfQ1fZ/xhWk1AcnukhVSQfeiY3Z1VAgj0YhI6bUwcliOk+ys
+         lBUr8hklCGDW5HwladtOEQZcwy0+nVUK3RzNh6bCfZVo9HlRqH/ug7sve/MPsVPc3t7g
+         zARbrqmkh1+X2BnsitpCcG63itpYCXlT9t+mEEiT1sjx8vuovk5+ncNtSmF+ltGHdWiV
+         kj5c6xY9vvNcdirT+2GSevw3K4z5yLQeF6T0lt+oHvJ8SSJv7nt8kxRJCVVCfxcUts44
+         7WJ5MxnI6dnQvsqZDkQcSUCRfiS1mTzPAzotCp0cA6FqHZxIW9GwbP4ssyt3+q+M/GAY
+         JjLQ==
+X-Gm-Message-State: AGi0Pub9J+xD30ZlSYUhKzcg3iXucoA6MN09LK8ol7nK2PTMTP03SdBM
+        RhRLJ/sAfFBCXi2CKEoF8wOVLVgyo4k=
+X-Google-Smtp-Source: APiQypK2ham0Bh3U1L4UbRNqHktYl/5o4Mjkh2HHkCULRVrlM7UhRJQAWEb/T+QIirsZaBtm4H5VzQ==
+X-Received: by 2002:a17:906:25cb:: with SMTP id n11mr23277840ejb.37.1588045360730;
+        Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id y23sm360858eju.85.2020.04.27.20.42.40
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id s10so15345998edy.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Apr 2020 20:42:40 -0700 (PDT)
+X-Received: by 2002:a19:9109:: with SMTP id t9mr18095968lfd.10.1588044961861;
+ Mon, 27 Apr 2020 20:36:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200428032745.133556-1-jannh@google.com> <20200428032745.133556-3-jannh@google.com>
+In-Reply-To: <20200428032745.133556-3-jannh@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 27 Apr 2020 20:35:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
+Message-ID: <CAHk-=wjSYTpTH0X8EcGGJD84tsJS62BN3tC6NfzmjvXdSkFVxg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] coredump: Fix handling of partial writes in dump_emit()
+To:     Jann Horn <jannh@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Mark Salter <msalter@redhat.com>,
         Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         linux-c6x-dev@linux-c6x.org,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Properly take the mmap_sem before calling into the GUP code from
-get_dump_page(); and play nice, allowing __get_user_pages_locked() to drop
-the mmap_sem if it has to sleep.
+On Mon, Apr 27, 2020 at 8:28 PM Jann Horn <jannh@google.com> wrote:
+>
+> After a partial write, we have to update the input buffer pointer.
 
-This requires adjusting the check in __get_user_pages_locked() to be
-slightly less strict: While `vmas != NULL` is normally incompatible with
-the lock-dropping retry logic, it's fine if we only want a single page,
-because then retries can only happen when we haven't grabbed any pages yet.
+Interesting. It seems this partial write case never triggers (except
+for actually killing the core-dump).
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- mm/gup.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Or did you find a case where it actually matters?
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 9a7e83772f1fe..4bb4149c0e259 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1261,7 +1261,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
- 
- 	if (locked) {
- 		/* if VM_FAULT_RETRY can be returned, vmas become invalid */
--		BUG_ON(vmas);
-+		if (WARN_ON(vmas && nr_pages != 1))
-+			return -EFAULT;
- 		/* check caller initialized locked */
- 		BUG_ON(*locked != 1);
- 	}
-@@ -1548,18 +1549,28 @@ static long __get_user_pages_locked(struct task_struct *tsk,
-  * NULL wherever the ZERO_PAGE, or an anonymous pte_none, has been found -
-  * allowing a hole to be left in the corefile to save diskspace.
-  *
-- * Called without mmap_sem, but after all other threads have been killed.
-+ * Called without mmap_sem (takes and releases the mmap_sem by itself).
-  */
- struct page *get_dump_page(unsigned long addr)
- {
-+	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
- 	struct page *page;
-+	int locked = 1;
-+	int ret;
- 
--	if (__get_user_pages(current, current->mm, addr, 1,
--			     FOLL_FORCE | FOLL_DUMP | FOLL_GET, &page, &vma,
--			     NULL) < 1)
-+	if (down_read_killable(&mm->mmap_sem))
-+		return NULL;
-+	ret = __get_user_pages_locked(current, mm, addr, 1, &page, &vma,
-+				      &locked,
-+				      FOLL_FORCE | FOLL_DUMP | FOLL_GET);
-+	if (ret != 1) {
-+		if (locked)
-+			up_read(&mm->mmap_sem);
- 		return NULL;
-+	}
- 	flush_cache_page(vma, addr, page_to_pfn(page));
-+	up_read(&mm->mmap_sem);
- 	return page;
- }
- 
--- 
-2.26.2.303.gf8c07b1a785-goog
+Your fix is obviously correct, but it also makes me go "that function
+clearly never actually worked for partial writes, maybe we shouldn't
+even bother?"
 
+             Linus
