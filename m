@@ -2,126 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A141BB936
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 10:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCB11BB9E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 11:33:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgD1IxS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 04:53:18 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39703 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726402AbgD1IxS (ORCPT
+        id S1726971AbgD1Jc4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 05:32:56 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:5562 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726477AbgD1Jc4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 04:53:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588063996;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1KpMvS5JJPrAXe2Z8MVzdEx1PSCcjjRIJzkkpDN2AEI=;
-        b=gwjQirmJmZIS8zWxSh8t5pW9hTzLVoRt75ZYMqpQcAQgbwGkg6Ruka5fVC87+pjHR8yXV4
-        GnyiiLaY8BzOOTl2cPklaZGEalHAPzs91Xa3uc/vT1itpC0yvI3tCHs3Wqep/27lb3Q0Au
-        GoYY832uvflE0rBCCQ/Uf/QNebWUe5M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-AO21JiRFMGC-1yM9MfuSiA-1; Tue, 28 Apr 2020 04:53:14 -0400
-X-MC-Unique: AO21JiRFMGC-1yM9MfuSiA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 196AB39347;
-        Tue, 28 Apr 2020 08:53:13 +0000 (UTC)
-Received: from localhost (ovpn-115-22.ams2.redhat.com [10.36.115.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFF1927CDB;
-        Tue, 28 Apr 2020 08:53:09 +0000 (UTC)
-Date:   Tue, 28 Apr 2020 09:53:08 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Chirantan Ekbote <chirantan@chromium.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>
-Subject: Re: [PATCH 1/2] fuse: virtiofs: Fix nullptr dereference
-Message-ID: <20200428085308.GA15547@stefanha-x1.localdomain>
-References: <20200424062540.23679-1-chirantan@chromium.org>
- <20200427175814.GC146096@redhat.com>
+        Tue, 28 Apr 2020 05:32:56 -0400
+X-IronPort-AV: E=Sophos;i="5.73,326,1583164800"; 
+   d="scan'208";a="90638122"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 28 Apr 2020 17:32:51 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 3DFFC50A9991;
+        Tue, 28 Apr 2020 17:32:49 +0800 (CST)
+Received: from [10.167.225.141] (10.167.225.141) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 28 Apr 2020 17:32:46 +0800
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogUmU6IFtSRkMgUEFUQ0ggMC84XSBkYXg6IEFkZCBh?=
+ =?UTF-8?Q?_dax-rmap_tree_to_support_reflink?=
+To:     Dave Chinner <david@fromorbit.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "Qi, Fuli" <qi.fuli@fujitsu.com>,
+        "Gotou, Yasunori" <y-goto@fujitsu.com>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+ <20200427122836.GD29705@bombadil.infradead.org>
+ <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
+ <20200428064318.GG2040@dread.disaster.area>
+From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <259fe633-e1ff-b279-cd8c-1a81eaa40941@cn.fujitsu.com>
+Date:   Tue, 28 Apr 2020 17:32:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200427175814.GC146096@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
-Content-Disposition: inline
+In-Reply-To: <20200428064318.GG2040@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) To
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
+X-yoursite-MailScanner-ID: 3DFFC50A9991.AE2A1
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 27, 2020 at 01:58:14PM -0400, Vivek Goyal wrote:
-> On Fri, Apr 24, 2020 at 03:25:39PM +0900, Chirantan Ekbote wrote:
-> > virtiofs device implementations are allowed to provide more than one
-> > request queue.  In this case `fsvq->fud` would not be initialized,
-> > leading to a nullptr dereference later during driver initialization.
-> >=20
-> > Make sure that `fsvq->fud` is initialized for all request queues even i=
-f
-> > the driver doesn't use them.
-> >=20
-> > Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
-> > ---
-> >  fs/fuse/virtio_fs.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > index bade747689033..d3c38222a7e4e 100644
-> > --- a/fs/fuse/virtio_fs.c
-> > +++ b/fs/fuse/virtio_fs.c
-> > @@ -1066,10 +1066,13 @@ static int virtio_fs_fill_super(struct super_bl=
-ock *sb)
-> >  =09}
-> > =20
-> >  =09err =3D -ENOMEM;
-> > -=09/* Allocate fuse_dev for hiprio and notification queues */
-> > -=09for (i =3D 0; i < VQ_REQUEST; i++) {
-> > +=09/* Allocate fuse_dev for all queues except the first request queue.=
- */
-> > +=09for (i =3D 0; i < fs->nvqs; i++) {
-> >  =09=09struct virtio_fs_vq *fsvq =3D &fs->vqs[i];
-> > =20
-> > +=09=09if (i =3D=3D VQ_REQUEST)
-> > +=09=09=09continue;
-> > +
->=20
-> These special conditions of initializing fuse device for one queue
-> fusing fill_super_common() and rest of the queues outside of it, are
-> bothering me. I am proposing a separate patch where all fuse device
-> initialization/cleanup is done by the caller. It makes code look
-> cleaner and easier to understand.
 
-Nice!
+On 2020/4/28 下午2:43, Dave Chinner wrote:
+> On Tue, Apr 28, 2020 at 06:09:47AM +0000, Ruan, Shiyang wrote:
+>>
+>> 在 2020/4/27 20:28:36, "Matthew Wilcox" <willy@infradead.org> 写道:
+>>
+>>> On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
+>>>>   This patchset is a try to resolve the shared 'page cache' problem for
+>>>>   fsdax.
+>>>>
+>>>>   In order to track multiple mappings and indexes on one page, I
+>>>>   introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
+>>>>   will be associated more than once if is shared.  At the second time we
+>>>>   associate this entry, we create this rb-tree and store its root in
+>>>>   page->private(not used in fsdax).  Insert (->mapping, ->index) when
+>>>>   dax_associate_entry() and delete it when dax_disassociate_entry().
+>>>
+>>> Do we really want to track all of this on a per-page basis?  I would
+>>> have thought a per-extent basis was more useful.  Essentially, create
+>>> a new address_space for each shared extent.  Per page just seems like
+>>> a huge overhead.
+>>>
+>> Per-extent tracking is a nice idea for me.  I haven't thought of it
+>> yet...
+>>
+>> But the extent info is maintained by filesystem.  I think we need a way
+>> to obtain this info from FS when associating a page.  May be a bit
+>> complicated.  Let me think about it...
+> 
+> That's why I want the -user of this association- to do a filesystem
+> callout instead of keeping it's own naive tracking infrastructure.
+> The filesystem can do an efficient, on-demand reverse mapping lookup
+> from it's own extent tracking infrastructure, and there's zero
+> runtime overhead when there are no errors present.
+> 
+> At the moment, this "dax association" is used to "report" a storage
+> media error directly to userspace. I say "report" because what it
+> does is kill userspace processes dead. The storage media error
+> actually needs to be reported to the owner of the storage media,
+> which in the case of FS-DAX is the filesytem.
 
-Stefan
+Understood.
 
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
+BTW, this is the usage in memory-failure, so what about rmap?  I have 
+not found how to use this tracking in rmap.  Do you have any ideas?
 
------BEGIN PGP SIGNATURE-----
+> 
+> That way the filesystem can then look up all the owners of that bad
+> media range (i.e. the filesystem block it corresponds to) and take
+> appropriate action. e.g.
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl6n7vIACgkQnKSrs4Gr
-c8hteAf/eYI9TctYqcOxsmycO3jHxaBajTT1j+7GE3qjJo+kGEV5XkAFdqNGKc6q
-O0wtnX8BrFIGvjo/oyibAtA2r712jKx0M6TllaKEOaT5ukuWA9Ele5Ahn0rn2hJV
-itjPBriTX/r/R4tAtHeItWrWgmnYhsoI29orLKPAZJbjilaiIyIStSG5UH8zmMa8
-VZpqfCX+MozlIJKyMb1e//FNDY9NQ7YLpyGLb30iB5pS7Nq12bKshV0r0wsqBCws
-HKz3VHyJz8Bso7GQCMiTzdeKYJuIT1ZY3NKixON2/0YAOpubd3ET19h5MFe/UX5S
-p7zIWZ2hShTWipUP3SM1QCpRoOWsew==
-=cZw4
------END PGP SIGNATURE-----
+I tried writing a function to look up all the owners' info of one block 
+in xfs for memory-failure use.  It was dropped in this patchset because 
+I found out that this lookup function needs 'rmapbt' to be enabled when 
+mkfs.  But by default, rmapbt is disabled.  I am not sure if it matters...
 
---FCuugMFkClbJLl1L--
+> 
+> - if it falls in filesytem metadata, shutdown the filesystem
+> - if it falls in user data, call the "kill userspace dead" routines
+>    for each mapping/index tuple the filesystem finds for the given
+>    LBA address that the media error occurred >
+> Right now if the media error is in filesystem metadata, the
+> filesystem isn't even told about it. The filesystem can't even shut
+> down - the error is just dropped on the floor and it won't be until
+> the filesystem next tries to reference that metadata that we notice
+> there is an issue.
+
+Understood.  Thanks.
+
+> 
+> Cheers,
+> 
+> Dave.
+> 
+
+
+--
+Thanks,
+Ruan Shiyang.
+
 
