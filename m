@@ -2,119 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 037491BCF55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 00:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F651BCF59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 00:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbgD1WCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 18:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726384AbgD1WCH (ORCPT
+        id S1726519AbgD1WCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 18:02:42 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:41588 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726343AbgD1WCl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 18:02:07 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974C0C03C1AD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 15:02:06 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id l19so454410lje.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 15:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=qgsuGKbVjYSeRuT0TDuIXexAYzlpaF3ybirX/bZdq/M=;
-        b=Nb6/Li2pKgIuauzZc2N7D4986KwsAReiq+tNfzAVNQVdh/FoY66ln1u7c/OYs5nAIQ
-         5UN/eOvHcUkIcP4q9blPXT94fH+WWdxswwCB5DKULdEHPi1YqR1dvk2z6PvlWWeAQAcm
-         wQwwSDA8HHbq+YgMhNTWRBM/CImHC0LY9UotCwM0UgXh0tABr3MbTh+50pfQ0KbVJKi8
-         cg4w5xhIpzuG6Bd892VjlS1HnODoa4vjODLOrKsg/dV5ZzXRX6o13x78TwXT7LaG0BJE
-         xgEIremOXnl4KN3PAUhl/lbPEuA27Zm/tMJk1F0bDyX0J3fzcmWjvKcuxbldGRhUrvwA
-         AVzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qgsuGKbVjYSeRuT0TDuIXexAYzlpaF3ybirX/bZdq/M=;
-        b=VSwiMlY3RELiTjuzRbxY3PGxo1CzvG+08vPctyJnVp8WDCVDerP4yYE0q4dhMPtDL9
-         GkGaqq3Sg8IjvqUzmO56G2M/ULYCHVTuaxymVzcbevrqQmADCH6G6iuq6VjNXJ/1kymP
-         5w3FkOtVEq/jcrszEGSKFiHHsGXQadviSdSPzPgpNHIJ48sohY4xoLmLV4qeNU0W0I/0
-         RoJ0isWYHlE1xGAvyr0mOOk5Qovftz5K3kZ/qiMul4hk8OVdCw2EPVUMRmCCgIwjFuGb
-         irv2dEzFnakex1jwWnMOqvBXGoB6VlRPpBJ3x7CAfNjn4+GYcETYwkbXfFRv5Z5I6oZN
-         WDxA==
-X-Gm-Message-State: AGi0PuYt5hEJBp1Hvoo23cC9tHCpaUYQSe4HOXSWQy67VR+ERxCznDI9
-        nYqv+XZsi2pqgRdjtjaw2bHwuELPv9Q0Y86wuw7EfQ==
-X-Google-Smtp-Source: APiQypK6ydV759YI7StmjgOVJfSU2MfnmxevWP+lyXRgv9iMHdwfQp34+B8t21gh6ZdagByaUv/XhQqYXuOXjfVzfUY=
-X-Received: by 2002:a2e:b249:: with SMTP id n9mr18998872ljm.221.1588111324730;
- Tue, 28 Apr 2020 15:02:04 -0700 (PDT)
+        Tue, 28 Apr 2020 18:02:41 -0400
+Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 3E9873A45A1;
+        Wed, 29 Apr 2020 08:02:33 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jTYJE-0008Uv-5w; Wed, 29 Apr 2020 08:02:32 +1000
+Date:   Wed, 29 Apr 2020 08:02:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "Qi, Fuli" <qi.fuli@fujitsu.com>,
+        "Gotou, Yasunori" <y-goto@fujitsu.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBSZQ==?= =?utf-8?Q?=3A?= [RFC PATCH 0/8]
+ dax: Add a dax-rmap tree to support reflink
+Message-ID: <20200428220232.GI2040@dread.disaster.area>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+ <20200427122836.GD29705@bombadil.infradead.org>
+ <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
+ <20200428064318.GG2040@dread.disaster.area>
+ <259fe633-e1ff-b279-cd8c-1a81eaa40941@cn.fujitsu.com>
+ <20200428111636.GK29705@bombadil.infradead.org>
+ <20200428112441.GH2040@dread.disaster.area>
+ <20200428153732.GZ6742@magnolia>
 MIME-Version: 1.0
-References: <20200428175129.634352-1-mic@digikod.net> <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
- <87blnb48a3.fsf@mid.deneb.enyo.de>
-In-Reply-To: <87blnb48a3.fsf@mid.deneb.enyo.de>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 29 Apr 2020 00:01:38 +0200
-Message-ID: <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200428153732.GZ6742@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
+        a=IkcTkHD0fZMA:10 a=cl8xLZFz6L8A:10 a=5KLPUuaC_9wA:10 a=JfrnYn6hAAAA:8
+        a=7-415B0cAAAA:8 a=l6wd5GMc4HtCNSAcdtkA:9 a=z4jTvAT5gXS7p1mQ:21
+        a=_k9EnfUi_P5Muxk2:21 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
-> * Jann Horn:
->
-> > Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
-> > the dynamic linker.
->
-> Absolutely.  In typical configurations, the kernel does not enforce
-> that executable mappings must be backed by files which are executable.
-> It's most obvious with using an explicit loader invocation to run
-> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
-> than trying to reimplement the kernel permission checks (or what some
-> believe they should be) in userspace.
+On Tue, Apr 28, 2020 at 08:37:32AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 28, 2020 at 09:24:41PM +1000, Dave Chinner wrote:
+> > On Tue, Apr 28, 2020 at 04:16:36AM -0700, Matthew Wilcox wrote:
+> > > On Tue, Apr 28, 2020 at 05:32:41PM +0800, Ruan Shiyang wrote:
+> > > > On 2020/4/28 下午2:43, Dave Chinner wrote:
+> > > > > On Tue, Apr 28, 2020 at 06:09:47AM +0000, Ruan, Shiyang wrote:
+> > > > > > 在 2020/4/27 20:28:36, "Matthew Wilcox" <willy@infradead.org> 写道:
+> > > > > > > On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
+> > > > > > > >   This patchset is a try to resolve the shared 'page cache' problem for
+> > > > > > > >   fsdax.
+> > > > > > > > 
+> > > > > > > >   In order to track multiple mappings and indexes on one page, I
+> > > > > > > >   introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
+> > > > > > > >   will be associated more than once if is shared.  At the second time we
+> > > > > > > >   associate this entry, we create this rb-tree and store its root in
+> > > > > > > >   page->private(not used in fsdax).  Insert (->mapping, ->index) when
+> > > > > > > >   dax_associate_entry() and delete it when dax_disassociate_entry().
+> > > > > > > 
+> > > > > > > Do we really want to track all of this on a per-page basis?  I would
+> > > > > > > have thought a per-extent basis was more useful.  Essentially, create
+> > > > > > > a new address_space for each shared extent.  Per page just seems like
+> > > > > > > a huge overhead.
+> > > > > > > 
+> > > > > > Per-extent tracking is a nice idea for me.  I haven't thought of it
+> > > > > > yet...
+> > > > > > 
+> > > > > > But the extent info is maintained by filesystem.  I think we need a way
+> > > > > > to obtain this info from FS when associating a page.  May be a bit
+> > > > > > complicated.  Let me think about it...
+> > > > > 
+> > > > > That's why I want the -user of this association- to do a filesystem
+> > > > > callout instead of keeping it's own naive tracking infrastructure.
+> > > > > The filesystem can do an efficient, on-demand reverse mapping lookup
+> > > > > from it's own extent tracking infrastructure, and there's zero
+> > > > > runtime overhead when there are no errors present.
+> > > > > 
+> > > > > At the moment, this "dax association" is used to "report" a storage
+> > > > > media error directly to userspace. I say "report" because what it
+> > > > > does is kill userspace processes dead. The storage media error
+> > > > > actually needs to be reported to the owner of the storage media,
+> > > > > which in the case of FS-DAX is the filesytem.
+> > > > 
+> > > > Understood.
+> > > > 
+> > > > BTW, this is the usage in memory-failure, so what about rmap?  I have not
+> > > > found how to use this tracking in rmap.  Do you have any ideas?
+> > > > 
+> > > > > 
+> > > > > That way the filesystem can then look up all the owners of that bad
+> > > > > media range (i.e. the filesystem block it corresponds to) and take
+> > > > > appropriate action. e.g.
+> > > > 
+> > > > I tried writing a function to look up all the owners' info of one block in
+> > > > xfs for memory-failure use.  It was dropped in this patchset because I found
+> > > > out that this lookup function needs 'rmapbt' to be enabled when mkfs.  But
+> > > > by default, rmapbt is disabled.  I am not sure if it matters...
+> > > 
+> > > I'm pretty sure you can't have shared extents on an XFS filesystem if you
+> > > _don't_ have the rmapbt feature enabled.  I mean, that's why it exists.
+> > 
+> > You're confusing reflink with rmap. :)
+> > 
+> > rmapbt does all the reverse mapping tracking, reflink just does the
+> > shared data extent tracking.
+> > 
+> > But given that anyone who wants to use DAX with reflink is going to
+> > have to mkfs their filesystem anyway (to turn on reflink) requiring
+> > that rmapbt is also turned on is not a big deal. Especially as we
+> > can check it at mount time in the kernel...
+> 
+> Are we going to turn on rmap by default?  The last I checked, it did
+> have a 10-20% performance cost on extreme metadata-heavy workloads.
+> Or do we only enable it by default if mkfs detects a pmem device?
 
-Oh, good point.
+Just have the kernel refuse to mount a reflink enabled filesystem on
+a DAX capable device unless -o dax=never or rmapbt is enabled.
 
-That actually seems like something Micka=C3=ABl could add to his series? If
-someone turns on that knob for "When an interpreter wants to execute
-something, enforce that we have execute access to it", they probably
-also don't want it to be possible to just map files as executable? So
-perhaps when that flag is on, the kernel should either refuse to map
-anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
-(less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
-check whether the file is executable and bail out if not?
+That'll get the message across pretty quickly....
 
-A configuration where interpreters verify that scripts are executable,
-but other things can just mmap executable pages, seems kinda
-inconsistent...
+> (Admittedly, most people do not run fsx as a productivity app; the
+> normal hit is usually 3-5% which might not be such a big deal since you
+> also get (half of) online fsck. :P)
+
+I have not noticed the overhead at all on any of my production
+machines since I enabled it way on all of them way back when....
+
+And, really, pmem is a _very poor choice_ for metadata intensive
+applications on XFS as pmem is completely synchronous.  XFS has an
+async IO model for it's metadata that *must* be buffered (so no
+DAX!) and the synchronous nature of pmem completely defeats the
+architectural IO pipelining XFS uses to allow thousands of
+concurrent metadata IOs in flight. OTOH, pmem IO depth is limited to
+the number of CPUs that are concurrently issuing IO, so it really,
+really sucks compared to a handful of high end nvme SSDs on PCIe
+4.0....
+
+So with that in mind, I see little reason to care about the small
+additional overhead of rmapbt on FS-DAX installations that require
+reflink...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
