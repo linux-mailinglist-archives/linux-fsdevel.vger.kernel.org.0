@@ -2,86 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7191BB7FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4946F1BB806
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgD1HrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 03:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbgD1HrT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 03:47:19 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156CBC03C1A9;
-        Tue, 28 Apr 2020 00:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XqbZray/izI+DtrCZeQqScd+zG1eR8dDs357djsfCWI=; b=rzZ7dWmYdkxfunsUxfkxv/fh5g
-        m6ldEYaWz6UCIpI8/bFvtB5yw82lrHnY1Hb6XCELINXMcsjN3oRwF8e+Xz1q1euYOOySS45KZsYfh
-        b4WGefXAB5V6TN8vGK8Y3FXiUkQkSRPOq29fEVH0yQ3+TcBoO/PaxJjiqOHVXlCcy0wOwZQce8lAC
-        ZG3B0UOXwRK542Kt9GwWMHogmveURyNb3D5r6NFGx0l0vwU2TJkQ/aanW++yi8+vD/f/xQcqed3Cm
-        O0imsixLSHCWqkYtwyFFBv7q45RxeHIkh8OaWBSd8dGQNpHd0yBXn+1KRWxDj+NSLUmEmaWZdVOj9
-        ANHmZgLQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTKxV-0003KI-8Y; Tue, 28 Apr 2020 07:47:13 +0000
-Date:   Tue, 28 Apr 2020 00:47:13 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        id S1726575AbgD1Hse (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 03:48:34 -0400
+Received: from verein.lst.de ([213.95.11.211]:54693 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbgD1Hsa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 03:48:30 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id B772568CF0; Tue, 28 Apr 2020 09:48:27 +0200 (CEST)
+Date:   Tue, 28 Apr 2020 09:48:27 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jan Kara <jack@suse.com>, tytso@mit.edu,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCHv2] fibmap: Warn and return an error in case of block >
- INT_MAX
-Message-ID: <20200428074713.GA12180@infradead.org>
-References: <58f0c64a3f2dbd363fb93371435f6bcaeeb7abe4.1588058868.git.riteshh@linux.ibm.com>
+        Jeremy Kerr <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH 2/7] signal: factor copy_siginfo_to_external32 from
+ copy_siginfo_to_user32
+Message-ID: <20200428074827.GA19846@lst.de>
+References: <20200421154204.252921-1-hch@lst.de> <20200421154204.252921-3-hch@lst.de> <20200425214724.a9a00c76edceff7296df7874@linux-foundation.org> <20200426074039.GA31501@lst.de> <20200427154050.e431ad7fb228610cc6b95973@linux-foundation.org> <20200428070935.GE18754@lst.de> <ddbaba35-9cc5-dfb9-3cae-51b026de5b65@c-s.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58f0c64a3f2dbd363fb93371435f6bcaeeb7abe4.1588058868.git.riteshh@linux.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ddbaba35-9cc5-dfb9-3cae-51b026de5b65@c-s.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 01:08:31PM +0530, Ritesh Harjani wrote:
-> We better warn the fibmap user and not return a truncated and therefore
-> an incorrect block map address if the bmap() returned block address
-> is greater than INT_MAX (since user supplied integer pointer).
-> 
-> It's better to pr_warn() all user of ioctl_fibmap() and return a proper
-> error code rather than silently letting a FS corruption happen if the
-> user tries to fiddle around with the returned block map address.
-> 
-> We fix this by returning an error code of -ERANGE and returning 0 as the
-> block mapping address in case if it is > INT_MAX.
-> 
-> Now iomap_bmap() could be called from either of these two paths.
-> Either when a user is calling an ioctl_fibmap() interface to get
-> the block mapping address or by some filesystem via use of bmap()
-> internal kernel API.
-> bmap() kernel API is well equipped with handling of u64 addresses.
-> 
-> WARN condition in iomap_bmap_actor() was mainly added to warn all
-> the fibmap users. But now that we have directly added this warning
-> for all fibmap users and also made sure to return 0 as block map address
-> in case if addr > INT_MAX.
-> So we can now remove this logic from iomap_bmap_actor().
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+On Tue, Apr 28, 2020 at 09:45:46AM +0200, Christophe Leroy wrote:
+>> I guess that might be a worthwhile middle ground.  Still not a fan of
+>> all these ifdefs..
+>>
+>
+> Can't we move the small X32 specific part out of 
+> __copy_siginfo_to_user32(), in an arch specific helper that voids for other 
+> architectures ?
+>
+> Something like:
+>
+> 		if (!arch_special_something(&new, from)) {
+> 			new.si_utime = from->si_utime;
+> 			new.si_stime = from->si_stime;
+> 		}
+>
+> Then the arch_special_something() does what it wants in x86 and returns 1, 
+> and for architectures not implementating it, a generic version return 0 all 
+> the time.
 
-Well, this changed quite a bit from the previous version, so I would
-have dropped the Reviewed-by tags.
+The main issue is that we need an explicit paramter to select x32,
+as it can't just be discovered from the calling context otherwise.
+The rest is just sugarcoating.
 
-That being said this version still looks good to me:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
