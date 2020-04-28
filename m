@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7291BB2DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9131BB2D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 02:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbgD1AVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Apr 2020 20:21:48 -0400
-Received: from mga05.intel.com ([192.55.52.43]:40690 "EHLO mga05.intel.com"
+        id S1726666AbgD1AWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Apr 2020 20:22:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:16476 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbgD1AVr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Apr 2020 20:21:47 -0400
-IronPort-SDR: 5I+h9wpec3M5t/LMY/OXixjbjJtBTqUjRccg5xbFg7dHXqXgiyN8yWc/foGvKhJ4wQnMV7GCYQ
- WCHchg5bIKgQ==
+        id S1726424AbgD1AVt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Apr 2020 20:21:49 -0400
+IronPort-SDR: otWHwsYP7gJC3Nedz6AbXqXhkUeVc5uPDXCHZ+L0kQVVteh2pfSR7lMCPyRP+Bveh/tYzgz0i9
+ BLJquHBI3eig==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:47 -0700
-IronPort-SDR: 8HXR028P2Jqh6f3cFIkVcptTXE6rTaUHplYnb/zxCMhtfdmToUdOJ4YjVd7Jj2eEaswyGCq75m
- azAYa/ZGxVqQ==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:48 -0700
+IronPort-SDR: CzElres2me3QpcebS4hq61xayp3+MnEtKbHg/B4tNmZEW4TkWo5aykndJ3RyIAZQsROOEfosir
+ v8KDoWQIoJgg==
 X-IronPort-AV: E=Sophos;i="5.73,325,1583222400"; 
-   d="scan'208";a="246331329"
+   d="scan'208";a="275659926"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:46 -0700
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:21:47 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Subject: [PATCH V11 01/11] fs/xfs: Remove unnecessary initialization of i_rwsem
-Date:   Mon, 27 Apr 2020 17:21:32 -0700
-Message-Id: <20200428002142.404144-2-ira.weiny@intel.com>
+Subject: [PATCH V11 02/11] fs: Remove unneeded IS_DAX() check in io_is_direct()
+Date:   Mon, 27 Apr 2020 17:21:33 -0700
+Message-Id: <20200428002142.404144-3-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200428002142.404144-1-ira.weiny@intel.com>
 References: <20200428002142.404144-1-ira.weiny@intel.com>
@@ -50,51 +50,84 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-An earlier call of xfs_reinit_inode() from xfs_iget_cache_hit() already
-handles initialization of i_rwsem.
+Remove the check because DAX now has it's own read/write methods and
+file systems which support DAX check IS_DAX() prior to IOCB_DIRECT on
+their own.  Therefore, it does not matter if the file state is DAX when
+the iocb flags are created.
 
-Doing so again is unneeded.
+Also remove io_is_direct() as it is just a simple flag check.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
-Changes from V4:
-	Update commit message to make it clear the xfs_iget_cache_hit()
-	is actually doing the initialization via xfs_reinit_inode()
+Changes from v8:
+	Rebase to latest Linus tree
 
-New for V4:
+Changes from v6:
+	remove io_is_direct() as well.
+	Remove Reviews since this is quite a bit different.
 
-NOTE: This was found while ensuring the new i_aops_sem was properly
-handled.  It seems like this is a layering violation so I think it is
-worth cleaning up so as to not confuse others.
+Changes from v3:
+	Reword commit message.
+	Reordered to be a 'pre-cleanup' patch
 ---
- fs/xfs/xfs_icache.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/block/loop.c | 6 +++---
+ include/linux/fs.h   | 7 +------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 8bf1d15be3f6..17a0b86fe701 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -423,6 +423,7 @@ xfs_iget_cache_hit(
- 		spin_unlock(&ip->i_flags_lock);
- 		rcu_read_unlock();
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index da693e6a834e..14372df0f354 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -634,8 +634,8 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
  
-+		ASSERT(!rwsem_is_locked(&inode->i_rwsem));
- 		error = xfs_reinit_inode(mp, inode);
- 		if (error) {
- 			bool wake;
-@@ -456,9 +457,6 @@ xfs_iget_cache_hit(
- 		ip->i_sick = 0;
- 		ip->i_checked = 0;
+ static inline void loop_update_dio(struct loop_device *lo)
+ {
+-	__loop_update_dio(lo, io_is_direct(lo->lo_backing_file) |
+-			lo->use_dio);
++	__loop_update_dio(lo, (lo->lo_backing_file->f_flags & O_DIRECT) |
++				lo->use_dio);
+ }
  
--		ASSERT(!rwsem_is_locked(&inode->i_rwsem));
--		init_rwsem(&inode->i_rwsem);
+ static void loop_reread_partitions(struct loop_device *lo,
+@@ -1028,7 +1028,7 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
+ 	if (!(lo_flags & LO_FLAGS_READ_ONLY) && file->f_op->fsync)
+ 		blk_queue_write_cache(lo->lo_queue, true, false);
+ 
+-	if (io_is_direct(lo->lo_backing_file) && inode->i_sb->s_bdev) {
++	if ((lo->lo_backing_file->f_flags & O_DIRECT) && inode->i_sb->s_bdev) {
+ 		/* In case of direct I/O, match underlying block size */
+ 		unsigned short bsize = bdev_logical_block_size(
+ 			inode->i_sb->s_bdev);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4f6f59b4f22a..a87cc5845a02 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3394,11 +3394,6 @@ extern void setattr_copy(struct inode *inode, const struct iattr *attr);
+ 
+ extern int file_update_time(struct file *file);
+ 
+-static inline bool io_is_direct(struct file *filp)
+-{
+-	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
+-}
 -
- 		spin_unlock(&ip->i_flags_lock);
- 		spin_unlock(&pag->pag_ici_lock);
- 	} else {
+ static inline bool vma_is_dax(const struct vm_area_struct *vma)
+ {
+ 	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
+@@ -3423,7 +3418,7 @@ static inline int iocb_flags(struct file *file)
+ 	int res = 0;
+ 	if (file->f_flags & O_APPEND)
+ 		res |= IOCB_APPEND;
+-	if (io_is_direct(file))
++	if (file->f_flags & O_DIRECT)
+ 		res |= IOCB_DIRECT;
+ 	if ((file->f_flags & O_DSYNC) || IS_SYNC(file->f_mapping->host))
+ 		res |= IOCB_DSYNC;
 -- 
 2.25.1
 
