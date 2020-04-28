@@ -2,125 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D0E1BB7F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D6F1BB7FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Apr 2020 09:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgD1Hp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 03:45:56 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:50279 "EHLO pegase1.c-s.fr"
+        id S1726673AbgD1Hq4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 03:46:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726253AbgD1Hp4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 03:45:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 49BDGT61qhz9v0Yh;
-        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=UBR5gAQ5; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Jm5mmlEvRnDf; Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 49BDGT4QTyz9v0Yg;
-        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1588059953; bh=/2fZZkU1LY2pi9G08Gg14D8HOq4abGxDwLX+kqPlt1o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UBR5gAQ53YJN7ELul96h9s1XA1XXA+4fvsvJ+j3pt0+0nKvRCMh3AZyL/IBPKVzuA
-         j3Gc+fUrI76w6umT2wOmN3GTPm/U0ZjnNCv4YC/kSlVhGQRyeNlBqhuRQjCUJuX8ff
-         HU7o4PADGi6vHlzTQ7FuNK5gQHJ7lzZ6KlCoAPp8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9CC8B8B7EF;
-        Tue, 28 Apr 2020 09:45:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id rlSWOtbbJT9w; Tue, 28 Apr 2020 09:45:54 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DE3628B7ED;
-        Tue, 28 Apr 2020 09:45:53 +0200 (CEST)
-Subject: Re: [PATCH 2/7] signal: factor copy_siginfo_to_external32 from
- copy_siginfo_to_user32
-To:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726253AbgD1Hqz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 03:46:55 -0400
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17626206A5;
+        Tue, 28 Apr 2020 07:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588060015;
+        bh=Yu1yHSEbM7UvnreW4VbWBBp6FDeif1jXQ1bMBO+35AI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g2J9L/Z+US9yUFhggxbwGgaoN7BfTgOzNGAVSF1W5yHTLAAUrfEJlrEUrQcnmb8EF
+         RLN+hTR6fYKIh+o67x++dRLLYAJWkrIpdE/m2b58mO8xyXA+0PhsI+A1akVDTLXjZ6
+         7kDJXwmhsUojV8JTeFGQZMzmIpADrf4RwY2RL1xw=
+Received: by pali.im (Postfix)
+        id 2E053735; Tue, 28 Apr 2020 09:46:53 +0200 (CEST)
+Date:   Tue, 28 Apr 2020 09:46:53 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeremy Kerr <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-References: <20200421154204.252921-1-hch@lst.de>
- <20200421154204.252921-3-hch@lst.de>
- <20200425214724.a9a00c76edceff7296df7874@linux-foundation.org>
- <20200426074039.GA31501@lst.de>
- <20200427154050.e431ad7fb228610cc6b95973@linux-foundation.org>
- <20200428070935.GE18754@lst.de>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <ddbaba35-9cc5-dfb9-3cae-51b026de5b65@c-s.fr>
-Date:   Tue, 28 Apr 2020 09:45:46 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: exfat upcase table for code points above U+FFFF (Was: Re:
+ [PATCH] staging: exfat: add exfat filesystem code to staging)
+Message-ID: <20200428074653.kcq6ibj6rjlrnau7@pali>
+References: <20190830075647.wvhrx4asnkrfkkwk@pali>
+ <20191016140353.4hrncxa5wkx47oau@pali>
+ <20191016143113.GS31224@sasha-vm>
+ <20191016160349.pwghlg566hh2o7id@pali>
+ <20191016203317.GU31224@sasha-vm>
+ <20191017075008.2uqgdimo3hrktj3i@pali>
+ <20200213000656.hx5wdofkcpg7aoyo@pali>
+ <20200213211847.GA1734@sasha-vm>
+ <20200421213045.skv2dvgm3xuspbl7@pali>
+ <20200427154913.GR13035@sasha-vm>
 MIME-Version: 1.0
-In-Reply-To: <20200428070935.GE18754@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200427154913.GR13035@sasha-vm>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-Le 28/04/2020 à 09:09, Christoph Hellwig a écrit :
-> On Mon, Apr 27, 2020 at 03:40:50PM -0700, Andrew Morton wrote:
->>> https://www.spinics.net/lists/kernel/msg3473847.html
->>> https://www.spinics.net/lists/kernel/msg3473840.html
->>> https://www.spinics.net/lists/kernel/msg3473843.html
->>
->> OK, but that doesn't necessitate the above monstrosity?  How about
->>
->> static int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
->> 			     const struct kernel_siginfo *from, bool x32_ABI)
->> {
->> 	struct compat_siginfo new;
->> 	copy_siginfo_to_external32(&new, from);
->> 	...
->> }
->>
->> int copy_siginfo_to_user32(struct compat_siginfo __user *to,
->> 			   const struct kernel_siginfo *from)
->> {
->> #if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
->> 	return __copy_siginfo_to_user32(to, from, in_x32_syscall());
->> #else
->> 	return __copy_siginfo_to_user32(to, from, 0);
->> #endif
->> }
->>
->> Or something like that - I didn't try very hard.  We know how to do
->> this stuff, and surely this thing isn't how!
+On Monday 27 April 2020 11:49:13 Sasha Levin wrote:
+> On Tue, Apr 21, 2020 at 11:30:45PM +0200, Pali Rohár wrote:
+> > On Thursday 13 February 2020 16:18:47 Sasha Levin wrote:
+> > > On Thu, Feb 13, 2020 at 01:06:56AM +0100, Pali Rohár wrote:
+> > > > In released exFAT specification is not written how are Unicode code
+> > > > points above U+FFFF represented in exFAT upcase table. Normally in
+> > > > UTF-16 are Unicode code points above U+FFFF represented by surrogate
+> > > > pairs but compression format of exFAT upcase table is not clear how to
+> > > > do it there.
+> > > >
+> > > > Are you able to send question about this problem to relevant MS people?
+> > > >
+> > > > New Linux implementation of exfat which is waiting on mailing list just
+> > > > do not support Unicode code points above U+FFFF in exFAT upcase table.
+> > > 
+> > > Sure, I'll forward this question on. I'll see if I can get someone from
+> > > their team who could be available to answer questions such as these in
+> > > the future - Microsoft is interested in maintaining compatiblity between
+> > > Linux and Windows exFAT implementations.
+> > 
+> > Hello Sasha! Have you got any answer from exfat MS team about upcase
+> > table for Unicode code points above U+FFFF?
 > 
-> I guess that might be a worthwhile middle ground.  Still not a fan of
-> all these ifdefs..
-> 
+> Sorry for taking so long. This is my understanding from the Windows
+> folks: Windows filesystems just don't support variable encoding length,
+> and expect UCS-2 strings.
 
-Can't we move the small X32 specific part out of 
-__copy_siginfo_to_user32(), in an arch specific helper that voids for 
-other architectures ?
-
-Something like:
-
-		if (!arch_special_something(&new, from)) {
-			new.si_utime = from->si_utime;
-			new.si_stime = from->si_stime;
-		}
-
-Then the arch_special_something() does what it wants in x86 and returns 
-1, and for architectures not implementating it, a generic version return 
-0 all the time.
-
-Christophe
+Ok, so should I understand your answer as exFAT upcase table does not
+support representing Unicode code points above U+FFFF and therefore
+exFAT implementation should expect that toupper(u) = u and tolower(u) = u
+for any Unicode code point u in range [U+10000, U+10FFFF]? This is how
+current exfat linux driver behave.
