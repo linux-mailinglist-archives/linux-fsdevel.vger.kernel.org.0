@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F25291BCFCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 00:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB8631BCFD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 00:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbgD1WTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 18:19:48 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32655 "EHLO mga06.intel.com"
+        id S1726510AbgD1WVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 18:21:49 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11602 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbgD1WTs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 18:19:48 -0400
-IronPort-SDR: ZDQxUzUBUfQ6GM5vJm+1jsawEtjmVZUDL3FTNfwnlsMEkQkZR/yVdW2cbERcCeMCGvCOc85pYp
- c9tvP60OW0yA==
+        id S1726044AbgD1WVs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Apr 2020 18:21:48 -0400
+IronPort-SDR: ZdFyQ8ix4jn4cd2J8Il0o5u4AjtY0gknQ/5SkmJbLonuS8iS+UaWnwSw0vnz1D3/JrgHdHTHQY
+ OOmIHM7/IGLg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 15:19:45 -0700
-IronPort-SDR: eAU+Cj8p1QJrbdl6uNR4a/GW6kPJnSrPWsugqOqk5Z+Tp1L/GWzPUu/hvrpUeTkI0AMq5q6TXO
- zsYEmUALHorg==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 15:21:48 -0700
+IronPort-SDR: J2+qB5qmOmJszZAz0B5uxl3yMlv7p9z3wNuWe+gysNGpgpG5qbMfH3z5vOCjRu/lCWjFwfq+l9
+ PexJuH+RhlSQ==
 X-IronPort-AV: E=Sophos;i="5.73,328,1583222400"; 
-   d="scan'208";a="257763108"
+   d="scan'208";a="459380620"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 15:19:45 -0700
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 15:21:47 -0700
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>
@@ -35,11 +35,11 @@ Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
 Subject: [PATCH V11.1] Documentation/dax: Update Usage section
-Date:   Tue, 28 Apr 2020 15:19:42 -0700
-Message-Id: <20200428221942.409890-1-ira.weiny@intel.com>
+Date:   Tue, 28 Apr 2020 15:21:45 -0700
+Message-Id: <20200428222145.409961-1-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <'20200428002142.404144-5-ira.weiny@intel.com'>
-References: <'20200428002142.404144-5-ira.weiny@intel.com'>
+In-Reply-To: <20200428002142.404144-5-ira.weiny@intel.com>
+References: <20200428002142.404144-5-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
