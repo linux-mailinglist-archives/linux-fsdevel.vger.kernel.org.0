@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B336F1BD64C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 09:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3451BD64F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 09:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgD2HmO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 03:42:14 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2126 "EHLO huawei.com"
+        id S1726689AbgD2HmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 03:42:15 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2127 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726511AbgD2HmM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 03:42:12 -0400
-Received: from lhreml708-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 779649403968A3C98473;
-        Wed, 29 Apr 2020 08:42:10 +0100 (IST)
+        id S1726554AbgD2HmN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Apr 2020 03:42:13 -0400
+Received: from lhreml707-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 4A1DB5F8236ABC6C97AB;
+        Wed, 29 Apr 2020 08:42:11 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml708-chm.china.huawei.com (10.201.108.57) with Microsoft SMTP Server
+ lhreml707-chm.china.huawei.com (10.201.108.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
  15.1.1913.5; Wed, 29 Apr 2020 08:42:10 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Wed, 29 Apr 2020 09:42:09 +0200
+ 15.1.1913.5; Wed, 29 Apr 2020 09:42:10 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <david.safford@gmail.com>,
         <viro@zeniv.linux.org.uk>, <jmorris@namei.org>
@@ -29,9 +29,9 @@ CC:     <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 2/3] evm: Extend API of post hooks to pass the result of pre hooks
-Date:   Wed, 29 Apr 2020 09:39:34 +0200
-Message-ID: <20200429073935.11913-2-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 3/3] evm: Return -EAGAIN to ignore verification failures
+Date:   Wed, 29 Apr 2020 09:39:35 +0200
+Message-ID: <20200429073935.11913-3-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200429073935.11913-1-roberto.sassu@huawei.com>
 References: <20200429073935.11913-1-roberto.sassu@huawei.com>
@@ -46,263 +46,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch extends the API of post hooks to pass the result returned by the
-pre hooks. Given that now this information is available, post hooks can
-stop before updating the HMAC if the result of the pre hook is not zero.
+By default, EVM maintains the same behavior as before hooks were moved
+outside the LSM infrastructure. When EVM returns -EPERM, callers stop their
+execution and return the error to user space.
 
-They still reset the result of the last verification, stored in the
-integrity_iint_cache, to ensure that file metadata are re-evaluated after
-update.
+This patch introduces a new mode, called ignore, that changes the return
+value of the pre hooks from -EPERM to -EAGAIN. It also modifies the callers
+of pre and post hooks to continue the execution if -EAGAIN is returned. The
+error is then handled by the post hooks.
+
+The only error that is not ignored is when user space is trying to modify a
+portable signature. Once that signature has been validated with the current
+values of metadata, there is no valid reason to change them.
+
+From user space perspective, operations on corrupted metadata are
+successfully performed but post hooks didn't update the HMAC. At the next
+IMA verification, when evm_verifyxattr() is called, corruption will be
+detected and access will be denied.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
  fs/attr.c                         |  2 +-
- fs/xattr.c                        | 49 ++++++++++++++++++-------------
- include/linux/evm.h               | 18 ++++++++----
- security/integrity/evm/evm_main.c | 21 +++++++++++--
- 4 files changed, 59 insertions(+), 31 deletions(-)
+ fs/xattr.c                        |  4 ++--
+ security/integrity/evm/evm_main.c | 23 +++++++++++++++++------
+ 3 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/fs/attr.c b/fs/attr.c
-index 8f26d7d2e3b4..6ce60e1eba34 100644
+index 6ce60e1eba34..6370e2f3704d 100644
 --- a/fs/attr.c
 +++ b/fs/attr.c
-@@ -343,7 +343,7 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
- 		ima_inode_post_setattr(dentry);
--		evm_inode_post_setattr(dentry, ia_valid);
-+		evm_inode_post_setattr(dentry, ia_valid, evm_error);
- 	}
- 
- 	return error;
+@@ -329,7 +329,7 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 	if (error)
+ 		return error;
+ 	evm_error = evm_inode_setattr(dentry, attr);
+-	if (evm_error)
++	if (evm_error && evm_error != -EAGAIN)
+ 		return evm_error;
+ 	error = try_break_deleg(inode, delegated_inode);
+ 	if (error)
 diff --git a/fs/xattr.c b/fs/xattr.c
-index 3b323b75b741..b1fd2aa481a8 100644
+index b1fd2aa481a8..73f0f3cd6c45 100644
 --- a/fs/xattr.c
 +++ b/fs/xattr.c
-@@ -151,24 +151,8 @@ __vfs_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
- }
- EXPORT_SYMBOL(__vfs_setxattr);
+@@ -229,7 +229,7 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+ 		goto out;
  
--/**
-- *  __vfs_setxattr_noperm - perform setxattr operation without performing
-- *  permission checks.
-- *
-- *  @dentry - object to perform setxattr on
-- *  @name - xattr name to set
-- *  @value - value to set @name to
-- *  @size - size of @value
-- *  @flags - flags to pass into filesystem operations
-- *
-- *  returns the result of the internal setxattr or setsecurity operations.
-- *
-- *  This function requires the caller to lock the inode's i_mutex before it
-- *  is executed. It also assumes that the caller will make the appropriate
-- *  permission checks.
-- */
--int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
--		const void *value, size_t size, int flags)
-+static int __vfs_setxattr_noperm_evm(struct dentry *dentry, const char *name,
-+		const void *value, size_t size, int flags, int evm_error)
- {
- 	struct inode *inode = dentry->d_inode;
- 	int error = -EAGAIN;
-@@ -183,7 +167,8 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
- 			fsnotify_xattr(dentry);
- 			security_inode_post_setxattr(dentry, name, value,
- 						     size, flags);
--			evm_inode_post_setxattr(dentry, name, value, size);
-+			evm_inode_post_setxattr(dentry, name, value, size,
-+						evm_error);
- 		}
- 	} else {
- 		if (unlikely(is_bad_inode(inode)))
-@@ -205,6 +190,27 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
- 	return error;
- }
- 
-+/**
-+ *  __vfs_setxattr_noperm - perform setxattr operation without performing
-+ *  permission checks.
-+ *
-+ *  @dentry - object to perform setxattr on
-+ *  @name - xattr name to set
-+ *  @value - value to set @name to
-+ *  @size - size of @value
-+ *  @flags - flags to pass into filesystem operations
-+ *
-+ *  returns the result of the internal setxattr or setsecurity operations.
-+ *
-+ *  This function requires the caller to lock the inode's i_mutex before it
-+ *  is executed. It also assumes that the caller will make the appropriate
-+ *  permission checks.
-+ */
-+int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
-+		const void *value, size_t size, int flags)
-+{
-+	return __vfs_setxattr_noperm_evm(dentry, name, value, size, flags, 0);
-+}
- 
- int
- vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
-@@ -228,7 +234,8 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+ 	evm_error = evm_inode_setxattr(dentry, name, value, size);
+-	if (evm_error) {
++	if (evm_error && evm_error != -EAGAIN) {
+ 		error = evm_error;
  		goto out;
  	}
+@@ -408,7 +408,7 @@ vfs_removexattr(struct dentry *dentry, const char *name)
+ 		goto out;
  
--	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
-+	error = __vfs_setxattr_noperm_evm(dentry, name, value, size, flags,
-+					  evm_error);
- 
- out:
- 	inode_unlock(inode);
-@@ -410,7 +417,7 @@ vfs_removexattr(struct dentry *dentry, const char *name)
- 
- 	if (!error) {
- 		fsnotify_xattr(dentry);
--		evm_inode_post_removexattr(dentry, name);
-+		evm_inode_post_removexattr(dentry, name, evm_error);
+ 	evm_error = evm_inode_removexattr(dentry, name);
+-	if (evm_error) {
++	if (evm_error && evm_error != -EAGAIN) {
+ 		error = evm_error;
+ 		goto out;
  	}
- 
- out:
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 8302bc29bb35..cc23d2248d3e 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -22,16 +22,19 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
- 					     size_t xattr_value_len,
- 					     struct integrity_iint_cache *iint);
- extern int evm_inode_setattr(struct dentry *dentry, struct iattr *attr);
--extern void evm_inode_post_setattr(struct dentry *dentry, int ia_valid);
-+extern void evm_inode_post_setattr(struct dentry *dentry, int ia_valid,
-+				   int evm_pre_error);
- extern int evm_inode_setxattr(struct dentry *dentry, const char *name,
- 			      const void *value, size_t size);
- extern void evm_inode_post_setxattr(struct dentry *dentry,
- 				    const char *xattr_name,
- 				    const void *xattr_value,
--				    size_t xattr_value_len);
-+				    size_t xattr_value_len,
-+				    int evm_pre_error);
- extern int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name);
- extern void evm_inode_post_removexattr(struct dentry *dentry,
--				       const char *xattr_name);
-+				       const char *xattr_name,
-+				       int evm_pre_error);
- extern int evm_inode_init_security(struct inode *inode,
- 				   const struct xattr *xattr_array,
- 				   struct xattr *evm);
-@@ -66,7 +69,8 @@ static inline int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
- 	return 0;
- }
- 
--static inline void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-+static inline void evm_inode_post_setattr(struct dentry *dentry, int ia_valid,
-+					  int evm_pre_error)
- {
- 	return;
- }
-@@ -80,7 +84,8 @@ static inline int evm_inode_setxattr(struct dentry *dentry, const char *name,
- static inline void evm_inode_post_setxattr(struct dentry *dentry,
- 					   const char *xattr_name,
- 					   const void *xattr_value,
--					   size_t xattr_value_len)
-+					   size_t xattr_value_len,
-+					   int evm_pre_error)
- {
- 	return;
- }
-@@ -92,7 +97,8 @@ static inline int evm_inode_removexattr(struct dentry *dentry,
- }
- 
- static inline void evm_inode_post_removexattr(struct dentry *dentry,
--					      const char *xattr_name)
-+					      const char *xattr_name,
-+					      int evm_pre_error)
- {
- 	return;
- }
 diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index d361d7fdafc4..ca9eaef7058b 100644
+index ca9eaef7058b..ef09caa3bbcf 100644
 --- a/security/integrity/evm/evm_main.c
 +++ b/security/integrity/evm/evm_main.c
-@@ -422,6 +422,7 @@ static void evm_reset_status(struct inode *inode)
-  * @xattr_name: pointer to the affected extended attribute name
-  * @xattr_value: pointer to the new extended attribute value
-  * @xattr_value_len: pointer to the new extended attribute value length
-+ * @evm_pre_error: error returned by evm_inode_setxattr()
-  *
-  * Update the HMAC stored in 'security.evm' to reflect the change.
-  *
-@@ -430,7 +431,8 @@ static void evm_reset_status(struct inode *inode)
-  * i_mutex lock.
-  */
- void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
--			     const void *xattr_value, size_t xattr_value_len)
-+			     const void *xattr_value, size_t xattr_value_len,
-+			     int evm_pre_error)
+@@ -54,11 +54,13 @@ static struct xattr_list evm_config_default_xattrnames[] = {
+ 
+ LIST_HEAD(evm_config_xattrnames);
+ 
+-static int evm_fixmode;
++static int evm_fixmode, evm_ignoremode __ro_after_init;
+ static int __init evm_set_fixmode(char *str)
  {
- 	if (!evm_key_loaded() || (!evm_protected_xattr(xattr_name)
- 				  && !posix_xattr_acl(xattr_name)))
-@@ -438,6 +440,9 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+ 	if (strncmp(str, "fix", 3) == 0)
+ 		evm_fixmode = 1;
++	if (strncmp(str, "ignore", 6) == 0)
++		evm_ignoremode = 1;
+ 	return 0;
+ }
+ __setup("evm=", evm_set_fixmode);
+@@ -311,6 +313,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+ {
+ 	enum integrity_status evm_status;
++	int rc = -EPERM;
  
- 	evm_reset_status(dentry->d_inode);
- 
-+	if (evm_pre_error)
-+		return;
+ 	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
+ 		if (!capable(CAP_SYS_ADMIN))
+@@ -345,12 +348,17 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
+-	if (evm_status != INTEGRITY_PASS)
++	if (evm_status != INTEGRITY_PASS) {
++		if (evm_ignoremode && evm_status != INTEGRITY_PASS_IMMUTABLE)
++			rc = -EAGAIN;
 +
- 	evm_update_evmxattr(dentry, xattr_name, xattr_value, xattr_value_len);
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+ 				    integrity_status_msg[evm_status],
+-				    -EPERM, 0);
+-	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
++				    rc, 0);
++	}
++
++	return evm_status == INTEGRITY_PASS ? 0 : rc;
  }
  
-@@ -445,19 +450,24 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-  * evm_inode_post_removexattr - update 'security.evm' after removing the xattr
-  * @dentry: pointer to the affected dentry
-  * @xattr_name: pointer to the affected extended attribute name
-+ * @evm_pre_error: error returned by evm_inode_removexattr()
-  *
-  * Update the HMAC stored in 'security.evm' to reflect removal of the xattr.
-  *
-  * No need to take the i_mutex lock here, as this function is called from
-  * vfs_removexattr() which takes the i_mutex.
-  */
--void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
-+void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name,
-+				int evm_pre_error)
+ /**
+@@ -482,6 +490,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
  {
- 	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
- 		return;
+ 	unsigned int ia_valid = attr->ia_valid;
+ 	enum integrity_status evm_status;
++	int rc = -EPERM;
  
- 	evm_reset_status(dentry->d_inode);
- 
-+	if (evm_pre_error)
-+		return;
-+
- 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ 	/* Policy permits modification of the protected attrs even though
+ 	 * there's no HMAC key loaded
+@@ -495,10 +504,12 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if ((evm_status == INTEGRITY_PASS) ||
+ 	    (evm_status == INTEGRITY_NOXATTRS))
+ 		return 0;
++	if (evm_ignoremode && evm_status != INTEGRITY_PASS_IMMUTABLE)
++		rc = -EAGAIN;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+-			    integrity_status_msg[evm_status], -EPERM, 0);
+-	return -EPERM;
++			    integrity_status_msg[evm_status], rc, 0);
++	return rc;
  }
  
-@@ -495,6 +505,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
-  * evm_inode_post_setattr - update 'security.evm' after modifying metadata
-  * @dentry: pointer to the affected dentry
-  * @ia_valid: for the UID and GID status
-+ * @evm_pre_error: error returned by evm_inode_setattr()
-  *
-  * For now, update the HMAC stored in 'security.evm' to reflect UID/GID
-  * changes.
-@@ -502,11 +513,15 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
-  * This function is called from notify_change(), which expects the caller
-  * to lock the inode's i_mutex.
-  */
--void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-+void evm_inode_post_setattr(struct dentry *dentry, int ia_valid,
-+			    int evm_pre_error)
- {
- 	if (!evm_key_loaded())
- 		return;
- 
-+	if (evm_pre_error)
-+		return;
-+
- 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
- 		evm_update_evmxattr(dentry, NULL, NULL, 0);
- }
+ /**
 -- 
 2.17.1
 
