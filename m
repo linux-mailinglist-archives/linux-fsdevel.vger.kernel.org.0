@@ -2,133 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2496C1BDE23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 15:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4A61BE005
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 16:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbgD2Nh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 09:37:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbgD2NhB (ORCPT
+        id S1728165AbgD2OEE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 10:04:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728132AbgD2OED (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 09:37:01 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3351CC0A3BF3;
-        Wed, 29 Apr 2020 06:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=u23sNGTDG+u9Lk1Zo8Xu9MDzG9uzpPr1XYeNiQGb77w=; b=FaHrizP5bJ1yL18yZzX0LCOIA3
-        XK13cukEJ31kTpTmirnJYRGSp68Xby0cYl078yXwVgJ7io9a0Ti5eLgH8ouYy4m8DMiIzY2BhwTMA
-        nVr6uQCYesz/ZtJJGEiHt/0oT7bm7Hh+F96qfzcOlMTty+TjgEiwkKv0IMsr9M+Bnr11CoKQyH6L8
-        UWKFsa0oirt+eDJNHYFiFhR6RdI2jg2OPGvXbBglkPLiHTfyotM5AEHLX6bsevxmxXfIGbqE9ABLG
-        uvM6of5ihPj7kdUFt1qXmBtRVuxbuc+Kfea2Z8kejnQWKq/C6zSzxQZ+x3vRp8eEdGF0Q2AjGHQuf
-        u+ICdD/g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTmtY-0005ww-1P; Wed, 29 Apr 2020 13:37:00 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     William Kucharski <william.kucharski@oracle.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 25/25] mm: Align THP mappings for non-DAX
-Date:   Wed, 29 Apr 2020 06:36:57 -0700
-Message-Id: <20200429133657.22632-26-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200429133657.22632-1-willy@infradead.org>
-References: <20200429133657.22632-1-willy@infradead.org>
+        Wed, 29 Apr 2020 10:04:03 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1BDC03C1AD;
+        Wed, 29 Apr 2020 07:04:02 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id z90so1859466qtd.10;
+        Wed, 29 Apr 2020 07:04:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OPeUScr2vL9/Zkz5n3yjWKmeXq3NwFtTvKkYOvdwcJg=;
+        b=LTCggxC9MXNyozRB6RCYBO8Lbp0lLeLTySbNpJQhtIFbSYraYm25VdWaDJlMpN3BN2
+         CqzhR0a16L40HQr0KYxb4JN+MGOqhjvgX63E5A4tba8gwwlnFCg1squLu7pJJkT81JWG
+         qy65myRgm6O+M918NRgjLhXBFp1/UCw1HGPZkkr3KG+mo3ph1CaD3QlOXne8wjvvQ/9k
+         puyVBe991Mmpaa/0UmjaPTufO8PNOhVyp9hX8hEcwcLb8O//uXvqVh5LSgNgfYdLViA1
+         c8eWv1keMyVgk8dLGVIKDN4EvyeFnOZ+2lsrAMpgrO4Pq6AVuf7TOPbrfaPrSXJyPgOw
+         gkXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OPeUScr2vL9/Zkz5n3yjWKmeXq3NwFtTvKkYOvdwcJg=;
+        b=c2P+TnGRaZfTY3z5Xo6CmrkT3YOsvedsw7uITekQLbxP9VobPZpee6YKsl5pRobp4L
+         atNDw3LoFps5ekXUHIDUIVyo4pvykoPyLKgCr/4NUN37kVxyZW64zfK0hhIcby+S8HAJ
+         FlpArlYqWAod7kPf3rB0vP1nrO8QDtm5Z6WCkojmhh1KlBjUDv1bYfkepL5j2UauwSvP
+         boN22AHY/JmWG6ve3jrh8vEjh+orbo5XbOem028fnnPpNVtjPb6A2NOOzg2sG0kPQ7XB
+         f2h5OEk4Q1js4TPBI8Z9YmXfbjpog5PYpjysJViZUj0sd1lz0KkS7iJFPwbVIilRBRVg
+         wluQ==
+X-Gm-Message-State: AGi0PuapLFDzyUqh9KJ12wh4764oqwdUOTi/yDntnDHZdeqbK5PYQPr/
+        Tbv/VQQjsaw2YUSY47bfTd0=
+X-Google-Smtp-Source: APiQypJyqJaXIDnsm/YAulJYEip+0qmiilCCcy1yOWUQP+L+XgAtkDC94qJjHwuYbiR6+7ZAJ/BCwg==
+X-Received: by 2002:ac8:71d8:: with SMTP id i24mr34585392qtp.223.1588169041381;
+        Wed, 29 Apr 2020 07:04:01 -0700 (PDT)
+Received: from dschatzberg-fedora-PC0Y6AEN ([2620:10d:c091:480::1:14f1])
+        by smtp.gmail.com with ESMTPSA id b10sm12609955qkl.19.2020.04.29.07.03.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2020 07:04:00 -0700 (PDT)
+Date:   Wed, 29 Apr 2020 10:03:57 -0400
+From:   Dan Schatzberg <schatzberg.dan@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v5 0/4] Charge loop device i/o to issuing cgroup
+Message-ID: <20200429140357.GB18499@dschatzberg-fedora-PC0Y6AEN>
+References: <20200428161355.6377-1-schatzberg.dan@gmail.com>
+ <20200428214653.GD2005@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200428214653.GD2005@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: William Kucharski <william.kucharski@oracle.com>
+On Wed, Apr 29, 2020 at 07:47:34AM +1000, Dave Chinner wrote:
+> On Tue, Apr 28, 2020 at 12:13:46PM -0400, Dan Schatzberg wrote:
+> > The loop device runs all i/o to the backing file on a separate kworker
+> > thread which results in all i/o being charged to the root cgroup. This
+> > allows a loop device to be used to trivially bypass resource limits
+> > and other policy. This patch series fixes this gap in accounting.
+> 
+> How is this specific to the loop device? Isn't every block device
+> that offloads work to a kthread or single worker thread susceptible
+> to the same "exploit"?
 
-When we have the opportunity to use transparent huge pages to map a
-file, we want to follow the same rules as DAX.
+I believe this is fairly loop device specific. The issue is that the
+loop driver issues I/O by re-entering the VFS layer (resulting in
+tmpfs like in my example or entering the block layer). Normally, I/O
+through the VFS layer is accounted for and controlled (e.g. you can
+OOM if writing to tmpfs, or get throttled by the I/O controller) but
+the loop device completely side-steps the accounting.
 
-Signed-off-by: William Kucharski <william.kucharski@oracle.com>
-[Inline __thp_get_unmapped_area() into thp_get_unmapped_area()]
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/huge_memory.c | 40 +++++++++++++---------------------------
- 1 file changed, 13 insertions(+), 27 deletions(-)
+> 
+> Or is the problem simply that the loop worker thread is simply not
+> taking the IO's associated cgroup and submitting the IO with that
+> cgroup associated with it? That seems kinda simple to fix....
+> 
+> > Naively charging cgroups could result in priority inversions through
+> > the single kworker thread in the case where multiple cgroups are
+> > reading/writing to the same loop device.
+> 
+> And that's where all the complexity and serialisation comes from,
+> right?
+> 
+> So, again: how is this unique to the loop device? Other block
+> devices also offload IO to kthreads to do blocking work and IO
+> submission to lower layers. Hence this seems to me like a generic
+> "block device does IO submission from different task" issue that
+> should be handled by generic infrastructure and not need to be
+> reimplemented multiple times in every block device driver that
+> offloads work to other threads...
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 7a5e2b470bc7..ebaf649aa28d 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -535,30 +535,30 @@ bool is_transparent_hugepage(struct page *page)
- }
- EXPORT_SYMBOL_GPL(is_transparent_hugepage);
- 
--static unsigned long __thp_get_unmapped_area(struct file *filp,
--		unsigned long addr, unsigned long len,
--		loff_t off, unsigned long flags, unsigned long size)
-+unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
-+		unsigned long len, unsigned long pgoff, unsigned long flags)
- {
-+	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
- 	loff_t off_end = off + len;
--	loff_t off_align = round_up(off, size);
-+	loff_t off_align = round_up(off, PMD_SIZE);
- 	unsigned long len_pad, ret;
- 
--	if (off_end <= off_align || (off_end - off_align) < size)
--		return 0;
-+	if (off_end <= off_align || (off_end - off_align) < PMD_SIZE)
-+		goto regular;
- 
--	len_pad = len + size;
-+	len_pad = len + PMD_SIZE;
- 	if (len_pad < len || (off + len_pad) < off)
--		return 0;
-+		goto regular;
- 
- 	ret = current->mm->get_unmapped_area(filp, addr, len_pad,
- 					      off >> PAGE_SHIFT, flags);
- 
- 	/*
--	 * The failure might be due to length padding. The caller will retry
--	 * without the padding.
-+	 * The failure might be due to length padding.  Retry without
-+	 * the padding.
- 	 */
- 	if (IS_ERR_VALUE(ret))
--		return 0;
-+		goto regular;
- 
- 	/*
- 	 * Do not try to align to THP boundary if allocation at the address
-@@ -567,23 +567,9 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
- 	if (ret == addr)
- 		return addr;
- 
--	ret += (off - ret) & (size - 1);
-+	ret += (off - ret) & (PMD_SIZE - 1);
- 	return ret;
--}
--
--unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
--		unsigned long len, unsigned long pgoff, unsigned long flags)
--{
--	unsigned long ret;
--	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
--
--	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
--		goto out;
--
--	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
--	if (ret)
--		return ret;
--out:
-+regular:
- 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
- }
- EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
--- 
-2.26.2
+I'm not familiar with other block device drivers that behave like
+this. Could you point me at a few?
 
+> 
+> > This patch series does some
+> > minor modification to the loop driver so that each cgroup can make
+> > forward progress independently to avoid this inversion.
+> > 
+> > With this patch series applied, the above script triggers OOM kills
+> > when writing through the loop device as expected.
+> 
+> NACK!
+> 
+> The IO that is disallowed should fail with ENOMEM or some similar
+> error, not trigger an OOM kill that shoots some innocent bystander
+> in the head. That's worse than using BUG() to report errors...
+
+The OOM behavior is due to cgroup limit. It mirrors the behavior one
+sees when writing to a too-large tmpfs.
