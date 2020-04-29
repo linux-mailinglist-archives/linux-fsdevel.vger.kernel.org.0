@@ -2,72 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F225D1BDB79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 14:12:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1DA01BDBF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 14:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgD2MME (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 08:12:04 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:42915 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbgD2MME (ORCPT
+        id S1726971AbgD2MVz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 08:21:55 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33764 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbgD2MVz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 08:12:04 -0400
-Received: by mail-io1-f71.google.com with SMTP id d188so2189925iof.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 05:12:03 -0700 (PDT)
+        Wed, 29 Apr 2020 08:21:55 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t7so791347plr.0;
+        Wed, 29 Apr 2020 05:21:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=PcO8Kd1YBitB52qqPhTJQcKlql/IIwrSnAimZeG48WY=;
-        b=i6cvyuHvPD4bNbBPfXIDpeqkVi8V+C/8iNKveabx5QIfg8iJYAZWYYBH9EDTIbFAEe
-         DTctARbMRX/H3BYObL56IFXekMkejU9MZV2guiM4GOXoEu2dgpfskdLTZ2VoPuToQLhy
-         pmkRk+6YUvDYqhnlSsa94z26UFyRqbTbJAKGlJxdF+ud4Kuj+F3Yw4TL8XILwgIgYRRj
-         P/Wwd416Vbk/PtkGL0mTfcGS/BNHQDTkjRILEKA1NrJ6s0vTH/ym/T3TiEJVUOrrHGGJ
-         IseFCcmvD9SadlIlV1zsHTCF3poL2F1DOguxi3FXnuSb8Bs2pen0WifRdrAJaWg7f9Kc
-         56dA==
-X-Gm-Message-State: AGi0PuaPBRpVFPhZfbpG0/gxcttjaW+5mOZaURRnt27Bn9yLi3ataLNV
-        ySjJMH6DeeB8dU1/KZ5soWpteB7xBuSoNT2z35sJmVSLUuH9
-X-Google-Smtp-Source: APiQypJP2W68RxtxIieiSS1l8KwM59eBNQMIxwjGv9JUZ6878yRXgSmubwKDBS1vqBOIm8e+WhASeRnX1wkEPaga96kMUFN9cOqO
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8hYyIcFg83pPVTyQcqYDesu3NloqLxLSIbckmr0AwHk=;
+        b=JrxAkFrbFloSjpp2rbn9klvLI0OhbYSsdXqkMBfIPNsgqeUA8ADBI1MSnk55XxAMgv
+         u3gl1DTZ4FxFDxbkdYJIv2zOnDx/lolIrBxBsZl19CsIaL+QUnq3MCeu4CWpjkerQ7wD
+         8HB3rDXbUH7Zed0YUqgg5ysDgllZTvZteNmZqbfsFM2ntpZz5CFUOoEvkVeXJUTTSXBs
+         28WcE1DupmcpiO95iS/kSxLmMR1GHCLwf4gwHLdGSH4pQufLwwO6z36UegaV00gT/O4/
+         kcqHFGk44lYltrd6fDJvAsSMY600aVHbUI1yWqN5psNtcW8HhpCzeK2TN2Ggi0AQgNmp
+         wSog==
+X-Gm-Message-State: AGi0PuZI82T/fLIMhjkx6iV6F6OO14Kj44mQzqN8YuxIVMJBC4WkgrpS
+        XapShQfLFSxIj3WmcISSq/c=
+X-Google-Smtp-Source: APiQypK7Azz2+WxwoHE3rVYKcE7BGDyy2jhBIIpR257VCG9YgyRto2jm/uAjKMSpahuJrXm0uANnmA==
+X-Received: by 2002:a17:90a:fa0e:: with SMTP id cm14mr2871825pjb.92.1588162914403;
+        Wed, 29 Apr 2020 05:21:54 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id h9sm966620pfo.129.2020.04.29.05.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2020 05:21:53 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 861A4403AB; Wed, 29 Apr 2020 12:21:52 +0000 (UTC)
+Date:   Wed, 29 Apr 2020 12:21:52 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3 4/6] blktrace: fix debugfs use after free
+Message-ID: <20200429122152.GL11244@42.do-not-panic.com>
+References: <20200429074627.5955-1-mcgrof@kernel.org>
+ <20200429074627.5955-5-mcgrof@kernel.org>
+ <20200429112637.GD21892@infradead.org>
+ <20200429114542.GJ11244@42.do-not-panic.com>
+ <20200429115051.GA27378@infradead.org>
+ <20200429120230.GK11244@42.do-not-panic.com>
+ <20200429120406.GA913@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:6c0b:: with SMTP id h11mr72208ilc.158.1588162322766;
- Wed, 29 Apr 2020 05:12:02 -0700 (PDT)
-Date:   Wed, 29 Apr 2020 05:12:02 -0700
-In-Reply-To: <00000000000051770905984d38d3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001821b605a46cdb7f@google.com>
-Subject: Re: WARNING in exfat_bdev_read
-From:   syzbot <syzbot+1930da7118e99b06e4ab@syzkaller.appspotmail.com>
-To:     alexander.levin@microsoft.com, davem@davemloft.net,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mchehab@kernel.org, namjae.jeon@samsung.com,
-        pragat.pandya@gmail.com, syzkaller-bugs@googlegroups.com,
-        valdis.kletnieks@vt.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429120406.GA913@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+On Wed, Apr 29, 2020 at 05:04:06AM -0700, Christoph Hellwig wrote:
+> On Wed, Apr 29, 2020 at 12:02:30PM +0000, Luis Chamberlain wrote:
+> > > Err, that function is static and has two callers.
+> > 
+> > Yes but that is to make it easier to look for who is creating the
+> > debugfs_dir for either the request_queue or partition. I'll export
+> > blk_debugfs_root and we'll open code all this.
+> 
+> No, please not.  exported variables are usually a bad idea.  Just
+> skip the somewhat pointless trivial static function.
 
-commit 5f33771fb0ac484d6e8cc34cb1e27c37442cd0db
-Author: Namjae Jeon <namjae.jeon@samsung.com>
-Date:   Fri Jan 3 01:13:45 2020 +0000
+Alrighty. It has me thinking we might want to only export those symbols
+to a specific namespace. Thoughts, preferences?
 
-    staging: exfat: add STAGING prefix to config names
+BLOCK_GENHD_PRIVATE ?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1407f818100000
-start commit:   32ef9553 Merge tag 'fsnotify_for_v5.5-rc1' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ff560c3de405258c
-dashboard link: https://syzkaller.appspot.com/bug?extid=1930da7118e99b06e4ab
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e208a6e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f83882e00000
+The scsi-generic driver seems... rather unique, and I'd imagine we'd
+want to discourage such concoctions in the future, so proliferations
+of these symbols.
 
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: staging: exfat: add STAGING prefix to config names
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  Luis
