@@ -2,85 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 606CB1BD6D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 10:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A63F1BD74E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 10:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbgD2IHb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 04:07:31 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:48217 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbgD2IHb (ORCPT
+        id S1726447AbgD2IbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 04:31:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56774 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726355AbgD2IbF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 04:07:31 -0400
-Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mqagw-1iqC123Skq-00mehJ; Wed, 29 Apr 2020 10:07:29 +0200
-Received: by mail-qt1-f169.google.com with SMTP id z90so1107430qtd.10;
-        Wed, 29 Apr 2020 01:07:28 -0700 (PDT)
-X-Gm-Message-State: AGi0PubUYmDFnOTInJ1eyFUUywCG7T/YgBsKecYpdh1L0bNR/t+Nki6G
-        Nw1BVV8wvYVGbaMPzNbL4dEq/vjb2BdmiRFwLPU=
-X-Google-Smtp-Source: APiQypLfq9vA8PAqfU/YH18U09P0GJiLGEJ7pxzfmyyZ8eMnuqIgB3yzKDt07rPkw8Uw/LGU/qVDLoTi47iZXZD4HCg=
-X-Received: by 2002:ac8:4c8d:: with SMTP id j13mr32077431qtv.142.1588147647641;
- Wed, 29 Apr 2020 01:07:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200428074827.GA19846@lst.de> <20200428195645.1365019-1-arnd@arndb.de>
- <20200429064458.GA31717@lst.de>
-In-Reply-To: <20200429064458.GA31717@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 29 Apr 2020 10:07:11 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1YD3RitSLLRsM+e+LwAxg+NS6F071B4zokwEpiL0WvrA@mail.gmail.com>
-Message-ID: <CAK8P3a1YD3RitSLLRsM+e+LwAxg+NS6F071B4zokwEpiL0WvrA@mail.gmail.com>
-Subject: Re: [PATCH] fixup! signal: factor copy_siginfo_to_external32 from copy_siginfo_to_user32
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Wed, 29 Apr 2020 04:31:05 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03T83YgD115099;
+        Wed, 29 Apr 2020 04:30:47 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30mhc23ug7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Apr 2020 04:30:47 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03T8Kpd4025685;
+        Wed, 29 Apr 2020 08:30:44 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 30mcu59mdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Apr 2020 08:30:44 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03T8UgdM3408150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Apr 2020 08:30:42 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73C9DAE04D;
+        Wed, 29 Apr 2020 08:30:42 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69A0DAE051;
+        Wed, 29 Apr 2020 08:30:39 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.33.252])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Apr 2020 08:30:39 +0000 (GMT)
+Subject: Re: [PATCHv2] fibmap: Warn and return an error in case of block >
+ INT_MAX
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:HDtOAVxf7F2kbOnVT+0Pbdsy6gyVLoRB+Ord+l/jmjxXPAbBL42
- 3+X+s/6c2JKSUDROKdUmb5RfzZOCOLmDD0yRRZiZK+C7ON33X4xGtgMFU3xmOohU6YZuk7G
- TztkztYiKr7uIxCPFCPqnwjUVQ29tybSJMdZBq4nmAbY2lRPFzIWDPV5ZGvExkctRcT3yFm
- ZB2LEJX08qFqgpeyjSuLg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wC5lmBW+bg0=:t+X4oCSjs88VFqmJoFXRW+
- PptH+Yin5M5HwIqowvIh7j5a3pqRYf4LmGVib8xT6NTu0w4nRBKkosFPAzHPM0+rNx+6ywE8H
- 91s8dVamJO/NorU94C+chA5zrmcwuibPKaO5mJfgDl9EPm2EwYRoXgw4vDDEZiBuFkfLHPZsX
- lP5p424klNI+NYvHYYDKZox/RSfqUcRkPEvaQG1vYmcphN+IqPQLBUM6+vmtyxQPoO38jWS5R
- bBhCAXyq8UQMX9fW2FFtErI4qXrl258imjxI7l8+0rPOwApFoxi6/dI1dXNAC6nx2G+8Npkt0
- 5RfwBFYY9e0qaztiFn0V1iNxalGyLiNkZCgU35oyMXgbSG+mtcfwZnrYBvK3VI9wK5D0FmfXB
- YqMchPDOamFSbN0XehNnpGoEMtc/L8lZr2121QvnnKOeM6JZs2VYzjZMA2vXtX2f2qMUHcgPM
- stQMu3VDvnm/ceky/oDEdfBWKiEk8zPpDXGMRBmjf41fsPTlHfsYrtKQFEH1vaLp0ksa1yYZW
- hEJUzpiV9QqyuTOOOCiA459HRGwy3LNYget1RVXzdcfdp2hUjsSv+CEaMyl4JGY673KznVcky
- y0Bo3A1brwQSdWPz/SVKVM5o3FH/0aOSXNAaQu0i37MjgQD/kBvUAGtSIFlU8M/6Ey0oeI3ue
- 109PRLULFsB9+EPm8SWmKrU4YJCavN5kAc8dLWRf9efWbMY57yqsryhvV/wOWi7VbjWmx7Hcj
- h5Sju4us+oZYqLkMsNH7mXPIHBeKanbM3LPzM/cI9/buI6TdHfetDN+ODVhRrJDjJf/0e6Mi7
- nmedfvD/cN04U7eTD7/CP7sQa+NLyf3i+JtGQ+j1CCPfv+loUA=
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jan Kara <jack@suse.com>, tytso@mit.edu,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>
+References: <58f0c64a3f2dbd363fb93371435f6bcaeeb7abe4.1588058868.git.riteshh@linux.ibm.com>
+ <20200428114141.GL29705@bombadil.infradead.org>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 29 Apr 2020 14:00:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20200428114141.GL29705@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Message-Id: <20200429083039.69A0DAE051@d06av26.portsmouth.uk.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-29_02:2020-04-28,2020-04-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2004290062
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 8:45 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Tue, Apr 28, 2020 at 09:56:26PM +0200, Arnd Bergmann wrote:
-> > I think I found a way to improve the x32 handling:
-> >
-> > This is a simplification over Christoph's "[PATCH 2/7] signal: factor
-> > copy_siginfo_to_external32 from copy_siginfo_to_user32", reducing the
-> > x32 specifics in the common code to a single #ifdef/#endif check, in
-> > order to keep it more readable for everyone else.
-> >
-> > Christoph, if you like it, please fold into your patch.
->
-> What do you think of this version?  This one always overrides
-> copy_siginfo_to_user32 for the x86 compat case to keep the churn down,
-> and improves the copy_siginfo_to_external32 documentation a bit.
 
-Looks good to me. I preferred checking for X32 explicitly (so we can
-find and kill off the #ifdef if we ever remove X32 for good), but there is
-little difference in the end.
 
-         Arnd
+On 4/28/20 5:11 PM, Matthew Wilcox wrote:
+> On Tue, Apr 28, 2020 at 01:08:31PM +0530, Ritesh Harjani wrote:
+>> @@ -71,6 +72,13 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
+>>   	block = ur_block;
+>>   	error = bmap(inode, &block);
+>>   
+>> +	if (block > INT_MAX) {
+>> +		error = -ERANGE;
+>> +		pr_warn_ratelimited("[%s/%d] FS (%s): would truncate fibmap result\n",
+>> +				    current->comm, task_pid_nr(current),
+>> +				    sb->s_id);
+> 
+> Why is it useful to print the pid?
+For e.g. a case where you have pthreads. pid could be different there.
+
+> And why print the superblock when we could print the filename instead? > We have a struct file, so we can printk("%pD4", filp) to print the
+> last four components of the pathname.
+> 
+
+Sure, let me use below print msg then. This should cover everything now
+If no objections, I could send this in v3. Pls, do let me know if
+otherwise.
+
+Since this has changed again from the 1st version, will drop all
+Reviewed-by: and you could directly review v3 then.
+
+		pr_warn_ratelimited("[%s/%d] FS: %s File: %pD4 would truncate fibmap 
+result\n",
+				    current->comm, task_pid_nr(current),
+				    sb->s_id, filp);
+
+About %pD from (Documentation/core-api/printk-formats.rst)
+========================================================
+<..>
+	%pd{,2,3,4}
+	%pD{,2,3,4}
+
+For printing dentry name; if we race with :c:func:`d_move`, the name might
+be a mix of old and new ones, but it won't oops.  %pd dentry is a safer
+equivalent of %s dentry->d_name.name we used to use, %pd<n> prints ``n``
+last components.  %pD does the same thing for struct file.
+
+
+
+-ritesh
