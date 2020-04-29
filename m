@@ -2,179 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1E71BEC61
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 01:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407841BEC73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 01:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgD2XDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 19:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57492 "EHLO
+        id S1727772AbgD2XL3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 19:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbgD2XDE (ORCPT
+        with ESMTP id S1726775AbgD2XL3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 19:03:04 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CBCC08E859
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 16:03:04 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id 23so3922974qkf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 16:03:04 -0700 (PDT)
+        Wed, 29 Apr 2020 19:11:29 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE21EC03C1AE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 16:11:28 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id e2so3022341eje.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 16:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UyDw5QOX4WfyUC8G627O7ysI5MXH2/kRIYRidhm+34A=;
-        b=Lf9PP9+pAmFpHpj/QA/vAUx6tPP+SMmy9otSkTHgBufep+WZtwcfRYFXHUYzeNOZY0
-         SSSAR5BfKXwu+JpXHmhJr/JUUF9F5hoGfhF6zI6lutQMd9Gy8+ZrIUYooreCLbeZdRSc
-         A0tS3wmiYn5H/hE8vNDkLWe9KcZ9XxaAC14AzAByukRe7mwS8No33u3J0IZlCXxvO6Ph
-         T0mxIgWGenP6PReTGK9OG7LFtVW/sn/EUUbm4WEIwCHNzRpfNw3inm8gqhw/QKNkHvdf
-         0S5BwcySsi/C4sLiJ/A9nsBPJGLQoB/ie9s3uFiuMVtheZVMWRuv7ke7ViClk89F4oDY
-         e4DQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ur9jfHYBxvOMHwCSyzgCuO4pNPy1puU85FIa2ankgiI=;
+        b=DrKHR3jwpIzSm+/wrDYjisbgySATaGLQu0oa0TojG2F2InX9rTKCVNl6/HZqurU3pj
+         UJIyVXdxk5hO/DdTXuKDLWUrdoodxV3U8YTqMXkuAyOg5qLHqAdR8oZRRYrFIzlXyC4k
+         sCR1zfwZ36sLzjhZCni2LVoS/XzTKFMv0dEak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UyDw5QOX4WfyUC8G627O7ysI5MXH2/kRIYRidhm+34A=;
-        b=gwYtxPImKrtAHIA06EEpmS9yXFrMXxce5TUaRQCje9kMciPFObmPujtWv4AjfOGRCK
-         309QPGB1wAGkGpx7j7vWk3EdIfKcQxjN6bsHpvQCSLMVyn1Cbc+eEUcqGQ5QhIy4eA3M
-         zsid1/Flo04NNHaZs6nIStjb4JTI5RFnQnBbYilS0meenDukRMMpAGQGp7yJqULT1Z5o
-         W/6bZv53dSzJ6c1KVj/uJ8T9VHxBEl+Yl29HsmGV2gGclm7GGD4A2MT7fkHu+qnpf+CA
-         zy3ar0QGMAsDKKlQO/bt10x9Nxbr++4VaRe6FmlVbrjlXr6Bcb1YeXdRAqk+yFEq51pu
-         d/Tg==
-X-Gm-Message-State: AGi0PuZvrL5jWJwOYw7p2ST6BUdsCabb6rghlHDnXMz/tE99hLbf3h1h
-        p9KgBym8NVHNyjjcolXbfNZU1A==
-X-Google-Smtp-Source: APiQypIMM3qPwE29FFUjHN0D+hYMHptYMFkDQiz7DJhIoeMIpRIpI7WoZIuhGnKXuL/3vQ+au4ADbA==
-X-Received: by 2002:a05:620a:166d:: with SMTP id d13mr787657qko.448.1588201383344;
-        Wed, 29 Apr 2020 16:03:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id i2sm446118qki.54.2020.04.29.16.03.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Apr 2020 16:03:02 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jTvjJ-0000sP-V0; Wed, 29 Apr 2020 20:03:01 -0300
-Date:   Wed, 29 Apr 2020 20:03:01 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     linux-doc@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [regression?] Re: [PATCH v6 06/12] mm/gup: track FOLL_PIN pages
-Message-ID: <20200429230301.GL26002@ziepe.ca>
-References: <5b901542-d949-8d7e-89c7-f8d5ee20f6e9@nvidia.com>
- <20200424141548.5afdd2bb@w520.home>
- <665ffb48-d498-90f4-f945-997a922fc370@nvidia.com>
- <20200428105455.30343fb4@w520.home>
- <20200428174957.GV26002@ziepe.ca>
- <20200428130752.75c153bd@w520.home>
- <20200428192251.GW26002@ziepe.ca>
- <20200428141223.5b1653db@w520.home>
- <20200429002903.GZ26002@ziepe.ca>
- <20200429135633.626a8411@w520.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ur9jfHYBxvOMHwCSyzgCuO4pNPy1puU85FIa2ankgiI=;
+        b=NhuIqa3VzfOjhFmToAxFwWSpdgRCfIRaLXthciAdodZLrL1PMjRvTP0BmLrENdgB6O
+         nPwa/Y54fdciYR+wxR2dmrkiezTTRwN/XpgGEkUZIGQx1uE2Zspo1WFvUZdoyaNugElu
+         AhRVNmZEKDvUltSpOAfgZTTyj8NhSFdSUHxMP3rxzi73DdmN6UUMp+X87Zo8whMJ7G5m
+         WIzyuZGEk9KjZwCQi7SKryB/oyW1hLTZ1l55+CLs7Bl3O06SzrBWOINSl/g+FNqgPCei
+         OTxesm0/2OTARP2scyuYVz+WSC/wGkGzEDsvOfBXFeDwwS/xlgCxEcTBFJQDBJ4VHfyp
+         bu6g==
+X-Gm-Message-State: AGi0PuazFXqVdUBck1cGdMCRBi1c56qvb/zR1C5IgT+PF8AUgNrZxQOQ
+        59ys/ivMyDuD5RjZ9vq7y1ixu5H64q0=
+X-Google-Smtp-Source: APiQypINU1X9IhrwbkbHmhTn39SYY6VDcGG+e3pkrMM0FNbO+u1gIanw5/jF/t4peLFnjs2NfB1olw==
+X-Received: by 2002:a17:906:3048:: with SMTP id d8mr131893ejd.97.1588201886997;
+        Wed, 29 Apr 2020 16:11:26 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id i4sm913671eja.92.2020.04.29.16.11.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2020 16:11:26 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id s10so4614096wrr.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 16:11:26 -0700 (PDT)
+X-Received: by 2002:a19:240a:: with SMTP id k10mr119932lfk.30.1588201425482;
+ Wed, 29 Apr 2020 16:03:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200429135633.626a8411@w520.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200429214954.44866-1-jannh@google.com> <20200429215620.GM1551@shell.armlinux.org.uk>
+In-Reply-To: <20200429215620.GM1551@shell.armlinux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 29 Apr 2020 16:03:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+Message-ID: <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 01:56:33PM -0600, Alex Williamson wrote:
-> On Tue, 28 Apr 2020 21:29:03 -0300
-> Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> 
-> > On Tue, Apr 28, 2020 at 02:12:23PM -0600, Alex Williamson wrote:
-> > 
-> > > > > Maybe I was just getting lucky before this commit.  For a
-> > > > > VM_PFNMAP, vaddr_get_pfn() only needs pin_user_pages_remote() to return
-> > > > > error and the vma information that we setup in vfio_pci_mmap().    
-> > > > 
-> > > > I've written on this before, vfio should not be passing pages to the
-> > > > iommu that it cannot pin eg it should not touch VM_PFNMAP vma's in the
-> > > > first place.
-> > > > 
-> > > > It is a use-after-free security issue the way it is..  
-> > > 
-> > > Where is the user after free?  Here I'm trying to map device mmio space
-> > > through the iommu, which we need to enable p2p when the user owns
-> > > multiple devices.  
-> > 
-> > Yes, I gathered what the intent was..
-> > 
-> > > The device is owned by the user, bound to vfio-pci, and can't be
-> > > unbound while the user has it open.  The iommu mappings are torn
-> > > down on release.  I guess I don't understand the problem.  
-> > 
-> > For PFNMAP VMAs the lifecycle rule is basically that the PFN inside
-> > the VMA can only be used inside the mmap_sem that read it. Ie you
-> > cannot take a PFN outside the mmap_sem and continue to use it.
-> > 
-> > This is because the owner of the VMA owns the lifetime of that PFN,
-> > and under the write side of the mmap_sem it can zap the PFN, or close
-> > the VMA. Afterwards the VMA owner knows that there are no active
-> > reference to the PFN in the system and can reclaim the PFN
-> > 
-> > ie the PFNMAP has no per-page pin counter. All lifetime revolves around
-> > the mmap_sem and the vma.
-> > 
-> > What vfio does is take the PFN out of the mmap_sem and program it into
-> > the iommu.
-> > 
-> > So when the VMA owner decides the PFN has no references, it actually
-> > doesn't: vfio continues to access it beyond its permitted lifetime.
-> > 
-> > HW like mlx5 and GPUs have BAR pages which have security
-> > properties. Once the PFN is returned to the driver the security
-> > context of the PFN can be reset and re-assigned to another
-> > process. Using VFIO a hostile user space can retain access to the BAR
-> > page and upon its reassignment access a security context they were not
-> > permitted to access.
-> > 
-> > This is why GUP does not return PFNMAP pages and vfio should not carry
-> > a reference outside the mmap_sem. It breaks all the lifetime rules.
-> 
-> Thanks for the explanation.  I'm inferring that there is no solution to
-> this, 
+On Wed, Apr 29, 2020 at 2:57 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> I've never had any reason to use FDPIC, and I don't have any binaries
+> that would use it.  Nicolas Pitre added ARM support, so I guess he
+> would be the one to talk to about it.  (Added Nicolas.)
 
-Not a particularly good one unfortunately. I've been wanting to use
-P2P_DMA pages to solve these kinds of things but they are kind of
-expensive.
+While we're at it, is there anybody who knows binfmt_flat?
 
-I have a copy of some draft patches trying to do this
+It might be Nicolas too.
 
-> but why can't we use mmu notifiers to invalidate the iommu on zap or
-> close?
+binfmt_flat doesn't do core-dumping, but it has some other oddities.
+In particular, I'd like to bring sanity to the installation of the new
+creds, and all the _normal_ binfmt cases do it largely close together
+with setup_new_exec().
 
-Hum.. I think with the new mmu interval notifiers vfio might be able
-to manage that without a huge amount of trouble. But the iommu
-invalidation needs to be synchronous from a mmu notifier callback - is
-that feasible?
+binfmt_flat is doing odd things. It's doing this:
 
-But even so, we have all this stuff now for authorizing PCI P2P which
-this design completely ignores as well. :(
+        /* Flush all traces of the currently running executable */
+        if (id == 0) {
+                ret = flush_old_exec(bprm);
+                if (ret)
+                        goto err;
 
-> I know that at least QEMU won't consider these sorts of mapping
-> fatal, so we could possibly change the default and make support for
-> such mappings opt-in, but I don't know if I'd break DPDK, or
-> potentially users within QEMU that make use of p2p between devices.
+                /* OK, This is the point of no return */
+                set_personality(PER_LINUX_32BIT);
+                setup_new_exec(bprm);
+        }
 
-I'd heard this was mostly for GPU device assignment? I'd be surprised
-if DPDK used this..
+in load_flat_file() - which is also used to loading _libraries_. Where
+it makes no sense at all.
 
-Jason
+It does the
+
+        install_exec_creds(bprm);
+
+in load_flat_binary() (which makes more sense: that is only for actual
+binary loading, no library case).
+
+I would _like_ for every binfmt loader to do
+
+        /* Flush all traces of the currently running executable */
+        retval = flush_old_exec(bprm);
+        if (retval)
+                return retval;
+
+   .. possibly set up personalities here ..
+
+        setup_new_exec(bprm);
+        install_exec_creds(bprm);
+
+all together, and at least merge 'setup_new_exec()' with 'install_exec_creds()'.
+
+And I think all the binfmt handlers would be ok with that, but the
+flat one in particular is really oddly set up.
+
+*Particularly* with that flush_old_exec/setup_new_exec() being done by
+the same routine that is also loading libraries (and called from
+'calc_reloc()' from binary loading too).
+
+Adding Greg Ungerer for m68knommu. Can somebody sort out why that
+flush_old_exec/setup_new_exec() isn't in load_flat_binary() like
+install_exec_creds() is?
+
+Most of that file goes back to pre-git days. And most of the commits
+since are not so much about binfmt_flat, as they are about cleanups or
+changes elsewhere where binfmt_flat was just a victim.
+
+               Linus
