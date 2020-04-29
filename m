@@ -2,176 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6242E1BD774
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 10:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0311BD793
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 10:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgD2Ing (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 04:43:36 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37714 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726447AbgD2Inf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 04:43:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588149813;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QcZ6PqElQuIY2I5jkNPEa7pluAGzlonQVidKA7ck390=;
-        b=dAlkn1uwdOR4eD6Hqf+FLmuJcZiWqq/BUbDuB2tH63pYzjk9woPrflXEp1svktYfU/ehSn
-        UwrkXatc/SQy1H50idMrdl1sCnkVuuZJG1d4aymLF+Ke0CY8F4hPlkTV0HuCQeUWKlyVNZ
-        JjE3rYSGUKSV7Ce0EaOzDkY2c/IPke0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-258-JE5sIyyoNyeAv0VuRsPBmQ-1; Wed, 29 Apr 2020 04:43:22 -0400
-X-MC-Unique: JE5sIyyoNyeAv0VuRsPBmQ-1
-Received: by mail-wm1-f70.google.com with SMTP id s12so914851wmj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 01:43:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=QcZ6PqElQuIY2I5jkNPEa7pluAGzlonQVidKA7ck390=;
-        b=bt5Zq9G7ewaWw9or0t7o0A3p6jBgNRmnHUVNq0i1+supoGvjaFxfNFFNnnL0Ts+D41
-         cYdkWmlf8nCy4ATDlXkR8fipQGDxtX20XFvUU+44E5cVUz8Mnm7wl1aAc3baUGVjUsJJ
-         ihFFSkZZkbze9VOF6g1zx1Agg8EPMpl48gausn5URNoLdZgAUbEZLimWSyJJvkm1gy07
-         gWRSXAWH/+QZkFKWCBSQCRn7WzEYtOmsdHlu4kJsgFL/BU/eh64QZt869ouUl1ugiDvw
-         iHajpUtk5uYZvbqO1F4Qy7AZICcBN6UW/OpMWjogKomSmNWT8rbRERyIEkVtvM7aJhQY
-         kKkQ==
-X-Gm-Message-State: AGi0PuadI3IFrcl165YbwykoM8AeGke+YUrrk3AAJaPuf9ATjGpNaSET
-        n9SQOuJtn+8c3uTuJ/xmEYwawDSQpm2tsZE5SqcspPHcQXn91phSWKvQ24kuAJzYo6XpW8g5AAU
-        eaqicGFREhSzwBG3rJmHeOYYb6g==
-X-Received: by 2002:a1c:23d4:: with SMTP id j203mr2121763wmj.49.1588149800194;
-        Wed, 29 Apr 2020 01:43:20 -0700 (PDT)
-X-Google-Smtp-Source: APiQypLcqDVfxUeEvW87fRGWUdN/d4quJBkD2yf6Dic3zqzuiXhubG6tHiMQWsgKcZj9hZwuRxpaoQ==
-X-Received: by 2002:a1c:23d4:: with SMTP id j203mr2121740wmj.49.1588149799911;
-        Wed, 29 Apr 2020 01:43:19 -0700 (PDT)
-Received: from localhost ([2001:470:5b39:28:1273:be38:bc73:5c36])
-        by smtp.gmail.com with ESMTPSA id t20sm6828575wmi.2.2020.04.29.01.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2020 01:43:19 -0700 (PDT)
-Date:   Wed, 29 Apr 2020 10:43:18 +0200
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject: Re: mmotm 2020-04-26-00-15 uploaded (mm/madvise.c)
-Message-ID: <20200429084318.wh7gjokuk445mr5d@butterfly.localdomain>
-References: <20200426071602.ZmQ_9C0ql%akpm@linux-foundation.org>
- <bec3b7bd-0829-b430-be1a-f61da01ac4ac@infradead.org>
- <39bcdbb6-cac8-aa3b-c543-041f9c28c730@infradead.org>
- <20200427135053.a125f84c62e2857e3dcdce4f@linux-foundation.org>
- <20200427234512.GD163745@google.com>
+        id S1726543AbgD2ItY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 04:49:24 -0400
+Received: from mout.web.de ([212.227.15.3]:39479 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726345AbgD2ItX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Apr 2020 04:49:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1588150104;
+        bh=KB7NzKpDMptjCbP3+GDqut7U6+dc07DshmQkLhVBunw=;
+        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
+        b=UqDUHvc5WxUxbi+oY2f9pZDNJsRCkEsmFlOsOZ8B25jq9lU4OmccVNF0SmIr6QWTN
+         XfNyrs6Krzquzsz5MrNYK/Kf5t89DBC0wBOZk2cE6JQFQH5YvrBiMkvM7l7nzVIucJ
+         mqAxv3alwVhHL9MdxKKxoyTegsHoVg7DEDy3Jw8w=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.72.72]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MfCyA-1jo6WL2o2c-00Opy5; Wed, 29
+ Apr 2020 10:48:23 +0200
+To:     Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Ming Lei <ming.lei@redhat.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Omar Sandoval <osandov@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Yu Kuai <yukuai3@huawei.com>
+Subject: Re: [PATCH v3 4/6] blktrace: fix debugfs use after free
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <78375104-16a5-ea1d-f894-b09b1224d189@web.de>
+Date:   Wed, 29 Apr 2020 10:48:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200427234512.GD163745@google.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jKgAeRtX71p2UHMLLdhso1OOttNxhhTJDLKaJ/YZUekeX/IWw5Q
+ OuXoTGIOlexakMSWjOQjcPfd+Q7Ro2EHfS6eJXzWMlUTKGf/ckEF8H5tCxNFpDXhkno8N2S
+ HwFZBB8W/lxktym5HkUs6tb5AnFpm/UWomhCMAlDPVNj76DD1B9gqesW2iYYVOhY+c+/zlp
+ +LLAdkXgNntbj6fOkTd5A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Tr6Gm8S4U6s=:LtiWerdvf5v4sRgaKGQ+ja
+ c5uGiQR312vJQCjjf6IT14sGkjj5z+zEJ50/CSPHHA5z2xOwjpMJUGi6OgZOTAU/yc1WF5df7
+ qPUV7OIi5wYkfEhb1IPEWKyvMo403ahBkPwlncUJarUQvH+Q3RL1wQ1rdXcVX1hVQ+OD6y49M
+ iX3IR3AeRTklPD5ajksvU5krKoKOKw82C8x5jgXrNrgs8FZiN3YnyzOaZG7ckXpvhaxNVfp3p
+ TbzZTRNkAWgoJRdl1mVj5njEDxb4kfjadh84TRwTVSm4WKupCHlW3dRvLkz7Ebo4zI3QyYjgR
+ +9e5B/vXe/JPfTgDBjjadMxdKhq7V6vqWy+w19K2amhoB+MzuGk2RLuVBTEFL+OCSF1KBYdod
+ UwzAa3ECk2VJYRoN4AeTkm37XnR1y22BrOnxvCsGkdeo/DDdxlL4F73mKmVxtzSsR9Ind3BWc
+ I2EAm3mhrW42+XPMjErQ/8MD+g1GOLvktSISTkFv3mJqgRKRxYXd59Jjxkl2DDVL/4/6vHo3k
+ 6LVJP8bhtVCzqfXSgsswxDDq4q3quGjXl35SzG1eNPsVYCK1NNrY3aRuiL8stXlGNxfwWj9a6
+ ypVCnnQ0ZpZ7fuX7U1WUwD2CDXkkBUCFo6uk6cncZ33mwsX//jfSfd6cNL7KT3t8sRr1rBOeg
+ 7E92g44du0YLFprs20Md3taLqTuz4p4hL/ALwcg2xZtD1I+sI7Z6XtgiRRMFR47EzfzO4gJtJ
+ qXARgZ4UXNNpLxSeD55ehqQ2iZXtnp1heL53xZfMiOffT09UVB5T/STh49KtV+lEwEzEb5Yo3
+ iZNuiG9kgtv530aw2n0c5LzQ5sYGa6VK7TQiyCSQbNKqOMz7yKYKJB/G4V32/brqAk/5ReZn0
+ 0yqtzdi6HeylGJF9UqZoKSDycE7fTe/aP364iDUXO1axBOewQW3oY/psHL/CWykrbUirhTez8
+ 6o03jJW00x1ShYPs/v7dHsXuPX4AJNSapxx19/hPuVQk+mw5XwQQHCdsql/eHHkIknpXrwuxe
+ r3Mooghi/QQPccBbWKD3Bshq4N2GyFZ4kMjFadokPOW1lQu8q3tYB5NA73LwRZt5CBU/7DH8Y
+ EXKhI22jpHCTv2LD+0j5yDAr0rotutNBwvzu/dwRwgfcCwtyngX8dFXQHvWJWhAOA5ghwRGOg
+ y/C63HUNN3pJuoNZWWJNQt1V9PFyWB9qrFWxa27HaqtYH3XdG9cAqACvX2fFQy6YZr7SeiUa2
+ CbwQSgpkZ9y6D1MOV
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 04:45:12PM -0700, Minchan Kim wrote:
-> Hi Andrew,
-> 
-> On Mon, Apr 27, 2020 at 01:50:53PM -0700, Andrew Morton wrote:
-> > On Sun, 26 Apr 2020 15:48:35 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> > 
-> > > On 4/26/20 10:26 AM, Randy Dunlap wrote:
-> > > > On 4/26/20 12:16 AM, akpm@linux-foundation.org wrote:
-> > > >> The mm-of-the-moment snapshot 2020-04-26-00-15 has been uploaded to
-> > > >>
-> > > >>    http://www.ozlabs.org/~akpm/mmotm/
-> > > >>
-> > > >> mmotm-readme.txt says
-> > > >>
-> > > >> README for mm-of-the-moment:
-> > > >>
-> > > >> http://www.ozlabs.org/~akpm/mmotm/
-> > > >>
-> > > >> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > > >> more than once a week.
-> > > >>
-> > > >> You will need quilt to apply these patches to the latest Linus release (5.x
-> > > >> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > > >> http://ozlabs.org/~akpm/mmotm/series
-> > > >>
-> > > >> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > > >> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > > >> followed by the base kernel version against which this patch series is to
-> > > >> be applied.
-> > > > 
-> > > > Hi,
-> > > > I'm seeing lots of build failures in mm/madvise.c.
-> > > > 
-> > > > Is Minchin's patch only partially applied or is it just missing some pieces?
-> > > > 
-> > > > a.  mm/madvise.c needs to #include <linux/uio.h>
-> > > > 
-> > > > b.  looks like the sys_process_madvise() prototype in <linux/syscalls.h>
-> > > > has not been updated:
-> > > > 
-> > > > In file included from ../mm/madvise.c:11:0:
-> > > > ../include/linux/syscalls.h:239:18: error: conflicting types for ‘sys_process_madvise’
-> > > >   asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-> > > >                   ^
-> > > > ../include/linux/syscalls.h:225:2: note: in expansion of macro ‘__SYSCALL_DEFINEx’
-> > > >   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-> > > >   ^~~~~~~~~~~~~~~~~
-> > > > ../include/linux/syscalls.h:219:36: note: in expansion of macro ‘SYSCALL_DEFINEx’
-> > > >  #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-> > > >                                     ^~~~~~~~~~~~~~~
-> > > > ../mm/madvise.c:1295:1: note: in expansion of macro ‘SYSCALL_DEFINE6’
-> > > >  SYSCALL_DEFINE6(process_madvise, int, which, pid_t, upid,
-> > > >  ^~~~~~~~~~~~~~~
-> > > > In file included from ../mm/madvise.c:11:0:
-> > > > ../include/linux/syscalls.h:880:17: note: previous declaration of ‘sys_process_madvise’ was here
-> > > >  asmlinkage long sys_process_madvise(int which, pid_t pid, unsigned long start,
-> > > >                  ^~~~~~~~~~~~~~~~~~~
-> > > 
-> > > I had to add 2 small patches to have clean madvise.c builds:
-> > > 
-> > 
-> > hm, not sure why these weren't noticed sooner, thanks.
-> > 
-> > This patchset is looking a bit tired now.
-> > 
-> > Things to be addressed (might be out of date):
-> > 
-> > - http://lkml.kernel.org/r/293bcd25-934f-dd57-3314-bbcf00833e51@redhat.com
-> 
-> It seems to be not related to process_madvise.
-> 
-> > 
-> > - http://lkml.kernel.org/r/2a767d50-4034-da8c-c40c-280e0dda910e@suse.cz
-> >   (I did this)
-> 
-> Thanks!
-> 
-> > 
-> > - http://lkml.kernel.org/r/20200310222008.GB72963@google.com
-> 
-> I will send foldable patches to handle comments.
-> 
-> > 
-> > - issues arising from the review of
-> >   http://lkml.kernel.org/r/20200302193630.68771-8-minchan@kernel.org
-> 
-> Oleksandr, What's the outcome of this issue?
-> Do we still need to change based on the comment?
-> 
+> =E2=80=A6, but a misuse of debugfs within blktace.
 
-My current understanding is that we do not mess with signals excessively
-in the given code path.
+How do you think about to avoid a typo here for the final change descripti=
+on?
 
--- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Principal Software Maintenance Engineer
-
+Regards,
+Markus
