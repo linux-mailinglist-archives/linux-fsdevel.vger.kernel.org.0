@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DECB1BDF3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 15:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 639941BDEC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 15:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbgD2Nl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 09:41:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52942 "EHLO
+        id S1727887AbgD2Nhl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 09:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgD2NhA (ORCPT
+        with ESMTP id S1727061AbgD2NhB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 09:37:00 -0400
+        Wed, 29 Apr 2020 09:37:01 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA864C09B052;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D28C09B053;
         Wed, 29 Apr 2020 06:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=VARbJRt66GXZ9qiKVVic699Ba+6i1AmoDjPwsJmH6Ms=; b=de4RFMRD8dMojIIeXBHcYPG/M5
-        nWhABiDosUpLCR6KRc1wgN3T8SPfYoLJVSfmoWAAg1yTm8JRu0hIRMVkBl2IZ0/57ANffY4eNtzjJ
-        0+Q6ZF75GUh0BNFNAZApP7LfPnMdiW5denJpYF1vBSQcUoqy2bSib5GP32tZnnvQcbyovRK8iv2mV
-        6K8E3kJCQHATjoghavXFEKlKQ7/yLyay0pxghvyOFcf5oQ4acCEwBoclrNn3vv50W6EKviUaNA55N
-        d0J47upy2ZwpPWv8P6+upSJve7iOzniw5/f++qOU3MXp38F62EHS6G7tvp3I1X/ooTuqZH4bq49WO
-        WJ444nfA==;
+        bh=iTN8ck5uddQpmt+rtiNROGP2F4hhl9L/H+YaYM0mw+U=; b=WOCJ26x4q1SK35EPWcVGDCM+9o
+        k5VOp+7Zry0z8QXx7IY6SWRTe/ArfgjtKfR/r/XO4TLv14LlCE8pE1Sgn0dY6704FmH1OrNGPg4R2
+        TruyAAZWjnQLJao+sqZm1dcz/35WASoBBv37xyj4hjU8f+z5dV1+c+hGXyA32rswly5hzYkYrqapz
+        1cbCyFpkvuXOvObY39bcxZckpel93dxCIUUuUdHI3hWuCIjStICcUT8hp4OodzSkctgUgkGBIgOiO
+        vT9vdJCzP23UTjD4a4NC93HdkJy7EcOBCNpu7nS5Z5WBX8YRy50Bwp8j7mBCyhtEoWY1bRpztu0ga
+        nxCn7xTg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jTmtX-0005vx-LQ; Wed, 29 Apr 2020 13:36:59 +0000
+        id 1jTmtX-0005w1-Mh; Wed, 29 Apr 2020 13:36:59 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v3 16/25] mm: Make prep_transhuge_page return its argument
-Date:   Wed, 29 Apr 2020 06:36:48 -0700
-Message-Id: <20200429133657.22632-17-willy@infradead.org>
+Subject: [PATCH v3 17/25] mm: Add __page_cache_alloc_order
+Date:   Wed, 29 Apr 2020 06:36:49 -0700
+Message-Id: <20200429133657.22632-18-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200429133657.22632-1-willy@infradead.org>
 References: <20200429133657.22632-1-willy@infradead.org>
@@ -47,73 +47,94 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-By permitting NULL or order-0 pages as an argument, and returning the
-argument, callers can write:
-
-	return prep_transhuge_page(alloc_pages(...));
-
-instead of assigning the result to a temporary variable and conditionally
-passing that to prep_transhuge_page().
+This new function allows page cache pages to be allocated that are
+larger than an order-0 page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- include/linux/huge_mm.h | 7 +++++--
- mm/huge_memory.c        | 9 +++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ include/linux/pagemap.h | 24 +++++++++++++++++++++---
+ mm/filemap.c            | 12 ++++++++----
+ 2 files changed, 29 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 1f6245091917..6a8502278f41 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -193,7 +193,7 @@ extern unsigned long thp_get_unmapped_area(struct file *filp,
- 		unsigned long addr, unsigned long len, unsigned long pgoff,
- 		unsigned long flags);
- 
--extern void prep_transhuge_page(struct page *page);
-+extern struct page *prep_transhuge_page(struct page *page);
- extern void free_transhuge_page(struct page *page);
- bool is_transparent_hugepage(struct page *page);
- 
-@@ -358,7 +358,10 @@ static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
- 	return false;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 55199cb5bd66..1169e2428dd7 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -205,15 +205,33 @@ static inline int page_cache_add_speculative(struct page *page, int count)
+ 	return __page_cache_add_speculative(page, count);
  }
  
--static inline void prep_transhuge_page(struct page *page) {}
-+static inline struct page *prep_transhuge_page(struct page *page)
++static inline gfp_t thp_gfpmask(gfp_t gfp)
 +{
-+	return page;
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	/* We'd rather allocate smaller pages than stall a page fault */
++	gfp |= GFP_TRANSHUGE_LIGHT;
++	gfp &= ~__GFP_DIRECT_RECLAIM;
++#endif
++	return gfp;
 +}
- 
- static inline bool is_transparent_hugepage(struct page *page)
++
+ #ifdef CONFIG_NUMA
+-extern struct page *__page_cache_alloc(gfp_t gfp);
++extern struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order);
+ #else
+-static inline struct page *__page_cache_alloc(gfp_t gfp)
++static inline
++struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
  {
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 6ecd1045113b..7a5e2b470bc7 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -508,15 +508,20 @@ static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+-	return alloc_pages(gfp, 0);
++	if (order == 0)
++		return alloc_pages(gfp, 0);
++	return prep_transhuge_page(alloc_pages(thp_gfpmask(gfp), order));
  }
  #endif
  
--void prep_transhuge_page(struct page *page)
-+struct page *prep_transhuge_page(struct page *page)
- {
-+	if (!page || compound_order(page) == 0)
-+		return page;
- 	/*
--	 * we use page->mapping and page->indexlru in second tail page
-+	 * we use page->mapping and page->index in second tail page
- 	 * as list_head: assuming THP order >= 2
- 	 */
-+	BUG_ON(compound_order(page) == 1);
- 
- 	INIT_LIST_HEAD(page_deferred_list(page));
- 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
++static inline struct page *__page_cache_alloc(gfp_t gfp)
++{
++	return __page_cache_alloc_order(gfp, 0);
++}
 +
-+	return page;
- }
+ static inline struct page *page_cache_alloc(struct address_space *x)
+ {
+ 	return __page_cache_alloc(mapping_gfp_mask(x));
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 23a051a7ef0f..9abba062973a 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -941,24 +941,28 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
+ EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
  
- bool is_transparent_hugepage(struct page *page)
+ #ifdef CONFIG_NUMA
+-struct page *__page_cache_alloc(gfp_t gfp)
++struct page *__page_cache_alloc_order(gfp_t gfp, unsigned int order)
+ {
+ 	int n;
+ 	struct page *page;
+ 
++	if (order > 0)
++		gfp = thp_gfpmask(gfp);
++
+ 	if (cpuset_do_page_mem_spread()) {
+ 		unsigned int cpuset_mems_cookie;
+ 		do {
+ 			cpuset_mems_cookie = read_mems_allowed_begin();
+ 			n = cpuset_mem_spread_node();
+-			page = __alloc_pages_node(n, gfp, 0);
++			page = __alloc_pages_node(n, gfp, order);
++			prep_transhuge_page(page);
+ 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
+ 
+ 		return page;
+ 	}
+-	return alloc_pages(gfp, 0);
++	return prep_transhuge_page(alloc_pages(gfp, order));
+ }
+-EXPORT_SYMBOL(__page_cache_alloc);
++EXPORT_SYMBOL(__page_cache_alloc_order);
+ #endif
+ 
+ /*
 -- 
 2.26.2
 
