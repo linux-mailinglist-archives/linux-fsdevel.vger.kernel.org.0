@@ -2,111 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E771BD288
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C64451BD29B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgD2CqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 22:46:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39362 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbgD2CqP (ORCPT
+        id S1726774AbgD2Cq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 22:46:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726498AbgD2Cq4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 22:46:15 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03T2hjcc121531;
-        Wed, 29 Apr 2020 02:46:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=gIeAZYkuVVDyweFavOri/H5uxFdFvLW4QIrNOv2+naM=;
- b=xc+PP61xi/bU+9667oXO9wieCTD0n7tfrhIMeBqPrGaZMc/SdD6nPvwqt+MXPb6LZSjw
- k5U6SEkwjpqc2+vihk2K+srxcb9AIedEL+LUDySVXfi3deNIgHClwIwFDkRMxSdwwftN
- kW2P0hO4mpyhw269M8sjBbIslT+DhYA10LM1jFXSJOSySSSRRJogJLx3TTfyXacNzJhh
- Vo39gBKykL3rhWUIfmKnJNm7tlft9qHpIPAvnQnHnXKvUIeICBOys0+Ehb+V1cCT296u
- wIDovXlyg/ycd7bWSN4crd+bBENVcdNmcl/7Dr8vUVeBiTGfvgvNUI2P8OzJeRYXmnh8 8A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 30p2p08p49-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Apr 2020 02:46:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03T2fu9K096183;
-        Wed, 29 Apr 2020 02:46:14 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 30pvcytegs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Apr 2020 02:46:14 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03T2kD1S004048;
-        Wed, 29 Apr 2020 02:46:13 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 Apr 2020 19:46:12 -0700
-Subject: [PATCH 18/18] xfs: fix quota accounting in the old fork swap code
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     darrick.wong@oracle.com
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Date:   Tue, 28 Apr 2020 19:46:11 -0700
-Message-ID: <158812837189.168506.4738302671249782594.stgit@magnolia>
-In-Reply-To: <158812825316.168506.932540609191384366.stgit@magnolia>
-References: <158812825316.168506.932540609191384366.stgit@magnolia>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 28 Apr 2020 22:46:56 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7003EC03C1AC;
+        Tue, 28 Apr 2020 19:46:56 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jTckK-00DwIZ-FV; Wed, 29 Apr 2020 02:46:48 +0000
+Date:   Wed, 29 Apr 2020 03:46:48 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        NeilBrown <neilb@suse.de>, "Rafael J . Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] epoll: Fix UAF dentry name access in wakeup source setup
+Message-ID: <20200429024648.GA23230@ZenIV.linux.org.uk>
+References: <20200429023104.131925-1-jannh@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9605 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- suspectscore=1 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004290020
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9605 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 clxscore=1015
- bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 suspectscore=1 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004290020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429023104.131925-1-jannh@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Wed, Apr 29, 2020 at 04:31:04AM +0200, Jann Horn wrote:
 
-The old fork swapping code doesn't change quota counts when it swaps
-data forks.  Fix it to do that.
+> I'm guessing this will go through akpm's tree?
+> 
+>  fs/eventpoll.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 8c596641a72b0..5052a41670479 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1450,7 +1450,7 @@ static int reverse_path_check(void)
+>  
+>  static int ep_create_wakeup_source(struct epitem *epi)
+>  {
+> -	const char *name;
+> +	struct name_snapshot name;
+>  	struct wakeup_source *ws;
+>  
+>  	if (!epi->ep->ws) {
+> @@ -1459,8 +1459,9 @@ static int ep_create_wakeup_source(struct epitem *epi)
+>  			return -ENOMEM;
+>  	}
+>  
+> -	name = epi->ffd.file->f_path.dentry->d_name.name;
+> -	ws = wakeup_source_register(NULL, name);
+> +	take_dentry_name_snapshot(&name, epi->ffd.file->f_path.dentry);
+> +	ws = wakeup_source_register(NULL, name.name.name);
+> +	release_dentry_name_snapshot(&name);
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_bmap_util.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index df373107e782..de6d1747a3fa 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -1386,6 +1386,7 @@ xfs_swap_extent_forks(
- 	xfs_filblks_t		aforkblks = 0;
- 	xfs_filblks_t		taforkblks = 0;
- 	xfs_extnum_t		junk;
-+	int64_t			temp_blks;
- 	uint64_t		tmp;
- 	unsigned int		state;
- 	int			src_log_flags = XFS_ILOG_CORE;
-@@ -1432,6 +1433,15 @@ xfs_swap_extent_forks(
- 	 */
- 	swap(ip->i_df, tip->i_df);
- 
-+	/* Update quota accounting. */
-+	temp_blks = tip->i_d.di_nblocks - taforkblks + aforkblks;
-+	xfs_trans_mod_dquot_byino(*tpp, ip, XFS_TRANS_DQ_BCOUNT,
-+			temp_blks - ip->i_d.di_nblocks);
-+
-+	temp_blks = ip->i_d.di_nblocks + taforkblks - aforkblks;
-+	xfs_trans_mod_dquot_byino(*tpp, tip, XFS_TRANS_DQ_BCOUNT,
-+			temp_blks - tip->i_d.di_nblocks);
-+
- 	/*
- 	 * Fix the on-disk inode values
- 	 */
-
+I'm not sure I like it.  Sure, it won't get freed under you that way; it still
+can go absolutely stale by the time you return from wakeup_source_register().
+What is it being used for?
