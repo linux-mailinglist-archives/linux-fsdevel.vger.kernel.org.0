@@ -2,97 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D598F1BDA93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 13:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC561BDAB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 13:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbgD2L2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 07:28:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:59125 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbgD2L2b (ORCPT
+        id S1726516AbgD2LdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 07:33:10 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:61749 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726865AbgD2LdJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 07:28:31 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MdNoW-1iuh7V0QCm-00ZRuF; Wed, 29 Apr 2020 13:28:29 +0200
-Received: by mail-qt1-f182.google.com with SMTP id 71so1431749qtc.12;
-        Wed, 29 Apr 2020 04:28:28 -0700 (PDT)
-X-Gm-Message-State: AGi0PuaeMu9/AjuDipLfLN315tZJAwUZQqGbnk7VJog+jkad7KXDSoyO
-        VebC0GhF2CCjsTjSnKx/99gRhDgXWbgz1M/7Eqg=
-X-Google-Smtp-Source: APiQypIa6TSw8+yjWo4LgdZcN78VVZq03VH3fd8N9jMLAVbifbgVTqRdEAU1CxrmrW/DkCSQUjz/sA0LJeq7jFPcccQ=
-X-Received: by 2002:ac8:2bce:: with SMTP id n14mr33266506qtn.18.1588159707900;
- Wed, 29 Apr 2020 04:28:27 -0700 (PDT)
+        Wed, 29 Apr 2020 07:33:09 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1588159988; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=+mKHoOni6HAqTybwiMJ3iqfd2RYtnOIL2dRkZG20+4c=; b=oFJdzz2OkJj75rIuDa69n3pgy+TJTj6lhKDtbHahQTEqzRQmZ7ICr07oKoaenTfwseUW/OIO
+ 48WPogw47NJpU02j4E9/0VwueTcYksVAmqgOWJ26CUbrSJLeV7ioLRW+iHXwWN2a51X6MLZN
+ 4kRIp/8wnPj8rPNlaCglCrvyeKY=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ea965f3.7f04b82dd880-smtp-out-n04;
+ Wed, 29 Apr 2020 11:33:07 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 608FAC4478F; Wed, 29 Apr 2020 11:33:05 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pkondeti)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ABF1CC433D2;
+        Wed, 29 Apr 2020 11:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABF1CC433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Wed, 29 Apr 2020 17:02:55 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] sched/uclamp: Add a new sysctl to control RT
+ default boost value
+Message-ID: <20200429113255.GA19464@codeaurora.org>
+References: <20200428164134.5588-1-qais.yousef@arm.com>
 MIME-Version: 1.0
-References: <20200428074827.GA19846@lst.de> <20200428195645.1365019-1-arnd@arndb.de>
- <20200429064458.GA31717@lst.de> <CAK8P3a1YD3RitSLLRsM+e+LwAxg+NS6F071B4zokwEpiL0WvrA@mail.gmail.com>
- <20200429094201.GA2557@lst.de>
-In-Reply-To: <20200429094201.GA2557@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 29 Apr 2020 13:28:11 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1+DU+juB_SxAAK6WAMHwi7vGQS7T_Yw0Gvo4P4M8jggg@mail.gmail.com>
-Message-ID: <CAK8P3a1+DU+juB_SxAAK6WAMHwi7vGQS7T_Yw0Gvo4P4M8jggg@mail.gmail.com>
-Subject: Re: [PATCH] fixup! signal: factor copy_siginfo_to_external32 from copy_siginfo_to_user32
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:0pgJ5+AUr0ZyAZ0GWg4eqDI1TnA/whWfuLpkrrMSvxYAWjINppE
- a7v/Ni2HcIVXKKwWpO6EnpmvcyOe0F5Ar+DzumTtjDwkyvsoWUEDtYRfZrJrzooiSz/8GjQ
- qiXdDOaE0kundOZXs40d686yOrTu1CHCpwIPasAhVGLbC9IZGTEU2/fhf11HAbf4YtVV8i6
- g/qyC1yHRA4zl1bYvXA6w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uZLu5qNCOnI=:SkzXkn6DWZomBu4HZnQGBD
- 2kgdRSn4t5CJI8Wsq9jLbwCEr6+MpFosTMnh2L3Bag9xsujcFudbhIAy4KGCnj3+9dCqG42PA
- X6oT+a5dy/u6nGvKRvfgkkwPe9usVTHypWqyMmS8cTiK+IUyWd2m/eyEN9pqz2G3iJuKcXUby
- cl17xihPdmxb8W7AX2P+jEN6NNle9VtLW/tZepA2fyUQOPEQ5zGWd1wtXyrBsM1oP3GiQNiLi
- o2zV26/liDzNGtEQWPrhJN/NZjESzGtAdZoW/pO0+IHUAgRsSXtWrmbBH5kSy4Fso5LCmOw7k
- rgf7a/EADdwfzg8OAEF5ZqlYsJxWf/NK5YMAC/n6Iw/ncPEHrSDMJ4u6LffvPhDyy9MWt3CcG
- Tn5jxqkP1EUD68kJmOF6pCm6nCTArhm5VjmADtD6yx0Sy1zXXztP4ZsNdFIQBeDtyBOhDqFKK
- zfhMywjnem/aO0xoJOesgzvzEGKYpoYbMpbNQ2fPnpjzpe1PZePIRRSQElmSaQV2t0J0IxFZi
- PBTOmCGajnrkNy8CG9RVy+QDtKPjg3k7IuFGnrFNq/Hx5ROjALOxqZY4vq9mZBE+ZIm8aJNxz
- /RtsHAor6ldAP/sR9+JEjhxIeHm+2Slhfh0lp92JieGeITFM4t4IKobyGIZAitVO+1xtSDz55
- nAX6CkUyjn94xfXYpRjirE8G/YEDxQLOFx/6Opq12qrt8lxPRiVv7RXjFL7n/x6dEUiNvf1wc
- qqwslQVvSgpE1WP2pB1aB5ZZVLJFH4Rvphw/Jxn1yzk2fWuwBclynm8ZZExl8guqNwfIAd5gz
- kH2bRaxVSlXjTkybabnvVuijWDVuipq4UvhRsk/aFlAm5ZGdcU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200428164134.5588-1-qais.yousef@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 11:42 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Wed, Apr 29, 2020 at 10:07:11AM +0200, Arnd Bergmann wrote:
-> > > What do you think of this version?  This one always overrides
-> > > copy_siginfo_to_user32 for the x86 compat case to keep the churn down,
-> > > and improves the copy_siginfo_to_external32 documentation a bit.
-> >
-> > Looks good to me. I preferred checking for X32 explicitly (so we can
-> > find and kill off the #ifdef if we ever remove X32 for good), but there is
-> > little difference in the end.
->
-> Is there any realistic chance we'll get rid of x32?
+Hi Qais,
 
-When we discussed it last year, there were a couple of users that replied
-saying they actively use it for a full system, and some others said they run
-specific programs built as x32 as it results in much faster (10% to 20%)
-execution of the same binaries compared to either i686 or x86_64.
+On Tue, Apr 28, 2020 at 05:41:33PM +0100, Qais Yousef wrote:
 
-I expect both of these to get less common over time as stuff bitrots
-and more of the workloads that benefit most from the higher
-performance (cross-compilers, hpc) run out of virtual address space.
-Debian popcon numbers are too small to be reliable but they do show
-a trend at https://popcon.debian.org/stat/sub-x32.png
+[...]
 
-I would just ask again every few years, and eventually we'll decide
-it's not worth keeping any more. I do expect most 32-bit machines
-to stop getting kernel updates before 2030 and we can probably
-remove a bunch of architectures including x32 before then, though
-at least armv7 users will have to get kernel updates for substantially
-longer.
+>  
+> +static void uclamp_sync_util_min_rt_default(struct task_struct *p)
+> +{
+> +	struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
+> +
+> +	if (unlikely(rt_task(p)) && !uc_se->user_defined)
+> +		uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt_default, false);
+> +}
 
-      Arnd
+Unlike system default clamp values, RT default value is written to
+p->uclamp_req[UCLAMP_MIN]. A user may not be able to set the uclamp.max to a
+lower value than sysctl_sched_uclamp_util_min_rt_default. This is not a
+big deal. Just sharing my observation. Is this how you expected it to work?
+
+> +
+>  static inline struct uclamp_se
+>  uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> @@ -907,8 +935,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  static inline struct uclamp_se
+>  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+> -	struct uclamp_se uc_max = uclamp_default[clamp_id];
+> +	struct uclamp_se uc_req, uc_max;
+> +
+> +	/*
+> +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
+> +	 */
+> +	uclamp_sync_util_min_rt_default(p);
+> +
+> +	uc_req = uclamp_tg_restrict(p, clamp_id);
+> +	uc_max = uclamp_default[clamp_id];
+
+We are calling uclamp_sync_util_min_rt_default() unnecessarily for
+clamp_id == UCLAMP_MAX case. Would it be better to have a separate
+uclamp_default for RT like uclamp_default_rt and select uc_max based
+on task policy? Since all tunables are handled in sysctl_sched_uclamp_handler
+we can cover the case of uclamp_util_min < uclamp_util_min_rt.
+
+>  
+>  	/* System default restrictions always apply */
+>  	if (unlikely(uc_req.value > uc_max.value))
+> @@ -1114,12 +1149,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  				loff_t *ppos)
+>  {
+>  	bool update_root_tg = false;
+> -	int old_min, old_max;
+> +	int old_min, old_max, old_min_rt;
+>  	int result;
+>  
+>  	mutex_lock(&uclamp_mutex);
+>  	old_min = sysctl_sched_uclamp_util_min;
+>  	old_max = sysctl_sched_uclamp_util_max;
+> +	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
+>  
+>  	result = proc_dointvec(table, write, buffer, lenp, ppos);
+>  	if (result)
+> @@ -1133,6 +1169,18 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  		goto undo;
+>  	}
+>  
+> +	/*
+> +	 * The new value will be applied to RT tasks the next time the
+> +	 * scheduler needs to calculate the effective uclamp.min for that task,
+> +	 * assuming the task is using the system default and not a user
+> +	 * specified value. In the latter we shall leave the value as the user
+> +	 * requested.
+> +	 */
+> +	if (sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
+> +		result = -EINVAL;
+> +		goto undo;
+> +	}
+> +
+>  	if (old_min != sysctl_sched_uclamp_util_min) {
+>  		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
+>  			      sysctl_sched_uclamp_util_min, false);
+> @@ -1158,6 +1206,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  undo:
+>  	sysctl_sched_uclamp_util_min = old_min;
+>  	sysctl_sched_uclamp_util_max = old_max;
+> +	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
+>  done:
+>  	mutex_unlock(&uclamp_mutex);
+>  
+> @@ -1200,9 +1249,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
+>  		if (uc_se->user_defined)
+>  			continue;
+>  
+> -		/* By default, RT tasks always get 100% boost */
+> +		/*
+> +		 * By default, RT tasks always get 100% boost, which the admins
+> +		 * are allowed to change via
+> +		 * sysctl_sched_uclamp_util_min_rt_default knob.
+> +		 */
+>  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+> -			clamp_value = uclamp_none(UCLAMP_MAX);
+> +			clamp_value = sysctl_sched_uclamp_util_min_rt_default;
+>  
+>  		uclamp_se_set(uc_se, clamp_value, false);
+>  	}
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 8a176d8727a3..64117363c502 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= sysctl_sched_uclamp_handler,
+>  	},
+> +	{
+> +		.procname	= "sched_util_clamp_min_rt_default",
+> +		.data		= &sysctl_sched_uclamp_util_min_rt_default,
+> +		.maxlen		= sizeof(unsigned int),
+> +		.mode		= 0644,
+> +		.proc_handler	= sysctl_sched_uclamp_handler,
+> +	},
+>  #endif
+>  #ifdef CONFIG_SCHED_AUTOGROUP
+>  	{
+> -- 
+> 2.17.1
+> 
+
+Thanks,
+Pavan
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
