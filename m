@@ -2,109 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD361BD983
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 12:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3BA61BD9AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 12:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgD2KZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 06:25:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41060 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726355AbgD2KZp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 06:25:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3F218AC44;
-        Wed, 29 Apr 2020 10:25:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DD8A91E1298; Wed, 29 Apr 2020 12:25:40 +0200 (CEST)
-Date:   Wed, 29 Apr 2020 12:25:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Schatzberg <schatzberg.dan@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH v5 0/4] Charge loop device i/o to issuing cgroup
-Message-ID: <20200429102540.GA12716@quack2.suse.cz>
-References: <20200428161355.6377-1-schatzberg.dan@gmail.com>
- <20200428214653.GD2005@dread.disaster.area>
+        id S1726523AbgD2KeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 06:34:10 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48673 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726345AbgD2KeJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Apr 2020 06:34:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588156448;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YoohDxSzOfJakVyi+LR58Vbq+jZaX7TPX/6wkZdclCE=;
+        b=K1557RuRIXVB7EgUO3NWUY9P2Ka6xrkwQWcgPiPM/Bg6HmT+Kq5RSYBH6Kaz9+ZXIttnwB
+        MAYZBtMjHKyIy9+er9PvZCBqzJOWZJJTJomtPpRuN3VDXWENVUIhDkDs0oyxjFnMJ2z3VF
+        86rVWsbe9i/OeA/Ka7tBPijRYaWCIBI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-435-XJ2b2WbkMIKKcCkrFEnD1A-1; Wed, 29 Apr 2020 06:34:06 -0400
+X-MC-Unique: XJ2b2WbkMIKKcCkrFEnD1A-1
+Received: by mail-wm1-f70.google.com with SMTP id h6so1020234wmi.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 03:34:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YoohDxSzOfJakVyi+LR58Vbq+jZaX7TPX/6wkZdclCE=;
+        b=ZcX88MezxwqXH23/W23s7fY1tucn/vC+iP53B93RQalwJ/jMgIyoT1o+lgSu9TVTPK
+         h+wfsfmPq03oWjSZHehSFwFTcrxZAzRl10XCv88aeZCqn2+3EEBiI26SHR0W9vMFydN4
+         1Tl94vuv3th9ZL53EaYjv4/rR+VKTpQ7jLGOqRKYMT+BR3cAPF/fIB6VsHmwv5P9IctF
+         q99PQLG9TI3RFleROecOyCsPwaneE3kHEcJH03FwrVPG2i7mpr//RCrNu1qPFIR9tVib
+         CDG4yguW9BvgnVkknMBHkkyR+JLikcYF+B50aYYQmNZ2ljgETeYyj+R4c2CkHt+tr/ZU
+         lsIg==
+X-Gm-Message-State: AGi0PuZcXEOwVB+rCV27RhoAUs1iTY4PpsYN5H4z10tEVO9siZ88ZzBs
+        QThpSitfaKjaMdHd3IaTn6szBRbncuv3DC46ApDC06kunHU6WONJzfsrZQfdTslrX6XfIGbdV4/
+        QNdeb2RC6vxcypH7j5mKOA1M84w==
+X-Received: by 2002:a5d:5652:: with SMTP id j18mr41171057wrw.40.1588156445898;
+        Wed, 29 Apr 2020 03:34:05 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKUplwF1IbfdLddtQvuA8EuJ4mORmXyTwztal2PAvAeQGMBU6PCU39J1Mm8ix5G/AW3NdIW0w==
+X-Received: by 2002:a5d:5652:: with SMTP id j18mr41171040wrw.40.1588156445690;
+        Wed, 29 Apr 2020 03:34:05 -0700 (PDT)
+Received: from localhost.localdomain ([194.230.155.226])
+        by smtp.gmail.com with ESMTPSA id d143sm7011018wmd.16.2020.04.29.03.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2020 03:34:05 -0700 (PDT)
+Subject: Re: [RFC PATCH 5/5] kvm_main: replace debugfs with statsfs
+To:     Randy Dunlap <rdunlap@infradead.org>, kvm@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, mst@redhat.com,
+        borntraeger@de.ibm.com, Paolo Bonzini <pbonzini@redhat.com>
+References: <20200427141816.16703-1-eesposit@redhat.com>
+ <20200427141816.16703-6-eesposit@redhat.com>
+ <2bb5bb1d-deb8-d6cd-498b-8948bae6d848@infradead.org>
+From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Message-ID: <48259504-7644-43cf-45a2-219981e59a49@redhat.com>
+Date:   Wed, 29 Apr 2020 12:34:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200428214653.GD2005@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2bb5bb1d-deb8-d6cd-498b-8948bae6d848@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 29-04-20 07:47:34, Dave Chinner wrote:
-> On Tue, Apr 28, 2020 at 12:13:46PM -0400, Dan Schatzberg wrote:
-> > The loop device runs all i/o to the backing file on a separate kworker
-> > thread which results in all i/o being charged to the root cgroup. This
-> > allows a loop device to be used to trivially bypass resource limits
-> > and other policy. This patch series fixes this gap in accounting.
-> 
-> How is this specific to the loop device? Isn't every block device
-> that offloads work to a kthread or single worker thread susceptible
-> to the same "exploit"?
-> 
-> Or is the problem simply that the loop worker thread is simply not
-> taking the IO's associated cgroup and submitting the IO with that
-> cgroup associated with it? That seems kinda simple to fix....
-> 
-> > Naively charging cgroups could result in priority inversions through
-> > the single kworker thread in the case where multiple cgroups are
-> > reading/writing to the same loop device.
-> 
-> And that's where all the complexity and serialisation comes from,
-> right?
-> 
-> So, again: how is this unique to the loop device? Other block
-> devices also offload IO to kthreads to do blocking work and IO
-> submission to lower layers. Hence this seems to me like a generic
-> "block device does IO submission from different task" issue that
-> should be handled by generic infrastructure and not need to be
-> reimplemented multiple times in every block device driver that
-> offloads work to other threads...
 
-Yeah, I was thinking about the same when reading the patch series
-description. We already have some cgroup workarounds for btrfs kthreads if
-I remember correctly, we have cgroup handling for flush workers, now we are
-adding cgroup handling for loopback device workers, and soon I'd expect
-someone comes with a need for DM/MD worker processes and IMHO it's getting
-out of hands because the complexity spreads through the kernel with every
-subsystem comming with slightly different solution to the problem and also
-the number of kthreads gets multiplied by the number of cgroups. So I
-agree some generic solution how to approach IO throttling of kthreads /
-workers would be desirable.
 
-OTOH I don't have a great idea how the generic infrastructure should look
-like...
+On 4/28/20 7:56 PM, Randy Dunlap wrote:
+> On 4/27/20 7:18 AM, Emanuele Giuseppe Esposito wrote:
+>> Use statsfs API instead of debugfs to create sources and add values.
+>>
+>> This also requires to change all architecture files to replace the old
+>> debugfs_entries with statsfs_vcpu_entries and statsfs_vm_entries.
+>>
+>> The files/folders name and organization is kept unchanged, and a symlink
+>> in sys/kernel/debugfs/kvm is left for backward compatibility.
+>>
+>> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+>> ---
+>>   arch/arm64/kvm/guest.c          |   2 +-
+>>   arch/mips/kvm/mips.c            |   2 +-
+>>   arch/powerpc/kvm/book3s.c       |   6 +-
+>>   arch/powerpc/kvm/booke.c        |   8 +-
+>>   arch/s390/kvm/kvm-s390.c        |  16 +-
+>>   arch/x86/include/asm/kvm_host.h |   2 +-
+>>   arch/x86/kvm/Makefile           |   2 +-
+>>   arch/x86/kvm/debugfs.c          |  64 -------
+>>   arch/x86/kvm/statsfs.c          |  49 +++++
+>>   arch/x86/kvm/x86.c              |   6 +-
+>>   include/linux/kvm_host.h        |  39 +---
+>>   virt/kvm/arm/arm.c              |   2 +-
+>>   virt/kvm/kvm_main.c             | 314 ++++----------------------------
+>>   13 files changed, 130 insertions(+), 382 deletions(-)
+>>   delete mode 100644 arch/x86/kvm/debugfs.c
+>>   create mode 100644 arch/x86/kvm/statsfs.c
+> 
+> 
+> You might want to select STATS_FS here (or depend on it if it is required),
+> or you could provide stubs in <linux/statsfs.h> for the cases of STATS_FS
+> is not set/enabled.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Currently debugfs is not present in the kvm Kconfig, but implements 
+empty stubs as you suggested. I guess it would be a good idea to do the 
+same for statsfs.
+
+Paolo, what do you think?
+
+Regarding the other suggestions, you are right, I will apply them in v2.
+
+Thank you,
+Emanuele
+
