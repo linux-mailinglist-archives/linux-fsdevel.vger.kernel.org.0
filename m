@@ -2,122 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C391BD256
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F91D1BD28A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbgD2CnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 22:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726490AbgD2CnB (ORCPT
+        id S1726744AbgD2CqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 22:46:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49428 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbgD2CqS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 22:43:01 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80240C03C1AD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:43:01 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id o134so1557791yba.18
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=1e2NH77BUHybTGxugnpz/lVzLlT/U4RLm6UsbwYLr4A=;
-        b=ROkfloZnyw0Pn1nyVT+OhQYVEitYDmQNg/ttq24vcCWR+BHyf7R5m6JtVusJMfAa03
-         47BpzL8fznqfqMHWLbLBMSKa2qLXXg8L+ttcFF+MJgcx/EImPs0b4Mw3zR6f4KXi7aki
-         /wR8lwRjt60fjkH/xi4LSFwStbw1RT/c4p4FPEkdCcCUHUxJyPPapXi2ArDxTlBBYbcI
-         dnMGNlgFvq5d4/VH/pirmr9Y6hfZgQ8p2ROTNI08TLuMWLj7iVbdkcbcDKZWlaZGzvWZ
-         PP1oKRK+a8UophdnKWCC3UeIBIkuPpCLn4P6rHmlbEpJCHxmyCWvYWfrx0mGnDKSvmOL
-         yzdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=1e2NH77BUHybTGxugnpz/lVzLlT/U4RLm6UsbwYLr4A=;
-        b=sKKdCnjq3T4ao0WO+ixntH1rxFlaelTArer1bcOfq3d8F89eIbO7aD3uIM4WRnR6lU
-         emIvNP9m463528HK+PS/Z9ioO6TgLv3wxZ9bsdLW0WHudWIWZQBldZvXZiu/hzyWvciV
-         Skdcu9jQOUBCWr1XYMi6ySZO6xvk/Mq5x0LYQfDD6HdbLfdEkRUYT2O0nzT+2I5XuV9I
-         pl1HK111cv2ia4K+pSnZD6DKCkUDl2IT/0fMhgvxrYGEm4rb+nEed2e4a6ucjJ39dMAt
-         AsB8Suy0BkJ2d2/Oj1XQKRTnqkePnCTJsoeNEECjVvhL00oAAah9sYkPNDoZAPWAFhAm
-         M9Mw==
-X-Gm-Message-State: AGi0PuYC+C6WMo5N1h7T1XMV5dZbqIrAlh2u7Cv9AUuh4nVAID4Fatj0
-        aKizYcSO2E9GYsTRq21Fg1nr9nTTPw==
-X-Google-Smtp-Source: APiQypKHXS545Ck07m0eyuMmqQZYShUs9n7ii7OW5TQ6sdLH5iCKxNW0TYL3M7PWRW7MQca6L3ZJ6PRRrA==
-X-Received: by 2002:a25:cc48:: with SMTP id l69mr48912932ybf.459.1588128180667;
- Tue, 28 Apr 2020 19:43:00 -0700 (PDT)
-Date:   Wed, 29 Apr 2020 04:42:26 +0200
-Message-Id: <20200429024226.135830-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.26.2.303.gf8c07b1a785-goog
-Subject: [PATCH] epoll: Move helper functions from UAPI header into eventpoll.c
-From:   Jann Horn <jannh@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
-        NeilBrown <neilb@suse.de>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Apr 2020 22:46:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03T2j6kG074138;
+        Wed, 29 Apr 2020 02:46:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=saTp9ZlztCwLxl5GJqatd7nexbzAftCe0NqyMIjna2U=;
+ b=AXqykkB0QEllnEW3qUBevZ4oIoNKkMvD8SoZfyfTV58KAEK2c9JjstlBMjp2M5urFmKj
+ 9x9tT29joiTUPeYnka0vbgqucbcSJSydtCelfbnnljNqAoSAbpJbBsIwGQO9kKVnpyA0
+ QERf23M1Won+RhA4IHjsO1OlTLfOkuwFlO5xDqp9Pt/nrVKK3IBKSAU24AkpcmXVMbqh
+ Tby27uVRd4OBjyq0rSzDylIjPPKkCYtJNALdSit2ILZ8ihM+ZnEF22z1tSNv2sDZtq7i
+ s+qWGaUgWvXhcMvOarXDC1SboIn2zShIDlx+TfYXcHCDqu+7QfkN3nRx5wrt8XnR367n Lw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 30nucg39r2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Apr 2020 02:46:17 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03T2g1jn096298;
+        Wed, 29 Apr 2020 02:44:16 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 30pvcytcgg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Apr 2020 02:44:16 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03T2iFqM003255;
+        Wed, 29 Apr 2020 02:44:15 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 Apr 2020 19:44:15 -0700
+Subject: [PATCH RFC 00/18] xfs: atomic file updates
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     darrick.wong@oracle.com
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Date:   Tue, 28 Apr 2020 19:44:14 -0700
+Message-ID: <158812825316.168506.932540609191384366.stgit@magnolia>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9605 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004290020
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9605 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004290020
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ep_take_care_of_epollwakeup() is a kernel-internal function (it calls
-capable()) and therefore does not belong in a UAPI header.
+Hi all,
 
-Since nothing outside fs/eventpoll.c uses it, move it over there.
+This series creates a new log incompat feature and log intent items to
+track high level progress of swapping ranges of two files and finish
+interrupted work if the system goes down.  It then adds a new
+FISWAPRANGE ioctl so that userspace can access the atomic extent
+swapping feature.  With this feature, user programs will be able to
+update files atomically by opening an O_TMPFILE, reflinking the source
+file to it, making whatever updates they want to make, and then
+atomically swap the changed bits back to the source file.  It even has
+an optional ability to detect a changed source file and reject the
+update.
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/eventpoll.c                 | 13 +++++++++++++
- include/uapi/linux/eventpoll.h | 12 ------------
- 2 files changed, 13 insertions(+), 12 deletions(-)
+The intent behind this new userspace functionality is to enable atomic
+rewrites of arbitrary parts of individual files.  For years, application
+programmers wanting to ensure the atomicity of a file update had to
+write the changes to a new file in the same directory, fsync the new
+file, rename the new file on top of the old filename, and then fsync the
+directory.  People get it wrong all the time, and $fs hacks abound.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 8c596641a72b0..7365ccba90973 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2102,6 +2102,19 @@ static inline int epoll_mutex_lock(struct mutex *mutex, int depth,
- 	return -EAGAIN;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
-+{
-+	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
-+		epev->events &= ~EPOLLWAKEUP;
-+}
-+#else
-+static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
-+{
-+	epev->events &= ~EPOLLWAKEUP;
-+}
-+#endif
-+
- int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 		 bool nonblock)
- {
-diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
-index 8a3432d0f0dcb..39dfc29f0f529 100644
---- a/include/uapi/linux/eventpoll.h
-+++ b/include/uapi/linux/eventpoll.h
-@@ -79,16 +79,4 @@ struct epoll_event {
- 	__u64 data;
- } EPOLL_PACKED;
- 
--#ifdef CONFIG_PM_SLEEP
--static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
--{
--	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
--		epev->events &= ~EPOLLWAKEUP;
--}
--#else
--static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
--{
--	epev->events &= ~EPOLLWAKEUP;
--}
--#endif
- #endif /* _UAPI_LINUX_EVENTPOLL_H */
+With atomic file updates, this is no longer necessary.  Programmers
+create an O_TMPFILE, optionally FICLONE the file contents into the
+temporary file, make whatever changes they want to the tempfile, and
+FISWAPRANGE the contents from the tempfile into the regular file.  The
+interface can optionally check the original file's [cm]time to reject
+the swap operation if the file has been modified by.  There are no
+fsyncs to take care of; no directory operations at all; and the fs will
+take care of finishing the swap operation if the system goes down in the
+middle of the swap.  Sample code can be found in the corresponding
+changes to xfs_io to exercise the use case mentioned above.
 
-base-commit: 96c9a7802af7d500a582d89a8b864584fe878c1b
--- 
-2.26.2.303.gf8c07b1a785-goog
+Note that this function is /not/ the O_DIRECT atomic file writes concept
+that has been floating around for years.  This is constructed entirely
+in software, which means that there are no limitations other than the
+regular filesystem limits.
 
+As a side note, there's an extra motivation behind the kernel
+functionality: online repair of file-based metadata.  The atomic file
+swap is implemented as an atomic inode fork swap, which means that we
+can implement online reconstruction of extended attributes and
+directories by building a new one in another inode and atomically
+swap the contents.
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This is an extraordinary way to destroy everything.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates
+
+xfsprogs git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=atomic-file-updates
+
+fstests git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=atomic-file-updates
