@@ -2,143 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 941211BE7EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 21:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A24A1BEA36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 23:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbgD2T4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 15:56:42 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48509 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726743AbgD2T4m (ORCPT
+        id S1727069AbgD2VuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 17:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726775AbgD2VuL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 15:56:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588190200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X6rk25Tv2imwj4OrlKEUTzABdfyr8dyAJgvrX//k5fs=;
-        b=D1S0Ba1qaQQe6L/411Vh8WBHUHWaZ0mIyejkNERPzR1DZvwRPzs2h1RG4OiNz0ociyqy1l
-        a7Su5UMGHALKfY5SBS28UpovBcowFSjjUbf+s2so/fg057U3c6J/F2CM6TbeouE20Ytf6C
-        HPmCTY1hZIYpNREXrTRUaoNtI6+EkGE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-Jn-7UCXpM_6y8Jb0umYfuw-1; Wed, 29 Apr 2020 15:56:38 -0400
-X-MC-Unique: Jn-7UCXpM_6y8Jb0umYfuw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D5CC107ACCA;
-        Wed, 29 Apr 2020 19:56:35 +0000 (UTC)
-Received: from w520.home (ovpn-112-162.phx2.redhat.com [10.3.112.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9425366062;
-        Wed, 29 Apr 2020 19:56:33 +0000 (UTC)
-Date:   Wed, 29 Apr 2020 13:56:33 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-doc@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [regression?] Re: [PATCH v6 06/12] mm/gup: track FOLL_PIN pages
-Message-ID: <20200429135633.626a8411@w520.home>
-In-Reply-To: <20200429002903.GZ26002@ziepe.ca>
-References: <20200211001536.1027652-7-jhubbard@nvidia.com>
-        <20200424121846.5ee2685f@w520.home>
-        <5b901542-d949-8d7e-89c7-f8d5ee20f6e9@nvidia.com>
-        <20200424141548.5afdd2bb@w520.home>
-        <665ffb48-d498-90f4-f945-997a922fc370@nvidia.com>
-        <20200428105455.30343fb4@w520.home>
-        <20200428174957.GV26002@ziepe.ca>
-        <20200428130752.75c153bd@w520.home>
-        <20200428192251.GW26002@ziepe.ca>
-        <20200428141223.5b1653db@w520.home>
-        <20200429002903.GZ26002@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Wed, 29 Apr 2020 17:50:11 -0400
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44BDEC035494
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 14:50:10 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id x7so4198302qkb.17
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 14:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=P4HtBjpSOsceKegug2sEdVIRavAA18N3gAKqWZxS3Rg=;
+        b=TI7o13vZ0R4PIgdk5y6o23r6CG8YctneHrjonN+9jVFDJ8a0023jr599F8e7C/pCP1
+         fL3VdXGkXbALChJNJ6t9m+IF3Wovo/x9/xrYX0g4YfMrgsQSVwwi23O/IaVGqNkQQ6h3
+         x+0qrgSjRfFwRKbeWgXwjoMlqjH1lm4wAM3CELbCKXTiLq/swJ34pmCu23AMfL5Yjkgy
+         2lr+IyuwfEsMfRYCu6HHrOrTyeTAAHhb+KjzIA+Iji3q7RLl2di8U0GeoekM5FEejqLO
+         huXbxPxwrw4zSseLeMFqvnk/V1Q6Vuoaodwe0RRKcnawzra8PObdhok75bmLDdUPrs8e
+         Ubdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=P4HtBjpSOsceKegug2sEdVIRavAA18N3gAKqWZxS3Rg=;
+        b=UhfJcQthhTuKTwqiA+0YbjjIZ6RFzXyGB7/3NVlDPc3dueV+FtZ4v7Rvidbxg8jHgE
+         waRdHt4rvv3u5Z3aliAMM3bYXQHupt/aeYdOnL2gsbkcrx4VC9TwvkMAp/XTEJ+RcX4p
+         Aqb+99yhrUvN2SfnyBk+OFSXVVd/BFf10iJZRHH73i5OQTxkET4hTUXjPFjdlnPC8F8X
+         QwYllBdoYlILpL6vfUsz2exWUxiL3eRMuJYjDFy2ar0jAcsBv6vGLDNCraeSQbHWWT2w
+         6xl53+BlLRWrPm9YRt2K87HMI/nQYWwaEWg7HXZ/QrFXwXVCx7mdD/Zv5Q/DhSoZ6XkN
+         tVgw==
+X-Gm-Message-State: AGi0Pua+FCGNBvzbz+QLh0egzZP4ELTeQn9eDHBdSKJ2N1tF/TXAnDuP
+        3gzb4UtFceldBdkXrUZFQhm+6Zj03g==
+X-Google-Smtp-Source: APiQypKMctOewJ3jBsbKHfX9HPIgYNkTG/naYrVaiwmZ+zyaqG0pLqe4doZmeqtJnRlWlz10BcfPBfAjMw==
+X-Received: by 2002:a0c:ba83:: with SMTP id x3mr36580637qvf.83.1588197009264;
+ Wed, 29 Apr 2020 14:50:09 -0700 (PDT)
+Date:   Wed, 29 Apr 2020 23:49:49 +0200
+Message-Id: <20200429214954.44866-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.26.2.526.g744177e7f7-goog
+Subject: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+From:   Jann Horn <jannh@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 28 Apr 2020 21:29:03 -0300
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
+At the moment, we have that rather ugly mmget_still_valid() helper to
+work around <https://crbug.com/project-zero/1790>: ELF core dumping
+doesn't take the mmap_sem while traversing the task's VMAs, and if
+anything (like userfaultfd) then remotely messes with the VMA tree,
+fireworks ensue. So at the moment we use mmget_still_valid() to bail
+out in any writers that might be operating on a remote mm's VMAs.
 
-> On Tue, Apr 28, 2020 at 02:12:23PM -0600, Alex Williamson wrote:
-> 
-> > > > Maybe I was just getting lucky before this commit.  For a
-> > > > VM_PFNMAP, vaddr_get_pfn() only needs pin_user_pages_remote() to return
-> > > > error and the vma information that we setup in vfio_pci_mmap().    
-> > > 
-> > > I've written on this before, vfio should not be passing pages to the
-> > > iommu that it cannot pin eg it should not touch VM_PFNMAP vma's in the
-> > > first place.
-> > > 
-> > > It is a use-after-free security issue the way it is..  
-> > 
-> > Where is the user after free?  Here I'm trying to map device mmio space
-> > through the iommu, which we need to enable p2p when the user owns
-> > multiple devices.  
-> 
-> Yes, I gathered what the intent was..
-> 
-> > The device is owned by the user, bound to vfio-pci, and can't be
-> > unbound while the user has it open.  The iommu mappings are torn
-> > down on release.  I guess I don't understand the problem.  
-> 
-> For PFNMAP VMAs the lifecycle rule is basically that the PFN inside
-> the VMA can only be used inside the mmap_sem that read it. Ie you
-> cannot take a PFN outside the mmap_sem and continue to use it.
-> 
-> This is because the owner of the VMA owns the lifetime of that PFN,
-> and under the write side of the mmap_sem it can zap the PFN, or close
-> the VMA. Afterwards the VMA owner knows that there are no active
-> reference to the PFN in the system and can reclaim the PFN
-> 
-> ie the PFNMAP has no per-page pin counter. All lifetime revolves around
-> the mmap_sem and the vma.
-> 
-> What vfio does is take the PFN out of the mmap_sem and program it into
-> the iommu.
-> 
-> So when the VMA owner decides the PFN has no references, it actually
-> doesn't: vfio continues to access it beyond its permitted lifetime.
-> 
-> HW like mlx5 and GPUs have BAR pages which have security
-> properties. Once the PFN is returned to the driver the security
-> context of the PFN can be reset and re-assigned to another
-> process. Using VFIO a hostile user space can retain access to the BAR
-> page and upon its reassignment access a security context they were not
-> permitted to access.
-> 
-> This is why GUP does not return PFNMAP pages and vfio should not carry
-> a reference outside the mmap_sem. It breaks all the lifetime rules.
+With this series, I'm trying to get rid of the need for that as
+cleanly as possible.
+In particular, I want to avoid holding the mmap_sem across unbounded
+sleeps.
 
-Thanks for the explanation.  I'm inferring that there is no solution to
-this, but why can't we use mmu notifiers to invalidate the iommu on zap
-or close?  I know that at least QEMU won't consider these sorts of
-mapping fatal, so we could possibly change the default and make support
-for such mappings opt-in, but I don't know if I'd break DPDK, or
-potentially users within QEMU that make use of p2p between devices.
-Thanks,
 
-Alex
+Patches 1, 2 and 3 are relatively unrelated cleanups in the core
+dumping code.
+
+Patches 4 and 5 implement the main change: Instead of repeatedly
+accessing the VMA list with sleeps in between, we snapshot it at the
+start with proper locking, and then later we just use our copy of
+the VMA list. This ensures that the kernel won't crash, that VMA
+metadata in the coredump is consistent even in the presence of
+concurrent modifications, and that any virtual addresses that aren't
+being concurrently modified have their contents show up in the core
+dump properly.
+
+The disadvantage of this approach is that we need a bit more memory
+during core dumping for storing metadata about all VMAs.
+
+After this series has landed, we should be able to rip out
+mmget_still_valid().
+
+
+Testing done so far:
+
+ - Creating a simple core dump on X86-64 still works.
+ - The created coredump on X86-64 opens in GDB, and both the stack and the
+   exectutable look vaguely plausible.
+ - 32-bit ARM compiles with FDPIC support, both with MMU and !MMU config.
+
+I'm CCing some folks from the architectures that use FDPIC in case
+anyone wants to give this a spin.
+
+
+This series is based on
+<https://lore.kernel.org/linux-fsdevel/20200427200626.1622060-1-hch@lst.de/>
+(Christoph Hellwig's "remove set_fs calls from the coredump code v4").
+
+
+changed in v2:
+ - replace "Fix handling of partial writes in dump_emit()" with
+   "Let dump_emit() bail out on short writes" (Linus)
+ - get rid of the useless complicated cache flushing in
+   "Take mmap_sem in get_dump_page()" (Linus)
+
+Jann Horn (5):
+  binfmt_elf_fdpic: Stop using dump_emit() on user pointers on !MMU
+  coredump: Let dump_emit() bail out on short writes
+  coredump: Refactor page range dumping into common helper
+  binfmt_elf, binfmt_elf_fdpic: Use a VMA list snapshot
+  mm/gup: Take mmap_sem in get_dump_page()
+
+ fs/binfmt_elf.c          | 170 ++++++++++++---------------------------
+ fs/binfmt_elf_fdpic.c    | 106 +++++++++---------------
+ fs/coredump.c            | 123 +++++++++++++++++++++++++---
+ include/linux/coredump.h |  12 +++
+ mm/gup.c                 |  60 +++++++-------
+ 5 files changed, 245 insertions(+), 226 deletions(-)
+
+
+base-commit: 6a8b55ed4056ea5559ebe4f6a4b247f627870d4c
+prerequisite-patch-id: c0a20b414eebc48fe0a8ca570b05de34c7980396
+prerequisite-patch-id: 51973b8db0fa4b114e0c3fd8936b634d9d5061c5
+prerequisite-patch-id: 0e1e8de282ca6d458dc6cbdc6b6ec5879edd8a05
+prerequisite-patch-id: d5ee749c4d3a22ec80bd0dd88aadf89aeb569db8
+prerequisite-patch-id: 46ce14e59e98e212a1eca0aef69c6dcdb62b8242
+-- 
+2.26.2.526.g744177e7f7-goog
 
