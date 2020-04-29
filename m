@@ -2,123 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C61201BEA42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 23:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51CE91BEA9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 23:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbgD2Vu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 17:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46208 "EHLO
+        id S1726910AbgD2V5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 17:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727844AbgD2Vu2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726554AbgD2V5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 17:50:28 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD33C035495
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 14:50:27 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id s8so5226034ybj.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 14:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=j9WUvKonPgTjIUwjN6gAw2Ow91kmiZMiVo0dKn965xM=;
-        b=rpSOhgpZAHdOAwMyVgY0CFeQV4JBSuitbsj273BpBIYbY5RLsc4oU8PEL0H8l2TB5Q
-         jG553aIKfQF2YF6o13fsBMT5zGN9segQ20ek4BoudBSd1oldgaKUIzQE1gUENm6VWCJL
-         rwV8ZCHjEEotGPzpCJokeDTsN3sON5Be1JY9+ilHhlCYSwmVmYep7UjgmJeL0j+AtidP
-         A/WuYCLR/baWvIOOSlanC6XH+h7tjaSu5ed9lIJtvsjuLczSBPgDCXkkJ+gL9HeXObZ4
-         LPEB4qS5TfOwPWx/cfdcs+Q13OO74wWcsFq39oxOHl9vj9OcZRqB9BpSiip4xH6q2UDi
-         xagA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=j9WUvKonPgTjIUwjN6gAw2Ow91kmiZMiVo0dKn965xM=;
-        b=DUmixGgzw1Zh3YvI5YUhpKrQUZbvS3FwtAkt4tApuLi27b41Z30dROcCJFzXL+t9V9
-         /sb33uwPo7551Y6hLX+VUKsjBLixZxPEUeB2AZmCKZ4F6BaQwYxzMDEyOFZPukm8xk3S
-         SCwm0He4Z6QlVjGWYiV3e4Acjn+FRlpgUlDr4LVModuPt9yMQgB5nqR+Ea6gjNDtVDTz
-         R+sGqaV+fKOCf9jD9Vr+w7sULnPecATnJiEkuD2bYF7I/Xg+Q2Ee2Kn3IH4IHPYF2h2V
-         9jl1oXkjBsTLKqHTMjbr6KcWx8Q2CH3CHxX7bPFgk/nYyfJZ56gaBtBEnwEcL5+mfIIQ
-         XiZQ==
-X-Gm-Message-State: AGi0PuZQBOE3ruOboEtdIk1eIs0suIIg/C4of139MiwOk9FFp90KWQpx
-        dClFYAIEPZ2oZroER9eHXkq/4RpsQA==
-X-Google-Smtp-Source: APiQypIHJ7rV1yTDZpZYpBo1v+hnjoUzGur3b82l9wJsRlWX+KQ5lDvvOT4btIQYmN3rHDSbWDUnK04YhA==
-X-Received: by 2002:a25:23d4:: with SMTP id j203mr618266ybj.97.1588197027087;
- Wed, 29 Apr 2020 14:50:27 -0700 (PDT)
-Date:   Wed, 29 Apr 2020 23:49:54 +0200
-In-Reply-To: <20200429214954.44866-1-jannh@google.com>
-Message-Id: <20200429214954.44866-6-jannh@google.com>
-Mime-Version: 1.0
-References: <20200429214954.44866-1-jannh@google.com>
-X-Mailer: git-send-email 2.26.2.526.g744177e7f7-goog
-Subject: [PATCH v2 5/5] mm/gup: Take mmap_sem in get_dump_page()
-From:   Jann Horn <jannh@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Wed, 29 Apr 2020 17:57:02 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:3201:214:fdff:fe10:1be6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BC2C03C1AE;
+        Wed, 29 Apr 2020 14:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JhIri9Htg0/sN4w6AP/QH7wGRCJsnU/YBI0zvtCnrSE=; b=lcgeCqTdF0/C0XnarY+tI1cLA
+        aTp5plAUZgVFOpQPCrwnTtLwHs8XQhIGrDDx+4JmRdD5VmjaNjo3kqPh/BRBwYRi0ULZSpSwWY0mW
+        TrgemlMVjy5uQmTWtkwO2jv40d3R3lIxts3PSghFetSH2TbL4JnhiGlJwhTroVW/CX7SpjTyhrZpn
+        X/Ez408/p4adJYNff4cxI3KCA5uQPjgzUfuiEZ4LI1/jdP1WfABKNM6VQy8G4/iB464EHLhHoNUBC
+        marQIPhja3Ndlo+onDkpOu7bNy8Fc8qEEX+yBrHUbV6/UqmfyOGOxXHgP9SDfhe6A2l8poddWJOzu
+        YD58Ko3aw==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:51674)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jTugs-0001oF-Rn; Wed, 29 Apr 2020 22:56:27 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jTugm-0001S9-Ad; Wed, 29 Apr 2020 22:56:20 +0100
+Date:   Wed, 29 Apr 2020 22:56:20 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
         Mark Salter <msalter@redhat.com>,
         Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         linux-c6x-dev@linux-c6x.org,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use
+ mmap_sem properly in there
+Message-ID: <20200429215620.GM1551@shell.armlinux.org.uk>
+References: <20200429214954.44866-1-jannh@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429214954.44866-1-jannh@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Properly take the mmap_sem before calling into the GUP code from
-get_dump_page(); and play nice, allowing the GUP code to drop the mmap_sem
-if it has to sleep.
+On Wed, Apr 29, 2020 at 11:49:49PM +0200, Jann Horn wrote:
+> At the moment, we have that rather ugly mmget_still_valid() helper to
+> work around <https://crbug.com/project-zero/1790>: ELF core dumping
+> doesn't take the mmap_sem while traversing the task's VMAs, and if
+> anything (like userfaultfd) then remotely messes with the VMA tree,
+> fireworks ensue. So at the moment we use mmget_still_valid() to bail
+> out in any writers that might be operating on a remote mm's VMAs.
+> 
+> With this series, I'm trying to get rid of the need for that as
+> cleanly as possible.
+> In particular, I want to avoid holding the mmap_sem across unbounded
+> sleeps.
+> 
+> 
+> Patches 1, 2 and 3 are relatively unrelated cleanups in the core
+> dumping code.
+> 
+> Patches 4 and 5 implement the main change: Instead of repeatedly
+> accessing the VMA list with sleeps in between, we snapshot it at the
+> start with proper locking, and then later we just use our copy of
+> the VMA list. This ensures that the kernel won't crash, that VMA
+> metadata in the coredump is consistent even in the presence of
+> concurrent modifications, and that any virtual addresses that aren't
+> being concurrently modified have their contents show up in the core
+> dump properly.
+> 
+> The disadvantage of this approach is that we need a bit more memory
+> during core dumping for storing metadata about all VMAs.
+> 
+> After this series has landed, we should be able to rip out
+> mmget_still_valid().
+> 
+> 
+> Testing done so far:
+> 
+>  - Creating a simple core dump on X86-64 still works.
+>  - The created coredump on X86-64 opens in GDB, and both the stack and the
+>    exectutable look vaguely plausible.
+>  - 32-bit ARM compiles with FDPIC support, both with MMU and !MMU config.
+> 
+> I'm CCing some folks from the architectures that use FDPIC in case
+> anyone wants to give this a spin.
 
-As Linus pointed out, we don't actually need the VMA because
-__get_user_pages() will flush the dcache for us if necessary.
+I've never had any reason to use FDPIC, and I don't have any binaries
+that would use it.  Nicolas Pitre added ARM support, so I guess he
+would be the one to talk to about it.  (Added Nicolas.)
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- mm/gup.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index 9a7e83772f1fe..03f659ddd830a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1548,19 +1548,23 @@ static long __get_user_pages_locked(struct task_struct *tsk,
-  * NULL wherever the ZERO_PAGE, or an anonymous pte_none, has been found -
-  * allowing a hole to be left in the corefile to save diskspace.
-  *
-- * Called without mmap_sem, but after all other threads have been killed.
-+ * Called without mmap_sem (takes and releases the mmap_sem by itself).
-  */
- struct page *get_dump_page(unsigned long addr)
- {
--	struct vm_area_struct *vma;
-+	struct mm_struct *mm = current->mm;
- 	struct page *page;
-+	int locked = 1;
-+	int ret;
- 
--	if (__get_user_pages(current, current->mm, addr, 1,
--			     FOLL_FORCE | FOLL_DUMP | FOLL_GET, &page, &vma,
--			     NULL) < 1)
-+	if (down_read_killable(&mm->mmap_sem))
- 		return NULL;
--	flush_cache_page(vma, addr, page_to_pfn(page));
--	return page;
-+	ret = __get_user_pages_locked(current, mm, addr, 1, &page, NULL,
-+				      &locked,
-+				      FOLL_FORCE | FOLL_DUMP | FOLL_GET);
-+	if (locked)
-+		up_read(&mm->mmap_sem);
-+	return (ret == 1) ? page : NULL;
- }
- 
- #if defined(CONFIG_FS_DAX) || defined (CONFIG_CMA)
 -- 
-2.26.2.526.g744177e7f7-goog
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
