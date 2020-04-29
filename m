@@ -2,303 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A661BE270
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 17:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C72BC1BE2F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 17:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgD2PVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 11:21:30 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:45497 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbgD2PV3 (ORCPT
+        id S1726838AbgD2Pjy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 11:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgD2Pjy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 11:21:29 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1588173688; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=+gyt2AqINPW1eeo+2IXQyoxZJZuFqi+WhErt1y8Af3c=; b=fdiV22dOUF9/cwvYw5taujNktu5Ichtzc9rpoVAWxwaE74fPPDxqyKVUy+afaVDj7FI7RkJk
- mCNET84M+zafMMrfRbAOJEao0vhFu9mEJNGzzuvZnT2XkEZyw8z87Edp50f5aZB1u/7ZA35L
- r/3avepqEUjeKbB0B/VSZ8EyMQ8=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ea99b6f.7f1bc751d810-smtp-out-n05;
- Wed, 29 Apr 2020 15:21:19 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E423DC44791; Wed, 29 Apr 2020 15:21:16 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pkondeti)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AA646C433CB;
-        Wed, 29 Apr 2020 15:21:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA646C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Wed, 29 Apr 2020 20:51:06 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200429152106.GB19464@codeaurora.org>
-References: <20200428164134.5588-1-qais.yousef@arm.com>
- <20200429113255.GA19464@codeaurora.org>
- <20200429123056.otyedhljlugyf5we@e107158-lin>
+        Wed, 29 Apr 2020 11:39:54 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CF9C03C1AE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 08:39:53 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id a21so3066259ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Apr 2020 08:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qP3I6OPRVWktvzkLiuD0CRDumnj0JjO4b9VfB41a1Gg=;
+        b=Av56D6yt+xBIXmC+kkn2QjTa6cXAqFcY2i0P234NzbBxlJGw51PW6TFOIwMUy2fJsf
+         yqbKnIiU2BsuH1oz2LImBIjciM0jjzzHA2bWIFs99MigbHTNPdwc61euBXbFOI98aEoE
+         +qcfQWleDUj3wviEzHoApiiIeqLu2H7MXV8mZEwYiuUghh56+/fL31/Z+1ExBkjaMY93
+         mM2/7D8ofSQJBXR+jEbTfCU4dFWdX9X6WnkNeafCWZdC2N95GIm6XRHZAONMnDq/DJsr
+         5DSATLf8PG6yZq3QcUh98cb1Ml74AJkXtAtpkbhRO9/h2FFeleCFdwrZqWwr3NyrokcO
+         VcJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qP3I6OPRVWktvzkLiuD0CRDumnj0JjO4b9VfB41a1Gg=;
+        b=o3QEglz/+o/EV4VaYJKqA7Hva2X4gB2j02oMKkj1CYO3KrMVbzs9gtp4YtX6PWICRN
+         9LKo74XB9TTKKFTjsqJVhcVYJ+feom84N7sOd/woORinRl8LHPImwa6dAhfPDCyxkGCz
+         HhA0Q6ha33ayh/GmIGFXqCeVijLqVEqmTKSSkAKTfuCgPxtKx1GsEyk9rui5coKTggqT
+         wuJj13TVN8XKQ29WRl5FFvCmKUw2s2Q1IFiXS1NWXcdZfvAxdUEJzI+WPIBAVuyfTlc4
+         tt2/hSmyDCANkrJ/S4CbkXF0mN2/NjpowiDPq7VL6gEcvsARnQ/7M53qfdOQKPqjDTcz
+         OYMA==
+X-Gm-Message-State: AGi0Pubzv4/5yyLB2ee2J5Jg4TJV96MQAvBC7NcWauiDwiiqZ9mPyJQi
+        yv6fdOAPHBhXPEZg4AFxnWf2hQ==
+X-Google-Smtp-Source: APiQypK1xFR5litchNV0f6pAe9wwsLoR7dp/Vk/RX6+WG2yQC5hmTjx30oqeL3LDl+iUDS/VE4Yhgw==
+X-Received: by 2002:a2e:330f:: with SMTP id d15mr2686948ljc.250.1588174792271;
+        Wed, 29 Apr 2020 08:39:52 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id i20sm3151493lfe.15.2020.04.29.08.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2020 08:39:51 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id E045B1021F9; Wed, 29 Apr 2020 18:40:02 +0300 (+03)
+Date:   Wed, 29 Apr 2020 18:40:02 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/25] Large pages in the page cache
+Message-ID: <20200429154002.n3mq2ysz37puf73y@box>
+References: <20200429133657.22632-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200429123056.otyedhljlugyf5we@e107158-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200429133657.22632-1-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Qais,
+On Wed, Apr 29, 2020 at 06:36:32AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> This patch set does not pass xfstests.  Test at your own risk.  It is
+> based on the readahead rewrite which is in Andrew's tree.  The large
+> pages somehow manage to fall off the LRU, so the test VM quickly runs
+> out of memory and freezes.  To reproduce:
+> 
+> # mkfs.xfs /dev/sdb && mount /dev/sdb /mnt && dd if=/dev/zero bs=1M count=2048 of=/mnt/bigfile && sync && sleep 2 && sync && echo 1 >/proc/sys/vm/drop_caches 
+> # /host/home/willy/kernel/xarray-2/tools/vm/page-types | grep thp
+> 0x0000000000401800	       511        1  ___________Ma_________t____________________	mmap,anonymous,thp
+> 0x0000000000405868	         1        0  ___U_lA____Ma_b_______t____________________	uptodate,lru,active,mmap,anonymous,swapbacked,thp
+> # dd if=/mnt/bigfile of=/dev/null bs=2M count=5
+> # /host/home/willy/kernel/xarray-2/tools/vm/page-types | grep thp
+> 0x0000000000400000	      2516        9  ______________________t____________________	thp
+> 0x0000000000400028	         1        0  ___U_l________________t____________________	uptodate,lru,thp
+> 0x000000000040006c	       106        0  __RU_lA_______________t____________________	referenced,uptodate,lru,active,thp
 
-On Wed, Apr 29, 2020 at 01:30:57PM +0100, Qais Yousef wrote:
-> Hi Pavan
-> 
-> On 04/29/20 17:02, Pavan Kondeti wrote:
-> > Hi Qais,
-> > 
-> > On Tue, Apr 28, 2020 at 05:41:33PM +0100, Qais Yousef wrote:
-> > 
-> > [...]
-> > 
-> > >  
-> > > +static void uclamp_sync_util_min_rt_default(struct task_struct *p)
-> > > +{
-> > > +	struct uclamp_se *uc_se = &p->uclamp_req[UCLAMP_MIN];
-> > > +
-> > > +	if (unlikely(rt_task(p)) && !uc_se->user_defined)
-> > > +		uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt_default, false);
-> > > +}
-> > 
-> > Unlike system default clamp values, RT default value is written to
-> > p->uclamp_req[UCLAMP_MIN]. A user may not be able to set the uclamp.max to a
-> > lower value than sysctl_sched_uclamp_util_min_rt_default. This is not a
-> > big deal. Just sharing my observation. Is this how you expected it to work?
-> 
-> This is how I expect it to work yes.
-> 
-> Note that the sysctl_sched_uclamp_util_{min,max}, or 'system default clamp
-> values' as you called them, are constraints. They define the range any task is
-> _allowed to_ *request*.
-> 
-> The new sysctl_sched_uclamp_util_min_rt_default is setting the default
-> *request* for RT tasks. And this was done since historically RT tasks has
-> always run at the highest performance point in Linux.
-> 
-> Can you think of a scenario where setting the default *request* of uclamp.max
-> for all RT tasks helps?
-> 
+Note that you have 107 pages on LRU. It is only head pages. With order-5
+pages it is over 13MiB.
 
-It was a hypothetical question :-) Thanks for clearly explaining the
-difference between system default clamp values (constraints) vs the newly
-introduced sysctl_sched_uclamp_util_min_rt_default (request for RT tasks).
+Looks like everything is fine.
 
-> I'm thinking, the global constrain of sysctl_sched_uclamp_util_max should
-> suffice. Or one can use cgroup to selectively cap some tasks.
+> 0x0000000000400228	         1        0  ___U_l___I____________t____________________	uptodate,lru,reclaim,thp
+> 0x0000000000401800	       511        1  ___________Ma_________t____________________	mmap,anonymous,thp
+> 0x0000000000405868	         1        0  ___U_lA____Ma_b_______t____________________	uptodate,lru,active,mmap,anonymous,swapbacked,thp
 > 
-> For example if you don't want any task in the system to be boosted to anything
-> higher than 800, just do
 > 
-> 	sysctl_sched_uclamp_util_max = 800
+> The principal idea here is that a large part of the overhead in dealing
+> with individual pages is that there's just so darned many of them.  We
+> would be better off dealing with fewer, larger pages, even if they don't
+> get to be the size necessary for the CPU to use a larger TLB entry.
 > 
-> Or if you want to be selective, the same thing can be achieved by creating
-> a cgroup cpu controller that has uclamp.max = 0.8 and attaching tasks to it.
+> Matthew Wilcox (Oracle) (24):
+>   mm: Allow hpages to be arbitrary order
+>   mm: Introduce thp_size
+>   mm: Introduce thp_order
+>   mm: Introduce offset_in_thp
+>   fs: Add a filesystem flag for large pages
+>   fs: Introduce i_blocks_per_page
+>   fs: Make page_mkwrite_check_truncate thp-aware
+>   fs: Support THPs in zero_user_segments
+>   bio: Add bio_for_each_thp_segment_all
+>   iomap: Support arbitrarily many blocks per page
+>   iomap: Support large pages in iomap_adjust_read_range
+>   iomap: Support large pages in read paths
+>   iomap: Support large pages in write paths
+>   iomap: Inline data shouldn't see large pages
+>   xfs: Support large pages
+>   mm: Make prep_transhuge_page return its argument
+>   mm: Add __page_cache_alloc_order
+>   mm: Allow large pages to be added to the page cache
+>   mm: Allow large pages to be removed from the page cache
+>   mm: Remove page fault assumption of compound page size
+>   mm: Add DEFINE_READAHEAD
+>   mm: Make page_cache_readahead_unbounded take a readahead_control
+>   mm: Make __do_page_cache_readahead take a readahead_control
+>   mm: Add large page readahead
 > 
-> > 
-> > > +
-> > >  static inline struct uclamp_se
-> > >  uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
-> > >  {
-> > > @@ -907,8 +935,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
-> > >  static inline struct uclamp_se
-> > >  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
-> > >  {
-> > > -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
-> > > -	struct uclamp_se uc_max = uclamp_default[clamp_id];
-> > > +	struct uclamp_se uc_req, uc_max;
-> > > +
-> > > +	/*
-> > > +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
-> > > +	 */
-> > > +	uclamp_sync_util_min_rt_default(p);
-> > > +
-> > > +	uc_req = uclamp_tg_restrict(p, clamp_id);
-> > > +	uc_max = uclamp_default[clamp_id];
-> > 
-> > We are calling uclamp_sync_util_min_rt_default() unnecessarily for
-> > clamp_id == UCLAMP_MAX case. Would it be better to have a separate
+> William Kucharski (1):
+>   mm: Align THP mappings for non-DAX
 > 
-> It was actually intentional to make sure we update the value ASAP. I didn't
-> think it's a lot of overhead. I can further protect with a check to verify
-> whether the value has changed if it seems heavy handed.
+>  drivers/nvdimm/btt.c    |   4 +-
+>  drivers/nvdimm/pmem.c   |   6 +-
+>  fs/ext4/verity.c        |   4 +-
+>  fs/f2fs/verity.c        |   4 +-
+>  fs/iomap/buffered-io.c  | 110 ++++++++++++++++--------------
+>  fs/jfs/jfs_metapage.c   |   2 +-
+>  fs/xfs/xfs_aops.c       |   4 +-
+>  fs/xfs/xfs_super.c      |   2 +-
+>  include/linux/bio.h     |  13 ++++
+>  include/linux/bvec.h    |  23 +++++++
+>  include/linux/fs.h      |   1 +
+>  include/linux/highmem.h |  15 +++--
+>  include/linux/huge_mm.h |  25 +++++--
+>  include/linux/mm.h      |  97 ++++++++++++++-------------
+>  include/linux/pagemap.h |  62 ++++++++++++++---
+>  mm/filemap.c            |  60 ++++++++++++-----
+>  mm/highmem.c            |  62 ++++++++++++++++-
+>  mm/huge_memory.c        |  49 ++++++--------
+>  mm/internal.h           |  13 ++--
+>  mm/memory.c             |   7 +-
+>  mm/page_io.c            |   2 +-
+>  mm/page_vma_mapped.c    |   4 +-
+>  mm/readahead.c          | 145 ++++++++++++++++++++++++++++++----------
+>  23 files changed, 485 insertions(+), 229 deletions(-)
 > 
-> > uclamp_default for RT like uclamp_default_rt and select uc_max based
-> > on task policy? Since all tunables are handled in sysctl_sched_uclamp_handler
-> > we can cover the case of uclamp_util_min < uclamp_util_min_rt.
+> -- 
+> 2.26.2
 > 
-> Hmm I'm not sure I got you.
-> 
-> uclamp_default[] is setting the constraints. I.e. what's the range it's allowed
-> to take.
-> 
-> What's added here is simply setting the requested uclamp.min value, which if
-> the constraints allow it will be applied.
-> 
-> For example. If
-> 
-> 	sysctl_sched_uclamp_util_min = 0
-> 	sysctl_sched_uclamp_util_min_rt_default = 400
-> 
-> uclamp_eff_get() will return 0 as effective uclamp.min value for the task. So
-> while the task still requests to be boosted to 1024, but the system constraint
-> prevents it from getting it. But as soon as the system constraint has changed,
-> the task might be able to get what it wants.
-> 
-> For example, if at runtime sysctl_sched_uclamp_util_min was modified to 1024
-> 
-> 	sysctl_sched_uclamp_util_min = 1024
-> 	sysctl_sched_uclamp_util_min_rt_default = 400
-> 
-> uclamp_eff_get() return 400 for the task now, as requested.
-> 
-
-Yes, I did understand the relation between sysctl_sched_uclamp_util_min and
-sysctl_sched_uclamp_util_min_rt_default . It is not clear why we are copying
-sysctl_sched_uclamp_util_min_rt_default into p->uclamp_req[UCLAMP_MIN] though
-user did not explicitly asked for it. In the above reply, you clearly
-mentioned that the new knob works like a request from the user space for all
-RT tasks.
-
-As we are copying the sysctl_sched_uclamp_util_min_rt_default value into
-p->uclamp_req[UCLAMP_MIN], user gets it when sched_getattr() is called though
-sched_setattr() was not called before. I guess that is expected behavior with
-your definition of this new tunable. Thanks for answering the question in
-detail.
-
-Thanks,
-Pavan
-
-> Thanks
-> 
-> --
-> Qais Yousef
-> 
-> > 
-> > >  
-> > >  	/* System default restrictions always apply */
-> > >  	if (unlikely(uc_req.value > uc_max.value))
-> > > @@ -1114,12 +1149,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> > >  				loff_t *ppos)
-> > >  {
-> > >  	bool update_root_tg = false;
-> > > -	int old_min, old_max;
-> > > +	int old_min, old_max, old_min_rt;
-> > >  	int result;
-> > >  
-> > >  	mutex_lock(&uclamp_mutex);
-> > >  	old_min = sysctl_sched_uclamp_util_min;
-> > >  	old_max = sysctl_sched_uclamp_util_max;
-> > > +	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
-> > >  
-> > >  	result = proc_dointvec(table, write, buffer, lenp, ppos);
-> > >  	if (result)
-> > > @@ -1133,6 +1169,18 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> > >  		goto undo;
-> > >  	}
-> > >  
-> > > +	/*
-> > > +	 * The new value will be applied to RT tasks the next time the
-> > > +	 * scheduler needs to calculate the effective uclamp.min for that task,
-> > > +	 * assuming the task is using the system default and not a user
-> > > +	 * specified value. In the latter we shall leave the value as the user
-> > > +	 * requested.
-> > > +	 */
-> > > +	if (sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
-> > > +		result = -EINVAL;
-> > > +		goto undo;
-> > > +	}
-> > > +
-> > >  	if (old_min != sysctl_sched_uclamp_util_min) {
-> > >  		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
-> > >  			      sysctl_sched_uclamp_util_min, false);
-> > > @@ -1158,6 +1206,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> > >  undo:
-> > >  	sysctl_sched_uclamp_util_min = old_min;
-> > >  	sysctl_sched_uclamp_util_max = old_max;
-> > > +	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
-> > >  done:
-> > >  	mutex_unlock(&uclamp_mutex);
-> > >  
-> > > @@ -1200,9 +1249,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
-> > >  		if (uc_se->user_defined)
-> > >  			continue;
-> > >  
-> > > -		/* By default, RT tasks always get 100% boost */
-> > > +		/*
-> > > +		 * By default, RT tasks always get 100% boost, which the admins
-> > > +		 * are allowed to change via
-> > > +		 * sysctl_sched_uclamp_util_min_rt_default knob.
-> > > +		 */
-> > >  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-> > > -			clamp_value = uclamp_none(UCLAMP_MAX);
-> > > +			clamp_value = sysctl_sched_uclamp_util_min_rt_default;
-> > >  
-> > >  		uclamp_se_set(uc_se, clamp_value, false);
-> > >  	}
-> > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > > index 8a176d8727a3..64117363c502 100644
-> > > --- a/kernel/sysctl.c
-> > > +++ b/kernel/sysctl.c
-> > > @@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
-> > >  		.mode		= 0644,
-> > >  		.proc_handler	= sysctl_sched_uclamp_handler,
-> > >  	},
-> > > +	{
-> > > +		.procname	= "sched_util_clamp_min_rt_default",
-> > > +		.data		= &sysctl_sched_uclamp_util_min_rt_default,
-> > > +		.maxlen		= sizeof(unsigned int),
-> > > +		.mode		= 0644,
-> > > +		.proc_handler	= sysctl_sched_uclamp_handler,
-> > > +	},
-> > >  #endif
-> > >  #ifdef CONFIG_SCHED_AUTOGROUP
-> > >  	{
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> > Thanks,
-> > Pavan
-> > 
-> > -- 
-> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+ Kirill A. Shutemov
