@@ -2,138 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3029E1BD246
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C391BD256
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Apr 2020 04:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbgD2Cbi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Apr 2020 22:31:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34102 "EHLO
+        id S1726509AbgD2CnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Apr 2020 22:43:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726399AbgD2Cbi (ORCPT
+        by vger.kernel.org with ESMTP id S1726490AbgD2CnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Apr 2020 22:31:38 -0400
-Received: from mail-qk1-x749.google.com (mail-qk1-x749.google.com [IPv6:2607:f8b0:4864:20::749])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C079CC03C1AC
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:31:36 -0700 (PDT)
-Received: by mail-qk1-x749.google.com with SMTP id v6so1024905qkd.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:31:36 -0700 (PDT)
+        Tue, 28 Apr 2020 22:43:01 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80240C03C1AD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:43:01 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id o134so1557791yba.18
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Apr 2020 19:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:to:cc;
-        bh=WsSQ4el//Y+73KDhxO8BeZ1dCh/HLj2RZlsq36dRgcM=;
-        b=UN3MlWNwt95WQYace+eSywTdugcKroUN4Rd4NIhK+DFYyrDN8XkL//M3xB36wTSsv6
-         CxaSgj15LnjkemeN+zYX8X989x6bk/g2OIjPhWWm2M28gV94gJklXPGiyptdOYM9EgTm
-         8MzkmI90JUtviXhr+Au/1KgR8bR+pp3Xx+3fifJsP/iNaFjalBpc5/Rz1AA3Ym4StixO
-         e9O7YpChBZnl+h0Qe6CjS6qzLHuDAegMNWajom+8Z7TPYlEU9sHbnK5iNXL0yOdeEUca
-         DplJ4WvwsA074Kv3xkzisUWar4asmsgH5DVpf4KN7Z6mO8xSxAsUV8WmdLTQ/l6snGz3
-         E7sg==
+        bh=1e2NH77BUHybTGxugnpz/lVzLlT/U4RLm6UsbwYLr4A=;
+        b=ROkfloZnyw0Pn1nyVT+OhQYVEitYDmQNg/ttq24vcCWR+BHyf7R5m6JtVusJMfAa03
+         47BpzL8fznqfqMHWLbLBMSKa2qLXXg8L+ttcFF+MJgcx/EImPs0b4Mw3zR6f4KXi7aki
+         /wR8lwRjt60fjkH/xi4LSFwStbw1RT/c4p4FPEkdCcCUHUxJyPPapXi2ArDxTlBBYbcI
+         dnMGNlgFvq5d4/VH/pirmr9Y6hfZgQ8p2ROTNI08TLuMWLj7iVbdkcbcDKZWlaZGzvWZ
+         PP1oKRK+a8UophdnKWCC3UeIBIkuPpCLn4P6rHmlbEpJCHxmyCWvYWfrx0mGnDKSvmOL
+         yzdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=WsSQ4el//Y+73KDhxO8BeZ1dCh/HLj2RZlsq36dRgcM=;
-        b=PG/XfSbyEWjNSu4KQaw1shMng1dYyOoMkC7B7C3BtQGdHpiUfb8TPGw7fMoQJU52/Q
-         K52OdhVcM3PXrUcnFYlWILnlD94Cj/YYEqXaG+UhSdTcumaMlsE+/cUBZ9dmbLLaLMut
-         ThCNnoR5TgkKUR+Uu22B8NJo5//k5sPcPvHgk+4HfGtoVyCFMD5P+gNVH/FlKzc/QfWI
-         NZChMQnResUDOHHxMVlICZ90YcGI+1dL797tfBOUcklLjU6xVSJOQTQ+x0LmlVWptDVv
-         vIfGKlp0SUy0SrEnaxtD6WAh6b7zP4RjucwWTxctVYN7pOLKEahm18Mzuo9Ue2QRmPbr
-         ngvw==
-X-Gm-Message-State: AGi0PuaP0/Nzl5zG3QG84+LSthz2wcvj1R/rIHUEy+7mRbQzqcJc7nf0
-        GJUK419NmacrKarSdMqrzzh7yEioyw==
-X-Google-Smtp-Source: APiQypL+uTWlVZWQKpSDFQTh731+sLTLvg0x4UaDIiB+KECbx00T+FVEJZxwGuXSKvn0BGAlyzOjd/5Caw==
-X-Received: by 2002:ad4:5a06:: with SMTP id ei6mr23544919qvb.70.1588127495938;
- Tue, 28 Apr 2020 19:31:35 -0700 (PDT)
-Date:   Wed, 29 Apr 2020 04:31:04 +0200
-Message-Id: <20200429023104.131925-1-jannh@google.com>
+        bh=1e2NH77BUHybTGxugnpz/lVzLlT/U4RLm6UsbwYLr4A=;
+        b=sKKdCnjq3T4ao0WO+ixntH1rxFlaelTArer1bcOfq3d8F89eIbO7aD3uIM4WRnR6lU
+         emIvNP9m463528HK+PS/Z9ioO6TgLv3wxZ9bsdLW0WHudWIWZQBldZvXZiu/hzyWvciV
+         Skdcu9jQOUBCWr1XYMi6ySZO6xvk/Mq5x0LYQfDD6HdbLfdEkRUYT2O0nzT+2I5XuV9I
+         pl1HK111cv2ia4K+pSnZD6DKCkUDl2IT/0fMhgvxrYGEm4rb+nEed2e4a6ucjJ39dMAt
+         AsB8Suy0BkJ2d2/Oj1XQKRTnqkePnCTJsoeNEECjVvhL00oAAah9sYkPNDoZAPWAFhAm
+         M9Mw==
+X-Gm-Message-State: AGi0PuYC+C6WMo5N1h7T1XMV5dZbqIrAlh2u7Cv9AUuh4nVAID4Fatj0
+        aKizYcSO2E9GYsTRq21Fg1nr9nTTPw==
+X-Google-Smtp-Source: APiQypKHXS545Ck07m0eyuMmqQZYShUs9n7ii7OW5TQ6sdLH5iCKxNW0TYL3M7PWRW7MQca6L3ZJ6PRRrA==
+X-Received: by 2002:a25:cc48:: with SMTP id l69mr48912932ybf.459.1588128180667;
+ Tue, 28 Apr 2020 19:43:00 -0700 (PDT)
+Date:   Wed, 29 Apr 2020 04:42:26 +0200
+Message-Id: <20200429024226.135830-1-jannh@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.26.2.303.gf8c07b1a785-goog
-Subject: [PATCH] epoll: Fix UAF dentry name access in wakeup source setup
+Subject: [PATCH] epoll: Move helper functions from UAPI header into eventpoll.c
 From:   Jann Horn <jannh@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
-        NeilBrown <neilb@suse.de>, "Rafael J . Wysocki" <rjw@sisk.pl>
+        NeilBrown <neilb@suse.de>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In ep_create_wakeup_source(), epi->ffd.file is some random file we're
-watching with epoll, so it might well be renamed concurrently. And when a
-file gets renamed, the buffer containing its name may be freed.
+ep_take_care_of_epollwakeup() is a kernel-internal function (it calls
+capable()) and therefore does not belong in a UAPI header.
 
-This can be reproduced by racing a task that keeps adding and removing
-EPOLLWAKEUP epoll entries for a fifo with another task that keeps renaming
-the fifo between two long names if you add an mdelay(200) call directly
-before wakeup_source_register(); KASAN then complains:
+Since nothing outside fs/eventpoll.c uses it, move it over there.
 
-BUG: KASAN: use-after-free in strlen+0xa/0x40
-Read of size 1 at addr ffff888065fda990 by task wakemeup/2375
-[...]
-Call Trace:
-[...]
- strlen+0xa/0x40
- kstrdup+0x1a/0x60
- wakeup_source_create+0x43/0xb0
- wakeup_source_register+0x13/0x60
- ep_create_wakeup_source+0x7f/0xf0
- do_epoll_ctl+0x13d0/0x1880
-[...]
- __x64_sys_epoll_ctl+0xc3/0x110
-[...]
-Allocated by task 2376:
-[...]
- __d_alloc+0x323/0x3c0
- d_alloc+0x30/0xf0
- __lookup_hash+0x61/0xc0
- do_renameat2+0x3fa/0x6d0
- __x64_sys_rename+0x3a/0x40
-[...]
-Freed by task 2379:
-[...]
- kfree_rcu_work+0x9b/0x5d0
-[...]
-
-Backporting note: This patch depends on commit 49d31c2f389a ("dentry name
-snapshots"). Maybe that one should also be backported as a dependency for
-pre-v4.13? (Sorry, I wasn't sure how to properly express this as a "Fixes:"
-tag.)
-
-Cc: stable@vger.kernel.org
-Fixes: 4d7e30d98939 ("epoll: Add a flag, EPOLLWAKEUP, to prevent suspend while epoll events are ready")
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
-I'm guessing this will go through akpm's tree?
-
- fs/eventpoll.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/eventpoll.c                 | 13 +++++++++++++
+ include/uapi/linux/eventpoll.h | 12 ------------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 8c596641a72b0..5052a41670479 100644
+index 8c596641a72b0..7365ccba90973 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1450,7 +1450,7 @@ static int reverse_path_check(void)
+@@ -2102,6 +2102,19 @@ static inline int epoll_mutex_lock(struct mutex *mutex, int depth,
+ 	return -EAGAIN;
+ }
  
- static int ep_create_wakeup_source(struct epitem *epi)
++#ifdef CONFIG_PM_SLEEP
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
++{
++	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
++		epev->events &= ~EPOLLWAKEUP;
++}
++#else
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
++{
++	epev->events &= ~EPOLLWAKEUP;
++}
++#endif
++
+ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+ 		 bool nonblock)
  {
--	const char *name;
-+	struct name_snapshot name;
- 	struct wakeup_source *ws;
+diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
+index 8a3432d0f0dcb..39dfc29f0f529 100644
+--- a/include/uapi/linux/eventpoll.h
++++ b/include/uapi/linux/eventpoll.h
+@@ -79,16 +79,4 @@ struct epoll_event {
+ 	__u64 data;
+ } EPOLL_PACKED;
  
- 	if (!epi->ep->ws) {
-@@ -1459,8 +1459,9 @@ static int ep_create_wakeup_source(struct epitem *epi)
- 			return -ENOMEM;
- 	}
- 
--	name = epi->ffd.file->f_path.dentry->d_name.name;
--	ws = wakeup_source_register(NULL, name);
-+	take_dentry_name_snapshot(&name, epi->ffd.file->f_path.dentry);
-+	ws = wakeup_source_register(NULL, name.name.name);
-+	release_dentry_name_snapshot(&name);
- 
- 	if (!ws)
- 		return -ENOMEM;
+-#ifdef CONFIG_PM_SLEEP
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
+-		epev->events &= ~EPOLLWAKEUP;
+-}
+-#else
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	epev->events &= ~EPOLLWAKEUP;
+-}
+-#endif
+ #endif /* _UAPI_LINUX_EVENTPOLL_H */
 
 base-commit: 96c9a7802af7d500a582d89a8b864584fe878c1b
 -- 
