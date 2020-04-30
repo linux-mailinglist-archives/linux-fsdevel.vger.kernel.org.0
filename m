@@ -2,125 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A66801BEDFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 03:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D121BEE3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 04:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbgD3B7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Apr 2020 21:59:52 -0400
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:51728 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbgD3B7v (ORCPT
+        id S1726784AbgD3CSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Apr 2020 22:18:21 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43388 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbgD3CSV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Apr 2020 21:59:51 -0400
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id F416F4999C;
-        Wed, 29 Apr 2020 21:59:47 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=ErazowRay1P/AwFSRhYIU6Y2Vtg=; b=U/bgW7
-        8LRuDwed7cFJI+OLHcNjS2azezYw4bDECsXxOtmXzamJa8j9tAdCdRFr37MXprd5
-        ErxVxpe2KVIBpAKAVf2dKTwzyPiZ3RDGm+EfMP70RzW2Zf/0ARTOupK3h0F1z+hz
-        mQJPY4L14N4+MX2vB7h1kvD7/e18IFTZLuIv8=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id EA42A4999B;
-        Wed, 29 Apr 2020 21:59:47 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=OH9QgA1zs57t3X+399BRoLLVjiVfyd9x67bP0Lvx9VY=; b=jpEXcJureDScwgQSTF9eHzcwhmQuFrOHxRs892SZDNVkINIFS5TbHDpabFpo7Gs7IHlBnmskokz8D4i2YY5ViibSy+NBswTJ776BfV1BmS29V/WPbozOzfLFQDTEEXWotrT//LfOGQVTKKoMRDg2y4UW+ua6jfMPr/mLDlS+tJQ=
-Received: from yoda.home (unknown [24.203.50.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 6E06D4999A;
-        Wed, 29 Apr 2020 21:59:47 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 91EAD2DA0A91;
-        Wed, 29 Apr 2020 21:59:46 -0400 (EDT)
-Date:   Wed, 29 Apr 2020 21:59:46 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-cc:     Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Christophe Lyon <christophe.lyon@linaro.org>
-Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
- properly in there
-In-Reply-To: <20200429215620.GM1551@shell.armlinux.org.uk>
-Message-ID: <nycvar.YSQ.7.76.2004292153090.2671@knanqh.ubzr>
-References: <20200429214954.44866-1-jannh@google.com> <20200429215620.GM1551@shell.armlinux.org.uk>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Wed, 29 Apr 2020 22:18:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03U2HqqX090181;
+        Thu, 30 Apr 2020 02:18:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=1ncC5E62RifgtDz5AqVJsSeQgkTe1w/HmEmirWoqSqY=;
+ b=FRK4oErvPMpfZ6FYFb9xd/h9WzIdGBBvob/sulyCkrK6L0IFFmdngz9E0dHg0jPmjSto
+ KXBiuvxR+twDS7wSOCHgcESAKQsiRcUuATjAQTzyn6nx6SB/gKi7xXt7hkUaIlJRnkqK
+ JROtWRNw0TDlbknD4rDd9n8ACf2ywDkpi/mpMqC6fLBbJtLE/KNPyyQJrnWkctXOuQpO
+ eFV2BvOMqKYDmr4P4ON7qkXDsijaq/ehJCNCQeKRUWDPdl73BfURrmgzSqgDVAgYL0UE
+ jafaY1dV8rKXLJakZKppbeL/CDC8XA3WPZ4MpbypIIufxlOS/T4zdRCTRaz3IoZNNNbA uQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 30p2p0ebjg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Apr 2020 02:18:10 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 03U2Gl3G141054;
+        Thu, 30 Apr 2020 02:18:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 30mxpmf46j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Apr 2020 02:18:09 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 03U2I8EU029855;
+        Thu, 30 Apr 2020 02:18:08 GMT
+Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Apr 2020 19:18:08 -0700
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [PATCH v9 00/11] Introduce Zone Append for writing to zoned block devices
+Date:   Wed, 29 Apr 2020 22:18:03 -0400
+Message-Id: <158821297686.28621.178479649242411251.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200428104605.8143-1-johannes.thumshirn@wdc.com>
+References: <20200428104605.8143-1-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: 44EB08B6-8A86-11EA-B6B5-D1361DBA3BAF-78420484!pb-smtp2.pobox.com
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9606 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=872 malwarescore=0
+ mlxscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004300015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9606 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 clxscore=1011
+ bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=930 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004300014
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 29 Apr 2020, Russell King - ARM Linux admin wrote:
+On Tue, 28 Apr 2020 19:45:54 +0900, Johannes Thumshirn wrote:
 
-> On Wed, Apr 29, 2020 at 11:49:49PM +0200, Jann Horn wrote:
-> > At the moment, we have that rather ugly mmget_still_valid() helper to
-> > work around <https://crbug.com/project-zero/1790>: ELF core dumping
-> > doesn't take the mmap_sem while traversing the task's VMAs, and if
-> > anything (like userfaultfd) then remotely messes with the VMA tree,
-> > fireworks ensue. So at the moment we use mmget_still_valid() to bail
-> > out in any writers that might be operating on a remote mm's VMAs.
-> > 
-> > With this series, I'm trying to get rid of the need for that as
-> > cleanly as possible.
-> > In particular, I want to avoid holding the mmap_sem across unbounded
-> > sleeps.
-> > 
-> > 
-> > Patches 1, 2 and 3 are relatively unrelated cleanups in the core
-> > dumping code.
-> > 
-> > Patches 4 and 5 implement the main change: Instead of repeatedly
-> > accessing the VMA list with sleeps in between, we snapshot it at the
-> > start with proper locking, and then later we just use our copy of
-> > the VMA list. This ensures that the kernel won't crash, that VMA
-> > metadata in the coredump is consistent even in the presence of
-> > concurrent modifications, and that any virtual addresses that aren't
-> > being concurrently modified have their contents show up in the core
-> > dump properly.
-> > 
-> > The disadvantage of this approach is that we need a bit more memory
-> > during core dumping for storing metadata about all VMAs.
-> > 
-> > After this series has landed, we should be able to rip out
-> > mmget_still_valid().
-> > 
-> > 
-> > Testing done so far:
-> > 
-> >  - Creating a simple core dump on X86-64 still works.
-> >  - The created coredump on X86-64 opens in GDB, and both the stack and the
-> >    exectutable look vaguely plausible.
-> >  - 32-bit ARM compiles with FDPIC support, both with MMU and !MMU config.
-> > 
-> > I'm CCing some folks from the architectures that use FDPIC in case
-> > anyone wants to give this a spin.
+> The upcoming NVMe ZNS Specification will define a new type of write
+> command for zoned block devices, zone append.
 > 
-> I've never had any reason to use FDPIC, and I don't have any binaries
-> that would use it.  Nicolas Pitre added ARM support, so I guess he
-> would be the one to talk to about it.  (Added Nicolas.)
+> When when writing to a zoned block device using zone append, the start
+> sector of the write is pointing at the start LBA of the zone to write to.
+> Upon completion the block device will respond with the position the data
+> has been placed in the zone. This from a high level perspective can be
+> seen like a file system's block allocator, where the user writes to a
+> file and the file-system takes care of the data placement on the device.
+> 
+> [...]
 
-It's been a while since I worked with it. However Christophe Lyon (in 
-CC) added support for ARM FDPIC to mainline gcc recently, so hopefully 
-he might still be set up and able to help.
+Applied to 5.8/scsi-queue, thanks!
 
+[01/11] scsi: core: free sgtables in case command setup fails
+        https://git.kernel.org/mkp/scsi/c/20a66f2bf280
 
-Nicolas
+-- 
+Martin K. Petersen	Oracle Linux Engineering
