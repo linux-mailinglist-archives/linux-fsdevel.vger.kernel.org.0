@@ -2,157 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1833F1BF961
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 15:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25DB1BFDC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 16:19:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgD3NYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 09:24:00 -0400
-Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:48165 "EHLO
-        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727774AbgD3NXz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 09:23:55 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CbgY0FJyzlhjXM;
-        Thu, 30 Apr 2020 15:23:53 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49CbgX0Ysmzlln1b;
-        Thu, 30 Apr 2020 15:23:52 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 5/5] doc: Add documentation for the fs.open_mayexec_enforce sysctl
-Date:   Thu, 30 Apr 2020 15:23:20 +0200
-Message-Id: <20200430132320.699508-6-mic@digikod.net>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200430132320.699508-1-mic@digikod.net>
-References: <20200430132320.699508-1-mic@digikod.net>
+        id S1727082AbgD3OTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 10:19:32 -0400
+Received: from hfcrelay.icp-osb-irony-out7.external.iinet.net.au ([203.59.1.87]:58808
+        "EHLO hfcrelay.icp-osb-irony-out7.external.iinet.net.au"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726309AbgD3OTb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 10:19:31 -0400
+X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Apr 2020 10:19:30 EDT
+X-SMTP-MATCH: 0
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BiAABi26pe//onNcoNWRwBAQEBAQE?=
+ =?us-ascii?q?HAQESAQEEBAEBQIE2BAEBCwGBfIJMhCGPSgEBBAaBCggligSRVgsBAQEBAQE?=
+ =?us-ascii?q?BAQE3BAEBhEQCglQ3Bg4CEAEBAQUBAQEBAQUDAYV3hkkBAQEBAgEjFUEFCws?=
+ =?us-ascii?q?YAgImAgJXBgEMBgIBAYMiglgFsnh2gTKFUINngUCBDioBjFp5gQeBOAyCXT6?=
+ =?us-ascii?q?HYIJgBJB/h3qZPAiCR5JXBoUkCBudBy2PWJ8dgXkzGggoCIMkUCVXkhxuAQi?=
+ =?us-ascii?q?NK2I2AgYIAQEDCZJqAQE?=
+X-IPAS-Result: =?us-ascii?q?A2BiAABi26pe//onNcoNWRwBAQEBAQEHAQESAQEEBAEBQ?=
+ =?us-ascii?q?IE2BAEBCwGBfIJMhCGPSgEBBAaBCggligSRVgsBAQEBAQEBAQE3BAEBhEQCg?=
+ =?us-ascii?q?lQ3Bg4CEAEBAQUBAQEBAQUDAYV3hkkBAQEBAgEjFUEFCwsYAgImAgJXBgEMB?=
+ =?us-ascii?q?gIBAYMiglgFsnh2gTKFUINngUCBDioBjFp5gQeBOAyCXT6HYIJgBJB/h3qZP?=
+ =?us-ascii?q?AiCR5JXBoUkCBudBy2PWJ8dgXkzGggoCIMkUCVXkhxuAQiNK2I2AgYIAQEDC?=
+ =?us-ascii?q?ZJqAQE?=
+X-IronPort-AV: E=Sophos;i="5.73,336,1583164800"; 
+   d="scan'208";a="253537256"
+Received: from 202-53-39-250.tpgi.com.au (HELO [192.168.0.106]) ([202.53.39.250])
+  by icp-osb-irony-out7.iinet.net.au with ESMTP; 30 Apr 2020 22:10:07 +0800
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20200429214954.44866-1-jannh@google.com>
+ <20200429215620.GM1551@shell.armlinux.org.uk>
+ <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
+Date:   Fri, 1 May 2020 00:10:05 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+In-Reply-To: <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This sysctl enables to propagate executable permission to userspace
-thanks to the O_MAYEXEC flag.
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <keescook@chromium.org>
----
 
-Changes since v3:
-* Switch back to O_MAYEXEC and highlight that it is only taken into
-  account by openat2(2).
+On 30/4/20 9:03 am, Linus Torvalds wrote:
+> On Wed, Apr 29, 2020 at 2:57 PM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
+>>
+>> I've never had any reason to use FDPIC, and I don't have any binaries
+>> that would use it.  Nicolas Pitre added ARM support, so I guess he
+>> would be the one to talk to about it.  (Added Nicolas.)
+> 
+> While we're at it, is there anybody who knows binfmt_flat?
+> 
+> It might be Nicolas too.
+> 
+> binfmt_flat doesn't do core-dumping, but it has some other oddities.
+> In particular, I'd like to bring sanity to the installation of the new
+> creds, and all the _normal_ binfmt cases do it largely close together
+> with setup_new_exec().
+> 
+> binfmt_flat is doing odd things. It's doing this:
+> 
+>          /* Flush all traces of the currently running executable */
+>          if (id == 0) {
+>                  ret = flush_old_exec(bprm);
+>                  if (ret)
+>                          goto err;
+> 
+>                  /* OK, This is the point of no return */
+>                  set_personality(PER_LINUX_32BIT);
+>                  setup_new_exec(bprm);
+>          }
+> 
+> in load_flat_file() - which is also used to loading _libraries_. Where
+> it makes no sense at all.
 
-Changes since v2:
-* Update documentation with the new RESOLVE_MAYEXEC.
-* Improve explanations, including concerns about LD_PRELOAD.
+I haven't looked at the shared lib support in there for a long time,
+but I thought that "id" is only 0 for the actual final program.
+Libraries have a slot or id number associated with them.
 
-Changes since v1:
-* Move from LSM/Yama to sysctl/fs .
----
- Documentation/admin-guide/sysctl/fs.rst | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+> It does the
+> 
+>          install_exec_creds(bprm);
+> 
+> in load_flat_binary() (which makes more sense: that is only for actual
+> binary loading, no library case).
+> 
+> I would _like_ for every binfmt loader to do
+> 
+>          /* Flush all traces of the currently running executable */
+>          retval = flush_old_exec(bprm);
+>          if (retval)
+>                  return retval;
+> 
+>     .. possibly set up personalities here ..
+> 
+>          setup_new_exec(bprm);
+>          install_exec_creds(bprm);
+> 
+> all together, and at least merge 'setup_new_exec()' with 'install_exec_creds()'.
+> 
+> And I think all the binfmt handlers would be ok with that, but the
+> flat one in particular is really oddly set up.
+> 
+> *Particularly* with that flush_old_exec/setup_new_exec() being done by
+> the same routine that is also loading libraries (and called from
+> 'calc_reloc()' from binary loading too).
+> 
+> Adding Greg Ungerer for m68knommu. Can somebody sort out why that
+> flush_old_exec/setup_new_exec() isn't in load_flat_binary() like
+> install_exec_creds() is?
+> 
+> Most of that file goes back to pre-git days. And most of the commits
+> since are not so much about binfmt_flat, as they are about cleanups or
+> changes elsewhere where binfmt_flat was just a victim.
 
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index 2a45119e3331..d55615c36772 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -37,6 +37,7 @@ Currently, these files are in /proc/sys/fs:
- - inode-nr
- - inode-state
- - nr_open
-+- open_mayexec_enforce
- - overflowuid
- - overflowgid
- - pipe-user-pages-hard
-@@ -165,6 +166,49 @@ system needs to prune the inode list instead of allocating
- more.
- 
- 
-+open_mayexec_enforce
-+--------------------
-+
-+While being ignored by :manpage:`open(2)` and :manpage:`openat(2)`, the
-+``O_MAYEXEC`` flag can be passed to :manpage:`openat2(2)` to only open regular
-+files that are expected to be executable.  If the file is not identified as
-+executable, then the syscall returns -EACCES.  This may allow a script
-+interpreter to check executable permission before reading commands from a file,
-+or a dynamic linker to only load executable shared objects.  One interesting
-+use case is to enforce a "write xor execute" policy through interpreters.
-+
-+The ability to restrict code execution must be thought as a system-wide policy,
-+which first starts by restricting mount points with the ``noexec`` option.
-+This option is also automatically applied to special filesystems such as /proc
-+.  This prevents files on such mount points to be directly executed by the
-+kernel or mapped as executable memory (e.g. libraries).  With script
-+interpreters using the ``O_MAYEXEC`` flag, the executable permission can then
-+be checked before reading commands from files. This makes it possible to
-+enforce the ``noexec`` at the interpreter level, and thus propagates this
-+security policy to scripts.  To be fully effective, these interpreters also
-+need to handle the other ways to execute code: command line parameters (e.g.,
-+option ``-e`` for Perl), module loading (e.g., option ``-m`` for Python),
-+stdin, file sourcing, environment variables, configuration files, etc.
-+According to the threat model, it may be acceptable to allow some script
-+interpreters (e.g. Bash) to interpret commands from stdin, may it be a TTY or a
-+pipe, because it may not be enough to (directly) perform syscalls.
-+
-+There are two complementary security policies: enforce the ``noexec`` mount
-+option, and enforce executable file permission.  These policies are handled by
-+the ``fs.open_mayexec_enforce`` sysctl (writable only with ``CAP_MAC_ADMIN``)
-+as a bitmask:
-+
-+1 - Mount restriction: checks that the mount options for the underlying VFS
-+    mount do not prevent execution.
-+
-+2 - File permission restriction: checks that the to-be-opened file is marked as
-+    executable for the current process (e.g., POSIX permissions).
-+
-+Code samples can be found in tools/testing/selftests/openat2/omayexec_test.c
-+and at
-+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC .
-+
-+
- overflowgid & overflowuid
- -------------------------
- 
--- 
-2.26.2
+I'll have a look at this.
+
+Quick hack test shows moving setup_new_exec(bprm) to be just before
+install_exec_creds(bprm) works fine for the static binaries case.
+Doing the flush_old_exec(bprm) there too crashed out - I'll need to
+dig into that to see why.
+
+Regards
+Greg
+
 
