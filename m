@@ -2,153 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B64471BF6E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 13:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72E51BF767
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 13:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbgD3LeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 07:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726130AbgD3LeS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 07:34:18 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 232D9C035494;
-        Thu, 30 Apr 2020 04:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dyL6CCvk+6z2bvZF+me9CZLQe+A3yK/IUAfcG9BA9aA=; b=nkeJRNcZDFtWI/Wyf48nt+KWKw
-        z/HOtayvUc3ToTXSmrm0t6WugyUzCnabW9uu8iM3q90NThDLJaQbqs4SkXrPAHb4fLlYucPremGru
-        i8OiVdFxkbSp0dAyTMBd/AZRAE0cllim3Iu0W4E5RrvJODzyoy1WLm8T+hSq20O6GKQ8ZV/Wxi2pW
-        SzDrnd8P5eFJS6lktSTRW37rKgaXeWyplJi8yHmCqtdKbdo6j4fR2FzmsqQ49xRLd8TegDbE95bDm
-        E3WLE8lWEs4U4c7rTSGJ7USbaHjprELm5gSr5M5RcM7zhRcwqrjKZmlsu5hCbimV71Wb2ZsIkIR3A
-        gGE8pwlA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jU7SJ-0004av-FS; Thu, 30 Apr 2020 11:34:15 +0000
-Date:   Thu, 30 Apr 2020 04:34:15 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/25] Large pages in the page cache
-Message-ID: <20200430113415.GW29705@bombadil.infradead.org>
-References: <20200429133657.22632-1-willy@infradead.org>
+        id S1726571AbgD3L7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 07:59:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbgD3L7G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 07:59:06 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04C9F2078D;
+        Thu, 30 Apr 2020 11:59:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588247945;
+        bh=MTHhwdAQgoPQj+qDZufQqSCn//NQmghP9mu5ED4ji+k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WeTofuiXkzp2SmsiIg3utgCWWiJJRSxMoo/Q4jWDdkcIZ6CW5XMUz4U9wA5EiXBSB
+         0TfIPLipbo9RNY2BfdjjmGni6M1WNC5UG8381IY0FkNBiPca3z0YUw+6zOslyvWqBc
+         RTdWE6Zan1ZN/sKa+sXsDwXrxppCTbBfgqNdyIfo=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     guaneryu@gmail.com, fstests@vger.kernel.org
+Cc:     bfoster@redhat.com, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: [xfstests PATCH] generic: test reporting of wb errors via syncfs
+Date:   Thu, 30 Apr 2020 07:59:02 -0400
+Message-Id: <20200430115902.28613-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200429133657.22632-1-willy@infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 06:36:32AM -0700, Matthew Wilcox wrote:
-> This patch set does not pass xfstests.  Test at your own risk.  It is
-> based on the readahead rewrite which is in Andrew's tree.  The large
-> pages somehow manage to fall off the LRU, so the test VM quickly runs
-> out of memory and freezes.
+From: Jeff Layton <jlayton@redhat.com>
 
-Kirill was right; that was not exactly the bug.  It did lead to the
-realisation that this could be avoided by simply not splitting the page
-if the filesystem knows how to write back large pages.  So this is
-the current diff.
+Add a test for new syncfs error reporting behavior. When an inode fails
+to be written back, ensure that a subsequent call to syncfs() will also
+report an error.
 
-I just hit the bug in clear_inode() that i_data.nrpages is not 0, so
-there's clearly at least one remaining problem to fix (and I suspect
-about half a dozen).
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ tests/generic/999     | 79 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/999.out |  8 +++++
+ tests/generic/group   |  1 +
+ 3 files changed, 88 insertions(+)
+ create mode 100755 tests/generic/999
+ create mode 100644 tests/generic/999.out
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 184c8b516543..d511504d07af 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -235,7 +235,7 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
- 	blk_status_t rc;
- 
- 	if (op_is_write(op))
--		rc = pmem_do_write(pmem, page, 0, sector, tmp_size(page));
-+		rc = pmem_do_write(pmem, page, 0, sector, thp_size(page));
- 	else
- 		rc = pmem_do_read(pmem, page, 0, sector, thp_size(page));
- 	/*
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 7eb54f5c403b..ce978ed4f0cd 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -116,6 +116,11 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- 	m->gfp_mask = mask;
- }
- 
-+static inline bool mapping_large_pages(struct address_space *mapping)
+This patch is intended to test new behavior for syncfs that has recently
+gone into linux-next and should make v5.8. See:
+
+https://lore.kernel.org/linux-fsdevel/20200428135155.19223-1-jlayton@kernel.org/
+
+diff --git a/tests/generic/999 b/tests/generic/999
+new file mode 100755
+index 000000000000..cdc0772d0774
+--- /dev/null
++++ b/tests/generic/999
+@@ -0,0 +1,79 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0+
++# Copyright (c) 2020, Jeff Layton. All rights reserved.
++# FS QA Test No. 999
++#
++# Open a file and write to it and fsync. Then, flip the data device to throw
++# errors, write to it again and do an fdatasync. Then open an O_RDONLY fd on
++# the same file and call syncfs against it and ensure that an error is reported.
++# Then call syncfs again and ensure that no error is reported. Finally, repeat
++# the open and syncfs and ensure that there is no error reported.
++
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1    # failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
 +{
-+	return mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES;
++	cd /
++	rm -f $tmp.*
++	_dmerror_cleanup
 +}
 +
- void release_pages(struct page **pages, int nr);
- 
- /*
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index ebaf649aa28d..e78686b628ae 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2654,7 +2654,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- int total_mapcount(struct page *page)
- {
--	int i, compound, ret;
-+	int i, compound, nr, ret;
- 
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 
-@@ -2662,16 +2662,17 @@ int total_mapcount(struct page *page)
- 		return atomic_read(&page->_mapcount) + 1;
- 
- 	compound = compound_mapcount(page);
-+	nr = compound_nr(page);
- 	if (PageHuge(page))
- 		return compound;
- 	ret = compound;
--	for (i = 0; i < HPAGE_PMD_NR; i++)
-+	for (i = 0; i < nr; i++)
- 		ret += atomic_read(&page[i]._mapcount) + 1;
- 	/* File pages has compound_mapcount included in _mapcount */
- 	if (!PageAnon(page))
--		return ret - compound * HPAGE_PMD_NR;
-+		return ret - compound * nr;
- 	if (PageDoubleMap(page))
--		ret -= HPAGE_PMD_NR;
-+		ret -= nr;
- 	return ret;
- }
- 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index e2493189e832..ac16e96a8828 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -458,7 +458,7 @@ static bool page_cache_readahead_order(struct readahead_control *rac,
- 	int err = 0;
- 	gfp_t gfp = readahead_gfp_mask(mapping);
- 
--	if (!(mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES))
-+	if (!mapping_large_pages(mapping))
- 		return false;
- 
- 	limit = min(limit, index + ra->size - 1);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b06868fc4926..51e6c135575d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1271,9 +1271,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 				/* Adding to swap updated mapping */
- 				mapping = page_mapping(page);
- 			}
--		} else if (unlikely(PageTransHuge(page))) {
-+		} else if (PageTransHuge(page)) {
- 			/* Split file THP */
--			if (split_huge_page_to_list(page, page_list))
-+			if (!mapping_large_pages(mapping) &&
-+			    split_huge_page_to_list(page, page_list))
- 				goto keep_locked;
- 		}
- 
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++. ./common/dmerror
++
++# real QA test starts here
++_supported_os Linux
++_require_scratch_nocheck
++# This test uses "dm" without taking into account the data could be on
++# realtime subvolume, thus the test will fail with rtinherit=1
++_require_no_rtinherit
++_require_dm_target error
++
++rm -f $seqres.full
++
++echo "Format and mount"
++_scratch_mkfs > $seqres.full 2>&1
++_dmerror_init
++_dmerror_mount
++
++
++# create file
++testfile=$SCRATCH_MNT/syncfs-reports-errors
++touch $testfile
++
++# write a page of data to file, and call fsync
++datalen=$(getconf PAGE_SIZE)
++$XFS_IO_PROG -c "pwrite -W -q 0 $datalen" $testfile
++
++# flip device to non-working mode
++_dmerror_load_error_table
++
++# rewrite the data and call fdatasync
++$XFS_IO_PROG -c "pwrite -w -q 0 $datalen" $testfile
++
++# heal the device error
++_dmerror_load_working_table
++
++# open again and call syncfs twice
++echo "One of the following syncfs calls should fail with EIO:"
++$XFS_IO_PROG -r -c syncfs -c syncfs $testfile
++echo "done"
++
++echo "This syncfs call should succeed:"
++$XFS_IO_PROG -r -c syncfs $testfile
++echo "done"
++
++# success, all done
++_dmerror_cleanup
++
++status=0
++exit
+diff --git a/tests/generic/999.out b/tests/generic/999.out
+new file mode 100644
+index 000000000000..950a2ba42503
+--- /dev/null
++++ b/tests/generic/999.out
+@@ -0,0 +1,8 @@
++QA output created by 999
++Format and mount
++fdatasync: Input/output error
++One of the following syncfs calls should fail with EIO:
++syncfs: Input/output error
++done
++This syncfs call should succeed:
++done
+diff --git a/tests/generic/group b/tests/generic/group
+index 718575baeef9..9bcf296fc3dd 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -598,3 +598,4 @@
+ 594 auto quick quota
+ 595 auto quick encrypt
+ 596 auto quick
++999 auto quick
+-- 
+2.26.2
 
