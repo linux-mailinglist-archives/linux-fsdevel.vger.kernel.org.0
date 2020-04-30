@@ -2,70 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EED1C071D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 21:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147DF1C08C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 23:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgD3T47 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 15:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbgD3T46 (ORCPT
+        id S1726805AbgD3VHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 17:07:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726701AbgD3VHK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 15:56:58 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16ABEC035494
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 12:56:58 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id x77so402491pfc.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 12:56:58 -0700 (PDT)
+        Thu, 30 Apr 2020 17:07:10 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF95EC035494
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 14:07:08 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id r25so951015oij.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 14:07:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kPzmBEkauB3ZxlWoeL0oahZoxKT2pd5/ATvEYXXQ2xc=;
-        b=cDz9M1OIiYUZDQy3cKKmDRnnZGONTni4S2ZJmbWsXQswsF3MB7iZ+K3PywbHI2cWbR
-         Mf+XxDVUPKnyap5PXRKDqhPWc+/EwhWy6fZ8gUzzuRfmafcNZHlfXmJMNJPwQxVI6Bfg
-         FCIoaX7FhQ+08qxE1xXh3e3gsMJ/niq0fcsb71m4Zqes5WHpzuG5w2aBQqkzMZXH7UBa
-         KL30k1EahReJwjOt4M95T/dXETNQsy4A91l5/w+UKSYVkEgWNlSd0qxCviBLmgso/VVN
-         aOyLbNNAbCghJ4VXC1lPu7rjzDYGWNO30XQuVsOWwxQESN5qpOewu37dyuqtrr1oPDRH
-         X2wA==
+        bh=Y0BHfY++8ymwoFsyQG3f2a5F1M5FJigDreAt8/y9wkw=;
+        b=tT/RHF/bfPnesXqFK6JRHF+/fL7TDEmxW2tMH4v+nGg1wDgnRcU5rKSFkUGLbHazAh
+         sn9+u/EMiquXspfC2UFxr9W2jqoSZSaLda3L7b3hzX+oPSu0gd8P8x1QrH3VGLm02C2C
+         +s4OMCohXuqTaeY0tssIradw6kYxEW9PsJwfBj4gPy1U66MYcQf7DncO6ljoe+lk5jvU
+         fKnVvytwK6V0wNiaFIWTLhP7C2dzeakwoRCc3lSBWMr3v2MOLe2j3gf80/t/ARVNw99j
+         on5eko7k+LRuZjwBgwTw7HxQuWXx22H4hy3vhQrNPmMiXk/Ns5dhIpdqZL0xyj8TkFQ6
+         0vow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=kPzmBEkauB3ZxlWoeL0oahZoxKT2pd5/ATvEYXXQ2xc=;
-        b=YONge0gQaOROMEyyrrUBN2AFLa6RCTJH9ZtjNfj73cxhky55ROIPJ2E2A5eEFYykOg
-         wno5Ro1X+EuwqMbj+dKCArlEm9FTzqo3mKwQhqQ0wtmcJ8/tzIJYS0KBQZcyBrOMtHEq
-         zP7CBgeALTjz3LCFifotpMuM72v5OG6OM+hCxa7vSJiI7/VoNXqtKNbNcmW26+xO248s
-         CtCCk8d4pY8CFBio1jysZt8w2yDVXRzjPWs7uHr22Gypljq0TsfAN9AW+8Uy+35FBvcx
-         6IQMeeCu6bdSYYdtxst4D/8vdatI2Df3i6gpuB7CflbkxmyXZfzKTB7qq4Lgvd5pmozm
-         dTkw==
-X-Gm-Message-State: AGi0PuatEJDpnngih8zLMcYWbyOTN3cYVCohctrPOw0m136wla07ZzZo
-        Y98Tx4D7e138QFFzXFnmwAbXdw==
-X-Google-Smtp-Source: APiQypKdj0QpDYDUfAC9z2RZ/9tolDELVk/9HhdYUHTHTaYPn+2ATTJzAJWy/9EnPJ3YrN00rHSs8A==
-X-Received: by 2002:a62:3006:: with SMTP id w6mr391270pfw.29.1588276617468;
-        Thu, 30 Apr 2020 12:56:57 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id z1sm502198pjn.43.2020.04.30.12.56.56
+        bh=Y0BHfY++8ymwoFsyQG3f2a5F1M5FJigDreAt8/y9wkw=;
+        b=CaKa+IfiEqTGZjkDM3fvefmlnzmeYsnDbia045fDwzcoDbLmMgx76s57Ta1UKnCAyv
+         39sP4hfCMtX1CB+/flbw7ZGFIpXddjcBnQLnNdg2GHGvO/KndioJ3MoSoeLwkwpmX6hP
+         4hkw7QmZJoieoWBcRHmEIO228pgt3n2jRPNUTZFrwWQ5JDJmhjbJylxfJ5XJzLsYk73Y
+         On3XB8/qBrhlkWSwMhpvI4MNBsrO43k3MJB2GPpSs2P2HGuIp1WiDGmZIHv33w7Z+/Pq
+         LrLbk98m6URHt78mdsivxHjRP1DOEUeA9oUYaKPWg66GvsTzTn6ilNKMWlIc5v3Hl/ww
+         VrRA==
+X-Gm-Message-State: AGi0PuYHJ49FPq60ZquYagPT2b+qoABjR5mkrqrRtTIGVKaa47IZXtCs
+        oVEoYHdSjvfguN1mvEmu9EWSPA==
+X-Google-Smtp-Source: APiQypIF07p8WMlOqZkR0BZmdYjCNv2JY6o4DDmIm1Lcv4/Fio2GvfUcSL2SHecf2CFgmirguuRxAg==
+X-Received: by 2002:aca:438b:: with SMTP id q133mr799994oia.148.1588280828409;
+        Thu, 30 Apr 2020 14:07:08 -0700 (PDT)
+Received: from [192.168.86.21] ([136.62.4.88])
+        by smtp.gmail.com with ESMTPSA id v9sm268330oib.56.2020.04.30.14.07.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2020 12:56:56 -0700 (PDT)
-Subject: Re: [PATCH] pipe: read/write_iter() handler should check for
- IOCB_NOWAIT
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thu, 30 Apr 2020 14:07:07 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+To:     Rich Felker <dalias@libc.org>, Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <273d8294-2508-a4c2-f96e-a6a394f94166@kernel.dk>
- <20200430175856.GX29705@bombadil.infradead.org>
- <d00f0ead-2782-06b3-6e21-559d8c86c461@kernel.dk>
- <bb78a400-8af5-aae8-8049-fd37e1a4db07@kernel.dk>
-Message-ID: <82433793-07ed-ea65-5962-86c8e4c59afb@kernel.dk>
-Date:   Thu, 30 Apr 2020 13:56:55 -0600
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20200429214954.44866-1-jannh@google.com>
+ <20200429215620.GM1551@shell.armlinux.org.uk>
+ <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+ <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
+ <20200430145123.GE21576@brightrain.aerifal.cx>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <34688b36-4fdf-0c71-77cc-f98e6b9962df@landley.net>
+Date:   Thu, 30 Apr 2020 16:13:10 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <bb78a400-8af5-aae8-8049-fd37e1a4db07@kernel.dk>
+In-Reply-To: <20200430145123.GE21576@brightrain.aerifal.cx>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,51 +89,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/30/20 1:51 PM, Jens Axboe wrote:
-> On 4/30/20 12:47 PM, Jens Axboe wrote:
->> On 4/30/20 11:58 AM, Matthew Wilcox wrote:
->>> On Thu, Apr 30, 2020 at 10:24:46AM -0600, Jens Axboe wrote:
->>>> Pipe read/write only checks for the file O_NONBLOCK flag, but we should
->>>> also check for IOCB_NOWAIT for whether or not we should handle this read
->>>> or write in a non-blocking fashion. If we don't, then we will block on
->>>> data or space for iocbs that explicitly asked for non-blocking
->>>> operation. This messes up callers that explicitly ask for non-blocking
->>>> operations.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>> Wouldn't this be better?
->>
->> Yeah, that's probably a better idea. Care to send a "proper" patch?
+On 4/30/20 9:51 AM, Rich Felker wrote:
+> This sounds correct. My understanding of FLAT shared library support
+> is that it's really bad and based on having preassigned slot indices
+> for each library on the system, and a global array per-process to give
+> to data base address for each library. Libraries are compiled to know
+> their own slot numbers so that they just load from fixed_reg[slot_id]
+> to get what's effectively their GOT pointer.
 > 
-> I take that back, running into issues going with a whole-sale conversion
-> like that:
-> 
-> mkdir("/run/dhcpcd", 0755)              = -1 EEXIST (File exists)
-> openat(AT_FDCWD, "/run/dhcpcd/ens7.pid", O_WRONLY|O_CREAT|O_NONBLOCK|O_CLOEXEC, 0644) = 4
-> flock(4, LOCK_EX|LOCK_NB)               = 0
-> getpid()                                = 214
-> ftruncate(4, 0)                         = 0
-> lseek(4, 0, SEEK_SET)                   = 0
-> fstat(4, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
-> lseek(4, 0, SEEK_CUR)                   = 0
-> write(4, "214\n", 4)                    = -1 EINVAL (Invalid argument)
-> 
-> which I don't know where is coming from yet, but it's definitely
-> breakage by auto setting IOCB_NOWAIT if O_NONBLOCK is set.
-> 
-> I'd prefer to go your route, but I also would like this fixed for pipes
-> for 5.7. So I'd suggest we go with mine, and then investigate why this
-> is breaking stuff and go with the all-in approach for 5.8 if feasible.
+> I'm not sure if anybody has actually used this in over a decade. Last
+> time I looked the tooling appeared broken, but in this domain lots of
+> users have forked private tooling that's not publicly available or at
+> least not publicly indexed, so it's hard to say for sure.
 
-OK, it's the old classic in generic_write_checks(), is my guess:
+Lots of people in this area are also still using 10 year old tools because it
+breaks every time they upgrade.
 
-        if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))  
-                return -EINVAL;
+Heck, nommu support for architectures musl doesn't support yet is _explicitly_
+the main thing keeping uClibc alive:
 
-so we definitely can't just flip the switch on O_NONBLOCK -> IOCB_NOWAIT
-in general, at least not for writes.
+  https://www.openwall.com/lists/musl/2015/05/30/1
 
--- 
-Jens Axboe
-
+Rob
