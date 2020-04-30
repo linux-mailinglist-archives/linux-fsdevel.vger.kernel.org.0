@@ -2,131 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F781BF3E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 11:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAFA1BF4CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 12:03:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgD3JNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 05:13:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49608 "EHLO mx2.suse.de"
+        id S1726845AbgD3KDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 06:03:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:51728 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbgD3JNb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 05:13:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3943CAB7F;
-        Thu, 30 Apr 2020 09:13:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7F9AD1E1295; Thu, 30 Apr 2020 11:13:29 +0200 (CEST)
-Date:   Thu, 30 Apr 2020 11:13:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jan Kara <jack@suse.com>, tytso@mit.edu,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCHv3 1/1] fibmap: Warn and return an error in case of block
- > INT_MAX
-Message-ID: <20200430091329.GC12716@quack2.suse.cz>
-References: <b95aca069607600ffd1efc95803cf39c13768b4d.1588222212.git.riteshh@linux.ibm.com>
+        id S1726378AbgD3KDS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 06:03:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0311063;
+        Thu, 30 Apr 2020 03:03:18 -0700 (PDT)
+Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B787D3F68F;
+        Thu, 30 Apr 2020 03:03:15 -0700 (PDT)
+Date:   Thu, 30 Apr 2020 11:03:13 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Tao Zhou <ouwen210@hotmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] Documentation/sysctl: Document uclamp sysctl knobs
+Message-ID: <20200430100311.hcamfff363hl4bjk@e107158-lin>
+References: <20200428164134.5588-1-qais.yousef@arm.com>
+ <20200428164134.5588-2-qais.yousef@arm.com>
+ <BL0PR14MB377949FBF2B798EEC425EE719AAA0@BL0PR14MB3779.namprd14.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b95aca069607600ffd1efc95803cf39c13768b4d.1588222212.git.riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <BL0PR14MB377949FBF2B798EEC425EE719AAA0@BL0PR14MB3779.namprd14.prod.outlook.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 30-04-20 10:25:18, Ritesh Harjani wrote:
-> We better warn the fibmap user and not return a truncated and therefore
-> an incorrect block map address if the bmap() returned block address
-> is greater than INT_MAX (since user supplied integer pointer).
+On 04/30/20 13:06, Tao Zhou wrote:
+> Hi,
 > 
-> It's better to pr_warn() all user of ioctl_fibmap() and return a proper
-> error code rather than silently letting a FS corruption happen if the
-> user tries to fiddle around with the returned block map address.
-> 
-> We fix this by returning an error code of -ERANGE and returning 0 as the
-> block mapping address in case if it is > INT_MAX.
-> 
-> Now iomap_bmap() could be called from either of these two paths.
-> Either when a user is calling an ioctl_fibmap() interface to get
-> the block mapping address or by some filesystem via use of bmap()
-> internal kernel API.
-> bmap() kernel API is well equipped with handling of u64 addresses.
-> 
-> WARN condition in iomap_bmap_actor() was mainly added to warn all
-> the fibmap users. But now that we have directly added this warning
-> for all fibmap users and also made sure to return 0 as block map address
-> in case if addr > INT_MAX.
-> So we can now remove this logic from iomap_bmap_actor().
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-
-Looks good to me. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
-> v2 -> v3:
-> 1. Added file path info using (%pD4)
-> 2. Dropped Reviewed-by tags for reviewing this final version.
-> 
->  fs/ioctl.c        | 8 ++++++++
->  fs/iomap/fiemap.c | 5 +----
->  2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index f1d93263186c..6b8629fbe0fd 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -55,6 +55,7 @@ EXPORT_SYMBOL(vfs_ioctl);
->  static int ioctl_fibmap(struct file *filp, int __user *p)
->  {
->  	struct inode *inode = file_inode(filp);
-> +	struct super_block *sb = inode->i_sb;
->  	int error, ur_block;
->  	sector_t block;
+> On Tue, Apr 28, 2020 at 05:41:34PM +0100, Qais Yousef wrote:
+> > Uclamp exposes 3 sysctl knobs:
+> > 
+> > 	* sched_util_clamp_min
+> > 	* sched_util_clamp_max
+> > 	* sched_util_clamp_min_rt_default
 >  
-> @@ -71,6 +72,13 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
->  	block = ur_block;
->  	error = bmap(inode, &block);
->  
-> +	if (block > INT_MAX) {
-> +		error = -ERANGE;
-> +		pr_warn_ratelimited("[%s/%d] FS: %s File: %pD4 would truncate fibmap result\n",
-> +				    current->comm, task_pid_nr(current),
-> +				    sb->s_id, filp);
-> +	}
-> +
->  	if (error)
->  		ur_block = 0;
->  	else
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index bccf305ea9ce..d55e8f491a5e 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -117,10 +117,7 @@ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
->  
->  	if (iomap->type == IOMAP_MAPPED) {
->  		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
-> -		if (addr > INT_MAX)
-> -			WARN(1, "would truncate bmap result\n");
-> -		else
-> -			*bno = addr;
-> +		*bno = addr;
->  	}
->  	return 0;
->  }
-> -- 
-> 2.21.0
+> > Document them in sysctl/kernel.rst.
+> > 
+> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> > CC: Jonathan Corbet <corbet@lwn.net>
+> > CC: Juri Lelli <juri.lelli@redhat.com>
+> > CC: Vincent Guittot <vincent.guittot@linaro.org>
+> > CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > CC: Steven Rostedt <rostedt@goodmis.org>
+> > CC: Ben Segall <bsegall@google.com>
+> > CC: Mel Gorman <mgorman@suse.de>
+> > CC: Luis Chamberlain <mcgrof@kernel.org>
+> > CC: Kees Cook <keescook@chromium.org>
+> > CC: Iurii Zaikin <yzaikin@google.com>
+> > CC: Quentin Perret <qperret@google.com>
+> > CC: Valentin Schneider <valentin.schneider@arm.com>
+> > CC: Patrick Bellasi <patrick.bellasi@matbug.net>
+> > CC: Pavan Kondeti <pkondeti@codeaurora.org>
+> > CC: linux-doc@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > CC: linux-fsdevel@vger.kernel.org
+> > ---
+> >  Documentation/admin-guide/sysctl/kernel.rst | 48 +++++++++++++++++++++
+> >  1 file changed, 48 insertions(+)
+> > 
+> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> > index 0d427fd10941..e7255f71493c 100644
+> > --- a/Documentation/admin-guide/sysctl/kernel.rst
+> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> > @@ -940,6 +940,54 @@ Enables/disables scheduler statistics. Enabling this feature
+> >  incurs a small amount of overhead in the scheduler but is
+> >  useful for debugging and performance tuning.
+> >  
+> > +sched_util_clamp_min:
+> > +=====================
+> > +
+> > +Max allowed *minimum* utilization.
+> > +
+> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
+> > +value.
+> > +
+> > +It means that any requested uclamp.min value cannot be greater than
+>                                                           ^^^^^^^
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Seems that 'greater' should be 'smaller'.
+> And the range is [sched_util_clamp_min:SCHED_CAPACITY_SCALE]
+> Uclamp request should not below this system value.
+> Or I am totally wrong for memory leak.
+
+No the range is [0:sched_util_clamp_min].
+
+It is what it is implemented by this condition:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/sched/core.c?h=v5.7-rc3#n913
+
+So if the requested uclamp.min value is greater than sched_util_clamp_min, we
+return sched_util_clamp_min.
+
+Thanks
+
+--
+Qais Yousef
+
+> 
+> Thank you
+> 
+> > +sched_util_clamp_min, ie: it is restricted to the range
+> > +[0:sched_util_clamp_min].
+> > +
+> > +sched_util_clamp_max:
+> > +=====================
+> > +
+> > +Max allowed *maximum* utilization.
+> > +
+> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
+> > +value.
+> > +
+> > +It means that any requested uclamp.max value cannot be greater than
+> > +sched_util_clamp_max, ie: it is restricted to the range
+> > +[0:sched_util_clamp_max].
+> > +
+> > +sched_util_clamp_min_rt_default:
+> > +================================
+> > +
+> > +By default Linux is tuned for performance. Which means that RT tasks always run
+> > +at the highest frequency and most capable (highest capacity) CPU (in
+> > +heterogeneous systems).
+> > +
+> > +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
+> > +SCHED_CAPACITY_SCALE (1024) by default. Which effectively boosts the tasks to
+> > +run at the highest frequency and bias them to run on the biggest CPU.
+> > +
+> > +This knob allows admins to change the default behavior when uclamp is being
+> > +used. In battery powered devices particularly, running at the maximum
+> > +capacity and frequency will increase energy consumption and shorten the battery
+> > +life.
+> > +
+> > +This knob is only effective for RT tasks which the user hasn't modified their
+> > +requested uclamp.min value via sched_setattr() syscall.
+> > +
+> > +This knob will not escape the constraint imposed by sched_util_clamp_min
+> > +defined above.
+> > +
+> > +Any modification is applied lazily on the next opportunity the scheduler needs
+> > +to calculate the effective value of uclamp.min of the task.
+> >  
+> >  seccomp
+> >  =======
+> > -- 
+> > 2.17.1
+> > 
