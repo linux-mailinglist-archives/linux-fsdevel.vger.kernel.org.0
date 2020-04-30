@@ -2,98 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FD31BF5D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 12:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64471BF6E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 13:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgD3Kpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 06:45:45 -0400
-Received: from smtp-190c.mail.infomaniak.ch ([185.125.25.12]:47343 "EHLO
-        smtp-190c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725280AbgD3Kpo (ORCPT
+        id S1726849AbgD3LeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 07:34:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726130AbgD3LeS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 06:45:44 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CX912QbTzlhqlb;
-        Thu, 30 Apr 2020 12:45:41 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49CX8y5zpZzll5m6;
-        Thu, 30 Apr 2020 12:45:38 +0200 (CEST)
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200428175129.634352-1-mic@digikod.net>
- <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
- <20200430080746.n26fja2444w6i2db@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <a7345fd6-ec2b-ac24-842d-8cded56df958@digikod.net>
-Date:   Thu, 30 Apr 2020 12:45:38 +0200
-User-Agent: 
+        Thu, 30 Apr 2020 07:34:18 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 232D9C035494;
+        Thu, 30 Apr 2020 04:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=dyL6CCvk+6z2bvZF+me9CZLQe+A3yK/IUAfcG9BA9aA=; b=nkeJRNcZDFtWI/Wyf48nt+KWKw
+        z/HOtayvUc3ToTXSmrm0t6WugyUzCnabW9uu8iM3q90NThDLJaQbqs4SkXrPAHb4fLlYucPremGru
+        i8OiVdFxkbSp0dAyTMBd/AZRAE0cllim3Iu0W4E5RrvJODzyoy1WLm8T+hSq20O6GKQ8ZV/Wxi2pW
+        SzDrnd8P5eFJS6lktSTRW37rKgaXeWyplJi8yHmCqtdKbdo6j4fR2FzmsqQ49xRLd8TegDbE95bDm
+        E3WLE8lWEs4U4c7rTSGJ7USbaHjprELm5gSr5M5RcM7zhRcwqrjKZmlsu5hCbimV71Wb2ZsIkIR3A
+        gGE8pwlA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jU7SJ-0004av-FS; Thu, 30 Apr 2020 11:34:15 +0000
+Date:   Thu, 30 Apr 2020 04:34:15 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/25] Large pages in the page cache
+Message-ID: <20200430113415.GW29705@bombadil.infradead.org>
+References: <20200429133657.22632-1-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200430080746.n26fja2444w6i2db@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429133657.22632-1-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Apr 29, 2020 at 06:36:32AM -0700, Matthew Wilcox wrote:
+> This patch set does not pass xfstests.  Test at your own risk.  It is
+> based on the readahead rewrite which is in Andrew's tree.  The large
+> pages somehow manage to fall off the LRU, so the test VM quickly runs
+> out of memory and freezes.
 
-On 30/04/2020 10:07, Christian Brauner wrote:
-> On Thu, Apr 30, 2020 at 11:54:29AM +1000, Aleksa Sarai wrote:
->> On 2020-04-28, Mickaël Salaün <mic@digikod.net> wrote:
->>> The goal of this patch series is to enable to control script execution
->>> with interpreters help.  A new RESOLVE_MAYEXEC flag, usable through
->>> openat2(2), is added to enable userspace script interpreter to delegate
->>> to the kernel (and thus the system security policy) the permission to
->>> interpret/execute scripts or other files containing what can be seen as
->>> commands.
->>>
->>> This third patch series mainly differ from the previous one by relying
->>> on the new openat2(2) system call to get rid of the undefined behavior
->>> of the open(2) flags.  Thus, the previous O_MAYEXEC flag is now replaced
->>> with the new RESOLVE_MAYEXEC flag and benefits from the openat2(2)
->>> strict check of this kind of flags.
->>
->> My only strong upfront objection is with this being a RESOLVE_ flag.
->>
->> RESOLVE_ flags have a specific meaning (they generally apply to all
->> components, and affect the rules of path resolution). RESOLVE_MAYEXEC
->> does neither of these things and so seems out of place among the other
->> RESOLVE_ flags.
->>
->> I would argue this should be an O_ flag, but not supported for the
-> 
-> I agree.
+Kirill was right; that was not exactly the bug.  It did lead to the
+realisation that this could be avoided by simply not splitting the page
+if the filesystem knows how to write back large pages.  So this is
+the current diff.
 
-OK, I'll switch back to O_MAYEXEC.
+I just hit the bug in clear_inode() that i_data.nrpages is not 0, so
+there's clearly at least one remaining problem to fix (and I suspect
+about half a dozen).
+
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 184c8b516543..d511504d07af 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -235,7 +235,7 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
+ 	blk_status_t rc;
+ 
+ 	if (op_is_write(op))
+-		rc = pmem_do_write(pmem, page, 0, sector, tmp_size(page));
++		rc = pmem_do_write(pmem, page, 0, sector, thp_size(page));
+ 	else
+ 		rc = pmem_do_read(pmem, page, 0, sector, thp_size(page));
+ 	/*
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 7eb54f5c403b..ce978ed4f0cd 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -116,6 +116,11 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
+ 
++static inline bool mapping_large_pages(struct address_space *mapping)
++{
++	return mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES;
++}
++
+ void release_pages(struct page **pages, int nr);
+ 
+ /*
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index ebaf649aa28d..e78686b628ae 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2654,7 +2654,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 
+ int total_mapcount(struct page *page)
+ {
+-	int i, compound, ret;
++	int i, compound, nr, ret;
+ 
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 
+@@ -2662,16 +2662,17 @@ int total_mapcount(struct page *page)
+ 		return atomic_read(&page->_mapcount) + 1;
+ 
+ 	compound = compound_mapcount(page);
++	nr = compound_nr(page);
+ 	if (PageHuge(page))
+ 		return compound;
+ 	ret = compound;
+-	for (i = 0; i < HPAGE_PMD_NR; i++)
++	for (i = 0; i < nr; i++)
+ 		ret += atomic_read(&page[i]._mapcount) + 1;
+ 	/* File pages has compound_mapcount included in _mapcount */
+ 	if (!PageAnon(page))
+-		return ret - compound * HPAGE_PMD_NR;
++		return ret - compound * nr;
+ 	if (PageDoubleMap(page))
+-		ret -= HPAGE_PMD_NR;
++		ret -= nr;
+ 	return ret;
+ }
+ 
+diff --git a/mm/readahead.c b/mm/readahead.c
+index e2493189e832..ac16e96a8828 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -458,7 +458,7 @@ static bool page_cache_readahead_order(struct readahead_control *rac,
+ 	int err = 0;
+ 	gfp_t gfp = readahead_gfp_mask(mapping);
+ 
+-	if (!(mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES))
++	if (!mapping_large_pages(mapping))
+ 		return false;
+ 
+ 	limit = min(limit, index + ra->size - 1);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b06868fc4926..51e6c135575d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1271,9 +1271,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 				/* Adding to swap updated mapping */
+ 				mapping = page_mapping(page);
+ 			}
+-		} else if (unlikely(PageTransHuge(page))) {
++		} else if (PageTransHuge(page)) {
+ 			/* Split file THP */
+-			if (split_huge_page_to_list(page, page_list))
++			if (!mapping_large_pages(mapping) &&
++			    split_huge_page_to_list(page, page_list))
+ 				goto keep_locked;
+ 		}
+ 
+
