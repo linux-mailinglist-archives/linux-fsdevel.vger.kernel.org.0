@@ -2,156 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F25DB1BFDC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 16:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B391BFD31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 16:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbgD3OTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 10:19:32 -0400
-Received: from hfcrelay.icp-osb-irony-out7.external.iinet.net.au ([203.59.1.87]:58808
-        "EHLO hfcrelay.icp-osb-irony-out7.external.iinet.net.au"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbgD3OTb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 10:19:31 -0400
-X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Apr 2020 10:19:30 EDT
-X-SMTP-MATCH: 0
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BiAABi26pe//onNcoNWRwBAQEBAQE?=
- =?us-ascii?q?HAQESAQEEBAEBQIE2BAEBCwGBfIJMhCGPSgEBBAaBCggligSRVgsBAQEBAQE?=
- =?us-ascii?q?BAQE3BAEBhEQCglQ3Bg4CEAEBAQUBAQEBAQUDAYV3hkkBAQEBAgEjFUEFCws?=
- =?us-ascii?q?YAgImAgJXBgEMBgIBAYMiglgFsnh2gTKFUINngUCBDioBjFp5gQeBOAyCXT6?=
- =?us-ascii?q?HYIJgBJB/h3qZPAiCR5JXBoUkCBudBy2PWJ8dgXkzGggoCIMkUCVXkhxuAQi?=
- =?us-ascii?q?NK2I2AgYIAQEDCZJqAQE?=
-X-IPAS-Result: =?us-ascii?q?A2BiAABi26pe//onNcoNWRwBAQEBAQEHAQESAQEEBAEBQ?=
- =?us-ascii?q?IE2BAEBCwGBfIJMhCGPSgEBBAaBCggligSRVgsBAQEBAQEBAQE3BAEBhEQCg?=
- =?us-ascii?q?lQ3Bg4CEAEBAQUBAQEBAQUDAYV3hkkBAQEBAgEjFUEFCwsYAgImAgJXBgEMB?=
- =?us-ascii?q?gIBAYMiglgFsnh2gTKFUINngUCBDioBjFp5gQeBOAyCXT6HYIJgBJB/h3qZP?=
- =?us-ascii?q?AiCR5JXBoUkCBudBy2PWJ8dgXkzGggoCIMkUCVXkhxuAQiNK2I2AgYIAQEDC?=
- =?us-ascii?q?ZJqAQE?=
-X-IronPort-AV: E=Sophos;i="5.73,336,1583164800"; 
-   d="scan'208";a="253537256"
-Received: from 202-53-39-250.tpgi.com.au (HELO [192.168.0.106]) ([202.53.39.250])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 30 Apr 2020 22:10:07 +0800
-Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
- properly in there
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-References: <20200429214954.44866-1-jannh@google.com>
- <20200429215620.GM1551@shell.armlinux.org.uk>
- <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
-Date:   Fri, 1 May 2020 00:10:05 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1729211AbgD3OK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 10:10:57 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49940 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728853AbgD3OKw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 10:10:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588255850;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VowfTlmq1HtbuJqEEyd/fBmcNQLXQ23ibDnuiela/aU=;
+        b=g+KCFU9kd5E+NS0Unci3QEzLfxOyHSRfZvwXpOQjTbKNSPMgY6e0kBE7RHgg4MpaUgtGCg
+        HG8J3oyCO4qRc9Fg9Sm8zdE/7+62NO0gA4jUcqFwWl88v2hubCQk8/IXdsRhfmvZCfntIB
+        RBCeoUI0+CXOqLeXtwB3BW+P451dYig=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-r_tZDWmPPxqLuajNXMDqzg-1; Thu, 30 Apr 2020 10:10:48 -0400
+X-MC-Unique: r_tZDWmPPxqLuajNXMDqzg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5B7C801503;
+        Thu, 30 Apr 2020 14:10:47 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-229.rdu2.redhat.com [10.10.115.229])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D31EC605CF;
+        Thu, 30 Apr 2020 14:10:40 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 50437223620; Thu, 30 Apr 2020 10:10:40 -0400 (EDT)
+Date:   Thu, 30 Apr 2020 10:10:40 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Chirantan Ekbote <chirantan@chromium.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH] fuse, virtiofs: Do not alloc/install fuse device in
+ fuse_fill_super_common()
+Message-ID: <20200430141040.GB260081@redhat.com>
+References: <20200427180354.GD146096@redhat.com>
+ <CAJfpegunz80iFEvW=OhFHuHe4Zyb3isDBZKqCcLLGcRZp1PVmg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegunz80iFEvW=OhFHuHe4Zyb3isDBZKqCcLLGcRZp1PVmg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Apr 30, 2020 at 10:58:42AM +0200, Miklos Szeredi wrote:
+> On Mon, Apr 27, 2020 at 8:04 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > As of now fuse_fill_super_common() allocates and installs one fuse device.
+> > Filesystems like virtiofs can have more than one filesystem queues and
+> > can have one fuse device per queue. Given, fuse_fill_super_common() only
+> > handles one device, virtiofs allocates and installes fuse devices for
+> > all queues except one.
+> >
+> > This makes logic little twisted and hard to understand. It probably
+> > is better to not do any device allocation/installation in
+> > fuse_fill_super_common() and let caller take care of it instead.
+> 
+> I don't have the details about the fuse super block setup in my head,
+> but leaving the fuse_dev_alloc_install() call inside
+> fuse_fill_super_common() and adding new
+> fuse_dev_alloc()/fuse_dev_install() calls looks highly suspicious.
 
+Good catch. My bad. I forgot to remove that fuse_dev_alloc_install() call
+from fuse_fill_super_common(). I tested it and it worked. So I guess I just
+ended up installing extra fud device in fc which was never used.
 
-On 30/4/20 9:03 am, Linus Torvalds wrote:
-> On Wed, Apr 29, 2020 at 2:57 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
->>
->> I've never had any reason to use FDPIC, and I don't have any binaries
->> that would use it.  Nicolas Pitre added ARM support, so I guess he
->> would be the one to talk to about it.  (Added Nicolas.)
-> 
-> While we're at it, is there anybody who knows binfmt_flat?
-> 
-> It might be Nicolas too.
-> 
-> binfmt_flat doesn't do core-dumping, but it has some other oddities.
-> In particular, I'd like to bring sanity to the installation of the new
-> creds, and all the _normal_ binfmt cases do it largely close together
-> with setup_new_exec().
-> 
-> binfmt_flat is doing odd things. It's doing this:
-> 
->          /* Flush all traces of the currently running executable */
->          if (id == 0) {
->                  ret = flush_old_exec(bprm);
->                  if (ret)
->                          goto err;
-> 
->                  /* OK, This is the point of no return */
->                  set_personality(PER_LINUX_32BIT);
->                  setup_new_exec(bprm);
->          }
-> 
-> in load_flat_file() - which is also used to loading _libraries_. Where
-> it makes no sense at all.
+I will fix this and post V2 of the patch.
 
-I haven't looked at the shared lib support in there for a long time,
-but I thought that "id" is only 0 for the actual final program.
-Libraries have a slot or id number associated with them.
-
-> It does the
-> 
->          install_exec_creds(bprm);
-> 
-> in load_flat_binary() (which makes more sense: that is only for actual
-> binary loading, no library case).
-> 
-> I would _like_ for every binfmt loader to do
-> 
->          /* Flush all traces of the currently running executable */
->          retval = flush_old_exec(bprm);
->          if (retval)
->                  return retval;
-> 
->     .. possibly set up personalities here ..
-> 
->          setup_new_exec(bprm);
->          install_exec_creds(bprm);
-> 
-> all together, and at least merge 'setup_new_exec()' with 'install_exec_creds()'.
-> 
-> And I think all the binfmt handlers would be ok with that, but the
-> flat one in particular is really oddly set up.
-> 
-> *Particularly* with that flush_old_exec/setup_new_exec() being done by
-> the same routine that is also loading libraries (and called from
-> 'calc_reloc()' from binary loading too).
-> 
-> Adding Greg Ungerer for m68knommu. Can somebody sort out why that
-> flush_old_exec/setup_new_exec() isn't in load_flat_binary() like
-> install_exec_creds() is?
-> 
-> Most of that file goes back to pre-git days. And most of the commits
-> since are not so much about binfmt_flat, as they are about cleanups or
-> changes elsewhere where binfmt_flat was just a victim.
-
-I'll have a look at this.
-
-Quick hack test shows moving setup_new_exec(bprm) to be just before
-install_exec_creds(bprm) works fine for the static binaries case.
-Doing the flush_old_exec(bprm) there too crashed out - I'll need to
-dig into that to see why.
-
-Regards
-Greg
-
+Thanks
+Vivek
 
