@@ -2,173 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AAFA1BF4CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 12:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28FD31BF5D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 12:45:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgD3KDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 06:03:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:51728 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726378AbgD3KDS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 06:03:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0311063;
-        Thu, 30 Apr 2020 03:03:18 -0700 (PDT)
-Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B787D3F68F;
-        Thu, 30 Apr 2020 03:03:15 -0700 (PDT)
-Date:   Thu, 30 Apr 2020 11:03:13 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Tao Zhou <ouwen210@hotmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        id S1726571AbgD3Kpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 06:45:45 -0400
+Received: from smtp-190c.mail.infomaniak.ch ([185.125.25.12]:47343 "EHLO
+        smtp-190c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725280AbgD3Kpo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 06:45:44 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CX912QbTzlhqlb;
+        Thu, 30 Apr 2020 12:45:41 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49CX8y5zpZzll5m6;
+        Thu, 30 Apr 2020 12:45:38 +0200 (CEST)
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] Documentation/sysctl: Document uclamp sysctl knobs
-Message-ID: <20200430100311.hcamfff363hl4bjk@e107158-lin>
-References: <20200428164134.5588-1-qais.yousef@arm.com>
- <20200428164134.5588-2-qais.yousef@arm.com>
- <BL0PR14MB377949FBF2B798EEC425EE719AAA0@BL0PR14MB3779.namprd14.prod.outlook.com>
+References: <20200428175129.634352-1-mic@digikod.net>
+ <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
+ <20200430080746.n26fja2444w6i2db@wittgenstein>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <a7345fd6-ec2b-ac24-842d-8cded56df958@digikod.net>
+Date:   Thu, 30 Apr 2020 12:45:38 +0200
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <20200430080746.n26fja2444w6i2db@wittgenstein>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BL0PR14MB377949FBF2B798EEC425EE719AAA0@BL0PR14MB3779.namprd14.prod.outlook.com>
-User-Agent: NeoMutt/20171215
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04/30/20 13:06, Tao Zhou wrote:
-> Hi,
+
+On 30/04/2020 10:07, Christian Brauner wrote:
+> On Thu, Apr 30, 2020 at 11:54:29AM +1000, Aleksa Sarai wrote:
+>> On 2020-04-28, Mickaël Salaün <mic@digikod.net> wrote:
+>>> The goal of this patch series is to enable to control script execution
+>>> with interpreters help.  A new RESOLVE_MAYEXEC flag, usable through
+>>> openat2(2), is added to enable userspace script interpreter to delegate
+>>> to the kernel (and thus the system security policy) the permission to
+>>> interpret/execute scripts or other files containing what can be seen as
+>>> commands.
+>>>
+>>> This third patch series mainly differ from the previous one by relying
+>>> on the new openat2(2) system call to get rid of the undefined behavior
+>>> of the open(2) flags.  Thus, the previous O_MAYEXEC flag is now replaced
+>>> with the new RESOLVE_MAYEXEC flag and benefits from the openat2(2)
+>>> strict check of this kind of flags.
+>>
+>> My only strong upfront objection is with this being a RESOLVE_ flag.
+>>
+>> RESOLVE_ flags have a specific meaning (they generally apply to all
+>> components, and affect the rules of path resolution). RESOLVE_MAYEXEC
+>> does neither of these things and so seems out of place among the other
+>> RESOLVE_ flags.
+>>
+>> I would argue this should be an O_ flag, but not supported for the
 > 
-> On Tue, Apr 28, 2020 at 05:41:34PM +0100, Qais Yousef wrote:
-> > Uclamp exposes 3 sysctl knobs:
-> > 
-> > 	* sched_util_clamp_min
-> > 	* sched_util_clamp_max
-> > 	* sched_util_clamp_min_rt_default
->  
-> > Document them in sysctl/kernel.rst.
-> > 
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > CC: Jonathan Corbet <corbet@lwn.net>
-> > CC: Juri Lelli <juri.lelli@redhat.com>
-> > CC: Vincent Guittot <vincent.guittot@linaro.org>
-> > CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > CC: Steven Rostedt <rostedt@goodmis.org>
-> > CC: Ben Segall <bsegall@google.com>
-> > CC: Mel Gorman <mgorman@suse.de>
-> > CC: Luis Chamberlain <mcgrof@kernel.org>
-> > CC: Kees Cook <keescook@chromium.org>
-> > CC: Iurii Zaikin <yzaikin@google.com>
-> > CC: Quentin Perret <qperret@google.com>
-> > CC: Valentin Schneider <valentin.schneider@arm.com>
-> > CC: Patrick Bellasi <patrick.bellasi@matbug.net>
-> > CC: Pavan Kondeti <pkondeti@codeaurora.org>
-> > CC: linux-doc@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > CC: linux-fsdevel@vger.kernel.org
-> > ---
-> >  Documentation/admin-guide/sysctl/kernel.rst | 48 +++++++++++++++++++++
-> >  1 file changed, 48 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> > index 0d427fd10941..e7255f71493c 100644
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -940,6 +940,54 @@ Enables/disables scheduler statistics. Enabling this feature
-> >  incurs a small amount of overhead in the scheduler but is
-> >  useful for debugging and performance tuning.
-> >  
-> > +sched_util_clamp_min:
-> > +=====================
-> > +
-> > +Max allowed *minimum* utilization.
-> > +
-> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-> > +value.
-> > +
-> > +It means that any requested uclamp.min value cannot be greater than
->                                                           ^^^^^^^
-> 
-> Seems that 'greater' should be 'smaller'.
-> And the range is [sched_util_clamp_min:SCHED_CAPACITY_SCALE]
-> Uclamp request should not below this system value.
-> Or I am totally wrong for memory leak.
+> I agree.
 
-No the range is [0:sched_util_clamp_min].
-
-It is what it is implemented by this condition:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/sched/core.c?h=v5.7-rc3#n913
-
-So if the requested uclamp.min value is greater than sched_util_clamp_min, we
-return sched_util_clamp_min.
-
-Thanks
-
---
-Qais Yousef
-
-> 
-> Thank you
-> 
-> > +sched_util_clamp_min, ie: it is restricted to the range
-> > +[0:sched_util_clamp_min].
-> > +
-> > +sched_util_clamp_max:
-> > +=====================
-> > +
-> > +Max allowed *maximum* utilization.
-> > +
-> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-> > +value.
-> > +
-> > +It means that any requested uclamp.max value cannot be greater than
-> > +sched_util_clamp_max, ie: it is restricted to the range
-> > +[0:sched_util_clamp_max].
-> > +
-> > +sched_util_clamp_min_rt_default:
-> > +================================
-> > +
-> > +By default Linux is tuned for performance. Which means that RT tasks always run
-> > +at the highest frequency and most capable (highest capacity) CPU (in
-> > +heterogeneous systems).
-> > +
-> > +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-> > +SCHED_CAPACITY_SCALE (1024) by default. Which effectively boosts the tasks to
-> > +run at the highest frequency and bias them to run on the biggest CPU.
-> > +
-> > +This knob allows admins to change the default behavior when uclamp is being
-> > +used. In battery powered devices particularly, running at the maximum
-> > +capacity and frequency will increase energy consumption and shorten the battery
-> > +life.
-> > +
-> > +This knob is only effective for RT tasks which the user hasn't modified their
-> > +requested uclamp.min value via sched_setattr() syscall.
-> > +
-> > +This knob will not escape the constraint imposed by sched_util_clamp_min
-> > +defined above.
-> > +
-> > +Any modification is applied lazily on the next opportunity the scheduler needs
-> > +to calculate the effective value of uclamp.min of the task.
-> >  
-> >  seccomp
-> >  =======
-> > -- 
-> > 2.17.1
-> > 
+OK, I'll switch back to O_MAYEXEC.
