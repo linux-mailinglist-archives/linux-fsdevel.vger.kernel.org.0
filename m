@@ -2,98 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EAAE1BF947
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 15:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD971BF94F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 15:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbgD3NU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 09:20:58 -0400
-Received: from verein.lst.de ([213.95.11.211]:40689 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbgD3NU5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 09:20:57 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6051968D07; Thu, 30 Apr 2020 15:20:54 +0200 (CEST)
-Date:   Thu, 30 Apr 2020 15:20:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/7] hfs: stop using ioctl_by_bdev
-Message-ID: <20200430132053.GA25428@lst.de>
+        id S1727064AbgD3NXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 09:23:43 -0400
+Received: from smtp-bc0f.mail.infomaniak.ch ([45.157.188.15]:55035 "EHLO
+        smtp-bc0f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726781AbgD3NXm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 09:23:42 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CbgJ5HK0zlhcc1;
+        Thu, 30 Apr 2020 15:23:40 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49Cbfy6XdVzlpwgm;
+        Thu, 30 Apr 2020 15:23:22 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 0/5] Add support for O_MAYEXEC
+Date:   Thu, 30 Apr 2020 15:23:15 +0200
+Message-Id: <20200430132320.699508-1-mic@digikod.net>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead just call the CDROM layer functionality directly.
+Hi,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
+The goal of this patch series is to enable to control script execution
+with interpreters help.  A new O_MAYEXEC flag, usable through
+openat2(2), is added to enable userspace script interpreter to delegate
+to the kernel (and thus the system security policy) the permission to
+interpret/execute scripts or other files containing what can be seen as
+commands.
 
-This one got lost.  Basically exactly the same as hfsplus.
+This fourth patch series switch back from RESOLVE_MAYEXEC to O_MAYEXEC
+which is more appropriate.  However, this new flag is only taken into
+account by openat2(2), but not open(2) nor openat(2).
 
- fs/hfs/mdb.c | 32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+A simple system-wide security policy can be enforced by the system
+administrator through a sysctl configuration consistent with the mount
+points or the file access rights.  The documentation patch explains the
+prerequisites.
 
-diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-index 460281b1299eb..cdf0edeeb2781 100644
---- a/fs/hfs/mdb.c
-+++ b/fs/hfs/mdb.c
-@@ -32,29 +32,35 @@
- static int hfs_get_last_session(struct super_block *sb,
- 				sector_t *start, sector_t *size)
- {
--	struct cdrom_multisession ms_info;
--	struct cdrom_tocentry te;
--	int res;
-+	struct cdrom_device_info *cdi = disk_to_cdi(sb->s_bdev->bd_disk);
- 
- 	/* default values */
- 	*start = 0;
- 	*size = i_size_read(sb->s_bdev->bd_inode) >> 9;
- 
- 	if (HFS_SB(sb)->session >= 0) {
-+		struct cdrom_tocentry te;
-+	
-+		if (!cdi)
-+			return -EINVAL;
-+
- 		te.cdte_track = HFS_SB(sb)->session;
- 		te.cdte_format = CDROM_LBA;
--		res = ioctl_by_bdev(sb->s_bdev, CDROMREADTOCENTRY, (unsigned long)&te);
--		if (!res && (te.cdte_ctrl & CDROM_DATA_TRACK) == 4) {
--			*start = (sector_t)te.cdte_addr.lba << 2;
--			return 0;
-+		if (cdrom_read_tocentry(cdi, &te) ||
-+		    (te.cdte_ctrl & CDROM_DATA_TRACK) != 4) {
-+			pr_err("invalid session number or type of track\n");
-+			return -EINVAL;
- 		}
--		pr_err("invalid session number or type of track\n");
--		return -EINVAL;
-+
-+		*start = (sector_t)te.cdte_addr.lba << 2;
-+	} else if (cdi) {
-+		struct cdrom_multisession ms_info;
-+
-+		ms_info.addr_format = CDROM_LBA;
-+		if (cdrom_multisession(cdi, &ms_info) == 0 && ms_info.xa_flag)
-+			*start = (sector_t)ms_info.addr.lba << 2;
- 	}
--	ms_info.addr_format = CDROM_LBA;
--	res = ioctl_by_bdev(sb->s_bdev, CDROMMULTISESSION, (unsigned long)&ms_info);
--	if (!res && ms_info.xa_flag)
--		*start = (sector_t)ms_info.addr.lba << 2;
-+
- 	return 0;
- }
- 
+Furthermore, the security policy can also be delegated to an LSM, either
+a MAC system or an integrity system.  For instance, the new kernel
+MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
+integrity gap by bringing the ability to check the use of scripts [1].
+Other uses are expected, such as for openat2(2) [2], SGX integration
+[3], bpffs [4] or IPE [5].
+
+Userspace needs to adapt to take advantage of this new feature.  For
+example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
+extended with policy enforcement points related to code interpretation,
+which can be used to align with the PowerShell audit features.
+Additional Python security improvements (e.g. a limited interpreter
+withou -c, stdin piping of code) are on their way.
+
+The initial idea come from CLIP OS 4 and the original implementation has
+been used for more than 11 years:
+https://github.com/clipos-archive/clipos4_doc
+
+An introduction to O_MAYEXEC was given at the Linux Security Summit
+Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+The "write xor execute" principle was explained at Kernel Recipes 2018 -
+CLIP OS: a defense-in-depth OS:
+https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+
+This patch series can be applied on top of v5.7-rc3.  This can be tested
+with CONFIG_SYSCTL.  I would really appreciate constructive comments on
+this patch series.
+
+Previous version:
+https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
+
+
+[1] https://lore.kernel.org/lkml/1544647356.4028.105.camel@linux.ibm.com/
+[2] https://lore.kernel.org/lkml/20190904201933.10736-6-cyphar@cyphar.com/
+[3] https://lore.kernel.org/lkml/CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com/
+[4] https://lore.kernel.org/lkml/CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com/
+[5] https://lore.kernel.org/lkml/20200406221439.1469862-12-deven.desai@linux.microsoft.com/
+[6] https://www.python.org/dev/peps/pep-0578/
+
+Regards,
+
+Mickaël Salaün (5):
+  fs: Add support for an O_MAYEXEC flag on openat2(2)
+  fs: Add a MAY_EXECMOUNT flag to infer the noexec mount property
+  fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC
+  selftest/openat2: Add tests for O_MAYEXEC enforcing
+  doc: Add documentation for the fs.open_mayexec_enforce sysctl
+
+ Documentation/admin-guide/sysctl/fs.rst       |  44 +++
+ fs/fcntl.c                                    |   2 +-
+ fs/namei.c                                    |  74 +++-
+ fs/open.c                                     |   8 +
+ include/linux/fcntl.h                         |   2 +-
+ include/linux/fs.h                            |   7 +
+ include/uapi/asm-generic/fcntl.h              |   7 +
+ kernel/sysctl.c                               |   7 +
+ tools/testing/selftests/kselftest_harness.h   |   3 +
+ tools/testing/selftests/openat2/Makefile      |   3 +-
+ tools/testing/selftests/openat2/config        |   1 +
+ tools/testing/selftests/openat2/helpers.h     |   1 +
+ .../testing/selftests/openat2/omayexec_test.c | 330 ++++++++++++++++++
+ 13 files changed, 485 insertions(+), 4 deletions(-)
+ create mode 100644 tools/testing/selftests/openat2/config
+ create mode 100644 tools/testing/selftests/openat2/omayexec_test.c
+
 -- 
 2.26.2
 
