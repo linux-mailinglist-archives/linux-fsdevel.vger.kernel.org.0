@@ -2,50 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5876C1C049B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 20:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8FF1C0517
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 20:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgD3SVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 14:21:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:60060 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbgD3SVg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 14:21:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C649C101E;
-        Thu, 30 Apr 2020 11:21:35 -0700 (PDT)
-Received: from [192.168.0.7] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E45CC3F73D;
-        Thu, 30 Apr 2020 11:21:32 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-To:     Qais Yousef <qais.yousef@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200428164134.5588-1-qais.yousef@arm.com>
- <20200429113255.GA19464@codeaurora.org>
- <20200429123056.otyedhljlugyf5we@e107158-lin>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <d3916860-6ee8-4d17-55ea-be5cada1302a@arm.com>
-Date:   Thu, 30 Apr 2020 20:21:31 +0200
+        id S1726503AbgD3SrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 14:47:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbgD3SrH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 14:47:07 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9017EC035495
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 11:47:06 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id h69so3214163pgc.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Apr 2020 11:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ABdRQgBI25yIrNvDESTtqmXMNbdBPdhiiSh6GEOf12k=;
+        b=CS7iZoWGBiAeaHIhT3vGdnnpVYg3KGf4JUbPH7vg1jP7Wyh+f14SEPpo8mHgtDYzYS
+         SK+Ou1SVqV8PrNAL1wKoKB/zIHibqlrG9vCmbenfxeQGs80iOXx0WUPMZxCAyvuL7pKy
+         0WxCAVumF9a+kz7dxFn4dhJM0FsFTmbHE8WV4r+2upnZVkwdAq+r6iEJ71izlXReGZKv
+         7bw3pkXgwQUseVNIH2JCQohcFdJnyPm4Y6aTAUY/mZPtSY/ZLuxt4epw+TSBrrUTnEkc
+         2atVBpwYmaW6IbsQGugx0yso0lsOSZlxWi5UsMZCKRbfJQYkaA9EfcGxJNm8gdRgjOJz
+         durA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ABdRQgBI25yIrNvDESTtqmXMNbdBPdhiiSh6GEOf12k=;
+        b=IrKMMU8OPtr2FP6WhaiqPO2R6cwReTfUNhtdbZOnbLNjBSCoLaUItHeepjE2hLJTiM
+         iiEY6k9cATpGaprS9Ub4fcuV0NLSWKYSezUEhFRckU0fT8Z3cUPP21+WC3CQgE/UtZY8
+         BCyDGbJdJXdcOXHB+BNAU+khuk37BuNiXUGf+fLsetzvWUslxNhvCtRgLtUWbaVUdLoa
+         izFkP0VjMc5SQ65fNECsSwPZKqWY3T94Nem73ZcJdAF9+I7HYdV4fCfk9aSiCFAwMRKX
+         2C8id0erM/WDhsO9sidron7Vs432dSblUygJssGlkSSj+ZMxCUjZ48aNnvKSrmJz0XMq
+         gbIQ==
+X-Gm-Message-State: AGi0PuZgc18lvXz69S5u0VQtPrL1yrEEld4UKAorTD6W1pXzCpGv2brP
+        eSRBRk5xf7QbHywbfKkdvh52Ng==
+X-Google-Smtp-Source: APiQypK50Mb5vUZOYLMzB7jL/Aw7RXfUYPGr8cTLOc5I+VuurshaMp5y0AtUjuRe4ZiNEEcvfpCTcw==
+X-Received: by 2002:a62:6246:: with SMTP id w67mr119360pfb.326.1588272425985;
+        Thu, 30 Apr 2020 11:47:05 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id y26sm413214pfn.185.2020.04.30.11.47.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Apr 2020 11:47:05 -0700 (PDT)
+Subject: Re: [PATCH] pipe: read/write_iter() handler should check for
+ IOCB_NOWAIT
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <273d8294-2508-a4c2-f96e-a6a394f94166@kernel.dk>
+ <20200430175856.GX29705@bombadil.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d00f0ead-2782-06b3-6e21-559d8c86c461@kernel.dk>
+Date:   Thu, 30 Apr 2020 12:47:03 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200429123056.otyedhljlugyf5we@e107158-lin>
+In-Reply-To: <20200430175856.GX29705@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,49 +72,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29/04/2020 14:30, Qais Yousef wrote:
-> Hi Pavan
-> 
-> On 04/29/20 17:02, Pavan Kondeti wrote:
->> Hi Qais,
+On 4/30/20 11:58 AM, Matthew Wilcox wrote:
+> On Thu, Apr 30, 2020 at 10:24:46AM -0600, Jens Axboe wrote:
+>> Pipe read/write only checks for the file O_NONBLOCK flag, but we should
+>> also check for IOCB_NOWAIT for whether or not we should handle this read
+>> or write in a non-blocking fashion. If we don't, then we will block on
+>> data or space for iocbs that explicitly asked for non-blocking
+>> operation. This messes up callers that explicitly ask for non-blocking
+>> operations.
 >>
->> On Tue, Apr 28, 2020 at 05:41:33PM +0100, Qais Yousef wrote:
-
-[...]
-
->>> @@ -907,8 +935,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
->>>  static inline struct uclamp_se
->>>  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
->>>  {
->>> -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
->>> -	struct uclamp_se uc_max = uclamp_default[clamp_id];
->>> +	struct uclamp_se uc_req, uc_max;
->>> +
->>> +	/*
->>> +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
->>> +	 */
->>> +	uclamp_sync_util_min_rt_default(p);
->>> +
->>> +	uc_req = uclamp_tg_restrict(p, clamp_id);
->>> +	uc_max = uclamp_default[clamp_id];
->>
->> We are calling uclamp_sync_util_min_rt_default() unnecessarily for
->> clamp_id == UCLAMP_MAX case. Would it be better to have a separate
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> It was actually intentional to make sure we update the value ASAP. I didn't
-> think it's a lot of overhead. I can further protect with a check to verify
-> whether the value has changed if it seems heavy handed.
+> Wouldn't this be better?
 
-Users of uclamp_eff_value()->uclamp_eff_get() ((like
-rt_task_fits_capacity())) always call both ids.
+Yeah, that's probably a better idea. Care to send a "proper" patch?
 
-So calling uclamp_sync_util_min_rt_default() only for UCLAMP_MIN would
-make sense. It's overhead in the fast path for rt tasks.
+-- 
+Jens Axboe
 
-Since changes to sched_util_clamp_min_rt_default will be fairly rare,
-you might even want to consider only doing the uclamp_se_set(...,
-min_rt_default, ...) in case
-
-  uc_se->value != sysctl_sched_uclamp_util_min_rt_default
-
-[...]
