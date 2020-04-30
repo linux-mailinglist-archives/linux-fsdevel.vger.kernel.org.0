@@ -2,96 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A43C1C0441
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 19:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5876C1C049B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 20:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbgD3R7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 13:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726318AbgD3R7F (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 13:59:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C336BC035494;
-        Thu, 30 Apr 2020 10:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lPMf1Z1GFT7QUGBGKnoHwGy463ZqTcbG/VsC/8ckYeE=; b=BHla1V7kaYXJqHABxydhsXHLxN
-        KJpUGrBVjN3N38i+33Z3RkE0+PkDu1Cou4c40LcmJJtzd3fFu8BsHfPOsXW8K5Uxbyh5M75WzSQZs
-        /ltcLXK5SifCKaNrMUfLIDWwx0ET6spmr1grsBmS22VlSuu+dMxDo9IJiqNoLCKNfHwAhxB3jvmx9
-        t0JHu0lkp+ymGctsCYe2DMS5V0Ck7U7ERVX+RZ3fYnxuiJ+b2MUz7eLVYci50VqbGheSMzvqFNRGW
-        QkHlhSUlpVu4HRRtEFX1+rqw6DnLJjkl371QiBQMiIzWo1BrJa7bW663xBYInX5EaSRM6Ij4de1JL
-        QeNYk55g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jUDSb-00050J-27; Thu, 30 Apr 2020 17:58:57 +0000
-Date:   Thu, 30 Apr 2020 10:58:56 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pipe: read/write_iter() handler should check for
- IOCB_NOWAIT
-Message-ID: <20200430175856.GX29705@bombadil.infradead.org>
-References: <273d8294-2508-a4c2-f96e-a6a394f94166@kernel.dk>
+        id S1726478AbgD3SVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 14:21:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:60060 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725844AbgD3SVg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 14:21:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C649C101E;
+        Thu, 30 Apr 2020 11:21:35 -0700 (PDT)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E45CC3F73D;
+        Thu, 30 Apr 2020 11:21:32 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] sched/uclamp: Add a new sysctl to control RT
+ default boost value
+To:     Qais Yousef <qais.yousef@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200428164134.5588-1-qais.yousef@arm.com>
+ <20200429113255.GA19464@codeaurora.org>
+ <20200429123056.otyedhljlugyf5we@e107158-lin>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <d3916860-6ee8-4d17-55ea-be5cada1302a@arm.com>
+Date:   Thu, 30 Apr 2020 20:21:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <273d8294-2508-a4c2-f96e-a6a394f94166@kernel.dk>
+In-Reply-To: <20200429123056.otyedhljlugyf5we@e107158-lin>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 30, 2020 at 10:24:46AM -0600, Jens Axboe wrote:
-> Pipe read/write only checks for the file O_NONBLOCK flag, but we should
-> also check for IOCB_NOWAIT for whether or not we should handle this read
-> or write in a non-blocking fashion. If we don't, then we will block on
-> data or space for iocbs that explicitly asked for non-blocking
-> operation. This messes up callers that explicitly ask for non-blocking
-> operations.
+On 29/04/2020 14:30, Qais Yousef wrote:
+> Hi Pavan
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> On 04/29/20 17:02, Pavan Kondeti wrote:
+>> Hi Qais,
+>>
+>> On Tue, Apr 28, 2020 at 05:41:33PM +0100, Qais Yousef wrote:
 
-Wouldn't this be better?
+[...]
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>> @@ -907,8 +935,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>>>  static inline struct uclamp_se
+>>>  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+>>>  {
+>>> -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+>>> -	struct uclamp_se uc_max = uclamp_default[clamp_id];
+>>> +	struct uclamp_se uc_req, uc_max;
+>>> +
+>>> +	/*
+>>> +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
+>>> +	 */
+>>> +	uclamp_sync_util_min_rt_default(p);
+>>> +
+>>> +	uc_req = uclamp_tg_restrict(p, clamp_id);
+>>> +	uc_max = uclamp_default[clamp_id];
+>>
+>> We are calling uclamp_sync_util_min_rt_default() unnecessarily for
+>> clamp_id == UCLAMP_MAX case. Would it be better to have a separate
+> 
+> It was actually intentional to make sure we update the value ASAP. I didn't
+> think it's a lot of overhead. I can further protect with a check to verify
+> whether the value has changed if it seems heavy handed.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 16fb72e9abf7..d4cf3ea9ad49 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -363,7 +363,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 			break;
- 		if (ret)
- 			break;
--		if (filp->f_flags & O_NONBLOCK) {
-+		if (iocb->ki_flags & IOCB_NOWAIT) {
- 			ret = -EAGAIN;
- 			break;
- 		}
-@@ -566,7 +566,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			continue;
- 
- 		/* Wait for buffer space to become available. */
--		if (filp->f_flags & O_NONBLOCK) {
-+		if (iocb->ki_flags & IOCB_NOWAIT) {
- 			if (!ret)
- 				ret = -EAGAIN;
- 			break;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4f6f59b4f22a..2790c956bd4f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3429,6 +3429,8 @@ static inline int iocb_flags(struct file *file)
- 		res |= IOCB_DSYNC;
- 	if (file->f_flags & __O_SYNC)
- 		res |= IOCB_SYNC;
-+	if (file->f_flags & O_NONBLOCK)
-+		res |= IOCB_NOWAIT;
- 	return res;
- }
- 
+Users of uclamp_eff_value()->uclamp_eff_get() ((like
+rt_task_fits_capacity())) always call both ids.
+
+So calling uclamp_sync_util_min_rt_default() only for UCLAMP_MIN would
+make sense. It's overhead in the fast path for rt tasks.
+
+Since changes to sched_util_clamp_min_rt_default will be fairly rare,
+you might even want to consider only doing the uclamp_se_set(...,
+min_rt_default, ...) in case
+
+  uc_se->value != sysctl_sched_uclamp_util_min_rt_default
+
+[...]
