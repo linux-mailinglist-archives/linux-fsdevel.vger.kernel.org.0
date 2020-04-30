@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8C01C0376
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 19:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F19E1C0385
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 19:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgD3RCl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 13:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
+        id S1726882AbgD3REM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 13:04:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbgD3RCl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 13:02:41 -0400
+        id S1726333AbgD3REL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Apr 2020 13:04:11 -0400
 Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A4B720787;
-        Thu, 30 Apr 2020 17:02:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76FDC20787;
+        Thu, 30 Apr 2020 17:04:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588266160;
-        bh=KyZuJnDBqEdGS6iPd0QsY0M5oYS5mvkpln5O+Lo+8+w=;
+        s=default; t=1588266251;
+        bh=p3PY8v4K9MXDL2QVIbKch9hnHXPDV5bO+Bl4Z5ompNM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MLXYWxhR97lhm1QqB4s/La6Baka75kWzkYwMsHuQcUnNEUisGpvdwC8LrmJ+1L5Hh
-         kbu7U8SLxdXVpPtxUXUEG0B46G8E9DAOYRz+0I7pW7zMpZjvXOeEDIiPKi8UBcYYmI
-         rBPBZEqP7AS27RXTEObKuIwLfjDPZF+M4NANJcxg=
-Date:   Thu, 30 Apr 2020 10:02:33 -0700
+        b=ofvd7GuJV37V4vJOvUKnWq4C/v1xbd3mvDBxUw04u6XfgRrJHLihJ0khXJpzsYWJi
+         42MtVUtsO8njIXQJ+P2HBeIv9z+8wKQu4dFy5SmhhU7L7TKGpapze5VAxJq/l2mj2u
+         wzpYGjYJmtlYiphZ0ZzWlzBBFWVL9FLJT4lb9OkY=
+Date:   Thu, 30 Apr 2020 10:04:08 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Satya Tangirala <satyat@google.com>
 Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
@@ -32,25 +32,27 @@ Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
         Kuohong Wang <kuohong.wang@mediatek.com>,
         Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v12 00/12] Inline Encryption Support
-Message-ID: <20200430170233.GA1003@sol.localdomain>
+Subject: Re: [PATCH v12 10/12] fscrypt: add inline encryption support
+Message-ID: <20200430170408.GB1003@sol.localdomain>
 References: <20200430115959.238073-1-satyat@google.com>
+ <20200430115959.238073-11-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200430115959.238073-1-satyat@google.com>
+In-Reply-To: <20200430115959.238073-11-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 30, 2020 at 11:59:47AM +0000, Satya Tangirala wrote:
-> This patch series adds support for Inline Encryption to the block layer,
-> UFS, fscrypt, f2fs and ext4.
+On Thu, Apr 30, 2020 at 11:59:57AM +0000, Satya Tangirala wrote:
+> +bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+> +{
+> +	return inode->i_crypt_info->ci_inlinecrypt;
+> +}
+> +EXPORT_SYMBOL_GPL(fscrypt_inode_uses_inline_crypto);
 
-Thanks, that was fast!  As usual I pushed this out to
-
-        Repo: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
-        Tag: inline-encryption-v12
+Right, this still needs to be exported (I missed that in the diff I suggested).
+But the export needs to be fixed to use the double-underscore name.
 
 - Eric
