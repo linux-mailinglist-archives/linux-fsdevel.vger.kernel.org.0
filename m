@@ -2,85 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B391BFD31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 16:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A36E1BFFB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Apr 2020 17:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgD3OK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Apr 2020 10:10:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49940 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728853AbgD3OKw (ORCPT
+        id S1726849AbgD3PIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Apr 2020 11:08:47 -0400
+Received: from brightrain.aerifal.cx ([216.12.86.13]:48620 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbgD3PIr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Apr 2020 10:10:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588255850;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VowfTlmq1HtbuJqEEyd/fBmcNQLXQ23ibDnuiela/aU=;
-        b=g+KCFU9kd5E+NS0Unci3QEzLfxOyHSRfZvwXpOQjTbKNSPMgY6e0kBE7RHgg4MpaUgtGCg
-        HG8J3oyCO4qRc9Fg9Sm8zdE/7+62NO0gA4jUcqFwWl88v2hubCQk8/IXdsRhfmvZCfntIB
-        RBCeoUI0+CXOqLeXtwB3BW+P451dYig=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-418-r_tZDWmPPxqLuajNXMDqzg-1; Thu, 30 Apr 2020 10:10:48 -0400
-X-MC-Unique: r_tZDWmPPxqLuajNXMDqzg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5B7C801503;
-        Thu, 30 Apr 2020 14:10:47 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-229.rdu2.redhat.com [10.10.115.229])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D31EC605CF;
-        Thu, 30 Apr 2020 14:10:40 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 50437223620; Thu, 30 Apr 2020 10:10:40 -0400 (EDT)
-Date:   Thu, 30 Apr 2020 10:10:40 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Chirantan Ekbote <chirantan@chromium.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: [PATCH] fuse, virtiofs: Do not alloc/install fuse device in
- fuse_fill_super_common()
-Message-ID: <20200430141040.GB260081@redhat.com>
-References: <20200427180354.GD146096@redhat.com>
- <CAJfpegunz80iFEvW=OhFHuHe4Zyb3isDBZKqCcLLGcRZp1PVmg@mail.gmail.com>
+        Thu, 30 Apr 2020 11:08:47 -0400
+Date:   Thu, 30 Apr 2020 10:51:23 -0400
+From:   Rich Felker <dalias@libc.org>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use
+ mmap_sem properly in there
+Message-ID: <20200430145123.GE21576@brightrain.aerifal.cx>
+References: <20200429214954.44866-1-jannh@google.com>
+ <20200429215620.GM1551@shell.armlinux.org.uk>
+ <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+ <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegunz80iFEvW=OhFHuHe4Zyb3isDBZKqCcLLGcRZp1PVmg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 30, 2020 at 10:58:42AM +0200, Miklos Szeredi wrote:
-> On Mon, Apr 27, 2020 at 8:04 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > As of now fuse_fill_super_common() allocates and installs one fuse device.
-> > Filesystems like virtiofs can have more than one filesystem queues and
-> > can have one fuse device per queue. Given, fuse_fill_super_common() only
-> > handles one device, virtiofs allocates and installes fuse devices for
-> > all queues except one.
-> >
-> > This makes logic little twisted and hard to understand. It probably
-> > is better to not do any device allocation/installation in
-> > fuse_fill_super_common() and let caller take care of it instead.
+On Fri, May 01, 2020 at 12:10:05AM +1000, Greg Ungerer wrote:
 > 
-> I don't have the details about the fuse super block setup in my head,
-> but leaving the fuse_dev_alloc_install() call inside
-> fuse_fill_super_common() and adding new
-> fuse_dev_alloc()/fuse_dev_install() calls looks highly suspicious.
+> 
+> On 30/4/20 9:03 am, Linus Torvalds wrote:
+> >On Wed, Apr 29, 2020 at 2:57 PM Russell King - ARM Linux admin
+> ><linux@armlinux.org.uk> wrote:
+> >>
+> >>I've never had any reason to use FDPIC, and I don't have any binaries
+> >>that would use it.  Nicolas Pitre added ARM support, so I guess he
+> >>would be the one to talk to about it.  (Added Nicolas.)
+> >
+> >While we're at it, is there anybody who knows binfmt_flat?
+> >
+> >It might be Nicolas too.
+> >
+> >binfmt_flat doesn't do core-dumping, but it has some other oddities.
+> >In particular, I'd like to bring sanity to the installation of the new
+> >creds, and all the _normal_ binfmt cases do it largely close together
+> >with setup_new_exec().
+> >
+> >binfmt_flat is doing odd things. It's doing this:
+> >
+> >         /* Flush all traces of the currently running executable */
+> >         if (id == 0) {
+> >                 ret = flush_old_exec(bprm);
+> >                 if (ret)
+> >                         goto err;
+> >
+> >                 /* OK, This is the point of no return */
+> >                 set_personality(PER_LINUX_32BIT);
+> >                 setup_new_exec(bprm);
+> >         }
+> >
+> >in load_flat_file() - which is also used to loading _libraries_. Where
+> >it makes no sense at all.
+> 
+> I haven't looked at the shared lib support in there for a long time,
+> but I thought that "id" is only 0 for the actual final program.
+> Libraries have a slot or id number associated with them.
 
-Good catch. My bad. I forgot to remove that fuse_dev_alloc_install() call
-from fuse_fill_super_common(). I tested it and it worked. So I guess I just
-ended up installing extra fud device in fc which was never used.
+This sounds correct. My understanding of FLAT shared library support
+is that it's really bad and based on having preassigned slot indices
+for each library on the system, and a global array per-process to give
+to data base address for each library. Libraries are compiled to know
+their own slot numbers so that they just load from fixed_reg[slot_id]
+to get what's effectively their GOT pointer.
 
-I will fix this and post V2 of the patch.
+I'm not sure if anybody has actually used this in over a decade. Last
+time I looked the tooling appeared broken, but in this domain lots of
+users have forked private tooling that's not publicly available or at
+least not publicly indexed, so it's hard to say for sure.
 
-Thanks
-Vivek
-
+Rich
