@@ -2,59 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 946A31C1F75
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 23:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BEF1C1F91
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 23:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbgEAVTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 17:19:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39232 "EHLO mail.kernel.org"
+        id S1726635AbgEAV0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 17:26:53 -0400
+Received: from mail.zx2c4.com ([192.95.5.64]:60731 "EHLO mail.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgEAVTF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 17:19:05 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88E9E20787;
-        Fri,  1 May 2020 21:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588367945;
-        bh=eS4UFrsPzGu4rvp9KfgUzgHF9eFBoLTYHJ7BQe382wk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1OURwhfWhQ712LzjrmsRXv/qnPOWXnqXvqPjKnaoB1zOxQmDB2UaYfMMzEs4gZ8MP
-         Bt4ZnmD5d8sdd3IzGK5ZtRkNTg7zhWibaEwEUoFROYrODSFbELcTnYf+g936Wdu8vn
-         3ag5Fotuv7+d67bdifx+GdSZSf/mA6VoHUab1ekw=
-Date:   Fri, 1 May 2020 14:19:03 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] exec: open code copy_string_kernel
-Message-Id: <20200501141903.5f7b1f81fdd38ae372d91f0e@linux-foundation.org>
-In-Reply-To: <20200501104105.2621149-3-hch@lst.de>
-References: <20200501104105.2621149-1-hch@lst.de>
-        <20200501104105.2621149-3-hch@lst.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726045AbgEAV0w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 May 2020 17:26:52 -0400
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 969305ee;
+        Fri, 1 May 2020 21:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
+        :cc:subject:message-id:references:mime-version:content-type
+        :in-reply-to; s=mail; bh=Rh6xj7VSHsXpYqNI0fr453COz6c=; b=Ri8cPWQ
+        ym7a7UOrLp4K3siXQff8GIM8c3tKIaKedUvptR4G8MJgmC2eUkARTEZZy3BQ6HxA
+        op9jAKubI0F0ZBjjEwZjZ2gQUwF6ogtaYslvw2glHNfVfbUFmxaO8G9cxQBqEnFV
+        c4BKD91ZXS4WMr66nbTzs4NkqOaDAKOGmXOXtw87R1wlceUkbKdvq0hfQLTNFSWh
+        Z8m476S/dlYkk2tavE2XVuQtVujA9XqMMsRYxrntDtUvkXs9hPmk83AMDYfGfZEw
+        C1gUV/S61zTioEF4KH/AzLpl8rab7O+YkCgcS8MgSFRNXO6zSPFoRF2a11UdUWlR
+        veQ9BETwiAAU3Nw==
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4e20e9e3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Fri, 1 May 2020 21:14:45 +0000 (UTC)
+Date:   Fri, 1 May 2020 15:26:48 -0600
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Johannes Thumshirn <jth@kernel.org>
+Cc:     David Sterba <dsterba@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 0/2] Add file-system authentication to BTRFS
+Message-ID: <20200501212648.GA521030@zx2c4.com>
+References: <20200428105859.4719-1-jth@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200428105859.4719-1-jth@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri,  1 May 2020 12:41:05 +0200 Christoph Hellwig <hch@lst.de> wrote:
+Hi Johannes,
 
-> Currently copy_string_kernel is just a wrapper around copy_strings that
-> simplifies the calling conventions and uses set_fs to allow passing a
-> kernel pointer.  But due to the fact the we only need to handle a single
-> kernel argument pointer, the logic can be sigificantly simplified while
-> getting rid of the set_fs.
-> 
+On Tue, Apr 28, 2020 at 12:58:57PM +0200, Johannes Thumshirn wrote:
+> Currently BRTFS supports CRC32C, XXHASH64, SHA256 and Blake2b for checksumming
+> these blocks. This series adds a new checksum algorithm, HMAC(SHA-256), which
+> does need an authentication key. When no, or an incoreect authentication key
+> is supplied no valid checksum can be generated and a read, fsck or scrub
+> operation would detect invalid or tampered blocks once the file-system is
+> mounted again with the correct key. 
 
-I don't get why this is better?  copy_strings() is still there and
-won't be going away - what's wrong with simply reusing it in this
-fashion?
+In case you're interested, Blake2b and Blake2s both have "keyed" modes,
+which are more efficient than HMAC and achieve basically the same thing
+-- they provide a PRF/MAC. There are normal crypto API interfaces for
+these, and there's also an easy library interface:
 
-I guess set_fs() is a bit hacky, but there's the benefit of not having
-to maintain two largely similar bits of code?
+#include <crypto/blake2s.h>
+blake2s(output_mac, input_data, secret_key,
+        output_mac_length, input_data_length, secret_key_length);
 
+You might find that the performance of Blake2b and Blake2s is better
+than HMAC-SHA2-256.
+
+But more generally, I'm wondering about the general design and what
+properties you're trying to provide. Is the block counter being hashed
+in to prevent rearranging? Are there generation counters to prevent
+replay/rollback?
+
+Also, I'm wondering if this is the kind of feature you'd consider
+pairing with a higher speed AEAD, and maybe in a way that would
+integrate with the existing fscrypt tooling, without the need to manage
+two sets of keys. Ever looked at bcachefs' design for this?
+https://bcachefs.org/Encryption/
+
+Either way, I'm happy to learn that btrfs is a filesystem with some
+space baked in for authentication tags.
+
+Jason
