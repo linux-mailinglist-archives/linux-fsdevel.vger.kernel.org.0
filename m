@@ -2,117 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B8D1C1D3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 20:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD6B1C1D4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 20:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbgEASc5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 14:32:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42090 "EHLO
+        id S1729975AbgEASkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 14:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730217AbgEASc4 (ORCPT
+        by vger.kernel.org with ESMTP id S1729721AbgEASkJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 14:32:56 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E5D8C061A0C;
-        Fri,  1 May 2020 11:32:56 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id i27so3253974ota.7;
-        Fri, 01 May 2020 11:32:56 -0700 (PDT)
+        Fri, 1 May 2020 14:40:09 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CAADC061A0C;
+        Fri,  1 May 2020 11:40:09 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id z25so3232581otq.13;
+        Fri, 01 May 2020 11:40:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9Qmvh7uhlyOv4U/7qQXX/hfMofRU+8ICG2gVkpg7rmk=;
-        b=kZXV9bInoZgJZ6HcAzR1LvYHwm6qz4GdGcfC9CuZU8l1X90m8ZACPZyx9Egtr4dkCL
-         rrzq3uMlbI+GWeTbNNsgbHUdVKHuNVCAtQFBUzrJMoL5kbUlrTVwSwl8+sE5s8vguu0F
-         VigKCrXGIMYLKYFOWXqZ1VO6O//p8QyXKArUQ/n3dvBMyRekxE4W4BHw0AQ7WRQU6N1s
-         bKzqmWtc/ZzVXbQxnY6rkqbw1v/zNmPxhlFmLMYAqA4eNUqAQTFJ3zYpww+au0AVdMSb
-         cRivk+oC1QCzQ3ehMajKTypmSk6ULqUaOVAwQFgUfvTAIzCEIXBUCTdIuSHpK1zaLfu3
-         rkng==
+        bh=G/Ppj60kuZ2ZpuqWrosQVWEvZ1D0lkPFEQQWaaxkXt4=;
+        b=qEwBWDyyUgOn70Xm+NeoHAspBfDw9y9+VenmlNk5gNJtnjSmyUlq8oDGc+xLNkbUdQ
+         kT6baTis4PAQiJg91VzBTJaQ0wzX9anPziPEkntVgOkq3y95z/H5Yoxvtq9m87AcPT9j
+         +YTTpJ2HvxggSm4NpIpFdhM4Ao3OWTr2b5lyWTd4AM7KWiw8Zr8yTCKTFPqvobNkfqzs
+         LS8r6M7vliTYJxZwkKWyD2keEQpe+rWrIEMpfARrCt8mBQBEFDo8xc/ZeMpDVkQNKewF
+         7G/1fIgrXyVmNadvr+Uu15YcPjjgWjTKiZ91/+NSh6S0p/GveNclr0WFfuK42NRUC/oS
+         T5HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9Qmvh7uhlyOv4U/7qQXX/hfMofRU+8ICG2gVkpg7rmk=;
-        b=JaFIh3iG+7XxvPUBQu3tXJYZAs4rNgM50uxuqhGfQJkMcNXSRGzKhwSavfWpdFYElr
-         wCwHJ4/7I6+LAYhl7CmipexWvT2OlwOULE+vdEHXulROGcRHBfKoeecXfUM3t54QfVr3
-         A4eoirpi6sRjQREfznXlFTcVrnUAWelX3trA8lzs8brKjGwq+3lTE9SWNatO3QF0H2Tn
-         E6WqU4ELBVAqKfGvI1Lz3zE7ugYCRraeORYopRHbMMbxY+7pQRpS3Kclw5DvPtvd4hZM
-         OL0LHS3QsANVghm7paP9xf8a8C9sxL2ZRQ52/XNI6U7PE6whsnPJwFJ/vjGgYs8GqIgy
-         PTEg==
-X-Gm-Message-State: AGi0PubNPoo7d1kYIXLpW8bjnFVVPm6AunUdZkGOGB5kBOYF4RIgicU3
-        pFzaFCOXzoXaqdlQNnbMVcz6945GnHp8q8V/Tts=
-X-Google-Smtp-Source: APiQypJOFNfYRfkorFkvPPm6K3ku1eNh71oc68jWQ44FcH3mdHql3grbEMaEE5R0nAfi/q55r/8QvDIA3m4Z7j9NL1A=
-X-Received: by 2002:a9d:2aa9:: with SMTP id e38mr4743248otb.162.1588357975980;
- Fri, 01 May 2020 11:32:55 -0700 (PDT)
+        bh=G/Ppj60kuZ2ZpuqWrosQVWEvZ1D0lkPFEQQWaaxkXt4=;
+        b=GvTjs2FaLLSWARDqqMQ2veiNzH1Q4bdGXrx85f0/JnFAEm7apDHpBl8kx4MizRQNNi
+         pyTSwzb2lLunmpNgqRCnLjJYup3rRkczhgcp9P9bu6P4p4aXii416Bz+5VTaMGyjNAmC
+         6up/Sia8oYyqtxQlXm5O3auWzVPQnhWin9TKeOyEEhFAnb4wSRZv9+l0BJdFZQfm+6BG
+         GsIPBOL7uMwHSMti1gRNTqh3iHjJ5t55wIeoZziU6nyrYejeZKnrKZfXJjsh4AVEYIrn
+         +c2UC/V0xkzjbo8M7gyu9rizhBOqOTD129vWhxT1Dz+Ainuooo56bjXw28cPiBUKZQKW
+         ++Zg==
+X-Gm-Message-State: AGi0PuYyIF0kwT4VGb9t9Fe9v+fx3ZJLM7f+qNXjZXGqk7L4R00nPvs7
+        6fIl0WH9g2BsvraeIgkLnDP4bJUOzaOGLGur8Qc=
+X-Google-Smtp-Source: APiQypJ9vrnfSBB0zVYRQ8oxqhztZhQ44vEcMfYoIaY5B5aPXzyA+82HJYqJU83kvnK8uo7xdzH2BHW79j4CG9YfR/w=
+X-Received: by 2002:a9d:2aa9:: with SMTP id e38mr4766098otb.162.1588358408442;
+ Fri, 01 May 2020 11:40:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJFHJroyC8SAFJZuQxcwHqph5EQRg=MqFdvfnwbK35Cv-A-neA@mail.gmail.com>
- <CAJfpegtWEMd_bCeULG13PACqPq5G5HbwKjMOnCoXyFQViXE0yQ@mail.gmail.com>
-In-Reply-To: <CAJfpegtWEMd_bCeULG13PACqPq5G5HbwKjMOnCoXyFQViXE0yQ@mail.gmail.com>
+References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
+ <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
+In-Reply-To: <20200501073127.GB13131@miu.piliscsaba.redhat.com>
 From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Fri, 1 May 2020 14:32:43 -0400
-Message-ID: <CAEjxPJ56JXRr0MWxtekBhfNS7i8hFex2oiwqGYrh=m1cH9X4kg@mail.gmail.com>
-Subject: Re: fuse doesn't use security_inode_init_security?
+Date:   Fri, 1 May 2020 14:39:56 -0400
+Message-ID: <CAEjxPJ6Tr-MD85yh-zRcCKwMTZ7bcw4vAXQ2=CjScG71ac4Vzw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Chirantan Ekbote <chirantan@chromium.org>,
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        SElinux list <selinux@vger.kernel.org>
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 1, 2020 at 3:54 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Fri, May 1, 2020 at 3:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> On Fri, May 1, 2020 at 8:55 AM Chirantan Ekbote <chirantan@chromium.org> wrote:
+> On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
+> > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
+> > > From: Miklos Szeredi <mszeredi@redhat.com>
+> > >
+> > > Whiteouts, unlike real device node should not require privileges to create.
+> > >
+> > > The general concern with device nodes is that opening them can have side
+> > > effects.  The kernel already avoids zero major (see
+> > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
+> > > explicitly forbids registering a char device with 0/0 number (see
+> > > cdev_add()).
+> > >
+> > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
+> > > i.e. it won't have any side effect.
 > >
-> > Hello,
+> > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+> > >  {
+> > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+> > >     int error = may_create(dir, dentry);
+> > >
+> > >     if (error)
+> > >             return error;
+> > >
+> > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
+> > > +       !is_whiteout)
+> > >             return -EPERM;
 > >
-> > I noticed that the fuse module doesn't currently call
-> > security_inode_init_security and I was wondering if there is a
-> > specific reason for that.  I found a patch from 2013[1] that would
-> > change fuse so that it would call that function but it doesn't appear
-> > that the patch was merged.
-> >
-> > For background: I currently have a virtio-fs server with a guest VM
-> > that wants to use selinux.  I was able to enable selinux support
-> > without much issue by adding
-> >
-> >     fs_use_xattr virtiofs u:object_r:labeledfs:s0;
-> >
-> > to the selinux policy in the guest.  This works for the most part
-> > except that `setfscreatecon` doesn't appear to work.  From what I can
-> > tell, this ends up writing to `/proc/[pid]/attr/fscreate` and the
-> > attributes actually get set via the `inode_init_security` lsm hook in
-> > selinux.  However, since fuse doesn't call
-> > `security_inode_init_security` the hook never runs so the
-> > file/directory doesn't have the right attributes.
-> >
-> > Is it safe to just call `security_inode_init_security` whenever fuse
-> > creates a new inode?  How does this affect non-virtiofs fuse servers?
+> > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
+> > end up with regressions for overlayfs on sufficiently weird setups?
 >
-> Not sure,  Adding more Cc's.
+> You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
+> distros/admins can.
 >
-> I know there's a deadlock scenario with getxattr called on root inode
-> before mount returns, which causes a deadlock unless mount is run in
-> the background.  Current libfuse doesn't handle this, but I think some
-> fuse fs work around this by not using libfuse, or at least have some
-> special setup code (glusterfs? ceph-fuse? not sure...).  I also don't
-> know whether the ->inode_init_security hook is related to this or not.
+> Can we just try this, and revert to calling ->mknod directly from overlayfs if
+> it turns out to be a problem that people can't fix easily?
+>
+> I guess we could add a new ->whiteout security hook as well, but I'm not sure
+> it's worth it.  Cc: LMS mailing list; patch re-added for context.
 
-(cc selinux list)
+I feel like I am still missing context but IIUC this change is
+allowing unprivileged userspace to explicitly call mknod(2) with the
+whiteout device number and skip all permission checks (except the LSM
+one). And then you are switching vfs_whiteout() over to using
+vfs_mknod() internally since it no longer does permission checking and
+that was why vfs_whiteout() was separate originally to avoid imposing
+any checks on overlayfs-internal creation of whiteouts?
 
-security_inode_init_security() calls the initxattrs callback to
-actually set each xattr in the backing store (if any), so unless you
-have a way to pass that to the daemon along with the create request
-the attribute won't be persisted with the file.  Setting the xattrs is
-supposed to be atomic with the file creation, not a separate
-setxattr() operation after creating the file, similar to ACL
-inheritance on new files.
-
-Also possibly related
-https://lore.kernel.org/selinux/6df9b58c-fe9b-28f3-c151-f77aa6dd67e7@tycho.nsa.gov/.
+If that's correct, then it seems problematic since we have no way in
+the LSM hook to distinguish the two cases (userspace invocation of
+mknod(2) versus overlayfs-internal operation).  Don't know offhand
+what credential is in effect in the overlayfs case (mounter or
+current) but regardless Android seems to use current regardless, and
+that could easily fail.
