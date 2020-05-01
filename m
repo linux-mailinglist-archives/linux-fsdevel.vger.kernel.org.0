@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE3881C1C50
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 19:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 240EE1C1C52
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 19:54:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbgEARx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 13:53:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
+        id S1730025AbgEARyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 13:54:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729291AbgEARx7 (ORCPT
+        by vger.kernel.org with ESMTP id S1729291AbgEARyE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 13:53:59 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE65C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 May 2020 10:53:59 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id u189so5171212ilc.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 May 2020 10:53:59 -0700 (PDT)
+        Fri, 1 May 2020 13:54:04 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB3EBC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 May 2020 10:54:03 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id q10so5167642ile.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 May 2020 10:54:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:subject:to:cc:message-id:date:user-agent:mime-version
          :content-language:content-transfer-encoding;
         bh=dNu8cTkVAel6kkIGd2Z1GoaI4LYxnwwQdrPVYtjvHuw=;
-        b=Ko8kSvtMTznmK4Pf/hYlBVtXpXbakAslYsizbJWGK6s9mR+8XttduJDjCpzEuhiZkK
-         Eaa6sEKnLEMT8WnLO/zYng0Cn/lyszxih7Hi3OvU/kaMp5isJXjd/UNhj4GI980hRNYm
-         GwbWdwXet0IrfXdQBDs2EznAzJw5yIgBKUjgo2aIICzbYqU9/t6OEuHoTrGUuj9CZ/N/
-         MzGu4UbfL8ahyEum8KspIt3Bb7LKUn6TYm/27wKU7JY2AtvoVKScLE1BW4cXECsw+dgJ
-         yNODVmAL8cPoae2PlQpjkM5A8/V7EgWgfkvKrXx359Dq9tTZlYJPUz1baUDPiv5Op+XI
-         wJ1Q==
+        b=pn/yiNkH2BolGsTY90r0F9u4gIdfHJl1zOjp55qnb3xiTh9PzYpVb2A1N8O9DP1Svv
+         w2NTNPf3TsfRpH9JftZ8IWVEkjOEC7RlENqSXU19puWMiK7krEinB/et2+ZMqzT/gFKS
+         DovjjVYTXGh1Wt4C+aNh80QnF58iHc9T1ujPPlCI+PcIWU3witBQMS3lVFb8S0tD3o8H
+         /OoekF/TkEbA7KQBvYXZmrGvqt9xsaRY9kWY2wL110pCnIlQI2J50s7dSq6n2uWS/gi6
+         o7CAcrG3VbW55MnpPp/1EclkTQC+T4OJ8m0Kg3Rl0gPDFlaga53kpX4+hK2aG49p9DYY
+         qVoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
          :mime-version:content-language:content-transfer-encoding;
         bh=dNu8cTkVAel6kkIGd2Z1GoaI4LYxnwwQdrPVYtjvHuw=;
-        b=BL1cl1z0Pe/A9YEfS5D9uJ9xFKZ5DifYCPQdRo4hboXFVdHT9cjk3osihgvivQ9jVk
-         TjIoFuWeQCgGfBFuK7U5AJK/kPEksyR8KxNa3Si7QvkZ28snwCELQL1FvAib0EQq6SQG
-         Fejnzt/D47KKqbEhM18j9bKTNrp6Sr/Y2syQ9meG9f8HS0xIOHW4cvHa1nXOP3B7yi5o
-         BPkib9BdXUspNOHhrCV/2xV4f4UV5GBmVOJf/EUuBrGpi7JwQUIl/fi+vSuh5T5xaNIK
-         +O1A6WboYuGP84+Qnpxl420Qwr26SADqpHFvT2nQ9F6ksc5jBwHg8wK0JHGKBhIv6C87
-         bTWA==
-X-Gm-Message-State: AGi0PuYFysxS3NTSJwVTHX0c/Pi3A3usrG79DtynJ1v6pwdbbqmxUev0
-        sebrD+clAQummuw1d62FGUS1Lg==
-X-Google-Smtp-Source: APiQypKOBb5wGUM5qyn893wxbiA3WMRiRsUfPWjKE3lKl98+s0INI+P8z8hyG+flyiXESNHGrgJpWA==
-X-Received: by 2002:a92:aa0f:: with SMTP id j15mr4792191ili.211.1588355638429;
-        Fri, 01 May 2020 10:53:58 -0700 (PDT)
+        b=cv6Wl2Kp3t7JSlZOp1KBZGel34oMjWDCAq7xwxttUgUQUwOfrhsC/rPX5xhA7fmOZu
+         IkUs8ZP19VNmLXlrktC/neY0ovEhP/U4bMg1s57CAGOcu84zk95322rLQQ/CgXwIhYz+
+         jqfOxEeYYPlxinyP1J4e/yOSvqMqS2Sq1G1n3eJjalhFlRGUcQZgLSwaKsc5XeAmbjGu
+         N0KPYLkfpoBeoKFdGcwhZXmnTJZYHTlOBIQnnvO9ljyjUcUeETGe1ZDsQJzRSAAfjCxm
+         vupVSt9WLhGEZ2F8yKXg4Db2T5lMvKC+Fcy3vX1sBIzXUSSq8R3Dv+nMod8VIL4RNhIV
+         Obkw==
+X-Gm-Message-State: AGi0PubA55IPeXLiLG8FyQoldhqJnEqKP90vY5SrMwlD3riI/pxCHmUG
+        K33gPX2dZKRSqQ2jnMmTnOmbKw==
+X-Google-Smtp-Source: APiQypLC47NdRLDraisAQcHfyWfCaDlj787RuTHv7zD4S6HnvPYtPXq2e7lDVuNbH+p/xQT2nAZGYA==
+X-Received: by 2002:a92:b6c4:: with SMTP id m65mr4851455ill.232.1588355643108;
+        Fri, 01 May 2020 10:54:03 -0700 (PDT)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 140sm1506810ilc.44.2020.05.01.10.53.57
+        by smtp.gmail.com with ESMTPSA id u4sm1136668iop.1.2020.05.01.10.54.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 10:53:57 -0700 (PDT)
+        Fri, 01 May 2020 10:54:02 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v3v] eventfd: convert to f_op->read_iter()
+Subject: [PATCH v3b] eventfd: convert to f_op->read_iter()
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <7e9c4447-d7b4-2753-ad28-a668e3ce370a@kernel.dk>
-Date:   Fri, 1 May 2020 11:53:57 -0600
+Message-ID: <97a28bdb-284a-c215-c04d-288bcef66376@kernel.dk>
+Date:   Fri, 1 May 2020 11:54:01 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
