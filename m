@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C701E1C0D03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 06:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D9DE1C0D0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 06:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbgEAEDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 00:03:15 -0400
-Received: from namei.org ([65.99.196.166]:56446 "EHLO namei.org"
+        id S1728053AbgEAEFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 00:05:53 -0400
+Received: from namei.org ([65.99.196.166]:56492 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbgEAEDP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 00:03:15 -0400
+        id S1725791AbgEAEFw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 May 2020 00:05:52 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 04142GZx030634;
-        Fri, 1 May 2020 04:02:16 GMT
-Date:   Fri, 1 May 2020 14:02:16 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 04144xrG030780;
+        Fri, 1 May 2020 04:04:59 GMT
+Date:   Fri, 1 May 2020 14:04:59 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -45,15 +45,14 @@ cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] fs: Add a MAY_EXECMOUNT flag to infer the noexec
- mount property
-In-Reply-To: <20200428175129.634352-3-mic@digikod.net>
-Message-ID: <alpine.LRH.2.21.2005011357290.29679@namei.org>
-References: <20200428175129.634352-1-mic@digikod.net> <20200428175129.634352-3-mic@digikod.net>
+Subject: Re: [PATCH v3 1/5] fs: Add support for a RESOLVE_MAYEXEC flag on
+ openat2(2)
+In-Reply-To: <20200428175129.634352-2-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2005011404420.29679@namei.org>
+References: <20200428175129.634352-1-mic@digikod.net> <20200428175129.634352-2-mic@digikod.net>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1665246916-2066436414-1588305635=:29679"
-Content-ID: <alpine.LRH.2.21.2005011402110.29679@namei.org>
+Content-Type: multipart/mixed; boundary="1665246916-652208896-1588305899=:29679"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -62,33 +61,23 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---1665246916-2066436414-1588305635=:29679
-Content-Type: text/plain; CHARSET=ISO-8859-15
+--1665246916-652208896-1588305899=:29679
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LRH.2.21.2005011402111.29679@namei.org>
 
-On Tue, 28 Apr 2020, Mickaël Salaün wrote:
+On Tue, 28 Apr 2020, MickaÃ«l SalaÃ¼n wrote:
 
-> An LSM doesn't get path information related to an access request to open
-> an inode.  This new (internal) MAY_EXECMOUNT flag enables an LSM to
-> check if the underlying mount point of an inode is marked as executable.
-> This is useful to implement a security policy taking advantage of the
-> noexec mount option.
-> 
-> This flag is set according to path_noexec(), which checks if a mount
-> point is mounted with MNT_NOEXEC or if the underlying superblock is
-> SB_I_NOEXEC.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Kees Cook <keescook@chromium.org>
+> When the RESOLVE_MAYEXEC flag is passed, openat2(2) may be subject to
+> additional restrictions depending on a security policy managed by the
+> kernel through a sysctl or implemented by an LSM thanks to the
+> inode_permission hook.
 
-Are there any existing LSMs which plan to use this aspect?
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
 
 -- 
 James Morris
 <jmorris@namei.org>
---1665246916-2066436414-1588305635=:29679--
+
+--1665246916-652208896-1588305899=:29679--
