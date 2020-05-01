@@ -2,106 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 011A81C1966
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 17:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 978601C199C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 17:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729461AbgEAPYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 11:24:49 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55527 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728443AbgEAPYt (ORCPT
+        id S1729007AbgEAPew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 11:34:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728742AbgEAPev (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 11:24:49 -0400
-Received: by mail-pj1-f66.google.com with SMTP id a32so18295pje.5;
-        Fri, 01 May 2020 08:24:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X20mKpRRVq/ark63BbLpoCynpLjPmjVnD3XcfxieJmo=;
-        b=nxLBwiUyssNTIBTkfse5CKboAwAshhtDUb2MiZ4uTej8w+2Hp7VUFZr+RiLxxUjANg
-         41i5Bn193Ai81hZUpbFSOIs/yWTn3f55Dd5nhrQehajf0UZBbKOQn1HPs32g87MxZ4aN
-         aA69TRjwlhffllEZg3LToNIXn5AJEPJ7elNznjbdgCn86PXOo9GaDHPfCNMoHMb2eeaV
-         efGcT1hMGtxFs7R9EgdgoRoqqDeal0KmSzOATx3kWGywGo0cC3SRFQlJ3KWPzFUVP6Y8
-         Cj3gJSvSirnh8egzSkODjBzhP/JIFamm3wTv97F0hZux/wV7bABL/OXg+RCdBRZyyFfi
-         OZAw==
-X-Gm-Message-State: AGi0Pua5rXtk1NfvOsomIPaNSfCZWQWDABp2iWnK7mUSQACtNWL4++6f
-        FhzDo4ZUL/U/xL4n0gXfUxI=
-X-Google-Smtp-Source: APiQypIS4cJmDrisB6sfUSd9KAjmqSPPBVrVSde1HXQ1i+jak+p623AzeudhI/4PsYT0cfEmmyEQeA==
-X-Received: by 2002:a17:902:a513:: with SMTP id s19mr5192257plq.84.1588346687212;
-        Fri, 01 May 2020 08:24:47 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id a15sm11899pju.3.2020.05.01.08.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 May 2020 08:24:45 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 5D8FD4046C; Fri,  1 May 2020 15:24:45 +0000 (UTC)
-Date:   Fri, 1 May 2020 15:24:45 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+        Fri, 1 May 2020 11:34:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE1DC061A0C;
+        Fri,  1 May 2020 08:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mudZdXlZw0GqaEzMjWKagRGi8BzWBpEPB67/0nKPQCE=; b=V1ckzZTyhF0Af9GOzBVyjPKNdH
+        +EXNeBP0j1l2zsqxQ+FKSH3n4/Yje91cltc6Amc42qiW5sWBsTAK+0Trn5rjABL6hwDqVkUkZ10wl
+        yLlB0dDOxxaiWd6kdwT3hMEHxSQNeJSoiBVN7c+NlHEYrjtApDvis7Bfkdtyh5kQLh8q7FPEIx5pm
+        OrIMZ3FTohSfzir/oNk9z7+Zrwwn9uI0412k2RFxsgOCgSAB8pmoimyCpVCu2qwUt8YSzlxkbpwdR
+        BnzmtosWaG2uOEh5hPD5XE98kV/mk53VO0b5fSnuSN8Skyu2QIEZWRaktnwq0cfHGCaSCddLuk8wv
+        Hqhl00yw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jUXgF-0003f0-Nf; Fri, 01 May 2020 15:34:23 +0000
+Date:   Fri, 1 May 2020 08:34:23 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, axboe@kernel.dk,
         viro@zeniv.linux.org.uk, bvanassche@acm.org, rostedt@goodmis.org,
         mingo@redhat.com, jack@suse.cz, ming.lei@redhat.com,
         nstange@suse.de, akpm@linux-foundation.org, mhocko@suse.com,
         yukuai3@huawei.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3 4/6] blktrace: fix debugfs use after free
-Message-ID: <20200501152445.GN11244@42.do-not-panic.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] blktrace: break out of blktrace setup on
+ concurrent calls
+Message-ID: <20200501153423.GA12469@infradead.org>
 References: <20200429074627.5955-1-mcgrof@kernel.org>
- <20200429074627.5955-5-mcgrof@kernel.org>
- <20200429112637.GD21892@infradead.org>
- <20200429114542.GJ11244@42.do-not-panic.com>
- <20200429115051.GA27378@infradead.org>
- <20200429120230.GK11244@42.do-not-panic.com>
- <20200429120406.GA913@infradead.org>
- <20200429122152.GL11244@42.do-not-panic.com>
- <20200429125726.GA2123334@kroah.com>
+ <20200429074627.5955-6-mcgrof@kernel.org>
+ <20200429094937.GB2081185@kroah.com>
+ <20200501150626.GM11244@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200429125726.GA2123334@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200501150626.GM11244@42.do-not-panic.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 02:57:26PM +0200, Greg KH wrote:
-> On Wed, Apr 29, 2020 at 12:21:52PM +0000, Luis Chamberlain wrote:
-> > On Wed, Apr 29, 2020 at 05:04:06AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Apr 29, 2020 at 12:02:30PM +0000, Luis Chamberlain wrote:
-> > > > > Err, that function is static and has two callers.
-> > > > 
-> > > > Yes but that is to make it easier to look for who is creating the
-> > > > debugfs_dir for either the request_queue or partition. I'll export
-> > > > blk_debugfs_root and we'll open code all this.
-> > > 
-> > > No, please not.  exported variables are usually a bad idea.  Just
-> > > skip the somewhat pointless trivial static function.
-> > 
-> > Alrighty. It has me thinking we might want to only export those symbols
-> > to a specific namespace. Thoughts, preferences?
-> > 
-> > BLOCK_GENHD_PRIVATE ?
+On Fri, May 01, 2020 at 03:06:26PM +0000, Luis Chamberlain wrote:
+> > You have access to a block device here, please use dev_warn() instead
+> > here for that, that makes it obvious as to what device a "concurrent
+> > blktrace" was attempted for.
 > 
-> That's a nice add-on issue after this is fixed.  As Christoph and I
-> pointed out, you have _less_ code in the file if you remove the static
-> wrapper function.  Do that now and then worry about symbol namespaces
-> please.
+> The block device may be empty, one example is for scsi-generic, but I'll
+> use buts->name.
 
-So it turns out that in the old implementation, it was implicit that the
-request_queue directory was shared with the scsi drive. So, the
-q->debugfs_dir *will* be set, and as we have it here', we'd silently be
-overwriting the old q->debugfs_dir, as the queue is the same. To keep
-things working as it used to, with both, we just need to use a symlink
-here. With the old way, we'd *always* create the sg directory and re-use
-that, however since we can only have one blktrace per request_queue, it
-still had the same restriction, this was just implicit. Using a symlink
-will make this much more obvious and upkeep the old functionality. We'll
-need to only export one symbol. I'll roll this in.
-
-  Luis
+Is blktrace on /dev/sg something we intentionally support, or just by
+some accident of history?  Given all the pains it causes I'd be tempted
+to just remove the support and see if anyone screams.
