@@ -2,84 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E431C18EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 17:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E7141C194A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 17:23:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbgEAPGa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 11:06:30 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52962 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728839AbgEAPGa (ORCPT
+        id S1728896AbgEAPX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 11:23:27 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60064 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728839AbgEAPX1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 11:06:30 -0400
-Received: by mail-pj1-f67.google.com with SMTP id a5so7380pjh.2;
-        Fri, 01 May 2020 08:06:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xZEuUIfKchT+EMbxhxCN46MIcCVcFm3FAvFpx36VX5s=;
-        b=siMrVTnv76sHVgyryxeCag4mzdiPllfjhxdBsdoCPtD4YTwuArBXu/LIbbZv0Cew4M
-         A1Jb/q1OhitBZ8qsdI0SJCfI/WxEBpe+bXtnFTfNbITtcj6/uQgskySb6tDBBPS3bhzh
-         /pIimOiLbNCymlK6d3QNp01EG8je0btr+QXLw+09tHLkcYZH7qLsB/rbLlX3pzkgh3re
-         ubljy6qDQ/uz7mcxhpHK6kVzIuCthNdHapVnXFNMjRNP/TPd++eMizPO1P/xwz581K5w
-         T4aoW4gOtu1SAB4pFDt+rTE9n/JwsjLvc72sKeDznr9jIhnBGIVzN4MXgb+DsVZfv4Ci
-         Pq+w==
-X-Gm-Message-State: AGi0PuYuZxqPm3EeKLR6WQrkmp9AaEKcL52JGupy8XxKq43DkmX/VyID
-        aafRqbUXd7Tv1oXxpZ7XAuA=
-X-Google-Smtp-Source: APiQypLRVmetlTXe8oQnydpwRXsMDCGv8wGQxNnx9xTkyckOaqUJcm8Xfuuqc69dMqg8NZhPGGC9qQ==
-X-Received: by 2002:a17:90a:690b:: with SMTP id r11mr5175418pjj.119.1588345589022;
-        Fri, 01 May 2020 08:06:29 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p16sm15627pjz.2.2020.05.01.08.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 May 2020 08:06:27 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id CABA44046C; Fri,  1 May 2020 15:06:26 +0000 (UTC)
-Date:   Fri, 1 May 2020 15:06:26 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] blktrace: break out of blktrace setup on
- concurrent calls
-Message-ID: <20200501150626.GM11244@42.do-not-panic.com>
-References: <20200429074627.5955-1-mcgrof@kernel.org>
- <20200429074627.5955-6-mcgrof@kernel.org>
- <20200429094937.GB2081185@kroah.com>
+        Fri, 1 May 2020 11:23:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588346605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rc411N4SAXY5qhpedf1WCTFSc6a6Qy1N6E4oUExpPQw=;
+        b=Z8dGCsQ7sJJ/ithZOblQlBzosCRZshV6XahEgdiqCV+I3e7yO46jrbqq/83VZkXLwrZ9D6
+        VYkm5H5vWXZEy/IXoF9z4HrJj7C9vf6B9cowQw6nA2LypJlWgI8R47qvWNu0YlJ7Bi1yuX
+        YijVRFqYW6GFDjVRMACgp6QwsrfJxHw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-157-dC2DbCpEN8WsLDvO8C9gOA-1; Fri, 01 May 2020 11:23:04 -0400
+X-MC-Unique: dC2DbCpEN8WsLDvO8C9gOA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3D94100CCD1;
+        Fri,  1 May 2020 15:23:02 +0000 (UTC)
+Received: from localhost (ovpn-112-36.ams2.redhat.com [10.36.112.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AEC8D196AE;
+        Fri,  1 May 2020 15:22:59 +0000 (UTC)
+Date:   Fri, 1 May 2020 16:22:58 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+        Chirantan Ekbote <chirantan@chromium.org>,
+        virtio-fs-list <virtio-fs@redhat.com>
+Subject: Re: [PATCH][v2] fuse, virtiofs: Do not alloc/install fuse device in
+ fuse_fill_super_common()
+Message-ID: <20200501152258.GB221440@stefanha-x1.localdomain>
+References: <20200430171814.GA275398@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20200430171814.GA275398@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
 Content-Disposition: inline
-In-Reply-To: <20200429094937.GB2081185@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 11:49:37AM +0200, Greg KH wrote:
-> On Wed, Apr 29, 2020 at 07:46:26AM +0000, Luis Chamberlain wrote:
-> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> > index 5c52976bd762..383045f67cb8 100644
-> > --- a/kernel/trace/blktrace.c
-> > +++ b/kernel/trace/blktrace.c
-> > @@ -516,6 +518,11 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
-> >  	 */
-> >  	strreplace(buts->name, '/', '_');
-> >  
-> > +	if (q->blk_trace) {
-> > +		pr_warn("Concurrent blktraces are not allowed\n");
-> > +		return -EBUSY;
-> 
-> You have access to a block device here, please use dev_warn() instead
-> here for that, that makes it obvious as to what device a "concurrent
-> blktrace" was attempted for.
+--H+4ONPRPur6+Ovig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The block device may be empty, one example is for scsi-generic, but I'll
-use buts->name.
+On Thu, Apr 30, 2020 at 01:18:14PM -0400, Vivek Goyal wrote:
+> As of now fuse_fill_super_common() allocates and installs one fuse device=
+.
+> Filesystems like virtiofs can have more than one filesystem queues and
+> can have one fuse device per queue. Give, fuse_fill_super_common() only
+> handles one device, virtiofs allocates and installes fuse devices for
+> all queues except one.
+>=20
+> This makes logic little twisted and hard to understand. It probably
+> is better to not do any device allocation/installation in
+> fuse_fill_super_common() and let caller take care of it instead.
+>=20
+> v2: Removed fuse_dev_alloc_install() call from fuse_fill_super_common().
+>=20
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/fuse_i.h    |  3 ---
+>  fs/fuse/inode.c     | 30 ++++++++++++++----------------
+>  fs/fuse/virtio_fs.c |  9 +--------
+>  3 files changed, 15 insertions(+), 27 deletions(-)
 
-  Luis
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--H+4ONPRPur6+Ovig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl6sPtIACgkQnKSrs4Gr
+c8hliQgAot+qe3sDadrMM/5bgjSPMJ98MqyVdtboP5q7pS53Uw52QJyEZpWm4o2/
+G3ACgq4R5RXhWfD4MZjHDRM2Co3RlINGaGCT6VqEdozxdZ+iNjkSvo62mdVjNRjC
+T7xqJYZlm7rDOqXqV3KG3jAEUmnPVikG4wsm+nJAlpUhH52ygQdhRWT8H0/tlSgV
+RE2Y8PZaafSHvJf8SnCNz4SQskUj77kSHjN4JpmS0iKRyQCyVlz64ZJ3VW92HJWM
+P13604JeZ95E0g0L4fRSSnw5ZsA1QuCrVpsKto+GgLEiqTmH5wuLiTMNKg8XdL/F
+qEQAGGrtIgt/27/FLmF4uYQkDFAEJA==
+=3pgI
+-----END PGP SIGNATURE-----
+
+--H+4ONPRPur6+Ovig--
+
