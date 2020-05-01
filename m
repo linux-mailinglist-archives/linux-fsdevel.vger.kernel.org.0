@@ -2,152 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D741C185C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 16:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E431C18EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 17:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbgEAOqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 10:46:48 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:45705 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729175AbgEAOqr (ORCPT
+        id S1729017AbgEAPGa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 11:06:30 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52962 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728839AbgEAPGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 10:46:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588344405;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
-        b=Opqu5KGsejFH5haU727QzqNyIMruqX6ti3zOD09bBYpuW6V2dJ3tfuVOvI9CxC69wWj1wo
-        J37bCkOswQec8zqstI1FUb3kzy6LT/OYYkHG9vRmXmSCedROqCVBTXoYC2xzKwJvS0kf8N
-        jn8mbbenKiDVpHH/U435rPG/bs3hXss=
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
- [209.85.161.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-300-hm8mRyCuM2WLfWe0aWMFRw-1; Fri, 01 May 2020 10:46:28 -0400
-X-MC-Unique: hm8mRyCuM2WLfWe0aWMFRw-1
-Received: by mail-oo1-f70.google.com with SMTP id t23so2320277oor.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 May 2020 07:46:28 -0700 (PDT)
+        Fri, 1 May 2020 11:06:30 -0400
+Received: by mail-pj1-f67.google.com with SMTP id a5so7380pjh.2;
+        Fri, 01 May 2020 08:06:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
-        b=b+5ro3kZYK9keqFJanP49243n+JGIj7RHjQcpCSGY54cElrOcfFQETT8OHbBPFZaoK
-         WfdqltDy61dc/ewqXz4z5jPG86Dq8RfygcAQ8pfoXH5HdYx+JfZ3p3vGwvE03pRxgjzB
-         TEs90V+vnJYLIko3+iHbsBrcnUZseC3ztfskEBZgW1BTI/7aJWRBGmUD5R8CDV3a0HlZ
-         nyJ7/ki8Ry0MIPzCxlBeEGwXn3XVZ1rEGfVAWW5czd5p84w/1QXXhnmmfbB5mxXz1UR5
-         axKQumHQMcBGQ060Z7Ppuc6I9tvL5sxtAJ8HSetToqv1AmWHva+iWf7KsQAxv+XMbDRi
-         Styg==
-X-Gm-Message-State: AGi0PuYCgvehc2fqyUaHCqpOcA4+pQQtUae8WXvqvfDo4SXPGwc27PbA
-        tv4TF6tLhUeq35PKyoC3gXesHZJ1fX6d+nohAJZk9ncCLlGUKO3VJPnyx/e9OMu3MwEFDQsP82R
-        z80PK4SkYSHIwKR1whXojWpMFrZ3OeSDYcIg39VbMsg==
-X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916391otq.66.1588344387508;
-        Fri, 01 May 2020 07:46:27 -0700 (PDT)
-X-Google-Smtp-Source: APiQypKDh3hGCI49P8v9DIB0pf8SQidMuRu0a5PX4JiBQLS3y/qnX6pw1k5XjASmHpGzODx7mlwPtfE2sRdsrcygTXg=
-X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916376otq.66.1588344387215;
- Fri, 01 May 2020 07:46:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xZEuUIfKchT+EMbxhxCN46MIcCVcFm3FAvFpx36VX5s=;
+        b=siMrVTnv76sHVgyryxeCag4mzdiPllfjhxdBsdoCPtD4YTwuArBXu/LIbbZv0Cew4M
+         A1Jb/q1OhitBZ8qsdI0SJCfI/WxEBpe+bXtnFTfNbITtcj6/uQgskySb6tDBBPS3bhzh
+         /pIimOiLbNCymlK6d3QNp01EG8je0btr+QXLw+09tHLkcYZH7qLsB/rbLlX3pzkgh3re
+         ubljy6qDQ/uz7mcxhpHK6kVzIuCthNdHapVnXFNMjRNP/TPd++eMizPO1P/xwz581K5w
+         T4aoW4gOtu1SAB4pFDt+rTE9n/JwsjLvc72sKeDznr9jIhnBGIVzN4MXgb+DsVZfv4Ci
+         Pq+w==
+X-Gm-Message-State: AGi0PuYuZxqPm3EeKLR6WQrkmp9AaEKcL52JGupy8XxKq43DkmX/VyID
+        aafRqbUXd7Tv1oXxpZ7XAuA=
+X-Google-Smtp-Source: APiQypLRVmetlTXe8oQnydpwRXsMDCGv8wGQxNnx9xTkyckOaqUJcm8Xfuuqc69dMqg8NZhPGGC9qQ==
+X-Received: by 2002:a17:90a:690b:: with SMTP id r11mr5175418pjj.119.1588345589022;
+        Fri, 01 May 2020 08:06:29 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p16sm15627pjz.2.2020.05.01.08.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 May 2020 08:06:27 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id CABA44046C; Fri,  1 May 2020 15:06:26 +0000 (UTC)
+Date:   Fri, 1 May 2020 15:06:26 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] blktrace: break out of blktrace setup on
+ concurrent calls
+Message-ID: <20200501150626.GM11244@42.do-not-panic.com>
+References: <20200429074627.5955-1-mcgrof@kernel.org>
+ <20200429074627.5955-6-mcgrof@kernel.org>
+ <20200429094937.GB2081185@kroah.com>
 MIME-Version: 1.0
-References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
- <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
-In-Reply-To: <20200501073127.GB13131@miu.piliscsaba.redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 1 May 2020 16:46:16 +0200
-Message-ID: <CAFqZXNu8jsz_4eqgLOc8RGSSAWhiKc=YcByvoTiBeYUprT+kMw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429094937.GB2081185@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 1, 2020 at 9:31 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
-> > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
-> > > From: Miklos Szeredi <mszeredi@redhat.com>
-> > >
-> > > Whiteouts, unlike real device node should not require privileges to create.
-> > >
-> > > The general concern with device nodes is that opening them can have side
-> > > effects.  The kernel already avoids zero major (see
-> > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
-> > > explicitly forbids registering a char device with 0/0 number (see
-> > > cdev_add()).
-> > >
-> > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
-> > > i.e. it won't have any side effect.
-> >
-> > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-> > >  {
-> > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
-> > >     int error = may_create(dir, dentry);
-> > >
-> > >     if (error)
-> > >             return error;
-> > >
-> > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-> > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
-> > > +       !is_whiteout)
-> > >             return -EPERM;
-> >
-> > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
-> > end up with regressions for overlayfs on sufficiently weird setups?
->
-> You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
-> distros/admins can.
->
-> Can we just try this, and revert to calling ->mknod directly from overlayfs if
-> it turns out to be a problem that people can't fix easily?
->
-> I guess we could add a new ->whiteout security hook as well, but I'm not sure
-> it's worth it.  Cc: LMS mailing list; patch re-added for context.
->
-> Thanks,
-> Miklos
->
-> ---
->  fs/char_dev.c                 |    3 +++
->  fs/namei.c                    |   17 ++++-------------
->  include/linux/device_cgroup.h |    3 +++
->  3 files changed, 10 insertions(+), 13 deletions(-)
->
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -483,6 +483,9 @@ int cdev_add(struct cdev *p, dev_t dev,
->         p->dev = dev;
->         p->count = count;
->
-> +       if (WARN_ON(dev == WHITEOUT_DEV))
-> +               return -EBUSY;
-> +
->         error = kobj_map(cdev_map, dev, count, NULL,
->                          exact_match, exact_lock, p);
->         if (error)
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3505,12 +3505,14 @@ EXPORT_SYMBOL(user_path_create);
->
->  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
->  {
-> +       bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
->         int error = may_create(dir, dentry);
->
->         if (error)
->                 return error;
->
-> -       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-> +       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
-> +           !is_whiteout)
+On Wed, Apr 29, 2020 at 11:49:37AM +0200, Greg KH wrote:
+> On Wed, Apr 29, 2020 at 07:46:26AM +0000, Luis Chamberlain wrote:
+> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> > index 5c52976bd762..383045f67cb8 100644
+> > --- a/kernel/trace/blktrace.c
+> > +++ b/kernel/trace/blktrace.c
+> > @@ -516,6 +518,11 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+> >  	 */
+> >  	strreplace(buts->name, '/', '_');
+> >  
+> > +	if (q->blk_trace) {
+> > +		pr_warn("Concurrent blktraces are not allowed\n");
+> > +		return -EBUSY;
+> 
+> You have access to a block device here, please use dev_warn() instead
+> here for that, that makes it obvious as to what device a "concurrent
+> blktrace" was attempted for.
 
-Sorry for sidetracking, but !capable(CAP_MKNOD) needs to be last in
-the chain, otherwise you could get a bogus audit report of CAP_MKNOD
-being denied in case is_whiteout is true.
+The block device may be empty, one example is for scsi-generic, but I'll
+use buts->name.
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
-
+  Luis
