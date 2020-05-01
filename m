@@ -2,185 +2,308 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A79E51C11B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 13:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C56D1C11A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 13:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbgEAL5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 07:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728570AbgEAL5H (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 07:57:07 -0400
-X-Greylist: delayed 580 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 01 May 2020 04:57:07 PDT
-Received: from mail.python.org (mail.python.org [IPv6:2a03:b0c0:2:d0::71:1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA5CC061A0C;
-        Fri,  1 May 2020 04:57:07 -0700 (PDT)
-Received: from seneca.home.cheimes.de (unknown [IPv6:2a04:4540:6518:8b00:aeec:f92b:b752:e7b])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.python.org (Postfix) with ESMTPSA id 49D9Tn1CB7zpF9Y;
-        Fri,  1 May 2020 07:47:25 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
-        t=1588333645; bh=pdFhsqmsyyF982XVgDC/+dtkNy2N/bbOczqXOrMoUoc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lXIut7Jn4M4RU8tl6bpmrZKQ/kENOTJHinPDmX2e7ubiJNwM0q2RyVhrFtPudEZM5
-         yst2cFm1JLYN1V8aYq6YNB0/KfHLKNMp0/GLnmO4DHs47Ro/wdNM1c3ZuLTVMG8xoc
-         fuG6fIDNLRkMRaDrECtOjX8iPca9JQtw9zfA7fbg=
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
-Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        id S1728730AbgEALtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 07:49:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:39018 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728575AbgEALtf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 May 2020 07:49:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F91B30E;
+        Fri,  1 May 2020 04:49:34 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97BD63F305;
+        Fri,  1 May 2020 04:49:31 -0700 (PDT)
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
         Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20200428175129.634352-1-mic@digikod.net>
- <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
- <87blnb48a3.fsf@mid.deneb.enyo.de>
- <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
-From:   Christian Heimes <christian@python.org>
-Autocrypt: addr=christian@python.org; prefer-encrypt=mutual; keydata=
- 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
- 53+DNOMi/34rdBwm0I62QkVYJYU=
-Message-ID: <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
-Date:   Fri, 1 May 2020 13:47:24 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+Date:   Fri,  1 May 2020 12:49:26 +0100
+Message-Id: <20200501114927.15248-1-qais.yousef@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29/04/2020 00.01, Jann Horn wrote:
-> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
->> * Jann Horn:
->>
->>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
->>> the dynamic linker.
->>
->> Absolutely.  In typical configurations, the kernel does not enforce
->> that executable mappings must be backed by files which are executable.
->> It's most obvious with using an explicit loader invocation to run
->> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
->> than trying to reimplement the kernel permission checks (or what some
->> believe they should be) in userspace.
-> 
-> Oh, good point.
-> 
-> That actually seems like something Mickaël could add to his series? If
-> someone turns on that knob for "When an interpreter wants to execute
-> something, enforce that we have execute access to it", they probably
-> also don't want it to be possible to just map files as executable? So
-> perhaps when that flag is on, the kernel should either refuse to map
-> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
-> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
-> check whether the file is executable and bail out if not?
-> 
-> A configuration where interpreters verify that scripts are executable,
-> but other things can just mmap executable pages, seems kinda
-> inconsistent...
+RT tasks by default run at the highest capacity/performance level. When
+uclamp is selected this default behavior is retained by enforcing the
+requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
+uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+value.
 
-+1
+This is also referred to as 'the default boost value of RT tasks'.
 
-I worked with Steve Downer on Python PEP 578 [1] that added audit hooks
-and PyFile_OpenCode() to CPython. A PyFile_OpenCode() implementation
-with RESOLVE_MAYEXEC will hep to secure loading of Python code. But
-Python also includes a wrapper of libffi. ctypes or cffi can load native
-code from either shared libraries with dlopen() or execute native code
-from mmap() regions. For example SnakeEater [2] is a clever attack that
-abused memfd_create syscall and proc filesystem to execute code.
+See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
 
-A consistent security policy must also ensure that mmap() PROT_EXEC
-enforces the same restrictions as RESOLVE_MAYEXEC. The restriction
-doesn't have be part of this patch, though.
+On battery powered devices, it is desired to control this default
+(currently hardcoded) behavior at runtime to reduce energy consumed by
+RT tasks.
 
-Christian
+For example, a mobile device manufacturer where big.LITTLE architecture
+is dominant, the performance of the little cores varies across SoCs, and
+on high end ones the big cores could be too power hungry.
 
-[1] https://www.python.org/dev/peps/pep-0578/
-[2] https://github.com/nullbites/SnakeEater/blob/master/SnakeEater2.py
+Given the diversity of SoCs, the new knob allows manufactures to tune
+the best performance/power for RT tasks for the particular hardware they
+run on.
+
+They could opt to further tune the value when the user selects
+a different power saving mode or when the device is actively charging.
+
+The runtime aspect of it further helps in creating a single kernel image
+that can be run on multiple devices that require different tuning.
+
+Keep in mind that a lot of RT tasks in the system are created by the
+kernel. On Android for instance I can see over 50 RT tasks, only
+a handful of which created by the Android framework.
+
+To control the default behavior globally by system admins and device
+integrators, introduce the new sysctl_sched_uclamp_util_min_rt_default
+to change the default boost value of the RT tasks.
+
+I anticipate this to be mostly in the form of modifying the init script
+of a particular device.
+
+Whenever the new default changes, it'd be applied lazily on the next
+opportunity the scheduler needs to calculate the effective uclamp.min
+value for the task, assuming that it still uses the system default value
+and not a user applied one.
+
+Tested on Juno-r2 in combination with the RT capacity awareness [1].
+By default an RT task will go to the highest capacity CPU and run at the
+maximum frequency, which is particularly energy inefficient on high end
+mobile devices because the biggest core[s] are 'huge' and power hungry.
+
+With this patch the RT task can be controlled to run anywhere by
+default, and doesn't cause the frequency to be maximum all the time.
+Yet any task that really needs to be boosted can easily escape this
+default behavior by modifying its requested uclamp.min value
+(p->uclamp_req[UCLAMP_MIN]) via sched_setattr() syscall.
+
+[1] 804d402fb6f6: ("sched/rt: Make RT capacity-aware")
+
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+CC: Jonathan Corbet <corbet@lwn.net>
+CC: Juri Lelli <juri.lelli@redhat.com>
+CC: Vincent Guittot <vincent.guittot@linaro.org>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Ben Segall <bsegall@google.com>
+CC: Mel Gorman <mgorman@suse.de>
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Kees Cook <keescook@chromium.org>
+CC: Iurii Zaikin <yzaikin@google.com>
+CC: Quentin Perret <qperret@google.com>
+CC: Valentin Schneider <valentin.schneider@arm.com>
+CC: Patrick Bellasi <patrick.bellasi@matbug.net>
+CC: Pavan Kondeti <pkondeti@codeaurora.org>
+CC: Randy Dunlap <rdunlap@infradead.org>
+CC: linux-doc@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+---
+
+Changes in v4:
+	* Make uclamp_sync_util_min_rt_default() inline and more selective
+	  about when to do the sync (Pavan, Dietmar).
+
+v3 discussion:
+
+https://lore.kernel.org/lkml/20200428164134.5588-1-qais.yousef@arm.com/
+
+
+ include/linux/sched/sysctl.h |  1 +
+ kernel/sched/core.c          | 77 +++++++++++++++++++++++++++++++++---
+ kernel/sysctl.c              |  7 ++++
+ 3 files changed, 80 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index d4f6215ee03f..e62cef019094 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -59,6 +59,7 @@ extern int sysctl_sched_rt_runtime;
+ #ifdef CONFIG_UCLAMP_TASK
+ extern unsigned int sysctl_sched_uclamp_util_min;
+ extern unsigned int sysctl_sched_uclamp_util_max;
++extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+ #endif
+ 
+ #ifdef CONFIG_CFS_BANDWIDTH
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9a2fbf98fd6f..15d2978e1869 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -790,6 +790,26 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+ /* Max allowed maximum utilization */
+ unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+ 
++/*
++ * By default RT tasks run at the maximum performance point/capacity of the
++ * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
++ * SCHED_CAPACITY_SCALE.
++ *
++ * This knob allows admins to change the default behavior when uclamp is being
++ * used. In battery powered devices, particularly, running at the maximum
++ * capacity and frequency will increase energy consumption and shorten the
++ * battery life.
++ *
++ * This knob only affects RT tasks that their uclamp_se->user_defined == false.
++ *
++ * This knob will not override the system default sched_util_clamp_min defined
++ * above.
++ *
++ * Any modification is applied lazily on the next attempt to calculate the
++ * effective value of the task.
++ */
++unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
++
+ /* All clamps are required to be less or equal than these values */
+ static struct uclamp_se uclamp_default[UCLAMP_CNT];
+ 
+@@ -872,6 +892,28 @@ unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
+ 	return uclamp_idle_value(rq, clamp_id, clamp_value);
+ }
+ 
++static inline void uclamp_sync_util_min_rt_default(struct task_struct *p,
++						   enum uclamp_id clamp_id)
++{
++	struct uclamp_se *uc_se;
++
++	/* Only sync for UCLAMP_MIN and RT tasks */
++	if (clamp_id != UCLAMP_MIN || likely(!rt_task(p)))
++		return;
++
++	uc_se = &p->uclamp_req[UCLAMP_MIN];
++
++	/*
++	 * Only sync if user didn't override the default request and the sysctl
++	 * knob has changed.
++	 */
++	if (unlikely(uc_se->user_defined) ||
++	    likely(uc_se->value == sysctl_sched_uclamp_util_min_rt_default))
++		return;
++
++	uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt_default, false);
++}
++
+ static inline struct uclamp_se
+ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+ {
+@@ -907,8 +949,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+ static inline struct uclamp_se
+ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+ {
+-	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+-	struct uclamp_se uc_max = uclamp_default[clamp_id];
++	struct uclamp_se uc_req, uc_max;
++
++	/*
++	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
++	 */
++	uclamp_sync_util_min_rt_default(p, clamp_id);
++
++	uc_req = uclamp_tg_restrict(p, clamp_id);
++	uc_max = uclamp_default[clamp_id];
+ 
+ 	/* System default restrictions always apply */
+ 	if (unlikely(uc_req.value > uc_max.value))
+@@ -1114,12 +1163,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ 				loff_t *ppos)
+ {
+ 	bool update_root_tg = false;
+-	int old_min, old_max;
++	int old_min, old_max, old_min_rt;
+ 	int result;
+ 
+ 	mutex_lock(&uclamp_mutex);
+ 	old_min = sysctl_sched_uclamp_util_min;
+ 	old_max = sysctl_sched_uclamp_util_max;
++	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
+ 
+ 	result = proc_dointvec(table, write, buffer, lenp, ppos);
+ 	if (result)
+@@ -1133,6 +1183,18 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ 		goto undo;
+ 	}
+ 
++	/*
++	 * The new value will be applied to RT tasks the next time the
++	 * scheduler needs to calculate the effective uclamp.min for that task,
++	 * assuming the task is using the system default and not a user
++	 * specified value. In the latter we shall leave the value as the user
++	 * requested.
++	 */
++	if (sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
++		result = -EINVAL;
++		goto undo;
++	}
++
+ 	if (old_min != sysctl_sched_uclamp_util_min) {
+ 		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
+ 			      sysctl_sched_uclamp_util_min, false);
+@@ -1158,6 +1220,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ undo:
+ 	sysctl_sched_uclamp_util_min = old_min;
+ 	sysctl_sched_uclamp_util_max = old_max;
++	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
+ done:
+ 	mutex_unlock(&uclamp_mutex);
+ 
+@@ -1200,9 +1263,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
+ 		if (uc_se->user_defined)
+ 			continue;
+ 
+-		/* By default, RT tasks always get 100% boost */
++		/*
++		 * By default, RT tasks always get 100% boost, which the admins
++		 * are allowed to change via
++		 * sysctl_sched_uclamp_util_min_rt_default knob.
++		 */
+ 		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+-			clamp_value = uclamp_none(UCLAMP_MAX);
++			clamp_value = sysctl_sched_uclamp_util_min_rt_default;
+ 
+ 		uclamp_se_set(uc_se, clamp_value, false);
+ 	}
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 8a176d8727a3..64117363c502 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= sysctl_sched_uclamp_handler,
+ 	},
++	{
++		.procname	= "sched_util_clamp_min_rt_default",
++		.data		= &sysctl_sched_uclamp_util_min_rt_default,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= sysctl_sched_uclamp_handler,
++	},
+ #endif
+ #ifdef CONFIG_SCHED_AUTOGROUP
+ 	{
+-- 
+2.17.1
+
