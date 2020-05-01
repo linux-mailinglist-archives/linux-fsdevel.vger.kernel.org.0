@@ -2,175 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 736931C0DD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 07:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED5F1C0DDC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 07:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbgEAFjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 01:39:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49680 "EHLO mail.kernel.org"
+        id S1728237AbgEAFo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 01:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbgEAFjK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 01:39:10 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726452AbgEAFo2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 May 2020 01:44:28 -0400
+Received: from [10.44.0.192] (unknown [103.48.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EB8F2073E;
-        Fri,  1 May 2020 05:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588311549;
-        bh=EmHczoYX1gH+WJOEfLomOHaDIvsOJKfq7lv+knH4aj8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kpjhOY8nWbejt3yw6PAEswI/MenT6OCoaSS/I4K2EfaSeVjPzSy0OtWr9DzEqHvO9
-         PAScSPEh0I5Ud4bdntPCcyHVUrNOq1jDuapUJoUDJQxWzWjaAJrgTA8Y5woYqGrX+8
-         v3KK860ubuW1fSoVKE4/UT+Dw4e87u8f2xIx5AHY=
-Date:   Thu, 30 Apr 2020 22:39:08 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Johannes Thumshirn <jth@kernel.org>
-Cc:     David Sterba <dsterba@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: Re: [PATCH v2 1/2] btrfs: add authentication support
-Message-ID: <20200501053908.GC1003@sol.localdomain>
-References: <20200428105859.4719-1-jth@kernel.org>
- <20200428105859.4719-2-jth@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id DEAF820731;
+        Fri,  1 May 2020 05:44:20 +0000 (UTC)
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20200429214954.44866-1-jannh@google.com>
+ <20200429215620.GM1551@shell.armlinux.org.uk>
+ <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+ <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
+ <CAHk-=wjau_zmdLaFDLcY3xnqiFaC7VZDXnnzFG9QDHL4kqStYQ@mail.gmail.com>
+ <87imhgyeqt.fsf@x220.int.ebiederm.org>
+Message-ID: <9dd76936-0009-31e4-d869-f64d01886642@linux-m68k.org>
+Date:   Fri, 1 May 2020 15:44:03 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200428105859.4719-2-jth@kernel.org>
+In-Reply-To: <87imhgyeqt.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 12:58:58PM +0200, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+
+On 1/5/20 5:07 am, Eric W. Biederman wrote:
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
 > 
-> Add authentication support for a BTRFS file-system.
+>> On Thu, Apr 30, 2020 at 7:10 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
 > 
-> This works, because in BTRFS every meta-data block as well as every
-> data-block has a own checksum. For meta-data the checksum is in the
-> meta-data node itself. For data blocks, the checksums are stored in the
-> checksum tree.
+>>>> Most of that file goes back to pre-git days. And most of the commits
+>>>> since are not so much about binfmt_flat, as they are about cleanups or
+>>>> changes elsewhere where binfmt_flat was just a victim.
+>>>
+>>> I'll have a look at this.
+>>
+>> Thanks.
+>>
+>>> Quick hack test shows moving setup_new_exec(bprm) to be just before
+>>> install_exec_creds(bprm) works fine for the static binaries case.
+>>> Doing the flush_old_exec(bprm) there too crashed out - I'll need to
+>>> dig into that to see why.
+>>
+>> Just moving setup_new_exec() would at least allow us to then join the
+>> two together, and just say "setup_new_exec() does the credential
+>> installation too".
 > 
-> When replacing the checksum algorithm with a keyed hash, like HMAC(SHA256),
-> a key is needed to mount a verified file-system. This key also needs to be
-> used at file-system creation time.
+> But it is only half a help if we allow failure points between
+> flush_old_exec and install_exec_creds.
 > 
-> We have to used a keyed hash scheme, in contrast to doing a normal
-> cryptographic hash, to guarantee integrity of the file system, as a
-> potential attacker could just replay file-system operations and the
-> changes would go unnoticed.
+> Greg do things work acceptably if install_exec_creds is moved to right
+> after setup_new_exec? (patch below)
+
+Yes, confirmed. Worked fine with that patch applied.
+
+
+> Looking at the code in load_flat_file after setup_new_exec it looks like
+> the kinds of things that in binfmt_elf.c we do after install_exec_creds
+> (aka vm_map).  So I think we want install_exec_creds sooner, instead
+> of setup_new_exec later.
 > 
-> Having a keyed hash only on the topmost Node of a tree or even just in the
-> super-block and using cryptographic hashes on the normal meta-data nodes
-> and checksum tree entries doesn't work either, as the BTRFS B-Tree's Nodes
-> do not include the checksums of their respective child nodes, but only the
-> block pointers and offsets where to find them on disk.
+>> But if it's true that nobody really uses the odd flat library support
+>> any more and there are no testers, maybe we should consider ripping it
+>> out...
 > 
-> Also note, we do not need a incompat R/O flag for this, because if an old
-> kernel tries to mount an authenticated file-system it will fail the
-> initial checksum type verification and thus refuses to mount.
+> I looked a little deeper and there is another reason to think about
+> ripping out the flat library loader.  The code is recursive, and
+> supports a maximum of 4 shared libraries in the entire system.
 > 
-> The key has to be supplied by the kernel's keyring and the method of
-> getting the key securely into the kernel is not subject of this patch.
+> load_flat_binary
+> 	load_flat_file
+>          	calc_reloc
+>                  	load_flat_shared_libary
+>                          	load_flat_file
+>                                  	....
+> 
+> I am mystified with what kind of system can survive with a grand total
+> of 4 shared libaries.  I think my a.out slackware system that I ran on
+> my i486 had more shared libraries.
 
-This is a good idea, but can you explain exactly what security properties you
-aim to achieve?
+The kind of embedded systems that were built with this stuff 20 years
+ago didn't have lots of applications and libraries. I think we found
+back then that most of your savings were from making libc shared.
+Less significant gains from making other libraries shared. And there
+was a bit of extra pain in setting them up with the shared library
+code generation options (that had to be unique for each one).
 
-As far as I can tell, btrfs hashes each data block individually.  There's no
-contextual information about where eaech block is located or which file(s) it
-belongs to.  So, with this proposal, an attacker can still replace any data
-block with any other data block.  Is that what you have in mind?  Have you
-considered including contextual information in the hashes, to prevent this?
+The whole mechanism is a bit of hack, and there was a few other
+limitations with the way it worked (I don't recall what they were
+right now).
 
-What about metadata blocks -- how well are they authenticated?  Can they be
-moved around?  And does this proposal authenticate *everything* on the
-filesystem, or is there any part that is missed?  What about the superblock?
+I am definitely in favor of removing it.
 
-You also mentioned preventing replay of filesystem operations, which suggests
-you're trying to achieve rollback protection.  But actually this scheme doesn't
-provide rollback protection.  For one, an attacker can always just rollback the
-entire filesystem to a previous state.
+Regards
+Greg
 
-This feature would still be useful even with the above limitations.  But what is
-your goal exactly?  Can this be made better?
 
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index d10c7be10f3b..fe403fb62178 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -17,6 +17,7 @@
->  #include <linux/error-injection.h>
->  #include <linux/crc32c.h>
->  #include <linux/sched/mm.h>
-> +#include <keys/user-type.h>
->  #include <asm/unaligned.h>
->  #include <crypto/hash.h>
->  #include "ctree.h"
-> @@ -339,6 +340,7 @@ static bool btrfs_supported_super_csum(u16 csum_type)
->  	case BTRFS_CSUM_TYPE_XXHASH:
->  	case BTRFS_CSUM_TYPE_SHA256:
->  	case BTRFS_CSUM_TYPE_BLAKE2:
-> +	case BTRFS_CSUM_TYPE_HMAC_SHA256:
->  		return true;
->  	default:
->  		return false;
-> @@ -2187,6 +2189,9 @@ static int btrfs_init_csum_hash(struct btrfs_fs_info *fs_info, u16 csum_type)
->  {
->  	struct crypto_shash *csum_shash;
->  	const char *csum_driver = btrfs_super_csum_driver(csum_type);
-> +	struct key *key;
-> +	const struct user_key_payload *ukp;
-> +	int err = 0;
->  
->  	csum_shash = crypto_alloc_shash(csum_driver, 0, 0);
->  
-> @@ -2198,7 +2203,53 @@ static int btrfs_init_csum_hash(struct btrfs_fs_info *fs_info, u16 csum_type)
->  
->  	fs_info->csum_shash = csum_shash;
->  
-> -	return 0;
-> +	/*
-> +	 * if we're not doing authentication, we're done by now. Still we have
-> +	 * to validate the possible combinations of BTRFS_MOUNT_AUTH_KEY and
-> +	 * keyed hashes.
-> +	 */
-> +	if (csum_type == BTRFS_CSUM_TYPE_HMAC_SHA256 &&
-> +	    !btrfs_test_opt(fs_info, AUTH_KEY)) {
-> +		crypto_free_shash(fs_info->csum_shash);
-> +		return -EINVAL;
 
-Seems there should be an error message here that says that a key is needed.
-
-> +	} else if (btrfs_test_opt(fs_info, AUTH_KEY)
-> +		   && csum_type != BTRFS_CSUM_TYPE_HMAC_SHA256) {
-> +		crypto_free_shash(fs_info->csum_shash);
-> +		return -EINVAL;
-
-The hash algorithm needs to be passed as a mount option.  Otherwise the attacker
-gets to choose it for you among all the supported keyed hash algorithms, as soon
-as support for a second one is added.  Maybe use 'auth_hash_name' like UBIFS
-does?
-
-> +	} else if (!btrfs_test_opt(fs_info, AUTH_KEY)) {
-> +		/*
-> +		 * This is the normal case, if noone want's authentication and
-> +		 * doesn't have a keyed hash, we're done.
-> +		 */
-> +		return 0;
-> +	}
-> +
-> +	key = request_key(&key_type_logon, fs_info->auth_key_name, NULL);
-> +	if (IS_ERR(key))
-> +		return PTR_ERR(key);
-
-Seems this should print an error message if the key can't be found.
-
-Also, this should enforce that the key description uses a service prefix by
-formatting it as kasprintf("btrfs:%s", fs_info->auth_key_name).  Otherwise
-people can abuse this feature to use keys that were added for other kernel
-features.  (This already got screwed up elsewhere, which makes the "logon" key
-type a bit of a disaster.  But there's no need to make it worse.)
-
-- Eric
+> Having read just a bit more it is definitely guaranteed (by the code)
+> that the first time load_flat_file is called id 0 will be used (aka id 0
+> is guaranteed to be the binary), and the ids 1, 2, 3 and 4 will only be
+> used if a relocation includes that id to reference an external shared
+> library.  That part of the code is drop dead simple.
+> 
+> ---
+> 
+> This is what I was thinking about applying.
+> 
+> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+> index 831a2b25ba79..1a1d1fcb893f 100644
+> --- a/fs/binfmt_flat.c
+> +++ b/fs/binfmt_flat.c
+> @@ -541,6 +541,7 @@ static int load_flat_file(struct linux_binprm *bprm,
+>   		/* OK, This is the point of no return */
+>   		set_personality(PER_LINUX_32BIT);
+>   		setup_new_exec(bprm);
+> +		install_exec_creds(bprm);
+>   	}
+>   
+>   	/*
+> @@ -963,8 +964,6 @@ static int load_flat_binary(struct linux_binprm *bprm)
+>   		}
+>   	}
+>   
+> -	install_exec_creds(bprm);
+> -
+>   	set_binfmt(&flat_format);
+>   
+>   #ifdef CONFIG_MMU
+> 
+> 
