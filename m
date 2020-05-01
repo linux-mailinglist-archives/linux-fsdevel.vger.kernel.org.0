@@ -2,134 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2A21C0E82
+	by mail.lfdr.de (Postfix) with ESMTP id 801D21C0E83
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 09:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbgEAHOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728282AbgEAHOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 1 May 2020 03:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728246AbgEAHOv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+Received: from mail.kernel.org ([198.145.29.99]:34066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728212AbgEAHOv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 1 May 2020 03:14:51 -0400
-Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65778C035494
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 May 2020 00:14:50 -0700 (PDT)
-Received: by mail-yb1-xb42.google.com with SMTP id d197so4548325ybh.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 May 2020 00:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MV/Q7EwkQ764+aYA9y8KigZ49kNY6VR5runzo9HRXAI=;
-        b=YEsJ68kG67HFUSEVoa4ShQkuTQXVsgWgNJnujwjFmqlO4tae8gECHz+YXcWwCiDBC+
-         YLqHC3qQXaRzDO7F3ICHjwSHE14kYBfZ1yL4lBRLcTwFpx4R/vsXaPPcE8w0a9/dcrYN
-         PETEIzETn8rgkDpHd4NyRr3SEAw3Hm8bv7aNw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MV/Q7EwkQ764+aYA9y8KigZ49kNY6VR5runzo9HRXAI=;
-        b=VdG7JlVu0oyVLNurxsRvsOluzkHuNkzSP83aq0LtfoqjaqHSUgB4pZAM0xmuVF3b8i
-         I7RlTbX+uC1bFIl7T1EjYM20QO5zRW4sAhw/LjR7YBk6dUgpxsfQAzn7a+o3iMe26fU0
-         A2sIbXsVAE+dThYpReormiOVlLSqS7FqYL0iOUT9vtmlvuIFGlvIIG5TUkfXEQLuULiQ
-         AO4ExnbXl+dGX5HRnWkIE8eY1ZzZwGmJnsFdBsO7MVbXbbFy+6W6bY2ug3rOYhcL5zFD
-         53ytOF+yKiszN23t7a2w2f694fkoDuNXVbLlaLHHemxQMrX9ftKO/BX04Bp/VPx7dhbc
-         lfjw==
-X-Gm-Message-State: AGi0PuawRL78IyEmtSCjnPCfL6ktZpRW2Lv0zg94qteibLzorHyTnPZH
-        dFNsY1kDbxWG+KIfQoygH9wyCxtpgzUkKe8FKljqtuVwlZo=
-X-Google-Smtp-Source: APiQypIYVMuMKifV1ecxXPi5tHp0NXdnMAM1mHYO52lnx/fDdZMv2hdLQRAhAZKluEZa5hnDutyrUx0kDepH6NQWZvg=
-X-Received: by 2002:a5b:351:: with SMTP id q17mr4355861ybp.428.1588317289222;
- Fri, 01 May 2020 00:14:49 -0700 (PDT)
+Received: from [192.168.0.106] (unknown [202.53.39.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 752A5208C3;
+        Fri,  1 May 2020 07:14:46 +0000 (UTC)
+Subject: Re: [PATCH v2 0/5] Fix ELF / FDPIC ELF core dumping, and use mmap_sem
+ properly in there
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Jann Horn <jannh@google.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20200429214954.44866-1-jannh@google.com>
+ <20200429215620.GM1551@shell.armlinux.org.uk>
+ <CAHk-=wgpoEr33NJwQ+hqK1dz3Rs9jSw+BGotsSdt2Kb3HqLV7A@mail.gmail.com>
+ <31196268-2ff4-7a1d-e9df-6116e92d2190@linux-m68k.org>
+ <CAHk-=wjau_zmdLaFDLcY3xnqiFaC7VZDXnnzFG9QDHL4kqStYQ@mail.gmail.com>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <9d4a2520-f41c-aed1-4ce0-274370eb4503@linux-m68k.org>
+Date:   Fri, 1 May 2020 17:14:43 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <20200424062540.23679-1-chirantan@chromium.org>
- <20200424062540.23679-2-chirantan@chromium.org> <20200427151934.GB1042399@stefanha-x1.localdomain>
-In-Reply-To: <20200427151934.GB1042399@stefanha-x1.localdomain>
-From:   Chirantan Ekbote <chirantan@chromium.org>
-Date:   Fri, 1 May 2020 16:14:38 +0900
-Message-ID: <CAJFHJrr2DAgQC9ZWx78OudX1x6A57_vpLf4rJu80ceR6bnpbaQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: virtiofs: Add basic multiqueue support
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>, slp@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=wjau_zmdLaFDLcY3xnqiFaC7VZDXnnzFG9QDHL4kqStYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stefan,
 
-On Tue, Apr 28, 2020 at 12:20 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> On Fri, Apr 24, 2020 at 03:25:40PM +0900, Chirantan Ekbote wrote:
-> > Use simple round-robin scheduling based on the `unique` field of the
-> > fuse request to spread requests across multiple queues, if supported by
-> > the device.
->
-> Multiqueue is not intended to be used this way and this patch will
-> reduce performance*.  I don't think it should be merged.
->
-> * I know it increases performance for you :) but hear me out:
->
+On 1/5/20 2:54 am, Linus Torvalds wrote:
+> On Thu, Apr 30, 2020 at 7:10 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
+>>
+>>> in load_flat_file() - which is also used to loading _libraries_. Where
+>>> it makes no sense at all.
+>>
+>> I haven't looked at the shared lib support in there for a long time,
+>> but I thought that "id" is only 0 for the actual final program.
+>> Libraries have a slot or id number associated with them.
+> 
+> Yes, that was my assumption, but looking at the code, it really isn't
+> obvious that that is the case at all.
+> 
+> 'id' gets calculated from fields that very much look like they could
+> be zero (eg by taking the top bits from another random field).
+> 
+>>> Most of that file goes back to pre-git days. And most of the commits
+>>> since are not so much about binfmt_flat, as they are about cleanups or
+>>> changes elsewhere where binfmt_flat was just a victim.
+>>
+>> I'll have a look at this.
+> 
+> Thanks.
+> 
+>> Quick hack test shows moving setup_new_exec(bprm) to be just before
+>> install_exec_creds(bprm) works fine for the static binaries case.
+>> Doing the flush_old_exec(bprm) there too crashed out - I'll need to
+>> dig into that to see why.
+> 
+> Just moving setup_new_exec() would at least allow us to then join the
+> two together, and just say "setup_new_exec() does the credential
+> installation too".
+> 
+> So to some degree, that's the important one.
+> 
+> But that flush_old_exec() does look odd in load_flat_file(). It's not
+> like anything but executing a binary should flush the old exec.
+> Certainly not loading a library, however odd that flat library code
+> is.
+> 
+> My _guess_ is that the reason for this is that "load_flat_file()" also
+> does a lot of verification of the file and does that whole "return
+> -ENOEXEC if the file format isn't right". So we don't want to flush
+> the old exec before that is done, but we obviously also don't want to
+> flush the old exec after we've actually loaded the new one into
+> memory..
 
-It actually doesn't increase performance for me :-(.  It did increase
-performance when I tested it on my 96-core workstation but on our
-actual target devices, which only have 2 cores, using multiqueue or
-having additional threads in the server actually made performance
-worse.
+Yeah, that is what it looks like. Looking at the history, the introduction
+of setup_new_exec() [in commit 221af7f87b974] was probably just
+added where the the existing flush_old_exec() was.
 
-> The purpose of multiqueue is for SMP scalability.  It allows queues to
-> be processed with CPU/NUMA affinity to the vCPU that submitted the
-> request (i.e. the virtqueue processing thread runs on a sibling physical
-> CPU core).  Each queue has its own MSI-X interrupt so that completion
-> interrupts can be processed on the same vCPU that submitted the request.
->
-> Spreading requests across queues defeats all this.  Virtqueue processing
-> threads that are located in the wrong place will now process the
-> requests.  Completion interrupts will wake up a vCPU that did not submit
-> the request and IPIs are necessary to notify the vCPU that originally
-> submitted the request.
->
 
-Thanks for the explanation.  I wasn't aware of this aspect of using
-multiple queues but it makes sense now why we wouldn't want to spread
-the requests across different queues.
+> So the location of flush_old_exec() makes that kind of sense, but it
+> would have made it better if that flat file support had a clear
+> separation of "check the file" from "load the file".
+> 
+> Oh well. As mentioned, the whole "at least put setup_new_exec() and
+> install_exec_creds() together" is the bigger thing.
+> 
+> But if it's true that nobody really uses the odd flat library support
+> any more and there are no testers, maybe we should consider ripping it
+> out...
 
-> Even if you don't care about SMP performance, using multiqueue as a
-> workaround for missing request parallelism still won't yield the best
-> results.  The guest should be able to submit up to the maximum queue
-> depth of the physical storage device.  Many Linux block drivers have max
-> queue depths of 64.  This would require 64 virtqueues (plus the queue
-> selection algorithm would have to utilize each one) and shows how
-> wasteful this approach is.
->
+I am for that. If nobody pipes up and complains I'll look at taking it out.
 
-I understand this but in practice unlike the virtio-blk workload,
-which is nothing but reads and writes to a single file, the virtio-fs
-workload tends to mix a bunch of metadata operations with data
-transfers.  The metadata operations should be mostly handled out of
-the host's file cache so it's unlikely virtio-fs would really be able
-to fully utilize the underlying storage short of reading or writing a
-really huge file.
+Regards
+Greg
 
-> Instead of modifying the guest driver, please implement request
-> parallelism in your device implementation.
-
-Yes, we have tried this already [1][2].  As I mentioned above, having
-additional threads in the server actually made performance worse.  My
-theory is that when the device only has 2 cpus, having additional
-threads on the host that need cpu time ends up taking time away from
-the guest vcpu.  We're now looking at switching to io_uring so that we
-can submit multiple requests from a single thread.
-
-The multiqueue change was small and I wasn't aware of the SMP
-implications, which is why I sent this patch.
-
-Thanks,
-Chirantan
-
-[1] https://chromium-review.googlesource.com/c/chromiumos/platform/crosvm/+/2103602
-[2] https://chromium-review.googlesource.com/c/chromiumos/platform/crosvm/+/2103603
