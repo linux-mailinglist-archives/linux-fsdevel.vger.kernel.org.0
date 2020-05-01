@@ -2,83 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1CC1C1C56
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 19:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 992F71C1C94
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 May 2020 20:07:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgEARyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 13:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729291AbgEARyi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 13:54:38 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2168C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 May 2020 10:54:36 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id i19so5591799ioh.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 May 2020 10:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Uhch7fSB/7Ki1vYFi3Z0iSi1LX7KXkljEn4AyEBquZE=;
-        b=Nx7BXMoSRhrWDV3OPwFEVATv5EIqod9Ke6TsglxqcaGtC5ZebrOKW3kUTkIyjnrbcv
-         drFHpu/isCG0aTZ9FZXSEf0Z54ZWsTcJlUx1ZlPTt8Nk9CchbeugUMSdwFQfMH9GYZ/P
-         Z5tf9J4N5cJ/CQHjxrLNoNQeGKHlS0Cjmoe+0+YCR5LqTlIgEzCyld0X4zHtA6qPLERc
-         Foi3m/rwrIOXx23Ap+0gIWMeZfh33maZDqF/jrVORJwzHr/jyja9Qf9om/FUQkeiZmfc
-         SACzicfCTmKby6ww6lOeYtQNXhgfaYUMydg++Oy9fy8YV+Wy3vfn6C3YzNAC9crGLKpu
-         Hvhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Uhch7fSB/7Ki1vYFi3Z0iSi1LX7KXkljEn4AyEBquZE=;
-        b=DqXhA/1P1onLZ7iNpxM4rKHfTmvPxsIRl3iHsp+JpEl2JAQSajk7QGyewIYDtjXTOB
-         9lZObwthG4kmlPKWlYMfYnHGbVLg22vNaa3KFDBsF5xy6KeIywasvwGyrA/YIbsNHwbD
-         tJwE+ZQ4Jp245VP6P5xmyr6caXlqntPAOuolkJwahnJ0llvMsY7DG37yicdkRwoBl+EZ
-         BJZRDlklHgTysX60L75lVhcoq0BwV8Y40mh22BKEpvcBv7qUympCpqjL6Y4jorPYSXH9
-         NJ8HCFmX4XwqzyxM0Zrk+DciNAP6rYNn2kekWguyvBYasGCqfUhSs5Ck058lpLgFZVcs
-         tQ9A==
-X-Gm-Message-State: AGi0PubF15k6RVE7YIfd5gqBvdLVAb73H3AevumvPzEGOf87S8u40Ont
-        pVpSlWGoxfpMrzaUOnwRKSa1hw==
-X-Google-Smtp-Source: APiQypJNFnYwbuS2xi8dA49XKVMcqRvoptJd8A3fVr/x8ct+Ixbn3LW9/DAsNtU6s1SUh3SiapWMQg==
-X-Received: by 2002:a02:c9cb:: with SMTP id c11mr4064657jap.93.1588355676393;
-        Fri, 01 May 2020 10:54:36 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k3sm1510390ilf.67.2020.05.01.10.54.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 10:54:35 -0700 (PDT)
-Subject: Re: [PATCH v3] eventfd: convert to f_op->read_iter()
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <4037e867-af74-6a11-a501-7e5b804beec5@kernel.dk>
-Message-ID: <222126cc-0eb5-31b1-2a31-ef1ff2b24f72@kernel.dk>
-Date:   Fri, 1 May 2020 11:54:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1729795AbgEASHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 14:07:23 -0400
+Received: from namei.org ([65.99.196.166]:56664 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729138AbgEASHX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 May 2020 14:07:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 041I5rjc006112;
+        Fri, 1 May 2020 18:05:53 GMT
+Date:   Sat, 2 May 2020 04:05:53 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] fs: Enable to enforce noexec mounts or file exec
+ through RESOLVE_MAYEXEC
+In-Reply-To: <d1a81d06-7530-1f2b-858a-e42bc1ae2a7e@digikod.net>
+Message-ID: <alpine.LRH.2.21.2005020405210.5924@namei.org>
+References: <20200428175129.634352-1-mic@digikod.net> <20200428175129.634352-4-mic@digikod.net> <alpine.LRH.2.21.2005011409570.29679@namei.org> <d1a81d06-7530-1f2b-858a-e42bc1ae2a7e@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <4037e867-af74-6a11-a501-7e5b804beec5@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="1665246916-1237382289-1588356355=:5924"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/1/20 11:53 AM, Jens Axboe wrote:
-> eventfd is using ->read() as it's file_operations read handler, but
-> this prevents passing in information about whether a given IO operation
-> is blocking or not. We can only use the file flags for that. To support
-> async (-EAGAIN/poll based) retries for io_uring, we need ->read_iter()
-> support. Convert eventfd to using ->read_iter().
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Attached the wrong patch, forgot to update it... See 3b posting. I ran
-this through my io_uring related eventfd testing, and it looks good.
+--1665246916-1237382289-1588356355=:5924
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 1 May 2020, Mickaël Salaün wrote:
+
+> 
+> However, for fully controlled distros such as CLIP OS, it make sense to
+> enforce such restrictions at kernel build time. I can add an alternative
+> kernel configuration to enforce a particular policy at boot and disable
+> this sysctl.
+
+Sounds good.
 
 -- 
-Jens Axboe
+James Morris
+<jmorris@namei.org>
 
+--1665246916-1237382289-1588356355=:5924--
