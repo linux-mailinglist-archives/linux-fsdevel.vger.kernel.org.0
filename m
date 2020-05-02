@@ -2,52 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D731C21DC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 02:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 672E71C21E3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 02:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgEBAWR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 20:22:17 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32969 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbgEBAWR (ORCPT
+        id S1726486AbgEBAZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 20:25:09 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39469 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgEBAZI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 20:22:17 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t7so4217747plr.0;
-        Fri, 01 May 2020 17:22:17 -0700 (PDT)
+        Fri, 1 May 2020 20:25:08 -0400
+Received: by mail-pj1-f68.google.com with SMTP id e6so564631pjt.4;
+        Fri, 01 May 2020 17:25:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=xqP1ypKDzEDw8qavmEZaNBpUnC4fGF3wqn5BkO6DJEw=;
-        b=JWEIY2csSErLBWeVaLNOjxdIDxxoYounSqOlxjjHKCnRGaifTn5BHXoPRjkYBMstB2
-         L2vgoK/PbXJSItFg8CqBG6zAizKh3rD2n9q737HfEZ0K5F6mNeLjc6GKs2yqI27H44DM
-         fLH2SDWLbXGDXNn6tdN3WQKEs+E0ag6C4DG6F1gwL2R5LMGpQPELzxfvxfcCCMZX+6XM
-         vRdA+CwJSyWMloKfwZvQ+3pmywiXQMOxY0rL+ypI+Scy50VO6s4jRjzKhD9G9KOcsbdb
-         6OG6BxQK/SEEfIksYcZQrvR7HmsvxFSVvMre4fIAHwYjkABuF/OrOK9UxPEpkA0Zmzrr
-         575w==
-X-Gm-Message-State: AGi0PuZTYaqYPbGrvV5rUO/FuSbzoBP91CW2lhi6ewFEfA/hmyMLQy7s
-        2VH4Y5foUdeAFfp15c21g4g=
-X-Google-Smtp-Source: APiQypKGMZAno3U6uaIKiwykYHUO3c1ZI12E5QCOg2T09raiI4CXPQD/nVyzblnBvoqcpJ970KJBpg==
-X-Received: by 2002:a17:902:6b05:: with SMTP id o5mr6451646plk.274.1588378936357;
-        Fri, 01 May 2020 17:22:16 -0700 (PDT)
+        bh=1PeAqJ5SiUZNxwlPTtwXNjCE1HPrHwFDRiunmDICEv0=;
+        b=rLWj60W4gdCQjOKyLTDrKGA5isjU9UVCoX5hsGTq2+XG9Gz4tSZ2OmOml3tsr3DYJv
+         AMwqWFHmhOrvpV56Pw9QrmffDXOGR09Hck9cP+oOoUDmbvDxMEshNAeZqcp6qbolAu2h
+         UQyA3WL+jkXTpC8i3J7vv0zeLdrm0Exh4khivsMVegqLWy0mjHz/y4P1pFfiCQDyvGit
+         4kgTcKjgfe7gx/CPfYptcwMBuHZwgWP7+I6Gasr3qAEAoC6FfULtodpz39wEFJy+TgpB
+         3NP/Xcq3gEPXAbCv+eamTvryeAVftISHgymateuXJknd95mVQ6ffu5WljP1VgBWhpyBO
+         5Oow==
+X-Gm-Message-State: AGi0Pub2mjbQ8fnFD3wHjiVv3s2qhpo+RtwFPg9misPN3EPFbjWR2zOV
+        lWBXZc3QxlnINec04WE7K+4RZPn7p5L9qw==
+X-Google-Smtp-Source: APiQypI3AkWgWLXFTvQI8oSsZ3tQZEJdUfMLz91z+Ov/ex9nniG4APLSEkrFX3MceTXPt5ttdyuFNQ==
+X-Received: by 2002:a17:90a:f698:: with SMTP id cl24mr2624417pjb.71.1588379107454;
+        Fri, 01 May 2020 17:25:07 -0700 (PDT)
 Received: from ?IPv6:2601:647:4000:d7:3401:2e72:5c00:8ec0? ([2601:647:4000:d7:3401:2e72:5c00:8ec0])
-        by smtp.gmail.com with ESMTPSA id o11sm2863889pgp.62.2020.05.01.17.22.13
+        by smtp.gmail.com with ESMTPSA id 6sm3228408pfj.123.2020.05.01.17.25.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 17:22:15 -0700 (PDT)
-Subject: Re: [PATCH v3 1/6] block: revert back to synchronous request_queue
- removal
+        Fri, 01 May 2020 17:25:06 -0700 (PDT)
+Subject: Re: [PATCH v3 3/6] blktrace: move blktrace debugfs creation to helper
+ function
 To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
         viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
         rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
         ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
 Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>
+        linux-kernel@vger.kernel.org
 References: <20200429074627.5955-1-mcgrof@kernel.org>
- <20200429074627.5955-2-mcgrof@kernel.org>
+ <20200429074627.5955-4-mcgrof@kernel.org>
 From:   Bart Van Assche <bvanassche@acm.org>
 Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
@@ -72,12 +70,12 @@ Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
  mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
  goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <a2c64413-d0a4-e5c8-e0fa-904285a1189e@acm.org>
-Date:   Fri, 1 May 2020 17:22:12 -0700
+Message-ID: <cd244b77-fdb1-3249-ecfd-86a306b1d30f@acm.org>
+Date:   Fri, 1 May 2020 17:25:05 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200429074627.5955-2-mcgrof@kernel.org>
+In-Reply-To: <20200429074627.5955-4-mcgrof@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,63 +85,19 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020-04-29 00:46, Luis Chamberlain wrote:
-> The last reference for the request_queue must not be called from atomic
-> conext. *When* the last reference to the request_queue reaches 0 varies,
-  ^^^^^^
-  context?
-> and so let's take the opportunity to document when that is expected to
-> happen and also document the context of the related calls as best as possible
-> so we can avoid future issues, and with the hopes that the synchronous
-> request_queue removal sticks.
-> 
-> We revert back to synchronous request_queue removal because asynchronous
-> removal creates a regression with expected userspace interaction with
-> several drivers. An example is when removing the loopback driver, one
-> uses ioctls from userspace to do so, but upon return and if successful,
-> one expects the device to be removed. Likewise if one races to add another
-> device the new one may not be added as it is still being removed. This was
-> expected behaviour before and it now fails as the device is still present
-           ^^^^^^^^^
-           behavior?
+> +static struct dentry *blk_trace_debugfs_dir(struct blk_user_trace_setup *buts,
+> +					    struct blk_trace *bt)
+> +{
+> +	struct dentry *dir = NULL;
+> +
+> +	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> +	if (!dir)
+> +		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> +
+> +	return dir;
+> +}
 
-> +/**
-> + * blk_put_queue - decrement the request_queue refcount
-> + * @q: the request_queue structure to decrement the refcount for
-> + *
-> + * Decrements the refcount to the request_queue kobject. When this reaches 0
-                              ^^
-                              of?
+Initializing 'dir' is not necessary since the first statement overwrites
+'dir'. Anyway:
 
-> +/**
-> + * blk_get_queue - increment the request_queue refcount
-> + * @q: the request_queue structure to incremenet the refcount for
-                                         ^^^^^^^^^^
-                                         increment?
-> + *
-> + * Increment the refcount to the request_queue kobject.
-                             ^^
-                             of?
-
->  /**
-> - * __blk_release_queue - release a request queue
-> - * @work: pointer to the release_work member of the request queue to be released
-> + * blk_release_queue - releases all allocated resources of the request_queue
-> + * @kobj: pointer to a kobject, who's container is a request_queue
-                                   ^^^^^
-                                   whose?
-
-> +/**
-> + * disk_release - releases all allocated resources of the gendisk
-> + * @dev: the device representing this disk
-> + *
-> + * This function releases all allocated resources of the gendisk.
-> + *
-> + * The struct gendisk refcounted is incremeneted with get_gendisk() or
-                         ^^^^^^^^^^    ^^^^^^^^^^^^
-                         refcount?     incremented?
-
-Please fix the spelling errors. Otherwise this patch looks good to me.
-
-Thanks,
-
-Bart.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
