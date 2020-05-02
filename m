@@ -2,208 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7FAC1C2515
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 14:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C160B1C272A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 19:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbgEBMKn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 May 2020 08:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727951AbgEBMKm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 May 2020 08:10:42 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9189C061A0C;
-        Sat,  2 May 2020 05:10:41 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id e26so2912613wmk.5;
-        Sat, 02 May 2020 05:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=KpfvJecLL3a77wRaEiE1iD1YWA6MRqbUFAwQ0V5rD8U=;
-        b=r+QdoZKQ3oV2+/dqyF9Q3ZPu7/x2VEIRUn2uWg0aEpfVMc975LtdWxKusSEWm+zFnh
-         3MJdfLLu/K/AhjZBr9w4ynM5LF3mQFxi/+qWORR/+IZQ5CdYgzzYXWzuKRFYTnkolhY/
-         DAfrnxESyd3hdYujeJEifJvIjQZE+BUemuu1HJXKKDhJRmQDT8cjA4+n4aXDBJCm0lxz
-         Vm0k8dI9R0hNt91uBMnuyf7ked/Q1SEz/n2Uf72fJa6YYdw5zSpPKy6yXzU7euytKnLN
-         FEjCPXW+RQx8X2vTrcxIsmc5dEct+Ks+09BkPWWaSCfrKZ3SQCHUTyFx0ksgVdids4XY
-         uvOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KpfvJecLL3a77wRaEiE1iD1YWA6MRqbUFAwQ0V5rD8U=;
-        b=FDhzR692EHcOqnUDUXmhwR+vFdz4U7mvHa3fpD8tCcOnU4DVnqSDYZDyFFxJ/XMHyJ
-         EmFKkBTTBNBb/3meSIB+tDyw8Sp02bxLD9zUuEFGNNip6WsoAHvsEtHVgSJoHqP3gbDW
-         bXniBZj/AhQUP1F0qRRP3Ynowfa5ST0mQsA+eiJN5ZC9PXzsm3pTklcteOfo0EvbM3V7
-         yyZvAYYirf7f7fU/DkP+5l67+e+fTfpmrXX+HhjssmZGbOtTWIi3IGiAUcyfQ3lMk7o6
-         qq7Jf5N8PrgQAUN1JZi20fImCUUBhPUXQNNumc3lhSrc1RftWgHdTtV9zi8sWAdoXn2L
-         +iiQ==
-X-Gm-Message-State: AGi0PuYUnXWWBDlGPd4ZuGV1gJtvyOqW3tPOhXYtW2YjX3Ninxlj5vio
-        PIVaVak24Qd/YPd3Or5Vffk=
-X-Google-Smtp-Source: APiQypLiYFkxgSfD8yXv1FY3q2MHs/3gjyCgFdoNZjDplObNqqNEJw95OsTWpXJWZc4pgGxlvVtfTQ==
-X-Received: by 2002:a1c:1c8:: with SMTP id 191mr4178633wmb.37.1588421440464;
-        Sat, 02 May 2020 05:10:40 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id m15sm3858297wmc.35.2020.05.02.05.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 May 2020 05:10:40 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Clay Harris <bugs@claycon.org>
-Subject: [PATCH 2/2] io_uring: add tee(2) support
-Date:   Sat,  2 May 2020 15:09:26 +0300
-Message-Id: <ea033201ae4e8359420ab1b50bce95ed47c8cd90.1588421219.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1588421219.git.asml.silence@gmail.com>
-References: <cover.1588421219.git.asml.silence@gmail.com>
+        id S1728399AbgEBRIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 May 2020 13:08:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728327AbgEBRIC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 2 May 2020 13:08:02 -0400
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104042064A;
+        Sat,  2 May 2020 17:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588439282;
+        bh=MIvxVX7zIrcs+Zk2CJWmBJutCLiO1x4xblndHQuzlI8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=P7Fb/9p7g8Q9xKQAiYxPLPTYzWpG/mS5FuZzrA6E6a7RLA/9SZI0e31cC7g83VnSX
+         ivaYz7Wlg4rQ3SHbv4BsNB9DdQsWWHuEX5fvtlL4KXktocRTP0KbbN4SHN5pe3hPi4
+         oelhKiMxq1rCS/20uWIjUt4m1g3ErNhjt2xWx69U=
+Date:   Sat, 2 May 2020 10:08:01 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, riteshh@linux.ibm.com
+Subject: [GIT PULL] iomap: bug fix for 5.7-rc3
+Message-ID: <20200502170801.GB6742@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add IORING_OP_TEE implementing tee(2) support. Almost identical to
-splice bits, but without offsets.
+Hi Linus,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c                 | 64 +++++++++++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 62 insertions(+), 3 deletions(-)
+Please pull this single bug fix for 5.7 that hoists the check for an
+unrepresentable FIBMAP return value into ioctl_fibmap.  The internal
+kernel function can handle 64-bit values (and is needed to fix a
+regression on ext4 + jbd2); it is only the userspace ioctl that is so
+old that it cannot deal.  The branch merged cleanly with upstream head
+as of a few minutes ago.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4ed82d39540b..dc314f66fbc9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -855,6 +855,11 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_PROVIDE_BUFFERS] = {},
- 	[IORING_OP_REMOVE_BUFFERS] = {},
-+	[IORING_OP_TEE] = {
-+		.needs_file		= 1,
-+		.hash_reg_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+	},
- };
- 
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -2754,7 +2759,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
- 	return ret;
- }
- 
--static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+static int __io_splice_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
- {
- 	struct io_splice* sp = &req->splice;
- 	unsigned int valid_flags = SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL;
-@@ -2764,8 +2770,6 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return 0;
- 
- 	sp->file_in = NULL;
--	sp->off_in = READ_ONCE(sqe->splice_off_in);
--	sp->off_out = READ_ONCE(sqe->off);
- 	sp->len = READ_ONCE(sqe->len);
- 	sp->flags = READ_ONCE(sqe->splice_flags);
- 
-@@ -2784,6 +2788,48 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
-+static int io_tee_prep(struct io_kiocb *req,
-+		       const struct io_uring_sqe *sqe)
-+{
-+	if (READ_ONCE(sqe->splice_off_in) || READ_ONCE(sqe->off))
-+		return -EINVAL;
-+	return __io_splice_prep(req, sqe);
-+}
-+
-+static int io_tee(struct io_kiocb *req, bool force_nonblock)
-+{
-+	struct io_splice *sp = &req->splice;
-+	struct file *in = sp->file_in;
-+	struct file *out = sp->file_out;
-+	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
-+	long ret;
-+
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	ret = do_tee(in, out, sp->len, flags);
-+	if (force_nonblock && ret == -EAGAIN)
-+		return -EAGAIN;
-+
-+	io_put_file(req, in, (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+
-+	io_cqring_add_event(req, ret);
-+	if (ret != sp->len)
-+		req_set_fail_links(req);
-+	io_put_req(req);
-+	return 0;
-+}
-+
-+static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_splice* sp = &req->splice;
-+
-+	sp->off_in = READ_ONCE(sqe->splice_off_in);
-+	sp->off_out = READ_ONCE(sqe->off);
-+	return __io_splice_prep(req, sqe);
-+}
-+
- static int io_splice(struct io_kiocb *req, bool force_nonblock)
- {
- 	struct io_splice *sp = &req->splice;
-@@ -4978,6 +5024,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_REMOVE_BUFFERS:
- 		ret = io_remove_buffers_prep(req, sqe);
- 		break;
-+	case IORING_OP_TEE:
-+		ret = io_tee_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -5051,6 +5100,7 @@ static void io_cleanup_req(struct io_kiocb *req)
- 		putname(req->open.filename);
- 		break;
- 	case IORING_OP_SPLICE:
-+	case IORING_OP_TEE:
- 		io_put_file(req, req->splice.file_in,
- 			    (req->splice.flags & SPLICE_F_FD_IN_FIXED));
- 		break;
-@@ -5281,6 +5331,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_remove_buffers(req, force_nonblock);
- 		break;
-+	case IORING_OP_TEE:
-+		if (sqe) {
-+			ret = io_tee_prep(req, sqe);
-+			if (ret < 0)
-+				break;
-+		}
-+		ret = io_tee(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index e48d746b8e2a..a279151437fc 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -129,6 +129,7 @@ enum {
- 	IORING_OP_SPLICE,
- 	IORING_OP_PROVIDE_BUFFERS,
- 	IORING_OP_REMOVE_BUFFERS,
-+	IORING_OP_TEE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.24.0
+--D
 
+The following changes since commit 6a8b55ed4056ea5559ebe4f6a4b247f627870d4c:
+
+  Linux 5.7-rc3 (2020-04-26 13:51:02 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.7-fixes-1
+
+for you to fetch changes up to b75dfde1212991b24b220c3995101c60a7b8ae74:
+
+  fibmap: Warn and return an error in case of block > INT_MAX (2020-04-30 07:57:46 -0700)
+
+----------------------------------------------------------------
+Changes for 5.7:
+- Move the FIBMAP range check and warning out of the backend iomap
+implementation and into the frontend ioctl_fibmap so that the checking
+is consistent for all implementations.
+
+----------------------------------------------------------------
+Ritesh Harjani (1):
+      fibmap: Warn and return an error in case of block > INT_MAX
+
+ fs/ioctl.c        | 8 ++++++++
+ fs/iomap/fiemap.c | 5 +----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
