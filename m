@@ -2,102 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 672E71C21E3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 02:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 639EE1C2206
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 May 2020 02:42:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgEBAZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 May 2020 20:25:09 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39469 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbgEBAZI (ORCPT
+        id S1727815AbgEBAmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 May 2020 20:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbgEBAmD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 May 2020 20:25:08 -0400
-Received: by mail-pj1-f68.google.com with SMTP id e6so564631pjt.4;
-        Fri, 01 May 2020 17:25:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1PeAqJ5SiUZNxwlPTtwXNjCE1HPrHwFDRiunmDICEv0=;
-        b=rLWj60W4gdCQjOKyLTDrKGA5isjU9UVCoX5hsGTq2+XG9Gz4tSZ2OmOml3tsr3DYJv
-         AMwqWFHmhOrvpV56Pw9QrmffDXOGR09Hck9cP+oOoUDmbvDxMEshNAeZqcp6qbolAu2h
-         UQyA3WL+jkXTpC8i3J7vv0zeLdrm0Exh4khivsMVegqLWy0mjHz/y4P1pFfiCQDyvGit
-         4kgTcKjgfe7gx/CPfYptcwMBuHZwgWP7+I6Gasr3qAEAoC6FfULtodpz39wEFJy+TgpB
-         3NP/Xcq3gEPXAbCv+eamTvryeAVftISHgymateuXJknd95mVQ6ffu5WljP1VgBWhpyBO
-         5Oow==
-X-Gm-Message-State: AGi0Pub2mjbQ8fnFD3wHjiVv3s2qhpo+RtwFPg9misPN3EPFbjWR2zOV
-        lWBXZc3QxlnINec04WE7K+4RZPn7p5L9qw==
-X-Google-Smtp-Source: APiQypI3AkWgWLXFTvQI8oSsZ3tQZEJdUfMLz91z+Ov/ex9nniG4APLSEkrFX3MceTXPt5ttdyuFNQ==
-X-Received: by 2002:a17:90a:f698:: with SMTP id cl24mr2624417pjb.71.1588379107454;
-        Fri, 01 May 2020 17:25:07 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:3401:2e72:5c00:8ec0? ([2601:647:4000:d7:3401:2e72:5c00:8ec0])
-        by smtp.gmail.com with ESMTPSA id 6sm3228408pfj.123.2020.05.01.17.25.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 17:25:06 -0700 (PDT)
-Subject: Re: [PATCH v3 3/6] blktrace: move blktrace debugfs creation to helper
- function
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200429074627.5955-1-mcgrof@kernel.org>
- <20200429074627.5955-4-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <cd244b77-fdb1-3249-ecfd-86a306b1d30f@acm.org>
-Date:   Fri, 1 May 2020 17:25:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 1 May 2020 20:42:03 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ED6CC061A0C;
+        Fri,  1 May 2020 17:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=wCroxG0qo4d90wbE2ZO3cJm2P6ZeLXZvihIg8REOcgs=; b=FFzOdU2u101Y4v8/bow0YrVHOq
+        Yq2ZkgZ5WywkZPzpDw1cTKINrvLjkorYmOrrcKeOZkB0S7+ueftGEtP19MgpNU5Ih+5VAXg/CYbfE
+        gnPyWIYBYsjLaeTODQMJ/GXXTCLdLBRmH0o2JhvTrSUhX6tWTpy0WfR30mJzDVy3npb3j5FSXMAmo
+        3tERt9YP3Yi9VFa8MZde/Y9t7NoErTGSgWjW01+MZp8zzXyrtb7rHKi6iNRChzCaZwQJZbwRO02sN
+        bgbo0ygKrxz7jmavzDTXd4mtAR/OucbITlBB9Hmo9GVpVxFFExZKYzLmPsvi+/zXFC0+fhSBHWeWg
+        PGmGj6mA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jUgEA-0002yp-JR; Sat, 02 May 2020 00:41:58 +0000
+Date:   Fri, 1 May 2020 17:41:58 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@infradead.org, david@fromorbit.com
+Subject: Re: [RFC PATCH V2 0/9] Introduce attach/clear_page_private to
+ cleanup code
+Message-ID: <20200502004158.GD29705@bombadil.infradead.org>
+References: <20200430214450.10662-1-guoqing.jiang@cloud.ionos.com>
+ <20200501221626.GC29705@bombadil.infradead.org>
+ <889f9f82-64ba-50b3-147b-459303617aeb@cloud.ionos.com>
 MIME-Version: 1.0
-In-Reply-To: <20200429074627.5955-4-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <889f9f82-64ba-50b3-147b-459303617aeb@cloud.ionos.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-04-29 00:46, Luis Chamberlain wrote:
-> +static struct dentry *blk_trace_debugfs_dir(struct blk_user_trace_setup *buts,
-> +					    struct blk_trace *bt)
-> +{
-> +	struct dentry *dir = NULL;
-> +
-> +	dir = debugfs_lookup(buts->name, blk_debugfs_root);
-> +	if (!dir)
-> +		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
-> +
-> +	return dir;
-> +}
+On Sat, May 02, 2020 at 12:42:15AM +0200, Guoqing Jiang wrote:
+> On 5/2/20 12:16 AM, Matthew Wilcox wrote:
+> > On Thu, Apr 30, 2020 at 11:44:41PM +0200, Guoqing Jiang wrote:
+> > >    include/linux/pagemap.h: introduce attach/clear_page_private
+> > >    md: remove __clear_page_buffers and use attach/clear_page_private
+> > >    btrfs: use attach/clear_page_private
+> > >    fs/buffer.c: use attach/clear_page_private
+> > >    f2fs: use attach/clear_page_private
+> > >    iomap: use attach/clear_page_private
+> > >    ntfs: replace attach_page_buffers with attach_page_private
+> > >    orangefs: use attach/clear_page_private
+> > >    buffer_head.h: remove attach_page_buffers
+> > I think mm/migrate.c could also use this:
+> > 
+> >          ClearPagePrivate(page);
+> >          set_page_private(newpage, page_private(page));
+> >          set_page_private(page, 0);
+> >          put_page(page);
+> >          get_page(newpage);
+> > 
+> 
+> Thanks for checking!  Assume the below change is appropriate.
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 7160c1556f79..f214adfb3fa4 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -797,10 +797,7 @@ static int __buffer_migrate_page(struct address_space
+> *mapping,
+>         if (rc != MIGRATEPAGE_SUCCESS)
+>                 goto unlock_buffers;
+> 
+> -       ClearPagePrivate(page);
+> -       set_page_private(newpage, page_private(page));
+> -       set_page_private(page, 0);
+> -       put_page(page);
+> +       set_page_private(newpage, detach_page_private(page));
+>         get_page(newpage);
 
-Initializing 'dir' is not necessary since the first statement overwrites
-'dir'. Anyway:
+I think you can do:
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+@@ -797,11 +797,7 @@ static int __buffer_migrate_page(struct address_space *mapping,
+        if (rc != MIGRATEPAGE_SUCCESS)
+                goto unlock_buffers;
+ 
+-       ClearPagePrivate(page);
+-       set_page_private(newpage, page_private(page));
+-       set_page_private(page, 0);
+-       put_page(page);
+-       get_page(newpage);
++       attach_page_private(newpage, detach_page_private(page));
+ 
+        bh = head;
+        do {
+@@ -810,8 +806,6 @@ static int __buffer_migrate_page(struct address_space *mapping,
+ 
+        } while (bh != head);
+ 
+-       SetPagePrivate(newpage);
+-
+        if (mode != MIGRATE_SYNC_NO_COPY)
+
+... but maybe there's a subtlety to the ordering of the setup of the bh
+and setting PagePrivate that means what you have there is a better patch.
+Anybody know?
