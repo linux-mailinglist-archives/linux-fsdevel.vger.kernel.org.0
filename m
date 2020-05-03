@@ -2,102 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A18D81C2AD9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 11:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40B31C2B54
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 12:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbgECJJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 05:09:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44519 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbgECJJ0 (ORCPT
+        id S1728081AbgECK1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 06:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46062 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727892AbgECK1n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 05:09:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l20so7035684pgb.11;
-        Sun, 03 May 2020 02:09:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pz+7fmmOLiHvlX4Oa/JOFFvJP8vnA71Hx7aLAhOtAu4=;
-        b=SUmNDkSQ0A3u0BOYvFBjYHivpe1MFTFZMMyzm/M6IiSrrWfiP+nRA12eUuO7jAZ770
-         F62VBNynJeHA+WG4ABqmsTfPzYjH/1Tff1DL1RLeqdEA3xrRXPk1wzmbPQYMfMSnfb63
-         OutwncfcWAuePPSk8XjzmUT7hkILB+FeMRLip+aib2Qz9ENDoSJW4VZUjTAPEJjOt9hS
-         ijbqPt+hnOUOHo8+ZSf6rDmJ8LYYZFr3dBX6T27YSp/lzVOKhLXrvCQFs4O0E0tc5hLU
-         bwaQpOnAVqNu/d+dM3I1cOYTEDaK2zJ7D7VScaAxXlWrc6mZWQh6i8DxmAozFv7XZ9Dx
-         ZQsw==
-X-Gm-Message-State: AGi0PuZvph7MqHHPR7jfhfbtnQLuY2lQsGSE9Gqmj/Z+FeeIfYvfpuZ0
-        Kqe5nUICBmgq2ug0xSH16P0=
-X-Google-Smtp-Source: APiQypIdYUfg+5dhTvIoYTyrqqWdYIDeNhDSPlvSkIws0w55SQ7aMbgV4xFiIfN1Yg3LnHw9AHMQzw==
-X-Received: by 2002:a62:7c16:: with SMTP id x22mr12008122pfc.267.1588496965480;
-        Sun, 03 May 2020 02:09:25 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id o99sm3886559pjo.8.2020.05.03.02.09.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 May 2020 02:09:24 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id AD1C640256; Sun,  3 May 2020 09:09:23 +0000 (UTC)
-Date:   Sun, 3 May 2020 09:09:23 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] loop: be paranoid on exit and prevent new
- additions / removals
-Message-ID: <20200503090923.GP11244@42.do-not-panic.com>
-References: <20200429074627.5955-1-mcgrof@kernel.org>
- <20200429074627.5955-7-mcgrof@kernel.org>
- <20200429095034.GC2081185@kroah.com>
+        Sun, 3 May 2020 06:27:43 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B28C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 May 2020 03:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PXJzVi9DcMYw4QW4HlkLJ29fvHY2Er138s9UOXtJXhI=; b=omO7ng7XHyZIz9nFubKc9pYiQZ
+        S05SCrB8t64Kja5yHvpT7qP4l6LEu/fv0VYEs2RyUt8VdknYDX8ch77ILZ4E8mUk5JX1cjLHPQqza
+        UbY60DWOH6HOlMghoqQsJ2AGOO+Xf8TLjZIZrqPijIRQhDfQkiyppFPpFW8MXNqE59liu9aWhbEuL
+        6ureWb7UC21n1UE/SjwwrmaC4cOirA4BxsuqJ3KQHuh/VZbHJMTPnmwj04vEvrAsqh5ybOozBAXFE
+        ZX0H4fx9/kK7hVEBtxYUMXm/MdnRAIqaDv4eVTmULYAlfbOLUQeDRMq6BAotbGDCrs97Kl4IOJExW
+        +aKx0+qA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jVBqY-0004UZ-68; Sun, 03 May 2020 10:27:42 +0000
+Date:   Sun, 3 May 2020 03:27:42 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>
+Subject: Re: [fuse-devel] fuse: trying to steal weird page
+Message-ID: <20200503102742.GF29705@bombadil.infradead.org>
+References: <87a72qtaqk.fsf@vostro.rath.org>
+ <877dxut8q7.fsf@vostro.rath.org>
+ <20200503032613.GE29705@bombadil.infradead.org>
+ <87368hz9vm.fsf@vostro.rath.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200429095034.GC2081185@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87368hz9vm.fsf@vostro.rath.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 11:50:34AM +0200, Greg KH wrote:
-> On Wed, Apr 29, 2020 at 07:46:27AM +0000, Luis Chamberlain wrote:
-> > Be pedantic on removal as well and hold the mutex.
-> > This should prevent uses of addition while we exit.
-> > 
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  drivers/block/loop.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > index da693e6a834e..6dccba22c9b5 100644
-> > --- a/drivers/block/loop.c
-> > +++ b/drivers/block/loop.c
-> > @@ -2333,6 +2333,8 @@ static void __exit loop_exit(void)
-> >  
-> >  	range = max_loop ? max_loop << part_shift : 1UL << MINORBITS;
-> >  
-> > +	mutex_lock(&loop_ctl_mutex);
-> > +
-> >  	idr_for_each(&loop_index_idr, &loop_exit_cb, NULL);
-> >  	idr_destroy(&loop_index_idr);
-> >  
-> > @@ -2340,6 +2342,8 @@ static void __exit loop_exit(void)
-> >  	unregister_blkdev(LOOP_MAJOR, "loop");
-> >  
-> >  	misc_deregister(&loop_misc);
-> > +
-> > +	mutex_unlock(&loop_ctl_mutex);
-> >  }
-> >  
-> >  module_init(loop_init);
+On Sun, May 03, 2020 at 09:43:41AM +0100, Nikolaus Rath wrote:
+> Here's what I got:
 > 
-> What type of issue is this helping with?  Can it be triggered today?  if
-> so, shouldn't it be backported to stable kernels?
+> [  221.277260] page:ffffec4bbd639880 refcount:1 mapcount:0 mapping:0000000000000000 index:0xd9
+> [  221.277265] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|lru)
+> [  221.277269] raw: 0017ffffc0000097 ffffec4bbd62f048 ffffec4bbd619308 0000000000000000
+> [  221.277271] raw: 00000000000000d9 0000000000000000 00000001ffffffff ffff9aec11beb000
+> [  221.277272] page dumped because: fuse: trying to steal weird page
+> [  221.277273] page->mem_cgroup:ffff9aec11beb000
 
-Just code inspection. I can't trigger a userspace test script to crash
-the kernel yet, but suspect a race still does exist.
+Great!  Here's the condition:
 
-  Luis
+        if (page_mapcount(page) ||
+            page->mapping != NULL ||
+            page_count(page) != 1 ||
+            (page->flags & PAGE_FLAGS_CHECK_AT_PREP &
+             ~(1 << PG_locked |
+               1 << PG_referenced |
+               1 << PG_uptodate |
+               1 << PG_lru |
+               1 << PG_active |
+               1 << PG_reclaim))) {
+
+mapcount is 0, mapping is NULL, refcount is 1, so that's all fine.
+flags has 'waiters' set, which is not in the allowed list.  I don't
+know the internals of FUSE, so I don't know why that is.
+
+Also, page_count() is unstable.  Unless there has been an RCU grace period
+between when the page was freed and now, a speculative reference may exist
+from the page cache.  So I would say this is a bad thing to check for.
+
+Thanks for the swift provision of the debugging data!
