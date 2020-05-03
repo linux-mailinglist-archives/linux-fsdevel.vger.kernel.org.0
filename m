@@ -2,141 +2,318 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1A01C2E05
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 18:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2DAF1C2E61
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 19:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbgECQuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 12:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48670 "EHLO
+        id S1728912AbgECRhN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 13:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728665AbgECQuU (ORCPT
+        with ESMTP id S1728831AbgECRhL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 12:50:20 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E33C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 May 2020 09:50:19 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id y25so4353861pfn.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 May 2020 09:50:19 -0700 (PDT)
+        Sun, 3 May 2020 13:37:11 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B46C061A0E;
+        Sun,  3 May 2020 10:37:10 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id g13so18110682wrb.8;
+        Sun, 03 May 2020 10:37:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K+hDv4e42XPVpaU7hW2zsXn/CRTTWYsAxn7Kxlnx+tM=;
-        b=b0nggKJPlLlCCGh93YpcszVXwxwMkK2lGTEPN1J/nf+PqAWjtCIrD7yq++BEc4Pc5p
-         82+uIWJmP+E94cwVK4pfSTFHRwPdEveebnUudRiZiXdkCiHBZOOIPrCujeSiwx19R1BV
-         ZLRaDcRIN33v5hWuoMJHTQPG4SxFPWgj+RmAdbGU+B30jOw0j9tQDOW5F80guTd4VYC5
-         q+1xjpmvnkeTibW1RLKMKuPhHiL0ZcwQeHpdrDVp8s+PfpL0UrBP1tP/yfmV975VrsHi
-         GKe9jWh518rRCtz9p2GRn8D+TTK3S33oJEsNwCiCfzp1eV/V5i7BWnWwwNVeoE4T5lFe
-         X4Mw==
+        d=gmail.com; s=20161025;
+        h=from:references:user-agent:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=CcNNW48DMJd5dqECUPVDtpDVz5NkbZaOubZZLlBCd0E=;
+        b=htNXykB1FiMsSJ0PjO31O5n3kJzWC9OAb66zDvjZSL8yc1LELM11IhNP2TjIcPb8Jv
+         k3u0UHgkv5cqT6JMmKT5z/muaDpz67l2NMTfLSJgQgzEgD9btLxxA1NhXAUQRijOIrJE
+         10BMErUd5OThZOFhY9aF2yE+Ghttpi1nFBuRNZylXeGC/jwRbi9C2CTg/eonjhcLbU2L
+         2Pjp7ARKgD63y6hOrQAbdIj/aSaEiSgcsBocf0SRbbVVHQugjrcSgy0nP7E0sBgda4NR
+         3uqj9bC8w5JQ+SUNO2hRmsuhuYkQeb/U8tMJz8dfVrDZtpFQBRl0Xo8w1OsnAxioudfv
+         pxjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K+hDv4e42XPVpaU7hW2zsXn/CRTTWYsAxn7Kxlnx+tM=;
-        b=Ne2I84zMw4aBzSZ9MwmPz0qtIRiZYeb1itDvQR8c8HiU5lNikWvMVTdTZ6o56bbMaD
-         ce69dhc8nsRRQKn/T8p7hDEaZnRnfQCtL49sNTwCklnR4ht2/gIT408z+M6Yhd69/Z2H
-         1LNm4+U63jOtsyrYLmnc1Qy71H/K/5uGX+duDd6SNRqGVZiPr/ZPRNOAvh8dD3dBxzBB
-         YLcoR/mgZhC2zXT0kLLbpjfJKlCrf5a9NYAlWUP1l6Pzc3gToZ1Ig8/ikQ+pHk1IPuBH
-         tmu6IAKAA2i9ejiKH/rq6x5+XOFGxDALygAWMzfpAC6aGm1jd/zW77ERNjo3tLvAsQPh
-         Tt1A==
-X-Gm-Message-State: AGi0PubKr/PUZWkxyaUuVnpjjwHYXlvOgCN34FjdTlWwve9NNKlUZBTl
-        3bGMf2CZkCsFPz7GjlSQ5h6yWg==
-X-Google-Smtp-Source: APiQypIYiM7wd1TgxxhVB68L2GiEcwGI2ZqeyG5g7hyx33lJcIt5g3IXRV2M98kxz/uPgwnWED3MtA==
-X-Received: by 2002:a63:d904:: with SMTP id r4mr13484097pgg.323.1588524619294;
-        Sun, 03 May 2020 09:50:19 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id b13sm6848308pfo.67.2020.05.03.09.50.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 May 2020 09:50:18 -0700 (PDT)
-Subject: Re: [PATCH v4] eventfd: convert to f_op->read_iter()
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <6b29f015-bd7c-0601-cf94-2c077285b933@kernel.dk>
- <20200501231231.GR23230@ZenIV.linux.org.uk>
- <03867cf3-d5e7-cc29-37d2-1a417a58af45@kernel.dk>
- <20200503134622.GS23230@ZenIV.linux.org.uk>
- <435c171c-37aa-8f7d-c506-d1e8f07f4bc7@kernel.dk>
-Message-ID: <c8129f11-38a8-64e6-be8e-b485d2b7fb26@kernel.dk>
-Date:   Sun, 3 May 2020 10:50:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:from:references:user-agent:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=CcNNW48DMJd5dqECUPVDtpDVz5NkbZaOubZZLlBCd0E=;
+        b=rWptewSvnAH9jNlS0SZ33Ja/zyAEW2vEP5o5pp/ux5hcnqqr3Se5QakMzXM5Qvge4C
+         cBqWrZDdIXynHccJHuiNsLU3g6O7tqasCZ+52NNifSn2d6h0GQ9QD1n4LOklg3n/dZ3A
+         3H/iRmXcsQ/Xuy7BRo/Jat1LGN/xtDHItL+Qyf2ExkPGD/9u0XGCOQEnvYF3csCkjLKw
+         /5d5J+Cy8d7nMdZphsvk1g91zAHgCY5laNEdJZ4MwTikxz2lTIOarYGYFPaRf0V9bTjH
+         +dei221OW9uW6sVWtYlKiZh5y5L/n1M90sq5xaWYj25n9GDOLHxnxtoY1goMWc2mKam9
+         IwMQ==
+X-Gm-Message-State: AGi0PubSF3Ia4wKwXt20LRhQ59S1OsAA0EG/L+RoHV8Pv+gkMuXo81cc
+        M+mEDtC+m5GmuCf3FolfJXCGuReMlC0zSA==
+X-Google-Smtp-Source: APiQypLBDx2IX/SbA45FnI0MuVve6ubbCLv8YvZOIy2HSAlJcJLQenicxRVMscHSSry4mWXZgSi/8A==
+X-Received: by 2002:a5d:428a:: with SMTP id k10mr14856219wrq.59.1588527428281;
+        Sun, 03 May 2020 10:37:08 -0700 (PDT)
+Received: from darkstar ([51.154.17.58])
+        by smtp.gmail.com with ESMTPSA id n9sm14788939wrx.61.2020.05.03.10.37.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 03 May 2020 10:37:07 -0700 (PDT)
+From:   Patrick Bellasi <derkling@gmail.com>
+X-Google-Original-From: Patrick Bellasi <patrick.bellasi@matbug.com>
+References: <20200501114927.15248-1-qais.yousef@arm.com>
+User-agent: mu4e 1.4.3; emacs 26.3
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+In-reply-to: <20200501114927.15248-1-qais.yousef@arm.com>
+Message-ID: <87h7wwrkcd.derkling@matbug.com>
+Date:   Sun, 03 May 2020 19:37:06 +0200
 MIME-Version: 1.0
-In-Reply-To: <435c171c-37aa-8f7d-c506-d1e8f07f4bc7@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/3/20 8:42 AM, Jens Axboe wrote:
-> On 5/3/20 7:46 AM, Al Viro wrote:
->> On Fri, May 01, 2020 at 05:54:09PM -0600, Jens Axboe wrote:
->>> On 5/1/20 5:12 PM, Al Viro wrote:
->>>> On Fri, May 01, 2020 at 01:11:09PM -0600, Jens Axboe wrote:
->>>>> +	flags &= EFD_SHARED_FCNTL_FLAGS;
->>>>> +	flags |= O_RDWR;
->>>>> +	fd = get_unused_fd_flags(flags);
->>>>>  	if (fd < 0)
->>>>> -		eventfd_free_ctx(ctx);
->>>>> +		goto err;
->>>>> +
->>>>> +	file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
->>>>> +	if (IS_ERR(file)) {
->>>>> +		put_unused_fd(fd);
->>>>> +		fd = PTR_ERR(file);
->>>>> +		goto err;
->>>>> +	}
->>>>>  
->>>>> +	file->f_mode |= FMODE_NOWAIT;
->>>>> +	fd_install(fd, file);
->>>>> +	return fd;
->>>>> +err:
->>>>> +	eventfd_free_ctx(ctx);
->>>>>  	return fd;
->>>>>  }
->>>>
->>>> Looks sane...  I can take it via vfs.git, or leave it for you if you
->>>> have other stuff in the same area...
->>>
->>> Would be great if you can queue it up in vfs.git, thanks! Don't have
->>> anything else that'd conflict with this.
->>
->> Applied; BTW, what happens if
->>         ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
->> fails?  Quitely succeed with BS value (-ENOSPC/-ENOMEM) shown by
->> eventfd_show_fdinfo()?
-> 
-> Huh yeah that's odd, not sure how I missed that when touching code
-> near it. Want a followup patch to fix that issue?
 
-This should do the trick. Ideally we'd change the order of these, and
-shove this fix into 5.7, but not sure it's super important since this
-bug is pretty old. Would make stable backports easier, though...
-Let me know how you want to handle it, as it'll impact the one you
-have already queued up.
+Hi Qais,
 
+few notes follows, but in general I like the way code is now organised.
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 20f0fd4d56e1..96081efdd0c9 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -422,6 +422,10 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-+	if (ctx->id < 0) {
-+		fd = ctx->id;
-+		goto err;
-+	}
- 
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
+On Fri, May 01, 2020 at 13:49:26 +0200, Qais Yousef <qais.yousef@arm.com> wrote...
 
--- 
-Jens Axboe
+[...]
+
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index d4f6215ee03f..e62cef019094 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -59,6 +59,7 @@ extern int sysctl_sched_rt_runtime;
+>  #ifdef CONFIG_UCLAMP_TASK
+>  extern unsigned int sysctl_sched_uclamp_util_min;
+>  extern unsigned int sysctl_sched_uclamp_util_max;
+> +extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+>  #endif
+>  
+>  #ifdef CONFIG_CFS_BANDWIDTH
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 9a2fbf98fd6f..15d2978e1869 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -790,6 +790,26 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+>  /* Max allowed maximum utilization */
+>  unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+>  
+> +/*
+> + * By default RT tasks run at the maximum performance point/capacity of the
+> + * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
+> + * SCHED_CAPACITY_SCALE.
+> + *
+> + * This knob allows admins to change the default behavior when uclamp is being
+> + * used. In battery powered devices, particularly, running at the maximum
+> + * capacity and frequency will increase energy consumption and shorten the
+> + * battery life.
+> + *
+> + * This knob only affects RT tasks that their uclamp_se->user_defined == false.
+> + *
+> + * This knob will not override the system default sched_util_clamp_min defined
+> + * above.
+> + *
+> + * Any modification is applied lazily on the next attempt to calculate the
+> + * effective value of the task.
+> + */
+> +unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
+> +
+>  /* All clamps are required to be less or equal than these values */
+>  static struct uclamp_se uclamp_default[UCLAMP_CNT];
+>  
+> @@ -872,6 +892,28 @@ unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
+>  	return uclamp_idle_value(rq, clamp_id, clamp_value);
+>  }
+>  
+> +static inline void uclamp_sync_util_min_rt_default(struct task_struct *p,
+> +						   enum uclamp_id clamp_id)
+> +{
+> +	struct uclamp_se *uc_se;
+> +
+> +	/* Only sync for UCLAMP_MIN and RT tasks */
+> +	if (clamp_id != UCLAMP_MIN || likely(!rt_task(p)))
+                                      ^^^^^^
+Are we sure that likely makes any difference when used like that?
+
+I believe you should either use:
+
+	if (likely(clamp_id != UCLAMP_MIN || !rt_task(p)))
+
+or completely drop it.
+
+> +		return;
+> +
+> +	uc_se = &p->uclamp_req[UCLAMP_MIN];
+
+nit-pick: you can probably move this at declaration time.
+
+The compiler will be smart enough to either post-pone the init or, given
+the likely() above, "pre-fetch" the value.
+
+Anyway, the compiler is likely smarter then us. :)
+
+> +
+> +	/*
+> +	 * Only sync if user didn't override the default request and the sysctl
+> +	 * knob has changed.
+> +	 */
+> +	if (unlikely(uc_se->user_defined) ||
+> +	    likely(uc_se->value == sysctl_sched_uclamp_util_min_rt_default))
+> +		return;
+
+Same here, I believe likely/unlikely work only if wrapping a full if()
+condition. Thus, you should probably better split the above in two
+separate checks, which also makes for a better inline doc.
+
+> +
+> +	uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt_default, false);
+
+Nit-pick: perhaps we can also improve a bit readability by defining at
+the beginning an alias variable with a shorter name, e.g.
+
+       unsigned int uclamp_min =  sysctl_sched_uclamp_util_min_rt_default;
+
+?
+
+> +}
+> +
+>  static inline struct uclamp_se
+>  uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> @@ -907,8 +949,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  static inline struct uclamp_se
+>  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+> -	struct uclamp_se uc_max = uclamp_default[clamp_id];
+> +	struct uclamp_se uc_req, uc_max;
+> +
+> +	/*
+> +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
+                                                                         ^^^^^
+> +	 */
+
+nit-pick: we can use a single line comment if you drop the (useless)
+'value' at the end.
+
+> +	uclamp_sync_util_min_rt_default(p, clamp_id);
+> +
+> +	uc_req = uclamp_tg_restrict(p, clamp_id);
+> +	uc_max = uclamp_default[clamp_id];
+>  
+>  	/* System default restrictions always apply */
+>  	if (unlikely(uc_req.value > uc_max.value))
+> @@ -1114,12 +1163,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  				loff_t *ppos)
+>  {
+>  	bool update_root_tg = false;
+> -	int old_min, old_max;
+> +	int old_min, old_max, old_min_rt;
+>  	int result;
+>  
+>  	mutex_lock(&uclamp_mutex);
+>  	old_min = sysctl_sched_uclamp_util_min;
+>  	old_max = sysctl_sched_uclamp_util_max;
+> +	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
+>  
+>  	result = proc_dointvec(table, write, buffer, lenp, ppos);
+>  	if (result)
+> @@ -1133,6 +1183,18 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  		goto undo;
+>  	}
+>  
+> +	/*
+> +	 * The new value will be applied to RT tasks the next time the
+> +	 * scheduler needs to calculate the effective uclamp.min for that task,
+> +	 * assuming the task is using the system default and not a user
+> +	 * specified value. In the latter we shall leave the value as the user
+> +	 * requested.
+
+IMO it does not make sense to explain here what you will do with this
+value. This will make even more complicated to maintain the comment
+above if the code using it should change in the future.
+
+So, if the code where we use the knob is not clear enough, maybe we can
+move this comment to the description of:
+   uclamp_sync_util_min_rt_default()
+or to be part of the documentation of:
+  sysctl_sched_uclamp_util_min_rt_default
+
+By doing that you can also just add this if condition with the previous ones.
+
+> +	 */
+> +	if (sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
+> +		result = -EINVAL;
+> +		goto undo;
+> +	}
+> +
+>  	if (old_min != sysctl_sched_uclamp_util_min) {
+>  		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
+>  			      sysctl_sched_uclamp_util_min, false);
+> @@ -1158,6 +1220,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  undo:
+>  	sysctl_sched_uclamp_util_min = old_min;
+>  	sysctl_sched_uclamp_util_max = old_max;
+> +	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
+>  done:
+>  	mutex_unlock(&uclamp_mutex);
+>  
+> @@ -1200,9 +1263,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
+>  		if (uc_se->user_defined)
+>  			continue;
+>  
+> -		/* By default, RT tasks always get 100% boost */
+> +		/*
+> +		 * By default, RT tasks always get 100% boost, which the admins
+> +		 * are allowed to change via
+> +		 * sysctl_sched_uclamp_util_min_rt_default knob.
+> +		 */
+>  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+> -			clamp_value = uclamp_none(UCLAMP_MAX);
+> +			clamp_value = sysctl_sched_uclamp_util_min_rt_default;
+
+Mmm... I suspect we don't need this anymore.
+
+If the task has a user_defined value, we skip this anyway.
+If the task has not a user_defined value, we will do set this anyway at
+each enqueue time.
+
+No?
+
+>  
+>  		uclamp_se_set(uc_se, clamp_value, false);
+>  	}
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 8a176d8727a3..64117363c502 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= sysctl_sched_uclamp_handler,
+>  	},
+> +	{
+> +		.procname	= "sched_util_clamp_min_rt_default",
+> +		.data		= &sysctl_sched_uclamp_util_min_rt_default,
+> +		.maxlen		= sizeof(unsigned int),
+> +		.mode		= 0644,
+> +		.proc_handler	= sysctl_sched_uclamp_handler,
+> +	},
+>  #endif
+>  #ifdef CONFIG_SCHED_AUTOGROUP
+>  	{
+
+Best,
+Patrick
 
