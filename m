@@ -2,102 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B32EE1C2CE2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 15:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E5981C2D0F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 16:42:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbgECNwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 09:52:51 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:32635 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728622AbgECNwu (ORCPT
+        id S1728705AbgECOmo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 10:42:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728277AbgECOmn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 09:52:50 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-194-3gMxvSZ4OeeIzTSoj4h9rA-1; Sun, 03 May 2020 14:52:46 +0100
-X-MC-Unique: 3gMxvSZ4OeeIzTSoj4h9rA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sun, 3 May 2020 14:52:45 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sun, 3 May 2020 14:52:45 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Karstens, Nate'" <Nate.Karstens@garmin.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Sun, 3 May 2020 10:42:43 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A2FC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 May 2020 07:42:43 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id l20so7269544pgb.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 May 2020 07:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=x1J8xB3qB59FMBKk1E4mDFgX9EdfMYR5lTCP5KpiWfY=;
+        b=UBw2EFYaFAKSOg6WT8kyyUN8c69DWsx+7vfxkrdzLzimHytVrnzz0gcAYXvHOHWv2R
+         xkJ1zy10RX4Ka+Y5VyR/AEZOzRDqqL2av9uWZrj99vJVIgOmMwap4RAH2uuRGtL3/27D
+         bKPcH+dCkZGtbiMJXlZB6MNikIl2Gw4s/aMSIR5fJu71Ch4yx8HsY2Th3g0AIHhU+4Uo
+         +x0dwu/D4DbsqCQte+khi3Lz0g+QXRN6/g4wPeSQFp6oYy2FexgWJYuGe2sPpakYviFf
+         7qLAkvKynHIUMi6AqSygJeXUmpdwGLre7bMgYv6eTkYePurOIOgDgx2pybpL5cl6HuJO
+         Lq6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x1J8xB3qB59FMBKk1E4mDFgX9EdfMYR5lTCP5KpiWfY=;
+        b=qZUb7x8LylcK0MMqkPpIwfX+flXZmEAdfWXaiEibi33M2uIpTmzobZiyTYy5M2CaRV
+         hy11mS0ZUpImP39Ys/tMFqJPNbcjdFH6JCJF0SWRDIHyxv2BWf7huF26jBQdUGo+yMLm
+         +OcZ/xe2S9z6Q5w1DXsJkU2LfIqwjrdUR3SqkKC8CpeJEllG8Bzd4ilHO6Jp8J36dSHo
+         29gPJTnX5cw8yWVT8J71YawN7MJAtg1fQA9aNtukoKr+2qHk/cOleQ4ZeDJTKT6jd3We
+         rg/iqfNBlse17WdXCRwP++oJoJjIAfR0v1adL4OPCBWmgDa9HepAFYyYrgaSFEf2nzAY
+         VEPA==
+X-Gm-Message-State: AGi0PuZ49ZI7ybbwy2QWXfbZvz7O2QVeC8Wnnejf77zDXP4F3alJECun
+        S+pC7dAUwDN6YZk/AnimRsV7EQpFnN/z7A==
+X-Google-Smtp-Source: APiQypI8R2hl8PnGCRsD3CcgaSWObue96Us/o1aM8g/gvpKTPm10UEvRGg962xdwRA/a9IxxU3gi8g==
+X-Received: by 2002:a65:4b8d:: with SMTP id t13mr12223136pgq.388.1588516963069;
+        Sun, 03 May 2020 07:42:43 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id p189sm6794303pfp.135.2020.05.03.07.42.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 May 2020 07:42:42 -0700 (PDT)
+Subject: Re: [PATCH v4] eventfd: convert to f_op->read_iter()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Changli Gao <xiaosuo@gmail.com>
-Subject: RE: [PATCH 1/4] fs: Implement close-on-fork
-Thread-Topic: [PATCH 1/4] fs: Implement close-on-fork
-Thread-Index: AQHWFuOUNQrmUX2/BU6CQ6OUTp2yNKiCIimAgBEzlACAAxtC0A==
-Date:   Sun, 3 May 2020 13:52:45 +0000
-Message-ID: <4d00ffe759ec4f87bd7f4e663732838b@AcuMS.aculab.com>
-References: <20200420071548.62112-1-nate.karstens@garmin.com>
- <20200420071548.62112-2-nate.karstens@garmin.com>
- <36dce9b4-a0bf-0015-f6bc-1006938545b1@gmail.com>
- <0e884704c25740df8e652d50431facff@garmin.com>
-In-Reply-To: <0e884704c25740df8e652d50431facff@garmin.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+References: <6b29f015-bd7c-0601-cf94-2c077285b933@kernel.dk>
+ <20200501231231.GR23230@ZenIV.linux.org.uk>
+ <03867cf3-d5e7-cc29-37d2-1a417a58af45@kernel.dk>
+ <20200503134622.GS23230@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <435c171c-37aa-8f7d-c506-d1e8f07f4bc7@kernel.dk>
+Date:   Sun, 3 May 2020 08:42:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200503134622.GS23230@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogS2Fyc3RlbnMsIE5hdGUNCj4gU2VudDogMDEgTWF5IDIwMjAgMTU6NDUNCj4gVGhhbmtz
-IGZvciB0aGUgc3VnZ2VzdGlvbi4gSSBsb29rZWQgaW50byBpdCBhbmQgbm90aWNlZCB0aGF0IGRv
-X2Nsb3NlX29uX2V4ZWMoKSBhcHBlYXJzIHRvIGhhdmUgc29tZQ0KPiBvcHRpbWl6YXRpb25zIGFz
-IHdlbGw6DQo+IA0KPiA+IHNldCA9IGZkdC0+Y2xvc2Vfb25fZXhlY1tpXTsNCj4gPiBpZiAoIXNl
-dCkNCj4gPiAJY29udGludWU7DQo+IA0KPiBJZiB3ZSBpbnRlcmxlYXZlIHRoZSBjbG9zZS1vbi1l
-eGVjIGFuZCBjbG9zZS1vbi1mb3JrIGZsYWdzIHRoZW4gdGhpcyBvcHRpbWl6YXRpb24gd2lsbCBo
-YXZlIHRvIGJlDQo+IHJlbW92ZWQuIERvIHlvdSBoYXZlIGEgc2Vuc2Ugb2Ygd2hpY2ggb3B0aW1p
-emF0aW9uIHByb3ZpZGVzIHRoZSBtb3N0IGJlbmVmaXQ/DQoNClRoaW5rcy4uLi4NCkEgbW9kZXJh
-dGUgcHJvcG9ydGlvbiBvZiBleGVjKCkgd2lsbCBoYXZlIGF0IGxlYXN0IG9uZSBmZCB3aXRoICdj
-bG9zZSBvbiBleGVjJyBzZXQuDQpWZXJ5IGZldyBmb3JrKCkgd2lsbCBoYXZlIGFueSBmZCB3aXRo
-ICdjbG9zZSBvbiBmb3JrJyBzZXQuDQpUaGUgJ2Nsb3NlIG9uIGZvcmsnIHRhYmxlIHNob3VsZG4n
-dCBiZSBjb3BpZWQgdG8gdGhlIGZvcmtlZCBwcm9jZXNzLg0KVGhlICdjbG9zZSBvbiBleGVjJyB0
-YWJsZSBpcyBkZWxldGVkIGJ5IGV4ZWMoKS4NCg0KU28uLi4NCk9uIGZvcmsoKSB0YWtlIGEgY29w
-eSBhbmQgY2xlYXIgdGhlICdjbG9zZV9vbl9mb3JrJyBiaXRtYXAuDQpGb3IgZXZlcnkgYml0IHNl
-dCBsb29rdXAgdGhlIGZkIGFuZCBjbG9zZSBpZiB0aGUgbGl2ZSBiaXQgaXMgc2V0Lg0KU2ltaWxh
-cmx5IGV4ZWMoKSBjbGVhcnMgYW5kIGFjdHMgb24gdGhlICdjbG9zZSBvbiBleGVjJyBtYXAuDQoN
-CllvdSBzaG91bGQgYmUgYWJsZSB0byB1c2UgdGhlIHNhbWUgJ2Nsb3NlIHRoZSBmZHMgaW4gdGhp
-cyBiaXRtYXAnDQpmdW5jdGlvbiBmb3IgYm90aCBjYXNlcy4NCg0KU28gSSB0aGluayB5b3UgbmVl
-ZCB0d28gYml0bWFwcy4NCkJ1dCB0aGUgY29kZSBuZWVkcyB0byBkaWZmZXJlbnRpYXRlIGJldHdl
-ZW4gcmVxdWVzdHMgdG8gc2V0IGJpdHMNCih3aGljaCBuZWVkIHRvIGFsbG9jYXRlL2V4dGVuZCB0
-aGUgYml0bWFwKSBhbmQgb25lcyB0byBjbGVhci9yZWFkDQpiaXRzICh3aGljaCBkbyBub3QpLg0K
-DQpZb3UgbWlnaHQgZXZlbiBjb25zaWRlciBwdXR0aW5nIHRoZSAnbGl2ZScgZmxhZyBpbnRvIHRo
-ZSBmZCBzdHJ1Y3R1cmUNCmFuZCB1c2luZyB0aGUgYml0bWFwIHZhbHVlIGFzIGEgJ2hpbnQnIC0g
-d2hpY2ggbWlnaHQgYmUgaGFzaGVkLg0KDQpBZnRlciBhbGwsIGl0IGlzIGxpa2VseSB0aGF0IHRo
-ZSAnY2xvc2Ugb24gZXhlYycgcHJvY2Vzc2luZw0Kd2lsbCBiZSBmYXN0ZXIgb3ZlcmFsbCBpZiBp
-dCBqdXN0IGxvb3BzIHRocm91Z2ggdGhlIG9wZW4gZmQgYW5kDQpjaGVja3MgZWFjaCBpbiB0dXJu
-IQ0KSSBkb3VidCBtYW55IHByb2Nlc3NlcyBhY3R1YWxseSBleGVjIHdpdGggbW9yZSB0aGFuIGFu
-IGhhbmRmdWwNCm9mIG9wZW4gZmlsZXMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
-c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
-IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On 5/3/20 7:46 AM, Al Viro wrote:
+> On Fri, May 01, 2020 at 05:54:09PM -0600, Jens Axboe wrote:
+>> On 5/1/20 5:12 PM, Al Viro wrote:
+>>> On Fri, May 01, 2020 at 01:11:09PM -0600, Jens Axboe wrote:
+>>>> +	flags &= EFD_SHARED_FCNTL_FLAGS;
+>>>> +	flags |= O_RDWR;
+>>>> +	fd = get_unused_fd_flags(flags);
+>>>>  	if (fd < 0)
+>>>> -		eventfd_free_ctx(ctx);
+>>>> +		goto err;
+>>>> +
+>>>> +	file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx, flags);
+>>>> +	if (IS_ERR(file)) {
+>>>> +		put_unused_fd(fd);
+>>>> +		fd = PTR_ERR(file);
+>>>> +		goto err;
+>>>> +	}
+>>>>  
+>>>> +	file->f_mode |= FMODE_NOWAIT;
+>>>> +	fd_install(fd, file);
+>>>> +	return fd;
+>>>> +err:
+>>>> +	eventfd_free_ctx(ctx);
+>>>>  	return fd;
+>>>>  }
+>>>
+>>> Looks sane...  I can take it via vfs.git, or leave it for you if you
+>>> have other stuff in the same area...
+>>
+>> Would be great if you can queue it up in vfs.git, thanks! Don't have
+>> anything else that'd conflict with this.
+> 
+> Applied; BTW, what happens if
+>         ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+> fails?  Quitely succeed with BS value (-ENOSPC/-ENOMEM) shown by
+> eventfd_show_fdinfo()?
+
+Huh yeah that's odd, not sure how I missed that when touching code
+near it. Want a followup patch to fix that issue?
+
+-- 
+Jens Axboe
 
