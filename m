@@ -2,78 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED8B1C2E6D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 19:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D4E91C2E7E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 20:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgECRp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 13:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728831AbgECRp1 (ORCPT
+        id S1728879AbgECS2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 14:28:39 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49682 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbgECS2j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 13:45:27 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65C7BC061A0E;
-        Sun,  3 May 2020 10:45:27 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id r26so6180363wmh.0;
-        Sun, 03 May 2020 10:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:references:user-agent:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=36HKN1eX4QBns91xZLt6xASIlJevon5QYZl/z69RQPY=;
-        b=IFKYlZaAl5gUxMO/QtqSSywZxS6lD+AgVXy+xzlRLxHdeBgA/txUK9BYpJ4JoU9mun
-         jkGNZcLO0CVI/rrTABIFD2J+8b014tDPpqLSpCquxxUKgN7JaAXKIxMwRdu+TbEyRk01
-         vNpjeTMJNixvmec06tMF8Hb/NHTm8YTs9xaOKVOCuc/pEJ00OfX00/T4sPeSkn5M91mZ
-         /pdvRCXWikS2lcshwbG6QNkb0pla4Xf56VsA17vAAAusjX0F106HyGS5TWMeW0SLeRUr
-         6G2b/5x9kGQQZsaeLpB5l+SRRoweVHTyh7Q9JEUP7QFQPZX+qfYrfrZ+CxysavHVMMWk
-         ARmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:user-agent:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=36HKN1eX4QBns91xZLt6xASIlJevon5QYZl/z69RQPY=;
-        b=QQ35df3ljUMnbodKeiczoNLEbf1QCuPlicn5zO8kkza7IsQvpoFne0IL8WmdA9u+LI
-         GEGer+AsVubigwF7/q9U/m4NH9ZZsp60XhdcyQdGY+fwd4M2fzYmlslhe47uajWsbEjL
-         HY5g6dDuGhdC2+476nVNzMFhN0vWZxgLrkex+JmiKgVxK3wxscUfp/Aa+AK7/04by7q3
-         PQ5WE+DUHZkpQa70x3ShmISxyvboBaMwQ98WwrRxJG4Q0uMflrGfn+5jcQFjxSCytFOM
-         SLUMY0Jf3Gr5sjvL6eWIgr4ksihoxa51CaSwzlMe4h+c2oiTPm1W5M5bm+pw6AgqjVJP
-         vAlA==
-X-Gm-Message-State: AGi0PubpFbIBr15yQdJrFjNHJy1mUxvtpnq4/iMMOMyk1DCWaEbq642Z
-        ZsdB39+fKUEI5GekZvdZNFe/Ai7ILOMXMQ==
-X-Google-Smtp-Source: APiQypJ8GHBJCPVtV4oX3y0cF0j3lcOVXn4fsurFj3AiGUzOs2jmMDZFzaLb+ksbyBFQ5ks+ag4q5Q==
-X-Received: by 2002:a1c:f012:: with SMTP id a18mr9990234wmb.41.1588527925282;
-        Sun, 03 May 2020 10:45:25 -0700 (PDT)
-Received: from darkstar ([51.154.17.58])
-        by smtp.gmail.com with ESMTPSA id f7sm13946189wrt.10.2020.05.03.10.45.23
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 May 2020 10:45:24 -0700 (PDT)
-From:   Patrick Bellasi <derkling@gmail.com>
-X-Google-Original-From: Patrick Bellasi <patrick.bellasi@matbug.com>
-References: <20200501114927.15248-1-qais.yousef@arm.com> <20200501114927.15248-2-qais.yousef@arm.com>
-User-agent: mu4e 1.4.3; emacs 26.3
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] Documentation/sysctl: Document uclamp sysctl knobs
-In-reply-to: <20200501114927.15248-2-qais.yousef@arm.com>
-Message-ID: <87d07krjyk.derkling@matbug.com>
-Date:   Sun, 03 May 2020 19:45:23 +0200
+        Sun, 3 May 2020 14:28:39 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 76D392A0CEA
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
+        =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>
+Subject: Re: [fuse-devel] fuse: trying to steal weird page
+Organization: Collabora
+References: <87a72qtaqk.fsf@vostro.rath.org> <877dxut8q7.fsf@vostro.rath.org>
+        <20200503032613.GE29705@bombadil.infradead.org>
+        <87368hz9vm.fsf@vostro.rath.org>
+        <20200503102742.GF29705@bombadil.infradead.org>
+Date:   Sun, 03 May 2020 14:28:34 -0400
+In-Reply-To: <20200503102742.GF29705@bombadil.infradead.org> (Matthew Wilcox's
+        message of "Sun, 3 May 2020 03:27:42 -0700")
+Message-ID: <85d07kkh4d.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -81,91 +39,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Matthew Wilcox <willy@infradead.org> writes:
 
-Hi Qais,
+> On Sun, May 03, 2020 at 09:43:41AM +0100, Nikolaus Rath wrote:
+>> Here's what I got:
+>> 
+>> [  221.277260] page:ffffec4bbd639880 refcount:1 mapcount:0 mapping:0000000000000000 index:0xd9
+>> [  221.277265] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|lru)
+>> [  221.277269] raw: 0017ffffc0000097 ffffec4bbd62f048 ffffec4bbd619308 0000000000000000
+>> [  221.277271] raw: 00000000000000d9 0000000000000000 00000001ffffffff ffff9aec11beb000
+>> [  221.277272] page dumped because: fuse: trying to steal weird page
+>> [  221.277273] page->mem_cgroup:ffff9aec11beb000
+>
+> Great!  Here's the condition:
+>
+>         if (page_mapcount(page) ||
+>             page->mapping != NULL ||
+>             page_count(page) != 1 ||
+>             (page->flags & PAGE_FLAGS_CHECK_AT_PREP &
+>              ~(1 << PG_locked |
+>                1 << PG_referenced |
+>                1 << PG_uptodate |
+>                1 << PG_lru |
+>                1 << PG_active |
+>                1 << PG_reclaim))) {
+>
+> mapcount is 0, mapping is NULL, refcount is 1, so that's all fine.
+> flags has 'waiters' set, which is not in the allowed list.  I don't
+> know the internals of FUSE, so I don't know why that is.
+>
 
-On Fri, May 01, 2020 at 13:49:27 +0200, Qais Yousef <qais.yousef@arm.com> wrote...
+Hi
 
-[...]
+On the first message, Nikolaus sent the following line:
 
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index 0d427fd10941..521c18ce3d92 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -940,6 +940,54 @@ Enables/disables scheduler statistics. Enabling this feature
->  incurs a small amount of overhead in the scheduler but is
->  useful for debugging and performance tuning.
->  
-> +sched_util_clamp_min:
-> +=====================
-> +
-> +Max allowed *minimum* utilization.
-> +
-> +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>> [ 2333.009937] fuse: page=00000000dd1750e3 index=2022240 flags=17ffffc0000097, count=1,
+>> mapcount=0, mapping=00000000125079ad
 
-Mmm... I feel one of the two is an implementation detail which should
-probably not be exposed?
-
-The user perhaps needs to know the value (1024) but we don't need to
-expose the internal representation.
-
-
-> +value.
-> +
-> +It means that any requested uclamp.min value cannot be greater than
-> +sched_util_clamp_min, i.e., it is restricted to the range
-> +[0:sched_util_clamp_min].
-> +
-> +sched_util_clamp_max:
-> +=====================
-> +
-> +Max allowed *maximum* utilization.
-> +
-> +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-> +value.
-> +
-> +It means that any requested uclamp.max value cannot be greater than
-> +sched_util_clamp_max, i.e., it is restricted to the range
-> +[0:sched_util_clamp_max].
-> +
-> +sched_util_clamp_min_rt_default:
-> +================================
-> +
-> +By default Linux is tuned for performance. Which means that RT tasks always run
-> +at the highest frequency and most capable (highest capacity) CPU (in
-> +heterogeneous systems).
-> +
-> +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-> +SCHED_CAPACITY_SCALE (1024) by default, which effectively boosts the tasks to
-> +run at the highest frequency and biases them to run on the biggest CPU.
-> +
-> +This knob allows admins to change the default behavior when uclamp is being
-> +used. In battery powered devices particularly, running at the maximum
-> +capacity and frequency will increase energy consumption and shorten the battery
-> +life.
-> +
-> +This knob is only effective for RT tasks which the user hasn't modified their
-> +requested uclamp.min value via sched_setattr() syscall.
-> +
-> +This knob will not escape the constraint imposed by sched_util_clamp_min
-> +defined above.
-
-Perhaps it's worth to specify that this value is going to be clamped by
-the values above? Otherwise it's a bit ambiguous to know what happen
-when it's bigger than schedu_util_clamp_min.
-
-> +Any modification is applied lazily on the next opportunity the scheduler needs
-> +to calculate the effective value of uclamp.min of the task.
-                    ^^^^^^^^^
-
-This is also an implementation detail, I would remove it.
-
->  
->  seccomp
->  =======
+It should be noted that on the second run, where we got the dump_page
+log, it indeed had a null mapping, which is similar to what Nikolaus
+asked on the previous thread he linked to, but looks like this wasn't
+the case on at least some of the reproductions of the issue.  On the
+line above, the condition that triggered the warning was page->mapping
+!= NULL.  I don't know what to do with this information, though.
 
 
-Best,
-Patrick
 
+-- 
+Gabriel Krisman Bertazi
