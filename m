@@ -2,167 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76D151C2ABF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 10:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A18D81C2AD9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 11:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgECIov (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 04:44:51 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35021 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726802AbgECIov (ORCPT
+        id S1727846AbgECJJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 05:09:26 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44519 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbgECJJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 04:44:51 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 376065C0288;
-        Sun,  3 May 2020 04:44:50 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sun, 03 May 2020 04:44:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:cc:subject:references:date:in-reply-to:message-id
-        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
-        rWer2zch0gAXDVghugI736C9y6GAGlQEvBqzSynKBrs=; b=wr3hJABdg15h6Wm4
-        nL3wpR23XC9XRPH9rP1YiA49ckUwqNd4GNxwUb0NS0SWS7qau84KswR6ir+yiYjV
-        19Hf9/ORsBDowNdf4jxAn83TTbYg8Ennk6ELjURL5bpV/lfk9Qk17YN4seLbY95w
-        GjtZrQGbPknd4pfFLATT+7ulna8aczUsguec7enY9pFbUVvFByeBuQTeyQGV32QP
-        IdjMxyD6vJ8dgZqnd1XZ/3k8dpnDaan3hdvDiJKCnbIWU2/e1IPXnOgjDbuJYL1I
-        a6/LCIAtA4gTcCA+CLlCMIYHBiFX9l/+St/+VRsU2Bi1gpv8r4aFXn9riwtLd8wQ
-        Ta5fhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=rWer2zch0gAXDVghugI736C9y6GAGlQEvBqzSynKB
-        rs=; b=kgLd/Y4xGOWtVhTVFzrWo7AVoy9rWgchykFCodjfyiX4k8HDEL7aUCtYT
-        uP3qm+pT0o27CSQHrEXVTB1hwTxjABJI4sMGsAUngEQbc0hVpxY+mqSecT/4AhS0
-        aB2ft+8qOPBZiDxutNWtOisJB702K9uZ9amxvs2DY8onWQ9PCGGwsfm8iHPfA+qy
-        hvRGO+8/vUziXjkfFeCpvngUzGy/QDbPjlmBLblVlThQBol1K0QdqbXZ/s1NBN14
-        WDIuCpiyNyz0FqlJMXTF+7m8Tz4MkWLaUh0scSkcNT5en2ZFjEssjsBJmWqIRFrE
-        2AB29lgljYOvIiJmOg4Ji50VDIfAg==
-X-ME-Sender: <xms:gYSuXiK09QQI7RwbAJsX8J_pU37yZMmFjtZUsTURaLpXNrQ0BrB_bg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrjedvgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhkohhl
-    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
-    htvghrnhephfetueeghedutdefteegudfgjefhfedthfehgeegkeejueevieeljedtfeef
-    ffehnecukfhppedukeehrdefrdelgedrudelgeenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:gYSuXsxelANP0-ALuGsGzefY5xSPUP02hpiBUPFZ5q48ze8IhIlboA>
-    <xmx:gYSuXnpqvFiyBfOeLaZ__uD9OfF3G3aFNdI9hH_1-qIM7j6-8n6zQA>
-    <xmx:gYSuXqU_ynZ1d0p2ZPWR33fLCMAdD-f5brsAkA_xz2wVYlKOvwwUQw>
-    <xmx:goSuXpGb6y9RdADjbhGPXlU3z5cCbtCG1zHOHH4kV198aEbV8Ww6-Q>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2B5E0328005D;
-        Sun,  3 May 2020 04:44:49 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 2AF56B4;
-        Sun,  3 May 2020 08:44:48 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id A0922E012A; Sun,  3 May 2020 09:43:41 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>
-Subject: Re: [fuse-devel] fuse: trying to steal weird page
-References: <87a72qtaqk.fsf@vostro.rath.org> <877dxut8q7.fsf@vostro.rath.org>
-        <20200503032613.GE29705@bombadil.infradead.org>
-Mail-Copies-To: never
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, fuse-devel
-        <fuse-devel@lists.sourceforge.net>, linux-mm <linux-mm@kvack.org>,
-        miklos <mszeredi@redhat.com>, Gabriel Krisman Bertazi
-        <krisman@collabora.com>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@collabora.com>
-Date:   Sun, 03 May 2020 09:43:41 +0100
-In-Reply-To: <20200503032613.GE29705@bombadil.infradead.org> (Matthew Wilcox's
-        message of "Sat, 2 May 2020 20:26:13 -0700")
-Message-ID: <87368hz9vm.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sun, 3 May 2020 05:09:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l20so7035684pgb.11;
+        Sun, 03 May 2020 02:09:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pz+7fmmOLiHvlX4Oa/JOFFvJP8vnA71Hx7aLAhOtAu4=;
+        b=SUmNDkSQ0A3u0BOYvFBjYHivpe1MFTFZMMyzm/M6IiSrrWfiP+nRA12eUuO7jAZ770
+         F62VBNynJeHA+WG4ABqmsTfPzYjH/1Tff1DL1RLeqdEA3xrRXPk1wzmbPQYMfMSnfb63
+         OutwncfcWAuePPSk8XjzmUT7hkILB+FeMRLip+aib2Qz9ENDoSJW4VZUjTAPEJjOt9hS
+         ijbqPt+hnOUOHo8+ZSf6rDmJ8LYYZFr3dBX6T27YSp/lzVOKhLXrvCQFs4O0E0tc5hLU
+         bwaQpOnAVqNu/d+dM3I1cOYTEDaK2zJ7D7VScaAxXlWrc6mZWQh6i8DxmAozFv7XZ9Dx
+         ZQsw==
+X-Gm-Message-State: AGi0PuZvph7MqHHPR7jfhfbtnQLuY2lQsGSE9Gqmj/Z+FeeIfYvfpuZ0
+        Kqe5nUICBmgq2ug0xSH16P0=
+X-Google-Smtp-Source: APiQypIdYUfg+5dhTvIoYTyrqqWdYIDeNhDSPlvSkIws0w55SQ7aMbgV4xFiIfN1Yg3LnHw9AHMQzw==
+X-Received: by 2002:a62:7c16:: with SMTP id x22mr12008122pfc.267.1588496965480;
+        Sun, 03 May 2020 02:09:25 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id o99sm3886559pjo.8.2020.05.03.02.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 May 2020 02:09:24 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id AD1C640256; Sun,  3 May 2020 09:09:23 +0000 (UTC)
+Date:   Sun, 3 May 2020 09:09:23 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] loop: be paranoid on exit and prevent new
+ additions / removals
+Message-ID: <20200503090923.GP11244@42.do-not-panic.com>
+References: <20200429074627.5955-1-mcgrof@kernel.org>
+ <20200429074627.5955-7-mcgrof@kernel.org>
+ <20200429095034.GC2081185@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429095034.GC2081185@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On May 02 2020, Matthew Wilcox <willy@infradead.org> wrote:
-> On Sat, May 02, 2020 at 08:52:48PM +0100, Nikolaus Rath wrote:
->> On May 02 2020, Nikolaus Rath <Nikolaus@rath.org> wrote:
->> > I have recently noticed that a FUSE filesystem regularly produces many
->> > kernel messages like this:
->> >
->> > [ 2333.009931] fuse: trying to steal weird page
->> > [ 2333.009937] fuse: page=3D00000000dd1750e3 index=3D2022240 flags=3D1=
-7ffffc0000097, count=3D1,
->> > mapcount=3D0, mapping=3D00000000125079ad
-> ...
->> > What are the implications of the above kernel message? Is there a way =
-to
->> > provide more debugging information?
->
-> It'd be helpful to use the common debugging infrastructure which prints
-> more useful information:
->
-> +++ b/fs/fuse/dev.c
-> @@ -772,8 +772,7 @@ static int fuse_check_page(struct page *page)
->                1 << PG_lru |
->                1 << PG_active |
->                1 << PG_reclaim))) {
-> -               pr_warn("trying to steal weird page\n");
-> -               pr_warn("  page=3D%p index=3D%li flags=3D%08lx, count=3D%=
-i, mapcount=3D%i, mapping=3D%p\n", page, page->index, page->flags, page_cou=
-nt(page), page_mapcount(page), page->mapping);
-> +               dump_page(page, "fuse: trying to steal weird page");
->                 return 1;
->         }
->         return 0;
->
-> (whitespace damaged; if you can't make the equivalent change, let me
-> know and I'll send you a real patch)
+On Wed, Apr 29, 2020 at 11:50:34AM +0200, Greg KH wrote:
+> On Wed, Apr 29, 2020 at 07:46:27AM +0000, Luis Chamberlain wrote:
+> > Be pedantic on removal as well and hold the mutex.
+> > This should prevent uses of addition while we exit.
+> > 
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  drivers/block/loop.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index da693e6a834e..6dccba22c9b5 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -2333,6 +2333,8 @@ static void __exit loop_exit(void)
+> >  
+> >  	range = max_loop ? max_loop << part_shift : 1UL << MINORBITS;
+> >  
+> > +	mutex_lock(&loop_ctl_mutex);
+> > +
+> >  	idr_for_each(&loop_index_idr, &loop_exit_cb, NULL);
+> >  	idr_destroy(&loop_index_idr);
+> >  
+> > @@ -2340,6 +2342,8 @@ static void __exit loop_exit(void)
+> >  	unregister_blkdev(LOOP_MAJOR, "loop");
+> >  
+> >  	misc_deregister(&loop_misc);
+> > +
+> > +	mutex_unlock(&loop_ctl_mutex);
+> >  }
+> >  
+> >  module_init(loop_init);
+> 
+> What type of issue is this helping with?  Can it be triggered today?  if
+> so, shouldn't it be backported to stable kernels?
 
-Here's what I got:
+Just code inspection. I can't trigger a userspace test script to crash
+the kernel yet, but suspect a race still does exist.
 
-[  221.277260] page:ffffec4bbd639880 refcount:1 mapcount:0 mapping:00000000=
-00000000 index:0xd9
-[  221.277265] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|l=
-ru)
-[  221.277269] raw: 0017ffffc0000097 ffffec4bbd62f048 ffffec4bbd619308 0000=
-000000000000
-[  221.277271] raw: 00000000000000d9 0000000000000000 00000001ffffffff ffff=
-9aec11beb000
-[  221.277272] page dumped because: fuse: trying to steal weird page
-[  221.277273] page->mem_cgroup:ffff9aec11beb000
-[  221.601910] page:ffffec4bbd4b2dc0 refcount:1 mapcount:0 mapping:00000000=
-00000000 index:0x1273
-[  221.601915] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|l=
-ru)
-[  221.601919] raw: 0017ffffc0000097 ffffec4bbd51f488 ffffec4bbd4b2d48 0000=
-000000000000
-[  221.601921] raw: 0000000000001273 0000000000000000 00000001ffffffff ffff=
-9aec11beb000
-[  221.601922] page dumped because: fuse: trying to steal weird page
-[  221.601923] page->mem_cgroup:ffff9aec11beb000
-[  221.958699] page:ffffec4bbd424d80 refcount:1 mapcount:0 mapping:00000000=
-00000000 index:0x38be
-[  221.958703] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|l=
-ru)
-[  221.958707] raw: 0017ffffc0000097 ffffec4bbd424048 ffffec4bbd424d48 0000=
-000000000000
-[  221.958709] raw: 00000000000038be 0000000000000000 00000001ffffffff ffff=
-9aec11beb000
-[  221.958710] page dumped because: fuse: trying to steal weird page
-[  221.958711] page->mem_cgroup:ffff9aec11beb000
-
-
-
-Best,
--Nikolaus
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+  Luis
