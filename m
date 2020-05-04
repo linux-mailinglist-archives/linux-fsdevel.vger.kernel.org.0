@@ -2,145 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 054CD1C37BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 13:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71EF31C378A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 13:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbgEDLJl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 07:09:41 -0400
-Received: from mailhub.9livesdata.com ([194.181.36.210]:44402 "EHLO
-        mailhub.9livesdata.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727786AbgEDLJl (ORCPT
+        id S1728592AbgEDLEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 07:04:00 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59751 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728398AbgEDLD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 07:09:41 -0400
-X-Greylist: delayed 552 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 May 2020 07:09:39 EDT
-Received: from [192.168.6.101] (icore-01 [192.168.6.101])
-        by mailhub.9livesdata.com (Postfix) with ESMTP id 241653465BD9;
-        Mon,  4 May 2020 13:00:21 +0200 (CEST)
-From:   Krzysztof Rusek <rusek@9livesdata.com>
-Subject: fuse_notify_inval_inode() may be ineffective when getattr request is
- in progress
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Message-ID: <846ae13f-acd9-9791-3f1b-855e4945012a@9livesdata.com>
-Date:   Mon, 4 May 2020 13:00:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 4 May 2020 07:03:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588590236;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ICTWiD14DGnWtt5uuvQA1CMZKfEw+J2p/55HnpIvnTw=;
+        b=gjkHwbfnmXGE2/vrLlruOQhSUzTe0/hJlHVE0omVAGKzJ2uz4D0H5Uxf+FaOFSUfE4slqZ
+        ioRAXO0BJJ4HfBv64cLsaOJ/xrvPjmB1ux1UYjCARj25bqZos9B9ZwhBIWhTHodQCzXHmd
+        JE3rO7cf9F94/JLD+fDeV8dMxsEew3M=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-257-HNovBpXvNz2dBxnV4eSI3w-1; Mon, 04 May 2020 07:03:52 -0400
+X-MC-Unique: HNovBpXvNz2dBxnV4eSI3w-1
+Received: by mail-wm1-f70.google.com with SMTP id v185so3316141wmg.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 04:03:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ICTWiD14DGnWtt5uuvQA1CMZKfEw+J2p/55HnpIvnTw=;
+        b=M7sMLfG+0ZFJXyQrUPJzMPUOvy3K9k48DIEJZ1MD1mL8WzOdCOwrOlrL8CywzA/JTU
+         6ihVkXQEPNx2O5RIBKztI/7cQ1TY1I3uEcq36TfuaAVPBH/fE09zjBZGyB8A8N5O1+g0
+         nXDIwpIErCyLu2cXG1ecR0ZHTX6SiV3j6ARG2/oIUbQU0orChMghX1QZkI6LUn6oePfg
+         xHHMR40xCB3NzEbK+TLiX0M3a+WfBfIZ5zKPZCLovynEwIL+kzTkMNQ1TxSYH04RXLoL
+         L1i/Zr2/ISYoDNL840IigN49nHpCv0i5gS84nTkyaDfoqvARNqJppZNhcbjDYoDPyS3O
+         9XhA==
+X-Gm-Message-State: AGi0PuaY7aFljgEtPTYO0v0LgeEkuXHQRoeez+CUars3GzCAc/cS3wUL
+        AOI0trDWfY8rTHd7e/TJcrBklRlUpuaia1Qdugi41ccXqpLcFj14RCuCgwvXFI2MkxDoznbMEg1
+        kcvTG1UpZx90uws8U34DMfpLuzw==
+X-Received: by 2002:adf:a2d7:: with SMTP id t23mr4327203wra.402.1588590231209;
+        Mon, 04 May 2020 04:03:51 -0700 (PDT)
+X-Google-Smtp-Source: APiQypIx2aIz7stykmwXWJf7C80Kf95sM7YNOTZKj0BHeE5ekaM3LQpRAivT6MmqN7PrZv1JcZDMtA==
+X-Received: by 2002:adf:a2d7:: with SMTP id t23mr4327156wra.402.1588590230858;
+        Mon, 04 May 2020 04:03:50 -0700 (PDT)
+Received: from localhost.localdomain.com ([194.230.155.213])
+        by smtp.gmail.com with ESMTPSA id a13sm10885750wrv.67.2020.05.04.04.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2020 04:03:50 -0700 (PDT)
+From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Subject: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux kernel statistics
+Date:   Mon,  4 May 2020 13:03:39 +0200
+Message-Id: <20200504110344.17560-1-eesposit@redhat.com>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------52CD8B03056B0F92CAC5F765"
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------52CD8B03056B0F92CAC5F765
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+There is currently no common way for Linux kernel subsystems to expose
+statistics to userspace shared throughout the Linux kernel; subsystems
+have to take care of gathering and displaying statistics by themselves,
+for example in the form of files in debugfs. For example KVM has its own
+code section that takes care of this in virt/kvm/kvm_main.c, where it sets
+up debugfs handlers for displaying values and aggregating them from
+various subfolders to obtain information about the system state (i.e.
+displaying the total number of exits, calculated by summing all exits of
+all cpus of all running virtual machines).
 
-Hello,
+Allowing each section of the kernel to do so has two disadvantages. First,
+it will introduce redundant code. Second, debugfs is anyway not the right
+place for statistics (for example it is affected by lockdown)
 
-I'm working on a user-space file system implementation utilizing fuse 
-kernel module (and libfuse user-space library). This file system 
-implementation provides a custom ioctl operation that uses 
-fuse_lowlevel_notify_inval_inode() function (which translates to 
-fuse_notify_inval_inode() in kernel) to notify the kernel that the file 
-was changed by the ioctl. However, under certain circumstances, 
-fuse_notify_inval_inode() call is ineffective, resulting in incorrect 
-file attributes being cached by the kernel. The problem occurs when 
-ioctl() is executed in parallel with getattr().
+In this patch series I introduce statsfs, a synthetic ram-based virtual
+filesystem that takes care of gathering and displaying statistics for the
+Linux kernel subsystems.
 
-I noticed this problem on RedHat 7.7 (3.10.0-1062.el7.x86_64), but I 
-believe mainline kernel is affected as well.
+The file system is mounted on /sys/kernel/stats and would be already used
+by kvm. Statsfs was initially introduced by Paolo Bonzini [1].
 
-I think there is a bug in the way fuse_notify_inval_inode() invalidates 
-file attributes. If getattr() started before fuse_notify_inval_inode() 
-was called, then the attributes returned by user-space process may be 
-out of date, and should not be cached. But fuse_notify_inval_inode() 
-only clears attribute validity time, which does not prevent getattr() 
-result from being cached.
+Statsfs offers a generic and stable API, allowing any kind of
+directory/file organization and supporting multiple kind of aggregations
+(not only sum, but also average, max, min and count_zero) and data types
+(all unsigned and signed types plus boolean). The implementation, which is
+a generalization of KVM’s debugfs statistics code, takes care of gathering
+and displaying information at run time; users only need to specify the
+values to be included in each source.
 
-More precisely, this bug occurs in the following scenario:
+Statsfs would also be a different mountpoint from debugfs, and would not
+suffer from limited access due to the security lock down patches. Its main
+function is to display each statistics as a file in the desired folder
+hierarchy defined through the API. Statsfs files can be read, and possibly
+cleared if their file mode allows it.
 
-1. kernel starts handling ioctl
-2. file system process receives ioctl request
-3. kernel starts handling getattr
-4. file system process receives getattr request
-5. file system process executes getattr
-6. file system process executes ioctl, changing file state
-7. file system process invokes fuse_lowlevel_notify_inval_inode(), which 
-invalidates file attributes in kernel
-8. file system process sends ioctl reply, ioctl handling ends
-9. file system process sends getattr reply, attributes are incorrectly 
-cached in the kernel
+Statsfs has two main components: the public API defined by
+include/linux/statsfs.h, and the virtual file system which should end up
+in /sys/kernel/stats.
 
-(Note that this scenario assumes that file system implementation is 
-multi-threaded, therefore allowing ioctl() and getattr() to be handled 
-in parallel.)
+The API has two main elements, values and sources. Kernel subsystems like
+KVM can use the API to create a source, add child
+sources/values/aggregates and register it to the root source (that on the
+virtual fs would be /sys/kernel/statsfs).
 
-I'm attaching an archive with a reproduction test for this problem. The 
-archive contains a README file explaining how to compile/run it.
+Sources are created via statsfs_source_create(), and each source becomes a
+directory in the file system. Sources form a parent-child relationship;
+root sources are added to the file system via statsfs_source_register().
+Every other source is added to or removed from a parent through the
+statsfs_source_add_subordinate and statsfs_source_remote_subordinate APIs.
+Once a source is created and added to the tree (via add_subordinate), it
+will be used to compute aggregate values in the parent source.
 
-By the way, to avoid a somehow similar race when write() is executed in 
-parallel with getattr(), there is a special FUSE_I_SIZE_UNSTABLE bit set 
-for the duration of write() operation.
+Values represent quantites that are gathered by the statsfs user. Examples
+of values include the number of vm exits of a given kind, the amount of
+memory used by some data structure, the length of the longest hash table
+chain, or anything like that. Values are defined with the
+statsfs_source_add_values function. Each value is defined by a struct
+statsfs_value; the same statsfs_value can be added to many different
+sources. A value can be considered "simple" if it fetches data from a
+user-provided location, or "aggregate" if it groups all values in the
+subordinates sources that include the same statsfs_value.
 
-Best regards,
-Krzysztof Rusek
+For more information, please consult the kerneldoc documentation in patch
+2 and the sample uses in the kunit tests and in KVM.
 
---------------52CD8B03056B0F92CAC5F765
-Content-Type: application/gzip;
- name="fusebug.tar.gz"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="fusebug.tar.gz"
+This series of patches is based on my previous series "libfs: group and
+simplify linux fs code" and the single patch sent to kvm "kvm_host: unify
+VM_STAT and VCPU_STAT definitions in a single place". The former
+simplifies code duplicated in debugfs and tracefs (from which statsfs is
+based on), the latter groups all macros definition for statistics in kvm
+in a single common file shared by all architectures.
 
-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
---------------52CD8B03056B0F92CAC5F765--
+Patch 1 adds a new refcount and kref destructor wrappers that take a
+semaphore, as those are used later by statsfs. Patch 2 introduces the
+statsfs API, patch 3 provides extensive tests that can also be used as
+example on how to use the API and patch 4 adds the file system support.
+Finally, patch 5 provides a real-life example of statsfs usage in KVM.
+
+[1] https://lore.kernel.org/kvm/5d6cdcb1-d8ad-7ae6-7351-3544e2fa366d@redhat.com/?fbclid=IwAR18LHJ0PBcXcDaLzILFhHsl3qpT3z2vlG60RnqgbpGYhDv7L43n0ZXJY8M
+
+Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+
+v1->v2 remove unnecessary list_foreach_safe loops, fix wrong indentation,
+change statsfs in stats_fs
+
+Emanuele Giuseppe Esposito (5):
+  refcount, kref: add dec-and-test wrappers for rw_semaphores
+  stats_fs API: create, add and remove stats_fs sources and values
+  kunit: tests for stats_fs API
+  stats_fs fs: virtual fs to show stats to the end-user
+  kvm_main: replace debugfs with stats_fs
+
+ MAINTAINERS                     |    7 +
+ arch/arm64/kvm/Kconfig          |    1 +
+ arch/arm64/kvm/guest.c          |    2 +-
+ arch/mips/kvm/Kconfig           |    1 +
+ arch/mips/kvm/mips.c            |    2 +-
+ arch/powerpc/kvm/Kconfig        |    1 +
+ arch/powerpc/kvm/book3s.c       |    6 +-
+ arch/powerpc/kvm/booke.c        |    8 +-
+ arch/s390/kvm/Kconfig           |    1 +
+ arch/s390/kvm/kvm-s390.c        |   16 +-
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kvm/Kconfig            |    1 +
+ arch/x86/kvm/Makefile           |    2 +-
+ arch/x86/kvm/debugfs.c          |   64 --
+ arch/x86/kvm/stats_fs.c         |   56 ++
+ arch/x86/kvm/x86.c              |    6 +-
+ fs/Kconfig                      |   12 +
+ fs/Makefile                     |    1 +
+ fs/stats_fs/Makefile            |    6 +
+ fs/stats_fs/inode.c             |  337 ++++++++++
+ fs/stats_fs/internal.h          |   35 +
+ fs/stats_fs/stats_fs-tests.c    | 1088 +++++++++++++++++++++++++++++++
+ fs/stats_fs/stats_fs.c          |  773 ++++++++++++++++++++++
+ include/linux/kref.h            |   11 +
+ include/linux/kvm_host.h        |   39 +-
+ include/linux/refcount.h        |    2 +
+ include/linux/stats_fs.h        |  304 +++++++++
+ include/uapi/linux/magic.h      |    1 +
+ lib/refcount.c                  |   32 +
+ tools/lib/api/fs/fs.c           |   21 +
+ virt/kvm/arm/arm.c              |    2 +-
+ virt/kvm/kvm_main.c             |  314 ++-------
+ 32 files changed, 2772 insertions(+), 382 deletions(-)
+ delete mode 100644 arch/x86/kvm/debugfs.c
+ create mode 100644 arch/x86/kvm/stats_fs.c
+ create mode 100644 fs/stats_fs/Makefile
+ create mode 100644 fs/stats_fs/inode.c
+ create mode 100644 fs/stats_fs/internal.h
+ create mode 100644 fs/stats_fs/stats_fs-tests.c
+ create mode 100644 fs/stats_fs/stats_fs.c
+ create mode 100644 include/linux/stats_fs.h
+
+-- 
+2.25.2
+
