@@ -2,109 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 547531C3F86
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 18:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 880E91C3F8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 18:16:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbgEDQON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 12:14:13 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60244 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbgEDQON (ORCPT
+        id S1729461AbgEDQQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 12:16:03 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42511 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729297AbgEDQQD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 12:14:13 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 044Fta2g150099;
-        Mon, 4 May 2020 16:13:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=Uuh1IJ8pB0K+VMTYDs8Zuh+vG5xj9hQbQ99FMw/17ys=;
- b=neQLZziZ4rQ+6tvbTUB3Kcy+OFOZKVIq+dwiEKIRJz3K+rKIA8zXYSxUdg0v2oRfx4gt
- 5Cr6hLdH/wM/TBnXuM2j49YZQ9HJWih61J1yaU8KJTk7fbmkM5IKh0BYf0aCSph6s2nE
- xRQxNlkY05IhAFStfOKzpMQosS3kB7QVn95DvhlaZTtFd/cgBkQyue5rzsWr1LJwS2l1
- GPrJfR0nU5YdgiBPI0v3KdGDoeEAIiM5nvustGd6ByNcbusoLpO6ivK/qvAFqoSRgAne
- pPVbnA9G2jhzXnKqhHtn3YeTaZuy/JF65xtNyQdr6P9ToW051/LFZtsulYW1oA2zYdLA Sg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 30s0tm7vq9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 May 2020 16:13:57 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 044G6qJR061942;
-        Mon, 4 May 2020 16:13:56 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 30sjdquymb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 May 2020 16:13:56 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 044GDskG025963;
-        Mon, 4 May 2020 16:13:54 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 May 2020 09:13:54 -0700
-Date:   Mon, 4 May 2020 09:13:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     ira.weiny@intel.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: [ANNOUNCE] xfs-linux: vfs-for-next updated to 83d9088659e8
-Message-ID: <20200504161352.GA13783@magnolia>
+        Mon, 4 May 2020 12:16:03 -0400
+Received: by mail-pl1-f195.google.com with SMTP id v2so6937241plp.9;
+        Mon, 04 May 2020 09:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2qr/Rk79g2nyCpDovhCY1s+LWpouRn7/uoh4iQYGd3A=;
+        b=bbZ4Z5WpjtQ/DIbg3J0QTujULI9KDWOJo6Z+xzSyFMeQU72ezGxp6NcY9YiO4gPvCk
+         nO2JIi8nlfhW4iu78U6pLD5k7Bq+Mt5wv6t+2syb+shj+9EGpH+hu5z1Jj6zA8f8hKFI
+         TNYQlYBSUJWdYWVoeIGPDdLUMwnH0ZjwkSXcfQzVqhNnsdL84GgwuncyxrnCkQpC1BJl
+         53xPX2G3QVAx3qVvLHuo3YC5gr/IzP/6bTHtl676+QUqVFHOa3+8bgav3pNTzwk6EYXr
+         mg36GidhX73kb2hYzldMleIwBFF347olBGPbQqwOyv40JO1xU5MoSeYYDuNqwtuj/tug
+         HipQ==
+X-Gm-Message-State: AGi0PuZB7L/p0fFPaXActO6Slp6Nimf+b+hUyOgtsvMCXAUuuLOX0uZU
+        eXXR2z01ffzbBPmga1+3PY8=
+X-Google-Smtp-Source: APiQypI11dj1BVZm0pIlZtfQDOMV2Dgjh1v2g/gqiPgsYO6t7Us71OisiFDj5bDWYh1D4JNJCy0RzQ==
+X-Received: by 2002:a17:902:8608:: with SMTP id f8mr9045plo.110.1588608962714;
+        Mon, 04 May 2020 09:16:02 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id h13sm9193057pfk.86.2020.05.04.09.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2020 09:16:01 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8F58F403EA; Mon,  4 May 2020 16:16:00 +0000 (UTC)
+Date:   Mon, 4 May 2020 16:16:00 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v3 1/6] block: revert back to synchronous request_queue
+ removal
+Message-ID: <20200504161600.GQ11244@42.do-not-panic.com>
+References: <20200429074627.5955-1-mcgrof@kernel.org>
+ <20200429074627.5955-2-mcgrof@kernel.org>
+ <a2c64413-d0a4-e5c8-e0fa-904285a1189e@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9610 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=2 mlxscore=0
- bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005040127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9610 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=2
- phishscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005040127
+In-Reply-To: <a2c64413-d0a4-e5c8-e0fa-904285a1189e@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Fri, May 01, 2020 at 05:22:12PM -0700, Bart Van Assche wrote:
+> Please fix the spelling errors. Otherwise this patch looks good to me.
 
-The vfs-for-next branch of the xfs-linux repository at:
+Fixed, thanks for the review.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-
-has just been updated.
-
-After a very, very long process of discussing how sysadmins and app
-programmers are supposed to tag files for DAX data access mode, we have
-reached an agreement about how the userspace knobs should work.  This
-first update contains the necessary documentation updates and statx mode
-flag to enable the behaviors that we have decided on.  The second part
-(hinting at inode eviction to change the DAX mode) will come later after
-everyone has had a few days to let this soak in.
-
-The new head of the vfs-for-next branch is commit:
-
-83d9088659e8 Documentation/dax: Update Usage section
-
-New Commits:
-
-Ira Weiny (3):
-      [efbe3c2493d2] fs: Remove unneeded IS_DAX() check in io_is_direct()
-      [712b2698e4c0] fs/stat: Define DAX statx attribute
-      [83d9088659e8] Documentation/dax: Update Usage section
-
-
-Code Diffstat:
-
- Documentation/filesystems/dax.txt | 142 +++++++++++++++++++++++++++++++++++++-
- drivers/block/loop.c              |   6 +-
- fs/stat.c                         |   3 +
- include/linux/fs.h                |   7 +-
- include/uapi/linux/stat.h         |   1 +
- 5 files changed, 147 insertions(+), 12 deletions(-)
+  Luis
