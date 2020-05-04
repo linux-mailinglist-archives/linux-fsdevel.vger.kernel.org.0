@@ -2,106 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA89B1C310A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 03:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6981A1C3167
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 05:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgEDBZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 21:25:59 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:60847 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbgEDBZ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 21:25:58 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49FlYH0HjSz9sSr;
-        Mon,  4 May 2020 11:25:55 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1588555556;
-        bh=vc2ocq2LVzS7oNXSMpHcVG3xe33e0fBbGhPZyRYagfM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=P+yJzoL4bKmQgxZi1HZa5TPP9rwqF/h2NThx+pjTcMdtdBDNff/3h228jqwzsXE2b
-         NQJQhDYncXGB0zYQeDkYjscr4OF+6Rqxpr31OS5Obez0CGvi8oBiJ3Y2azikMftqQt
-         U+jzCD47pLK/nuTaLkh3aiYDzUWWzf1IbXyuYsgSqVM3RNmpilPBYaN/E+R7RNNqo1
-         WT9ab3XNgwxWwK5N/cas1cph5490Z5afc6RVZtTmbZpHUnnVlwPo1486wsKlO+zmPg
-         yu1OUHXML1YrIkeJQ8m9spCLWXR6FJr3ec9jOEGd6cjZcxZe1mrlNfBUbSa4Vnfgr4
-         ZNwuqxT3rnTxQ==
-Date:   Mon, 4 May 2020 11:25:52 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH 3/5] sysctl: remove all extern declaration from sysctl.c
-Message-ID: <20200504112552.4dbdd2a9@canb.auug.org.au>
-In-Reply-To: <20200424064338.538313-4-hch@lst.de>
-References: <20200424064338.538313-1-hch@lst.de>
-        <20200424064338.538313-4-hch@lst.de>
+        id S1727774AbgEDDKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 23:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59604 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbgEDDKl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 3 May 2020 23:10:41 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4166BC061A0E;
+        Sun,  3 May 2020 20:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XXJ2nLBUwta0Na249+bQSZuRqkr1ECfsOkPvLduFZV0=; b=g1BP8fSKFiDU9E9Y5b2D0PjBQ9
+        FiTM+ywvRARjPcGKha2iPGb2jDEvx4LVKONbuyki4+x71gAasA27cT0q7u8QoYcB0MwlN7ERRAJjr
+        WKLnPLVnRh/Vvm8n2lv8RnuZh4WkFYGYhZWt3YjYZtfWynEsbpCZN6eCn6dRZngWoeKtGfdtJ+EQq
+        SOqybcna34WTXu2+HnuBtfRdxEUnJteMRxhaUazWMbKkOkkV0aX4akfdTLlkJF3tVZprTnXy+OUKw
+        8LXH5a3Mb5pTkOQv29D2dUwD64tkrWPqnWEtXX81TQDDdXOhEefvUS1+BM0OuXD8ViENU2E8FosH7
+        tmjJOBBw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jVRV6-0000DP-89; Mon, 04 May 2020 03:10:36 +0000
+Date:   Sun, 3 May 2020 20:10:36 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 18/25] mm: Allow large pages to be added to the page
+ cache
+Message-ID: <20200504031036.GB16070@bombadil.infradead.org>
+References: <20200429133657.22632-1-willy@infradead.org>
+ <20200429133657.22632-19-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ze/S33mgpR/AlQdumg8GhV7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429133657.22632-19-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/Ze/S33mgpR/AlQdumg8GhV7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 29, 2020 at 06:36:50AM -0700, Matthew Wilcox wrote:
+> @@ -886,7 +906,7 @@ static int __add_to_page_cache_locked(struct page *page,
+>  	/* Leave page->index set: truncation relies upon it */
+>  	if (!huge)
+>  		mem_cgroup_cancel_charge(page, memcg, false);
+> -	put_page(page);
+> +	page_ref_sub(page, nr);
+>  	return xas_error(&xas);
+>  }
+>  ALLOW_ERROR_INJECTION(__add_to_page_cache_locked, ERRNO);
 
-Hi Christoph,
+This is wrong.  page_ref_sub() will not call __put_page() if the refcount
+gets to zero.  What do people prefer?
 
-On Fri, 24 Apr 2020 08:43:36 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> Extern declarations in .c files are a bad style and can lead to
-> mismatches.  Use existing definitions in headers where they exist,
-> and otherwise move the external declarations to suitable header
-> files.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/coredump.h |  4 ++++
->  include/linux/file.h     |  2 ++
->  include/linux/mm.h       |  2 ++
->  include/linux/mmzone.h   |  2 ++
->  include/linux/pid.h      |  3 +++
->  include/linux/sysctl.h   |  8 +++++++
->  kernel/sysctl.c          | 45 +++-------------------------------------
->  7 files changed, 24 insertions(+), 42 deletions(-)
+-	put_page(page);
 
-A couple of suggestions for another patch (since this one is in a
-shared branch in Al's tree now):
+(a)
++	put_thp(page);
 
-There is an "extern struct ctl_table random_table[];" in
-drivers/char/random.c which is redundant now (in fact always was).
+(b)
++	put_page_nr(page, nr);
 
-There is already an "extern struct ctl_table epoll_table[];" in
-include/linux/poll.h, so could have included that in kernel/sysctl.c
-instead of adding the new one in include/linux/sysctl.h
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ze/S33mgpR/AlQdumg8GhV7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6vbyAACgkQAVBC80lX
-0GxFGwf/WH/cv5RMadV9dmdAfJGI/cu7ozy5lgpWNwTKsdi4ITqe5NGRhPUzU4yW
-G2MRxjhFk0AMvRQWk9cdWriceLeojws2iI4W6ht10nYedCXG70ee+MJ/TEx7VJ5f
-+Cff6GVaFu+4/qF04l/XTgi75XrzhNxQx3EptjGJg89jeJoKB219icmdSfwb8lBE
-RzU/qAufZ62wf5ClRmbyMJ0rj0RqdpKI/Jg+gD/rYE9HnveOnyLkFRDY7Zn5s7H8
-k+TPkw9I4xlWwDYr6cp43CX4rfGlZNoByoYat5ExYbvsjtPk9ygEYm9liKVKgIqh
-riEp/3lZakla9sctllvU4m6A6mIQJQ==
-=LZ1e
------END PGP SIGNATURE-----
-
---Sig_/Ze/S33mgpR/AlQdumg8GhV7--
+(c)
++	if (page_ref_sub_return(page, nr) == 0)
++		__put_page(page);
