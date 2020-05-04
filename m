@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C40461C413B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 19:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3A31C4144
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 19:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbgEDRKg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 13:10:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46107 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729958AbgEDRKg (ORCPT
+        id S1730274AbgEDRKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 13:10:44 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:32522 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730263AbgEDRKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 13:10:36 -0400
+        Mon, 4 May 2020 13:10:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588612231;
+        s=mimecast20190719; t=1588612239;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=96SxmuKlV25Lla2gzXNPRpubxboKMw7cO+om1ALOtMw=;
-        b=CVQXDQ57L/NK8tvIxUHQgES2av2fzwdGIlTXlm5SL34HGm8tOG5BUnSE5Gf+z2nvMch71i
-        Qt2zjfmVD8fAVdmqDB2d7rdGUkyZYZPo6qy7hDejAk+PKh/qYXRt3HcWd3qwsR9uHwFrMe
-        eMOiDVmY+8jtSdTKslqt23/8jDi+h+E=
+        bh=ziVh1EL1Ehrwcxm8whnchbheyq0zd4kEH339R26rgo8=;
+        b=Si7/UPsuDfDDQFV4PNS5NHxLWa44oytfFALbrsoRE76c1gqVCE0JYeWN78lRU+AyWu1A7H
+        4RbC1N6vXbQqJ8RMr7QoOTLrBGuYsVAMpAnZTKqPMSNgj2v3ThPYeOoi3CNbY/k+WX+SzK
+        JvFS1E1KfOnOoMEeCEObgYgXfNqBliA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-OeSfqIVKMG-29WwaNJ9pIg-1; Mon, 04 May 2020 13:10:27 -0400
-X-MC-Unique: OeSfqIVKMG-29WwaNJ9pIg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-368-fV6tDUX2OXePH0SApp27bQ-1; Mon, 04 May 2020 13:10:37 -0400
+X-MC-Unique: fV6tDUX2OXePH0SApp27bQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B51A81800D4A;
-        Mon,  4 May 2020 17:10:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF86B100CCC0;
+        Mon,  4 May 2020 17:10:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D6CE75D9DD;
-        Mon,  4 May 2020 17:10:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CFA335C1B2;
+        Mon,  4 May 2020 17:10:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 19/61] fscache: Remove the I/O operation manager
+Subject: [RFC PATCH 20/61] cachefiles: Remove tree of active files and use
+ S_CACHE_FILE inode flag
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -50,1101 +51,755 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 04 May 2020 18:10:22 +0100
-Message-ID: <158861222204.340223.10016122662634480669.stgit@warthog.procyon.org.uk>
+Date:   Mon, 04 May 2020 18:10:31 +0100
+Message-ID: <158861223095.340223.16833900707367414548.stgit@warthog.procyon.org.uk>
 In-Reply-To: <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
 References: <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.21
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the fscache I/O operation manager.  Getting operation-operation
-interactions and object-operation interactions correct has proven really
-difficult; furthermore, the operations are being replaced with kiocb-driven
-stuff on the cache front.
+Remove the tree of active dentries from the cachefiles_cache struct and
+instead set a flag, S_CACHE_FILE, on the backing inode to indicate that
+this file is in use by the kernel so as to ward off other kernel users.
+
+This simplifies the code a lot and also prevents two overlain caches from
+fighting with each other.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/namei.c          |    5 
- fs/fscache/Makefile            |    3 
- fs/fscache/cache.c             |    3 
- fs/fscache/cookie.c            |    1 
- fs/fscache/internal.h          |   13 -
- fs/fscache/object-list.c       |   25 --
- fs/fscache/object.c            |   24 --
- fs/fscache/operation.c         |  633 ----------------------------------------
- include/linux/fscache-cache.h  |   71 ----
- include/trace/events/fscache.h |   57 ----
- 10 files changed, 7 insertions(+), 828 deletions(-)
- delete mode 100644 fs/fscache/operation.c
+ fs/cachefiles/daemon.c            |    4 
+ fs/cachefiles/interface.c         |   20 --
+ fs/cachefiles/internal.h          |   10 -
+ fs/cachefiles/namei.c             |  375 +++++++------------------------------
+ include/trace/events/cachefiles.h |   29 ---
+ 5 files changed, 78 insertions(+), 360 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 432002080b83..924042e8cced 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -36,9 +36,8 @@ void __cachefiles_printk_object(struct cachefiles_object *object,
- 	       prefix, object->fscache.state->name,
- 	       object->fscache.flags, work_busy(&object->fscache.work),
- 	       object->fscache.events, object->fscache.event_mask);
--	pr_err("%sops=%u inp=%u exc=%u\n",
--	       prefix, object->fscache.n_ops, object->fscache.n_in_progress,
--	       object->fscache.n_exclusive);
-+	pr_err("%sops=%u\n",
-+	       prefix, object->fscache.n_ops);
- 	pr_err("%sparent=%p\n",
- 	       prefix, object->fscache.parent);
+diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+index 752c1e43416f..8a937d6d5e22 100644
+--- a/fs/cachefiles/daemon.c
++++ b/fs/cachefiles/daemon.c
+@@ -102,8 +102,6 @@ static int cachefiles_daemon_open(struct inode *inode, struct file *file)
+ 	}
  
-diff --git a/fs/fscache/Makefile b/fs/fscache/Makefile
-index 565a3441d31d..ac3fcd909fff 100644
---- a/fs/fscache/Makefile
-+++ b/fs/fscache/Makefile
-@@ -9,8 +9,7 @@ fscache-y := \
- 	fsdef.o \
- 	main.o \
- 	netfs.o \
--	object.o \
--	operation.o
-+	object.o
+ 	mutex_init(&cache->daemon_mutex);
+-	cache->active_nodes = RB_ROOT;
+-	rwlock_init(&cache->active_lock);
+ 	init_waitqueue_head(&cache->daemon_pollwq);
  
- fscache-$(CONFIG_PROC_FS) += proc.o
- fscache-$(CONFIG_FSCACHE_STATS) += stats.o
-diff --git a/fs/fscache/cache.c b/fs/fscache/cache.c
-index 1c91ecfb8360..bea53cd92a45 100644
---- a/fs/fscache/cache.c
-+++ b/fs/fscache/cache.c
-@@ -182,12 +182,9 @@ void fscache_init_cache(struct fscache_cache *cache,
- 	vsnprintf(cache->identifier, sizeof(cache->identifier), idfmt, va);
- 	va_end(va);
+ 	/* set default caching limits
+@@ -138,8 +136,6 @@ static int cachefiles_daemon_release(struct inode *inode, struct file *file)
  
--	INIT_WORK(&cache->op_gc, fscache_operation_gc);
- 	INIT_LIST_HEAD(&cache->link);
- 	INIT_LIST_HEAD(&cache->object_list);
--	INIT_LIST_HEAD(&cache->op_gc_list);
- 	spin_lock_init(&cache->object_list_lock);
--	spin_lock_init(&cache->op_gc_list_lock);
+ 	cachefiles_daemon_unbind(cache);
+ 
+-	ASSERT(!cache->active_nodes.rb_node);
+-
+ 	/* clean up the control file interface */
+ 	cache->cachefilesd = NULL;
+ 	file->private_data = NULL;
+diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+index 99f42d216ef7..b868afb970ad 100644
+--- a/fs/cachefiles/interface.c
++++ b/fs/cachefiles/interface.c
+@@ -36,7 +36,6 @@ static struct fscache_object *cachefiles_alloc_object(
+ 
+ 	ASSERTCMP(object->backer, ==, NULL);
+ 
+-	BUG_ON(test_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags));
+ 	atomic_set(&object->usage, 1);
+ 
+ 	fscache_object_init(&object->fscache, cookie, &cache->cache);
+@@ -74,7 +73,6 @@ static struct fscache_object *cachefiles_alloc_object(
+ nomem_key:
+ 	kfree(buffer);
+ nomem_buffer:
+-	BUG_ON(test_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags));
+ 	kmem_cache_free(cachefiles_object_jar, object);
+ 	fscache_object_destroyed(&cache->cache);
+ nomem_object:
+@@ -190,8 +188,6 @@ static void cachefiles_drop_object(struct fscache_object *_object)
+ 	struct cachefiles_object *object;
+ 	struct cachefiles_cache *cache;
+ 	const struct cred *saved_cred;
+-	struct inode *inode;
+-	blkcnt_t i_blocks = 0;
+ 
+ 	ASSERT(_object);
+ 
+@@ -218,10 +214,6 @@ static void cachefiles_drop_object(struct fscache_object *_object)
+ 		    _object != cache->cache.fsdef
+ 		    ) {
+ 			_debug("- retire object OBJ%x", object->fscache.debug_id);
+-			inode = d_backing_inode(object->dentry);
+-			if (inode)
+-				i_blocks = inode->i_blocks;
+-
+ 			cachefiles_begin_secure(cache, &saved_cred);
+ 			cachefiles_delete_object(cache, object);
+ 			cachefiles_end_secure(cache, saved_cred);
+@@ -231,14 +223,11 @@ static void cachefiles_drop_object(struct fscache_object *_object)
+ 		if (object->backer != object->dentry)
+ 			dput(object->backer);
+ 		object->backer = NULL;
+-	}
+ 
+-	/* note that the object is now inactive */
+-	if (test_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags))
+-		cachefiles_mark_object_inactive(cache, object, i_blocks);
+-
+-	dput(object->dentry);
+-	object->dentry = NULL;
++		cachefiles_unmark_inode_in_use(object, object->dentry);
++		dput(object->dentry);
++		object->dentry = NULL;
++	}
+ 
+ 	_leave("");
  }
- EXPORT_SYMBOL(fscache_init_cache);
+@@ -274,7 +263,6 @@ static void cachefiles_put_object(struct fscache_object *_object,
+ 	if (u == 0) {
+ 		_debug("- kill object OBJ%x", object->fscache.debug_id);
  
-diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-index cd105227cb83..3b450c783f03 100644
---- a/fs/fscache/cookie.c
-+++ b/fs/fscache/cookie.c
-@@ -756,7 +756,6 @@ void __fscache_disable_cookie(struct fscache_cookie *cookie,
- 		hlist_for_each_entry(object, &cookie->backing_objects, cookie_link) {
- 			if (invalidate)
- 				set_bit(FSCACHE_OBJECT_RETIRED, &object->flags);
--			clear_bit(FSCACHE_OBJECT_PENDING_WRITE, &object->flags);
- 			fscache_raise_event(object, FSCACHE_OBJECT_EV_KILL);
- 		}
- 	} else {
-diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index 360137fd19a7..bc5539d2157b 100644
---- a/fs/fscache/internal.h
-+++ b/fs/fscache/internal.h
-@@ -138,19 +138,6 @@ extern void fscache_objlist_remove(struct fscache_object *);
- #define fscache_objlist_remove(object) do {} while(0)
- #endif
- 
--/*
-- * operation.c
-- */
--extern int fscache_submit_exclusive_op(struct fscache_object *,
--				       struct fscache_operation *);
--extern int fscache_submit_op(struct fscache_object *,
--			     struct fscache_operation *);
--extern int fscache_cancel_op(struct fscache_operation *, bool);
--extern void fscache_cancel_all_ops(struct fscache_object *);
--extern void fscache_abort_object(struct fscache_object *);
--extern void fscache_start_operations(struct fscache_object *);
--extern void fscache_operation_gc(struct work_struct *);
--
- /*
-  * proc.c
-  */
-diff --git a/fs/fscache/object-list.c b/fs/fscache/object-list.c
-index fc28de4738ec..147c556ee01b 100644
---- a/fs/fscache/object-list.c
-+++ b/fs/fscache/object-list.c
-@@ -23,10 +23,6 @@ struct fscache_objlist_data {
- #define FSCACHE_OBJLIST_CONFIG_AUX	0x00000002	/* show object auxdata */
- #define FSCACHE_OBJLIST_CONFIG_BUSY	0x00000010	/* show busy objects */
- #define FSCACHE_OBJLIST_CONFIG_IDLE	0x00000020	/* show idle objects */
--#define FSCACHE_OBJLIST_CONFIG_PENDWR	0x00000040	/* show objects with pending writes */
--#define FSCACHE_OBJLIST_CONFIG_NOPENDWR	0x00000080	/* show objects without pending writes */
--#define FSCACHE_OBJLIST_CONFIG_READS	0x00000100	/* show objects with active reads */
--#define FSCACHE_OBJLIST_CONFIG_NOREADS	0x00000200	/* show objects without active reads */
- #define FSCACHE_OBJLIST_CONFIG_EVENTS	0x00000400	/* show objects with events */
- #define FSCACHE_OBJLIST_CONFIG_NOEVENTS	0x00000800	/* show objects without no events */
- #define FSCACHE_OBJLIST_CONFIG_WORK	0x00001000	/* show objects with work */
-@@ -166,7 +162,7 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 	u8 *p;
- 
- 	if ((unsigned long) v == 1) {
--		seq_puts(m, "OBJECT   PARENT   STAT CHLDN OPS OOP IPR EX READS"
-+		seq_puts(m, "OBJECT   PARENT   STAT CHLDN OPS OOP"
- 			 " EM EV FL S"
- 			 " | COOKIE   TYPE    TY FL");
- 		if (config & (FSCACHE_OBJLIST_CONFIG_KEY |
-@@ -185,7 +181,7 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 	}
- 
- 	if ((unsigned long) v == 2) {
--		seq_puts(m, "======== ======== ==== ===== === === === == ====="
-+		seq_puts(m, "======== ======== ==== ===== === ==="
- 			 " == == == ="
- 			 " | ======== ======= == ===");
- 		if (config & (FSCACHE_OBJLIST_CONFIG_KEY |
-@@ -217,26 +213,19 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 		       obj->flags ||
- 		       !list_empty(&obj->dependents),
- 		       BUSY, IDLE);
--		FILTER(test_bit(FSCACHE_OBJECT_PENDING_WRITE, &obj->flags),
--		       PENDWR, NOPENDWR);
--		FILTER(atomic_read(&obj->n_reads),
--		       READS, NOREADS);
- 		FILTER(obj->events & obj->event_mask,
- 		       EVENTS, NOEVENTS);
- 		FILTER(work_busy(&obj->work), WORK, NOWORK);
- 	}
- 
- 	seq_printf(m,
--		   "%08x %08x %s %5u %3u %3u %3u %2u %5u %2lx %2lx %2lx %1x | ",
-+		   "%08x %08x %s %5u %3u %3u %2lx %2lx %2lx %1x | ",
- 		   obj->debug_id,
- 		   obj->parent ? obj->parent->debug_id : UINT_MAX,
- 		   obj->state->short_name,
- 		   obj->n_children,
- 		   obj->n_ops,
- 		   obj->n_obj_ops,
--		   obj->n_in_progress,
--		   obj->n_exclusive,
--		   atomic_read(&obj->n_reads),
- 		   obj->event_mask,
- 		   obj->events,
- 		   obj->flags,
-@@ -336,10 +325,6 @@ static void fscache_objlist_config(struct fscache_objlist_data *data)
- 		case 'A': config |= FSCACHE_OBJLIST_CONFIG_AUX;		break;
- 		case 'B': config |= FSCACHE_OBJLIST_CONFIG_BUSY;	break;
- 		case 'b': config |= FSCACHE_OBJLIST_CONFIG_IDLE;	break;
--		case 'W': config |= FSCACHE_OBJLIST_CONFIG_PENDWR;	break;
--		case 'w': config |= FSCACHE_OBJLIST_CONFIG_NOPENDWR;	break;
--		case 'R': config |= FSCACHE_OBJLIST_CONFIG_READS;	break;
--		case 'r': config |= FSCACHE_OBJLIST_CONFIG_NOREADS;	break;
- 		case 'S': config |= FSCACHE_OBJLIST_CONFIG_WORK;	break;
- 		case 's': config |= FSCACHE_OBJLIST_CONFIG_NOWORK;	break;
- 		}
-@@ -350,10 +335,6 @@ static void fscache_objlist_config(struct fscache_objlist_data *data)
- 
- 	if (!(config & (FSCACHE_OBJLIST_CONFIG_BUSY | FSCACHE_OBJLIST_CONFIG_IDLE)))
- 	    config   |= FSCACHE_OBJLIST_CONFIG_BUSY | FSCACHE_OBJLIST_CONFIG_IDLE;
--	if (!(config & (FSCACHE_OBJLIST_CONFIG_PENDWR | FSCACHE_OBJLIST_CONFIG_NOPENDWR)))
--	    config   |= FSCACHE_OBJLIST_CONFIG_PENDWR | FSCACHE_OBJLIST_CONFIG_NOPENDWR;
--	if (!(config & (FSCACHE_OBJLIST_CONFIG_READS | FSCACHE_OBJLIST_CONFIG_NOREADS)))
--	    config   |= FSCACHE_OBJLIST_CONFIG_READS | FSCACHE_OBJLIST_CONFIG_NOREADS;
- 	if (!(config & (FSCACHE_OBJLIST_CONFIG_EVENTS | FSCACHE_OBJLIST_CONFIG_NOEVENTS)))
- 	    config   |= FSCACHE_OBJLIST_CONFIG_EVENTS | FSCACHE_OBJLIST_CONFIG_NOEVENTS;
- 	if (!(config & (FSCACHE_OBJLIST_CONFIG_WORK | FSCACHE_OBJLIST_CONFIG_NOWORK)))
-diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index 73231fdf565c..8cb21dd4b1cc 100644
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -315,9 +315,8 @@ void fscache_object_init(struct fscache_object *object,
- 	INIT_WORK(&object->work, fscache_object_work_func);
- 	INIT_LIST_HEAD(&object->dependents);
- 	INIT_LIST_HEAD(&object->dep_link);
--	INIT_LIST_HEAD(&object->pending_ops);
- 	object->n_children = 0;
--	object->n_ops = object->n_in_progress = object->n_exclusive = 0;
-+	object->n_ops = 0;
- 	object->events = 0;
- 	object->cache = cache;
- 	object->cookie = cookie;
-@@ -580,14 +579,6 @@ static const struct fscache_state *fscache_object_available(struct fscache_objec
- 	spin_lock(&object->lock);
- 
- 	fscache_done_parent_op(object);
--	if (object->n_in_progress == 0) {
--		if (object->n_ops > 0) {
--			ASSERTCMP(object->n_ops, >=, object->n_obj_ops);
--			fscache_start_operations(object);
--		} else {
--			ASSERT(list_empty(&object->pending_ops));
--		}
--	}
- 	spin_unlock(&object->lock);
- 
- 	fscache_stat(&fscache_n_cop_lookup_complete);
-@@ -654,24 +645,11 @@ static const struct fscache_state *fscache_kill_object(struct fscache_object *ob
- 	fscache_mark_object_dead(object);
- 	object->oob_event_mask = 0;
- 
--	if (test_bit(FSCACHE_OBJECT_RETIRED, &object->flags)) {
--		/* Reject any new read/write ops and abort any that are pending. */
--		clear_bit(FSCACHE_OBJECT_PENDING_WRITE, &object->flags);
--		fscache_cancel_all_ops(object);
--	}
--
- 	if (list_empty(&object->dependents) &&
- 	    object->n_ops == 0 &&
- 	    object->n_children == 0)
- 		return transit_to(DROP_OBJECT);
- 
--	if (object->n_in_progress == 0) {
--		spin_lock(&object->lock);
--		if (object->n_ops > 0 && object->n_in_progress == 0)
--			fscache_start_operations(object);
--		spin_unlock(&object->lock);
--	}
--
- 	if (!list_empty(&object->dependents))
- 		return transit_to(KILL_DEPENDENTS);
- 
-diff --git a/fs/fscache/operation.c b/fs/fscache/operation.c
-deleted file mode 100644
-index 1a22a55f75a0..000000000000
---- a/fs/fscache/operation.c
-+++ /dev/null
-@@ -1,633 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/* FS-Cache worker operation management routines
-- *
-- * Copyright (C) 2008 Red Hat, Inc. All Rights Reserved.
-- * Written by David Howells (dhowells@redhat.com)
-- *
-- * See Documentation/filesystems/caching/operations.txt
-- */
--
--#define FSCACHE_DEBUG_LEVEL OPERATION
--#include <linux/module.h>
--#include <linux/seq_file.h>
--#include <linux/slab.h>
--#include "internal.h"
--
--atomic_t fscache_op_debug_id;
--EXPORT_SYMBOL(fscache_op_debug_id);
--
--static void fscache_operation_dummy_cancel(struct fscache_operation *op)
--{
--}
--
--/**
-- * fscache_operation_init - Do basic initialisation of an operation
-- * @op: The operation to initialise
-- * @release: The release function to assign
-- *
-- * Do basic initialisation of an operation.  The caller must still set flags,
-- * object and processor if needed.
-- */
--void fscache_operation_init(struct fscache_cookie *cookie,
--			    struct fscache_operation *op,
--			    fscache_operation_processor_t processor,
--			    fscache_operation_cancel_t cancel,
--			    fscache_operation_release_t release)
--{
--	INIT_WORK(&op->work, fscache_op_work_func);
--	atomic_set(&op->usage, 1);
--	op->state = FSCACHE_OP_ST_INITIALISED;
--	op->debug_id = atomic_inc_return(&fscache_op_debug_id);
--	op->processor = processor;
--	op->cancel = cancel ?: fscache_operation_dummy_cancel;
--	op->release = release;
--	INIT_LIST_HEAD(&op->pend_link);
--	fscache_stat(&fscache_n_op_initialised);
--	trace_fscache_op(cookie, op, fscache_op_init);
--}
--EXPORT_SYMBOL(fscache_operation_init);
--
--/**
-- * fscache_enqueue_operation - Enqueue an operation for processing
-- * @op: The operation to enqueue
-- *
-- * Enqueue an operation for processing by the FS-Cache thread pool.
-- *
-- * This will get its own ref on the object.
-- */
--void fscache_enqueue_operation(struct fscache_operation *op)
--{
--	struct fscache_cookie *cookie = op->object->cookie;
--	
--	_enter("{OBJ%x OP%x,%u}",
--	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
--
--	ASSERT(list_empty(&op->pend_link));
--	ASSERT(op->processor != NULL);
--	ASSERT(fscache_object_is_available(op->object));
--	ASSERTCMP(atomic_read(&op->usage), >, 0);
--	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
--		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
--
--	fscache_stat(&fscache_n_op_enqueue);
--	switch (op->flags & FSCACHE_OP_TYPE) {
--	case FSCACHE_OP_ASYNC:
--		trace_fscache_op(cookie, op, fscache_op_enqueue_async);
--		_debug("queue async");
--		atomic_inc(&op->usage);
--		if (!queue_work(fscache_op_wq, &op->work))
--			fscache_put_operation(op);
--		break;
--	case FSCACHE_OP_MYTHREAD:
--		trace_fscache_op(cookie, op, fscache_op_enqueue_mythread);
--		_debug("queue for caller's attention");
--		break;
--	default:
--		pr_err("Unexpected op type %lx", op->flags);
--		BUG();
--		break;
--	}
--}
--EXPORT_SYMBOL(fscache_enqueue_operation);
--
--/*
-- * start an op running
-- */
--static void fscache_run_op(struct fscache_object *object,
--			   struct fscache_operation *op)
--{
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_PENDING);
--
--	op->state = FSCACHE_OP_ST_IN_PROGRESS;
--	object->n_in_progress++;
--	if (test_and_clear_bit(FSCACHE_OP_WAITING, &op->flags))
--		wake_up_bit(&op->flags, FSCACHE_OP_WAITING);
--	if (op->processor)
--		fscache_enqueue_operation(op);
--	else
--		trace_fscache_op(object->cookie, op, fscache_op_run);
--	fscache_stat(&fscache_n_op_run);
--}
--
--/*
-- * report an unexpected submission
-- */
--static void fscache_report_unexpected_submission(struct fscache_object *object,
--						 struct fscache_operation *op,
--						 const struct fscache_state *ostate)
--{
--	static bool once_only;
--	struct fscache_operation *p;
--	unsigned n;
--
--	if (once_only)
--		return;
--	once_only = true;
--
--	kdebug("unexpected submission OP%x [OBJ%x %s]",
--	       op->debug_id, object->debug_id, object->state->name);
--	kdebug("objstate=%s [%s]", object->state->name, ostate->name);
--	kdebug("objflags=%lx", object->flags);
--	kdebug("objevent=%lx [%lx]", object->events, object->event_mask);
--	kdebug("ops=%u inp=%u exc=%u",
--	       object->n_ops, object->n_in_progress, object->n_exclusive);
--
--	if (!list_empty(&object->pending_ops)) {
--		n = 0;
--		list_for_each_entry(p, &object->pending_ops, pend_link) {
--			ASSERTCMP(p->object, ==, object);
--			kdebug("%p %p", op->processor, op->release);
--			n++;
--		}
--
--		kdebug("n=%u", n);
--	}
--
--	dump_stack();
--}
--
--/*
-- * submit an exclusive operation for an object
-- * - other ops are excluded from running simultaneously with this one
-- * - this gets any extra refs it needs on an op
-- */
--int fscache_submit_exclusive_op(struct fscache_object *object,
--				struct fscache_operation *op)
--{
--	const struct fscache_state *ostate;
--	unsigned long flags;
--	int ret;
--
--	_enter("{OBJ%x OP%x},", object->debug_id, op->debug_id);
--
--	trace_fscache_op(object->cookie, op, fscache_op_submit_ex);
--
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_INITIALISED);
--	ASSERTCMP(atomic_read(&op->usage), >, 0);
--
--	spin_lock(&object->lock);
--	ASSERTCMP(object->n_ops, >=, object->n_in_progress);
--	ASSERTCMP(object->n_ops, >=, object->n_exclusive);
--	ASSERT(list_empty(&op->pend_link));
--
--	ostate = object->state;
--	smp_rmb();
--
--	op->state = FSCACHE_OP_ST_PENDING;
--	flags = READ_ONCE(object->flags);
--	if (unlikely(!(flags & BIT(FSCACHE_OBJECT_IS_LIVE)))) {
--		fscache_stat(&fscache_n_op_rejected);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	} else if (unlikely(fscache_cache_is_broken(object))) {
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -EIO;
--	} else if (flags & BIT(FSCACHE_OBJECT_IS_AVAILABLE)) {
--		op->object = object;
--		object->n_ops++;
--		object->n_exclusive++;	/* reads and writes must wait */
--
--		if (object->n_in_progress > 0) {
--			atomic_inc(&op->usage);
--			list_add_tail(&op->pend_link, &object->pending_ops);
--			fscache_stat(&fscache_n_op_pend);
--		} else if (!list_empty(&object->pending_ops)) {
--			atomic_inc(&op->usage);
--			list_add_tail(&op->pend_link, &object->pending_ops);
--			fscache_stat(&fscache_n_op_pend);
--			fscache_start_operations(object);
--		} else {
--			ASSERTCMP(object->n_in_progress, ==, 0);
--			fscache_run_op(object, op);
--		}
--
--		/* need to issue a new write op after this */
--		clear_bit(FSCACHE_OBJECT_PENDING_WRITE, &object->flags);
--		ret = 0;
--	} else if (flags & BIT(FSCACHE_OBJECT_IS_LOOKED_UP)) {
--		op->object = object;
--		object->n_ops++;
--		object->n_exclusive++;	/* reads and writes must wait */
--		atomic_inc(&op->usage);
--		list_add_tail(&op->pend_link, &object->pending_ops);
--		fscache_stat(&fscache_n_op_pend);
--		ret = 0;
--	} else if (flags & BIT(FSCACHE_OBJECT_KILLED_BY_CACHE)) {
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	} else {
--		fscache_report_unexpected_submission(object, op, ostate);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	}
--
--	spin_unlock(&object->lock);
--	return ret;
--}
--
--/*
-- * submit an operation for an object
-- * - objects may be submitted only in the following states:
-- *   - during object creation (write ops may be submitted)
-- *   - whilst the object is active
-- *   - after an I/O error incurred in one of the two above states (op rejected)
-- * - this gets any extra refs it needs on an op
-- */
--int fscache_submit_op(struct fscache_object *object,
--		      struct fscache_operation *op)
--{
--	const struct fscache_state *ostate;
--	unsigned long flags;
--	int ret;
--
--	_enter("{OBJ%x OP%x},{%u}",
--	       object->debug_id, op->debug_id, atomic_read(&op->usage));
--
--	trace_fscache_op(object->cookie, op, fscache_op_submit);
--
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_INITIALISED);
--	ASSERTCMP(atomic_read(&op->usage), >, 0);
--
--	spin_lock(&object->lock);
--	ASSERTCMP(object->n_ops, >=, object->n_in_progress);
--	ASSERTCMP(object->n_ops, >=, object->n_exclusive);
--	ASSERT(list_empty(&op->pend_link));
--
--	ostate = object->state;
--	smp_rmb();
--
--	op->state = FSCACHE_OP_ST_PENDING;
--	flags = READ_ONCE(object->flags);
--	if (unlikely(!(flags & BIT(FSCACHE_OBJECT_IS_LIVE)))) {
--		fscache_stat(&fscache_n_op_rejected);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	} else if (unlikely(fscache_cache_is_broken(object))) {
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -EIO;
--	} else if (flags & BIT(FSCACHE_OBJECT_IS_AVAILABLE)) {
--		op->object = object;
--		object->n_ops++;
--
--		if (object->n_exclusive > 0) {
--			atomic_inc(&op->usage);
--			list_add_tail(&op->pend_link, &object->pending_ops);
--			fscache_stat(&fscache_n_op_pend);
--		} else if (!list_empty(&object->pending_ops)) {
--			atomic_inc(&op->usage);
--			list_add_tail(&op->pend_link, &object->pending_ops);
--			fscache_stat(&fscache_n_op_pend);
--			fscache_start_operations(object);
--		} else {
--			ASSERTCMP(object->n_exclusive, ==, 0);
--			fscache_run_op(object, op);
--		}
--		ret = 0;
--	} else if (flags & BIT(FSCACHE_OBJECT_IS_LOOKED_UP)) {
--		op->object = object;
--		object->n_ops++;
--		atomic_inc(&op->usage);
--		list_add_tail(&op->pend_link, &object->pending_ops);
--		fscache_stat(&fscache_n_op_pend);
--		ret = 0;
--	} else if (flags & BIT(FSCACHE_OBJECT_KILLED_BY_CACHE)) {
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	} else {
--		fscache_report_unexpected_submission(object, op, ostate);
--		ASSERT(!fscache_object_is_active(object));
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		ret = -ENOBUFS;
--	}
--
--	spin_unlock(&object->lock);
--	return ret;
--}
--
--/*
-- * queue an object for withdrawal on error, aborting all following asynchronous
-- * operations
-- */
--void fscache_abort_object(struct fscache_object *object)
--{
--	_enter("{OBJ%x}", object->debug_id);
--
--	fscache_raise_event(object, FSCACHE_OBJECT_EV_ERROR);
--}
--
--/*
-- * Jump start the operation processing on an object.  The caller must hold
-- * object->lock.
-- */
--void fscache_start_operations(struct fscache_object *object)
--{
--	struct fscache_operation *op;
--	bool stop = false;
--
--	while (!list_empty(&object->pending_ops) && !stop) {
--		op = list_entry(object->pending_ops.next,
--				struct fscache_operation, pend_link);
--
--		if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags)) {
--			if (object->n_in_progress > 0)
--				break;
--			stop = true;
--		}
--		list_del_init(&op->pend_link);
--		fscache_run_op(object, op);
--
--		/* the pending queue was holding a ref on the object */
--		fscache_put_operation(op);
--	}
--
--	ASSERTCMP(object->n_in_progress, <=, object->n_ops);
--
--	_debug("woke %d ops on OBJ%x",
--	       object->n_in_progress, object->debug_id);
--}
--
--/*
-- * cancel an operation that's pending on an object
-- */
--int fscache_cancel_op(struct fscache_operation *op,
--		      bool cancel_in_progress_op)
--{
--	struct fscache_object *object = op->object;
--	bool put = false;
--	int ret;
--
--	_enter("OBJ%x OP%x}", op->object->debug_id, op->debug_id);
--
--	trace_fscache_op(object->cookie, op, fscache_op_cancel);
--
--	ASSERTCMP(op->state, >=, FSCACHE_OP_ST_PENDING);
--	ASSERTCMP(op->state, !=, FSCACHE_OP_ST_CANCELLED);
--	ASSERTCMP(atomic_read(&op->usage), >, 0);
--
--	spin_lock(&object->lock);
--
--	ret = -EBUSY;
--	if (op->state == FSCACHE_OP_ST_PENDING) {
--		ASSERT(!list_empty(&op->pend_link));
--		list_del_init(&op->pend_link);
--		put = true;
--
--		fscache_stat(&fscache_n_op_cancelled);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags))
--			object->n_exclusive--;
--		if (test_and_clear_bit(FSCACHE_OP_WAITING, &op->flags))
--			wake_up_bit(&op->flags, FSCACHE_OP_WAITING);
--		ret = 0;
--	} else if (op->state == FSCACHE_OP_ST_IN_PROGRESS && cancel_in_progress_op) {
--		ASSERTCMP(object->n_in_progress, >, 0);
--		if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags))
--			object->n_exclusive--;
--		object->n_in_progress--;
--		if (object->n_in_progress == 0)
--			fscache_start_operations(object);
--
--		fscache_stat(&fscache_n_op_cancelled);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--		if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags))
--			object->n_exclusive--;
--		if (test_and_clear_bit(FSCACHE_OP_WAITING, &op->flags))
--			wake_up_bit(&op->flags, FSCACHE_OP_WAITING);
--		ret = 0;
--	}
--
--	if (put)
--		fscache_put_operation(op);
--	spin_unlock(&object->lock);
--	_leave(" = %d", ret);
--	return ret;
--}
--
--/*
-- * Cancel all pending operations on an object
-- */
--void fscache_cancel_all_ops(struct fscache_object *object)
--{
--	struct fscache_operation *op;
--
--	_enter("OBJ%x", object->debug_id);
--
--	spin_lock(&object->lock);
--
--	while (!list_empty(&object->pending_ops)) {
--		op = list_entry(object->pending_ops.next,
--				struct fscache_operation, pend_link);
--		fscache_stat(&fscache_n_op_cancelled);
--		list_del_init(&op->pend_link);
--
--		trace_fscache_op(object->cookie, op, fscache_op_cancel_all);
--
--		ASSERTCMP(op->state, ==, FSCACHE_OP_ST_PENDING);
--		op->cancel(op);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--
--		if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags))
--			object->n_exclusive--;
--		if (test_and_clear_bit(FSCACHE_OP_WAITING, &op->flags))
--			wake_up_bit(&op->flags, FSCACHE_OP_WAITING);
--		fscache_put_operation(op);
--		cond_resched_lock(&object->lock);
--	}
--
--	spin_unlock(&object->lock);
--	_leave("");
--}
--
--/*
-- * Record the completion or cancellation of an in-progress operation.
-- */
--void fscache_op_complete(struct fscache_operation *op, bool cancelled)
--{
--	struct fscache_object *object = op->object;
--
--	_enter("OBJ%x", object->debug_id);
--
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
--	ASSERTCMP(object->n_in_progress, >, 0);
--	ASSERTIFCMP(test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags),
--		    object->n_exclusive, >, 0);
--	ASSERTIFCMP(test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags),
--		    object->n_in_progress, ==, 1);
--
--	spin_lock(&object->lock);
--
--	if (!cancelled) {
--		trace_fscache_op(object->cookie, op, fscache_op_completed);
--		op->state = FSCACHE_OP_ST_COMPLETE;
--	} else {
--		op->cancel(op);
--		trace_fscache_op(object->cookie, op, fscache_op_cancelled);
--		op->state = FSCACHE_OP_ST_CANCELLED;
--	}
--
--	if (test_bit(FSCACHE_OP_EXCLUSIVE, &op->flags))
--		object->n_exclusive--;
--	object->n_in_progress--;
--	if (object->n_in_progress == 0)
--		fscache_start_operations(object);
--
--	spin_unlock(&object->lock);
--	_leave("");
--}
--EXPORT_SYMBOL(fscache_op_complete);
--
--/*
-- * release an operation
-- * - queues pending ops if this is the last in-progress op
-- */
--void fscache_put_operation(struct fscache_operation *op)
--{
--	struct fscache_object *object;
--	struct fscache_cache *cache;
--
--	_enter("{OBJ%x OP%x,%d}",
--	       op->object ? op->object->debug_id : 0,
--	       op->debug_id, atomic_read(&op->usage));
--
--	ASSERTCMP(atomic_read(&op->usage), >, 0);
--
--	if (!atomic_dec_and_test(&op->usage))
--		return;
--
--	trace_fscache_op(op->object ? op->object->cookie : NULL, op, fscache_op_put);
--
--	_debug("PUT OP");
--	ASSERTIFCMP(op->state != FSCACHE_OP_ST_INITIALISED &&
--		    op->state != FSCACHE_OP_ST_COMPLETE,
--		    op->state, ==, FSCACHE_OP_ST_CANCELLED);
--
--	fscache_stat(&fscache_n_op_release);
--
--	if (op->release) {
--		op->release(op);
--		op->release = NULL;
--	}
--	op->state = FSCACHE_OP_ST_DEAD;
--
--	object = op->object;
--	if (likely(object)) {
--		if (test_bit(FSCACHE_OP_DEC_READ_CNT, &op->flags))
--			atomic_dec(&object->n_reads);
--		if (test_bit(FSCACHE_OP_UNUSE_COOKIE, &op->flags))
--			fscache_unuse_cookie(object);
--
--		/* now... we may get called with the object spinlock held, so we
--		 * complete the cleanup here only if we can immediately acquire the
--		 * lock, and defer it otherwise */
--		if (!spin_trylock(&object->lock)) {
--			_debug("defer put");
--			fscache_stat(&fscache_n_op_deferred_release);
--
--			cache = object->cache;
--			spin_lock(&cache->op_gc_list_lock);
--			list_add_tail(&op->pend_link, &cache->op_gc_list);
--			spin_unlock(&cache->op_gc_list_lock);
--			schedule_work(&cache->op_gc);
--			_leave(" [defer]");
--			return;
--		}
--
--		ASSERTCMP(object->n_ops, >, 0);
--		object->n_ops--;
--		if (object->n_ops == 0)
--			fscache_raise_event(object, FSCACHE_OBJECT_EV_CLEARED);
--
--		spin_unlock(&object->lock);
--	}
--
--	kfree(op);
--	_leave(" [done]");
--}
--EXPORT_SYMBOL(fscache_put_operation);
--
--/*
-- * garbage collect operations that have had their release deferred
-- */
--void fscache_operation_gc(struct work_struct *work)
--{
--	struct fscache_operation *op;
--	struct fscache_object *object;
--	struct fscache_cache *cache =
--		container_of(work, struct fscache_cache, op_gc);
--	int count = 0;
--
--	_enter("");
--
--	do {
--		spin_lock(&cache->op_gc_list_lock);
--		if (list_empty(&cache->op_gc_list)) {
--			spin_unlock(&cache->op_gc_list_lock);
--			break;
--		}
--
--		op = list_entry(cache->op_gc_list.next,
--				struct fscache_operation, pend_link);
--		list_del(&op->pend_link);
--		spin_unlock(&cache->op_gc_list_lock);
--
--		object = op->object;
--		trace_fscache_op(object->cookie, op, fscache_op_gc);
--
--		spin_lock(&object->lock);
--
--		_debug("GC DEFERRED REL OBJ%x OP%x",
--		       object->debug_id, op->debug_id);
--		fscache_stat(&fscache_n_op_gc);
--
--		ASSERTCMP(atomic_read(&op->usage), ==, 0);
--		ASSERTCMP(op->state, ==, FSCACHE_OP_ST_DEAD);
--
--		ASSERTCMP(object->n_ops, >, 0);
--		object->n_ops--;
--		if (object->n_ops == 0)
--			fscache_raise_event(object, FSCACHE_OBJECT_EV_CLEARED);
--
--		spin_unlock(&object->lock);
--		kfree(op);
--
--	} while (count++ < 20);
--
--	if (!list_empty(&cache->op_gc_list))
--		schedule_work(&cache->op_gc);
--
--	_leave("");
--}
--
--/*
-- * execute an operation using fs_op_wq to provide processing context -
-- * the caller holds a ref to this object, so we don't need to hold one
-- */
--void fscache_op_work_func(struct work_struct *work)
--{
--	struct fscache_operation *op =
--		container_of(work, struct fscache_operation, work);
--	unsigned long start;
--
--	_enter("{OBJ%x OP%x,%d}",
--	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
--
--	trace_fscache_op(op->object->cookie, op, fscache_op_work);
--
--	ASSERT(op->processor != NULL);
--	start = jiffies;
--	op->processor(op);
--	fscache_hist(fscache_ops_histogram, start);
--	fscache_put_operation(op);
--
--	_leave("");
--}
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 3c543f8ac663..5e63d4a7feb0 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -23,7 +23,6 @@
- struct fscache_cache;
- struct fscache_cache_ops;
- struct fscache_object;
--struct fscache_operation;
- 
- enum fscache_obj_ref_trace {
- 	fscache_obj_get_add_to_deps,
-@@ -62,11 +61,8 @@ struct fscache_cache {
- 	char			identifier[36];	/* cache label */
- 
- 	/* node management */
--	struct work_struct	op_gc;		/* operation garbage collector */
- 	struct list_head	object_list;	/* list of data/index objects */
--	struct list_head	op_gc_list;	/* list of ops to be deleted */
- 	spinlock_t		object_list_lock;
--	spinlock_t		op_gc_list_lock;
- 	atomic_t		object_count;	/* no. of live objects in this cache */
- 	struct fscache_object	*fsdef;		/* object for the fsdef index */
- 	unsigned long		flags;
-@@ -76,68 +72,6 @@ struct fscache_cache {
- 
- extern wait_queue_head_t fscache_cache_cleared_wq;
- 
--/*
-- * operation to be applied to a cache object
-- * - retrieval initiation operations are done in the context of the process
-- *   that issued them, and not in an async thread pool
-- */
--typedef void (*fscache_operation_release_t)(struct fscache_operation *op);
--typedef void (*fscache_operation_processor_t)(struct fscache_operation *op);
--typedef void (*fscache_operation_cancel_t)(struct fscache_operation *op);
--
--enum fscache_operation_state {
--	FSCACHE_OP_ST_BLANK,		/* Op is not yet submitted */
--	FSCACHE_OP_ST_INITIALISED,	/* Op is initialised */
--	FSCACHE_OP_ST_PENDING,		/* Op is blocked from running */
--	FSCACHE_OP_ST_IN_PROGRESS,	/* Op is in progress */
--	FSCACHE_OP_ST_COMPLETE,		/* Op is complete */
--	FSCACHE_OP_ST_CANCELLED,	/* Op has been cancelled */
--	FSCACHE_OP_ST_DEAD		/* Op is now dead */
--};
--
--struct fscache_operation {
--	struct work_struct	work;		/* record for async ops */
--	struct list_head	pend_link;	/* link in object->pending_ops */
--	struct fscache_object	*object;	/* object to be operated upon */
--
--	unsigned long		flags;
--#define FSCACHE_OP_TYPE		0x000f	/* operation type */
--#define FSCACHE_OP_ASYNC	0x0001	/* - async op, processor may sleep for disk */
--#define FSCACHE_OP_MYTHREAD	0x0002	/* - processing is done be issuing thread, not pool */
--#define FSCACHE_OP_WAITING	4	/* cleared when op is woken */
--#define FSCACHE_OP_EXCLUSIVE	5	/* exclusive op, other ops must wait */
--#define FSCACHE_OP_DEC_READ_CNT	6	/* decrement object->n_reads on destruction */
--#define FSCACHE_OP_UNUSE_COOKIE	7	/* call fscache_unuse_cookie() on completion */
--#define FSCACHE_OP_KEEP_FLAGS	0x00f0	/* flags to keep when repurposing an op */
--
--	enum fscache_operation_state state;
--	atomic_t		usage;
--	unsigned		debug_id;	/* debugging ID */
--
--	/* operation processor callback
--	 * - can be NULL if FSCACHE_OP_WAITING is going to be used to perform
--	 *   the op in a non-pool thread */
--	fscache_operation_processor_t processor;
--
--	/* Operation cancellation cleanup (optional) */
--	fscache_operation_cancel_t cancel;
--
--	/* operation releaser */
--	fscache_operation_release_t release;
--};
--
--extern atomic_t fscache_op_debug_id;
--extern void fscache_op_work_func(struct work_struct *work);
--
--extern void fscache_enqueue_operation(struct fscache_operation *);
--extern void fscache_op_complete(struct fscache_operation *, bool);
--extern void fscache_put_operation(struct fscache_operation *);
--extern void fscache_operation_init(struct fscache_cookie *,
--				   struct fscache_operation *,
--				   fscache_operation_processor_t,
--				   fscache_operation_cancel_t,
--				   fscache_operation_release_t);
--
- /*
-  * cache operations
-  */
-@@ -232,9 +166,6 @@ struct fscache_object {
- 	int			n_children;	/* number of child objects */
- 	int			n_ops;		/* number of extant ops on object */
- 	int			n_obj_ops;	/* number of object ops outstanding on object */
--	int			n_in_progress;	/* number of ops in progress */
--	int			n_exclusive;	/* number of exclusive ops queued or in progress */
--	atomic_t		n_reads;	/* number of read ops in progress */
- 	spinlock_t		lock;		/* state and operations lock */
- 
- 	unsigned long		lookup_jif;	/* time at which lookup started */
-@@ -245,7 +176,6 @@ struct fscache_object {
- 
- 	unsigned long		flags;
- #define FSCACHE_OBJECT_LOCK		0	/* T if object is busy being processed */
--#define FSCACHE_OBJECT_PENDING_WRITE	1	/* T if object has pending write */
- #define FSCACHE_OBJECT_WAITING		2	/* T if object is waiting on its parent */
- #define FSCACHE_OBJECT_IS_LIVE		3	/* T if object is not withdrawn or relinquished */
- #define FSCACHE_OBJECT_IS_LOOKED_UP	4	/* T if object has been looked up */
-@@ -262,7 +192,6 @@ struct fscache_object {
- 	struct work_struct	work;		/* attention scheduling record */
- 	struct list_head	dependents;	/* FIFO of dependent objects */
- 	struct list_head	dep_link;	/* link in parent's dependents list */
--	struct list_head	pending_ops;	/* unstarted operations on this object */
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- 	struct rb_node		objlist_link;	/* link in global object list */
- #endif
-diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-index 2ebfd688a7c2..08d7de72409d 100644
---- a/include/trace/events/fscache.h
-+++ b/include/trace/events/fscache.h
-@@ -33,24 +33,6 @@ enum fscache_cookie_trace {
- 	fscache_cookie_put_parent,
+-		ASSERT(!test_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags));
+ 		ASSERTCMP(object->fscache.parent, ==, NULL);
+ 		ASSERTCMP(object->backer, ==, NULL);
+ 		ASSERTCMP(object->dentry, ==, NULL);
+diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+index a5d48f271ce1..f8f308ce7385 100644
+--- a/fs/cachefiles/internal.h
++++ b/fs/cachefiles/internal.h
+@@ -38,12 +38,9 @@ struct cachefiles_object {
+ 	struct dentry			*dentry;	/* the file/dir representing this object */
+ 	struct dentry			*backer;	/* backing file */
+ 	loff_t				i_size;		/* object size */
+-	unsigned long			flags;
+-#define CACHEFILES_OBJECT_ACTIVE	0		/* T if marked active */
+ 	atomic_t			usage;		/* object usage count */
+ 	uint8_t				type;		/* object type */
+ 	uint8_t				new;		/* T if object new */
+-	struct rb_node			active_node;	/* link in active tree (dentry is key) */
  };
  
--enum fscache_op_trace {
--	fscache_op_cancel,
--	fscache_op_cancel_all,
--	fscache_op_cancelled,
--	fscache_op_completed,
--	fscache_op_enqueue_async,
--	fscache_op_enqueue_mythread,
--	fscache_op_gc,
--	fscache_op_init,
--	fscache_op_put,
--	fscache_op_run,
--	fscache_op_signal,
--	fscache_op_submit,
--	fscache_op_submit_ex,
--	fscache_op_work,
--	fscache_op_trace__nr
--};
--
- #endif
- 
+ extern struct kmem_cache *cachefiles_object_jar;
+@@ -59,8 +56,6 @@ struct cachefiles_cache {
+ 	const struct cred		*cache_cred;	/* security override for accessing cache */
+ 	struct mutex			daemon_mutex;	/* command serialisation mutex */
+ 	wait_queue_head_t		daemon_pollwq;	/* poll waitqueue for daemon */
+-	struct rb_root			active_nodes;	/* active nodes (can't be culled) */
+-	rwlock_t			active_lock;	/* lock for active_nodes */
+ 	atomic_t			gravecounter;	/* graveyard uniquifier */
+ 	atomic_t			f_released;	/* number of objects released lately */
+ 	atomic_long_t			b_released;	/* number of blocks released lately */
+@@ -126,9 +121,8 @@ extern char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type);
  /*
-@@ -69,22 +51,6 @@ enum fscache_op_trace {
- 	EM(fscache_cookie_put_object,		"PUT obj")		\
- 	E_(fscache_cookie_put_parent,		"PUT prn")
- 
--#define fscache_op_traces						\
--	EM(fscache_op_cancel,			"Cancel1")		\
--	EM(fscache_op_cancel_all,		"CancelA")		\
--	EM(fscache_op_cancelled,		"Canclld")		\
--	EM(fscache_op_completed,		"Complet")		\
--	EM(fscache_op_enqueue_async,		"EnqAsyn")		\
--	EM(fscache_op_enqueue_mythread,		"EnqMyTh")		\
--	EM(fscache_op_gc,			"GC     ")		\
--	EM(fscache_op_init,			"Init   ")		\
--	EM(fscache_op_put,			"Put    ")		\
--	EM(fscache_op_run,			"Run    ")		\
--	EM(fscache_op_signal,			"Signal ")		\
--	EM(fscache_op_submit,			"Submit ")		\
--	EM(fscache_op_submit_ex,		"SubmitX")		\
--	E_(fscache_op_work,			"Work   ")
--
- /*
-  * Export enum symbols via userspace.
+  * namei.c
   */
-@@ -309,29 +275,6 @@ TRACE_EVENT(fscache_osm,
- 		      __entry->event_num)
+-extern void cachefiles_mark_object_inactive(struct cachefiles_cache *cache,
+-					    struct cachefiles_object *object,
+-					    blkcnt_t i_blocks);
++extern void cachefiles_unmark_inode_in_use(struct cachefiles_object *object,
++				    struct dentry *dentry);
+ extern int cachefiles_delete_object(struct cachefiles_cache *cache,
+ 				    struct cachefiles_object *object);
+ extern int cachefiles_walk_to_object(struct cachefiles_object *parent,
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 924042e8cced..818d1bca1904 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -21,251 +21,51 @@
+ #define CACHEFILES_KEYBUF_SIZE 512
+ 
+ /*
+- * dump debugging info about an object
++ * Mark the backing file as being a cache file if it's not already in use so.
+  */
+-static noinline
+-void __cachefiles_printk_object(struct cachefiles_object *object,
+-				const char *prefix)
++static bool cachefiles_mark_inode_in_use(struct cachefiles_object *object,
++					 struct dentry *dentry)
+ {
+-	struct fscache_cookie *cookie;
+-	const u8 *k;
+-	unsigned loop;
+-
+-	pr_err("%sobject: OBJ%x\n", prefix, object->fscache.debug_id);
+-	pr_err("%sobjstate=%s fl=%lx wbusy=%x ev=%lx[%lx]\n",
+-	       prefix, object->fscache.state->name,
+-	       object->fscache.flags, work_busy(&object->fscache.work),
+-	       object->fscache.events, object->fscache.event_mask);
+-	pr_err("%sops=%u\n",
+-	       prefix, object->fscache.n_ops);
+-	pr_err("%sparent=%p\n",
+-	       prefix, object->fscache.parent);
+-
+-	spin_lock(&object->fscache.lock);
+-	cookie = object->fscache.cookie;
+-	if (cookie) {
+-		pr_err("%scookie=%p [pr=%p fl=%lx]\n",
+-		       prefix,
+-		       object->fscache.cookie,
+-		       object->fscache.cookie->parent,
+-		       object->fscache.cookie->flags);
+-		pr_err("%skey=[%u] '", prefix, cookie->key_len);
+-		k = (cookie->key_len <= sizeof(cookie->inline_key)) ?
+-			cookie->inline_key : cookie->key;
+-		for (loop = 0; loop < cookie->key_len; loop++)
+-			pr_cont("%02x", k[loop]);
+-		pr_cont("'\n");
+-	} else {
+-		pr_err("%scookie=NULL\n", prefix);
+-	}
+-	spin_unlock(&object->fscache.lock);
+-}
+-
+-/*
+- * dump debugging info about a pair of objects
+- */
+-static noinline void cachefiles_printk_object(struct cachefiles_object *object,
+-					      struct cachefiles_object *xobject)
+-{
+-	if (object)
+-		__cachefiles_printk_object(object, "");
+-	if (xobject)
+-		__cachefiles_printk_object(xobject, "x");
+-}
+-
+-/*
+- * mark the owner of a dentry, if there is one, to indicate that that dentry
+- * has been preemptively deleted
+- * - the caller must hold the i_mutex on the dentry's parent as required to
+- *   call vfs_unlink(), vfs_rmdir() or vfs_rename()
+- */
+-static void cachefiles_mark_object_buried(struct cachefiles_cache *cache,
+-					  struct dentry *dentry,
+-					  enum fscache_why_object_killed why)
+-{
+-	struct cachefiles_object *object;
+-	struct rb_node *p;
+-
+-	_enter(",'%pd'", dentry);
+-
+-	write_lock(&cache->active_lock);
+-
+-	p = cache->active_nodes.rb_node;
+-	while (p) {
+-		object = rb_entry(p, struct cachefiles_object, active_node);
+-		if (object->dentry > dentry)
+-			p = p->rb_left;
+-		else if (object->dentry < dentry)
+-			p = p->rb_right;
+-		else
+-			goto found_dentry;
+-	}
+-
+-	write_unlock(&cache->active_lock);
+-	trace_cachefiles_mark_buried(NULL, dentry, why);
+-	_leave(" [no owner]");
+-	return;
++	struct inode *inode = d_backing_inode(dentry);
++	bool can_use = false;
+ 
+-	/* found the dentry for  */
+-found_dentry:
+-	kdebug("preemptive burial: OBJ%x [%s] %p",
+-	       object->fscache.debug_id,
+-	       object->fscache.state->name,
+-	       dentry);
++	_enter(",%p", object);
+ 
+-	trace_cachefiles_mark_buried(object, dentry, why);
++	inode_lock(inode);
+ 
+-	if (fscache_object_is_live(&object->fscache)) {
+-		pr_err("\n");
+-		pr_err("Error: Can't preemptively bury live object\n");
+-		cachefiles_printk_object(object, NULL);
++	if (!(inode->i_flags & S_CACHE_FILE)) {
++		inode->i_flags |= S_CACHE_FILE;
++		trace_cachefiles_mark_active(object, dentry);
++		can_use = true;
+ 	} else {
+-		if (why != FSCACHE_OBJECT_IS_STALE)
+-			fscache_object_mark_killed(&object->fscache, why);
++		pr_notice("cachefiles: Inode already in use: %pd\n", dentry);
+ 	}
+ 
+-	write_unlock(&cache->active_lock);
+-	_leave(" [owner marked]");
++	inode_unlock(inode);
++	return can_use;
+ }
+ 
+ /*
+- * record the fact that an object is now active
++ * Unmark a backing inode.
+  */
+-static int cachefiles_mark_object_active(struct cachefiles_cache *cache,
+-					 struct cachefiles_object *object)
++void cachefiles_unmark_inode_in_use(struct cachefiles_object *object,
++				    struct dentry *dentry)
+ {
+-	struct cachefiles_object *xobject;
+-	struct rb_node **_p, *_parent = NULL;
+-	struct dentry *dentry;
+-
+-	_enter(",%p", object);
+-
+-try_again:
+-	write_lock(&cache->active_lock);
+-
+-	dentry = object->dentry;
+-	trace_cachefiles_mark_active(object, dentry);
+-
+-	if (test_and_set_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags)) {
+-		pr_err("Error: Object already active\n");
+-		cachefiles_printk_object(object, NULL);
+-		BUG();
+-	}
+-
+-	_p = &cache->active_nodes.rb_node;
+-	while (*_p) {
+-		_parent = *_p;
+-		xobject = rb_entry(_parent,
+-				   struct cachefiles_object, active_node);
+-
+-		ASSERT(xobject != object);
+-
+-		if (xobject->dentry > dentry)
+-			_p = &(*_p)->rb_left;
+-		else if (xobject->dentry < dentry)
+-			_p = &(*_p)->rb_right;
+-		else
+-			goto wait_for_old_object;
+-	}
+-
+-	rb_link_node(&object->active_node, _parent, _p);
+-	rb_insert_color(&object->active_node, &cache->active_nodes);
+-
+-	write_unlock(&cache->active_lock);
+-	_leave(" = 0");
+-	return 0;
+-
+-	/* an old object from a previous incarnation is hogging the slot - we
+-	 * need to wait for it to be destroyed */
+-wait_for_old_object:
+-	trace_cachefiles_wait_active(object, dentry, xobject);
+-	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
+-
+-	if (fscache_object_is_live(&xobject->fscache)) {
+-		pr_err("\n");
+-		pr_err("Error: Unexpected object collision\n");
+-		cachefiles_printk_object(object, xobject);
+-	}
+-	atomic_inc(&xobject->usage);
+-	write_unlock(&cache->active_lock);
+-
+-	if (test_bit(CACHEFILES_OBJECT_ACTIVE, &xobject->flags)) {
+-		wait_queue_head_t *wq;
+-
+-		signed long timeout = 60 * HZ;
+-		wait_queue_entry_t wait;
+-		bool requeue;
+-
+-		/* if the object we're waiting for is queued for processing,
+-		 * then just put ourselves on the queue behind it */
+-		if (work_pending(&xobject->fscache.work)) {
+-			_debug("queue OBJ%x behind OBJ%x immediately",
+-			       object->fscache.debug_id,
+-			       xobject->fscache.debug_id);
+-			goto requeue;
+-		}
+-
+-		/* otherwise we sleep until either the object we're waiting for
+-		 * is done, or the fscache_object is congested */
+-		wq = bit_waitqueue(&xobject->flags, CACHEFILES_OBJECT_ACTIVE);
+-		init_wait(&wait);
+-		requeue = false;
+-		do {
+-			prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
+-			if (!test_bit(CACHEFILES_OBJECT_ACTIVE, &xobject->flags))
+-				break;
+-
+-			requeue = fscache_object_sleep_till_congested(&timeout);
+-		} while (timeout > 0 && !requeue);
+-		finish_wait(wq, &wait);
+-
+-		if (requeue &&
+-		    test_bit(CACHEFILES_OBJECT_ACTIVE, &xobject->flags)) {
+-			_debug("queue OBJ%x behind OBJ%x after wait",
+-			       object->fscache.debug_id,
+-			       xobject->fscache.debug_id);
+-			goto requeue;
+-		}
+-
+-		if (timeout <= 0) {
+-			pr_err("\n");
+-			pr_err("Error: Overlong wait for old active object to go away\n");
+-			cachefiles_printk_object(object, xobject);
+-			goto requeue;
+-		}
+-	}
+-
+-	ASSERT(!test_bit(CACHEFILES_OBJECT_ACTIVE, &xobject->flags));
+-
+-	cache->cache.ops->put_object(&xobject->fscache,
+-		(enum fscache_obj_ref_trace)cachefiles_obj_put_wait_retry);
+-	goto try_again;
++	struct inode *inode = d_backing_inode(dentry);
+ 
+-requeue:
+-	cache->cache.ops->put_object(&xobject->fscache,
+-		(enum fscache_obj_ref_trace)cachefiles_obj_put_wait_timeo);
+-	_leave(" = -ETIMEDOUT");
+-	return -ETIMEDOUT;
++	inode_lock(inode);
++	inode->i_flags &= ~S_CACHE_FILE;
++	inode_unlock(inode);
++	trace_cachefiles_mark_inactive(object, dentry, inode);
+ }
+ 
+ /*
+  * Mark an object as being inactive.
+  */
+-void cachefiles_mark_object_inactive(struct cachefiles_cache *cache,
+-				     struct cachefiles_object *object,
+-				     blkcnt_t i_blocks)
++static void cachefiles_mark_object_inactive(struct cachefiles_cache *cache,
++					    struct cachefiles_object *object)
+ {
+-	struct dentry *dentry = object->dentry;
+-	struct inode *inode = d_backing_inode(dentry);
+-
+-	trace_cachefiles_mark_inactive(object, dentry, inode);
+-
+-	write_lock(&cache->active_lock);
+-	rb_erase(&object->active_node, &cache->active_nodes);
+-	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
+-	write_unlock(&cache->active_lock);
+-
+-	wake_up_bit(&object->flags, CACHEFILES_OBJECT_ACTIVE);
++	blkcnt_t i_blocks = d_backing_inode(object->dentry)->i_blocks;
+ 
+ 	/* This object can now be culled, so we need to let the daemon know
+ 	 * that there is something it can remove if it needs to.
+@@ -286,7 +86,6 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 				  struct cachefiles_object *object,
+ 				  struct dentry *dir,
+ 				  struct dentry *rep,
+-				  bool preemptive,
+ 				  enum fscache_why_object_killed why)
+ {
+ 	struct dentry *grave, *trap;
+@@ -310,9 +109,6 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 		} else {
+ 			trace_cachefiles_unlink(object, rep, why);
+ 			ret = vfs_unlink(d_inode(dir), rep, NULL);
+-
+-			if (preemptive)
+-				cachefiles_mark_object_buried(cache, rep, why);
+ 		}
+ 
+ 		inode_unlock(d_inode(dir));
+@@ -373,8 +169,7 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 			return -ENOMEM;
+ 		}
+ 
+-		cachefiles_io_error(cache, "Lookup error %ld",
+-				    PTR_ERR(grave));
++		cachefiles_io_error(cache, "Lookup error %ld", PTR_ERR(grave));
+ 		return -EIO;
+ 	}
+ 
+@@ -416,9 +211,6 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 		if (ret != 0 && ret != -ENOMEM)
+ 			cachefiles_io_error(cache,
+ 					    "Rename failed with error %d", ret);
+-
+-		if (preemptive)
+-			cachefiles_mark_object_buried(cache, rep, why);
+ 	}
+ 
+ 	unlock_rename(cache->graveyard, dir);
+@@ -446,26 +238,18 @@ int cachefiles_delete_object(struct cachefiles_cache *cache,
+ 
+ 	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+ 
+-	if (test_bit(FSCACHE_OBJECT_KILLED_BY_CACHE, &object->fscache.flags)) {
+-		/* object allocation for the same key preemptively deleted this
+-		 * object's file so that it could create its own file */
+-		_debug("object preemptively buried");
++	/* We need to check that our parent is _still_ our parent - it may have
++	 * been renamed.
++	 */
++	if (dir == object->dentry->d_parent) {
++		ret = cachefiles_bury_object(cache, object, dir, object->dentry,
++					     FSCACHE_OBJECT_WAS_RETIRED);
++	} else {
++		/* It got moved, presumably by cachefilesd culling it, so it's
++		 * no longer in the key path and we can ignore it.
++		 */
+ 		inode_unlock(d_inode(dir));
+ 		ret = 0;
+-	} else {
+-		/* we need to check that our parent is _still_ our parent - it
+-		 * may have been renamed */
+-		if (dir == object->dentry->d_parent) {
+-			ret = cachefiles_bury_object(cache, object, dir,
+-						     object->dentry, false,
+-						     FSCACHE_OBJECT_WAS_RETIRED);
+-		} else {
+-			/* it got moved, presumably by cachefilesd culling it,
+-			 * so it's no longer in the key path and we can ignore
+-			 * it */
+-			inode_unlock(d_inode(dir));
+-			ret = 0;
+-		}
+ 	}
+ 
+ 	dput(dir);
+@@ -487,6 +271,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 	struct path path;
+ 	unsigned long start;
+ 	const char *name;
++	bool marked = false;
+ 	int ret, nlen;
+ 
+ 	_enter("OBJ%x{%p},OBJ%x,%s,",
+@@ -529,6 +314,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 	cachefiles_hist(cachefiles_lookup_histogram, start);
+ 	if (IS_ERR(next)) {
+ 		trace_cachefiles_lookup(object, next, NULL);
++		ret = PTR_ERR(next);
+ 		goto lookup_error;
+ 	}
+ 
+@@ -628,6 +414,13 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 	/* we've found the object we were looking for */
+ 	object->dentry = next;
+ 
++	/* note that we're now using this object */
++	if (!cachefiles_mark_inode_in_use(object, object->dentry)) {
++		ret = -EBUSY;
++		goto check_error_unlock;
++	}
++	marked = true;
++
+ 	/* if we've found that the terminal object exists, then we need to
+ 	 * check its attributes and delete it if it's out of date */
+ 	if (!object->new) {
+@@ -640,13 +433,12 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 			object->dentry = NULL;
+ 
+ 			ret = cachefiles_bury_object(cache, object, dir, next,
+-						     true,
+ 						     FSCACHE_OBJECT_IS_STALE);
+ 			dput(next);
+ 			next = NULL;
+ 
+ 			if (ret < 0)
+-				goto delete_error;
++				goto error_out2;
+ 
+ 			_debug("redo lookup");
+ 			fscache_object_retrying_stale(&object->fscache);
+@@ -654,16 +446,10 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 		}
+ 	}
+ 
+-	/* note that we're now using this object */
+-	ret = cachefiles_mark_object_active(cache, object);
+-
+ 	inode_unlock(d_inode(dir));
+ 	dput(dir);
+ 	dir = NULL;
+ 
+-	if (ret == -ETIMEDOUT)
+-		goto mark_active_timed_out;
+-
+ 	_debug("=== OBTAINED_OBJECT ===");
+ 
+ 	if (object->new) {
+@@ -712,26 +498,19 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
+ 		cachefiles_io_error(cache, "Create/mkdir failed");
+ 	goto error;
+ 
+-mark_active_timed_out:
+-	_debug("mark active timed out");
+-	goto release_dentry;
+-
++check_error_unlock:
++	inode_unlock(d_inode(dir));
++	dput(dir);
+ check_error:
+-	_debug("check error %d", ret);
+-	cachefiles_mark_object_inactive(
+-		cache, object, d_backing_inode(object->dentry)->i_blocks);
+-release_dentry:
++	if (marked)
++		cachefiles_unmark_inode_in_use(object, object->dentry);
++	cachefiles_mark_object_inactive(cache, object);
+ 	dput(object->dentry);
+ 	object->dentry = NULL;
+ 	goto error_out;
+ 
+-delete_error:
+-	_debug("delete error %d", ret);
+-	goto error_out2;
+-
+ lookup_error:
+-	_debug("lookup error %ld", PTR_ERR(next));
+-	ret = PTR_ERR(next);
++	_debug("lookup error %d", ret);
+ 	if (ret == -EIO)
+ 		cachefiles_io_error(cache, "Lookup failed");
+ 	next = NULL;
+@@ -861,8 +640,6 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
+ 					      struct dentry *dir,
+ 					      char *filename)
+ {
+-	struct cachefiles_object *object;
+-	struct rb_node *_n;
+ 	struct dentry *victim;
+ 	unsigned long start;
+ 	int ret;
+@@ -892,34 +669,9 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
+ 		return ERR_PTR(-ENOENT);
+ 	}
+ 
+-	/* check to see if we're using this object */
+-	read_lock(&cache->active_lock);
+-
+-	_n = cache->active_nodes.rb_node;
+-
+-	while (_n) {
+-		object = rb_entry(_n, struct cachefiles_object, active_node);
+-
+-		if (object->dentry > victim)
+-			_n = _n->rb_left;
+-		else if (object->dentry < victim)
+-			_n = _n->rb_right;
+-		else
+-			goto object_in_use;
+-	}
+-
+-	read_unlock(&cache->active_lock);
+-
+ 	//_leave(" = %p", victim);
+ 	return victim;
+ 
+-object_in_use:
+-	read_unlock(&cache->active_lock);
+-	inode_unlock(d_inode(dir));
+-	dput(victim);
+-	//_leave(" = -EBUSY [in use]");
+-	return ERR_PTR(-EBUSY);
+-
+ lookup_error:
+ 	inode_unlock(d_inode(dir));
+ 	ret = PTR_ERR(victim);
+@@ -948,6 +700,7 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
+ 		    char *filename)
+ {
+ 	struct dentry *victim;
++	struct inode *inode;
+ 	int ret;
+ 
+ 	_enter(",%pd/,%s", dir, filename);
+@@ -956,6 +709,19 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
+ 	if (IS_ERR(victim))
+ 		return PTR_ERR(victim);
+ 
++	/* check to see if someone is using this object */
++	inode = d_inode(victim);
++	inode_lock(inode);
++	if (inode->i_flags & S_CACHE_FILE) {
++		ret = -EBUSY;
++	} else {
++		inode->i_flags |= S_CACHE_FILE;
++		ret = 0;
++	}
++	inode_unlock(inode);
++	if (ret < 0)
++		goto error_unlock;
++
+ 	_debug("victim -> %p %s",
+ 	       victim, d_backing_inode(victim) ? "positive" : "negative");
+ 
+@@ -971,7 +737,7 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
+ 	/*  actually remove the victim (drops the dir mutex) */
+ 	_debug("bury");
+ 
+-	ret = cachefiles_bury_object(cache, NULL, dir, victim, false,
++	ret = cachefiles_bury_object(cache, NULL, dir, victim,
+ 				     FSCACHE_OBJECT_WAS_CULLED);
+ 	if (ret < 0)
+ 		goto error;
+@@ -1008,6 +774,7 @@ int cachefiles_check_in_use(struct cachefiles_cache *cache, struct dentry *dir,
+ 			    char *filename)
+ {
+ 	struct dentry *victim;
++	int ret = 0;
+ 
+ 	//_enter(",%pd/,%s",
+ 	//       dir, filename);
+@@ -1017,7 +784,9 @@ int cachefiles_check_in_use(struct cachefiles_cache *cache, struct dentry *dir,
+ 		return PTR_ERR(victim);
+ 
+ 	inode_unlock(d_inode(dir));
++	if (d_inode(victim)->i_flags & S_CACHE_FILE)
++		ret = -EBUSY;
+ 	dput(victim);
+ 	//_leave(" = 0");
+-	return 0;
++	return ret;
+ }
+diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
+index 9a448fe9355d..c877035c2946 100644
+--- a/include/trace/events/cachefiles.h
++++ b/include/trace/events/cachefiles.h
+@@ -237,35 +237,6 @@ TRACE_EVENT(cachefiles_mark_active,
+ 		      __entry->obj, __entry->de)
  	    );
  
--TRACE_EVENT(fscache_op,
--	    TP_PROTO(struct fscache_cookie *cookie, struct fscache_operation *op,
--		     enum fscache_op_trace why),
+-TRACE_EVENT(cachefiles_wait_active,
+-	    TP_PROTO(struct cachefiles_object *obj,
+-		     struct dentry *de,
+-		     struct cachefiles_object *xobj),
 -
--	    TP_ARGS(cookie, op, why),
+-	    TP_ARGS(obj, de, xobj),
 -
+-	    /* Note that obj may be NULL */
 -	    TP_STRUCT__entry(
--		    __field(unsigned int,		cookie		)
--		    __field(unsigned int,		op		)
--		    __field(enum fscache_op_trace,	why		)
+-		    __field(unsigned int,		obj		)
+-		    __field(unsigned int,		xobj		)
+-		    __field(struct dentry *,		de		)
+-		    __field(u16,			flags		)
+-		    __field(u16,			fsc_flags	)
 -			     ),
 -
 -	    TP_fast_assign(
--		    __entry->cookie		= cookie->debug_id;
--		    __entry->op			= op->debug_id;
--		    __entry->why		= why;
+-		    __entry->obj	= obj->fscache.debug_id;
+-		    __entry->de		= de;
+-		    __entry->xobj	= xobj->fscache.debug_id;
+-		    __entry->flags	= xobj->flags;
+-		    __entry->fsc_flags	= xobj->fscache.flags;
 -			   ),
 -
--	    TP_printk("c=%08x op=%08x %s",
--		      __entry->cookie, __entry->op,
--		      __print_symbolic(__entry->why, fscache_op_traces))
+-	    TP_printk("o=%08x d=%p wo=%08x wf=%x wff=%x",
+-		      __entry->obj, __entry->de, __entry->xobj,
+-		      __entry->flags, __entry->fsc_flags)
 -	    );
 -
- #endif /* _TRACE_FSCACHE_H */
- 
- /* This part must be outside protection */
+ TRACE_EVENT(cachefiles_mark_inactive,
+ 	    TP_PROTO(struct cachefiles_object *obj,
+ 		     struct dentry *de,
 
 
