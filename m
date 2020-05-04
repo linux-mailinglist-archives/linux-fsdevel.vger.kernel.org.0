@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A7D1C3530
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 11:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1501C3531
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 11:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbgEDJAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728167AbgEDJAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 4 May 2020 05:00:51 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:53627 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726885AbgEDJAu (ORCPT
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21865 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728512AbgEDJAv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 05:00:50 -0400
+        Mon, 4 May 2020 05:00:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588582847;
+        s=mimecast20190719; t=1588582849;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7IIEigFH4euYLZFcVPE/gY3sCMVw531UeBsz7uQYoxI=;
-        b=BE5JFqPPvmZ6exmo4pyf8cwY9MRQ5TzB1s08pK39MK0F8BdJDo2nebU2ip9Sfi9JXFkAw1
-        E1N9iZYZ88y5/ZCAhXnr3L2IAbmAc5FZxLE340kFForwFbvYk7uRmilcfZIbhZKQByi0Xs
-        A7hpd0r9bnHTgHpJ9/TbltWAvEvXha4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-231-lSPpa4qkN02M2dT5hds4cQ-1; Mon, 04 May 2020 05:00:45 -0400
-X-MC-Unique: lSPpa4qkN02M2dT5hds4cQ-1
-Received: by mail-wm1-f72.google.com with SMTP id h22so4534103wml.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 02:00:45 -0700 (PDT)
+        bh=rK7fi6Y9wU92f9lQDpmj5Rq5pcDU3mpj/jsbL/pXac0=;
+        b=BX7NIuW3t0alMebflTZPzJ5dx5oAJwe2ECBEo3V6T9ZDtlmh6pBjXQrwOLag9ExWj7haHZ
+        yEGVrrhgl/ns7C+joMPyQ0tpd33szeydH8er7e3Ob0SVn0XhcZ6rqgteqdZjTiKBnLKV2m
+        X0cyVNP10k2LYlbG91BZnvA0MF1DIr8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-425-kE9LgEp3NoiFYPNcxCdA_Q-1; Mon, 04 May 2020 05:00:46 -0400
+X-MC-Unique: kE9LgEp3NoiFYPNcxCdA_Q-1
+Received: by mail-wm1-f69.google.com with SMTP id u11so3160749wmc.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 02:00:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7IIEigFH4euYLZFcVPE/gY3sCMVw531UeBsz7uQYoxI=;
-        b=fbQ1nPi6/kJsV335iWCq+9dQ436ObxBKh73RPvQ1rJFWAt+uuSZ/yiBnpXhac95XOv
-         3Nms9liqt+parbiRpSJPgc/36WagWkPNG6DzU4qxrFqZTvIxxIEFPMRNaXRvh0AsoHTs
-         wHRzjtIQnnN/3sve3JhmNU4VjhH1ACH/6CIUFPPT90RDiohmYlPBAy2h54eKIlRewkP7
-         r6CohoKRe0USoSnF0qSrDyJqVQ2QdOhHLVghVHNRONfQvSNf8gJmI20RIL0H3lCs4+5A
-         K6PwSQ9YGIRSwHnJ13WgBMTfr0wz9mf3Is2OxcIIkNmhryLhOIEmS+//OwhERgcHrFJ3
-         EbWA==
-X-Gm-Message-State: AGi0Pub6jv54ex6XaKSbigVs36div8q66jvIYwsLEd1uYhC87Y5aZhBX
-        QCE20YEtdOZp3297MZBaJ7bIM77BsZa4aBv5HY45JV4rT5NOSnOi6z8WLLOKMHgPDeD/BYrcEnP
-        gqJivpWLzel8bBH5j81B2EifsUg==
-X-Received: by 2002:a1c:9e43:: with SMTP id h64mr13190318wme.0.1588582844038;
+        bh=rK7fi6Y9wU92f9lQDpmj5Rq5pcDU3mpj/jsbL/pXac0=;
+        b=V/qCxRR5H7h4ewlc0bufAU6p8f0/8oreXk5xe3mDDV7tpiEbG7jjd89fY3BFJ3//FJ
+         52ATRIOoMRWuTtNBrX8iiKHX3KWKCKM1rZhNE6pTa5N/7+QFMyv1HkEgd/FAWqDOIRmr
+         42TfqeW+G4+yhNuMet520Mz2KnXDf2my06ahWl0KMpJhVzVe7cTOh3i5uOfu1Yg9fKnu
+         fsbRbJh7p8aZmfIJDVL+Hy28Zk3rPB6sd2ocDzN6pZI2b+Ul503wxKVYO8zkGDXiROoL
+         8yrs5T+JlP/hgydV+6QclxU/HAbyvON1bSv+sojTZ3DmIxNWTi3x4yvtXm6yvj3a5eed
+         ocYA==
+X-Gm-Message-State: AGi0PuYE9DgxaysndOral1bib6MvlO0SJClsOF47mDn6b6Ks/daTQxXX
+        QVc4s1XhUFYcDxt5x5JPhD7rUigT1cM70FyUKJPycrY61z1W6+fPOchfLVpVMtQoquSO1ImuhLI
+        7MXdsn4Mnc+59EUQaNEPbN7ghiA==
+X-Received: by 2002:a5d:6ac1:: with SMTP id u1mr1349760wrw.319.1588582845019;
+        Mon, 04 May 2020 02:00:45 -0700 (PDT)
+X-Google-Smtp-Source: APiQypLoNr/f4mQA7SsbgtWQOMo1QequnmZqBTgkJHb2z1VHuIOAxGvWLPnw/QDJ2+f3J7ebV07xYA==
+X-Received: by 2002:a5d:6ac1:: with SMTP id u1mr1349738wrw.319.1588582844750;
         Mon, 04 May 2020 02:00:44 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJ7cTfFgvNNGrMEitRciGBgC/FMKXF2hdIb6eT2wnu6p2bAkNVK/QrF1BuJrSQF9koo5AfklA==
-X-Received: by 2002:a1c:9e43:: with SMTP id h64mr13190289wme.0.1588582843669;
-        Mon, 04 May 2020 02:00:43 -0700 (PDT)
 Received: from localhost.localdomain.com ([194.230.155.213])
-        by smtp.gmail.com with ESMTPSA id u127sm12984720wme.8.2020.05.04.02.00.42
+        by smtp.gmail.com with ESMTPSA id u127sm12984720wme.8.2020.05.04.02.00.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 May 2020 02:00:43 -0700 (PDT)
+        Mon, 04 May 2020 02:00:44 -0700 (PDT)
 From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Subject: [PATCH v3 5/7] libfs: add file creation functions
-Date:   Mon,  4 May 2020 11:00:30 +0200
-Message-Id: <20200504090032.10367-6-eesposit@redhat.com>
+Subject: [PATCH v3 6/7] debugfs: switch to simplefs inode creation API
+Date:   Mon,  4 May 2020 11:00:31 +0200
+Message-Id: <20200504090032.10367-7-eesposit@redhat.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200504090032.10367-1-eesposit@redhat.com>
 References: <20200504090032.10367-1-eesposit@redhat.com>
@@ -70,286 +70,246 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A bunch of code is duplicated between debugfs and tracefs, unify it to the
-libfs library.
+The only difference, compared to the pre-existing code, is that symlink
+creation now triggers fsnotify_create.  This was a bug in the debugfs
+code, since for example vfs_symlink does call fsnotify_create.
 
-The code is very similar, except that dentry and inode creation are unified
-into a single function (unlike start_creating in debugfs and tracefs, which
-only takes care of dentries).  This adds an output parameter to the
-creation functions, but pushes all error recovery into fs/libfs.c.
+Also remove debugfs_get_inode(), since it will be substituted
+by new_inode_current_time() in the simplefs_create_dentry call.
 
 Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
 ---
- fs/libfs.c         | 226 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  18 ++++
- 2 files changed, 244 insertions(+)
+ fs/debugfs/inode.c | 155 +++++----------------------------------------
+ 1 file changed, 15 insertions(+), 140 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 5c76e4c648dc..90b0c221d9a2 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -751,6 +751,232 @@ struct inode *simple_alloc_anon_inode(struct simple_fs *fs)
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 5dbb74a23e7c..76b594941840 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -61,17 +61,6 @@ static const struct inode_operations debugfs_symlink_inode_operations = {
+ 	.setattr	= debugfs_setattr,
+ };
+ 
+-static struct inode *debugfs_get_inode(struct super_block *sb)
+-{
+-	struct inode *inode = new_inode(sb);
+-	if (inode) {
+-		inode->i_ino = get_next_ino();
+-		inode->i_atime = inode->i_mtime =
+-			inode->i_ctime = current_time(inode);
+-	}
+-	return inode;
+-}
+-
+ struct debugfs_mount_opts {
+ 	kuid_t uid;
+ 	kgid_t gid;
+@@ -305,68 +294,6 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
  }
- EXPORT_SYMBOL(simple_alloc_anon_inode);
+ EXPORT_SYMBOL_GPL(debugfs_lookup);
  
-+static struct dentry *failed_creating(struct simple_fs *fs, struct dentry *dentry)
-+{
-+	inode_unlock(d_inode(dentry->d_parent));
-+	dput(dentry);
-+	simple_release_fs(fs);
-+	return ERR_PTR(-ENOMEM);
-+}
-+
-+/**
-+ * simplefs_create_dentry - creates a new dentry and inode
-+ * @fs: a pointer to a struct simple_fs containing the reference counter
-+ *      and vfs_mount pointer
-+ * @type: the fs type
-+ * @name: dentry name
-+ * @parent: parent dentry. If this parameter is NULL,
-+ *          then the dentry will be created in the root of the
-+ *          filesystem.
-+ * @inode: pointer that will contain a newly created inode
-+ *
-+ * This function returns a new dentry, or NULL on error.  On success, a
-+ * new inode is created and stored into @inode.  Also note that the inode
-+ * for the parent directory is locked by simplefs_create_dentry(),
-+ * and will be unlocked by simple_finish_dentry().
-+ **/
-+struct dentry *simplefs_create_dentry(struct simple_fs *fs, struct file_system_type *type,
-+				      const char *name, struct dentry *parent,
-+				      struct inode **inode)
-+{
-+	struct dentry *dentry;
-+	int error;
-+
-+	pr_debug("creating file '%s'\n", name);
-+
-+	if (IS_ERR(parent))
-+		return parent;
-+
-+	error = simple_pin_fs(fs, type);
-+	if (error) {
-+		pr_err("Unable to pin filesystem for file '%s'\n", name);
-+		return ERR_PTR(error);
-+	}
-+
-+	/* If the parent is not specified, we create it in the root.
-+	 * We need the root dentry to do this, which is in the super
-+	 * block. A pointer to that is in the struct vfsmount that we
-+	 * have around.
-+	 */
-+	if (!parent)
-+		parent = fs->mount->mnt_root;
-+
-+	inode_lock(d_inode(parent));
-+	dentry = lookup_one_len(name, parent, strlen(name));
-+	if (!IS_ERR(dentry) && d_really_is_positive(dentry)) {
-+		if (d_is_dir(dentry))
-+			pr_err("Directory '%s' with parent '%s' already present!\n",
-+			       name, parent->d_name.name);
-+		else
-+			pr_err("File '%s' in directory '%s' already present!\n",
-+			       name, parent->d_name.name);
-+		dput(dentry);
-+		dentry = ERR_PTR(-EEXIST);
-+	}
-+
-+	if (IS_ERR(dentry)) {
-+		inode_unlock(d_inode(parent));
-+		simple_release_fs(fs);
-+	}
-+
-+
-+	if (IS_ERR(dentry))
-+		return dentry;
-+
-+	*inode = new_inode_current_time(fs->mount->mnt_sb);
-+	if (unlikely(!(*inode))) {
-+		pr_err("out of free inodes, can not create file '%s'\n",
-+		       name);
-+		return failed_creating(fs, dentry);
-+	}
-+
-+	return dentry;
-+}
-+EXPORT_SYMBOL(simplefs_create_dentry);
-+
-+/**
-+ * simplefs_create_file - creates a new file dentry and inode
-+ * @fs: a pointer to a struct simple_fs containing the reference counter
-+ *      and vfs_mount pointer
-+ * @type: the fs type
-+ * @name: file name
-+ * @mode: file mode
-+ * @parent: parent dentry. If this parameter is NULL,
-+ *          then the file will be created in the root of the
-+ *          filesystem.
-+ * @data: what will the file contain
-+ * @inode: pointer that will contain a newly created inode
-+ *
-+ * This function returns a new dentry, or NULL on error.  On success, a
-+ * new inode is created and stored into @inode.  Also note that the inode
-+ * for the parent directory is locked by simplefs_create_dentry(),
-+ * and will be unlocked by simple_finish_dentry().
-+ **/
-+struct dentry *simplefs_create_file(struct simple_fs *fs, struct file_system_type *type,
-+				    const char *name, umode_t mode,
-+				    struct dentry *parent, void *data,
-+				    struct inode **inode)
-+{
-+	struct dentry *dentry;
-+
-+	WARN_ON((mode & S_IFMT) && !S_ISREG(mode));
-+	mode |= S_IFREG;
-+
-+	dentry = simplefs_create_dentry(fs, type, name, parent, inode);
-+
-+	if (IS_ERR(dentry))
-+		return dentry;
-+
-+	(*inode)->i_mode = mode;
-+	(*inode)->i_private = data;
-+
-+	return dentry;
-+}
-+EXPORT_SYMBOL(simplefs_create_file);
-+
-+
-+/**
-+ * simplefs_finish_dentry- complete creation of a new dentry
-+ * @dentry: the dentry being created
-+ * @inode: the inode associated to the dentry
-+ *
-+ * This function completes the creation of a dentry.
-+ * This includes associating @inode with the dentry, ensuring the link
-+ * counts are consistent and informing fsnotify.
-+ **/
-+struct dentry *simplefs_finish_dentry(struct dentry *dentry, struct inode *inode)
-+{
-+	d_instantiate(dentry, inode);
-+	if (S_ISDIR(inode->i_mode)) {
-+		inc_nlink(d_inode(dentry->d_parent));
-+		fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
-+	} else {
-+		fsnotify_create(d_inode(dentry->d_parent), dentry);
-+	}
-+	inode_unlock(d_inode(dentry->d_parent));
-+	return dentry;
-+}
-+EXPORT_SYMBOL(simplefs_finish_dentry);
-+
-+/**
-+ * simplefs_create_dir - creates a new directory dentry and inode
-+ * @fs: a pointer to a struct simple_fs containing the reference counter
-+ *      and vfs_mount pointer
-+ * @type: the fs type
-+ * @name: dir name
-+ * @mode: dir mode
-+ * @parent: parent dentry. If this parameter is NULL,
-+ *          then the directory will be created in the root of the
-+ *          filesystem.
-+ * @inode: pointer that will contain a newly created inode
-+ *
-+ * This function returns a new dentry, or NULL on error.  On success, a
-+ * new inode is created and stored into @inode.  Also note that the inode
-+ * for the parent directory is locked by simplefs_create_dentry(),
-+ * and will be unlocked by simple_finish_dentry().
-+ **/
-+struct dentry *simplefs_create_dir(struct simple_fs *fs, struct file_system_type *type,
-+				   const char *name, umode_t mode, struct dentry *parent,
-+				   struct inode **inode)
-+{
-+	struct dentry *dentry;
-+
-+	WARN_ON((mode & S_IFMT) && !S_ISDIR(mode));
-+	mode |= S_IFDIR;
-+
-+	dentry = simplefs_create_dentry(fs, type, name, parent, inode);
-+	if (IS_ERR(dentry))
-+		return dentry;
-+
-+	(*inode)->i_mode = mode;
-+	(*inode)->i_op = &simple_dir_inode_operations;
-+	(*inode)->i_fop = &simple_dir_operations;
-+
-+	/* directory inodes start off with i_nlink == 2 (for "." entry) */
-+	inc_nlink(*inode);
-+	return dentry;
-+}
-+EXPORT_SYMBOL(simplefs_create_dir);
-+
-+/**
-+ * simplefs_create_symlink - creates a new symlink dentry and inode
-+ * @fs: a pointer to a struct simple_fs containing the reference counter
-+ *      and vfs_mount pointer
-+ * @type: the fs type
-+ * @name: symlink name
-+ * @parent: parent dentry. If this parameter is NULL,
-+ *          then the symbolic link will be created in the root of the
-+ *          filesystem.
-+ * @inode: pointer that will contain a newly created inode
-+ *
-+ * This function returns a new dentry, or NULL on error.  On success, a
-+ * new inode is created and stored into @inode.  Also note that the inode
-+ * for the parent directory is locked by simplefs_create_dentry(),
-+ * and will be unlocked by simple_finish_dentry().
-+ **/
-+struct dentry *simplefs_create_symlink(struct simple_fs *fs, struct file_system_type *type,
-+				       const char *name, struct dentry *parent,
-+				       const char *target, struct inode **inode)
-+{
-+	struct dentry *dentry;
-+	char *link = kstrdup(target, GFP_KERNEL);
-+
-+	if (!link)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dentry = simplefs_create_dentry(fs, type, name, parent, inode);
-+	if (IS_ERR(dentry)) {
-+		kfree_link(link);
-+		return dentry;
-+	}
-+
-+	(*inode)->i_mode = S_IFLNK | S_IRWXUGO;
-+	(*inode)->i_link = link;
-+	(*inode)->i_op = &simple_symlink_inode_operations;
-+	return dentry;
-+}
-+EXPORT_SYMBOL(simplefs_create_symlink);
-+
+-static struct dentry *start_creating(const char *name, struct dentry *parent)
+-{
+-	struct dentry *dentry;
+-	int error;
+-
+-	pr_debug("creating file '%s'\n", name);
+-
+-	if (IS_ERR(parent))
+-		return parent;
+-
+-	error = simple_pin_fs(&debugfs, &debug_fs_type);
+-	if (error) {
+-		pr_err("Unable to pin filesystem for file '%s'\n", name);
+-		return ERR_PTR(error);
+-	}
+-
+-	/* If the parent is not specified, we create it in the root.
+-	 * We need the root dentry to do this, which is in the super
+-	 * block. A pointer to that is in the struct vfsmount that we
+-	 * have around.
+-	 */
+-	if (!parent)
+-		parent = debugfs.mount->mnt_root;
+-
+-	inode_lock(d_inode(parent));
+-	if (unlikely(IS_DEADDIR(d_inode(parent))))
+-		dentry = ERR_PTR(-ENOENT);
+-	else
+-		dentry = lookup_one_len(name, parent, strlen(name));
+-	if (!IS_ERR(dentry) && d_really_is_positive(dentry)) {
+-		if (d_is_dir(dentry))
+-			pr_err("Directory '%s' with parent '%s' already present!\n",
+-			       name, parent->d_name.name);
+-		else
+-			pr_err("File '%s' in directory '%s' already present!\n",
+-			       name, parent->d_name.name);
+-		dput(dentry);
+-		dentry = ERR_PTR(-EEXIST);
+-	}
+-
+-	if (IS_ERR(dentry)) {
+-		inode_unlock(d_inode(parent));
+-		simple_release_fs(&debugfs);
+-	}
+-
+-	return dentry;
+-}
+-
+-static struct dentry *failed_creating(struct dentry *dentry)
+-{
+-	inode_unlock(d_inode(dentry->d_parent));
+-	dput(dentry);
+-	simple_release_fs(&debugfs);
+-	return ERR_PTR(-ENOMEM);
+-}
+-
+-static struct dentry *end_creating(struct dentry *dentry)
+-{
+-	inode_unlock(d_inode(dentry->d_parent));
+-	return dentry;
+-}
+-
+ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 				struct dentry *parent, void *data,
+ 				const struct file_operations *proxy_fops,
+@@ -375,32 +302,17 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 	struct dentry *dentry;
+ 	struct inode *inode;
+ 
+-	if (!(mode & S_IFMT))
+-		mode |= S_IFREG;
+-	BUG_ON(!S_ISREG(mode));
+-	dentry = start_creating(name, parent);
+-
++	dentry = simplefs_create_file(&debugfs, &debug_fs_type,
++				      name, mode, parent, data, &inode);
+ 	if (IS_ERR(dentry))
+ 		return dentry;
+ 
+-	inode = debugfs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode)) {
+-		pr_err("out of free dentries, can not create file '%s'\n",
+-		       name);
+-		return failed_creating(dentry);
+-	}
+-
+-	inode->i_mode = mode;
+-	inode->i_private = data;
+-
+ 	inode->i_op = &debugfs_file_inode_operations;
+ 	inode->i_fop = proxy_fops;
+ 	dentry->d_fsdata = (void *)((unsigned long)real_fops |
+ 				DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
+ 
+-	d_instantiate(dentry, inode);
+-	fsnotify_create(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
+ }
+ 
  /**
-  * simple_read_from_buffer - copy data from the buffer to user space
-  * @to: the user space buffer to read to
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5e93de72118b..0569540fbe61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3375,6 +3375,24 @@ extern void simple_release_fs(struct simple_fs *);
+@@ -533,29 +445,16 @@ EXPORT_SYMBOL_GPL(debugfs_create_file_size);
+  */
+ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+ {
+-	struct dentry *dentry = start_creating(name, parent);
++	struct dentry *dentry;
+ 	struct inode *inode;
  
- extern struct inode *simple_alloc_anon_inode(struct simple_fs *fs);
++	dentry = simplefs_create_dir(&debugfs, &debug_fs_type,
++				     name, 0755, parent, &inode);
+ 	if (IS_ERR(dentry))
+ 		return dentry;
  
-+extern struct dentry *simplefs_create_dentry(struct simple_fs *fs,
-+					     struct file_system_type *type,
-+					     const char *name, struct dentry *parent,
-+					     struct inode **inode);
-+struct dentry *simplefs_finish_dentry(struct dentry *dentry, struct inode *inode);
-+
-+extern struct dentry *simplefs_create_file(struct simple_fs *fs,
-+					   struct file_system_type *type,
-+					   const char *name, umode_t mode,
-+					   struct dentry *parent, void *data,
-+					   struct inode **inode);
-+extern struct dentry *simplefs_create_dir(struct simple_fs *fs, struct file_system_type *type,
-+					  const char *name, umode_t mode, struct dentry *parent,
-+					  struct inode **inode);
-+extern struct dentry *simplefs_create_symlink(struct simple_fs *fs, struct file_system_type *type,
-+					      const char *name, struct dentry *parent,
-+					      const char *target, struct inode **inode);
-+
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+-	inode = debugfs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode)) {
+-		pr_err("out of free dentries, can not create directory '%s'\n",
+-		       name);
+-		return failed_creating(dentry);
+-	}
+-
+-	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
+ 	inode->i_op = &debugfs_dir_inode_operations;
+-	inode->i_fop = &simple_dir_operations;
+-
+-	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+-	inc_nlink(inode);
+-	d_instantiate(dentry, inode);
+-	inc_nlink(d_inode(dentry->d_parent));
+-	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_dir);
+ 
+@@ -575,29 +474,19 @@ struct dentry *debugfs_create_automount(const char *name,
+ 					debugfs_automount_t f,
+ 					void *data)
+ {
+-	struct dentry *dentry = start_creating(name, parent);
++	struct dentry *dentry;
+ 	struct inode *inode;
+ 
++	dentry = simplefs_create_dentry(&debugfs, &debug_fs_type, name, parent,
++					&inode);
+ 	if (IS_ERR(dentry))
+ 		return dentry;
+ 
+-	inode = debugfs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode)) {
+-		pr_err("out of free dentries, can not create automount '%s'\n",
+-		       name);
+-		return failed_creating(dentry);
+-	}
+-
+ 	make_empty_dir_inode(inode);
+ 	inode->i_flags |= S_AUTOMOUNT;
+ 	inode->i_private = data;
+ 	dentry->d_fsdata = (void *)f;
+-	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+-	inc_nlink(inode);
+-	d_instantiate(dentry, inode);
+-	inc_nlink(d_inode(dentry->d_parent));
+-	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
+ }
+ EXPORT_SYMBOL(debugfs_create_automount);
+ 
+@@ -629,28 +518,14 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+ {
+ 	struct dentry *dentry;
+ 	struct inode *inode;
+-	char *link = kstrdup(target, GFP_KERNEL);
+-	if (!link)
+-		return ERR_PTR(-ENOMEM);
+ 
+-	dentry = start_creating(name, parent);
+-	if (IS_ERR(dentry)) {
+-		kfree(link);
++	dentry = simplefs_create_symlink(&debugfs, &debug_fs_type,
++					 name, parent, target, &inode);
++	if (IS_ERR(dentry))
+ 		return dentry;
+-	}
+ 
+-	inode = debugfs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode)) {
+-		pr_err("out of free dentries, can not create symlink '%s'\n",
+-		       name);
+-		kfree(link);
+-		return failed_creating(dentry);
+-	}
+-	inode->i_mode = S_IFLNK | S_IRWXUGO;
+ 	inode->i_op = &debugfs_symlink_inode_operations;
+-	inode->i_link = link;
+-	d_instantiate(dentry, inode);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_symlink);
+ 
 -- 
 2.25.2
 
