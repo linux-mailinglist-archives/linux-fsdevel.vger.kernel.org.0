@@ -2,109 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9C041C3B7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 15:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C93331C3B8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 15:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgEDNnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 09:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44774 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728088AbgEDNnM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 09:43:12 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194A9C061A10
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 May 2020 06:43:12 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id t9so3879812pjw.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 06:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QAn+2RM7soSoqdOBHN+11VsA1mCP/YaXzCZebzqANzo=;
-        b=TE0iYyWaTh8bQ7IhHQUx/YbRFRnMkI4YDJatk7J/aBL01J5cQhnQxteoR6dI47x2WM
-         9w6GKjsw2MxaEcoWrmr/sfBb3M1hW9o+V38nO1wdEs99XhLm+b2sfzz39ExcH7Z7lrZ8
-         3hh+1EqtCInJBgFUsAjijAZjvXJGKLf9i3PXhKlPubiiU6+tfcNv7UkM+PY/8BPiU/+d
-         0CoCZeT/EiobAGwHu4cy1D0QsKI5zVK1WHzdEKSvmisLf2zRy7QYw/rrIHiUOHZ8dhxs
-         uJZKIS6sSR+EKs2QnO8trbgF6u3PH7lG36bjbej6xNQnma4QOJvC2lWBsb9KM2jn0a0+
-         JAFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QAn+2RM7soSoqdOBHN+11VsA1mCP/YaXzCZebzqANzo=;
-        b=ULlnFQ0c96SvRrNlEFGw6P4PDo1wkHo+oEgVuweRPXKvzLKGvL4Nwu30e5XYeYV0vT
-         q+s48EV+DrlUkPbjZv1d5Kb6sBt7JFc5MbBpjzajyrc7UFrMZ1Qxkl2iqBKa9SQODr1K
-         JjKvCMUoXuM4MhhfM0a8xMkebkLDptxR0Rwe9DxBVtEXHdfaUtOgT+QKglLd1fDVeVpW
-         YtPyAAi3KtljLWW8Esc0MjcdHgr4kmiKSBzE+qjmUafQYfJcpnq/2H0IF4ZvL/IBSDg5
-         tIBEMsnJQZxMWYXkayo8AXB5/Z9Uajd76cfhiJOo4ieNVu/F7b9F5jGFdlKMydAFF7OV
-         B9Ug==
-X-Gm-Message-State: AGi0PuZd5BwvcDlCOA1PLEjtjgwf3cX95g0YJJFMKxuLnTTXOESsi4J5
-        qBSlafJDWgSY+I7Pr7krSm5+TO+Q8HaHeA==
-X-Google-Smtp-Source: APiQypKVxfCwaRhwua444a4sKxbwU/GHLXZIu8GXcoaQjL6NbjBrUVGGq7g2rF/uM+Rfwd9g0kYMdA==
-X-Received: by 2002:a17:902:9693:: with SMTP id n19mr18232346plp.277.1588599791407;
-        Mon, 04 May 2020 06:43:11 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id a23sm8908180pfo.145.2020.05.04.06.43.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 06:43:10 -0700 (PDT)
-Subject: Re: [PATCH 1/2] splice: export do_tee()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Clay Harris <bugs@claycon.org>
-References: <cover.1588421219.git.asml.silence@gmail.com>
- <56e9c3c84e5dbf0be8272b520a7f26b039724175.1588421219.git.asml.silence@gmail.com>
- <CAG48ez0h6950sPrwfirF2rJ7S0GZhHcBM=+Pm+T2ky=-iFyOKg@mail.gmail.com>
- <387c1e30-cdb0-532b-032e-6b334b9a69fa@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b62d84b0-c5a8-402f-d62e-e0b8d41221bb@kernel.dk>
-Date:   Mon, 4 May 2020 07:43:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <387c1e30-cdb0-532b-032e-6b334b9a69fa@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1728085AbgEDNqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 09:46:33 -0400
+Received: from mail-bn7nam10on2134.outbound.protection.outlook.com ([40.107.92.134]:60353
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726913AbgEDNqc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 May 2020 09:46:32 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iY7rNUIJrxtfpAozCdDIvTuS8CqGgVDuoWyBqCZ/cPypJqzQTBLkaDV6WFKLN3oIHuzBVnFUi1Ytfk6EjMzZK4BVGVKmt/vrW4tDR+q/3u3/tGiNtEDMKFKG+S1e6ylRp5oJMfxAJkm17nAfer96/NrUkBL2itsBeyilYd2Aq4qSX6hH4NTipK19DCPZDO+m88PJguOKZ8nEsQVD1b85FjMl/usPL4yH0cA4N53VgrlYOjrNWl4qwg8m007jTUiCAaDhXvfCgZqEji75tViwkwF6fWrID8Kc/zpo33emkzS8HCYoXJ2wFOi2iZeRodHESegQxCH6bPtco+/Gup7wGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I8S+NwkAFnMlPYchysvHz9W/d/XOnB8UJdtq5O3sPyU=;
+ b=HmAK4HTV7MMbOWJjroD2yWWWFPKWyhxYmocJWBtAYCb4ZLvjEacu+4YhvVMR/7CV2WfUBAfnpCFM+dh7ltgCjC5ofN+/gjwIgqlDe5nQX8NL65aP/lPDf4qPTZkULXmSiOrahRiol5Jg3NPI85hBbQ2DGDnlodHWFzc5M7iQs3iIzH6SidxdbL18c8T4Lzbel7PGPfr2V3+gU2i/XaSnvkiuIH9iNu/Y58N7KhQPDl0hJ0QoxviKRwoKPi7ceg+EFKN/hD5+EStuB+TRmfl7bogu6u/LgJeE3V/bgC1tKn15/DzowQYaU319KJXu2lanoYqC0VR9+lVMwEy/68RN+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 204.77.163.244) smtp.rcpttodomain=zeniv.linux.org.uk
+ smtp.mailfrom=garmin.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
+ action=none header.from=garmin.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I8S+NwkAFnMlPYchysvHz9W/d/XOnB8UJdtq5O3sPyU=;
+ b=t9rP8pyCF7hCYE7oD4GPSr4T6qE6vDgI46Tr8hz2lz7An+Ph51/Iup3OoSeiS04EKzSqWLhr3pe7/RoyadUjLc0HgDoA2uticbdobyH52bimFJgEILDof5cE1OsI/8BLnCAG4+euIf6JeFO1Ph0rK7jx9PCg7ks/VYObRRrlfEWpW23T2f6xwGILS9GExbiECD1c1Vwf+Fsvp8lbBz1IknljqGVo2H1+eru5gDaM0kWHziK19uRQwxtr1qmHoLs74jMERbokTKq0KFqWOk1PvjDcyeslUN0gpWg8/5XpbfTaX/hOArMa6VsqbA8w7R0u5kVtZ3yN1BgFW56rscW1mg==
+Received: from MWHPR19CA0018.namprd19.prod.outlook.com (2603:10b6:300:d4::28)
+ by BN6PR04MB0548.namprd04.prod.outlook.com (2603:10b6:404:98::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.27; Mon, 4 May
+ 2020 13:46:25 +0000
+Received: from MW2NAM10FT063.eop-nam10.prod.protection.outlook.com
+ (2603:10b6:300:d4:cafe::b9) by MWHPR19CA0018.outlook.office365.com
+ (2603:10b6:300:d4::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend
+ Transport; Mon, 4 May 2020 13:46:24 +0000
+Authentication-Results: spf=pass (sender IP is 204.77.163.244)
+ smtp.mailfrom=garmin.com; zeniv.linux.org.uk; dkim=none (message not signed)
+ header.d=none;zeniv.linux.org.uk; dmarc=pass action=none
+ header.from=garmin.com;
+Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
+ 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=204.77.163.244; helo=edgetransport.garmin.com;
+Received: from edgetransport.garmin.com (204.77.163.244) by
+ MW2NAM10FT063.mail.protection.outlook.com (10.13.155.36) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2958.20 via Frontend Transport; Mon, 4 May 2020 13:46:24 +0000
+Received: from OLAWPA-EXMB2.ad.garmin.com (10.5.144.24) by
+ olawpa-edge5.garmin.com (10.60.4.229) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1466.3; Mon, 4 May 2020 08:46:22 -0500
+Received: from OLAWPA-EXMB7.ad.garmin.com (10.5.144.21) by
+ OLAWPA-EXMB2.ad.garmin.com (10.5.144.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 4 May 2020 08:46:23 -0500
+Received: from OLAWPA-EXMB7.ad.garmin.com ([fe80::68cc:dab9:e96a:c89]) by
+ OLAWPA-EXMB7.ad.garmin.com ([fe80::68cc:dab9:e96a:c89%23]) with mapi id
+ 15.01.1913.007; Mon, 4 May 2020 08:46:22 -0500
+From:   "Karstens, Nate" <Nate.Karstens@garmin.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Changli Gao <xiaosuo@gmail.com>
+Subject: RE: Implement close-on-fork
+Thread-Topic: Implement close-on-fork
+Thread-Index: AQHWGLbZv/+sbtLmUEywo/DM9o3r9aiFlOCAgAAL0QCADb2wEA==
+Date:   Mon, 4 May 2020 13:46:22 +0000
+Message-ID: <de6adce76b534310975e4d3c4a4facb2@garmin.com>
+References: <20200420071548.62112-1-nate.karstens@garmin.com>
+ <20200422150107.GK23230@ZenIV.linux.org.uk>
+ <20200422151815.GT5820@bombadil.infradead.org>
+ <20200422160032.GL23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200422160032.GL23230@ZenIV.linux.org.uk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.50.4.6]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1020-25394.007
+X-TM-AS-Result: No-27.018700-8.000000-10
+X-TMASE-MatchedRID: yebcs53SkkCWFjFUJMrS44VMtEwAWsdc4KGcvdz6T3yqvcIF1TcLYFaP
+        6AhhdqyDXQS0szagh4Mxi8MyKU4EZNjTzYyhzXBGtvnlOJ61K3rdYVrFVbszaPyQXCBzKijh1TU
+        m5o9W5vUTGmoC9JG/E5GuTWz+EB0g4QkhCfQ808F9j6Il8VAHF2AW2j9VWc0lI7vGkGphvBhyMB
+        AlYDmp4lqggJY/GBdeNB7jBV5VDYO7Cjv/4LgPYnCxQs5EhhfjUg5zxCPHJW0xr/m//6oStvzis
+        Q86/F0ZrTwuuE+7qnE+9k1u1Md9SZ9AhAcFWw1rU9ht8cPjV44YgyDj5TiRtT2yosu2E9kKkewQ
+        9AfP6yyBAcI2M9CkidtXYrM5EPdswp83yWF/TK5BAOxoLJ+v3MV0QyhMrtsxYxDgISSqWZ6EbMb
+        fBj9wt4sHqQHaw/Q7sVJ8zTsA3rUApIQ1X2G0S3CO70QAsBdCyWxPa/RwSU90rxNYA09+9oXvte
+        Z/aS6Rkk084sJF0CYQy9bT0ApQg8EM7jBTDoIY+ACG5oWJ7tI8jmaHmXQMACNGK7UC7ElMyZZP6
+        HlL02AbDC6jLuKs7R3btB6mqMnLkOYrLvfr5/LZw6vmg2YxmfiH64jt3FfEtGZL9hpabzCX0y6n
+        lwu2zGpeBnrkhkXvS0mrIcn0eIdLzhnjbgktErSlePUaQB977KNezW4SKYV3pEVETu8p8a0ZkEG
+        mg55zSxogTdxY9kZP2UMxnvUrSaH2g9syPs8854eqweLWaL4vsOOmgOo1mdjMMV3eZDNhtoa372
+        /xU0Ozv2tt8x+SiCCezYDg2QbmcNYIRle9ggeeAiCmPx4NwNivpTdmVCR2xEHRux+uk8irEHfaj
+        14ZyVVoEXK0hBS3
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--27.018700-8.000000
+X-TMASE-Version: SMEX-12.5.0.1300-8.5.1020-25394.007
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFTY:;SFS:(396003)(39860400002)(136003)(376002)(346002)(46966005)(70586007)(54906003)(186003)(966005)(316002)(478600001)(7696005)(108616005)(24736004)(70206006)(8936002)(2616005)(53546011)(2906002)(3480700007)(26005)(47076004)(4326008)(7416002)(7636003)(82740400003)(110136005)(5660300002)(16799955002)(36756003)(8676002)(426003)(82310400002)(356005)(86362001)(336012);DIR:OUT;SFP:1102;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 894847fa-29f7-43da-8c08-08d7f031893c
+X-MS-TrafficTypeDiagnostic: BN6PR04MB0548:
+X-Microsoft-Antispam-PRVS: <BN6PR04MB0548CC46F1EA3C4C2937BF449CA60@BN6PR04MB0548.namprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 03932714EB
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: E0euQN9aVjxcn5KYAGBSKXY4PK56CbTmp2fiSuVTOrR/qEL9Y/rfmMJgYpEX13uDWXywih5fQZAoE0Nh1ngyDMks8NUBnxP8BwVUizCG4r9PN+wUsFozwHCjRVMCwRdvLgZFZIrPxWzI2QGzjzAzzjoFvCiUlmEXNlyXGU1B/M2dmOH7O6qmEF10Tqpo4jCjB0R7N0Ggm9seAaieVHIcyXkc3KKNQ8MXXv+pcuqi4GcQPx8e0vZ0hkQ9bGP3mQDbI9ofp/yeebtN+ppbOMvUg1juuPAEq5ogSwnQsyuLaEADyZyKxk1jf3og8DNYyrfzWNO+M3IU10qUybbsETfTA0DpZ7XyEX5uL2uXxodXdr297Up26e7YI4rX9moCZ0ve18GOtObtxdzqP/oLhpTyN04/irp8xazdozrn7IPorTe8BthrD9rW2H2SlgPF/ImGQg6/3btTs3YTzaIDfn6BhNP3Nsku+HmuUgUe+woo6lmRMgyxmYBQVuSKDGnN4U0sSMNI1aQ83tGhV1wCcMDY9unU1i+S6v5xZKUEiJvTXTgevbmqAWquBUdTTdbVfr+rorgTJAHkL7yXs1LaGLaF6w==
+X-OriginatorOrg: garmin.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2020 13:46:24.1395
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 894847fa-29f7-43da-8c08-08d7f031893c
+X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB0548
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/4/20 6:31 AM, Pavel Begunkov wrote:
-> On 04/05/2020 14:09, Jann Horn wrote:
->> On Sat, May 2, 2020 at 2:10 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>> export do_tee() for use in io_uring
->> [...]
->>> diff --git a/fs/splice.c b/fs/splice.c
->> [...]
->>>   * The 'flags' used are the SPLICE_F_* variants, currently the only
->>>   * applicable one is SPLICE_F_NONBLOCK.
->>>   */
->>> -static long do_tee(struct file *in, struct file *out, size_t len,
->>> -                  unsigned int flags)
->>> +long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
->>>  {
->>>         struct pipe_inode_info *ipipe = get_pipe_info(in);
->>>         struct pipe_inode_info *opipe = get_pipe_info(out);
->>
->> AFAICS do_tee() in its current form is not something you should be
->> making available to anything else, because the file mode checks are
->> performed in sys_tee() instead of in do_tee(). (And I don't see any
->> check for file modes in your uring patch, but maybe I missed it?) If
->> you want to make do_tee() available elsewhere, please refactor the
->> file mode checks over into do_tee().
-> 
-> Overlooked it indeed. Glad you found it
+Thanks everyone for their comments, sorry for the delay in my reply.
 
-Yeah indeed, that's a glaring oversight on my part too. Will you send
-a patch for 5.7-rc as well for splice?
+> As for the original problem...  what kind of exclusion is used between th=
+e reaction to netlink notifications (including closing every socket,
+> etc.) and actual IO done on those sockets?
+> Not an idle question, BTW - unlike Solaris we do NOT (and will not) have
+> close(2) abort IO on the same descriptor from another thread.  So if one =
+thread sits in recvmsg(2) while another does close(2), the socket will
+> *NOT* actually shut down until recvmsg(2) returns.
 
--- 
-Jens Axboe
+The netlink notification is received on a separate thread, but handling of =
+that notification (closing and re-opening sockets) and the socket I/O is al=
+l done on the same thread. The call to system() happens sometime between wh=
+en this thread decides to close all of its sockets and when the sockets hav=
+e been closed. The child process is left with a reference to one or more so=
+ckets. The close-on-exec flag is set on the socket, so the period of time i=
+s brief, but because system() is not atomic this still leaves a window of o=
+pportunity for the failure to occur. The parent process tries to open the s=
+ocket again but fails because the child process still has an open socket th=
+at controls the port.
 
+This phenomenon can really be generalized to any resource that 1) a process=
+ needs exclusive access to and 2) the operating system automatically create=
+s a new reference in the child when the process forks.
+
+> Reimplementing system() is trivial.
+> LD_LIBRARY_PRELOAD should take care of all system(3) calls.
+
+Yes, that would solve the problem for our system. We identified what we bel=
+ieve to be a problem with the POSIX threading model and wanted to work with=
+ the community to improve this for others as well. The Austin Group agreed =
+with the premise enough that they were willing to update the POSIX standard=
+.
+
+> I wonder it it has some value to add runtime checking for "multi-threaded=
+" to such lib functions and error out if yes.
+> Apart from that, system() is a PITA even on single/non-threaded apps.
+
+That may be, but system() is convenient and there isn't much in the documen=
+tation that warns the average developer away from its use. The manpage indi=
+cates system() is thread-safe. The manpage is also somewhat contradictory i=
+n that it describes the operation as being equivalent to a fork() and an ex=
+ecl(), though it later points out that pthread_atfork() handlers may not be=
+ executed.
+
+> FWIW, I'm opposed to the entire feature.  Improving the implementation wi=
+ll not change that.
+
+I get it. From our perspective, changing the OS to resolve an issue seems l=
+ike a drastic step. We tried hard to come up with an alternative (see https=
+://www.mail-archive.com/austin-group-l@opengroup.org/msg05324.html and http=
+s://austingroupbugs.net/view.php?id=3D1317), but nothing else addresses the=
+ underlying issue: there is no way to prevent a fork() from duplicating the=
+ resource. The close-on-exec flag partially-addresses this by allowing the =
+parent process to mark a file descriptor as exclusive to itself, but there =
+is still a period of time the failure can occur because the auto-close only=
+ occurs during the exec(). Perhaps this would not be an issue with a differ=
+ent process/threading model, but that is another discussion entirely.
+
+Best Regards,
+
+Nate
+
+-----Original Message-----
+From: Al Viro <viro@ftp.linux.org.uk> On Behalf Of Al Viro
+Sent: Wednesday, April 22, 2020 11:01
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Karstens, Nate <Nate.Karstens@garmin.com>; Jeff Layton <jlayton@kernel.=
+org>; J. Bruce Fields <bfields@fieldses.org>; Arnd Bergmann <arnd@arndb.de>=
+; Richard Henderson <rth@twiddle.net>; Ivan Kokshaysky <ink@jurassic.park.m=
+su.ru>; Matt Turner <mattst88@gmail.com>; James E.J. Bottomley <James.Botto=
+mley@hansenpartnership.com>; Helge Deller <deller@gmx.de>; David S. Miller =
+<davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; linux-fsdevel@vger=
+.kernel.org; linux-arch@vger.kernel.org; linux-alpha@vger.kernel.org; linux=
+-parisc@vger.kernel.org; sparclinux@vger.kernel.org; netdev@vger.kernel.org=
+; linux-kernel@vger.kernel.org; Changli Gao <xiaosuo@gmail.com>
+Subject: Re: Implement close-on-fork
+
+CAUTION - EXTERNAL EMAIL: Do not click any links or open any attachments un=
+less you trust the sender and know the content is safe.
+
+
+On Wed, Apr 22, 2020 at 08:18:15AM -0700, Matthew Wilcox wrote:
+> On Wed, Apr 22, 2020 at 04:01:07PM +0100, Al Viro wrote:
+> > On Mon, Apr 20, 2020 at 02:15:44AM -0500, Nate Karstens wrote:
+> > > Series of 4 patches to implement close-on-fork. Tests have been
+> > > published to https://github.com/nkarstens/ltp/tree/close-on-fork.
+> > >
+> > > close-on-fork addresses race conditions in system(), which
+> > > (depending on the implementation) is non-atomic in that it first
+> > > calls a fork() and then an exec().
+> > >
+> > > This functionality was approved by the Austin Common Standards
+> > > Revision Group for inclusion in the next revision of the POSIX
+> > > standard (see issue 1318 in the Austin Group Defect Tracker).
+> >
+> > What exactly the reasons are and why would we want to implement that?
+> >
+> > Pardon me, but going by the previous history, "The Austin Group Says
+> > It's Good" is more of a source of concern regarding the merits,
+> > general sanity and, most of all, good taste of a proposal.
+> >
+> > I'm not saying that it's automatically bad, but you'll have to go
+> > much deeper into the rationale of that change before your proposal
+> > is taken seriously.
+>
+> https://www.mail-archive.com/austin-group-l@opengroup.org/msg05324.htm
+> l
+> might be useful
+
+*snort*
+
+Alan Coopersmith in that thread:
+|| https://lwn.net/Articles/785430/ suggests AIX, BSD, & MacOS have also
+|| defined it, and though it's been proposed multiple times for Linux, neve=
+r adopted there.
+
+Now, look at the article in question.  You'll see that it should've been "s=
+omeone's posting in the end of comments thread under LWN article says that =
+apparently it exists on AIX, BSD, ..."
+
+The strength of evidence aside, that got me curious; I have checked the sou=
+rce of FreeBSD, NetBSD and OpenBSD.  No such thing exists in either of thei=
+r kernels, so at least that part can be considered an urban legend.
+
+As for the original problem...  what kind of exclusion is used between the =
+reaction to netlink notifications (including closing every socket,
+etc.) and actual IO done on those sockets?
+
+
+________________________________
+
+CONFIDENTIALITY NOTICE: This email and any attachments are for the sole use=
+ of the intended recipient(s) and contain information that may be Garmin co=
+nfidential and/or Garmin legally privileged. If you have received this emai=
+l in error, please notify the sender by reply email and delete the message.=
+ Any disclosure, copying, distribution or use of this communication (includ=
+ing attachments) by someone other than the intended recipient is prohibited=
+. Thank you.
