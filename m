@@ -2,86 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6F71C494E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 23:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB4D1C496F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 00:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgEDV7U convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 4 May 2020 17:59:20 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:52546 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727855AbgEDV7T (ORCPT
+        id S1728172AbgEDWLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 18:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726338AbgEDWLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 17:59:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 82AEB6071A61;
-        Mon,  4 May 2020 23:59:17 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ORmgk83AKakw; Mon,  4 May 2020 23:59:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id A74316071A7C;
-        Mon,  4 May 2020 23:59:16 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id YuWijWMN5XAw; Mon,  4 May 2020 23:59:16 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 7DAC86071A61;
-        Mon,  4 May 2020 23:59:16 +0200 (CEST)
-Date:   Mon, 4 May 2020 23:59:16 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Johannes Thumshirn <jth@kernel.org>
-Cc:     David Sterba <dsterba@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        david <david@sigma-star.at>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Message-ID: <164471725.184338.1588629556400.JavaMail.zimbra@nod.at>
-In-Reply-To: <20200428105859.4719-2-jth@kernel.org>
-References: <20200428105859.4719-1-jth@kernel.org> <20200428105859.4719-2-jth@kernel.org>
-Subject: Re: [PATCH v2 1/2] btrfs: add authentication support
+        Mon, 4 May 2020 18:11:21 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 669A7C061A0E;
+        Mon,  4 May 2020 15:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=Ke6Is75zTSCuovFahCnc7BTlhzg10jNaHS1gn8ns//o=; b=JDybFtusCmGEq91bmNnwoWCj+a
+        N0xxIbsYu5lQxZkzPmNDuU07PGvTPGCdW0vbPRO5yL9CyEBvYR1vtbAgXrtqw0hBFSByZmuXy1eOa
+        BV13lTYReOQhwPBCt6oCwd0okqW34ZMeppO7ul+DxlMT9qEZya+kLv/fyY5XjjSJAr4+XskBbUHkP
+        mPhZXNr8NsQlQubgAbiO0erlNn5pHycINxr2ibFLT8cB20zuIsAzAh/rYn7lMK6nibeLoyUg72TaC
+        rhhs1ncVZ9Po/A7mh6tw7ETaxX3a6Mq6QjZeYirrDtXuot86KgWihjeGnL68mEPitegVqvhOr0bO8
+        9WIr0pFg==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jVjIz-0001BJ-5H; Mon, 04 May 2020 22:11:17 +0000
+Subject: Re: [PATCH v2 2/5] stats_fs API: create, add and remove stats_fs
+ sources and values
+To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+        kvm@vger.kernel.org
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200504110344.17560-1-eesposit@redhat.com>
+ <20200504110344.17560-3-eesposit@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9a4e7489-bac4-23dc-b612-73eb91babb6f@infradead.org>
+Date:   Mon, 4 May 2020 15:11:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <20200504110344.17560-3-eesposit@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Topic: btrfs: add authentication support
-Thread-Index: Z3MnT0+k8n5OYo6is7pXVDYH2KOhKQ==
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Johannes Thumshirn" <jth@kernel.org>
-> An: "David Sterba" <dsterba@suse.cz>
-> CC: "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "linux-btrfs" <linux-btrfs@vger.kernel.org>, "Eric Biggers"
-> <ebiggers@google.com>, "richard" <richard@nod.at>, "Johannes Thumshirn" <johannes.thumshirn@wdc.com>, "Johannes
-> Thumshirn" <jthumshirn@suse.de>
-> Gesendet: Dienstag, 28. April 2020 12:58:58
-> Betreff: [PATCH v2 1/2] btrfs: add authentication support
+On 5/4/20 4:03 AM, Emanuele Giuseppe Esposito wrote:
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index f08fbbfafd9a..1b0de0f19e96 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -328,4 +328,10 @@ source "fs/unicode/Kconfig"
+>  config IO_WQ
+>  	bool
+>  
+> +config STATS_FS
+> +	bool "Statistics Filesystem"
+> +	help
+> +	  stats_fs is a virtual file system that provides counters and
+> +	  other statistics about the running kernel.
+> +
+>  endmenu
 
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> Add authentication support for a BTRFS file-system.
-> 
-> This works, because in BTRFS every meta-data block as well as every
-> data-block has a own checksum. For meta-data the checksum is in the
-> meta-data node itself. For data blocks, the checksums are stored in the
-> checksum tree.
+Hi,
 
-Eric already raised doubts, let me ask more directly.
-Does the checksum tree really cover all moving parts of BTRFS?
+This kconfig entry should be under (inside) "Pseudo filesystems",
+i.e., between 'menu "Pseudo filesystems"' and its corresponding
+"endmenu".
 
-I'm a little surprised how small your patch is.
-Getting all this done for UBIFS was not easy and given that UBIFS is truly
-copy-on-write it was still less work than it would be for other filesystems.
+Thanks.
+-- 
+~Randy
 
-If I understand the checksum tree correctly, the main purpose is protecting
-you from flipping bits.
-An attacker will perform much more sophisticated attacks.
-
-Thanks,
-//richard
