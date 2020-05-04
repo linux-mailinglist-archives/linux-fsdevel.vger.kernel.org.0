@@ -2,44 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BA61C4116
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 19:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655A61C411E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 19:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbgEDRJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 13:09:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38622 "EHLO
+        id S1730202AbgEDRJo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 13:09:44 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38834 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730169AbgEDRJa (ORCPT
+        with ESMTP id S1730189AbgEDRJm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 13:09:30 -0400
+        Mon, 4 May 2020 13:09:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588612168;
+        s=mimecast20190719; t=1588612179;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PRwwHlNO1yY7dz7YgZUstN0FteiDl+34wwZyp1CvKVs=;
-        b=Mam27Jc18E6QXmCHSyVW4hzx2Iuxa2eMNNgT7rttWNRz4Y82wylN54tWvmx/XYvSrR8OYT
-        HjOBKl1qLH7HT8ezgUwRk3gk9vkHQ13ohdt7bf1rIatzNk1XFik/46z0tYcYcxv2lVsr+O
-        lnYDIKfhLmOjA5py954UnAfqUHXwuWk=
+        bh=3/IYZhuHPsRjdF240Q1/z3a4igodJ3Q8RgoNPBPM/OU=;
+        b=R9W1ZPuBB2G5mn4t8nukj+TGZc9JtaCWgIVmc1BFuEQ/AtvVTJnWobHtL0b4e1FOKHk/Q9
+        X3MBtLmq1cu0eZXVP6fqzdcbhtfr9XCDbFkaXBSa1i3Cox/QiN7Yu+fmojLhb5z2hw+98N
+        kfIGC8OpwLiyU6JBPBZvRfktgbWrcRY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-112-1SWJZk0-NcGayu76UEvi5A-1; Mon, 04 May 2020 13:09:27 -0400
-X-MC-Unique: 1SWJZk0-NcGayu76UEvi5A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-300-wXH_2MNKMjWsJk-XjuX1Pg-1; Mon, 04 May 2020 13:09:36 -0400
+X-MC-Unique: wXH_2MNKMjWsJk-XjuX1Pg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51DD0DC0A;
-        Mon,  4 May 2020 17:09:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 294058730EB;
+        Mon,  4 May 2020 17:09:34 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B8C1899CF;
-        Mon,  4 May 2020 17:09:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D69F60BEC;
+        Mon,  4 May 2020 17:09:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 13/61] fscache: Remove store_limit* from struct
- fscache_object
+Subject: [RFC PATCH 14/61] fscache: Remove fscache_check_consistency()
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -51,221 +50,332 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 04 May 2020 18:09:21 +0100
-Message-ID: <158861216191.340223.5826773540368508104.stgit@warthog.procyon.org.uk>
+Date:   Mon, 04 May 2020 18:09:30 +0100
+Message-ID: <158861217055.340223.17464479642843198381.stgit@warthog.procyon.org.uk>
 In-Reply-To: <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
 References: <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.21
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the store_limit values from struct fscache_object and store the
-object size in the cookie.  The netfs can update this at will, and we don't
-want to call back into the netfs to fetch it.
+Remove fscache_check_consistency() as that allows the netfs to pry into the
+inner working of the cache - and what's in the cookie should be taken as
+consistent with the disk (possibly lazily).
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/interface.c     |   10 ++--------
- fs/fscache/cookie.c           |   14 ++++++--------
- fs/fscache/object.c           |    2 --
- include/linux/fscache-cache.h |   22 ----------------------
- include/linux/fscache.h       |    1 +
- 5 files changed, 9 insertions(+), 40 deletions(-)
+ fs/cachefiles/interface.c     |   26 -------------
+ fs/fscache/cookie.c           |   79 ----------------------------------------
+ fs/fscache/internal.h         |    9 -----
+ fs/fscache/page.c             |   82 -----------------------------------------
+ include/linux/fscache-cache.h |    4 --
+ include/linux/fscache.h       |   23 ------------
+ 6 files changed, 223 deletions(-)
 
 diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index b7aa5c733cb7..a5d348581bcc 100644
+index a5d348581bcc..a3837ed090a8 100644
 --- a/fs/cachefiles/interface.c
 +++ b/fs/cachefiles/interface.c
-@@ -359,7 +359,7 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
- 	loff_t oi_size;
- 	int ret;
+@@ -320,31 +320,6 @@ static void cachefiles_sync_cache(struct fscache_cache *_cache)
+ 				    ret);
+ }
  
--	ni_size = _object->store_limit_l;
-+	ni_size = _object->cookie->object_size;
- 
- 	_enter("{OBJ%x},[%llu]",
- 	       _object->debug_id, (unsigned long long) ni_size);
-@@ -376,8 +376,6 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
- 
- 	ASSERT(d_is_reg(object->backer));
- 
--	fscache_set_store_limit(&object->fscache, ni_size);
+-/*
+- * check if the backing cache is updated to FS-Cache
+- * - called by FS-Cache when evaluates if need to invalidate the cache
+- */
+-static int cachefiles_check_consistency(struct fscache_operation *op)
+-{
+-	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
+-	const struct cred *saved_cred;
+-	int ret;
 -
- 	oi_size = i_size_read(d_backing_inode(object->backer));
- 	if (oi_size == ni_size)
- 		return 0;
-@@ -406,7 +404,6 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
- 	cachefiles_end_secure(cache, saved_cred);
- 
- 	if (ret == -EIO) {
--		fscache_set_store_limit(&object->fscache, 0);
- 		cachefiles_io_error_obj(object, "Size set failed");
- 		ret = -ENOBUFS;
- 	}
-@@ -431,7 +428,7 @@ static void cachefiles_invalidate_object(struct fscache_operation *op)
- 	cache = container_of(object->fscache.cache,
- 			     struct cachefiles_cache, cache);
- 
--	ni_size = op->object->store_limit_l;
-+	ni_size = op->object->cookie->object_size;
- 
- 	_enter("{OBJ%x},[%llu]",
- 	       op->object->debug_id, (unsigned long long)ni_size);
-@@ -439,8 +436,6 @@ static void cachefiles_invalidate_object(struct fscache_operation *op)
- 	if (object->backer) {
- 		ASSERT(d_is_reg(object->backer));
- 
--		fscache_set_store_limit(&object->fscache, ni_size);
+-	_enter("{OBJ%x}", op->object->debug_id);
 -
- 		path.dentry = object->backer;
- 		path.mnt = cache->mnt;
- 
-@@ -451,7 +446,6 @@ static void cachefiles_invalidate_object(struct fscache_operation *op)
- 		cachefiles_end_secure(cache, saved_cred);
- 
- 		if (ret != 0) {
--			fscache_set_store_limit(&object->fscache, 0);
- 			if (ret == -EIO)
- 				cachefiles_io_error_obj(object,
- 							"Invalidate failed");
+-	object = container_of(op->object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
+-
+-	cachefiles_begin_secure(cache, &saved_cred);
+-	ret = cachefiles_check_auxdata(object);
+-	cachefiles_end_secure(cache, saved_cred);
+-
+-	_leave(" = %d", ret);
+-	return ret;
+-}
+-
+ /*
+  * notification the attributes on an object have changed
+  * - called with reads/writes excluded by FS-Cache
+@@ -468,5 +443,4 @@ const struct fscache_cache_ops cachefiles_cache_ops = {
+ 	.put_object		= cachefiles_put_object,
+ 	.sync_cache		= cachefiles_sync_cache,
+ 	.attr_changed		= cachefiles_attr_changed,
+-	.check_consistency	= cachefiles_check_consistency,
+ };
 diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-index 0ffccb238e69..bcaadbcaa0b2 100644
+index bcaadbcaa0b2..cd2e166d5f29 100644
 --- a/fs/fscache/cookie.c
 +++ b/fs/fscache/cookie.c
-@@ -22,8 +22,7 @@ static struct hlist_bl_head fscache_cookie_hash[1 << fscache_cookie_hash_shift];
- static LIST_HEAD(fscache_cookies);
- static DEFINE_RWLOCK(fscache_cookies_lock);
+@@ -883,85 +883,6 @@ void fscache_cookie_put(struct fscache_cookie *cookie,
+ 	_leave("");
+ }
  
--static int fscache_acquire_non_index_cookie(struct fscache_cookie *cookie,
--					    loff_t object_size);
-+static int fscache_acquire_non_index_cookie(struct fscache_cookie *cookie);
- static int fscache_alloc_object(struct fscache_cache *cache,
- 				struct fscache_cookie *cookie);
- static int fscache_attach_object(struct fscache_cookie *cookie,
-@@ -167,6 +166,7 @@ struct fscache_cookie *fscache_alloc_cookie(
- 	cookie->advice = advice;
- 	cookie->key_len = index_key_len;
- 	cookie->aux_len = aux_data_len;
-+	cookie->object_size = object_size;
- 	strlcpy(cookie->type_name, type_name, sizeof(cookie->type_name));
- 
- 	if (fscache_set_key(cookie, index_key, index_key_len) < 0)
-@@ -337,7 +337,7 @@ struct fscache_cookie *__fscache_acquire_cookie(
- 		 * - we create indices on disk when we need them as an index
- 		 * may exist in multiple caches */
- 		if (cookie->type != FSCACHE_COOKIE_TYPE_INDEX) {
--			if (fscache_acquire_non_index_cookie(cookie, object_size) == 0) {
-+			if (fscache_acquire_non_index_cookie(cookie) == 0) {
- 				set_bit(FSCACHE_COOKIE_ENABLED, &cookie->flags);
- 			} else {
- 				atomic_dec(&parent->n_children);
-@@ -376,6 +376,7 @@ void __fscache_enable_cookie(struct fscache_cookie *cookie,
- 	wait_on_bit_lock(&cookie->flags, FSCACHE_COOKIE_ENABLEMENT_LOCK,
- 			 TASK_UNINTERRUPTIBLE);
- 
-+	cookie->object_size = object_size;
- 	fscache_update_aux(cookie, aux_data);
- 
- 	if (test_bit(FSCACHE_COOKIE_ENABLED, &cookie->flags))
-@@ -387,7 +388,7 @@ void __fscache_enable_cookie(struct fscache_cookie *cookie,
- 		/* Wait for outstanding disablement to complete */
- 		__fscache_wait_on_invalidate(cookie);
- 
--		if (fscache_acquire_non_index_cookie(cookie, object_size) == 0)
-+		if (fscache_acquire_non_index_cookie(cookie) == 0)
- 			set_bit(FSCACHE_COOKIE_ENABLED, &cookie->flags);
- 	} else {
- 		set_bit(FSCACHE_COOKIE_ENABLED, &cookie->flags);
-@@ -404,8 +405,7 @@ EXPORT_SYMBOL(__fscache_enable_cookie);
-  * - this must make sure the index chain is instantiated and instantiate the
-  *   object representation too
-  */
--static int fscache_acquire_non_index_cookie(struct fscache_cookie *cookie,
--					    loff_t object_size)
-+static int fscache_acquire_non_index_cookie(struct fscache_cookie *cookie)
- {
- 	struct fscache_object *object;
- 	struct fscache_cache *cache;
-@@ -456,8 +456,6 @@ static int fscache_acquire_non_index_cookie(struct fscache_cookie *cookie,
- 	object = hlist_entry(cookie->backing_objects.first,
- 			     struct fscache_object, cookie_link);
- 
--	fscache_set_store_limit(object, object_size);
+-/*
+- * check the consistency between the netfs inode and the backing cache
+- *
+- * NOTE: it only serves no-index type
+- */
+-int __fscache_check_consistency(struct fscache_cookie *cookie,
+-				const void *aux_data)
+-{
+-	struct fscache_operation *op;
+-	struct fscache_object *object;
+-	bool wake_cookie = false;
+-	int ret;
 -
- 	/* initiate the process of looking up all the objects in the chain
- 	 * (done by fscache_initialise_object()) */
- 	fscache_raise_event(object, FSCACHE_OBJECT_EV_NEW_CHILD);
-diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index fa74b3c94f88..ede38bd4774a 100644
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -319,8 +319,6 @@ void fscache_object_init(struct fscache_object *object,
- 	object->n_children = 0;
- 	object->n_ops = object->n_in_progress = object->n_exclusive = 0;
- 	object->events = 0;
--	object->store_limit = 0;
--	object->store_limit_l = 0;
- 	object->cache = cache;
- 	object->cookie = cookie;
- 	fscache_cookie_get(cookie, fscache_cookie_get_attach_object);
+-	_enter("%p,", cookie);
+-
+-	ASSERTCMP(cookie->type, ==, FSCACHE_COOKIE_TYPE_DATAFILE);
+-
+-	if (fscache_wait_for_deferred_lookup(cookie) < 0)
+-		return -ERESTARTSYS;
+-
+-	if (hlist_empty(&cookie->backing_objects))
+-		return 0;
+-
+-	op = kzalloc(sizeof(*op), GFP_NOIO | __GFP_NOMEMALLOC | __GFP_NORETRY);
+-	if (!op)
+-		return -ENOMEM;
+-
+-	fscache_operation_init(cookie, op, NULL, NULL, NULL);
+-	op->flags = FSCACHE_OP_MYTHREAD |
+-		(1 << FSCACHE_OP_WAITING) |
+-		(1 << FSCACHE_OP_UNUSE_COOKIE);
+-	trace_fscache_page_op(cookie, NULL, op, fscache_page_op_check_consistency);
+-
+-	spin_lock(&cookie->lock);
+-
+-	fscache_update_aux(cookie, aux_data);
+-
+-	if (!fscache_cookie_enabled(cookie) ||
+-	    hlist_empty(&cookie->backing_objects))
+-		goto inconsistent;
+-	object = hlist_entry(cookie->backing_objects.first,
+-			     struct fscache_object, cookie_link);
+-	if (test_bit(FSCACHE_IOERROR, &object->cache->flags))
+-		goto inconsistent;
+-
+-	op->debug_id = atomic_inc_return(&fscache_op_debug_id);
+-
+-	__fscache_use_cookie(cookie);
+-	if (fscache_submit_op(object, op) < 0)
+-		goto submit_failed;
+-
+-	/* the work queue now carries its own ref on the object */
+-	spin_unlock(&cookie->lock);
+-
+-	ret = fscache_wait_for_operation_activation(object, op, NULL, NULL);
+-	if (ret == 0) {
+-		/* ask the cache to honour the operation */
+-		ret = object->cache->ops->check_consistency(op);
+-		fscache_op_complete(op, false);
+-	} else if (ret == -ENOBUFS) {
+-		ret = 0;
+-	}
+-
+-	fscache_put_operation(op);
+-	_leave(" = %d", ret);
+-	return ret;
+-
+-submit_failed:
+-	wake_cookie = __fscache_unuse_cookie(cookie);
+-inconsistent:
+-	spin_unlock(&cookie->lock);
+-	if (wake_cookie)
+-		__fscache_wake_unused_cookie(cookie);
+-	kfree(op);
+-	_leave(" = -ESTALE");
+-	return -ESTALE;
+-}
+-EXPORT_SYMBOL(__fscache_check_consistency);
+-
+ /*
+  * Generate a list of extant cookies in /proc/fs/fscache/cookies
+  */
+diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+index bc66bf7182ed..20cbd1288b5a 100644
+--- a/fs/fscache/internal.h
++++ b/fs/fscache/internal.h
+@@ -151,15 +151,6 @@ extern void fscache_abort_object(struct fscache_object *);
+ extern void fscache_start_operations(struct fscache_object *);
+ extern void fscache_operation_gc(struct work_struct *);
+ 
+-/*
+- * page.c
+- */
+-extern int fscache_wait_for_deferred_lookup(struct fscache_cookie *);
+-extern int fscache_wait_for_operation_activation(struct fscache_object *,
+-						 struct fscache_operation *,
+-						 atomic_t *,
+-						 atomic_t *);
+-
+ /*
+  * proc.c
+  */
+diff --git a/fs/fscache/page.c b/fs/fscache/page.c
+index fd9cc16abc18..73636e9d652d 100644
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -96,85 +96,3 @@ int __fscache_attr_changed(struct fscache_cookie *cookie)
+ 	return -ENOBUFS;
+ }
+ EXPORT_SYMBOL(__fscache_attr_changed);
+-
+-/*
+- * wait for a deferred lookup to complete
+- */
+-int fscache_wait_for_deferred_lookup(struct fscache_cookie *cookie)
+-{
+-	unsigned long jif;
+-
+-	_enter("");
+-
+-	if (!test_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags)) {
+-		_leave(" = 0 [imm]");
+-		return 0;
+-	}
+-
+-	fscache_stat(&fscache_n_retrievals_wait);
+-
+-	jif = jiffies;
+-	if (wait_on_bit(&cookie->flags, FSCACHE_COOKIE_LOOKING_UP,
+-			TASK_INTERRUPTIBLE) != 0) {
+-		fscache_stat(&fscache_n_retrievals_intr);
+-		_leave(" = -ERESTARTSYS");
+-		return -ERESTARTSYS;
+-	}
+-
+-	ASSERT(!test_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags));
+-
+-	smp_rmb();
+-	fscache_hist(fscache_retrieval_delay_histogram, jif);
+-	_leave(" = 0 [dly]");
+-	return 0;
+-}
+-
+-/*
+- * wait for an object to become active (or dead)
+- */
+-int fscache_wait_for_operation_activation(struct fscache_object *object,
+-					  struct fscache_operation *op,
+-					  atomic_t *stat_op_waits,
+-					  atomic_t *stat_object_dead)
+-{
+-	int ret;
+-
+-	if (!test_bit(FSCACHE_OP_WAITING, &op->flags))
+-		goto check_if_dead;
+-
+-	_debug(">>> WT");
+-	if (stat_op_waits)
+-		fscache_stat(stat_op_waits);
+-	if (wait_on_bit(&op->flags, FSCACHE_OP_WAITING,
+-			TASK_INTERRUPTIBLE) != 0) {
+-		trace_fscache_op(object->cookie, op, fscache_op_signal);
+-		ret = fscache_cancel_op(op, false);
+-		if (ret == 0)
+-			return -ERESTARTSYS;
+-
+-		/* it's been removed from the pending queue by another party,
+-		 * so we should get to run shortly */
+-		wait_on_bit(&op->flags, FSCACHE_OP_WAITING,
+-			    TASK_UNINTERRUPTIBLE);
+-	}
+-	_debug("<<< GO");
+-
+-check_if_dead:
+-	if (op->state == FSCACHE_OP_ST_CANCELLED) {
+-		if (stat_object_dead)
+-			fscache_stat(stat_object_dead);
+-		_leave(" = -ENOBUFS [cancelled]");
+-		return -ENOBUFS;
+-	}
+-	if (unlikely(fscache_object_is_dying(object) ||
+-		     fscache_cache_is_broken(object))) {
+-		enum fscache_operation_state state = op->state;
+-		trace_fscache_op(object->cookie, op, fscache_op_signal);
+-		fscache_cancel_op(op, true);
+-		if (stat_object_dead)
+-			fscache_stat(stat_object_dead);
+-		_leave(" = -ENOBUFS [obj dead %d]", state);
+-		return -ENOBUFS;
+-	}
+-	return 0;
+-}
 diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 0a87e82a1657..81418056f43f 100644
+index 81418056f43f..3a78e41d2338 100644
 --- a/include/linux/fscache-cache.h
 +++ b/include/linux/fscache-cache.h
-@@ -274,8 +274,6 @@ struct fscache_object {
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- 	struct rb_node		objlist_link;	/* link in global object list */
- #endif
--	pgoff_t			store_limit;	/* current storage limit */
--	loff_t			store_limit_l;	/* current storage limit */
- };
+@@ -167,10 +167,6 @@ struct fscache_cache_ops {
+ 	/* unpin an object in the cache */
+ 	void (*unpin_object)(struct fscache_object *object);
  
- extern void fscache_object_init(struct fscache_object *, struct fscache_cookie *,
-@@ -336,26 +334,6 @@ static inline void fscache_object_lookup_error(struct fscache_object *object)
- 	set_bit(FSCACHE_OBJECT_EV_ERROR, &object->events);
+-	/* check the consistency between the backing cache and the FS-Cache
+-	 * cookie */
+-	int (*check_consistency)(struct fscache_operation *op);
+-
+ 	/* store the updated auxiliary data on an object */
+ 	void (*update_object)(struct fscache_object *object);
+ 
+diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+index 64d9ef34da49..82e871a3dc6a 100644
+--- a/include/linux/fscache.h
++++ b/include/linux/fscache.h
+@@ -139,7 +139,6 @@ extern struct fscache_cookie *__fscache_acquire_cookie(
+ 	const void *, size_t,
+ 	loff_t, bool);
+ extern void __fscache_relinquish_cookie(struct fscache_cookie *, const void *, bool);
+-extern int __fscache_check_consistency(struct fscache_cookie *, const void *);
+ extern void __fscache_update_cookie(struct fscache_cookie *, const void *);
+ extern int __fscache_attr_changed(struct fscache_cookie *);
+ extern void __fscache_invalidate(struct fscache_cookie *);
+@@ -290,28 +289,6 @@ void fscache_relinquish_cookie(struct fscache_cookie *cookie,
+ 		__fscache_relinquish_cookie(cookie, aux_data, retire);
  }
  
 -/**
-- * fscache_set_store_limit - Set the maximum size to be stored in an object
-- * @object: The object to set the maximum on
-- * @i_size: The limit to set in bytes
+- * fscache_check_consistency - Request validation of a cache's auxiliary data
+- * @cookie: The cookie representing the cache object
+- * @aux_data: The updated auxiliary data for the cookie (may be NULL)
 - *
-- * Set the maximum size an object is permitted to reach, implying the highest
-- * byte that may be written.  Intended to be called by the attr_changed() op.
+- * Request an consistency check from fscache, which passes the request to the
+- * backing cache.  The auxiliary data on the cookie will be updated first if
+- * @aux_data is set.
 - *
-- * See Documentation/filesystems/caching/backend-api.txt for a complete
-- * description.
+- * Returns 0 if consistent and -ESTALE if inconsistent.  May also
+- * return -ENOMEM and -ERESTARTSYS.
 - */
 -static inline
--void fscache_set_store_limit(struct fscache_object *object, loff_t i_size)
+-int fscache_check_consistency(struct fscache_cookie *cookie,
+-			      const void *aux_data)
 -{
--	object->store_limit_l = i_size;
--	object->store_limit = i_size >> PAGE_SHIFT;
--	if (i_size & ~PAGE_MASK)
--		object->store_limit++;
+-	if (fscache_cookie_valid(cookie) && fscache_cookie_enabled(cookie))
+-		return __fscache_check_consistency(cookie, aux_data);
+-	else
+-		return 0;
 -}
 -
- static inline void __fscache_use_cookie(struct fscache_cookie *cookie)
- {
- 	atomic_inc(&cookie->n_active);
-diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index 85f9cb4ac826..64d9ef34da49 100644
---- a/include/linux/fscache.h
-+++ b/include/linux/fscache.h
-@@ -83,6 +83,7 @@ struct fscache_cookie {
- 	struct hlist_bl_node		hash_link;	/* Link in hash table */
- 	struct list_head		proc_link;	/* Link in proc list */
- 	char				type_name[8];	/* Cookie type name */
-+	loff_t				object_size;	/* Size of the netfs object */
- 
- 	unsigned long			flags;
- #define FSCACHE_COOKIE_LOOKING_UP	0	/* T if non-index cookie being looked up still */
+ /**
+  * fscache_update_cookie - Request that a cache object be updated
+  * @cookie: The cookie representing the cache object
 
 
