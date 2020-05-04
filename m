@@ -2,115 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCCB41C2F80
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 May 2020 23:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA89B1C310A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 03:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgECVe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 17:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729104AbgECVe6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 17:34:58 -0400
-Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFF1C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 May 2020 14:34:56 -0700 (PDT)
-Received: by mail-oo1-xc2b.google.com with SMTP id x16so1946830oop.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 May 2020 14:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=IgTeF+LVkrmnHGOkyt/OzpDEYF5QYc9hbEmPaYioyu0=;
-        b=qSOkuJHDBtR/oPMjvTGnHm5RKzGT0BPqeqGc8PygnC+CxUQh1J/V27Lt+QCrnJeGYz
-         VTCSSMWuPLtKkQgYnI0C1CUkFO7RPiCcq/KFyt1yMS/sTaCLx4zxHC4qMNoq8cOa9PmI
-         iSeRyh5SzK7IEgxPoQYk+7zNivYvvZbLTTkFkuz/FcaAcWzMPAa8LcRTPuV+sZ2RPDoS
-         wkSQa96IfVrbw/gingwHEyBxmaRZEAfVdLbhO7tGs5YkOhH/wTgw/F5kkl9D8RYw5AVY
-         sqAT7QT4JNol1CDs1oB/mHabGch4Ay+XG8txQ5ePb3PClxCECdMB/NrBleSrY6RH9UWn
-         5AYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=IgTeF+LVkrmnHGOkyt/OzpDEYF5QYc9hbEmPaYioyu0=;
-        b=sEuFhzxWShDaJO6dREVI5H05fvwhtXc6zakyLP3Kmnd0dYzaMQb2VgaFUa6mS+fjIR
-         ND3DqzT5JhT4w4fXeeWNhhwyotQr4eMigfjSIPaMczcCKu3wIQaTAA8HHsqmf4PIXCS1
-         sf6/e7QSnvYFfOB4lmWOi3fPYckMopxUbaMGjtYBnd+DvT3+K6YVScfxjnRRQEG8boXt
-         PSlUkomwBx5iDVjoguC+GHrIeu+54fYIsfX2H+QW2l3Qypo12pl20Us9SOB8THOW6WxN
-         jSaCCgcOC6CMiZ1ussn+Atkg8IllHJyQFG/5/7/PJekokIRzJUzkAgg4++dbeAX1nXaw
-         6Sdg==
-X-Gm-Message-State: AGi0PubNf/7sa4s2tjN9WwkhH84pORnBwi5uiSTuVRiM+SqJHFiq3MKt
-        DBnUBoYH+o0OW64u0C96iq5yYQ==
-X-Google-Smtp-Source: APiQypIhrXkS38NaBOw0Ubh4BR6oaPPy8n2CZ8sy6uuHzXloQ+3ERxcPAvt2P2jIBybO3uvRtqnhRQ==
-X-Received: by 2002:a4a:274f:: with SMTP id w15mr5041010oow.93.1588541694956;
-        Sun, 03 May 2020 14:34:54 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 80sm2693094otd.35.2020.05.03.14.34.53
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Sun, 03 May 2020 14:34:54 -0700 (PDT)
-Date:   Sun, 3 May 2020 14:34:39 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Andre Almeida <andrealmeid@collabora.com>
-Subject: Re: [fuse-devel] fuse: trying to steal weird page
-In-Reply-To: <20200503102742.GF29705@bombadil.infradead.org>
-Message-ID: <alpine.LSU.2.11.2005031421230.4028@eggly.anvils>
-References: <87a72qtaqk.fsf@vostro.rath.org> <877dxut8q7.fsf@vostro.rath.org> <20200503032613.GE29705@bombadil.infradead.org> <87368hz9vm.fsf@vostro.rath.org> <20200503102742.GF29705@bombadil.infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S1726477AbgEDBZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 May 2020 21:25:59 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:60847 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbgEDBZ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 3 May 2020 21:25:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49FlYH0HjSz9sSr;
+        Mon,  4 May 2020 11:25:55 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1588555556;
+        bh=vc2ocq2LVzS7oNXSMpHcVG3xe33e0fBbGhPZyRYagfM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=P+yJzoL4bKmQgxZi1HZa5TPP9rwqF/h2NThx+pjTcMdtdBDNff/3h228jqwzsXE2b
+         NQJQhDYncXGB0zYQeDkYjscr4OF+6Rqxpr31OS5Obez0CGvi8oBiJ3Y2azikMftqQt
+         U+jzCD47pLK/nuTaLkh3aiYDzUWWzf1IbXyuYsgSqVM3RNmpilPBYaN/E+R7RNNqo1
+         WT9ab3XNgwxWwK5N/cas1cph5490Z5afc6RVZtTmbZpHUnnVlwPo1486wsKlO+zmPg
+         yu1OUHXML1YrIkeJQ8m9spCLWXR6FJr3ec9jOEGd6cjZcxZe1mrlNfBUbSa4Vnfgr4
+         ZNwuqxT3rnTxQ==
+Date:   Mon, 4 May 2020 11:25:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH 3/5] sysctl: remove all extern declaration from sysctl.c
+Message-ID: <20200504112552.4dbdd2a9@canb.auug.org.au>
+In-Reply-To: <20200424064338.538313-4-hch@lst.de>
+References: <20200424064338.538313-1-hch@lst.de>
+        <20200424064338.538313-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; boundary="Sig_/Ze/S33mgpR/AlQdumg8GhV7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 3 May 2020, Matthew Wilcox wrote:
-> On Sun, May 03, 2020 at 09:43:41AM +0100, Nikolaus Rath wrote:
-> > Here's what I got:
-> > 
-> > [  221.277260] page:ffffec4bbd639880 refcount:1 mapcount:0 mapping:0000000000000000 index:0xd9
-> > [  221.277265] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|lru)
-> > [  221.277269] raw: 0017ffffc0000097 ffffec4bbd62f048 ffffec4bbd619308 0000000000000000
-> > [  221.277271] raw: 00000000000000d9 0000000000000000 00000001ffffffff ffff9aec11beb000
-> > [  221.277272] page dumped because: fuse: trying to steal weird page
-> > [  221.277273] page->mem_cgroup:ffff9aec11beb000
-> 
-> Great!  Here's the condition:
-> 
->         if (page_mapcount(page) ||
->             page->mapping != NULL ||
->             page_count(page) != 1 ||
->             (page->flags & PAGE_FLAGS_CHECK_AT_PREP &
->              ~(1 << PG_locked |
->                1 << PG_referenced |
->                1 << PG_uptodate |
->                1 << PG_lru |
->                1 << PG_active |
->                1 << PG_reclaim))) {
-> 
-> mapcount is 0, mapping is NULL, refcount is 1, so that's all fine.
-> flags has 'waiters' set, which is not in the allowed list.  I don't
-> know the internals of FUSE, so I don't know why that is.
+--Sig_/Ze/S33mgpR/AlQdumg8GhV7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That list of PG_flags dates back to 2010: which 2016's 62906027091f
-("mm: add PageWaiters indicating tasks are waiting for a page bit")
-ought to have updated.  Though it's understandable that it did not:
-surprising to find a list of PG_flags outside of mm/ and fs/proc/.
-Just add PG_waiters to the list and the issue should go away.
+Hi Christoph,
 
-> 
-> Also, page_count() is unstable.
+On Fri, 24 Apr 2020 08:43:36 +0200 Christoph Hellwig <hch@lst.de> wrote:
+>
+> Extern declarations in .c files are a bad style and can lead to
+> mismatches.  Use existing definitions in headers where they exist,
+> and otherwise move the external declarations to suitable header
+> files.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/coredump.h |  4 ++++
+>  include/linux/file.h     |  2 ++
+>  include/linux/mm.h       |  2 ++
+>  include/linux/mmzone.h   |  2 ++
+>  include/linux/pid.h      |  3 +++
+>  include/linux/sysctl.h   |  8 +++++++
+>  kernel/sysctl.c          | 45 +++-------------------------------------
+>  7 files changed, 24 insertions(+), 42 deletions(-)
 
-Agreed: fine to back out if page_count() is high,
-but not good to issue a worrying warning about it.
+A couple of suggestions for another patch (since this one is in a
+shared branch in Al's tree now):
 
-> Unless there has been an RCU grace period
-> between when the page was freed and now, a speculative reference may exist
-> from the page cache.  So I would say this is a bad thing to check for.
-> 
-> Thanks for the swift provision of the debugging data!
+There is an "extern struct ctl_table random_table[];" in
+drivers/char/random.c which is redundant now (in fact always was).
+
+There is already an "extern struct ctl_table epoll_table[];" in
+include/linux/poll.h, so could have included that in kernel/sysctl.c
+instead of adding the new one in include/linux/sysctl.h
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ze/S33mgpR/AlQdumg8GhV7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6vbyAACgkQAVBC80lX
+0GxFGwf/WH/cv5RMadV9dmdAfJGI/cu7ozy5lgpWNwTKsdi4ITqe5NGRhPUzU4yW
+G2MRxjhFk0AMvRQWk9cdWriceLeojws2iI4W6ht10nYedCXG70ee+MJ/TEx7VJ5f
++Cff6GVaFu+4/qF04l/XTgi75XrzhNxQx3EptjGJg89jeJoKB219icmdSfwb8lBE
+RzU/qAufZ62wf5ClRmbyMJ0rj0RqdpKI/Jg+gD/rYE9HnveOnyLkFRDY7Zn5s7H8
+k+TPkw9I4xlWwDYr6cp43CX4rfGlZNoByoYat5ExYbvsjtPk9ygEYm9liKVKgIqh
+riEp/3lZakla9sctllvU4m6A6mIQJQ==
+=LZ1e
+-----END PGP SIGNATURE-----
+
+--Sig_/Ze/S33mgpR/AlQdumg8GhV7--
