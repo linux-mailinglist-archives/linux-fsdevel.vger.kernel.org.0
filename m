@@ -2,109 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E0161C3E6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 17:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F821C3EAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 17:38:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbgEDPZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 11:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60822 "EHLO
+        id S1728899AbgEDPio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 11:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729265AbgEDPZa (ORCPT
+        by vger.kernel.org with ESMTP id S1726551AbgEDPio (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 11:25:30 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172C5C061A0F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 May 2020 08:25:29 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id x2so11603540ilp.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 08:25:29 -0700 (PDT)
+        Mon, 4 May 2020 11:38:44 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19992C061A0E;
+        Mon,  4 May 2020 08:38:44 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id t3so5422696otp.3;
+        Mon, 04 May 2020 08:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1D6ZTlzAS5HkUezZq1d69+4ZI9fkn6KXF485uBa6Wb4=;
-        b=vpCJWCcIJezmGQ/p3n8j3sNcRcaIqyVKXOJ7w7db8gP/UBvO5jIYrQE8TmB+ZbrVJ4
-         yt7WQB29zl923U4tE4aW2wXa+oJILUBPFeI+PZ3Cc1MMK7Hrlnuz4v2s21a9fgXRrL91
-         lsKc/wBzNJp7NV7lUp+hbdmHzTeT8TWzRbf42I9CfncjpZvyAq13woPfTGZvPaXbLsFg
-         1Ypd6SD1Dln2/KB30PQcMJWtse0ybZgNIlCf9gDpbLMc7hZs9AE5skkqHbav6t8gwO9R
-         bS5DfvH6DuhDoo/iRSGy2SimyuYdqWnVYwuK1yMBI3XWM0rMWz/0GqBoj673fbXVr/ZC
-         fY3g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oQmiZ2oynlhDfde2EHPhdAI1YOCtUf9mJwJbeZ1phXA=;
+        b=LLdJgfk1v3kAIY+VoLISzPL7wnGft9Y5B9LAEqA9liHp8SRaQjP8RlqzOXUktcNnnP
+         JfLWB12JPPeGdyrE5ZZPtqGjNBITxDv5H+h9xzFbAmi+wIcZqGn1ms/YoNb2LH1hZtih
+         6FdoSRuputT5mDOtQAMS1JvXhlvnau9Wfinxswhns6BVDlNh0FY92pwqwBXFlt8m6jYx
+         vrcHVRjxx1sh6xnVb6zS8NCK56Q5zQBWs+LEebscmCunxIYUC2FXBbiyOoVR4taRMTE0
+         BZiaaLuf9k237O0RO1vOVcjy/FeivKTax6cU4mpLh0CGaV0fLrOHBIFKrjxEzKSREU3I
+         XCnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1D6ZTlzAS5HkUezZq1d69+4ZI9fkn6KXF485uBa6Wb4=;
-        b=YknedpoOiNlMFWWvd1CDjPCkIKlwvEQPGG8VdPqrVo8wscB5yTO56Q8FDPaTO1NhHu
-         oeGHQNbxIpMF7bHrpg3a/eBpexUxejs/4WSz4EaDIo2PA7YDCj6Uwm8Lrat0XIKVlfzE
-         PeXkL+UVqvkXKsSYtEzLk3Uzk/96yNVwOBijn5b0dcjKcpJaYdBKTCUbNRKNTd7SGqrO
-         0J8xlTBHRdONk3y0lcq5lpcqgV79y5Jw4hpOx436zKbVgBIK4hAyzG1B0eI1FEGNqht2
-         WNWDjNHig3Zu1lfjdza31gk2RKmCpoaAsfmS31DJImNLwELIahZNYVpDxUfSH9o4T421
-         6Amw==
-X-Gm-Message-State: AGi0PuYrXnMJmWoBJEpgMgx5keERQFGhLFZo9c2rQx9qZ8GV88AWizpF
-        huS5nrGHjdbsN40ApfMhCR6XLg==
-X-Google-Smtp-Source: APiQypJvJRK186D9XWYvVBKoUDgGWOQugwpDAZB2tbbwlSi7OBFGdZTUwIibCv0T3/bRtM9QcnRvew==
-X-Received: by 2002:a92:898c:: with SMTP id w12mr17264192ilk.139.1588605928210;
-        Mon, 04 May 2020 08:25:28 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l14sm4084365ioj.12.2020.05.04.08.25.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 08:25:27 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: Remove logically dead code in io_splice
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200504151912.GA22779@embeddedor>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
-Date:   Mon, 4 May 2020 09:25:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oQmiZ2oynlhDfde2EHPhdAI1YOCtUf9mJwJbeZ1phXA=;
+        b=dF41VW3Buev8snXWbpig4fLIz0UOH3VDfx/j+zJIwzlrbIJ3/pGkv2D9aaicbdGgjd
+         pWnxo5lqcBg4cZXWUEn27HPXVxDfj4iVjCeIHxtMZesvTK1ls/zMkjbl5BM81zWtywhg
+         CLLejrx7vaLYEJZ+PZojl7uUr1uV9tpJC9N+5FUYmejCA6AiOhrTVmzo7miGXsoQinWh
+         HNcGRi2bk4cpZSlgr9k3w2pJb9ijy2IaXtSKhAZAfQPWCEcoBJAwqd1g0FhyP0yika6Y
+         +/VjItRtFvSol01AYh4m52ANQMX8AzqZJueHAr4MxdypK1SXF/GD9iQreCbdIFmnCe3F
+         H9DA==
+X-Gm-Message-State: AGi0PuaX/74qwhfvNVqodipjae0h7c5t37RrFzI1Gh9iv5AGWj38mg3r
+        chAOdkLJNJsrFaRpkGpQJ8z6l4uU9TPmvx7os0wzuLER
+X-Google-Smtp-Source: APiQypK30ppvBdUJTltS7axkgnOzEYXoHyr1dwoOOZ9tmfqmC3j+MRh3bml/HVpypkfHGMVyWOD+7huhTdt6XADF4JM=
+X-Received: by 2002:a9d:2aa9:: with SMTP id e38mr14907515otb.162.1588606723375;
+ Mon, 04 May 2020 08:38:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200504151912.GA22779@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
+ <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
+ <CAEjxPJ6Tr-MD85yh-zRcCKwMTZ7bcw4vAXQ2=CjScG71ac4Vzw@mail.gmail.com> <CAJfpegvZ+ASrpbEpeKx-h3mK7fedd7EfgAfm7TL7dgPmy7tppg@mail.gmail.com>
+In-Reply-To: <CAJfpegvZ+ASrpbEpeKx-h3mK7fedd7EfgAfm7TL7dgPmy7tppg@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 4 May 2020 11:38:32 -0400
+Message-ID: <CAEjxPJ7S-i+CvGSiBWhPZ6xLFZanzA8OgRLgvL5X7VBkKF4Eqg@mail.gmail.com>
+Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/4/20 9:19 AM, Gustavo A. R. Silva wrote:
-> In case force_nonblock happens to be true, the function returns
-> at:
-> 
->  2779         if (force_nonblock)
->  2780                 return -EAGAIN;
-> 
-> before reaching this line of code. So, the null check on force_nonblock
-> at 2785, is never actually being executed.
-> 
-> Addresses-Coverity-ID: 1492838 ("Logically dead code")
-> Fixes: 2fb3e82284fc ("io_uring: punt splice async because of inode mutex")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e5dfbbd2aa34..4b1efb062f7f 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
->  	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
->  	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
->  	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
-> -	if (force_nonblock && ret == -EAGAIN)
-> +	if (ret == -EAGAIN)
->  		return -EAGAIN;
+On Mon, May 4, 2020 at 7:18 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Fri, May 1, 2020 at 8:40 PM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Fri, May 1, 2020 at 3:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
+> > > > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
+> > > > > From: Miklos Szeredi <mszeredi@redhat.com>
+> > > > >
+> > > > > Whiteouts, unlike real device node should not require privileges to create.
+> > > > >
+> > > > > The general concern with device nodes is that opening them can have side
+> > > > > effects.  The kernel already avoids zero major (see
+> > > > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
+> > > > > explicitly forbids registering a char device with 0/0 number (see
+> > > > > cdev_add()).
+> > > > >
+> > > > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
+> > > > > i.e. it won't have any side effect.
+> > > >
+> > > > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+> > > > >  {
+> > > > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+> > > > >     int error = may_create(dir, dentry);
+> > > > >
+> > > > >     if (error)
+> > > > >             return error;
+> > > > >
+> > > > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> > > > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
+> > > > > +       !is_whiteout)
+> > > > >             return -EPERM;
+> > > >
+> > > > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
+> > > > end up with regressions for overlayfs on sufficiently weird setups?
+> > >
+> > > You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
+> > > distros/admins can.
+> > >
+> > > Can we just try this, and revert to calling ->mknod directly from overlayfs if
+> > > it turns out to be a problem that people can't fix easily?
+> > >
+> > > I guess we could add a new ->whiteout security hook as well, but I'm not sure
+> > > it's worth it.  Cc: LMS mailing list; patch re-added for context.
+> >
+> > I feel like I am still missing context but IIUC this change is
+> > allowing unprivileged userspace to explicitly call mknod(2) with the
+> > whiteout device number and skip all permission checks (except the LSM
+> > one). And then you are switching vfs_whiteout() over to using
+> > vfs_mknod() internally since it no longer does permission checking and
+> > that was why vfs_whiteout() was separate originally to avoid imposing
+> > any checks on overlayfs-internal creation of whiteouts?
+> >
+> > If that's correct, then it seems problematic since we have no way in
+> > the LSM hook to distinguish the two cases (userspace invocation of
+> > mknod(2) versus overlayfs-internal operation).  Don't know offhand
+> > what credential is in effect in the overlayfs case (mounter or
+> > current) but regardless Android seems to use current regardless, and
+> > that could easily fail.
+>
+> The major point is: whiteouts are *not* device files, not in the real
+> sense, it just happens that whiteouts are represented by the file
+> having a char/0/0 type.
+>
+> Also the fact that overlayfs invocation is indistinguishable from
+> userspace invocation is very much on purpose.  Whiteout creation was
+> the exception before this change, not the rule.
+>
+> If you consider the above, how should this be handled from an LSM perspective?
 
-This isn't right, it should just remove the two lines completely. But
-also see:
-
-https://lore.kernel.org/io-uring/529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk/T/#u
-
--- 
-Jens Axboe
-
+In that case, I guess you can leave the patch as is aside from moving
+the capable() check last, and we will just need to allow creation of
+these files to the mounter context for overlayfs-internal usage. It
+doesn't appear to be safe to skip the hook call altogether for the
+general case (e.g. userspace mknod(2)).
