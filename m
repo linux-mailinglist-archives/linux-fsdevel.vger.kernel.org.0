@@ -2,72 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 957281C3348
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 09:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 364431C33FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 10:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgEDHFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 03:05:05 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:33732 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbgEDHFF (ORCPT
+        id S1727855AbgEDIFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 04:05:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727827AbgEDIFN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 03:05:05 -0400
-Received: by mail-il1-f197.google.com with SMTP id l18so12784143ilg.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 00:05:04 -0700 (PDT)
+        Mon, 4 May 2020 04:05:13 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709EEC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 May 2020 01:05:13 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id k1so878949wro.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 01:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=TW5sBRpo/YovaEfvGvwj3MSBq0/ytrBMh4na3w3/wC4=;
+        b=Gu9yXS48OKcopziozZMjKwXRZWcKzNvJ+duJS9Ckr8h226rg0DZ+YeIyacJpwQ+Bda
+         eKn49Mn4hx4W1fpA7Uz05acJQFvAwP2sVxTSTiqKpV0xr0I9wAppmz9cQnes30Z5cP9H
+         0kc6Ew63a4gQAVdviMiManHLD5ql1twciwZtqrtiWfQL7obmi2OtbpBEdvjArgaLsUos
+         cjA6rTehU32xRE1xCo+dGmGqh9wiQX9hgfqC9D9Os6loRNwzteyc46sNG1LMDLmv67M0
+         I8orH4SEd8wJBBIe9pSxmxmtG06G6uux6QFwYJLwsXYf/eD4/wyrj16bjjQFE76YqTMR
+         zJmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=u3a78ZSqYtMPKHHAjJSNj5CtWeDAIi+gNz7+0hYnnWI=;
-        b=DRm4a2no+uk1J/W09QbHTXtQaqKp6/qJXhW1354MAHsVyoq5TnXS5dd1WE3acRXzgI
-         es3Wfpz3mYYeSESbrNaINM2z9JD8nobY2aIxp2o//l2SIkU8Hcn7Ed8DMun20tlsdrpd
-         9P0nhu/JgxhedAAXpDNSQMkwqauXjRPTOgankUbG7it+QLe+ScGE4dsfyI2b1betAo03
-         6I+DxB5ryTx4NM3MvANtGO3e19A2SSurX5vqj76T/+RIOwWD+lcj6POfRPNXo9ZvkM1T
-         Uiw/+sS7371DT37osz02PFgltDHOX2VIMacSOydBtIuWzuz9kLq5sqobZculQMT8gy4H
-         /bhw==
-X-Gm-Message-State: AGi0PuYI2R/G9F3sOHtP1yjP3jS0+Gv++W2eBvDMPE4B9GIet/t3kyTS
-        tKvGjpFVdDohhc+dJq8sbg9d39I/ut4EQ9reAqZUmNHhhkdI
-X-Google-Smtp-Source: APiQypJoS44zQk9wi0Sxu/Y9n64DarEKre69MS+FF88hVeGqZryFDTLDuYB2V3PmvQ9hW8h0OBRfR17f+aByoFxd0BOKIBQz/zJ+
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=TW5sBRpo/YovaEfvGvwj3MSBq0/ytrBMh4na3w3/wC4=;
+        b=aEL3NMB9NovjxTuMCkYHzfUfu13WyHFY7WtQ7YF0Fboo9pcD3dll9awHfgeK5w1q/5
+         w4tsSTg+mR10DsYEpyD5D4/+s2VqhV9CBeKnItXdyUWUpuuKoOwc8cWtc/dD4b7ZFRHS
+         +1Z9oxfEWfy3cr23ui0yTfzYjJr3AGwbJNo5SVXQ2cVS0qRzzjz7GXMKKHe0OQ3DnBVm
+         BjaCkLPejnfoSEDEW+21s6bBSfw1S55xN8KPJVmaUsHhEp1V4xgwp0SNjuOl9p2m2zmD
+         Z0T+8e2Lz2U6QOnzgLwZmnozaMVllis1fItWSeNrJVoAsIUckRm7b3M4DYruncBBmf6G
+         BTGg==
+X-Gm-Message-State: AGi0PuZqcWfCZ7C+6MEvDOi5CvkSA40NkNB5HVSX4+lpVfTOh0AEu9jO
+        cA7CZ3Y0noAn4GJdXOyladDqy4hfk/U=
+X-Google-Smtp-Source: APiQypIIJl/1BkC+pU0YDwuqwNHWOmTT/zmjbnadLRwFRDLLGn5eO42Hq/TIqKLWZJVAvO+6QPUT/w==
+X-Received: by 2002:adf:ecc3:: with SMTP id s3mr15255246wro.116.1588579512157;
+        Mon, 04 May 2020 01:05:12 -0700 (PDT)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id n18sm8775043wrw.90.2020.05.04.01.05.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 May 2020 01:05:11 -0700 (PDT)
+Subject: Re: [PATCH 01/12] aio: fix async fsync creds
+To:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Giuseppe Scrivano <gscrivan@redhat.com>, stable@vger.kernel.org
+References: <20191128155940.17530-1-mszeredi@redhat.com>
+ <20191128155940.17530-2-mszeredi@redhat.com>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+Message-ID: <37c7880a-a551-b381-fe07-581059f17f06@scylladb.com>
+Date:   Mon, 4 May 2020 11:05:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:8515:: with SMTP id f21mr14830968ilh.20.1588575904094;
- Mon, 04 May 2020 00:05:04 -0700 (PDT)
-Date:   Mon, 04 May 2020 00:05:04 -0700
-In-Reply-To: <000000000000c0bffa0586795098@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000076622305a4cd26ae@google.com>
-Subject: Re: WARNING: bad unlock balance in rcu_core
-From:   syzbot <syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com>
-To:     aia21@cantab.net, bvanassche@acm.org, dvyukov@google.com,
-        gaoxiang25@huawei.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, miaoxie@huawei.com, mingo@kernel.org,
-        mingo@redhat.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191128155940.17530-2-mszeredi@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+Ping on this unapplied patch. Its lack makes it hard to use containers 
+for development of storage systems.
 
-commit 10476e6304222ced7df9b3d5fb0a043b3c2a1ad8
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Fri Mar 13 08:56:38 2020 +0000
 
-    locking/lockdep: Fix bad recursion pattern
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142baee4100000
-start commit:   5a1e843c Merge tag 'mips_fixes_5.4_3' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=420126a10fdda0f1
-dashboard link: https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1108239ce00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cf40a8e00000
-
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: locking/lockdep: Fix bad recursion pattern
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 28/11/2019 17.59, Miklos Szeredi wrote:
+> Avi Kivity reports that on fuse filesystems running in a user namespace
+> asyncronous fsync fails with EOVERFLOW.
+>
+> The reason is that f_ops->fsync() is called with the creds of the kthread
+> performing aio work instead of the creds of the process originally
+> submitting IOCB_CMD_FSYNC.
+>
+> Fuse sends the creds of the caller in the request header and it needs to
+> translate the uid and gid into the server's user namespace.  Since the
+> kthread is running in init_user_ns, the translation will fail and the
+> operation returns an error.
+>
+> It can be argued that fsync doesn't actually need any creds, but just
+> zeroing out those fields in the header (as with requests that currently
+> don't take creds) is a backward compatibility risk.
+>
+> Instead of working around this issue in fuse, solve the core of the problem
+> by calling the filesystem with the proper creds.
+>
+> Reported-by: Avi Kivity <avi@scylladb.com>
+> Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+> Fixes: c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+> Cc: stable@vger.kernel.org  # 4.18+
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>   fs/aio.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 0d9a559d488c..37828773e2fe 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -176,6 +176,7 @@ struct fsync_iocb {
+>   	struct file		*file;
+>   	struct work_struct	work;
+>   	bool			datasync;
+> +	struct cred		*creds;
+>   };
+>   
+>   struct poll_iocb {
+> @@ -1589,8 +1590,11 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
+>   static void aio_fsync_work(struct work_struct *work)
+>   {
+>   	struct aio_kiocb *iocb = container_of(work, struct aio_kiocb, fsync.work);
+> +	const struct cred *old_cred = override_creds(iocb->fsync.creds);
+>   
+>   	iocb->ki_res.res = vfs_fsync(iocb->fsync.file, iocb->fsync.datasync);
+> +	revert_creds(old_cred);
+> +	put_cred(iocb->fsync.creds);
+>   	iocb_put(iocb);
+>   }
+>   
+> @@ -1604,6 +1608,10 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+>   	if (unlikely(!req->file->f_op->fsync))
+>   		return -EINVAL;
+>   
+> +	req->creds = prepare_creds();
+> +	if (!req->creds)
+> +		return -ENOMEM;
+> +
+>   	req->datasync = datasync;
+>   	INIT_WORK(&req->work, aio_fsync_work);
+>   	schedule_work(&req->work);
