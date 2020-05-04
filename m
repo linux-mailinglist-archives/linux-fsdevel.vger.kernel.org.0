@@ -2,71 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1E7C1C4042
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 18:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1081C4047
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 18:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbgEDQl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 May 2020 12:41:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44580 "EHLO
+        id S1729801AbgEDQmL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 12:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729310AbgEDQl6 (ORCPT
+        with ESMTP id S1729777AbgEDQmK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 May 2020 12:41:58 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1EDC061A0E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 May 2020 09:41:57 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id x2so11866399ilp.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 09:41:57 -0700 (PDT)
+        Mon, 4 May 2020 12:42:10 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04731C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 May 2020 09:42:09 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id u11so13034418iow.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 09:42:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=o+OExAmgyirreBNQZz1mdzV+UOlsl91T24IoRPDTUCA=;
-        b=F1xfOa3kXWTYolMLtey19TxDsFE0OVOmGFGXXfzZzeHq6Gq2eYJNzidg0G69JvwZY8
-         lVv/XrEzU8O49UtzvJe6YqyZi7d3+ayYhbnmazX9FZvG1VpGuTYl/CTkfWWGxw7dxKGX
-         8RB1X5d0fInxVY/9CA/mbxNjIYPCO85Vj5z2ChREefZA8zvo0a7ptA3YRya/4ZmucFwO
-         D/MG+YTf8WvACUS2237dItdL+U9M7unu3NRWe7Fltx72XWkqwz2qMlWSP3E5XlCnBGx9
-         DK9KMNtHed00BpweFl5P8s9V8xDsWysRZrUsyMAYHKjgxAvyG0OJE2rhI37J0GsBKNhm
-         nwjA==
+        bh=bOO31zCyp7KWzFdVhclDF5PA/avMx0uxJp6+DDvlojY=;
+        b=lYYSqhAOi/YBrHI6goaVk9aafelTnt0zZWWXUtzSeOKygT6Drldsfb+EoH7afX5zLF
+         7PTVJqxtJikt317tIgoNlX4FUDKLxBBUUvHvV2pmmtmErt6Nbn3NfYLNOofBx/HQ+18w
+         dGafc6oz0Kp6cWAaKe+ImIvB82LPU0bTiowCzu0UyRROSwJANGJqH9FG8xzC4cFdSpZt
+         Wx91opcI6r5kt7DdLsZ3oHILrh9mznVIMMSLIKca0Vrt1Wg/JeljWb0r9MAckHZpJpr5
+         RMUq4tpRefSQyu7V/+oXe98n149PACi9LaZbPf99z7mdmBDkGqBJXP1mnuZdhRzrgNMz
+         4kmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=o+OExAmgyirreBNQZz1mdzV+UOlsl91T24IoRPDTUCA=;
-        b=Gyt1hHxM8sGRzMYdbnFJ51uKlXdIEFNZJrRCx5P3mQ5kV9mZyp2FpMxYQWbBN6If8O
-         0q2pWLg2pb0/GYxE+EDwU0zh2VneKzRpvT/bgxyf2TrOV74y1VCDW3nJHl0rsrCTtL4+
-         TRjFNekkpwxVI2qRU02viIf+TlyV6oCSq4p1VrRexbe65spuOh1Xa9PQWAPEe3ozCs9p
-         jY+hG+SOuQblGiSDj8rz4KM8yRAsMHoealf80hgZwWMcUyHz3sS0B3SLPXYM1KUGQX8P
-         Dk/5bjsQ6oHhJsdjD+JzEnY8YJjZGLGXttY/2ubgEuZKYhdYdrQ2+9LlIbRKOk29w/FX
-         jJfg==
-X-Gm-Message-State: AGi0PuZD8hRw8kPSWDcTP0HCCIU7NISIsKLFjASaQQVO4xEekIWbttGd
-        kVlMChAawe+oWzzlbZCzKM+VGw==
-X-Google-Smtp-Source: APiQypK3isUqB2C2sabeTTpk6n8V8noFEi6QUtgDDorDERlY5R+gZMBGol53QwqsH9zC6HzIIbmnWg==
-X-Received: by 2002:a92:41c6:: with SMTP id o189mr16632128ila.157.1588610516971;
-        Mon, 04 May 2020 09:41:56 -0700 (PDT)
+        bh=bOO31zCyp7KWzFdVhclDF5PA/avMx0uxJp6+DDvlojY=;
+        b=dtQTX00vWqOrVOQe056QEZdbW/5C4q6cb+yG645qKH0vxPlnbS7ftrDPgPPpELYoeH
+         qrj++vyHkD/Ipt3jap08X9UzN5faxS9XQqsgJjSqW3drERsvqgI8e5BC7Q22CBZj6w1m
+         XGQrvrWhG6F0WitVchAb+nJM5wGvCJVm4YbkSi/6kjn12GfdTVoGYJozo1wSy+uHVx/b
+         pH0ywb455/Ubm9dUsu4JcWyuSGxkcVgLqaXp7qyvNxHmE1NfWGnOOFTYuvxRa3oWSffo
+         cf5zes6nysL8wwxCkNpAx/lSA+Qk/h2cVh43DCdrA4dDjSlgyEpa+SPZ/Up+PRN39cBR
+         E7Yg==
+X-Gm-Message-State: AGi0PubLro53OMJP/J40onA4RaHz4FCo9lTfoqCMnWdM/KfbHgZn2jnM
+        MfZtqZ8+onozCaxJBIal99lElauKCOCXJg==
+X-Google-Smtp-Source: APiQypLXsv27U+YtINVyuWix6toSeHFvCR2e8RbWxck6ha2hn+n5FFfAbC4zwwBY5vbf0r/EquXz9A==
+X-Received: by 2002:a5e:c814:: with SMTP id y20mr16153088iol.135.1588610528387;
+        Mon, 04 May 2020 09:42:08 -0700 (PDT)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t88sm5381273ild.30.2020.05.04.09.41.55
+        by smtp.gmail.com with ESMTPSA id y15sm5378378ilg.21.2020.05.04.09.42.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 09:41:56 -0700 (PDT)
-Subject: Re: [PATCH 5/7] hfsplus: stop using ioctl_by_bdev
+        Mon, 04 May 2020 09:42:07 -0700 (PDT)
+Subject: Re: stop using ioctl_by_bdev for file system access to CDROMs v2
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Tim Waugh <tim@cyberelk.net>, Borislav Petkov <bp@alien8.de>,
         Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
         linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20200425075706.721917-1-hch@lst.de>
- <20200425075706.721917-6-hch@lst.de>
- <6c47f731-7bff-f186-da55-7ce6cffacdc3@kernel.dk>
- <20200504162114.GA637@lst.de>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6cbb8166-a419-9322-78ee-51fbec22b59d@kernel.dk>
-Date:   Mon, 4 May 2020 10:41:55 -0600
+Message-ID: <c89a895d-6bc0-c563-ad51-9204656b30b5@kernel.dk>
+Date:   Mon, 4 May 2020 10:42:07 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200504162114.GA637@lst.de>
+In-Reply-To: <20200425075706.721917-1-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,36 +71,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/4/20 10:21 AM, Christoph Hellwig wrote:
-> On Mon, May 04, 2020 at 10:16:40AM -0600, Jens Axboe wrote:
->> On 4/25/20 1:57 AM, Christoph Hellwig wrote:
->>>  	if (HFSPLUS_SB(sb)->session >= 0) {
->>> +		struct cdrom_tocentry te;
->>> +
->>> +		if (!cdi)
->>> +			return -EINVAL;
->>> +
->>>  		te.cdte_track = HFSPLUS_SB(sb)->session;
->>>  		te.cdte_format = CDROM_LBA;
->>> -		res = ioctl_by_bdev(sb->s_bdev,
->>> -			CDROMREADTOCENTRY, (unsigned long)&te);
->>> -		if (!res && (te.cdte_ctrl & CDROM_DATA_TRACK) == 4) {
->>> -			*start = (sector_t)te.cdte_addr.lba << 2;
->>> -			return 0;
->>> +		if (cdrom_read_tocentry(cdi, &te) ||
->>> +		    (te.cdte_ctrl & CDROM_DATA_TRACK) != 4) {
->>> +			pr_err("invalid session number or type of track\n");
->>> +			return -EINVAL;
->>>  		}
->>
->> I must be missing something obvious from just looking over the patches,
->> but how does this work if cdrom is modular and hfsplus is builtin?
+On 4/25/20 1:56 AM, Christoph Hellwig wrote:
+> Hi Jens,
 > 
-> In that case disk_to_cdi will return NULL as it uses IS_REACHABLE
-> and the file systems won't query the CD-ROM specific information.
+> except for the DASD case under discussion the last users of ioctl_by_bdev
+> are the file system drivers that want to query CDROM information using
+> ioctls.  This series switches them to use function calls directly into
+> the CDROM midlayer instead, which implies:
+> 
+>  - adding a cdrom_device_info pointer to the gendisk, so that file systems
+>    can find it without going to the low-level driver first
+>  - ensuring that the CDROM midlayer (which isn't a lot of code) is built
+>    in if the file systems are built in so that they can actually call the
+>    exported functions
+> 
+> Changes since v1:
+>  - fix up the no-CDROM error case in isofs_get_last_session to return 0
+>    instead of -EINVAL.
 
-Got it, looks like that'll do the trick without nasty Kconfig
-dependencies.
+Applied for 5.8, thanks.
 
 -- 
 Jens Axboe
