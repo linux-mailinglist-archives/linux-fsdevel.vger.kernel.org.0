@@ -2,71 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6981A1C3167
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 05:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 957281C3348
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 May 2020 09:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgEDDKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 May 2020 23:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbgEDDKl (ORCPT
+        id S1727100AbgEDHFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 May 2020 03:05:05 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:33732 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbgEDHFF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 May 2020 23:10:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4166BC061A0E;
-        Sun,  3 May 2020 20:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XXJ2nLBUwta0Na249+bQSZuRqkr1ECfsOkPvLduFZV0=; b=g1BP8fSKFiDU9E9Y5b2D0PjBQ9
-        FiTM+ywvRARjPcGKha2iPGb2jDEvx4LVKONbuyki4+x71gAasA27cT0q7u8QoYcB0MwlN7ERRAJjr
-        WKLnPLVnRh/Vvm8n2lv8RnuZh4WkFYGYhZWt3YjYZtfWynEsbpCZN6eCn6dRZngWoeKtGfdtJ+EQq
-        SOqybcna34WTXu2+HnuBtfRdxEUnJteMRxhaUazWMbKkOkkV0aX4akfdTLlkJF3tVZprTnXy+OUKw
-        8LXH5a3Mb5pTkOQv29D2dUwD64tkrWPqnWEtXX81TQDDdXOhEefvUS1+BM0OuXD8ViENU2E8FosH7
-        tmjJOBBw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jVRV6-0000DP-89; Mon, 04 May 2020 03:10:36 +0000
-Date:   Sun, 3 May 2020 20:10:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 18/25] mm: Allow large pages to be added to the page
- cache
-Message-ID: <20200504031036.GB16070@bombadil.infradead.org>
-References: <20200429133657.22632-1-willy@infradead.org>
- <20200429133657.22632-19-willy@infradead.org>
+        Mon, 4 May 2020 03:05:05 -0400
+Received: by mail-il1-f197.google.com with SMTP id l18so12784143ilg.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 May 2020 00:05:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=u3a78ZSqYtMPKHHAjJSNj5CtWeDAIi+gNz7+0hYnnWI=;
+        b=DRm4a2no+uk1J/W09QbHTXtQaqKp6/qJXhW1354MAHsVyoq5TnXS5dd1WE3acRXzgI
+         es3Wfpz3mYYeSESbrNaINM2z9JD8nobY2aIxp2o//l2SIkU8Hcn7Ed8DMun20tlsdrpd
+         9P0nhu/JgxhedAAXpDNSQMkwqauXjRPTOgankUbG7it+QLe+ScGE4dsfyI2b1betAo03
+         6I+DxB5ryTx4NM3MvANtGO3e19A2SSurX5vqj76T/+RIOwWD+lcj6POfRPNXo9ZvkM1T
+         Uiw/+sS7371DT37osz02PFgltDHOX2VIMacSOydBtIuWzuz9kLq5sqobZculQMT8gy4H
+         /bhw==
+X-Gm-Message-State: AGi0PuYI2R/G9F3sOHtP1yjP3jS0+Gv++W2eBvDMPE4B9GIet/t3kyTS
+        tKvGjpFVdDohhc+dJq8sbg9d39I/ut4EQ9reAqZUmNHhhkdI
+X-Google-Smtp-Source: APiQypJoS44zQk9wi0Sxu/Y9n64DarEKre69MS+FF88hVeGqZryFDTLDuYB2V3PmvQ9hW8h0OBRfR17f+aByoFxd0BOKIBQz/zJ+
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200429133657.22632-19-willy@infradead.org>
+X-Received: by 2002:a92:8515:: with SMTP id f21mr14830968ilh.20.1588575904094;
+ Mon, 04 May 2020 00:05:04 -0700 (PDT)
+Date:   Mon, 04 May 2020 00:05:04 -0700
+In-Reply-To: <000000000000c0bffa0586795098@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000076622305a4cd26ae@google.com>
+Subject: Re: WARNING: bad unlock balance in rcu_core
+From:   syzbot <syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com>
+To:     aia21@cantab.net, bvanassche@acm.org, dvyukov@google.com,
+        gaoxiang25@huawei.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miaoxie@huawei.com, mingo@kernel.org,
+        mingo@redhat.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 06:36:50AM -0700, Matthew Wilcox wrote:
-> @@ -886,7 +906,7 @@ static int __add_to_page_cache_locked(struct page *page,
->  	/* Leave page->index set: truncation relies upon it */
->  	if (!huge)
->  		mem_cgroup_cancel_charge(page, memcg, false);
-> -	put_page(page);
-> +	page_ref_sub(page, nr);
->  	return xas_error(&xas);
->  }
->  ALLOW_ERROR_INJECTION(__add_to_page_cache_locked, ERRNO);
+syzbot suspects this bug was fixed by commit:
 
-This is wrong.  page_ref_sub() will not call __put_page() if the refcount
-gets to zero.  What do people prefer?
+commit 10476e6304222ced7df9b3d5fb0a043b3c2a1ad8
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Fri Mar 13 08:56:38 2020 +0000
 
--	put_page(page);
+    locking/lockdep: Fix bad recursion pattern
 
-(a)
-+	put_thp(page);
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142baee4100000
+start commit:   5a1e843c Merge tag 'mips_fixes_5.4_3' of git://git.kernel...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=420126a10fdda0f1
+dashboard link: https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1108239ce00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cf40a8e00000
 
-(b)
-+	put_page_nr(page, nr);
+If the result looks correct, please mark the bug fixed by replying with:
 
-(c)
-+	if (page_ref_sub_return(page, nr) == 0)
-+		__put_page(page);
+#syz fix: locking/lockdep: Fix bad recursion pattern
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
