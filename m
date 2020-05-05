@@ -2,130 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32FD91C5A37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1011C5A4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 17:00:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbgEEO5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:57:45 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:59603 "EHLO
-        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729123AbgEEO5o (ORCPT
+        id S1729600AbgEEPAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 11:00:34 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:52879 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbgEEPAb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:57:44 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49GjWS0PVPzlhDCG;
-        Tue,  5 May 2020 16:57:40 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49GjWP0npnzlvfC7;
-        Tue,  5 May 2020 16:57:37 +0200 (CEST)
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Christian Heimes <christian@python.org>,
-        Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20200428175129.634352-1-mic@digikod.net>
- <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
- <87blnb48a3.fsf@mid.deneb.enyo.de>
- <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
- <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <8d47dfe6-1ff7-e5fe-d4d0-c2493db3fd63@digikod.net>
-Date:   Tue, 5 May 2020 16:57:36 +0200
-User-Agent: 
+        Tue, 5 May 2020 11:00:31 -0400
+Received: from mail-qv1-f43.google.com ([209.85.219.43]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M6H7o-1jTl4Q0ZdQ-006cvC; Tue, 05 May 2020 17:00:30 +0200
+Received: by mail-qv1-f43.google.com with SMTP id p13so1109209qvt.12;
+        Tue, 05 May 2020 08:00:29 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZmBpVYAiEFjxHnkMj44pEum+WuhQRrU2a7ujZa/Yq3jfSU5GQx
+        3OA5ZUWaGF8Bg8GHBmE253KaY34iezgcjlVUnWU=
+X-Google-Smtp-Source: APiQypKrddD0XLM23ERKqp8jN3+C82vh7NIDRBG0Uf01KOrVl399PbZ2DcqmCHoRuZCUuRyJT5cdYW0eG7pmsStXQPk=
+X-Received: by 2002:a0c:e781:: with SMTP id x1mr3317423qvn.4.1588690828960;
+ Tue, 05 May 2020 08:00:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+References: <20200505143028.1290686-1-arnd@arndb.de> <b287bb2f-28e2-7a41-e015-aa5a0cb3b5d7@embeddedor.com>
+In-Reply-To: <b287bb2f-28e2-7a41-e015-aa5a0cb3b5d7@embeddedor.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 5 May 2020 17:00:12 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0v-hK+Ury86-1D2_jfOFgR8ZTEFKVQZBWJq3dW=MuSzw@mail.gmail.com>
+Message-ID: <CAK8P3a0v-hK+Ury86-1D2_jfOFgR8ZTEFKVQZBWJq3dW=MuSzw@mail.gmail.com>
+Subject: Re: [PATCH] fsnotify: avoid gcc-10 zero-length-bounds warning
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rxM3GBXNbjQCzWEHPzyHTPa7qUdjCipkeA/r6+eAINZgG1WPD/j
+ LYmMxQV7mBG3+0cXIAYsOZgIRjxVNaBydlVjKiCd6bH91u9kN1lCzlPAitJy3aAGek/a+GR
+ FyY1X3GZ6hmlLpBFCgwH/zaTtO4D3Vx4/Tk7ThJ9rsfXh2oBg2YCdJuHP85TzmLHl0KucaQ
+ jISdWaYRwtnpuIqS2gDcg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5mt9Fx4RWYw=:9fCUuVrwzdfJlVlyuFtWcn
+ 1CPajEk6NCZx936DBzJvYz7hnImlDfykx6qoA4ZlvvN9oJF3HRFs68WQ8lC0WhJbl7XIEqwDo
+ mrlfZgdgM56ZNF3JoYkVryfdc+VVYi3PZs3ZisMzx+e4HjOpQfV/V3YA9Tf3swKKhpo4fzzmV
+ XKtzwIH+XoVyM/Iig3bcS5w2V2Ppl2PX05K9BfTaDvhnxQhUmYaGHjQsAV0jbPABqjCmg4DrX
+ ZovnnD+hKl+w69j/RgFWRme0yxiHgEkiscaaPxBYaXFQNYIIrjn6YcVQDdsHPfazqh0SltOkJ
+ sge/PhaHU7sh4sW+81+4TWDN5mTZwnBv0kasxxvsKcIdYDJ93eQEVQCpuweKqW2OfnpYvDrqQ
+ OzdgdbFS48epsofYftSPyqERaOrRH8+2mDc8nHXUfAp4/5Ii4AlQPT/Afcb6Tf/ju1O9vOg7O
+ VSo0c7fjuq1XBQhnYhqGIgCiVjcD9cokSVgyH1Cq2V9/3UAfdqaaicWolocH9GBfGDi5X4i3F
+ Omf+wpbZ1eQdgcVa2HOmJr8Vk5v7lDBe/DhNGClZbtfSfD03h4AY5zCxy9qd9gsBO8iAIhI6+
+ VIdCRPeeQ5ZStIS2q86S9qvlX1gc5O+L76wIxNdM8QuZc4ZUHqIRal4acBO1VWN1CSjOcCIyp
+ ypzWzNAakklCar1zG3nll8K2oZJ1rk7x6S8A4XnRXmqbKBII1KDGBU7jdBzFSPPtuudtGB/vE
+ msRaKD+ItnUa+cqdZwkKoiWyA5pnomIHBMAzkzWuiBNhNSWAQgrBx/7SIR72Vp5t9xEJ/dJdt
+ b87hLa1M4Ui0nTz4Ua8ktzLSqxIQZKTZJIquBHmgPisW6Y59Z4=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, May 5, 2020 at 4:35 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> On 5/5/20 09:30, Arnd Bergmann wrote:
+> > gcc-10 warns about accesses into the f_handle[] zero-length array.
+> >
+> > fs/notify/fdinfo.c: In function 'show_mark_fhandle':
+> > fs/notify/fdinfo.c:66:47: error: array subscript 'i' is outside the bounds of an interior zero-length array 'unsigned char[0]' [-Werror=zero-length-bounds]
+> >    66 |   seq_printf(m, "%02x", (int)f.handle.f_handle[i]);
+> >       |                              ~~~~~~~~~~~~~~~~~^~~
+> > In file included from fs/notify/fdinfo.c:3:
+> > include/linux/fs.h:988:16: note: while referencing 'f_handle'
+> >   988 |  unsigned char f_handle[0];
+> >       |                ^~~~~~~~
+> >
+> > This is solved by using a flexible array instead.
+> >
+> > Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> > Gustavo has done the same thing as part of a treewide change, but keeping
+> > this separate lets us backport it to stable kernels more easily later.
+>
+> Arnd,
+>
+> I wonder why would we need to backport these changes to -stable... merely
+> because of the use of a new version of GCC?
 
-On 01/05/2020 13:47, Christian Heimes wrote:
-> On 29/04/2020 00.01, Jann Horn wrote:
->> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
->>> * Jann Horn:
->>>
->>>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
->>>> the dynamic linker.
->>>
->>> Absolutely.  In typical configurations, the kernel does not enforce
->>> that executable mappings must be backed by files which are executable.
->>> It's most obvious with using an explicit loader invocation to run
->>> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
->>> than trying to reimplement the kernel permission checks (or what some
->>> believe they should be) in userspace.
->>
->> Oh, good point.
->>
->> That actually seems like something Mickaël could add to his series? If
->> someone turns on that knob for "When an interpreter wants to execute
->> something, enforce that we have execute access to it", they probably
->> also don't want it to be possible to just map files as executable? So
->> perhaps when that flag is on, the kernel should either refuse to map
->> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
->> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
->> check whether the file is executable and bail out if not?
->>
->> A configuration where interpreters verify that scripts are executable,
->> but other things can just mmap executable pages, seems kinda
->> inconsistent...
-> 
-> +1
-> 
-> I worked with Steve Downer on Python PEP 578 [1] that added audit hooks
-> and PyFile_OpenCode() to CPython. A PyFile_OpenCode() implementation
-> with RESOLVE_MAYEXEC will hep to secure loading of Python code. But
-> Python also includes a wrapper of libffi. ctypes or cffi can load native
-> code from either shared libraries with dlopen() or execute native code
-> from mmap() regions. For example SnakeEater [2] is a clever attack that
-> abused memfd_create syscall and proc filesystem to execute code.
-> 
-> A consistent security policy must also ensure that mmap() PROT_EXEC
-> enforces the same restrictions as RESOLVE_MAYEXEC. The restriction
-> doesn't have be part of this patch, though.
-> 
-> Christian
-> 
-> [1] https://www.python.org/dev/peps/pep-0578/
-> [2] https://github.com/nullbites/SnakeEater/blob/master/SnakeEater2.py
+Yes, we usually backport trivial warning fixes to stable kernels to allow
+building those with any modern compiler version.
 
-To be consistent, a "noexec" policy must indeed also restricts features
-such as mprotect(2) and mmap(2) which may enable to set arbitrary memory
-as executable. This can be restricted with SELinux (i.e. execmem,
-execmod,execheap and execstack permissions), PaX MPROTECT [1] or SARA [2].
-
-[1] https://pax.grsecurity.net/docs/mprotect.txt
-[2]
-https://lore.kernel.org/lkml/1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com/
+       Arnd
