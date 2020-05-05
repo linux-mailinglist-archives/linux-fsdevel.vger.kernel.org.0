@@ -2,133 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA24A1C5D53
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 18:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 451631C5DE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 18:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730326AbgEEQUf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 12:20:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730038AbgEEQUe (ORCPT
+        id S1730128AbgEEQw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 12:52:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729720AbgEEQw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 12:20:34 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFBFFC061A0F;
-        Tue,  5 May 2020 09:20:33 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id s8so3437848wrt.9;
-        Tue, 05 May 2020 09:20:33 -0700 (PDT)
+        Tue, 5 May 2020 12:52:28 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F37C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 09:52:28 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id h4so2352284ljg.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 09:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yY+bhdyqnSifK57VkgUaPiCviPA6iwmvsO4o134EEgY=;
-        b=q3tPb65jrzPiiIZbzkr4Euc4VQeZgXUQahl8mWUCu0+ehoR4bgBIcRGTqiED3bOHAq
-         h/wF/DwkciN3e02ugWRf1nT40NLTlrW4To6qZBwR30RYADHBpA4Cmp724RI2i+olMQFu
-         1+JOa3toBut+vY1QwASjGgnRxwBIyGQZdi8Ir6yrOif6OAmA2gRgt89ue1AveMKHow2n
-         AqKrjvDn2V3Qare7XGd9tlO+timzPzE0pskXDUNzvaeLVjxQulxKDXEKoYeL6fuELqeA
-         UvBA3WYlSpx618RXATwCmH/s5i1Wy/NEQ4/vw69pHbHgKGKw7gJm4fzcr7y/jREfz/+/
-         2cWQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9hFXujfAx2/iHidBrnKhRaNUObDjx6hbclJAooxUbFo=;
+        b=eb7GI2X/XrhuAn2Vm+U9831w2ibE6cHnWF7F9S99pPGIKJ581y9sIjG0fOlnKnr8XU
+         3l3RpH6pJHtIm3ZTaZWOJ1vg4eqLgQyIQUJKPk6h3hKYNOZAM/NKILDQePeV8IKRtcTz
+         txmKNoel5w65lmX1pdFQXgC+9b7bhZqgRSUAI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yY+bhdyqnSifK57VkgUaPiCviPA6iwmvsO4o134EEgY=;
-        b=o//Xml67migyVr+FvkWohD48sqA3NjAkk3AbuchjXg0++MO4ns/gigtK1HS6XrOO4f
-         NeSpJNZUkrQffQFITvI9VuvK+62EbJXnTx2EDeVWyrkOAhdXQ0bcaCNN14eP28HZhGIE
-         Ogkbp/ph7d1Nq2mxYsMJ7ZVJNmtI9PczowUgCpiTsKYG+T+Xl2M6A+0L+fzx9L2YoDbI
-         xZ87JVe5boNExCSp6upcjniIWjoRAv6/9ssLHtxkYF5LUcxIDbdr0VEQsWYpsjBeruqm
-         mTjQiGMzYBWx3al2dT1nYxvTbQsY/EhC6AHFtz3/HYoubx/LW461/soiWcnEUDJQ+DNC
-         +2Sw==
-X-Gm-Message-State: AGi0PuZaYv6bgXeetpa3dT6FpYjolmOSQKTUlw8S94WxD4uotbJVt472
-        g+nST2G6e1g6EF8FAN7/HPQ=
-X-Google-Smtp-Source: APiQypKgEhgof7rSvYj3ILm/nrUjR72kkGB2LTvsUxaoRw3h7amXLD9kV0taO7xWOhMk55qpv/O3gg==
-X-Received: by 2002:a5d:614b:: with SMTP id y11mr4904778wrt.77.1588695632481;
-        Tue, 05 May 2020 09:20:32 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.12.123])
-        by smtp.gmail.com with ESMTPSA id c128sm1612871wma.42.2020.05.05.09.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2020 09:20:31 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v3 7/7] fanotify: report events "on child" with name info to sb/mount marks
-Date:   Tue,  5 May 2020 19:20:14 +0300
-Message-Id: <20200505162014.10352-8-amir73il@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200505162014.10352-1-amir73il@gmail.com>
-References: <20200505162014.10352-1-amir73il@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9hFXujfAx2/iHidBrnKhRaNUObDjx6hbclJAooxUbFo=;
+        b=tUNcILN5ZODQw++7RaSLPSIWiOS3ky0gdi+JTtowDuagQ0VrCH2h+qqsoEYvtXrEK6
+         BFWg86yjEYZaYntgAswZFh4ecLs6mbMhE+xTiVYKgA6rvJbEboYYdLlC3p8jARVuwJ7w
+         JOpVxA0sl7nNPQHH+ZWFWTabTK8ZiI/3RKWP6FXGew2Qc4BPIVfQNJi3CpUYg6cbEzSh
+         6futgAy+qOpgWGXDdAGbJbD0M/WMTLAvFPbsAMzuDT4hJFTMBMH2S6pyRPkmQe0n7zCe
+         Fkjit4g1OTogVI1m6Tet5KhNtlpR8j9HWnvFWRf7s2DX8t3jDci0HH5AYhgzRmoJwlPO
+         uQaw==
+X-Gm-Message-State: AGi0PuYKfrhqf3bSVAFAC52ckPiy5jrPvFXOUy5Xx3KsNCoLm3D5ZoOw
+        XSmouBLuoNkO/GOda+FOVIdoaWSQ0eI=
+X-Google-Smtp-Source: APiQypKWwhCUvON9U0Skfi/TvVrzscO7iL8m1Q7Fvb7jnZjfzdSFv0WAHS+ALXr6L4KcmSpRwVjbKw==
+X-Received: by 2002:a2e:7815:: with SMTP id t21mr2403142ljc.146.1588697543000;
+        Tue, 05 May 2020 09:52:23 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id d23sm2632887ljg.90.2020.05.05.09.52.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 May 2020 09:52:21 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id u15so2374213ljd.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 09:52:21 -0700 (PDT)
+X-Received: by 2002:a2e:87d9:: with SMTP id v25mr2307697ljj.241.1588697540733;
+ Tue, 05 May 2020 09:52:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200505101256.3121270-1-hch@lst.de>
+In-Reply-To: <20200505101256.3121270-1-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 5 May 2020 09:52:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgrHhaM1XCB=E3Zp2Br8E5c_kmVUTd5y06xh5sev5nRMA@mail.gmail.com>
+Message-ID: <CAHk-=wgrHhaM1XCB=E3Zp2Br8E5c_kmVUTd5y06xh5sev5nRMA@mail.gmail.com>
+Subject: Re: remove set_fs calls from the coredump code v6
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With fanotify_init() flags FAN_REPORT_FID_NAME, when adding an inode
-mark with FS_EVENT_ON_CHILD, events are reported with fid of the parent
-and the name of the child entry.
+On Tue, May 5, 2020 at 3:13 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> this series gets rid of playing with the address limit in the exec and
+> coredump code.  Most of this was fairly trivial, the biggest changes are
+> those to the spufs coredump code.
 
-When adding a filesystem or mount mark, report events that are "possible
-on child" (e.g. open/close) in two flavors, one with just the child fid
-and one also with the parent fid and the child entry name, as if all
-directories are interested in events "on child".
+Ack, nice, and looks good.
 
-The flag FAN_EVENT_ON_CHILD was always ignored for sb/mount mark, so we
-can safely ignore the value of the flag passed by the user and set the
-flag in sb/mount mark mask depending on the FAN_REPORT_NAME group flag.
+The only part I dislike is how we have that 'struct compat_siginfo' on
+the stack, which is a huge waste (most of it is the nasty padding to
+128 bytes).
 
-Cc: <linux-api@vger.kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.c      |  7 +++++--
- fs/notify/fanotify/fanotify_user.c | 16 ++++++++++++++--
- 2 files changed, 19 insertions(+), 4 deletions(-)
+But that's not new, I only reacted to it because the code moved a bit.
+We cleaned up the regular siginfo to not have the padding in the
+kernel (and by "we" I mean "Eric Biederman did it after some prodding
+as part of his siginfo cleanups" - see commit 4ce5f9c9e754 "signal:
+Use a smaller struct siginfo in the kernel"),  and I wonder if we
+could do something similar with that compat thing.
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index e91a8cc1b83c..ec42c721850c 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -244,10 +244,13 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		/*
- 		 * If the event is for a child and this mark doesn't care about
- 		 * events on a child, don't send it!
-+		 * An event "on child" without name info is not intended for a
-+		 * mount/sb mark.
- 		 */
- 		if (event_mask & FS_EVENT_ON_CHILD &&
--		    (type != FSNOTIFY_OBJ_TYPE_INODE ||
--		     !(mark->mask & FS_EVENT_ON_CHILD)))
-+		    (!(mark->mask & FS_EVENT_ON_CHILD) ||
-+		     (type != FSNOTIFY_OBJ_TYPE_INODE &&
-+		      !FAN_GROUP_FLAG(group, FAN_REPORT_NAME))))
- 			continue;
- 
- 		marks_mask |= mark->mask;
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 36c1327b32f4..89c0554da90e 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1150,8 +1150,20 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		inode = path.dentry->d_inode;
- 	} else {
- 		mnt = path.mnt;
--		/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount marks */
--		mask &= ~FAN_EVENT_ON_CHILD;
-+		/*
-+		 * So far, flag FAN_EVENT_ON_CHILD was ignored for sb/mount
-+		 * marks.  Reporting events "on child" with name info for
-+		 * sb/mount marks is now implemented, so explicitly mask out
-+		 * the flag for backward compatibility with existing programs
-+		 * that do not request events with name info.
-+		 * On sb/mount mark events with FAN_REPORT_NAME, events are
-+		 * reported as if all directories are interested in events
-+		 * "on child".
-+		 */
-+		if (FAN_GROUP_FLAG(group, FAN_REPORT_NAME))
-+			mask |= FAN_EVENT_ON_CHILD;
-+		else
-+			mask &= ~FAN_EVENT_ON_CHILD;
- 	}
- 
- 	/* create/update an inode mark */
--- 
-2.17.1
+128 bytes of wasted kernel stack isn't the end of the world, but it's
+sad when the *actual* data is only 32 bytes or so.
 
+                Linus
