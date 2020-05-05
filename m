@@ -2,47 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49CA71C4DF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 07:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67C181C4DFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 07:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbgEEF5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 01:57:07 -0400
-Received: from verein.lst.de ([213.95.11.211]:33401 "EHLO verein.lst.de"
+        id S1728114AbgEEF6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 01:58:21 -0400
+Received: from verein.lst.de ([213.95.11.211]:33405 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbgEEF5H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 01:57:07 -0400
+        id S1725320AbgEEF6V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 01:58:21 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 430EE68BEB; Tue,  5 May 2020 07:57:04 +0200 (CEST)
-Date:   Tue, 5 May 2020 07:57:04 +0200
+        id B397168BEB; Tue,  5 May 2020 07:58:19 +0200 (CEST)
+Date:   Tue, 5 May 2020 07:58:19 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Kees Cook <keescook@chromium.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Iurii Zaikin <yzaikin@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Andrey Ignatov <rdna@fb.com>
-Subject: Re: [PATCH 5/5] sysctl: pass kernel pointers to ->proc_handler
-Message-ID: <20200505055704.GA3552@lst.de>
-References: <20200424064338.538313-1-hch@lst.de> <20200424064338.538313-6-hch@lst.de> <202005041154.CC19F03@keescook>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Make sure proc handlers can't expose heap
+ memory
+Message-ID: <20200505055819.GB3552@lst.de>
+References: <202005041205.C7AF4AF@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202005041154.CC19F03@keescook>
+In-Reply-To: <202005041205.C7AF4AF@keescook>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 04, 2020 at 12:01:11PM -0700, Kees Cook wrote:
-> >  	if (error)
-> > -		goto out;
-> > +		goto out_free_buf;
-> >  
-> >  	/* careful: calling conventions are nasty here */
+On Mon, May 04, 2020 at 12:08:55PM -0700, Kees Cook wrote:
+> Just as a precaution, make sure that proc handlers don't accidentally
+> grow "count" beyond the allocated kbuf size.
 > 
-> Is this comment still valid after doing these cleanups?
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> This applies to hch's sysctl cleanup tree...
 
-The comment is pretty old so I decided to keep it.  That being said
-I'm not sure it really is very helpful.
+This looks ok o me.  You should probably add Al to the Cc list as
+he has picked up my series into a branch of vfs.git.
+
+Acked-by: Christoph Hellwig <hch@lst.de>
