@@ -2,170 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9781C509F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 10:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE4C1C51BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 11:18:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbgEEImI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 04:42:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39482 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbgEEImH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 04:42:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 808AFAFF2;
-        Tue,  5 May 2020 08:42:08 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 05 May 2020 10:42:05 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
+        id S1728631AbgEEJSu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 05:18:50 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38240 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728596AbgEEJSt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 05:18:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588670327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zuMGxsvybi8NjrS2E9p5tIYiMOdSBLcmmuty15NCl3s=;
+        b=a8jAlpX2OgkAjKjZ0SMA+T/46LAjEUwU5wDzR272oqmoNLTNBxkLAIIDORGlgnAhBSD6OH
+        Dg0xiGTXRvJmEWGJ95tgTHOgwA9LZbXkL4fE6UIKcOcs5VI7qMiDSauOCdVSCtTrU/m4/n
+        hqMovwsAxVnrPaTN/ZpT3x44XCGql00=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-413-mbdNpxYhOvGH_r6k3W2Hnw-1; Tue, 05 May 2020 05:18:44 -0400
+X-MC-Unique: mbdNpxYhOvGH_r6k3W2Hnw-1
+Received: by mail-wr1-f71.google.com with SMTP id m5so906603wru.15
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 02:18:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zuMGxsvybi8NjrS2E9p5tIYiMOdSBLcmmuty15NCl3s=;
+        b=t0Dob/uopuq5qhOpelNWKksBDE3QjVGWPTFuHR4+r9dhkBSThz6zSQlG2ci9s+0lbp
+         LdcT6buKsYtVzITrDuZOW4X5YiA4wwgTOS6XS+0Apz/tAO41acbbJhnPiYSezGD5SA4c
+         VH3uCU7wWQMMydmuLFip11XnC0oa+FFwJneebNCKaioD0SBZaxDDuhPAb6BvGK5+3hED
+         5ziHJq8GCbzw3LmZt+3A5MKpWejU3vre/4+3ovLXzAblPw/oeh/KkvZP8i73l/xBis/T
+         E5bxNHZYbCQBYyRhv3/XuhV4z/81wd61HGqiNfZvsfPwPyUFz8am5gsqt1gl5QP+mkCS
+         zmwA==
+X-Gm-Message-State: AGi0PuaROpxrtf7+qAMRKDbqFmyKYwzilGHR1Rs91Ln2Ppm/pJC0Um4P
+        0KCkwI+Q4JKzToDohG0P1kHiKbZx0wt3PYh4r/f3qDKoWqfOw2dGTU8jI42UIhuHfQcMjwN5BxQ
+        UY+ugTkjnoANSAz0Lc5EW5BPD5w==
+X-Received: by 2002:adf:fc92:: with SMTP id g18mr2673638wrr.10.1588670322687;
+        Tue, 05 May 2020 02:18:42 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKX7pVuROFVyxwt8yc6FBoonk6++mD6BpR68uHXCtbveK9HdmTEsxgnCte+p9bp4Db4rFjGdw==
+X-Received: by 2002:adf:fc92:: with SMTP id g18mr2673592wrr.10.1588670322377;
+        Tue, 05 May 2020 02:18:42 -0700 (PDT)
+Received: from localhost.localdomain ([194.230.155.186])
+        by smtp.gmail.com with ESMTPSA id n6sm2246200wrs.81.2020.05.05.02.18.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 May 2020 02:18:41 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux
+ kernel statistics
+To:     David Rientjes <rientjes@google.com>
+Cc:     Jonathan Adams <jwadams@google.com>, kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] epoll: call final ep_events_available() check under
- the lock
-In-Reply-To: <20200505084049.1779243-1-rpenyaev@suse.de>
-References: <20200505084049.1779243-1-rpenyaev@suse.de>
-Message-ID: <a9898eaefa85fa9c85e179ff162d5e8d@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200504110344.17560-1-eesposit@redhat.com>
+ <alpine.DEB.2.22.394.2005041429210.224786@chino.kir.corp.google.com>
+From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Message-ID: <f2654143-b8e5-5a1f-8bd0-0cb0df2cd638@redhat.com>
+Date:   Tue, 5 May 2020 11:18:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.22.394.2005041429210.224786@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Hi Andrew,
 
-May I ask you to remove "epoll: ensure ep_poll() doesn't miss wakeup
-events" from your -mm queue? Jason lately found out that the patch
-does not fully solve the problem and this one patch is a second
-attempt to do things correctly in a different way (namely to do
-the final check under the lock). Previous changes are not needed.
+On 5/4/20 11:37 PM, David Rientjes wrote:
+> On Mon, 4 May 2020, Emanuele Giuseppe Esposito wrote:
+> 
+>>
+>> In this patch series I introduce statsfs, a synthetic ram-based virtual
+>> filesystem that takes care of gathering and displaying statistics for the
+>> Linux kernel subsystems.
+>>
+> 
+> This is exciting, we have been looking in the same area recently.  Adding
+> Jonathan Adams <jwadams@google.com>.
+> 
+> In your diffstat, one thing I notice that is omitted: an update to
+> Documentation/* :)  Any chance of getting some proposed Documentation/
+> updates with structure of the fs, the per subsystem breakdown, and best
+> practices for managing the stats from the kernel level?
 
-Thanks.
+Yes, I will write some documentation. Thank you for the suggestion.
 
---
-Roman
+>>
+>> Values represent quantites that are gathered by the statsfs user. Examples
+>> of values include the number of vm exits of a given kind, the amount of
+>> memory used by some data structure, the length of the longest hash table
+>> chain, or anything like that. Values are defined with the
+>> statsfs_source_add_values function. Each value is defined by a struct
+>> statsfs_value; the same statsfs_value can be added to many different
+>> sources. A value can be considered "simple" if it fetches data from a
+>> user-provided location, or "aggregate" if it groups all values in the
+>> subordinates sources that include the same statsfs_value.
+>>
+> 
+> This seems like it could have a lot of overhead if we wanted to
+> periodically track the totality of subsystem stats as a form of telemetry
+> gathering from userspace.  To collect telemetry for 1,000 different stats,
+> do we need to issue lseek()+read() syscalls for each of them individually
+> (or, worse, open()+read()+close())?
+> 
+> Any thoughts on how that can be optimized?  A couple of ideas:
+> 
+>   - an interface that allows gathering of all stats for a particular
+>     interface through a single file that would likely be encoded in binary
+>     and the responsibility of userspace to disseminate, or
+> 
+>   - an interface that extends beyond this proposal and allows the reader to
+>     specify which stats they are interested in collecting and then the
+>     kernel will only provide these stats in a well formed structure and
+>     also be binary encoded.
+
+Are you thinking of another file, containing all the stats for the 
+directory in binary format?
+
+> We've found that the one-file-per-stat method is pretty much a show
+> stopper from the performance view and we always must execute at least two
+> syscalls to obtain a single stat.
+> 
+> Since this is becoming a generic API (good!!), maybe we can discuss
+> possible ways to optimize gathering of stats in mass?
+
+Sure, the idea of a binary format was considered from the beginning in 
+[1], and it can be done either together with the current filesystem, or 
+as a replacement via different mount options.
+
+Thank you,
+Emanuele
+
+>> [1] https://lore.kernel.org/kvm/5d6cdcb1-d8ad-7ae6-7351-3544e2fa366d@redhat.com/?fbclid=IwAR18LHJ0PBcXcDaLzILFhHsl3qpT3z2vlG60RnqgbpGYhDv7L43n0ZXJY8M
 
 
-On 2020-05-05 10:40, Roman Penyaev wrote:
-> The original problem was described here:
->    https://lkml.org/lkml/2020/4/27/1121
-> 
-> There is a possible race when ep_scan_ready_list() leaves ->rdllist
-> and ->obflist empty for a short period of time although some events
-> are pending. It is quite likely that ep_events_available() observes
-> empty lists and goes to sleep. Since 339ddb53d373 ("fs/epoll: remove
-> unnecessary wakeups of nested epoll") we are conservative in wakeups
-> (there is only one place for wakeup and this is ep_poll_callback()),
-> thus ep_events_available() must always observe correct state of
-> two lists. The easiest and correct way is to do the final check
-> under the lock. This does not impact the performance, since lock
-> is taken anyway for adding a wait entry to the wait queue.
-> 
-> In this patch barrierless __set_current_state() is used. This is
-> safe since waitqueue_active() is called under the same lock on wakeup
-> side.
-> 
-> Short-circuit for fatal signals (i.e. fatal_signal_pending() check)
-> is moved to the line just before actual events harvesting routine.
-> This is fully compliant to what is said in the comment of the patch
-> where the actual fatal_signal_pending() check was added:
-> c257a340ede0 ("fs, epoll: short circuit fetching events if thread
-> has been killed").
-> 
-> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> Reported-by: Jason Baron <jbaron@akamai.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Khazhismel Kumykov <khazhy@google.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
->  fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
->  1 file changed, 28 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index aba03ee749f8..8453e5403283 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1879,34 +1879,33 @@ static int ep_poll(struct eventpoll *ep,
-> struct epoll_event __user *events,
->  		 * event delivery.
->  		 */
->  		init_wait(&wait);
-> -		write_lock_irq(&ep->lock);
-> -		__add_wait_queue_exclusive(&ep->wq, &wait);
-> -		write_unlock_irq(&ep->lock);
-> 
-> +		write_lock_irq(&ep->lock);
->  		/*
-> -		 * We don't want to sleep if the ep_poll_callback() sends us
-> -		 * a wakeup in between. That's why we set the task state
-> -		 * to TASK_INTERRUPTIBLE before doing the checks.
-> +		 * Barrierless variant, waitqueue_active() is called under
-> +		 * the same lock on wakeup ep_poll_callback() side, so it
-> +		 * is safe to avoid an explicit barrier.
->  		 */
-> -		set_current_state(TASK_INTERRUPTIBLE);
-> +		__set_current_state(TASK_INTERRUPTIBLE);
-> +
->  		/*
-> -		 * Always short-circuit for fatal signals to allow
-> -		 * threads to make a timely exit without the chance of
-> -		 * finding more events available and fetching
-> -		 * repeatedly.
-> +		 * Do the final check under the lock. ep_scan_ready_list()
-> +		 * plays with two lists (->rdllist and ->ovflist) and there
-> +		 * is always a race when both lists are empty for short
-> +		 * period of time although events are pending, so lock is
-> +		 * important.
->  		 */
-> -		if (fatal_signal_pending(current)) {
-> -			res = -EINTR;
-> -			break;
-> +		eavail = ep_events_available(ep);
-> +		if (!eavail) {
-> +			if (signal_pending(current))
-> +				res = -EINTR;
-> +			else
-> +				__add_wait_queue_exclusive(&ep->wq, &wait);
->  		}
-> +		write_unlock_irq(&ep->lock);
-> 
-> -		eavail = ep_events_available(ep);
-> -		if (eavail)
-> -			break;
-> -		if (signal_pending(current)) {
-> -			res = -EINTR;
-> +		if (eavail || res)
->  			break;
-> -		}
-> 
->  		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
->  			timed_out = 1;
-> @@ -1927,6 +1926,15 @@ static int ep_poll(struct eventpoll *ep, struct
-> epoll_event __user *events,
->  	}
-> 
->  send_events:
-> +	if (fatal_signal_pending(current))
-> +		/*
-> +		 * Always short-circuit for fatal signals to allow
-> +		 * threads to make a timely exit without the chance of
-> +		 * finding more events available and fetching
-> +		 * repeatedly.
-> +		 */
-> +		res = -EINTR;
-> +
->  	/*
->  	 * Try to transfer events to user space. In case we get 0 events and
->  	 * there's still timeout left over, we go trying again in search of
+>>
+>> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+>>
+>> v1->v2 remove unnecessary list_foreach_safe loops, fix wrong indentation,
+>> change statsfs in stats_fs
+>>
+>> Emanuele Giuseppe Esposito (5):
+>>    refcount, kref: add dec-and-test wrappers for rw_semaphores
+>>    stats_fs API: create, add and remove stats_fs sources and values
+>>    kunit: tests for stats_fs API
+>>    stats_fs fs: virtual fs to show stats to the end-user
+>>    kvm_main: replace debugfs with stats_fs
+>>
+>>   MAINTAINERS                     |    7 +
+>>   arch/arm64/kvm/Kconfig          |    1 +
+>>   arch/arm64/kvm/guest.c          |    2 +-
+>>   arch/mips/kvm/Kconfig           |    1 +
+>>   arch/mips/kvm/mips.c            |    2 +-
+>>   arch/powerpc/kvm/Kconfig        |    1 +
+>>   arch/powerpc/kvm/book3s.c       |    6 +-
+>>   arch/powerpc/kvm/booke.c        |    8 +-
+>>   arch/s390/kvm/Kconfig           |    1 +
+>>   arch/s390/kvm/kvm-s390.c        |   16 +-
+>>   arch/x86/include/asm/kvm_host.h |    2 +-
+>>   arch/x86/kvm/Kconfig            |    1 +
+>>   arch/x86/kvm/Makefile           |    2 +-
+>>   arch/x86/kvm/debugfs.c          |   64 --
+>>   arch/x86/kvm/stats_fs.c         |   56 ++
+>>   arch/x86/kvm/x86.c              |    6 +-
+>>   fs/Kconfig                      |   12 +
+>>   fs/Makefile                     |    1 +
+>>   fs/stats_fs/Makefile            |    6 +
+>>   fs/stats_fs/inode.c             |  337 ++++++++++
+>>   fs/stats_fs/internal.h          |   35 +
+>>   fs/stats_fs/stats_fs-tests.c    | 1088 +++++++++++++++++++++++++++++++
+>>   fs/stats_fs/stats_fs.c          |  773 ++++++++++++++++++++++
+>>   include/linux/kref.h            |   11 +
+>>   include/linux/kvm_host.h        |   39 +-
+>>   include/linux/refcount.h        |    2 +
+>>   include/linux/stats_fs.h        |  304 +++++++++
+>>   include/uapi/linux/magic.h      |    1 +
+>>   lib/refcount.c                  |   32 +
+>>   tools/lib/api/fs/fs.c           |   21 +
+>>   virt/kvm/arm/arm.c              |    2 +-
+>>   virt/kvm/kvm_main.c             |  314 ++-------
+>>   32 files changed, 2772 insertions(+), 382 deletions(-)
+>>   delete mode 100644 arch/x86/kvm/debugfs.c
+>>   create mode 100644 arch/x86/kvm/stats_fs.c
+>>   create mode 100644 fs/stats_fs/Makefile
+>>   create mode 100644 fs/stats_fs/inode.c
+>>   create mode 100644 fs/stats_fs/internal.h
+>>   create mode 100644 fs/stats_fs/stats_fs-tests.c
+>>   create mode 100644 fs/stats_fs/stats_fs.c
+>>   create mode 100644 include/linux/stats_fs.h
+>>
+>> -- 
+>> 2.25.2
+>>
 
