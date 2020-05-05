@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B95061C549B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 13:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C21201C54AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 13:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbgEELmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 07:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
+        id S1728584AbgEELpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 07:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728422AbgEELmm (ORCPT
+        by vger.kernel.org with ESMTP id S1728608AbgEELpC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 07:42:42 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD43EC061A41
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 04:42:40 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id y4so1246975ljn.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 04:42:40 -0700 (PDT)
+        Tue, 5 May 2020 07:45:02 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CCFC061A41
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 04:45:02 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id h4so1242763ljg.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 04:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ikKwSi47RkdUncF8ZIue6G09Cc3O7H+FG1YBZJHLO1c=;
-        b=PZPHz2sf+Y8/7voSUCVwWYQDTFp6jwT4eccln+h2V5t1fLtEiuMZ5ce3f8GLrLB5/+
-         Lv1kPL8izEzV+2IdG5SUTSb1GcCNzzZfyx/zyH1vNX1EgrQil8bLC2Jc+9mBLhAhHXe7
-         lOi78W5ciY1Ra0aIWnH4lpyflE7/EEEyKc94UjlHjcZQTnCuGIhy7/dnoqU7UVdaxjRC
-         Rdy8T9f0YhG4rZRuZD9UxnGFLdby4z/l2sf/CrEw82JtjLZcoH91Y9xfMaRapGwaeY1W
-         cCq9z7jHxn2gQYCZgaN9WotoV7g5/hfB1w9fLaw30A+XNiJTmnTXn2BktrD8y/mxhzoX
-         nxVw==
+        bh=oIfWdRq9yyjwaPNLBB1WhcLPviYtpHs1y/6Em0UoQzc=;
+        b=N4hxmyzj9lyf6o8bph0ivG/R3yiX7+7av0Z3hbRgE3G1P9nJfWcbLP48L+DmBUPdRL
+         iS7tdHnci9lYc5jibCU27M9cIyiBouV3TGfHBxmomzZlTAA+K4jvmlfO+0PUY5gOJwWk
+         INzBNV9RdyU4hz+KA3qMcbJKjE4Nef1pYkIpykiFiNhgkJ8IjX1SCD4/KaX9gsrjw7UM
+         PqB5v5UISICWvKpUwJeHeWlT+kuUlYh2Fy7unW4FPr071vxBMvN/2bqL0KNaC/NHAxF/
+         T4cTLz3YQkpT0ozMLHkIMjfiTRUu5z91/BjdSvFzNbqdymSh9Jx5aHZO1PEyCLvLAOi3
+         ZMTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ikKwSi47RkdUncF8ZIue6G09Cc3O7H+FG1YBZJHLO1c=;
-        b=OCE/ygJ4/FIBTYwc7mden+nYeUbB2Vn1Ga1HyMe9Wc81MQ3ZS/6kCQtXakbvlSll3l
-         31+jTJTlYCC1QbQ99/AR/KLIlr4ovr3Rzp4TJWYV6Xw8GMwJjc9dCXMSUCfekhbo+bjQ
-         0fPitNfjMTHrbbmq9eBqeyUldCd+Av/1bf4Cryy52bR4J37SyoxUEJ1c9DlC+y6XCW9A
-         E3LIzxiuEW9xvq1o661omH8imWWMGN1Olou0OST4re+ks/79HkmKrO7dFHonk/mJdIPz
-         NXqQr7oFGZK3088+xaDBsOnFJHifTrl/7o0X3cly8s2ukMuxVnTFZemEOh1t/0MKNrrO
-         NU+A==
-X-Gm-Message-State: AGi0PuaPYMQQoNZZ0P+zTRtqM+s3UCc9qW80dU+RmJe/OdAqJsIPFzQ2
-        R3PH9uUpfRKQqZ8tZEur7+GnnagGLTUuISp0mSqOuw==
-X-Google-Smtp-Source: APiQypLzrurPKOFHS71dRCXI6iqbXYejtciTu5aveMTkrB6ldhKIG7OBjVfkuUaytzaP4Y/gPJR2+9djLt+JtIxmsXQ=
-X-Received: by 2002:a2e:b249:: with SMTP id n9mr1613232ljm.221.1588678959039;
- Tue, 05 May 2020 04:42:39 -0700 (PDT)
+        bh=oIfWdRq9yyjwaPNLBB1WhcLPviYtpHs1y/6Em0UoQzc=;
+        b=PqNgEX+r9XVXtS6L/N3roZT8LqhdplyDVsKFDEMl9WkXm1V1vt7lG9gs+uZr3PXkk7
+         acoZbU8s0erEMmigeg4tUaGm13pepdGpWkp+8nO3IpElbLnYkvnEfn2nyYDVZ9ubW1CO
+         RJrvTUMXxhykckQs8GiQTmt5fHITMtny1HPw95Q+44LkvDPv8pPYi2AE4KM3AlWH2mbU
+         j3wn3ySeifg/GkQ2KvnkBLFA26PgupfidtPXJDFvU5lg6BgdG5xTnvRG5A0lCR5AnIcE
+         YmpOdBmD6A2Z5MMbgmYI7T2jPv6XFG21v3MJH1kcQCWL5TnCBUJHBslknaX4T1vM+QoE
+         AD5Q==
+X-Gm-Message-State: AGi0PuZNqRcuNEsROZbHk1M/3KcftkjhlWToUOTre55BjW4PT+MJ0f7J
+        RcmP8nuspG/fvt+21N+Ko+PRdqndvyNkuTbOItMbcg==
+X-Google-Smtp-Source: APiQypJYtnxQWEbjes9DIO+nQO7CpHNG6KYJaneU9CBZe2/UNds1SHP++W+raV03+mh53wSUVZj+nsFewgw6YpANntc=
+X-Received: by 2002:a2e:b17a:: with SMTP id a26mr1481524ljm.215.1588679100508;
+ Tue, 05 May 2020 04:45:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200429214954.44866-1-jannh@google.com> <20200429214954.44866-2-jannh@google.com>
- <20200505104805.GA17400@lst.de>
-In-Reply-To: <20200505104805.GA17400@lst.de>
+References: <20200429214954.44866-1-jannh@google.com> <20200429214954.44866-4-jannh@google.com>
+ <20200505105023.GB17400@lst.de>
+In-Reply-To: <20200505105023.GB17400@lst.de>
 From:   Jann Horn <jannh@google.com>
-Date:   Tue, 5 May 2020 13:42:12 +0200
-Message-ID: <CAG48ez3F70-UXwdHmO4CnR0bAForn-SBtstW5WAYjcrLFwS_9A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] binfmt_elf_fdpic: Stop using dump_emit() on user
- pointers on !MMU
+Date:   Tue, 5 May 2020 13:44:34 +0200
+Message-ID: <CAG48ez26DT2v7QQEbbur8LL+tQskrTBLCW+eW__RTOpezte6rw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] coredump: Refactor page range dumping into common helper
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -76,17 +75,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 5, 2020 at 12:48 PM Christoph Hellwig <hch@lst.de> wrote:
-> On Wed, Apr 29, 2020 at 11:49:50PM +0200, Jann Horn wrote:
-> > dump_emit() is for kernel pointers, and VMAs describe userspace memory.
-> > Let's be tidy here and avoid accessing userspace pointers under KERNEL_DS,
-> > even if it probably doesn't matter much on !MMU systems - especially given
-> > that it looks like we can just use the same get_dump_page() as on MMU if
-> > we move it out of the CONFIG_MMU block.
+On Tue, May 5, 2020 at 12:50 PM Christoph Hellwig <hch@lst.de> wrote:
+> On Wed, Apr 29, 2020 at 11:49:52PM +0200, Jann Horn wrote:
+> > Both fs/binfmt_elf.c and fs/binfmt_elf_fdpic.c need to dump ranges of pages
+> > into the coredump file. Extract that logic into a common helper.
+> >
+> > Any other binfmt that actually wants to create coredumps will probably need
+> > the same function; so stop making get_dump_page() depend on
+> > CONFIG_ELF_CORE.
 >
-> Looks sensible.  Did you get a chance to test this with a nommu setup?
+> Why is the #ifdef CONFIG_ELF_CORE in gup.c removed when the only
+> remaining caller is under the same ifdef?
 
-Nope. Do you happen to have a recommendation for a convenient
-environment I can use with QEMU, or something like that? I'm guessing
-that just running a standard armel Debian userspace with a !mmu ARM
-kernel wouldn't work so well?
+Oh, whoops, good point - I should go put that back.
