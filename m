@@ -2,152 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CDEB1C5A45
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 707D81C5A2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbgEEO74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:59:56 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.209]:43888 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729235AbgEEO74 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:59:56 -0400
-X-Greylist: delayed 1479 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 May 2020 10:59:55 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 3D15126C3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 09:35:15 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id VyfDjz6W48vkBVyfDjhNqv; Tue, 05 May 2020 09:35:15 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=w8vO40rWXZ1GoRNZS/PfE/ay1WvD44l/8L95KgF2RvY=; b=ScOXw0wV7Vj+vTyGGrREdyREEs
-        wfcSrYktKVNZsiRm1MTr9133gkmGKxvBRjSV9EHu1uHkC6gzpGIFNwVFaQUuYpSUk03yvQhH/V6oh
-        583wKp7oea6AuIsv0YToFIaa/e/bzddHJtT3xX4Qnpls9jmv7AAx9QUVlvfDxhU6yayxD8vJBrTbH
-        mZLP3GfTgvaD+u/lPJMIV7yX46j2+pjNiPLzBUCFnW3AZ7xMMNIollEFSWezlMFdVMRMrL7l9jBY5
-        8M2l93g2+YEuP/FvIfgG9JlOx02bzlPElo07RrLcjrbV7CGOt57CcLoOUuDi+gVjogzoIoAvE4HYX
-        OpVDrxLw==;
-Received: from [189.207.59.248] (port=46906 helo=[192.168.15.4])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jVyfC-002vTa-QF; Tue, 05 May 2020 09:35:14 -0500
-Subject: Re: [PATCH] fsnotify: avoid gcc-10 zero-length-bounds warning
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
+        id S1729261AbgEEO4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 10:56:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38030 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729123AbgEEO4T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 10:56:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A71F4ABCF;
+        Tue,  5 May 2020 14:56:20 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>, Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200505143028.1290686-1-arnd@arndb.de>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <b287bb2f-28e2-7a41-e015-aa5a0cb3b5d7@embeddedor.com>
-Date:   Tue, 5 May 2020 09:39:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Khazhismel Kumykov <khazhy@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v2] epoll: call final ep_events_available() check under the lock
+Date:   Tue,  5 May 2020 16:56:09 +0200
+Message-Id: <20200505145609.1865152-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200505143028.1290686-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.207.59.248
-X-Source-L: No
-X-Exim-ID: 1jVyfC-002vTa-QF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [189.207.59.248]:46906
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+There is a possible race when ep_scan_ready_list() leaves ->rdllist
+and ->obflist empty for a short period of time although some events
+are pending. It is quite likely that ep_events_available() observes
+empty lists and goes to sleep. Since 339ddb53d373 ("fs/epoll: remove
+unnecessary wakeups of nested epoll") we are conservative in wakeups
+(there is only one place for wakeup and this is ep_poll_callback()),
+thus ep_events_available() must always observe correct state of
+two lists. The easiest and correct way is to do the final check
+under the lock. This does not impact the performance, since lock
+is taken anyway for adding a wait entry to the wait queue.
 
+The discussion of the problem can be found here:
+   https://lore.kernel.org/linux-fsdevel/a2f22c3c-c25a-4bda-8339-a7bdaf17849e@akamai.com/
 
-On 5/5/20 09:30, Arnd Bergmann wrote:
-> gcc-10 warns about accesses into the f_handle[] zero-length array.
-> 
-> fs/notify/fdinfo.c: In function 'show_mark_fhandle':
-> fs/notify/fdinfo.c:66:47: error: array subscript 'i' is outside the bounds of an interior zero-length array 'unsigned char[0]' [-Werror=zero-length-bounds]
->    66 |   seq_printf(m, "%02x", (int)f.handle.f_handle[i]);
->       |                              ~~~~~~~~~~~~~~~~~^~~
-> In file included from fs/notify/fdinfo.c:3:
-> include/linux/fs.h:988:16: note: while referencing 'f_handle'
->   988 |  unsigned char f_handle[0];
->       |                ^~~~~~~~
-> 
-> This is solved by using a flexible array instead.
-> 
-> Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Gustavo has done the same thing as part of a treewide change, but keeping
-> this separate lets us backport it to stable kernels more easily later.
+In this patch barrierless __set_current_state() is used. This is
+safe since waitqueue_active() is called under the same lock on wakeup
+side.
 
-Arnd,
+Short-circuit for fatal signals (i.e. fatal_signal_pending() check)
+is moved to the line just before actual events harvesting routine.
+This is fully compliant to what is said in the comment of the patch
+where the actual fatal_signal_pending() check was added:
+c257a340ede0 ("fs, epoll: short circuit fetching events if thread
+has been killed").
 
-I wonder why would we need to backport these changes to -stable... merely
-because of the use of a new version of GCC?
+Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested epoll")
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Reported-by: Jason Baron <jbaron@akamai.com>
+Reviewed-by: Jason Baron <jbaron@akamai.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Khazhismel Kumykov <khazhy@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+---
+v2: minor comments tweaks
 
-Thanks
---
-Gustavo
+ fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index aba03ee749f8..12eebcdea9c8 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1879,34 +1879,33 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		 * event delivery.
+ 		 */
+ 		init_wait(&wait);
+-		write_lock_irq(&ep->lock);
+-		__add_wait_queue_exclusive(&ep->wq, &wait);
+-		write_unlock_irq(&ep->lock);
+ 
++		write_lock_irq(&ep->lock);
+ 		/*
+-		 * We don't want to sleep if the ep_poll_callback() sends us
+-		 * a wakeup in between. That's why we set the task state
+-		 * to TASK_INTERRUPTIBLE before doing the checks.
++		 * Barrierless variant, waitqueue_active() is called under
++		 * the same lock on wakeup ep_poll_callback() side, so it
++		 * is safe to avoid an explicit barrier.
+ 		 */
+-		set_current_state(TASK_INTERRUPTIBLE);
++		__set_current_state(TASK_INTERRUPTIBLE);
++
+ 		/*
+-		 * Always short-circuit for fatal signals to allow
+-		 * threads to make a timely exit without the chance of
+-		 * finding more events available and fetching
+-		 * repeatedly.
++		 * Do the final check under the lock. ep_scan_ready_list()
++		 * plays with two lists (->rdllist and ->ovflist) and there
++		 * is always a race when both lists are empty for short
++		 * period of time although events are pending, so lock is
++		 * important.
+ 		 */
+-		if (fatal_signal_pending(current)) {
+-			res = -EINTR;
+-			break;
++		eavail = ep_events_available(ep);
++		if (!eavail) {
++			if (signal_pending(current))
++				res = -EINTR;
++			else
++				__add_wait_queue_exclusive(&ep->wq, &wait);
+ 		}
++		write_unlock_irq(&ep->lock);
+ 
+-		eavail = ep_events_available(ep);
+-		if (eavail)
+-			break;
+-		if (signal_pending(current)) {
+-			res = -EINTR;
++		if (eavail || res)
+ 			break;
+-		}
+ 
+ 		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
+ 			timed_out = 1;
+@@ -1927,6 +1926,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 	}
+ 
+ send_events:
++	if (fatal_signal_pending(current)) {
++		/*
++		 * Always short-circuit for fatal signals to allow
++		 * threads to make a timely exit without the chance of
++		 * finding more events available and fetching
++		 * repeatedly.
++		 */
++		res = -EINTR;
++	}
+ 	/*
+ 	 * Try to transfer events to user space. In case we get 0 events and
+ 	 * there's still timeout left over, we go trying again in search of
+-- 
+2.24.1
+
