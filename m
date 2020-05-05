@@ -2,68 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 579941C5540
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 14:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CFC1C5583
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 14:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbgEEMQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 08:16:01 -0400
-Received: from verein.lst.de ([213.95.11.211]:35078 "EHLO verein.lst.de"
+        id S1728850AbgEEMgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 08:36:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47320 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbgEEMQB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 08:16:01 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 68BE668C4E; Tue,  5 May 2020 14:15:57 +0200 (CEST)
-Date:   Tue, 5 May 2020 14:15:57 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jann Horn <jannh@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
+        id S1728268AbgEEMgb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 08:36:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 70B07AB3D;
+        Tue,  5 May 2020 12:36:31 +0000 (UTC)
+Subject: Re: [PATCH v2 1/2] btrfs: add authentication support
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <jth@kernel.org>
+Cc:     David Sterba <dsterba@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] binfmt_elf_fdpic: Stop using dump_emit() on
- user pointers on !MMU
-Message-ID: <20200505121557.GA24052@lst.de>
-References: <20200429214954.44866-1-jannh@google.com> <20200429214954.44866-2-jannh@google.com> <20200505104805.GA17400@lst.de> <CAG48ez3F70-UXwdHmO4CnR0bAForn-SBtstW5WAYjcrLFwS_9A@mail.gmail.com>
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        david <david@sigma-star.at>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+References: <20200428105859.4719-1-jth@kernel.org>
+ <20200428105859.4719-2-jth@kernel.org>
+ <164471725.184338.1588629556400.JavaMail.zimbra@nod.at>
+ <SN4PR0401MB3598DDEF9BF9BACA71A1041D9BA70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+From:   Jeff Mahoney <jeffm@suse.com>
+Organization: SUSE Labs Data & Performance
+Message-ID: <bc2811dd-8d1e-f2ff-7a9b-326fe4270b96@suse.com>
+Date:   Tue, 5 May 2020 08:36:24 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez3F70-UXwdHmO4CnR0bAForn-SBtstW5WAYjcrLFwS_9A@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <SN4PR0401MB3598DDEF9BF9BACA71A1041D9BA70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="QCxjXmJIb3cmtZierbUqiktbM3SrmCMZ3"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 05, 2020 at 01:42:12PM +0200, Jann Horn wrote:
-> On Tue, May 5, 2020 at 12:48 PM Christoph Hellwig <hch@lst.de> wrote:
-> > On Wed, Apr 29, 2020 at 11:49:50PM +0200, Jann Horn wrote:
-> > > dump_emit() is for kernel pointers, and VMAs describe userspace memory.
-> > > Let's be tidy here and avoid accessing userspace pointers under KERNEL_DS,
-> > > even if it probably doesn't matter much on !MMU systems - especially given
-> > > that it looks like we can just use the same get_dump_page() as on MMU if
-> > > we move it out of the CONFIG_MMU block.
-> >
-> > Looks sensible.  Did you get a chance to test this with a nommu setup?
-> 
-> Nope. Do you happen to have a recommendation for a convenient
-> environment I can use with QEMU, or something like that? I'm guessing
-> that just running a standard armel Debian userspace with a !mmu ARM
-> kernel wouldn't work so well?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--QCxjXmJIb3cmtZierbUqiktbM3SrmCMZ3
+Content-Type: multipart/mixed; boundary="kj7CSqKnFEG7s9mZj42es8yczA9qAG63h"
 
-Nommu generally needs special userspace either using uclibc-ng or musl.
-When I did the RISC-V nommu work I used buildroot for my root file
-systems.  We haven't gotten elffdpic to work on RISC-V yet, so I can't
-use that setup for testing, but it should support ARM as well.
+--kj7CSqKnFEG7s9mZj42es8yczA9qAG63h
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 5/5/20 3:55 AM, Johannes Thumshirn wrote:
+> On 04/05/2020 23:59, Richard Weinberger wrote:
+>> Eric already raised doubts, let me ask more directly.
+>> Does the checksum tree really cover all moving parts of BTRFS?
+>>
+>> I'm a little surprised how small your patch is.
+>> Getting all this done for UBIFS was not easy and given that UBIFS is t=
+ruly
+>> copy-on-write it was still less work than it would be for other filesy=
+stems.
+>>
+>> If I understand the checksum tree correctly, the main purpose is prote=
+cting
+>> you from flipping bits.
+>> An attacker will perform much more sophisticated attacks.
+>=20
+> [ Adding Jeff with whom I did the design work ]
+>=20
+> The checksum tree only covers the file-system payload. But combined wit=
+h=20
+> the checksum field, which is the start of every on-disk structure, we=20
+> have all parts of the filesystem checksummed.
+
+That the checksums were originally intended for bitflip protection isn't
+really relevant.  Using a different algorithm doesn't change the
+fundamentals and the disk format was designed to use larger checksums
+than crc32c.  The checksum tree covers file data.  The contextual
+information is in the metadata describing the disk blocks and all the
+metadata blocks have internal checksums that would also be
+authenticated.  The only weak spot is that there has been a historical
+race where a user submits a write using direct i/o and modifies the data
+while in flight.  This will cause CRC failures already and that would
+still happen with this.
+
+All that said, the biggest weak spot I see in the design was mentioned
+on LWN: We require the key to mount the file system at all and there's
+no way to have a read-only but still verifiable file system.  That's
+worth examining further.
+
+-Jeff
+
+--=20
+Jeff Mahoney
+SUSE Labs
+
+
+--kj7CSqKnFEG7s9mZj42es8yczA9qAG63h--
+
+--QCxjXmJIb3cmtZierbUqiktbM3SrmCMZ3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAl6xXcgACgkQHntLYyF5
+5bLD7hAAxbI4wvgOSMoos1hNp4kX/ldHeB/8zS3FGNN6+hG4I2D/Ua1a+kiDadVH
+mo3vqtldIEJ581Rih0YCcXvBaTQYG0FwUVUcUI/SeAyvK9DA0kYqOY+G5VEyjlgm
+PP1nz+LfphdJCF90wc577760eelnCFSJUvkj3Rt8fNfEfs8djJP8G57HMWS2u9WF
+Lb6PZA10LdqZHoIIEHoH+CPX8rEukhtvQrmtA2AbgFh+vNbnfOwWTDdrvBrVCQ24
+vdSast4jflMYBXji2Fv4Rw8ulkafGZpRbvkWoA4s/GP1tCJG3ppJsDw2lvMeHJ+0
+m0KO0Q6xdqA+D7ekuu3csBwHvTbS4BDlkc5UQCg+uXLYtZDesmqOcxFJ9yHslbSU
+MNWONyjwbBHMdCkHwKLaqxJtFbx+J+TUXr6HN6iYrexCZeHpBPcMoEM8mF66fIDN
+qvFW3/DFqFaHpMWb+JnitZ5DFH1SP7+p5knaRByW2phUenIZTPHJph6Nh/axPvEe
+WfFsAwfCQBMqsxlGafWvLx3H2e9Kz93KCvWUgVxKwJXGtVV7pmX/tbb5q+VjRMU2
+BdaykW0ORblxEOiK+IoD+ia/qatoyoHv8EDUhAbpN1oziJ92BTcE2xql4RVw6ytd
+dfrRWkNkmZqzdOpAALfGslhZlCjm1aUXfEzllnoZjDgsTwJB7Qo=
+=5ruj
+-----END PGP SIGNATURE-----
+
+--QCxjXmJIb3cmtZierbUqiktbM3SrmCMZ3--
