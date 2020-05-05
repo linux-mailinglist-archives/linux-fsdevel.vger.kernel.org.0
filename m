@@ -2,173 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CCB41C5A31
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32FD91C5A37
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbgEEO4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:56:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:42444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729123AbgEEO4n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:56:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C7AA1FB;
-        Tue,  5 May 2020 07:56:42 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB0CE3F68F;
-        Tue,  5 May 2020 07:56:39 -0700 (PDT)
-Date:   Tue, 5 May 2020 15:56:37 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Patrick Bellasi <derkling@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S1729335AbgEEO5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 10:57:45 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:59603 "EHLO
+        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729123AbgEEO5o (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 10:57:44 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49GjWS0PVPzlhDCG;
+        Tue,  5 May 2020 16:57:40 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49GjWP0npnzlvfC7;
+        Tue,  5 May 2020 16:57:37 +0200 (CEST)
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+To:     Christian Heimes <christian@python.org>,
+        Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
         Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] Documentation/sysctl: Document uclamp sysctl knobs
-Message-ID: <20200505145637.5daqhatsm5bjsok7@e107158-lin.cambridge.arm.com>
-References: <20200501114927.15248-1-qais.yousef@arm.com>
- <20200501114927.15248-2-qais.yousef@arm.com>
- <87d07krjyk.derkling@matbug.com>
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200428175129.634352-1-mic@digikod.net>
+ <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
+ <87blnb48a3.fsf@mid.deneb.enyo.de>
+ <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
+ <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <8d47dfe6-1ff7-e5fe-d4d0-c2493db3fd63@digikod.net>
+Date:   Tue, 5 May 2020 16:57:36 +0200
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87d07krjyk.derkling@matbug.com>
-User-Agent: NeoMutt/20171215
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Patrick
 
-On 05/03/20 19:45, Patrick Bellasi wrote:
-> > +sched_util_clamp_min:
-> > +=====================
-> > +
-> > +Max allowed *minimum* utilization.
-> > +
-> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
->                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On 01/05/2020 13:47, Christian Heimes wrote:
+> On 29/04/2020 00.01, Jann Horn wrote:
+>> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
+>>> * Jann Horn:
+>>>
+>>>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
+>>>> the dynamic linker.
+>>>
+>>> Absolutely.  In typical configurations, the kernel does not enforce
+>>> that executable mappings must be backed by files which are executable.
+>>> It's most obvious with using an explicit loader invocation to run
+>>> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
+>>> than trying to reimplement the kernel permission checks (or what some
+>>> believe they should be) in userspace.
+>>
+>> Oh, good point.
+>>
+>> That actually seems like something Mickaël could add to his series? If
+>> someone turns on that knob for "When an interpreter wants to execute
+>> something, enforce that we have execute access to it", they probably
+>> also don't want it to be possible to just map files as executable? So
+>> perhaps when that flag is on, the kernel should either refuse to map
+>> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
+>> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
+>> check whether the file is executable and bail out if not?
+>>
+>> A configuration where interpreters verify that scripts are executable,
+>> but other things can just mmap executable pages, seems kinda
+>> inconsistent...
 > 
-> Mmm... I feel one of the two is an implementation detail which should
-> probably not be exposed?
+> +1
 > 
-> The user perhaps needs to know the value (1024) but we don't need to
-> expose the internal representation.
-
-Okay.
-
+> I worked with Steve Downer on Python PEP 578 [1] that added audit hooks
+> and PyFile_OpenCode() to CPython. A PyFile_OpenCode() implementation
+> with RESOLVE_MAYEXEC will hep to secure loading of Python code. But
+> Python also includes a wrapper of libffi. ctypes or cffi can load native
+> code from either shared libraries with dlopen() or execute native code
+> from mmap() regions. For example SnakeEater [2] is a clever attack that
+> abused memfd_create syscall and proc filesystem to execute code.
 > 
+> A consistent security policy must also ensure that mmap() PROT_EXEC
+> enforces the same restrictions as RESOLVE_MAYEXEC. The restriction
+> doesn't have be part of this patch, though.
 > 
-> > +value.
-> > +
-> > +It means that any requested uclamp.min value cannot be greater than
-> > +sched_util_clamp_min, i.e., it is restricted to the range
-> > +[0:sched_util_clamp_min].
-> > +
-> > +sched_util_clamp_max:
-> > +=====================
-> > +
-> > +Max allowed *maximum* utilization.
-> > +
-> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
-> > +value.
-> > +
-> > +It means that any requested uclamp.max value cannot be greater than
-> > +sched_util_clamp_max, i.e., it is restricted to the range
-> > +[0:sched_util_clamp_max].
-> > +
-> > +sched_util_clamp_min_rt_default:
-> > +================================
-> > +
-> > +By default Linux is tuned for performance. Which means that RT tasks always run
-> > +at the highest frequency and most capable (highest capacity) CPU (in
-> > +heterogeneous systems).
-> > +
-> > +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-> > +SCHED_CAPACITY_SCALE (1024) by default, which effectively boosts the tasks to
-> > +run at the highest frequency and biases them to run on the biggest CPU.
-> > +
-> > +This knob allows admins to change the default behavior when uclamp is being
-> > +used. In battery powered devices particularly, running at the maximum
-> > +capacity and frequency will increase energy consumption and shorten the battery
-> > +life.
-> > +
-> > +This knob is only effective for RT tasks which the user hasn't modified their
-> > +requested uclamp.min value via sched_setattr() syscall.
-> > +
-> > +This knob will not escape the constraint imposed by sched_util_clamp_min
-> > +defined above.
+> Christian
 > 
-> Perhaps it's worth to specify that this value is going to be clamped by
-> the values above? Otherwise it's a bit ambiguous to know what happen
-> when it's bigger than schedu_util_clamp_min.
+> [1] https://www.python.org/dev/peps/pep-0578/
+> [2] https://github.com/nullbites/SnakeEater/blob/master/SnakeEater2.py
 
-Hmm for me that sentence says exactly what you're asking for.
+To be consistent, a "noexec" policy must indeed also restricts features
+such as mprotect(2) and mmap(2) which may enable to set arbitrary memory
+as executable. This can be restricted with SELinux (i.e. execmem,
+execmod,execheap and execstack permissions), PaX MPROTECT [1] or SARA [2].
 
-So what you want is
-
-	s/will not escape the constraint imposed by/will be clamped by/
-
-?
-
-I'm not sure if this will help if the above is already ambiguous. Maybe if
-I explicitly say
-
-	..will not escape the *range* constrained imposed by..
-
-sched_util_clamp_min is already defined as a range constraint, so hopefully it
-should hit the mark better now?
-
-> 
-> > +Any modification is applied lazily on the next opportunity the scheduler needs
-> > +to calculate the effective value of uclamp.min of the task.
->                     ^^^^^^^^^
-> 
-> This is also an implementation detail, I would remove it.
-
-The idea is that this value is not updated 'immediately'/synchronously. So
-currently RUNNING tasks will not see the effect, which could generate confusion
-when users trip over it. IMO giving an idea of how it's updated will help with
-expectation of the users. I doubt any will care, but I think it's an important
-behavior element that is worth conveying and documenting. I'd be happy to
-reword it if necessary.
-
-I have this now
-
-"""
- 984 This knob will not escape the range constraint imposed by sched_util_clamp_min
- 985 defined above.
- 986
- 987 For example if
- 988
- 989         sched_util_clamp_min_rt_default = 800
- 990         sched_util_clamp_min = 600
- 991
- 992 Then the boost will be clamped to 600 because 800 is outside of the permissible
- 993 range of [0:600]. This could happen for instance if a powersave mode will
- 994 restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
- 995 this restriction is lifted, the requested sched_util_clamp_min_rt_default
- 996 will take effect.
- 997
- 998 Any modification is applied lazily to currently running tasks and should be
- 999 visible by the next wakeup.
-"""
-
-Thanks
-
---
-Qais Yousef
+[1] https://pax.grsecurity.net/docs/mprotect.txt
+[2]
+https://lore.kernel.org/lkml/1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com/
