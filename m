@@ -2,82 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9431C6404
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 00:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 000C31C6415
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 00:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbgEEWhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 18:37:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34708 "EHLO mail.kernel.org"
+        id S1729119AbgEEWrC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 18:47:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53876 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbgEEWhH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 18:37:07 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2528206FA;
-        Tue,  5 May 2020 22:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588718227;
-        bh=UdZ1HFCFDP6+pG52oE+2tMcVpq+n7qYIuAWKP/UAw+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CLLQrHiyI6r0PMHl+ZFLUZAEoPzJUouVkuj6gki9wWdNwifcCIdwPFxii+KxDnIE4
-         pbKNiv4zO9kxTZ4u8ROfqZ9s9ntdBf+laCTtT+uyEaxLIOuxPcvCQYylB871xYiiLn
-         DASjzcAYFN4HWHVb7c7pCp/BBoL278fHTHCVnsas=
-Date:   Tue, 5 May 2020 15:37:05 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        David Sterba <dsterba@suse.cz>,
+        id S1726568AbgEEWrC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 18:47:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 052FDAE64;
+        Tue,  5 May 2020 22:47:02 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 4ECC4DA7AD; Wed,  6 May 2020 00:46:12 +0200 (CEST)
+Date:   Wed, 6 May 2020 00:46:11 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     dsterba@suse.cz, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
         Richard Weinberger <richard@nod.at>
 Subject: Re: [PATCH v2 1/2] btrfs: add authentication support
-Message-ID: <20200505223705.GD128280@sol.localdomain>
+Message-ID: <20200505224611.GA18421@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Eric Biggers <ebiggers@kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>
 References: <20200428105859.4719-1-jth@kernel.org>
  <20200428105859.4719-2-jth@kernel.org>
  <20200501053908.GC1003@sol.localdomain>
  <SN4PR0401MB3598198E5FB728B68B39A1589BA60@SN4PR0401MB3598.namprd04.prod.outlook.com>
  <20200504205935.GA51650@gmail.com>
- <SN4PR0401MB359843476634082E8329168A9BA70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20200505221448.GW18421@twin.jikos.cz>
+ <20200505223120.GC128280@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB359843476634082E8329168A9BA70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+In-Reply-To: <20200505223120.GC128280@sol.localdomain>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 05, 2020 at 08:11:56AM +0000, Johannes Thumshirn wrote:
-> On 04/05/2020 22:59, Eric Biggers wrote:
-> [...]
+On Tue, May 05, 2020 at 03:31:20PM -0700, Eric Biggers wrote:
+> > Using that example, the authenticated checksum cannot be subverted on
+> > the superblock. So even if there are untrusted superblock data used, it
+> > won't even pass the verification of the superblock itself.
 > 
-> > But your proposed design doesn't do this completely, since some times of offline
-> > modifications are still possible.
-> > 
-> > So that's why I'm asking *exactly* what security properties it will provide.
-> 
-> [...]
-> 
-> > Does this mean that a parent node's checksum doesn't cover the checksum of its
-> > child nodes, but rather only their locations?  Doesn't that allow subtrees to be
-> > swapped around without being detected?
-> 
-> I was about to say "no you can't swap the subtrees as the header also 
-> stores the address of the block", but please give me some more time to 
-> think about it. I don't want to give a wrong answer.
-> 
-> [...]
-> 
-> > Actually, nothing in the current design prevents the whole filesystem from being
-> > rolled back to an earlier state.  So, an attacker can actually both "change the
-> > structure of the filesystem" and "roll back to an earlier state".
-> 
-> Can you give an example how an attacker could do a rollback of the whole 
-> filesystem without the key? What am I missing?
-> 
+> You're missing the point.  For unkeyed hashes, there's no need to provide the
+> hash algorithm name at mount time, as there's no authentication anyway.  But for
+> keyed hashes (as added by this patch) it is needed.  If the attacker gets to
+> choose the algorithms for you, you don't have a valid cryptosystem.
 
-They replace the current content of the block device with the content at an
-earlier time.
+I think we need to be more specific as I don't see how this contradicts
+what I've said, perhaps you'll show me the exact point where I missed
+it.
 
-- Eric
+An example superblock contains:
+
+	u8 checksum[32];
+	int hash_type;
+	u8 the_rest[256];
+
+The checksum is calculated from offsetof(hash_type) to the end of the
+structure. Then it is stored to the checksum array, and whole block is
+stored on disk.
+
+Valid superblock created by user contains may look like:
+
+	.checksum = 0x123456
+	.hash_type = 0x1	/* hmac(sha256) */
+	.the_rest = ...;
+
+Without a valid key, none of the hash_type or the_rest can be changed
+without producing a valid checksum.
+
+When you say 'if attacker gets to chose the algorithms' I understand it
+as change to hash_type, eg. setting it to 0x2 which would be
+hmac(blake2b).
+
+So maybe it violates some principle of not letting the attacker choice
+happen at all, but how would the attack continue to produce a valid
+checksum?
