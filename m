@@ -2,171 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7429A1C6223
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 22:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 870931C6233
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 22:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgEEUfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 16:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52230 "EHLO
+        id S1728914AbgEEUlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 16:41:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726350AbgEEUfr (ORCPT
+        by vger.kernel.org with ESMTP id S1726350AbgEEUlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 16:35:47 -0400
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D68CEC061A0F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 13:35:46 -0700 (PDT)
-Received: by mail-qt1-x844.google.com with SMTP id s30so3262545qth.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 13:35:46 -0700 (PDT)
+        Tue, 5 May 2020 16:41:47 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01EBC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 May 2020 13:41:46 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id s18so1550205pgl.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 13:41:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h8SYNhRZjrwkMvfBI+njwRPRnFuJefiLlP5z7X/vREo=;
-        b=EYY8aYoz/vmQhoycHnAhGXr51yLoy3ohpuPVY3qHmrZ+VLspmS2hsJuA3b5DHkSgyA
-         asRN2b4kk91JzDrQwtbZ/Ue7br+ygNqCJkw/Jod0f2xgQe83sFKEpOkCY54aMP4RhdXv
-         Lmp1gr1eULW7RkNPZNEqbYnia7Y1rvMYmX8p1Psw0Et+Qyk+0rVI2r0c/rfGGAnLptav
-         Iup05nYSGcVce5QV0FHXDPfnxDJBs0OJjD/ojIcwT8/GiAZEe3fCn8/bVM+XcCisC0bf
-         mMwfYWZrj2b2D7MmTtCgm0V2OxiAo5T6whANRLGHS2IuunZ2hOlXjYiY2CpF+gONh08x
-         3dTQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TBeTodJwY1sbypPr0O4/M7Oc5AId4qrDzBRpp3D+bWw=;
+        b=XU6X9GMe8j4wKq96hvrcdX1ByQHmmyBW7U6O/ETyAHaaOeuNGkQLdp5aHsi+ZYAg/n
+         ToTVv9P6DfvsQWmACbq/7EkvxkgQBisVFC+Cuteh8eSBPa0l95XCST9S/53ATidKpelR
+         BE5pJ6fNUlqYODQ8vfoK3eOaI1hndoAxJQXJc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h8SYNhRZjrwkMvfBI+njwRPRnFuJefiLlP5z7X/vREo=;
-        b=TuMXGWpmVKOw4fEHkNXDqi7RYjzUsGOwOUdz+03hGpeqGU75PZNguEWQF61pRIdOpL
-         iZ/zmEETzISr9y8P3h9k+/Cx0eIy8f+uCMPGwZ826lNBaNB6o7x6mM4CvbIuPyPz6t7d
-         ftEYqZFdHxjEy2IFbFtM1OnvIfiqCWQzg29KlpOh4lFEg90FzB8hjEdOqlNWgCJvwo4d
-         veYuW+wbVkmm9YsXm1SkLYCg+7Igp8Z3VTgv9t8Mw1kRbYVcVbUWj3ctrMbwmlIGNXqA
-         WBBU6JGHhDd4AbEi4B8l/qJXeg2ZojP9RlXYRg3ADSFctb9RORL9RoEM7of4GIC3gQDx
-         3j7w==
-X-Gm-Message-State: AGi0Pubzg4lWqxMV61V8qy4513r8GEyRjg2n6JMGt1bjIs1IkKlkfgts
-        o3cTATZm/EVtTe6rL8PkE/xBOvmNKFWg8tGb2f0JSerz
-X-Google-Smtp-Source: APiQypL+7UscQbmRBHWrH8NdOndOCVOXNz1vyQHcPPi4an6UYcA0QN5lg2HueQHtrlZAnQ03coblSGKkUc7pWCJ5o1Y=
-X-Received: by 2002:ac8:3488:: with SMTP id w8mr4874608qtb.378.1588710945678;
- Tue, 05 May 2020 13:35:45 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TBeTodJwY1sbypPr0O4/M7Oc5AId4qrDzBRpp3D+bWw=;
+        b=nFYym0A0+4I3VNAubUWiO2dgGJ0Yy4vxiKU7CLT2mFSRNfDqnjEeRsqCnJiLOUx/Nn
+         fG3wGBFYUYmt0I4zzmKwAuoTpga6AK/AUUqvp76MsRuA711G50W8r9XAngbVScqjAT/H
+         sJMD5LdmXZBlPnfFMrTbCL0I9XJjhsjfvHIc5p3BlQHTuly5tbeg3x5IqTI6jPD3HY48
+         +sE35Mz1XQvf98liHPakCjAK9+5hRDrFLFvn1BZZaaJ2Q9JMOiC9IRbvrPvepOzN5Vxw
+         JMpLzyF1m8vKTR3c1ACJ3xRsGMoUrMml0j4VEQXPntELZv9Y7eN9HR/kTQjz524pi8wI
+         AyUA==
+X-Gm-Message-State: AGi0PubSMpqKVzfBbJ4Def5T+gBUed9mxxluxHvvtxffxcnfxLbKllIQ
+        81yXdEf8PW9a+hf+hLzDf6rQQA==
+X-Google-Smtp-Source: APiQypKneSUsTTVo+yZKgZiaXfs8Cdo88B6bTaJHGjy6DGrc5Y7iwWPQe9ZysHr3aN4qrrZAuhv8sQ==
+X-Received: by 2002:a62:d005:: with SMTP id p5mr5183995pfg.156.1588711306249;
+        Tue, 05 May 2020 13:41:46 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g16sm2726879pfq.203.2020.05.05.13.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2020 13:41:45 -0700 (PDT)
+Date:   Tue, 5 May 2020 13:41:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Make sure proc handlers can't expose heap memory
+Message-ID: <202005051339.5F1979C4DF@keescook>
+References: <202005041205.C7AF4AF@keescook>
+ <20200504195937.GS11244@42.do-not-panic.com>
+ <202005041329.169799C65D@keescook>
+ <20200504215903.GT11244@42.do-not-panic.com>
+ <20200505063441.GA3877399@kroah.com>
 MIME-Version: 1.0
-References: <20200505084049.1779243-1-rpenyaev@suse.de> <a9898eaefa85fa9c85e179ff162d5e8d@suse.de>
- <20200505130357.04566dee5501c3787105376f@linux-foundation.org>
-In-Reply-To: <20200505130357.04566dee5501c3787105376f@linux-foundation.org>
-From:   Khazhismel Kumykov <khazhy@google.com>
-Date:   Tue, 5 May 2020 13:35:34 -0700
-Message-ID: <CACGdZYKyVEA3vF8A6cq+gM5CtsRi4gcxyCyRazqpxjTgqcuZ2w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] epoll: call final ep_events_available() check under
- the lock
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Roman Penyaev <rpenyaev@suse.de>, Jason Baron <jbaron@akamai.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000009b672805a4ec97d1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200505063441.GA3877399@kroah.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000009b672805a4ec97d1
-Content-Type: text/plain; charset="UTF-8"
+On Tue, May 05, 2020 at 08:34:41AM +0200, Greg KH wrote:
+> On Mon, May 04, 2020 at 09:59:03PM +0000, Luis Chamberlain wrote:
+> > On Mon, May 04, 2020 at 01:32:07PM -0700, Kees Cook wrote:
+> > > On Mon, May 04, 2020 at 07:59:37PM +0000, Luis Chamberlain wrote:
+> > > > On Mon, May 04, 2020 at 12:08:55PM -0700, Kees Cook wrote:
+> > > > > Just as a precaution, make sure that proc handlers don't accidentally
+> > > > > grow "count" beyond the allocated kbuf size.
+> > > > > 
+> > > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > > ---
+> > > > > This applies to hch's sysctl cleanup tree...
+> > > > > ---
+> > > > >  fs/proc/proc_sysctl.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > > 
+> > > > > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> > > > > index 15030784566c..535ab26473af 100644
+> > > > > --- a/fs/proc/proc_sysctl.c
+> > > > > +++ b/fs/proc/proc_sysctl.c
+> > > > > @@ -546,6 +546,7 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+> > > > >  	struct inode *inode = file_inode(filp);
+> > > > >  	struct ctl_table_header *head = grab_header(inode);
+> > > > >  	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+> > > > > +	size_t count_max = count;
+> > > > >  	void *kbuf;
+> > > > >  	ssize_t error;
+> > > > >  
+> > > > > @@ -590,6 +591,8 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+> > > > >  
+> > > > >  	if (!write) {
+> > > > >  		error = -EFAULT;
+> > > > > +		if (WARN_ON(count > count_max))
+> > > > > +			count = count_max;
+> > > > 
+> > > > That would crash a system with panic-on-warn. I don't think we want that?
+> > > 
+> > > Eh? None of the handlers should be making this mistake currently and
+> > > it's not a mistake that can be controlled from userspace. WARN() is
+> > > absolutely what's wanted here: report an impossible situation (and
+> > > handle it gracefully for the bulk of users that don't have
+> > > panic_on_warn set).
+> > 
+> > Alrighty, Greg are you OK with this type of WARN_ON()? You recently
+> > expressed concerns over its use due to panic-on-warn on another patch.
+> 
+> We should never call WARN() on any path that a user can trigger.
+> 
+> If it is just a "the developer called this api in a foolish way" then we
+> could use a WARN_ON() to have them realize their mistake, but in my
+> personal experience, foolish developers don't even notice that kind of
+> mistake :(
 
-On Tue, May 5, 2020 at 1:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Tue, 05 May 2020 10:42:05 +0200 Roman Penyaev <rpenyaev@suse.de> wrote:
->
-> > May I ask you to remove "epoll: ensure ep_poll() doesn't miss wakeup
-> > events" from your -mm queue? Jason lately found out that the patch
-> > does not fully solve the problem and this one patch is a second
-> > attempt to do things correctly in a different way (namely to do
-> > the final check under the lock). Previous changes are not needed.
->
-> Where do we stand with Khazhismel's "eventpoll: fix missing wakeup for
-> ovflist in ep_poll_callback"?
->
-> http://lkml.kernel.org/r/20200424190039.192373-1-khazhy@google.com
->
+Right -- while it'd be nice if the developer noticed it, it is _usually_
+an unsuspecting end user (or fuzzer), in which case we absolutely want a
+WARN (and not a BUG![1]) and have the situations handled gracefully, so
+it can be reported and fixed.
 
-My understanding is - we need the ep_poll_callback fix on a logical
-level (ovfllist was never triggering wakeup), and the two follow-ups
-close races - in both how we add/remove from the wait queue, and how
-we observe the ready list, which are needed if we only wake when we
-add events, where before we were also waking when we were splicing
-ovflist events when reading the ready list. As well, the first two
-together are needed for epoll60 to pass in my testing.
+-Kees
 
-Khazhy
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bug-on
 
---0000000000009b672805a4ec97d1
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPBgYJKoZIhvcNAQcCoIIO9zCCDvMCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ggxpMIIEkjCCA3qgAwIBAgINAewckktV4F6Q7sAtGDANBgkqhkiG9w0BAQsFADBMMSAwHgYDVQQL
-ExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMK
-R2xvYmFsU2lnbjAeFw0xODA2MjAwMDAwMDBaFw0yODA2MjAwMDAwMDBaMEsxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSEwHwYDVQQDExhHbG9iYWxTaWduIFNNSU1FIENB
-IDIwMTgwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCUeobu8FdB5oJg6Fz6SFf8YsPI
-dNcq4rBSiSDAwqMNYbeTpRrINMBdWuPqVWaBX7WHYMsKQwCOvAF1b7rkD+ROo+CCTJo76EAY25Pp
-jt7TYP/PxoLesLQ+Ld088+BeyZg9pQaf0VK4tn23fOCWbFWoM8hdnF86Mqn6xB6nLsxJcz4CUGJG
-qAhC3iedFiCfZfsIp2RNyiUhzPAqalkrtD0bZQvCgi5aSNJseNyCysS1yA58OuxEyn2e9itZJE+O
-sUeD8VFgz+nAYI5r/dmFEXu5d9npLvTTrSJjrEmw2/ynKn6r6ONueZnCfo6uLmP1SSglhI/SN7dy
-L1rKUCU7R1MjAgMBAAGjggFyMIIBbjAOBgNVHQ8BAf8EBAMCAYYwJwYDVR0lBCAwHgYIKwYBBQUH
-AwIGCCsGAQUFBwMEBggrBgEFBQcDCTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRMtwWJ
-1lPNI0Ci6A94GuRtXEzs0jAfBgNVHSMEGDAWgBSP8Et/qC5FJK5NUPpjmove4t0bvDA+BggrBgEF
-BQcBAQQyMDAwLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9iYWxzaWduLmNvbS9yb290cjMw
-NgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIzLmNybDBn
-BgNVHSAEYDBeMAsGCSsGAQQBoDIBKDAMBgorBgEEAaAyASgKMEEGCSsGAQQBoDIBXzA0MDIGCCsG
-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
-BQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wUQYIKwYBBQUHAQEE
-RTBDMEEGCCsGAQUFBzAChjVodHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc3Nt
-aW1lY2EyMDE4LmNydDAfBgNVHSMEGDAWgBRMtwWJ1lPNI0Ci6A94GuRtXEzs0jA/BgNVHR8EODA2
-MDSgMqAwhi5odHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2NhL2dzc21pbWVjYTIwMTguY3JsMA0G
-CSqGSIb3DQEBCwUAA4IBAQCM37MMrUvgKBlbkfClP3kSaljmhqmtbhA855Dxg0ExJEaXMLDnSEod
-BZm4+79Rcp/gCP67jOVlkJHRSTPco73qpOMg8Q9aXMbcysY/rm3bul1wpALN1dQh8STLYiDdNBXJ
-LJZxf7nC3+xcLEb0+RTU05lUVCzmixKU665YZspUCQttLL7LxY8k7vpLtXeX7+OP6mxVsEOca9CI
-fEybv+pk4+vHfIg3XiUK2Qs4qTHSFZ09OuPSRqkO1CY/AET8DPwXkO2ByN/gdUYo1po23haQT7kB
-qhSVsP/BmQ7F6qER6f8mDR3F0uH26W4ZFxa/htst/Pb0qoQnkyDXLPSLJa9UMYICYTCCAl0CAQEw
-XzBLMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEhMB8GA1UEAxMYR2xv
-YmFsU2lnbiBTTUlNRSBDQSAyMDE4AhABiQs/r7YF6iuE/NQrZF28MA0GCWCGSAFlAwQCAQUAoIHU
-MC8GCSqGSIb3DQEJBDEiBCCPB7JBGPWXEzvmI6+qkW04NwddgBWY9wJPycoyzBwfhzAYBgkqhkiG
-9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDA1MDUyMDM1NDZaMGkGCSqGSIb3
-DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcN
-AwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAE
-ggEAgXA7etQPygilhOlUl4xAgxL22LrJJp3gHd/uYUpJecNRkLIrQ/pF3kUE5Mbihx1QsJD7Lmi+
-R940ZnPZxvPMG2UQ5j9VHWELETbJQK8KFr0Uz/wOEWooaMUT8RwTg42uX8xdhMyZy/abTNIeSbrm
-wz5XvrAlgeDxHGJgW2ZnTvzWzVh74AF90lFUiHjzHZ+m6koU65RV+5cizgR+LvrEnvdfCyr2FlOM
-EMba3dJOhXwOYN18sUclNma4/vlpGJHUiPvgewLRlvmX07WFgmLW1RpxhfK31pNS3b7fX8XQRj1p
-ozNF6zhgngcsIsA+xgAeaPBD3MoyVNsWPTp9dDBzVg==
---0000000000009b672805a4ec97d1--
+-- 
+Kees Cook
