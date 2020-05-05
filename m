@@ -2,76 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A727C1C5C0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 17:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 104E01C5C18
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 17:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730615AbgEEPn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 11:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        id S1730430AbgEEPom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 11:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730105AbgEEPn6 (ORCPT
+        with ESMTP id S1729510AbgEEPom (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 11:43:58 -0400
+        Tue, 5 May 2020 11:44:42 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28EEEC061A10;
-        Tue,  5 May 2020 08:43:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F6DC061A0F;
+        Tue,  5 May 2020 08:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Wm55+kaVzF02vi6ubXJtcTkLmaBwejbSqugyKO7Nr0A=; b=P7YUGRhZD4xKRSOPXCPlindfQ8
-        6f8+ZUNYb3JZIVwcbAcqZu8/hEbtV/gm0YHc9+gg6JHZs+bzlQ8qHKzBaWokO6N5hTR+z9MuQXlQF
-        z/Z2C82abEvBOidEFbDRiZMFYA2VNbBCZNc7E9jOUrSbAaYak0dmx1E2y9BN9gZD3PWIbhEX7732o
-        bBBLqvRepQQ+cahHl4IreOTSAOc3YpYOg5t+lhF2CuaJmuNFdCJ4PKp/EuJ1YnSb3SopKdVpMRODx
-        +IHkzrX/+UZDFTemNELhmV7tYIsWz7z9vuh9BXItp9j2HZaRJKWJnxQ74N2nSmUMmYMxIyeVyEikR
-        qYSWXwHA==;
-Received: from [2001:4bb8:191:66b6:c70:4a89:bc61:2] (helo=localhost)
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=4pG9Q3mxGfQII0zN/KiOtZT4U+FTy9kLkMvMkZu6fuA=; b=aDgjCnQ88jQ8GWFdgLyeqhtywg
+        4RPASZALdwfDM4GEFmKBqGjztwc5XP2UhxJQ4+jaUW9tf6+iQklDSbXlEDQayXqxCOiWMpxtilwdA
+        qp5fykFBHZVnEqCXoKwGlpmPY9ZWatL+x47eD0VMek2+hRum8YLdbmR0a2Iyqi3M2nRUbRoaQqIlP
+        jsZladMw2HtoZURiCgQsp/MwTnPYCsFnoE4TLRv+s9p+GYNhWayJPcsnIm0MxlP2fGRWP2lWct/uo
+        oHca+LId/MCvpFZSlrm3j1tjVqMkj42sniuYrbHH/nWWF0D1RfTSFI3Hs29hcwIOnq1v7hwdGeZ94
+        Ibk/A2Ng==;
+Received: from [2601:1c0:6280:3f0::19c2]
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jVzjh-00046v-Ip; Tue, 05 May 2020 15:43:57 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-ext4@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     jack@suse.cz, tytso@mit.edu, adilger@dilger.ca,
-        riteshh@linux.ibm.com, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH 11/11] ext4: remove the access_ok() check in ext4_ioctl_get_es_cache
-Date:   Tue,  5 May 2020 17:43:24 +0200
-Message-Id: <20200505154324.3226743-12-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200505154324.3226743-1-hch@lst.de>
-References: <20200505154324.3226743-1-hch@lst.de>
+        id 1jVzkM-0004EJ-PU; Tue, 05 May 2020 15:44:38 +0000
+Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
+ through O_MAYEXEC
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200505153156.925111-1-mic@digikod.net>
+ <20200505153156.925111-4-mic@digikod.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fb6e2d7d-a372-3e79-214d-3ac9a451cd0a@infradead.org>
+Date:   Tue, 5 May 2020 08:44:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <20200505153156.925111-4-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-access_ok just checks we are fed a proper user pointer.  We also do that
-in copy_to_user itself, so no need to do this early.
+On 5/5/20 8:31 AM, Mickaël Salaün wrote:
+> diff --git a/security/Kconfig b/security/Kconfig
+> index cd3cc7da3a55..d8fac9240d14 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -230,6 +230,32 @@ config STATIC_USERMODEHELPER_PATH
+>  	  If you wish for all usermode helper programs to be disabled,
+>  	  specify an empty string here (i.e. "").
+>  
+> +menuconfig OMAYEXEC_STATIC
+> +	tristate "Configure O_MAYEXEC behavior at build time"
+> +	---help---
+> +	  Enable to enforce O_MAYEXEC at build time, and disable the dedicated
+> +	  fs.open_mayexec_enforce sysctl.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/ext4/ioctl.c | 5 -----
- 1 file changed, 5 deletions(-)
+That help message is a bit confusing IMO.  Does setting/enabling OMAYEXEC_STATIC
+both enforce O_MAYEXEC at build time and also disable the dedicated sysctl?
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index f81acbbb1b12e..2162db0c747d2 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -754,11 +754,6 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	fieinfo.fi_extents_max = fiemap.fm_extent_count;
- 	fieinfo.fi_extents_start = ufiemap->fm_extents;
- 
--	if (fiemap.fm_extent_count != 0 &&
--	    !access_ok(fieinfo.fi_extents_start,
--		       fieinfo.fi_extents_max * sizeof(struct fiemap_extent)))
--		return -EFAULT;
--
- 	error = ext4_get_es_cache(inode, &fieinfo, fiemap.fm_start,
- 			fiemap.fm_length);
- 	fiemap.fm_flags = fieinfo.fi_flags;
+Or are these meant to be alternatives, one for what Enabling this kconfig symbol
+does and the other for what Disabling this symbol does?  If so, it doesn't
+say that.
+
+> +
+> +	  See Documentation/admin-guide/sysctl/fs.rst for more details.
+> +
+> +if OMAYEXEC_STATIC
+> +
+> +config OMAYEXEC_ENFORCE_MOUNT
+> +	bool "Mount restriction"
+> +	default y
+> +	---help---
+> +	  Forbid opening files with the O_MAYEXEC option if their underlying VFS is
+> +	  mounted with the noexec option or if their superblock forbids execution
+> +	  of its content (e.g., /proc).
+> +
+> +config OMAYEXEC_ENFORCE_FILE
+> +	bool "File permission restriction"
+> +	---help---
+> +	  Forbid opening files with the O_MAYEXEC option if they are not marked as
+> +	  executable for the current process (e.g., POSIX permissions).
+> +
+> +endif # OMAYEXEC_STATIC
+> +
+>  source "security/selinux/Kconfig"
+>  source "security/smack/Kconfig"
+>  source "security/tomoyo/Kconfig"
+
+
 -- 
-2.26.2
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
