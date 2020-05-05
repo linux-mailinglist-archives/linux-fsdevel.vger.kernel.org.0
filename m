@@ -2,234 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6527D1C597A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8931C5999
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbgEEO2F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:28:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:41792 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729308AbgEEO2D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:28:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBF3D1FB;
-        Tue,  5 May 2020 07:28:02 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 840BD3F68F;
-        Tue,  5 May 2020 07:28:00 -0700 (PDT)
-Date:   Tue, 5 May 2020 15:27:58 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Patrick Bellasi <derkling@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200505142757.rturrjok4uklf2ea@e107158-lin.cambridge.arm.com>
-References: <20200501114927.15248-1-qais.yousef@arm.com>
- <87h7wwrkcd.derkling@matbug.com>
+        id S1729464AbgEEObU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 10:31:20 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:58246 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729148AbgEEObU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 10:31:20 -0400
+Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
+        by mx0a-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 045EQvdd006869;
+        Tue, 5 May 2020 15:30:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=jan2016.eng;
+ bh=03Nwu6JjsT0rWT9gfDoCTWuSbxK/L+5JpaoujUtPskc=;
+ b=fMoPDURtC80n7ph2QV4yAIERO5C+rKNaDjq+l09ixrHP5odJVwy4iL4ZmCD4WEmBSVzk
+ u9vvcq60GfdxR2RZtvqUPkK98WfodF7zdQjFus1XVwL+1TZvT2VMzQ3COnv6rd6AWzBk
+ JtJdtuQrj4bZpGYPO7gTmn9F9FcVuG7mHMBTekRklJRGFtG/usVv9c811CTumFRvos6n
+ yux7ZSOv2LL8KWYRYubKYyVsEb/cg+bYxd4AFgtKoTeKNWF2xuh9jlKdEQQWWYIAI22Y
+ s5DmiAsxeBAtNYF6SKkuhxt+pu5P3hIfEPRk8V0XvXW2ZX/mSgqoWW68sIrgEDKp1hMr /g== 
+Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
+        by mx0a-00190b01.pphosted.com with ESMTP id 30s0wmmw7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 May 2020 15:30:12 +0100
+Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
+        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id 045E2jt8016968;
+        Tue, 5 May 2020 10:30:03 -0400
+Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
+        by prod-mail-ppoint1.akamai.com with ESMTP id 30s46wjr5a-1;
+        Tue, 05 May 2020 10:30:03 -0400
+Received: from [0.0.0.0] (prod-ssh-gw01.bos01.corp.akamai.com [172.27.119.138])
+        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 2FCDF34952;
+        Tue,  5 May 2020 14:30:03 +0000 (GMT)
+Subject: Re: [PATCH 1/1] epoll: call final ep_events_available() check under
+ the lock
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20200505084049.1779243-1-rpenyaev@suse.de>
+From:   Jason Baron <jbaron@akamai.com>
+Message-ID: <52b58e34-8c2c-9d3f-65f9-3807810c6b69@akamai.com>
+Date:   Tue, 5 May 2020 10:30:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <20200505084049.1779243-1-rpenyaev@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87h7wwrkcd.derkling@matbug.com>
-User-Agent: NeoMutt/20171215
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-2002250000 definitions=main-2005050114
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
+ mlxscore=0 malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005050117
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/03/20 19:37, Patrick Bellasi wrote:
 
-[...]
 
-> > +static inline void uclamp_sync_util_min_rt_default(struct task_struct *p,
-> > +						   enum uclamp_id clamp_id)
-> > +{
-> > +	struct uclamp_se *uc_se;
-> > +
-> > +	/* Only sync for UCLAMP_MIN and RT tasks */
-> > +	if (clamp_id != UCLAMP_MIN || likely(!rt_task(p)))
->                                       ^^^^^^
-> Are we sure that likely makes any difference when used like that?
+On 5/5/20 4:40 AM, Roman Penyaev wrote:
+> The original problem was described here:
+>    https://lkml.org/lkml/2020/4/27/1121
 > 
-> I believe you should either use:
+> There is a possible race when ep_scan_ready_list() leaves ->rdllist
+> and ->obflist empty for a short period of time although some events
+> are pending. It is quite likely that ep_events_available() observes
+> empty lists and goes to sleep. Since 339ddb53d373 ("fs/epoll: remove
+> unnecessary wakeups of nested epoll") we are conservative in wakeups
+> (there is only one place for wakeup and this is ep_poll_callback()),
+> thus ep_events_available() must always observe correct state of
+> two lists. The easiest and correct way is to do the final check
+> under the lock. This does not impact the performance, since lock
+> is taken anyway for adding a wait entry to the wait queue.
 > 
-> 	if (likely(clamp_id != UCLAMP_MIN || !rt_task(p)))
+> In this patch barrierless __set_current_state() is used. This is
+> safe since waitqueue_active() is called under the same lock on wakeup
+> side.
 > 
-> or completely drop it.
+> Short-circuit for fatal signals (i.e. fatal_signal_pending() check)
+> is moved to the line just before actual events harvesting routine.
+> This is fully compliant to what is said in the comment of the patch
+> where the actual fatal_signal_pending() check was added:
+> c257a340ede0 ("fs, epoll: short circuit fetching events if thread
+> has been killed").
+> 
+> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+> Reported-by: Jason Baron <jbaron@akamai.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Khazhismel Kumykov <khazhy@google.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
+>  1 file changed, 28 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index aba03ee749f8..8453e5403283 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1879,34 +1879,33 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  		 * event delivery.
+>  		 */
+>  		init_wait(&wait);
+> -		write_lock_irq(&ep->lock);
+> -		__add_wait_queue_exclusive(&ep->wq, &wait);
+> -		write_unlock_irq(&ep->lock);
+>  
+> +		write_lock_irq(&ep->lock);
+>  		/*
+> -		 * We don't want to sleep if the ep_poll_callback() sends us
+> -		 * a wakeup in between. That's why we set the task state
+> -		 * to TASK_INTERRUPTIBLE before doing the checks.
+> +		 * Barrierless variant, waitqueue_active() is called under
+> +		 * the same lock on wakeup ep_poll_callback() side, so it
+> +		 * is safe to avoid an explicit barrier.
+>  		 */
+> -		set_current_state(TASK_INTERRUPTIBLE);
+> +		__set_current_state(TASK_INTERRUPTIBLE);
+> +
+>  		/*
+> -		 * Always short-circuit for fatal signals to allow
+> -		 * threads to make a timely exit without the chance of
+> -		 * finding more events available and fetching
+> -		 * repeatedly.
+> +		 * Do the final check under the lock. ep_scan_ready_list()
+> +		 * plays with two lists (->rdllist and ->ovflist) and there
+> +		 * is always a race when both lists are empty for short
+> +		 * period of time although events are pending, so lock is
+> +		 * important.
+>  		 */
+> -		if (fatal_signal_pending(current)) {
+> -			res = -EINTR;
+> -			break;
+> +		eavail = ep_events_available(ep);
+> +		if (!eavail) {
+> +			if (signal_pending(current))
+> +				res = -EINTR;
+> +			else
+> +				__add_wait_queue_exclusive(&ep->wq, &wait);
+>  		}
+> +		write_unlock_irq(&ep->lock);
+>  
+> -		eavail = ep_events_available(ep);
+> -		if (eavail)
+> -			break;
+> -		if (signal_pending(current)) {
+> -			res = -EINTR;
+> +		if (eavail || res)
+>  			break;
+> -		}
+>  
+>  		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
+>  			timed_out = 1;
+> @@ -1927,6 +1926,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  	}
+>  
+>  send_events:
+> +	if (fatal_signal_pending(current))
+> +		/*
+> +		 * Always short-circuit for fatal signals to allow
+> +		 * threads to make a timely exit without the chance of
+> +		 * finding more events available and fetching
+> +		 * repeatedly.
+> +		 */
+> +		res = -EINTR;
+> +
+>  	/*
+>  	 * Try to transfer events to user space. In case we get 0 events and
+>  	 * there's still timeout left over, we go trying again in search of
+> 
 
-I agree all these likely/unlikely better dropped.
 
-> 
-> > +		return;
-> > +
-> > +	uc_se = &p->uclamp_req[UCLAMP_MIN];
-> 
-> nit-pick: you can probably move this at declaration time.
-> 
-> The compiler will be smart enough to either post-pone the init or, given
-> the likely() above, "pre-fetch" the value.
-> 
-> Anyway, the compiler is likely smarter then us. :)
 
-I'll fling this question to the reviewers who voiced concerns about the
-overhead. Personally I see the v3 implementation is the best fit :)
+Hi Roman,
 
-> 
-> > +
-> > +	/*
-> > +	 * Only sync if user didn't override the default request and the sysctl
-> > +	 * knob has changed.
-> > +	 */
-> > +	if (unlikely(uc_se->user_defined) ||
-> > +	    likely(uc_se->value == sysctl_sched_uclamp_util_min_rt_default))
-> > +		return;
-> 
-> Same here, I believe likely/unlikely work only if wrapping a full if()
-> condition. Thus, you should probably better split the above in two
-> separate checks, which also makes for a better inline doc.
-> 
-> > +
-> > +	uclamp_se_set(uc_se, sysctl_sched_uclamp_util_min_rt_default, false);
-> 
-> Nit-pick: perhaps we can also improve a bit readability by defining at
-> the beginning an alias variable with a shorter name, e.g.
-> 
->        unsigned int uclamp_min =  sysctl_sched_uclamp_util_min_rt_default;
-> 
-> ?
+Looks good feel free to add:
+Reviewed-by: Jason Baron <jbaron@akamai.com>
 
-Could do. I used default_util_min as a name though.
+I think we should also add the fixes tag to assist stable backports:
+Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested epoll")
 
-> 
-> > +}
-> > +
-> >  static inline struct uclamp_se
-> >  uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
-> >  {
-> > @@ -907,8 +949,15 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
-> >  static inline struct uclamp_se
-> >  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
-> >  {
-> > -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
-> > -	struct uclamp_se uc_max = uclamp_default[clamp_id];
-> > +	struct uclamp_se uc_req, uc_max;
-> > +
-> > +	/*
-> > +	 * Sync up any change to sysctl_sched_uclamp_util_min_rt_default value.
->                                                                          ^^^^^
-> > +	 */
-> 
-> nit-pick: we can use a single line comment if you drop the (useless)
-> 'value' at the end.
+Thanks,
 
-Okay.
+-Jason
 
-> 
-> > +	uclamp_sync_util_min_rt_default(p, clamp_id);
-> > +
-> > +	uc_req = uclamp_tg_restrict(p, clamp_id);
-> > +	uc_max = uclamp_default[clamp_id];
-> >  
-> >  	/* System default restrictions always apply */
-> >  	if (unlikely(uc_req.value > uc_max.value))
-> > @@ -1114,12 +1163,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  				loff_t *ppos)
-> >  {
-> >  	bool update_root_tg = false;
-> > -	int old_min, old_max;
-> > +	int old_min, old_max, old_min_rt;
-> >  	int result;
-> >  
-> >  	mutex_lock(&uclamp_mutex);
-> >  	old_min = sysctl_sched_uclamp_util_min;
-> >  	old_max = sysctl_sched_uclamp_util_max;
-> > +	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
-> >  
-> >  	result = proc_dointvec(table, write, buffer, lenp, ppos);
-> >  	if (result)
-> > @@ -1133,6 +1183,18 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  		goto undo;
-> >  	}
-> >  
-> > +	/*
-> > +	 * The new value will be applied to RT tasks the next time the
-> > +	 * scheduler needs to calculate the effective uclamp.min for that task,
-> > +	 * assuming the task is using the system default and not a user
-> > +	 * specified value. In the latter we shall leave the value as the user
-> > +	 * requested.
-> 
-> IMO it does not make sense to explain here what you will do with this
-> value. This will make even more complicated to maintain the comment
-> above if the code using it should change in the future.
-> 
-> So, if the code where we use the knob is not clear enough, maybe we can
-> move this comment to the description of:
->    uclamp_sync_util_min_rt_default()
-> or to be part of the documentation of:
->   sysctl_sched_uclamp_util_min_rt_default
-> 
-> By doing that you can also just add this if condition with the previous ones.
-
-Okay.
-
-> 
-> > +	 */
-> > +	if (sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
-> > +		result = -EINVAL;
-> > +		goto undo;
-> > +	}
-> > +
-> >  	if (old_min != sysctl_sched_uclamp_util_min) {
-> >  		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
-> >  			      sysctl_sched_uclamp_util_min, false);
-> > @@ -1158,6 +1220,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  undo:
-> >  	sysctl_sched_uclamp_util_min = old_min;
-> >  	sysctl_sched_uclamp_util_max = old_max;
-> > +	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
-> >  done:
-> >  	mutex_unlock(&uclamp_mutex);
-> >  
-> > @@ -1200,9 +1263,13 @@ static void __setscheduler_uclamp(struct task_struct *p,
-> >  		if (uc_se->user_defined)
-> >  			continue;
-> >  
-> > -		/* By default, RT tasks always get 100% boost */
-> > +		/*
-> > +		 * By default, RT tasks always get 100% boost, which the admins
-> > +		 * are allowed to change via
-> > +		 * sysctl_sched_uclamp_util_min_rt_default knob.
-> > +		 */
-> >  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-> > -			clamp_value = uclamp_none(UCLAMP_MAX);
-> > +			clamp_value = sysctl_sched_uclamp_util_min_rt_default;
-> 
-> Mmm... I suspect we don't need this anymore.
-> 
-> If the task has a user_defined value, we skip this anyway.
-> If the task has not a user_defined value, we will do set this anyway at
-> each enqueue time.
-> 
-> No?
-
-Indeed.
-
-Thanks
-
---
-Qais Yousef
