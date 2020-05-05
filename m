@@ -2,106 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D81E41C6113
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 21:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2931C612C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 21:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgEETcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 15:32:53 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52902 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbgEETcx (ORCPT
+        id S1728569AbgEETnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 15:43:01 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:40960 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbgEETnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 15:32:53 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 045JRb2S006709;
-        Tue, 5 May 2020 19:32:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=rdSjQKXVW7MXP14DwcrzMCIHpaKkz+doTPGKhqIYdSg=;
- b=S1GF9zsQZ4q/DOd6+Q7rikZynXEhh7DUNn8A4UZ0FvE7gRH9Ad6M4wJ9yNKxyReQgce1
- KM+QExzlDsEBC8XuJIdlMx4Sj+4O61fafbZ2cjhDfR61uIGlqQRlMB3OJLFFXg2MziLV
- 6o7AJadghBrXkO2uRvp9kMisfAIEeTzyd08Cc0C0H3YD5WS6806/7cmU1j785zaKOdkT
- oH77/zNBdi0k9x0BKGniApNl/Qzi3gYDGup3Rhy53PeNxNukaI7lVYQelDSuNKnTweiK
- FRs4I4RkKgkOAMbdT9hnaQub3l+ZJmYIzGgN25GacVYjyMlfqqUfmMVpn54JyhVmFSuF IA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 30s09r6rb7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 May 2020 19:32:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 045JRiv2128615;
-        Tue, 5 May 2020 19:30:51 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 30t1r5sr6a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 May 2020 19:30:51 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 045JUoYk019554;
-        Tue, 5 May 2020 19:30:50 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 May 2020 12:30:50 -0700
-Date:   Tue, 5 May 2020 12:30:49 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Yuxuan Shui <yshuiv7@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: iomap_bmap should accept unwritten maps
-Message-ID: <20200505193049.GC5694@magnolia>
-References: <20200505183608.10280-1-yshuiv7@gmail.com>
+        Tue, 5 May 2020 15:43:01 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jW3Sz-0000zc-E9; Tue, 05 May 2020 13:42:57 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jW3Sy-0003WK-3A; Tue, 05 May 2020 13:42:56 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 05 May 2020 14:39:32 -0500
+Message-ID: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200505183608.10280-1-yshuiv7@gmail.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9612 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 suspectscore=1
- spamscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005050148
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9612 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1011 suspectscore=1
- priorityscore=1501 malwarescore=0 mlxlogscore=999 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005050148
+Content-Type: text/plain
+X-XM-SPF: eid=1jW3Sy-0003WK-3A;;;mid=<87h7wujhmz.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19L4HMNcSPaWzPpAyNF2T7kOhipYhZQrjA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4913]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa02 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;<linux-kernel@vger.kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 358 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 4.0 (1.1%), b_tie_ro: 2.8 (0.8%), parse: 0.66
+        (0.2%), extract_message_metadata: 2.6 (0.7%), get_uri_detail_list:
+        1.15 (0.3%), tests_pri_-1000: 3.0 (0.8%), tests_pri_-950: 1.03 (0.3%),
+        tests_pri_-900: 0.82 (0.2%), tests_pri_-90: 68 (19.1%), check_bayes:
+        67 (18.7%), b_tokenize: 6 (1.5%), b_tok_get_all: 7 (2.0%),
+        b_comp_prob: 1.76 (0.5%), b_tok_touch_all: 49 (13.8%), b_finish: 0.75
+        (0.2%), tests_pri_0: 263 (73.4%), check_dkim_signature: 0.40 (0.1%),
+        check_dkim_adsp: 2.7 (0.7%), poll_dns_idle: 1.23 (0.3%), tests_pri_10:
+        2.4 (0.7%), tests_pri_500: 6 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: exec: Promised cleanups after introducing exec_update_mutex
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 05, 2020 at 07:36:08PM +0100, Yuxuan Shui wrote:
-> commit ac58e4fb03f9d111d733a4ad379d06eef3a24705 moved ext4_bmap from
-> generic_block_bmap to iomap_bmap, this introduced a regression which
-> prevents some user from using previously working swapfiles. The kernel
-> will complain about holes while there is none.
-> 
-> What is happening here is that the swapfile has unwritten mappings,
-> which is rejected by iomap_bmap, but was accepted by ext4_get_block.
 
-...which is why ext4 ought to use iomap_swapfile_activate.
+In the patchset that introduced exec_update_mutex there were a few last
+minute discoveries and fixes that left the code in a state that can
+be very easily be improved.
 
---D
+During the merge window we discussed the first three of these patches
+and I promised I would resend them.
 
-> This commit makes sure iomap_bmap would accept unwritten mappings as
-> well.
-> 
-> Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
-> ---
->  fs/iomap/fiemap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index d55e8f491a5e..fb488dcfa8c7 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -115,7 +115,7 @@ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
->  {
->  	sector_t *bno = data, addr;
->  
-> -	if (iomap->type == IOMAP_MAPPED) {
-> +	if (iomap->type == IOMAP_MAPPED || iomap->type == IOMAP_UNWRITTEN) {
->  		addr = (pos - iomap->offset + iomap->addr) >> inode->i_blkbits;
->  		*bno = addr;
->  	}
-> -- 
-> 2.26.2
-> 
+What the first patch does is it makes the the calls in the binfmts:
+	flush_old_exec();
+        /* set the personality */
+        setup_new_exec();
+        install_exec_creds();
+
+With no sleeps or anything in between.
+
+At the conclusion of this set of changes the the calls in the binfmts
+are:
+	begin_new_exec();
+        /* set the personality */
+        setup_new_exec();
+
+The intent is to make the code easier to follow and easier to change.
+
+Eric W. Biederman (7):
+      binfmt: Move install_exec_creds after setup_new_exec to match binfmt_elf
+      exec: Make unlocking exec_update_mutex explict
+      exec: Rename the flag called_exec_mmap point_of_no_return
+      exec: Merge install_exec_creds into setup_new_exec
+      exec: In setup_new_exec cache current in the local variable me
+      exec: Move most of setup_new_exec into flush_old_exec
+      exec: Rename flush_old_exec begin_new_exec
+
+ Documentation/trace/ftrace.rst |   2 +-
+ arch/x86/ia32/ia32_aout.c      |   4 +-
+ fs/binfmt_aout.c               |   3 +-
+ fs/binfmt_elf.c                |   3 +-
+ fs/binfmt_elf_fdpic.c          |   3 +-
+ fs/binfmt_flat.c               |   4 +-
+ fs/exec.c                      | 162 ++++++++++++++++++++---------------------
+ include/linux/binfmts.h        |  10 +--
+ kernel/events/core.c           |   2 +-
+ 9 files changed, 92 insertions(+), 101 deletions(-)
+
+---
+
+These changes are against v5.7-rc3.
+
+My intention once everything passes code reveiw is to place these
+changes in a topic branch in my tree and then into linux-next, and
+eventually to send Linus a pull when the next merge window opens.
+Unless someone has a better idea.
+
+I am a little concerned that I might conflict with the ongoing coredump
+cleanups.
+
+I have several follow up sets of changes with additional cleanups as
+well but I am trying to keep everything small enough that the code can
+be reviewed.
+
+After enough cleanups I hope to reopen the conversation of dealing with
+the livelock situation with cred_guard_mutex.  As I think figuring out
+what to do becomes much easier once several of my planned
+cleanups/improvements have been made.
+
+But ultimately I just want to get exec to the point where when
+we have disucssions on how to make exec better the code is in good
+enough shape we can actually address the issues we see.
+
+Eric
