@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 236E51C524A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 11:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8C51C524C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 11:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgEEJ73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 05:59:29 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24784 "EHLO
+        id S1728706AbgEEJ7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 05:59:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39184 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728677AbgEEJ7Y (ORCPT
+        with ESMTP id S1728268AbgEEJ7Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 05:59:24 -0400
+        Tue, 5 May 2020 05:59:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588672762;
+        s=mimecast20190719; t=1588672764;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zXA4w7SFuvdgtElQZS4nWZuP6eglSGx7ZZVh8H1aUkI=;
-        b=NN7YhVSxArdUFq0ke6ODbPFO78T+kyH9VNLhM7SH43EU2HNvw3FoelrQNAw9h99LS2SoB1
-        89hFs4CMd/hQcpif2vuz34C7qkXYSqJrGRAHqYsDVXWoqv3KVn7dkB2QbxpnQfOqR4/xOq
-        yy5qkslmXNu9swxtHyknbNhEE6wmGpc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-398-gTGbV3rhM--ZbfCGmKYCww-1; Tue, 05 May 2020 05:59:20 -0400
-X-MC-Unique: gTGbV3rhM--ZbfCGmKYCww-1
-Received: by mail-wr1-f72.google.com with SMTP id y4so975794wrt.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 02:59:20 -0700 (PDT)
+        bh=OyszvEdfhOqvydMHG0rBHFkiY38nX4lEEIw22aCBSnI=;
+        b=RqPRL6RMw6SXPnNnvAJFbQ3DZfFAHh46tgV8pf3gdOHamDBp4x4d7pZpVQgO1fv2/5PQE8
+        Km2uNdKYJJHv4xEShejk7hyR3e4ZaiAcqH8z5MZCQ68ifl86GPwfH6LFFNecIs0/F51lKy
+        5AiJIbJPXan0wJxudUDhiuNt2VIezK8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-379-57jQg6vDO6muvhGUcfDxlg-1; Tue, 05 May 2020 05:59:21 -0400
+X-MC-Unique: 57jQg6vDO6muvhGUcfDxlg-1
+Received: by mail-wr1-f71.google.com with SMTP id f2so967771wrm.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 May 2020 02:59:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zXA4w7SFuvdgtElQZS4nWZuP6eglSGx7ZZVh8H1aUkI=;
-        b=cgfnWQ5MS9G+yMRhUJkd9c+owndsQB/CXySwUbTqgfG7b+gH6Z6dfeZE5YCKGwzMUx
-         E7Zjy7YPmC8dBrOBPwYru01J8htIkyV+L0GGz6HT55NOAVEZ4DNB9OpZ20p3OqKsZhX7
-         9mFob8ETxsLhdC806THJKG/Ghz5tivijrQ5pU56Yu+OeBJMPTx7LDPprErLIf1Y8k4M6
-         CWsgyjM/Yv2NWO2RfvfRjQ/l5pjs1j01mgkSFfx9mLfe2LpQuYg/BuSTu4MC4J6AeG0F
-         P+ck2mSdkzQ7VL5Mpamo4HTB1f5KRhwW7t7agrR46Z2/ah9NzP1G1NdIHZDsmNJujY43
-         /65Q==
-X-Gm-Message-State: AGi0PubQucC26MzZ5xVhiJ821w8+I5xTt6RXzJu08EtMNv1F4sr3v8go
-        HxHLfkUuAUV1pJEOTkZdos6s3y7ddMtjm0fBSEehxZmKSfJGjR68H6NG9Yr9s3j4CtrbxCdf7I8
-        Clp3nJUu+ltEdjVepz/s/vUb1lQ==
-X-Received: by 2002:adf:e84f:: with SMTP id d15mr3032033wrn.296.1588672758917;
-        Tue, 05 May 2020 02:59:18 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJShUnYILHJ8U5brRMrIssUCnaErztaa25cV9VvPFQqdJVpx0Vrslt1Z2BIuQkZt6KNTl+ItA==
-X-Received: by 2002:adf:e84f:: with SMTP id d15mr3032013wrn.296.1588672758743;
-        Tue, 05 May 2020 02:59:18 -0700 (PDT)
+        bh=OyszvEdfhOqvydMHG0rBHFkiY38nX4lEEIw22aCBSnI=;
+        b=cy8Lx1Yp6MEU+/qzzlQ8cU+0VDp4IWNOqsSLBTLBx3Sg+6PP3di0v99ZjnXMQgUM++
+         i30o67T2uX9uTTq6xkY8Z8ha/kkUclZDjewZrqPm7S9hGXvchNI+ZxBxLRsMctJ6H5fq
+         QAGbH4eJ7x+lEqwfYvXVekZ47MLKIG0CG7FpH7nEHDUlz9tD8V58gUe6YIyBK6WTNdCP
+         W7POD7Hg/6+H6qEPP0PtC5xAas4pjKirenMN2Z2bc6qurdeN7fhKaMek0e4bEVQVgxAW
+         xLkhAsT90evAkS10lqC5EoziD5y+FnmmGefCO68NWJrt8yQrzIQayD5Xb9uQw9EKen8M
+         ORuw==
+X-Gm-Message-State: AGi0PubEfPwybKyowXblEsSUWqlD1ve66ZohUViIViDm4DJvYeyXqYJ0
+        2ig14W/p3t2L/3IN9xNbkr/8VBKZZLaZosMaCfOAasTbXdYp0lfcw2Y1wmJGUxU4GI5fIX4w/Sw
+        3AacJqfJ5lpqu83kkJhR6Sz0ZAA==
+X-Received: by 2002:a5d:65ce:: with SMTP id e14mr2760084wrw.314.1588672760178;
+        Tue, 05 May 2020 02:59:20 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJvCZOQu0cs8h545uYlQatVCv4VfNKe6VY53mr88ncSgs6P0niA5ZZfVwJnwn/2Trdin8ScfQ==
+X-Received: by 2002:a5d:65ce:: with SMTP id e14mr2760067wrw.314.1588672760001;
+        Tue, 05 May 2020 02:59:20 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id t16sm2862734wmi.27.2020.05.05.02.59.17
+        by smtp.gmail.com with ESMTPSA id t16sm2862734wmi.27.2020.05.05.02.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2020 02:59:18 -0700 (PDT)
+        Tue, 05 May 2020 02:59:19 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 01/12] vfs: allow unprivileged whiteout creation
-Date:   Tue,  5 May 2020 11:59:04 +0200
-Message-Id: <20200505095915.11275-2-mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Avi Kivity <avi@scylladb.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH 02/12] aio: fix async fsync creds
+Date:   Tue,  5 May 2020 11:59:05 +0200
+Message-Id: <20200505095915.11275-3-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200505095915.11275-1-mszeredi@redhat.com>
 References: <20200505095915.11275-1-mszeredi@redhat.com>
@@ -67,99 +68,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Whiteouts, unlike real device node should not require privileges to create.
+Avi Kivity reports that on fuse filesystems running in a user namespace
+asyncronous fsync fails with EOVERFLOW.
 
-The general concern with device nodes is that opening them can have side
-effects.  The kernel already avoids zero major (see
-Documentation/admin-guide/devices.txt).  To be on the safe side the patch
-explicitly forbids registering a char device with 0/0 number (see
-cdev_add()).
+The reason is that f_ops->fsync() is called with the creds of the kthread
+performing aio work instead of the creds of the process originally
+submitting IOCB_CMD_FSYNC.
 
-This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
-i.e. it won't have any side effect.
+Fuse sends the creds of the caller in the request header and it needs to
+translate the uid and gid into the server's user namespace.  Since the
+kthread is running in init_user_ns, the translation will fail and the
+operation returns an error.
 
+It can be argued that fsync doesn't actually need any creds, but just
+zeroing out those fields in the header (as with requests that currently
+don't take creds) is a backward compatibility risk.
+
+Instead of working around this issue in fuse, solve the core of the problem
+by calling the filesystem with the proper creds.
+
+Reported-by: Avi Kivity <avi@scylladb.com>
+Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Fixes: c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+Cc: stable@vger.kernel.org  # 4.18+
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/char_dev.c                 |  3 +++
- fs/namei.c                    | 17 ++++-------------
- include/linux/device_cgroup.h |  3 +++
- 3 files changed, 10 insertions(+), 13 deletions(-)
+ fs/aio.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index c5e6eff5a381..ba0ded7842a7 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -483,6 +483,9 @@ int cdev_add(struct cdev *p, dev_t dev, unsigned count)
- 	p->dev = dev;
- 	p->count = count;
+diff --git a/fs/aio.c b/fs/aio.c
+index 5f3d3d814928..6483f9274d5e 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -176,6 +176,7 @@ struct fsync_iocb {
+ 	struct file		*file;
+ 	struct work_struct	work;
+ 	bool			datasync;
++	struct cred		*creds;
+ };
  
-+	if (WARN_ON(dev == WHITEOUT_DEV))
-+		return -EBUSY;
-+
- 	error = kobj_map(cdev_map, dev, count, NULL,
- 			 exact_match, exact_lock, p);
- 	if (error)
-diff --git a/fs/namei.c b/fs/namei.c
-index a320371899cf..b48dc2e03888 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3505,12 +3505,14 @@ EXPORT_SYMBOL(user_path_create);
- 
- int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+ struct poll_iocb {
+@@ -1589,8 +1590,11 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
+ static void aio_fsync_work(struct work_struct *work)
  {
-+	bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
- 	int error = may_create(dir, dentry);
+ 	struct aio_kiocb *iocb = container_of(work, struct aio_kiocb, fsync.work);
++	const struct cred *old_cred = override_creds(iocb->fsync.creds);
  
- 	if (error)
- 		return error;
+ 	iocb->ki_res.res = vfs_fsync(iocb->fsync.file, iocb->fsync.datasync);
++	revert_creds(old_cred);
++	put_cred(iocb->fsync.creds);
+ 	iocb_put(iocb);
+ }
  
--	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-+	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
-+	    !capable(CAP_MKNOD))
- 		return -EPERM;
- 
- 	if (!dir->i_op->mknod)
-@@ -4345,9 +4347,6 @@ static int do_renameat2(int olddfd, const char __user *oldname, int newdfd,
- 	    (flags & RENAME_EXCHANGE))
+@@ -1604,6 +1608,10 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+ 	if (unlikely(!req->file->f_op->fsync))
  		return -EINVAL;
  
--	if ((flags & RENAME_WHITEOUT) && !capable(CAP_MKNOD))
--		return -EPERM;
--
- 	if (flags & RENAME_EXCHANGE)
- 		target_flags = 0;
- 
-@@ -4485,15 +4484,7 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
- 
- int vfs_whiteout(struct inode *dir, struct dentry *dentry)
- {
--	int error = may_create(dir, dentry);
--	if (error)
--		return error;
--
--	if (!dir->i_op->mknod)
--		return -EPERM;
--
--	return dir->i_op->mknod(dir, dentry,
--				S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
-+	return vfs_mknod(dir, dentry, S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
- }
- EXPORT_SYMBOL(vfs_whiteout);
- 
-diff --git a/include/linux/device_cgroup.h b/include/linux/device_cgroup.h
-index fa35b52e0002..57e63bd63370 100644
---- a/include/linux/device_cgroup.h
-+++ b/include/linux/device_cgroup.h
-@@ -51,6 +51,9 @@ static inline int devcgroup_inode_mknod(int mode, dev_t dev)
- 	if (!S_ISBLK(mode) && !S_ISCHR(mode))
- 		return 0;
- 
-+	if (S_ISCHR(mode) && dev == WHITEOUT_DEV)
-+		return 0;
++	req->creds = prepare_creds();
++	if (!req->creds)
++		return -ENOMEM;
 +
- 	if (S_ISBLK(mode))
- 		type = DEVCG_DEV_BLOCK;
- 	else
+ 	req->datasync = datasync;
+ 	INIT_WORK(&req->work, aio_fsync_work);
+ 	schedule_work(&req->work);
 -- 
 2.21.1
 
