@@ -2,205 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8931C5999
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC0B1C5994
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbgEEObU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:31:20 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:58246 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729148AbgEEObU (ORCPT
+        id S1729310AbgEEOav (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 10:30:51 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:42439 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729148AbgEEOav (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:31:20 -0400
-Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
-        by mx0a-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 045EQvdd006869;
-        Tue, 5 May 2020 15:30:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=03Nwu6JjsT0rWT9gfDoCTWuSbxK/L+5JpaoujUtPskc=;
- b=fMoPDURtC80n7ph2QV4yAIERO5C+rKNaDjq+l09ixrHP5odJVwy4iL4ZmCD4WEmBSVzk
- u9vvcq60GfdxR2RZtvqUPkK98WfodF7zdQjFus1XVwL+1TZvT2VMzQ3COnv6rd6AWzBk
- JtJdtuQrj4bZpGYPO7gTmn9F9FcVuG7mHMBTekRklJRGFtG/usVv9c811CTumFRvos6n
- yux7ZSOv2LL8KWYRYubKYyVsEb/cg+bYxd4AFgtKoTeKNWF2xuh9jlKdEQQWWYIAI22Y
- s5DmiAsxeBAtNYF6SKkuhxt+pu5P3hIfEPRk8V0XvXW2ZX/mSgqoWW68sIrgEDKp1hMr /g== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-        by mx0a-00190b01.pphosted.com with ESMTP id 30s0wmmw7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 May 2020 15:30:12 +0100
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id 045E2jt8016968;
-        Tue, 5 May 2020 10:30:03 -0400
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 30s46wjr5a-1;
-        Tue, 05 May 2020 10:30:03 -0400
-Received: from [0.0.0.0] (prod-ssh-gw01.bos01.corp.akamai.com [172.27.119.138])
-        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 2FCDF34952;
-        Tue,  5 May 2020 14:30:03 +0000 (GMT)
-Subject: Re: [PATCH 1/1] epoll: call final ep_events_available() check under
- the lock
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20200505084049.1779243-1-rpenyaev@suse.de>
-From:   Jason Baron <jbaron@akamai.com>
-Message-ID: <52b58e34-8c2c-9d3f-65f9-3807810c6b69@akamai.com>
-Date:   Tue, 5 May 2020 10:30:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Tue, 5 May 2020 10:30:51 -0400
+Received: from localhost.localdomain ([149.172.19.189]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MekvT-1ixkId0Wnd-00alx9; Tue, 05 May 2020 16:30:30 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fsnotify: avoid gcc-10 zero-length-bounds warning
+Date:   Tue,  5 May 2020 16:30:09 +0200
+Message-Id: <20200505143028.1290686-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-In-Reply-To: <20200505084049.1779243-1-rpenyaev@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-2002250000 definitions=main-2005050114
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501
- bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005050117
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:9CGfPlqsG6O+oqtr6wXagl79sSxl+5NaR402II1ViR7OGlFLFXt
+ gDq2dWYsZe9jg0JqXfL2kkPQaQankYkttOr/wMmrFL1LXnFD0j9yv/ymgK4fjkFdSrl8rKb
+ fq8AZ10hG1w2k89O1s0Sx1KKiU0NDXM/Jsdwfi0RmT5VNEOvIqrYy9UlG3YJFn/bjt2nE0y
+ JYInF2O7ydt7/pKK/ABHQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lpl6YuOemig=:CEPjLM6gYwSsxt3gW2LLE5
+ iEspgsAILOPW2a0YSImo4XL582Kl1O58MX9Qnt+UJY4kGkV+qwBvmDnTBkylEP+gwwvcHDSl+
+ nzyOsyHbnivwh9msNSA8BTNCPHNEJe7q6ShgrAq3TUcLzVgB3fDzhYkT0ed9K5jP1ZXF9bPi4
+ ckTwcIo6dRDqUPt2FwG0hIcEFGCfFLPq7Ih+REQmcEQ/xmecWU0z4k43bqP4BOg+xArBfPE4I
+ lSgOyyIYkcb3IjNzRY/OQh1fOX/9fs3CADa3FDbDQuQ6DiSU9CWEIiRDSvU0UonhXESYHWf1n
+ 7GJ/3VR+rNAsd0RRT5Ixq298kKd9lDff9RxuWL8I9ilC2159YPOl6w3bnTB2h7pcumqvmhXFY
+ TAwCNKmE7EiUkDtbvCmovZj1X/+Ujysirbgw6Kl0lXsko415d97wQPUL7KjXUKfWs0EJYKwh+
+ jtP/8WgOV2dP5bz2VdLcjU/clPf7ComHYuda+2QyNCyJ8k3u+kyBkTfD5vUNpI60/MLDiMDPf
+ m6IGHWzzVjTYMiKLSdtBTAFLJu4zE7XVKecMUiPpbnB1xf56U7Rv+zf6VvJCocsWRyeL9+kTL
+ hOnyL/F+cchp4PiKDA431ig8W534gYFASQ0G74KxsL5yM4ALK8xVfgjSSOmvn0c5exwuhGfZM
+ NN+meiHg9+5S37ohizLgmVPaHju9iPb7sd0KgBFDuF5+qX0Y+zo0D/INbwCWOfj2J5lRpTZ1K
+ hHcmmtJ9p7Gy8QvQs9kJUksrS9ULFeR+vjr2jGNFSHjy5YsKbV5o8piRY07klN8MYXq+jauRG
+ B6Wdp4uhWu3TZuV2gvX7LqhobB5garPiziWq1fUAQ0le4/Dki0=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+gcc-10 warns about accesses into the f_handle[] zero-length array.
 
+fs/notify/fdinfo.c: In function 'show_mark_fhandle':
+fs/notify/fdinfo.c:66:47: error: array subscript 'i' is outside the bounds of an interior zero-length array 'unsigned char[0]' [-Werror=zero-length-bounds]
+   66 |   seq_printf(m, "%02x", (int)f.handle.f_handle[i]);
+      |                              ~~~~~~~~~~~~~~~~~^~~
+In file included from fs/notify/fdinfo.c:3:
+include/linux/fs.h:988:16: note: while referencing 'f_handle'
+  988 |  unsigned char f_handle[0];
+      |                ^~~~~~~~
 
-On 5/5/20 4:40 AM, Roman Penyaev wrote:
-> The original problem was described here:
->    https://lkml.org/lkml/2020/4/27/1121
-> 
-> There is a possible race when ep_scan_ready_list() leaves ->rdllist
-> and ->obflist empty for a short period of time although some events
-> are pending. It is quite likely that ep_events_available() observes
-> empty lists and goes to sleep. Since 339ddb53d373 ("fs/epoll: remove
-> unnecessary wakeups of nested epoll") we are conservative in wakeups
-> (there is only one place for wakeup and this is ep_poll_callback()),
-> thus ep_events_available() must always observe correct state of
-> two lists. The easiest and correct way is to do the final check
-> under the lock. This does not impact the performance, since lock
-> is taken anyway for adding a wait entry to the wait queue.
-> 
-> In this patch barrierless __set_current_state() is used. This is
-> safe since waitqueue_active() is called under the same lock on wakeup
-> side.
-> 
-> Short-circuit for fatal signals (i.e. fatal_signal_pending() check)
-> is moved to the line just before actual events harvesting routine.
-> This is fully compliant to what is said in the comment of the patch
-> where the actual fatal_signal_pending() check was added:
-> c257a340ede0 ("fs, epoll: short circuit fetching events if thread
-> has been killed").
-> 
-> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> Reported-by: Jason Baron <jbaron@akamai.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Khazhismel Kumykov <khazhy@google.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
->  fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
->  1 file changed, 28 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index aba03ee749f8..8453e5403283 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1879,34 +1879,33 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  		 * event delivery.
->  		 */
->  		init_wait(&wait);
-> -		write_lock_irq(&ep->lock);
-> -		__add_wait_queue_exclusive(&ep->wq, &wait);
-> -		write_unlock_irq(&ep->lock);
->  
-> +		write_lock_irq(&ep->lock);
->  		/*
-> -		 * We don't want to sleep if the ep_poll_callback() sends us
-> -		 * a wakeup in between. That's why we set the task state
-> -		 * to TASK_INTERRUPTIBLE before doing the checks.
-> +		 * Barrierless variant, waitqueue_active() is called under
-> +		 * the same lock on wakeup ep_poll_callback() side, so it
-> +		 * is safe to avoid an explicit barrier.
->  		 */
-> -		set_current_state(TASK_INTERRUPTIBLE);
-> +		__set_current_state(TASK_INTERRUPTIBLE);
-> +
->  		/*
-> -		 * Always short-circuit for fatal signals to allow
-> -		 * threads to make a timely exit without the chance of
-> -		 * finding more events available and fetching
-> -		 * repeatedly.
-> +		 * Do the final check under the lock. ep_scan_ready_list()
-> +		 * plays with two lists (->rdllist and ->ovflist) and there
-> +		 * is always a race when both lists are empty for short
-> +		 * period of time although events are pending, so lock is
-> +		 * important.
->  		 */
-> -		if (fatal_signal_pending(current)) {
-> -			res = -EINTR;
-> -			break;
-> +		eavail = ep_events_available(ep);
-> +		if (!eavail) {
-> +			if (signal_pending(current))
-> +				res = -EINTR;
-> +			else
-> +				__add_wait_queue_exclusive(&ep->wq, &wait);
->  		}
-> +		write_unlock_irq(&ep->lock);
->  
-> -		eavail = ep_events_available(ep);
-> -		if (eavail)
-> -			break;
-> -		if (signal_pending(current)) {
-> -			res = -EINTR;
-> +		if (eavail || res)
->  			break;
-> -		}
->  
->  		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
->  			timed_out = 1;
-> @@ -1927,6 +1926,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  	}
->  
->  send_events:
-> +	if (fatal_signal_pending(current))
-> +		/*
-> +		 * Always short-circuit for fatal signals to allow
-> +		 * threads to make a timely exit without the chance of
-> +		 * finding more events available and fetching
-> +		 * repeatedly.
-> +		 */
-> +		res = -EINTR;
-> +
->  	/*
->  	 * Try to transfer events to user space. In case we get 0 events and
->  	 * there's still timeout left over, we go trying again in search of
-> 
+This is solved by using a flexible array instead.
 
+Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Gustavo has done the same thing as part of a treewide change, but keeping
+this separate lets us backport it to stable kernels more easily later.
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Hi Roman,
-
-Looks good feel free to add:
-Reviewed-by: Jason Baron <jbaron@akamai.com>
-
-I think we should also add the fixes tag to assist stable backports:
-Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested epoll")
-
-Thanks,
-
--Jason
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8690dc56e883..b229c55a8232 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -986,7 +986,7 @@ struct file_handle {
+ 	__u32 handle_bytes;
+ 	int handle_type;
+ 	/* file identifier */
+-	unsigned char f_handle[0];
++	unsigned char f_handle[];
+ };
+ 
+ static inline struct file *get_file(struct file *f)
+-- 
+2.26.0
 
