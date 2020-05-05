@@ -2,153 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 707D81C5A2D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CCB41C5A31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 16:56:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbgEEO4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 10:56:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38030 "EHLO mx2.suse.de"
+        id S1729289AbgEEO4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 10:56:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:42444 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729123AbgEEO4T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 10:56:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A71F4ABCF;
-        Tue,  5 May 2020 14:56:20 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Roman Penyaev <rpenyaev@suse.de>, Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH v2] epoll: call final ep_events_available() check under the lock
-Date:   Tue,  5 May 2020 16:56:09 +0200
-Message-Id: <20200505145609.1865152-1-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.24.1
+        id S1729123AbgEEO4n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 May 2020 10:56:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C7AA1FB;
+        Tue,  5 May 2020 07:56:42 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB0CE3F68F;
+        Tue,  5 May 2020 07:56:39 -0700 (PDT)
+Date:   Tue, 5 May 2020 15:56:37 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Patrick Bellasi <derkling@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] Documentation/sysctl: Document uclamp sysctl knobs
+Message-ID: <20200505145637.5daqhatsm5bjsok7@e107158-lin.cambridge.arm.com>
+References: <20200501114927.15248-1-qais.yousef@arm.com>
+ <20200501114927.15248-2-qais.yousef@arm.com>
+ <87d07krjyk.derkling@matbug.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87d07krjyk.derkling@matbug.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a possible race when ep_scan_ready_list() leaves ->rdllist
-and ->obflist empty for a short period of time although some events
-are pending. It is quite likely that ep_events_available() observes
-empty lists and goes to sleep. Since 339ddb53d373 ("fs/epoll: remove
-unnecessary wakeups of nested epoll") we are conservative in wakeups
-(there is only one place for wakeup and this is ep_poll_callback()),
-thus ep_events_available() must always observe correct state of
-two lists. The easiest and correct way is to do the final check
-under the lock. This does not impact the performance, since lock
-is taken anyway for adding a wait entry to the wait queue.
+Hi Patrick
 
-The discussion of the problem can be found here:
-   https://lore.kernel.org/linux-fsdevel/a2f22c3c-c25a-4bda-8339-a7bdaf17849e@akamai.com/
+On 05/03/20 19:45, Patrick Bellasi wrote:
+> > +sched_util_clamp_min:
+> > +=====================
+> > +
+> > +Max allowed *minimum* utilization.
+> > +
+> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
+>                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> Mmm... I feel one of the two is an implementation detail which should
+> probably not be exposed?
+> 
+> The user perhaps needs to know the value (1024) but we don't need to
+> expose the internal representation.
 
-In this patch barrierless __set_current_state() is used. This is
-safe since waitqueue_active() is called under the same lock on wakeup
-side.
+Okay.
 
-Short-circuit for fatal signals (i.e. fatal_signal_pending() check)
-is moved to the line just before actual events harvesting routine.
-This is fully compliant to what is said in the comment of the patch
-where the actual fatal_signal_pending() check was added:
-c257a340ede0 ("fs, epoll: short circuit fetching events if thread
-has been killed").
+> 
+> 
+> > +value.
+> > +
+> > +It means that any requested uclamp.min value cannot be greater than
+> > +sched_util_clamp_min, i.e., it is restricted to the range
+> > +[0:sched_util_clamp_min].
+> > +
+> > +sched_util_clamp_max:
+> > +=====================
+> > +
+> > +Max allowed *maximum* utilization.
+> > +
+> > +Default value is SCHED_CAPACITY_SCALE (1024), which is the maximum possible
+> > +value.
+> > +
+> > +It means that any requested uclamp.max value cannot be greater than
+> > +sched_util_clamp_max, i.e., it is restricted to the range
+> > +[0:sched_util_clamp_max].
+> > +
+> > +sched_util_clamp_min_rt_default:
+> > +================================
+> > +
+> > +By default Linux is tuned for performance. Which means that RT tasks always run
+> > +at the highest frequency and most capable (highest capacity) CPU (in
+> > +heterogeneous systems).
+> > +
+> > +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
+> > +SCHED_CAPACITY_SCALE (1024) by default, which effectively boosts the tasks to
+> > +run at the highest frequency and biases them to run on the biggest CPU.
+> > +
+> > +This knob allows admins to change the default behavior when uclamp is being
+> > +used. In battery powered devices particularly, running at the maximum
+> > +capacity and frequency will increase energy consumption and shorten the battery
+> > +life.
+> > +
+> > +This knob is only effective for RT tasks which the user hasn't modified their
+> > +requested uclamp.min value via sched_setattr() syscall.
+> > +
+> > +This knob will not escape the constraint imposed by sched_util_clamp_min
+> > +defined above.
+> 
+> Perhaps it's worth to specify that this value is going to be clamped by
+> the values above? Otherwise it's a bit ambiguous to know what happen
+> when it's bigger than schedu_util_clamp_min.
 
-Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested epoll")
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Reported-by: Jason Baron <jbaron@akamai.com>
-Reviewed-by: Jason Baron <jbaron@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Khazhismel Kumykov <khazhy@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
-v2: minor comments tweaks
+Hmm for me that sentence says exactly what you're asking for.
 
- fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+So what you want is
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index aba03ee749f8..12eebcdea9c8 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1879,34 +1879,33 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		 * event delivery.
- 		 */
- 		init_wait(&wait);
--		write_lock_irq(&ep->lock);
--		__add_wait_queue_exclusive(&ep->wq, &wait);
--		write_unlock_irq(&ep->lock);
- 
-+		write_lock_irq(&ep->lock);
- 		/*
--		 * We don't want to sleep if the ep_poll_callback() sends us
--		 * a wakeup in between. That's why we set the task state
--		 * to TASK_INTERRUPTIBLE before doing the checks.
-+		 * Barrierless variant, waitqueue_active() is called under
-+		 * the same lock on wakeup ep_poll_callback() side, so it
-+		 * is safe to avoid an explicit barrier.
- 		 */
--		set_current_state(TASK_INTERRUPTIBLE);
-+		__set_current_state(TASK_INTERRUPTIBLE);
-+
- 		/*
--		 * Always short-circuit for fatal signals to allow
--		 * threads to make a timely exit without the chance of
--		 * finding more events available and fetching
--		 * repeatedly.
-+		 * Do the final check under the lock. ep_scan_ready_list()
-+		 * plays with two lists (->rdllist and ->ovflist) and there
-+		 * is always a race when both lists are empty for short
-+		 * period of time although events are pending, so lock is
-+		 * important.
- 		 */
--		if (fatal_signal_pending(current)) {
--			res = -EINTR;
--			break;
-+		eavail = ep_events_available(ep);
-+		if (!eavail) {
-+			if (signal_pending(current))
-+				res = -EINTR;
-+			else
-+				__add_wait_queue_exclusive(&ep->wq, &wait);
- 		}
-+		write_unlock_irq(&ep->lock);
- 
--		eavail = ep_events_available(ep);
--		if (eavail)
--			break;
--		if (signal_pending(current)) {
--			res = -EINTR;
-+		if (eavail || res)
- 			break;
--		}
- 
- 		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
- 			timed_out = 1;
-@@ -1927,6 +1926,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 	}
- 
- send_events:
-+	if (fatal_signal_pending(current)) {
-+		/*
-+		 * Always short-circuit for fatal signals to allow
-+		 * threads to make a timely exit without the chance of
-+		 * finding more events available and fetching
-+		 * repeatedly.
-+		 */
-+		res = -EINTR;
-+	}
- 	/*
- 	 * Try to transfer events to user space. In case we get 0 events and
- 	 * there's still timeout left over, we go trying again in search of
--- 
-2.24.1
+	s/will not escape the constraint imposed by/will be clamped by/
 
+?
+
+I'm not sure if this will help if the above is already ambiguous. Maybe if
+I explicitly say
+
+	..will not escape the *range* constrained imposed by..
+
+sched_util_clamp_min is already defined as a range constraint, so hopefully it
+should hit the mark better now?
+
+> 
+> > +Any modification is applied lazily on the next opportunity the scheduler needs
+> > +to calculate the effective value of uclamp.min of the task.
+>                     ^^^^^^^^^
+> 
+> This is also an implementation detail, I would remove it.
+
+The idea is that this value is not updated 'immediately'/synchronously. So
+currently RUNNING tasks will not see the effect, which could generate confusion
+when users trip over it. IMO giving an idea of how it's updated will help with
+expectation of the users. I doubt any will care, but I think it's an important
+behavior element that is worth conveying and documenting. I'd be happy to
+reword it if necessary.
+
+I have this now
+
+"""
+ 984 This knob will not escape the range constraint imposed by sched_util_clamp_min
+ 985 defined above.
+ 986
+ 987 For example if
+ 988
+ 989         sched_util_clamp_min_rt_default = 800
+ 990         sched_util_clamp_min = 600
+ 991
+ 992 Then the boost will be clamped to 600 because 800 is outside of the permissible
+ 993 range of [0:600]. This could happen for instance if a powersave mode will
+ 994 restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
+ 995 this restriction is lifted, the requested sched_util_clamp_min_rt_default
+ 996 will take effect.
+ 997
+ 998 Any modification is applied lazily to currently running tasks and should be
+ 999 visible by the next wakeup.
+"""
+
+Thanks
+
+--
+Qais Yousef
