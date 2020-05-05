@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 569161C52BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 12:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCE81C52B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 May 2020 12:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbgEEKNY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 06:13:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39020 "EHLO
+        id S1728703AbgEEKNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 06:13:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728672AbgEEKNS (ORCPT
+        by vger.kernel.org with ESMTP id S1728695AbgEEKNV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 06:13:18 -0400
+        Tue, 5 May 2020 06:13:21 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66ED2C061A0F;
-        Tue,  5 May 2020 03:13:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E40C061A10;
+        Tue,  5 May 2020 03:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=BF0GXDFF3qwWO18GQH0xrC+A/HHBITe3cDdcV9qUSf0=; b=jfrd54OfO4eIHUORLgDrmiU3Xt
-        VHM8gf/0hxX5BJIEF2FS8mNupTpwZFPkYoa6Bk5ekrm0w7RZwl/NkJdv/3X+UK3EVLqkFQkl1C94z
-        /sp0eiDwHV+fmDJd7716beKLevAt5J32TGf1VKH+lgsIvntOl4yzlhmSNfRkDy7rYwGlJIADMwsau
-        oR66OvOQgXJbFDApmEsW9mFiIfapqD0g8wGrbbsrGhRd0OyjbObHBvk3EoxNe7OGjvD9Hr6R5K0Ye
-        1xfazIV0QZ1LT3TwxSR8OGGaEZeQzTabrnn/MsaBMM3AHAeeTAmvnDhNru7JD0Baq/HkcnbTVugAU
-        5V6GmxAg==;
+        bh=L0Fi4OmEy/vXWrkbLOxIAklPfYbCMsJaeMZCcyjYe7A=; b=SSeEywTdNRy7myQR+esW9J/mC7
+        /6W9EwmEodGph0fzN72evNwv8MSS9sHqWApw7jEGHLkQKf5k77BrzZEIT/BK4Wj94mtZe1vqMt9wl
+        IxcVm3XLsDBMJ2D3qR5+e49+qm2lfxOzSChS/7xk/iiF0rCHjUoAxKwsstNEtHPgSL2r7zKk6L25N
+        Mq79zli2EuZNkqK2X0GlKyvEcX/pjIDsl+S2SlkxYAi+HBXJJxAYSk4uoU0TCCtmqVjvlrKZF497J
+        thSW4vB93lIW4NlCXFLP5R/DDbgu6c9Ij8zJIb36iOU6W+ODsZ1cQXYMRC02D684H5LdtQVzmohf9
+        FvXYW4Ow==;
 Received: from [2001:4bb8:191:66b6:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jVuZX-0006uH-8e; Tue, 05 May 2020 10:13:07 +0000
+        id 1jVuZa-0006uv-6l; Tue, 05 May 2020 10:13:10 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
@@ -37,9 +37,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>, x86@kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] powerpc/spufs: simplify spufs core dumping
-Date:   Tue,  5 May 2020 12:12:52 +0200
-Message-Id: <20200505101256.3121270-4-hch@lst.de>
+Subject: [PATCH 4/7] signal: refactor copy_siginfo_to_user32
+Date:   Tue,  5 May 2020 12:12:53 +0200
+Message-Id: <20200505101256.3121270-5-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200505101256.3121270-1-hch@lst.de>
 References: <20200505101256.3121270-1-hch@lst.de>
@@ -51,522 +51,286 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace the coredump ->read method with a ->dump method that must call
-dump_emit itself.  That way we avoid a buffer allocation an messing with
-set_fs() to call into code that is intended to deal with user buffers.
-For the ->get case we can now use a small on-stack buffer and avoid
-memory allocations as well.
+Factor out a copy_siginfo_to_external32 helper from
+copy_siginfo_to_user32 that fills out the compat_siginfo, but does so
+on a kernel space data structure.  With that we can let architectures
+override copy_siginfo_to_user32 with their own implementations using
+copy_siginfo_to_external32.  That allows moving the x32 SIGCHLD purely
+to x86 architecture code.
+
+As a nice side effect copy_siginfo_to_external32 also comes in handy
+for avoiding a set_fs() call in the coredump code later on.
+
+Contains improvements from Eric W. Biederman <ebiederm@xmission.com>
+and Arnd Bergmann <arnd@arndb.de>.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Jeremy Kerr <jk@ozlabs.org>
 ---
- arch/powerpc/platforms/cell/spufs/coredump.c |  87 +++-----
- arch/powerpc/platforms/cell/spufs/file.c     | 203 ++++++++-----------
- arch/powerpc/platforms/cell/spufs/spufs.h    |   3 +-
- 3 files changed, 117 insertions(+), 176 deletions(-)
+ arch/x86/ia32/ia32_signal.c   |   2 +-
+ arch/x86/include/asm/compat.h |   8 ++-
+ arch/x86/kernel/signal.c      |  28 ++++++++-
+ include/linux/compat.h        |  11 +++-
+ kernel/signal.c               | 106 +++++++++++++++++-----------------
+ 5 files changed, 96 insertions(+), 59 deletions(-)
 
-diff --git a/arch/powerpc/platforms/cell/spufs/coredump.c b/arch/powerpc/platforms/cell/spufs/coredump.c
-index 8b3296b62f651..3b75e8f60609c 100644
---- a/arch/powerpc/platforms/cell/spufs/coredump.c
-+++ b/arch/powerpc/platforms/cell/spufs/coredump.c
-@@ -21,22 +21,6 @@
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index f9d8804144d09..81cf22398cd16 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -350,7 +350,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	unsafe_put_user(*(__u64 *)set, (__u64 *)&frame->uc.uc_sigmask, Efault);
+ 	user_access_end();
  
- #include "spufs.h"
+-	if (__copy_siginfo_to_user32(&frame->info, &ksig->info, false))
++	if (__copy_siginfo_to_user32(&frame->info, &ksig->info))
+ 		return -EFAULT;
  
--static ssize_t do_coredump_read(int num, struct spu_context *ctx, void *buffer,
--				size_t size, loff_t *off)
--{
--	u64 data;
--	int ret;
--
--	if (spufs_coredump_read[num].read)
--		return spufs_coredump_read[num].read(ctx, buffer, size, off);
--
--	data = spufs_coredump_read[num].get(ctx);
--	ret = snprintf(buffer, size, "0x%.16llx", data);
--	if (ret >= size)
--		return size;
--	return ++ret; /* count trailing NULL */
--}
--
- static int spufs_ctx_note_size(struct spu_context *ctx, int dfd)
- {
- 	int i, sz, total = 0;
-@@ -118,58 +102,43 @@ int spufs_coredump_extra_notes_size(void)
- static int spufs_arch_write_note(struct spu_context *ctx, int i,
- 				  struct coredump_params *cprm, int dfd)
- {
--	loff_t pos = 0;
--	int sz, rc, total = 0;
--	const int bufsz = PAGE_SIZE;
--	char *name;
--	char fullname[80], *buf;
-+	size_t sz = spufs_coredump_read[i].size;
-+	char fullname[80];
- 	struct elf_note en;
--	size_t skip;
--
--	buf = (void *)get_zeroed_page(GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
-+	size_t ret;
+ 	/* Set up registers for signal handler */
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index 52e9f3480f690..d4edf281fff49 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -214,7 +214,11 @@ static inline bool in_compat_syscall(void)
+ #endif
  
--	name = spufs_coredump_read[i].name;
--	sz = spufs_coredump_read[i].size;
--
--	sprintf(fullname, "SPU/%d/%s", dfd, name);
-+	sprintf(fullname, "SPU/%d/%s", dfd, spufs_coredump_read[i].name);
- 	en.n_namesz = strlen(fullname) + 1;
- 	en.n_descsz = sz;
- 	en.n_type = NT_SPU;
- 
- 	if (!dump_emit(cprm, &en, sizeof(en)))
--		goto Eio;
--
-+		return -EIO;
- 	if (!dump_emit(cprm, fullname, en.n_namesz))
--		goto Eio;
--
-+		return -EIO;
- 	if (!dump_align(cprm, 4))
--		goto Eio;
--
--	do {
--		rc = do_coredump_read(i, ctx, buf, bufsz, &pos);
--		if (rc > 0) {
--			if (!dump_emit(cprm, buf, rc))
--				goto Eio;
--			total += rc;
--		}
--	} while (rc == bufsz && total < sz);
--
--	if (rc < 0)
--		goto out;
--
--	skip = roundup(cprm->pos - total + sz, 4) - cprm->pos;
--	if (!dump_skip(cprm, skip))
--		goto Eio;
--
--	rc = 0;
--out:
--	free_page((unsigned long)buf);
--	return rc;
--Eio:
--	free_page((unsigned long)buf);
--	return -EIO;
-+		return -EIO;
+ struct compat_siginfo;
+-int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+-		const kernel_siginfo_t *from, bool x32_ABI);
 +
-+	if (spufs_coredump_read[i].dump) {
-+		ret = spufs_coredump_read[i].dump(ctx, cprm);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		char buf[32];
++#ifdef CONFIG_X86_X32_ABI
++int copy_siginfo_to_user32(struct compat_siginfo __user *to,
++		const kernel_siginfo_t *from);
++#define copy_siginfo_to_user32 copy_siginfo_to_user32
++#endif /* CONFIG_X86_X32_ABI */
+ 
+ #endif /* _ASM_X86_COMPAT_H */
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 83b74fb38c8fc..f3df262e370b3 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -37,6 +37,7 @@
+ #include <asm/vm86.h>
+ 
+ #ifdef CONFIG_X86_64
++#include <linux/compat.h>
+ #include <asm/proto.h>
+ #include <asm/ia32_unistd.h>
+ #endif /* CONFIG_X86_64 */
+@@ -511,6 +512,31 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
+ }
+ #endif /* CONFIG_X86_32 */
+ 
++#ifdef CONFIG_X86_X32_ABI
++static int x32_copy_siginfo_to_user(struct compat_siginfo __user *to,
++		const struct kernel_siginfo *from)
++{
++	struct compat_siginfo new;
 +
-+		ret = snprintf(buf, sizeof(buf), "0x%.16llx",
-+			       spufs_coredump_read[i].get(ctx));
-+		if (ret >= sizeof(buf))
-+			return sizeof(buf);
-+
-+		/* count trailing the NULL: */
-+		if (!dump_emit(cprm, buf, ret + 1))
-+			return -EIO;
++	copy_siginfo_to_external32(&new, from);
++	if (from->si_signo == SIGCHLD) {
++		new._sifields._sigchld_x32._utime = from->si_utime;
++		new._sifields._sigchld_x32._stime = from->si_stime;
 +	}
-+
-+	if (!dump_skip(cprm, roundup(cprm->pos - ret + sz, 4) - cprm->pos))
-+		return -EIO;
++	if (copy_to_user(to, &new, sizeof(struct compat_siginfo)))
++		return -EFAULT;
 +	return 0;
- }
- 
- int spufs_coredump_extra_notes_write(struct coredump_params *cprm)
-diff --git a/arch/powerpc/platforms/cell/spufs/file.c b/arch/powerpc/platforms/cell/spufs/file.c
-index bd30b5e0c4c37..e44427c245850 100644
---- a/arch/powerpc/platforms/cell/spufs/file.c
-+++ b/arch/powerpc/platforms/cell/spufs/file.c
-@@ -9,6 +9,7 @@
- 
- #undef DEBUG
- 
-+#include <linux/coredump.h>
- #include <linux/fs.h>
- #include <linux/ioctl.h>
- #include <linux/export.h>
-@@ -129,6 +130,14 @@ static ssize_t spufs_attr_write(struct file *file, const char __user *buf,
- 	return ret;
- }
- 
-+static ssize_t spufs_dump_emit(struct coredump_params *cprm, void *buf,
-+		size_t size)
-+{
-+	if (!dump_emit(cprm, buf, size))
-+		return -EIO;
-+	return size;
 +}
 +
- #define DEFINE_SPUFS_SIMPLE_ATTRIBUTE(__fops, __get, __set, __fmt)	\
- static int __fops ## _open(struct inode *inode, struct file *file)	\
- {									\
-@@ -172,12 +181,9 @@ spufs_mem_release(struct inode *inode, struct file *file)
++int copy_siginfo_to_user32(struct compat_siginfo __user *to,
++			   const struct kernel_siginfo *from)
++{
++	if (in_x32_syscall())
++		return x32_copy_siginfo_to_user(to, from);
++	return __copy_siginfo_to_user32(to, from);
++}
++#endif /* CONFIG_X86_X32_ABI */
++
+ static int x32_setup_rt_frame(struct ksignal *ksig,
+ 			      compat_sigset_t *set,
+ 			      struct pt_regs *regs)
+@@ -543,7 +569,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+ 	user_access_end();
+ 
+ 	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
+-		if (__copy_siginfo_to_user32(&frame->info, &ksig->info, true))
++		if (x32_copy_siginfo_to_user(&frame->info, &ksig->info))
+ 			return -EFAULT;
+ 	}
+ 
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 0480ba4db5929..e90100c0de72e 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -402,8 +402,15 @@ long compat_get_bitmap(unsigned long *mask, const compat_ulong_t __user *umask,
+ 		       unsigned long bitmap_size);
+ long compat_put_bitmap(compat_ulong_t __user *umask, unsigned long *mask,
+ 		       unsigned long bitmap_size);
+-int copy_siginfo_from_user32(kernel_siginfo_t *to, const struct compat_siginfo __user *from);
+-int copy_siginfo_to_user32(struct compat_siginfo __user *to, const kernel_siginfo_t *from);
++void copy_siginfo_to_external32(struct compat_siginfo *to,
++		const struct kernel_siginfo *from);
++int copy_siginfo_from_user32(kernel_siginfo_t *to,
++		const struct compat_siginfo __user *from);
++int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
++		const kernel_siginfo_t *from);
++#ifndef copy_siginfo_to_user32
++#define copy_siginfo_to_user32 __copy_siginfo_to_user32
++#endif
+ int get_compat_sigevent(struct sigevent *event,
+ 		const struct compat_sigevent __user *u_event);
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 284fc1600063b..5ca48cc5da760 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3235,94 +3235,94 @@ int copy_siginfo_from_user(kernel_siginfo_t *to, const siginfo_t __user *from)
  }
  
- static ssize_t
--__spufs_mem_read(struct spu_context *ctx, char __user *buffer,
--			size_t size, loff_t *pos)
-+spufs_mem_dump(struct spu_context *ctx, struct coredump_params *cprm)
+ #ifdef CONFIG_COMPAT
+-int copy_siginfo_to_user32(struct compat_siginfo __user *to,
+-			   const struct kernel_siginfo *from)
+-#if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
+-{
+-	return __copy_siginfo_to_user32(to, from, in_x32_syscall());
+-}
+-int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+-			     const struct kernel_siginfo *from, bool x32_ABI)
+-#endif
++/**
++ * copy_siginfo_to_external32 - copy a kernel siginfo into a compat user siginfo
++ * @to: compat siginfo destination
++ * @from: kernel siginfo source
++ *
++ * Note: This function does not work properly for the SIGCHLD on x32, but
++ * fortunately it doesn't have to.  The only valid callers for this function are
++ * copy_siginfo_to_user32, which is overriden for x32 and the coredump code.
++ * The latter does not care because SIGCHLD will never cause a coredump.
++ */
++void copy_siginfo_to_external32(struct compat_siginfo *to,
++		const struct kernel_siginfo *from)
  {
--	char *local_store = ctx->ops->get_ls(ctx);
--	return simple_read_from_buffer(buffer, size, pos, local_store,
--					LS_SIZE);
-+	return spufs_dump_emit(cprm, ctx->ops->get_ls(ctx), LS_SIZE);
- }
+-	struct compat_siginfo new;
+-	memset(&new, 0, sizeof(new));
++	memset(to, 0, sizeof(*to));
  
- static ssize_t
-@@ -190,7 +196,8 @@ spufs_mem_read(struct file *file, char __user *buffer,
- 	ret = spu_acquire(ctx);
- 	if (ret)
- 		return ret;
--	ret = __spufs_mem_read(ctx, buffer, size, pos);
-+	ret = simple_read_from_buffer(buffer, size, pos, ctx->ops->get_ls(ctx),
-+				      LS_SIZE);
- 	spu_release(ctx);
+-	new.si_signo = from->si_signo;
+-	new.si_errno = from->si_errno;
+-	new.si_code  = from->si_code;
++	to->si_signo = from->si_signo;
++	to->si_errno = from->si_errno;
++	to->si_code  = from->si_code;
+ 	switch(siginfo_layout(from->si_signo, from->si_code)) {
+ 	case SIL_KILL:
+-		new.si_pid = from->si_pid;
+-		new.si_uid = from->si_uid;
++		to->si_pid = from->si_pid;
++		to->si_uid = from->si_uid;
+ 		break;
+ 	case SIL_TIMER:
+-		new.si_tid     = from->si_tid;
+-		new.si_overrun = from->si_overrun;
+-		new.si_int     = from->si_int;
++		to->si_tid     = from->si_tid;
++		to->si_overrun = from->si_overrun;
++		to->si_int     = from->si_int;
+ 		break;
+ 	case SIL_POLL:
+-		new.si_band = from->si_band;
+-		new.si_fd   = from->si_fd;
++		to->si_band = from->si_band;
++		to->si_fd   = from->si_fd;
+ 		break;
+ 	case SIL_FAULT:
+-		new.si_addr = ptr_to_compat(from->si_addr);
++		to->si_addr = ptr_to_compat(from->si_addr);
+ #ifdef __ARCH_SI_TRAPNO
+-		new.si_trapno = from->si_trapno;
++		to->si_trapno = from->si_trapno;
+ #endif
+ 		break;
+ 	case SIL_FAULT_MCEERR:
+-		new.si_addr = ptr_to_compat(from->si_addr);
++		to->si_addr = ptr_to_compat(from->si_addr);
+ #ifdef __ARCH_SI_TRAPNO
+-		new.si_trapno = from->si_trapno;
++		to->si_trapno = from->si_trapno;
+ #endif
+-		new.si_addr_lsb = from->si_addr_lsb;
++		to->si_addr_lsb = from->si_addr_lsb;
+ 		break;
+ 	case SIL_FAULT_BNDERR:
+-		new.si_addr = ptr_to_compat(from->si_addr);
++		to->si_addr = ptr_to_compat(from->si_addr);
+ #ifdef __ARCH_SI_TRAPNO
+-		new.si_trapno = from->si_trapno;
++		to->si_trapno = from->si_trapno;
+ #endif
+-		new.si_lower = ptr_to_compat(from->si_lower);
+-		new.si_upper = ptr_to_compat(from->si_upper);
++		to->si_lower = ptr_to_compat(from->si_lower);
++		to->si_upper = ptr_to_compat(from->si_upper);
+ 		break;
+ 	case SIL_FAULT_PKUERR:
+-		new.si_addr = ptr_to_compat(from->si_addr);
++		to->si_addr = ptr_to_compat(from->si_addr);
+ #ifdef __ARCH_SI_TRAPNO
+-		new.si_trapno = from->si_trapno;
++		to->si_trapno = from->si_trapno;
+ #endif
+-		new.si_pkey = from->si_pkey;
++		to->si_pkey = from->si_pkey;
+ 		break;
+ 	case SIL_CHLD:
+-		new.si_pid    = from->si_pid;
+-		new.si_uid    = from->si_uid;
+-		new.si_status = from->si_status;
+-#ifdef CONFIG_X86_X32_ABI
+-		if (x32_ABI) {
+-			new._sifields._sigchld_x32._utime = from->si_utime;
+-			new._sifields._sigchld_x32._stime = from->si_stime;
+-		} else
+-#endif
+-		{
+-			new.si_utime = from->si_utime;
+-			new.si_stime = from->si_stime;
+-		}
++		to->si_pid = from->si_pid;
++		to->si_uid = from->si_uid;
++		to->si_status = from->si_status;
++		to->si_utime = from->si_utime;
++		to->si_stime = from->si_stime;
+ 		break;
+ 	case SIL_RT:
+-		new.si_pid = from->si_pid;
+-		new.si_uid = from->si_uid;
+-		new.si_int = from->si_int;
++		to->si_pid = from->si_pid;
++		to->si_uid = from->si_uid;
++		to->si_int = from->si_int;
+ 		break;
+ 	case SIL_SYS:
+-		new.si_call_addr = ptr_to_compat(from->si_call_addr);
+-		new.si_syscall   = from->si_syscall;
+-		new.si_arch      = from->si_arch;
++		to->si_call_addr = ptr_to_compat(from->si_call_addr);
++		to->si_syscall   = from->si_syscall;
++		to->si_arch      = from->si_arch;
+ 		break;
+ 	}
++}
  
- 	return ret;
-@@ -459,12 +466,10 @@ spufs_regs_open(struct inode *inode, struct file *file)
- }
- 
- static ssize_t
--__spufs_regs_read(struct spu_context *ctx, char __user *buffer,
--			size_t size, loff_t *pos)
-+spufs_regs_dump(struct spu_context *ctx, struct coredump_params *cprm)
- {
--	struct spu_lscsa *lscsa = ctx->csa.lscsa;
--	return simple_read_from_buffer(buffer, size, pos,
--				      lscsa->gprs, sizeof lscsa->gprs);
-+	return spufs_dump_emit(cprm, ctx->csa.lscsa->gprs,
-+			       sizeof(ctx->csa.lscsa->gprs));
- }
- 
- static ssize_t
-@@ -482,7 +487,8 @@ spufs_regs_read(struct file *file, char __user *buffer,
- 	ret = spu_acquire_saved(ctx);
- 	if (ret)
- 		return ret;
--	ret = __spufs_regs_read(ctx, buffer, size, pos);
-+	ret = simple_read_from_buffer(buffer, size, pos, ctx->csa.lscsa->gprs,
-+				      sizeof(ctx->csa.lscsa->gprs));
- 	spu_release_saved(ctx);
- 	return ret;
- }
-@@ -517,12 +523,10 @@ static const struct file_operations spufs_regs_fops = {
- };
- 
- static ssize_t
--__spufs_fpcr_read(struct spu_context *ctx, char __user * buffer,
--			size_t size, loff_t * pos)
-+spufs_fpcr_dump(struct spu_context *ctx, struct coredump_params *cprm)
- {
--	struct spu_lscsa *lscsa = ctx->csa.lscsa;
--	return simple_read_from_buffer(buffer, size, pos,
--				      &lscsa->fpcr, sizeof(lscsa->fpcr));
-+	return spufs_dump_emit(cprm, &ctx->csa.lscsa->fpcr,
-+			       sizeof(ctx->csa.lscsa->fpcr));
- }
- 
- static ssize_t
-@@ -535,7 +539,8 @@ spufs_fpcr_read(struct file *file, char __user * buffer,
- 	ret = spu_acquire_saved(ctx);
- 	if (ret)
- 		return ret;
--	ret = __spufs_fpcr_read(ctx, buffer, size, pos);
-+	ret = simple_read_from_buffer(buffer, size, pos, &ctx->csa.lscsa->fpcr,
-+				      sizeof(ctx->csa.lscsa->fpcr));
- 	spu_release_saved(ctx);
- 	return ret;
- }
-@@ -953,28 +958,26 @@ spufs_signal1_release(struct inode *inode, struct file *file)
++int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
++			   const struct kernel_siginfo *from)
++{
++	struct compat_siginfo new;
++
++	copy_siginfo_to_external32(&new, from);
+ 	if (copy_to_user(to, &new, sizeof(struct compat_siginfo)))
+ 		return -EFAULT;
+-
  	return 0;
  }
  
--static ssize_t __spufs_signal1_read(struct spu_context *ctx, char __user *buf,
--			size_t len, loff_t *pos)
-+static ssize_t spufs_signal1_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
--	int ret = 0;
--	u32 data;
-+	if (!ctx->csa.spu_chnlcnt_RW[3])
-+		return 0;
-+	return spufs_dump_emit(cprm, &ctx->csa.spu_chnldata_RW[3],
-+			       sizeof(ctx->csa.spu_chnldata_RW[3]));
-+}
- 
--	if (len < 4)
-+static ssize_t __spufs_signal1_read(struct spu_context *ctx, char __user *buf,
-+			size_t len)
-+{
-+	if (len < sizeof(ctx->csa.spu_chnldata_RW[3]))
- 		return -EINVAL;
--
--	if (ctx->csa.spu_chnlcnt_RW[3]) {
--		data = ctx->csa.spu_chnldata_RW[3];
--		ret = 4;
--	}
--
--	if (!ret)
--		goto out;
--
--	if (copy_to_user(buf, &data, 4))
-+	if (!ctx->csa.spu_chnlcnt_RW[3])
-+		return 0;
-+	if (copy_to_user(buf, &ctx->csa.spu_chnldata_RW[3],
-+			 sizeof(ctx->csa.spu_chnldata_RW[3])))
- 		return -EFAULT;
--
--out:
--	return ret;
-+	return sizeof(ctx->csa.spu_chnldata_RW[3]);
- }
- 
- static ssize_t spufs_signal1_read(struct file *file, char __user *buf,
-@@ -986,7 +989,7 @@ static ssize_t spufs_signal1_read(struct file *file, char __user *buf,
- 	ret = spu_acquire_saved(ctx);
- 	if (ret)
- 		return ret;
--	ret = __spufs_signal1_read(ctx, buf, len, pos);
-+	ret = __spufs_signal1_read(ctx, buf, len);
- 	spu_release_saved(ctx);
- 
- 	return ret;
-@@ -1090,28 +1093,26 @@ spufs_signal2_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--static ssize_t __spufs_signal2_read(struct spu_context *ctx, char __user *buf,
--			size_t len, loff_t *pos)
-+static ssize_t spufs_signal2_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
--	int ret = 0;
--	u32 data;
-+	if (!ctx->csa.spu_chnlcnt_RW[4])
-+		return 0;
-+	return spufs_dump_emit(cprm, &ctx->csa.spu_chnldata_RW[4],
-+			       sizeof(ctx->csa.spu_chnldata_RW[4]));
-+}
- 
--	if (len < 4)
-+static ssize_t __spufs_signal2_read(struct spu_context *ctx, char __user *buf,
-+			size_t len)
-+{
-+	if (len < sizeof(ctx->csa.spu_chnldata_RW[4]))
- 		return -EINVAL;
--
--	if (ctx->csa.spu_chnlcnt_RW[4]) {
--		data =  ctx->csa.spu_chnldata_RW[4];
--		ret = 4;
--	}
--
--	if (!ret)
--		goto out;
--
--	if (copy_to_user(buf, &data, 4))
-+	if (!ctx->csa.spu_chnlcnt_RW[4])
-+		return 0;
-+	if (copy_to_user(buf, &ctx->csa.spu_chnldata_RW[4],
-+			 sizeof(ctx->csa.spu_chnldata_RW[4])))
- 		return -EFAULT;
--
--out:
--	return ret;
-+	return sizeof(ctx->csa.spu_chnldata_RW[4]);
- }
- 
- static ssize_t spufs_signal2_read(struct file *file, char __user *buf,
-@@ -1123,7 +1124,7 @@ static ssize_t spufs_signal2_read(struct file *file, char __user *buf,
- 	ret = spu_acquire_saved(ctx);
- 	if (ret)
- 		return ret;
--	ret = __spufs_signal2_read(ctx, buf, len, pos);
-+	ret = __spufs_signal2_read(ctx, buf, len);
- 	spu_release_saved(ctx);
- 
- 	return ret;
-@@ -1947,18 +1948,13 @@ static const struct file_operations spufs_caps_fops = {
- 	.release	= single_release,
- };
- 
--static ssize_t __spufs_mbox_info_read(struct spu_context *ctx,
--			char __user *buf, size_t len, loff_t *pos)
-+static ssize_t spufs_mbox_info_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
--	u32 data;
--
--	/* EOF if there's no entry in the mbox */
- 	if (!(ctx->csa.prob.mb_stat_R & 0x0000ff))
- 		return 0;
--
--	data = ctx->csa.prob.pu_mb_R;
--
--	return simple_read_from_buffer(buf, len, pos, &data, sizeof data);
-+	return spufs_dump_emit(cprm, &ctx->csa.prob.pu_mb_R,
-+			       sizeof(ctx->csa.prob.pu_mb_R));
- }
- 
- static ssize_t spufs_mbox_info_read(struct file *file, char __user *buf,
-@@ -1990,18 +1986,13 @@ static const struct file_operations spufs_mbox_info_fops = {
- 	.llseek  = generic_file_llseek,
- };
- 
--static ssize_t __spufs_ibox_info_read(struct spu_context *ctx,
--				char __user *buf, size_t len, loff_t *pos)
-+static ssize_t spufs_ibox_info_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
--	u32 data;
--
--	/* EOF if there's no entry in the ibox */
- 	if (!(ctx->csa.prob.mb_stat_R & 0xff0000))
- 		return 0;
--
--	data = ctx->csa.priv2.puint_mb_R;
--
--	return simple_read_from_buffer(buf, len, pos, &data, sizeof data);
-+	return spufs_dump_emit(cprm, &ctx->csa.priv2.puint_mb_R,
-+			       sizeof(ctx->csa.priv2.puint_mb_R));
- }
- 
- static ssize_t spufs_ibox_info_read(struct file *file, char __user *buf,
-@@ -2038,21 +2029,11 @@ static size_t spufs_wbox_info_cnt(struct spu_context *ctx)
- 	return (4 - ((ctx->csa.prob.mb_stat_R & 0x00ff00) >> 8)) * sizeof(u32);
- }
- 
--static ssize_t __spufs_wbox_info_read(struct spu_context *ctx,
--			char __user *buf, size_t len, loff_t *pos)
-+static ssize_t spufs_wbox_info_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
--	int i, cnt;
--	u32 data[4];
--	u32 wbox_stat;
--
--	wbox_stat = ctx->csa.prob.mb_stat_R;
--	cnt = spufs_wbox_info_cnt(ctx);
--	for (i = 0; i < cnt; i++) {
--		data[i] = ctx->csa.spu_mailbox_data[i];
--	}
--
--	return simple_read_from_buffer(buf, len, pos, &data,
--				cnt * sizeof(u32));
-+	return spufs_dump_emit(cprm, &ctx->csa.spu_mailbox_data,
-+			spufs_wbox_info_cnt(ctx));
- }
- 
- static ssize_t spufs_wbox_info_read(struct file *file, char __user *buf,
-@@ -2102,15 +2083,13 @@ static void spufs_get_dma_info(struct spu_context *ctx,
- 	}
- }
- 
--static ssize_t __spufs_dma_info_read(struct spu_context *ctx,
--			char __user *buf, size_t len, loff_t *pos)
-+static ssize_t spufs_dma_info_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
- 	struct spu_dma_info info;
- 
- 	spufs_get_dma_info(ctx, &info);
--
--	return simple_read_from_buffer(buf, len, pos, &info,
--				sizeof info);
-+	return spufs_dump_emit(cprm, &info, sizeof(info));
- }
- 
- static ssize_t spufs_dma_info_read(struct file *file, char __user *buf,
-@@ -2158,22 +2137,13 @@ static void spufs_get_proxydma_info(struct spu_context *ctx,
- 	}
- }
- 
--static ssize_t __spufs_proxydma_info_read(struct spu_context *ctx,
--			char __user *buf, size_t len, loff_t *pos)
-+static ssize_t spufs_proxydma_info_dump(struct spu_context *ctx,
-+		struct coredump_params *cprm)
- {
- 	struct spu_proxydma_info info;
--	int ret = sizeof info;
--
--	if (len < ret)
--		return -EINVAL;
--
--	if (!access_ok(buf, len))
--		return -EFAULT;
- 
- 	spufs_get_proxydma_info(ctx, &info);
--
--	return simple_read_from_buffer(buf, len, pos, &info,
--				sizeof info);
-+	return spufs_dump_emit(cprm, &info, sizeof(info));
- }
- 
- static ssize_t spufs_proxydma_info_read(struct file *file, char __user *buf,
-@@ -2183,6 +2153,9 @@ static ssize_t spufs_proxydma_info_read(struct file *file, char __user *buf,
- 	struct spu_proxydma_info info;
- 	int ret;
- 
-+	if (len < sizeof(info))
-+		return -EINVAL;
-+
- 	ret = spu_acquire_saved(ctx);
- 	if (ret)
- 		return ret;
-@@ -2636,23 +2609,23 @@ const struct spufs_tree_descr spufs_dir_debug_contents[] = {
- };
- 
- const struct spufs_coredump_reader spufs_coredump_read[] = {
--	{ "regs", __spufs_regs_read, NULL, sizeof(struct spu_reg128[128])},
--	{ "fpcr", __spufs_fpcr_read, NULL, sizeof(struct spu_reg128) },
-+	{ "regs", spufs_regs_dump, NULL, sizeof(struct spu_reg128[128])},
-+	{ "fpcr", spufs_fpcr_dump, NULL, sizeof(struct spu_reg128) },
- 	{ "lslr", NULL, spufs_lslr_get, 19 },
- 	{ "decr", NULL, spufs_decr_get, 19 },
- 	{ "decr_status", NULL, spufs_decr_status_get, 19 },
--	{ "mem", __spufs_mem_read, NULL, LS_SIZE, },
--	{ "signal1", __spufs_signal1_read, NULL, sizeof(u32) },
-+	{ "mem", spufs_mem_dump, NULL, LS_SIZE, },
-+	{ "signal1", spufs_signal1_dump, NULL, sizeof(u32) },
- 	{ "signal1_type", NULL, spufs_signal1_type_get, 19 },
--	{ "signal2", __spufs_signal2_read, NULL, sizeof(u32) },
-+	{ "signal2", spufs_signal2_dump, NULL, sizeof(u32) },
- 	{ "signal2_type", NULL, spufs_signal2_type_get, 19 },
- 	{ "event_mask", NULL, spufs_event_mask_get, 19 },
- 	{ "event_status", NULL, spufs_event_status_get, 19 },
--	{ "mbox_info", __spufs_mbox_info_read, NULL, sizeof(u32) },
--	{ "ibox_info", __spufs_ibox_info_read, NULL, sizeof(u32) },
--	{ "wbox_info", __spufs_wbox_info_read, NULL, 4 * sizeof(u32)},
--	{ "dma_info", __spufs_dma_info_read, NULL, sizeof(struct spu_dma_info)},
--	{ "proxydma_info", __spufs_proxydma_info_read,
-+	{ "mbox_info", spufs_mbox_info_dump, NULL, sizeof(u32) },
-+	{ "ibox_info", spufs_ibox_info_dump, NULL, sizeof(u32) },
-+	{ "wbox_info", spufs_wbox_info_dump, NULL, 4 * sizeof(u32)},
-+	{ "dma_info", spufs_dma_info_dump, NULL, sizeof(struct spu_dma_info)},
-+	{ "proxydma_info", spufs_proxydma_info_dump,
- 			   NULL, sizeof(struct spu_proxydma_info)},
- 	{ "object-id", NULL, spufs_object_id_get, 19 },
- 	{ "npc", NULL, spufs_npc_get, 19 },
-diff --git a/arch/powerpc/platforms/cell/spufs/spufs.h b/arch/powerpc/platforms/cell/spufs/spufs.h
-index 413c89afe1126..1ba4d884febfa 100644
---- a/arch/powerpc/platforms/cell/spufs/spufs.h
-+++ b/arch/powerpc/platforms/cell/spufs/spufs.h
-@@ -337,8 +337,7 @@ void spufs_dma_callback(struct spu *spu, int type);
- extern struct spu_coredump_calls spufs_coredump_calls;
- struct spufs_coredump_reader {
- 	char *name;
--	ssize_t (*read)(struct spu_context *ctx,
--			char __user *buffer, size_t size, loff_t *pos);
-+	ssize_t (*dump)(struct spu_context *ctx, struct coredump_params *cprm);
- 	u64 (*get)(struct spu_context *ctx);
- 	size_t size;
- };
 -- 
 2.26.2
 
