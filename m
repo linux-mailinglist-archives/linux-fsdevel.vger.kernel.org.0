@@ -2,302 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 685AE1C75E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 18:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D061C75E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 18:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbgEFQLT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 6 May 2020 12:11:19 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2159 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730208AbgEFQLO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 12:11:14 -0400
-Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 08BA7A6B66337BCE45B5;
-        Wed,  6 May 2020 17:11:12 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- lhreml703-cah.china.huawei.com (10.201.108.44) with Microsoft SMTP Server
- (TLS) id 14.3.487.0; Wed, 6 May 2020 17:11:11 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Wed, 6 May 2020 18:11:10 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Wed, 6 May 2020 18:11:10 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibRKAQ
-Date:   Wed, 6 May 2020 16:11:10 +0000
-Message-ID: <96ef56e0bcb64b83a0180b09b87a67e6@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-In-Reply-To: <20200429073935.11913-1-roberto.sassu@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.71.158]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1730227AbgEFQLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 12:11:52 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:61287 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730031AbgEFQLw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 May 2020 12:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1588781511; x=1620317511;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AAOjyDq77pYajeR8YUvq7Y6cYNRk46t6uohLT5cJoG0=;
+  b=D4j0Q7uULZvn5sgaFxJHs5jREotGa0fIBL+8cewJbxOOTvLnhUfzS3fm
+   WJB8OE8bdWUaMw8Xn8I4oyGC9M/qNNuqnj1ga/ITc6Bpn8bNF6u77aWy7
+   KJSQf3VtgSWa9oRFmOWsU/YdVV6uJXhbdiIITtpSdM/xxC1jvaOMF5mng
+   vmm5Jeigl7hG1rH2VsprmC/jHLjudLPKS4pKj5umBeMUcOgnolK/d7u+C
+   RJzM0aTmnOtB1YKNbFLw50AlDf49hNkfTGVX4XXHnW3zwPXvPEXQBA4/L
+   2SN12EMGpakL2M4wsuwvhgy0dUVhH7VDJnpI1d/tsDpkCCua4e0WryQbC
+   w==;
+IronPort-SDR: L95Ft4KqJqCYAuoIpuAHEfqAZZhqmHzR9q8cEG8DjxQjz1WXNZYmQbMvWlRi4pKMF8hXm2rsq8
+ 1YYf5kk6SjsYl88W9+sLnOB42rWUFpJQFTy2Sy/rr56WyeaM4+rPpgj+PTGh6kEROjNax7dUKJ
+ AQ33XVVmM28Lb/5keTIEvUDD4y7f2dK96BOYKtn/X9hnTe6NeEgazivu3ZZzOQtQDVT5fVvVvN
+ KS186ogqOTHBP2K8toqzJ6JemMAM8/m2XDUTsmO0hn5r5LS5EhQ64FR0M7VgF/q8IVx/UPEEeQ
+ 4VY=
+X-IronPort-AV: E=Sophos;i="5.73,359,1583164800"; 
+   d="scan'208";a="245917883"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 May 2020 00:11:51 +0800
+IronPort-SDR: wYfBNM6GTENyrulOdXq38FVvJ4w5x1fI7yfSAOWA1W2u7if2dYGguKHxhFK2Zfc4a4VjrX9n8z
+ uxNwM8u/tIRZ2lesqdHS+4N5c+3T0wops=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2020 09:02:16 -0700
+IronPort-SDR: rPRYvLLeaCQzUmGJMusvSYiNsSygecjJLL5BUMWtUaN7/bz9NHymapPmsjEo/ZX4eBARO7TPs8
+ xf0eCXtgdyMw==
+WDCIronportException: Internal
+Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
+  by uls-op-cesaip01.wdc.com with ESMTP; 06 May 2020 09:11:49 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v10 0/9] Introduce Zone Append for writing to zoned block devices
+Date:   Thu,  7 May 2020 01:11:36 +0900
+Message-Id: <20200506161145.9841-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> -----Original Message-----
-> From: Roberto Sassu
-> Sent: Wednesday, April 29, 2020 9:40 AM
-> To: zohar@linux.ibm.com; david.safford@gmail.com;
-> viro@zeniv.linux.org.uk; jmorris@namei.org
-> Cc: linux-fsdevel@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
-> security-module@vger.kernel.org; linux-kernel@vger.kernel.org; Silviu
-> Vlasceanu <Silviu.Vlasceanu@huawei.com>; Roberto Sassu
-> <roberto.sassu@huawei.com>
-> Subject: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+The upcoming NVMe ZNS Specification will define a new type of write
+command for zoned block devices, zone append.
 
-Any thought on this? The implementation can be discussed later.
+When when writing to a zoned block device using zone append, the start
+sector of the write is pointing at the start LBA of the zone to write to.
+Upon completion the block device will respond with the position the data
+has been placed in the zone. This from a high level perspective can be
+seen like a file system's block allocator, where the user writes to a
+file and the file-system takes care of the data placement on the device.
 
-I just wanted a feedback on the approach, if this is the right direction
-to solve the problem.
+In order to fully exploit the new zone append command in file-systems and
+other interfaces above the block layer, we choose to emulate zone append
+in SCSI and null_blk. This way we can have a single write path for both
+file-systems and other interfaces above the block-layer, like io_uring on
+zoned block devices, without having to care too much about the underlying
+characteristics of the device itself.
 
-Thanks
+The emulation works by providing a cache of each zone's write pointer, so
+zone append issued to the disk can be translated to a write with a
+starting LBA of the write pointer. This LBA is used as input zone number
+for the write pointer lookup in the zone write pointer offset cache and
+the cached offset is then added to the LBA to get the actual position to
+write the data. In SCSI we then turn the REQ_OP_ZONE_APPEND request into a
+WRITE(16) command. Upon successful completion of the WRITE(16), the cache
+will be updated to the new write pointer location and the written sector
+will be noted in the request. On error the cache entry will be marked as
+invalid and on the next write an update of the write pointer will be
+scheduled, before issuing the actual write.
 
-Roberto
+In order to reduce memory consumption, the only cached item is the offset
+of the write pointer from the start of the zone, everything else can be
+calculated. On an example drive with 52156 zones, the additional memory
+consumption of the cache is thus 52156 * 4 = 208624 Bytes or 51 4k Byte
+pages. The performance impact is neglectable for a spinning drive.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+For null_blk the emulation is way simpler, as null_blk's zoned block
+device emulation support already caches the write pointer position, so we
+only need to report the position back to the upper layers. Additional
+caching is not needed here.
+
+Furthermore we have converted zonefs to run use ZONE_APPEND for synchronous
+direct I/Os. Asynchronous I/O still uses the normal path via iomap.
+
+The series is based on Jens' for-5.8/block branch with HEAD:
+8cf7961dab42 ("block: bypass ->make_request_fn for blk-mq drivers")
+
+As Christoph asked for a branch I pushed it to a git repo at:
+git://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git zone-append.v10
+https://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git/log/?h=zone-append.v10
+
+Changes to v9:
+- Renamed zone_wp_ofst to zone_wp_offset (Hannes/Martin)
+- Colledted Reviews
+- Dropped already merged patches
+
+Changes to v8:
+- Added kerneldoc for bio_add_hw_page (Hannes)
+- Simplified calculation of zone-boundary cross checking (Bart)
+- Added safety nets for max_appen_sectors setting
+- Added Reviews from Hannes
+- Added Damien's Ack on the zonefs change
+
+Changes to v7:
+- Rebased on Jens' for-5.8/block
+- Fixed up stray whitespace change (Bart)
+- Added Reviews from Bart and Christoph
+
+Changes to v6:
+- Added Daniel's Reviewed-by's
+- Addressed Christoph's comment on whitespace changes in 4/11
+- Renamed driver_cb in 6/11
+- Fixed lines over 80 characters in 8/11
+- Damien simplified sd_zbc_revalidate_zones() in 8/11
+
+Changes to v5:
+- Added patch to fix the memleak on failed scsi command setup
+- Added prep patch from Christoph for bio_add_hw_page
+- Added Christoph's suggestions for adding append pages to bios
+- Fixed compile warning with !CONFIG_BLK_DEV_ZONED
+- Damien re-worked revalidate zone
+- Added Christoph's suggestions for rescanning write pointers to update cache
+
+Changes to v4:
+- Added page merging for zone-append bios (Christoph)
+- Removed different locking schmes for zone management operations (Christoph)
+- Changed wp_ofst assignment from blk_revalidate_zones (Christoph)
+- Smaller nitpicks (Christoph)
+- Documented my changes to Keith's patch so it's clear where I messed up so he
+  doesn't get blamed
+- Added Damien as a Co-developer to the sd emulation patch as he wrote as much
+  code for it as I did (if not more)
+
+Changes since v3:
+- Remove impact of zone-append from bio_full() and bio_add_page()
+  fast-path (Christoph)
+- All of the zone write pointer offset caching is handled in SCSI now
+  (Christoph) 
+- Drop null_blk pathces that damien sent separately (Christoph)
+- Use EXPORT_SYMBOL_GPL for new exports (Christoph)	
+
+Changes since v2:
+- Remove iomap implementation and directly issue zone-appends from within
+  zonefs (Christoph)
+- Drop already merged patch
+- Rebase onto new for-next branch
+
+Changes since v1:
+- Too much to mention, treat as a completely new series.
 
 
-> EVM is a module for the protection of the integrity of file metadata. It
-> protects security-relevant extended attributes, and some file attributes
-> such as the UID and the GID. It protects their integrity with an HMAC or
-> with a signature.
-> 
-> What makes EVM different from other LSMs is that it makes a security
-> decision depending on multiple pieces of information, which cannot be
-> managed atomically by the system.
-> 
-> Example: cp -a file.orig file.dest
-> 
-> If security.selinux, security.ima and security.evm must be preserved, cp
-> will invoke setxattr() for each xattr, and EVM performs a verification
-> during each operation. The problem is that copying security.evm from
-> file.orig to file.dest will likely break the following EVM verifications if
-> some metadata still have to be copied. EVM has no visibility on the
-> metadata of the source file, so it cannot determine when the copy can be
-> considered complete.
-> 
-> On the other hand, EVM has to check metadata during every operation to
-> ensure that there is no transition from corrupted metadata, e.g. after an
-> offline attack, to valid ones after the operation. An HMAC update would
-> prevent the corruption to be detected, as the HMAC on the new values
-> would
-> be correct. Thus, to avoid this issue, EVM has to return an error to the
-> system call so that its execution will be interrupted.
-> 
-> A solution that would satisfy both requirements, not breaking user space
-> applications and detecting corrupted metadata is to let metadata operations
-> be completed successfully and to pass the result of the EVM verification
-> from the pre hooks to the post hooks. In this way, the HMAC update can be
-> avoided if the verification wasn't successful.
-> 
-> This approach will bring another important benefit: it is no longer
-> required that every file has a valid HMAC or signature. Instead of always
-> enforcing metadata integrity, even when it is not relevant for IMA, EVM
-> will let IMA decide for files selected with the appraisal policy,
-> depending on the result of the requested verification.
-> 
-> The main problem is that the result of the verification currently cannot be
-> passed from the pre hooks to the post hooks, due to how the LSM API is
-> defined. A possible solution would be to use integrity_iint_cache for this
-> purpose, but it will increase the memory pressure, as new structures will
-> be allocated also for metadata operations, not only for measurement,
-> appraisal and audit. Another solution would be to extend the LSM API, but
-> it seems not worthwhile as EVM would be the only module getting a benefit
-> from this change.
-> 
-> Given that pre and post hooks are called from the same system call, a more
-> efficient solution seems to move the hooks outside the LSM infrastructure,
-> so that the return value of the pre hooks can be passed to the post hooks.
-> A predefined error (-EAGAIN) will be used to signal to the system call to
-> continue the execution. Otherwise, if the pre hooks return -EPERM, the
-> system calls will behave as before and will immediately return before
-> metadata are changed.
-> 
-> Overview of the changes:
-> 
-> evm_inode_init_security()	LSM (no change)
-> evm_inode_setxattr()		LSM -> vfs_setxattr()
-> evm_inode_post_setxattr()	LSM -> vfs_setxattr()
-> evm_inode_removexattr()		LSM -> vfs_removexattr()
-> evm_inode_post_removexattr()	vfs_removexattr() (no change)
-> evm_inode_setattr()		LSM -> vfs_setattr()
-> evm_inode_post_setattr()	vfs_setattr() (no change)
-> evm_verifyxattr()		outside LSM (no change)
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  fs/attr.c           |  5 ++++-
->  fs/xattr.c          | 17 +++++++++++++++--
->  security/security.c | 18 +++---------------
->  3 files changed, 22 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index b4bbdbd4c8ca..8f26d7d2e3b4 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -224,7 +224,7 @@ int notify_change(struct dentry * dentry, struct iattr
-> * attr, struct inode **de
->  {
->  	struct inode *inode = dentry->d_inode;
->  	umode_t mode = inode->i_mode;
-> -	int error;
-> +	int error, evm_error;
->  	struct timespec64 now;
->  	unsigned int ia_valid = attr->ia_valid;
-> 
-> @@ -328,6 +328,9 @@ int notify_change(struct dentry * dentry, struct iattr
-> * attr, struct inode **de
->  	error = security_inode_setattr(dentry, attr);
->  	if (error)
->  		return error;
-> +	evm_error = evm_inode_setattr(dentry, attr);
-> +	if (evm_error)
-> +		return evm_error;
->  	error = try_break_deleg(inode, delegated_inode);
->  	if (error)
->  		return error;
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index e13265e65871..3b323b75b741 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -183,6 +183,7 @@ int __vfs_setxattr_noperm(struct dentry *dentry,
-> const char *name,
->  			fsnotify_xattr(dentry);
->  			security_inode_post_setxattr(dentry, name, value,
->  						     size, flags);
-> +			evm_inode_post_setxattr(dentry, name, value,
-> size);
->  		}
->  	} else {
->  		if (unlikely(is_bad_inode(inode)))
-> @@ -210,7 +211,7 @@ vfs_setxattr(struct dentry *dentry, const char
-> *name, const void *value,
->  		size_t size, int flags)
->  {
->  	struct inode *inode = dentry->d_inode;
-> -	int error;
-> +	int error, evm_error;
-> 
->  	error = xattr_permission(inode, name, MAY_WRITE);
->  	if (error)
-> @@ -221,6 +222,12 @@ vfs_setxattr(struct dentry *dentry, const char
-> *name, const void *value,
->  	if (error)
->  		goto out;
-> 
-> +	evm_error = evm_inode_setxattr(dentry, name, value, size);
-> +	if (evm_error) {
-> +		error = evm_error;
-> +		goto out;
-> +	}
-> +
->  	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
-> 
->  out:
-> @@ -382,7 +389,7 @@ int
->  vfs_removexattr(struct dentry *dentry, const char *name)
->  {
->  	struct inode *inode = dentry->d_inode;
-> -	int error;
-> +	int error, evm_error;
-> 
->  	error = xattr_permission(inode, name, MAY_WRITE);
->  	if (error)
-> @@ -393,6 +400,12 @@ vfs_removexattr(struct dentry *dentry, const char
-> *name)
->  	if (error)
->  		goto out;
-> 
-> +	evm_error = evm_inode_removexattr(dentry, name);
-> +	if (evm_error) {
-> +		error = evm_error;
-> +		goto out;
-> +	}
-> +
->  	error = __vfs_removexattr(dentry, name);
-> 
->  	if (!error) {
-> diff --git a/security/security.c b/security/security.c
-> index 7fed24b9d57e..e1368ab34cee 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1255,14 +1255,9 @@ int security_inode_permission(struct inode
-> *inode, int mask)
-> 
->  int security_inode_setattr(struct dentry *dentry, struct iattr *attr)
->  {
-> -	int ret;
-> -
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return 0;
-> -	ret = call_int_hook(inode_setattr, 0, dentry, attr);
-> -	if (ret)
-> -		return ret;
-> -	return evm_inode_setattr(dentry, attr);
-> +	return call_int_hook(inode_setattr, 0, dentry, attr);
->  }
->  EXPORT_SYMBOL_GPL(security_inode_setattr);
-> 
-> @@ -1291,10 +1286,7 @@ int security_inode_setxattr(struct dentry *dentry,
-> const char *name,
->  		ret = cap_inode_setxattr(dentry, name, value, size, flags);
->  	if (ret)
->  		return ret;
-> -	ret = ima_inode_setxattr(dentry, name, value, size);
-> -	if (ret)
-> -		return ret;
-> -	return evm_inode_setxattr(dentry, name, value, size);
-> +	return ima_inode_setxattr(dentry, name, value, size);
->  }
-> 
->  void security_inode_post_setxattr(struct dentry *dentry, const char
-> *name,
-> @@ -1303,7 +1295,6 @@ void security_inode_post_setxattr(struct dentry
-> *dentry, const char *name,
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return;
->  	call_void_hook(inode_post_setxattr, dentry, name, value, size,
-> flags);
-> -	evm_inode_post_setxattr(dentry, name, value, size);
->  }
-> 
->  int security_inode_getxattr(struct dentry *dentry, const char *name)
-> @@ -1335,10 +1326,7 @@ int security_inode_removexattr(struct dentry
-> *dentry, const char *name)
->  		ret = cap_inode_removexattr(dentry, name);
->  	if (ret)
->  		return ret;
-> -	ret = ima_inode_removexattr(dentry, name);
-> -	if (ret)
-> -		return ret;
-> -	return evm_inode_removexattr(dentry, name);
-> +	return ima_inode_removexattr(dentry, name);
->  }
-> 
->  int security_inode_need_killpriv(struct dentry *dentry)
-> --
-> 2.17.1
+Christoph Hellwig (1):
+  block: rename __bio_add_pc_page to bio_add_hw_page
+
+Damien Le Moal (2):
+  block: Modify revalidate zones
+  null_blk: Support REQ_OP_ZONE_APPEND
+
+Johannes Thumshirn (5):
+  block: introduce blk_req_zone_write_trylock
+  scsi: sd_zbc: factor out sanity checks for zoned commands
+  scsi: sd_zbc: emulate ZONE_APPEND commands
+  block: export bio_release_pages and bio_iov_iter_get_pages
+  zonefs: use REQ_OP_ZONE_APPEND for sync DIO
+
+Keith Busch (1):
+  block: Introduce REQ_OP_ZONE_APPEND
+
+ block/bio.c                    | 129 ++++++++---
+ block/blk-core.c               |  52 +++++
+ block/blk-map.c                |   5 +-
+ block/blk-mq.c                 |  27 +++
+ block/blk-settings.c           |  31 +++
+ block/blk-sysfs.c              |  13 ++
+ block/blk-zoned.c              |  23 +-
+ block/blk.h                    |   4 +-
+ drivers/block/null_blk_zoned.c |  37 ++-
+ drivers/scsi/scsi_lib.c        |   1 +
+ drivers/scsi/sd.c              |  16 +-
+ drivers/scsi/sd.h              |  43 +++-
+ drivers/scsi/sd_zbc.c          | 399 ++++++++++++++++++++++++++++++---
+ fs/zonefs/super.c              |  80 ++++++-
+ include/linux/blk_types.h      |  14 ++
+ include/linux/blkdev.h         |  15 +-
+ 16 files changed, 797 insertions(+), 92 deletions(-)
+
+-- 
+2.24.1
 
