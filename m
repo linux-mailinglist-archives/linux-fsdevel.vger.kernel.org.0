@@ -2,171 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3934B1C7247
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 15:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C2B1C72B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 16:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgEFN63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 09:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725915AbgEFN63 (ORCPT
+        id S1728930AbgEFOYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 10:24:42 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24559 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727084AbgEFOYm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 09:58:29 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01FF7C061A0F;
-        Wed,  6 May 2020 06:58:29 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id g12so2783341wmh.3;
-        Wed, 06 May 2020 06:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
-        b=Q6HPTt+u3+89M2HFaPVRacO/JQ3o6TncSmdWSGOQ0aPRnnnZjOBQMYjCkj81udQqpM
-         z822xxWIPHed1tEBquN88P8vzAjlh+EsUFSF2Hst5yMyGKVo7g+Fwp8CpqvgHmCgtvU+
-         QnqhNYrsoleXRli8jMRR9IfkdLU4IBvPjcFCL0GYrZmdO3JRLCQ9T0ZuSPK0/QZUlXBV
-         m1ECS8ST0niSClCdgxrpbbzA/8B13pqxMz8FIft0JLf8RXaGDI2ZJXBf9JftnJJwenG8
-         ZnkPA1EkBHstMnBaleNuzPPikWJ66SMB46cXZnNG28/NhwLDZiuC6hPEL338zXOxNh+D
-         h+lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
-        b=fgTNRbuGBCwZx5YpgEBXomO9/IkxkZPqcmL+ccIvFkBrnqrdhGu1sxvY7c+u2HJa5a
-         mhRZA/CcFV0oP8XLatpGMiok3Ibwl8SqyEvDolwMoHY00Sf/Qx+KVfnrVqYLwE3T4jjt
-         cUT7hpPXiXVxYgl/5JGm+Jl/xwc6l6G846I8mcsJXsoU5hR5dvqyK+7zKrYA3PxDBoPy
-         XW8e3yMHnqTTuJZKomN+iBSB1yjrVGxrw6c5uguO2MmbiU53Tq8j+V7hnFiN/MmTJh6d
-         lnkF3mNVV8IE6wL+fsVqpTwDN5g7BKuGOnUvRjqtLv+CIoiJA2jRDXmdCjzKnOhPRnRg
-         Hbcw==
-X-Gm-Message-State: AGi0PuZIKrm5QSmOSD8XAD4T/yHowIwyFUrpMQV6ptUNciNts1+UMRja
-        vaXX3BrWX9JDU1OFypT8S0JQqYUNUwvPDn3mZ8c=
-X-Google-Smtp-Source: APiQypKjKQAId4IZ/DADa6i5YJiFkV0MIE/wVRudVIYBUwp4MA9TqjXOBxPzV8T9K3OYvXCy4DV8NSplZatxaHWSUKw=
-X-Received: by 2002:a7b:c3ca:: with SMTP id t10mr4560109wmj.94.1588773507683;
- Wed, 06 May 2020 06:58:27 -0700 (PDT)
+        Wed, 6 May 2020 10:24:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588775080;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dbddwc8AWoCH822EokkiRcp0XFOdJXpCOboNl38sqMs=;
+        b=Ec5egBY7MQtrsi+HfvGFiG2yB8hL0u9v8a4bF5O/swX57l8qXcM0uz5IfUF3zW+cZRb0mU
+        C/1Q7ZJNNxpNrh77XnxbywI7c7IJrssKx79dghteYOjUw8jnvgVm2jmxXedVuankpOC2+p
+        MIeHNlCwKM0MnNKfWuQNIkGQSheYbtk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-7dSlh3iYM9GY009Ms9gsRQ-1; Wed, 06 May 2020 10:24:39 -0400
+X-MC-Unique: 7dSlh3iYM9GY009Ms9gsRQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1CE281CBE1;
+        Wed,  6 May 2020 14:24:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2557E6299C;
+        Wed,  6 May 2020 14:24:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200506110942.GL16070@bombadil.infradead.org>
+References: <20200506110942.GL16070@bombadil.infradead.org> <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk> <683739.1588751878@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
 MIME-Version: 1.0
-References: <20200505153156.925111-1-mic@digikod.net> <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
-In-Reply-To: <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
-From:   "Lev R. Oshvang ." <levonshe@gmail.com>
-Date:   Wed, 6 May 2020 16:58:16 +0300
-Message-ID: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <713140.1588775072.1@warthog.procyon.org.uk>
+Date:   Wed, 06 May 2020 15:24:32 +0100
+Message-ID: <713141.1588775072@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 5, 2020 at 6:36 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
->
->
-> On 05/05/2020 17:31, Micka=C3=ABl Sala=C3=BCn wrote:
-> > Hi,
-> >
-> > This fifth patch series add new kernel configurations (OMAYEXEC_STATIC,
-> > OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
-> > configure the security policy at kernel build time.  As requested by
-> > Mimi Zohar, I completed the series with one of her patches for IMA.
-> >
-> > The goal of this patch series is to enable to control script execution
-> > with interpreters help.  A new O_MAYEXEC flag, usable through
-> > openat2(2), is added to enable userspace script interpreter to delegate
-> > to the kernel (and thus the system security policy) the permission to
-> > interpret/execute scripts or other files containing what can be seen as
-> > commands.
-> >
-> > A simple system-wide security policy can be enforced by the system
-> > administrator through a sysctl configuration consistent with the mount
-> > points or the file access rights.  The documentation patch explains the
-> > prerequisites.
-> >
-> > Furthermore, the security policy can also be delegated to an LSM, eithe=
-r
-> > a MAC system or an integrity system.  For instance, the new kernel
-> > MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
-> > integrity gap by bringing the ability to check the use of scripts [1].
-> > Other uses are expected, such as for openat2(2) [2], SGX integration
-> > [3], bpffs [4] or IPE [5].
-> >
-> > Userspace needs to adapt to take advantage of this new feature.  For
-> > example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
-> > extended with policy enforcement points related to code interpretation,
-> > which can be used to align with the PowerShell audit features.
-> > Additional Python security improvements (e.g. a limited interpreter
-> > withou -c, stdin piping of code) are on their way.
-> >
-> > The initial idea come from CLIP OS 4 and the original implementation ha=
-s
-> > been used for more than 12 years:
-> > https://github.com/clipos-archive/clipos4_doc
-> >
-> > An introduction to O_MAYEXEC was given at the Linux Security Summit
-> > Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> > https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
-> > The "write xor execute" principle was explained at Kernel Recipes 2018 =
--
-> > CLIP OS: a defense-in-depth OS:
-> > https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
-> >
-> > This patch series can be applied on top of v5.7-rc4.  This can be teste=
-d
-> > with CONFIG_SYSCTL.  I would really appreciate constructive comments on
-> > this patch series.
-> >
-> > Previous version:
-> > https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
->
-> The previous version (v4) is
-> https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
+Matthew Wilcox <willy@infradead.org> wrote:
 
+> > Won't that screw up ITER_MAPPING?  Does that mean that ITER_MAPPING isn't
+> > viable?
+> 
+> Can you remind me why ITER_MAPPING needs:
+> 
+> "The caller must guarantee that the pages are all present and they must be
+> locked using PG_locked, PG_writeback or PG_fscache to prevent them from
+> going away or being migrated whilst they're being accessed."
+> 
+> An elevated refcount prevents migration, and it also prevents the pages
+> from being freed.  It doesn't prevent them from being truncated out of
+> the file, but it does ensure the pages aren't reallocated.
 
-Hi Michael
+ITER_MAPPING relies on the mapping to maintain the pointers to the pages so
+that it can find them rather than being like ITER_BVEC where there's a
+separate list.
 
-I have couple of question
-1. Why you did not add O_MAYEXEC to open()?
-Some time ago (around v4.14) open() did not return EINVAL when
-VALID_OPEN_FLAGS check failed.
-Now it does, so I do not see a problem that interpreter will use
-simple open(),  ( Although that path might be manipulated, but file
-contents will be verified by IMA)
-2. When you apply a new flag to mount, it means that IMA will check
-all files under this mount and it does not matter whether the file in
-question is a script or not.
-IMHO it is too hard overhead for performance reasons.
+Truncate removes the pages from the mapping - at which point ITER_MAPPING can
+no longer find them.
 
-Regards,
-LEv
+David
+
