@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D061C75E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 18:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C455D1C75EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 18:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbgEFQLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 12:11:52 -0400
+        id S1730229AbgEFQLz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 12:11:55 -0400
 Received: from esa1.hgst.iphmx.com ([68.232.141.245]:61287 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730031AbgEFQLw (ORCPT
+        with ESMTP id S1730031AbgEFQLy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 12:11:52 -0400
+        Wed, 6 May 2020 12:11:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1588781511; x=1620317511;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AAOjyDq77pYajeR8YUvq7Y6cYNRk46t6uohLT5cJoG0=;
-  b=D4j0Q7uULZvn5sgaFxJHs5jREotGa0fIBL+8cewJbxOOTvLnhUfzS3fm
-   WJB8OE8bdWUaMw8Xn8I4oyGC9M/qNNuqnj1ga/ITc6Bpn8bNF6u77aWy7
-   KJSQf3VtgSWa9oRFmOWsU/YdVV6uJXhbdiIITtpSdM/xxC1jvaOMF5mng
-   vmm5Jeigl7hG1rH2VsprmC/jHLjudLPKS4pKj5umBeMUcOgnolK/d7u+C
-   RJzM0aTmnOtB1YKNbFLw50AlDf49hNkfTGVX4XXHnW3zwPXvPEXQBA4/L
-   2SN12EMGpakL2M4wsuwvhgy0dUVhH7VDJnpI1d/tsDpkCCua4e0WryQbC
-   w==;
-IronPort-SDR: L95Ft4KqJqCYAuoIpuAHEfqAZZhqmHzR9q8cEG8DjxQjz1WXNZYmQbMvWlRi4pKMF8hXm2rsq8
- 1YYf5kk6SjsYl88W9+sLnOB42rWUFpJQFTy2Sy/rr56WyeaM4+rPpgj+PTGh6kEROjNax7dUKJ
- AQ33XVVmM28Lb/5keTIEvUDD4y7f2dK96BOYKtn/X9hnTe6NeEgazivu3ZZzOQtQDVT5fVvVvN
- KS186ogqOTHBP2K8toqzJ6JemMAM8/m2XDUTsmO0hn5r5LS5EhQ64FR0M7VgF/q8IVx/UPEEeQ
- 4VY=
+  t=1588781513; x=1620317513;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0JlNWBo5qsmBRuVSjNgQ5ZxBal/++72N7bBAuyMp7qg=;
+  b=JGA4VUByKJrwiFbIQfLl7tmFlB88/9g6Nmf9NbDX9AeCKApy0+CDgu9v
+   +mhYcCnJWO/502ktDs3l4++ExQQ1r5C26WaK0hseRPIMrrLtRdbiC1/C6
+   fFa87Hy7GThBh8pxlGiZESx4cJY0FtQjHEc5U/ON91umICBb3oovfl5jn
+   yGSOQjztk+3fN6LSAhy60HxzXnGxx8Fu2c9zjzpmhfoh2UsefNvIg0V95
+   G14MOMki5joJ+Ddd5ZYHoCGvQWfVCnvDS4mCEHJEKbEW4px12UsoBNDWy
+   NpBo2eiHvf9ulMfpsvvXqJTVGRXe1y6jeY5AsSBH3uvum/KIuj+AaOl/J
+   A==;
+IronPort-SDR: BPsbNbwvCxirQgntB0nrpGc79MPPlQ6934agvTF0YjN+NZuar76Kc/CA8t9/jlQ+Qfm1YPDChv
+ SOg+F+Ny991h6od6OTJo1zS12Vhs79hWG5GHuaIlBJzwEzBmfSjtQ8d3aFfqaIQPczPaJaxRNH
+ Vi95FUrz5cq98xeZhZLr7LgJdEkEsgyq6Si356X2Y99jpkqAUqcbUYmApHQ+JtrVsHjQ0PwOVB
+ zgSjQ9l2DEFIN/xKWy8F/3VvpC/rOYbE+Yqi46zw+5qLFw3aLeURCK6zEH/NO/sLZ6I7g+Xtr4
+ Y4M=
 X-IronPort-AV: E=Sophos;i="5.73,359,1583164800"; 
-   d="scan'208";a="245917883"
+   d="scan'208";a="245917887"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 07 May 2020 00:11:51 +0800
-IronPort-SDR: wYfBNM6GTENyrulOdXq38FVvJ4w5x1fI7yfSAOWA1W2u7if2dYGguKHxhFK2Zfc4a4VjrX9n8z
- uxNwM8u/tIRZ2lesqdHS+4N5c+3T0wops=
+  by ob1.hgst.iphmx.com with ESMTP; 07 May 2020 00:11:53 +0800
+IronPort-SDR: Hn9+V0pSaqoQcjGI8TaEqVfDio6W+lzMxeFSQSc35O/c5WMX8Aa6Szc3JMMhZuB7+5tH6avmVg
+ dnl8I6m8JV+GmSk8ondlBY6F+bxIsu6EM=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2020 09:02:16 -0700
-IronPort-SDR: rPRYvLLeaCQzUmGJMusvSYiNsSygecjJLL5BUMWtUaN7/bz9NHymapPmsjEo/ZX4eBARO7TPs8
- xf0eCXtgdyMw==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2020 09:02:18 -0700
+IronPort-SDR: vzotcLpljwjLAaecdTBSqGRnxKIuWraMUCeaW6oc6pzTHI4sot2XHY+/GhgktrNgFRZa0T5j9Y
+ nC2tlCtRYnSg==
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 06 May 2020 09:11:49 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 06 May 2020 09:11:51 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -52,11 +52,15 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v10 0/9] Introduce Zone Append for writing to zoned block devices
-Date:   Thu,  7 May 2020 01:11:36 +0900
-Message-Id: <20200506161145.9841-1-johannes.thumshirn@wdc.com>
+        Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Daniel Wagner <dwagner@suse.de>
+Subject: [PATCH v10 1/9] block: rename __bio_add_pc_page to bio_add_hw_page
+Date:   Thu,  7 May 2020 01:11:37 +0900
+Message-Id: <20200506161145.9841-2-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200506161145.9841-1-johannes.thumshirn@wdc.com>
+References: <20200506161145.9841-1-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -64,151 +68,168 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The upcoming NVMe ZNS Specification will define a new type of write
-command for zoned block devices, zone append.
+From: Christoph Hellwig <hch@lst.de>
 
-When when writing to a zoned block device using zone append, the start
-sector of the write is pointing at the start LBA of the zone to write to.
-Upon completion the block device will respond with the position the data
-has been placed in the zone. This from a high level perspective can be
-seen like a file system's block allocator, where the user writes to a
-file and the file-system takes care of the data placement on the device.
+Rename __bio_add_pc_page() to bio_add_hw_page() and explicitly pass in a
+max_sectors argument.
 
-In order to fully exploit the new zone append command in file-systems and
-other interfaces above the block layer, we choose to emulate zone append
-in SCSI and null_blk. This way we can have a single write path for both
-file-systems and other interfaces above the block-layer, like io_uring on
-zoned block devices, without having to care too much about the underlying
-characteristics of the device itself.
+This max_sectors argument can be used to specify constraints from the
+hardware.
 
-The emulation works by providing a cache of each zone's write pointer, so
-zone append issued to the disk can be translated to a write with a
-starting LBA of the write pointer. This LBA is used as input zone number
-for the write pointer lookup in the zone write pointer offset cache and
-the cached offset is then added to the LBA to get the actual position to
-write the data. In SCSI we then turn the REQ_OP_ZONE_APPEND request into a
-WRITE(16) command. Upon successful completion of the WRITE(16), the cache
-will be updated to the new write pointer location and the written sector
-will be noted in the request. On error the cache entry will be marked as
-invalid and on the next write an update of the write pointer will be
-scheduled, before issuing the actual write.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+[ jth: rebased and made public for blk-map.c ]
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+---
+ block/bio.c     | 65 ++++++++++++++++++++++++++++++-------------------
+ block/blk-map.c |  5 ++--
+ block/blk.h     |  4 +--
+ 3 files changed, 45 insertions(+), 29 deletions(-)
 
-In order to reduce memory consumption, the only cached item is the offset
-of the write pointer from the start of the zone, everything else can be
-calculated. On an example drive with 52156 zones, the additional memory
-consumption of the cache is thus 52156 * 4 = 208624 Bytes or 51 4k Byte
-pages. The performance impact is neglectable for a spinning drive.
-
-For null_blk the emulation is way simpler, as null_blk's zoned block
-device emulation support already caches the write pointer position, so we
-only need to report the position back to the upper layers. Additional
-caching is not needed here.
-
-Furthermore we have converted zonefs to run use ZONE_APPEND for synchronous
-direct I/Os. Asynchronous I/O still uses the normal path via iomap.
-
-The series is based on Jens' for-5.8/block branch with HEAD:
-8cf7961dab42 ("block: bypass ->make_request_fn for blk-mq drivers")
-
-As Christoph asked for a branch I pushed it to a git repo at:
-git://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git zone-append.v10
-https://git.kernel.org/pub/scm/linux/kernel/git/jth/linux.git/log/?h=zone-append.v10
-
-Changes to v9:
-- Renamed zone_wp_ofst to zone_wp_offset (Hannes/Martin)
-- Colledted Reviews
-- Dropped already merged patches
-
-Changes to v8:
-- Added kerneldoc for bio_add_hw_page (Hannes)
-- Simplified calculation of zone-boundary cross checking (Bart)
-- Added safety nets for max_appen_sectors setting
-- Added Reviews from Hannes
-- Added Damien's Ack on the zonefs change
-
-Changes to v7:
-- Rebased on Jens' for-5.8/block
-- Fixed up stray whitespace change (Bart)
-- Added Reviews from Bart and Christoph
-
-Changes to v6:
-- Added Daniel's Reviewed-by's
-- Addressed Christoph's comment on whitespace changes in 4/11
-- Renamed driver_cb in 6/11
-- Fixed lines over 80 characters in 8/11
-- Damien simplified sd_zbc_revalidate_zones() in 8/11
-
-Changes to v5:
-- Added patch to fix the memleak on failed scsi command setup
-- Added prep patch from Christoph for bio_add_hw_page
-- Added Christoph's suggestions for adding append pages to bios
-- Fixed compile warning with !CONFIG_BLK_DEV_ZONED
-- Damien re-worked revalidate zone
-- Added Christoph's suggestions for rescanning write pointers to update cache
-
-Changes to v4:
-- Added page merging for zone-append bios (Christoph)
-- Removed different locking schmes for zone management operations (Christoph)
-- Changed wp_ofst assignment from blk_revalidate_zones (Christoph)
-- Smaller nitpicks (Christoph)
-- Documented my changes to Keith's patch so it's clear where I messed up so he
-  doesn't get blamed
-- Added Damien as a Co-developer to the sd emulation patch as he wrote as much
-  code for it as I did (if not more)
-
-Changes since v3:
-- Remove impact of zone-append from bio_full() and bio_add_page()
-  fast-path (Christoph)
-- All of the zone write pointer offset caching is handled in SCSI now
-  (Christoph) 
-- Drop null_blk pathces that damien sent separately (Christoph)
-- Use EXPORT_SYMBOL_GPL for new exports (Christoph)	
-
-Changes since v2:
-- Remove iomap implementation and directly issue zone-appends from within
-  zonefs (Christoph)
-- Drop already merged patch
-- Rebase onto new for-next branch
-
-Changes since v1:
-- Too much to mention, treat as a completely new series.
-
-
-Christoph Hellwig (1):
-  block: rename __bio_add_pc_page to bio_add_hw_page
-
-Damien Le Moal (2):
-  block: Modify revalidate zones
-  null_blk: Support REQ_OP_ZONE_APPEND
-
-Johannes Thumshirn (5):
-  block: introduce blk_req_zone_write_trylock
-  scsi: sd_zbc: factor out sanity checks for zoned commands
-  scsi: sd_zbc: emulate ZONE_APPEND commands
-  block: export bio_release_pages and bio_iov_iter_get_pages
-  zonefs: use REQ_OP_ZONE_APPEND for sync DIO
-
-Keith Busch (1):
-  block: Introduce REQ_OP_ZONE_APPEND
-
- block/bio.c                    | 129 ++++++++---
- block/blk-core.c               |  52 +++++
- block/blk-map.c                |   5 +-
- block/blk-mq.c                 |  27 +++
- block/blk-settings.c           |  31 +++
- block/blk-sysfs.c              |  13 ++
- block/blk-zoned.c              |  23 +-
- block/blk.h                    |   4 +-
- drivers/block/null_blk_zoned.c |  37 ++-
- drivers/scsi/scsi_lib.c        |   1 +
- drivers/scsi/sd.c              |  16 +-
- drivers/scsi/sd.h              |  43 +++-
- drivers/scsi/sd_zbc.c          | 399 ++++++++++++++++++++++++++++++---
- fs/zonefs/super.c              |  80 ++++++-
- include/linux/blk_types.h      |  14 ++
- include/linux/blkdev.h         |  15 +-
- 16 files changed, 797 insertions(+), 92 deletions(-)
-
+diff --git a/block/bio.c b/block/bio.c
+index 21cbaa6a1c20..aad0a6dad4f9 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -748,9 +748,14 @@ static inline bool page_is_mergeable(const struct bio_vec *bv,
+ 	return true;
+ }
+ 
+-static bool bio_try_merge_pc_page(struct request_queue *q, struct bio *bio,
+-		struct page *page, unsigned len, unsigned offset,
+-		bool *same_page)
++/*
++ * Try to merge a page into a segment, while obeying the hardware segment
++ * size limit.  This is not for normal read/write bios, but for passthrough
++ * or Zone Append operations that we can't split.
++ */
++static bool bio_try_merge_hw_seg(struct request_queue *q, struct bio *bio,
++				 struct page *page, unsigned len,
++				 unsigned offset, bool *same_page)
+ {
+ 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+ 	unsigned long mask = queue_segment_boundary(q);
+@@ -765,38 +770,32 @@ static bool bio_try_merge_pc_page(struct request_queue *q, struct bio *bio,
+ }
+ 
+ /**
+- *	__bio_add_pc_page	- attempt to add page to passthrough bio
+- *	@q: the target queue
+- *	@bio: destination bio
+- *	@page: page to add
+- *	@len: vec entry length
+- *	@offset: vec entry offset
+- *	@same_page: return if the merge happen inside the same page
+- *
+- *	Attempt to add a page to the bio_vec maplist. This can fail for a
+- *	number of reasons, such as the bio being full or target block device
+- *	limitations. The target block device must allow bio's up to PAGE_SIZE,
+- *	so it is always possible to add a single page to an empty bio.
++ * bio_add_hw_page - attempt to add a page to a bio with hw constraints
++ * @q: the target queue
++ * @bio: destination bio
++ * @page: page to add
++ * @len: vec entry length
++ * @offset: vec entry offset
++ * @max_sectors: maximum number of sectors that can be added
++ * @same_page: return if the segment has been merged inside the same page
+  *
+- *	This should only be used by passthrough bios.
++ * Add a page to a bio while respecting the hardware max_sectors, max_segment
++ * and gap limitations.
+  */
+-int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
++int bio_add_hw_page(struct request_queue *q, struct bio *bio,
+ 		struct page *page, unsigned int len, unsigned int offset,
+-		bool *same_page)
++		unsigned int max_sectors, bool *same_page)
+ {
+ 	struct bio_vec *bvec;
+ 
+-	/*
+-	 * cloned bio must not modify vec list
+-	 */
+-	if (unlikely(bio_flagged(bio, BIO_CLONED)))
++	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return 0;
+ 
+-	if (((bio->bi_iter.bi_size + len) >> 9) > queue_max_hw_sectors(q))
++	if (((bio->bi_iter.bi_size + len) >> 9) > max_sectors)
+ 		return 0;
+ 
+ 	if (bio->bi_vcnt > 0) {
+-		if (bio_try_merge_pc_page(q, bio, page, len, offset, same_page))
++		if (bio_try_merge_hw_seg(q, bio, page, len, offset, same_page))
+ 			return len;
+ 
+ 		/*
+@@ -823,11 +822,27 @@ int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ 	return len;
+ }
+ 
++/**
++ * bio_add_pc_page	- attempt to add page to passthrough bio
++ * @q: the target queue
++ * @bio: destination bio
++ * @page: page to add
++ * @len: vec entry length
++ * @offset: vec entry offset
++ *
++ * Attempt to add a page to the bio_vec maplist. This can fail for a
++ * number of reasons, such as the bio being full or target block device
++ * limitations. The target block device must allow bio's up to PAGE_SIZE,
++ * so it is always possible to add a single page to an empty bio.
++ *
++ * This should only be used by passthrough bios.
++ */
+ int bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ 		struct page *page, unsigned int len, unsigned int offset)
+ {
+ 	bool same_page = false;
+-	return __bio_add_pc_page(q, bio, page, len, offset, &same_page);
++	return bio_add_hw_page(q, bio, page, len, offset,
++			queue_max_hw_sectors(q), &same_page);
+ }
+ EXPORT_SYMBOL(bio_add_pc_page);
+ 
+diff --git a/block/blk-map.c b/block/blk-map.c
+index b6fa343fea9f..e3e4ac48db45 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -257,6 +257,7 @@ static struct bio *bio_copy_user_iov(struct request_queue *q,
+ static struct bio *bio_map_user_iov(struct request_queue *q,
+ 		struct iov_iter *iter, gfp_t gfp_mask)
+ {
++	unsigned int max_sectors = queue_max_hw_sectors(q);
+ 	int j;
+ 	struct bio *bio;
+ 	int ret;
+@@ -294,8 +295,8 @@ static struct bio *bio_map_user_iov(struct request_queue *q,
+ 				if (n > bytes)
+ 					n = bytes;
+ 
+-				if (!__bio_add_pc_page(q, bio, page, n, offs,
+-						&same_page)) {
++				if (!bio_add_hw_page(q, bio, page, n, offs,
++						     max_sectors, &same_page)) {
+ 					if (same_page)
+ 						put_page(page);
+ 					break;
+diff --git a/block/blk.h b/block/blk.h
+index 73bd3b1c6938..1ae3279df712 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -453,8 +453,8 @@ static inline void part_nr_sects_write(struct hd_struct *part, sector_t size)
+ 
+ struct request_queue *__blk_alloc_queue(int node_id);
+ 
+-int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
++int bio_add_hw_page(struct request_queue *q, struct bio *bio,
+ 		struct page *page, unsigned int len, unsigned int offset,
+-		bool *same_page);
++		unsigned int max_sectors, bool *same_page);
+ 
+ #endif /* BLK_INTERNAL_H */
 -- 
 2.24.1
 
