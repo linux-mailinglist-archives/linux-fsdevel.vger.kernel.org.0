@@ -2,96 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B43E71C7972
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 20:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C19F1C7A69
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 21:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbgEFScg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 14:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729313AbgEFScf (ORCPT
+        id S1729279AbgEFTiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 15:38:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34504 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729316AbgEFTiW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 14:32:35 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E2EDC061A0F;
-        Wed,  6 May 2020 11:32:35 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id a8so2896540edv.2;
-        Wed, 06 May 2020 11:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fq3C3PbiEHBNQ27byMZOeuqdKYIZw/ni/msqiBB7jyw=;
-        b=rJLEiPN7+PxVlf0QK9PQNUT6kdIjMim7/Ob4MOBhcoNSlOu2jcUZTT6HZnRkZBplSw
-         gZ7/yA0PANlt5Anpszzp4vP722DW0sXC9Gm78C9nyFl2PR2ny6S4LFG+8XYxupDtF+M7
-         svQk0iI11QWz45fTvs5s2+YBLElpfugmc/46+FDIU5YtMEcbsh0Er/PXglJhernwl7Sq
-         5JiIoVLofL284wjgrRU7sH68j4j+ZtIrlo8hPqZf3iQPaACAasJnBrboSvJDeNuQoWKi
-         LrRNEPC/B9g1dqRX1W/SNp+CcAAboD7hzPJ08Ioz+pqzHU0laa/KsjTEOXl5mNNPghME
-         G5Aw==
+        Wed, 6 May 2020 15:38:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588793901;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4yGP/vMyHodm9DIXtqpc9Y5085eYUUAufi7jwsRMqFY=;
+        b=bJBtLCbpiYSfHeOTzpKfxlnfTdkiWiffsuNOi8hZY/kUUDYAgDYF4H+1DYaUuUdnO1cYPx
+        g+LFd4QUn8FTapE7XEndlCuW8mPDfovnDjEveKLgzgHm/QJkQbnugEyy2P+HykxUDJ98Li
+        pwG3EDYCKx2GHvMna8U9W8VkfxAEMDc=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-241-BghV_ulkOQ2QF-S-a2gkMA-1; Wed, 06 May 2020 15:38:19 -0400
+X-MC-Unique: BghV_ulkOQ2QF-S-a2gkMA-1
+Received: by mail-qk1-f198.google.com with SMTP id h186so2936349qkc.22
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 May 2020 12:38:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fq3C3PbiEHBNQ27byMZOeuqdKYIZw/ni/msqiBB7jyw=;
-        b=MJp/1VGoeM9AvUAaERCqjkAVxT/bD0ml9HP+stHiyK7jRRp1LLIsO6yVlarKpSmvV0
-         /PAPYgWSnH5sB1WCzDTGIGKSALbMtWbUMlGtl/w2gukNV9csfC1uMCKZI6iWxGen9SaU
-         j23uryfIQ8gaDcle+dFBc+ipnXR3TMCClcFrz8BZHhMx8ySnOfjh3iqZiyit1w/cBUGR
-         GKkyB5+I2PiInn0JidfuLtIXaVBceyJ/ZbnFYh7efPlgcbUOrg+Hyn13eZaj73qQPkiY
-         qLoWHyvBN9M6B/2Lo1lew0lFo26IlpY0rRt7EuuIbSWmsbtuvB2dm/QavxYGwF5oWvaW
-         8jxQ==
-X-Gm-Message-State: AGi0PuYUrABMq86MUjFXcVe4SSUryFYDk4hKo/P+K41PwOeEEEXt0CDf
-        fcSWzz1OetKSAw8BJH4Cyk6uM/7DTSRY+rCvi74=
-X-Google-Smtp-Source: APiQypIqKVPkPU9lpEJGXc3tDKlNRebjzrlGVMGBlrUrwK8oBbdsyu+LRyPffWUSAmpIOciZmJuZppyjOo2b3eZ4pfE=
-X-Received: by 2002:a05:6402:558:: with SMTP id i24mr7963797edx.347.1588789953782;
- Wed, 06 May 2020 11:32:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4yGP/vMyHodm9DIXtqpc9Y5085eYUUAufi7jwsRMqFY=;
+        b=AqKRs8HdLTrqQyJTZjhggDjTDSOzUYG6d2jVs0BIMxD3Ajxuh+4dFpcTLr6LyI9LTN
+         Z1FAJ6xuziyUmLTFpUDjPOyguirK4xryQ8i8VqIJ0/wSNVInH3TRNG08TEHu55mR+8wt
+         NcPpoid+toVroVOlGi59f4L8AKrdLaNAC3gBww2Dn6CDx+wT9XKSfTPSCtsLnRJ6sdNh
+         UhMbwj8yKBukAPswoC/xK/DyqNfoslT2lIRiGFEgcwNzvpTusoCwd0JSgL+hGnKxXn+j
+         jfFJ7epqjrw4Y1rwtod461rQ8mefDgOPay3Ui+mSU1I8FFwUTwXDuBBdoDPWc1NjvuUx
+         KCFw==
+X-Gm-Message-State: AGi0PuZnno0bcnGDPjp0LkE3MERLEmnVN9YhLxxv4b6TA+fgosqV70k6
+        GSDs7TVvz5p5i6ia+oXo3F89gRp2oWlD8Cm3+tNjJ45YGFsmpVfp3sZdXTbWeuQNf2SR+87O/Vw
+        B5WqW+YTGMQweRUhiIvfkXIjHVw==
+X-Received: by 2002:ac8:6cf:: with SMTP id j15mr10289654qth.143.1588793899434;
+        Wed, 06 May 2020 12:38:19 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJgeGRbgQoROxq+NzNkpj9p1DQBrBYEowm2aG2YpEWn4T7EEcbZzi+caA0aMstz/KZmNOVVMA==
+X-Received: by 2002:ac8:6cf:: with SMTP id j15mr10289631qth.143.1588793899217;
+        Wed, 06 May 2020 12:38:19 -0700 (PDT)
+Received: from xz-x1 ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id h188sm2445057qke.82.2020.05.06.12.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2020 12:38:18 -0700 (PDT)
+Date:   Wed, 6 May 2020 15:38:16 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, timmurray@google.com,
+        minchan@google.com, sspatil@google.com, lokeshgidra@google.com
+Subject: Re: [PATCH 2/2] Add a new sysctl knob:
+ unprivileged_userfaultfd_user_mode_only
+Message-ID: <20200506193816.GB228260@xz-x1>
+References: <20200423002632.224776-1-dancol@google.com>
+ <20200423002632.224776-3-dancol@google.com>
 MIME-Version: 1.0
-References: <20200429133657.22632-1-willy@infradead.org> <20200429133657.22632-19-willy@infradead.org>
- <20200504031036.GB16070@bombadil.infradead.org>
-In-Reply-To: <20200504031036.GB16070@bombadil.infradead.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 6 May 2020 11:32:10 -0700
-Message-ID: <CAHbLzkq14tV3o_Oh82FhgyDZ4=8mRf8udfhEGHyTVCPQceq=1A@mail.gmail.com>
-Subject: Re: [PATCH v3 18/25] mm: Allow large pages to be added to the page cache
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200423002632.224776-3-dancol@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 3, 2020 at 8:10 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Apr 29, 2020 at 06:36:50AM -0700, Matthew Wilcox wrote:
-> > @@ -886,7 +906,7 @@ static int __add_to_page_cache_locked(struct page *page,
-> >       /* Leave page->index set: truncation relies upon it */
-> >       if (!huge)
-> >               mem_cgroup_cancel_charge(page, memcg, false);
-> > -     put_page(page);
-> > +     page_ref_sub(page, nr);
-> >       return xas_error(&xas);
-> >  }
-> >  ALLOW_ERROR_INJECTION(__add_to_page_cache_locked, ERRNO);
->
-> This is wrong.  page_ref_sub() will not call __put_page() if the refcount
-> gets to zero.  What do people prefer?
->
-> -       put_page(page);
->
-> (a)
-> +       put_thp(page);
->
-> (b)
-> +       put_page_nr(page, nr);
->
-> (c)
-> +       if (page_ref_sub_return(page, nr) == 0)
-> +               __put_page(page);
+On Wed, Apr 22, 2020 at 05:26:32PM -0700, Daniel Colascione wrote:
+> +unprivileged_userfaultfd_user_mode_only
+> +========================================
+> +
+> +This flag controls whether unprivileged users can use the userfaultfd
+> +system calls to handle page faults in kernel mode.  If set to zero,
+> +userfaultfd works with or without UFFD_USER_MODE_ONLY, modulo
+> +unprivileged_userfaultfd above.  If set to one, users without
+> +SYS_CAP_PTRACE must pass UFFD_USER_MODE_ONLY in order for userfaultfd
+> +to succeed.  Prohibiting use of userfaultfd for handling faults from
+> +kernel mode may make certain vulnerabilities more difficult
+> +to exploit.
+> +
+> +The default value is 0.
 
-b or c IMHO. The shmem uses page_ref_add/page_ref_sub so we'd better
-follow it. If go with b, it sounds better to add get_page_nr() as
-well.
+If this is going to be added... I am thinking whether it should be easier to
+add another value for unprivileged_userfaultfd, rather than a new sysctl. E.g.:
 
->
+  "0": unprivileged userfaultfd forbidden
+  "1": unprivileged userfaultfd allowed (both user/kernel faults)
+  "2": unprivileged userfaultfd allowed (only user faults)
+
+Because after all unprivileged_userfaultfd_user_mode_only will be meaningless
+(iiuc) if unprivileged_userfaultfd=0.  The default value will also be the same
+as before ("1") then.
+
+Thanks,
+
+-- 
+Peter Xu
+
