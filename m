@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9F131C6645
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 05:23:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 796FC1C6648
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 05:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbgEFDXB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 May 2020 23:23:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45258 "EHLO
+        id S1726495AbgEFDZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 May 2020 23:25:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46680 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgEFDXB (ORCPT
+        with ESMTP id S1725900AbgEFDZV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 May 2020 23:23:01 -0400
+        Tue, 5 May 2020 23:25:21 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0463JJND137618;
-        Wed, 6 May 2020 03:22:54 GMT
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0463JLEp137684;
+        Wed, 6 May 2020 03:25:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2020-01-29;
- bh=M7o3mveFnkdwnbj66a4mQn32Sn6aJFfylurYE915t2Y=;
- b=R2FxuQSzfkTmLsz94hfxwC6rGAv6tmx/4EHzOGam+zFjEQz1G5JLWv8+3cFHtoejSgr6
- 3s7ZVJySUWGtja+iVQMrEDjMXkp4x4TPo2UrjOYz9wi3p1DkdGQ6ezi6vuwl8wqtNTka
- lRwh+631QVmxLg0Qe/DZaAaStFQFo1JBxBITd+AtLPnI951Z0PfrK2jpOyzMDAPTHgF3
- zLAtE/FFW+ooU/GI7cBUgK3hIYskYLYjnE30L8+fi9L7o/R1kLw+V0z5NNAht97Me5E0
- S1xZ2S/Ef2OxQD9AusC4A8zf81InrbT4tYoMkGTQNlovJu99DTLYwZc/pXLlLITxEOd1 +w== 
+ bh=3dzvCOrBHdmxYrucJrODcoh+LS2TSuy2nuN5tRQD+qM=;
+ b=LRW3T0bvqwJ4arIjBEU72TnqcfvwIQIlyqfpFFUf8Y8QHImOt0EMSxYTwcvpUsdBGIuF
+ cQa0kMC698Dp1eY4ohNAoYQI9mUxM1iY/X1sK4NKs5XLauSSSrx8UW+In2sqyBKseSBY
+ BpJYFEv6oiJcKtDJwO2UK6o4pHYILOWCzgc1Ux6lj0FvxTuq0YAOy18d71rndNOy4JER
+ rYrBfMs1jaaQCCQh98JZo8Ww+FU6yGFbWiCWAl+1XAvwc7VmOngLvePgwCaMu7SfuHkw
+ UWAzWuguhLRebc8nUajHgDS2Gj/jBwvkSARufC+dxu2vdH0EVcVFAWaa9o4QG9s0n8W6 iw== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 30s0tmg1et-1
+        by aserp2120.oracle.com with ESMTP id 30s0tmg1ka-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 May 2020 03:22:54 +0000
+        Wed, 06 May 2020 03:25:16 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0463Glta139451;
-        Wed, 6 May 2020 03:22:54 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 30sjdueggc-1
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0463Gl0Y139450;
+        Wed, 6 May 2020 03:23:16 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 30sjdueh75-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 May 2020 03:22:54 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0463MqLk012334;
-        Wed, 6 May 2020 03:22:52 GMT
+        Wed, 06 May 2020 03:23:16 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0463NFlV022146;
+        Wed, 6 May 2020 03:23:15 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 May 2020 20:22:52 -0700
+        with ESMTP ; Tue, 05 May 2020 20:23:15 -0700
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -49,29 +49,29 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Keith Busch <kbusch@kernel.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v9 09/11] null_blk: Support REQ_OP_ZONE_APPEND
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v9 10/11] block: export bio_release_pages and
+ bio_iov_iter_get_pages
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
 References: <20200428104605.8143-1-johannes.thumshirn@wdc.com>
-        <20200428104605.8143-10-johannes.thumshirn@wdc.com>
-Date:   Tue, 05 May 2020 23:22:49 -0400
-In-Reply-To: <20200428104605.8143-10-johannes.thumshirn@wdc.com> (Johannes
-        Thumshirn's message of "Tue, 28 Apr 2020 19:46:03 +0900")
-Message-ID: <yq1v9l9927q.fsf@oracle.com>
+        <20200428104605.8143-11-johannes.thumshirn@wdc.com>
+Date:   Tue, 05 May 2020 23:23:13 -0400
+In-Reply-To: <20200428104605.8143-11-johannes.thumshirn@wdc.com> (Johannes
+        Thumshirn's message of "Tue, 28 Apr 2020 19:46:04 +0900")
+Message-ID: <yq1r1vx9272.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.91 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9612 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=826 malwarescore=0
+ bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=886 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
  definitions=main-2005060025
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9612 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
  priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
- phishscore=0 clxscore=1015 bulkscore=0 mlxlogscore=864 adultscore=0
+ phishscore=0 clxscore=1015 bulkscore=0 mlxlogscore=931 adultscore=0
  impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2003020000 definitions=main-2005060025
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -82,11 +82,8 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Johannes,
 
-> Support REQ_OP_ZONE_APPEND requests for null_blk devices with zoned
-> mode enabled. Use the internally tracked zone write pointer position
-> as the actual write position and return it using the command request
-> __sector field in the case of an mq device and using the command BIO
-> sector in the case of a BIO device.
+> Export bio_release_pages and bio_iov_iter_get_pages, so they can be
+> used from modular code.
 
 Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 
