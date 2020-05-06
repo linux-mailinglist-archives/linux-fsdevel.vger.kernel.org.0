@@ -2,113 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 998831C7A73
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 21:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0642E1C7B7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 22:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgEFTpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 15:45:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50670 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729402AbgEFTpH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 15:45:07 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 046JebdV000769;
-        Wed, 6 May 2020 15:45:00 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30u8t7a58p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 15:45:00 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 046JeaWT000630;
-        Wed, 6 May 2020 15:44:59 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30u8t7a57n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 15:44:59 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 046JUXjf028572;
-        Wed, 6 May 2020 19:44:57 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03ams.nl.ibm.com with ESMTP id 30s0g5sugr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 19:44:56 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 046Jisow524580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 May 2020 19:44:54 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9D294203F;
-        Wed,  6 May 2020 19:44:54 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BA9542045;
-        Wed,  6 May 2020 19:44:53 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.197.80])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  6 May 2020 19:44:53 +0000 (GMT)
-Message-ID: <1588794293.4624.21.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, david.safford@gmail.com,
-        viro@zeniv.linux.org.uk, jmorris@namei.org,
-        John Johansen <john.johansen@canonical.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Wed, 06 May 2020 15:44:53 -0400
-In-Reply-To: <20200429073935.11913-1-roberto.sassu@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-06_09:2020-05-05,2020-05-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 phishscore=0 clxscore=1011
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005060154
+        id S1727995AbgEFUse (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 16:48:34 -0400
+Received: from smtp-33.italiaonline.it ([213.209.10.33]:51906 "EHLO libero.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727772AbgEFUsd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 May 2020 16:48:33 -0400
+X-Greylist: delayed 488 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 May 2020 16:48:32 EDT
+Received: from venice.bhome ([94.37.193.252])
+        by smtp-33.iol.local with ESMTPA
+        id WQq5jnZY4rZwsWQq5jrngQ; Wed, 06 May 2020 22:40:22 +0200
+x-libjamoibt: 1601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2014;
+        t=1588797622; bh=IX1qh9N0qaPPNnvKbUSWchwftr3A1KbhyZgDuoFdl4k=;
+        h=From;
+        b=uHzki6glcTesfBTggOaV8zwz9bCGPRIq9YgQEBNda4xSv1wiC4iQPrq7kRyg7Rxwp
+         ZmFX9WwMzYb2L8yWNEYZTT3dfnNmcVXzxAOBK8FOFi6kv7P6FVRW5EgwYFsI5iB55u
+         x+odhpgt6nv8bVeG003QVl0FzdGqFQZszAJZjjBHbRrwc+UbGPKCssxpTkiZaI2X/x
+         uEH9Zvbv9W6WW0hoZoYAQAas4R61YwV7t0bDwzvrmFQ9HB2sQXfZjRBgpWo+LHL1Qz
+         hQYSEZH26ygH3hazOnXPYyUIuZ8Qc0EfunFwsQQC653ovaokwnlzXFBwddpyc1osoP
+         NkZVHO+i3/59w==
+X-CNFS-Analysis: v=2.3 cv=ANbu9Azk c=1 sm=1 tr=0
+ a=m9MdMCwkAncLgtUozvdZtQ==:117 a=m9MdMCwkAncLgtUozvdZtQ==:17
+ a=IkcTkHD0fZMA:10 a=ifkeKN6-E4AdYMXjE3oA:9 a=QEXdDO2ut3YA:10
+ a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
+Reply-To: kreijack@inwind.it
+Subject: btree [was Re: [PATCH v2 1/2] btrfs: add authentication support]
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        David Sterba <dsterba@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>
+References: <20200428105859.4719-1-jth@kernel.org>
+ <20200428105859.4719-2-jth@kernel.org>
+ <20200501053908.GC1003@sol.localdomain>
+ <SN4PR0401MB3598198E5FB728B68B39A1589BA60@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20200504205935.GA51650@gmail.com>
+ <SN4PR0401MB359843476634082E8329168A9BA70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <d395520c-0763-8551-ec80-9cde9b39c3cd@gmx.com>
+From:   Goffredo Baroncelli <kreijack@libero.it>
+Message-ID: <d649407a-7ca4-e9ee-f291-7845c89c622b@libero.it>
+Date:   Wed, 6 May 2020 22:40:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <d395520c-0763-8551-ec80-9cde9b39c3cd@gmx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEyxU0b93HMuwtyrsMdQOLz92eh4cOSw8ejnQBVpKesXrlWhKp0yBULJcPNmd7ip9lS5zt4l7p2Dl74Pf6hRox09LF7xypsPul+CZ+qdi3BLxuJi6eR6
+ e3OTEm4s/YsrLYN8ixfRodGtPXQ3d5gHSgXWdtU89/wga9Z+WtCM2rqKuMhwOx5izGJfHgYVAM+EExOJFamExbtbK+eJcVK4VAyNPzyaHHD38bXEacJZ9SbX
+ /Rs9DHDn5CpIcHoXXNe7l44JTnbT1sBN6T6MwreP560XfAdcw7M6elcDoGUofAhPzx9uYYXHLjGyGX+erbXS39ut+gaiZK47z1lf80Zq8sT/VWlOGmg7LFVM
+ H9A91wqUvk/x5czdhv8UCsvX3iY3iValUocqzap7jCMVK78E+5o=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Cc: John Johansen] 
+Hi Qu,
 
-On Wed, 2020-04-29 at 09:39 +0200, Roberto Sassu wrote:
-> EVM is a module for the protection of the integrity of file metadata. It
-> protects security-relevant extended attributes, and some file attributes
-> such as the UID and the GID. It protects their integrity with an HMAC or
-> with a signature.
+I will go a bit off topic, because I am interested more in the understanding of the btrees than the topic of this thread
+On 5/5/20 11:26 AM, Qu Wenruo wrote:
+[...]
 > 
-> What makes EVM different from other LSMs is that it makes a security
-> decision depending on multiple pieces of information, which cannot be
-> managed atomically by the system.
+> My personal idea on this swap-tree attack is, the first key, generation,
+> bytenr protection can prevent such case.
 > 
-> Example: cp -a file.orig file.dest
+> The protection chain begins from superblock, and ends at the leaf tree
+> blocks, as long as superblock is also protected by hmac hash, it should
+> be safe.
 > 
-> If security.selinux, security.ima and security.evm must be preserved, cp
-> will invoke setxattr() for each xattr, and EVM performs a verification
-> during each operation. The problem is that copying security.evm from
-> file.orig to file.dest will likely break the following EVM verifications if
-> some metadata still have to be copied. EVM has no visibility on the
-> metadata of the source file, so it cannot determine when the copy can be
-> considered complete.
+> 
+> Btrfs protects parent-child relationship by:
+> - Parent has the pointer (bytenr) of its child
+>    The main protection. If attacker wants to swap one tree block, it must
+>    change the parent tree block.
+>    The parent is either a tree block (parent node), or root item in root
+>    tree, or a super block.
+>    All protected by hmac csum. Thus attack can only do such attach by
+>    knowing the key.
+> 
+> - Parent has the first key of its child
+>    Unlike previous one, this is just an extra check, no extra protection.
+>    And root item doesn't contain the first key.
 
-I remember having a similar discussion in the past.  At the time,
-there wasn't EVM portable and immutable signature support, just the
-HMAC and original signature types.  Neither of these EVM xattrs types
-should be copied.
+It always true ? When a key is inserted, we update the key of the parent to be equal to the first of the (right) child. However when a key is removed, this should be not mandatory. Is it enough that the parent key is greater (or equal) than the first key of the left node, and lesser than the last of the right node ?
 
-Calling evm_verifyxattr() is not limited to IMA, but may be called by
-other LSMs/subsystems as well.  At some point, there was some
-discussion about AppArmor calling it directly.  Not sure if that is
-still being discussed.
+Supposing to have
 
-Since copying the EVM HMAC or original signature isn't applicable, I
-would prefer exploring an EVM portable and immutable signature only
-solution.
+              10
+            /    \
+1 2 3 4 5         10 11 12 13
 
-Mimi
+If you remove 10 in the right child node, is it mandatory to updated the '10' in the parent node (to 11) ?
+
+
+[...]
+
+-- 
+gpg @keyserver.linux.it: Goffredo Baroncelli <kreijackATinwind.it>
+Key fingerprint BBF5 1610 0B64 DAC6 5F7D  17B2 0EDA 9B37 8B82 E0B5
