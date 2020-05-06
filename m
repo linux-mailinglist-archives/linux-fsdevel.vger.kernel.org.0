@@ -2,135 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3376D1C74E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 17:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 618811C752A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 May 2020 17:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbgEFPah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 11:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729958AbgEFPag (ORCPT
+        id S1729563AbgEFPlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 11:41:52 -0400
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:24776 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbgEFPlu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 11:30:36 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B48BC061A10
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 May 2020 08:30:36 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id b8so495763plm.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 May 2020 08:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=QdMtxniSWK3PkWXNKwBL1UPHuRFtnVNhLkmVLBdfg9k=;
-        b=Q/9X3HqpDpP1bpMyEce6+77MmK6MN+XVjRdiAxqecgTGYNf3lBxevqb2kiejal14bb
-         WjYaodQ0NtKSLfkI4ehZZNQCWbD4wu0b8/wpICLtZi+IHB10p/r0x/OfvVfBgznsLkHH
-         mBJthd/pdvQ9+cBWw2Oz5oYEAiMhlyPElCbek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=QdMtxniSWK3PkWXNKwBL1UPHuRFtnVNhLkmVLBdfg9k=;
-        b=gfs109IYB8WhNb57v1F2/yYaGyJ5MHP6F48fl/liJFEuLPKdpfmLLmGdyfJ53rDOo2
-         mjuyPV0DlC5CLRXu8L7628rTKIBnw4RyXANDuHa/aYq+Le1V1XKhrKFqHF0eFVwgwkNQ
-         31ME1nNW6sXfwcpM65iwDNLDSSeFGhlkt/0Mx/HlbfikQOqbWGYCqjEEdHp2kk79Yk9z
-         ww/T2kJftprzJLmy4CSfWvSM19JjJUSC9eGVElcLRF+OrBl5XWyevEZ1yBjm94t0QA3Z
-         GHjSQSTMuPg8vNqr2zgUMSUZFGCsQv74HNgGE6+781P5I1WErfhZRWYEQM/hGfFrYF7e
-         AXjg==
-X-Gm-Message-State: AGi0PuZCiTnpBJtX9+2+H4V0CrMg5XpeD5Xqoqb5fZa9qQE042f/G9q1
-        dUzomKgN/G941Mtm9lCdr75K9w==
-X-Google-Smtp-Source: APiQypLr2NM9l03AagLLZo6M94o8eGZFpNOjjoclEjyQPblQQ32jPFWaWB507XPHEGNsAcVzeN19jg==
-X-Received: by 2002:a17:90a:21ce:: with SMTP id q72mr9815638pjc.0.1588779036158;
-        Wed, 06 May 2020 08:30:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 82sm2099813pfv.214.2020.05.06.08.30.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 May 2020 08:30:34 -0700 (PDT)
-Date:   Wed, 6 May 2020 08:30:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 6/7] exec: Move most of setup_new_exec into flush_old_exec
-Message-ID: <202005060829.A09C366D0@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87ftcei2si.fsf@x220.int.ebiederm.org>
- <202005051354.C7E2278688@keescook>
- <87368ddsc9.fsf@x220.int.ebiederm.org>
+        Wed, 6 May 2020 11:41:50 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 49HLRq0L5BzKmVK;
+        Wed,  6 May 2020 17:41:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id iNb9taX10f5N; Wed,  6 May 2020 17:41:38 +0200 (CEST)
+Date:   Thu, 7 May 2020 01:41:17 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     "Lev R. Oshvang ." <levonshe@gmail.com>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
+Message-ID: <20200506154117.gibiibfytrdl4exo@yavin.dot.cyphar.com>
+References: <20200505153156.925111-1-mic@digikod.net>
+ <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
+ <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ljnqns477wlvxj5l"
 Content-Disposition: inline
-In-Reply-To: <87368ddsc9.fsf@x220.int.ebiederm.org>
+In-Reply-To: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
+X-Rspamd-Queue-Id: BECC31754
+X-Rspamd-Score: -7.67 / 15.00 / 15.00
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 06, 2020 at 09:57:10AM -0500, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
-> 
-> > On Tue, May 05, 2020 at 02:45:33PM -0500, Eric W. Biederman wrote:
-> >> 
-> >> The current idiom for the callers is:
-> >> 
-> >> flush_old_exec(bprm);
-> >> set_personality(...);
-> >> setup_new_exec(bprm);
-> >> 
-> >> In 2010 Linus split flush_old_exec into flush_old_exec and
-> >> setup_new_exec.  With the intention that setup_new_exec be what is
-> >> called after the processes new personality is set.
-> >> 
-> >> Move the code that doesn't depend upon the personality from
-> >> setup_new_exec into flush_old_exec.  This is to facilitate future
-> >> changes by having as much code together in one function as possible.
+
+--ljnqns477wlvxj5l
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2020-05-06, Lev R. Oshvang . <levonshe@gmail.com> wrote:
+> On Tue, May 5, 2020 at 6:36 PM Micka=EBl Sala=FCn <mic@digikod.net> wrote:
 > >
-> > Er, I *think* this is okay, but I have some questions below which
-> > maybe you already investigated (and should perhaps get called out in
-> > the changelog).
-> 
-> I will see if I can expand more on the review that I have done.
-> 
-> I saw this as moving thre lines and the personality setting later in the
-> code, rather than moving a bunch of lines up
-> 
-> AKA these lines:
-> >> +	arch_pick_mmap_layout(me->mm, &bprm->rlim_stack);
-> >> +
-> >> +	arch_setup_new_exec();
-> >> +
-> >> +	/* Set the new mm task size. We have to do that late because it may
-> >> +	 * depend on TIF_32BIT which is only updated in flush_thread() on
-> >> +	 * some architectures like powerpc
-> >> +	 */
-> >> +	me->mm->task_size = TASK_SIZE;
-> 
-> 
-> I verified carefully that only those three lines can depend upon the
-> personality changes.
-> 
-> Your concern if anything depends on those moved lines I haven't looked
-> at so closely so I will go back through and do that.  I don't actually
-> expect anything depends upon those three lines because they should only
-> be changing architecture specific state.  But that is general handwaving
-> not actually careful review which tends to turn up suprises in exec.
+> >
+> > On 05/05/2020 17:31, Micka=EBl Sala=FCn wrote:
+> > > Hi,
+> > >
+> > > This fifth patch series add new kernel configurations (OMAYEXEC_STATI=
+C,
+> > > OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
+> > > configure the security policy at kernel build time.  As requested by
+> > > Mimi Zohar, I completed the series with one of her patches for IMA.
+> > >
+> > > The goal of this patch series is to enable to control script execution
+> > > with interpreters help.  A new O_MAYEXEC flag, usable through
+> > > openat2(2), is added to enable userspace script interpreter to delega=
+te
+> > > to the kernel (and thus the system security policy) the permission to
+> > > interpret/execute scripts or other files containing what can be seen =
+as
+> > > commands.
+> > >
+> > > A simple system-wide security policy can be enforced by the system
+> > > administrator through a sysctl configuration consistent with the mount
+> > > points or the file access rights.  The documentation patch explains t=
+he
+> > > prerequisites.
+> > >
+> > > Furthermore, the security policy can also be delegated to an LSM, eit=
+her
+> > > a MAC system or an integrity system.  For instance, the new kernel
+> > > MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
+> > > integrity gap by bringing the ability to check the use of scripts [1].
+> > > Other uses are expected, such as for openat2(2) [2], SGX integration
+> > > [3], bpffs [4] or IPE [5].
+> > >
+> > > Userspace needs to adapt to take advantage of this new feature.  For
+> > > example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to =
+be
+> > > extended with policy enforcement points related to code interpretatio=
+n,
+> > > which can be used to align with the PowerShell audit features.
+> > > Additional Python security improvements (e.g. a limited interpreter
+> > > withou -c, stdin piping of code) are on their way.
+> > >
+> > > The initial idea come from CLIP OS 4 and the original implementation =
+has
+> > > been used for more than 12 years:
+> > > https://github.com/clipos-archive/clipos4_doc
+> > >
+> > > An introduction to O_MAYEXEC was given at the Linux Security Summit
+> > > Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+> > > https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
+> > > The "write xor execute" principle was explained at Kernel Recipes 201=
+8 -
+> > > CLIP OS: a defense-in-depth OS:
+> > > https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
+> > >
+> > > This patch series can be applied on top of v5.7-rc4.  This can be tes=
+ted
+> > > with CONFIG_SYSCTL.  I would really appreciate constructive comments =
+on
+> > > this patch series.
+> > >
+> > > Previous version:
+> > > https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
+> >
+> > The previous version (v4) is
+> > https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
+>=20
+>=20
+> Hi Michael
+>=20
+> I have couple of question
+> 1. Why you did not add O_MAYEXEC to open()?
+> Some time ago (around v4.14) open() did not return EINVAL when
+> VALID_OPEN_FLAGS check failed.
+> Now it does, so I do not see a problem that interpreter will use
+> simple open(),  ( Although that path might be manipulated, but file
+> contents will be verified by IMA)
 
-Right -- I looked through all of it (see my last email) and I think it's
-all okay, but I was curious if you'd looked too. :)
+You don't get -EINVAL from open() in the case of unknown flags, that's
+something only openat2() does in the open*() family. Hence why it's only
+introduced for openat2().
 
-> Speaking of while I was looking through the lsm hooks again I just
-> realized that 613cc2b6f272 ("fs: exec: apply CLOEXEC before changing
-> dumpable task flags") only fixed half the problem.  So I am going to
-> take a quick detour fix that then come back to this.  As that directly
-> affects this code motion.
+> 2. When you apply a new flag to mount, it means that IMA will check
+> all files under this mount and it does not matter whether the file in
+> question is a script or not.
+> IMHO it is too hard overhead for performance reasons.
+>=20
+> Regards,
+> LEv
 
-Oh yay. :) Thanks for catching it!
 
--- 
-Kees Cook
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ljnqns477wlvxj5l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXrLamgAKCRCdlLljIbnQ
+Eo2EAQDv6NtU9F0Nl45n0HGqLDKRn1IEH5GBUZwhlkUR72xbbAD8CqwZXGFnsYZB
++Che7WXy1zSGWAJq84tQAqCqj97ABAQ=
+=EWAe
+-----END PGP SIGNATURE-----
+
+--ljnqns477wlvxj5l--
