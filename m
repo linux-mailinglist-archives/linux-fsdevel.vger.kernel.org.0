@@ -2,204 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B923F1C9E6A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 00:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09421C9E71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 00:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgEGWZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 18:25:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbgEGWZ1 (ORCPT
+        id S1726937AbgEGW0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 18:26:02 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35098 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbgEGW0C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 18:25:27 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C59C05BD09
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 15:25:27 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id l12so3122092pgr.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 15:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ruvKB/r5U5U9Os2KZjBYBX9D7kyzSo+ZlwnM5cSiqeE=;
-        b=V2frT0bMO5pywn4rC4FlUiQXYp34MdhakawaLF6YQw0ARQpzs/i7vBjWovF58iUPlc
-         6gKPJ0MOxZ+9tPoGPIoZ89/c6USjmlRXXhNhKaksqZJzd0ZhTsmCsdlxA6ONX69SqdXo
-         a94AxC6sbrARI1xM2Xx49l3zwuYH4iNO1qeNP+kN2DPrZmW7YiV7rovgr0t830soWwYb
-         Jny2tsEvj/HJ4xj9QpAWE2RPds0m0kY/ityT+tPzYLDcrj6GqNXfj6Dh4zG5Gob/IVp1
-         JOr8RD7G4GkNEVlvl4TPt0YPQ+Z3xWVqu2t6RH3nRJE72Z8adlzcUQWopeREMXUe6KhM
-         4JpA==
+        Thu, 7 May 2020 18:26:02 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f8so2666913plt.2;
+        Thu, 07 May 2020 15:26:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ruvKB/r5U5U9Os2KZjBYBX9D7kyzSo+ZlwnM5cSiqeE=;
-        b=FS49ZEMMzdtcOBTkzPyyCVPc0nXb/gVwk9Xwz7XyGu+fC8IQHzYzcDh+Md+SL4Z1p5
-         ye2A3jQDceRn4a1C9qaFvYGJMWGWHcbgzrJA/QPZ2Nj3s8HY/7xdk20H6dFBG2GxR5kJ
-         6fUSJenOdLJwD5k32xqYfG13DqLPes153BCwoyaCnpjH4q87j1B/64sqNqu4dKpfPUPD
-         GDMUG7udiF0ap8YT9Z0cceev7aX9roprKetPCDFaD76m/kEsPLJw04Znw3GW84OcC8tQ
-         S/ZR5V6Qk6eS/2mL+Y3F+67syo46ftlT6vG2nyePq6RKJWFce0aC+uxupiV8KId+/G14
-         F0lg==
-X-Gm-Message-State: AGi0PuZHKxMttcR30kdIMQvez5oMNFnxhOzOURjGTtkntVg219pzkz5y
-        sGoixSA62a/5SZO37WoqqkG5+Io0XJk=
-X-Google-Smtp-Source: APiQypLYzNsgbDLLy8ELztbg2CD02ndhzDj7VMaCU+d5sYFNRUYR7Utn5USUuf2n2PnN7mA0eVYbFg==
-X-Received: by 2002:a63:3385:: with SMTP id z127mr14134277pgz.168.1588890326314;
-        Thu, 07 May 2020 15:25:26 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id w125sm4397052pgw.22.2020.05.07.15.25.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 May 2020 15:25:25 -0700 (PDT)
-Subject: Re: [PATCH] fs/io_uring: fix O_PATH fds in openat, openat2, statx
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Max Kellermann <mk@cm4all.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20200507185725.15840-1-mk@cm4all.com>
- <20200507190131.GF23230@ZenIV.linux.org.uk>
- <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
- <20200507192903.GG23230@ZenIV.linux.org.uk>
- <8e3c88cc-027b-4f90-b4f8-a20d11d35c4b@kernel.dk>
- <20200507220637.GH23230@ZenIV.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <283c8edb-fea2-5192-f1d6-3cc57815b1e2@kernel.dk>
-Date:   Thu, 7 May 2020 16:25:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DZd2V6aZzC95wLlSgPEBXlyeRSaAQc/BSqmBsSSCJnY=;
+        b=Mn907trl+04MmBXU84WKRAQT1FD7GWoxusIl9dCBVbp/AahOB7DwgnAQ/kpNIPh4OY
+         s9ICGmGWRFlrgtjzDWo6CRQnq+IxgHaPJdeMr4+iB78w88SgyfklLk8uQ9Z8KYY4ZP4b
+         XfNjUjCayU/bN5L0x2hxqOC6dMNjgZT10UnctORR4Q4kAyOln2mAkKW8tCrg9JHQJlZf
+         eaFg2Bx+/4c2eVqrr/7N/YLbvSVlsyZTB2ruuYTvlibqF18vSI4vQJjjCWLQ7EJJTGaO
+         bqO58PCHIMfSEdHo3TGGdqqzQ3ar+uOnqnlAvVcU8+18JrkVqJDU4jH2p0USaiaR+ivh
+         K7qQ==
+X-Gm-Message-State: AGi0PuYEDYBPA05+Z+kZr6A1Lk+Sw1zfO8QqtPA7+WmN7BXOAzawfMHd
+        0yjOSRQ2sCbkbWEmSC1+zDU=
+X-Google-Smtp-Source: APiQypIPwdzfOMX951uSbn33ONVVuG6n8WfUdh7gFNW66WEA5AQCyAZiEcEcEVoNy/HcIubnSplBmw==
+X-Received: by 2002:a17:90a:d3cc:: with SMTP id d12mr2582928pjw.158.1588890360942;
+        Thu, 07 May 2020 15:26:00 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id h5sm769234pjv.4.2020.05.07.15.25.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2020 15:25:59 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 04A1C403EA; Thu,  7 May 2020 22:25:58 +0000 (UTC)
+Date:   Thu, 7 May 2020 22:25:58 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Rafael Aquini <aquini@redhat.com>
+Cc:     Tso Ted <tytso@mit.edu>, Adrian Bunk <bunk@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Jeff Mahoney <jeffm@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jessica Yu <jeyu@suse.de>, Takashi Iwai <tiwai@suse.de>,
+        Ann Davis <AnDavis@suse.com>,
+        Richard Palethorpe <rpalethorpe@suse.de>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
+        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
+        rdunlap@infradead.org
+Subject: Re: [PATCH v2] kernel: add panic_on_taint
+Message-ID: <20200507222558.GA11244@42.do-not-panic.com>
+References: <20200507180631.308441-1-aquini@redhat.com>
+ <20200507182257.GX11244@42.do-not-panic.com>
+ <20200507184307.GF205881@optiplex-lnx>
+ <20200507184705.GG205881@optiplex-lnx>
+ <20200507203340.GZ11244@42.do-not-panic.com>
+ <20200507220606.GK205881@optiplex-lnx>
 MIME-Version: 1.0
-In-Reply-To: <20200507220637.GH23230@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200507220606.GK205881@optiplex-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/7/20 4:06 PM, Al Viro wrote:
-> On Thu, May 07, 2020 at 02:53:30PM -0600, Jens Axboe wrote:
+On Thu, May 07, 2020 at 06:06:06PM -0400, Rafael Aquini wrote:
+> On Thu, May 07, 2020 at 08:33:40PM +0000, Luis Chamberlain wrote:
+> > I *think* that a cmdline route to enable this would likely remove the
+> > need for the kernel config for this. But even with Vlastimil's work
+> > merged, I think we'd want yet-another value to enable / disable this
+> > feature. Do we need yet-another-taint flag to tell us that this feature
+> > was enabled?
+> >
 > 
->> I think the patch is correct as-is, I took a good look at how we're
->> currently handling it. None of those three ops should fiddle with
->> the fd at all, and all of them do forbid the use of fixed files (the
->> descriptor table look-alikes), so that part is fine, too.
->>
->> There's some low hanging fruit around optimizing and improving it,
->> I'm including an updated version below. Max, can you double check
->> with your testing?
-> 
-> <looks>
-> 
-> Could you explain WTF is io_issue_sqe() doing in case of IORING_OP_CLOSE?
-> Specifically, what is the value of
->         req->close.fd = READ_ONCE(sqe->fd);
->         if (req->file->f_op == &io_uring_fops ||
->             req->close.fd == req->ctx->ring_fd)
->                 return -EBADF;
-> in io_close_prep()?  And what does happen if some joker does dup2()
-> of something with io_uring_fops into our slot right after that check?
-> Before the subsequent
->         ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
-> that is.
+> I guess it makes sense to get rid of the sysctl interface for
+> proc_on_taint, and only keep it as a cmdline option. 
 
-I agree, there's a gap there. We should do the check in the op handler,
-and under the files_struct lock. How about something like the below?
+That would be easier to support and k3eps this simple.
 
+> But the real issue seems to be, regardless we go with a cmdline-only option
+> or not, the ability of proc_taint() to set any arbitrary taint flag 
+> other than just marking the kernel with TAINT_USER. 
 
-diff --git a/fs/file.c b/fs/file.c
-index c8a4e4c86e55..50ee73b76d17 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -646,18 +646,13 @@ int __close_fd(struct files_struct *files, unsigned fd)
- }
- EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
- 
--/*
-- * variant of __close_fd that gets a ref on the file for later fput.
-- * The caller must ensure that filp_close() called on the file, and then
-- * an fput().
-- */
--int __close_fd_get_file(unsigned int fd, struct file **res)
-+int __close_fd_get_file_locked(struct files_struct *files, unsigned int fd,
-+			       struct file **res)
-+	__releases(&files->file_lock)
- {
--	struct files_struct *files = current->files;
- 	struct file *file;
- 	struct fdtable *fdt;
- 
--	spin_lock(&files->file_lock);
- 	fdt = files_fdtable(files);
- 	if (fd >= fdt->max_fds)
- 		goto out_unlock;
-@@ -677,6 +672,19 @@ int __close_fd_get_file(unsigned int fd, struct file **res)
- 	return -ENOENT;
- }
- 
-+/*
-+ * variant of __close_fd that gets a ref on the file for later fput.
-+ * The caller must ensure that filp_close() called on the file, and then
-+ * an fput().
-+ */
-+int __close_fd_get_file(unsigned int fd, struct file **res)
-+{
-+	struct files_struct *files = current->files;
-+
-+	spin_lock(&files->file_lock);
-+	return __close_fd_get_file_locked(files, fd, res);
-+}
-+
- void do_close_on_exec(struct files_struct *files)
- {
- 	unsigned i;
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 979d9f977409..740547106717 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3399,10 +3399,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return -EBADF;
- 
- 	req->close.fd = READ_ONCE(sqe->fd);
--	if (req->file->f_op == &io_uring_fops ||
--	    req->close.fd == req->ctx->ring_fd)
--		return -EBADF;
--
- 	return 0;
- }
- 
-@@ -3430,10 +3426,19 @@ static void io_close_finish(struct io_wq_work **workptr)
- 
- static int io_close(struct io_kiocb *req, bool force_nonblock)
- {
-+	struct files_struct *files = current->files;
- 	int ret;
- 
- 	req->close.put_file = NULL;
--	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
-+	spin_lock(&files->file_lock);
-+	if (req->file->f_op == &io_uring_fops ||
-+	    req->close.fd == req->ctx->ring_fd) {
-+		spin_unlock(&files->file_lock);
-+		return -EBADF;
-+	}
-+
-+	ret = __close_fd_get_file_locked(files, req->close.fd,
-+						&req->close.put_file);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index f07c55ea0c22..11d19303af46 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -122,6 +122,8 @@ extern void __fd_install(struct files_struct *files,
- extern int __close_fd(struct files_struct *files,
- 		      unsigned int fd);
- extern int __close_fd_get_file(unsigned int fd, struct file **res);
-+extern int __close_fd_get_file_locked(struct files_struct *files,
-+				      unsigned int fd, struct file **res);
- 
- extern struct kmem_cache *files_cachep;
- 
+I think we would have no other option but to add a new TAINT flag so
+that we know that the taint flag was modified by a user. Perhaps just
+re-using TAINT_USER when proc_taint() would suffice.
 
--- 
-Jens Axboe
-
+  Luis
