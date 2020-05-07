@@ -2,73 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB321C9AA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 21:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FECA1C9B10
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 21:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbgEGTPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 15:15:07 -0400
-Received: from ms.lwn.net ([45.79.88.28]:38346 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbgEGTPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 15:15:06 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id CFFE6453;
-        Thu,  7 May 2020 19:15:04 +0000 (UTC)
-Date:   Thu, 7 May 2020 13:15:03 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, timmurray@google.com,
-        minchan@google.com, sspatil@google.com, lokeshgidra@google.com
-Subject: Re: [PATCH 2/2] Add a new sysctl knob:
- unprivileged_userfaultfd_user_mode_only
-Message-ID: <20200507131503.02aba5a6@lwn.net>
-In-Reply-To: <20200506193816.GB228260@xz-x1>
-References: <20200423002632.224776-1-dancol@google.com>
-        <20200423002632.224776-3-dancol@google.com>
-        <20200506193816.GB228260@xz-x1>
-Organization: LWN.net
+        id S1728324AbgEGT3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 15:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39604 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726367AbgEGT3G (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 May 2020 15:29:06 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32798C05BD43;
+        Thu,  7 May 2020 12:29:06 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jWmCd-003ASV-I0; Thu, 07 May 2020 19:29:03 +0000
+Date:   Thu, 7 May 2020 20:29:03 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Max Kellermann <mk@cm4all.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fs/io_uring: fix O_PATH fds in openat, openat2, statx
+Message-ID: <20200507192903.GG23230@ZenIV.linux.org.uk>
+References: <20200507185725.15840-1-mk@cm4all.com>
+ <20200507190131.GF23230@ZenIV.linux.org.uk>
+ <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 6 May 2020 15:38:16 -0400
-Peter Xu <peterx@redhat.com> wrote:
-
-> If this is going to be added... I am thinking whether it should be easier to
-> add another value for unprivileged_userfaultfd, rather than a new sysctl. E.g.:
+On Thu, May 07, 2020 at 01:05:23PM -0600, Jens Axboe wrote:
+> On 5/7/20 1:01 PM, Al Viro wrote:
+> > On Thu, May 07, 2020 at 08:57:25PM +0200, Max Kellermann wrote:
+> >> If an operation's flag `needs_file` is set, the function
+> >> io_req_set_file() calls io_file_get() to obtain a `struct file*`.
+> >>
+> >> This fails for `O_PATH` file descriptors, because those have no
+> >> `struct file*`
+> > 
+> > O_PATH descriptors most certainly *do* have that.  What the hell
+> > are you talking about?
 > 
->   "0": unprivileged userfaultfd forbidden
->   "1": unprivileged userfaultfd allowed (both user/kernel faults)
->   "2": unprivileged userfaultfd allowed (only user faults)
-> 
-> Because after all unprivileged_userfaultfd_user_mode_only will be meaningless
-> (iiuc) if unprivileged_userfaultfd=0.  The default value will also be the same
-> as before ("1") then.
+> Yeah, hence I was interested in the test case. Since this is
+> bypassing that part, was assuming we'd have some logic error
+> that attempted a file grab for a case where we shouldn't.
 
-It occurs to me to wonder whether this interface should also let an admin
-block *privileged* user from handling kernel-space faults?  In a
-secure-boot/lockdown setting, this could be a hardening measure that keeps
-a (somewhat) restricted root user from expanding their privilege...?
+Just in case - you do realize that you should either resolve the
+descriptor yourself (and use the resulting struct file *, without
+letting anyone even look at the descriptor) *or* pass the
+descriptor as-is and don't even look at the descriptor table?
 
-jon
+Once more, with feeling:
+
+Descriptor tables are inherently sharable objects.  You can't resolve
+a descriptor twice and assume you'll get the same thing both times.
+You can't insert something into descriptor table and assume that the
+same slot will be holding the same struct file reference after
+the descriptor table has been unlocked.
+
+Again, resolving the descriptor more than once in course of syscall
+is almost always a serious bug; there are very few exceptions and
+none of the mentioned in that patch are anywhere near those.
+
+IOW, that patch will either immediately break things on O_PATH
+(if you are really passing struct file *) or it's probably correct,
+but the reason is entirely different - it's that you are passing
+descriptor, which gets resolved by whatever you are calling, in
+which case io_uring has no business resolving it.  And if that's
+the case, you are limited to real descriptors - your descriptor
+table lookalikes won't be of any use.
