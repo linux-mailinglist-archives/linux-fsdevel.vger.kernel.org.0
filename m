@@ -2,116 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C00A1C997D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 20:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D37121C9980
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 20:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbgEGSnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 14:43:17 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46476 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbgEGSnR (ORCPT
+        id S1728336AbgEGSnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 14:43:24 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33451 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726320AbgEGSnX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 14:43:17 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 047IbgcN004211;
-        Thu, 7 May 2020 18:42:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=mEDzEEDSb5jTK1bCppRO0q98+bzWMLYtdC4AbIqeGDQ=;
- b=p67mYIkdiwJsmnC7ru/mh2/Yfh7z9rNBCXeRFzXgPFjCOGcc6I/jf3cI3t6jZOTbWonM
- nrcSzlCIQt+vCOOmQ/QHgtwcbiTxDxYwCMIRsCfZg9MO/a2lQzY2bzVgx0RBUj9W7WR4
- WoXDElaGKcpiCo0hEvUgaktAI5Hm931tQRG3DGXkUcl15yZqquCGX7wNaqqTAh6RNGwp
- roIaOjY0Q8kbCj8TBaOv7qBq0ccyMZ0+dsll3Io87z1wQ08LfzFH9Uq74xr2J0iYjz+t
- pKvSm6/u3weJp62HWoSStAEc9eR/JZCV8uDuCKATw4q2+0vtEYn3HjHH6uRkJLw5jOHm sg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 30vhvyj79h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 18:42:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 047IavNE026231;
-        Thu, 7 May 2020 18:42:00 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 30sjdyq2v8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 18:42:00 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 047IfuCW023296;
-        Thu, 7 May 2020 18:41:56 GMT
-Received: from [10.154.153.82] (/10.154.153.82)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 May 2020 11:41:55 -0700
-Subject: Re: [RFC 21/43] x86/KASLR: PKRAM: support physical kaslr
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        rppt@linux.ibm.com, akpm@linux-foundation.org, hughd@google.com,
-        ebiederm@xmission.com, masahiroy@kernel.org, ardb@kernel.org,
-        ndesaulniers@google.com, dima@golovin.in, daniel.kiper@oracle.com,
-        nivedita@alum.mit.edu, rafael.j.wysocki@intel.com,
-        dan.j.williams@intel.com, zhenzhong.duan@oracle.com,
-        jroedel@suse.de, bhe@redhat.com, guro@fb.com,
-        Thomas.Lendacky@amd.com, andriy.shevchenko@linux.intel.com,
-        hannes@cmpxchg.org, minchan@kernel.org, mhocko@kernel.org,
-        ying.huang@intel.com, yang.shi@linux.alibaba.com,
-        gustavo@embeddedor.com, ziqian.lzq@antfin.com,
-        vdavydov.dev@gmail.com, jason.zeng@intel.com, kevin.tian@intel.com,
-        zhiyuan.lv@intel.com, lei.l.li@intel.com, paul.c.lai@intel.com,
-        ashok.raj@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kexec@lists.infradead.org
-References: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
- <1588812129-8596-22-git-send-email-anthony.yznaga@oracle.com>
- <202005071049.2D0939137D@keescook>
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <62a1c002-ad7b-a364-5797-6d7f5545d5cf@oracle.com>
-Date:   Thu, 7 May 2020 11:41:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 7 May 2020 14:43:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588877002;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jh97DkO75QGZr6UViEI6oioQHzU0u8jFEO5QZXD5xsY=;
+        b=MXC2AagNZJ2Sr2nah3oaYT+KfF1GJIsEJoVRDknesLkdp0yBMohg/A9lPx7MkHs14GiXai
+        mg+8P2Vf9CwLB8I3UTOuStQhJMgLIYy+i6wUmanJUKh53NPFUApbpquyIOPYY/qbboGSHz
+        qNou6sRDinJQOHTZ7SHPGyrgDKuIfkI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-254-hOsW7xkTMlefJxkiXvcjgg-1; Thu, 07 May 2020 14:43:18 -0400
+X-MC-Unique: hOsW7xkTMlefJxkiXvcjgg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7101319200C1;
+        Thu,  7 May 2020 18:43:16 +0000 (UTC)
+Received: from optiplex-lnx (unknown [10.3.128.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E61AE70559;
+        Thu,  7 May 2020 18:43:10 +0000 (UTC)
+Date:   Thu, 7 May 2020 14:43:07 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
+        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
+        rdunlap@infradead.org
+Subject: Re: [PATCH v2] kernel: add panic_on_taint
+Message-ID: <20200507184307.GF205881@optiplex-lnx>
+References: <20200507180631.308441-1-aquini@redhat.com>
+ <20200507182257.GX11244@42.do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <202005071049.2D0939137D@keescook>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9614 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005070151
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9614 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 phishscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005070151
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200507182257.GX11244@42.do-not-panic.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 5/7/20 10:51 AM, Kees Cook wrote:
-> On Wed, May 06, 2020 at 05:41:47PM -0700, Anthony Yznaga wrote:
->> Avoid regions of memory that contain preserved pages when computing
->> slots used to select where to put the decompressed kernel.
-> This is changing the slot-walking code instead of updating
-> mem_avoid_overlap() -- that's where the check for a "reserved" memory
-> area should live.
+On Thu, May 07, 2020 at 06:22:57PM +0000, Luis Chamberlain wrote:
+> On Thu, May 07, 2020 at 02:06:31PM -0400, Rafael Aquini wrote:
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index 8a176d8727a3..b80ab660d727 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -1217,6 +1217,13 @@ static struct ctl_table kern_table[] = {
+> >  		.extra1		= SYSCTL_ZERO,
+> >  		.extra2		= SYSCTL_ONE,
+> >  	},
+> > +	{
+> > +		.procname	= "panic_on_taint",
+> > +		.data		= &panic_on_taint,
+> > +		.maxlen		= sizeof(unsigned long),
+> > +		.mode		= 0644,
+> > +		.proc_handler	= proc_doulongvec_minmax,
+> > +	},
+> 
+> You sent this out before I could reply to the other thread on v1.
+> My thoughts on the min / max values, or lack here:
+>                                                                                 
+> Valid range doesn't mean "currently allowed defined" masks.                     
+> 
+> For example, if you expect to panic due to a taint, but a new taint type
+> you want was not added on an older kernel you would be under a very
+> *false* sense of security that your kernel may not have hit such a
+> taint, but the reality of the situation was that the kernel didn't
+> support that taint flag only added in future kernels.                           
+> 
+> You may need to define a new flag (MAX_TAINT) which should be the last
+> value + 1, the allowed max values would be                                      
+> 
+> (2^MAX_TAINT)-1                                                                 
+> 
+> or                                                                              
+> 
+> (1<<MAX_TAINT)-1  
+> 
+> Since this is to *PANIC* I think we do want to test ranges and ensure
+> only valid ones are allowed.
 >
-> For example, this is how both mem_avoid_memmap() and the setup_data
-> memory areas are handled.
->
-> Is there a reason mem_avoid_overlap() can't be used here?
->
 
-I was thinking it would be more efficient to process just
-the regions that did not contain preserved pages rather
-than checking for preserved pages in mem_avoid_overlap(),
-but I see that may just be adding unnecessary complexity.
-I'll investigate modifying mem_avoid_overlap().
-Thank you for the comments!
+Ok. I'm thinking in:
 
-Anthony
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 8a176d8727a3..ee492431e7b0 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1217,6 +1217,15 @@ static struct ctl_table kern_table[] = {
+                .extra1         = SYSCTL_ZERO,
+                .extra2         = SYSCTL_ONE,
+        },
++       {
++               .procname       = "panic_on_taint",
++               .data           = &panic_on_taint,
++               .maxlen         = sizeof(unsigned long),
++               .mode           = 0644,
++               .proc_handler   = proc_doulongvec_minmax,
++               .extra1         = SYSCTL_ZERO,
++               .extra2         = (1 << TAINT_FLAGS_COUNT << 1) - 1,
++       },
+
+
+Would that address your concerns wrt this one?
+
+Cheers!
+-- Rafael
+
