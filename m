@@ -2,132 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C11471C99A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 20:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BF21C99CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 20:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgEGSrU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 14:47:20 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27031 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726467AbgEGSrU (ORCPT
+        id S1727983AbgEGSuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 14:50:50 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35879 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgEGSut (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 14:47:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588877238;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fA/ECm0zhQEdUp/fUbA73B0nJs5vbdkbZsQ0b4cogDo=;
-        b=RWR1oVgF1bNv9eejrfSIl5pEwUEsUpiwoW2024olhT/Mb3Oyfe3Y9iqRaGB751vG4MEz8O
-        Usp3knGuWkJNxjNahhD2WlsCMPijWpkcYTDBemu8Y+MoLYIxaxE2cJg5a+OhxL8qbuuCa+
-        DdUSrDX8PDDbUBiEME5tlOs0qlF5ajw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-271-MgJVVsgDOfqwYGQcSYPLlA-1; Thu, 07 May 2020 14:47:16 -0400
-X-MC-Unique: MgJVVsgDOfqwYGQcSYPLlA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAF3919200C0;
-        Thu,  7 May 2020 18:47:14 +0000 (UTC)
-Received: from optiplex-lnx (unknown [10.3.128.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CCBBF70559;
-        Thu,  7 May 2020 18:47:08 +0000 (UTC)
-Date:   Thu, 7 May 2020 14:47:05 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
+        Thu, 7 May 2020 14:50:49 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f15so2430640plr.3;
+        Thu, 07 May 2020 11:50:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NVtq4LDDtvm7cyqcZmZ6iVyVFqaMEGZyo2ntIU6mBx8=;
+        b=MkU6SofPX1nSol8g32toQunda+QRsJDgV6ECkIfwTDWlj0tRgdBWeEYxJ+rVJ9Q53L
+         UHFoQPNDDFnzrCxHsTKJVf1Sn2w0MpWMzfX9ea9l7s1jd8EdongQZU4jSFjR7A7DBYsG
+         4u6usbp92htw/LZpUYq/2oom4r1v5Ee5wFv47+3kV93FunQz2S6saDM4CDv3DrB3F8TQ
+         ka/C2DN/ISVM+5iN8MdRtT9dS5MiUZT6eWxQkJBUwdl4DQhOBBFOOsfnOl+v+luBnQf2
+         5u/bLVWUOIQXP0Q0uqi8mLkGaHlTCMIfhEgs7xI7R5behg7f64bPlidCjP5vbtVrHj6N
+         wYEg==
+X-Gm-Message-State: AGi0PuZ01BqftuvErG1l1PAtoKe3ZxhCJNgk0DUbCf1f+ik/Ti7ZxZQl
+        QPV7leXsEnSsGBgIePqLoLk=
+X-Google-Smtp-Source: APiQypL/T4pokMBN3BjyJTmEhzQ6U4iO/Je8syJeCy3/7O5YcCFMehZ+kLkFe9ehfbZ5CmV/DTUJmw==
+X-Received: by 2002:a17:90a:d808:: with SMTP id a8mr1614734pjv.6.1588877448984;
+        Thu, 07 May 2020 11:50:48 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id ft14sm474731pjb.46.2020.05.07.11.50.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2020 11:50:47 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 92589403EA; Thu,  7 May 2020 18:50:46 +0000 (UTC)
+Date:   Thu, 7 May 2020 18:50:46 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Rafael Aquini <aquini@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
         keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
         rdunlap@infradead.org
 Subject: Re: [PATCH v2] kernel: add panic_on_taint
-Message-ID: <20200507184705.GG205881@optiplex-lnx>
+Message-ID: <20200507185046.GY11244@42.do-not-panic.com>
 References: <20200507180631.308441-1-aquini@redhat.com>
- <20200507182257.GX11244@42.do-not-panic.com>
- <20200507184307.GF205881@optiplex-lnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200507184307.GF205881@optiplex-lnx>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200507180631.308441-1-aquini@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 07, 2020 at 02:43:16PM -0400, Rafael Aquini wrote:
-> On Thu, May 07, 2020 at 06:22:57PM +0000, Luis Chamberlain wrote:
-> > On Thu, May 07, 2020 at 02:06:31PM -0400, Rafael Aquini wrote:
-> > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > > index 8a176d8727a3..b80ab660d727 100644
-> > > --- a/kernel/sysctl.c
-> > > +++ b/kernel/sysctl.c
-> > > @@ -1217,6 +1217,13 @@ static struct ctl_table kern_table[] = {
-> > >  		.extra1		= SYSCTL_ZERO,
-> > >  		.extra2		= SYSCTL_ONE,
-> > >  	},
-> > > +	{
-> > > +		.procname	= "panic_on_taint",
-> > > +		.data		= &panic_on_taint,
-> > > +		.maxlen		= sizeof(unsigned long),
-> > > +		.mode		= 0644,
-> > > +		.proc_handler	= proc_doulongvec_minmax,
-> > > +	},
-> > 
-> > You sent this out before I could reply to the other thread on v1.
-> > My thoughts on the min / max values, or lack here:
-> >                                                                                 
-> > Valid range doesn't mean "currently allowed defined" masks.                     
-> > 
-> > For example, if you expect to panic due to a taint, but a new taint type
-> > you want was not added on an older kernel you would be under a very
-> > *false* sense of security that your kernel may not have hit such a
-> > taint, but the reality of the situation was that the kernel didn't
-> > support that taint flag only added in future kernels.                           
-> > 
-> > You may need to define a new flag (MAX_TAINT) which should be the last
-> > value + 1, the allowed max values would be                                      
-> > 
-> > (2^MAX_TAINT)-1                                                                 
-> > 
-> > or                                                                              
-> > 
-> > (1<<MAX_TAINT)-1  
-> > 
-> > Since this is to *PANIC* I think we do want to test ranges and ensure
-> > only valid ones are allowed.
-> >
-> 
-> Ok. I'm thinking in:
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 8a176d8727a3..ee492431e7b0 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1217,6 +1217,15 @@ static struct ctl_table kern_table[] = {
->                 .extra1         = SYSCTL_ZERO,
->                 .extra2         = SYSCTL_ONE,
->         },
-> +       {
-> +               .procname       = "panic_on_taint",
-> +               .data           = &panic_on_taint,
-> +               .maxlen         = sizeof(unsigned long),
-> +               .mode           = 0644,
-> +               .proc_handler   = proc_doulongvec_minmax,
-> +               .extra1         = SYSCTL_ZERO,
-> +               .extra2         = (1 << TAINT_FLAGS_COUNT << 1) - 1,
-							^^^^^^^^
-Without that crap, obviously. Sorry. That was a screw up on my side,
-when copyin' and pasting.
+On Thu, May 07, 2020 at 02:06:31PM -0400, Rafael Aquini wrote:
+> Another, perhaps less frequent, use for this option would be
+> as a mean for assuring a security policy (in paranoid mode)
+> case where no single taint is allowed for the running system.
 
--- Rafael
-	
-> +       },
-> 
-> 
-> Would that address your concerns wrt this one?
-> 
-> Cheers!
-> -- Rafael
+If used for this purpose then we must add a new TAINT flag for
+proc_taint() was used, otherwise we can cheat to show a taint
+*did* happen, where in fact it never happened, some punk just
+echo'd a value into the kernel's /proc/sys/kernel/tainted.
 
+Forunately proc_taint() only allows to *increment* the taint, not
+reduce.
+
+  Luis
