@@ -2,132 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 736411C8446
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 10:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F5F1C8467
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 10:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbgEGIFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 04:05:09 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:25015 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725964AbgEGIFJ (ORCPT
+        id S1725953AbgEGIK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 04:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46228 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725848AbgEGIK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 04:05:09 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-222-zMK3yQ5kPIe6BMT91EbWpA-1; Thu, 07 May 2020 09:05:05 +0100
-X-MC-Unique: zMK3yQ5kPIe6BMT91EbWpA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 7 May 2020 09:05:04 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 7 May 2020 09:05:04 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     =?utf-8?B?J01pY2thw6tsIFNhbGHDvG4n?= <mic@digikod.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Christian Heimes" <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "Deven Bowers" <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        "Lakshmi Ramasubramanian" <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?utf-8?B?UGhpbGlwcGUgVHLDqWJ1Y2hldA==?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH v5 0/6] Add support for O_MAYEXEC
-Thread-Topic: [PATCH v5 0/6] Add support for O_MAYEXEC
-Thread-Index: AQHWIvJxeV/0BLZ+8kuLT1dTVkm+SqicRhNg
-Date:   Thu, 7 May 2020 08:05:04 +0000
-Message-ID: <20b24b9ca0a64afb9389722845738ec8@AcuMS.aculab.com>
-References: <20200505153156.925111-1-mic@digikod.net>
-In-Reply-To: <20200505153156.925111-1-mic@digikod.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 7 May 2020 04:10:28 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA9CC061A10
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 01:10:27 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id a8so2484637ybs.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 01:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H8Cu6HxLa77jfVaZq3CgdIap4XuJaTdN0YbC0ZBDI6M=;
+        b=HHTWe/aw3WAO0yhwglTuWvnXtft80GNiSghWxIrZ8pm3zAl6YWCPBliDTGEgkmScPn
+         GRXl7egcPPz7vscL5sn1MgH+ZlgS20+7153v5mN3c8Sv5/SOt/jdmqkdfKiaabkOmQmY
+         JkkTTl0/M/DXPC/fmTCboG4vGxTAISZ/GlWe0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H8Cu6HxLa77jfVaZq3CgdIap4XuJaTdN0YbC0ZBDI6M=;
+        b=Mjy4DmpyXi9iIag0KDQHIEOJRP64Hy87gLAbLL2D4zT65CrrX6O+7yzE5jfGOPPH2w
+         yUiZ5m2rVUMjvf3PNaXjGPIpbRpw/mTPTcZxNqrNvOKFa5YnI+2KIasEEMu3ibwOb+Rp
+         LqDatyONTyk75JUctGooWFpau7qHvPT07shE7faV/IOTKrLEzGu8PW/L/WZGwwf/8Hbg
+         V+dIxg59SeI9zePILKLCmTsz8y/j0zwujtHDg5az3X3tsoS9/uywzBBzmzk7z3j46LLA
+         A8wYHsF0TtnBDjBKMEibkWd57+CGHTX9Bu19bHTgLWIIaX9garMwB6exx8l9tc0U3y2P
+         266A==
+X-Gm-Message-State: AGi0PuZFloRrASaJ34SdD6BP26cSz4/MpkPSwM/Mx2td44Srz4BioW/p
+        s6qwY017d4DKaolYV5ZZOD8UUzGYfBsoGWlS0s5wow==
+X-Google-Smtp-Source: APiQypJCQTdVxRjuBFFsXs0gT1xdcUYEcYrD4ZAzch0VY2vs2mJSoKpfKRsJM7D1YGqA0M/kjdDVOVS3+4q+aOuqDx0=
+X-Received: by 2002:a25:448a:: with SMTP id r132mr22208820yba.277.1588839026841;
+ Thu, 07 May 2020 01:10:26 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20200424062540.23679-1-chirantan@chromium.org>
+ <20200424062540.23679-2-chirantan@chromium.org> <20200427151934.GB1042399@stefanha-x1.localdomain>
+ <CAJFHJrr2DAgQC9ZWx78OudX1x6A57_vpLf4rJu80ceR6bnpbaQ@mail.gmail.com> <20200501154752.GA222606@stefanha-x1.localdomain>
+In-Reply-To: <20200501154752.GA222606@stefanha-x1.localdomain>
+From:   Chirantan Ekbote <chirantan@chromium.org>
+Date:   Thu, 7 May 2020 17:10:15 +0900
+Message-ID: <CAJFHJrpdbVKWyGuJJCBATVaYZsPLeg6JzpZmGFDsUcF_a4gcMA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: virtiofs: Add basic multiqueue support
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>, slp@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTWlja2HDq2wgU2FsYcO8bg0KPiBTZW50OiAwNSBNYXkgMjAyMCAxNjozMg0KPiANCj4g
-VGhpcyBmaWZ0aCBwYXRjaCBzZXJpZXMgYWRkIG5ldyBrZXJuZWwgY29uZmlndXJhdGlvbnMgKE9N
-QVlFWEVDX1NUQVRJQywNCj4gT01BWUVYRUNfRU5GT1JDRV9NT1VOVCwgYW5kIE9NQVlFWEVDX0VO
-Rk9SQ0VfRklMRSkgdG8gZW5hYmxlIHRvDQo+IGNvbmZpZ3VyZSB0aGUgc2VjdXJpdHkgcG9saWN5
-IGF0IGtlcm5lbCBidWlsZCB0aW1lLiAgQXMgcmVxdWVzdGVkIGJ5DQo+IE1pbWkgWm9oYXIsIEkg
-Y29tcGxldGVkIHRoZSBzZXJpZXMgd2l0aCBvbmUgb2YgaGVyIHBhdGNoZXMgZm9yIElNQS4NCj4g
-DQo+IFRoZSBnb2FsIG9mIHRoaXMgcGF0Y2ggc2VyaWVzIGlzIHRvIGVuYWJsZSB0byBjb250cm9s
-IHNjcmlwdCBleGVjdXRpb24NCj4gd2l0aCBpbnRlcnByZXRlcnMgaGVscC4gIEEgbmV3IE9fTUFZ
-RVhFQyBmbGFnLCB1c2FibGUgdGhyb3VnaA0KPiBvcGVuYXQyKDIpLCBpcyBhZGRlZCB0byBlbmFi
-bGUgdXNlcnNwYWNlIHNjcmlwdCBpbnRlcnByZXRlciB0byBkZWxlZ2F0ZQ0KPiB0byB0aGUga2Vy
-bmVsIChhbmQgdGh1cyB0aGUgc3lzdGVtIHNlY3VyaXR5IHBvbGljeSkgdGhlIHBlcm1pc3Npb24g
-dG8NCj4gaW50ZXJwcmV0L2V4ZWN1dGUgc2NyaXB0cyBvciBvdGhlciBmaWxlcyBjb250YWluaW5n
-IHdoYXQgY2FuIGJlIHNlZW4gYXMNCj4gY29tbWFuZHMuDQo+IA0KPiBBIHNpbXBsZSBzeXN0ZW0t
-d2lkZSBzZWN1cml0eSBwb2xpY3kgY2FuIGJlIGVuZm9yY2VkIGJ5IHRoZSBzeXN0ZW0NCj4gYWRt
-aW5pc3RyYXRvciB0aHJvdWdoIGEgc3lzY3RsIGNvbmZpZ3VyYXRpb24gY29uc2lzdGVudCB3aXRo
-IHRoZSBtb3VudA0KPiBwb2ludHMgb3IgdGhlIGZpbGUgYWNjZXNzIHJpZ2h0cy4gIFRoZSBkb2N1
-bWVudGF0aW9uIHBhdGNoIGV4cGxhaW5zIHRoZQ0KPiBwcmVyZXF1aXNpdGVzLg0KPiANCj4gRnVy
-dGhlcm1vcmUsIHRoZSBzZWN1cml0eSBwb2xpY3kgY2FuIGFsc28gYmUgZGVsZWdhdGVkIHRvIGFu
-IExTTSwgZWl0aGVyDQo+IGEgTUFDIHN5c3RlbSBvciBhbiBpbnRlZ3JpdHkgc3lzdGVtLiAgRm9y
-IGluc3RhbmNlLCB0aGUgbmV3IGtlcm5lbA0KPiBNQVlfT1BFTkVYRUMgZmxhZyBjbG9zZXMgYSBt
-YWpvciBJTUEgbWVhc3VyZW1lbnQvYXBwcmFpc2FsIGludGVycHJldGVyDQo+IGludGVncml0eSBn
-YXAgYnkgYnJpbmdpbmcgdGhlIGFiaWxpdHkgdG8gY2hlY2sgdGhlIHVzZSBvZiBzY3JpcHRzIFsx
-XS4NCj4gT3RoZXIgdXNlcyBhcmUgZXhwZWN0ZWQsIHN1Y2ggYXMgZm9yIG9wZW5hdDIoMikgWzJd
-LCBTR1ggaW50ZWdyYXRpb24NCj4gWzNdLCBicGZmcyBbNF0gb3IgSVBFIFs1XS4NCj4gDQo+IFVz
-ZXJzcGFjZSBuZWVkcyB0byBhZGFwdCB0byB0YWtlIGFkdmFudGFnZSBvZiB0aGlzIG5ldyBmZWF0
-dXJlLiAgRm9yDQo+IGV4YW1wbGUsIHRoZSBQRVAgNTc4IFs2XSAoUnVudGltZSBBdWRpdCBIb29r
-cykgZW5hYmxlcyBQeXRob24gMy44IHRvIGJlDQo+IGV4dGVuZGVkIHdpdGggcG9saWN5IGVuZm9y
-Y2VtZW50IHBvaW50cyByZWxhdGVkIHRvIGNvZGUgaW50ZXJwcmV0YXRpb24sDQo+IHdoaWNoIGNh
-biBiZSB1c2VkIHRvIGFsaWduIHdpdGggdGhlIFBvd2VyU2hlbGwgYXVkaXQgZmVhdHVyZXMuDQo+
-IEFkZGl0aW9uYWwgUHl0aG9uIHNlY3VyaXR5IGltcHJvdmVtZW50cyAoZS5nLiBhIGxpbWl0ZWQg
-aW50ZXJwcmV0ZXINCj4gd2l0aG91IC1jLCBzdGRpbiBwaXBpbmcgb2YgY29kZSkgYXJlIG9uIHRo
-ZWlyIHdheS4NCj4gDQo+IFRoZSBpbml0aWFsIGlkZWEgY29tZSBmcm9tIENMSVAgT1MgNCBhbmQg
-dGhlIG9yaWdpbmFsIGltcGxlbWVudGF0aW9uIGhhcw0KPiBiZWVuIHVzZWQgZm9yIG1vcmUgdGhh
-biAxMiB5ZWFyczoNCj4gaHR0cHM6Ly9naXRodWIuY29tL2NsaXBvcy1hcmNoaXZlL2NsaXBvczRf
-ZG9jDQo+IA0KPiBBbiBpbnRyb2R1Y3Rpb24gdG8gT19NQVlFWEVDIHdhcyBnaXZlbiBhdCB0aGUg
-TGludXggU2VjdXJpdHkgU3VtbWl0DQo+IEV1cm9wZSAyMDE4IC0gTGludXggS2VybmVsIFNlY3Vy
-aXR5IENvbnRyaWJ1dGlvbnMgYnkgQU5TU0k6DQo+IGh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dh
-dGNoP3Y9Y2hOakNSdFBLUVkmdD0xN20xNXMNCj4gVGhlICJ3cml0ZSB4b3IgZXhlY3V0ZSIgcHJp
-bmNpcGxlIHdhcyBleHBsYWluZWQgYXQgS2VybmVsIFJlY2lwZXMgMjAxOCAtDQo+IENMSVAgT1M6
-IGEgZGVmZW5zZS1pbi1kZXB0aCBPUzoNCj4gaHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/
-dj1QalJFMHVCdGtIVSZ0PTExbTE0cw0KPiANCj4gVGhpcyBwYXRjaCBzZXJpZXMgY2FuIGJlIGFw
-cGxpZWQgb24gdG9wIG9mIHY1LjctcmM0LiAgVGhpcyBjYW4gYmUgdGVzdGVkDQo+IHdpdGggQ09O
-RklHX1NZU0NUTC4gIEkgd291bGQgcmVhbGx5IGFwcHJlY2lhdGUgY29uc3RydWN0aXZlIGNvbW1l
-bnRzIG9uDQo+IHRoaXMgcGF0Y2ggc2VyaWVzLg0KDQpOb25lIG9mIHRoYXQgZGVzY3JpcHRpb24g
-YWN0dWFsbHkgc2F5cyB3aGF0IHRoZSBwYXRjaCBhY3R1YWxseSBkb2VzLg0KDQoJRGF2aWQNCg0K
-LQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0s
-IE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdh
-bGVzKQ0K
+On Sat, May 2, 2020 at 12:48 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> On Fri, May 01, 2020 at 04:14:38PM +0900, Chirantan Ekbote wrote:
+> > On Tue, Apr 28, 2020 at 12:20 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > > Instead of modifying the guest driver, please implement request
+> > > parallelism in your device implementation.
+> >
+> > Yes, we have tried this already [1][2].  As I mentioned above, having
+> > additional threads in the server actually made performance worse.  My
+> > theory is that when the device only has 2 cpus, having additional
+> > threads on the host that need cpu time ends up taking time away from
+> > the guest vcpu.  We're now looking at switching to io_uring so that we
+> > can submit multiple requests from a single thread.
+>
+> The host has 2 CPUs?  How many vCPUs does the guest have?  What is the
+> physical storage device?  What is the host file system?
 
+The host has 2 cpus.  The guest has 1 vcpu.  The physical storage
+device is an internal ssd.  The file system is ext4 with directory
+encryption.
+
+
+>
+> io_uring's vocabulary is expanding.  It can now do openat2(2), close(2),
+> statx(2), but not mkdir(2), unlink(2), rename(2), etc.
+>
+> I guess there are two options:
+> 1. Fall back to threads for FUSE operations that cannot yet be done via
+>    io_uring.
+> 2. Process FUSE operations that cannot be done via io_uring
+>    synchronously.
+>
+
+I'm hoping that using io_uring for just the reads and writes should
+give us a big enough improvement that we can do the rest of the
+operations synchronously.
+
+Chirantan
