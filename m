@@ -2,60 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29C011C9EE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 01:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A007F1C9EEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 01:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgEGXGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 19:06:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbgEGXGU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 19:06:20 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FFC3208D6;
-        Thu,  7 May 2020 23:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588892779;
-        bh=HAilGWe4lV9oUELeIOkLoxMN5NMr+o3TPnQtyqGETY4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QQMh0MejIC3msVJ9Mc0Vp4sql4itOWA1pUrx0ZwApVELQEAwDpfiMzam77C31caYN
-         pIz3jTKcKsduV3DgmQiI4p+NYGVTPM0QaTknaUdLT2KvSVAtHrNUD9kI5Azml5xP1p
-         3fofpirtshBXkSU3cHNb9wbZlP09cV+p9Gfe6dQ0=
-Date:   Thu, 7 May 2020 16:06:18 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        keescook@chromium.org, yzaikin@google.com, mcgrof@kernel.org,
-        vbabka@suse.cz, kernel@gpiccoli.net
-Subject: Re: [PATCH] kernel/watchdog.c: convert {soft/hard}lockup boot
- parameters to sysctl aliases
-Message-Id: <20200507160618.43c2825e49dec1df8db30429@linux-foundation.org>
-In-Reply-To: <20200507214624.21911-1-gpiccoli@canonical.com>
-References: <20200507214624.21911-1-gpiccoli@canonical.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727856AbgEGXH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 19:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727821AbgEGXHW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 May 2020 19:07:22 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7670C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 16:07:22 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id 4so1686234qtb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 16:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=cDgv5RBBNmmZoeVkSdRHbb+p5n1j6gbGkVNuskYknK8=;
+        b=irn2+fcrxp6NonlZzAmEkP+IcmaZPlVzbzxmfCG6lVabw4/G0dFt3sq6PNTCVMGxGG
+         mHrxFYOqL919h6uaxEl0JW7dIaw8NB10ABm7DPmqf/EhfuWGsilf0Zdh4cihFDxim+Mo
+         2oiV63mSEiHMYHoenvD/gjwZA2LAweN8EWw+tYVdcFwe7a8XKwwE9AkeASQmt+OrM6Ud
+         66rqMK51DOb0gUzTcrOl8r0cDm0oT8FMB5ERjpMlkKlVh00sAuv1oGi7o++rQCXNEyy3
+         NK/+1D+NyYl6NPUHDAAe/3i2dWdBxPkf5biMBOG9YHzAaT3acw0lJR7KTsOkpXlpkwHt
+         Jr4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=cDgv5RBBNmmZoeVkSdRHbb+p5n1j6gbGkVNuskYknK8=;
+        b=Jt4tgttJcAIjnY6+8DyiAQnzJz93ljBRabpPplgRx1Pm5URlfVMOf0lAzYj2Fm2afA
+         uKAn5h9TuNAaqg6AUb0Q/ExUA35ef061bd4ClA0MFdc2+P8y18mqJgGJgZIU5T572EZV
+         Ei2R71uknv7St0BlPTydXV1oN38TJHMKyK84iS9HxNT5c5cWMRKFHaX7J3Hlzz4lIRBo
+         AbmtCib6k61amqU1H9gB6ekwOez9zn0KPFG9feJ33mOArech8zzj6UBQlAvEMVwc04P7
+         opRqVJdHu7H0AV95eZZiKdblsmr3FZtT0CXxrC+2e8gga4ckYpGac7Nsa4fGNS2KMbuJ
+         5ZMg==
+X-Gm-Message-State: AGi0PuZU7X9QaVlG9k0S2FYLJzy2oJLEfcUD05chP3g8vuzoOWFHknun
+        /1PVkZ4MYFMy4vfaYDhqVhvasA==
+X-Google-Smtp-Source: APiQypJ8nv0rS/6ipD0+tlnjwjtkoEW9gBSgFlE4m3C077d6wO4jOE6P+FabQVeufE8QHwU+D1XMog==
+X-Received: by 2002:ac8:46c9:: with SMTP id h9mr16757891qto.128.1588892841789;
+        Thu, 07 May 2020 16:07:21 -0700 (PDT)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id b126sm5170080qkc.119.2020.05.07.16.07.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 16:07:21 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] kernel: add panic_on_taint
+Date:   Thu, 7 May 2020 19:07:20 -0400
+Message-Id: <6B423101-ACF4-49A3-AD53-ACBF87F1ABE0@lca.pw>
+References: <20200507221503.GL205881@optiplex-lnx>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        dyoung@redhat.com, Baoquan He <bhe@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+In-Reply-To: <20200507221503.GL205881@optiplex-lnx>
+To:     Rafael Aquini <aquini@redhat.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu,  7 May 2020 18:46:24 -0300 "Guilherme G. Piccoli" <gpiccoli@canonical.com> wrote:
 
-> After a recent change introduced by Vlastimil's series [0], kernel is
-> able now to handle sysctl parameters on kernel command line; also, the
-> series introduced a simple infrastructure to convert legacy boot
-> parameters (that duplicate sysctls) into sysctl aliases.
-> 
-> This patch converts the watchdog parameters softlockup_panic and
-> {hard,soft}lockup_all_cpu_backtrace to use the new alias infrastructure.
-> It fixes the documentation too, since the alias only accepts values 0
-> or 1, not the full range of integers. We also took the opportunity here
-> to improve the documentation of the previously converted hung_task_panic
-> (see the patch series [0]) and put the alias table in alphabetical order.
 
-We have a lot of sysctls.  What is the motivation for converting these
-particular ones?
+> On May 7, 2020, at 6:15 PM, Rafael Aquini <aquini@redhat.com> wrote:
+>=20
+> It's a reasonable and self-contained feature that we have a valid use for.=
+=20
+> I honestly fail to see it causing that amount of annoyance as you are=20
+> suggesting here.
+
+It is not a big trouble yet, but keeping an obsolete patch that not very str=
+aightforward to figure out that it will be superseded by the panic_on_taint p=
+atch will only cause more confusion the longer it has stayed in linux-next.
+
+The thing is that even if you can=E2=80=99t get this panic_on_taint (the sup=
+erior solution) patch accepted for some reasons, someone else could still wo=
+rk on it until it get merged.
+
+Thus, I failed to see any possibility we will go back to the inferior soluti=
+on (mm-slub-add-panic_on_error-to-the-debug-facilities.patch) by all means.=
