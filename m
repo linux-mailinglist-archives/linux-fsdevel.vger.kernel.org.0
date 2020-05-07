@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A443C1C7F07
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 02:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DCF01C7F38
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 02:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbgEGApH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 20:45:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39276 "EHLO
+        id S1728941AbgEGAqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 20:46:18 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40334 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbgEGApF (ORCPT
+        with ESMTP id S1728823AbgEGAqN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 20:45:05 -0400
+        Wed, 6 May 2020 20:46:13 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470c5BP093096;
-        Thu, 7 May 2020 00:44:06 GMT
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470bjvQ092893;
+        Thu, 7 May 2020 00:44:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=ALhXxW63LGZoM6V1NGaT+SnLTVsGEByBjEn2ykRFtnU=;
- b=WcY7ARrycjOtSErtWFAU7jEvJCDzYLSMBBQdEfiSz+VYmm+P1vsiQipFRaHJUKefDQGP
- 6SpWpJBVSg9v6poZtOhM+2hrCsnxl4pzn6zYo4RjyJ4+qFdAymPEnFqh+BblrFOCjNA0
- XyKWvLvG7vKezc7rF7JYRpliViNaHZR8KW1i1GGsXAXequif8VvZ+tkVIKDcugDuYbBH
- YuryJoR0X2xYHmHfLo+CWApOuQEpt2LzEmBRNoO7V72Rr1m6OLrd+fh37MBvbvhCdP1e
- kocUdOrK1sim2WztAHrtjy2lA9VQ/tMfFjN2zEdc7hlmRCU+CQRP/xvQDIkwglOkuSz6 pQ== 
+ bh=sXz+5MX/e43ODGutAI7Eoi78pN72CvHNRozhR5OcLiY=;
+ b=JpV7XO6RwQPucJ1rzxFOrsUoGfS6PaZu4Xq59fbTr7D8gnurRyXVepNkiKrUY7ZWdWuE
+ FYeu8glZtcMNsarunOq7+eS23s7Grd371BkO8UvWf6hmDlnYU0BmdCDtAUPCfpzLMU2Z
+ oeHzKLxttnshWsKX5tF9pbl/opBNAylWQ5ags9r7Cd5eMsMDy+lwlbODzH9+jE1pE2e5
+ OXzO8JyJy8+aoI+pYt1R4fe7cwE3cX9/TpBvxJnvozO0ov0IrK7M8483f84Le4WlP4ot
+ fVHYkurQo2RH3pmEkEgSB5l3vGC/x4CImxxdoGFnkDifY5a4l1ye4OafH3qm6fqBMYMX 0w== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 30s1gnd8pb-1
+        by userp2120.oracle.com with ESMTP id 30s1gnd8pe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:44:05 +0000
+        Thu, 07 May 2020 00:44:08 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470alNS170704;
-        Thu, 7 May 2020 00:44:05 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 30us7p2nm1-1
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470aqPn170885;
+        Thu, 7 May 2020 00:44:08 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 30us7p2np8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:44:05 +0000
+        Thu, 07 May 2020 00:44:08 +0000
 Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0470i20o025972;
-        Thu, 7 May 2020 00:44:02 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0470i6Ko029955;
+        Thu, 7 May 2020 00:44:06 GMT
 Received: from ayz-linux.localdomain (/68.7.158.207)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 May 2020 17:44:02 -0700
+        with ESMTP ; Wed, 06 May 2020 17:44:05 -0700
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -60,9 +60,9 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, paul.c.lai@intel.com, ashok.raj@intel.com,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         kexec@lists.infradead.org
-Subject: [RFC 25/43] mm: shmem: specify the mm to use when inserting pages
-Date:   Wed,  6 May 2020 17:41:51 -0700
-Message-Id: <1588812129-8596-26-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC 26/43] mm: shmem: when inserting, handle pages already charged to a memcg
+Date:   Wed,  6 May 2020 17:41:52 -0700
+Message-Id: <1588812129-8596-27-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
@@ -82,55 +82,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Explicitly specify the mm to pass to shmem_insert_page() when
-the pkram_stream is initialized rather than use the mm of the
-current thread.  This will allow for multiple kernel threads to
-target the same mm when inserting pages in parallel.
+If shmem_insert_page() is called to insert a page that was preserved
+using PKRAM on the current boot (i.e. preserved page is restored without
+an intervening kexec boot), the page will still be charged to a memory
+cgroup because it is never freed. Don't try to charge it again.
 
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- include/linux/pkram.h | 1 +
- mm/pkram.c            | 1 +
- mm/shmem_pkram.c      | 2 +-
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ mm/shmem.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/pkram.h b/include/linux/pkram.h
-index b47b3aef16e3..cbb79d2803c0 100644
---- a/include/linux/pkram.h
-+++ b/include/linux/pkram.h
-@@ -18,6 +18,7 @@ struct pkram_stream {
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 13475073fb52..1f3b43b8fa34 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -693,6 +693,7 @@ int shmem_insert_page(struct mm_struct *mm, struct inode *inode, pgoff_t index,
+ 	struct mem_cgroup *memcg;
+ 	pgoff_t hindex = index;
+ 	bool on_lru = PageLRU(page);
++	bool has_memcg = page->mem_cgroup ? true : false;
  
- 	unsigned long next_index;
- 	struct address_space *mapping;
-+	struct mm_struct *mm;
+ 	if (index > (MAX_LFS_FILESIZE >> PAGE_SHIFT))
+ 		return -EFBIG;
+@@ -738,20 +739,24 @@ int shmem_insert_page(struct mm_struct *mm, struct inode *inode, pgoff_t index,
  
- 	/* byte data */
- 	struct page *data_page;
-diff --git a/mm/pkram.c b/mm/pkram.c
-index 4d4d836fea53..a5e539052af6 100644
---- a/mm/pkram.c
-+++ b/mm/pkram.c
-@@ -565,6 +565,7 @@ static void pkram_stream_init(struct pkram_stream *ps,
- 	memset(ps, 0, sizeof(*ps));
- 	ps->gfp_mask = gfp_mask;
- 	ps->node = node;
-+	ps->mm = current->mm;
- }
+ 	__SetPageReferenced(page);
  
- static void pkram_stream_init_obj(struct pkram_stream *ps, struct pkram_obj *obj)
-diff --git a/mm/shmem_pkram.c b/mm/shmem_pkram.c
-index 3fa9cfbe0003..c97d64393822 100644
---- a/mm/shmem_pkram.c
-+++ b/mm/shmem_pkram.c
-@@ -236,7 +236,7 @@ static int load_file_content(struct pkram_stream *ps)
- 		if (!page)
- 			break;
+-	err = mem_cgroup_try_charge_delay(page, mm, gfp, &memcg,
+-					PageTransHuge(page));
+-	if (err)
+-		goto out_unlock;
++	if (!has_memcg) {
++		err = mem_cgroup_try_charge_delay(page, mm, gfp, &memcg,
++						PageTransHuge(page));
++		if (err)
++			goto out_unlock;
++	}
  
--		err = shmem_insert_page(current->mm, ps->mapping->host, index, page);
-+		err = shmem_insert_page(ps->mm, ps->mapping->host, index, page);
- 		put_page(page);
- 	} while (!err);
+ 	err = shmem_add_to_page_cache(page, mapping, hindex,
+ 					NULL, gfp & GFP_RECLAIM_MASK);
+ 	if (err) {
+-		mem_cgroup_cancel_charge(page, memcg,
+-			PageTransHuge(page));
++		if (!has_memcg)
++			mem_cgroup_cancel_charge(page, memcg,
++						PageTransHuge(page));
+ 		goto out_unlock;
+ 	}
+-	mem_cgroup_commit_charge(page, memcg, on_lru,
+-			PageTransHuge(page));
++	if (!has_memcg)
++		mem_cgroup_commit_charge(page, memcg, on_lru,
++					PageTransHuge(page));
  
+ 	if (!on_lru)
+ 		lru_cache_add_anon(page);
 -- 
 2.13.3
 
