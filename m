@@ -2,126 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4701C7F34
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 02:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B2F1C8026
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 04:50:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbgEGAqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 20:46:13 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38982 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728909AbgEGAqK (ORCPT
+        id S1728369AbgEGCu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 22:50:26 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:53553 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbgEGCuZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 20:46:10 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470ep5K098400;
-        Thu, 7 May 2020 00:45:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=GHyTm1dF4tuIvRr/Sme8g0LfjNUADURL5kv1ja2d5gg=;
- b=B2ieybBw6yGUeCUHVlAsRBnlc2/4Xd/KOmp96lhPgAt8aY+OY0nx5m0HV49zY4rmmwNJ
- C2s+DocZP+0TkwaFub5pxJI6VLiZDTcntuJuwRiK6BhA4pqOyBsR5hSUgs8TBMEtVRwq
- OElN/qCU2uFHMkJBBKXftNAEdERNSddgfIfiOzBTs8P4ylt3KV1I3R+rr5nplsc4zmhK
- ndh51F39UD6VOjw/FzRcndPUY74810gTKBZWOztHuZiGWlEMz8N9DZFuEnfShhYFDYJm
- 6QwLRCsTOBx7pn2Mq4SU4ShEr7RZ2iKufkGsu48ZeUFaikGwL8cPgZL4TT7Ejf7MNy1O 3A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 30usgq4h41-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:45:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470bUBT098659;
-        Thu, 7 May 2020 00:45:12 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 30sjnma71q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:45:11 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0470j8I8025069;
-        Thu, 7 May 2020 00:45:08 GMT
-Received: from ayz-linux.localdomain (/68.7.158.207)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 May 2020 17:45:08 -0700
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        rppt@linux.ibm.com, akpm@linux-foundation.org, hughd@google.com,
-        ebiederm@xmission.com, masahiroy@kernel.org, ardb@kernel.org,
-        ndesaulniers@google.com, dima@golovin.in, daniel.kiper@oracle.com,
-        nivedita@alum.mit.edu, rafael.j.wysocki@intel.com,
-        dan.j.williams@intel.com, zhenzhong.duan@oracle.com,
-        jroedel@suse.de, bhe@redhat.com, guro@fb.com,
-        Thomas.Lendacky@amd.com, andriy.shevchenko@linux.intel.com,
-        keescook@chromium.org, hannes@cmpxchg.org, minchan@kernel.org,
-        mhocko@kernel.org, ying.huang@intel.com,
-        yang.shi@linux.alibaba.com, gustavo@embeddedor.com,
-        ziqian.lzq@antfin.com, vdavydov.dev@gmail.com,
-        jason.zeng@intel.com, kevin.tian@intel.com, zhiyuan.lv@intel.com,
-        lei.l.li@intel.com, paul.c.lai@intel.com, ashok.raj@intel.com,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: [RFC 43/43] PKRAM: improve index alignment of pkram_link entries
-Date:   Wed,  6 May 2020 17:42:09 -0700
-Message-Id: <1588812129-8596-44-git-send-email-anthony.yznaga@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
-References: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9613 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005070001
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9613 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005070001
+        Wed, 6 May 2020 22:50:25 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200507025022epoutp0336b7aeb3077c3d9af4a2ad1938108f47~MnzXmcMfn0906009060epoutp03D
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 02:50:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200507025022epoutp0336b7aeb3077c3d9af4a2ad1938108f47~MnzXmcMfn0906009060epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1588819822;
+        bh=YyLMH25O/wiRsw+XqQLJyHrmX9TPc1OpQ9UO4aIwdRo=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=oMgYHgyJJvJeJ0a9aTO+UtjPtbkFqIwt+03ZFKYz0JVGuIs0eBMa8HX98NPzbpp9B
+         WYfc1tgH2b8pJ989co9mtb2R0CvI4plcJdRdAFZIuIhOY0yvb29LQTrL1RJKxDXGyT
+         uT9odrmahiggDF5lI7lG8mTAZMpQIGZ+d8EFmWMY=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200507025021epcas1p345de9dc55ea6cd1b311f41843ee51837~MnzWyuxSd0315903159epcas1p3x;
+        Thu,  7 May 2020 02:50:21 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.166]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 49HdHJ0W16zMqYlv; Thu,  7 May
+        2020 02:50:20 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DA.F0.04648.96773BE5; Thu,  7 May 2020 11:50:17 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200507025017epcas1p1daafe1a44960ebddfab157040fb968ac~MnzTIkm0X0426804268epcas1p1N;
+        Thu,  7 May 2020 02:50:17 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200507025017epsmtrp149546de963a85481b515604867959cd5~MnzTH-UMU2195221952epsmtrp16;
+        Thu,  7 May 2020 02:50:17 +0000 (GMT)
+X-AuditID: b6c32a37-1f3ff70000001228-40-5eb37769de04
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8A.90.18461.96773BE5; Thu,  7 May 2020 11:50:17 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200507025017epsmtip10c1dbf0db4521a5d7257de2ffdeefa63~MnzS8P3n52544125441epsmtip1_;
+        Thu,  7 May 2020 02:50:17 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Wei Yongjun'" <weiyongjun1@huawei.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>
+In-Reply-To: <20200506142554.123748-1-weiyongjun1@huawei.com>
+Subject: RE: [PATCH -next] exfat: fix possible memory leak in exfat_find()
+Date:   Thu, 7 May 2020 11:50:17 +0900
+Message-ID: <004801d6241a$3d8da150$b8a8e3f0$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQH5CkYLOhJgAZJkKEDNo0PB2a9z1QJArZWfqEQXUWA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm85yzHcPVcWq9TMp1MEJrurmmU1wUmoj2Qwz80UU96UFHZxfO
+        mZb1xyjmtaWQQTPLCqykmJnmBe8XxKDAyEKhCCxphZHdvCZtnkn+e96H533f5/m+l8TkFRIF
+        aTTbWN7McLRkC/5sOEKlMp59mq1uGEjUt0+H6nt6x3F929oIoR/+1S05hKdeHpkjUh1tzSj1
+        Z+uuDOw4l1jIMvksr2TNeZZ8o7nAQKcfy0nK0cWqNSpNvD6OVpoZE2ugk49mqFKMnGcZrSxm
+        uCIPlcEIAh19MJG3FNlYZaFFsBlo1prPWTVqa5TAmIQic0FUnsWUoFGrY3QeZS5XONm+gFvH
+        JOcuvpv2K0VOohL5k0AdgK6uJWkl2kLKqU4EV+pf4GLxA0GDfRGJxR8EpY73+EbLyq1RX0sv
+        gp6RYZ/KjaDL5ZZ6VRJKBWur/RIvDqb2w8yvmvVujBLAtVi7zvtTBnjwvdajJ8kgKg2WG3O9
+        EKfCocOt9ypkVDzcWViUijgQxm989E0Jg465m5joRwlLn5oIkQ+G+go7Jm5NgNLOZcxrDajf
+        Upicv+0LkAzv7j+WiDgIvoy1SUWsAPdV+7odoC7AfL9vfjmCzwsGEWthytVCeCUYFQGu7miR
+        3g1dKw1ItLAVvv2uJsQpMii3y0XJHnC8GvYTcShUln2X1iDauSmYc1Mw56Ywzv/LGhHejLaz
+        VsFUwAoaq3bzV7ei9TOMjOtELS+PDiGKRHSAbKCpNVtOMMVCiWkIAYnRwbKAxSfZclk+U3Ke
+        5S05fBHHCkNI53n2WkwRkmfxHLXZlqPRxWi1Wv2B2LhYnZbeIat7y2XLqQLGxp5hWSvLb/T5
+        kf6KUhT+aNbePpGmDKk5rQ5MOrJqSAqJ7AuYeD5CyMteB16/91dSdXhvfHNmymD7Z8ds30BY
+        8cNG3tXzpiVr8u5Jh6JttDZ59Zrxg8ySWPHVxhnc1b0nApx9xGzdKjuXkNYxNa1Pdt7t2Llj
+        fuYKP3hqSJPZ0rvvkl91bNah9IzwKmEbjQuFjCYS4wXmH0ERePScAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSnG5m+eY4g55eOYutt6Qt9uw9yWKx
+        5d8RVovDX3axObB4tBx5y+rRt2UVo8fnTXIBzFFcNimpOZllqUX6dglcGVe3fmcpOM5W0Xj3
+        FlMD4yzWLkZODgkBE4nf846ydzFycQgJ7GaUeD2/mREiIS1x7MQZ5i5GDiBbWOLw4WKImueM
+        EvuvNrCB1LAJ6Er8+7MfzBYR0JF4/GUCC4jNLFAq0XruHBNEQx+jxNcpf9lBEpwCthIrPkxk
+        BxkqLOAl8WtBAojJIqAisf2lBUgFr4ClxMLvP9ghbEGJkzOfsICUMAvoSbRtZISYLi+x/e0c
+        ZogrFSR+Pl3GChEXkZjd2cYMcY2VRMOOX8wTGIVnIZk0C2HSLCSTZiHpXsDIsopRMrWgODc9
+        t9iwwDAvtVyvODG3uDQvXS85P3cTIzgmtDR3MG5f9UHvECMTB+MhRgkOZiURXp4fG+OEeFMS
+        K6tSi/Lji0pzUosPMUpzsCiJ894oXBgnJJCeWJKanZpakFoEk2Xi4JRqYAr/G9No2B6xuGiP
+        J3dl3eRH14O2LRH32+TY/XjDrO+Lug5M1/pub11wTJIncrLZg1lTfB8I6Sod+duuVDvjwvr2
+        OIWfIUkxWYuvG7gLdJ/XrmD4tls67NOsIklJtXnvfaLzgo58OvErfoI1K2dTZcXWher+oTas
+        q3K/3d6869UFJ5EPlwLKShlr1VJaDA/VbPDlTkw8FeF2bjHjrgt5V36Jr0n/k6O0/5HYiTTr
+        3NrP61xsGCWnXEnfbWXww6z7RO0JfsbDdZPPnSwu+uF/VuCABsOhpqgWwa9bux89aNa4+dV3
+        MY/rY/V7ufUK5yRUPy/eJMVkXhDb9SnzxjKZZ+ZvZ+7Z9feJ7MK+T9uitimxFGckGmoxFxUn
+        AgDpdiM4+AIAAA==
+X-CMS-MailID: 20200507025017epcas1p1daafe1a44960ebddfab157040fb968ac
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200506142203epcas1p1f805af350b11786d9771fb5bd12bfdd6
+References: <CGME20200506142203epcas1p1f805af350b11786d9771fb5bd12bfdd6@epcas1p1.samsung.com>
+        <20200506142554.123748-1-weiyongjun1@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To take advantage of optimizations when adding pages to the page cache
-via shmem_insert_pages(), improve the likelihood that the pages array
-passed to shmem_insert_pages() starts on an aligned index.  Do this
-when preserving pages by starting a new pkram_link page when the current
-page is aligned and the next aligned page will not fit on the pkram_link
-page.
+> 'es' is malloced from exfat_get_dentry_set() in exfat_find() and should be freed before leaving from
+> the error handling cases, otherwise it will cause memory leak.
+> 
+> Fixes: 5f2aa075070c ("exfat: add inode operations")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Applied.
+Thanks!
+> ---
+>  fs/exfat/namei.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c index c241dd177f1a..48f4df883f3b 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -681,6 +681,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+>  			exfat_fs_error(sb,
+>  				"non-zero size file starts with zero cluster (size : %llu, p_dir : %u,
+> entry : 0x%08x)",
+>  				i_size_read(dir), ei->dir.dir, ei->entry);
+> +			kfree(es);
+>  			return -EIO;
+>  		}
+> 
+> 
 
-Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
- mm/pkram.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/mm/pkram.c b/mm/pkram.c
-index ef092aa5ce7a..416c3ca4411b 100644
---- a/mm/pkram.c
-+++ b/mm/pkram.c
-@@ -913,11 +913,21 @@ static int __pkram_save_page(struct pkram_stream *ps,
- {
- 	struct pkram_link *link = ps->link;
- 	struct pkram_obj *obj = ps->obj;
-+	int order, align, align_cnt;
- 	pkram_entry_t p;
--	int order;
-+
-+	if (PageTransHuge(page)) {
-+		align = 1 << (HPAGE_PMD_ORDER + XA_CHUNK_SHIFT - (HPAGE_PMD_ORDER % XA_CHUNK_SHIFT));
-+		align_cnt = align >> HPAGE_PMD_ORDER;
-+	} else {
-+		align = XA_CHUNK_SIZE;
-+		align_cnt = XA_CHUNK_SIZE;
-+	}
- 
- 	if (!link || ps->entry_idx >= PKRAM_LINK_ENTRIES_MAX ||
--	    index != ps->next_index) {
-+	    index != ps->next_index ||
-+	    (IS_ALIGNED(index, align) &&
-+	    (ps->entry_idx + align_cnt > PKRAM_LINK_ENTRIES_MAX))) {
- 		struct page *link_page;
- 
- 		link_page = pkram_alloc_page((ps->gfp_mask & GFP_RECLAIM_MASK) |
--- 
-2.13.3
 
