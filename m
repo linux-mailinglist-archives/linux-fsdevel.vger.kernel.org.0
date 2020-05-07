@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F41C61C7F28
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 02:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 411041C7F64
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 02:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbgEGAp7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 May 2020 20:45:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38788 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbgEGAp6 (ORCPT
+        id S1728379AbgEGAsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 May 2020 20:48:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51462 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgEGAsN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 May 2020 20:45:58 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470dDks097472;
-        Thu, 7 May 2020 00:45:00 GMT
+        Wed, 6 May 2020 20:48:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470cd03065150;
+        Thu, 7 May 2020 00:47:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=7K77j/6mtxQ9j5vDJ+M7D2bl3GjRuKy3se3PRu5nsHg=;
- b=fknRxePLvSCA2rgFxv17tFilEvUcB8Sm1qixpcq8htEL5+jMu9HgoK4AmSWmU5S+ZkSA
- nDAhgsc9si0wjbVnFvNv/8X2KeIYxyingZ+wv8jvbeRn+nVmTFly4CU0yNcKBvY2+jVu
- c2D85RuZlAHnVFY0HdVTQEdHGa7aiJPbG99wIg4XJyPEW+jT33EouxaTBIY1nMaIv0lV
- CbQYJXCcHIp4hPBwSJR28UisseHnsGqGQwpfd6W5LjvXz7KtxddPjhifE9TJ6cNYG2Ae
- zzaUH0VA/so04hfFmVi7z0tTREp0xKaYemyw2Yl7K60g3PKDQvkRdYChSgUY6vCl9+rG 4Q== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 30usgq4h3c-1
+ bh=l1jFeQ++L0S4ASpfp6U4S++udUwtZnOa7K5HcmPbm40=;
+ b=M8E0M0WwtI3cedOWrkJtCN5Seer3lVIlIgeTRqf/ZAbULwP7hbR/DUd10TGvyh+zKJFu
+ Yqbahbnf+BnBlvlzLj9ffvGcE1WmKLs37LsglI7zWYQUZZrkUmRw/Zu8eeB7ow8I3OWq
+ ZnEKp3idtHZBAgPqGrPKlom6mEbYfFZVKEpCLi3J5c8FvIhOmbHf7UrgPDpMlYQukFYI
+ UOjs92DL79AGbXOmlETANSHaur/mHJLJ5oQw8ozc0QzXCKZVnDa7yXv+0jI31db7oLuM
+ EfeVSQ99bXniBIIktzx5ynqu48FqKIKVE81AYG3H9Vh2uM6N+VttsdlqlJSGwds2Vsrl 1g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 30s09rdfk9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:45:00 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470alm0170700;
-        Thu, 7 May 2020 00:44:59 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 30us7p2prs-1
+        Thu, 07 May 2020 00:47:06 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0470aoJd136102;
+        Thu, 7 May 2020 00:45:05 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 30sjdwrtfs-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 May 2020 00:44:59 +0000
+        Thu, 07 May 2020 00:45:05 +0000
 Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0470iv2E020654;
-        Thu, 7 May 2020 00:44:57 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0470j141025060;
+        Thu, 7 May 2020 00:45:01 GMT
 Received: from ayz-linux.localdomain (/68.7.158.207)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 May 2020 17:44:57 -0700
+        with ESMTP ; Wed, 06 May 2020 17:45:01 -0700
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -60,162 +60,257 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, paul.c.lai@intel.com, ashok.raj@intel.com,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         kexec@lists.infradead.org
-Subject: [RFC 40/43] shmem: initial support for adding multiple pages to pagecache
-Date:   Wed,  6 May 2020 17:42:06 -0700
-Message-Id: <1588812129-8596-41-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC 41/43] XArray: add xas_export_node() and xas_import_node()
+Date:   Wed,  6 May 2020 17:42:07 -0700
+Message-Id: <1588812129-8596-42-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1588812129-8596-1-git-send-email-anthony.yznaga@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9613 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=2 mlxscore=0
+ bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
  definitions=main-2005070001
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9613 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1015 suspectscore=2
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2003020000 definitions=main-2005070001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-shmem_insert_pages() currently loops over the array of pages passed
-to it and calls shmem_add_to_page_cache() for each one. Prepare
-for adding pages to the pagecache in bulk by adding and using a
-shmem_add_pages_to_cache() call.  For now it just iterates over
-an array and adds pages individually, but improvements in performance
-when multiple threads are adding to the same pagecache are achieved
-by calling a new shmem_add_to_page_cache_fast() function that does
-not check for conflicts and drops the xarray lock before updating stats.
+Contention on the xarray lock when multiple threads are adding to the
+same xarray can be mitigated by providing a way to add entries in
+bulk.
+
+Allow a caller to allocate and populate an xarray node outside of
+the target xarray and then only take the xarray lock long enough to
+import the node into it.
 
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- mm/shmem.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 84 insertions(+), 11 deletions(-)
+ Documentation/core-api/xarray.rst |   8 +++
+ include/linux/xarray.h            |   2 +
+ lib/test_xarray.c                 |  45 +++++++++++++++++
+ lib/xarray.c                      | 100 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 155 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 678a396ba8d3..f621d863e362 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -660,6 +660,57 @@ static int shmem_add_to_page_cache(struct page *page,
- 	return 0;
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 640934b6f7b4..659e10df8901 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -444,6 +444,14 @@ called each time the XArray updates a node.  This is used by the page
+ cache workingset code to maintain its list of nodes which contain only
+ shadow entries.
+ 
++xas_export_node() is used to remove and return a node from an XArray
++while xas_import_node() is used to add a node to an XArray.  Together
++these can be used, for example, to reduce lock contention when multiple
++threads are updating an XArray by allowing a caller to allocate and
++populate a node outside of the target XArray in a local XArray, export
++the node, and then take the target XArray lock just long enough to import
++the node.
++
+ Multi-Index Entries
+ -------------------
+ 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 14c893433139..73bd8ccc4424 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1504,6 +1504,8 @@ bool xas_nomem(struct xa_state *, gfp_t);
+ void xas_pause(struct xa_state *);
+ 
+ void xas_create_range(struct xa_state *);
++struct xa_node *xas_export_node(struct xa_state *xas);
++void xas_import_node(struct xa_state *xas, struct xa_node *node);
+ 
+ /**
+  * xas_reload() - Refetch an entry from the xarray.
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index d4f97925dbd8..5cfaa1720cc1 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -1682,6 +1682,50 @@ static noinline void check_destroy(struct xarray *xa)
+ #endif
  }
  
-+static int shmem_add_to_page_cache_fast(struct page *page,
-+				   struct address_space *mapping,
-+				   pgoff_t index, gfp_t gfp)
++static noinline void check_export_import_1(struct xarray *xa,
++		unsigned long index, unsigned int order)
 +{
-+	XA_STATE_ORDER(xas, &mapping->i_pages, index, compound_order(page));
-+	unsigned long nr = compound_nr(page);
-+	unsigned long i = 0;
++	int xa_shift = order + XA_CHUNK_SHIFT - (order % XA_CHUNK_SHIFT);
++	XA_STATE(xas, xa, index);
++	struct xa_node *node;
++	unsigned long i;
 +
-+	VM_BUG_ON_PAGE(PageTail(page), page);
-+	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+	VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
++	xa_store_many_order(xa, index, xa_shift);
 +
-+	page_ref_add(page, nr);
-+	page->mapping = mapping;
-+	page->index = index;
++	xas_lock(&xas);
++	xas_set_order(&xas, index, xa_shift);
++	node = xas_export_node(&xas);
++	xas_unlock(&xas);
++
++	XA_BUG_ON(xa, !xa_empty(xa));
 +
 +	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas);
-+		if (xas_error(&xas))
-+			goto unlock;
-+next:
-+		xas_store(&xas, page);
-+		if (++i < nr) {
-+			xas_next(&xas);
-+			goto next;
-+		}
-+		mapping->nrpages += nr;
++		xas_lock(&xas);
++		xas_set_order(&xas, index, xa_shift);
++		xas_import_node(&xas, node);
 +		xas_unlock(&xas);
-+		if (PageTransHuge(page)) {
-+			count_vm_event(THP_FILE_ALLOC);
-+			__inc_node_page_state(page, NR_SHMEM_THPS);
-+		}
-+		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
-+		__mod_node_page_state(page_pgdat(page), NR_SHMEM, nr);
-+		local_irq_enable();
-+		break;
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp));
++	} while (xas_nomem(&xas, GFP_KERNEL));
 +
-+	if (xas_error(&xas)) {
-+		page->mapping = NULL;
-+		page_ref_sub(page, nr);
-+		return xas_error(&xas);
-+	}
++	for (i = index; i < index + (1UL << xa_shift); i++)
++		xa_erase_index(xa, i);
 +
-+	return 0;
++	XA_BUG_ON(xa, !xa_empty(xa));
 +}
 +
- /*
-  * Like delete_from_page_cache, but substitutes swap for page.
-  */
-@@ -681,6 +732,35 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- 	BUG_ON(error);
++static noinline void check_export_import(struct xarray *xa)
++{
++	unsigned int order;
++	unsigned int max_order = IS_ENABLED(CONFIG_XARRAY_MULTI) ? 12 : 1;
++
++	for (order = 0; order < max_order; order += XA_CHUNK_SHIFT) {
++		int xa_shift = order + XA_CHUNK_SHIFT;
++		unsigned long j;
++
++		for (j = 0; j < XA_CHUNK_SIZE; j++)
++			check_export_import_1(xa, j << xa_shift, order);
++	}
++}
++
+ static DEFINE_XARRAY(array);
+ 
+ static int xarray_checks(void)
+@@ -1712,6 +1756,7 @@ static int xarray_checks(void)
+ 	check_workingset(&array, 0);
+ 	check_workingset(&array, 64);
+ 	check_workingset(&array, 4096);
++	check_export_import(&array);
+ 
+ 	printk("XArray: %u of %u tests passed\n", tests_passed, tests_run);
+ 	return (tests_run == tests_passed) ? 0 : -EINVAL;
+diff --git a/lib/xarray.c b/lib/xarray.c
+index e9e641d3c0c3..478925780e87 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -507,6 +507,30 @@ static void xas_delete_node(struct xa_state *xas)
+ 		xas_shrink(xas);
  }
  
-+static int shmem_add_pages_to_cache(struct page *pages[], int npages,
-+				struct address_space *mapping,
-+				pgoff_t start, gfp_t gfp)
++static void xas_unlink_node(struct xa_state *xas)
 +{
-+	pgoff_t index = start;
-+	int err = 0;
-+	int i;
++	struct xa_node *node = xas->xa_node;
++	struct xa_node *parent;
 +
-+	i = 0;
-+	while (i < npages) {
-+		if (PageTransHuge(pages[i])) {
-+			err = shmem_add_to_page_cache_fast(pages[i], mapping, index, gfp);
-+			if (err)
-+				break;
-+			index += HPAGE_PMD_NR;
-+			i++;
-+			continue;
-+		}
++	parent = xa_parent_locked(xas->xa, node);
++	xas->xa_node = parent;
++	xas->xa_offset = node->offset;
 +
-+		err = shmem_add_to_page_cache_fast(pages[i], mapping, index, gfp);
-+		if (err)
-+			break;
-+		index++;
-+		i++;
++	if (!parent) {
++		xas->xa->xa_head = NULL;
++		xas->xa_node = XAS_BOUNDS;
++		return;
 +	}
 +
-+	return err;
++	parent->slots[xas->xa_offset] = NULL;
++	parent->count--;
++	XA_NODE_BUG_ON(parent, parent->count > XA_CHUNK_SIZE);
++
++	xas_update(xas, parent);
++
++	xas_delete_node(xas);
 +}
 +
- int shmem_insert_page(struct mm_struct *mm, struct inode *inode, pgoff_t index,
- 		      struct page *page)
- {
-@@ -844,17 +924,10 @@ int shmem_insert_pages(struct mm_struct *mm, struct inode *inode, pgoff_t index,
+ /**
+  * xas_free_nodes() - Free this node and all nodes that it references
+  * @xas: Array operation state.
+@@ -1540,6 +1564,82 @@ static void xas_set_range(struct xa_state *xas, unsigned long first,
+ }
  
- 	}
- 
--	for (i = 0; i < npages; i++) {
--		err = shmem_add_to_page_cache(pages[i], mapping, index,
--					NULL, gfp & GFP_RECLAIM_MASK);
--		if (err)
--			goto out_truncate;
--
--		if (PageTransHuge(pages[i]))
--			index += HPAGE_PMD_NR;
--		else
--			index++;
--	}
-+	err = shmem_add_pages_to_cache(pages, npages, mapping, index,
-+					gfp & GFP_RECLAIM_MASK);
-+	if (err)
-+		goto out_truncate;
- 
- 	spin_lock(&info->lock);
- 	info->alloced += nr;
+ /**
++ * xas_export_node() - remove and return a node from an XArray
++ * @xas: XArray operation state
++ *
++ * The range covered by @xas must be aligned to and cover a single node
++ * at any level of the tree.
++ *
++ * Return: On success, returns the removed node.  If the range is invalid,
++ * returns %NULL and sets -EINVAL in @xas.  Otherwise returns %NULL if the
++ * node does not exist.
++ */
++struct xa_node *xas_export_node(struct xa_state *xas)
++{
++	struct xa_node *node;
++
++	if (!xas->xa_shift || xas->xa_sibs) {
++		xas_set_err(xas, -EINVAL);
++		return NULL;
++	}
++
++	xas->xa_shift -= XA_CHUNK_SHIFT;
++
++	if (!xas_find(xas, xas->xa_index))
++		return NULL;
++	node = xas->xa_node;
++	xas_unlink_node(xas);
++	node->parent = NULL;
++
++	return node;
++}
++
++/**
++ * xas_import_node() - add a node to an XArray
++ * @xas: XArray operation state
++ * @node: The node to add
++ *
++ * The range covered by @xas must be aligned to and cover a single node
++ * at any level of the tree.  No nodes should already exist within the
++ * range.
++ * Sets an error in @xas if the range is invalid or xas_create() fails
++ */
++void xas_import_node(struct xa_state *xas, struct xa_node *node)
++{
++	struct xa_node *parent = NULL;
++	void __rcu **slot = &xas->xa->xa_head;
++	int count = 0;
++
++	if (!xas->xa_shift || xas->xa_sibs) {
++		xas_set_err(xas, -EINVAL);
++		return;
++	}
++
++	if (xas->xa_index || xa_head_locked(xas->xa)) {
++		xas_set_order(xas, xas->xa_index, node->shift + XA_CHUNK_SHIFT);
++		xas_create(xas, true);
++
++		if (xas_invalid(xas))
++			return;
++
++		parent = xas->xa_node;
++	}
++
++	if (parent) {
++		slot = &parent->slots[xas->xa_offset];
++		node->offset = xas->xa_offset;
++		count++;
++	}
++
++	RCU_INIT_POINTER(node->parent, parent);
++	node->array = xas->xa;
++
++	rcu_assign_pointer(*slot, xa_mk_node(node));
++
++	update_node(xas, parent, count, 0);
++}
++
++/**
+  * xa_store_range() - Store this entry at a range of indices in the XArray.
+  * @xa: XArray.
+  * @first: First index to affect.
 -- 
 2.13.3
 
