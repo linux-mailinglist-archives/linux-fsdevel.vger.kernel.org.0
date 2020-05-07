@@ -2,102 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F5F1C8467
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 10:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E34B1C84D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 10:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbgEGIK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 04:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725848AbgEGIK2 (ORCPT
+        id S1725953AbgEGIaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 04:30:16 -0400
+Received: from smtp-42ae.mail.infomaniak.ch ([84.16.66.174]:49133 "EHLO
+        smtp-42ae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725819AbgEGIaP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 04:10:28 -0400
-Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA9CC061A10
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 01:10:27 -0700 (PDT)
-Received: by mail-yb1-xb43.google.com with SMTP id a8so2484637ybs.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 01:10:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H8Cu6HxLa77jfVaZq3CgdIap4XuJaTdN0YbC0ZBDI6M=;
-        b=HHTWe/aw3WAO0yhwglTuWvnXtft80GNiSghWxIrZ8pm3zAl6YWCPBliDTGEgkmScPn
-         GRXl7egcPPz7vscL5sn1MgH+ZlgS20+7153v5mN3c8Sv5/SOt/jdmqkdfKiaabkOmQmY
-         JkkTTl0/M/DXPC/fmTCboG4vGxTAISZ/GlWe0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H8Cu6HxLa77jfVaZq3CgdIap4XuJaTdN0YbC0ZBDI6M=;
-        b=Mjy4DmpyXi9iIag0KDQHIEOJRP64Hy87gLAbLL2D4zT65CrrX6O+7yzE5jfGOPPH2w
-         yUiZ5m2rVUMjvf3PNaXjGPIpbRpw/mTPTcZxNqrNvOKFa5YnI+2KIasEEMu3ibwOb+Rp
-         LqDatyONTyk75JUctGooWFpau7qHvPT07shE7faV/IOTKrLEzGu8PW/L/WZGwwf/8Hbg
-         V+dIxg59SeI9zePILKLCmTsz8y/j0zwujtHDg5az3X3tsoS9/uywzBBzmzk7z3j46LLA
-         A8wYHsF0TtnBDjBKMEibkWd57+CGHTX9Bu19bHTgLWIIaX9garMwB6exx8l9tc0U3y2P
-         266A==
-X-Gm-Message-State: AGi0PuZFloRrASaJ34SdD6BP26cSz4/MpkPSwM/Mx2td44Srz4BioW/p
-        s6qwY017d4DKaolYV5ZZOD8UUzGYfBsoGWlS0s5wow==
-X-Google-Smtp-Source: APiQypJCQTdVxRjuBFFsXs0gT1xdcUYEcYrD4ZAzch0VY2vs2mJSoKpfKRsJM7D1YGqA0M/kjdDVOVS3+4q+aOuqDx0=
-X-Received: by 2002:a25:448a:: with SMTP id r132mr22208820yba.277.1588839026841;
- Thu, 07 May 2020 01:10:26 -0700 (PDT)
+        Thu, 7 May 2020 04:30:15 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49HmqS2fKzzlj47t;
+        Thu,  7 May 2020 10:30:12 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49HmqJ429fzlpk1S;
+        Thu,  7 May 2020 10:30:04 +0200 (CEST)
+Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
+To:     "Lev R. Oshvang ." <levonshe@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20200505153156.925111-1-mic@digikod.net>
+ <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
+ <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <db3c1f05-11d4-077e-4574-03ecb585bc21@digikod.net>
+Date:   Thu, 7 May 2020 10:30:04 +0200
+User-Agent: 
 MIME-Version: 1.0
-References: <20200424062540.23679-1-chirantan@chromium.org>
- <20200424062540.23679-2-chirantan@chromium.org> <20200427151934.GB1042399@stefanha-x1.localdomain>
- <CAJFHJrr2DAgQC9ZWx78OudX1x6A57_vpLf4rJu80ceR6bnpbaQ@mail.gmail.com> <20200501154752.GA222606@stefanha-x1.localdomain>
-In-Reply-To: <20200501154752.GA222606@stefanha-x1.localdomain>
-From:   Chirantan Ekbote <chirantan@chromium.org>
-Date:   Thu, 7 May 2020 17:10:15 +0900
-Message-ID: <CAJFHJrpdbVKWyGuJJCBATVaYZsPLeg6JzpZmGFDsUcF_a4gcMA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: virtiofs: Add basic multiqueue support
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>, slp@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 2, 2020 at 12:48 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> On Fri, May 01, 2020 at 04:14:38PM +0900, Chirantan Ekbote wrote:
-> > On Tue, Apr 28, 2020 at 12:20 AM Stefan Hajnoczi <stefanha@redhat.com> wrote:
-> > > Instead of modifying the guest driver, please implement request
-> > > parallelism in your device implementation.
-> >
-> > Yes, we have tried this already [1][2].  As I mentioned above, having
-> > additional threads in the server actually made performance worse.  My
-> > theory is that when the device only has 2 cpus, having additional
-> > threads on the host that need cpu time ends up taking time away from
-> > the guest vcpu.  We're now looking at switching to io_uring so that we
-> > can submit multiple requests from a single thread.
->
-> The host has 2 CPUs?  How many vCPUs does the guest have?  What is the
-> physical storage device?  What is the host file system?
 
-The host has 2 cpus.  The guest has 1 vcpu.  The physical storage
-device is an internal ssd.  The file system is ext4 with directory
-encryption.
+On 06/05/2020 15:58, Lev R. Oshvang . wrote:
+> On Tue, May 5, 2020 at 6:36 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>>
+>> On 05/05/2020 17:31, Mickaël Salaün wrote:
+>>> Hi,
+>>>
+>>> This fifth patch series add new kernel configurations (OMAYEXEC_STATIC,
+>>> OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
+>>> configure the security policy at kernel build time.  As requested by
+>>> Mimi Zohar, I completed the series with one of her patches for IMA.
+>>>
+>>> The goal of this patch series is to enable to control script execution
+>>> with interpreters help.  A new O_MAYEXEC flag, usable through
+>>> openat2(2), is added to enable userspace script interpreter to delegate
+>>> to the kernel (and thus the system security policy) the permission to
+>>> interpret/execute scripts or other files containing what can be seen as
+>>> commands.
+>>>
+>>> A simple system-wide security policy can be enforced by the system
+>>> administrator through a sysctl configuration consistent with the mount
+>>> points or the file access rights.  The documentation patch explains the
+>>> prerequisites.
+>>>
+>>> Furthermore, the security policy can also be delegated to an LSM, either
+>>> a MAC system or an integrity system.  For instance, the new kernel
+>>> MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
+>>> integrity gap by bringing the ability to check the use of scripts [1].
+>>> Other uses are expected, such as for openat2(2) [2], SGX integration
+>>> [3], bpffs [4] or IPE [5].
+>>>
+>>> Userspace needs to adapt to take advantage of this new feature.  For
+>>> example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
+>>> extended with policy enforcement points related to code interpretation,
+>>> which can be used to align with the PowerShell audit features.
+>>> Additional Python security improvements (e.g. a limited interpreter
+>>> withou -c, stdin piping of code) are on their way.
+>>>
+>>> The initial idea come from CLIP OS 4 and the original implementation has
+>>> been used for more than 12 years:
+>>> https://github.com/clipos-archive/clipos4_doc
+>>>
+>>> An introduction to O_MAYEXEC was given at the Linux Security Summit
+>>> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+>>> https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+>>> The "write xor execute" principle was explained at Kernel Recipes 2018 -
+>>> CLIP OS: a defense-in-depth OS:
+>>> https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+>>>
+>>> This patch series can be applied on top of v5.7-rc4.  This can be tested
+>>> with CONFIG_SYSCTL.  I would really appreciate constructive comments on
+>>> this patch series.
+>>>
+>>> Previous version:
+>>> https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
+>>
+>> The previous version (v4) is
+>> https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
+> 
+> 
+> Hi Michael
+> 
+> I have couple of question
+> 1. Why you did not add O_MAYEXEC to open()?
+> Some time ago (around v4.14) open() did not return EINVAL when
+> VALID_OPEN_FLAGS check failed.
+> Now it does, so I do not see a problem that interpreter will use
+> simple open(),  ( Although that path might be manipulated, but file
+> contents will be verified by IMA)
 
+Aleksa replied to this.
 
->
-> io_uring's vocabulary is expanding.  It can now do openat2(2), close(2),
-> statx(2), but not mkdir(2), unlink(2), rename(2), etc.
->
-> I guess there are two options:
-> 1. Fall back to threads for FUSE operations that cannot yet be done via
->    io_uring.
-> 2. Process FUSE operations that cannot be done via io_uring
->    synchronously.
->
+> 2. When you apply a new flag to mount, it means that IMA will check
+> all files under this mount and it does not matter whether the file in
+> question is a script or not.
+> IMHO it is too hard overhead for performance reasons.
 
-I'm hoping that using io_uring for just the reads and writes should
-give us a big enough improvement that we can do the rest of the
-operations synchronously.
+This patch series doesn't change the way IMA handles mount points.
 
-Chirantan
+> 
+> Regards,
+> LEv
+> 
