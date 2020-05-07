@@ -2,156 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9851C9C9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 22:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EEA01C9CC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 22:53:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgEGUp0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 16:45:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37794 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726093AbgEGUpZ (ORCPT
+        id S1726942AbgEGUxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 16:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726913AbgEGUxd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 16:45:25 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 047KXHcV055062;
-        Thu, 7 May 2020 16:45:19 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30s2g5q56q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 16:45:19 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 047KXRih055831;
-        Thu, 7 May 2020 16:45:19 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30s2g5q566-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 16:45:18 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 047KeALF017294;
-        Thu, 7 May 2020 20:45:17 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03ams.nl.ibm.com with ESMTP id 30s0g5v2q4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 20:45:17 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 047KjEfJ5832932
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 May 2020 20:45:15 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7D8C11C04A;
-        Thu,  7 May 2020 20:45:14 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD8E711C052;
-        Thu,  7 May 2020 20:45:13 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.135.201])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 May 2020 20:45:13 +0000 (GMT)
-Message-ID: <1588884313.5685.110.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Thu, 07 May 2020 16:45:13 -0400
-In-Reply-To: <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-07_13:2020-05-07,2020-05-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005070159
+        Thu, 7 May 2020 16:53:33 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36152C05BD09
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 13:53:33 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id s10so2567485plr.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 13:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=apC70P+WGdPKFsrjSIHDzYRXCNXoO9MhbSn/BWD3G1Q=;
+        b=OTWBXUeeTVTEseUVg355oFX82yg8MruupyfYZFSCg6gAGmbwuWRX662bE/yyJZNWxi
+         ohqBq4POZYu7WQSEMXILeUHRLnFEXrMBoSzlOmDxOb6TOpRVhXTFaMrjy5ophX+xJoNc
+         MRzyaACYbyiVYh5rL0wqg4/oa+OT1embbQSHuGGWuboMrVfMXJAs3g4usw+stF2L71MR
+         2pKMjb4E1KIKhxuTYlateeggED0szL6XVHuW8Mz7OXCp3IV+hPMgkrS78j8fLzIfLtW+
+         +PZU7XB9FgyE8aIC5y2eHzAlmcEN8l7DGJh6imxocojoJ22F/MAXqVhyCfEbl1I+EC9y
+         JwyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=apC70P+WGdPKFsrjSIHDzYRXCNXoO9MhbSn/BWD3G1Q=;
+        b=QSUqyK/AQMTJxLIAw8i97SnX3NEuERuOLCab8wHfB043KKAS6xHO1a1PYqLCL0NR8l
+         0YEZUo5HXqwoSNG2Zlfoyw/WgPnkcmuO2AOTxrcaj5t5vTrNYBT1NyFDFDjNSPHX5xfe
+         0NpF9DRyWYYCpHhh++U/pf7/bOH2tLq4ZvSfpTseu+qd8+B7SmP1LsrI2TvvlpvBa1AS
+         Uo5o6rLYiYWjiDPiipXH4e62aAstZdWRQksczwVfqjO7qzUSYHHKCuebBFYvF4MSdGxX
+         GDKqMjcZ5jn/9vIoNw+TK+0VIl2ux6jYGXMNrmmW/KUrCRgeLkVvWg4h/c89Bazzgm34
+         ueAA==
+X-Gm-Message-State: AGi0PuaTONwFZHFMadK+uBT7YUZAEyCD4Akfau79wvecmTPRJdu/k7HK
+        Hx1DF13OAehHuLY3jEGcSAhNqw==
+X-Google-Smtp-Source: APiQypI6Lw41gK0iQ1uMGOotk8bGMyFO+59MIl/grRNa2oRHJkBrJup38vmMv+fodfelMDXFmm2eOQ==
+X-Received: by 2002:a17:902:70c6:: with SMTP id l6mr13647889plt.31.1588884812313;
+        Thu, 07 May 2020 13:53:32 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id b2sm4272683pgg.77.2020.05.07.13.53.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 13:53:31 -0700 (PDT)
+Subject: Re: [PATCH] fs/io_uring: fix O_PATH fds in openat, openat2, statx
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Max Kellermann <mk@cm4all.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20200507185725.15840-1-mk@cm4all.com>
+ <20200507190131.GF23230@ZenIV.linux.org.uk>
+ <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
+ <20200507192903.GG23230@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8e3c88cc-027b-4f90-b4f8-a20d11d35c4b@kernel.dk>
+Date:   Thu, 7 May 2020 14:53:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200507192903.GG23230@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-05-07 at 16:47 +0000, Roberto Sassu wrote:
-> > > > On Wed, 2020-05-06 at 15:44 -0400, Mimi Zohar wrote:
-> > > > > Since copying the EVM HMAC or original signature isn't applicable, I
-> > > > > would prefer exploring an EVM portable and immutable signature only
-> > > > > solution.
-> > > >
-> > > > To prevent copying the EVM xattr, we added "security.evm" to
-> > > > /etc/xattr.conf.  To support copying just the EVM portable and
-> > > > immutable signatures will require a different solution.
-> > >
-> > > This patch set removes the need for ignoring security.evm. It can be
-> > always
-> > > copied, even if it is an HMAC. EVM will update it only when verification in
-> > > the pre hook is successful. Combined with the ability of protecting a
-> > subset
-> > > of files without introducing an EVM policy, these advantages seem to
-> > > outweigh the effort necessary to make the switch.
-> > 
-> > As the EVM file HMAC and original signature contain inode specific
-> > information (eg. i_version, i_generation), these xattrs cannot ever be
-> > copied.  The proposed change is in order to support just the new EVM
-> > signatures.
+On 5/7/20 1:29 PM, Al Viro wrote:
+> On Thu, May 07, 2020 at 01:05:23PM -0600, Jens Axboe wrote:
+>> On 5/7/20 1:01 PM, Al Viro wrote:
+>>> On Thu, May 07, 2020 at 08:57:25PM +0200, Max Kellermann wrote:
+>>>> If an operation's flag `needs_file` is set, the function
+>>>> io_req_set_file() calls io_file_get() to obtain a `struct file*`.
+>>>>
+>>>> This fails for `O_PATH` file descriptors, because those have no
+>>>> `struct file*`
+>>>
+>>> O_PATH descriptors most certainly *do* have that.  What the hell
+>>> are you talking about?
+>>
+>> Yeah, hence I was interested in the test case. Since this is
+>> bypassing that part, was assuming we'd have some logic error
+>> that attempted a file grab for a case where we shouldn't.
 > 
-> Right, I didn't consider it.
+> Just in case - you do realize that you should either resolve the
+> descriptor yourself (and use the resulting struct file *, without
+> letting anyone even look at the descriptor) *or* pass the
+> descriptor as-is and don't even look at the descriptor table?
 > 
-> Would it make sense instead to introduce an alias like security.evm_immutable
-> so that this xattr can be copied?
-
-Being portable, not the attribute of being immutable, allows copying
-the EVM xattr.  Your original problem - the order in which the xattrs
-are copied - might still be an issue.  We need to look at "cp" closer
-to understand what it is doing.  For example, are the xattrs written
-while the target file is tagged as a new file?
-
-There have been similar problems in the past.  For example, tar calls
-mknodat to create the file, but doesn't write the file data.  The
-solution there was to tag the file as a new file.
-
-We need to understand the problem better, before deciding how to
-resolve it.
-
+> Once more, with feeling:
 > 
-> > At least IMA file hashes should always be used in conjunction with
-> > EVM.  EVM xattrs should always require a security.ima xattr to bind
+> Descriptor tables are inherently sharable objects.  You can't resolve
+> a descriptor twice and assume you'll get the same thing both times.
+> You can't insert something into descriptor table and assume that the
+> same slot will be holding the same struct file reference after
+> the descriptor table has been unlocked.
 > 
-> I proposed to enforce this restriction some time ago:
+> Again, resolving the descriptor more than once in course of syscall
+> is almost always a serious bug; there are very few exceptions and
+> none of the mentioned in that patch are anywhere near those.
 > 
-> https://patchwork.kernel.org/patch/10979351/
-> 
-> Is it ok to enforce it globally?
+> IOW, that patch will either immediately break things on O_PATH
+> (if you are really passing struct file *) or it's probably correct,
+> but the reason is entirely different - it's that you are passing
+> descriptor, which gets resolved by whatever you are calling, in
+> which case io_uring has no business resolving it.  And if that's
+> the case, you are limited to real descriptors - your descriptor
+> table lookalikes won't be of any use.
 
-Doing this would then be dependent on upstreaming the initramfs xattr
-patches first, wouldn't it?  :)
+I think the patch is correct as-is, I took a good look at how we're
+currently handling it. None of those three ops should fiddle with
+the fd at all, and all of them do forbid the use of fixed files (the
+descriptor table look-alikes), so that part is fine, too.
 
-> 
-> > the file metadata to the file data.  The IMA and EVM policies really
-> > need to be in sync.
-> 
-> It would be nice, but at the moment EVM considers also files that are
-> not selected by the IMA policy. An example of why this is a problem is
-> the audit service that fails to start when it tries to adjust the permissions
-> of the log files. Those files don't have security.evm because they are
-> not appraised by IMA, but EVM denies the operation.
+There's some low hanging fruit around optimizing and improving it,
+I'm including an updated version below. Max, can you double check
+with your testing?
 
-No, this is a timing issue as to whether or not the builtin policy or
-a custom policy has been loaded.  A custom policy could exclude the
-log files based on LSM labels, but they are included in the builtin
-policy.
 
-Mimi
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index dd680eb153cb..979d9f977409 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -680,8 +680,6 @@ struct io_op_def {
+ 	unsigned		needs_mm : 1;
+ 	/* needs req->file assigned */
+ 	unsigned		needs_file : 1;
+-	/* needs req->file assigned IFF fd is >= 0 */
+-	unsigned		fd_non_neg : 1;
+ 	/* hash wq insertion if file is a regular file */
+ 	unsigned		hash_reg_file : 1;
+ 	/* unbound wq insertion if file is a non-regular file */
+@@ -784,8 +782,6 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 	},
+ 	[IORING_OP_OPENAT] = {
+-		.needs_file		= 1,
+-		.fd_non_neg		= 1,
+ 		.file_table		= 1,
+ 		.needs_fs		= 1,
+ 	},
+@@ -799,8 +795,6 @@ static const struct io_op_def io_op_defs[] = {
+ 	},
+ 	[IORING_OP_STATX] = {
+ 		.needs_mm		= 1,
+-		.needs_file		= 1,
+-		.fd_non_neg		= 1,
+ 		.needs_fs		= 1,
+ 		.file_table		= 1,
+ 	},
+@@ -837,8 +831,6 @@ static const struct io_op_def io_op_defs[] = {
+ 		.buffer_select		= 1,
+ 	},
+ 	[IORING_OP_OPENAT2] = {
+-		.needs_file		= 1,
+-		.fd_non_neg		= 1,
+ 		.file_table		= 1,
+ 		.needs_fs		= 1,
+ 	},
+@@ -5368,15 +5360,6 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
+ 	io_steal_work(req, workptr);
+ }
+ 
+-static int io_req_needs_file(struct io_kiocb *req, int fd)
+-{
+-	if (!io_op_defs[req->opcode].needs_file)
+-		return 0;
+-	if ((fd == -1 || fd == AT_FDCWD) && io_op_defs[req->opcode].fd_non_neg)
+-		return 0;
+-	return 1;
+-}
+-
+ static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+ 					      int index)
+ {
+@@ -5414,14 +5397,11 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+ }
+ 
+ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+-			   int fd, unsigned int flags)
++			   int fd)
+ {
+ 	bool fixed;
+ 
+-	if (!io_req_needs_file(req, fd))
+-		return 0;
+-
+-	fixed = (flags & IOSQE_FIXED_FILE);
++	fixed = (req->flags & REQ_F_FIXED_FILE) != 0;
+ 	if (unlikely(!fixed && req->needs_fixed_file))
+ 		return -EBADF;
+ 
+@@ -5798,7 +5778,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		       struct io_submit_state *state, bool async)
+ {
+ 	unsigned int sqe_flags;
+-	int id, fd;
++	int id;
+ 
+ 	/*
+ 	 * All io need record the previous position, if LINK vs DARIN,
+@@ -5850,8 +5830,10 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 					IOSQE_ASYNC | IOSQE_FIXED_FILE |
+ 					IOSQE_BUFFER_SELECT | IOSQE_IO_LINK);
+ 
+-	fd = READ_ONCE(sqe->fd);
+-	return io_req_set_file(state, req, fd, sqe_flags);
++	if (!io_op_defs[req->opcode].needs_file)
++		return 0;
++
++	return io_req_set_file(state, req, READ_ONCE(sqe->fd));
+ }
+ 
+ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+
+-- 
+Jens Axboe
+
