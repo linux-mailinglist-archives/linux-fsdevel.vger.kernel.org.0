@@ -2,80 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5811C9A90
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 21:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB321C9AA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 21:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbgEGTM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 15:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728267AbgEGTM2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 15:12:28 -0400
-Received: from nibbler.cm4all.net (nibbler.cm4all.net [IPv6:2001:8d8:970:e500:82:165:145:151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D00C05BD43
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 12:12:28 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by nibbler.cm4all.net (Postfix) with ESMTP id 9B70BC022B
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 21:12:27 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at nibbler.cm4all.net
-Received: from nibbler.cm4all.net ([127.0.0.1])
-        by localhost (nibbler.cm4all.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id x84vf2PA3KKX for <linux-fsdevel@vger.kernel.org>;
-        Thu,  7 May 2020 21:12:27 +0200 (CEST)
-Received: from zero.intern.cm-ag (zero.intern.cm-ag [172.30.16.10])
-        by nibbler.cm4all.net (Postfix) with SMTP id 79A4EC01B6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 21:12:27 +0200 (CEST)
-Received: (qmail 3684 invoked from network); 7 May 2020 22:28:44 +0200
-Received: from unknown (HELO rabbit.intern.cm-ag) (172.30.3.1)
-  by zero.intern.cm-ag with SMTP; 7 May 2020 22:28:44 +0200
-Received: by rabbit.intern.cm-ag (Postfix, from userid 1023)
-        id 4E1C8461450; Thu,  7 May 2020 21:12:27 +0200 (CEST)
-Date:   Thu, 7 May 2020 21:12:27 +0200
-From:   Max Kellermann <mk@cm4all.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Max Kellermann <mk@cm4all.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] fs/io_uring: fix O_PATH fds in openat, openat2, statx
-Message-ID: <20200507191227.GA16101@rabbit.intern.cm-ag>
-References: <20200507185725.15840-1-mk@cm4all.com>
- <20200507190131.GF23230@ZenIV.linux.org.uk>
- <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
+        id S1728509AbgEGTPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 15:15:07 -0400
+Received: from ms.lwn.net ([45.79.88.28]:38346 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728362AbgEGTPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 May 2020 15:15:06 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id CFFE6453;
+        Thu,  7 May 2020 19:15:04 +0000 (UTC)
+Date:   Thu, 7 May 2020 13:15:03 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, timmurray@google.com,
+        minchan@google.com, sspatil@google.com, lokeshgidra@google.com
+Subject: Re: [PATCH 2/2] Add a new sysctl knob:
+ unprivileged_userfaultfd_user_mode_only
+Message-ID: <20200507131503.02aba5a6@lwn.net>
+In-Reply-To: <20200506193816.GB228260@xz-x1>
+References: <20200423002632.224776-1-dancol@google.com>
+        <20200423002632.224776-3-dancol@google.com>
+        <20200506193816.GB228260@xz-x1>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/05/07 21:05, Jens Axboe <axboe@kernel.dk> wrote:
-> On 5/7/20 1:01 PM, Al Viro wrote:
-> > On Thu, May 07, 2020 at 08:57:25PM +0200, Max Kellermann wrote:
-> >> If an operation's flag `needs_file` is set, the function
-> >> io_req_set_file() calls io_file_get() to obtain a `struct file*`.
-> >>
-> >> This fails for `O_PATH` file descriptors, because those have no
-> >> `struct file*`
-> > 
-> > O_PATH descriptors most certainly *do* have that.  What the hell
-> > are you talking about?
+On Wed, 6 May 2020 15:38:16 -0400
+Peter Xu <peterx@redhat.com> wrote:
+
+> If this is going to be added... I am thinking whether it should be easier to
+> add another value for unprivileged_userfaultfd, rather than a new sysctl. E.g.:
 > 
-> Yeah, hence I was interested in the test case. Since this is
-> bypassing that part, was assuming we'd have some logic error
-> that attempted a file grab for a case where we shouldn't.
+>   "0": unprivileged userfaultfd forbidden
+>   "1": unprivileged userfaultfd allowed (both user/kernel faults)
+>   "2": unprivileged userfaultfd allowed (only user faults)
+> 
+> Because after all unprivileged_userfaultfd_user_mode_only will be meaningless
+> (iiuc) if unprivileged_userfaultfd=0.  The default value will also be the same
+> as before ("1") then.
 
-Reproduce this by patching liburing/test/lfs-openat.c:
+It occurs to me to wonder whether this interface should also let an admin
+block *privileged* user from handling kernel-space faults?  In a
+secure-boot/lockdown setting, this could be a hardening measure that keeps
+a (somewhat) restricted root user from expanding their privilege...?
 
--       int dfd = open("/tmp", O_RDONLY | O_DIRECTORY);
-+       int dfd = open("/tmp", O_PATH);
-
- $ ./test/lfs-openat
- io_uring openat failed: Bad file descriptor
-
-GH PR: https://github.com/axboe/liburing/pull/130
-
-Max
+jon
