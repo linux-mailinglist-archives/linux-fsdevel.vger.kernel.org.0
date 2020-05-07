@@ -2,87 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 344671C83DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 09:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B2A1C841F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 May 2020 10:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbgEGHxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 03:53:38 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2161 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725900AbgEGHxh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 03:53:37 -0400
-Received: from lhreml737-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 7AAF388BEEFFBA9EA804;
-        Thu,  7 May 2020 08:53:35 +0100 (IST)
-Received: from fraeml705-chm.china.huawei.com (10.206.15.54) by
- lhreml737-chm.china.huawei.com (10.201.108.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Thu, 7 May 2020 08:53:35 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 7 May 2020 09:53:34 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Thu, 7 May 2020 09:53:34 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IA==
-Date:   Thu, 7 May 2020 07:53:34 +0000
-Message-ID: <ab879f9e66874736a40e9c566cadc272@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
- <1588799408.4624.28.camel@linux.ibm.com>
-In-Reply-To: <1588799408.4624.28.camel@linux.ibm.com>
-Accept-Language: en-US
+        id S1725900AbgEGIB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 04:01:56 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:57950 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725845AbgEGIB4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 May 2020 04:01:56 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-86-phOmLZBGMRWXoRhUhxSFxQ-1; Thu, 07 May 2020 09:01:52 +0100
+X-MC-Unique: phOmLZBGMRWXoRhUhxSFxQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 7 May 2020 09:01:51 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 7 May 2020 09:01:51 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] fsnotify: avoid gcc-10 zero-length-bounds warning
+Thread-Topic: [PATCH] fsnotify: avoid gcc-10 zero-length-bounds warning
+Thread-Index: AQHWIu3yH4vXlI/Pe06688jiYmguf6icRU4w
+Date:   Thu, 7 May 2020 08:01:51 +0000
+Message-ID: <af2c5bdf0c4e4e00bef96b5c6b4e1da7@AcuMS.aculab.com>
+References: <20200505143028.1290686-1-arnd@arndb.de>
+ <b287bb2f-28e2-7a41-e015-aa5a0cb3b5d7@embeddedor.com>
+ <CAK8P3a0v-hK+Ury86-1D2_jfOFgR8ZTEFKVQZBWJq3dW=MuSzw@mail.gmail.com>
+In-Reply-To: <CAK8P3a0v-hK+Ury86-1D2_jfOFgR8ZTEFKVQZBWJq3dW=MuSzw@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.65.97]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86
-em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBNYXkgNiwgMjAyMCAxMTox
-MCBQTQ0KPiBUbzogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPjsgZGF2
-aWQuc2FmZm9yZEBnbWFpbC5jb207DQo+IHZpcm9AemVuaXYubGludXgub3JnLnVrOyBqbW9ycmlz
-QG5hbWVpLm9yZzsgSm9obiBKb2hhbnNlbg0KPiA8am9obi5qb2hhbnNlbkBjYW5vbmljYWwuY29t
-Pg0KPiBDYzogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWludGVncml0eUB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBzZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBTaWx2aXUNCj4gVmxhc2NlYW51IDxTaWx2
-aXUuVmxhc2NlYW51QGh1YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUkZDXVtQQVRDSCAxLzNd
-IGV2bTogTW92ZSBob29rcyBvdXRzaWRlIExTTSBpbmZyYXN0cnVjdHVyZQ0KPiANCj4gT24gV2Vk
-LCAyMDIwLTA1LTA2IGF0IDE1OjQ0IC0wNDAwLCBNaW1pIFpvaGFyIHdyb3RlOg0KPiA+IFNpbmNl
-IGNvcHlpbmcgdGhlIEVWTSBITUFDIG9yIG9yaWdpbmFsIHNpZ25hdHVyZSBpc24ndCBhcHBsaWNh
-YmxlLCBJDQo+ID4gd291bGQgcHJlZmVyIGV4cGxvcmluZyBhbiBFVk0gcG9ydGFibGUgYW5kIGlt
-bXV0YWJsZSBzaWduYXR1cmUgb25seQ0KPiA+IHNvbHV0aW9uLg0KPiANCj4gVG8gcHJldmVudCBj
-b3B5aW5nIHRoZSBFVk0geGF0dHIsIHdlIGFkZGVkICJzZWN1cml0eS5ldm0iIHRvDQo+IC9ldGMv
-eGF0dHIuY29uZi4gwqBUbyBzdXBwb3J0IGNvcHlpbmcganVzdCB0aGUgRVZNIHBvcnRhYmxlIGFu
-ZA0KPiBpbW11dGFibGUgc2lnbmF0dXJlcyB3aWxsIHJlcXVpcmUgYSBkaWZmZXJlbnQgc29sdXRp
-b24uDQoNClRoaXMgcGF0Y2ggc2V0IHJlbW92ZXMgdGhlIG5lZWQgZm9yIGlnbm9yaW5nIHNlY3Vy
-aXR5LmV2bS4gSXQgY2FuIGJlIGFsd2F5cw0KY29waWVkLCBldmVuIGlmIGl0IGlzIGFuIEhNQUMu
-IEVWTSB3aWxsIHVwZGF0ZSBpdCBvbmx5IHdoZW4gdmVyaWZpY2F0aW9uIGluDQp0aGUgcHJlIGhv
-b2sgaXMgc3VjY2Vzc2Z1bC4gQ29tYmluZWQgd2l0aCB0aGUgYWJpbGl0eSBvZiBwcm90ZWN0aW5n
-IGEgc3Vic2V0DQpvZiBmaWxlcyB3aXRob3V0IGludHJvZHVjaW5nIGFuIEVWTSBwb2xpY3ksIHRo
-ZXNlIGFkdmFudGFnZXMgc2VlbSB0bw0Kb3V0d2VpZ2ggdGhlIGVmZm9ydCBuZWNlc3NhcnkgdG8g
-bWFrZSB0aGUgc3dpdGNoLg0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3Nl
-bGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlh
-biwgU2hpIFlhbmxpDQo=
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAwNSBNYXkgMjAyMCAxNjowMA0KLi4uDQo+IFll
+cywgd2UgdXN1YWxseSBiYWNrcG9ydCB0cml2aWFsIHdhcm5pbmcgZml4ZXMgdG8gc3RhYmxlIGtl
+cm5lbHMgdG8gYWxsb3cNCj4gYnVpbGRpbmcgdGhvc2Ugd2l0aCBhbnkgbW9kZXJuIGNvbXBpbGVy
+IHZlcnNpb24uDQoNCkluIHRoaXMgY2FzZSB3b3VsZG4ndCBpdCBiZSBiZXR0ZXIgdG8gYmFja3Bv
+cnQgYSBjaGFuZ2UgdGhhdCBkaXNhYmxlcw0KdGhlIHNwZWNpZmljIGNvbXBpbGVyIHdhcm5pbmc/
+DQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9h
+ZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBO
+bzogMTM5NzM4NiAoV2FsZXMpDQo=
+
