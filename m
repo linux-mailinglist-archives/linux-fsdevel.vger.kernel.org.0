@@ -2,61 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A41F1C9FD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 02:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 512E21CA0A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 04:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgEHArt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 May 2020 20:47:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726470AbgEHArs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 May 2020 20:47:48 -0400
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 392C4208DB;
-        Fri,  8 May 2020 00:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588898868;
-        bh=o+XMYnph7WnUvtJzgSjnkfel0bcIVqkZCQcAyXf7X8w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MRyKEnLCgDOEJAbR2QHtq5uH5cC3ds7OS0vSSpGdIWKUrlY5Up1fCDhounYXrbKZM
-         tSbeRvZdsK8RK8bdNji3Tcot8wOcPydqqeK+1Q7BQ9K35Ms/Q6wK9XilKGISQYwXuI
-         6nrfNCi2g5rpI2hbjM63pxfYtU39Po7ggeLiUH5Y=
-Received: by mail-lj1-f180.google.com with SMTP id u15so8386393ljd.3;
-        Thu, 07 May 2020 17:47:48 -0700 (PDT)
-X-Gm-Message-State: AGi0PuZXPFNKqvbf4TQQAVzxBuKMTWvVbxxGL9O8I5rPeoFERwBA/IK9
-        X5m6mxmNs1ZCTxPqxPjUNgebaq6SMuTehMwcj/w=
-X-Google-Smtp-Source: APiQypKWc38MeNE3gf0ZtBnSHyBQT4+vbhnwvgfpeWBVwKm33L2xKJsqjFGnv2W4jRlbv5ZUQNg7CbdahZ2nkror/Fw=
-X-Received: by 2002:a2e:a552:: with SMTP id e18mr10194682ljn.113.1588898866412;
- Thu, 07 May 2020 17:47:46 -0700 (PDT)
+        id S1727779AbgEHCR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 May 2020 22:17:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46730 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbgEHCR5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 May 2020 22:17:57 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162CBC05BD0A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 May 2020 19:17:57 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id p12so101849qtn.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 May 2020 19:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gpiccoli-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q181yzRPrb4b19Hrbwu/9thGmuUl9/8sqVdS721JtdI=;
+        b=bf4W7j1XqRzdw6xkGA8tp0VlOVCxMWbB+5gcI5x0cv6vhpfQlQbsx1lWrFsQFbOAET
+         OiCBzQCpFH38gyWtn9ZHRhJPrcacz9KPTXhelGMveATMxSQHTAC6+frJ1nQFJwsQE+9R
+         qzkfmp9k92ODps/zzm2KJEf+JTuPlokJ/NxFobH60O+RWfNcMFGBvjUnRzoNRViTa7Dv
+         WuDLScVZzW6k3Fn2UBEMKGqc1H0vSMcx0/1rn+5ilFO8E1Cq4eYFGwlzigbuWXygvnNi
+         R/Qs8RtfpEHLxY2L8N3uZ0nOhRNVab9CYgZBapTZ90S+sDyqqej5Saz4pYzCwGjd57gx
+         1zXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q181yzRPrb4b19Hrbwu/9thGmuUl9/8sqVdS721JtdI=;
+        b=JuqA5fiGLWthRFe5ek1qQmxVAiyNz3A1g9UWQyJwcY75TV8Y+yW0EMYA3UF3OQOHRu
+         6hYMnqv2f21jWtq6dOCPGlTaKCJUyOGT7ALLuy5ayOig6hOBsF2DdXpax5ObO+3XR+aX
+         Sy7I1ytsAmY5bFyd+zmWO4+ySa8PSx+NAMAORAH9FbuuS4Li4mqEAAARjDJMJoxJWScT
+         aind2PURbNdnrz7nq31LyvCZw8T6E9hrSoTq9iJhqSeKQJPtZZlgBMXmjF9kU1jp4Ohk
+         CwaTJNcUQ9Kg/z2gTqAz66WP/lNW4JTd3ZwDe4czrGhyaK2F0W7utoj1nHDbAEfVZ+w2
+         0cPw==
+X-Gm-Message-State: AGi0PuZadsGLXcmzId9LC4vidNg8Cu9+BKAlHaI4wbpuorBTWdmla8tx
+        +oWpRGGw9NoOBtx2qpFvHW0p+bOojoX5OHF/r8KcBw==
+X-Google-Smtp-Source: APiQypJA/nTNKSOcz66mO4EnbxIFuBZdFfzznNIpAqzztxpk2iMe7jNp61vYGF5COXtBAeI8Y1COIQPYkQTSay/NioY=
+X-Received: by 2002:aed:2ea2:: with SMTP id k31mr547064qtd.136.1588904276303;
+ Thu, 07 May 2020 19:17:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200507214400.15785-1-guoqing.jiang@cloud.ionos.com> <20200507214400.15785-3-guoqing.jiang@cloud.ionos.com>
-In-Reply-To: <20200507214400.15785-3-guoqing.jiang@cloud.ionos.com>
-From:   Song Liu <song@kernel.org>
-Date:   Thu, 7 May 2020 17:47:35 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5Z9MfS_yFbPaC7Mc8+rMkL3e_m5N_P=6bq28TLXYQpuw@mail.gmail.com>
-Message-ID: <CAPhsuW5Z9MfS_yFbPaC7Mc8+rMkL3e_m5N_P=6bq28TLXYQpuw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 02/10] md: remove __clear_page_buffers and use attach/detach_page_private
-To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Cc:     Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, david@fromorbit.com,
-        hch@infradead.org, Matthew Wilcox <willy@infradead.org>,
-        linux-raid <linux-raid@vger.kernel.org>
+References: <20200507214624.21911-1-gpiccoli@canonical.com> <20200507160618.43c2825e49dec1df8db30429@linux-foundation.org>
+In-Reply-To: <20200507160618.43c2825e49dec1df8db30429@linux-foundation.org>
+From:   "Guilherme G. Piccoli" <kernel@gpiccoli.net>
+Date:   Thu, 7 May 2020 23:17:19 -0300
+Message-ID: <CALJn8nMwQfHdXAQHHqnWA7GxeAN43wG2W42uF6uaHQ--Z40xOw@mail.gmail.com>
+Subject: Re: [PATCH] kernel/watchdog.c: convert {soft/hard}lockup boot
+ parameters to sysctl aliases
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        linux-kernel@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        keescook@chromium.org, yzaikin@google.com, mcgrof@kernel.org,
+        vbabka@suse.cz
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 7, 2020 at 2:44 PM Guoqing Jiang
-<guoqing.jiang@cloud.ionos.com> wrote:
->
-> After introduce attach/detach_page_private in pagemap.h, we can remove
-> the duplicat code and call the new functions.
->
-> Cc: Song Liu <song@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+On Thu, May 7, 2020 at 8:06 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> We have a lot of sysctls.  What is the motivation for converting these
+> particular ones?
 
-Acked-by: Song Liu <song@kernel.org>
+No stronger motivation than a regular clean-up - I just liked the
+infrastructure provided by Vlastmil and thought in using it. I know we
+have plenty of sysctls, but not all of them have identical/duplicate
+boot params, so I went with the obvious ones, that I use more.
+Cheers,
+
+Guilherme
