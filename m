@@ -2,141 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 458EB1CB5F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 19:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1180B1CB614
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 19:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgEHR22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 13:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        id S1727816AbgEHRcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 13:32:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbgEHR22 (ORCPT
+        with ESMTP id S1726746AbgEHRcx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 13:28:28 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8CBC061A0C;
-        Fri,  8 May 2020 10:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=g4OHAWvJdqq6ZyHT3haATGWFoBehw1iX6Se1BPujZ5g=; b=X3fKeXz0aEWgnYZ/Wm4BaBo1tL
-        moKbBLt4taCmsmtYyM2Yx6r+CjDsEWHxqyqVpRKoS5tKH/n/krHkdYmb2H1pnfFS6y4W64zDg/bBK
-        rrndiu9vYtN7Vm4wsGustbbx77srZUdf41YupjbgdP3P4GNE8woSDcJzU2TE1KyHnPy8I4sVyHrk9
-        aZp2bg4CmY/ibFRkPoTOELO0MD1sp3SR7vq2xUXk7d7l1PfcpyVv6Zt+jy4G4Y7ndD7mwCMp6ohUh
-        qdC2jo5Mzvnb84/90rUiS0cD4JnrjJPhKyup2/69WOMWtTRlSlMI40IkOBi7YDEemoeBhDcCLJwEY
-        LXL5bvFw==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jX6nN-0002cH-NI; Fri, 08 May 2020 17:28:21 +0000
-Subject: Re: mmotm 2020-05-05-15-28 uploaded (objtool warning)
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-References: <20200505222922.jajHT3b4j%akpm@linux-foundation.org>
- <36dc367a-f647-4ee8-a327-d1c3457a7940@infradead.org>
- <20200508103830.GZ5298@hirez.programming.kicks-ass.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <73dd7a8c-87a4-695d-6f3b-ddde337c0747@infradead.org>
-Date:   Fri, 8 May 2020 10:28:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 8 May 2020 13:32:53 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62700C061A0C;
+        Fri,  8 May 2020 10:32:53 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id h26so1926535qtu.8;
+        Fri, 08 May 2020 10:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
+        b=CevGhA3drB9rx9GAhf7Jd40EnNtr3XglCd18jTPTpJsgn56s0Q9ZugmY0aQqMnSGTH
+         7aagHQfF3X78TVXApqMaxjd66mhtOXvmL/4HYUWJW/adXA8e8n5GfPBPmQNAL19OfDE5
+         LKmSVl8km7PxkynymVQEPV4lk577a7G6pryLd8OTLGPtsbCEaAV29/jnVDoGOchK+oXF
+         ADZkHhl+hkYYLZCeFVTd3IXBBgi7Vcs9qr0dwPmfQ9/ULwOPvDSa/PgxDmkfuyvSzJ6H
+         sC+yukRWl+pPdTIl3k+mflFAJ1SndgezVfhRdzQGFW2qCsOZjs94dn27Zb6+yY1dofoM
+         xFPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
+        b=RN422PLdjE8go6AuR72FJuTgiBzmtnpYBWzaGZYP3BNaZGF4ofuRufgeE4QXVRyFXS
+         wT6Uqp4sZb8OzRfgzSlVEHpCPSzJHK4+SX0n2pLrZTG7qjNKk0W3Rvri0CJYSilJXc/H
+         4kL8nlGnSVgj6O0wEhLFBWL3sMvvQtsNBfHfbyLPqFUpfCXSsojm9Bi/u2vKBWbxJyUZ
+         5Rbzwv+mK39nx495fsByG58gzAwTOXGSK9UwSEBZJuJ1VYo5iWkDVYK3k/kBBMfEoXM6
+         eR17In0P35gkRK9xxc8aYddKHScusjFhJYNdGmUDIIBnISNwRrS1TqFdXqG+HzTdAwDP
+         E0kA==
+X-Gm-Message-State: AGi0PuZ/W84N46cblyjD6WQwXcQ/wTq7XnqgYu3XaKJNd1Qcr0JiEJ15
+        xLZnwcQyn9sZVQX4X0JqcqDx0CoSRnww8Z3Mk1kJPgN0
+X-Google-Smtp-Source: APiQypI1ltj7u5Bq7am8qePoEo4cQ/trbraNCdyogcK0LAAg4BY0jq2I7/GsLnM1GzSePjDroYbXz+4CAgFA1/GrFDU=
+X-Received: by 2002:ac8:51d3:: with SMTP id d19mr4033765qtn.141.1588959172426;
+ Fri, 08 May 2020 10:32:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200508103830.GZ5298@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200508153634.249933-1-hch@lst.de> <20200508153634.249933-5-hch@lst.de>
+In-Reply-To: <20200508153634.249933-5-hch@lst.de>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 8 May 2020 10:32:41 -0700
+Message-ID: <CAEf4BzZ-gE87RVLPHGBfoNhHB+H7AnPbb7UUE7EGq8T5p_en_w@mail.gmail.com>
+Subject: Re: [PATCH 04/12] bpf: use __anon_inode_getfd
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/8/20 3:38 AM, Peter Zijlstra wrote:
-> On Tue, May 05, 2020 at 10:40:43PM -0700, Randy Dunlap wrote:
->> On 5/5/20 3:29 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2020-05-05-15-28 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>
->>
->> on x86_64:
->>
->> arch/x86/hyperv/hv_apic.o: warning: objtool: hv_apic_write()+0x25: alternative modifies stack
-> 
-> Wheee... this seems to have cured it for me.
-> 
+On Fri, May 8, 2020 at 8:39 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Use __anon_inode_getfd instead of opencoding the logic using
+> get_unused_fd_flags + anon_inode_getfile.  Also switch the
+> bpf_link_new_file calling conventions to match __anon_inode_getfd.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
-> Subject: objtool: Allow no-op CFI ops in alternatives
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Fri May 8 12:34:33 CEST 2020
-> 
-> Randy reported a false-positive: "alternative modifies stack".
-> 
-> What happens is that:
-> 
-> 	alternative_io("movl %0, %P1", "xchgl %0, %P1", X86_BUG_11AP,
->  13d:   89 9d 00 d0 7f ff       mov    %ebx,-0x803000(%rbp)
-> 
-> decodes to an instruction with CFI-ops because it modifies RBP.
-> However, due to this being a !frame-pointer build, that should not in
-> fact change the CFI state.
-> 
-> So instead of dis-allowing any CFI-op, verify the op would've actually
-> changed the CFI state.
-> 
-> Fixes: 7117f16bf460 ("objtool: Fix ORC vs alternatives")
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>  include/linux/bpf.h  |  2 +-
+>  kernel/bpf/cgroup.c  |  6 +++---
+>  kernel/bpf/syscall.c | 31 +++++++++----------------------
+>  3 files changed, 13 insertions(+), 26 deletions(-)
+>
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+[...]
 
-Thanks.
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 64783da342020..cb2364e17423c 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2307,23 +2307,10 @@ int bpf_link_new_fd(struct bpf_link *link)
+>   * complicated and expensive operations and should be delayed until all the fd
+>   * reservation and anon_inode creation succeeds.
+>   */
 
-> ---
->  tools/objtool/check.c |   11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -2078,17 +2078,18 @@ static int handle_insn_ops(struct instru
->  	struct stack_op *op;
->  
->  	list_for_each_entry(op, &insn->stack_ops, list) {
-> +		struct cfi_state old_cfi = state->cfi;
->  		int res;
->  
-> -		if (insn->alt_group) {
-> -			WARN_FUNC("alternative modifies stack", insn->sec, insn->offset);
-> -			return -1;
-> -		}
+The comment above explains the reason why we do want to split getting
+fd, getting file, and installing fd later. I'd like to keep it this
+way. Also, this code was refactored in bpf-next by [0] (it still uses
+get_unused_fd_flag + anon_inode_getfile + fd_install, by design).
+
+  [0] https://patchwork.ozlabs.org/project/netdev/patch/20200429001614.1544-3-andriin@fb.com/
+
+> -struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd)
+> +int bpf_link_new_file(struct bpf_link *link, struct file **file)
+>  {
+> -       struct file *file;
+> -       int fd;
 > -
->  		res = update_cfi_state(insn, &state->cfi, op);
->  		if (res)
->  			return res;
->  
-> +		if (insn->alt_group && memcmp(&state->cfi, &old_cfi, sizeof(struct cfi_state))) {
-> +			WARN_FUNC("alternative modifies stack", insn->sec, insn->offset);
-> +			return -1;
-> +		}
-> +
->  		if (op->dest.type == OP_DEST_PUSHF) {
->  			if (!state->uaccess_stack) {
->  				state->uaccess_stack = 1;
-> 
+> -       fd = get_unused_fd_flags(O_CLOEXEC);
+> -       if (fd < 0)
+> -               return ERR_PTR(fd);
+> -
+> -       file = anon_inode_getfile("bpf_link", &bpf_link_fops, link, O_CLOEXEC);
+> -       if (IS_ERR(file)) {
+> -               put_unused_fd(fd);
+> -               return file;
+> -       }
+> -
+> -       *reserved_fd = fd;
+> -       return file;
+> +       return __anon_inode_getfd("bpf_link", &bpf_link_fops, link, O_CLOEXEC,
+> +                       file);
+>  }
+>
 
-
--- 
-~Randy
+[...]
