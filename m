@@ -2,210 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E77FD1CB53A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 18:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1383D1CB558
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 19:05:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbgEHQyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 12:54:15 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52456 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726815AbgEHQyO (ORCPT
+        id S1726767AbgEHRFu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 13:05:50 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:51445 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726750AbgEHRFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 12:54:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588956851;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7cPGMHYLt8uRkzqsxvlnSsppGjQWalvX1CXcsJ2sNtI=;
-        b=Rv4cAFT6vjfVSVeM/d1Q88OrHx9YF1YcBTqGds/SDWa69tqMBiWx3ZADdWxLQN0oNYVSYp
-        cFludcg0YtCEKiK9mWE8YyakRzNoLKFLUqO9qcqelH15eb+fbobH2wmmmmSgRHxQd76Xmr
-        90NmQjfyC+G4S1sEoUzml29M3KIUWiw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-gQgx_S6pMbGkTcWRzCrHLA-1; Fri, 08 May 2020 12:54:09 -0400
-X-MC-Unique: gQgx_S6pMbGkTcWRzCrHLA-1
-Received: by mail-wm1-f71.google.com with SMTP id d134so5568284wmd.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 09:54:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7cPGMHYLt8uRkzqsxvlnSsppGjQWalvX1CXcsJ2sNtI=;
-        b=KII/4xIno1e2QUBshG6n5Q+NfaKQwTfiNs+WLLOq+6sbNRATglhR44IY2D17Ryl6d0
-         4LaFEvAqr66KNmZd5D+IhrkH579QL3DqvK6mLkWPzjspBB0XBTY3nhjXxvZ5Z9C+NQoA
-         fGeOkC+/DwL2ShS7lQ2Xgj2Hyh2W5kjVnAcdiFAJ6iuBQfkUIlq9K6XzembMKB8rxGSC
-         orXBNpZx7MmBFZ8410kI+hQwzKx68NirpGT2zDI9iDIyEvofLGsqLc+255TZFm4eXXHY
-         4Fbu1BtZ/ftji+Tw3SET4J5zHPcGnctCgHHm5h4xWkRNxLV8U4q8UOui7Kzo+7yDR7ia
-         2uZA==
-X-Gm-Message-State: AGi0PuZh1EdW0JTA2OZqqxF/ii3mLpdFoJfdqTofMVxMOveUplRsHCzG
-        hQGABpPktRe//mjFd2ppdJ8SaiHf2+106P2XcuPqjhJZhFuC9zNlpYoDCCpB/rG+Ic5dj6AvgWu
-        Xu8vhO6qH5TS0A5QfnDg4Zqn7rA==
-X-Received: by 2002:a05:600c:40d:: with SMTP id q13mr6806849wmb.69.1588956848275;
-        Fri, 08 May 2020 09:54:08 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJd9FRP9YT1M7aB0uzWK+C9xMb9GqqT6RIht/vZ5FbjXT3flOjsmdBTVZwd+LU0m743YVoEkQ==
-X-Received: by 2002:a05:600c:40d:: with SMTP id q13mr6806805wmb.69.1588956847989;
-        Fri, 08 May 2020 09:54:07 -0700 (PDT)
-Received: from redhat.com (bzq-79-179-68-225.red.bezeqint.net. [79.179.68.225])
-        by smtp.gmail.com with ESMTPSA id r11sm2628353wrv.14.2020.05.08.09.54.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2020 09:54:07 -0700 (PDT)
-Date:   Fri, 8 May 2020 12:54:03 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, timmurray@google.com,
-        minchan@google.com, sspatil@google.com, lokeshgidra@google.com
-Subject: Re: [PATCH 2/2] Add a new sysctl knob:
- unprivileged_userfaultfd_user_mode_only
-Message-ID: <20200508125314-mutt-send-email-mst@kernel.org>
-References: <20200423002632.224776-1-dancol@google.com>
- <20200423002632.224776-3-dancol@google.com>
- <20200508125054-mutt-send-email-mst@kernel.org>
+        Fri, 8 May 2020 13:05:50 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6C5F55C01F3;
+        Fri,  8 May 2020 13:05:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 08 May 2020 13:05:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
+        jDHydD+6BCPSvhs8uR+ChWtBD5nHPXar/DRi9kzp9Rc=; b=JqXbJZecDueHIIzA
+        mDcuJMevKU5F09ZTl3LD7AwzJ5l9J4lOQ5pYWkHZSvoSom08RAz3xRYRmDUeAUMS
+        keAbcXIk32CJi6rO7+HtT22m7FTlhHW6HMHjIdiOQMJAzcGRDjxufytovWJ2cZZU
+        MzFpUShXpSnocQ4aNS62z+oSCCUm6PCtGcuM68IX83SGXOt9tUBCT3BNjEAZv5RI
+        HWiHbBVn7YePRDB+aZuDS7FV56LkgAM/f6s46kIyndg5JIJhzPyBl8rVscFCkSXh
+        mtNKX11QB1NT1cS2Cmhc4aKdYiAh8Q8DH21497AyYQjVB36PiBgmmCo8uec4q9qz
+        rmZIkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=jDHydD+6BCPSvhs8uR+ChWtBD5nHPXar/DRi9kzp9
+        Rc=; b=MYfiYdVKFHdisWsV65Sdw73Oglc63scG0xTQs2ON49SyRZekoW0m5qj3d
+        0FrsYv5yxHX03zfPUS3sosE0GqfF4MGC4N+cE5ga+pfElIG0WAWL7hbBwB2QQu9B
+        xigVJUEOVWST5D9WHh4tJF87ekqoI0sv7boUU+KYpdUj1UWGVL+aeoS0FivWoCAE
+        lI3XrlInznx0SG5pvd0EX7lyv0A3XPHDyCIAWF9yb6xCp9o0TSRM0FVgmAZbRuM8
+        KzeXq0d5tYCJPsGvq75Ca84D/njSZ4poFMaLngfmXC9UVIm3v/UunauONsLXVxEk
+        VlJVJxY6G9N2OL7/IOznE9qI9ImCw==
+X-ME-Sender: <xms:bJG1XoDMDnUsdJoEZ75He1sVKXXQ4mS6QXTKIMtrtCqIvcGoB7UWJw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrkeefgdegvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhkohhl
+    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
+    htvghrnhephfetueeghedutdefteegudfgjefhfedthfehgeegkeejueevieeljedtfeef
+    ffehnecukfhppedukeehrdefrdelgedrudelgeenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
+X-ME-Proxy: <xmx:bJG1XpAlDEO9QzxJKcrbNk9y9Qv4WmbK1ZRbd6bBWAZkZfhhRD8Zcg>
+    <xmx:bJG1XiTUZECJDHYPK03p92MbOywS6gfXR2JVr-blnaIaY4opqc-e4A>
+    <xmx:bJG1Xt6V61aZeR14_8M3WzJPSb1KRoFOuok4vfhcSADyVkX57MSP1g>
+    <xmx:bZG1XjY2J5z9V4k9woB-mnkYhlrpS-JRaxXOOThxLI9TlQ4AkWkrXQ>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4D913328005D;
+        Fri,  8 May 2020 13:05:48 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 1DEE549;
+        Fri,  8 May 2020 17:05:47 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 3AE30E33CD; Fri,  8 May 2020 18:04:34 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>
+Subject: Re: [fuse-devel] [fuse] Getting visibility into reads from page cache
+References: <87k123h4vr.fsf@vostro.rath.org>
+        <CAJfpeguqV=++b-PF6o6Y-pLvPioHrM-4mWE2rUqoFbmB7685FA@mail.gmail.com>
+        <874ksq4fa9.fsf@vostro.rath.org>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, fuse-devel
+        <fuse-devel@lists.sourceforge.net>
+Date:   Fri, 08 May 2020 18:04:34 +0100
+In-Reply-To: <874ksq4fa9.fsf@vostro.rath.org> (Nikolaus Rath's message of
+        "Fri, 08 May 2020 16:28:30 +0100")
+Message-ID: <871rnu4au5.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200508125054-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 08, 2020 at 12:52:34PM -0400, Michael S. Tsirkin wrote:
-> On Wed, Apr 22, 2020 at 05:26:32PM -0700, Daniel Colascione wrote:
-> > This sysctl can be set to either zero or one. When zero (the default)
-> > the system lets all users call userfaultfd with or without
-> > UFFD_USER_MODE_ONLY, modulo other access controls. When
-> > unprivileged_userfaultfd_user_mode_only is set to one, users without
-> > CAP_SYS_PTRACE must pass UFFD_USER_MODE_ONLY to userfaultfd or the API
-> > will fail with EPERM. This facility allows administrators to reduce
-> > the likelihood that an attacker with access to userfaultfd can delay
-> > faulting kernel code to widen timing windows for other exploits.
-> > 
-> > Signed-off-by: Daniel Colascione <dancol@google.com>
-> 
-> The approach taken looks like a hard-coded security policy.
-> For example, it won't be possible to set the sysctl knob
-> in question on any sytem running kvm. So this is
-> no good for any general purpose system.
-> 
-> What's wrong with using a security policy for this instead?
+On May 08 2020, Nikolaus Rath <Nikolaus@rath.org> wrote:
+>>
+>>   sudo bpftrace -e 'kretprobe:fuse_file_read_iter { printf ("fuse
+>> read: %d\n", retval); }'
+>
+>
+> - I believe that (struct kiocb*)arg0)->ki_pos will give me the offset
+>   within the file, but where can I see how much data is being read?
 
-In fact I see the original thread already mentions selinux,
-so it's just a question of making this controllable by
-selinux.
+Looking at the code in fuse_file_read_iter, it seems the length is in
+((struct iov_iter*)arg1)->count, but I do not really understand why.
 
-> 
-> 
-> > ---
-> >  Documentation/admin-guide/sysctl/vm.rst | 13 +++++++++++++
-> >  fs/userfaultfd.c                        | 11 ++++++++++-
-> >  include/linux/userfaultfd_k.h           |  1 +
-> >  kernel/sysctl.c                         |  9 +++++++++
-> >  4 files changed, 33 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> > index 0329a4d3fa9e..4296b508ab74 100644
-> > --- a/Documentation/admin-guide/sysctl/vm.rst
-> > +++ b/Documentation/admin-guide/sysctl/vm.rst
-> > @@ -850,6 +850,19 @@ privileged users (with SYS_CAP_PTRACE capability).
-> >  
-> >  The default value is 1.
-> >  
-> > +unprivileged_userfaultfd_user_mode_only
-> > +========================================
-> > +
-> > +This flag controls whether unprivileged users can use the userfaultfd
-> > +system calls to handle page faults in kernel mode.  If set to zero,
-> > +userfaultfd works with or without UFFD_USER_MODE_ONLY, modulo
-> > +unprivileged_userfaultfd above.  If set to one, users without
-> > +SYS_CAP_PTRACE must pass UFFD_USER_MODE_ONLY in order for userfaultfd
-> > +to succeed.  Prohibiting use of userfaultfd for handling faults from
-> > +kernel mode may make certain vulnerabilities more difficult
-> > +to exploit.
-> > +
-> > +The default value is 0.
-> >  
-> >  user_reserve_kbytes
-> >  ===================
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 21378abe8f7b..85cc1ab74361 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -29,6 +29,7 @@
-> >  #include <linux/hugetlb.h>
-> >  
-> >  int sysctl_unprivileged_userfaultfd __read_mostly = 1;
-> > +int sysctl_unprivileged_userfaultfd_user_mode_only __read_mostly = 0;
-> >  
-> >  static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
-> >  
-> > @@ -2009,8 +2010,16 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
-> >  	static const int uffd_flags = UFFD_USER_MODE_ONLY;
-> >  	struct userfaultfd_ctx *ctx;
-> >  	int fd;
-> > +	bool need_cap_check = false;
-> >  
-> > -	if (!sysctl_unprivileged_userfaultfd && !capable(CAP_SYS_PTRACE))
-> > +	if (!sysctl_unprivileged_userfaultfd)
-> > +		need_cap_check = true;
-> > +
-> > +	if (sysctl_unprivileged_userfaultfd_user_mode_only &&
-> > +	    (flags & UFFD_USER_MODE_ONLY) == 0)
-> > +		need_cap_check = true;
-> > +
-> > +	if (need_cap_check && !capable(CAP_SYS_PTRACE))
-> >  		return -EPERM;
-> >  
-> >  	BUG_ON(!current->mm);
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > index a8e5f3ea9bb2..d81e30074bf5 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -31,6 +31,7 @@
-> >  #define UFFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS)
-> >  
-> >  extern int sysctl_unprivileged_userfaultfd;
-> > +extern int sysctl_unprivileged_userfaultfd_user_mode_only;
-> >  
-> >  extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
-> >  
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index 8a176d8727a3..9cbdf4483961 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -1719,6 +1719,15 @@ static struct ctl_table vm_table[] = {
-> >  		.extra1		= SYSCTL_ZERO,
-> >  		.extra2		= SYSCTL_ONE,
-> >  	},
-> > +	{
-> > +		.procname	= "unprivileged_userfaultfd_user_mode_only",
-> > +		.data		= &sysctl_unprivileged_userfaultfd_user_mode_only,
-> > +		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd_user_mode_only),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= proc_dointvec_minmax,
-> > +		.extra1		= SYSCTL_ZERO,
-> > +		.extra2		= SYSCTL_ONE,
-> > +	},
-> >  #endif
-> >  	{ }
-> >  };
-> > -- 
-> > 2.26.2.303.gf8c07b1a785-goog
-> > 
+The definiton of this parameter is:
 
+struct iov_iter {
+	int type;
+	const struct iovec *iov;
+	unsigned long nr_segs;
+	size_t iov_offset;
+	size_t count;
+};
+
+..so I would think that *count* is the number of `iovec` elements hiding
+behind the `iov` pointer, not some total number of bytes.
+
+Furthermore, there is a function iov_length() that is documented to
+return the "total number of bytes covered by an iovec" and doesn't look
+at `count` at all.
+
+Can someone elucidate why the number of bytes to be read from the file
+is in iov_iter.count?
+
+
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
