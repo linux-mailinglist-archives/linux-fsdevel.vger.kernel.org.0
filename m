@@ -2,130 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF0241CB419
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A52931CB440
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 18:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgEHPzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 11:55:16 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35008 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727890AbgEHPzQ (ORCPT
+        id S1727917AbgEHQBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 12:01:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55463 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727082AbgEHQBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 11:55:16 -0400
+        Fri, 8 May 2020 12:01:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588953315;
+        s=mimecast20190719; t=1588953692;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=o2NuVDMsNek1XqDZ23KXOT0aYU3U9mtuti+eij0cQ3Y=;
-        b=RH/5e3x/Aznsbd5AM1J6BO+2cqjJRQKQ+ghv58yZ4onqXKu52Yll3jfDrYllFqRXnZ0nKO
-        3f2rtaNllTzDrvWbaSRolJ2itxGSdcZE0opMh4qcFX2KXuNbcI3CtqooBvkUkAiwE+/gsb
-        us/8o0UifSojcAi6TAgXtPfpSD3kH2Q=
+        bh=5LkMQAQyCyRsGiygZwM0QwLTkw6iqVkAYQ2dn3WWLSk=;
+        b=V232rhftnKMaCEWFBWmxsnI9oWJtDujPkAlGPHv4ziIHi4reOzaN2ayPpEjVvcdGEjAnWM
+        ME2HkW8LMQ25xzelzY67JCVmnJxLSLvfXUXq9C8YQIdf6/UUQp1Gq+Vaa6kS3l3J6S/VWR
+        NQxqumNyOYOcPDt80MOZJqgJ21cF9yg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-tB1ktjf7Nd6ZDjXX8AJRsw-1; Fri, 08 May 2020 11:55:11 -0400
-X-MC-Unique: tB1ktjf7Nd6ZDjXX8AJRsw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-352-WIhy7G_8NaWGf6v478Z7tg-1; Fri, 08 May 2020 12:01:28 -0400
+X-MC-Unique: WIhy7G_8NaWGf6v478Z7tg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59A41107ACCA;
-        Fri,  8 May 2020 15:55:09 +0000 (UTC)
-Received: from w520.home (ovpn-113-111.phx2.redhat.com [10.3.113.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 615F6341E3;
-        Fri,  8 May 2020 15:55:08 +0000 (UTC)
-Date:   Fri, 8 May 2020 09:55:07 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 08/12] vfio: use __anon_inode_getfd
-Message-ID: <20200508095507.54051943@w520.home>
-In-Reply-To: <20200508153634.249933-9-hch@lst.de>
-References: <20200508153634.249933-1-hch@lst.de>
-        <20200508153634.249933-9-hch@lst.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39E8684B8A4;
+        Fri,  8 May 2020 16:01:26 +0000 (UTC)
+Received: from treble (ovpn-115-96.rdu2.redhat.com [10.10.115.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 544516AD13;
+        Fri,  8 May 2020 16:01:24 +0000 (UTC)
+Date:   Fri, 8 May 2020 11:01:22 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2020-05-05-15-28 uploaded (objtool warning)
+Message-ID: <20200508160122.hsqb25lzhd2xkisv@treble>
+References: <20200505222922.jajHT3b4j%akpm@linux-foundation.org>
+ <36dc367a-f647-4ee8-a327-d1c3457a7940@infradead.org>
+ <20200508103830.GZ5298@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200508103830.GZ5298@hirez.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri,  8 May 2020 17:36:30 +0200
-Christoph Hellwig <hch@lst.de> wrote:
-
-> Use __anon_inode_getfd instead of opencoding the logic using
-> get_unused_fd_flags + anon_inode_getfile.
+On Fri, May 08, 2020 at 12:38:30PM +0200, Peter Zijlstra wrote:
+> Subject: objtool: Allow no-op CFI ops in alternatives
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Fri May 8 12:34:33 CEST 2020
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/vfio/vfio.c | 37 ++++++++-----------------------------
->  1 file changed, 8 insertions(+), 29 deletions(-)
+> Randy reported a false-positive: "alternative modifies stack".
+> 
+> What happens is that:
+> 
+> 	alternative_io("movl %0, %P1", "xchgl %0, %P1", X86_BUG_11AP,
+>  13d:   89 9d 00 d0 7f ff       mov    %ebx,-0x803000(%rbp)
+> 
+> decodes to an instruction with CFI-ops because it modifies RBP.
+> However, due to this being a !frame-pointer build, that should not in
+> fact change the CFI state.
+> 
+> So instead of dis-allowing any CFI-op, verify the op would've actually
+> changed the CFI state.
+> 
+> Fixes: 7117f16bf460 ("objtool: Fix ORC vs alternatives")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
+It helps to put an example of the fixed warning in the commit log, like:
 
-Thanks!
+This fixes the following warning:
 
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
+  arch/x86/hyperv/hv_apic.o: warning: objtool: hv_apic_write()+0x25: alternative modifies stack
 
-> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> index 765e0e5d83ed9..33a88103f857f 100644
-> --- a/drivers/vfio/vfio.c
-> +++ b/drivers/vfio/vfio.c
-> @@ -1451,42 +1451,21 @@ static int vfio_group_get_device_fd(struct vfio_group *group, char *buf)
->  		return ret;
->  	}
->  
-> -	/*
-> -	 * We can't use anon_inode_getfd() because we need to modify
-> -	 * the f_mode flags directly to allow more than just ioctls
-> -	 */
-> -	ret = get_unused_fd_flags(O_CLOEXEC);
-> -	if (ret < 0) {
-> -		device->ops->release(device->device_data);
-> -		vfio_device_put(device);
-> -		return ret;
-> -	}
-> -
-> -	filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
-> -				   device, O_RDWR);
-> -	if (IS_ERR(filep)) {
-> -		put_unused_fd(ret);
-> -		ret = PTR_ERR(filep);
-> -		device->ops->release(device->device_data);
-> -		vfio_device_put(device);
-> -		return ret;
-> -	}
-> -
-> -	/*
-> -	 * TODO: add an anon_inode interface to do this.
-> -	 * Appears to be missing by lack of need rather than
-> -	 * explicitly prevented.  Now there's need.
-> -	 */
-> +	ret = __anon_inode_getfd("[vfio-device]", &vfio_device_fops,
-> +				   device, O_CLOEXEC | O_RDWR, &filep);
-> +	if (ret < 0)
-> +		goto release;
->  	filep->f_mode |= (FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE);
-> -
->  	atomic_inc(&group->container_users);
-> -
->  	fd_install(ret, filep);
->  
->  	if (group->noiommu)
->  		dev_warn(device->dev, "vfio-noiommu device opened by user "
->  			 "(%s:%d)\n", current->comm, task_pid_nr(current));
-> -
-> +	return ret;
-> +release:
-> +	device->ops->release(device->device_data);
-> +	vfio_device_put(device);
->  	return ret;
->  }
->  
+Otherwise it looks good.
+
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+
+-- 
+Josh
 
