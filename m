@@ -2,276 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D981CA765
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 11:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A65E21CA805
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 12:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgEHJoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 05:44:18 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45974 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726091AbgEHJoR (ORCPT
+        id S1726736AbgEHKOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 06:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbgEHKOH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 05:44:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588931055;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LB8B9nMZ801LTv0eYMRXac4vYEFLiAr6bD2XMw8FWro=;
-        b=ZW/adFXz6xIYKIs44c1CnJ+xmgxVRsJkAJorLvAxnT6RCmYtgmSBW9hS16fOx4S1OhmcIP
-        18ww+pLyt5piCHIu4QkYMopFmX80VYuW5uquLvHtmI2T6HhfGMpSAwjF6nds1t66YbgRCt
-        zsCc8FnRH+UdyHpFOp21IVvTiaax5Dk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-oVxVVYxPPQGWkF2nVBhXNA-1; Fri, 08 May 2020 05:44:12 -0400
-X-MC-Unique: oVxVVYxPPQGWkF2nVBhXNA-1
-Received: by mail-wm1-f71.google.com with SMTP id l21so4927374wmh.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 02:44:12 -0700 (PDT)
+        Fri, 8 May 2020 06:14:07 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E98AAC05BD43;
+        Fri,  8 May 2020 03:14:06 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id q10so932228ile.0;
+        Fri, 08 May 2020 03:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jhA1BBa4NsPm3rIlgXZArVumo+yjVGMobhO6ZOoqYRs=;
+        b=j1+g9B8h+aRkZjugMpLxA77lzkdbkqgnmjbB326bQLFMbMMd3h/8DNaT/QoBwKLtfh
+         KXpX36Yy+zI/n0HpXpFGOWA0k7mrQdoDUKEq69HVNbU3UwDWJ0hS31NrGkc9wMdmB/b7
+         pS/6Ujeo1Mm76OIaW9za3ve0FETBb43Cx4wq1Xnh8IXlUt6gVMu80FYn2pl+QT3peryP
+         nnWFGNLcYbPYw+43q0rG/P/d0Ui+zNYXhsHr3zjTrnw8EDDxz6DCNLAd4GYDrlDm9O4n
+         I2Cs/jhDWfBsWy1PFXrs50xEVXbNx1KP6Kg8De55qosONq/NkdeeFwL3EUcwj4V8I+Vp
+         nkQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LB8B9nMZ801LTv0eYMRXac4vYEFLiAr6bD2XMw8FWro=;
-        b=ONY72vxkGKVfzC9soyfv0rV8VPhDzKJRNNT3UbTZRMlYNyLZiS/rm2Vgvh5uuk3XlW
-         5aQ7ZlAoMBBDzw8LtSlyOnKDU87UkxE7g/wELmH1guv0g2UzSwZAdjbp49SO92pVAnWm
-         kZs53eiqpQVD0gLeDjhzmSaQu6Gt9QM2LjeQM0MuDZLiUB77T/Mro87aU/ybPunbk8uz
-         m3aYqvZU3DyBzZ+cq6v0Nq5euB7CFsQ1N/84HDDFogwRG/b2IeIqN4+uDdrQ/ux9+v2N
-         1cPO/ZDlK0C4r0/e8VSfGhKYFDtwCuCF/CR1m++pr9ooAQ09eVIlLzHzbhtPHCNgsAGI
-         rF0w==
-X-Gm-Message-State: AGi0PuaVpKDkkKjMc6CRtSrVZaTFbXLmncXCqvN6J9H/RF6whylLq9VT
-        enYjx2aeX9t1tDXFF/qAdhoiNLBkhIwPD35nzJWB7/dw1NuRBmgs/5lIyFUMh5aSWfx12bPzTma
-        R8nNj17STYdLdJdXXBDEqPLHupg==
-X-Received: by 2002:a5d:6107:: with SMTP id v7mr1883188wrt.270.1588931049117;
-        Fri, 08 May 2020 02:44:09 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJgPEJmExg9Eh0dPygYqOMxDwjDrVa8N6ORETYXOWrahJgijwXVH3Zlb8oI31fLimenfgopfg==
-X-Received: by 2002:a5d:6107:: with SMTP id v7mr1883147wrt.270.1588931048748;
-        Fri, 08 May 2020 02:44:08 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:20ea:bae4:47a7:31db? ([2001:b07:6468:f312:20ea:bae4:47a7:31db])
-        by smtp.gmail.com with ESMTPSA id d27sm2213073wra.30.2020.05.08.02.44.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2020 02:44:08 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux
- kernel statistics
-To:     Jonathan Adams <jwadams@google.com>,
-        Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200504110344.17560-1-eesposit@redhat.com>
- <CA+VK+GN=iDhDV2ZDJbBsxrjZ3Qoyotk_L0DvsbwDVvqrpFZ8fQ@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <29982969-92f6-b6d0-aeae-22edb401e3ac@redhat.com>
-Date:   Fri, 8 May 2020 11:44:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jhA1BBa4NsPm3rIlgXZArVumo+yjVGMobhO6ZOoqYRs=;
+        b=MM1R5bW35pZvWKAwgqi91nFGrU9ghgGwuOmLUQ72zKI4JuoqDwMkIKL4/j0e148fhl
+         feezUmD20709OnHtpKsXVSP/aPNhdq2jd2DWWjwLP/JA1isNxm+wAkhbRqFoyqi5xhqu
+         5GmNMrjxWaOpi0Nvpuaqkr9hCpw4PszVx6IxB43bDjT/Sfe6VWLlYEQWTNMoEZTA9WTe
+         ta9LZDvjwgf8GIe/nrCg6DtW7Ra65TvS8gFVt/eVCy7r63IdhHeZb3O31FN/9GHipfbb
+         1azgoamxQNfyjMmlSPnrQYzNV3TJ0Gb+Sl1dsltEs0w7KJjt1I7sjVIr5kUOhXvazQ4Z
+         gPpQ==
+X-Gm-Message-State: AGi0PubgcSEeR9YqOIPRQi9xA9VeyuSi+hI0JjDEoprc7fyvUFeUyQGp
+        Sd4olGMdTQ8dXjRaNyUmoZEh1fZufE6GvGGVkGdwt2LP
+X-Google-Smtp-Source: APiQypIrWPSTx9U/IY+i09/JOejnZGX4BIxq4JUPLFLlBVnEgrKehCVn3ZZpq8559VWoZAjN5PEwfwz56bqv3fQil3M=
+X-Received: by 2002:a92:d2c1:: with SMTP id w1mr1787919ilg.96.1588932846340;
+ Fri, 08 May 2020 03:14:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+VK+GN=iDhDV2ZDJbBsxrjZ3Qoyotk_L0DvsbwDVvqrpFZ8fQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1585733475-5222-1-git-send-email-chakragithub@gmail.com>
+ <CAJfpegtk=pbLgBzM92tRq8UMUh+vxcDcwLL77iAcv=Mxw3r4Lw@mail.gmail.com>
+ <CAH7=fosGV3AOcU9tG0AK3EJ2yTXZL3KGfsuVUA5gMBjC4Nn-WQ@mail.gmail.com>
+ <CAH7=fosz9KDSBN86+7OxYTLJWUSdUSkeLZR5Y0YyM6=GE0BdOw@mail.gmail.com> <CAJfpegvWBHootLiE_zsw35G6Ee387V=Da_wCzaV9NhZQVDKYGg@mail.gmail.com>
+In-Reply-To: <CAJfpegvWBHootLiE_zsw35G6Ee387V=Da_wCzaV9NhZQVDKYGg@mail.gmail.com>
+From:   Chakra Divi <chakragithub@gmail.com>
+Date:   Fri, 8 May 2020 15:43:54 +0530
+Message-ID: <CAH7=fosn3fnNBkKzHNBSvoQh+Gjpi2J0mZ3rRENitMmFmpHcUw@mail.gmail.com>
+Subject: Re: [PATCH] fuse:rely on fuse_perm for exec when no mode bits set
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Answering for Emanuele because he's not available until Monday]
-
-On 07/05/20 19:45, Jonathan Adams wrote:
-> This is good work.  As David Rientjes mentioned, I'm currently investigating
-> a similar project, based on a google-internal debugfs-based FS we call
-> "metricfs".  It's
-> designed in a slightly different fashion than statsfs here is, and the
-> statistics exported are
-> mostly fed into our OpenTelemetry-like system.  We're motivated by
-> wanting an upstreamed solution, so that we can upstream the metrics we
-> create that are of general interest, and lower the overall rebasing
-> burden for our tree.
-
-Cool.  We included a public reading API exactly so that there could be
-other "frontends".  I was mostly thinking of BPF as an in-tree user, but
-your metricfs could definitely use the reading API.
-
->  - the 8/16/32/64 signed/unsigned integers seems like a wart, and the
-> built-in support to grab any offset from a structure doesn't seem like
-> much of an advantage. A simpler interface would be to just support an> "integer" (possibly signed/unsigned) type, which is always 64-bit, and
-> allow the caller to provide a function pointer to retrieve the value,
-> with one or two void *s cbargs.  Then the framework could provide an
-> offset-based callback (or callbacks) similar to the existing
-> functionality, and a similar one for per-CPU based statistics.  A
-> second "clear" callback could be optionally provided to allow for
-> statistics to be cleared, as in your current proposal.
-
-Ok, so basically splitting get_simple_value into many separate
-callbacks.  The callbacks would be in a struct like
-
-struct stats_fs_type {
-	uint64_t (*get)(struct stats_fs_value *, void *);
-	void (*clear)(struct stats_fs_value *, void *);
-	bool signed;
-}
-
-static uint64_t stats_fs_get_u8(struct stats_fs_value *val, void *base)
-{
-	return *((uint8_t *)(base + (uintptr_t)val->arg);
-}
-
-static void stats_fs_clear_u8(struct stats_fs_value *val, void *base)
-{
-	*((uint8_t *)(base + (uintptr_t)val->arg) = 0;
-}
-
-struct stats_fs_type stats_fs_type_u8 = {
-	stats_fs_get_u8,
-	stats_fs_clear_u8,
-	false
-};
-
-and custom types can be defined using "&(struct stats_fs_type) {...}".
-
->  - Beyond the statistic's type, one *very* useful piece of metadata
-> for telemetry tools is knowing whether a given statistic is
-> "cumulative" (an unsigned counter which is only ever increased), as
-> opposed to a floating value (like "amount of memory used").
-
-Good idea.  Also, clearing does not make sense for a floating value, so
-we can use cumulative/floating to get a default for the mode: KVM
-statistics for example are mostly cumulative and mode 644, except a few
-that are floating and those are all mode 444.  Therefore it makes sense
-to add cumulative/floating even before outputting it as metadata.
-
-> I'm more
-> concerned with getting the statistics model and capabilities right
-> from the beginning, because those are harder to adjust later.
-
-Agreed.
-
-> 1. Each metricfs metric can have one or two string or integer "keys".
-> If these exist, they expand the metric from a single value into a
-> multi-dimensional table. For example, we use this to report a hash
-> table we keep of functions calling "WARN()", in a 'warnings'
-> statistic:
-> 
-> % cat .../warnings/values
-> x86_pmu_stop 1
-> %
+On Tue, Apr 28, 2020 at 1:51 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> Indicates that the x86_pmu_stop() function has had a WARN() fire once
-> since the system was booted.  If multiple functions have fired
-> WARN()s, they are listed in this table with their own counts. [1]  We
-> also use these to report per-CPU counters on a CPU-by-CPU basis:
-> 
-> % cat .../irq_x86/NMI/values
-> 0 42
-> 1 18
-> ... one line per cpu
-> % cat .../rx_bytes/values
-> lo 501360681
-> eth0 1457631256
+> On Mon, Apr 27, 2020 at 3:46 PM Chakra Divi <chakragithub@gmail.com> wrote:
+> >
+> > On Tue, Apr 21, 2020 at 4:21 PM Chakra Divi <chakragithub@gmail.com> wrote:
+> > >
+> > > On Mon, Apr 20, 2020 at 4:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > >
+> > > > On Wed, Apr 1, 2020 at 11:31 AM Chakra Divi <chakragithub@gmail.com> wrote:
+> > > > >
+> > > > > In current code, for exec we are checking mode bits
+> > > > > for x bit set even though the fuse_perm_getattr returns
+> > > > > success. Changes in this patch avoids mode bit explicit
+> > > > > check, leaves the exec checking to fuse file system
+> > > > > in uspace.
+> > > >
+> > > > Why is this needed?
+> > >
+> > > Thanks for responding Miklos. We have an use case with our remote file
+> > > system mounted on fuse , where permissions checks will happen remotely
+> > > without the need of mode bits. In case of read, write it worked
+> > > without issues. But for executable files, we found that fuse kernel is
+> > > explicitly checking 'x' mode bit set on the file. We want this
+> > > checking also to be pushed to remote instead of kernel doing it - so
+> > > modified the kernel code to send getattr op to usespace in exec case
+> > > too.
+> >
+> > Any help on this Miklos....
+>
+> I still don't understand what you are requesting.  What your patch
+> does is unconditionally allow execution, even without any 'x' bits in
+> the mode.  What does that achieve?
 
-These seem like two different things.
+Thanks for the help Miklos. We have a network based filesystem that
+supports acls.
+As our filesystem give granular access, we wipe out the mode bits and
+completely rely on ACLs.
 
-The percpu and per-interface values are best represented as subordinate
-sources, one per CPU and one per interface.  For interfaces I would just
-use a separate directory, but it doesn't really make sense for CPUs.  So
-if we can cater for it in the model, it's better.  For example:
+Fuse works well for all other ops (with default_permissions disabled )
+ as all the checks are done at the filesystems.
+But only executables have problems because fuse kernel rejects the
+execution by doing access checks on mode bit.
+To push this check to filesystem, in the above patch - i'm relying on
+return value from fuse_perm_getattr() ignoring the mode bits.
 
-- add a new argument to statsfs_create_source and statsfs_create_values
-that makes it not create directories and files respectively.
+When the fuse module is asked to rely on filesystem for access checks,
+why do we need this explicit check for executables?
+I found out that it is the same issue with nfs too. Is there a reason
+for it ? Should we not push this check to filesystem ?
 
-- add a new "aggregate function" STATS_FS_LIST that directs the parent
-to build a table of all the simple values below it
-
-We can also add a helper statsfs_add_values_percpu that creates a new
-source for each CPU, I think.
-
-The warnings one instead is a real hash table.  It should be possible to
-implement it as some kind of customized aggregation, that is implemented
-in the client instead of coming from subordinate sources.  The
-presentation can then just use STATS_FS_LIST.  I don't see anything in
-the design that is a blocker.
-
-> 2.  We also export some metadata about each statistic.  For example,
-> the metadata for the NMI counter above looks like:
-> 
-> % cat .../NMI/annotations
-> DESCRIPTION Non-maskable\ interrupts
-> CUMULATIVE
-> % cat .../NMI/fields
-> cpu value
-> int int
-> %
-
-Good idea.  I would prefer per-directory dot-named files for this.  For
-example a hypothetical statsfs version of /proc/interrupts could be like
-this:
-
-$ cat /sys/kernel/stats/interrupts/.schema
-0                                          // Name
-CUMULATIVE                                 // Flags
-int:int                                    // Type(s)
-IR-IO-APIC    2-edge      timer            // Description
-...
-LOC
-CUMULATIVE
-int:int
-Local timer interrupts
-...
-$ cat /sys/kernel/stats/interrupts/LOC
-0 4286815
-1 4151572
-2 4199361
-3 4229248
-
-> 3. We have a (very few) statistics where the value itself is a string,
-> usually for device statuses.
-
-Maybe in addition to CUMULATIVE and FLOATING we can have ENUM
-properties, and a table to convert those enums to strings.  Aggregation
-could also be used to make a histogram out of enums in subordinate
-sources, e.g.
-
-$ cat /sys/kernel/stats/kvm/637-1/vcpu_state
-running 12
-uninitialized 0
-halted 4
-
-So in general I'd say the sources/values model holds up.  We certainly
-want to:
-
-- switch immediately to callbacks instead of the type constants (so that
-core statsfs code only does signed/unsigned)
-
-- add a field to distinguish cumulative and floating properties (and use
-it to determine the default file mode)
-
-- add a new argument to statsfs_create_source and statsfs_create_values
-that makes it not create directories and files respectively
-
-- add a new API to look for a statsfs_value recursively in all the
-subordinate sources, and pass the source/value pair to a callback
-function; and reimplement recursive aggregation and clear in terms of
-this function.
-
-> For our use cases, we generally don't both output a statistic and it's
-> aggregation from the kernel; either we sum up things in the kernel
-> (e.g. over a bunch of per-cpu or per-memcg counters) and only have the
-> result statistic, or we expect user-space to sum up the data if it's
-> interested.  The tabular form makes it pretty easy to do so (i.e. you
-> can use awk(1) to sum all of the per-cpu NMI counters).
-
-Yep, the above "not create a dentry" flag would handle the case where
-you sum things up in the kernel because the more fine grained counters
-would be overwhelming.
-
-Paolo
-
+Thanks,
+Chakra
+>
+> Thanks,
+> Miklos
