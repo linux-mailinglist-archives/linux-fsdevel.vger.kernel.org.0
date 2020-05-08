@@ -2,66 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 190261CB2D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F3C1CB2E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgEHP36 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 11:29:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57304 "EHLO
+        id S1726891AbgEHPdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 11:33:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbgEHP35 (ORCPT
+        with ESMTP id S1726736AbgEHPdR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 11:29:57 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F467C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 May 2020 08:29:56 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id w11so2170925iov.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 08:29:56 -0700 (PDT)
+        Fri, 8 May 2020 11:33:17 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF324C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 May 2020 08:33:17 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id e8so1769476ilm.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 08:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nk6RHcExY0LgqkERTzLyOugz5IoSHIMF3+L+W3k3sTM=;
-        b=aYPt015R3MZqJU6zTu0YTrS7KdSMum8HJnR6RQ6e24WQOjI4Ur9QVeRJSY7NnRIFZd
-         IZsmJq0UDIY5bHgFrmoNzkk8HH+8BGvKWk8akxsxOkOpB630b9BQiCvT4zMi+qY8JgCD
-         3+8cGBW551YKMlefQVS+yAHfyVzzPbtmkMqbTh5P+veODcnjHamwHJKPaPuLICvIO5AP
-         MfWRVMizT+trP06HQvKiby2brIKZcTfW/o9uMrcVEc/jvBfnIZzrAf/lLkZRspTAXUQ0
-         3LrM7X0RSt0briJXai/4T912sG84ytx04Yl5ggGd6jN2UzCykfXlpWfub1e6Chvie+Xp
-         9z7Q==
+        bh=5Cd+7bkSYmAgh5DN2n8p/aA30ZkROc8uSmHqYwQWmIo=;
+        b=1iPAXJkZlmhJ7BWDzF+X/VxemjHkBOyCJgHgt65w4dKt/0PlKCx0c/u64jtLZxjAjf
+         RhtUZjMuUdqdzPQ3LA99pdgmqUHu3PM/094MHVDxE6NeWVI4x/nePVvrHxnkwZz54Dj6
+         mhprggRTf6YEW316PXqEfnWWBJUx0fO7rt6kzkIgVx/CMs4YfolvA9bfWOOuGaTWGBg1
+         Iw8bCQEj6A8zfNpUO0qxMcGPc5t+KauHAuUR78JZRDN1xPNFPuzqiN6TtJFhDMlyjLt+
+         2svlxe7tUdDVWIdczvsS82svc0CNZUfqjSnzY+sF3UmFRL+vEmpTKOEhv4nqKVU1TiZt
+         nZkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nk6RHcExY0LgqkERTzLyOugz5IoSHIMF3+L+W3k3sTM=;
-        b=ElUovu+NiEEbq+1r9M+B3qAildQCIKK4FzJJEnCFaH5PmvbrTN6jtJY0y5Czaoev+V
-         m05PoQ2qgdvwYAOCQlGOqjC6RwIoDb//lJnX+lcIea/ox45ZuWwYuOpXvqEhID+gpxNp
-         XbYtM9iWdd8aDudouh2HeHJnya1Q7bfixhuOg6sW+uVNtzZ+RDiNhtVv0vX4q9Jx3ygA
-         JCcLIIOErbUr13dGKpcBJb3bvJHOTXiNXOW0dK5I4N9i7OGw+5estSRFS6YRu7fbDLRR
-         v0idWaueh27ZTQObEHQ0sypiYuiWcOp/ezSIg/7+1EecXLC44Cp/bAeZisf93e5rUsOM
-         MkZg==
-X-Gm-Message-State: AGi0PuZBniFMBhTVggTvbdRNNAtozJRhHTysyIU9KWGVVETyPRstJlif
-        bV9umQr8ut6pXt5VKCrjVan0n9HIe3Y=
-X-Google-Smtp-Source: APiQypIXgmex+zsOFZGr9ugAJltkk+meCOXpP254DY7Slv+ItHa08HS3rmtyOi/opsj8ElzkdXFEVg==
-X-Received: by 2002:a02:c9cb:: with SMTP id c11mr2911600jap.93.1588951793971;
-        Fri, 08 May 2020 08:29:53 -0700 (PDT)
+        bh=5Cd+7bkSYmAgh5DN2n8p/aA30ZkROc8uSmHqYwQWmIo=;
+        b=pAUS6IyGmfeZ3jKKa4dK1oxlGVqdH6muRVG5efoRq9QhpIj4ZVbzqjKCfR4JvYZVTW
+         1Rm20jUHdXVyWqbVlUAjlzjNQzjale/ABgCDBvwVFg69Jc0JKo8Npg8F4TSA8ahATDAz
+         nI8O5bafX+8iDVAhie/YkNe2Zq3Jqp+KO02U9Ln7a5S8UYAr/+fZLxcMo7x2YNjwhxpy
+         7iqXe3+N6nG+5RTQd3b4Lgc3wzmy83z6p3g7KdArSiZACVfsAK1S7llfMgjvYz+/eXO4
+         jda4SzjH92S34exbAJ2WQgSNK4+qgxrDFjXEHeHAANeO4HtOFdKw7lKCMod+DhwvTBhO
+         q9YA==
+X-Gm-Message-State: AGi0PuYFqxg7uuIVWaSqvoibjD/sDyWvuQ+EAh7g5BdMCinpB5/sIC+b
+        ljldvpwY9QpMenCQ8oMzuqTgjQ==
+X-Google-Smtp-Source: APiQypKdVtlaL71EVvq3emaUv8Y5xpm9c6baK99R3bNrpVMnsd3KYQCR5+DwQRQy+eekJ9a63TUoAg==
+X-Received: by 2002:a92:8804:: with SMTP id h4mr69496ild.251.1588951997047;
+        Fri, 08 May 2020 08:33:17 -0700 (PDT)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t62sm915931ill.87.2020.05.08.08.29.52
+        by smtp.gmail.com with ESMTPSA id u17sm923258ilb.86.2020.05.08.08.33.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2020 08:29:53 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] fs/io_uring: fix O_PATH fds in openat, openat2,
- statx
-To:     Max Kellermann <mk@cm4all.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200508063846.21067-1-mk@cm4all.com>
- <20200508064056.GA21129@rabbit.intern.cm-ag>
+        Fri, 08 May 2020 08:33:16 -0700 (PDT)
+Subject: Re: [PATCH] fs/io_uring: fix O_PATH fds in openat, openat2, statx
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Max Kellermann <mk@cm4all.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20200507185725.15840-1-mk@cm4all.com>
+ <20200507190131.GF23230@ZenIV.linux.org.uk>
+ <4cac0e53-656c-50f0-3766-ae3cc6c0310a@kernel.dk>
+ <20200507192903.GG23230@ZenIV.linux.org.uk>
+ <8e3c88cc-027b-4f90-b4f8-a20d11d35c4b@kernel.dk>
+ <20200507220637.GH23230@ZenIV.linux.org.uk>
+ <283c8edb-fea2-5192-f1d6-3cc57815b1e2@kernel.dk>
+ <20200507224447.GI23230@ZenIV.linux.org.uk>
+ <e16125f2-c3ec-f029-c607-19bede54fa17@kernel.dk>
+ <20200507233132.GJ23230@ZenIV.linux.org.uk>
+ <629de3b6-cf80-fe37-1dde-7f0464da0a04@kernel.dk>
+ <20200508152918.12340-1-hdanton@sina.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f1f9d108-7f31-c586-330a-ce5a2f1e5bc2@kernel.dk>
-Date:   Fri, 8 May 2020 09:29:52 -0600
+Message-ID: <35aa8592-5565-3578-d90f-3b56bb8ab078@kernel.dk>
+Date:   Fri, 8 May 2020 09:33:15 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200508064056.GA21129@rabbit.intern.cm-ag>
+In-Reply-To: <20200508152918.12340-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,25 +81,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/8/20 12:40 AM, Max Kellermann wrote:
-> On 2020/05/08 08:38, Max Kellermann <mk@cm4all.com> wrote:
->> This fails for `O_PATH` file descriptors, because io_file_get() calls
->> fget(), which rejects `O_PATH` file descriptors.  To support `O_PATH`,
->> fdget_raw() must be used (like path_init() in `fs/namei.c` does).
->> This rejection causes io_req_set_file() to throw `-EBADF`.  This
->> breaks the operations `openat`, `openat2` and `statx`, where `O_PATH`
->> file descriptors are commonly used.
+On 5/8/20 9:29 AM, Hillf Danton wrote:
+> Dunno if what's missing makes  grumpy.
 > 
-> Code is the same as in v1, but I investigated the root cause of the
-> problem and updated the patch description.
-> 
-> Jens, I believe this should be a separate trivial commit just removing
-> those flags, to allow Greg to backport this to stable easily.
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3439,6 +3439,11 @@ static void io_close_finish(struct io_wq
+>  static int io_close(struct io_kiocb *req, bool force_nonblock)
+>  {
+>  	int ret;
+> +	struct fd f;
+> +
+> +	f = fdget(req->close.fd);
+> +	if (!f.file)
+> +		return -EBADF;
+>  
+>  	req->close.put_file = NULL;
+>  	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
 
-I'd prefer just to keep the single patch, the stable backports tend to
-throw rejects anyway, and it's quick enough for me to just provide a
-tested backport. The single version I posted also gets rid of the
-extra sqe read, where we really should be doing just one, for example.
+Can you expand? With the last patch posted, we don't do that fget/fdget
+at all. __close_fd_get_file() will error out if we don't have a file
+there. It does change the close error from -EBADF to -ENOENT, so maye we
+just need to improve that?
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 979d9f977409..9fd1257c8404 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -786,7 +786,6 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_fs		= 1,
+ 	},
+ 	[IORING_OP_CLOSE] = {
+-		.needs_file		= 1,
+ 		.file_table		= 1,
+ 	},
+ 	[IORING_OP_FILES_UPDATE] = {
+@@ -3399,10 +3398,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return -EBADF;
+ 
+ 	req->close.fd = READ_ONCE(sqe->fd);
+-	if (req->file->f_op == &io_uring_fops ||
+-	    req->close.fd == req->ctx->ring_fd)
+-		return -EBADF;
+-
+ 	return 0;
+ }
+ 
+@@ -3434,8 +3429,11 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
+ 
+ 	req->close.put_file = NULL;
+ 	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
+-	if (ret < 0)
++	if (ret < 0) {
++		if (ret == -ENOENT)
++			ret = -EBADF;
+ 		return ret;
++	}
+ 
+ 	/* if the file has a flush method, be safe and punt to async */
+ 	if (req->close.put_file->f_op->flush && force_nonblock) {
 
 -- 
 Jens Axboe
