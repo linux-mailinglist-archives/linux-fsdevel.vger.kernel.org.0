@@ -2,122 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1180B1CB614
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 19:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1FF1CB78F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 20:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgEHRcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 13:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbgEHRcx (ORCPT
+        id S1727082AbgEHSrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 14:47:05 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:37948 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbgEHSrE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 13:32:53 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62700C061A0C;
-        Fri,  8 May 2020 10:32:53 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id h26so1926535qtu.8;
-        Fri, 08 May 2020 10:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
-        b=CevGhA3drB9rx9GAhf7Jd40EnNtr3XglCd18jTPTpJsgn56s0Q9ZugmY0aQqMnSGTH
-         7aagHQfF3X78TVXApqMaxjd66mhtOXvmL/4HYUWJW/adXA8e8n5GfPBPmQNAL19OfDE5
-         LKmSVl8km7PxkynymVQEPV4lk577a7G6pryLd8OTLGPtsbCEaAV29/jnVDoGOchK+oXF
-         ADZkHhl+hkYYLZCeFVTd3IXBBgi7Vcs9qr0dwPmfQ9/ULwOPvDSa/PgxDmkfuyvSzJ6H
-         sC+yukRWl+pPdTIl3k+mflFAJ1SndgezVfhRdzQGFW2qCsOZjs94dn27Zb6+yY1dofoM
-         xFPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
-        b=RN422PLdjE8go6AuR72FJuTgiBzmtnpYBWzaGZYP3BNaZGF4ofuRufgeE4QXVRyFXS
-         wT6Uqp4sZb8OzRfgzSlVEHpCPSzJHK4+SX0n2pLrZTG7qjNKk0W3Rvri0CJYSilJXc/H
-         4kL8nlGnSVgj6O0wEhLFBWL3sMvvQtsNBfHfbyLPqFUpfCXSsojm9Bi/u2vKBWbxJyUZ
-         5Rbzwv+mK39nx495fsByG58gzAwTOXGSK9UwSEBZJuJ1VYo5iWkDVYK3k/kBBMfEoXM6
-         eR17In0P35gkRK9xxc8aYddKHScusjFhJYNdGmUDIIBnISNwRrS1TqFdXqG+HzTdAwDP
-         E0kA==
-X-Gm-Message-State: AGi0PuZ/W84N46cblyjD6WQwXcQ/wTq7XnqgYu3XaKJNd1Qcr0JiEJ15
-        xLZnwcQyn9sZVQX4X0JqcqDx0CoSRnww8Z3Mk1kJPgN0
-X-Google-Smtp-Source: APiQypI1ltj7u5Bq7am8qePoEo4cQ/trbraNCdyogcK0LAAg4BY0jq2I7/GsLnM1GzSePjDroYbXz+4CAgFA1/GrFDU=
-X-Received: by 2002:ac8:51d3:: with SMTP id d19mr4033765qtn.141.1588959172426;
- Fri, 08 May 2020 10:32:52 -0700 (PDT)
+        Fri, 8 May 2020 14:47:04 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jX81T-0003wn-Rx; Fri, 08 May 2020 12:47:00 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jX81S-0002jx-TS; Fri, 08 May 2020 12:46:59 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+Date:   Fri, 08 May 2020 13:43:31 -0500
+In-Reply-To: <87h7wujhmz.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Tue, 05 May 2020 14:39:32 -0500")
+Message-ID: <87sgga6ze4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20200508153634.249933-1-hch@lst.de> <20200508153634.249933-5-hch@lst.de>
-In-Reply-To: <20200508153634.249933-5-hch@lst.de>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 8 May 2020 10:32:41 -0700
-Message-ID: <CAEf4BzZ-gE87RVLPHGBfoNhHB+H7AnPbb7UUE7EGq8T5p_en_w@mail.gmail.com>
-Subject: Re: [PATCH 04/12] bpf: use __anon_inode_getfd
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1jX81S-0002jx-TS;;;mid=<87sgga6ze4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19zP/RKyneohwPABJrj/EMwOUTBmYaO2o8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,XMNoVowels autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4993]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;<linux-kernel@vger.kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 562 ms - load_scoreonly_sql: 0.19 (0.0%),
+        signal_user_changed: 13 (2.2%), b_tie_ro: 10 (1.8%), parse: 1.39
+        (0.2%), extract_message_metadata: 3.9 (0.7%), get_uri_detail_list:
+        0.67 (0.1%), tests_pri_-1000: 5 (0.9%), tests_pri_-950: 1.47 (0.3%),
+        tests_pri_-900: 1.14 (0.2%), tests_pri_-90: 123 (21.8%), check_bayes:
+        121 (21.5%), b_tokenize: 6 (1.0%), b_tok_get_all: 6 (1.0%),
+        b_comp_prob: 2.2 (0.4%), b_tok_touch_all: 104 (18.4%), b_finish: 0.94
+        (0.2%), tests_pri_0: 391 (69.6%), check_dkim_signature: 0.95 (0.2%),
+        check_dkim_adsp: 2.5 (0.4%), poll_dns_idle: 0.25 (0.0%), tests_pri_10:
+        2.2 (0.4%), tests_pri_500: 11 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 0/6] exec: Trivial cleanups for exec
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 8, 2020 at 8:39 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Use __anon_inode_getfd instead of opencoding the logic using
-> get_unused_fd_flags + anon_inode_getfile.  Also switch the
-> bpf_link_new_file calling conventions to match __anon_inode_getfd.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/bpf.h  |  2 +-
->  kernel/bpf/cgroup.c  |  6 +++---
->  kernel/bpf/syscall.c | 31 +++++++++----------------------
->  3 files changed, 13 insertions(+), 26 deletions(-)
->
 
-[...]
+This is a continuation of my work to clean up exec so it's more
+difficult problems are approachable.
 
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 64783da342020..cb2364e17423c 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -2307,23 +2307,10 @@ int bpf_link_new_fd(struct bpf_link *link)
->   * complicated and expensive operations and should be delayed until all the fd
->   * reservation and anon_inode creation succeeds.
->   */
+The changes correct some comments, stop open coding mutex_lock_killable,
+and move the point_of_no_return variable up to when the
+point_of_no_return actually occurs.
 
-The comment above explains the reason why we do want to split getting
-fd, getting file, and installing fd later. I'd like to keep it this
-way. Also, this code was refactored in bpf-next by [0] (it still uses
-get_unused_fd_flag + anon_inode_getfile + fd_install, by design).
+I don't think there is anything controversial in there but if you see
+something please let me know.
 
-  [0] https://patchwork.ozlabs.org/project/netdev/patch/20200429001614.1544-3-andriin@fb.com/
+Eric W. Biederman (6):
+      exec: Move the comment from above de_thread to above unshare_sighand
+      exec: Fix spelling of search_binary_handler in a comment
+      exec: Stop open coding mutex_lock_killable of cred_guard_mutex
+      exec: Run sync_mm_rss before taking exec_update_mutex
+      exec: Move handling of the point of no return to the top level
+      exec: Set the point of no return sooner
 
-> -struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd)
-> +int bpf_link_new_file(struct bpf_link *link, struct file **file)
->  {
-> -       struct file *file;
-> -       int fd;
-> -
-> -       fd = get_unused_fd_flags(O_CLOEXEC);
-> -       if (fd < 0)
-> -               return ERR_PTR(fd);
-> -
-> -       file = anon_inode_getfile("bpf_link", &bpf_link_fops, link, O_CLOEXEC);
-> -       if (IS_ERR(file)) {
-> -               put_unused_fd(fd);
-> -               return file;
-> -       }
-> -
-> -       *reserved_fd = fd;
-> -       return file;
-> +       return __anon_inode_getfd("bpf_link", &bpf_link_fops, link, O_CLOEXEC,
-> +                       file);
->  }
->
-
-[...]
+ fs/exec.c       | 51 +++++++++++++++++++++++++++------------------------
+ kernel/ptrace.c |  4 ++--
+ 2 files changed, 29 insertions(+), 26 deletions(-)
