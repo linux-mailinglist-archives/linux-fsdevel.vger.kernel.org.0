@@ -2,112 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAEB31CB285
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7DBD1CB2CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgEHPH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 11:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbgEHPH3 (ORCPT
+        id S1726815AbgEHP3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 11:29:46 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:52817 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726636AbgEHP3q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 11:07:29 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0AF8C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 May 2020 08:07:28 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id c18so1700861ile.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 08:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XfW90zo6T5KAPuSOZK0m1rceAYunAO3tCus7Ecsk/44=;
-        b=DrZ7dJBMb2gXPW/MlynB0PhMDYS5RWpgZDN3qhCWiYnfMsQIs0JfrwfzCjqNFYgSgj
-         siIgfrxvC4CefgaMBVAqwJXjVn0A/zoV+eEmn7OSIAK6GBpFkjIQQuLBuagyA/NUCwen
-         3UywojBNh+0E6JpECOLO8Cc9n+XCDwqTHTFx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XfW90zo6T5KAPuSOZK0m1rceAYunAO3tCus7Ecsk/44=;
-        b=V0t+V5/Dkfox/2kx/r7EbBofk5eI9xiNTIa29gQfhzhyx8rJF3qjWLMAE8m8yKREqz
-         KlcZh7dKOjZAUZRs2egdVFHL0UvRNBkiTpABgwtmL3zFG4kXVzpyGNtqcW/QiGp2W7cd
-         F4/8asrio3mWvf/kVCvHCPCtTe6y2fIp3iwXN0anzirTcL/dc7VedItSHfzWfaBOBa97
-         Z7BT/LG+LxdJ8RawftQtJHybKTa0W7jgNfhMw0f0P4GNMpcXBM1omUu3CjbC/v+djiV8
-         AijpwdqWGJ2XBg3YdwuTKMJtHFmjSDtNbf8hbvehrITE2ydP1YsVHlOcq82diPELzVbi
-         ChPA==
-X-Gm-Message-State: AGi0Pubxpznip56dpjGoKw/IrX9HMQdkzYgGgtqRX7dNzywv7bDlFNDY
-        8Kczm1pvRbXYczke7HwiKqDE7A==
-X-Google-Smtp-Source: APiQypLZ6wdxpHO7TnlOBfCn3vWaqdrCHX8bZENsqHjjjQiZYcM/1t27BVtHr2oouk546ImkXT2xWA==
-X-Received: by 2002:a05:6e02:ca:: with SMTP id r10mr3308743ilq.41.1588950448273;
-        Fri, 08 May 2020 08:07:28 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id n65sm905604ila.69.2020.05.08.08.07.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2020 08:07:27 -0700 (PDT)
-Subject: Re: [PATCH 1/2] fs: avoid fdput() after failed fdget() in
- ksys_sync_file_range()
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     axboe@kernel.dk, zohar@linux.vnet.ibm.com, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1588894359.git.skhan@linuxfoundation.org>
- <31be6e0896eba59c06eb9d3d137b214f7220cc53.1588894359.git.skhan@linuxfoundation.org>
- <20200508000509.GK23230@ZenIV.linux.org.uk>
- <20200508002422.GL23230@ZenIV.linux.org.uk>
- <20200508022139.GD11244@42.do-not-panic.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <7d3e7bf5-22e4-ab3d-798e-33d3657e1cf1@linuxfoundation.org>
-Date:   Fri, 8 May 2020 09:07:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 8 May 2020 11:29:46 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 12AA25C01D2;
+        Fri,  8 May 2020 11:29:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 08 May 2020 11:29:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
+        o7+iZNTEOvr0ADpNDDv8Z0wUbWtj9Zi+aBJlpBe4pdg=; b=TtGE6bbrWAAmZbFb
+        yz85soIHMwjPbZW21EkPOXsu3qFwdy3vxbx7v2veRHkm9zyGaG1f4LMis5/QDaKA
+        /jhByptEvfBSlcNoeDDUOrJD7IcwdMxZ6hYfpw/rZmPmAUh00BffPH/hcZmIwws1
+        +11TsRw/9jDtVFUs/HE3g9QW7aXqAYvQm+dvkcwW6jP5vyXV4NXq+vRFmeWwxGOo
+        3jiO8jGH8M4Baos6/K1jvweJKRD+96lWFvlftqp1phFoDVr7VN1OPUF1mRUOuArV
+        uNS5iBLwQA2oGGW4M8TtW62iTotTaG9I958HJA2oPolZp5BHWs/T5xkvNGjq0KfT
+        vI7gzA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=o7+iZNTEOvr0ADpNDDv8Z0wUbWtj9Zi+aBJlpBe4p
+        dg=; b=s4ibGc85HYgUTdFS2l4IReriwJxY5zrkczIY7rO46mdzhhJBFjQo2Shl7
+        87cwaXdSYPvRZz7aZLluMs5fgljkUxwWQVe4r0qzgcJIrJYfShMY8hUoYcRpAKfK
+        /Wj3dUwJpIBiNQRt86nVrZtRTMXG/zfQusy1SgOoMwe/xNyYd1IVlrFzngcLrHoC
+        wtg+SIO+IypVjIhfZmWg+eg2eWtZOYE/++eViBu8ckewRu5CcpEvSrzr9g2XsXzD
+        Otbj4MngVX9VYayz9zbm4haYDunWeTIn+3t06dvTx9VOAB6ocRNeUsdUVw+0UVN1
+        SikHk6bqmMRD4N+vxSboM05OEfeSA==
+X-ME-Sender: <xms:6Hq1XmyUUi5qKAu_y0XNApCc0MpKPuH7JbPqXclP8Al0oH7HdeEhfw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrkeefgddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhkohhl
+    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
+    htvghrnhephfetueeghedutdefteegudfgjefhfedthfehgeegkeejueevieeljedtfeef
+    ffehnecukfhppedukeehrdefrdelgedrudelgeenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
+X-ME-Proxy: <xmx:6Hq1Xghqhj0dKK9LK0InW6U4lxmIoMzOCxDVRP4Zehw1AvlaLg6jjQ>
+    <xmx:6Hq1XhdNp0PyJpgpqiHopeyruW-2iaDF4OZFsceCzPAJmAAIuK3AOg>
+    <xmx:6Hq1XtumR666j-vqrhRfeq0zGck4i8ScwNqXOw9pYnzOyDLV49Qk-A>
+    <xmx:6Xq1Xo__-MKVsTAviid0hrWKxNRBxwuqg68EgvWvJQ3mQ9vCvQTyNQ>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 83EEA3280059;
+        Fri,  8 May 2020 11:29:44 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id B153C49;
+        Fri,  8 May 2020 15:29:43 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id DDAFBE33CD; Fri,  8 May 2020 16:28:30 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>
+Subject: Re: [fuse-devel] [fuse] Getting visibility into reads from page cache
+References: <87k123h4vr.fsf@vostro.rath.org>
+        <CAJfpeguqV=++b-PF6o6Y-pLvPioHrM-4mWE2rUqoFbmB7685FA@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, fuse-devel
+        <fuse-devel@lists.sourceforge.net>
+Date:   Fri, 08 May 2020 16:28:30 +0100
+In-Reply-To: <CAJfpeguqV=++b-PF6o6Y-pLvPioHrM-4mWE2rUqoFbmB7685FA@mail.gmail.com>
+        (Miklos Szeredi's message of "Mon, 27 Apr 2020 11:26:16 +0200")
+Message-ID: <874ksq4fa9.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200508022139.GD11244@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/7/20 8:21 PM, Luis Chamberlain wrote:
-> On Fri, May 08, 2020 at 01:24:22AM +0100, Al Viro wrote:
->> On Fri, May 08, 2020 at 01:05:09AM +0100, Al Viro wrote:
->>> On Thu, May 07, 2020 at 05:57:09PM -0600, Shuah Khan wrote:
->>>> Fix ksys_sync_file_range() to avoid fdput() after a failed fdget().
->>>> fdput() doesn't do fput() on this file since FDPUT_FPUT isn't set
->>>> in fd.flags. Fix it anyway since failed fdget() doesn't require
->>>> a fdput().
->>>>
->>>> This was introdcued in a commit to add sync_file_range() helper.
->>>
->>> Er...  What's the point microoptimizing the slow path here?
+On Apr 27 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Sat, Apr 25, 2020 at 7:07 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
 >>
->> PS: I'm not saying the patch is incorrect, but Fixes: is IMO over the
->> top.  And looking at that thing,
->> {
->>          struct fd f = fdget(fd);
->>          int ret;
+>> Hello,
 >>
->> 	if (unlikely(!f.file))
->> 		return -EBADF;
+>> For debugging purposes, I would like to get information about read
+>> requests for FUSE filesystems that are answered from the page cache
+>> (i.e., that never make it to the FUSE userspace daemon).
 >>
->> 	ret = sync_file_range(f.file, offset, nbytes, flags);
->>          fdput(f);
->>          return ret;
->> }
+>> What would be the easiest way to accomplish that?
 >>
->> might be cleaner, but that's a matter of taste...
-> 
-> This makes it easier to read.
-> 
+>> For now I'd be happy with seeing regular reads and knowing when an
+>> application uses mmap (so that I know that I might be missing reads).
+>>
+>>
+>> Not having done any real kernel-level work, I would start by looking
+>> into using some tracing framework to hook into the relevant kernel
+>> function. However, I thought I'd ask here first to make sure that I'm
+>> not heading into the completely wrong direction.
+>
+> Bpftrace is a nice high level tracing tool.
+>
+> E.g.
+>
+>   sudo bpftrace -e 'kretprobe:fuse_file_read_iter { printf ("fuse
+> read: %d\n", retval); }'
 
-Yes it does. I will make the changes and send v2.
-
-thanks,
--- Shuah
+Thanks, this looks great! I had to do some reading about bpftrace first,
+but I think this is exacly what I'm looking for. A few more questions:
 
 
+- If I attach a probe to fuse_file_mmap, will this tell me whenever an
+  application attempts to mmap() a FUSE file?
+
+- I believe that (struct kiocb*)arg0)->ki_pos will give me the offset
+  within the file, but where can I see how much data is being read?
+
+- What is the best way to connect read requests to a specific FUSE
+  filesystems (if more than one is mounted)? I found the superblock in
+  (struct kiocb*)arg0)->ki_filp->f_mapping->host->i_sb->s_fs_info, but I
+  do not see anything in this structure that I could map to a similar
+  value that FUSE userspace has access to...
+
+- I assume fuse_file_read_iter is called for every read request for FUSE
+  filesystems unless it's an mmap'ed access. Is that right?
+
+- Is there any similar way to catch access to an mmap'ed file? I think
+  there is probably a way to make sure that every memory read triggers a
+  page fault and then hook into the fault handler, but I am not sure how
+  difficult this is to do and how much performance this would cost....
+
+- If my BPF program contains e.g. a printf statement, will execution of
+  the kernel function block until the printf has completed, or is there
+  some queuing mechanism?
+
+Thanks for your help!
+
+
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
