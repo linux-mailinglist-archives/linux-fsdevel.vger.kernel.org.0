@@ -2,112 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 273BD1CB320
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB4A1CB3B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 17:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbgEHPhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 11:37:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
+        id S1728165AbgEHPmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 11:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728418AbgEHPhL (ORCPT
+        with ESMTP id S1727092AbgEHPmw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 11:37:11 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F247EC061A0C;
-        Fri,  8 May 2020 08:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=uQupytwSEXnv3/F3EONV14yFM9iDWY0BYhUPftguMlU=; b=ECjye1lFh/oDKkHSp8s8r3/PBL
-        bY/42wC5a85E1iHD+psjQ/gkXg7hcCE7r0N2ufr4ZnmtVS2rYT80SgF8xdIozTYFqxl0tf1Z49wkr
-        brImDOTrRr2yXeQqkxa8oM7wZ8d1A07kuZ+YelyRE3/Ejv0WR63qqwEi7NkSPvm6JCdwbnIFIuFhh
-        ca06xctQt3/rLg9MSgExt6X6hISxql6kbhSk4akzhzTPYah7nLCyDQJuj3qQCGYA/oqYFM9Kr5h5f
-        gIMF4UxTD82Q2/oQLlx6fL74cfXHXgNPMz/nvaxsMY6cMkjGOAWo/Ha8ThQx5El+S/JcOa/eOm9Qh
-        ch4YtVZw==;
-Received: from [2001:4bb8:180:9d3f:90d7:9df8:7cd:3504] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jX53m-0004ST-Ff; Fri, 08 May 2020 15:37:10 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH 12/12] vtpm_proxy: use __anon_inode_getfd
-Date:   Fri,  8 May 2020 17:36:34 +0200
-Message-Id: <20200508153634.249933-13-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200508153634.249933-1-hch@lst.de>
-References: <20200508153634.249933-1-hch@lst.de>
+        Fri, 8 May 2020 11:42:52 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0103C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 May 2020 08:42:52 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id w6so1823375ilg.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 08:42:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nsc0r+5+ZjurzhOSjY4Y4lgMibKJ6WxK1U7G5gxIfG8=;
+        b=XZ7DQiFAjFR4nQHlDaw40CKmYcpLCFegUPvkAfGrjAmgtNZ+5fzyq0iHzJtEkfdMbS
+         IvD/tgUQJNjMCaOy1OqPw6s2ABZjbZiWoVWwwIF9azyhPPFbOE20HP7thOwa0acqLhdq
+         PHpex97hM8yoMtRN0ehacCJ2d+4Fm49T63zz0XvXrrEmTuyHFwMElTYqShxoeZrnXt3f
+         /YEh09jMp9ZiCYMx49Ds+b2J9I4Ui60C0gzy0ectvVelokPU/sK/J/VG82TyxNOtv8RG
+         7PDZjeIUn8D2OLeMsiqUtxDR9zFue8V6D8qbR6SUVKmbr0ib1OyCN3Y2z3GmkOI/+bOP
+         TTqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nsc0r+5+ZjurzhOSjY4Y4lgMibKJ6WxK1U7G5gxIfG8=;
+        b=J/srs855gofC6c6fObxpl/NMxvcFQDmHA2plYzb46NvlN23LeKjiu8tMKLHDj/vWen
+         x5TWB5jHcnxtuCUKFh8xP1kkFn1a+Dn+1c43PLWbGpyb+VQvxw54YRAJB7+RHCgA+x8u
+         E5dtjeTysbr6HsJAirtYqu5PYTZMzkJ4H38PdbxzrA9xSrzTpknovVjEpGZHFY4qBCBo
+         A3lzseBOF2zXnMqzSdihFyy7STP7aPmfFKT8wDSZe4VAvXvXquEKvPlclX7nKt5ZRx0H
+         UFbGTrfvSRlceNto5zCd0gHFP/mywibVwfDhom2Vadt/q3Wyt1gSLp5Dj6GMJibG3teV
+         yecg==
+X-Gm-Message-State: AGi0PuYMx1MnEz5UagnqNU017DwdWEuKgYpyuSmx7A/DKaUEVE5eNncj
+        b0ILLhEvUAxhygDknR5ymGh5u0A+icw=
+X-Google-Smtp-Source: APiQypLHAanSroDF/FH4Tm79CLceEZR7JGIioYNd3m0MytZ6QPPskUL2RZ+Ia2VRaJRuFv64YDjc0Q==
+X-Received: by 2002:a92:89d5:: with SMTP id w82mr3393607ilk.153.1588952571841;
+        Fri, 08 May 2020 08:42:51 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o22sm818896iow.25.2020.05.08.08.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 May 2020 08:42:51 -0700 (PDT)
+Subject: Re: [PATCH] hfs: stop using ioctl_by_bdev
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200508081828.590158-1-hch@lst.de>
+ <20200508081828.590158-2-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b1629593-587f-476d-a534-9336cb9e6d43@kernel.dk>
+Date:   Fri, 8 May 2020 09:42:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200508081828.590158-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use __anon_inode_getfd instead of opencoding the logic using
-get_unused_fd_flags + anon_inode_getfile.
+On 5/8/20 2:18 AM, Christoph Hellwig wrote:
+> Instead just call the CDROM layer functionality directly.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/char/tpm/tpm_vtpm_proxy.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+Applied, thanks.
 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index 91c772e38bb54..4c0a31209ae5a 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -534,7 +534,7 @@ static struct file *vtpm_proxy_create_device(
- 				 struct vtpm_proxy_new_dev *vtpm_new_dev)
- {
- 	struct proxy_dev *proxy_dev;
--	int rc, fd;
-+	int fd;
- 	struct file *file;
- 
- 	if (vtpm_new_dev->flags & ~VTPM_PROXY_FLAGS_ALL)
-@@ -546,19 +546,10 @@ static struct file *vtpm_proxy_create_device(
- 
- 	proxy_dev->flags = vtpm_new_dev->flags;
- 
--	/* setup an anonymous file for the server-side */
--	fd = get_unused_fd_flags(O_RDWR);
--	if (fd < 0) {
--		rc = fd;
-+	fd = __anon_inode_getfd("[vtpms]", &vtpm_proxy_fops, proxy_dev, O_RDWR,
-+			&file);
-+	if (fd < 0)
- 		goto err_delete_proxy_dev;
--	}
--
--	file = anon_inode_getfile("[vtpms]", &vtpm_proxy_fops, proxy_dev,
--				  O_RDWR);
--	if (IS_ERR(file)) {
--		rc = PTR_ERR(file);
--		goto err_put_unused_fd;
--	}
- 
- 	/* from now on we can unwind with put_unused_fd() + fput() */
- 	/* simulate an open() on the server side */
-@@ -576,13 +567,9 @@ static struct file *vtpm_proxy_create_device(
- 
- 	return file;
- 
--err_put_unused_fd:
--	put_unused_fd(fd);
--
- err_delete_proxy_dev:
- 	vtpm_proxy_delete_proxy_dev(proxy_dev);
--
--	return ERR_PTR(rc);
-+	return ERR_PTR(fd);
- }
- 
- /*
 -- 
-2.26.2
+Jens Axboe
 
