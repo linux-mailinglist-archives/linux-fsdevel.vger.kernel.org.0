@@ -2,128 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADAC01CB8A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 21:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33921CB8BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 May 2020 22:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbgEHTxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 15:53:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727826AbgEHTw6 (ORCPT
+        id S1727093AbgEHUAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 16:00:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25097 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726825AbgEHUAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 15:52:58 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E069C05BD0C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 May 2020 12:52:58 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id s186so1131548qkd.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 May 2020 12:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
-        b=Ts3CIrENqZECosUV9ufuB6NplQ4bZIANry4cTq9ctiFl2W3eKhj5UpDDQOEaY6A2Yd
-         mNvqS8MpDNbFmXG47isv0LHHuWhU9DrWeNeUqpMHP3rRP+c5b6gcvtAg+8ZLRMd/gdoD
-         1i8v4D54gKF1JaotzplFLT3nMfQ5VKcTVTMjFomlH2d9ykBhs9YeoAV4r0fEyjl3TlPr
-         v2KDioACvLG1JOHWROC3jtqtFiE8v+6chVfwhJVwQ6LpHrO+DnmO5kWS3VjbGmk9WNEY
-         aeK1VQ7Ix6UqBc9nyw9EdxtaWdyBCOYz2f1ZZWBmiN42UGRN2WCkIjnAj9hWJy7yjUPW
-         HsMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
-        b=OR94/NuQosH0JXMbbu1T1t2WV6//IEkDZ8DSh4ssYcPX2x32rcreGmMS0V8IOjKthI
-         rBFB3COMWiju1MCiUWq0pB22642OYkXEblNT6q6aD4JdJsXZhAJgFKt8LXGsd+dx0i4/
-         IhxGSnGLk+71njI145N/8ihe9KD7/5v1v3ESJ/fWQVdYKH05k45ytdjV6prk5wDnxRZR
-         apVmzm9CPkEWyYNHJyfD2fO+WR4wzJUSM4f/ly7P/uWxN3N+PfxurHiKXFZjaqtbgPYS
-         jJEDINon9ZjAItbQ/A8NkRDewjKNoSZP+8uEesf7PbniVc08JBU7O8+DRzTb+GGz5ITe
-         hnFA==
-X-Gm-Message-State: AGi0PuZFLrMJXrO7hHn8gj77AxGRWkK80N2z4lezr1EimxacKrsu28ec
-        8F5vvqfWg3ws0Wp+AEQW36bXNg==
-X-Google-Smtp-Source: APiQypJ92/0qZ5iunL9hikarn4eDK0RllMv8mjTvIrEJ1zjbLNqAjWeKqDY9cc4vVlZEbqAojJlNqA==
-X-Received: by 2002:a37:a4d8:: with SMTP id n207mr4488919qke.354.1588967577470;
-        Fri, 08 May 2020 12:52:57 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id c4sm1945896qkf.120.2020.05.08.12.52.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 May 2020 12:52:56 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jX93I-0002SQ-9Q; Fri, 08 May 2020 16:52:56 -0300
-Date:   Fri, 8 May 2020 16:52:56 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 09/12] rdma: use __anon_inode_getfd
-Message-ID: <20200508195256.GA8912@ziepe.ca>
-References: <20200508153634.249933-1-hch@lst.de>
- <20200508153634.249933-10-hch@lst.de>
+        Fri, 8 May 2020 16:00:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588968016;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XcJYYGDxYUxU0RX7aa3X/KiDcquP9abnqc3PijumMy4=;
+        b=EWexSIE2aO/qJx1SPfKm6l9KE3qfqiV9w55SIg2ISa47a0oL2Di2zC3jWsOEOJc8wgDYU8
+        jGQemRWpEXolvxdxdNXuXdb0iyqAiQE80CN6qNpOvb8qEt1/IXKoOUCri85xy5ix0TXrGc
+        o/cola7kn5gpKdTa1F49Q3gydtF55XU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-500-L3-e7MSpOJmw5tlWsXZj_Q-1; Fri, 08 May 2020 16:00:11 -0400
+X-MC-Unique: L3-e7MSpOJmw5tlWsXZj_Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 254501800D42;
+        Fri,  8 May 2020 20:00:10 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-117-83.rdu2.redhat.com [10.10.117.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26BD61E4;
+        Fri,  8 May 2020 20:00:09 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/8] dcache: show count of hash buckets in sysctl
+ fs.dentry-state
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>
+References: <158893941613.200862.4094521350329937435.stgit@buzz>
+ <158894059427.200862.341530589978120554.stgit@buzz>
+ <7c1cef87-2940-eb17-51d4-cbc40218b770@redhat.com>
+ <ac1ece33-46ea-175a-98ef-c79fcd1ced90@yandex-team.ru>
+ <741172f7-a0d2-1428-fb25-789e38978d4e@redhat.com>
+ <1f137f70-3d37-eb70-2e85-2541e504afbd@yandex-team.ru>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <34ed1b12-1bee-8158-3084-fb1059b6686a@redhat.com>
+Date:   Fri, 8 May 2020 16:00:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200508153634.249933-10-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1f137f70-3d37-eb70-2e85-2541e504afbd@yandex-team.ru>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 08, 2020 at 05:36:31PM +0200, Christoph Hellwig wrote:
-> Use __anon_inode_getfd instead of opencoding the logic using
-> get_unused_fd_flags + anon_inode_getfile.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/infiniband/core/rdma_core.c | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
+On 5/8/20 3:38 PM, Konstantin Khlebnikov wrote:
+>
+>
+> On 08/05/2020 22.05, Waiman Long wrote:
+>> On 5/8/20 12:16 PM, Konstantin Khlebnikov wrote:
+>>> On 08/05/2020 17.49, Waiman Long wrote:
+>>>> On 5/8/20 8:23 AM, Konstantin Khlebnikov wrote:
+>>>>> Count of buckets is required for estimating average length of hash 
+>>>>> chains.
+>>>>> Size of hash table depends on memory size and printed once at boot.
+>>>>>
+>>>>> Let's expose nr_buckets as sixth number in sysctl fs.dentry-state
+>>>>
+>>>> The hash bucket count is a constant determined at boot time. Is 
+>>>> there a need to use up one dentry_stat entry for that? Besides one 
+>>>> can get it by looking up the kernel dmesg log like:
+>>>>
+>>>> [    0.055212] Dentry cache hash table entries: 8388608 (order: 14, 
+>>>> 67108864 bytes)
+>>>
+>>> Grepping logs since boot time is a worst API ever.
+>>>
+>>> dentry-state shows count of dentries in various states.
+>>> It's very convenient to show count of buckets next to it,
+>>> because this number defines overall scale. 
+>>
+>> I am not against using the last free entry for that. My only concern 
+>> is when we want to expose another internal dcache data point via 
+>> dentry-state, we will have to add one more number to the array which 
+>> can cause all sort of compatibility problem. So do we want to use the 
+>> last free slot for a constant that can be retrieved from somewhere else?
+>
+> I see no problem in adding more numbers into sysctl.
+> Especially into such rarely used.
+> This interface is designed for that.
+>
+> Also fields 'age_limit' and 'want_pages' are unused since kernel 2.2.0
 
- 
-> diff --git a/drivers/infiniband/core/rdma_core.c b/drivers/infiniband/core/rdma_core.c
-> index 5128cb16bb485..541e5e06347f6 100644
-> --- a/drivers/infiniband/core/rdma_core.c
-> +++ b/drivers/infiniband/core/rdma_core.c
-> @@ -462,30 +462,21 @@ alloc_begin_fd_uobject(const struct uverbs_api_object *obj,
->  	if (WARN_ON(fd_type->fops->release != &uverbs_uobject_fd_release))
->  		return ERR_PTR(-EINVAL);
->  
-> -	new_fd = get_unused_fd_flags(O_CLOEXEC);
-> -	if (new_fd < 0)
-> -		return ERR_PTR(new_fd);
-> -
->  	uobj = alloc_uobj(attrs, obj);
->  	if (IS_ERR(uobj))
-> -		goto err_fd;
-> +		return uobj;
->  
->  	/* Note that uverbs_uobject_fd_release() is called during abort */
-> -	filp = anon_inode_getfile(fd_type->name, fd_type->fops, NULL,
-> -				  fd_type->flags);
-> -	if (IS_ERR(filp)) {
-> -		uobj = ERR_CAST(filp);
-> +	new_fd = __anon_inode_getfd(fd_type->name, fd_type->fops, NULL,
-> +			fd_type->flags | O_CLOEXEC, &filp);
-> +	if (new_fd < 0)
->  		goto err_uobj;
+Well, I got rebuke the last time I want to reuse one of 
+age_limit/want_pages entry for negative dentry count because of the 
+potential of breaking some really old applications or tools. Changing 
+dentry-state to output one more number can potentially break 
+compatibility too. That is why I am questioning if it is a good idea to 
+use up the last free slot.
 
-This will conflict with a fix (83a267021221 'RDMA/core: Fix
-overwriting of uobj in case of error') that is going to go to -rc
-soon.
+Cheers,
+Longman
 
-Also the above misses returning an ERR_PTR if __anon_inode_getfd fails, it
-returns a uobj that had been freed.. I suppose it should be something
-like
 
-if (new_fd < 0) {
-   uverbs_uobject_put(uobj);
-   return ERR_PTR(new_fd)
-}
-
-?
-
-Jason
