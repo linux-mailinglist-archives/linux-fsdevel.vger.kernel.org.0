@@ -2,139 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A7F1CBF59
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 10:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C07981CC14F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 14:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgEIIrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 04:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725989AbgEIIrf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 04:47:35 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195F5C061A0C;
-        Sat,  9 May 2020 01:47:35 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id g14so2782945wme.1;
-        Sat, 09 May 2020 01:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vpA2mMnqtCdcczzkn/BswPLFEz3AqGdCg7CXXHUsINQ=;
-        b=fsf5L63RngfsFHogIddKCefBwaJMD0i/7d0SGXzwlzuQj5veMbf37TVxzV3XhU9pPz
-         W3ajImjcN6U19WkMWXjlRHamJXtXoycA2qWpk2mE6P3NhptdU5Yrfri5GHcyqow04Aeu
-         RXDko3XlzZDmtJqLLe67ojhStsta03uAlGDfjh0p1FcSe4yWUMYxG4tT0HHRFh+lLRhI
-         NdVWae3mQ3/hEHGcMkmdPgwsWrnAq33BteCX+tAKcHnVTl6zeFJKgexr10cKOvW3KRJy
-         8XNpqln4a2EZBODt9MIcl+XAwEnOYXh4XzfZQJrf+VQQw0tuPFW9SubM+p0FJeyHqGOs
-         pDkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vpA2mMnqtCdcczzkn/BswPLFEz3AqGdCg7CXXHUsINQ=;
-        b=fqN58LfDSs52XzzazE5KnzNYwKCqMkxVhluubeFKrkBD2glSI8FwajeEqa9Ql4V2mE
-         yVCOZGvB2hIi2Vb6m0jSuntmuhsfGfb6/IrNWECgtQ3xH3eWDO+lhfBSb8JvUHJBx5aQ
-         FdLcC8w5A3j9nPNOFrAC/+PV7KctspnY0N3FQP52jtsnmVrUy0orgRghhCF0B+H+a9AH
-         b081hbZMjqjgW+KHS1UsxpTQH8XhXlf7yx5fKE5o6vAIsvD/b9dCiRa5I3TGB1cgWIZP
-         lnOALqlNLJ67Jxyg6rAfj7RXv7GxFrVxfOzeZ37h++sxEZlFFN0BDJSlXTSyO0b3WPxa
-         n9WQ==
-X-Gm-Message-State: AGi0PuZvGJLS8rL9ZSV4hASmZoRjyjuzRCqeA0y6GTddoBrP3tWDFGQX
-        3as1fevObWnXl5bJhwLQ48aI5TI7
-X-Google-Smtp-Source: APiQypKZkVDG+otFrlSCvBOkm7q7k+tzlXizLMWX5sXQxqKVfB8TYKqQb5B6dyx1LlKk2FYszyfWBQ==
-X-Received: by 2002:a7b:cf23:: with SMTP id m3mr19772826wmg.36.1589014053596;
-        Sat, 09 May 2020 01:47:33 -0700 (PDT)
-Received: from localhost.localdomain ([46.191.65.149])
-        by smtp.gmail.com with ESMTPSA id b20sm16145044wme.9.2020.05.09.01.47.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 May 2020 01:47:33 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC] splice/tee: len=0 fast path after validity check
-Date:   Sat,  9 May 2020 11:46:18 +0300
-Message-Id: <14d4955e8c232ea7d2cbb2c2409be789499e0452.1589013737.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727945AbgEIMat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 08:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbgEIMat (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 9 May 2020 08:30:49 -0400
+Received: from localhost (unknown [137.135.114.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0610521775;
+        Sat,  9 May 2020 12:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589027448;
+        bh=y/iu5sTHaRKQS+/7XC4HQd45Hj9tgLxCJS4jcMvp0C4=;
+        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=YYsgdSn+G1AtsWdV23KNXe+f3jX/yvqbZPxeCBddSYzvZoSv1l1DbFi1cVnuvIfLR
+         ms4JVEJQY9hcywHAObGgeAzihw/UYKPgLnv9f2j5MDzh/S35xryUyH9BytVXTBu7MN
+         bayPGZDg32lYUlhOZZ1H9bd2o2uTePy+ThMqW6lk=
+Date:   Sat, 09 May 2020 12:30:46 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Max Kellermann <mk@cm4all.com>
+To:     axboe@kernel.dk, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Max Kellermann <mk@cm4all.com>
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fs/io_uring: fix O_PATH fds in openat, openat2, statx
+In-Reply-To: <20200508063846.21067-1-mk@cm4all.com>
+References: <20200508063846.21067-1-mk@cm4all.com>
+Message-Id: <20200509123048.0610521775@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When len=0, splice() and tee() return 0 even if specified fds are
-invalid, hiding errors from users. Move len=0 optimisation later after
-basic validity checks.
+Hi
 
-before:
-splice(len=0, fd_in=-1, ...) == 0;
+[This is an automated email]
 
-after:
-splice(len=0, fd_in=-1, ...) == -EBADF;
+This commit has been processed because it contains a -stable tag.
+The stable tag indicates that it's relevant for the following trees: all
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+The bot has tested the following trees: v5.6.11, v5.4.39, v4.19.121, v4.14.179, v4.9.222, v4.4.222.
 
-Totally leaving it at yours judgment, but it'd be nice to have
-for io_uring as well.
+v5.6.11: Build OK!
+v5.4.39: Failed to apply! Possible dependencies:
+    0463b6c58e55 ("io_uring: use labeled array init in io_op_defs")
+    561fb04a6a22 ("io_uring: replace workqueue usage with io-wq")
+    771b53d033e8 ("io-wq: small threadpool implementation for io_uring")
+    ba5290ccb6b5 ("io_uring: replace s->needs_lock with s->in_async")
+    ba816ad61fdf ("io_uring: run dependent links inline if possible")
+    c826bd7a743f ("io_uring: add set of tracing events")
+    cf6fd4bd559e ("io_uring: inline struct sqe_submit")
+    d3656344fea0 ("io_uring: add lookup table for various opcode needs")
+    d625c6ee4975 ("io_uring: read opcode and user_data from SQE exactly once")
+    fcb323cc53e2 ("io_uring: io_uring: add support for async work inheriting files")
 
- fs/splice.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+v4.19.121: Failed to apply! Possible dependencies:
+    0463b6c58e55 ("io_uring: use labeled array init in io_op_defs")
+    2b188cc1bb85 ("Add io_uring IO interface")
+    4e21565b7fd4 ("asm-generic: add kexec_file_load system call to unistd.h")
+    561fb04a6a22 ("io_uring: replace workqueue usage with io-wq")
+    6b06314c47e1 ("io_uring: add file set registration")
+    6c271ce2f1d5 ("io_uring: add submission polling")
+    9a56a2323dbb ("io_uring: use fget/fput_many() for file references")
+    c992fe2925d7 ("io_uring: add fsync support")
+    d3656344fea0 ("io_uring: add lookup table for various opcode needs")
+    def596e9557c ("io_uring: support for IO polling")
 
-diff --git a/fs/splice.c b/fs/splice.c
-index a1dd54de24d8..8d6fc690f8e9 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1122,6 +1122,9 @@ long do_splice(struct file *in, loff_t __user *off_in,
- 		     !(out->f_mode & FMODE_WRITE)))
- 		return -EBADF;
- 
-+	if (unlikely(!len))
-+		return 0;
-+
- 	ipipe = get_pipe_info(in);
- 	opipe = get_pipe_info(out);
- 
-@@ -1426,9 +1429,6 @@ SYSCALL_DEFINE6(splice, int, fd_in, loff_t __user *, off_in,
- 	struct fd in, out;
- 	long error;
- 
--	if (unlikely(!len))
--		return 0;
--
- 	if (unlikely(flags & ~SPLICE_F_ALL))
- 		return -EINVAL;
- 
-@@ -1535,7 +1535,6 @@ static int splice_pipe_to_pipe(struct pipe_inode_info *ipipe,
- 	int ret = 0;
- 	bool input_wakeup = false;
- 
--
- retry:
- 	ret = ipipe_prep(ipipe, flags);
- 	if (ret)
-@@ -1769,6 +1768,9 @@ long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
- 	 * copying the data.
- 	 */
- 	if (ipipe && opipe && ipipe != opipe) {
-+		if (unlikely(!len))
-+			return 0;
-+
- 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
- 			flags |= SPLICE_F_NONBLOCK;
- 
-@@ -1795,9 +1797,6 @@ SYSCALL_DEFINE4(tee, int, fdin, int, fdout, size_t, len, unsigned int, flags)
- 	if (unlikely(flags & ~SPLICE_F_ALL))
- 		return -EINVAL;
- 
--	if (unlikely(!len))
--		return 0;
--
- 	error = -EBADF;
- 	in = fdget(fdin);
- 	if (in.file) {
+v4.14.179: Failed to apply! Possible dependencies:
+    0463b6c58e55 ("io_uring: use labeled array init in io_op_defs")
+    05c17cedf85b ("x86: Wire up restartable sequence system call")
+    1bd21c6c21e8 ("syscalls/core: Introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y")
+    2b188cc1bb85 ("Add io_uring IO interface")
+    3c1c456f9b96 ("syscalls: sort syscall prototypes in include/linux/syscalls.h")
+    4ddb45db3085 ("x86/syscalls: Use COMPAT_SYSCALL_DEFINEx() macros for x86-only compat syscalls")
+    5ac9efa3c50d ("syscalls/core, syscalls/x86: Clean up compat syscall stub naming convention")
+    66f4e88cc69d ("x86/ioport: add ksys_ioperm() helper; remove in-kernel calls to sys_ioperm()")
+    7a074e96dee6 ("aio: implement io_pgetevents")
+    7c2178c1ff48 ("x86/syscalls: Use proper syscall definition for sys_ioperm()")
+    9a56a2323dbb ("io_uring: use fget/fput_many() for file references")
+    ab0d1e85bfd0 ("fs/quota: use COMPAT_SYSCALL_DEFINE for sys32_quotactl()")
+    af52201d9916 ("x86/entry: Do not special-case clone(2) in compat entry")
+    b411991e0ca8 ("x86/syscalls/32: Simplify $entry == $compat entries")
+    b51d3cdf44d5 ("x86: remove compat_sys_x86_waitpid()")
+    d3656344fea0 ("io_uring: add lookup table for various opcode needs")
+    d53238cd51a8 ("kernel: open-code sys_rt_sigpending() in sys_sigpending()")
+    dfe64506c01e ("x86/syscalls: Don't pointlessly reload the system call number")
+    e145242ea0df ("syscalls/core, syscalls/x86: Clean up syscall stub naming convention")
+    ebeb8c82ffaf ("syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32")
+    fa697140f9a2 ("syscalls/x86: Use 'struct pt_regs' based syscall calling convention for 64-bit syscalls")
+
+v4.9.222: Failed to apply! Possible dependencies:
+    0463b6c58e55 ("io_uring: use labeled array init in io_op_defs")
+    05c17cedf85b ("x86: Wire up restartable sequence system call")
+    2611dc193956 ("Remove compat_sys_getdents64()")
+    2b188cc1bb85 ("Add io_uring IO interface")
+    3a404842547c ("x86/entry: define _TIF_ALLWORK_MASK flags explicitly")
+    499934898fcd ("x86/entry/64: Use ENTRY() instead of ALIGN+GLOBAL for stub32_clone()")
+    4ddb45db3085 ("x86/syscalls: Use COMPAT_SYSCALL_DEFINEx() macros for x86-only compat syscalls")
+    5ac9efa3c50d ("syscalls/core, syscalls/x86: Clean up compat syscall stub naming convention")
+    5ea0727b163c ("x86/syscalls: Check address limit on user-mode return")
+    66f4e88cc69d ("x86/ioport: add ksys_ioperm() helper; remove in-kernel calls to sys_ioperm()")
+    7a074e96dee6 ("aio: implement io_pgetevents")
+    7c2178c1ff48 ("x86/syscalls: Use proper syscall definition for sys_ioperm()")
+    9a56a2323dbb ("io_uring: use fget/fput_many() for file references")
+    ab0d1e85bfd0 ("fs/quota: use COMPAT_SYSCALL_DEFINE for sys32_quotactl()")
+    af52201d9916 ("x86/entry: Do not special-case clone(2) in compat entry")
+    afb94c9e0b41 ("livepatch/x86: add TIF_PATCH_PENDING thread flag")
+    b411991e0ca8 ("x86/syscalls/32: Simplify $entry == $compat entries")
+    b51d3cdf44d5 ("x86: remove compat_sys_x86_waitpid()")
+    d3656344fea0 ("io_uring: add lookup table for various opcode needs")
+    dfe64506c01e ("x86/syscalls: Don't pointlessly reload the system call number")
+    e145242ea0df ("syscalls/core, syscalls/x86: Clean up syscall stub naming convention")
+    ebeb8c82ffaf ("syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32")
+    fa697140f9a2 ("syscalls/x86: Use 'struct pt_regs' based syscall calling convention for 64-bit syscalls")
+
+v4.4.222: Failed to apply! Possible dependencies:
+    0463b6c58e55 ("io_uring: use labeled array init in io_op_defs")
+    05c17cedf85b ("x86: Wire up restartable sequence system call")
+    1e423bff959e ("x86/entry/64: Migrate the 64-bit syscall slow path to C")
+    2b188cc1bb85 ("Add io_uring IO interface")
+    302f5b260c32 ("x86/entry/64: Always run ptregs-using syscalls on the slow path")
+    3e65654e3db6 ("x86/syscalls: Move compat syscall entry handling into syscalltbl.sh")
+    46eabf06c04a ("x86/entry/64: Call all native slow-path syscalls with full pt-regs")
+    5ac9efa3c50d ("syscalls/core, syscalls/x86: Clean up compat syscall stub naming convention")
+    7a074e96dee6 ("aio: implement io_pgetevents")
+    95d97adb2bb8 ("x86/signal: Cleanup get_nr_restart_syscall()")
+    97245d00585d ("x86/entry: Get rid of pt_regs_to_thread_info()")
+    9a56a2323dbb ("io_uring: use fget/fput_many() for file references")
+    abfb9498ee13 ("x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()")
+    c87a85177e7a ("x86/entry: Get rid of two-phase syscall entry work")
+    cfcbadb49dab ("x86/syscalls: Add syscall entry qualifiers")
+    d3656344fea0 ("io_uring: add lookup table for various opcode needs")
+    dfe64506c01e ("x86/syscalls: Don't pointlessly reload the system call number")
+    e145242ea0df ("syscalls/core, syscalls/x86: Clean up syscall stub naming convention")
+    ebeb8c82ffaf ("syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32")
+    fa697140f9a2 ("syscalls/x86: Use 'struct pt_regs' based syscall calling convention for 64-bit syscalls")
+    fba324744bfd ("x86/syscalls: Refactor syscalltbl.sh")
+
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
+
 -- 
-2.24.0
-
+Thanks
+Sasha
