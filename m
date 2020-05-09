@@ -2,180 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3221CBA97
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 00:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254D01CBCCA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 05:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbgEHWRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 May 2020 18:17:45 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22959 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728156AbgEHWRo (ORCPT
+        id S1728708AbgEIDLD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 May 2020 23:11:03 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:52368 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbgEIDLD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 May 2020 18:17:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588976262;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=m4cOlrKnnxPQY1u+rt9M+4WGZOXo5vlBMofbne1FOu0=;
-        b=cYVLXbvmBzjCm4tqmGFY5PHVtFov8XSL3DauMvKPu67Mo2Ghao7xaeINLrWOpDSXQ0nPxj
-        IUHYAb07IyyzS1Scf4BypZK+8bDtdu/wO4xc4j9JMtGXgXzyviP6dtA+7ehnDcYiaZeBvf
-        BL77pnnZU6XlvQ3cYVR/4nsaI0lX5Lk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-481-QhGahKe7MBKjJBAQtEXuAQ-1; Fri, 08 May 2020 18:17:40 -0400
-X-MC-Unique: QhGahKe7MBKjJBAQtEXuAQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7054B464;
-        Fri,  8 May 2020 22:17:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A093A5D9CC;
-        Fri,  8 May 2020 22:17:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 5/5] cachefiles: Fix race between read_waiter and read_copier
- involving op->to_do
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc:     Lei Xue <carmark.dlut@gmail.com>,
-        Dave Wysochanski <dwysocha@redhat.com>, dhowells@redhat.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 May 2020 23:17:33 +0100
-Message-ID: <158897625384.1119820.5444982973508253115.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158897619675.1119820.2203023452686054109.stgit@warthog.procyon.org.uk>
-References: <158897619675.1119820.2203023452686054109.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.21
+        Fri, 8 May 2020 23:11:03 -0400
+Received: by mail-pj1-f65.google.com with SMTP id a5so5172278pjh.2;
+        Fri, 08 May 2020 20:11:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p5NcTJui4Fu9/J9tXQ/zepXkgIKrwl9gDgd73XI0wYc=;
+        b=ja0ShmthooFHI65GVbxrDfAXLGW6Q6YJ3/zNDpkofbXcZ1Li07H0YgPtUJuvXbrlsR
+         Ds0PRB6ZqCy7zBWc8r6vJOJiHOzGsFcZqcjUJT6wucqN0CgV1Cf23ri/Enek8PYZS8cW
+         Ix/SdKk/2z+Sk++D6G6f41VLnvPlGqzvHGYg9Hlx9zlYpqy1GK5LDtOaImfzqnApSoo/
+         x5NEBxzBfaYx2qriIA2Tf35F87QvilTDv8i4XBaRoT+jac2GR3qOaotg66mgLCQyQCcG
+         s1z0bNsJF8JE5ck85G4dhIPAk/oBe3hdQcpywNqSd2l7/i6zLUlo4gMEOxjVH4CUNLtb
+         myOw==
+X-Gm-Message-State: AGi0PuY7xzyFVDb3moUoTXLrPDH9kQ9/Q3djxdD1e0h5SoJzoV1S2G5G
+        wRoVRQxbzd/AIOx32W/zoi4=
+X-Google-Smtp-Source: APiQypJJo3vtBLT/+F50uK9YwKjnwZupKT9TMWAfYkMfkofkKXyVoI6FIcRSuFmkZZNsc5UL7pmUIw==
+X-Received: by 2002:a17:90a:20ca:: with SMTP id f68mr1501737pjg.67.1588993861986;
+        Fri, 08 May 2020 20:11:01 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b1sm3105905pfa.202.2020.05.08.20.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2020 20:11:00 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id BBC854035F; Sat,  9 May 2020 03:10:59 +0000 (UTC)
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH v4 0/5] block: fix blktrace debugfs use after free
+Date:   Sat,  9 May 2020 03:10:53 +0000
+Message-Id: <20200509031058.8239-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Lei Xue <carmark.dlut@gmail.com>
+Phew, well, since we did't hear back about removing scsi-generic
+blktrace functionality I put work into addressing to keep it. That
+took a lot of code inspection and also testing. Since libvirt
+is limited to what devices you can test I resorted to testing
+all supported device types with iscsi tcp and tgt.
 
-There is a potential race in fscache operation enqueuing for reading and
-copying multiple pages from cachefiles to netfs.  The problem can be seen
-easily on a heavy loaded system (for example many processes reading files
-continually on an NFS share covered by fscache triggered this problem within
-a few minutes).
+I decided to simplfiy the partition work further by just using
+a symbolic link. In the end that makes the blktrace code even
+cleaner than anything we had before.
 
-The race is due to cachefiles_read_waiter() adding the op to the monitor
-to_do list and then then drop the object->work_lock spinlock before
-completing fscache_enqueue_operation().  Once the lock is dropped,
-cachefiles_read_copier() grabs the op, completes processing it, and
-makes it through fscache_retrieval_complete() which sets the op->state to
-the final state of FSCACHE_OP_ST_COMPLETE(4).  When cachefiles_read_waiter()
-finally gets through the remainder of fscache_enqueue_operation()
-it sees the invalid state, and hits the ASSERTCMP and the following
-oops is seen:
-[ 2259.612361] FS-Cache:
-[ 2259.614785] FS-Cache: Assertion failed
-[ 2259.618639] FS-Cache: 4 == 5 is false
-[ 2259.622456] ------------[ cut here ]------------
-[ 2259.627190] kernel BUG at fs/fscache/operation.c:70!
-...
-[ 2259.791675] RIP: 0010:[<ffffffffc061b4cf>]  [<ffffffffc061b4cf>] fscache_enqueue_operation+0xff/0x170 [fscache]
-[ 2259.802059] RSP: 0000:ffffa0263d543be0  EFLAGS: 00010046
-[ 2259.807521] RAX: 0000000000000019 RBX: ffffa01a4d390480 RCX: 0000000000000006
-[ 2259.814847] RDX: 0000000000000000 RSI: 0000000000000046 RDI: ffffa0263d553890
-[ 2259.822176] RBP: ffffa0263d543be8 R08: 0000000000000000 R09: ffffa0263c2d8708
-[ 2259.829502] R10: 0000000000001e7f R11: 0000000000000000 R12: ffffa01a4d390480
-[ 2259.844483] R13: ffff9fa9546c5920 R14: ffffa0263d543c80 R15: ffffa0293ff9bf10
-[ 2259.859554] FS:  00007f4b6efbd700(0000) GS:ffffa0263d540000(0000) knlGS:0000000000000000
-[ 2259.875571] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2259.889117] CR2: 00007f49e1624ff0 CR3: 0000012b38b38000 CR4: 00000000007607e0
-[ 2259.904015] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 2259.918764] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 2259.933449] PKRU: 55555554
-[ 2259.943654] Call Trace:
-[ 2259.953592]  <IRQ>
-[ 2259.955577]  [<ffffffffc03a7c12>] cachefiles_read_waiter+0x92/0xf0 [cachefiles]
-[ 2259.978039]  [<ffffffffa34d3942>] __wake_up_common+0x82/0x120
-[ 2259.991392]  [<ffffffffa34d3a63>] __wake_up_common_lock+0x83/0xc0
-[ 2260.004930]  [<ffffffffa34d3510>] ? task_rq_unlock+0x20/0x20
-[ 2260.017863]  [<ffffffffa34d3ab3>] __wake_up+0x13/0x20
-[ 2260.030230]  [<ffffffffa34c72a0>] __wake_up_bit+0x50/0x70
-[ 2260.042535]  [<ffffffffa35bdcdb>] unlock_page+0x2b/0x30
-[ 2260.054495]  [<ffffffffa35bdd09>] page_endio+0x29/0x90
-[ 2260.066184]  [<ffffffffa368fc81>] mpage_end_io+0x51/0x80
+scsi-generic stuff still required quite a bit of work to figure
+out what to do. Since scsi devices probe asynchronously and scsi-generic
+is nothing but a class_interface whose sg_add_device() runs *prior*
+to the scsi device probe, we currently address the symlink on the
+sg ioctl. I however think this reveals a shortcoming of the class
+interface, now that we have async probe and its used widely. I
+think we need a probe_complete() call or something like that.
+If that seems reasonable I can work on that, that would allow us to
+move the debugfs_dir symlink / settings from sg's ioctl to a new
+proper call. I'd prefer to address that later though, as an evolution.
 
-CPU1
-cachefiles_read_waiter()
- 20 static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 21                                   int sync, void *_key)
- 22 {
-...
- 61         spin_lock(&object->work_lock);
- 62         list_add_tail(&monitor->op_link, &op->to_do);
- 63         spin_unlock(&object->work_lock);
-<begin race window>
- 64
- 65         fscache_enqueue_retrieval(op);
-182 static inline void fscache_enqueue_retrieval(struct fscache_retrieval *op)
-183 {
-184         fscache_enqueue_operation(&op->op);
-185 }
- 58 void fscache_enqueue_operation(struct fscache_operation *op)
- 59 {
- 60         struct fscache_cookie *cookie = op->object->cookie;
- 61
- 62         _enter("{OBJ%x OP%x,%u}",
- 63                op->object->debug_id, op->debug_id, atomic_read(&op->usage));
- 64
- 65         ASSERT(list_empty(&op->pend_link));
- 66         ASSERT(op->processor != NULL);
- 67         ASSERT(fscache_object_is_available(op->object));
- 68         ASSERTCMP(atomic_read(&op->usage), >, 0);
-<end race window>
+Its my first time touching scsi stuff, so I'd highly appreciate a good
+review of what I propose for scsi-generic. It gets a bit more
+complicated with some drivers using the bsg queue. FWIW, if bsg is
+enabled we *reshare* the request_queue from the scsi_device, unless
+you're a scsi transport, in which case it creates its own.
 
-CPU2
-cachefiles_read_copier()
-168         while (!list_empty(&op->to_do)) {
-...
-202                 fscache_end_io(op, monitor->netfs_page, error);
-203                 put_page(monitor->netfs_page);
-204                 fscache_retrieval_complete(op, 1);
+You can find this on my git tree:
 
-CPU1
- 58 void fscache_enqueue_operation(struct fscache_operation *op)
- 59 {
-...
- 69         ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
- 70                     op->state, ==,  FSCACHE_OP_ST_CANCELLED);
+https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20200508-block-fixes
 
-Signed-off-by: Lei Xue <carmark.dlut@gmail.com>
-Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Luis Chamberlain (5):
+  block: revert back to synchronous request_queue removal
+  block: move main block debugfs initialization to its own file
+  blktrace: fix debugfs use after free
+  blktrace: break out of blktrace setup on concurrent calls
+  loop: be paranoid on exit and prevent new additions / removals
 
- fs/cachefiles/rdwr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/Makefile               |   1 +
+ block/blk-core.c             |  32 ++++--
+ block/blk-debugfs.c          | 202 +++++++++++++++++++++++++++++++++++
+ block/blk-mq-debugfs.c       |   5 -
+ block/blk-sysfs.c            |  46 ++++----
+ block/blk.h                  |  23 ++++
+ block/bsg.c                  |   2 +
+ block/genhd.c                |  73 ++++++++++++-
+ block/partitions/core.c      |   9 ++
+ drivers/block/loop.c         |   4 +
+ drivers/scsi/ch.c            |   1 +
+ drivers/scsi/sg.c            |  75 +++++++++++++
+ drivers/scsi/st.c            |   2 +
+ include/linux/blkdev.h       |   6 +-
+ include/linux/blktrace_api.h |   1 -
+ include/linux/genhd.h        |  69 ++++++++++++
+ kernel/trace/blktrace.c      |  33 ++++--
+ 17 files changed, 539 insertions(+), 45 deletions(-)
+ create mode 100644 block/blk-debugfs.c
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index d3d78176b23c..e7726f5f1241 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -60,9 +60,9 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 	object = container_of(op->op.object, struct cachefiles_object, fscache);
- 	spin_lock(&object->work_lock);
- 	list_add_tail(&monitor->op_link, &op->to_do);
-+	fscache_enqueue_retrieval(op);
- 	spin_unlock(&object->work_lock);
- 
--	fscache_enqueue_retrieval(op);
- 	fscache_put_retrieval(op);
- 	return 0;
- }
-
+-- 
+2.25.1
 
