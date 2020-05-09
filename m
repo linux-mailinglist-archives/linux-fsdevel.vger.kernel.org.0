@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A16C1CC435
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 21:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2122A1CC438
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 21:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbgEITp0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 15:45:26 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42698 "EHLO
+        id S1728617AbgEITpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 15:45:55 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:42758 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbgEITpZ (ORCPT
+        with ESMTP id S1728098AbgEITpz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 15:45:25 -0400
+        Sat, 9 May 2020 15:45:55 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jXVPX-0003d9-4j; Sat, 09 May 2020 13:45:23 -0600
+        id 1jXVQ1-0003mG-1E; Sat, 09 May 2020 13:45:53 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jXVPW-0006cn-2I; Sat, 09 May 2020 13:45:22 -0600
+        id 1jXVPz-0006mp-VW; Sat, 09 May 2020 13:45:52 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -41,44 +41,45 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
 References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
         <87sgga6ze4.fsf@x220.int.ebiederm.org>
         <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-Date:   Sat, 09 May 2020 14:41:53 -0500
+Date:   Sat, 09 May 2020 14:42:23 -0500
 In-Reply-To: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Sat, 09 May 2020 14:40:17 -0500")
-Message-ID: <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <878si0zyhs.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jXVPW-0006cn-2I;;;mid=<87eerszyim.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+kPbaq+T2+bCARxYrk3S95h7Uzt40Jq/s=
+X-XM-SPF: eid=1jXVPz-0006mp-VW;;;mid=<878si0zyhs.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+WaFjsADm08u5UbPlcu3GHSSNgJl9oWdE=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
 X-Spam-Level: **
 X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
         *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa04 0; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-DCC: ; sa04 0; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: **;<linux-kernel@vger.kernel.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 566 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 12 (2.0%), b_tie_ro: 10 (1.8%), parse: 1.33
-        (0.2%), extract_message_metadata: 14 (2.4%), get_uri_detail_list: 3.5
-        (0.6%), tests_pri_-1000: 13 (2.3%), tests_pri_-950: 1.26 (0.2%),
-        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 131 (23.1%), check_bayes:
-        129 (22.8%), b_tokenize: 12 (2.2%), b_tok_get_all: 10 (1.7%),
-        b_comp_prob: 2.6 (0.5%), b_tok_touch_all: 101 (17.8%), b_finish: 0.92
-        (0.2%), tests_pri_0: 380 (67.2%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.2 (0.4%), poll_dns_idle: 0.62 (0.1%), tests_pri_10:
-        3.1 (0.5%), tests_pri_500: 6 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+X-Spam-Timing: total 529 ms - load_scoreonly_sql: 0.11 (0.0%),
+        signal_user_changed: 14 (2.7%), b_tie_ro: 12 (2.3%), parse: 1.80
+        (0.3%), extract_message_metadata: 20 (3.7%), get_uri_detail_list: 2.8
+        (0.5%), tests_pri_-1000: 23 (4.3%), tests_pri_-950: 2.3 (0.4%),
+        tests_pri_-900: 1.96 (0.4%), tests_pri_-90: 101 (19.1%), check_bayes:
+        98 (18.6%), b_tokenize: 13 (2.4%), b_tok_get_all: 8 (1.6%),
+        b_comp_prob: 3.2 (0.6%), b_tok_touch_all: 69 (13.1%), b_finish: 1.42
+        (0.3%), tests_pri_0: 350 (66.2%), check_dkim_signature: 1.06 (0.2%),
+        check_dkim_adsp: 3.2 (0.6%), poll_dns_idle: 0.44 (0.1%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 4/5] exec: Allow load_misc_binary to call prepare_binfmt unconditionally
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
@@ -88,160 +89,87 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Instead of recursing in search_binary_handler have the methods that
-would recurse return a positive value, and simply loop in exec_binprm.
+Add a flag preserve_creds that binfmt_misc can set to prevent
+credentials from being updated.  This allows binfmrt_misc to always
+call prepare_binfmt.  Allowing the credential computation logic to be
+consolidated.
 
-This is a trivial change as all of the methods that would recurse do
-so as effectively the last thing they do.   Making this a trivial code
-change.
-
+Ref: c407c033de84 ("[PATCH] binfmt_misc: improve calculation of interpreter's credentials")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- arch/alpha/kernel/binfmt_loader.c |  2 +-
- fs/binfmt_em86.c                  |  2 +-
- fs/binfmt_misc.c                  |  5 +----
- fs/binfmt_script.c                |  2 +-
- fs/exec.c                         | 20 +++++++++-----------
- include/linux/binfmts.h           |  2 --
- 6 files changed, 13 insertions(+), 20 deletions(-)
+ fs/binfmt_misc.c        | 15 +++------------
+ fs/exec.c               | 14 +++++++++-----
+ include/linux/binfmts.h |  2 ++
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
-diff --git a/arch/alpha/kernel/binfmt_loader.c b/arch/alpha/kernel/binfmt_loader.c
-index a8d0d6e06526..a90c8b1d5498 100644
---- a/arch/alpha/kernel/binfmt_loader.c
-+++ b/arch/alpha/kernel/binfmt_loader.c
-@@ -38,7 +38,7 @@ static int load_binary(struct linux_binprm *bprm)
- 	retval = prepare_binprm(bprm);
- 	if (retval < 0)
- 		return retval;
--	return search_binary_handler(bprm);
-+	return 1; /* Search for the interpreter */
- }
- 
- static struct linux_binfmt loader_format = {
-diff --git a/fs/binfmt_em86.c b/fs/binfmt_em86.c
-index 466497860c62..a9b9ac7f9bb0 100644
---- a/fs/binfmt_em86.c
-+++ b/fs/binfmt_em86.c
-@@ -95,7 +95,7 @@ static int load_em86(struct linux_binprm *bprm)
- 	if (retval < 0)
- 		return retval;
- 
--	return search_binary_handler(bprm);
-+	return 1; /* Search for the interpreter */
- }
- 
- static struct linux_binfmt em86_format = {
 diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..127fae9c21ab 100644
+index 127fae9c21ab..16bfafd2671d 100644
 --- a/fs/binfmt_misc.c
 +++ b/fs/binfmt_misc.c
-@@ -234,10 +234,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+@@ -218,19 +218,10 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 		goto error;
+ 
+ 	bprm->file = interp_file;
+-	if (fmt->flags & MISC_FMT_CREDENTIALS) {
+-		loff_t pos = 0;
+-
+-		/*
+-		 * No need to call prepare_binprm(), it's already been
+-		 * done.  bprm->buf is stale, update from interp_file.
+-		 */
+-		memset(bprm->buf, 0, BINPRM_BUF_SIZE);
+-		retval = kernel_read(bprm->file, bprm->buf, BINPRM_BUF_SIZE,
+-				&pos);
+-	} else
+-		retval = prepare_binprm(bprm);
++	if (fmt->flags & MISC_FMT_CREDENTIALS)
++		bprm->preserve_creds = 1;
+ 
++	retval = prepare_binprm(bprm);
  	if (retval < 0)
  		goto error;
  
--	retval = search_binary_handler(bprm);
--	if (retval < 0)
--		goto error;
--
-+	retval = 1; /* Search for the interpreter */
- ret:
- 	dput(fmt->dentry);
- 	return retval;
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index e9e6a6f4a35f..76a05696d376 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -146,7 +146,7 @@ static int load_script(struct linux_binprm *bprm)
- 	retval = prepare_binprm(bprm);
- 	if (retval < 0)
- 		return retval;
--	return search_binary_handler(bprm);
-+	return 1; /* Search for the interpreter */
- }
- 
- static struct linux_binfmt script_format = {
 diff --git a/fs/exec.c b/fs/exec.c
-index 635b5085050c..8bbf5fa785a6 100644
+index 8bbf5fa785a6..01dbeb025c46 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1690,16 +1690,12 @@ EXPORT_SYMBOL(remove_arg_zero);
- /*
-  * cycle the list of binary formats handler, until one recognizes the image
+@@ -1630,14 +1630,18 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
   */
--int search_binary_handler(struct linux_binprm *bprm)
-+static int search_binary_handler(struct linux_binprm *bprm)
+ int prepare_binprm(struct linux_binprm *bprm)
  {
- 	bool need_retry = IS_ENABLED(CONFIG_MODULES);
- 	struct linux_binfmt *fmt;
- 	int retval;
+-	int retval;
+ 	loff_t pos = 0;
  
--	/* This allows 4 levels of binfmt rewrites before failing hard. */
--	if (bprm->recursion_depth > 5)
--		return -ELOOP;
--
- 	retval = security_bprm_check(bprm);
- 	if (retval)
- 		return retval;
-@@ -1712,10 +1708,7 @@ int search_binary_handler(struct linux_binprm *bprm)
- 			continue;
- 		read_unlock(&binfmt_lock);
+-	bprm_fill_uid(bprm);
++	if (!bprm->preserve_creds) {
++		int retval;
  
--		bprm->recursion_depth++;
- 		retval = fmt->load_binary(bprm);
--		bprm->recursion_depth--;
--
- 		read_lock(&binfmt_lock);
- 		put_binfmt(fmt);
- 		if (bprm->point_of_no_return || !bprm->file ||
-@@ -1738,12 +1731,11 @@ int search_binary_handler(struct linux_binprm *bprm)
+-	retval = cap_bprm_set_creds(bprm);
+-	if (retval)
+-		return retval;
++		bprm_fill_uid(bprm);
++
++		retval = cap_bprm_set_creds(bprm);
++		if (retval)
++			return retval;
++	}
++	bprm->preserve_creds = 0;
  
- 	return retval;
- }
--EXPORT_SYMBOL(search_binary_handler);
- 
- static int exec_binprm(struct linux_binprm *bprm)
- {
- 	pid_t old_pid, old_vpid;
--	int ret;
-+	int ret, depth = 0;
- 
- 	/* Need to fetch pid before load_binary changes it */
- 	old_pid = current->pid;
-@@ -1751,7 +1743,13 @@ static int exec_binprm(struct linux_binprm *bprm)
- 	old_vpid = task_pid_nr_ns(current, task_active_pid_ns(current->parent));
- 	rcu_read_unlock();
- 
--	ret = search_binary_handler(bprm);
-+	do {
-+		depth++;
-+		ret = search_binary_handler(bprm);
-+		/* This allows 4 levels of binfmt rewrites before failing hard. */
-+		if ((ret > 0) && (depth > 5))
-+			ret = -ELOOP;
-+	} while (ret > 0);
- 	if (ret >= 0) {
- 		audit_bprm(bprm);
- 		trace_sched_process_exec(current, old_pid, bprm);
+ 	memset(bprm->buf, 0, BINPRM_BUF_SIZE);
+ 	return kernel_read(bprm->file, bprm->buf, BINPRM_BUF_SIZE, &pos);
 diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 42f760acfc2c..89f1135dcb75 100644
+index 89f1135dcb75..cb016f001e7a 100644
 --- a/include/linux/binfmts.h
 +++ b/include/linux/binfmts.h
-@@ -47,7 +47,6 @@ struct linux_binprm {
- #ifdef __alpha__
- 	unsigned int taso:1;
- #endif
--	unsigned int recursion_depth; /* only for search_binary_handler() */
- 	struct file * file;
- 	struct cred *cred;	/* new credentials */
- 	int unsafe;		/* how unsafe this exec is (mask of LSM_UNSAFE_*) */
-@@ -118,7 +117,6 @@ extern void unregister_binfmt(struct linux_binfmt *);
- 
- extern int prepare_binprm(struct linux_binprm *);
- extern int __must_check remove_arg_zero(struct linux_binprm *);
--extern int search_binary_handler(struct linux_binprm *);
- extern int begin_new_exec(struct linux_binprm * bprm);
- extern void setup_new_exec(struct linux_binprm * bprm);
- extern void finalize_exec(struct linux_binprm *bprm);
+@@ -26,6 +26,8 @@ struct linux_binprm {
+ 	unsigned long p; /* current top of mem */
+ 	unsigned long argmin; /* rlimit marker for copy_strings() */
+ 	unsigned int
++		/* Don't update the creds for an interpreter (see binfmt_misc) */
++		preserve_creds:1,
+ 		/*
+ 		 * True if most recent call to the commoncaps bprm_set_creds
+ 		 * hook (due to multiple prepare_binprm() calls from the
 -- 
 2.25.0
 
