@@ -2,119 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7881CC409
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 21:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19B01CC42B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 21:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbgEITS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 15:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727938AbgEITS0 (ORCPT
+        id S1728182AbgEITnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 15:43:55 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:53792 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727938AbgEITny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 15:18:26 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91029C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Sat,  9 May 2020 12:18:26 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id u15so5212290ljd.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 May 2020 12:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MTaQjuSq7+Uk0mjz5XhiS0By4Z0ZIBHeP5OQxoY0AXY=;
-        b=bb8lv33/xdxQCjzNvqgBwiUcCYj652YvhdbqcvSHcY1rj9neVWryv4l1j6MmeGq4jo
-         AEH6Z8NxA7GKp1r/srByCIJnplyXBSDQ62DfynP6rinchtYP4IYYLHytr7y6o8ZD6J1K
-         ZVP3pi5JLSulmR+djlIuZSg8uAVtxAHd0IwZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MTaQjuSq7+Uk0mjz5XhiS0By4Z0ZIBHeP5OQxoY0AXY=;
-        b=jjhMuVDTTrmLsDlhuZSHEecceFoEMxiYGgWh2Y4cDn8Cen8rtgjFykYVKACRSnVIYY
-         Fg0+fCuc9TV7MIMPwwhYx2Z3LAXv4QLX5g6oAAieDKntQ/2jJ3lB90Na5ZjA4X8tc8Pg
-         zAZVAs3F5MQxlbVEpMgtvArA8RhNyKG6+UmLiarH6lhjL/hUAbK4XxfwCl3mdrCtAIsK
-         HZ9D005HLMFEzf/mxF9Xwv+ALjexbnvl6O5KPwIjafUW+z0r6/IUpPy6URi2Q3OLimc3
-         oyCC6x/9gRbP4sUP/YbSJZdiFGn5Pc48PlKjFDx6C76oV1ACyPnKDV9jcP8vc7oNqdiD
-         tecw==
-X-Gm-Message-State: AOAM531eWjE354nob6Tf4R6P7e8RvbIJRd70mCms7aLusNu+Tkqguqru
-        o/xw9DmyxzWw7Ji6P53kSpmhta5BFhI=
-X-Google-Smtp-Source: ABdhPJxqL7JBaf9MCLvk5kgSBZfPjXeBH27v6yNZo/FrOT+t40A6vq7Qx80mrlWZ0XwfYhDAwGuyYg==
-X-Received: by 2002:a2e:8590:: with SMTP id b16mr5728311lji.45.1589051904705;
-        Sat, 09 May 2020 12:18:24 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id y9sm4505596ljy.31.2020.05.09.12.18.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 May 2020 12:18:23 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id b26so4108914lfa.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 May 2020 12:18:23 -0700 (PDT)
-X-Received: by 2002:ac2:418b:: with SMTP id z11mr5854254lfh.30.1589051902927;
- Sat, 09 May 2020 12:18:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87blmy6zay.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87blmy6zay.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 9 May 2020 12:18:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
-Message-ID: <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] exec: Stop open coding mutex_lock_killable of cred_guard_mutex
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sat, 9 May 2020 15:43:54 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jXVNz-0002uX-Fb; Sat, 09 May 2020 13:43:47 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jXVNy-0006US-Ht; Sat, 09 May 2020 13:43:47 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
         Greg Ungerer <gerg@linux-m68k.org>,
         Rob Landley <rob@landley.net>,
         Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+Date:   Sat, 09 May 2020 14:40:17 -0500
+In-Reply-To: <87sgga6ze4.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Fri, 08 May 2020 13:43:31 -0500")
+Message-ID: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jXVNy-0006US-Ht;;;mid=<87v9l4zyla.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19IOND8rj4bMCGwxstKDUfSmpiOWIeGpr4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,XMNoVowels autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa08 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;<linux-kernel@vger.kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 511 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 13 (2.6%), b_tie_ro: 12 (2.3%), parse: 0.81
+        (0.2%), extract_message_metadata: 2.3 (0.5%), get_uri_detail_list:
+        0.70 (0.1%), tests_pri_-1000: 3.6 (0.7%), tests_pri_-950: 1.26 (0.2%),
+        tests_pri_-900: 1.10 (0.2%), tests_pri_-90: 160 (31.3%), check_bayes:
+        158 (31.0%), b_tokenize: 6 (1.1%), b_tok_get_all: 8 (1.6%),
+        b_comp_prob: 2.2 (0.4%), b_tok_touch_all: 138 (26.9%), b_finish: 1.17
+        (0.2%), tests_pri_0: 311 (60.8%), check_dkim_signature: 0.43 (0.1%),
+        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 1.13 (0.2%), tests_pri_10:
+        3.8 (0.7%), tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 0/5] exec: Control flow simplifications
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 8, 2020 at 11:48 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
->
-> Oleg modified the code that did
-> "mutex_lock_interruptible(&current->cred_guard_mutex)" to return
-> -ERESTARTNOINTR instead of -EINTR, so that userspace will never see a
-> failure to grab the mutex.
->
-> Slightly earlier Liam R. Howlett defined mutex_lock_killable for
-> exactly the same situation but it does it a little more cleanly.
 
-What what what?
+It is hard to follow the control flow in exec.c as the code has evolved
+over time and something that used to work one way now works another.
+This set of changes attempts to address the worst of that, to remove
+unnecessary work and to make the code a little easier to follow.
 
-None of this makes sense. Your commit message is completely wrong, and
-the patch is utter shite.
+The one rough point in my changes is cap_bprm_set_creds propbably
+needs a new name as I have taken it out of security_bprm_set_creds
+but my imagination failed to come up with anything better.
 
-mutex_lock_interruptible() and mutex_lock_killable() are completely
-different operations, and the difference has absolutely nothing to do
-with  -ERESTARTNOINTR or -EINTR.
+Eric W. Biederman (5):
+      exec: Call cap_bprm_set_creds directly from prepare_binprm
+      exec: Directly call security_bprm_set_creds from __do_execve_file
+      exec: Remove recursion from search_binary_handler
+      exec: Allow load_misc_binary to call prepare_binfmt unconditionally
+      exec: Move the call of prepare_binprm into search_binary_handler
 
-mutex_lock_interruptible() is interrupted by any signal.
+ arch/alpha/kernel/binfmt_loader.c |  5 +----
+ fs/binfmt_em86.c                  |  7 +-----
+ fs/binfmt_misc.c                  | 22 +++---------------
+ fs/binfmt_script.c                |  5 +----
+ fs/exec.c                         | 47 +++++++++++++++++++++------------------
+ include/linux/binfmts.h           | 11 ++-------
+ include/linux/security.h          |  2 +-
+ security/apparmor/domain.c        |  3 ---
+ security/commoncap.c              |  1 -
+ security/selinux/hooks.c          |  2 --
+ security/smack/smack_lsm.c        |  3 ---
+ security/tomoyo/tomoyo.c          |  6 -----
+ 12 files changed, 34 insertions(+), 80 deletions(-)
 
-mutex_lock_killable() is - surprise surprise - only interrupted by
-SIGKILL (in theory any fatal signal, but we never actually implemented
-that logic, so it's only interruptible by the known-to-always-be-fatal
-SIGKILL).
+---
 
-> Switch the code to mutex_lock_killable so that it is clearer what the
-> code is doing.
+I think this is correct set of changes that makes things better but
+please look things over/review this code if you have any expertise in
+anything I am touching.
 
-This nonsensical patch makes me worry about all your other patches.
-The explanation is wrong, the patch is wrong, and it changes things to
-be fundamentally broken.
+Thank you,
+Eric
 
-Before this, ^C would break out of a blocked execve()/ptrace()
-situation. After this patch, you need special tools to do so.
 
-This patch is completely wrong.
-
-And Kees, what the heck is that "Reviewed-by" for? Worthless review too.
-
-                Linus
