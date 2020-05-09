@@ -2,89 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 826D81CC3D8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 20:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C7881CC409
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 21:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbgEIS7O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 14:59:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59508 "EHLO
+        id S1728162AbgEITS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 15:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728011AbgEIS7N (ORCPT
+        by vger.kernel.org with ESMTP id S1727938AbgEITS0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 14:59:13 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB6EC05BD0A
-        for <linux-fsdevel@vger.kernel.org>; Sat,  9 May 2020 11:59:13 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id ms17so5750813pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 May 2020 11:59:13 -0700 (PDT)
+        Sat, 9 May 2020 15:18:26 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91029C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sat,  9 May 2020 12:18:26 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id u15so5212290ljd.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 May 2020 12:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uk9SlQz0CEzsa9L5BG2dNiuhefw99CVH+DuavxyjFwA=;
-        b=WpMlExT/LVZeacy+KQ32hrpYo3R8XLnZFgCb869aNV+iiJ4EApUMjwk4xusqybUsck
-         IQsuT29KxtXyciI21GTLSAOx5ucTEuI1DNlfzz+U1uA4nl/ZYLB37ks3l7sCuyFgfsb7
-         C39XCT5j6YqMLMPgPmiFNCU6Ambyi9SwoV1Zk=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MTaQjuSq7+Uk0mjz5XhiS0By4Z0ZIBHeP5OQxoY0AXY=;
+        b=bb8lv33/xdxQCjzNvqgBwiUcCYj652YvhdbqcvSHcY1rj9neVWryv4l1j6MmeGq4jo
+         AEH6Z8NxA7GKp1r/srByCIJnplyXBSDQ62DfynP6rinchtYP4IYYLHytr7y6o8ZD6J1K
+         ZVP3pi5JLSulmR+djlIuZSg8uAVtxAHd0IwZs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uk9SlQz0CEzsa9L5BG2dNiuhefw99CVH+DuavxyjFwA=;
-        b=Yhewy1564SCUirj0Oohaemj29/xtCHBZsdECXtKftVbXe2aoLMn4wH/JWJRqSaWH0f
-         dLJbN/QTobM2UgdeSn5SMc0+6aN24mlwai0AAg996t+jkLlyeToN7j+5ubg96XI/1don
-         ADVyGVg+VRUBndkf4Slc/uEkIfmQXZeKRFXAjl0HTSmTYR8BMpe9jzgecb6YbsORR745
-         iCI1zuZ6uqZzwr4MEBY1Sn9L4wKvYax0CiKEbyAQdUcdnLbd6fPXY4QzAWMiVC4PzM9R
-         zyIanmj31n/qN/g5/086F7s5w9hMAnc1VkrCEA66U8MY/NmorWyTqkA/Qeym1c2o0JgO
-         LtaA==
-X-Gm-Message-State: AGi0PuZIaoevVCMe0w224mYeWyJpxFRtqEJ/WdRFsB0npP1JipSLk7JC
-        GAkPulPdg8fvLnCwlCArfvaF3A==
-X-Google-Smtp-Source: APiQypKBNQXLzuVMARkaYrebfFtrKeGEowsUVjfCgRHf5JpipmwnEaSx8EB4o1ubtEkZ1ly+hXTS1A==
-X-Received: by 2002:a17:90a:db0a:: with SMTP id g10mr13107736pjv.54.1589050752729;
-        Sat, 09 May 2020 11:59:12 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j26sm5139846pfr.215.2020.05.09.11.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 May 2020 11:59:11 -0700 (PDT)
-Date:   Sat, 9 May 2020 11:59:10 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Rafael Aquini <aquini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
-        mcgrof@kernel.org, akpm@linux-foundation.org, cai@lca.pw,
-        rdunlap@infradead.org, tytso@mit.edu, bunk@kernel.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        labbott@redhat.com, jeffm@suse.com, jikos@kernel.org, jeyu@suse.de,
-        tiwai@suse.de, AnDavis@suse.com, rpalethorpe@suse.de
-Subject: Re: [PATCH v3] kernel: add panic_on_taint
-Message-ID: <202005091159.A317BEFF@keescook>
-References: <20200509135737.622299-1-aquini@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MTaQjuSq7+Uk0mjz5XhiS0By4Z0ZIBHeP5OQxoY0AXY=;
+        b=jjhMuVDTTrmLsDlhuZSHEecceFoEMxiYGgWh2Y4cDn8Cen8rtgjFykYVKACRSnVIYY
+         Fg0+fCuc9TV7MIMPwwhYx2Z3LAXv4QLX5g6oAAieDKntQ/2jJ3lB90Na5ZjA4X8tc8Pg
+         zAZVAs3F5MQxlbVEpMgtvArA8RhNyKG6+UmLiarH6lhjL/hUAbK4XxfwCl3mdrCtAIsK
+         HZ9D005HLMFEzf/mxF9Xwv+ALjexbnvl6O5KPwIjafUW+z0r6/IUpPy6URi2Q3OLimc3
+         oyCC6x/9gRbP4sUP/YbSJZdiFGn5Pc48PlKjFDx6C76oV1ACyPnKDV9jcP8vc7oNqdiD
+         tecw==
+X-Gm-Message-State: AOAM531eWjE354nob6Tf4R6P7e8RvbIJRd70mCms7aLusNu+Tkqguqru
+        o/xw9DmyxzWw7Ji6P53kSpmhta5BFhI=
+X-Google-Smtp-Source: ABdhPJxqL7JBaf9MCLvk5kgSBZfPjXeBH27v6yNZo/FrOT+t40A6vq7Qx80mrlWZ0XwfYhDAwGuyYg==
+X-Received: by 2002:a2e:8590:: with SMTP id b16mr5728311lji.45.1589051904705;
+        Sat, 09 May 2020 12:18:24 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id y9sm4505596ljy.31.2020.05.09.12.18.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 May 2020 12:18:23 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id b26so4108914lfa.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 May 2020 12:18:23 -0700 (PDT)
+X-Received: by 2002:ac2:418b:: with SMTP id z11mr5854254lfh.30.1589051902927;
+ Sat, 09 May 2020 12:18:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200509135737.622299-1-aquini@redhat.com>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87blmy6zay.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87blmy6zay.fsf_-_@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 9 May 2020 12:18:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
+Message-ID: <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] exec: Stop open coding mutex_lock_killable of cred_guard_mutex
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 09, 2020 at 09:57:37AM -0400, Rafael Aquini wrote:
-> Analogously to the introduction of panic_on_warn, this patch
-> introduces a kernel option named panic_on_taint in order to
-> provide a simple and generic way to stop execution and catch
-> a coredump when the kernel gets tainted by any given taint flag.
-> 
-> This is useful for debugging sessions as it avoids rebuilding
-> the kernel to explicitly add calls to panic() or BUG() into
-> code sites that introduce the taint flags of interest.
-> Another, perhaps less frequent, use for this option would be
-> as a mean for assuring a security policy (in paranoid mode)
-> case where no single taint is allowed for the running system.
-> 
-> Suggested-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Rafael Aquini <aquini@redhat.com>
+On Fri, May 8, 2020 at 11:48 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>
+> Oleg modified the code that did
+> "mutex_lock_interruptible(&current->cred_guard_mutex)" to return
+> -ERESTARTNOINTR instead of -EINTR, so that userspace will never see a
+> failure to grab the mutex.
+>
+> Slightly earlier Liam R. Howlett defined mutex_lock_killable for
+> exactly the same situation but it does it a little more cleanly.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+What what what?
 
--- 
-Kees Cook
+None of this makes sense. Your commit message is completely wrong, and
+the patch is utter shite.
+
+mutex_lock_interruptible() and mutex_lock_killable() are completely
+different operations, and the difference has absolutely nothing to do
+with  -ERESTARTNOINTR or -EINTR.
+
+mutex_lock_interruptible() is interrupted by any signal.
+
+mutex_lock_killable() is - surprise surprise - only interrupted by
+SIGKILL (in theory any fatal signal, but we never actually implemented
+that logic, so it's only interruptible by the known-to-always-be-fatal
+SIGKILL).
+
+> Switch the code to mutex_lock_killable so that it is clearer what the
+> code is doing.
+
+This nonsensical patch makes me worry about all your other patches.
+The explanation is wrong, the patch is wrong, and it changes things to
+be fundamentally broken.
+
+Before this, ^C would break out of a blocked execve()/ptrace()
+situation. After this patch, you need special tools to do so.
+
+This patch is completely wrong.
+
+And Kees, what the heck is that "Reviewed-by" for? Worthless review too.
+
+                Linus
