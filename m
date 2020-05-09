@@ -2,157 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E20D1CC245
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 16:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1371CC287
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 18:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbgEIO4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 10:56:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50615 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728005AbgEIO4i (ORCPT
+        id S1727998AbgEIQEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 12:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726782AbgEIQEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 10:56:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589036194;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=biBEh2xyG7QOz0vWY4fM+UdTv5nwnU3LRB3gcCSBxrI=;
-        b=Zsv0H2YqN1sZAYBa/UCloHZg6FB4iTagjI9+IUM3XnkAXeI0XMUhNwUPVbbUO5Lbz3BuXI
-        3gHN59fdERf4Tekqgr07Cp8nLI9FOgcC52+IvKIIHc9L1QF2WyRSiRlBCiXsC7tlYcv6eV
-        hg9c/c4aJN2pII1g5KXJ/iERIpE34ME=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-221-MPQ1STaMOfSNwr8bvkqY-A-1; Sat, 09 May 2020 10:56:32 -0400
-X-MC-Unique: MPQ1STaMOfSNwr8bvkqY-A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08901800D24;
-        Sat,  9 May 2020 14:56:30 +0000 (UTC)
-Received: from x1-fbsd (unknown [10.3.128.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CA879323;
-        Sat,  9 May 2020 14:56:16 +0000 (UTC)
-Date:   Sat, 9 May 2020 10:56:14 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Tso Ted <tytso@mit.edu>, Adrian Bunk <bunk@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Jeff Mahoney <jeffm@suse.com>, Jiri Kosina <jikos@kernel.org>,
-        Jessica Yu <jeyu@suse.de>, Takashi Iwai <tiwai@suse.de>,
-        Ann Davis <AnDavis@suse.com>,
-        Richard Palethorpe <rpalethorpe@suse.de>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
-        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
-        rdunlap@infradead.org
-Subject: Re: [PATCH v2] kernel: add panic_on_taint
-Message-ID: <20200509145614.GA6704@x1-fbsd>
-References: <20200507180631.308441-1-aquini@redhat.com>
- <20200507182257.GX11244@42.do-not-panic.com>
- <20200507184307.GF205881@optiplex-lnx>
- <20200507184705.GG205881@optiplex-lnx>
- <20200507203340.GZ11244@42.do-not-panic.com>
- <20200507220606.GK205881@optiplex-lnx>
- <20200507222558.GA11244@42.do-not-panic.com>
- <20200508124719.GB367616@optiplex-lnx>
- <20200509034854.GI11244@42.do-not-panic.com>
+        Sat, 9 May 2020 12:04:13 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16126C061A0C;
+        Sat,  9 May 2020 09:04:13 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id d207so422078wmd.0;
+        Sat, 09 May 2020 09:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qTwSc/ypaLi+KKFJzSKFB5kBxai1cU71l88XEfLySiY=;
+        b=uYBL5gHMIT7ufV9viFSy67O8gqzsxOJ0VvlmxD0HipOBPZIbIHrJk+gTPuoQ/Ct3b8
+         ehJkj6htP7M7ltb5OA0h5g2UffH/y+hiSAmDR2WOZu1Z/zxE41YEjzfSblHOmtArcsHJ
+         l13ivq4yad6EPYS4BIL/tHlIzTgSv+HqpOy6DzjgCTgy0q3aEV+J5aM2ixUyuaL5f4uB
+         bswQI6yDZWsa9l/DeHqr5iChkOC+UGsFEsruK90VqsVGrhzcnbq2aP3WDVnYLvZeAunM
+         F0AGbOGvmRuRJB7QDkYd/5jFupdC1eKPFrTB12G4i7V/Aykr7NQWsn0lGSbpaRbG1ZeH
+         sv4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qTwSc/ypaLi+KKFJzSKFB5kBxai1cU71l88XEfLySiY=;
+        b=X+D24C+RWKEyLkBMQgSIR6UHjEW2Qq08G60Hz46RUmjLM3xXfO2RLxnuuRI9ENB3Dd
+         aMwGgWex1rBviq4Iyb7pqveqS+Ii5mBnX1dgmSxMpTKLkUNqL7kktSh4Kzl4dzxHuXSd
+         Alxx/h9huVewcbyfPgCHpQAtIVx0ugomUZBVVYGSgxArBsX8RUnb6w5WFDo3uzPhg2Ki
+         Z7TDtwz5HIbwGxj7Sy6lamPak0IcV9PA1i8UpCw2fes70Piqp6ZfqZuxWpwIrJyiGoIo
+         OsXKDx8ysAIMGZxToLxcKuJ4yNF3y4OmFtFvk/UStd/7KW1HSY20nOXPj83KfsgeSgbX
+         MI7g==
+X-Gm-Message-State: AGi0Pub+O2tQgZxBaC4/ydtVNg/3roPxe6bx5ITNwU4NMAfPO6HiEIlf
+        Vghp1gjBC2P9ouPI465rCCrehwkS
+X-Google-Smtp-Source: APiQypLBDGXWQx7Ql2mgJh88GekKvoJOFzsG973L3TW5JVjmGRzJnq8KA4tSg7TaFtnT+Pdcoy6niQ==
+X-Received: by 2002:a1c:f416:: with SMTP id z22mr21929182wma.32.1589040251374;
+        Sat, 09 May 2020 09:04:11 -0700 (PDT)
+Received: from [192.168.43.127] ([46.191.65.149])
+        by smtp.gmail.com with ESMTPSA id 33sm8848332wrk.61.2020.05.09.09.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 May 2020 09:04:10 -0700 (PDT)
+Subject: Re: [RFC] splice/tee: len=0 fast path after validity check
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <14d4955e8c232ea7d2cbb2c2409be789499e0452.1589013737.git.asml.silence@gmail.com>
+ <29de6592-8d62-5b5d-9859-d7adcc58759b@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <549f9a26-041b-6b2c-f21d-4cf8733323a4@gmail.com>
+Date:   Sat, 9 May 2020 19:03:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200509034854.GI11244@42.do-not-panic.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <29de6592-8d62-5b5d-9859-d7adcc58759b@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 09, 2020 at 03:48:54AM +0000, Luis Chamberlain wrote:
-> On Fri, May 08, 2020 at 08:47:19AM -0400, Rafael Aquini wrote:
-> > On Thu, May 07, 2020 at 10:25:58PM +0000, Luis Chamberlain wrote:
-> > > On Thu, May 07, 2020 at 06:06:06PM -0400, Rafael Aquini wrote:
-> > > > On Thu, May 07, 2020 at 08:33:40PM +0000, Luis Chamberlain wrote:
-> > > > > I *think* that a cmdline route to enable this would likely remove the
-> > > > > need for the kernel config for this. But even with Vlastimil's work
-> > > > > merged, I think we'd want yet-another value to enable / disable this
-> > > > > feature. Do we need yet-another-taint flag to tell us that this feature
-> > > > > was enabled?
-> > > > >
-> > > > 
-> > > > I guess it makes sense to get rid of the sysctl interface for
-> > > > proc_on_taint, and only keep it as a cmdline option. 
-> > > 
-> > > That would be easier to support and k3eps this simple.
-> > > 
-> > > > But the real issue seems to be, regardless we go with a cmdline-only option
-> > > > or not, the ability of proc_taint() to set any arbitrary taint flag 
-> > > > other than just marking the kernel with TAINT_USER. 
-> > > 
-> > > I think we would have no other option but to add a new TAINT flag so
-> > > that we know that the taint flag was modified by a user. Perhaps just
-> > > re-using TAINT_USER when proc_taint() would suffice.
-> > >
-> > 
-> > We might not need an extra taint flag if, perhaps, we could make these
-> > two features mutually exclusive. The idea here is that bitmasks added 
-> > via panic_on_taint get filtered out in proc_taint(), so a malicious 
-> > user couldn't exploit the latter interface to easily panic the system,
-> > when the first one is also in use. 
+On 09/05/2020 17:42, Jens Axboe wrote:
+> On 5/9/20 2:46 AM, Pavel Begunkov wrote:
+>> When len=0, splice() and tee() return 0 even if specified fds are
+>> invalid, hiding errors from users. Move len=0 optimisation later after
+>> basic validity checks.
+>>
+>> before:
+>> splice(len=0, fd_in=-1, ...) == 0;
+>>
+>> after:
+>> splice(len=0, fd_in=-1, ...) == -EBADF;
 > 
-> I get it, however I I can still see the person who enables enabling
-> panic-on-tain wanting to know if proc_taint() was used. So even if
-> it was not on their mask, if it was modified that seems like important
-> information for a bug report analysis.
->
+> I'm not sure what the purpose of this would be. It probably should have
+> been done that way from the beginning, but it wasn't.  While there's
+> very little risk of breaking any applications due to this change, it
+> also seems like a pointless exercise at this point.
+> 
+> So my suggestion would be to just leave it alone.
 
-For that purpose (tracking user taints) I think sth between these lines
-would work:
+Ok
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 8a176d8727a3..651a82c13621 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2602,6 +2602,9 @@ int proc_douintvec(struct ctl_table *table, int write,
-                                 do_proc_douintvec_conv, NULL);
- }
-
-+/* track which taint bits were set by the user */
-+static unsigned long user_tainted;
-+
- /*
-  * Taint values can only be increased
-  * This means we can safely use a temporary.
-@@ -2629,11 +2632,20 @@ static int proc_taint(struct ctl_table *table, int write,
-                 */
-                int i;
-                for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
--                       if ((tmptaint >> i) & 1)
-+                       if ((tmptaint >> i) & 1) {
-+                               set_bit(i, &user_tainted);
-                                add_taint(i, LOCKDEP_STILL_OK);
-+                       }
-                }
-        }
-
-+       /*
-+        * Users with SYS_ADMIN capability can fiddle with any arbitrary
-+        * taint flag through this interface.
-+        * If that's the case, we also need to mark the kernel "tainted by user"
-+        */
-+       add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-+
-        return err;
- }
-
-
-I don't think, though, it's panic_on_taint work to track that. I posted a v3 for
-this feature with a way to select if one wants to avoid user forced taints
-triggering panic() for flags also set for panic_on_taint.
-
-Cheers,
-
--- Rafael
-
+-- 
+Pavel Begunkov
