@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24BDD1CC58A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 01:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC8F71CC596
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 01:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbgEIXqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 19:46:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
+        id S1727940AbgEIXrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 19:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728129AbgEIXp7 (ORCPT
+        by vger.kernel.org with ESMTP id S1728575AbgEIXqA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 19:45:59 -0400
+        Sat, 9 May 2020 19:46:00 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E46FC05BD09;
-        Sat,  9 May 2020 16:45:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B62CC061A0C;
+        Sat,  9 May 2020 16:46:00 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jXZAM-004iRA-77; Sat, 09 May 2020 23:45:58 +0000
+        id 1jXZAM-004iRG-B0; Sat, 09 May 2020 23:45:58 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 02/20] fat_dir_ioctl(): hadn't needed that access_ok() for more than a decade...
-Date:   Sun, 10 May 2020 00:45:39 +0100
-Message-Id: <20200509234557.1124086-2-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 03/20] btrfs_ioctl_send(): don't bother with access_ok()
+Date:   Sun, 10 May 2020 00:45:40 +0100
+Message-Id: <20200509234557.1124086-3-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200509234557.1124086-1-viro@ZenIV.linux.org.uk>
 References: <20200509234124.GM23230@ZenIV.linux.org.uk>
@@ -37,35 +37,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-address is passed only to put_user() and copy_to_user()
+we do copy_from_user() on that range anyway
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/fat/dir.c | 4 ----
- 1 file changed, 4 deletions(-)
+ fs/btrfs/send.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 054acd9fd033..b4ddf48fa444 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -804,8 +804,6 @@ static long fat_dir_ioctl(struct file *filp, unsigned int cmd,
- 		return fat_generic_ioctl(filp, cmd, arg);
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index c5f41bd86765..6a92ecf9eaa2 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -7065,13 +7065,6 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ 		goto out;
  	}
  
--	if (!access_ok(d1, sizeof(struct __fat_dirent[2])))
--		return -EFAULT;
- 	/*
- 	 * Yes, we don't need this put_user() absolutely. However old
- 	 * code didn't return the right value. So, app use this value,
-@@ -844,8 +842,6 @@ static long fat_compat_dir_ioctl(struct file *filp, unsigned cmd,
- 		return fat_generic_ioctl(filp, cmd, (unsigned long)arg);
- 	}
- 
--	if (!access_ok(d1, sizeof(struct compat_dirent[2])))
--		return -EFAULT;
- 	/*
- 	 * Yes, we don't need this put_user() absolutely. However old
- 	 * code didn't return the right value. So, app use this value,
+-	if (!access_ok(arg->clone_sources,
+-			sizeof(*arg->clone_sources) *
+-			arg->clone_sources_count)) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
+-
+ 	if (arg->flags & ~BTRFS_SEND_FLAG_MASK) {
+ 		ret = -EINVAL;
+ 		goto out;
 -- 
 2.11.0
 
