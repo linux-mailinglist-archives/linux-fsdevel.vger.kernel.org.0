@@ -2,238 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE141CC1F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 15:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CAC1CC22B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 May 2020 16:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgEIN6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 09:58:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40425 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727820AbgEIN6a (ORCPT
+        id S1727787AbgEIOUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 10:20:44 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:50696 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbgEIOUo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 09:58:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589032708;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=nLUA8W5j+MyNDn2SryzaQKTx2p2PalluAUK/eJiFTvA=;
-        b=CCTfK62/RAE3AXMP9kLcXUCSRfv5oPj191L4mGr7s1kys1GZiOdMmu0I9jGzPqg7FLQVRw
-        duzka6KGfGT+pbaSC9tGtl9U3WYqCFBzy2yh6MLQ0r42ahLiacQuRjHqbNNOIdZHf/gY/H
-        irSqBD16HEtqr8/3QHiO+wWAsoWjFaM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-311-CZHajXDuMram0ED9XXXl7g-1; Sat, 09 May 2020 09:58:24 -0400
-X-MC-Unique: CZHajXDuMram0ED9XXXl7g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE53D39341;
-        Sat,  9 May 2020 13:58:17 +0000 (UTC)
-Received: from optiplex-lnx.redhat.com (unknown [10.3.128.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 403855D97B;
-        Sat,  9 May 2020 13:57:40 +0000 (UTC)
-From:   Rafael Aquini <aquini@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, dyoung@redhat.com, bhe@redhat.com,
-        corbet@lwn.net, mcgrof@kernel.org, keescook@chromium.org,
-        akpm@linux-foundation.org, cai@lca.pw, rdunlap@infradead.org,
-        tytso@mit.edu, bunk@kernel.org, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, labbott@redhat.com, jeffm@suse.com,
-        jikos@kernel.org, jeyu@suse.de, tiwai@suse.de, AnDavis@suse.com,
-        rpalethorpe@suse.de
-Subject: [PATCH v3] kernel: add panic_on_taint
-Date:   Sat,  9 May 2020 09:57:37 -0400
-Message-Id: <20200509135737.622299-1-aquini@redhat.com>
+        Sat, 9 May 2020 10:20:44 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jXQLJ-0006Tb-Ur; Sat, 09 May 2020 08:20:41 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jXQLI-0001r0-SE; Sat, 09 May 2020 08:20:41 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <875zd66za3.fsf_-_@x220.int.ebiederm.org>
+        <202005082213.8BDD4AC0CC@keescook>
+Date:   Sat, 09 May 2020 09:17:11 -0500
+In-Reply-To: <202005082213.8BDD4AC0CC@keescook> (Kees Cook's message of "Fri,
+        8 May 2020 22:15:43 -0700")
+Message-ID: <87tv0p2nx4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain
+X-XM-SPF: eid=1jXQLI-0001r0-SE;;;mid=<87tv0p2nx4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18A1U/jWwxjIXHnvSgRraar1VS0tQcBrZU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 446 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 10 (2.3%), b_tie_ro: 9 (2.0%), parse: 0.85 (0.2%),
+         extract_message_metadata: 11 (2.5%), get_uri_detail_list: 1.07 (0.2%),
+         tests_pri_-1000: 5 (1.2%), tests_pri_-950: 1.30 (0.3%),
+        tests_pri_-900: 1.06 (0.2%), tests_pri_-90: 177 (39.6%), check_bayes:
+        163 (36.4%), b_tokenize: 8 (1.9%), b_tok_get_all: 7 (1.5%),
+        b_comp_prob: 3.2 (0.7%), b_tok_touch_all: 140 (31.4%), b_finish: 1.13
+        (0.3%), tests_pri_0: 224 (50.2%), check_dkim_signature: 0.53 (0.1%),
+        check_dkim_adsp: 2.8 (0.6%), poll_dns_idle: 1.19 (0.3%), tests_pri_10:
+        3.2 (0.7%), tests_pri_500: 9 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 4/6] exec: Run sync_mm_rss before taking exec_update_mutex
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Analogously to the introduction of panic_on_warn, this patch
-introduces a kernel option named panic_on_taint in order to
-provide a simple and generic way to stop execution and catch
-a coredump when the kernel gets tainted by any given taint flag.
+Kees Cook <keescook@chromium.org> writes:
 
-This is useful for debugging sessions as it avoids rebuilding
-the kernel to explicitly add calls to panic() or BUG() into
-code sites that introduce the taint flags of interest.
-Another, perhaps less frequent, use for this option would be
-as a mean for assuring a security policy (in paranoid mode)
-case where no single taint is allowed for the running system.
+> $ git grep exec_mm_release
+> fs/exec.c:      exec_mm_release(tsk, old_mm);
+> include/linux/sched/mm.h:extern void exec_mm_release(struct task_struct *, struct mm_struct *);
+> kernel/fork.c:void exec_mm_release(struct task_struct *tsk, struct mm_struct *mm)
+>
+> kernel/fork.c:
+>
+> void exit_mm_release(struct task_struct *tsk, struct mm_struct *mm)
+> {
+>         futex_exit_release(tsk);
+>         mm_release(tsk, mm);
+> }
+>
+> void exec_mm_release(struct task_struct *tsk, struct mm_struct *mm)
+> {
+>         futex_exec_release(tsk);
+>         mm_release(tsk, mm);
+> }
+>
+> $ git grep exit_mm_release
+> include/linux/sched/mm.h:extern void exit_mm_release(struct task_struct *, struct mm_struct *);
+> kernel/exit.c:  exit_mm_release(current, mm);
+> kernel/fork.c:void exit_mm_release(struct task_struct *tsk, struct mm_struct *mm)
+>
+> kernel/exit.c:
+>
+>         exit_mm_release(current, mm);
+>         if (!mm)
+>                 return;
+>         sync_mm_rss(mm);
+>
+> It looks to me like both exec_mm_release() and exit_mm_release() could
+> easily have the sync_mm_rss(...) folded into their function bodies and
+> removed from the callers. *shrug*
 
-Suggested-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Rafael Aquini <aquini@redhat.com>
----
-Changelog:
-* v2: get rid of unnecessary/misguided compiler hints		(Luis)
-* v2: enhance documentation text for the new kernel parameter	(Randy)
-* v3: drop sysctl interface, keep it only as a kernel parameter (Luis)
+Well it would have to be all of:
+	if (mm) 
+		sync_mm_rss(mm);
 
- Documentation/admin-guide/kdump/kdump.rst     | 10 +++++
- .../admin-guide/kernel-parameters.txt         | 15 +++++++
- include/linux/kernel.h                        |  2 +
- kernel/panic.c                                | 40 +++++++++++++++++++
- kernel/sysctl.c                               |  9 ++++-
- 5 files changed, 75 insertions(+), 1 deletion(-)
+I remember reading through exit_mm_release and seeing that nothing
+actually depended upon a non-NULL mm. Unless you have clear_child_tid
+set.
 
-diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-index ac7e131d2935..de3cf6d377cc 100644
---- a/Documentation/admin-guide/kdump/kdump.rst
-+++ b/Documentation/admin-guide/kdump/kdump.rst
-@@ -521,6 +521,16 @@ will cause a kdump to occur at the panic() call.  In cases where a user wants
- to specify this during runtime, /proc/sys/kernel/panic_on_warn can be set to 1
- to achieve the same behaviour.
- 
-+Trigger Kdump on add_taint()
-+============================
-+
-+The kernel parameter, panic_on_taint, calls panic() from within add_taint(),
-+whenever the value set in this bitmask matches with the bit flag being set
-+by add_taint(). This will cause a kdump to occur at the panic() call.
-+In cases where a user wants to specify this during runtime,
-+/proc/sys/kernel/panic_on_taint can be set to a respective bitmask value
-+to achieve the same behaviour.
-+
- Contact
- =======
- 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 7bc83f3d9bdf..4a69fe49a70d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3404,6 +3404,21 @@
- 	panic_on_warn	panic() instead of WARN().  Useful to cause kdump
- 			on a WARN().
- 
-+	panic_on_taint=	[KNL] conditionally panic() in add_taint()
-+			Format: <str>
-+			Specifies, as a string, the TAINT flag set that will
-+			compose a bitmask for calling panic() when the kernel
-+			gets tainted.
-+			See Documentation/admin-guide/tainted-kernels.rst for
-+			details on the taint flags that users can pick to
-+			compose the bitmask to assign to panic_on_taint.
-+			When the string is prefixed with a '-' the bitmask
-+			set in panic_on_taint will be mutually exclusive
-+			with the sysctl knob kernel.tainted, and any attempt
-+			to write to that sysctl will fail with -EINVAL for
-+			any taint value that masks with the flags set for
-+			this option.
-+
- 	crash_kexec_post_notifiers
- 			Run kdump after running panic-notifiers and dumping
- 			kmsg. This only for the users who doubt kdump always
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 9b7a8d74a9d6..66bc102cb59a 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -528,6 +528,8 @@ extern int panic_on_oops;
- extern int panic_on_unrecovered_nmi;
- extern int panic_on_io_nmi;
- extern int panic_on_warn;
-+extern unsigned long panic_on_taint;
-+extern bool panic_on_taint_exclusive;
- extern int sysctl_panic_on_rcu_stall;
- extern int sysctl_panic_on_stackoverflow;
- 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index b69ee9e76cb2..65c62f8a1de8 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -25,6 +25,7 @@
- #include <linux/kexec.h>
- #include <linux/sched.h>
- #include <linux/sysrq.h>
-+#include <linux/ctype.h>
- #include <linux/init.h>
- #include <linux/nmi.h>
- #include <linux/console.h>
-@@ -44,6 +45,8 @@ static int pause_on_oops_flag;
- static DEFINE_SPINLOCK(pause_on_oops_lock);
- bool crash_kexec_post_notifiers;
- int panic_on_warn __read_mostly;
-+unsigned long panic_on_taint;
-+bool panic_on_taint_exclusive = false;
- 
- int panic_timeout = CONFIG_PANIC_TIMEOUT;
- EXPORT_SYMBOL_GPL(panic_timeout);
-@@ -434,6 +437,11 @@ void add_taint(unsigned flag, enum lockdep_ok lockdep_ok)
- 		pr_warn("Disabling lock debugging due to kernel taint\n");
- 
- 	set_bit(flag, &tainted_mask);
-+
-+	if (tainted_mask & panic_on_taint) {
-+		panic_on_taint = 0;
-+		panic("panic_on_taint set ...");
-+	}
- }
- EXPORT_SYMBOL(add_taint);
- 
-@@ -686,3 +694,35 @@ static int __init oops_setup(char *s)
- 	return 0;
- }
- early_param("oops", oops_setup);
-+
-+static int __init panic_on_taint_setup(char *s)
-+{
-+	/* we just ignore panic_on_taint if passed without flags */
-+	if (!s)
-+		goto out;
-+
-+	for (; *s; s++) {
-+		int i;
-+
-+		if (*s == '-') {
-+			panic_on_taint_exclusive = true;
-+			continue;
-+		}
-+
-+		for (i = 0; i < TAINT_FLAGS_COUNT; i++) {
-+			if (toupper(*s) == taint_flags[i].c_true) {
-+				set_bit(i, &panic_on_taint);
-+				break;
-+			}
-+		}
-+	}
-+
-+	/* unset exclusive mode if no taint flags were passed on */
-+	if (panic_on_taint_exclusive &&
-+	    !(panic_on_taint & ((1UL << TAINT_FLAGS_COUNT) - 1)))
-+		panic_on_taint_exclusive = false;
-+
-+out:
-+	return 0;
-+}
-+early_param("panic_on_taint", panic_on_taint_setup);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 8a176d8727a3..d361ec0420f6 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2623,11 +2623,18 @@ static int proc_taint(struct ctl_table *table, int write,
- 		return err;
- 
- 	if (write) {
-+		int i;
-+		/*
-+		 * If we are relying on panic_on_taint not producing
-+		 * false positives due to userland input, bail out
-+		 * before setting the requested taint flags.
-+		 */
-+		if (panic_on_taint_exclusive && (tmptaint & panic_on_taint))
-+			return -EINVAL;
- 		/*
- 		 * Poor man's atomic or. Not worth adding a primitive
- 		 * to everyone's atomic.h for this
- 		 */
--		int i;
- 		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
- 			if ((tmptaint >> i) & 1)
- 				add_taint(i, LOCKDEP_STILL_OK);
--- 
-2.25.4
+I am not up to speed on that part of the mm layer right now to know if
+it is a good idea to put sync_mm_rss in exit_mm_release but at a quick
+look it feels like it.
+
+Eric
 
