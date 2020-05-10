@@ -2,71 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3701CCB6B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 15:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 051491CCB93
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 16:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgEJNt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 09:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728238AbgEJNt4 (ORCPT
+        id S1729095AbgEJOeI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 10:34:08 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:60998 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728714AbgEJOeI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 09:49:56 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A40EBC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 06:49:55 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id g9so1040550edw.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 06:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=eFE/do3S6tDaY1ME7mtEhXgIpSFSJP2EU1L+x5xt8lE=;
-        b=Zet4RTHN1DJGCjqorzPhc4vvD5Z2/rD6PEDr0Vsqstf9YZ7rtV8fioaIXm4e8sgNw3
-         hyJNw1YxM+Xcl0pNp+WUaP0pF3Vf6tmrbveT7jOnBMmVc2CyF5ua6dw0J3kvSDQwoiJB
-         tvJBKu9ANnYRoNOajkr8XLFExW9WF+OyBaEU9BTtAbdWKrqZMbSAplSWfBdrT4iIZALu
-         5KlkXo2PcNqSsSIOkF8IulLy+Q2cuFZ99h6kKmqPU8b40Xry0oDFUii9p5jGL+ZRdBmo
-         iIGhKLok9NH1EzS1BZVNZPw8cSZZbg9c4EHxKK5OhqlhPlO9ANffzxB074bK3bjsFdDi
-         y70A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=eFE/do3S6tDaY1ME7mtEhXgIpSFSJP2EU1L+x5xt8lE=;
-        b=AW4md3WBFfxl0b/9y36zHEZWYGBrEZJC+lCT6R0XnOkwuDhFFxtxybFwuaBXqqR8C4
-         IOiAq09QizopcgTNJ4xAeygfHZM7BBce4KLE9KuALx9RnWs0L/YQOVXq6DVsBph1jw6z
-         0ZC0Z5oBUmTMb7aScg1SD+cz4xsBv5GtWuXoeqZG+sG8Ygqc8kFL4di6uGUqjQvws/AT
-         W2EM+NUnGPuQm/1daXuJld9EixS4yP2jULeBAjzPanMnI8puq/XmXwKynFCX6eG+LaV7
-         LEZiOyIOmmpL6k8oMhQmmJAan+drK+7B8bM3CETna9k2Ylj6kLfS0Ie5uFcZyiBw9a+P
-         USIw==
-X-Gm-Message-State: AGi0PuacKXKmwn5MvWlyGoHusqY1q0SpUgDSG3XlvNajEdAhzEsvHp0V
-        XAf1e7pNA3kwqr6tJZ1gEhlkoey1bY5sUn+P0wM=
-X-Google-Smtp-Source: APiQypL5EWyxOIva2YC+y3g0rRM0gcoJGZLSKNmX2u19emLW7c2w9AwtAQ7bAWGy9TRBlfnZ8kdxn83sPMp6VDoDAU8=
-X-Received: by 2002:a05:6402:1609:: with SMTP id f9mr8933214edv.23.1589118594190;
- Sun, 10 May 2020 06:49:54 -0700 (PDT)
+        Sun, 10 May 2020 10:34:08 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-46-WIrgiLb1OoGiMrDQB_cpGw-1; Sun, 10 May 2020 15:34:04 +0100
+X-MC-Unique: WIrgiLb1OoGiMrDQB_cpGw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sun, 10 May 2020 15:34:04 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sun, 10 May 2020 15:34:04 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Al Viro' <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCHES] uaccess simple access_ok() removals
+Thread-Topic: [PATCHES] uaccess simple access_ok() removals
+Thread-Index: AQHWJltq6fE30OjG4EOuI+zbUBs5vKihYCkw
+Date:   Sun, 10 May 2020 14:34:04 +0000
+Message-ID: <847a5160e4e64a82962dc1531cd52e11@AcuMS.aculab.com>
+References: <20200509234124.GM23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200509234124.GM23230@ZenIV.linux.org.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Received: by 2002:a17:906:eda7:0:0:0:0 with HTTP; Sun, 10 May 2020 06:49:53
- -0700 (PDT)
-Reply-To: yarazahid@gmail.com
-From:   Yara Zahid <hentrybull010@gmail.com>
-Date:   Sun, 10 May 2020 06:49:53 -0700
-Message-ID: <CAJRVwvS=UH5zjRgdc6TO_SaS3jntWvjVyRz-H9rixLLMi2MJoQ@mail.gmail.com>
-Subject: Can i trust you.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Good Day To You,
+From: Al Viro
+> Sent: 10 May 2020 00:41
+> 
+> 	One of the uaccess-related branches; this one is just the
+> cases when access_ok() calls are trivially pointless - the address
+> in question gets fed only to primitives that do access_ok() checks
+> themselves.
 
-Please i need your kind Assistance. I will be very glad if you can
-assist me to receive this sum of ( $22. Million US dollars.) into your
-bank account for the benefit of our both families, As i am totally
-convinced to write you in reference to the transfer for onward
-investment or any profitable Oriented business in your country.
+There is also the check in rw_copy_check_uvector() that should
+always be replicated by the copy_to/from_user() in _copy_to/from_iter().
 
-Reply me if you are ready to receive this fund.
+And the strange call to rw_copy_check_uvector() in mm/process_vm_access.c
+which carefully avoids the access_ok() check for the target process.
+I did a quick look, but failed to see an obvious check further
+down the call path.
+The code is doing a read/write from another process, not sure when it
+is used - not by gdb.
 
-Mr.Yara Zahid.
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
