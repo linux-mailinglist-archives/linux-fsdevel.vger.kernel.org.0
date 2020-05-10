@@ -2,97 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA811CC721
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 08:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56EA11CC724
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 08:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgEJGVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 02:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbgEJGVB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 02:21:01 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A0752082E;
-        Sun, 10 May 2020 06:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589091660;
-        bh=ykU5Chtjjs/h2pWxDILMKNjujFPoh+jfp41AJ916jkU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GsYRtFkS2rH27mGlJmEDwOKT52jC3bQqxZ7jLtVD/igAnz/9nBCUIGfYKHcNcqGnc
-         vmlxkJecvTGwv+zEXIfwYXHaalOEQTI+OhJXsE2eDnxNMF7/Mou/bkudpHECUyMO0m
-         TLqVb8Mynio93dyMpUzgkue+u6aCFLbHxKWIVD9I=
-Date:   Sun, 10 May 2020 08:20:58 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v4 1/5] block: revert back to synchronous request_queue
- removal
-Message-ID: <20200510062058.GA3394360@kroah.com>
-References: <20200509031058.8239-1-mcgrof@kernel.org>
- <20200509031058.8239-2-mcgrof@kernel.org>
+        id S1725810AbgEJGZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 02:25:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54744 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725779AbgEJGZa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 10 May 2020 02:25:30 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04A62Asl074332;
+        Sun, 10 May 2020 02:25:23 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30xa4gab5j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 10 May 2020 02:25:23 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04A6K077003362;
+        Sun, 10 May 2020 06:25:22 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55a12q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 10 May 2020 06:25:21 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04A6PJGb61997502
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 10 May 2020 06:25:19 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF11042042;
+        Sun, 10 May 2020 06:25:18 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B7484203F;
+        Sun, 10 May 2020 06:25:17 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.61.127])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 10 May 2020 06:25:17 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        tytso@mit.edu, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RFC 00/16] ext4: mballoc/extents: Code cleanup and debug improvements
+Date:   Sun, 10 May 2020 11:54:40 +0530
+Message-Id: <cover.1589086800.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200509031058.8239-2-mcgrof@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-10_01:2020-05-08,2020-05-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0 impostorscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=3 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005100050
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 09, 2020 at 03:10:54AM +0000, Luis Chamberlain wrote:
-> Commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") merged on
-> v4.12 moved the work behind blk_release_queue() into a workqueue after a
-> splat floated around which indicated some work on blk_release_queue()
-> could sleep in blk_exit_rl(). This splat would be possible when a driver
-> called blk_put_queue() or blk_cleanup_queue() (which calls blk_put_queue()
-> as its final call) from an atomic context.
-> 
-> blk_put_queue() decrements the refcount for the request_queue kobject,
-> and upon reaching 0 blk_release_queue() is called. Although blk_exit_rl()
-> is now removed through commit db6d9952356 ("block: remove request_list code")
-> on v5.0, we reserve the right to be able to sleep within blk_release_queue()
-> context.
-> 
-> The last reference for the request_queue must not be called from atomic
-> context. *When* the last reference to the request_queue reaches 0 varies,
-> and so let's take the opportunity to document when that is expected to
-> happen and also document the context of the related calls as best as possible
-> so we can avoid future issues, and with the hopes that the synchronous
-> request_queue removal sticks.
-> 
-> We revert back to synchronous request_queue removal because asynchronous
-> removal creates a regression with expected userspace interaction with
-> several drivers. An example is when removing the loopback driver, one
-> uses ioctls from userspace to do so, but upon return and if successful,
-> one expects the device to be removed. Likewise if one races to add another
-> device the new one may not be added as it is still being removed. This was
-> expected behavior before and it now fails as the device is still present
-> and busy still. Moving to asynchronous request_queue removal could have
-> broken many scripts which relied on the removal to have been completed if
-> there was no error. Document this expectation as well so that this
-> doesn't regress userspace again.
-> 
-> Using asynchronous request_queue removal however has helped us find
-> other bugs. In the future we can test what could break with this
-> arrangement by enabling CONFIG_DEBUG_KOBJECT_RELEASE.
+Hello All,
 
-You are adding documenation and might_sleep() calls all over the place
-in here, making the "real" change in the patch hard to pick out.
+This series does some code refactoring/cleanups and debug logs improvements
+around mb_debug() and ext_debug(). These were found when working over
+improving mballoc ENOSPC handling in ext4.
+These should be small and stright forward patches for reviewing.
 
-How about you split this up into 3 patches, one for documentation, one
-for might_sleep() and one for the real change?  Or maybe just 2 patches,
-but what you have here seems excessive.
+Ritesh Harjani (16):
+  ext4: mballoc: Do print bb_free info even when it is 0
+  ext4: mballoc: Refactor ext4_mb_show_ac()
+  ext4: mballoc: Add more mb_debug() msgs
+  ext4: mballoc: Correct the mb_debug() format specifier for pa_len var
+  ext4: mballoc: Fix few other format specifier in mb_debug()
+  ext4: mballoc: Simplify error handling in ext4_init_mballoc()
+  ext4: mballoc: Make ext4_mb_use_preallocated() return type as bool
+  ext4: mballoc: Refactor code inside DOUBLE_CHECK into separate function
+  ext4: mballoc: Fix possible NULL ptr & remove BUG_ONs from DOUBLE_CHECK
+  ext4: balloc: Use task_pid_nr() helper
+  ext4: Use BIT() macro for BH_** state bits
+  ext4: Improve ext_debug() msg in case of block allocation failure
+  ext4: Replace EXT_DEBUG with __maybe_unused in ext4_ext_handle_unwritten_extents()
+  ext4: mballoc: Make mb_debug() implementation to use pr_debug()
+  ext4: Make ext_debug() implementation to use pr_debug()
+  ext4: Add process name and pid in ext4_msg()
 
-thanks,
+ fs/ext4/Kconfig   |   3 +-
+ fs/ext4/balloc.c  |   5 +-
+ fs/ext4/ext4.h    |  26 +++--
+ fs/ext4/extents.c | 150 +++++++++++++-------------
+ fs/ext4/inode.c   |  15 +--
+ fs/ext4/mballoc.c | 265 ++++++++++++++++++++++++++--------------------
+ fs/ext4/mballoc.h |  16 ++-
+ fs/ext4/super.c   |   3 +-
+ 8 files changed, 261 insertions(+), 222 deletions(-)
 
-greg k-h
+-- 
+2.21.0
+
