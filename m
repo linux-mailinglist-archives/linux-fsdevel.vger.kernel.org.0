@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE2E1CC82B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E971CC832
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbgEJH4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 03:56:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
+        id S1729295AbgEJH4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 03:56:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbgEJH4f (ORCPT
+        with ESMTP id S1725810AbgEJH4j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 03:56:35 -0400
+        Sun, 10 May 2020 03:56:39 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDF9EC05BD09;
-        Sun, 10 May 2020 00:56:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F81C061A0C;
+        Sun, 10 May 2020 00:56:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=3bgjHBt5jDLELtVeoaM1eNLq4RdOdC1sIUbPCNr5dBM=; b=QiS4GFEV1NyB7Ulueat1TS2a8l
-        xaIAvA7zTSV4WqI6GVSwN9XzLnd4vSV/OvZJBMoy/t7h+trqYnwcj8SGUJViEVHuqIYKI4C8A6VIr
-        2KEtDxeWrLz/f881qk19b71/P89d+Eigg3Q0KySjFuwzEwB4cy3UPiiyAnVJwefksqugeiwcp9j+2
-        vrlWF+RL8KWBIw44OcUsYbHWE+XEOh+ZpbBTzXLMhVZIh+wGhuRl0flj9mC4bxfUHN9yT2hcVRQnX
-        U5rdGKIbAGbwTqvWr1pM0+Mzie8evSKjd+jYzYhCoczNIJPSRbKirBuEBxhgP8TpCYYqFaVTS4elM
-        BDV1bRXQ==;
+        bh=h1wlmdmJ+SbuSyPJIzXhJQXOtYNYFSmh0yN4ZKBWMKk=; b=lfX0+X5PBMIFZiffuU4usV1LLT
+        8RwgCLh11SKaJzMwL/11PCBnwFU0RQmjNSM74OctGeL3iXSNdBRM2pyO/36qGG76fJ5G552PdDpua
+        BiK4yXJUaQatBqA9eHDbmu6QdyxrOSn0CjzKHla0vqDE8pa8bnvLPGm4YeJ9hp/w7DS8gwelEvGxh
+        yRMp6Z6/B7l0lgC4bjLF0g7JJQE9qUw+/mqBYg2+w7zJH+6v/258QkcJYr6m/lXu5Gs3M46GvxiCd
+        gY7QyyTZxvqtz0G0Wv/Z5SOB0WROnYjbKKAWVMgW1ywN/QbFCMC2PXE1Sd+HYOoRXI/7JYyWxOoeH
+        nH8NIhgA==;
 Received: from [2001:4bb8:180:9d3f:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jXgp0-0000ty-7N; Sun, 10 May 2020 07:56:26 +0000
+        id 1jXgp3-000138-9j; Sun, 10 May 2020 07:56:29 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +43,9 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 23/31] sh: implement flush_icache_user_range
-Date:   Sun, 10 May 2020 09:55:02 +0200
-Message-Id: <20200510075510.987823-24-hch@lst.de>
+Subject: [PATCH 24/31] xtensa: implement flush_icache_user_range
+Date:   Sun, 10 May 2020 09:55:03 +0200
+Message-Id: <20200510075510.987823-25-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200510075510.987823-1-hch@lst.de>
 References: <20200510075510.987823-1-hch@lst.de>
@@ -57,27 +57,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The SuperH implementation of flush_icache_range seems to be able to
+The Xtensa implementation of flush_icache_range seems to be able to
 cope with user addresses.  Just define flush_icache_user_range to
 flush_icache_range.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/sh/include/asm/cacheflush.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/xtensa/include/asm/cacheflush.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/sh/include/asm/cacheflush.h b/arch/sh/include/asm/cacheflush.h
-index b932e42ef0284..fe7400079b97b 100644
---- a/arch/sh/include/asm/cacheflush.h
-+++ b/arch/sh/include/asm/cacheflush.h
-@@ -46,6 +46,7 @@ extern void flush_cache_range(struct vm_area_struct *vma,
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
- extern void flush_dcache_page(struct page *page);
- extern void flush_icache_range(unsigned long start, unsigned long end);
+diff --git a/arch/xtensa/include/asm/cacheflush.h b/arch/xtensa/include/asm/cacheflush.h
+index a0d50be5a8cb1..460e666ad0761 100644
+--- a/arch/xtensa/include/asm/cacheflush.h
++++ b/arch/xtensa/include/asm/cacheflush.h
+@@ -107,6 +107,8 @@ void flush_cache_page(struct vm_area_struct*,
+ #define flush_cache_page  local_flush_cache_page
+ #endif
+ 
 +#define flush_icache_user_range flush_icache_range
- extern void flush_icache_page(struct vm_area_struct *vma,
- 				 struct page *page);
- extern void flush_cache_sigtramp(unsigned long address);
++
+ #define local_flush_cache_all()						\
+ 	do {								\
+ 		__flush_invalidate_dcache_all();			\
 -- 
 2.26.2
 
