@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 982D41CC7D9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1401CC7DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbgEJHzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728381AbgEJHzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sun, 10 May 2020 03:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38128 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgEJHzU (ORCPT
+        with ESMTP id S1725810AbgEJHzU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 10 May 2020 03:55:20 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE92FC061A0E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 905CFC061A0C;
         Sun, 10 May 2020 00:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=7/gXVwxfQCALl/htOL9nGBBdk9CR2DqbWyS3c9DzJzg=; b=TvxbsuwUX/hm6+Z8fi/17h3sCr
-        V6hTHGgSMnPIXClp9WBd4xHpkact4TdSPlY40kgpTlFrc4X0TcbVrodeZch2eF33X40QtPmPFET1U
-        Tys5kVImtNbCnWZn12idX8lvZh32iDnfxIDeXhSFPGHn0PMIm30TD0pbjnUShEADOadDDfLCmcKnm
-        wKfgOhNBY1n/ICaPIfQgdGgBtYZHWT6fzJbX2O0Ol1Icyt3JJoleMMbRsBA4C7Ht6DLkc7DlYLbcX
-        cjmyou6JXKISuiamP88TvDgJ4S2xixwnMizgAVSPuwNbaVDo6GTG7tK/YFq90voaly/1rUW1zB1cS
-        ecEzX6Qw==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=f8uY0F5J9sPe3diCT135xJ/N/Dw+x4WW5zJnRGaybDU=; b=WgSEO+DZ7vfgUBNE3VpHkBiZbn
+        JF/fx30o0hdfuBdw+OLgmSXG6xrRXgBq6r4hPSEQ2ky+6ZsyIFaJ+gbmPDQzq6cdZnGmDHJF78/aJ
+        tYjfG6IsQjw6sWBRIyhFVqIHLqAlQnhXCzqHcRu1eMN6FQXaR5wSxDcnblooBE0IVRq3rnDmZ09QO
+        wAfV4Z4+KNwErzZy+I/N0i+mpYO5jXTLXuPqMGKSlKftHYSfLo3v5CZ7ufbqCr6tZJziYTm9NUN3t
+        2IZ932OQ9h/nKJbSFGoZ5Xhzfy4wWdAjaGDkAHWCP6CxmX9/bVSEE2VS7G26CbY1KUqjBpfk9/dtq
+        6/tD+Urg==;
 Received: from [2001:4bb8:180:9d3f:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jXgno-0007lE-9T; Sun, 10 May 2020 07:55:13 +0000
+        id 1jXgns-0007pB-5z; Sun, 10 May 2020 07:55:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,10 +43,12 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: sort out the flush_icache_range mess
-Date:   Sun, 10 May 2020 09:54:39 +0200
-Message-Id: <20200510075510.987823-1-hch@lst.de>
+Subject: [PATCH 01/31] arm: fix the flush_icache_range arguments in set_fiq_handler
+Date:   Sun, 10 May 2020 09:54:40 +0200
+Message-Id: <20200510075510.987823-2-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200510075510.987823-1-hch@lst.de>
+References: <20200510075510.987823-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -55,35 +57,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+The arguments passed look bogus, try to fix them to something that seems
+to make sense.
 
-flush_icache_range is mostly used for kernel address, except for the following
-cases:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arm/kernel/fiq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- - the nommu brk and mmap implementations,
- - the read_code helper that is only used for binfmt_flat, binfmt_elf_fdpic,
-   and binfmt_aout including the broken ia32 compat version
- - binfmt_flat itself,
+diff --git a/arch/arm/kernel/fiq.c b/arch/arm/kernel/fiq.c
+index cd1234c103fcd..98ca3e3fa8471 100644
+--- a/arch/arm/kernel/fiq.c
++++ b/arch/arm/kernel/fiq.c
+@@ -98,8 +98,8 @@ void set_fiq_handler(void *start, unsigned int length)
+ 
+ 	memcpy(base + offset, start, length);
+ 	if (!cache_is_vipt_nonaliasing())
+-		flush_icache_range((unsigned long)base + offset, offset +
+-				   length);
++		flush_icache_range((unsigned long)base + offset,
++				   (unsigned long)base + offset + length);
+ 	flush_icache_range(0xffff0000 + offset, 0xffff0000 + offset + length);
+ }
+ 
+-- 
+2.26.2
 
-none of which really are used by a typical MMU enabled kernel, as a.out can
-only be build for alpha and m68k to start with.
-
-But strangely enough commit ae92ef8a4424 ("PATCH] flush icache in correct
-context") added a "set_fs(KERNEL_DS)" around the flush_icache_range call
-in the module loader, because apparently m68k assumed user pointers.
-
-This series first cleans up the cacheflush implementations, largely by
-switching as much as possible to the asm-generic version after a few
-preparations, then moves the misnamed current flush_icache_user_range to
-a new name, to finally introduce a real flush_icache_user_range to be used
-for the above use cases to flush the instruction cache for a userspace
-address range.  The last patch then drops the set_fs in the module code
-and moves it into the m68k implementation.
-
-A git tree is available here:
-
-    git://git.infradead.org/users/hch/misc.git flush_icache_range
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/flush_icache_range
