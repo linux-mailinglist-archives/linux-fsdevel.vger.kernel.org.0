@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EF11CC7E8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E611CC8ED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 09:58:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbgEJHzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 03:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38182 "EHLO
+        id S1728977AbgEJHzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 03:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgEJHzk (ORCPT
+        with ESMTP id S1725839AbgEJHzt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 03:55:40 -0400
+        Sun, 10 May 2020 03:55:49 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069FBC061A0C;
-        Sun, 10 May 2020 00:55:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 080AFC061A0C;
+        Sun, 10 May 2020 00:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=NvlDCJ52IZIXq0+H620wKd1v1G0M5nfx6BSZiQRK5ug=; b=NGBT7Ze+wzfIfeJsuo6D3LAmqC
-        On5LQ/nUu5GokPFEn/bHNA6QR2B2+gEbQjCs6LY5hcdxLgPp8fxWD7Acl6JMe4XEeJ0IJbGUDiJVm
-        t34DtEvDzzCpX8paEM+Ww56XbmW9GTJKA/z80k/AXQtvb98GSS3x+8olOuFURNUf0tUzd3LJh0dtV
-        j5hNfyP2p5c75onJXMhJj6YVCVoGRHUmoi0UsKjHlrQXKzbgCJQK0jiufR8AboGLB7MZa130wVaza
-        Tndf4BDbOM+388hCDQeCerJ9pCdswbu+IL4zQ/c4LRCjUV67J70U8+soFFD1tFcI50b2wk7yMHXMN
-        uq3olJHg==;
+        bh=Z9YRs5dLpbvo98tj/Cgt22OOiGK6aHhMzE6epEWfQXc=; b=M6E6jT1vTAkcc/uqCv5rRZBqVj
+        4C9y1DKz9zmQassTsueu8yWQtNmiSAw2Hqc+MF/e1W//UGZoTW7Mkhlj5xO2Sw8y6kKhWH6Lxu081
+        RTOiKkdeaCdvxRpTIMXxDZX2l/SD61dJ1ht3dJUMAZ5fSZztKAueD6GAhmW6p58R92s+FRj6moa0W
+        MW6rCeXcQQ1sGtgtL8vI274YEWPu36qdr9qupNELF/8k4VcjiFVOld/2i3HBkugH4PB6MhS+BWh7/
+        W8A67yIAP6eHosepHe+pXuDHyaVjcFfcdRZzmDftL4nnPz9Dlr8KupBRqGGJq8mtr1f9Lr6VMYOde
+        +ETCOrfw==;
 Received: from [2001:4bb8:180:9d3f:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jXgo0-0007vN-Vz; Sun, 10 May 2020 07:55:25 +0000
+        id 1jXgo3-0007yb-Rn; Sun, 10 May 2020 07:55:28 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +43,9 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/31] nds32: unexport flush_icache_page
-Date:   Sun, 10 May 2020 09:54:43 +0200
-Message-Id: <20200510075510.987823-5-hch@lst.de>
+Subject: [PATCH 05/31] powerpc: unexport flush_icache_user_range
+Date:   Sun, 10 May 2020 09:54:44 +0200
+Message-Id: <20200510075510.987823-6-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200510075510.987823-1-hch@lst.de>
 References: <20200510075510.987823-1-hch@lst.de>
@@ -57,25 +57,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-flush_icache_page is only used by mm/memory.c.
+flush_icache_user_range is only used by copy_to_user_page, which is
+only used by core VM code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/nds32/mm/cacheflush.c | 1 -
+ arch/powerpc/mm/mem.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/nds32/mm/cacheflush.c b/arch/nds32/mm/cacheflush.c
-index 254703653b6f5..8f168b33065fa 100644
---- a/arch/nds32/mm/cacheflush.c
-+++ b/arch/nds32/mm/cacheflush.c
-@@ -35,7 +35,6 @@ void flush_icache_page(struct vm_area_struct *vma, struct page *page)
- 	kunmap_atomic((void *)kaddr);
- 	local_irq_restore(flags);
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 041ed7cfd341a..f0d1bf0a8e14f 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -587,7 +587,6 @@ void flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
+ 	flush_icache_range(maddr, maddr + len);
+ 	kunmap(page);
  }
--EXPORT_SYMBOL(flush_icache_page);
+-EXPORT_SYMBOL(flush_icache_user_range);
  
- void flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
- 	                     unsigned long addr, int len)
+ /*
+  * System memory should not be in /proc/iomem but various tools expect it
 -- 
 2.26.2
 
