@@ -2,60 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56EA11CC724
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 08:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 179341CC726
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 08:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725810AbgEJGZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 02:25:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54744 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbgEJGZa (ORCPT
+        id S1726104AbgEJGZc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 02:25:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3786 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725779AbgEJGZb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 02:25:30 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04A62Asl074332;
-        Sun, 10 May 2020 02:25:23 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30xa4gab5j-1
+        Sun, 10 May 2020 02:25:31 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04A60qVd144292;
+        Sun, 10 May 2020 02:25:25 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30xa2g28dm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 10 May 2020 02:25:23 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04A6K077003362;
-        Sun, 10 May 2020 06:25:22 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 30wm55a12q-1
+        Sun, 10 May 2020 02:25:25 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04A6K4hn022877;
+        Sun, 10 May 2020 06:25:24 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma01fra.de.ibm.com with ESMTP id 30wm558tek-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 10 May 2020 06:25:21 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04A6PJGb61997502
+        Sun, 10 May 2020 06:25:23 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04A6PLkP33947808
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 10 May 2020 06:25:19 GMT
+        Sun, 10 May 2020 06:25:21 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF11042042;
-        Sun, 10 May 2020 06:25:18 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E201842042;
+        Sun, 10 May 2020 06:25:20 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B7484203F;
-        Sun, 10 May 2020 06:25:17 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 51E4442041;
+        Sun, 10 May 2020 06:25:19 +0000 (GMT)
 Received: from localhost.localdomain.com (unknown [9.199.61.127])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 10 May 2020 06:25:17 +0000 (GMT)
+        Sun, 10 May 2020 06:25:19 +0000 (GMT)
 From:   Ritesh Harjani <riteshh@linux.ibm.com>
 To:     linux-ext4@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
         tytso@mit.edu, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [RFC 00/16] ext4: mballoc/extents: Code cleanup and debug improvements
-Date:   Sun, 10 May 2020 11:54:40 +0530
-Message-Id: <cover.1589086800.git.riteshh@linux.ibm.com>
+Subject: [RFC 01/16] ext4: mballoc: Do print bb_free info even when it is 0
+Date:   Sun, 10 May 2020 11:54:41 +0530
+Message-Id: <c894f1d1d30f86ae38f4e3a861949665b6dc61cd.1589086800.git.riteshh@linux.ibm.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1589086800.git.riteshh@linux.ibm.com>
+References: <cover.1589086800.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
  definitions=2020-05-10_01:2020-05-08,2020-05-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0 impostorscore=0
- spamscore=0 mlxlogscore=999 suspectscore=3 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 clxscore=1015 mlxscore=0
+ suspectscore=3 malwarescore=0 bulkscore=0 mlxlogscore=856
  lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2003020000 definitions=main-2005100050
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -63,41 +65,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello All,
+Improve the debugging msg by also printing even if bb_free is 0.
 
-This series does some code refactoring/cleanups and debug logs improvements
-around mb_debug() and ext_debug(). These were found when working over
-improving mballoc ENOSPC handling in ext4.
-These should be small and stright forward patches for reviewing.
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+ fs/ext4/mballoc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Ritesh Harjani (16):
-  ext4: mballoc: Do print bb_free info even when it is 0
-  ext4: mballoc: Refactor ext4_mb_show_ac()
-  ext4: mballoc: Add more mb_debug() msgs
-  ext4: mballoc: Correct the mb_debug() format specifier for pa_len var
-  ext4: mballoc: Fix few other format specifier in mb_debug()
-  ext4: mballoc: Simplify error handling in ext4_init_mballoc()
-  ext4: mballoc: Make ext4_mb_use_preallocated() return type as bool
-  ext4: mballoc: Refactor code inside DOUBLE_CHECK into separate function
-  ext4: mballoc: Fix possible NULL ptr & remove BUG_ONs from DOUBLE_CHECK
-  ext4: balloc: Use task_pid_nr() helper
-  ext4: Use BIT() macro for BH_** state bits
-  ext4: Improve ext_debug() msg in case of block allocation failure
-  ext4: Replace EXT_DEBUG with __maybe_unused in ext4_ext_handle_unwritten_extents()
-  ext4: mballoc: Make mb_debug() implementation to use pr_debug()
-  ext4: Make ext_debug() implementation to use pr_debug()
-  ext4: Add process name and pid in ext4_msg()
-
- fs/ext4/Kconfig   |   3 +-
- fs/ext4/balloc.c  |   5 +-
- fs/ext4/ext4.h    |  26 +++--
- fs/ext4/extents.c | 150 +++++++++++++-------------
- fs/ext4/inode.c   |  15 +--
- fs/ext4/mballoc.c | 265 ++++++++++++++++++++++++++--------------------
- fs/ext4/mballoc.h |  16 ++-
- fs/ext4/super.c   |   3 +-
- 8 files changed, 261 insertions(+), 222 deletions(-)
-
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 30d5d97548c4..bcfaaad62167 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -4170,8 +4170,6 @@ static void ext4_mb_show_ac(struct ext4_allocation_context *ac)
+ 		}
+ 		ext4_unlock_group(sb, i);
+ 
+-		if (grp->bb_free == 0)
+-			continue;
+ 		printk(KERN_ERR "%u: %d/%d \n",
+ 		       i, grp->bb_free, grp->bb_fragments);
+ 	}
 -- 
 2.21.0
 
