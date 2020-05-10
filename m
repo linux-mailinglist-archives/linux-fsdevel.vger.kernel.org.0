@@ -2,251 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A55161CCCE2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 20:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67D931CCD4F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 21:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbgEJSWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 14:22:25 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31042 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729122AbgEJSWZ (ORCPT
+        id S1729183AbgEJTny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 15:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729139AbgEJTny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 14:22:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589134942;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=q81SuHUTnKBZMjxvwanX0cQQzPpJSCQHTK5vFXt66+0=;
-        b=S5rT9Hwd2uAIiWVXaNPWv5PXJmsX97WWfoYyzToe57xPWodcMBfTaZE3MqaZYwm7NApwBI
-        NWFCxPpIpc9xelbsCxcrPk39Dzifsm6fU6tfJU9csfAPgFtj3DyCQVYRDBKWHGYm7Ma67u
-        bxqyUy0Kuibkf0x75RDrZs70cD8e/4Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-402-Y1SWhzHKOSG0OeyiaF7NfQ-1; Sun, 10 May 2020 14:22:18 -0400
-X-MC-Unique: Y1SWhzHKOSG0OeyiaF7NfQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 531E71005510;
-        Sun, 10 May 2020 18:22:15 +0000 (UTC)
-Received: from t490s (ovpn-112-111.phx2.redhat.com [10.3.112.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43BC11001B30;
-        Sun, 10 May 2020 18:22:04 +0000 (UTC)
-Date:   Sun, 10 May 2020 14:22:02 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        dyoung@redhat.com, corbet@lwn.net, mcgrof@kernel.org,
-        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
-        rdunlap@infradead.org, tytso@mit.edu, bunk@kernel.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        labbott@redhat.com, jeffm@suse.com, jikos@kernel.org, jeyu@suse.de,
-        tiwai@suse.de, AnDavis@suse.com, rpalethorpe@suse.de
-Subject: Re: [PATCH v3] kernel: add panic_on_taint
-Message-ID: <20200510182202.GA31704@t490s>
-References: <20200509135737.622299-1-aquini@redhat.com>
- <20200510025921.GA10165@MiWiFi-R3L-srv>
+        Sun, 10 May 2020 15:43:54 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881DDC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 12:43:53 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id u6so7183188ljl.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 12:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GOt0HOaqZfjjxJE5mAqOm47sbC7ffDpQA2P+1UtM4RE=;
+        b=MvdUhg89yXtJF0t/lWJcuLrr+bpGqVPlxoPK/Zhq2QqXYyp7vcGmiSrZl+n0GURWqw
+         V64Z4RvbsMsrTzRFhphZJ44YD55cIcu0w/FHaiF/arWpo9zjG6+ztNZG5zl1l+5WIhmf
+         vjboKU8xNCyk7pZgwioS1lDPWOU6mzJy+CNac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GOt0HOaqZfjjxJE5mAqOm47sbC7ffDpQA2P+1UtM4RE=;
+        b=LqfKd+2I1iOxW5PfdhXUKZsQQCvFRCsUXKyotAyjepXnq1xT3fbiR3q5E2Lt8O0/jn
+         wBubGB8lGuQLJkGc9WkwcTI8aToNMB3wj4OcdczlJNISkiNCOukKgLuHu2I+QZbbrz90
+         I8gX4L2jQWJPHnTPGwpw9anIh9Ewq90Gm6Hrq4fN1IFr3c+7RlVZe+B+f32LeIyrhFk+
+         RHBWH7FoWsTxg5Gxpovx47UuTjih7BzrAiX6zkL+CyJPoJ8USrRJWK/MC3mukwzySjxJ
+         HWMGBlwCXXrE/J0DDZmGJjwij7RVKn1FJTsXbQk01E9Z1Xd3/GiS8gd2RVOUXH0CnNHA
+         xSVA==
+X-Gm-Message-State: AOAM531SYMcgFqAvuM/BtOzQDH4zkHnV3sOaMh0AFsh+9W5c34fbrxct
+        kxxoYAmjQaa+ZuMT/itL/xRe0K1WEow=
+X-Google-Smtp-Source: ABdhPJwlvheuhqZuXQsmF9gW+ZDPJggQ1TleGBvgczXhIB0cFsfAergWhqRd+OYB00LOkIHN5HxphA==
+X-Received: by 2002:a2e:8645:: with SMTP id i5mr7718532ljj.56.1589139831448;
+        Sun, 10 May 2020 12:43:51 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id f10sm8101662lfl.82.2020.05.10.12.43.51
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 May 2020 12:43:51 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id u15so7210512ljd.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 12:43:51 -0700 (PDT)
+X-Received: by 2002:a2e:87d9:: with SMTP id v25mr7886930ljj.241.1589139516386;
+ Sun, 10 May 2020 12:38:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200510025921.GA10165@MiWiFi-R3L-srv>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+In-Reply-To: <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 10 May 2020 12:38:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+Message-ID: <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 10, 2020 at 10:59:21AM +0800, Baoquan He wrote:
-> On 05/09/20 at 09:57am, Rafael Aquini wrote:
-> > Analogously to the introduction of panic_on_warn, this patch
-> > introduces a kernel option named panic_on_taint in order to
-> > provide a simple and generic way to stop execution and catch
-> > a coredump when the kernel gets tainted by any given taint flag.
-> > 
-> > This is useful for debugging sessions as it avoids rebuilding
-> > the kernel to explicitly add calls to panic() or BUG() into
-> > code sites that introduce the taint flags of interest.
-> > Another, perhaps less frequent, use for this option would be
-> > as a mean for assuring a security policy (in paranoid mode)
-> > case where no single taint is allowed for the running system.
-> > 
-> > Suggested-by: Qian Cai <cai@lca.pw>
-> > Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> > ---
-> > Changelog:
-> > * v2: get rid of unnecessary/misguided compiler hints		(Luis)
-> > * v2: enhance documentation text for the new kernel parameter	(Randy)
-> > * v3: drop sysctl interface, keep it only as a kernel parameter (Luis)
-> > 
-> >  Documentation/admin-guide/kdump/kdump.rst     | 10 +++++
-> >  .../admin-guide/kernel-parameters.txt         | 15 +++++++
-> >  include/linux/kernel.h                        |  2 +
-> >  kernel/panic.c                                | 40 +++++++++++++++++++
-> >  kernel/sysctl.c                               |  9 ++++-
-> >  5 files changed, 75 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-> > index ac7e131d2935..de3cf6d377cc 100644
-> > --- a/Documentation/admin-guide/kdump/kdump.rst
-> > +++ b/Documentation/admin-guide/kdump/kdump.rst
-> > @@ -521,6 +521,16 @@ will cause a kdump to occur at the panic() call.  In cases where a user wants
-> >  to specify this during runtime, /proc/sys/kernel/panic_on_warn can be set to 1
-> >  to achieve the same behaviour.
-> >  
-> > +Trigger Kdump on add_taint()
-> > +============================
-> > +
-> > +The kernel parameter, panic_on_taint, calls panic() from within add_taint(),
-> > +whenever the value set in this bitmask matches with the bit flag being set
-> > +by add_taint(). This will cause a kdump to occur at the panic() call.
-> > +In cases where a user wants to specify this during runtime,
-> > +/proc/sys/kernel/panic_on_taint can be set to a respective bitmask value
-> > +to achieve the same behaviour.
-> > +
-> >  Contact
-> >  =======
-> >  
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 7bc83f3d9bdf..4a69fe49a70d 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -3404,6 +3404,21 @@
-> >  	panic_on_warn	panic() instead of WARN().  Useful to cause kdump
-> >  			on a WARN().
-> >  
-> > +	panic_on_taint=	[KNL] conditionally panic() in add_taint()
-> > +			Format: <str>
-> 			Changed it as 'Format: <string>' to be
-> consistent with the existing other options?
-
-I can resubmit with the change, if it's a strong req and the surgery
-cannot be done at merge time.
-
-
-> > +			Specifies, as a string, the TAINT flag set that will
-> > +			compose a bitmask for calling panic() when the kernel
-> > +			gets tainted.
-> > +			See Documentation/admin-guide/tainted-kernels.rst for
-> > +			details on the taint flags that users can pick to
-> > +			compose the bitmask to assign to panic_on_taint.
-> > +			When the string is prefixed with a '-' the bitmask
-> > +			set in panic_on_taint will be mutually exclusive
-> > +			with the sysctl knob kernel.tainted, and any attempt
-> > +			to write to that sysctl will fail with -EINVAL for
-> > +			any taint value that masks with the flags set for
-> > +			this option.
-> > +
-> >  	crash_kexec_post_notifiers
-> >  			Run kdump after running panic-notifiers and dumping
-> >  			kmsg. This only for the users who doubt kdump always
-> > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> > index 9b7a8d74a9d6..66bc102cb59a 100644
-> > --- a/include/linux/kernel.h
-> > +++ b/include/linux/kernel.h
-> > @@ -528,6 +528,8 @@ extern int panic_on_oops;
-> >  extern int panic_on_unrecovered_nmi;
-> >  extern int panic_on_io_nmi;
-> >  extern int panic_on_warn;
-> > +extern unsigned long panic_on_taint;
-> > +extern bool panic_on_taint_exclusive;
-> >  extern int sysctl_panic_on_rcu_stall;
-> >  extern int sysctl_panic_on_stackoverflow;
-> >  
-> > diff --git a/kernel/panic.c b/kernel/panic.c
-> > index b69ee9e76cb2..65c62f8a1de8 100644
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -25,6 +25,7 @@
-> >  #include <linux/kexec.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/sysrq.h>
-> > +#include <linux/ctype.h>
-> >  #include <linux/init.h>
-> >  #include <linux/nmi.h>
-> >  #include <linux/console.h>
-> > @@ -44,6 +45,8 @@ static int pause_on_oops_flag;
-> >  static DEFINE_SPINLOCK(pause_on_oops_lock);
-> >  bool crash_kexec_post_notifiers;
-> >  int panic_on_warn __read_mostly;
-> > +unsigned long panic_on_taint;
-> > +bool panic_on_taint_exclusive = false;
-> >  
-> >  int panic_timeout = CONFIG_PANIC_TIMEOUT;
-> >  EXPORT_SYMBOL_GPL(panic_timeout);
-> > @@ -434,6 +437,11 @@ void add_taint(unsigned flag, enum lockdep_ok lockdep_ok)
-> >  		pr_warn("Disabling lock debugging due to kernel taint\n");
-> >  
-> >  	set_bit(flag, &tainted_mask);
-> > +
-> > +	if (tainted_mask & panic_on_taint) {
-> > +		panic_on_taint = 0;
-> 
-> This panic_on_taint resetting is redundant? It will trigger crash, do we
-> need care if it's 0 or not?
+On Sat, May 9, 2020 at 9:30 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
+> Wouldn't this change cause
+>
+>         if (fd_binary > 0)
+>                 ksys_close(fd_binary);
+>         bprm->interp_flags = 0;
+>         bprm->interp_data = 0;
+>
+> not to be called when "Search for the interpreter" failed?
 
-We might still get more than one CPU hitting a taint adding code path after 
-the one that tripped here called panic. To avoid multiple calls to panic, 
-in that particular scenario, we clear the panic_on_taint bitmask out. 
-Also, albeit non-frequent, we might be tracking TAINT_WARN, and still hit 
-a WARN_ON() in the panic / kdump path, thus incurring in a second 
-(and unwanted) call to panic here.  
+Good catch. We seem to have some subtle magic wrt the fd_binary file
+descriptor, which depends on the recursive behavior.
 
- 
-> > +		panic("panic_on_taint set ...");
-> > +	}
-> >  }
-> >  EXPORT_SYMBOL(add_taint);
-> >  
-> > @@ -686,3 +694,35 @@ static int __init oops_setup(char *s)
-> >  	return 0;
-> >  }
-> >  early_param("oops", oops_setup);
-> > +
-> > +static int __init panic_on_taint_setup(char *s)
-> > +{
-> > +	/* we just ignore panic_on_taint if passed without flags */
-> > +	if (!s)
-> > +		goto out;
-> > +
-> > +	for (; *s; s++) {
-> > +		int i;
-> > +
-> > +		if (*s == '-') {
-> > +			panic_on_taint_exclusive = true;
-> > +			continue;
-> > +		}
-> > +
-> > +		for (i = 0; i < TAINT_FLAGS_COUNT; i++) {
-> > +			if (toupper(*s) == taint_flags[i].c_true) {
-> > +				set_bit(i, &panic_on_taint);
-> > +				break;
-> > +			}
-> > +		}
-> 
-> Read admin-guide/tainted-kernels.rst, but still do not get what 'G' means.
-> If I specify 'panic_on_taint="G"' or 'panic_on_taint="-G"' in cmdline,
-> what is expected for this customer behaviour?
-> 
+I'm not seeing how to fix it cleanly with the "turn it into a loop".
+Basically, that binfmt_misc use-case isn't really a tail-call.
 
-This will not panic the system as no taint flag gets actually set in 
-panic_on_taint bitmask for G.
+Eric, ideas?
 
-G is the counterpart of P, and appears on print_tainted() whenever
-TAINT_PROPRIETARY_MODULE is not set. panic_on_taint doesn't set
-anything for G, as it doesn't represent any taint, but the lack
-of one particular taint, instead.
-
-(apparently, TAINT_PROPRIETARY_MODULE is the only taint flag
-that follows that pattern of having an extra assigned letter 
-that means its absence, and perhaps it should be removed)
-
-> Except of above minor nitpicks, this patch looks good to me, thanks.
-> 
-> Reviewed-by: Baoquan He <bhe@redhat.com>
-> 
-> Thanks
-> Baoquan
-
+                 Linus
