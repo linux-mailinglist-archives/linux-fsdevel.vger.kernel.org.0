@@ -2,101 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F891CCDF1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 22:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 699361CCDF6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 22:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbgEJUdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 16:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728977AbgEJUdh (ORCPT
+        id S1729327AbgEJUf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 16:35:58 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32752 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729365AbgEJUf5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 16:33:37 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F541C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 13:33:37 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id k7so1778443pjs.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 May 2020 13:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=t7/Qx+MoMVSELV0AwEX9yeriQs+i2bJ9OEtioZrc6/E=;
-        b=a05xacJBi8M5GW4q4TaYKuU7WRBZ+y4zUna0AIr7BOmfBcmoGGv7TNuSPQ2yzi9shD
-         GDbaPFQy72q0inH5FQh0qcOJ6EIkWGXh0BpPb0QPqvl95FLK4xev16FsjRl7Wpss84QI
-         7braW8unmkg+QBOtT7zDZK9cTS/T4zRyuxsSo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t7/Qx+MoMVSELV0AwEX9yeriQs+i2bJ9OEtioZrc6/E=;
-        b=OpuYtry35k//zghFb9P/zh4Undkk+b42Z8pBDLZeCzZhNlKOqKsyfUWW05PU2Lkgar
-         vqrakescHDjGr6V+PSMqKuX/45PtVhTPekLl8Ncl1gEVdDks6SJ0wi/c5InbQMT5cIQu
-         8NquxOtnlzzd29jbAAspw/NtnMrFYZs59q/G+Iv/qmFkz1Uhw2qHznJYLaEEQgHJjUI8
-         +UaKfWCIXRrYJp/J8POzLtJVhoWRApBv3/O8luXKTrcJNq5QGg3I3et+VsXRGZOYrIAr
-         R+YEfXDc5C3jyC28JiDxIyymx+orn7hPyPga4cUBcyRgPD18ebn1sdv/rxWHkVvpXj2Z
-         2Yxw==
-X-Gm-Message-State: AGi0PuZmieygOb7vLcJ7dsPjCo8RAPwvjGwNfw/n9igt8Uj5+uEFp8Lu
-        SRzvDQ38J2yaH1knLbD5WSKC1w==
-X-Google-Smtp-Source: APiQypICqSkXYu8+cYaIGfpRaZvwlAIZIkt+jRKxFakvU4nAmX1NSsrvqM+OkqXqpwg3vUSAoA6t4w==
-X-Received: by 2002:a17:902:b68f:: with SMTP id c15mr12283260pls.303.1589142817020;
-        Sun, 10 May 2020 13:33:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m7sm7380670pfb.48.2020.05.10.13.33.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2020 13:33:36 -0700 (PDT)
-Date:   Sun, 10 May 2020 13:33:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 3/6] exec: Stop open coding mutex_lock_killable of
- cred_guard_mutex
-Message-ID: <202005101331.F0ADFAD@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87blmy6zay.fsf_-_@x220.int.ebiederm.org>
- <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
+        Sun, 10 May 2020 16:35:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589142956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DSFlNYwfdCpOV/I7s5/Tc33w1643YGxcvEZSHoh8T7o=;
+        b=SGbEDa3sEdDlG77g96bkiE5ApCm0NQ9dniCa7M1NIzRVnQCMmiqibqNlzQxmYcrzJGkEoA
+        SD4zpsAsIYYziGnhuwv64t50l+HOZl7Hj3/cxGWp9Psbn6tElksqcv5k9UYP+FTheJi32y
+        dVuPApVeCYEnrMslM5qtfa0+BZ6sc6k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-96-K3k0KoFINIa8H5p22cqmrw-1; Sun, 10 May 2020 16:35:52 -0400
+X-MC-Unique: K3k0KoFINIa8H5p22cqmrw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68F19107ACCA;
+        Sun, 10 May 2020 20:35:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C83C160DB4;
+        Sun, 10 May 2020 20:35:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <d4efead1d6dba67f5c862a8d00ca88dd3c45dd34.camel@hammerspace.com>
+References: <d4efead1d6dba67f5c862a8d00ca88dd3c45dd34.camel@hammerspace.com> <158897619675.1119820.2203023452686054109.stgit@warthog.procyon.org.uk>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     dhowells@redhat.com,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "cmaiolino@redhat.com" <cmaiolino@redhat.com>,
+        "carmark.dlut@gmail.com" <carmark.dlut@gmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-cachefs@redhat.com" <linux-cachefs@redhat.com>,
+        "dwysocha@redhat.com" <dwysocha@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
+Subject: Re: [PATCH 0/5] cachefiles, nfs: Fixes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wguq6FwYb8_WZ_ZOxpHtwyc0xpz+PitNuf4pVxjWFmjFQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1787829.1589142943.1@warthog.procyon.org.uk>
+Date:   Sun, 10 May 2020 21:35:43 +0100
+Message-ID: <1787830.1589142943@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 09, 2020 at 12:18:06PM -0700, Linus Torvalds wrote:
-> On Fri, May 8, 2020 at 11:48 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >
-> >
-> > Oleg modified the code that did
-> > "mutex_lock_interruptible(&current->cred_guard_mutex)" to return
-> > -ERESTARTNOINTR instead of -EINTR, so that userspace will never see a
-> > failure to grab the mutex.
-> >
-> > Slightly earlier Liam R. Howlett defined mutex_lock_killable for
-> > exactly the same situation but it does it a little more cleanly.
-> 
-> mutex_lock_interruptible() and mutex_lock_killable() are completely
-> different operations, and the difference has absolutely nothing to do
-> with  -ERESTARTNOINTR or -EINTR.
->
-> [...]
-> 
-> And Kees, what the heck is that "Reviewed-by" for? Worthless review too.
+Trond Myklebust <trondmy@hammerspace.com> wrote:
 
-Yeah, I messed that up; apologies. And I know exactly where my brain
-misfired on this one. On a related note, I must stop doing code reviews
-on Friday night. :)
+> I can pull this branch, and send it together with the NFS client
+> bugfixes for 5.7-rc5.
 
--- 
-Kees Cook
+Thanks!
+
+David
+
