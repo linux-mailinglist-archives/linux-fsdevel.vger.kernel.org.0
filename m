@@ -2,88 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20DF01CC66B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 06:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2BBB1CC6F6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 07:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbgEJEXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 00:23:50 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56888 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbgEJEXu (ORCPT
+        id S1728562AbgEJFRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 01:17:05 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52838 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726389AbgEJFRE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 00:23:50 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04A4MfMe014715;
-        Sun, 10 May 2020 13:22:41 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
- Sun, 10 May 2020 13:22:41 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04A4MeWL014709
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 10 May 2020 13:22:41 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87eerszyim.fsf_-_@x220.int.ebiederm.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
-Date:   Sun, 10 May 2020 13:22:37 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Sun, 10 May 2020 01:17:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589087823;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tCJf3aD47ctQEj0+bjTncfKWspILH0i2eRAlZk7YIas=;
+        b=YkA+bNRDfKCq+NmOCS2CsehwT+8p7u3Brk/3C/kSzRC9vUa2Op3Gz+55ebaBTpU36NAr4H
+        E5zKt1n3A53puuQihq9HHS4raC005hHPJExsTnMw+PlCBCWzTtcGejx5XythiSwYiwu2pe
+        J2nJBDeTQ5Lme2XAvcWZdpPUP+l19WA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-315-1wSi7USNNkmzpDGYI08JnQ-1; Sun, 10 May 2020 01:17:00 -0400
+X-MC-Unique: 1wSi7USNNkmzpDGYI08JnQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23DD980058A;
+        Sun, 10 May 2020 05:16:57 +0000 (UTC)
+Received: from localhost (ovpn-12-30.pek2.redhat.com [10.72.12.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8EB7704C6;
+        Sun, 10 May 2020 05:16:48 +0000 (UTC)
+Date:   Sun, 10 May 2020 13:16:46 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Rafael Aquini <aquini@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, dyoung@redhat.com, corbet@lwn.net,
+        mcgrof@kernel.org, keescook@chromium.org,
+        akpm@linux-foundation.org, cai@lca.pw, tytso@mit.edu,
+        bunk@kernel.org, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, labbott@redhat.com, jeffm@suse.com,
+        jikos@kernel.org, jeyu@suse.de, tiwai@suse.de, AnDavis@suse.com,
+        rpalethorpe@suse.de
+Subject: Re: [PATCH v3] kernel: add panic_on_taint
+Message-ID: <20200510051646.GF5029@MiWiFi-R3L-srv>
+References: <20200509135737.622299-1-aquini@redhat.com>
+ <20200510025921.GA10165@MiWiFi-R3L-srv>
+ <acab7971-7522-3511-c976-e0237ceda4d0@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <87eerszyim.fsf_-_@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <acab7971-7522-3511-c976-e0237ceda4d0@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/05/10 4:41, Eric W. Biederman wrote:
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -234,10 +234,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
->  	if (retval < 0)
->  		goto error;
->  
-> -	retval = search_binary_handler(bprm);
-> -	if (retval < 0)
-> -		goto error;
-> -
-> +	retval = 1; /* Search for the interpreter */
->  ret:
->  	dput(fmt->dentry);
->  	return retval;
+On 05/09/20 at 09:10pm, Randy Dunlap wrote:
+> On 5/9/20 7:59 PM, Baoquan He wrote:
+> > Read admin-guide/tainted-kernels.rst, but still do not get what 'G' means.
+> 
+> I interpret 'G' as GPL (strictly it means that no proprietary module has
+> been loaded).  But I don't see why TAINT_PROPRIETARY_MODULE is the only
+> taint flag that has a non-blank c_false character.  It could just be blank
+> also AFAICT.  Then the 'G' would not be there to confuse us.  :)
 
-Wouldn't this change cause
+Yeah, seems c_false character is not so necessary. If no 'P' set, then
+it means no proprietary modules loaded naturally. We may need clean up
+the c_false in struct taint_flag, since c_true is enough to indicate
+what want to check.
 
-	if (fd_binary > 0)
-		ksys_close(fd_binary);
-	bprm->interp_flags = 0;
-	bprm->interp_data = 0;
-
-not to be called when "Search for the interpreter" failed?
 
