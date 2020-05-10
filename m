@@ -2,77 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2BBB1CC6F6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 07:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA811CC721
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 08:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgEJFRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 May 2020 01:17:05 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52838 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726389AbgEJFRE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 May 2020 01:17:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589087823;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tCJf3aD47ctQEj0+bjTncfKWspILH0i2eRAlZk7YIas=;
-        b=YkA+bNRDfKCq+NmOCS2CsehwT+8p7u3Brk/3C/kSzRC9vUa2Op3Gz+55ebaBTpU36NAr4H
-        E5zKt1n3A53puuQihq9HHS4raC005hHPJExsTnMw+PlCBCWzTtcGejx5XythiSwYiwu2pe
-        J2nJBDeTQ5Lme2XAvcWZdpPUP+l19WA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-315-1wSi7USNNkmzpDGYI08JnQ-1; Sun, 10 May 2020 01:17:00 -0400
-X-MC-Unique: 1wSi7USNNkmzpDGYI08JnQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725846AbgEJGVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 May 2020 02:21:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbgEJGVB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 10 May 2020 02:21:01 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23DD980058A;
-        Sun, 10 May 2020 05:16:57 +0000 (UTC)
-Received: from localhost (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8EB7704C6;
-        Sun, 10 May 2020 05:16:48 +0000 (UTC)
-Date:   Sun, 10 May 2020 13:16:46 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Rafael Aquini <aquini@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, dyoung@redhat.com, corbet@lwn.net,
-        mcgrof@kernel.org, keescook@chromium.org,
-        akpm@linux-foundation.org, cai@lca.pw, tytso@mit.edu,
-        bunk@kernel.org, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, labbott@redhat.com, jeffm@suse.com,
-        jikos@kernel.org, jeyu@suse.de, tiwai@suse.de, AnDavis@suse.com,
-        rpalethorpe@suse.de
-Subject: Re: [PATCH v3] kernel: add panic_on_taint
-Message-ID: <20200510051646.GF5029@MiWiFi-R3L-srv>
-References: <20200509135737.622299-1-aquini@redhat.com>
- <20200510025921.GA10165@MiWiFi-R3L-srv>
- <acab7971-7522-3511-c976-e0237ceda4d0@infradead.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A0752082E;
+        Sun, 10 May 2020 06:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589091660;
+        bh=ykU5Chtjjs/h2pWxDILMKNjujFPoh+jfp41AJ916jkU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GsYRtFkS2rH27mGlJmEDwOKT52jC3bQqxZ7jLtVD/igAnz/9nBCUIGfYKHcNcqGnc
+         vmlxkJecvTGwv+zEXIfwYXHaalOEQTI+OhJXsE2eDnxNMF7/Mou/bkudpHECUyMO0m
+         TLqVb8Mynio93dyMpUzgkue+u6aCFLbHxKWIVD9I=
+Date:   Sun, 10 May 2020 08:20:58 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v4 1/5] block: revert back to synchronous request_queue
+ removal
+Message-ID: <20200510062058.GA3394360@kroah.com>
+References: <20200509031058.8239-1-mcgrof@kernel.org>
+ <20200509031058.8239-2-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <acab7971-7522-3511-c976-e0237ceda4d0@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20200509031058.8239-2-mcgrof@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/09/20 at 09:10pm, Randy Dunlap wrote:
-> On 5/9/20 7:59 PM, Baoquan He wrote:
-> > Read admin-guide/tainted-kernels.rst, but still do not get what 'G' means.
+On Sat, May 09, 2020 at 03:10:54AM +0000, Luis Chamberlain wrote:
+> Commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") merged on
+> v4.12 moved the work behind blk_release_queue() into a workqueue after a
+> splat floated around which indicated some work on blk_release_queue()
+> could sleep in blk_exit_rl(). This splat would be possible when a driver
+> called blk_put_queue() or blk_cleanup_queue() (which calls blk_put_queue()
+> as its final call) from an atomic context.
 > 
-> I interpret 'G' as GPL (strictly it means that no proprietary module has
-> been loaded).  But I don't see why TAINT_PROPRIETARY_MODULE is the only
-> taint flag that has a non-blank c_false character.  It could just be blank
-> also AFAICT.  Then the 'G' would not be there to confuse us.  :)
+> blk_put_queue() decrements the refcount for the request_queue kobject,
+> and upon reaching 0 blk_release_queue() is called. Although blk_exit_rl()
+> is now removed through commit db6d9952356 ("block: remove request_list code")
+> on v5.0, we reserve the right to be able to sleep within blk_release_queue()
+> context.
+> 
+> The last reference for the request_queue must not be called from atomic
+> context. *When* the last reference to the request_queue reaches 0 varies,
+> and so let's take the opportunity to document when that is expected to
+> happen and also document the context of the related calls as best as possible
+> so we can avoid future issues, and with the hopes that the synchronous
+> request_queue removal sticks.
+> 
+> We revert back to synchronous request_queue removal because asynchronous
+> removal creates a regression with expected userspace interaction with
+> several drivers. An example is when removing the loopback driver, one
+> uses ioctls from userspace to do so, but upon return and if successful,
+> one expects the device to be removed. Likewise if one races to add another
+> device the new one may not be added as it is still being removed. This was
+> expected behavior before and it now fails as the device is still present
+> and busy still. Moving to asynchronous request_queue removal could have
+> broken many scripts which relied on the removal to have been completed if
+> there was no error. Document this expectation as well so that this
+> doesn't regress userspace again.
+> 
+> Using asynchronous request_queue removal however has helped us find
+> other bugs. In the future we can test what could break with this
+> arrangement by enabling CONFIG_DEBUG_KOBJECT_RELEASE.
 
-Yeah, seems c_false character is not so necessary. If no 'P' set, then
-it means no proprietary modules loaded naturally. We may need clean up
-the c_false in struct taint_flag, since c_true is enough to indicate
-what want to check.
+You are adding documenation and might_sleep() calls all over the place
+in here, making the "real" change in the patch hard to pick out.
 
+How about you split this up into 3 patches, one for documentation, one
+for might_sleep() and one for the real change?  Or maybe just 2 patches,
+but what you have here seems excessive.
 
+thanks,
+
+greg k-h
