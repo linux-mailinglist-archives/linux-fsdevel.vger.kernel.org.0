@@ -2,83 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E988F1CC5CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 02:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F40FC1CC5D5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 May 2020 02:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbgEJAgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 May 2020 20:36:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgEJAgO (ORCPT
+        id S1727837AbgEJAvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 May 2020 20:51:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:65189 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbgEJAvL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 May 2020 20:36:14 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q124so2700033pgq.13;
-        Sat, 09 May 2020 17:36:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=SQF8VGNw/LWoe9FfZGxpzTCfdvJXZRTz9yGixScGhPs=;
-        b=qfvcu0K3EvzWUREclK/jjWSv3eUWCHQjL7qjT3vjJqMi4635F4NwrG/3O51IAT1HMF
-         JEKE91L3MA6mKHRHA6flh5vEcJUr8WQNiqJ6RRRgQyr8jespEGnQ23b/r6r/nNPN2Cpq
-         Fp8gyWyF8CmclGQLzKZ0tQGc41wXaXPniBJFwMqRu0/HbtgF44wLbqJ4i6ClfiPas7Xm
-         qO7etrJlOBRs5MTw2B9QOPi8EsDaTq4496iBKTjFE9POjD0U/R9udZ+a+PRig6l6rT1y
-         Z3VhZmDTkX2IBqkOhisbClOemXZIzq/7OGVf+5Csrh/yPjASUF1Be3Lh2O/mjTgaZeDB
-         Uo5w==
-X-Gm-Message-State: AGi0PuYhtSvFybeX4JjaL6E6pzEfm2kow+2aOnK26M9tjO8FgKZ12EqD
-        8zqvGOjJSSwflqB0pURA0V8=
-X-Google-Smtp-Source: APiQypLzWG+D3I3lGRvqUjjthvsCMHM3xjJIhlNwyoTH7tORaG4skYeDsbtO5wgVmwoRSn49F59p9Q==
-X-Received: by 2002:a63:7219:: with SMTP id n25mr8505744pgc.358.1589070972603;
-        Sat, 09 May 2020 17:36:12 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:8ef:746a:4fe7:1df? ([2601:647:4000:d7:8ef:746a:4fe7:1df])
-        by smtp.gmail.com with ESMTPSA id z6sm5386018pfb.87.2020.05.09.17.36.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 May 2020 17:36:11 -0700 (PDT)
-Subject: Re: [PATCH v4 1/5] block: revert back to synchronous request_queue
- removal
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200509031058.8239-1-mcgrof@kernel.org>
- <20200509031058.8239-2-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <3969cc50-eef7-0b39-58eb-a19535a61d15@acm.org>
-Date:   Sat, 9 May 2020 17:36:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sat, 9 May 2020 20:51:11 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04A0p77S032175;
+        Sun, 10 May 2020 09:51:07 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp);
+ Sun, 10 May 2020 09:51:07 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav302.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04A0p1V9031999
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 10 May 2020 09:51:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 05/20] tomoyo_write_control(): get rid of pointless
+ access_ok()
+To:     Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20200509234124.GM23230@ZenIV.linux.org.uk>
+ <20200509234557.1124086-1-viro@ZenIV.linux.org.uk>
+ <20200509234557.1124086-5-viro@ZenIV.linux.org.uk>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b67a5f6e-0192-f350-e797-455fe570ce93@i-love.sakura.ne.jp>
+Date:   Sun, 10 May 2020 09:50:58 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200509031058.8239-2-mcgrof@kernel.org>
+In-Reply-To: <20200509234557.1124086-5-viro@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,17 +49,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-05-08 20:10, Luis Chamberlain wrote:
-> We revert back to synchronous request_queue removal because asynchronous
-> removal creates a regression with expected userspace interaction with
-> several drivers. An example is when removing the loopback driver, one
-> uses ioctls from userspace to do so, but upon return and if successful,
-> one expects the device to be removed. Likewise if one races to add another
-> device the new one may not be added as it is still being removed. This was
-> expected behavior before and it now fails as the device is still present
-> and busy still. Moving to asynchronous request_queue removal could have
-> broken many scripts which relied on the removal to have been completed if
-> there was no error. Document this expectation as well so that this
-> doesn't regress userspace again.
+Hello, Al.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+I think that this access_ok() check helps reducing partial writes (either
+"whole amount was processed" or "not processed at all" unless -ENOMEM).
+Do you think that such attempt is pointless? Then, please go ahead...
+
+On 2020/05/10 8:45, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> address is passed only to get_user()
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  security/tomoyo/common.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+> index 1b467381986f..f93f8acd05f7 100644
+> --- a/security/tomoyo/common.c
+> +++ b/security/tomoyo/common.c
+> @@ -2662,8 +2662,6 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
+>  
+>  	if (!head->write)
+>  		return -EINVAL;
+> -	if (!access_ok(buffer, buffer_len))
+> -		return -EFAULT;
+>  	if (mutex_lock_interruptible(&head->io_sem))
+>  		return -EINTR;
+>  	head->read_user_buf_avail = 0;
+> 
+
