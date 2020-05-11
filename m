@@ -2,124 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6337C1CDCCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 16:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 932531CDD5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 16:37:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbgEKONz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 10:13:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2185 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730227AbgEKONz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 10:13:55 -0400
-Received: from lhreml719-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 71607F49943FEEF7C06D;
-        Mon, 11 May 2020 15:13:53 +0100 (IST)
-Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
- lhreml719-chm.china.huawei.com (10.201.108.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Mon, 11 May 2020 15:13:53 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Mon, 11 May 2020 16:13:52 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Mon, 11 May 2020 16:13:52 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroA==
-Date:   Mon, 11 May 2020 14:13:52 +0000
-Message-ID: <414644a0be9e4af880452f4b5079aba1@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
- <1588957684.5146.70.camel@linux.ibm.com>
-In-Reply-To: <1588957684.5146.70.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.51]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730163AbgEKOhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 10:37:07 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:54932 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbgEKOhG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 May 2020 10:37:06 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jY9Y5-0000jJ-D7; Mon, 11 May 2020 08:36:53 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jY9Y4-0003I8-ID; Mon, 11 May 2020 08:36:53 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+        <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+        <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+Date:   Mon, 11 May 2020 09:33:21 -0500
+In-Reply-To: <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+        (Linus Torvalds's message of "Sun, 10 May 2020 12:38:20 -0700")
+Message-ID: <87sgg6v8we.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-XM-SPF: eid=1jY9Y4-0003I8-ID;;;mid=<87sgg6v8we.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/csdb/igOrSyXjCRUr34F0lHFKDweqaq4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 430 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (2.6%), b_tie_ro: 10 (2.2%), parse: 0.87
+        (0.2%), extract_message_metadata: 15 (3.5%), get_uri_detail_list: 1.42
+        (0.3%), tests_pri_-1000: 7 (1.6%), tests_pri_-950: 1.24 (0.3%),
+        tests_pri_-900: 1.05 (0.2%), tests_pri_-90: 132 (30.8%), check_bayes:
+        123 (28.5%), b_tokenize: 8 (1.9%), b_tok_get_all: 9 (2.0%),
+        b_comp_prob: 2.8 (0.6%), b_tok_touch_all: 99 (23.1%), b_finish: 0.89
+        (0.2%), tests_pri_0: 248 (57.8%), check_dkim_signature: 0.51 (0.1%),
+        check_dkim_adsp: 3.2 (0.7%), poll_dns_idle: 0.34 (0.1%), tests_pri_10:
+        2.1 (0.5%), tests_pri_500: 8 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
-RnJpZGF5LCBNYXkgOCwgMjAyMCA3OjA4IFBNDQo+IE9uIEZyaSwgMjAyMC0wNS0wOCBhdCAxMDoy
-MCArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiA+IEZyb206IE1pbWkgWm9oYXIgW21h
-aWx0bzp6b2hhckBsaW51eC5pYm0uY29tXQ0KPiA+ID4gT24gVGh1LCAyMDIwLTA1LTA3IGF0IDE2
-OjQ3ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiANCj4gPHNuaXA+DQo+IA0KPiA+ID4g
-PiA+IHRoZSBmaWxlIG1ldGFkYXRhIHRvIHRoZSBmaWxlIGRhdGEuIMKgVGhlIElNQSBhbmQgRVZN
-IHBvbGljaWVzIHJlYWxseQ0KPiA+ID4gPiA+IG5lZWQgdG8gYmUgaW4gc3luYy4NCj4gPiA+ID4N
-Cj4gPiA+ID4gSXQgd291bGQgYmUgbmljZSwgYnV0IGF0IHRoZSBtb21lbnQgRVZNIGNvbnNpZGVy
-cyBhbHNvIGZpbGVzIHRoYXQgYXJlDQo+ID4gPiA+IG5vdCBzZWxlY3RlZCBieSB0aGUgSU1BIHBv
-bGljeS4gQW4gZXhhbXBsZSBvZiB3aHkgdGhpcyBpcyBhIHByb2JsZW0gaXMNCj4gPiA+ID4gdGhl
-IGF1ZGl0IHNlcnZpY2UgdGhhdCBmYWlscyB0byBzdGFydCB3aGVuIGl0IHRyaWVzIHRvIGFkanVz
-dCB0aGUNCj4gcGVybWlzc2lvbnMNCj4gPiA+ID4gb2YgdGhlIGxvZyBmaWxlcy4gVGhvc2UgZmls
-ZXMgZG9uJ3QgaGF2ZSBzZWN1cml0eS5ldm0gYmVjYXVzZSB0aGV5IGFyZQ0KPiA+ID4gPiBub3Qg
-YXBwcmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9wZXJhdGlvbi4NCj4gPiA+DQo+
-ID4gPiBObywgdGhpcyBpcyBhIHRpbWluZyBpc3N1ZSBhcyB0byB3aGV0aGVyIG9yIG5vdCB0aGUg
-YnVpbHRpbiBwb2xpY3kgb3INCj4gPiA+IGEgY3VzdG9tIHBvbGljeSBoYXMgYmVlbiBsb2FkZWQu
-IMKgQSBjdXN0b20gcG9saWN5IGNvdWxkIGV4Y2x1ZGUgdGhlDQo+ID4gPiBsb2cgZmlsZXMgYmFz
-ZWQgb24gTFNNIGxhYmVscywgYnV0IHRoZXkgYXJlIGluY2x1ZGVkIGluIHRoZSBidWlsdGluDQo+
-ID4gPiBwb2xpY3kuDQo+ID4NCj4gPiBZZXMsIEkgd2FzIHJlZmVycmluZyB0byBhIGN1c3RvbSBw
-b2xpY3kuIEluIHRoaXMgY2FzZSwgRVZNIHdpbGwgbm90IGFkYXB0DQo+ID4gdG8gdGhlIGN1c3Rv
-bSBwb2xpY3kgYnV0IHN0aWxsIHZlcmlmaWVzIGFsbCBmaWxlcy4gSWYgYWNjZXNzIGNvbnRyb2wg
-aXMgZG9uZQ0KPiA+IGV4Y2x1c2l2ZWx5IGJ5IElNQSBhdCB0aGUgdGltZSBldm1fdmVyaWZ5eGF0
-dHIoKSBpcyBjYWxsZWQsIHdlIHdvdWxkbid0DQo+ID4gbmVlZCB0byBhZGQgc2VjdXJpdHkuZXZt
-IHRvIGFsbCBmaWxlcy4NCj4gDQo+IFJvYmVydG8sIEVWTSBpcyBvbmx5IHRyaWdnZXJlZCBieSBJ
-TUEsIHVubGVzcyB5b3UndmUgbW9kaWZpZWQgdGhlDQo+IGtlcm5lbCB0byBkbyBvdGhlcndpc2Uu
-DQoNCkVWTSB3b3VsZCBkZW55IHhhdHRyL2F0dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBk
-aXNhYmxlZCBpbiB0aGUNCmtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3Nl
-dHhhdHRyKCkgcmV0dXJucyB0aGUgdmFsdWUNCmZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4gSU1B
-IGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCg0KPiBJJ20gbm90IGludGVyZXN0ZWQgaW4gYSBjb21w
-bGljYXRlZCBzb2x1dGlvbiwganVzdCBvbmUgdGhhdCBhZGRyZXNzZXMNCj4gdGhlIG5ldyBFVk0g
-aW1tdXRhYmxlIGFuZCBwb3J0YWJsZSBzaWduYXR1cmUuIMKgSXQgbWlnaHQgcmVxdWlyZSBFVk0N
-Cj4gSE1BQywgSU1BIGRpZmZlcmVudGlhdGluZyBiZXR3ZWVuIGEgbmV3IGZpbGUgYW5kIGFuIGV4
-aXN0aW5nIGZpbGUsIG9yDQo+IGl0IG1pZ2h0IHJlcXVpcmUgd3JpdGluZyB0aGUgbmV3IEVWTSBz
-aWduYXR1cmUgbGFzdCwgYWZ0ZXIgYWxsIHRoZQ0KPiBvdGhlciB4YXR0cnMgb3IgbWV0YWRhdGEg
-YXJlIHVwZGF0ZWQuIMKgUGxlYXNlIG5vdGhpbmcgdGhhdCBjaGFuZ2VzDQo+IGV4aXN0aW5nIGV4
-cGVjdGF0aW9ucy4NCg0KT2suIEludHJvZHVjaW5nIHRoZSBuZXcgc3RhdHVzIElOVEVHUklUWV9G
-QUlMX0lNTVVUQUJMRSwgYXMgSQ0KbWVudGlvbmVkIGluICdbUEFUQ0hdIGltYTogQWxsb3cgaW1h
-c2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KRVZNIHBvcnRhYmxlIHNpZ25hdHVy
-ZXMnIHNlZW1zIHRvIGhhdmUgYW4gYWRkaXRpb25hbCBiZW5lZml0LiBXZQ0KY291bGQgaW50cm9k
-dWNlIGFuIGFkZGl0aW9uYWwgZXhjZXB0aW9uIGluIGV2bV9wcm90ZWN0X3hhdHRyKCksIG90aGVy
-DQp0aGFuIElOVEVHUklUWV9OT1hBVFRSUywgYXMgd2Uga25vdyB0aGF0IHhhdHRyL2F0dHIgdXBk
-YXRlIHdvbid0DQpjYXVzZSBITUFDIHVwZGF0ZS4NCg0KSG93ZXZlciwgaXQgd29uJ3Qgd29yayB1
-bmxlc3MgdGhlIElNQSBwb2xpY3kgc2F5cyB0aGF0IHRoZSBmaWxlIHNob3VsZA0KYmUgYXBwcmFp
-c2VkIHdoZW4gdGhlIG1rbm9kKCkgc3lzdGVtIGNhbGwgaXMgZXhlY3V0ZWQuIE90aGVyd2lzZSwN
-CmludGVncml0eV9paW50X2NhY2hlIGlzIG5vdCBjcmVhdGVkIGZvciB0aGUgZmlsZSBhbmQgdGhl
-IElNQV9ORVdfRklMRQ0KZmxhZyBpcyBub3Qgc2V0Lg0KDQpHcmFudGluZyBhbiBleGNlcHRpb24g
-Zm9yIElOVEVHUklUWV9GQUlMX0lNTVVUQUJMRSBzb2x2ZXMgdGhlIGNhc2UNCndoZXJlIHNlY3Vy
-aXR5LmV2bSBpcyB0aGUgZmlyc3QgeGF0dHIgc2V0LiBJZiBhIHByb3RlY3RlZCB4YXR0ciBpcyB0
-aGUgZmlyc3QgdG8NCmJlIGFkZGVkLCB0aGVuIHdlIGFsc28gaGF2ZSB0byBoYW5kbGUgdGhlIElO
-VEVHUklUWV9OT0xBQkVMIGVycm9yLg0KSXQgc2hvdWxkIGJlIGZpbmUgdG8gYWRkIGFuIGV4Y2Vw
-dGlvbiBmb3IgdGhpcyBlcnJvciBpZiB0aGUgSE1BQyBrZXkgaXMgbm90DQpsb2FkZWQuDQoNClRo
-aXMgc3RpbGwgZG9lcyBub3Qgc29sdmUgYWxsIHByb2JsZW1zLiBJTlRFR1JJVFlfTk9MQUJFTCBj
-YW5ub3QgYmUNCmlnbm9yZWQgaWYgdGhlIEhNQUMga2V5IGlzIGxvYWRlZCwgd2hpY2ggbWVhbnMg
-dGhhdCBhbGwgZmlsZXMgbmVlZCB0byBiZQ0KcHJvdGVjdGVkIGJ5IEVWTSB0byBhdm9pZCBpc3N1
-ZXMgbGlrZSB0aGUgb25lIEkgZGVzY3JpYmVkIChhdWRpdGQpLg0KDQpSb2JlcnRvDQoNCkhVQVdF
-SSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJl
-Y3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+
+> On Sat, May 9, 2020 at 9:30 PM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> Wouldn't this change cause
+>>
+>>         if (fd_binary > 0)
+>>                 ksys_close(fd_binary);
+>>         bprm->interp_flags = 0;
+>>         bprm->interp_data = 0;
+>>
+>> not to be called when "Search for the interpreter" failed?
+>
+> Good catch. We seem to have some subtle magic wrt the fd_binary file
+> descriptor, which depends on the recursive behavior.
+
+Yes.  I Tetsuo I really appreciate you noticing this.  This is exactly
+the kind of behavior I am trying to flush out and keep from being
+hidden.
+
+> I'm not seeing how to fix it cleanly with the "turn it into a loop".
+> Basically, that binfmt_misc use-case isn't really a tail-call.
+
+I have reservations about installing a new file descriptor before
+we process the close on exec logic and the related security modules
+closing file descriptors that your new credentials no longer give
+you access to logic.
+
+I haven't yet figured out how opening a file descriptor during exec
+should fit into all of that.
+
+
+
+What I do see is that interp_data is just a parameter that is smuggled
+into the call of search binary handler.  And the next binary handler
+needs to be binfmt_elf for it to make much sense, as only binfmt_elf
+(and binfmt_elf_fdpic) deals with BINPRM_FLAGS_EXECFD.
+
+
+So I think what needs to happen is to rename bprm->interp_data to
+bprm->execfd, remove BINPRM_FLAGS_EXECFD and make closing that file
+descriptor free_bprm's responsiblity.
+
+I hope such a change will make it easier to see all of the pieces that
+are intereacting during exec.
+
+I am still asking: is the installation of that file descriptor useful if
+it is not exported passed to userspace as an AT_EXECFD note?
+
+
+I will dig in and see what I can come up with.
+
+Eric
+
+
