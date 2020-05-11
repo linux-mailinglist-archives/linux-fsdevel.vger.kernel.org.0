@@ -2,119 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C95C71CE287
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 20:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42841CE389
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 21:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbgEKSY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 14:24:58 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:37113 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729713AbgEKSY6 (ORCPT
+        id S1731241AbgEKTEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 15:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731191AbgEKTEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 14:24:58 -0400
-Received: by mail-pj1-f65.google.com with SMTP id a7so8199362pju.2;
-        Mon, 11 May 2020 11:24:58 -0700 (PDT)
+        Mon, 11 May 2020 15:04:12 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5BCC05BD09
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 12:04:12 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id 63so1077670oto.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 12:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s73sYUjU2T+59AL45Tu6TCysxqjsop1IGHTRXXypctk=;
+        b=E5S6DY5dOJAQJ1y0RjFlD/g9ZJgf1fK9Qa/tgwB0E5Z9j1UTeta7QmykD9FZ30bOni
+         c4DVq96s2Evv7V9KaW8OQhxbMXwoepXtudd6kQBCa0dJySxYJmwTUrwF2+oRTKC9ExjM
+         gjI+gsIZtPs/bQ+CEiDeOzXyiAhkG5gTCLG6eca9ZRGsF5kXUQvmXWk2zEj5UhOhWuXa
+         hFfBbR18/T3k5p7wj0/LC2+XlwCvrJcFZIIGpWEZHY/IlzLM4XaQkuhODDxDAldBSqfq
+         Zvh1PkSumtOA9HVXZnMw8PSWuZdBo3yLIU5xWM/ii+gXYIVomaFt0qBQWmDt+mvi3Hs0
+         9cfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gzjYF0ep8XMaeJksKcr1mwS/Ul5KRJgBfVKTrx7XdJ8=;
-        b=YDHwCHen8nAIlXkNjGyytBp4l/3THc/CLlDSTpZ2ov/9MEQ9lgcGqlURz9eWD6UY49
-         Ht+7MCXeLI4re36/2CCRhVtRAz59KEmu1sZ+TgiPFxhMNu7lJr9cYWEKvA40lcd+dhi8
-         qkRg97EWRcR8h3DdOA6gQMW/3obhX9IcJxhXyiFEqC2hO9t2GwThObeG6skwYIlx8sp3
-         0zY/VMtBmda9nvA7gUkcTaLaxTDKB4s03ctagWfEms0bF0vWacZ5eUWbRmpXDPGBBJFV
-         rkTLmHOUQuyw6s7yTeHsEFzZvW3IgdEtgld/kh7ONUN99NarRzrJCrk3w2p73DYXxSg4
-         yvmw==
-X-Gm-Message-State: AGi0PubnsxvtM0K7F8T+3Rp5ASSZyrscyWV9K/tJiAZ9AfB91aoC7qHH
-        o/NqBnO51FBLWtJQBWzGq38RwVF1Mo0=
-X-Google-Smtp-Source: APiQypKPXNbqjUaKuNkDw/NfTC1wA3JKFcVH3i5a3y/+Dd5/xFN9T+yDEPZ7DD1beXNuM8j6Z44Wqw==
-X-Received: by 2002:a17:902:8e87:: with SMTP id bg7mr16102782plb.91.1589221497577;
-        Mon, 11 May 2020 11:24:57 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id k6sm10585413pju.44.2020.05.11.11.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 11:24:56 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 62A1240605; Mon, 11 May 2020 18:24:55 +0000 (UTC)
-Date:   Mon, 11 May 2020 18:24:55 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Rafael Aquini <aquini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
-        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
-        rdunlap@infradead.org, tytso@mit.edu, bunk@kernel.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        labbott@redhat.com, jeffm@suse.com, jikos@kernel.org, jeyu@suse.de,
-        tiwai@suse.de, AnDavis@suse.com, rpalethorpe@suse.de
-Subject: Re: [PATCH v3] kernel: add panic_on_taint
-Message-ID: <20200511182455.GR11244@42.do-not-panic.com>
-References: <20200509135737.622299-1-aquini@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s73sYUjU2T+59AL45Tu6TCysxqjsop1IGHTRXXypctk=;
+        b=FALdUqJFB1/55rGAmHG/AeghkYG1N0txgZ4AUGNp/oMDSzhvOiWXfdUl6W4wnBv/9g
+         TAY+XV04kp3voKIYDbXzKNu8us9kw78EZDF3I9lG8T4edOQQy/ewlu1R8Si+f0LGCyiO
+         Zuf1+bI8v3uQx8BqxU5Dx9PGSS2Kpf6Ysz+91IxiigHzRkZ/4X1ecjzclEoVaFAtf3bv
+         UgeF6cdlVWghlqLmueHS+GetmR/Mkjs1GXgPVWfykGosg1JmbeFpp2qGLUtqgwF5ATdL
+         9VHyAjVAcl0BC9AxJcPZO4O/E0CA9xPZo08l6AL2Fzt6BKlir0tKTQ3A7NsyDP3qycv+
+         j6YQ==
+X-Gm-Message-State: AGi0Puadhn5iV2qbV39IgZfxeVJw1UCk8QmsiOd8u3dMyxLdO3kFDLE/
+        mkiZpETr/KwXjY5C6wUASNHjlQ==
+X-Google-Smtp-Source: APiQypJIVFT+ZCv+tK80xUXbracodPGzrtONiD0MTwj6mM4HCs3oxADGxVBontAQ8QNSI/IJI96jVw==
+X-Received: by 2002:a05:6830:22e8:: with SMTP id t8mr14366049otc.229.1589223851277;
+        Mon, 11 May 2020 12:04:11 -0700 (PDT)
+Received: from [192.168.86.21] ([136.62.4.88])
+        by smtp.gmail.com with ESMTPSA id a7sm2848586otr.15.2020.05.11.12.04.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2020 12:04:10 -0700 (PDT)
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>, dalias@libc.org
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <f33135b7-caa2-94f3-7563-fab6a1f5da0f@landley.net>
+Date:   Mon, 11 May 2020 14:10:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200509135737.622299-1-aquini@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87sgg6v8we.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 09, 2020 at 09:57:37AM -0400, Rafael Aquini wrote:
-> +Trigger Kdump on add_taint()
-> +============================
-> +
-> +The kernel parameter, panic_on_taint, calls panic() from within add_taint(),
-> +whenever the value set in this bitmask matches with the bit flag being set
-> +by add_taint(). This will cause a kdump to occur at the panic() call.
-> +In cases where a user wants to specify this during runtime,
-> +/proc/sys/kernel/panic_on_taint can be set to a respective bitmask value
-> +to achieve the same behaviour.
-> +
->  Contact
->  =======
->  
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 7bc83f3d9bdf..4a69fe49a70d 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3404,6 +3404,21 @@
->  	panic_on_warn	panic() instead of WARN().  Useful to cause kdump
->  			on a WARN().
->  
-> +	panic_on_taint=	[KNL] conditionally panic() in add_taint()
-> +			Format: <str>
-> +			Specifies, as a string, the TAINT flag set that will
-> +			compose a bitmask for calling panic() when the kernel
-> +			gets tainted.
-> +			See Documentation/admin-guide/tainted-kernels.rst for
-> +			details on the taint flags that users can pick to
-> +			compose the bitmask to assign to panic_on_taint.
-> +			When the string is prefixed with a '-' the bitmask
-> +			set in panic_on_taint will be mutually exclusive
-> +			with the sysctl knob kernel.tainted, and any attempt
-> +			to write to that sysctl will fail with -EINVAL for
-> +			any taint value that masks with the flags set for
-> +			this option.
+On 5/11/20 9:33 AM, Eric W. Biederman wrote:
+> What I do see is that interp_data is just a parameter that is smuggled
+> into the call of search binary handler.  And the next binary handler
+> needs to be binfmt_elf for it to make much sense, as only binfmt_elf
+> (and binfmt_elf_fdpic) deals with BINPRM_FLAGS_EXECFD.
 
-This talks about using a string, but that it sets a bitmask. Its not
-very clear that one must use the string representation from each taint
-flag. Also, I don't think to use the character representation as we
-limit ourselves to the alphabet and quirky what-should-be-arbitrary
-characters that represent the taint flags. The taint flag character
-representation is juse useful for human reading of a panic, but I think
-because of the limitation of the mask with the alphabet this was not
-such a great idea long term.
+The binfmt_elf_fdpic driver is separate from binfmt_elf for the same reason
+ext2/ext3/ext4 used to have 3 drivers: fdpic is really just binfmt_elf with the
+4 main sections (text, data, bss, rodata) able to move independently of each
+other (each tracked with its own base pointer).
 
-So, I don't think we should keep on extending the alphabet use case, a
-simple digit representation would suffice. I think this means we'd need
-two params one for exclusive and one for the value of the taint.
+It's kind of -fPIE on steroids, and various security people have sniffed at it
+over the years to give ASLR more degrees of freedom on with-MMU systems. Many
+moons ago Rich Felker proposed teaching the fdpic loader how to load normal ELF
+binaries so there's just the one loader (there's a flag in the ELF header to say
+whether the sections are independent or not).
 
-Using a hex value or number also lets us make the input value shorter.
-
-If a kernel boots with panic-on-taint flag not yet supported, we don't
-complain, therefore getting a false sense of security that we will panic
-with a not yet supported taint flag. I think we should pr_warn() or
-fail to boot when that happens.
-
-  Luis
+Rob
