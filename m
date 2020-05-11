@@ -2,130 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3D01CE237
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 20:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95C71CE287
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 20:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbgEKSDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 14:03:39 -0400
-Received: from mailrelay107.isp.belgacom.be ([195.238.20.134]:58693 "EHLO
-        mailrelay107.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726891AbgEKSDj (ORCPT
+        id S1729818AbgEKSY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 14:24:58 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:37113 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729713AbgEKSY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 14:03:39 -0400
-IronPort-SDR: VUq4jO75KW4H3TgsSOFgBFUo9vAEUdMNiSd5BWXN7y18LYE7ofKn66OXrim0BUh82D5eNZjRca
- f06kf1ferT2TBmt785tOOesjePmPcSZv5NQrw9iHAPRF36soHC85WyyQ1GqEwGysj5Mg1zyxFW
- pVTpxrmEkWRxgwEyR8WnV4Ow/40jghhQs2Kp1A1Mf//y/9Z3YbpgseKsUq3HTnNx2sP7jdBUEy
- rg0A421F+Pk0unSujCPB0jeXS6ivyTFVOcQpziXnaogGG54tmG1faJkWxNjDqmy897kEwGG2o4
- +lA=
-X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3AZUoO0hJEWyVjs6zkjdmcpTZWNBhigK39O0sv0r?=
- =?us-ascii?q?FitYgfLvTxwZ3uMQTl6Ol3ixeRBMOHsq8C2rKd6vm7EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCe9bL9oKBi6sQrdutQLjYZsN6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhSEaPDA77W7XkNR9gqJFrhy8qRJxwInab46aOvdlYq/QfskXSX?=
- =?us-ascii?q?ZbU8pNSyBMBJ63YYsVD+oGOOZVt4nzqEEVohu/HwasAv7kxD9ShnDowKI1zf?=
- =?us-ascii?q?4hEQDa0wwjAtkDt3rUo8/uO6ccSu2116rIzDXFb/xIxTfx8pPHfQ44rPyKQL?=
- =?us-ascii?q?l/ftbfx1M1GAPZklWft5blPzWN2+oDsGWW6+puWOOvhmI5pQx/oiWiytsxho?=
- =?us-ascii?q?XVh48bxV/K+Dh3zYsrONC1SEx2bMCrHpdMuS+UOI97TMMiTW12vCs3zKANt5?=
- =?us-ascii?q?2jfCUSzJkr2gTTZ+GEfoSW+B7vSeecLDdiiH54eb+ygQu5/1K6xe3mTMa01U?=
- =?us-ascii?q?5Hri9CktbRqH8AzwfT6s2bSvtl+UehxCqP2xjT6u5aJUA0krLWJIUgwr4/mZ?=
- =?us-ascii?q?oTrF/DHjTxmEXyka+WbV8o+uiv6+TifLrqvp6cN4lqhQHiKqkjntGzDf4lPg?=
- =?us-ascii?q?UNQWSX4/mw2bzj8EHjXblHj+U6kqzDv5DbIcQbqLS5AwhQ0os75RawFSyp0N?=
- =?us-ascii?q?oDkHkcL1JEeBSHgJb1O13UO//3E++zg06wnzdz2/DGIrrhD43PLnfZjLjhfq?=
- =?us-ascii?q?1w61VByAoo099T/Y5bC7AZKvLpRkDxrMDYDgM+MwGs2ennDdR91pkcVG+BA6?=
- =?us-ascii?q?+ZNLjfsVCN5u01IumMYJUZtyr6K/gg//Tul2M2mUcBfam12psacHS4HvVgI0?=
- =?us-ascii?q?WEbnvgm9kBEXwXsQUgUuzlllmCXCVNZ3a9Qa08/Cs3CIG4AofZQICinriB0D?=
- =?us-ascii?q?28Hp1MaWBMEkqMHmvwd4WYR/cMbzqfIsF7nTMfW7isUJQh1RKutQ/81bVnMv?=
- =?us-ascii?q?DY9TYGusGr6N8g5eTYljkp6Cd5Sc+PlymESmBuwTgJQxc52al+pQp2zVLQ/7?=
- =?us-ascii?q?J/hql2HNZS7vUBfB03OZPGzud5Q4T8UwjPVsyKWVCrXpOsDGdiHZoK39YSbh?=
- =?us-ascii?q?MlSJ2ZhRfZ0n/yDg=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BLBwAhk7le/xCltltmhHqBZBIsjSW?=
- =?us-ascii?q?FeowYijKHJgsBAQEBAQEBAQE0AQIEAQGERIINJzgTAgMBAQEDAgUBAQYBAQE?=
- =?us-ascii?q?BAQEEBAFsBAEBBwoCAYROIQEDAQEFCgFDgjsig0ILASMjT3ASgyaCWCmwRDO?=
- =?us-ascii?q?FUYNXgUCBOIddhQGBQT+EX4QGhjwEjkakJYJUgnGVKwwdnTotj3CfOyKBVk0?=
- =?us-ascii?q?gGDuCaVAYDZBMF44nQjA3AgYIAQEDCVcBIgGLVII0AQE?=
-X-IPAS-Result: =?us-ascii?q?A2BLBwAhk7le/xCltltmhHqBZBIsjSWFeowYijKHJgsBA?=
- =?us-ascii?q?QEBAQEBAQE0AQIEAQGERIINJzgTAgMBAQEDAgUBAQYBAQEBAQEEBAFsBAEBB?=
- =?us-ascii?q?woCAYROIQEDAQEFCgFDgjsig0ILASMjT3ASgyaCWCmwRDOFUYNXgUCBOIddh?=
- =?us-ascii?q?QGBQT+EX4QGhjwEjkakJYJUgnGVKwwdnTotj3CfOyKBVk0gGDuCaVAYDZBMF?=
- =?us-ascii?q?44nQjA3AgYIAQEDCVcBIgGLVII0AQE?=
-Received: from 16.165-182-91.adsl-dyn.isp.belgacom.be (HELO biggussolus.home) ([91.182.165.16])
-  by relay.skynet.be with ESMTP; 11 May 2020 20:03:16 +0200
-From:   Fabian Frederick <fabf@skynet.be>
-To:     jack@suse.cz, amir73il@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 9/9 linux-next] fsnotify: fsnotify_clear_marks_by_group() massage
-Date:   Mon, 11 May 2020 20:03:05 +0200
-Message-Id: <20200511180305.215252-1-fabf@skynet.be>
-X-Mailer: git-send-email 2.26.2
+        Mon, 11 May 2020 14:24:58 -0400
+Received: by mail-pj1-f65.google.com with SMTP id a7so8199362pju.2;
+        Mon, 11 May 2020 11:24:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gzjYF0ep8XMaeJksKcr1mwS/Ul5KRJgBfVKTrx7XdJ8=;
+        b=YDHwCHen8nAIlXkNjGyytBp4l/3THc/CLlDSTpZ2ov/9MEQ9lgcGqlURz9eWD6UY49
+         Ht+7MCXeLI4re36/2CCRhVtRAz59KEmu1sZ+TgiPFxhMNu7lJr9cYWEKvA40lcd+dhi8
+         qkRg97EWRcR8h3DdOA6gQMW/3obhX9IcJxhXyiFEqC2hO9t2GwThObeG6skwYIlx8sp3
+         0zY/VMtBmda9nvA7gUkcTaLaxTDKB4s03ctagWfEms0bF0vWacZ5eUWbRmpXDPGBBJFV
+         rkTLmHOUQuyw6s7yTeHsEFzZvW3IgdEtgld/kh7ONUN99NarRzrJCrk3w2p73DYXxSg4
+         yvmw==
+X-Gm-Message-State: AGi0PubnsxvtM0K7F8T+3Rp5ASSZyrscyWV9K/tJiAZ9AfB91aoC7qHH
+        o/NqBnO51FBLWtJQBWzGq38RwVF1Mo0=
+X-Google-Smtp-Source: APiQypKPXNbqjUaKuNkDw/NfTC1wA3JKFcVH3i5a3y/+Dd5/xFN9T+yDEPZ7DD1beXNuM8j6Z44Wqw==
+X-Received: by 2002:a17:902:8e87:: with SMTP id bg7mr16102782plb.91.1589221497577;
+        Mon, 11 May 2020 11:24:57 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id k6sm10585413pju.44.2020.05.11.11.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2020 11:24:56 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 62A1240605; Mon, 11 May 2020 18:24:55 +0000 (UTC)
+Date:   Mon, 11 May 2020 18:24:55 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Rafael Aquini <aquini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        dyoung@redhat.com, bhe@redhat.com, corbet@lwn.net,
+        keescook@chromium.org, akpm@linux-foundation.org, cai@lca.pw,
+        rdunlap@infradead.org, tytso@mit.edu, bunk@kernel.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        labbott@redhat.com, jeffm@suse.com, jikos@kernel.org, jeyu@suse.de,
+        tiwai@suse.de, AnDavis@suse.com, rpalethorpe@suse.de
+Subject: Re: [PATCH v3] kernel: add panic_on_taint
+Message-ID: <20200511182455.GR11244@42.do-not-panic.com>
+References: <20200509135737.622299-1-aquini@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200509135737.622299-1-aquini@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-revert condition and remove clear label
+On Sat, May 09, 2020 at 09:57:37AM -0400, Rafael Aquini wrote:
+> +Trigger Kdump on add_taint()
+> +============================
+> +
+> +The kernel parameter, panic_on_taint, calls panic() from within add_taint(),
+> +whenever the value set in this bitmask matches with the bit flag being set
+> +by add_taint(). This will cause a kdump to occur at the panic() call.
+> +In cases where a user wants to specify this during runtime,
+> +/proc/sys/kernel/panic_on_taint can be set to a respective bitmask value
+> +to achieve the same behaviour.
+> +
+>  Contact
+>  =======
+>  
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 7bc83f3d9bdf..4a69fe49a70d 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3404,6 +3404,21 @@
+>  	panic_on_warn	panic() instead of WARN().  Useful to cause kdump
+>  			on a WARN().
+>  
+> +	panic_on_taint=	[KNL] conditionally panic() in add_taint()
+> +			Format: <str>
+> +			Specifies, as a string, the TAINT flag set that will
+> +			compose a bitmask for calling panic() when the kernel
+> +			gets tainted.
+> +			See Documentation/admin-guide/tainted-kernels.rst for
+> +			details on the taint flags that users can pick to
+> +			compose the bitmask to assign to panic_on_taint.
+> +			When the string is prefixed with a '-' the bitmask
+> +			set in panic_on_taint will be mutually exclusive
+> +			with the sysctl knob kernel.tainted, and any attempt
+> +			to write to that sysctl will fail with -EINVAL for
+> +			any taint value that masks with the flags set for
+> +			this option.
 
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
----
- fs/notify/mark.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+This talks about using a string, but that it sets a bitmask. Its not
+very clear that one must use the string representation from each taint
+flag. Also, I don't think to use the character representation as we
+limit ourselves to the alphabet and quirky what-should-be-arbitrary
+characters that represent the taint flags. The taint flag character
+representation is juse useful for human reading of a panic, but I think
+because of the limitation of the mask with the alphabet this was not
+such a great idea long term.
 
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 1d96216dffd1..ca2eba786bb6 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -724,28 +724,27 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
- 	LIST_HEAD(to_free);
- 	struct list_head *head = &to_free;
- 
--	/* Skip selection step if we want to clear all marks. */
--	if (type_mask == FSNOTIFY_OBJ_ALL_TYPES_MASK) {
-+	if (type_mask != FSNOTIFY_OBJ_ALL_TYPES_MASK) {
-+	       /*
-+		* We have to be really careful here. Anytime we drop mark_mutex,
-+		* e.g. fsnotify_clear_marks_by_inode() can come and free marks.
-+		* Even in our to_free list so we have to use mark_mutex even
-+		* when accessing that list. And freeing mark requires us to drop
-+		* mark_mutex. So we can reliably free only the first mark in the
-+		* list. That's why we first move marks to free to to_free list
-+		* in one go and then free marks in to_free list one by one.
-+		*/
-+		mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
-+		list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
-+			if ((1U << mark->connector->type) & type_mask)
-+				list_move(&mark->g_list, &to_free);
-+		}
-+		mutex_unlock(&group->mark_mutex);
-+	} else {
-+		/* Skip selection step if we want to clear all marks. */
- 		head = &group->marks_list;
--		goto clear;
- 	}
--	/*
--	 * We have to be really careful here. Anytime we drop mark_mutex, e.g.
--	 * fsnotify_clear_marks_by_inode() can come and free marks. Even in our
--	 * to_free list so we have to use mark_mutex even when accessing that
--	 * list. And freeing mark requires us to drop mark_mutex. So we can
--	 * reliably free only the first mark in the list. That's why we first
--	 * move marks to free to to_free list in one go and then free marks in
--	 * to_free list one by one.
--	 */
--	mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
--	list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
--		if ((1U << mark->connector->type) & type_mask)
--			list_move(&mark->g_list, &to_free);
--	}
--	mutex_unlock(&group->mark_mutex);
- 
--clear:
- 	while (1) {
- 		mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
- 		if (list_empty(head)) {
--- 
-2.26.2
+So, I don't think we should keep on extending the alphabet use case, a
+simple digit representation would suffice. I think this means we'd need
+two params one for exclusive and one for the value of the taint.
 
+Using a hex value or number also lets us make the input value shorter.
+
+If a kernel boots with panic-on-taint flag not yet supported, we don't
+complain, therefore getting a false sense of security that we will panic
+with a not yet supported taint flag. I think we should pr_warn() or
+fail to boot when that happens.
+
+  Luis
