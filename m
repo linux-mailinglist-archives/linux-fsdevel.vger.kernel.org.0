@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 722511CE21E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 20:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406C51CE21F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 20:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbgEKSAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 14:00:34 -0400
-Received: from mailrelay107.isp.belgacom.be ([195.238.20.134]:58416 "EHLO
+        id S1728711AbgEKSBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 14:01:05 -0400
+Received: from mailrelay107.isp.belgacom.be ([195.238.20.134]:58467 "EHLO
         mailrelay107.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727051AbgEKSAe (ORCPT
+        by vger.kernel.org with ESMTP id S1726310AbgEKSBF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 14:00:34 -0400
-IronPort-SDR: TGBs/NcPgxU5YwHEhMCt1CkESV440BpfUu/yDaTbJBVBnaS32OzdKLaJ1C/bNvN2a5bT5brIUb
- 9+KLZKEJTpDZju8S6dZczdPSitPqhBv9KamLCcNURRKI5V1vogp5aixg4MOIHuZ1FpY6vNkK/b
- P7xGkqC1rye8knMccrvWUUP8c29WyE31IaEl4pSm32IURCld6LkB49vD8eCNlVM/ebPamNWzaF
- +LZNdz5gIeaRXaUBJwkeHp0y6IzgHyQE6zivWP16koTOak6TLW3LXGPQz3INyd4nQ/kEtSXQ4r
- 3hI=
+        Mon, 11 May 2020 14:01:05 -0400
+IronPort-SDR: aUaxfGE8BlacwG/G0pIlSUrEd+suneAgK2yiBLlT0mhN7NN3z4lsrO3u8XAxDcRBGVcDm9tC58
+ /E36Fb4sCdcmJ9Z5T6WgXhGWj1fHTFYwoTXpLN6xqSAGC+SX91n3VoHrnYvNyHMRLQ12xCacjZ
+ HOTDNqse1w11U5nYn/A3NwwYbBhnxEo1qWhAhDgetqEyNruvjWbIXcmMyoydp3x95OjI0kwAJ0
+ kTzYlhOPPlpZBeYA+FO30Hurb/QJcXsHekrQkADpB1dRwW2RprEhyIwwIwQHZFqrYR591Ihyn5
+ frQ=
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3AOLdaaBMJrxitgW5zEX4l6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0I/jzrarrMEGX3/hxlliBBdydt6sZzbuO+Pm5AyQp2tWoiDg6aptCVh?=
- =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
- =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagYb5+NhG7oRneusULnIduNLs6xw?=
- =?us-ascii?q?fUrHdPZ+lY335jK0iJnxb76Mew/Zpj/DpVtvk86cNOUrj0crohQ7BAAzsoL2?=
- =?us-ascii?q?465MvwtRneVgSP/WcTUn8XkhVTHQfI6gzxU4rrvSv7sup93zSaPdHzQLspVz?=
- =?us-ascii?q?mu87tnRRn1gyoBKjU38nzYitZogaxbvhyvuhJxzY3Tbo6aO/RzZb/RcNAASG?=
- =?us-ascii?q?ZdRMtdSzBND4WhZIUPFeoBOuNYopH9qVQUthS+BBOjBOXywTFInH/5w7A13P?=
- =?us-ascii?q?o7EQHHwAMgHM8FvXParNrvL6gSX/u4zLLLzTTDafNZxyv95JLTfR8/uPyBW6?=
- =?us-ascii?q?97fsXNx0c1DQzFkkmQppL/PzOTzukDvWuW4u5gW++ui2MrtQ98rDiyy8swl4?=
- =?us-ascii?q?XFmoMYxF/L+yhkzos4O8C1RU55bNO6H5Vcqy+UOYRyT80iQ29kpiI3x7sbsp?=
- =?us-ascii?q?C4ZCgH0JAqywPFZ/CacIWE/AjvWPuQLDp4nn5pZbOyihCv+ka60OL8TNO70F?=
- =?us-ascii?q?NSoypAldnDq24C2gTI6siCVvt95kCh2SuT1wzL6uFLP0Q0la3DJpE6w74wmZ?=
- =?us-ascii?q?UTsVnYHi/tn0X2iLKWdl4+9uio7OTnZ6vpqoedN49ylA7+Lrwjl8iiDegiLw?=
- =?us-ascii?q?QDXHaX9f6h2LDi/UD1WqhGg/wunqncqp/aJMAbpqCjAw9S14Yu8xi/AC2939?=
- =?us-ascii?q?QWhnQHN1FFeRKBj4f3J1HCOuv3Aumnj1S2jDhr3+zGPqHmApjVLHjMiqvufb?=
- =?us-ascii?q?Vm5k5H1Qoz1s5Q64hIBbAAOPjzQFP+tMTEDh8lNAy52/zoCNB81oMEW2+CDK?=
- =?us-ascii?q?6ZMKfJvF+H4+IgOeiMZIsPtDnhLPgl4ubkjWUlll8FYampwZwXZWi8HvRnJU?=
- =?us-ascii?q?WZfHXtjs4PEWcRowUxUvLqh0OGUTNIeXayULwz5ishBIKlE4jDXIatj6KF3C?=
- =?us-ascii?q?uhGZ1WfG9GAEiWEXj0b4WER+sMaCWKL89viDMLTrahRpQ61RGttA76zaRoLv?=
- =?us-ascii?q?bO9iIDq52wnORysu/anhIa7iFvAoKWwSXFRmR1hDxTRjse06V2oEg7wVCGgo?=
- =?us-ascii?q?ZihPkNO9VZ5vpPGikgOJLR1e1xCJimVAvLcP+SS0egT8ngCzxnHYF5+MMHf0?=
- =?us-ascii?q?soQ4bqtRvExSf/W7I=3D?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AoW86ABKzpNanoYpLoNmcpTZWNBhigK39O0sv0r?=
+ =?us-ascii?q?FitYgfLvTxwZ3uMQTl6Ol3ixeRBMOHsq8C2rKd6vm6EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCe9bL9oKBi6sQrdutQLjYd8N6081g?=
+ =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
+ =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
+ =?us-ascii?q?i+86tmTgLjhSEaPDA77W7XkNR9gqJFrhy8qRJxwInab46aOvdlYq/QfskXSX?=
+ =?us-ascii?q?ZbU8pNSyBMBJ63YYsVD+oGOOZVt4nzqEEVohu/HwasAv7kxD9ShnDowKI1zf?=
+ =?us-ascii?q?4hEQDa0wwjAtkDt3rUo8/uO6ccSu2116rIzDXFb/xIxTfx8pPHfQ44rPyKQL?=
+ =?us-ascii?q?l/ftbfx1M1GAPZklWft5blPzWN2+oDsGWW6+puWOOvhmI5pQx/oiWiytsxho?=
+ =?us-ascii?q?XVh48bxV/K+Dh3zYsrONC1SEx2bMCrHpdMuS+UOI97TMMiTW12vCs3zKANt5?=
+ =?us-ascii?q?2jfCUSzJkr2gTTZ+GEfoSW+B7vSeecLDdiiH54eb+ygQu5/1K6xe3mTMa01U?=
+ =?us-ascii?q?5Hri9CktbRqH8AzwfT6s2bSvtl+UehxCqP2xjT6u5aJUA0krLWJIUgwr4/mZ?=
+ =?us-ascii?q?oTrF/DHjTxmEXyka+WbV8o+uiv6+TifLrqvp6cN4lqhQHiKqkjntGzDf4lPg?=
+ =?us-ascii?q?UNQWSX4/mw2bzj8EHjXblHj+U6kqzDv5DbIcQbqLS5AwhQ0os75RawFSyp0N?=
+ =?us-ascii?q?oDkHkcL1JEeBSHgJb1O13UO//3E++zg06wnzdz2/DGIrrhD43PLnfZjLjhfq?=
+ =?us-ascii?q?1w61VByAoo099T/Y5bC7AZKvLpRkDxrMDYDgM+MwGs2ennDdR91pkcVG+BA6?=
+ =?us-ascii?q?+ZNLjfsVCN5u01IumMYJUZtyr6K/gg//Tul2M2mUcBfam12psacHS4HvVgI0?=
+ =?us-ascii?q?WEbnvgm9kBEXwXsQUgUuzlllmCXCVNZ3a9Qa08/Cs3CIG4AofZQICinriB0D?=
+ =?us-ascii?q?28Hp1MaWBMEkqMHmvwd4WYR/cMbzqfIsF7nTMfW7isUJQh1RKutQ/81bVnMv?=
+ =?us-ascii?q?DY9TYGusGr6N8g5eTYljkp6Cd5Sc+PlymESmBuwTgJQxc52al+pQp2zVLQ/7?=
+ =?us-ascii?q?J/hql2HNZS7vUBfB03OZPGzud5Q4T8UwjPVsyKWVCrXpOsDGdiHZoK39YSbh?=
+ =?us-ascii?q?MlSJ2ZhRfZ0n/yDg=3D=3D?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CPBgACkrle/xCltltmglCCKoFkEiy?=
- =?us-ascii?q?NJYV6jBiRWAsBAQEBAQEBAQE0AQIEAQGERIINJzcGDgIDAQEBAwIFAQEGAQE?=
- =?us-ascii?q?BAQEBBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsEE?=
- =?us-ascii?q?zhVGDVoFAgTiHXYUBgUE/hF+KQgSya4JUgnGVKwwdnTqQHZ86I4FWTSAYgyR?=
- =?us-ascii?q?QGA2fCkIwNwIGCAEBAwlXASIBjggBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2CPBgACkrle/xCltltmglCCKoFkEiyNJYV6jBiRWAsBA?=
- =?us-ascii?q?QEBAQEBAQE0AQIEAQGERIINJzcGDgIDAQEBAwIFAQEGAQEBAQEBBAQBbAQBA?=
- =?us-ascii?q?QcKAgGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsEEzhVGDVoFAgTiHX?=
- =?us-ascii?q?YUBgUE/hF+KQgSya4JUgnGVKwwdnTqQHZ86I4FWTSAYgyRQGA2fCkIwNwIGC?=
- =?us-ascii?q?AEBAwlXASIBjggBAQ?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BKBwACkrle/xCltltmhHqBZBIsjSW?=
+ =?us-ascii?q?FeowYkVgLAQEBAQEBAQEBNAECBAEBhESCDSc4EwIDAQEBAwIFAQEGAQEBAQE?=
+ =?us-ascii?q?BBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsEEzhVG?=
+ =?us-ascii?q?DVoFAgTiHXYUBgUE/hF+KQgSya4JUgnGVKwwdgkuab5AdnzsigVZNIBiDJFA?=
+ =?us-ascii?q?YDZBMF44nQjA3AgYIAQEDCVcBIgGOCAEB?=
+X-IPAS-Result: =?us-ascii?q?A2BKBwACkrle/xCltltmhHqBZBIsjSWFeowYkVgLAQEBA?=
+ =?us-ascii?q?QEBAQEBNAECBAEBhESCDSc4EwIDAQEBAwIFAQEGAQEBAQEBBAQBbAQBAQcKA?=
+ =?us-ascii?q?gGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsEEzhVGDVoFAgTiHXYUBg?=
+ =?us-ascii?q?UE/hF+KQgSya4JUgnGVKwwdgkuab5AdnzsigVZNIBiDJFAYDZBMF44nQjA3A?=
+ =?us-ascii?q?gYIAQEDCVcBIgGOCAEB?=
 Received: from 16.165-182-91.adsl-dyn.isp.belgacom.be (HELO biggussolus.home) ([91.182.165.16])
-  by relay.skynet.be with ESMTP; 11 May 2020 20:00:32 +0200
+  by relay.skynet.be with ESMTP; 11 May 2020 20:01:03 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     jack@suse.cz, amir73il@gmail.com
 Cc:     linux-fsdevel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 3/9 linux-next] notify: explicit shutdown initialization
-Date:   Mon, 11 May 2020 20:00:25 +0200
-Message-Id: <20200511180025.214952-1-fabf@skynet.be>
+Subject: [PATCH 4/9 linux-next] notify: add mutex destroy
+Date:   Mon, 11 May 2020 20:00:59 +0200
+Message-Id: <20200511180059.215002-1-fabf@skynet.be>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,8 +68,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kzalloc should already do it but explicitly initialize group
-shutdown variable to false.
+destroy mutex before group kfree
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
@@ -77,17 +76,17 @@ Signed-off-by: Fabian Frederick <fabf@skynet.be>
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/notify/group.c b/fs/notify/group.c
-index 133f723aca07..f2cba2265061 100644
+index f2cba2265061..0a2dc03d13eb 100644
 --- a/fs/notify/group.c
 +++ b/fs/notify/group.c
-@@ -130,6 +130,7 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
- 	INIT_LIST_HEAD(&group->notification_list);
- 	init_waitqueue_head(&group->notification_waitq);
- 	group->max_events = UINT_MAX;
-+	group->shutdown = false;
+@@ -25,6 +25,7 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
+ 		group->ops->free_group_priv(group);
  
- 	mutex_init(&group->mark_mutex);
- 	INIT_LIST_HEAD(&group->marks_list);
+ 	mem_cgroup_put(group->memcg);
++	mutex_destroy(&group->mark_mutex);
+ 
+ 	kfree(group);
+ }
 -- 
 2.26.2
 
