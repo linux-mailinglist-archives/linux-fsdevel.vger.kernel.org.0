@@ -2,83 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9122B1CDAC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 15:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCFAA1CDB6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 15:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgEKNGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 09:06:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726687AbgEKNGV (ORCPT
+        id S1729691AbgEKNjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 09:39:04 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36642 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbgEKNjD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 09:06:21 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4F2C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 06:06:20 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id se13so1155334ejb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 06:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G6rfSAq7VRiDOfN0G3BRn36tCGRPl0zkuCoZTRKLtCw=;
-        b=ksZIGkW+yvvjbtaY2nNzmZwckBW1OR2ggJMaLYqFwgO5Iu+2GnXjxZzPNnrp3/IIke
-         b7bHFtuIZmo6tmJXpcd5zp9vAqEnXB8ttdPhFUYu3lLj++m66sXLAKcO/urN46d+U5Uc
-         k4gUgv8mKouRPRTiLfhwp/ZrB0tt3VukPk4do=
+        Mon, 11 May 2020 09:39:03 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f15so3954819plr.3;
+        Mon, 11 May 2020 06:39:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G6rfSAq7VRiDOfN0G3BRn36tCGRPl0zkuCoZTRKLtCw=;
-        b=TLUS67mQl+FaALms7PvkM0044Lr4EQCBwQtBkfN/7Le2rrOT8WTGmY+OfOflYtmUZs
-         Oc6aLDf6j5z2v+GSpFMa3ikkAB7f80twIgcTBL/jMWogXz80hAdERTwBvZyEIhgjMQxp
-         rjGw0nDkMm8d9FPt+7nBxR1faOIcPJlM2Gki9zeMsZGaUB+4yMfTy/9uU347gEQt9u3v
-         +EcntXtq6Ya5Ond8KJQ127+Tpo8xtIn2ownFI51QD+7c9iBbD4ZXzb0Nh1X+yHvMoZbF
-         Mi+0KexgI+jPvOHs93mRh/gHBMYdZauJa7opFvDB5Uftyl0BfkOHZvzkfTEz9TT0PNMx
-         275Q==
-X-Gm-Message-State: AGi0PuYOfmrZyM3U9b9QDjS7aFNmWD/59ci692fFQ61OiNxDhvmI2y5w
-        EGkUj64cttrf54aXc/dz/tMvBMpNrPySeDd5xa9fGCZBzXE=
-X-Google-Smtp-Source: APiQypKugPfDJjEcYS+t5lrC9KAOo/Vh8NGq2JR6GWop8sjqsUcu4R10ctAD2NHWLfFk8QL34+2dCp0KbR8FWowmTw8=
-X-Received: by 2002:a17:906:340a:: with SMTP id c10mr13601482ejb.218.1589202379428;
- Mon, 11 May 2020 06:06:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a77Oq5OXHF7el+BrAxI3YkOcCnUkeWqP0J5f4YEVkXM=;
+        b=YQs25M+jwEExvjUyvU+Ezm/hkPO1YVNHZrH0kjTbgn6gYpmPkufFzN9GKUTKYXIeHK
+         K1sshT+U1LP0nRJ3nHccr+atUmWQwJGcPnNkQNJZU6O7UJudGrmRKs9FGgw1JCd5CE7L
+         UVOPGTna4jQJQRNbVHuIlaZP+pmpsClZHcQQ2KEBAElfAoTp2oAI3iuwbEwia6lxLJAd
+         uBJV/c4zNqfWvsD7b1LcL8LAh+HiGnJCZxbKdXc01dxj+1NLOLYbOuo/w4UumGo9zEyF
+         kUELN0mtUyh3K1ikqC2bEEMCV9ZOe5qWMPH9q85zmAm9zF83ajU1qS97CZL/VO6gOOfV
+         Piug==
+X-Gm-Message-State: AGi0Pubo6PBDSnrXkqCNKSXcQs52IvYAkhNEojqwPiZUbTZCsGmUXNx7
+        6tBC0M8RoWo3UH/8Yiu0ifk=
+X-Google-Smtp-Source: APiQypKqHlxgJmo3bwvHjknzSYEsG4x2Ee1DWrk4HLFXH26haXIT+z521EOT/qAn2yUInaHP1vs5wQ==
+X-Received: by 2002:a17:90a:c702:: with SMTP id o2mr22379928pjt.196.1589204342837;
+        Mon, 11 May 2020 06:39:02 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id t8sm8122734pgn.81.2020.05.11.06.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2020 06:39:01 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8354D40605; Mon, 11 May 2020 13:39:00 +0000 (UTC)
+Date:   Mon, 11 May 2020 13:39:00 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] blktrace: break out of blktrace setup on
+ concurrent calls
+Message-ID: <20200511133900.GL11244@42.do-not-panic.com>
+References: <20200509031058.8239-1-mcgrof@kernel.org>
+ <20200509031058.8239-5-mcgrof@kernel.org>
+ <e728acea-61c1-fcb5-489b-9be8cafe61ea@acm.org>
 MIME-Version: 1.0
-References: <1588778444-28375-1-git-send-email-eguan@linux.alibaba.com>
-In-Reply-To: <1588778444-28375-1-git-send-email-eguan@linux.alibaba.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 11 May 2020 15:06:08 +0200
-Message-ID: <CAJfpegsivYq68FjSxAGnszcPJBrJrYG5Gojsc8T+PKup0Cm8fw@mail.gmail.com>
-Subject: Re: [PATCH RFC] fuse: invalidate inode attr in writeback cache mode
-To:     Eryu Guan <eguan@linux.alibaba.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e728acea-61c1-fcb5-489b-9be8cafe61ea@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 6, 2020 at 5:21 PM Eryu Guan <eguan@linux.alibaba.com> wrote:
->
-> Under writeback mode, inode->i_blocks is not updated, making utils like
-> du read st.blocks as 0.
->
-> For example, when using virtiofs (cache=always & nondax mode) with
-> writeback_cache enabled, writing a new file and check its disk usage
-> with du, du reports 0 usage.
+On Sat, May 09, 2020 at 06:09:38PM -0700, Bart Van Assche wrote:
+> On 2020-05-08 20:10, Luis Chamberlain wrote:
+> > @@ -493,6 +496,12 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+> >  	 */
+> >  	strreplace(buts->name, '/', '_');
+> >  
+> > +	if (q->blk_trace) {
+> > +		pr_warn("Concurrent blktraces are not allowed on %s\n",
+> > +			buts->name);
+> > +		return -EBUSY;
+> > +	}
+> > +
+> >  	bt = kzalloc(sizeof(*bt), GFP_KERNEL);
+> >  	if (!bt)
+> >  		return -ENOMEM;
+> 
+> Is this really sufficient? Shouldn't concurrent do_blk_trace_setup()
+> calls that refer to the same request queue be serialized to really
+> prevent that debugfs attribute creation fails?
 
-Hmm... invalidating the attribute might also yield the wrong result as
-the server may not have received the WRITE request that modifies the
-underlying file.
+We'd have to add something like a linked list. Right now I'm just
+clarifying things which were not clear before. What you describe is
+a functional feature change. I'm just trying to fix a bug and clarify
+limitations.
 
-Invalidating attributes at the end of fuse_flush() definitely makes
-sense, though.
+> How about using the block device name instead of the partition name in
+> the error message since the concurrency context is the block device and
+> not the partition?
 
-If we wanted 100% correct behavior, we'd need to flush WRITE requests
-before each GETATTR request.  That might be a performance bottleneck,
-though.
+blk device argument can be NULL here. sg-generic is one case.
 
-So first I'd just try doing the invalidation from fuse_flush().
-
-Thanks,
-Miklos
+ Luis
