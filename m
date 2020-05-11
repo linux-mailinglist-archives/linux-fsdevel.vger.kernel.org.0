@@ -2,240 +2,292 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B268E1CE106
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 18:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B451CE11D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 19:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbgEKQ4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 12:56:20 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:44880 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbgEKQ4U (ORCPT
+        id S1730846AbgEKRCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 13:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730837AbgEKRCx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 12:56:20 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYBiw-0008Db-Jb; Mon, 11 May 2020 10:56:14 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYBiv-000239-EN; Mon, 11 May 2020 10:56:14 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <87k11kzyjm.fsf_-_@x220.int.ebiederm.org>
-        <202005101929.A4374D0F56@keescook>
-Date:   Mon, 11 May 2020 11:52:41 -0500
-In-Reply-To: <202005101929.A4374D0F56@keescook> (Kees Cook's message of "Sun,
-        10 May 2020 20:15:34 -0700")
-Message-ID: <87y2pytnvq.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 11 May 2020 13:02:53 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52A1C05BD0B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 10:02:52 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id j8so10548194iog.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 10:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v9CvyozKz45tnTJQ44+n4GCpZIz1GaPx/h3VjVloSMY=;
+        b=tbeMsNETXaEX3eJAcNRFx55zA4c6oWWywXJTG0m9Laj8pgKvsqI7TxoQJ64X4vE4z1
+         KA3IuRAIIjUJrjr3WjqA24MmwomMG4cu4cWAni3plBKjfwhrJxPfbLuO9m1FjoAf6c2V
+         tNwkuMMNnJOXVORPh8uuO8jvnKUOsmiy8jjjP4G8ZvPYf3udSJVnLdWmuCJoz2u0yxMi
+         +oIituEo72EEqvu9+Pa+GXdkvq/PgDg2nH8Gt73tTw2l/vZacrGPtfkJoLRPxzDERdkD
+         BYVqxGGvUD8JSOma+Kr/PXclcfjnUHDrFgS/59PETBSkayfVQEvNfaTrCfIDG18RKAec
+         dwYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v9CvyozKz45tnTJQ44+n4GCpZIz1GaPx/h3VjVloSMY=;
+        b=ZnbzYNGoKSgbRFhCFOvo2XyaUkupY9yYw+rq0z0gdIgFIWD4r1ZzeupoWvnd/kRxd4
+         F/opR11W0WLTfirSnmje6rkyVrd03oIgrHWZ6zWpXZy+3KysNPq4Wa80COX64zYKs6eL
+         feJKAhgiDJFn1ke9Bc2qP/CjnSvLH3UHhClYpL360oVLy3CR7zPx0hl4DICbuayuW6GU
+         jlPDTSIVGE6osxOwh4MJk0arKNHahG3h4b5zPDKFyY7OZBMamaMz59buVyMesJX0QaVX
+         6giIMI3caIqEZcBxy4mRRVYnsRajJ7qR8an4+ztfdM37YDJYAZBGwPnprAnEJShl9KG/
+         AUvQ==
+X-Gm-Message-State: AGi0PuaW6elPyFiTG5vQESWNjhKuGuUP1LG8muBw6abQuzMgNdUH6mks
+        vW1J4ZkxJ9sau0CDpCkmhOhK0rmVhmVmUZb4SFg9B+5oANTN
+X-Google-Smtp-Source: APiQypIzyhjcdRL5OT7UxMCqUNX1Cf2+MX0zMCcjnimWF5EBRCR6JtPmcD8rSAVKspTwViI94ganHU9wtPVKGKmx8k0=
+X-Received: by 2002:a6b:dd06:: with SMTP id f6mr12960070ioc.90.1589216571449;
+ Mon, 11 May 2020 10:02:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jYBiv-000239-EN;;;mid=<87y2pytnvq.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+l+6Xh4x5nig+D3mtInQozkhcto8/9LHc=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        XMGappySubj_01,XMNoVowels,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa04 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 637 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (1.7%), b_tie_ro: 9 (1.5%), parse: 1.02 (0.2%),
-         extract_message_metadata: 15 (2.4%), get_uri_detail_list: 2.7 (0.4%),
-        tests_pri_-1000: 15 (2.3%), tests_pri_-950: 1.25 (0.2%),
-        tests_pri_-900: 0.99 (0.2%), tests_pri_-90: 171 (26.9%), check_bayes:
-        155 (24.3%), b_tokenize: 11 (1.7%), b_tok_get_all: 12 (1.8%),
-        b_comp_prob: 3.1 (0.5%), b_tok_touch_all: 125 (19.7%), b_finish: 1.19
-        (0.2%), tests_pri_0: 404 (63.4%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.3 (0.4%), poll_dns_idle: 0.65 (0.1%), tests_pri_10:
-        4.0 (0.6%), tests_pri_500: 11 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 2/5] exec: Directly call security_bprm_set_creds from __do_execve_file
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20200504110344.17560-1-eesposit@redhat.com> <CA+VK+GN=iDhDV2ZDJbBsxrjZ3Qoyotk_L0DvsbwDVvqrpFZ8fQ@mail.gmail.com>
+ <29982969-92f6-b6d0-aeae-22edb401e3ac@redhat.com>
+In-Reply-To: <29982969-92f6-b6d0-aeae-22edb401e3ac@redhat.com>
+From:   Jonathan Adams <jwadams@google.com>
+Date:   Mon, 11 May 2020 10:02:14 -0700
+Message-ID: <CA+VK+GOccmwVov9Fx1eMZkzivBduWRuoyAuCRtjMfM4LemRkgw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux
+ kernel statistics
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
-
-> On Sat, May 09, 2020 at 02:41:17PM -0500, Eric W. Biederman wrote:
->> 
->> Now that security_bprm_set_creds is no longer responsible for calling
->> cap_bprm_set_creds, security_bprm_set_creds only does something for
->> the primary file that is being executed (not any interpreters it may
->> have).  Therefore call security_bprm_set_creds from __do_execve_file,
->> instead of from prepare_binprm so that it is only called once, and
->> remove the now unnecessary called_set_creds field of struct binprm.
->> 
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  fs/exec.c                  | 11 +++++------
->>  include/linux/binfmts.h    |  6 ------
->>  security/apparmor/domain.c |  3 ---
->>  security/selinux/hooks.c   |  2 --
->>  security/smack/smack_lsm.c |  3 ---
->>  security/tomoyo/tomoyo.c   |  6 ------
->>  6 files changed, 5 insertions(+), 26 deletions(-)
->> 
->> diff --git a/fs/exec.c b/fs/exec.c
->> index 765bfd51a546..635b5085050c 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1635,12 +1635,6 @@ int prepare_binprm(struct linux_binprm *bprm)
->>  
->>  	bprm_fill_uid(bprm);
->>  
->> -	/* fill in binprm security blob */
->> -	retval = security_bprm_set_creds(bprm);
->> -	if (retval)
->> -		return retval;
->> -	bprm->called_set_creds = 1;
->> -
->>  	retval = cap_bprm_set_creds(bprm);
->>  	if (retval)
->>  		return retval;
->> @@ -1858,6 +1852,11 @@ static int __do_execve_file(int fd, struct filename *filename,
->>  	if (retval < 0)
->>  		goto out;
->>  
->> +	/* fill in binprm security blob */
->> +	retval = security_bprm_set_creds(bprm);
->> +	if (retval)
->> +		goto out;
->> +
->>  	retval = prepare_binprm(bprm);
->>  	if (retval < 0)
->>  		goto out;
->> 
+On Fri, May 8, 2020 at 2:44 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> Here I go with a Sunday night review, so hopefully I'm thinking better
-> than Friday night's review, but I *think* this patch is broken from
-> the LSM sense of the world in that security_bprm_set_creds() is getting
-> called _before_ the creds actually get fully set (in prepare_binprm()
-> by the calls to bprm_fill_uid(), cap_bprm_set_creds(), and
-> check_unsafe_exec()).
+> [Answering for Emanuele because he's not available until Monday]
 >
-> As a specific example, see the setting of LSM_UNSAFE_NO_NEW_PRIVS in
-> bprm->unsafe during check_unsafe_exec(), which must happen after
-> bprm_fill_uid(bprm) and cap_bprm_set_creds(bprm), to have a "true" view
-> of the execution privileges. Apparmor checks for this flag in its
-> security_bprm_set_creds() hook. Similarly do selinux, smack, etc...
-
-I think you are getting prepare_binprm confused with prepare_bprm_creds.
-Understandable given the similarity of their names.
-
-> The security_bprm_set_creds() boundary for LSM is to see the "final"
-> state of the process privileges, and that needs to happen after
-> bprm_fill_uid(), cap_bprm_set_creds(), and check_unsafe_exec() have all
-> finished.
+> On 07/05/20 19:45, Jonathan Adams wrote:
+> > This is good work.  As David Rientjes mentioned, I'm currently investigating
+> > a similar project, based on a google-internal debugfs-based FS we call
+> > "metricfs".  It's
+> > designed in a slightly different fashion than statsfs here is, and the
+> > statistics exported are
+> > mostly fed into our OpenTelemetry-like system.  We're motivated by
+> > wanting an upstreamed solution, so that we can upstream the metrics we
+> > create that are of general interest, and lower the overall rebasing
+> > burden for our tree.
 >
-> So, as it stands, I don't think this will work, but perhaps it can still
-> be rearranged to avoid the called_set_creds silliness. I'll look more
-> this week...
+> Cool.  We included a public reading API exactly so that there could be
+> other "frontends".  I was mostly thinking of BPF as an in-tree user, but
+> your metricfs could definitely use the reading API.
+>
+> >  - the 8/16/32/64 signed/unsigned integers seems like a wart, and the
+> > built-in support to grab any offset from a structure doesn't seem like
+> > much of an advantage. A simpler interface would be to just support an> "integer" (possibly signed/unsigned) type, which is always 64-bit, and
+> > allow the caller to provide a function pointer to retrieve the value,
+> > with one or two void *s cbargs.  Then the framework could provide an
+> > offset-based callback (or callbacks) similar to the existing
+> > functionality, and a similar one for per-CPU based statistics.  A
+> > second "clear" callback could be optionally provided to allow for
+> > statistics to be cleared, as in your current proposal.
+>
+> Ok, so basically splitting get_simple_value into many separate
+> callbacks.  The callbacks would be in a struct like
+>
+> struct stats_fs_type {
+>         uint64_t (*get)(struct stats_fs_value *, void *);
+>         void (*clear)(struct stats_fs_value *, void *);
+>         bool signed;
+> }
+...
+> struct stats_fs_type stats_fs_type_u8 = {
+>         stats_fs_get_u8,
+>         stats_fs_clear_u8,
+>         false
+> };
+>
+> and custom types can be defined using "&(struct stats_fs_type) {...}".
 
-If you look at the flow of the code in __do_execve_file before this
-change it is:
+That makes sense.
 
-	prepare_bprm_creds()
-        check_unsafe_exec()
+> >  - Beyond the statistic's type, one *very* useful piece of metadata
+> > for telemetry tools is knowing whether a given statistic is
+> > "cumulative" (an unsigned counter which is only ever increased), as
+> > opposed to a floating value (like "amount of memory used").
+>
+> Good idea.  Also, clearing does not make sense for a floating value, so
+> we can use cumulative/floating to get a default for the mode: KVM
+> statistics for example are mostly cumulative and mode 644, except a few
+> that are floating and those are all mode 444.  Therefore it makes sense
+> to add cumulative/floating even before outputting it as metadata.
+>
+> > I'm more
+> > concerned with getting the statistics model and capabilities right
+> > from the beginning, because those are harder to adjust later.
+>
+> Agreed.
+>
+> > 1. Each metricfs metric can have one or two string or integer "keys".
+> > If these exist, they expand the metric from a single value into a
+> > multi-dimensional table. For example, we use this to report a hash
+> > table we keep of functions calling "WARN()", in a 'warnings'
+> > statistic:
+> >
+> > % cat .../warnings/values
+> > x86_pmu_stop 1
+> > %
+> >
+> > Indicates that the x86_pmu_stop() function has had a WARN() fire once
+> > since the system was booted.  If multiple functions have fired
+> > WARN()s, they are listed in this table with their own counts. [1]  We
+> > also use these to report per-CPU counters on a CPU-by-CPU basis:
+> >
+> > % cat .../irq_x86/NMI/values
+> > 0 42
+> > 1 18
+> > ... one line per cpu
+> > % cat .../rx_bytes/values
+> > lo 501360681
+> > eth0 1457631256
+>
+> These seem like two different things.
 
-	...
+I see your point; I agree that there are two different things here.
 
-        prepare_binprm()
-        	bprm_file_uid()
-                	bprm->cred->euid = current_euid()
-                        bprm->cred->egid = current_egid()
-		security_bprm_set_creds()
-                	for_each_lsm()
-                        	lsm->bprm_set_creds()
-                                	if (called_set_creds)
-                                        	return;
-                                        ...
-		bprm->called_set_creds = 1;
-	...
+> The percpu and per-interface values are best represented as subordinate
+> sources, one per CPU and one per interface.  For interfaces I would just
+> use a separate directory, but it doesn't really make sense for CPUs.  So
+> if we can cater for it in the model, it's better.  For example:
+>
+> - add a new argument to statsfs_create_source and statsfs_create_values
+> that makes it not create directories and files respectively.
+>
+> - add a new "aggregate function" STATS_FS_LIST that directs the parent
+> to build a table of all the simple values below it
+>
+> We can also add a helper statsfs_add_values_percpu that creates a new
+> source for each CPU, I think.
 
-	exec_binprm()
-        	search_binary_handler()
-                	security_bprm_check()
-                        	tomoyo_bprm_check_security()
-                                ima_bprm_check()
-   			load_script()
-                        	prepare_binprm()
-                                	/* called_set_creds already == 1 */
-                                	bprm_file_uid()
-                                        security_bprm_set_creds()
-			                	for_each_lsm()
-			                        	lsm->bprm_set_creds()
-		                                	if (called_set_creds)
-                		                        	return;
-                                		        ...
-                                search_binary_handler()
-                                	security_bprm_check_security()
-                                        load_elf_binary()
-                                        	...
-                                                setup_new_exec
-                                                ...
+I think I'd characterize this slightly differently; we have a set of
+statistics which are essentially "in parallel":
 
+  - a variety of statistics, N CPUs they're available for, or
+  - a variety of statistics, N interfaces they're available for.
+  - a variety of statistics, N kvm object they're available for.
 
-Assuming you are executing a shell script.
+Recreating a parallel hierarchy of statistics any time we add/subtract
+a CPU or interface seems like a lot of overhead.  Perhaps a better
+model would
+be some sort of "parameter enumn" (naming is hard; parameter set?), so
+when a CPU/network interface/etc is added you'd add its ID to the
+"CPUs" we know about, and at removal time you'd take it out; it would
+have an associated cbarg for the value getting callback.
 
-Now bprm_file_uid is written with the assumption that it will be called
-multiple times and it reinitializes all of it's variables each time.
+Does that make sense as a design?
 
-As you can see in above the implementations of bprm_set_creds() only
-really execute before called_set_creds is set, aka the first time.
-They in no way see the final state.
+I'm working on characterizing all of our metricfs usage; I'll see if
+this looks like it mostly covers our usecases.
 
-Further when I looked as those hooks they were not looking at the values
-set by bprm_file_uid at all.  There were busy with the values their
-they needed to set in that hook for their particular lsm.
+> The warnings one instead is a real hash table.  It should be possible to
+> implement it as some kind of customized aggregation, that is implemented
+> in the client instead of coming from subordinate sources.  The
+> presentation can then just use STATS_FS_LIST.  I don't see anything in
+> the design that is a blocker.
 
-So while in theory I can see the danger of moving above bprm_file_uid
-I don't see anything in practice that would be a problem.
+Yes; though if it's low-enough overhead, you could imagine having a
+dynamically-updated parameter enum based on the hash table.
 
-Further by moving the call of security_bprm_set_creds out of
-prepare_binprm int __do_execve_file just before the call of
-prepare_binprm I am just moving the call above binprm_fill_uid
-and nothing else.
+> > 2.  We also export some metadata about each statistic.  For example,
+> > the metadata for the NMI counter above looks like:
+> >
+> > % cat .../NMI/annotations
+> > DESCRIPTION Non-maskable\ interrupts
+> > CUMULATIVE
+> > % cat .../NMI/fields
+> > cpu value
+> > int int
+> > %
+>
+> Good idea.  I would prefer per-directory dot-named files for this.  For
+> example a hypothetical statsfs version of /proc/interrupts could be like
+> this:
+>
+> $ cat /sys/kernel/stats/interrupts/.schema
+> 0                                          // Name
+> CUMULATIVE                                 // Flags
+> int:int                                    // Type(s)
+> IR-IO-APIC    2-edge      timer            // Description
+> ...
+> LOC
+> CUMULATIVE
+> int:int
+> Local timer interrupts
+> ...
+> $ cat /sys/kernel/stats/interrupts/LOC
+> 0 4286815
+> 1 4151572
+> 2 4199361
+> 3 4229248
+>
+> > 3. We have a (very few) statistics where the value itself is a string,
+> > usually for device statuses.
+>
+> Maybe in addition to CUMULATIVE and FLOATING we can have ENUM
+> properties, and a table to convert those enums to strings.  Aggregation
+> could also be used to make a histogram out of enums in subordinate
+> sources, e.g.
+>
+> $ cat /sys/kernel/stats/kvm/637-1/vcpu_state
+> running 12
+> uninitialized 0
+> halted 4
 
-So I think you just confused prepare_bprm_creds with prepare_binprm.
-As most of your criticisms appear valid in that case.  Can you take a
-second look?
+That's along similar lines to the parameter enums, yeah.
 
-Thank you,
-Eric
+> So in general I'd say the sources/values model holds up.  We certainly
+> want to:
+>
+> - switch immediately to callbacks instead of the type constants (so that
+> core statsfs code only does signed/unsigned)
+>
+> - add a field to distinguish cumulative and floating properties (and use
+> it to determine the default file mode)
+
+Yup, these make sense.
+
+> - add a new argument to statsfs_create_source and statsfs_create_values
+> that makes it not create directories and files respectively
+>
+> - add a new API to look for a statsfs_value recursively in all the
+> subordinate sources, and pass the source/value pair to a callback
+> function; and reimplement recursive aggregation and clear in terms of
+> this function.
+
+This is where I think a little iteration on the "parameter enums"
+should happen before jumping into implementation.
+
+> > For our use cases, we generally don't both output a statistic and it's
+> > aggregation from the kernel; either we sum up things in the kernel
+> > (e.g. over a bunch of per-cpu or per-memcg counters) and only have the
+> > result statistic, or we expect user-space to sum up the data if it's
+> > interested.  The tabular form makes it pretty easy to do so (i.e. you
+> > can use awk(1) to sum all of the per-cpu NMI counters).
+>
+> Yep, the above "not create a dentry" flag would handle the case where
+> you sum things up in the kernel because the more fine grained counters
+> would be overwhelming.
+
+nodnod; or the callback could handle the sum itself.
+
+Thanks,
+- jonathan
