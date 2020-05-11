@@ -2,292 +2,305 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B451CE11D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 19:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74CD71CE175
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 19:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbgEKRCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 13:02:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730837AbgEKRCx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 13:02:53 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52A1C05BD0B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 10:02:52 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id j8so10548194iog.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 10:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v9CvyozKz45tnTJQ44+n4GCpZIz1GaPx/h3VjVloSMY=;
-        b=tbeMsNETXaEX3eJAcNRFx55zA4c6oWWywXJTG0m9Laj8pgKvsqI7TxoQJ64X4vE4z1
-         KA3IuRAIIjUJrjr3WjqA24MmwomMG4cu4cWAni3plBKjfwhrJxPfbLuO9m1FjoAf6c2V
-         tNwkuMMNnJOXVORPh8uuO8jvnKUOsmiy8jjjP4G8ZvPYf3udSJVnLdWmuCJoz2u0yxMi
-         +oIituEo72EEqvu9+Pa+GXdkvq/PgDg2nH8Gt73tTw2l/vZacrGPtfkJoLRPxzDERdkD
-         BYVqxGGvUD8JSOma+Kr/PXclcfjnUHDrFgS/59PETBSkayfVQEvNfaTrCfIDG18RKAec
-         dwYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v9CvyozKz45tnTJQ44+n4GCpZIz1GaPx/h3VjVloSMY=;
-        b=ZnbzYNGoKSgbRFhCFOvo2XyaUkupY9yYw+rq0z0gdIgFIWD4r1ZzeupoWvnd/kRxd4
-         F/opR11W0WLTfirSnmje6rkyVrd03oIgrHWZ6zWpXZy+3KysNPq4Wa80COX64zYKs6eL
-         feJKAhgiDJFn1ke9Bc2qP/CjnSvLH3UHhClYpL360oVLy3CR7zPx0hl4DICbuayuW6GU
-         jlPDTSIVGE6osxOwh4MJk0arKNHahG3h4b5zPDKFyY7OZBMamaMz59buVyMesJX0QaVX
-         6giIMI3caIqEZcBxy4mRRVYnsRajJ7qR8an4+ztfdM37YDJYAZBGwPnprAnEJShl9KG/
-         AUvQ==
-X-Gm-Message-State: AGi0PuaW6elPyFiTG5vQESWNjhKuGuUP1LG8muBw6abQuzMgNdUH6mks
-        vW1J4ZkxJ9sau0CDpCkmhOhK0rmVhmVmUZb4SFg9B+5oANTN
-X-Google-Smtp-Source: APiQypIzyhjcdRL5OT7UxMCqUNX1Cf2+MX0zMCcjnimWF5EBRCR6JtPmcD8rSAVKspTwViI94ganHU9wtPVKGKmx8k0=
-X-Received: by 2002:a6b:dd06:: with SMTP id f6mr12960070ioc.90.1589216571449;
- Mon, 11 May 2020 10:02:51 -0700 (PDT)
+        id S1730851AbgEKRS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 13:18:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:36516 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729698AbgEKRSz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 May 2020 13:18:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 918B430E;
+        Mon, 11 May 2020 10:18:54 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AC263F305;
+        Mon, 11 May 2020 10:18:52 -0700 (PDT)
+Date:   Mon, 11 May 2020 18:18:49 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200511171849.55rsnpdbqdgopnxs@e107158-lin.cambridge.arm.com>
+References: <20200511154053.7822-1-qais.yousef@arm.com>
 MIME-Version: 1.0
-References: <20200504110344.17560-1-eesposit@redhat.com> <CA+VK+GN=iDhDV2ZDJbBsxrjZ3Qoyotk_L0DvsbwDVvqrpFZ8fQ@mail.gmail.com>
- <29982969-92f6-b6d0-aeae-22edb401e3ac@redhat.com>
-In-Reply-To: <29982969-92f6-b6d0-aeae-22edb401e3ac@redhat.com>
-From:   Jonathan Adams <jwadams@google.com>
-Date:   Mon, 11 May 2020 10:02:14 -0700
-Message-ID: <CA+VK+GOccmwVov9Fx1eMZkzivBduWRuoyAuCRtjMfM4LemRkgw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux
- kernel statistics
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200511154053.7822-1-qais.yousef@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 8, 2020 at 2:44 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> [Answering for Emanuele because he's not available until Monday]
->
-> On 07/05/20 19:45, Jonathan Adams wrote:
-> > This is good work.  As David Rientjes mentioned, I'm currently investigating
-> > a similar project, based on a google-internal debugfs-based FS we call
-> > "metricfs".  It's
-> > designed in a slightly different fashion than statsfs here is, and the
-> > statistics exported are
-> > mostly fed into our OpenTelemetry-like system.  We're motivated by
-> > wanting an upstreamed solution, so that we can upstream the metrics we
-> > create that are of general interest, and lower the overall rebasing
-> > burden for our tree.
->
-> Cool.  We included a public reading API exactly so that there could be
-> other "frontends".  I was mostly thinking of BPF as an in-tree user, but
-> your metricfs could definitely use the reading API.
->
-> >  - the 8/16/32/64 signed/unsigned integers seems like a wart, and the
-> > built-in support to grab any offset from a structure doesn't seem like
-> > much of an advantage. A simpler interface would be to just support an> "integer" (possibly signed/unsigned) type, which is always 64-bit, and
-> > allow the caller to provide a function pointer to retrieve the value,
-> > with one or two void *s cbargs.  Then the framework could provide an
-> > offset-based callback (or callbacks) similar to the existing
-> > functionality, and a similar one for per-CPU based statistics.  A
-> > second "clear" callback could be optionally provided to allow for
-> > statistics to be cleared, as in your current proposal.
->
-> Ok, so basically splitting get_simple_value into many separate
-> callbacks.  The callbacks would be in a struct like
->
-> struct stats_fs_type {
->         uint64_t (*get)(struct stats_fs_value *, void *);
->         void (*clear)(struct stats_fs_value *, void *);
->         bool signed;
-> }
-...
-> struct stats_fs_type stats_fs_type_u8 = {
->         stats_fs_get_u8,
->         stats_fs_clear_u8,
->         false
-> };
->
-> and custom types can be defined using "&(struct stats_fs_type) {...}".
+Sorry I forgot to label this as v5 in the subject line.
 
-That makes sense.
+--
+Qais Yousef
 
-> >  - Beyond the statistic's type, one *very* useful piece of metadata
-> > for telemetry tools is knowing whether a given statistic is
-> > "cumulative" (an unsigned counter which is only ever increased), as
-> > opposed to a floating value (like "amount of memory used").
->
-> Good idea.  Also, clearing does not make sense for a floating value, so
-> we can use cumulative/floating to get a default for the mode: KVM
-> statistics for example are mostly cumulative and mode 644, except a few
-> that are floating and those are all mode 444.  Therefore it makes sense
-> to add cumulative/floating even before outputting it as metadata.
->
-> > I'm more
-> > concerned with getting the statistics model and capabilities right
-> > from the beginning, because those are harder to adjust later.
->
-> Agreed.
->
-> > 1. Each metricfs metric can have one or two string or integer "keys".
-> > If these exist, they expand the metric from a single value into a
-> > multi-dimensional table. For example, we use this to report a hash
-> > table we keep of functions calling "WARN()", in a 'warnings'
-> > statistic:
-> >
-> > % cat .../warnings/values
-> > x86_pmu_stop 1
-> > %
-> >
-> > Indicates that the x86_pmu_stop() function has had a WARN() fire once
-> > since the system was booted.  If multiple functions have fired
-> > WARN()s, they are listed in this table with their own counts. [1]  We
-> > also use these to report per-CPU counters on a CPU-by-CPU basis:
-> >
-> > % cat .../irq_x86/NMI/values
-> > 0 42
-> > 1 18
-> > ... one line per cpu
-> > % cat .../rx_bytes/values
-> > lo 501360681
-> > eth0 1457631256
->
-> These seem like two different things.
-
-I see your point; I agree that there are two different things here.
-
-> The percpu and per-interface values are best represented as subordinate
-> sources, one per CPU and one per interface.  For interfaces I would just
-> use a separate directory, but it doesn't really make sense for CPUs.  So
-> if we can cater for it in the model, it's better.  For example:
->
-> - add a new argument to statsfs_create_source and statsfs_create_values
-> that makes it not create directories and files respectively.
->
-> - add a new "aggregate function" STATS_FS_LIST that directs the parent
-> to build a table of all the simple values below it
->
-> We can also add a helper statsfs_add_values_percpu that creates a new
-> source for each CPU, I think.
-
-I think I'd characterize this slightly differently; we have a set of
-statistics which are essentially "in parallel":
-
-  - a variety of statistics, N CPUs they're available for, or
-  - a variety of statistics, N interfaces they're available for.
-  - a variety of statistics, N kvm object they're available for.
-
-Recreating a parallel hierarchy of statistics any time we add/subtract
-a CPU or interface seems like a lot of overhead.  Perhaps a better
-model would
-be some sort of "parameter enumn" (naming is hard; parameter set?), so
-when a CPU/network interface/etc is added you'd add its ID to the
-"CPUs" we know about, and at removal time you'd take it out; it would
-have an associated cbarg for the value getting callback.
-
-Does that make sense as a design?
-
-I'm working on characterizing all of our metricfs usage; I'll see if
-this looks like it mostly covers our usecases.
-
-> The warnings one instead is a real hash table.  It should be possible to
-> implement it as some kind of customized aggregation, that is implemented
-> in the client instead of coming from subordinate sources.  The
-> presentation can then just use STATS_FS_LIST.  I don't see anything in
-> the design that is a blocker.
-
-Yes; though if it's low-enough overhead, you could imagine having a
-dynamically-updated parameter enum based on the hash table.
-
-> > 2.  We also export some metadata about each statistic.  For example,
-> > the metadata for the NMI counter above looks like:
-> >
-> > % cat .../NMI/annotations
-> > DESCRIPTION Non-maskable\ interrupts
-> > CUMULATIVE
-> > % cat .../NMI/fields
-> > cpu value
-> > int int
-> > %
->
-> Good idea.  I would prefer per-directory dot-named files for this.  For
-> example a hypothetical statsfs version of /proc/interrupts could be like
-> this:
->
-> $ cat /sys/kernel/stats/interrupts/.schema
-> 0                                          // Name
-> CUMULATIVE                                 // Flags
-> int:int                                    // Type(s)
-> IR-IO-APIC    2-edge      timer            // Description
-> ...
-> LOC
-> CUMULATIVE
-> int:int
-> Local timer interrupts
-> ...
-> $ cat /sys/kernel/stats/interrupts/LOC
-> 0 4286815
-> 1 4151572
-> 2 4199361
-> 3 4229248
->
-> > 3. We have a (very few) statistics where the value itself is a string,
-> > usually for device statuses.
->
-> Maybe in addition to CUMULATIVE and FLOATING we can have ENUM
-> properties, and a table to convert those enums to strings.  Aggregation
-> could also be used to make a histogram out of enums in subordinate
-> sources, e.g.
->
-> $ cat /sys/kernel/stats/kvm/637-1/vcpu_state
-> running 12
-> uninitialized 0
-> halted 4
-
-That's along similar lines to the parameter enums, yeah.
-
-> So in general I'd say the sources/values model holds up.  We certainly
-> want to:
->
-> - switch immediately to callbacks instead of the type constants (so that
-> core statsfs code only does signed/unsigned)
->
-> - add a field to distinguish cumulative and floating properties (and use
-> it to determine the default file mode)
-
-Yup, these make sense.
-
-> - add a new argument to statsfs_create_source and statsfs_create_values
-> that makes it not create directories and files respectively
->
-> - add a new API to look for a statsfs_value recursively in all the
-> subordinate sources, and pass the source/value pair to a callback
-> function; and reimplement recursive aggregation and clear in terms of
-> this function.
-
-This is where I think a little iteration on the "parameter enums"
-should happen before jumping into implementation.
-
-> > For our use cases, we generally don't both output a statistic and it's
-> > aggregation from the kernel; either we sum up things in the kernel
-> > (e.g. over a bunch of per-cpu or per-memcg counters) and only have the
-> > result statistic, or we expect user-space to sum up the data if it's
-> > interested.  The tabular form makes it pretty easy to do so (i.e. you
-> > can use awk(1) to sum all of the per-cpu NMI counters).
->
-> Yep, the above "not create a dentry" flag would handle the case where
-> you sum things up in the kernel because the more fine grained counters
-> would be overwhelming.
-
-nodnod; or the callback could handle the sum itself.
-
-Thanks,
-- jonathan
+On 05/11/20 16:40, Qais Yousef wrote:
+> RT tasks by default run at the highest capacity/performance level. When
+> uclamp is selected this default behavior is retained by enforcing the
+> requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
+> uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> value.
+> 
+> This is also referred to as 'the default boost value of RT tasks'.
+> 
+> See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> 
+> On battery powered devices, it is desired to control this default
+> (currently hardcoded) behavior at runtime to reduce energy consumed by
+> RT tasks.
+> 
+> For example, a mobile device manufacturer where big.LITTLE architecture
+> is dominant, the performance of the little cores varies across SoCs, and
+> on high end ones the big cores could be too power hungry.
+> 
+> Given the diversity of SoCs, the new knob allows manufactures to tune
+> the best performance/power for RT tasks for the particular hardware they
+> run on.
+> 
+> They could opt to further tune the value when the user selects
+> a different power saving mode or when the device is actively charging.
+> 
+> The runtime aspect of it further helps in creating a single kernel image
+> that can be run on multiple devices that require different tuning.
+> 
+> Keep in mind that a lot of RT tasks in the system are created by the
+> kernel. On Android for instance I can see over 50 RT tasks, only
+> a handful of which created by the Android framework.
+> 
+> To control the default behavior globally by system admins and device
+> integrators, introduce the new sysctl_sched_uclamp_util_min_rt_default
+> to change the default boost value of the RT tasks.
+> 
+> I anticipate this to be mostly in the form of modifying the init script
+> of a particular device.
+> 
+> Whenever the new default changes, it'd be applied lazily on the next
+> opportunity the scheduler needs to calculate the effective uclamp.min
+> value for the task, assuming that it still uses the system default value
+> and not a user applied one.
+> 
+> Tested on Juno-r2 in combination with the RT capacity awareness [1].
+> By default an RT task will go to the highest capacity CPU and run at the
+> maximum frequency, which is particularly energy inefficient on high end
+> mobile devices because the biggest core[s] are 'huge' and power hungry.
+> 
+> With this patch the RT task can be controlled to run anywhere by
+> default, and doesn't cause the frequency to be maximum all the time.
+> Yet any task that really needs to be boosted can easily escape this
+> default behavior by modifying its requested uclamp.min value
+> (p->uclamp_req[UCLAMP_MIN]) via sched_setattr() syscall.
+> 
+> [1] 804d402fb6f6: ("sched/rt: Make RT capacity-aware")
+> 
+> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> CC: Jonathan Corbet <corbet@lwn.net>
+> CC: Juri Lelli <juri.lelli@redhat.com>
+> CC: Vincent Guittot <vincent.guittot@linaro.org>
+> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> CC: Steven Rostedt <rostedt@goodmis.org>
+> CC: Ben Segall <bsegall@google.com>
+> CC: Mel Gorman <mgorman@suse.de>
+> CC: Luis Chamberlain <mcgrof@kernel.org>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Iurii Zaikin <yzaikin@google.com>
+> CC: Quentin Perret <qperret@google.com>
+> CC: Valentin Schneider <valentin.schneider@arm.com>
+> CC: Patrick Bellasi <patrick.bellasi@matbug.net>
+> CC: Pavan Kondeti <pkondeti@codeaurora.org>
+> CC: linux-doc@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> ---
+> 
+> Changes in v5 (all from Patrick):
+> 	* Remove use of likely/unlikely
+> 	* Use short hand variable for sysctl_sched_uclamp_util_min_rt_default
+> 	* Combine if conditions that checks for errors when setting
+> 	  sysctl_sched_uclamp_util_min_rt_default
+> 	* Fit a comment in a single line
+> 
+> v4 discussion:
+> 
+> https://lore.kernel.org/lkml/20200501114927.15248-1-qais.yousef@arm.com/
+> 
+>  include/linux/sched/sysctl.h |  1 +
+>  kernel/sched/core.c          | 63 +++++++++++++++++++++++++++++++-----
+>  kernel/sysctl.c              |  7 ++++
+>  3 files changed, 63 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index d4f6215ee03f..e62cef019094 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -59,6 +59,7 @@ extern int sysctl_sched_rt_runtime;
+>  #ifdef CONFIG_UCLAMP_TASK
+>  extern unsigned int sysctl_sched_uclamp_util_min;
+>  extern unsigned int sysctl_sched_uclamp_util_max;
+> +extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+>  #endif
+>  
+>  #ifdef CONFIG_CFS_BANDWIDTH
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 9a2fbf98fd6f..ea1e11db78bb 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -790,6 +790,26 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+>  /* Max allowed maximum utilization */
+>  unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+>  
+> +/*
+> + * By default RT tasks run at the maximum performance point/capacity of the
+> + * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
+> + * SCHED_CAPACITY_SCALE.
+> + *
+> + * This knob allows admins to change the default behavior when uclamp is being
+> + * used. In battery powered devices, particularly, running at the maximum
+> + * capacity and frequency will increase energy consumption and shorten the
+> + * battery life.
+> + *
+> + * This knob only affects RT tasks that their uclamp_se->user_defined == false.
+> + *
+> + * This knob will not override the system default sched_util_clamp_min defined
+> + * above.
+> + *
+> + * Any modification is applied lazily on the next attempt to calculate the
+> + * effective value of the task.
+> + */
+> +unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
+> +
+>  /* All clamps are required to be less or equal than these values */
+>  static struct uclamp_se uclamp_default[UCLAMP_CNT];
+>  
+> @@ -872,6 +892,28 @@ unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
+>  	return uclamp_idle_value(rq, clamp_id, clamp_value);
+>  }
+>  
+> +static inline void uclamp_sync_util_min_rt_default(struct task_struct *p,
+> +						   enum uclamp_id clamp_id)
+> +{
+> +	unsigned int default_util_min = sysctl_sched_uclamp_util_min_rt_default;
+> +	struct uclamp_se *uc_se;
+> +
+> +	/* Only sync for UCLAMP_MIN and RT tasks */
+> +	if (clamp_id != UCLAMP_MIN || !rt_task(p))
+> +		return;
+> +
+> +	uc_se = &p->uclamp_req[UCLAMP_MIN];
+> +
+> +	/*
+> +	 * Only sync if user didn't override the default request and the sysctl
+> +	 * knob has changed.
+> +	 */
+> +	if (uc_se->user_defined || uc_se->value == default_util_min)
+> +		return;
+> +
+> +	uclamp_se_set(uc_se, default_util_min, false);
+> +}
+> +
+>  static inline struct uclamp_se
+>  uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> @@ -907,8 +949,13 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+>  static inline struct uclamp_se
+>  uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> -	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+> -	struct uclamp_se uc_max = uclamp_default[clamp_id];
+> +	struct uclamp_se uc_req, uc_max;
+> +
+> +	/* Sync up any change to sysctl_sched_uclamp_util_min_rt_default. */
+> +	uclamp_sync_util_min_rt_default(p, clamp_id);
+> +
+> +	uc_req = uclamp_tg_restrict(p, clamp_id);
+> +	uc_max = uclamp_default[clamp_id];
+>  
+>  	/* System default restrictions always apply */
+>  	if (unlikely(uc_req.value > uc_max.value))
+> @@ -1114,12 +1161,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  				loff_t *ppos)
+>  {
+>  	bool update_root_tg = false;
+> -	int old_min, old_max;
+> +	int old_min, old_max, old_min_rt;
+>  	int result;
+>  
+>  	mutex_lock(&uclamp_mutex);
+>  	old_min = sysctl_sched_uclamp_util_min;
+>  	old_max = sysctl_sched_uclamp_util_max;
+> +	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
+>  
+>  	result = proc_dointvec(table, write, buffer, lenp, ppos);
+>  	if (result)
+> @@ -1128,7 +1176,9 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  		goto done;
+>  
+>  	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
+> -	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
+> +	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE		||
+> +	    sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
+> +
+>  		result = -EINVAL;
+>  		goto undo;
+>  	}
+> @@ -1158,6 +1208,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+>  undo:
+>  	sysctl_sched_uclamp_util_min = old_min;
+>  	sysctl_sched_uclamp_util_max = old_max;
+> +	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
+>  done:
+>  	mutex_unlock(&uclamp_mutex);
+>  
+> @@ -1200,10 +1251,6 @@ static void __setscheduler_uclamp(struct task_struct *p,
+>  		if (uc_se->user_defined)
+>  			continue;
+>  
+> -		/* By default, RT tasks always get 100% boost */
+> -		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+> -			clamp_value = uclamp_none(UCLAMP_MAX);
+> -
+>  		uclamp_se_set(uc_se, clamp_value, false);
+>  	}
+>  
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 8a176d8727a3..64117363c502 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= sysctl_sched_uclamp_handler,
+>  	},
+> +	{
+> +		.procname	= "sched_util_clamp_min_rt_default",
+> +		.data		= &sysctl_sched_uclamp_util_min_rt_default,
+> +		.maxlen		= sizeof(unsigned int),
+> +		.mode		= 0644,
+> +		.proc_handler	= sysctl_sched_uclamp_handler,
+> +	},
+>  #endif
+>  #ifdef CONFIG_SCHED_AUTOGROUP
+>  	{
+> -- 
+> 2.17.1
+> 
