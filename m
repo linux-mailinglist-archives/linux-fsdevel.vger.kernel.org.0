@@ -2,142 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB9E1CDC79
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 16:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6337C1CDCCA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 16:14:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbgEKODc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 10:03:32 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37213 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729279AbgEKODc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 10:03:32 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d184so4793997pfd.4;
-        Mon, 11 May 2020 07:03:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vf5eO08K8TQtqLIZ8vTORrxsJc6yUCjJkazs1Bh1bj4=;
-        b=lc5Z6Brwq+2+DTyJYO5ysev2ojsZw6u4HFj9raKqUv77O9VPTftOtbcZH0+IPaw2Jm
-         m/FR5c9f8slMae8IC6y2eDIMtNTybWR+YEgoPVE05tRzGuEsgew8u7V661hXw2jlTVyS
-         puJgla520vsq+44Tr4JQsvoxSDN3Ab8NUa9MFtgyXj0Cxmo4OUeHEiKHUBcqN4tdwAxD
-         RCiSbqIj1v/ZtzyIx3IfrEMw67GufyyB+6wWF3+G2hYd/kC6BwAY4h18uKTP3ctDQ2dg
-         gd1fWPaJ3prjXBazNB19fsmU7t1HvyCkAZAVcR59y95R6xERk6rSRbVHhjg5RCqgag5c
-         H+hg==
-X-Gm-Message-State: AGi0PubDmXvjqAO6DaS4Bty9IRB9vXj0gz4WnnOrviCYCMz21tMrjx7x
-        XqqDbveMM4pllG+7vXlSKIA=
-X-Google-Smtp-Source: APiQypLEaFgNrNPd13k7XF1jNCRRMz3QrV3XwtPkQkwwm+0cvcB2J8SaXWT82L5S5cHirPigs0BYhQ==
-X-Received: by 2002:a62:81c1:: with SMTP id t184mr16312244pfd.236.1589205810901;
-        Mon, 11 May 2020 07:03:30 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id x10sm8078137pgq.79.2020.05.11.07.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 07:03:28 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 12F9040605; Mon, 11 May 2020 14:03:27 +0000 (UTC)
-Date:   Mon, 11 May 2020 14:03:27 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
-        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christof Schmitt <christof.schmitt@de.ibm.com>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4 3/5] blktrace: fix debugfs use after free
-Message-ID: <20200511140327.GO11244@42.do-not-panic.com>
-References: <20200509031058.8239-1-mcgrof@kernel.org>
- <20200509031058.8239-4-mcgrof@kernel.org>
- <20200510062636.GA3400311@kroah.com>
+        id S1730301AbgEKONz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 10:13:55 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2185 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730227AbgEKONz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 May 2020 10:13:55 -0400
+Received: from lhreml719-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 71607F49943FEEF7C06D;
+        Mon, 11 May 2020 15:13:53 +0100 (IST)
+Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
+ lhreml719-chm.china.huawei.com (10.201.108.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Mon, 11 May 2020 15:13:53 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 11 May 2020 16:13:52 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Mon, 11 May 2020 16:13:52 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "John Johansen" <john.johansen@canonical.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroA==
+Date:   Mon, 11 May 2020 14:13:52 +0000
+Message-ID: <414644a0be9e4af880452f4b5079aba1@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+ <1588957684.5146.70.camel@linux.ibm.com>
+In-Reply-To: <1588957684.5146.70.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.12.51]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200510062636.GA3400311@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 10, 2020 at 08:26:36AM +0200, Greg KH wrote:
-> On Sat, May 09, 2020 at 03:10:56AM +0000, Luis Chamberlain wrote:
-> > diff --git a/block/blk-debugfs.c b/block/blk-debugfs.c
-> > index 19091e1effc0..d40f12aecf8a 100644
-> > --- a/block/blk-debugfs.c
-> > +++ b/block/blk-debugfs.c
-> > +static struct dentry *queue_debugfs_symlink_type(struct request_queue *q,
-> > +						 const char *src,
-> > +						 const char *dst,
-> > +						 enum blk_debugfs_dir_type type)
-> > +{
-> > +	struct dentry *dentry = ERR_PTR(-EINVAL);
-> > +	char *dir_dst;
-> > +
-> > +	dir_dst = kzalloc(PATH_MAX, GFP_KERNEL);
-> > +	if (!dir_dst)
-> > +		return dentry;
-> > +
-> > +	switch (type) {
-> > +	case BLK_DBG_DIR_BASE:
-> > +		if (dst)
-> > +			snprintf(dir_dst, PATH_MAX, "%s", dst);
-> > +		else if (!IS_ERR_OR_NULL(q->debugfs_dir))
-> > +			snprintf(dir_dst, PATH_MAX, "%s",
-> > +				 q->debugfs_dir->d_name.name);
-> 
-> How can debugfs_dir be NULL/error here?
-
-If someone were to move blk_queue_debugfs_symlink() to sg_add_device(),
-this can happen as the sd_probe() will run asynchronously. The comment
-in blk_queue_debugfs_symlink() suggest to be mindful of async probes.
-
-I can do-away with this *iff* we add an probe_complete call to the
-driver core class interface.
-
-> And grabbing the name of a debugfs file is sketchy, just use the name
-> that you think you already have, from the device, don't rely on debugfs
-> working here.
-> 
-> And why a symlink anyway?
-
-As the commit log explains, and the comment to the calling functions
-explains, we have a shared request_queue, and this has been the way,
-the symlink makes that sharing explicit. The next patch explains why
-using two blktraces on two separate devices would fail, the symlink
-makes this sharing quite obvious.
-
-It also simplifies the trace/kernel/blktrace.c code to just use the
-debugfs_dir only.
-
-> THat's a new addition, what is going to work
-> with that in userspace?
-
-This already works in userspace with blktrace. If you see a regression,
-please let me know.
-
-> > +#ifdef CONFIG_DEBUG_FS
-> > +	p->debugfs_sym = blk_queue_debugfs_symlink(disk->queue, dev_name(pdev),
-> > +						   disk->disk_name);
-> > +#endif
-> 
-> No need to #ifdef this, right?
-
-It is needed because of the p->debugfs_sym.
-
-> I feel like this patch series keeps getting more complex and messier
-> over time :(
-
-I'm afraid that use of blktrace in scsi-generic is the culprit, the
-technical debt of the complexities around how the request_queue is
-shared and properly providing backward compatibilty by removing the
-debufs_looksup() has caught up to us.
-
-If we were to agree to remove scsi-generic support from blktrace first,
-that would simplify things hugely.
-
-  Luis
+PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
+RnJpZGF5LCBNYXkgOCwgMjAyMCA3OjA4IFBNDQo+IE9uIEZyaSwgMjAyMC0wNS0wOCBhdCAxMDoy
+MCArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiA+IEZyb206IE1pbWkgWm9oYXIgW21h
+aWx0bzp6b2hhckBsaW51eC5pYm0uY29tXQ0KPiA+ID4gT24gVGh1LCAyMDIwLTA1LTA3IGF0IDE2
+OjQ3ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiANCj4gPHNuaXA+DQo+IA0KPiA+ID4g
+PiA+IHRoZSBmaWxlIG1ldGFkYXRhIHRvIHRoZSBmaWxlIGRhdGEuIMKgVGhlIElNQSBhbmQgRVZN
+IHBvbGljaWVzIHJlYWxseQ0KPiA+ID4gPiA+IG5lZWQgdG8gYmUgaW4gc3luYy4NCj4gPiA+ID4N
+Cj4gPiA+ID4gSXQgd291bGQgYmUgbmljZSwgYnV0IGF0IHRoZSBtb21lbnQgRVZNIGNvbnNpZGVy
+cyBhbHNvIGZpbGVzIHRoYXQgYXJlDQo+ID4gPiA+IG5vdCBzZWxlY3RlZCBieSB0aGUgSU1BIHBv
+bGljeS4gQW4gZXhhbXBsZSBvZiB3aHkgdGhpcyBpcyBhIHByb2JsZW0gaXMNCj4gPiA+ID4gdGhl
+IGF1ZGl0IHNlcnZpY2UgdGhhdCBmYWlscyB0byBzdGFydCB3aGVuIGl0IHRyaWVzIHRvIGFkanVz
+dCB0aGUNCj4gcGVybWlzc2lvbnMNCj4gPiA+ID4gb2YgdGhlIGxvZyBmaWxlcy4gVGhvc2UgZmls
+ZXMgZG9uJ3QgaGF2ZSBzZWN1cml0eS5ldm0gYmVjYXVzZSB0aGV5IGFyZQ0KPiA+ID4gPiBub3Qg
+YXBwcmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9wZXJhdGlvbi4NCj4gPiA+DQo+
+ID4gPiBObywgdGhpcyBpcyBhIHRpbWluZyBpc3N1ZSBhcyB0byB3aGV0aGVyIG9yIG5vdCB0aGUg
+YnVpbHRpbiBwb2xpY3kgb3INCj4gPiA+IGEgY3VzdG9tIHBvbGljeSBoYXMgYmVlbiBsb2FkZWQu
+IMKgQSBjdXN0b20gcG9saWN5IGNvdWxkIGV4Y2x1ZGUgdGhlDQo+ID4gPiBsb2cgZmlsZXMgYmFz
+ZWQgb24gTFNNIGxhYmVscywgYnV0IHRoZXkgYXJlIGluY2x1ZGVkIGluIHRoZSBidWlsdGluDQo+
+ID4gPiBwb2xpY3kuDQo+ID4NCj4gPiBZZXMsIEkgd2FzIHJlZmVycmluZyB0byBhIGN1c3RvbSBw
+b2xpY3kuIEluIHRoaXMgY2FzZSwgRVZNIHdpbGwgbm90IGFkYXB0DQo+ID4gdG8gdGhlIGN1c3Rv
+bSBwb2xpY3kgYnV0IHN0aWxsIHZlcmlmaWVzIGFsbCBmaWxlcy4gSWYgYWNjZXNzIGNvbnRyb2wg
+aXMgZG9uZQ0KPiA+IGV4Y2x1c2l2ZWx5IGJ5IElNQSBhdCB0aGUgdGltZSBldm1fdmVyaWZ5eGF0
+dHIoKSBpcyBjYWxsZWQsIHdlIHdvdWxkbid0DQo+ID4gbmVlZCB0byBhZGQgc2VjdXJpdHkuZXZt
+IHRvIGFsbCBmaWxlcy4NCj4gDQo+IFJvYmVydG8sIEVWTSBpcyBvbmx5IHRyaWdnZXJlZCBieSBJ
+TUEsIHVubGVzcyB5b3UndmUgbW9kaWZpZWQgdGhlDQo+IGtlcm5lbCB0byBkbyBvdGhlcndpc2Uu
+DQoNCkVWTSB3b3VsZCBkZW55IHhhdHRyL2F0dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBk
+aXNhYmxlZCBpbiB0aGUNCmtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3Nl
+dHhhdHRyKCkgcmV0dXJucyB0aGUgdmFsdWUNCmZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4gSU1B
+IGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCg0KPiBJJ20gbm90IGludGVyZXN0ZWQgaW4gYSBjb21w
+bGljYXRlZCBzb2x1dGlvbiwganVzdCBvbmUgdGhhdCBhZGRyZXNzZXMNCj4gdGhlIG5ldyBFVk0g
+aW1tdXRhYmxlIGFuZCBwb3J0YWJsZSBzaWduYXR1cmUuIMKgSXQgbWlnaHQgcmVxdWlyZSBFVk0N
+Cj4gSE1BQywgSU1BIGRpZmZlcmVudGlhdGluZyBiZXR3ZWVuIGEgbmV3IGZpbGUgYW5kIGFuIGV4
+aXN0aW5nIGZpbGUsIG9yDQo+IGl0IG1pZ2h0IHJlcXVpcmUgd3JpdGluZyB0aGUgbmV3IEVWTSBz
+aWduYXR1cmUgbGFzdCwgYWZ0ZXIgYWxsIHRoZQ0KPiBvdGhlciB4YXR0cnMgb3IgbWV0YWRhdGEg
+YXJlIHVwZGF0ZWQuIMKgUGxlYXNlIG5vdGhpbmcgdGhhdCBjaGFuZ2VzDQo+IGV4aXN0aW5nIGV4
+cGVjdGF0aW9ucy4NCg0KT2suIEludHJvZHVjaW5nIHRoZSBuZXcgc3RhdHVzIElOVEVHUklUWV9G
+QUlMX0lNTVVUQUJMRSwgYXMgSQ0KbWVudGlvbmVkIGluICdbUEFUQ0hdIGltYTogQWxsb3cgaW1h
+c2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KRVZNIHBvcnRhYmxlIHNpZ25hdHVy
+ZXMnIHNlZW1zIHRvIGhhdmUgYW4gYWRkaXRpb25hbCBiZW5lZml0LiBXZQ0KY291bGQgaW50cm9k
+dWNlIGFuIGFkZGl0aW9uYWwgZXhjZXB0aW9uIGluIGV2bV9wcm90ZWN0X3hhdHRyKCksIG90aGVy
+DQp0aGFuIElOVEVHUklUWV9OT1hBVFRSUywgYXMgd2Uga25vdyB0aGF0IHhhdHRyL2F0dHIgdXBk
+YXRlIHdvbid0DQpjYXVzZSBITUFDIHVwZGF0ZS4NCg0KSG93ZXZlciwgaXQgd29uJ3Qgd29yayB1
+bmxlc3MgdGhlIElNQSBwb2xpY3kgc2F5cyB0aGF0IHRoZSBmaWxlIHNob3VsZA0KYmUgYXBwcmFp
+c2VkIHdoZW4gdGhlIG1rbm9kKCkgc3lzdGVtIGNhbGwgaXMgZXhlY3V0ZWQuIE90aGVyd2lzZSwN
+CmludGVncml0eV9paW50X2NhY2hlIGlzIG5vdCBjcmVhdGVkIGZvciB0aGUgZmlsZSBhbmQgdGhl
+IElNQV9ORVdfRklMRQ0KZmxhZyBpcyBub3Qgc2V0Lg0KDQpHcmFudGluZyBhbiBleGNlcHRpb24g
+Zm9yIElOVEVHUklUWV9GQUlMX0lNTVVUQUJMRSBzb2x2ZXMgdGhlIGNhc2UNCndoZXJlIHNlY3Vy
+aXR5LmV2bSBpcyB0aGUgZmlyc3QgeGF0dHIgc2V0LiBJZiBhIHByb3RlY3RlZCB4YXR0ciBpcyB0
+aGUgZmlyc3QgdG8NCmJlIGFkZGVkLCB0aGVuIHdlIGFsc28gaGF2ZSB0byBoYW5kbGUgdGhlIElO
+VEVHUklUWV9OT0xBQkVMIGVycm9yLg0KSXQgc2hvdWxkIGJlIGZpbmUgdG8gYWRkIGFuIGV4Y2Vw
+dGlvbiBmb3IgdGhpcyBlcnJvciBpZiB0aGUgSE1BQyBrZXkgaXMgbm90DQpsb2FkZWQuDQoNClRo
+aXMgc3RpbGwgZG9lcyBub3Qgc29sdmUgYWxsIHByb2JsZW1zLiBJTlRFR1JJVFlfTk9MQUJFTCBj
+YW5ub3QgYmUNCmlnbm9yZWQgaWYgdGhlIEhNQUMga2V5IGlzIGxvYWRlZCwgd2hpY2ggbWVhbnMg
+dGhhdCBhbGwgZmlsZXMgbmVlZCB0byBiZQ0KcHJvdGVjdGVkIGJ5IEVWTSB0byBhdm9pZCBpc3N1
+ZXMgbGlrZSB0aGUgb25lIEkgZGVzY3JpYmVkIChhdWRpdGQpLg0KDQpSb2JlcnRvDQoNCkhVQVdF
+SSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJl
+Y3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
