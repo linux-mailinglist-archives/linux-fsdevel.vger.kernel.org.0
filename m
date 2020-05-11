@@ -2,157 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C8A21CD96D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 14:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E0E1CD9B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 14:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgEKMMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 08:12:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
+        id S1729963AbgEKM0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 08:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725913AbgEKMMq (ORCPT
+        by vger.kernel.org with ESMTP id S1729957AbgEKM0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 08:12:46 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBD2C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:12:44 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id b91so3516923edf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:12:44 -0700 (PDT)
+        Mon, 11 May 2020 08:26:07 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36BC9C05BD09
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:26:06 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id l3so7750740edq.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=mGEeAidnaM2iRIyWxI6jgp1Wobv7K4kFp+s5P5H4YoA=;
-        b=owJ03ZLe6XOnl1JyEldc61eRkgc7YLJIQJIzIhH0Nh+NOdGN78NY6/IY9z6/Sm3VYt
-         03cpvMlqpx35vrqjUtos/XQNeRCJu8eJrcZPmufFRCXiAkyzkBotvjSoOpadPq4d15L5
-         6dLgZojOK//t9s+FN2fJVN1JI3hK1KZxZUA84=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2EN8bcyFVSWdG2LyezQQ8oCrjUutuFeHxXpmjXGuS0M=;
+        b=TocUd7QBMuxELeVQIclwEwhNwZ51aFXx4DeH5YgrrumzZciDVWnPvzltX/S1ugv1ii
+         5E0iZOqOZgwgYeazNVKnAscq1Gf0jJaYh7zXejxjfmsLdTBq4ann9CBZ0Zp+Et1gnOx6
+         csGJZAegn3dXfqJgRVFCHUXWbN4lRvZ4bmgmE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=mGEeAidnaM2iRIyWxI6jgp1Wobv7K4kFp+s5P5H4YoA=;
-        b=kh0l+xO25zIQq7Wtyodo8tsx/s0/c6wr6z3HJoCwkiYvdM4aQkBEf0iNVHDdXrp9cS
-         Sz8sCCuN0gukmhFcClqBwggWHm/dTgSXJ18xGiZrD9eQ3Urh2A7u8bhOnswYdg/Dmo6B
-         QewJd9/vkiiWOgkf9fzD4EVgwmjaJasnCCaGuI9meZ47BfgGNF7P5K8D59esUuz/K51h
-         QpzJRHcBCGGmihyaa4fl2O4ZuCUTnUy04Eh5pEPK+5QhEYsiAPgwoKvWyo24DGssmW8a
-         ZvOXvbBxZs/xPJq1ymwySi4YeLPsnJkc7w32u5wn9qpiAD81w8jFd+4UT1eCp5MlUT25
-         D86A==
-X-Gm-Message-State: AGi0PubhEfiqSyYaxnjUHG744KbtXF1i2zG4p83MMYPnFL2vT1h3Nxf1
-        /eh05WnmOTLOfJQmLtMTH087Sf7u4qFGwKeOmt1rqg==
-X-Google-Smtp-Source: APiQypLx39OTYFA+g9OcLemqwK2mJuf5Rfhn6Y6TMz6Bi7uvVAIE32tvtajBkxSF8JW4n0CKQeJvwfWnbSszCMWAzrY=
-X-Received: by 2002:a05:6402:2058:: with SMTP id bc24mr8316071edb.134.1589199163373;
- Mon, 11 May 2020 05:12:43 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=2EN8bcyFVSWdG2LyezQQ8oCrjUutuFeHxXpmjXGuS0M=;
+        b=pS8zPLVSqrGYKs9hrch8yJsfNccClEp4fR+u/asqALOHRKOUlvivbf4P2hnuuCubuc
+         8Gqo/HCHEPyylDSwPlAD2vS3HmCEUvT6hiuBl5c/y30SmheGACj7egTIcXyjb888sQpP
+         rU4HSuFo60Afs8Lr4Xu2pzfMBM0k7uQduB2m43BsXAbPmLl1oiv+mQPPgVbK3rs/RFxg
+         jrUZELNAHjVmpSg86MPfVDDxMdK9guMUjTSLFPhnzK7eem4G88grTMG/7glmomF6i9AJ
+         b1yfyB/fx+6Rj7FhfWDt525O4PFeu72XKL6fqK9hlZRes0+IGsjs1X2vBexS2XVm2cnj
+         z4uA==
+X-Gm-Message-State: AGi0PubzpoqiZQNtu6Kob7WTArS5Txtqe8hZk4quNje2+Sch8KFXykkn
+        xdAH/yCUiuYOYCGgiRfpDVaoYKb4nwlyImYj5VSXPBnQH14=
+X-Google-Smtp-Source: APiQypI0RnkmhdnNNKq94iFMEVCCm1LcUFOTW66OOLC6+dFFohZ56vzj/6GxcQ/jT8FOFcqF+Rlp5uYkhgYIYqDhLNo=
+X-Received: by 2002:aa7:cdd9:: with SMTP id h25mr13644594edw.17.1589199964897;
+ Mon, 11 May 2020 05:26:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <87k123h4vr.fsf@vostro.rath.org> <CAJfpeguqV=++b-PF6o6Y-pLvPioHrM-4mWE2rUqoFbmB7685FA@mail.gmail.com>
- <874ksq4fa9.fsf@vostro.rath.org>
-In-Reply-To: <874ksq4fa9.fsf@vostro.rath.org>
+References: <1585733475-5222-1-git-send-email-chakragithub@gmail.com>
+ <CAJfpegtk=pbLgBzM92tRq8UMUh+vxcDcwLL77iAcv=Mxw3r4Lw@mail.gmail.com>
+ <CAH7=fosGV3AOcU9tG0AK3EJ2yTXZL3KGfsuVUA5gMBjC4Nn-WQ@mail.gmail.com>
+ <CAH7=fosz9KDSBN86+7OxYTLJWUSdUSkeLZR5Y0YyM6=GE0BdOw@mail.gmail.com>
+ <CAJfpegvWBHootLiE_zsw35G6Ee387V=Da_wCzaV9NhZQVDKYGg@mail.gmail.com> <CAH7=fosn3fnNBkKzHNBSvoQh+Gjpi2J0mZ3rRENitMmFmpHcUw@mail.gmail.com>
+In-Reply-To: <CAH7=fosn3fnNBkKzHNBSvoQh+Gjpi2J0mZ3rRENitMmFmpHcUw@mail.gmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 11 May 2020 14:12:32 +0200
-Message-ID: <CAJfpegv63Tv7_YKno6BR+SdPPGD_4=c4YnGPmbPrY7jZCyuf_g@mail.gmail.com>
-Subject: Re: [fuse-devel] [fuse] Getting visibility into reads from page cache
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
+Date:   Mon, 11 May 2020 14:25:53 +0200
+Message-ID: <CAJfpegu4BzWybuBH=-ojqZ5Qfw4+0Lv+yqbTrerw3+tb=qghWw@mail.gmail.com>
+Subject: Re: [PATCH] fuse:rely on fuse_perm for exec when no mode bits set
+To:     Chakra Divi <chakragithub@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 8, 2020 at 5:29 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+On Fri, May 8, 2020 at 12:14 PM Chakra Divi <chakragithub@gmail.com> wrote:
 >
-> On Apr 27 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > On Sat, Apr 25, 2020 at 7:07 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
-> >>
-> >> Hello,
-> >>
-> >> For debugging purposes, I would like to get information about read
-> >> requests for FUSE filesystems that are answered from the page cache
-> >> (i.e., that never make it to the FUSE userspace daemon).
-> >>
-> >> What would be the easiest way to accomplish that?
-> >>
-> >> For now I'd be happy with seeing regular reads and knowing when an
-> >> application uses mmap (so that I know that I might be missing reads).
-> >>
-> >>
-> >> Not having done any real kernel-level work, I would start by looking
-> >> into using some tracing framework to hook into the relevant kernel
-> >> function. However, I thought I'd ask here first to make sure that I'm
-> >> not heading into the completely wrong direction.
+> On Tue, Apr 28, 2020 at 1:51 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 > >
-> > Bpftrace is a nice high level tracing tool.
+> > On Mon, Apr 27, 2020 at 3:46 PM Chakra Divi <chakragithub@gmail.com> wrote:
+> > >
+> > > On Tue, Apr 21, 2020 at 4:21 PM Chakra Divi <chakragithub@gmail.com> wrote:
+> > > >
+> > > > On Mon, Apr 20, 2020 at 4:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > > >
+> > > > > On Wed, Apr 1, 2020 at 11:31 AM Chakra Divi <chakragithub@gmail.com> wrote:
+> > > > > >
+> > > > > > In current code, for exec we are checking mode bits
+> > > > > > for x bit set even though the fuse_perm_getattr returns
+> > > > > > success. Changes in this patch avoids mode bit explicit
+> > > > > > check, leaves the exec checking to fuse file system
+> > > > > > in uspace.
+> > > > >
+> > > > > Why is this needed?
+> > > >
+> > > > Thanks for responding Miklos. We have an use case with our remote file
+> > > > system mounted on fuse , where permissions checks will happen remotely
+> > > > without the need of mode bits. In case of read, write it worked
+> > > > without issues. But for executable files, we found that fuse kernel is
+> > > > explicitly checking 'x' mode bit set on the file. We want this
+> > > > checking also to be pushed to remote instead of kernel doing it - so
+> > > > modified the kernel code to send getattr op to usespace in exec case
+> > > > too.
+> > >
+> > > Any help on this Miklos....
 > >
-> > E.g.
-> >
-> >   sudo bpftrace -e 'kretprobe:fuse_file_read_iter { printf ("fuse
-> > read: %d\n", retval); }'
+> > I still don't understand what you are requesting.  What your patch
+> > does is unconditionally allow execution, even without any 'x' bits in
+> > the mode.  What does that achieve?
 >
-> Thanks, this looks great! I had to do some reading about bpftrace first,
-> but I think this is exacly what I'm looking for. A few more questions:
+> Thanks for the help Miklos. We have a network based filesystem that
+> supports acls.
+> As our filesystem give granular access, we wipe out the mode bits and
+> completely rely on ACLs.
+
+Are you using POSIX ACLs?   Why can't you translate the ACL's back
+into mode bits (that's what all filesystems do)?
+
 >
+> Fuse works well for all other ops (with default_permissions disabled )
+>  as all the checks are done at the filesystems.
+> But only executables have problems because fuse kernel rejects the
+> execution by doing access checks on mode bit.
+> To push this check to filesystem, in the above patch - i'm relying on
+> return value from fuse_perm_getattr() ignoring the mode bits.
 >
-> - If I attach a probe to fuse_file_mmap, will this tell me whenever an
->   application attempts to mmap() a FUSE file?
+> When the fuse module is asked to rely on filesystem for access checks,
+> why do we need this explicit check for executables?
 
-Yes.
-
-> - I believe that (struct kiocb*)arg0)->ki_pos will give me the offset
->   within the file, but where can I see how much data is being read?
->
-> Looking at the code in fuse_file_read_iter, it seems the length is in
-> ((struct iov_iter*)arg1)->count, but I do not really understand why.
-
-That's correct.
-
-> The definiton of this parameter is:
->
-> struct iov_iter {
->         int type;
->         const struct iovec *iov;
->         unsigned long nr_segs;
->         size_t iov_offset;
->         size_t count;
-> };
->
-> ..so I would think that *count* is the number of `iovec` elements hiding
-> behind the `iov` pointer, not some total number of bytes.
-
-That's nr_segs.
-
-> Furthermore, there is a function iov_length() that is documented to
-> return the "total number of bytes covered by an iovec" and doesn't look
-> at `count` at all.
-
-iov_iter_count() is the accessor function that does this.
-
-> - What is the best way to connect read requests to a specific FUSE
->   filesystems (if more than one is mounted)? I found the superblock in
->   (struct kiocb*)arg0)->ki_filp->f_mapping->host->i_sb->s_fs_info, but I
->   do not see anything in this structure that I could map to a similar
->   value that FUSE userspace has access to...
-
-You can match up ki_filp->f_inode->i_sb->s_dev with st_dev on any
-file.  I think the kernel encodes the device value differently, but
-the bits should be there.
-
-> - I assume fuse_file_read_iter is called for every read request for FUSE
->   filesystems unless it's an mmap'ed access. Is that right?
-
-Correct.
-
-> - Is there any similar way to catch access to an mmap'ed file? I think
->   there is probably a way to make sure that every memory read triggers a
->   page fault and then hook into the fault handler, but I am not sure how
->   difficult this is to do and how much performance this would cost....
-
-Not sure if that's implementable, but it would surely be grossly
-inefficient.  Flushing page tables e.g. every second would probably
-work, but then you'd only get the read pattern on a one second
-granularity.
-
-> - If my BPF program contains e.g. a printf statement, will execution of
->   the kernel function block until the printf has completed, or is there
->   some queuing mechanism?
-
-AFAIK there's some queuing.
+Because there's no other check.  Have you noticed that with your patch
+*all* files become executable?  I guess that's not what you wanted...
 
 Thanks,
 Miklos
