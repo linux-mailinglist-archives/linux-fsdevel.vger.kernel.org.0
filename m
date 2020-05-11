@@ -2,155 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC92E1CDF49
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 17:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA47A1CDFD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 18:02:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbgEKPlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 11:41:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:34946 "EHLO foss.arm.com"
+        id S1730481AbgEKQCb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 12:02:31 -0400
+Received: from elvis.franken.de ([193.175.24.41]:48696 "EHLO elvis.franken.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgEKPlY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 11:41:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6EB31B;
-        Mon, 11 May 2020 08:41:24 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0D8A3F68F;
-        Mon, 11 May 2020 08:41:21 -0700 (PDT)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1729550AbgEKQCa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 May 2020 12:02:30 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1jYAsk-0000qr-00; Mon, 11 May 2020 18:02:18 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 8CE72C0473; Mon, 11 May 2020 18:01:35 +0200 (CEST)
+Date:   Mon, 11 May 2020 18:01:35 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Roman Zippel <zippel@linux-m68k.org>,
+        Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] Documentation/sysctl: Document uclamp sysctl knobs
-Date:   Mon, 11 May 2020 16:40:53 +0100
-Message-Id: <20200511154053.7822-2-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200511154053.7822-1-qais.yousef@arm.com>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
+Subject: Re: [PATCH 03/31] MIPS: unexport __flush_icache_user_range
+Message-ID: <20200511160135.GA17079@alpha.franken.de>
+References: <20200510075510.987823-1-hch@lst.de>
+ <20200510075510.987823-4-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200510075510.987823-4-hch@lst.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Uclamp exposes 3 sysctl knobs:
+On Sun, May 10, 2020 at 09:54:42AM +0200, Christoph Hellwig wrote:
+> __flush_icache_user_range is not used in modular code, so unexport it.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/mips/mm/cache.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-	* sched_util_clamp_min
-	* sched_util_clamp_max
-	* sched_util_clamp_min_rt_default
+applied to mips-next.
 
-Document them in sysctl/kernel.rst.
+Thomas.
 
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Jonathan Corbet <corbet@lwn.net>
-CC: Juri Lelli <juri.lelli@redhat.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Ben Segall <bsegall@google.com>
-CC: Mel Gorman <mgorman@suse.de>
-CC: Luis Chamberlain <mcgrof@kernel.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Iurii Zaikin <yzaikin@google.com>
-CC: Quentin Perret <qperret@google.com>
-CC: Valentin Schneider <valentin.schneider@arm.com>
-CC: Patrick Bellasi <patrick.bellasi@matbug.net>
-CC: Pavan Kondeti <pkondeti@codeaurora.org>
-CC: linux-doc@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
----
-
-Changes in v5:
-	* Improve the wording about the lazy update and the relationship to
-	  sched_util_clamp_min (Patrick)
-
- Documentation/admin-guide/sysctl/kernel.rst | 57 +++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 0d427fd10941..6cd3cb0e22c0 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -940,6 +940,63 @@ Enables/disables scheduler statistics. Enabling this feature
- incurs a small amount of overhead in the scheduler but is
- useful for debugging and performance tuning.
- 
-+sched_util_clamp_min:
-+=====================
-+
-+Max allowed *minimum* utilization.
-+
-+Default value is 1024, which is the maximum possible value.
-+
-+It means that any requested uclamp.min value cannot be greater than
-+sched_util_clamp_min, i.e., it is restricted to the range
-+[0:sched_util_clamp_min].
-+
-+sched_util_clamp_max:
-+=====================
-+
-+Max allowed *maximum* utilization.
-+
-+Default value is 1024, which is the maximum possible value.
-+
-+It means that any requested uclamp.max value cannot be greater than
-+sched_util_clamp_max, i.e., it is restricted to the range
-+[0:sched_util_clamp_max].
-+
-+sched_util_clamp_min_rt_default:
-+================================
-+
-+By default Linux is tuned for performance. Which means that RT tasks always run
-+at the highest frequency and most capable (highest capacity) CPU (in
-+heterogeneous systems).
-+
-+Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-+1024 by default, which effectively boosts the tasks to run at the highest
-+frequency and biases them to run on the biggest CPU.
-+
-+This knob allows admins to change the default behavior when uclamp is being
-+used. In battery powered devices particularly, running at the maximum
-+capacity and frequency will increase energy consumption and shorten the battery
-+life.
-+
-+This knob is only effective for RT tasks which the user hasn't modified their
-+requested uclamp.min value via sched_setattr() syscall.
-+
-+This knob will not escape the range constraint imposed by sched_util_clamp_min
-+defined above.
-+
-+For example if
-+
-+	sched_util_clamp_min_rt_default = 800
-+	sched_util_clamp_min = 600
-+
-+Then the boost will be clamped to 600 because 800 is outside of the permissible
-+range of [0:600]. This could happen for instance if a powersave mode will
-+restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
-+this restriction is lifted, the requested sched_util_clamp_min_rt_default
-+will take effect.
-+
-+Any modification is applied lazily to tasks and is effective starting from
-+their next wakeup.
- 
- seccomp
- =======
 -- 
-2.17.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
