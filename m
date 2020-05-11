@@ -2,120 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E0E1CD9B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 14:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1666B1CDA9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 15:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbgEKM0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 08:26:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
+        id S1729470AbgEKNAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 09:00:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729957AbgEKM0H (ORCPT
+        by vger.kernel.org with ESMTP id S1727827AbgEKNAM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 08:26:07 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36BC9C05BD09
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:26:06 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id l3so7750740edq.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 05:26:06 -0700 (PDT)
+        Mon, 11 May 2020 09:00:12 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF917C061A0C;
+        Mon, 11 May 2020 06:00:11 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id h4so17948170wmb.4;
+        Mon, 11 May 2020 06:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2EN8bcyFVSWdG2LyezQQ8oCrjUutuFeHxXpmjXGuS0M=;
-        b=TocUd7QBMuxELeVQIclwEwhNwZ51aFXx4DeH5YgrrumzZciDVWnPvzltX/S1ugv1ii
-         5E0iZOqOZgwgYeazNVKnAscq1Gf0jJaYh7zXejxjfmsLdTBq4ann9CBZ0Zp+Et1gnOx6
-         csGJZAegn3dXfqJgRVFCHUXWbN4lRvZ4bmgmE=
+        d=gmail.com; s=20161025;
+        h=sender:from:references:user-agent:to:cc:subject:in-reply-to
+         :message-id:date:mime-version;
+        bh=GT1dtgToCuf3JZQXWgmn/1+1Vz720HE+8i0ZCjTlo7w=;
+        b=KMIYu0AtbfomOEZKHqvTVcN79xGzhnfhHfc7vhfsX/lwOqA1f19NINZIIxSAUC6QLQ
+         5VsPpzc0E+023+kEaNkndCHKiXjMuzEWlkp6VsqvTWnMhnzY1MTQCODGdxGf9/zTdUsr
+         HbkSTNLDGabEucMdKXdALoz7wQVWpsotJTehLTQRh+jYB06ncAumAb2Am9CGttiGR5Sh
+         aiiikjtkdt/06zyvSctEimqsm8VJNYrnfWXwVvrHb92UNz9uA/ux8QfhDPgCZEihPtvH
+         NwvSlbe6MGUoGWWvSseNcxCfF8QM7aOQuwsYrw4PWWDp/xctTdAJICB2yEgDBdKfIRaC
+         Hzqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2EN8bcyFVSWdG2LyezQQ8oCrjUutuFeHxXpmjXGuS0M=;
-        b=pS8zPLVSqrGYKs9hrch8yJsfNccClEp4fR+u/asqALOHRKOUlvivbf4P2hnuuCubuc
-         8Gqo/HCHEPyylDSwPlAD2vS3HmCEUvT6hiuBl5c/y30SmheGACj7egTIcXyjb888sQpP
-         rU4HSuFo60Afs8Lr4Xu2pzfMBM0k7uQduB2m43BsXAbPmLl1oiv+mQPPgVbK3rs/RFxg
-         jrUZELNAHjVmpSg86MPfVDDxMdK9guMUjTSLFPhnzK7eem4G88grTMG/7glmomF6i9AJ
-         b1yfyB/fx+6Rj7FhfWDt525O4PFeu72XKL6fqK9hlZRes0+IGsjs1X2vBexS2XVm2cnj
-         z4uA==
-X-Gm-Message-State: AGi0PubzpoqiZQNtu6Kob7WTArS5Txtqe8hZk4quNje2+Sch8KFXykkn
-        xdAH/yCUiuYOYCGgiRfpDVaoYKb4nwlyImYj5VSXPBnQH14=
-X-Google-Smtp-Source: APiQypI0RnkmhdnNNKq94iFMEVCCm1LcUFOTW66OOLC6+dFFohZ56vzj/6GxcQ/jT8FOFcqF+Rlp5uYkhgYIYqDhLNo=
-X-Received: by 2002:aa7:cdd9:: with SMTP id h25mr13644594edw.17.1589199964897;
- Mon, 11 May 2020 05:26:04 -0700 (PDT)
+        h=x-gm-message-state:sender:from:references:user-agent:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=GT1dtgToCuf3JZQXWgmn/1+1Vz720HE+8i0ZCjTlo7w=;
+        b=pMOUrg3QGClVIPQhdVKAscw+O4OgkDvjRLqwl2KlCLqzSiRRlzq6alKJcbUIslsvx3
+         gy32gojR8U09GXuxZhXzqim64bqLRu7/GS+2bedt8I4/baGFmp8hcsCGqBVk2bW6A7ST
+         BPXqJBvEXNDe3aqey35gZwI7vqFa2iXyiJE9JZiHvc8B8alzQMjHzEkv5JoVAgH8t1MV
+         PBByTqROVg7UIj3Yqa2sX+VCjTKSJr1gMdJz7q2EyHYZmoId+Z5Zuz9QYu/IW3yIBBGm
+         lfQQln21GdyPPd3q1CUGcxqYkczzE95B051r3BTxM+zYrIb25BU/P0ZJDGASUQe1v0Yg
+         jD/w==
+X-Gm-Message-State: AGi0Pua0omwPWO/goomQM2967UocxWA+LO1PxlGTUVE+QoPlH7913PNp
+        0sC/NrX1Fg/JTQKpuzB7GkFLXQvd1Is=
+X-Google-Smtp-Source: APiQypIdEhVCj3AfwnDtXHxVYKduAfM7hgi55kuPoCwoSEKk/rppyVs+ayP4HIB75wIQ3XU0hprR4g==
+X-Received: by 2002:a1c:e305:: with SMTP id a5mr14612754wmh.1.1589202009946;
+        Mon, 11 May 2020 06:00:09 -0700 (PDT)
+Received: from darkstar ([51.154.17.58])
+        by smtp.gmail.com with ESMTPSA id 5sm26454868wmz.16.2020.05.11.06.00.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 May 2020 06:00:08 -0700 (PDT)
+From:   Patrick Bellasi <patrick.bellasi@matbug.net>
+X-Google-Original-From: Patrick Bellasi <patrick.bellasi@matbug.com>
+References: <20200501114927.15248-1-qais.yousef@arm.com> <20200501114927.15248-2-qais.yousef@arm.com> <87d07krjyk.derkling@matbug.com> <20200505145637.5daqhatsm5bjsok7@e107158-lin.cambridge.arm.com>
+User-agent: mu4e 1.4.3; emacs 26.3
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] Documentation/sysctl: Document uclamp sysctl knobs
+In-reply-to: <20200505145637.5daqhatsm5bjsok7@e107158-lin.cambridge.arm.com>
+Message-ID: <877dxik4ob.derkling@matbug.com>
+Date:   Mon, 11 May 2020 15:00:04 +0200
 MIME-Version: 1.0
-References: <1585733475-5222-1-git-send-email-chakragithub@gmail.com>
- <CAJfpegtk=pbLgBzM92tRq8UMUh+vxcDcwLL77iAcv=Mxw3r4Lw@mail.gmail.com>
- <CAH7=fosGV3AOcU9tG0AK3EJ2yTXZL3KGfsuVUA5gMBjC4Nn-WQ@mail.gmail.com>
- <CAH7=fosz9KDSBN86+7OxYTLJWUSdUSkeLZR5Y0YyM6=GE0BdOw@mail.gmail.com>
- <CAJfpegvWBHootLiE_zsw35G6Ee387V=Da_wCzaV9NhZQVDKYGg@mail.gmail.com> <CAH7=fosn3fnNBkKzHNBSvoQh+Gjpi2J0mZ3rRENitMmFmpHcUw@mail.gmail.com>
-In-Reply-To: <CAH7=fosn3fnNBkKzHNBSvoQh+Gjpi2J0mZ3rRENitMmFmpHcUw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 11 May 2020 14:25:53 +0200
-Message-ID: <CAJfpegu4BzWybuBH=-ojqZ5Qfw4+0Lv+yqbTrerw3+tb=qghWw@mail.gmail.com>
-Subject: Re: [PATCH] fuse:rely on fuse_perm for exec when no mode bits set
-To:     Chakra Divi <chakragithub@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 8, 2020 at 12:14 PM Chakra Divi <chakragithub@gmail.com> wrote:
->
-> On Tue, Apr 28, 2020 at 1:51 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, Apr 27, 2020 at 3:46 PM Chakra Divi <chakragithub@gmail.com> wrote:
-> > >
-> > > On Tue, Apr 21, 2020 at 4:21 PM Chakra Divi <chakragithub@gmail.com> wrote:
-> > > >
-> > > > On Mon, Apr 20, 2020 at 4:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > >
-> > > > > On Wed, Apr 1, 2020 at 11:31 AM Chakra Divi <chakragithub@gmail.com> wrote:
-> > > > > >
-> > > > > > In current code, for exec we are checking mode bits
-> > > > > > for x bit set even though the fuse_perm_getattr returns
-> > > > > > success. Changes in this patch avoids mode bit explicit
-> > > > > > check, leaves the exec checking to fuse file system
-> > > > > > in uspace.
-> > > > >
-> > > > > Why is this needed?
-> > > >
-> > > > Thanks for responding Miklos. We have an use case with our remote file
-> > > > system mounted on fuse , where permissions checks will happen remotely
-> > > > without the need of mode bits. In case of read, write it worked
-> > > > without issues. But for executable files, we found that fuse kernel is
-> > > > explicitly checking 'x' mode bit set on the file. We want this
-> > > > checking also to be pushed to remote instead of kernel doing it - so
-> > > > modified the kernel code to send getattr op to usespace in exec case
-> > > > too.
-> > >
-> > > Any help on this Miklos....
-> >
-> > I still don't understand what you are requesting.  What your patch
-> > does is unconditionally allow execution, even without any 'x' bits in
-> > the mode.  What does that achieve?
->
-> Thanks for the help Miklos. We have a network based filesystem that
-> supports acls.
-> As our filesystem give granular access, we wipe out the mode bits and
-> completely rely on ACLs.
 
-Are you using POSIX ACLs?   Why can't you translate the ACL's back
-into mode bits (that's what all filesystems do)?
+Hi Qais,
 
+On Tue, May 05, 2020 at 16:56:37 +0200, Qais Yousef <qais.yousef@arm.com> wrote...
+
+>> > +sched_util_clamp_min_rt_default:
+>> > +================================
+>> > +
+>> > +By default Linux is tuned for performance. Which means that RT tasks always run
+>> > +at the highest frequency and most capable (highest capacity) CPU (in
+>> > +heterogeneous systems).
+>> > +
+>> > +Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
+>> > +SCHED_CAPACITY_SCALE (1024) by default, which effectively boosts the tasks to
+>> > +run at the highest frequency and biases them to run on the biggest CPU.
+>> > +
+>> > +This knob allows admins to change the default behavior when uclamp is being
+>> > +used. In battery powered devices particularly, running at the maximum
+>> > +capacity and frequency will increase energy consumption and shorten the battery
+>> > +life.
+>> > +
+>> > +This knob is only effective for RT tasks which the user hasn't modified their
+>> > +requested uclamp.min value via sched_setattr() syscall.
+>> > +
+>> > +This knob will not escape the constraint imposed by sched_util_clamp_min
+>> > +defined above.
+>> 
+>> Perhaps it's worth to specify that this value is going to be clamped by
+>> the values above? Otherwise it's a bit ambiguous to know what happen
+>> when it's bigger than schedu_util_clamp_min.
 >
-> Fuse works well for all other ops (with default_permissions disabled )
->  as all the checks are done at the filesystems.
-> But only executables have problems because fuse kernel rejects the
-> execution by doing access checks on mode bit.
-> To push this check to filesystem, in the above patch - i'm relying on
-> return value from fuse_perm_getattr() ignoring the mode bits.
+> Hmm for me that sentence says exactly what you're asking for.
 >
-> When the fuse module is asked to rely on filesystem for access checks,
-> why do we need this explicit check for executables?
+> So what you want is
+>
+> 	s/will not escape the constraint imposed by/will be clamped by/
+>
+> ?
+>
+> I'm not sure if this will help if the above is already ambiguous. Maybe if
+> I explicitly say
+>
+> 	..will not escape the *range* constrained imposed by..
+>
+> sched_util_clamp_min is already defined as a range constraint, so hopefully it
+> should hit the mark better now?
 
-Because there's no other check.  Have you noticed that with your patch
-*all* files become executable?  I guess that's not what you wanted...
+Right, that also can work.
 
-Thanks,
-Miklos
+>> 
+>> > +Any modification is applied lazily on the next opportunity the scheduler needs
+>> > +to calculate the effective value of uclamp.min of the task.
+>>                     ^^^^^^^^^
+>> 
+>> This is also an implementation detail, I would remove it.
+>
+> The idea is that this value is not updated 'immediately'/synchronously. So
+> currently RUNNING tasks will not see the effect, which could generate confusion
+> when users trip over it. IMO giving an idea of how it's updated will help with
+> expectation of the users. I doubt any will care, but I think it's an important
+> behavior element that is worth conveying and documenting. I'd be happy to
+> reword it if necessary.
+
+Right, I agree on giving an hint on the lazy update. What I was pointing
+out was mainly the reference to the 'effective' value. Maybe we can just
+drop that word.
+
+> I have this now
+>
+> """
+>  984 This knob will not escape the range constraint imposed by sched_util_clamp_min
+>  985 defined above.
+>  986
+>  987 For example if
+>  988
+>  989         sched_util_clamp_min_rt_default = 800
+>  990         sched_util_clamp_min = 600
+>  991
+>  992 Then the boost will be clamped to 600 because 800 is outside of the permissible
+>  993 range of [0:600]. This could happen for instance if a powersave mode will
+>  994 restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
+>  995 this restriction is lifted, the requested sched_util_clamp_min_rt_default
+>  996 will take effect.
+>  997
+>  998 Any modification is applied lazily to currently running tasks and should be
+>  999 visible by the next wakeup.
+> """
+
+That's better IMHO, would just slightly change the last sentence to:
+
+       Any modification is applied lazily to tasks and is effective
+       starting from their next wakeup.
+
+Best,
+Patrick
+
