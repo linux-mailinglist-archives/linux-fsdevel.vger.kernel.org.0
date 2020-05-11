@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 234641CD2C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 09:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D81A1CD2D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 09:41:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgEKHii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 03:38:38 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45913 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbgEKHih (ORCPT
+        id S1728740AbgEKHlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 03:41:01 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43469 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728402AbgEKHlB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 03:38:37 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e20so6761153otk.12;
-        Mon, 11 May 2020 00:38:36 -0700 (PDT)
+        Mon, 11 May 2020 03:41:01 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g14so6759418otg.10;
+        Mon, 11 May 2020 00:41:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aNoZEZ57CrI9/0G/8w94E+hwvPuAlWx38MUKzKDQBhc=;
-        b=d2D1KuQg2lFdM1HL2D20VaQEtPK2Lj6WFQ1xyn/9oB7BCp2Chg3laEXviuTzKrwHhF
-         seauMkor0acn+p7Q66sB//sBZ1OQw7kAUrpvuyHM/ZXFrzvkgHAcneiXU4sIPmFZ/PcY
-         bHx68/Ldp4L/K238dAhyxW0zpYUkDGEjQBnLSsZXx7M3EEGVvP2y0Ul7L6owBlijsM8a
-         927V/IlXDb8Tq5n1NnJNQLotEZcuwbICuopt8SEJaNWb7ZTnd0U4SgeUPgLbEl1mbkCO
-         Fc7JADwhvl4nfdBtYlg7NzO5jn87v/UneTYEkXBoGZ9OxvdEjMI7GfQRYStT2a0mb8Ci
-         8Opg==
-X-Gm-Message-State: AGi0PuaF5nqAaSl9NkkYrpJX6O4Ym4tG9g80BYpGVS8pGO8Zp2NF9cG/
-        aUB2We/3MQfzLRzuoGlEwYs5nKXmitZdmwW1/Ug=
-X-Google-Smtp-Source: APiQypLoBt4t5N0l098m7w2IDSx4KyTJchn19q3bmw0+va1jJpmuNmPwj2oo62ETWA1hKW2oSkbgdMOlQ069s61RJoI=
-X-Received: by 2002:a9d:63da:: with SMTP id e26mr10874719otl.107.1589182716617;
- Mon, 11 May 2020 00:38:36 -0700 (PDT)
+        bh=VS2fk1JcC03oZxkfqvBGknuVzDopGVbMhfQjjlcRALA=;
+        b=ILqja3Dq36MXQ8lFuQq2JCpcnw3RBo+OG1PPqGmjzQqwrJWz1ZXK2qT0cxUMtoJC91
+         X6X7vUxSTgRgV1fDhFNkS3lQgkpFbLLG8XKg4GdWqHo6NKdcRtoD7NKOvd6ytxr4Gwvt
+         xDvYgeOn5sDI7fxr7d04Ih1WY7KlV09GCMr32bq3BDXVnvM0Xsg0U2VWimRwhzwVQYYv
+         8B++jdIxL2HCcU07HBqbT1lUnzsJPevL7Ti/Zm7QGwXwrPQsWGFIJIwE0UKpavqSlYWL
+         vi1m8GdeH4BV/3iQ2IgyePBgE/7pRq5AhiAWIebpM52dcRFxafDvvKOHu14EDveSprlF
+         1gSA==
+X-Gm-Message-State: AGi0PuZOGd7H10ajd/Ev2EsNTwCy3z4oDCBinFm2LMfLrRAlX2JaZQ4w
+        zbMs0vHS7Xjk9wo7Zldy2ZYxULrJRjmFjdKpwog=
+X-Google-Smtp-Source: APiQypLrnA3x0TQgcu4GbQXkWDUyTXgEK7R9Byl6mAxrtqxgZZGXhJd6czCyilOQXM5O9JA2CdYzbDyIV5/QIHKRb9A=
+X-Received: by 2002:a9d:63da:: with SMTP id e26mr10878643otl.107.1589182859874;
+ Mon, 11 May 2020 00:40:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200510075510.987823-1-hch@lst.de> <20200510075510.987823-27-hch@lst.de>
-In-Reply-To: <20200510075510.987823-27-hch@lst.de>
+References: <20200510075510.987823-1-hch@lst.de> <20200510075510.987823-32-hch@lst.de>
+In-Reply-To: <20200510075510.987823-32-hch@lst.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 May 2020 09:38:25 +0200
-Message-ID: <CAMuHMdUTAA_mkS-KY70ykr-n-UJxfqM09EYcVQVKA4+FSkC1Og@mail.gmail.com>
-Subject: Re: [PATCH 26/31] m68k: implement flush_icache_user_range
+Date:   Mon, 11 May 2020 09:40:39 +0200
+Message-ID: <CAMuHMdU_OxNoKfO=i903kx0mgk0-i2h4u2ase3m9_dn6oFh_5g@mail.gmail.com>
+Subject: Re: [PATCH 31/31] module: move the set_fs hack for flush_icache_range
+ to m68k
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -69,13 +70,14 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Sun, May 10, 2020 at 9:57 AM Christoph Hellwig <hch@lst.de> wrote:
-> Rename the current flush_icache_range to flush_icache_user_range as
-> per commit ae92ef8a4424 ("PATCH] flush icache in correct context") there
-> seems to be an assumption that it operates on user addresses.  Add a
-> flush_icache_range around it that for now is a no-op.
+>
+> flush_icache_range generally operates on kernel addresses, but for some
+> reason m68k needed a set_fs override.  Move that into the m68k code
+> insted of keeping it in the module loader.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
 Gr{oetje,eeting}s,
