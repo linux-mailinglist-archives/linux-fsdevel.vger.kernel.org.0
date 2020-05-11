@@ -2,135 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B60C91CE7D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 23:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 413091CE7D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 23:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgEKV55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 17:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725860AbgEKV54 (ORCPT
+        id S1728054AbgEKV7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 17:59:16 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32149 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727835AbgEKV7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 17:57:56 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E08DC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 14:57:56 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id f4so5256539iov.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 14:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LOEA6DpSly4GxOVPavYb4GjGMimohHGgAvP4sektv9U=;
-        b=nvNQWHeC6T5YiBl/SculRtn6BELdE8yhuPHgAlLRNur/H/jTaAWqsKqcWK08kaFsVV
-         RBink8ysbQCqZGVpH1nivHAhuFpVnKRAe/cHQ7nQDQ8H/3Azyk/85g8YyNEEQSKFcZkG
-         6ORqci1BlrE6xYxUo/UNGvOdnvzG9NqWrVtCznwiZip2GKHa35gbd91SNKpXV0gvhipn
-         jv9ZA4M2ccroLzqbxOJuctlQikw3+vU1xrIUATGfXgUqf4ZvVfbcEEtq7zCbCHQT2TMy
-         nNoipVwXZvY6qhsX3wmSMYs5k/E0PWvxpF8lc/vQclHq85xXM+n5qVTL1AygFJrZiqL5
-         d7uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LOEA6DpSly4GxOVPavYb4GjGMimohHGgAvP4sektv9U=;
-        b=sN+2f5G6p3koMzL2Mm53dyCLdVzdO+B/yqFoLa2n4lP/pXBiUudKaqK99XkvmUYqoV
-         OclRkJ/26rpR+eEwNLDNYNxUJy/KV230dDkynTf/A70+3QqYN9fsR4u1QkQpIhYcqEd3
-         I7jkD8o+etCUOGwy8zDvQEB9tq7niJXWZTuX7E0lq2SVmz0gd2bapYwEqVnETaPvdU7Y
-         NwuSvXTIJGvkmYarpdNxfxfsfHL4W01XRfetbM9RCjYy0xA02F3KkYGS2IETo17PMpkD
-         L4yO0x45MCZ/hLRfSycibzvYKW5631HPpNEMxkINLAQ5K5X0I5dC7W4rDy4c2qFIunLg
-         kwXQ==
-X-Gm-Message-State: AGi0Pua9xJoIJeVsyAT+EgMfVtiX0BkHeHKrkBnXhyC+f+4GCCjtW0tG
-        s0bZnSDV6csXdt0KNs7bhpTnKGj1rF20D+V4ytGzdg==
-X-Google-Smtp-Source: APiQypJPWwCeR9snfx2YNEGMQiY/LwYsyxs5X36iKAIZ7vJaprUEyvJaxFYtlNaJwWUJhHS1x2Kf9mTg+KKe68D9jOE=
-X-Received: by 2002:a02:c615:: with SMTP id i21mr7465678jan.30.1589234276037;
- Mon, 11 May 2020 14:57:56 -0700 (PDT)
+        Mon, 11 May 2020 17:59:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589234353;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=lG05Rn0O+ELWikk9dZBI+YfJaiuIbJQEERVy0w4Y7tg=;
+        b=i7zOY5nIkKTgh3tPoQ0EiZKuDKASYw6ICQdvwttTV8PoSvKjvHWDm4Jwz+vRpsU/yF51MC
+        8yHo8aQ2LkshM8zztI4lDgQ7Cuns1xWhMwMy1+eWx9sQ7QZG9SzUItjhTcvPu+ZwUC5jZn
+        0jjrztM+EG7tYVzZxNr8MH/8ODFPHGg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-426-igxqb0uCNjCy1dgbOX5KDw-1; Mon, 11 May 2020 17:59:10 -0400
+X-MC-Unique: igxqb0uCNjCy1dgbOX5KDw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED3E281C9A7;
+        Mon, 11 May 2020 21:59:08 +0000 (UTC)
+Received: from optiplex-lnx.redhat.com (unknown [10.3.128.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C18638DE2;
+        Mon, 11 May 2020 21:59:07 +0000 (UTC)
+From:   Rafael Aquini <aquini@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com
+Subject: [PATCH] kernel: sysctl: ignore invalid taint bits introduced via kernel.tainted and taint the kernel with TAINT_USER on writes
+Date:   Mon, 11 May 2020 17:59:04 -0400
+Message-Id: <20200511215904.719257-1-aquini@redhat.com>
 MIME-Version: 1.0
-References: <20200511180305.215252-1-fabf@skynet.be>
-In-Reply-To: <20200511180305.215252-1-fabf@skynet.be>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 12 May 2020 00:57:44 +0300
-Message-ID: <CAOQ4uxjs-23-sFboCSuVLVKs5jaNzv23TboM6uTP3MFve8E8sg@mail.gmail.com>
-Subject: Re: [PATCH 9/9 linux-next] fsnotify: fsnotify_clear_marks_by_group() massage
-To:     Fabian Frederick <fabf@skynet.be>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 11, 2020 at 9:03 PM Fabian Frederick <fabf@skynet.be> wrote:
->
-> revert condition and remove clear label
->
-> Signed-off-by: Fabian Frederick <fabf@skynet.be>
+The sysctl knob allows any user with SYS_ADMIN capability to
+taint the kernel with any arbitrary value, but this might
+produce an invalid flags bitset being committed to tainted_mask.
 
-Definite NACK on this one.
-It creates code churn, increases code nesting level and brings
-very little value.
-Keep up the good work, Fabian
-and try to focus on useful cleanups!
+This patch introduces a simple way for proc_taint() to ignore
+any eventual invalid bit coming from the user input before
+committing those bits to the kernel tainted_mask, as well as
+it makes clear use of TAINT_USER flag to mark the kernel
+tainted by user everytime a taint value is written
+to the kernel.tainted sysctl.
 
-Thanks,
-Amir.
+Signed-off-by: Rafael Aquini <aquini@redhat.com>
+---
+ kernel/sysctl.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 8a176d8727a3..f0a4fb38ac62 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2623,17 +2623,32 @@ static int proc_taint(struct ctl_table *table, int write,
+ 		return err;
+ 
+ 	if (write) {
++		int i;
++
++		/*
++		 * Ignore user input that would make us committing
++		 * arbitrary invalid TAINT flags in the loop below.
++		 */
++		tmptaint &= (1UL << TAINT_FLAGS_COUNT) - 1;
++
+ 		/*
+ 		 * Poor man's atomic or. Not worth adding a primitive
+ 		 * to everyone's atomic.h for this
+ 		 */
+-		int i;
+ 		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
+ 			if ((tmptaint >> i) & 1)
+ 				add_taint(i, LOCKDEP_STILL_OK);
+ 		}
++
++		/*
++		 * Users with SYS_ADMIN capability can include any arbitrary
++		 * taint flag by writing to this interface. If that's the case,
++		 * we also need to mark the kernel "tainted by user".
++		 */
++		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
+ 
++
+ 	return err;
+ }
+ 
+-- 
+2.25.4
 
-> ---
->  fs/notify/mark.c | 37 ++++++++++++++++++-------------------
->  1 file changed, 18 insertions(+), 19 deletions(-)
->
-> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-> index 1d96216dffd1..ca2eba786bb6 100644
-> --- a/fs/notify/mark.c
-> +++ b/fs/notify/mark.c
-> @@ -724,28 +724,27 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
->         LIST_HEAD(to_free);
->         struct list_head *head = &to_free;
->
-> -       /* Skip selection step if we want to clear all marks. */
-> -       if (type_mask == FSNOTIFY_OBJ_ALL_TYPES_MASK) {
-> +       if (type_mask != FSNOTIFY_OBJ_ALL_TYPES_MASK) {
-> +              /*
-> +               * We have to be really careful here. Anytime we drop mark_mutex,
-> +               * e.g. fsnotify_clear_marks_by_inode() can come and free marks.
-> +               * Even in our to_free list so we have to use mark_mutex even
-> +               * when accessing that list. And freeing mark requires us to drop
-> +               * mark_mutex. So we can reliably free only the first mark in the
-> +               * list. That's why we first move marks to free to to_free list
-> +               * in one go and then free marks in to_free list one by one.
-> +               */
-> +               mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
-> +               list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
-> +                       if ((1U << mark->connector->type) & type_mask)
-> +                               list_move(&mark->g_list, &to_free);
-> +               }
-> +               mutex_unlock(&group->mark_mutex);
-> +       } else {
-> +               /* Skip selection step if we want to clear all marks. */
->                 head = &group->marks_list;
-> -               goto clear;
->         }
-> -       /*
-> -        * We have to be really careful here. Anytime we drop mark_mutex, e.g.
-> -        * fsnotify_clear_marks_by_inode() can come and free marks. Even in our
-> -        * to_free list so we have to use mark_mutex even when accessing that
-> -        * list. And freeing mark requires us to drop mark_mutex. So we can
-> -        * reliably free only the first mark in the list. That's why we first
-> -        * move marks to free to to_free list in one go and then free marks in
-> -        * to_free list one by one.
-> -        */
-> -       mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
-> -       list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
-> -               if ((1U << mark->connector->type) & type_mask)
-> -                       list_move(&mark->g_list, &to_free);
-> -       }
-> -       mutex_unlock(&group->mark_mutex);
->
-> -clear:
->         while (1) {
->                 mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
->                 if (list_empty(head)) {
-> --
-> 2.26.2
->
