@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1A91CDF45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 17:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC92E1CDF49
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 May 2020 17:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbgEKPlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 11:41:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:34916 "EHLO foss.arm.com"
+        id S1730458AbgEKPlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 11:41:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:34946 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729751AbgEKPlR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 11:41:17 -0400
+        id S1726934AbgEKPlY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 May 2020 11:41:24 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04FB730E;
-        Mon, 11 May 2020 08:41:16 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6EB31B;
+        Mon, 11 May 2020 08:41:24 -0700 (PDT)
 Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D32E3F68F;
-        Mon, 11 May 2020 08:41:13 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0D8A3F68F;
+        Mon, 11 May 2020 08:41:21 -0700 (PDT)
 From:   Qais Yousef <qais.yousef@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>
@@ -37,71 +37,24 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Pavan Kondeti <pkondeti@codeaurora.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
-Date:   Mon, 11 May 2020 16:40:52 +0100
-Message-Id: <20200511154053.7822-1-qais.yousef@arm.com>
+Subject: [PATCH 2/2] Documentation/sysctl: Document uclamp sysctl knobs
+Date:   Mon, 11 May 2020 16:40:53 +0100
+Message-Id: <20200511154053.7822-2-qais.yousef@arm.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200511154053.7822-1-qais.yousef@arm.com>
+References: <20200511154053.7822-1-qais.yousef@arm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RT tasks by default run at the highest capacity/performance level. When
-uclamp is selected this default behavior is retained by enforcing the
-requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
-uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
-value.
+Uclamp exposes 3 sysctl knobs:
 
-This is also referred to as 'the default boost value of RT tasks'.
+	* sched_util_clamp_min
+	* sched_util_clamp_max
+	* sched_util_clamp_min_rt_default
 
-See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
-
-On battery powered devices, it is desired to control this default
-(currently hardcoded) behavior at runtime to reduce energy consumed by
-RT tasks.
-
-For example, a mobile device manufacturer where big.LITTLE architecture
-is dominant, the performance of the little cores varies across SoCs, and
-on high end ones the big cores could be too power hungry.
-
-Given the diversity of SoCs, the new knob allows manufactures to tune
-the best performance/power for RT tasks for the particular hardware they
-run on.
-
-They could opt to further tune the value when the user selects
-a different power saving mode or when the device is actively charging.
-
-The runtime aspect of it further helps in creating a single kernel image
-that can be run on multiple devices that require different tuning.
-
-Keep in mind that a lot of RT tasks in the system are created by the
-kernel. On Android for instance I can see over 50 RT tasks, only
-a handful of which created by the Android framework.
-
-To control the default behavior globally by system admins and device
-integrators, introduce the new sysctl_sched_uclamp_util_min_rt_default
-to change the default boost value of the RT tasks.
-
-I anticipate this to be mostly in the form of modifying the init script
-of a particular device.
-
-Whenever the new default changes, it'd be applied lazily on the next
-opportunity the scheduler needs to calculate the effective uclamp.min
-value for the task, assuming that it still uses the system default value
-and not a user applied one.
-
-Tested on Juno-r2 in combination with the RT capacity awareness [1].
-By default an RT task will go to the highest capacity CPU and run at the
-maximum frequency, which is particularly energy inefficient on high end
-mobile devices because the biggest core[s] are 'huge' and power hungry.
-
-With this patch the RT task can be controlled to run anywhere by
-default, and doesn't cause the frequency to be maximum all the time.
-Yet any task that really needs to be boosted can easily escape this
-default behavior by modifying its requested uclamp.min value
-(p->uclamp_req[UCLAMP_MIN]) via sched_setattr() syscall.
-
-[1] 804d402fb6f6: ("sched/rt: Make RT capacity-aware")
+Document them in sysctl/kernel.rst.
 
 Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 CC: Jonathan Corbet <corbet@lwn.net>
@@ -123,173 +76,81 @@ CC: linux-kernel@vger.kernel.org
 CC: linux-fsdevel@vger.kernel.org
 ---
 
-Changes in v5 (all from Patrick):
-	* Remove use of likely/unlikely
-	* Use short hand variable for sysctl_sched_uclamp_util_min_rt_default
-	* Combine if conditions that checks for errors when setting
-	  sysctl_sched_uclamp_util_min_rt_default
-	* Fit a comment in a single line
+Changes in v5:
+	* Improve the wording about the lazy update and the relationship to
+	  sched_util_clamp_min (Patrick)
 
-v4 discussion:
+ Documentation/admin-guide/sysctl/kernel.rst | 57 +++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-https://lore.kernel.org/lkml/20200501114927.15248-1-qais.yousef@arm.com/
-
- include/linux/sched/sysctl.h |  1 +
- kernel/sched/core.c          | 63 +++++++++++++++++++++++++++++++-----
- kernel/sysctl.c              |  7 ++++
- 3 files changed, 63 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index d4f6215ee03f..e62cef019094 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -59,6 +59,7 @@ extern int sysctl_sched_rt_runtime;
- #ifdef CONFIG_UCLAMP_TASK
- extern unsigned int sysctl_sched_uclamp_util_min;
- extern unsigned int sysctl_sched_uclamp_util_max;
-+extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
- #endif
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 0d427fd10941..6cd3cb0e22c0 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -940,6 +940,63 @@ Enables/disables scheduler statistics. Enabling this feature
+ incurs a small amount of overhead in the scheduler but is
+ useful for debugging and performance tuning.
  
- #ifdef CONFIG_CFS_BANDWIDTH
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9a2fbf98fd6f..ea1e11db78bb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -790,6 +790,26 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
- /* Max allowed maximum utilization */
- unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
- 
-+/*
-+ * By default RT tasks run at the maximum performance point/capacity of the
-+ * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
-+ * SCHED_CAPACITY_SCALE.
-+ *
-+ * This knob allows admins to change the default behavior when uclamp is being
-+ * used. In battery powered devices, particularly, running at the maximum
-+ * capacity and frequency will increase energy consumption and shorten the
-+ * battery life.
-+ *
-+ * This knob only affects RT tasks that their uclamp_se->user_defined == false.
-+ *
-+ * This knob will not override the system default sched_util_clamp_min defined
-+ * above.
-+ *
-+ * Any modification is applied lazily on the next attempt to calculate the
-+ * effective value of the task.
-+ */
-+unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
++sched_util_clamp_min:
++=====================
 +
- /* All clamps are required to be less or equal than these values */
- static struct uclamp_se uclamp_default[UCLAMP_CNT];
- 
-@@ -872,6 +892,28 @@ unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
- 	return uclamp_idle_value(rq, clamp_id, clamp_value);
- }
- 
-+static inline void uclamp_sync_util_min_rt_default(struct task_struct *p,
-+						   enum uclamp_id clamp_id)
-+{
-+	unsigned int default_util_min = sysctl_sched_uclamp_util_min_rt_default;
-+	struct uclamp_se *uc_se;
++Max allowed *minimum* utilization.
 +
-+	/* Only sync for UCLAMP_MIN and RT tasks */
-+	if (clamp_id != UCLAMP_MIN || !rt_task(p))
-+		return;
++Default value is 1024, which is the maximum possible value.
 +
-+	uc_se = &p->uclamp_req[UCLAMP_MIN];
++It means that any requested uclamp.min value cannot be greater than
++sched_util_clamp_min, i.e., it is restricted to the range
++[0:sched_util_clamp_min].
 +
-+	/*
-+	 * Only sync if user didn't override the default request and the sysctl
-+	 * knob has changed.
-+	 */
-+	if (uc_se->user_defined || uc_se->value == default_util_min)
-+		return;
++sched_util_clamp_max:
++=====================
 +
-+	uclamp_se_set(uc_se, default_util_min, false);
-+}
++Max allowed *maximum* utilization.
 +
- static inline struct uclamp_se
- uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
- {
-@@ -907,8 +949,13 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
- static inline struct uclamp_se
- uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
- {
--	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
--	struct uclamp_se uc_max = uclamp_default[clamp_id];
-+	struct uclamp_se uc_req, uc_max;
++Default value is 1024, which is the maximum possible value.
 +
-+	/* Sync up any change to sysctl_sched_uclamp_util_min_rt_default. */
-+	uclamp_sync_util_min_rt_default(p, clamp_id);
++It means that any requested uclamp.max value cannot be greater than
++sched_util_clamp_max, i.e., it is restricted to the range
++[0:sched_util_clamp_max].
 +
-+	uc_req = uclamp_tg_restrict(p, clamp_id);
-+	uc_max = uclamp_default[clamp_id];
- 
- 	/* System default restrictions always apply */
- 	if (unlikely(uc_req.value > uc_max.value))
-@@ -1114,12 +1161,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
- 				loff_t *ppos)
- {
- 	bool update_root_tg = false;
--	int old_min, old_max;
-+	int old_min, old_max, old_min_rt;
- 	int result;
- 
- 	mutex_lock(&uclamp_mutex);
- 	old_min = sysctl_sched_uclamp_util_min;
- 	old_max = sysctl_sched_uclamp_util_max;
-+	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
- 
- 	result = proc_dointvec(table, write, buffer, lenp, ppos);
- 	if (result)
-@@ -1128,7 +1176,9 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
- 		goto done;
- 
- 	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
--	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
-+	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE		||
-+	    sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
++sched_util_clamp_min_rt_default:
++================================
 +
- 		result = -EINVAL;
- 		goto undo;
- 	}
-@@ -1158,6 +1208,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
- undo:
- 	sysctl_sched_uclamp_util_min = old_min;
- 	sysctl_sched_uclamp_util_max = old_max;
-+	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
- done:
- 	mutex_unlock(&uclamp_mutex);
++By default Linux is tuned for performance. Which means that RT tasks always run
++at the highest frequency and most capable (highest capacity) CPU (in
++heterogeneous systems).
++
++Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
++1024 by default, which effectively boosts the tasks to run at the highest
++frequency and biases them to run on the biggest CPU.
++
++This knob allows admins to change the default behavior when uclamp is being
++used. In battery powered devices particularly, running at the maximum
++capacity and frequency will increase energy consumption and shorten the battery
++life.
++
++This knob is only effective for RT tasks which the user hasn't modified their
++requested uclamp.min value via sched_setattr() syscall.
++
++This knob will not escape the range constraint imposed by sched_util_clamp_min
++defined above.
++
++For example if
++
++	sched_util_clamp_min_rt_default = 800
++	sched_util_clamp_min = 600
++
++Then the boost will be clamped to 600 because 800 is outside of the permissible
++range of [0:600]. This could happen for instance if a powersave mode will
++restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
++this restriction is lifted, the requested sched_util_clamp_min_rt_default
++will take effect.
++
++Any modification is applied lazily to tasks and is effective starting from
++their next wakeup.
  
-@@ -1200,10 +1251,6 @@ static void __setscheduler_uclamp(struct task_struct *p,
- 		if (uc_se->user_defined)
- 			continue;
- 
--		/* By default, RT tasks always get 100% boost */
--		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
--			clamp_value = uclamp_none(UCLAMP_MAX);
--
- 		uclamp_se_set(uc_se, clamp_value, false);
- 	}
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 8a176d8727a3..64117363c502 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -453,6 +453,13 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= sysctl_sched_uclamp_handler,
- 	},
-+	{
-+		.procname	= "sched_util_clamp_min_rt_default",
-+		.data		= &sysctl_sched_uclamp_util_min_rt_default,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sysctl_sched_uclamp_handler,
-+	},
- #endif
- #ifdef CONFIG_SCHED_AUTOGROUP
- 	{
+ seccomp
+ =======
 -- 
 2.17.1
 
