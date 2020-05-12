@@ -2,132 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C1C1CFE3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 21:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 146CF1CFE79
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 21:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731014AbgELTZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 15:25:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730999AbgELTZ0 (ORCPT
+        id S1730864AbgELTiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 15:38:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64932 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725554AbgELTiP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 15:25:26 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98033C061A0F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 12:25:26 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id e6so9883185pjt.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 12:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zuvKbkxXexDFgEr1pGnuiyt05zDdT11JeOxs67G6etM=;
-        b=QrgzGmWQtElD5mjDu3W8wIpwV1hy6zO5D4IGwwOsKgvGqbaM7TGjkewco9AYTSGXlv
-         dWsAVSyFtoNXZ/+C554O1raxb4PYKxPNEq4eBRLvewfg2sLpL6VawYdI7rYRn9aSZHkd
-         3QqRZuo0mp94NP4bIrrxWUWlYjP41OnHwnU2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zuvKbkxXexDFgEr1pGnuiyt05zDdT11JeOxs67G6etM=;
-        b=hEHXoearuJ8kYkiAxIAtwunsAmltDm64HHf1VbJhghoh6W1l6kkXzYa5EnzQkQ2fYO
-         oCuaR49s2fToMzTBtHcZbdJJI4SjcZ5qi8Ovnv0d9T6gPipjYylmnRFLKzl/eCDrYK+X
-         m16wSJNyuuQHGJ3Nq4mL0D+b9sS3b0PvO2QFT2pAJoyWP1l6RwA35DF66kIhrO388HGS
-         K+wtzEgyDZssLUy18lyBiafcYCYQvzFNfYsMLos3CBTxMO54CF18djfrhD5C+MmhZoBV
-         a8eaE4KhdleWltMQkWuQb6bm23hxuBj7ivYGmps5aYUg3BvWewM9s5fT2wd47Lg4C3UJ
-         3feQ==
-X-Gm-Message-State: AGi0PubGnb0XsxYIpHazw6REzqQbDvMbl/v4+l2JYefq/M+P5b9jTYHd
-        doenkHtuVhfc3nUSIwoJEQTKCw==
-X-Google-Smtp-Source: APiQypLJuiWQRFv5kofh3l2xnXnOJoCBvEnuis0K48GEmJut0JZfFKUjUksikIwYvKq/qZ8mSMhu+g==
-X-Received: by 2002:a17:902:103:: with SMTP id 3mr21731839plb.325.1589311526054;
-        Tue, 12 May 2020 12:25:26 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 3sm12789369pfo.27.2020.05.12.12.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 12:25:25 -0700 (PDT)
-Date:   Tue, 12 May 2020 12:25:24 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-Message-ID: <202005121218.ED0B728DA@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87eerszyim.fsf_-_@x220.int.ebiederm.org>
- <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
- <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
- <87sgg6v8we.fsf@x220.int.ebiederm.org>
- <202005111428.B094E3B76A@keescook>
- <874kslq9jm.fsf@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874kslq9jm.fsf@x220.int.ebiederm.org>
+        Tue, 12 May 2020 15:38:15 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04CJWmE5032796;
+        Tue, 12 May 2020 15:38:08 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3101kmrxxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 15:38:07 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04CJWnD2032993;
+        Tue, 12 May 2020 15:38:07 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3101kmrxx3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 15:38:07 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04CJZbMA000708;
+        Tue, 12 May 2020 19:38:05 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3100ub83s0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 19:38:05 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04CJc3SG7143692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 19:38:03 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7400542042;
+        Tue, 12 May 2020 19:38:03 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35D0942041;
+        Tue, 12 May 2020 19:38:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.144.67])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 May 2020 19:38:02 +0000 (GMT)
+Message-ID: <1589312281.5098.91.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Tue, 12 May 2020 15:38:01 -0400
+In-Reply-To: <fcdb168d27214b5e85c3b741f184cde9@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+         <1589293025.5098.53.camel@linux.ibm.com>
+         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+         <1589298622.5098.67.camel@linux.ibm.com>
+         <fcdb168d27214b5e85c3b741f184cde9@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-12_06:2020-05-11,2020-05-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ cotscore=-2147483648 mlxlogscore=999 adultscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005120144
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 01:42:53PM -0500, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
-> > Should binfmt_misc do the install, or can the consuming binfmt do it?
-> > i.e. when binfmt_elf sees bprm->execfd, does it perform the install
-> > instead?
+On Tue, 2020-05-12 at 16:31 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+
+> > > > Each time the EVM protected file metadata is updated, the EVM HMAC
+> > is
+> > > > updated, assuming the existing EVM HMAC is valid.  Userspace should
+> > > > not have access to the HMAC key, so we only allow writing EVM
+> > > > signatures.
+> > > >
+> > > > The only difference between writing the original EVM signature and the
+> > > > new portable and immutable signature is the security.ima xattr
+> > > > requirement.  Since the new EVM signature does not include the
+> > > > filesystem specific data, something else needs to bind the file
+> > > > metadata to the file data.  Thus the IMA xattr requirement.
+> > > >
+> > > > Assuming that the new EVM signature is written last, as long as there
+> > > > is an IMA xattr, there shouldn't be a problem writing the new EVM
+> > > > signature.
+> > >
+> > >         /* first need to know the sig type */
+> > >         rc = vfs_getxattr_alloc(dentry, XATTR_NAME_EVM, (char
+> > **)&xattr_data, 0,
+> > >                                 GFP_NOFS);
+> > >         if (rc <= 0) {
+> > >                 evm_status = INTEGRITY_FAIL;
+> > >                 if (rc == -ENODATA) {
+> > >                         rc = evm_find_protected_xattrs(dentry);
+> > >                         if (rc > 0)
+> > >                                 evm_status = INTEGRITY_NOLABEL;
+> > >                         else if (rc == 0)
+> > >                                 evm_status = INTEGRITY_NOXATTRS; /* new file */
+> > >
+> > > If EVM_ALLOW_METADATA_WRITES is cleared, only the first xattr
+> > > can be written (status INTEGRITY_NOXATTRS is ok). After,
+> > > evm_find_protected_xattrs() returns rc > 0, so the status is
+> > > INTEGRITY_NOLABEL, which is not ignored by evm_protect_xattr().
+> > 
+> > With EVM HMAC enabled, as a result of writing the first protected
+> > xattr, an EVM HMAC should be calculated and written in
+> > evm_inode_post_setxattr().
 > 
-> I am still thinking about this one, but here is where I am at.  At a
-> practical level passing the file descriptor of the script to interpreter
-> seems like something we should encourage in the long term.  It removes
-> races and it is cheaper because then the interpreter does not have to
-> turn around and open the script itself.
+> To solve the ordering issue, wouldn't allowing setxattr() on a file
+> with portable signature that does not yet pass verification be safe?
+> evm_update_evmxattr() checks if the signature is portable and
+> if yes, does not calculate the HMAC.
 
-Yeah, this does sounds pretty good, though I have concerns about doing
-it for a process that isn't expecting it. I've seen a lot of bad code
-make assumptions about initial fd numbers. :(
+Before agreeing to allowing the protected xattrs to be written on a
+file with a portable signature that does not yet pass verification are
+safe, would we be introducing any new types of attacks?
 
-> Strictly speaking binfmt_misc should not need to close the file
-> descriptor in binfmt_misc because we have already unshared the files
-> struct and reset_files_struct should handle restoring it.
+For example, would we differentiate between portable signatures that
+don't pass verification and ones that do?  If we don't differentiate,
+could it be used for DoS?  Should it be limited to new files?
 
-If I get what you mean, I agree. The error case is fine.
-
-> Calling fd_install in binfmt_misc still seems wrong, as that exposes
-> the new file descriptor to user space with the old creds.
-
-I haven't dug into the details here -- is there a real risk here? The
-old creds are what opened the file originally for the exec. Are you
-thinking about executable-but-not-readable files?
-
-> It is possible although unlikely for userspace to find the file
-> descriptor without consulting AT_EXECFD so just to be conservative I
-> think we should install the file descriptor in begin_new_exec even if
-> the next interpreter does not support AT_EXECFD.
-
-I think universally installing the fd needs to be a distinct patch --
-it's going to have a lot of consequences, IMO. We can certainly deal
-with them, but I don't think it should be part of this clean-up series.
-
-> I am still working on how to handle recursive binfmts but I suspect it
-> is just a matter of having an array of struct files in struct
-> linux_binprm.
-
-If install is left if binfmt_misc, then the recursive problem goes away,
-yes?
-
--- 
-Kees Cook
+Mimi
