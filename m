@@ -2,178 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95D981CF991
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BFF1CF9A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgELPq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 11:46:58 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34082 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbgELPq6 (ORCPT
+        id S1730628AbgELPuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 11:50:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32094 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726388AbgELPuv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 11:46:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x15so5951681pfa.1;
-        Tue, 12 May 2020 08:46:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MtYywY2K25Oxq0Q4HERqyfecqjUp660Gxl2wjqqJEco=;
-        b=K9KDijmUF4wLBIeOBTxCTkJgQNWeajH6Hd3ouungWOexP5d/4FZnuYDGIwFKWypMXU
-         wugts2knPsap/6bvexDzME+YoJ3B/pVAboYRlriXLmsU+TeFOEkce5zUyvLOUjUapqan
-         s7N9ZlLxihcWTkmq3Y6jhRZ6WRLNafAvgCahBEqAhn6Zb8pskqOnC/qYJ7OTtkWZ8UX+
-         iYl4P+LoLw82V5LGb4G/R5/3g+/8nyhfevNwPwjbpcxHfYGPMvc9N7mMUXWx4pYNyeuw
-         kPqulKWM2K/+6O2GiGolSj4MnFTs4cbMQrbCsLZ/98UJ8Uw4CpmFYQdihvSOp6lXCn8W
-         +y3g==
-X-Gm-Message-State: AGi0PuYrqDwsS5dnzxVehuBc4HWau52wGicxFcySf5XommnamyNtuLSp
-        bTmIFw2FdiiE+nbiQhV91ejnsxJWWNA=
-X-Google-Smtp-Source: APiQypKJGsnCdzJstpku2315Yntqu27dW6PJlc3/S/r5xTdjKrCftQi2kBJztLOOnGqcDiT5iJZ+0w==
-X-Received: by 2002:a63:de49:: with SMTP id y9mr19730658pgi.435.1589298416999;
-        Tue, 12 May 2020 08:46:56 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p3sm2104413pjh.22.2020.05.12.08.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 08:46:55 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C8C9B4063E; Tue, 12 May 2020 15:46:54 +0000 (UTC)
-Date:   Tue, 12 May 2020 15:46:54 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Rafael Aquini <aquini@redhat.com>
-Cc:     Tso Ted <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, keescook@chromium.org,
-        yzaikin@google.com
-Subject: Re: [PATCH] kernel: sysctl: ignore invalid taint bits introduced via
- kernel.tainted and taint the kernel with TAINT_USER on writes
-Message-ID: <20200512154654.GA11244@42.do-not-panic.com>
-References: <20200511215904.719257-1-aquini@redhat.com>
- <20200511231045.GV11244@42.do-not-panic.com>
- <20200511235914.GF367616@optiplex-lnx>
- <20200512001702.GW11244@42.do-not-panic.com>
- <20200512010313.GA725253@optiplex-lnx>
- <20200512050405.GY11244@42.do-not-panic.com>
- <20200512144906.GG367616@optiplex-lnx>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Tue, 12 May 2020 11:50:51 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04CFZgS0193662;
+        Tue, 12 May 2020 11:50:29 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw55wxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 11:50:29 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04CFbG10007232;
+        Tue, 12 May 2020 11:50:28 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw55wx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 11:50:28 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04CFoBnV004421;
+        Tue, 12 May 2020 15:50:27 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55esms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 15:50:26 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04CFnDnQ64225606
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 15:49:13 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3292A405C;
+        Tue, 12 May 2020 15:50:24 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C4B7A405F;
+        Tue, 12 May 2020 15:50:23 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.144.67])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 May 2020 15:50:23 +0000 (GMT)
+Message-ID: <1589298622.5098.67.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Tue, 12 May 2020 11:50:22 -0400
+In-Reply-To: <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+         <1589293025.5098.53.camel@linux.ibm.com>
+         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200512144906.GG367616@optiplex-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-12_04:2020-05-11,2020-05-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005120115
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 10:49:06AM -0400, Rafael Aquini wrote:
-> On Tue, May 12, 2020 at 05:04:05AM +0000, Luis Chamberlain wrote:
-> > On Mon, May 11, 2020 at 09:03:13PM -0400, Rafael Aquini wrote:
-> > > On Tue, May 12, 2020 at 12:17:03AM +0000, Luis Chamberlain wrote:
-> > > > On Mon, May 11, 2020 at 07:59:14PM -0400, Rafael Aquini wrote:
-> > > > > On Mon, May 11, 2020 at 11:10:45PM +0000, Luis Chamberlain wrote:
-> > > > > > On Mon, May 11, 2020 at 05:59:04PM -0400, Rafael Aquini wrote:
-> > > > > > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > > > > > > index 8a176d8727a3..f0a4fb38ac62 100644
-> > > > > > > --- a/kernel/sysctl.c
-> > > > > > > +++ b/kernel/sysctl.c
-> > > > > > > @@ -2623,17 +2623,32 @@ static int proc_taint(struct ctl_table *table, int write,
-> > > > > > >  		return err;
-> > > > > > >  
-> > > > > > >  	if (write) {
-> > > > > > > +		int i;
-> > > > > > > +
-> > > > > > > +		/*
-> > > > > > > +		 * Ignore user input that would make us committing
-> > > > > > > +		 * arbitrary invalid TAINT flags in the loop below.
-> > > > > > > +		 */
-> > > > > > > +		tmptaint &= (1UL << TAINT_FLAGS_COUNT) - 1;
-> > > > > > 
-> > > > > > This looks good but we don't pr_warn() of information lost on intention.
-> > > > > >
-> > > > > 
-> > > > > Are you thinking in sth like:
-> > > > > 
-> > > > > +               if (tmptaint > TAINT_FLAGS_MAX) {
-> > > > > +                       tmptaint &= TAINT_FLAGS_MAX;
-> > > > > +                       pr_warn("proc_taint: out-of-range invalid input ignored"
-> > > > > +                               " tainted_mask adjusted to 0x%x\n", tmptaint);
-> > > > > +               }
-> > > > > ?
-> > > > 
-> > > > Sure that would clarify this.
-> > > > 
-> > > > > > > +
-> > > > > > >  		/*
-> > > > > > >  		 * Poor man's atomic or. Not worth adding a primitive
-> > > > > > >  		 * to everyone's atomic.h for this
-> > > > > > >  		 */
-> > > > > > > -		int i;
-> > > > > > >  		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
-> > > > > > >  			if ((tmptaint >> i) & 1)
-> > > > > > >  				add_taint(i, LOCKDEP_STILL_OK);
-> > > > > > >  		}
-> > > > > > > +
-> > > > > > > +		/*
-> > > > > > > +		 * Users with SYS_ADMIN capability can include any arbitrary
-> > > > > > > +		 * taint flag by writing to this interface. If that's the case,
-> > > > > > > +		 * we also need to mark the kernel "tainted by user".
-> > > > > > > +		 */
-> > > > > > > +		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-> > > > > > 
-> > > > > > I'm in favor of this however I'd like to hear from Ted on if it meets
-> > > > > > the original intention. I would think he had a good reason not to add
-> > > > > > it here.
-> > > > > >
-> > > > > 
-> > > > > Fair enough. The impression I got by reading Ted's original commit
-> > > > > message is that the intent was to have TAINT_USER as the flag set 
-> > > > > via this interface, even though the code was allowing for any 
-> > > > > arbitrary value.
-> > > > 
-> > > > That wasn't my reading, it was that the user did something very odd
-> > > > with user input which we don't like as kernel developers, and it gives
-> > > > us a way to prove: hey you did something stupid, sorry but I cannot
-> > > > support your kernel panic.
-> > > > 
-> > > > > I think it's OK to let the user fiddle with
-> > > > > the flags, as it's been allowed since the introduction of
-> > > > > this interface, but we need to reflect that fact in the
-> > > > > tainting itself. Since TAINT_USER is not used anywhere,
-> > > > 
-> > > > I see users of TAINT_USER sprinkled around
+On Tue, 2020-05-12 at 15:31 +0000, Roberto Sassu wrote:
+> > From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-
+> > security-module@vger.kernel.org] On Behalf Of Mimi Zohar
+> > Sent: Tuesday, May 12, 2020 4:17 PM
+> > On Tue, 2020-05-12 at 07:54 +0000, Roberto Sassu wrote:
+> > > > > > Roberto, EVM is only triggered by IMA, unless you've modified the
+> > > > > > kernel to do otherwise.
+> > > > >
+> > > > > EVM would deny xattr/attr operations even if IMA is disabled in the
+> > > > > kernel configuration. For example, evm_setxattr() returns the value
+> > > > > from evm_protect_xattr(). IMA is not involved there.
 > > > >
-> > > 
-> > > I meant in the original commit that introduced it
-> > > (commit 34f5a39899f3f3e815da64f48ddb72942d86c366). Sorry I
-> > > miscomunicated that.
-> > > 
-> > > In its current usage, it seems that the other places adding TAINT_USER
-> > > match with what is being proposed here: To signal when we have user 
-> > > fiddling with kernel / module parameters.
+> > > > Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
+> > > > EVM-protected metadata")
+> > introduced EVM_ALLOW_METADATA_WRITES
+> > > > to allow writing the EVM portable and immutable file signatures.
+> > >
+> > > According to Documentation/ABI/testing/evm:
+> > >
+> > > Note that once a key has been loaded, it will no longer be
+> > > possible to enable metadata modification.
 > > 
-> > drivers/base/regmap/regmap-debugfs.c requires *manual* code changes
-> > to compile / enable some knob. i915 complains about unsafe module
-> > params such as module_param_cb_unsafe() core_param_unsafe(). Then
-> > drivers/soundwire/cadence_master.c is for when a debugfs dangerous
-> > param was used.
+> > Not any key, but the HMAC key.
 > > 
-> > This still doesn't rule out the use of proc_taint() for testing taint,
-> > and that adding it may break some tests. So even though this would
-> > only affect some tests scripts, I can't say that adding this taint won't
-> > cause some headaches to someone. I wouldn't encourage its use on
-> > proc_taint() from what I can see so far.
-> >
+> > 2         Permit modification of EVM-protected metadata at
+> >           runtime. Not supported if HMAC validation and
+> >           creation is enabled.
 > 
-> OK, I�ll repost without the hunk forcing the taint. If we eventually
-> come to the conclusion that tainting in proc_taint() is the right thing
-> to do, we can do that part of the change later.
+> #ifdef CONFIG_EVM_LOAD_X509
+> void __init evm_load_x509(void)
+> {
+> [...]
+>         rc = integrity_load_x509(INTEGRITY_KEYRING_EVM, CONFIG_EVM_X509_PATH);
+>         if (!rc)
+>                 evm_initialized |= EVM_INIT_X509;
+> 
+> 
+> static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>                              size_t count, loff_t *ppos)
+> {
+> [...]
+>         /* Don't allow a request to freshly enable metadata writes if
+>          * keys are loaded.
+>          */
+>         if ((i & EVM_ALLOW_METADATA_WRITES) &&
+>             ((evm_initialized & EVM_KEY_MASK) != 0) &&
+>             !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>                 return -EPERM;
+> 
+> Should have been:
+> 
+>         if ((i & EVM_ALLOW_METADATA_WRITES) &&
+>             ((evm_initialized & EVM_INIT_HMAC) != 0) &&
+>             !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>                 return -EPERM;
 
-Just add another taint, we have 64 bits and according to you we won't
-ever run out. TAINT_CUSTOM or whatever.
+Ok
 
-> Do you think we should use printk_ratelimited() in the ignore message,
-> instead? 
+> 
+> > Each time the EVM protected file metadata is updated, the EVM HMAC is
+> > updated, assuming the existing EVM HMAC is valid.  Userspace should
+> > not have access to the HMAC key, so we only allow writing EVM
+> > signatures.
+> > 
+> > The only difference between writing the original EVM signature and the
+> > new portable and immutable signature is the security.ima xattr
+> > requirement.  Since the new EVM signature does not include the
+> > filesystem specific data, something else needs to bind the file
+> > metadata to the file data.  Thus the IMA xattr requirement.
+> > 
+> > Assuming that the new EVM signature is written last, as long as there
+> > is an IMA xattr, there shouldn't be a problem writing the new EVM
+> > signature.
+> 
+>         /* first need to know the sig type */
+>         rc = vfs_getxattr_alloc(dentry, XATTR_NAME_EVM, (char **)&xattr_data, 0,
+>                                 GFP_NOFS);
+>         if (rc <= 0) {
+>                 evm_status = INTEGRITY_FAIL;
+>                 if (rc == -ENODATA) {
+>                         rc = evm_find_protected_xattrs(dentry);
+>                         if (rc > 0)
+>                                 evm_status = INTEGRITY_NOLABEL;
+>                         else if (rc == 0)
+>                                 evm_status = INTEGRITY_NOXATTRS; /* new file */
+> 
+> If EVM_ALLOW_METADATA_WRITES is cleared, only the first xattr
+> can be written (status INTEGRITY_NOXATTRS is ok). After,
+> evm_find_protected_xattrs() returns rc > 0, so the status is
+> INTEGRITY_NOLABEL, which is not ignored by evm_protect_xattr().
 
-No, that's for when there are many prints at the same time, you probably
-want pr_warn_once().
+With EVM HMAC enabled, as a result of writing the first protected
+xattr, an EVM HMAC should be calculated and written in
+evm_inode_post_setxattr().
 
-  Luis
+Mimi
