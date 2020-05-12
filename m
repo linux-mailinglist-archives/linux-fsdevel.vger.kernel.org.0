@@ -2,147 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5561CF960
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D981CF991
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730823AbgELPha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 11:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730818AbgELPh3 (ORCPT
+        id S1727856AbgELPq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 11:46:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34082 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbgELPq6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 11:37:29 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF740C061A0F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:37:28 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id d21so6483183ljg.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U3mfWUpC6bH/0PPzXG5Sq3RBRbSppz1EWcuNQTMG4no=;
-        b=OtmcAawdVwZKG0M4kx0M+jrAJrJ1G8XEe6FS6/gIpKW8YlvvcI+MbEI73prV/Re8NB
-         kfVrqKnsXX/z8j2S9JCcSMF+x9IrlFuT/dRhsCYoWSO9brOKkkel3EoQT9HVHNkOAFZR
-         u3SK7kTeFtpAVEIs+r01cEzhEPtSvAoIMgaPmloMPyD3Sr3wevwmfBffVsZkDrv0tiew
-         Ej6+/AVE05h8zDM0MwzyKbGmq6f9TF8ftwLcPe3t24NEOU0sxN5kl8ufSEKoc3N4xNzD
-         S9oXqMeVmjGsNSGA3d2JW1HsaLgJyKm6mEFB19vsJrI2yzuz6Ih6kU4pvoADlSdXFnaV
-         +paQ==
+        Tue, 12 May 2020 11:46:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x15so5951681pfa.1;
+        Tue, 12 May 2020 08:46:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U3mfWUpC6bH/0PPzXG5Sq3RBRbSppz1EWcuNQTMG4no=;
-        b=UWq1I8LOGHJfYfi1yeZjT4wHmPGPv3vNOlp/niGOQn+in59Q/ig5VB3b75GwsSXOKc
-         eftp6Hmuh1ZvHDc7kBio60WtLakSsZJ7dS7Q2TyBtvv0NVcD83ey1cwtBvKM6TirQskn
-         sybVGeHc9shDpy4H/EWH7oYjzxSZKKK1xJqRa2ICnPAPZHVUGzMBLeWHOrfpxOK22feD
-         GTGe5EAKCPmicKJb/Iwdb4PD8qwgofnh8YbrbT4pvOU1mzuVQf2sPIevMZ/YMQAzSzjj
-         y4hLYQsJn5e5JlU4HvshFNoOLFvdxY3QVZnKmaEEHlxfS8b18Tza0uTLSi/grGJdWxZB
-         S+Kg==
-X-Gm-Message-State: AOAM5302B9aQXLW+oRa7OKSPwpDSlStnjx6Kvgng4aNO6JTgng3/mbvu
-        baJ596esyzEn79F6rvS0UQnPzzNPNXYi+zYnXK+bUA==
-X-Google-Smtp-Source: ABdhPJzSzvPBzHJJyhmdNxeCDNn0RGhxwM4L9OsASaWkxZEseTcQrITCOOAq3lvC6NY1FGK3OODa4SHdRTxY9uynbbg=
-X-Received: by 2002:a2e:9455:: with SMTP id o21mr14273685ljh.245.1589297847090;
- Tue, 12 May 2020 08:37:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=MtYywY2K25Oxq0Q4HERqyfecqjUp660Gxl2wjqqJEco=;
+        b=K9KDijmUF4wLBIeOBTxCTkJgQNWeajH6Hd3ouungWOexP5d/4FZnuYDGIwFKWypMXU
+         wugts2knPsap/6bvexDzME+YoJ3B/pVAboYRlriXLmsU+TeFOEkce5zUyvLOUjUapqan
+         s7N9ZlLxihcWTkmq3Y6jhRZ6WRLNafAvgCahBEqAhn6Zb8pskqOnC/qYJ7OTtkWZ8UX+
+         iYl4P+LoLw82V5LGb4G/R5/3g+/8nyhfevNwPwjbpcxHfYGPMvc9N7mMUXWx4pYNyeuw
+         kPqulKWM2K/+6O2GiGolSj4MnFTs4cbMQrbCsLZ/98UJ8Uw4CpmFYQdihvSOp6lXCn8W
+         +y3g==
+X-Gm-Message-State: AGi0PuYrqDwsS5dnzxVehuBc4HWau52wGicxFcySf5XommnamyNtuLSp
+        bTmIFw2FdiiE+nbiQhV91ejnsxJWWNA=
+X-Google-Smtp-Source: APiQypKJGsnCdzJstpku2315Yntqu27dW6PJlc3/S/r5xTdjKrCftQi2kBJztLOOnGqcDiT5iJZ+0w==
+X-Received: by 2002:a63:de49:: with SMTP id y9mr19730658pgi.435.1589298416999;
+        Tue, 12 May 2020 08:46:56 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p3sm2104413pjh.22.2020.05.12.08.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 08:46:55 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id C8C9B4063E; Tue, 12 May 2020 15:46:54 +0000 (UTC)
+Date:   Tue, 12 May 2020 15:46:54 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Rafael Aquini <aquini@redhat.com>
+Cc:     Tso Ted <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, keescook@chromium.org,
+        yzaikin@google.com
+Subject: Re: [PATCH] kernel: sysctl: ignore invalid taint bits introduced via
+ kernel.tainted and taint the kernel with TAINT_USER on writes
+Message-ID: <20200512154654.GA11244@42.do-not-panic.com>
+References: <20200511215904.719257-1-aquini@redhat.com>
+ <20200511231045.GV11244@42.do-not-panic.com>
+ <20200511235914.GF367616@optiplex-lnx>
+ <20200512001702.GW11244@42.do-not-panic.com>
+ <20200512010313.GA725253@optiplex-lnx>
+ <20200512050405.GY11244@42.do-not-panic.com>
+ <20200512144906.GG367616@optiplex-lnx>
 MIME-Version: 1.0
-References: <20200511224430.HDJjRC68z%akpm@linux-foundation.org>
- <3b612c3e-ce52-ba92-eb02-0fa7fd38819f@infradead.org> <20200512121750.GA397968@cmpxchg.org>
-In-Reply-To: <20200512121750.GA397968@cmpxchg.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 12 May 2020 21:07:15 +0530
-Message-ID: <CA+G9fYvZ1SFX1b7+3_X9L+snPxV_zGHykuDD96Me+gM++BYTBg@mail.gmail.com>
-Subject: Re: mmotm 2020-05-11-15-43 uploaded (mm/memcontrol.c, huge pages)
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        mhocko@suse.cz, mm-commits@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200512144906.GG367616@optiplex-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> The THP page size macros are CONFIG_TRANSPARENT_HUGEPAGE only.
->
-> We already ifdef most THP-related code in memcg, but not these
-> particular stats. Memcg used to track the pages as they came in, and
-> PageTransHuge() + hpage_nr_pages() work when THP is not compiled in.
->
-> Switching to native vmstat counters, memcg doesn't see the pages, it
-> only gets a count of THPs. To translate that to bytes, it has to know
-> how big the THPs are - and that's only available for CONFIG_THP.
->
-> Add the necessary ifdefs. /proc/meminfo, smaps etc. also don't show
-> the THP counters when the feature is compiled out. The event counts
-> (THP_FAULT_ALLOC, THP_COLLAPSE_ALLOC) were already conditional also.
->
-> Style touchup: HPAGE_PMD_NR * PAGE_SIZE is silly. Use HPAGE_PMD_SIZE.
+On Tue, May 12, 2020 at 10:49:06AM -0400, Rafael Aquini wrote:
+> On Tue, May 12, 2020 at 05:04:05AM +0000, Luis Chamberlain wrote:
+> > On Mon, May 11, 2020 at 09:03:13PM -0400, Rafael Aquini wrote:
+> > > On Tue, May 12, 2020 at 12:17:03AM +0000, Luis Chamberlain wrote:
+> > > > On Mon, May 11, 2020 at 07:59:14PM -0400, Rafael Aquini wrote:
+> > > > > On Mon, May 11, 2020 at 11:10:45PM +0000, Luis Chamberlain wrote:
+> > > > > > On Mon, May 11, 2020 at 05:59:04PM -0400, Rafael Aquini wrote:
+> > > > > > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > > > > > > index 8a176d8727a3..f0a4fb38ac62 100644
+> > > > > > > --- a/kernel/sysctl.c
+> > > > > > > +++ b/kernel/sysctl.c
+> > > > > > > @@ -2623,17 +2623,32 @@ static int proc_taint(struct ctl_table *table, int write,
+> > > > > > >  		return err;
+> > > > > > >  
+> > > > > > >  	if (write) {
+> > > > > > > +		int i;
+> > > > > > > +
+> > > > > > > +		/*
+> > > > > > > +		 * Ignore user input that would make us committing
+> > > > > > > +		 * arbitrary invalid TAINT flags in the loop below.
+> > > > > > > +		 */
+> > > > > > > +		tmptaint &= (1UL << TAINT_FLAGS_COUNT) - 1;
+> > > > > > 
+> > > > > > This looks good but we don't pr_warn() of information lost on intention.
+> > > > > >
+> > > > > 
+> > > > > Are you thinking in sth like:
+> > > > > 
+> > > > > +               if (tmptaint > TAINT_FLAGS_MAX) {
+> > > > > +                       tmptaint &= TAINT_FLAGS_MAX;
+> > > > > +                       pr_warn("proc_taint: out-of-range invalid input ignored"
+> > > > > +                               " tainted_mask adjusted to 0x%x\n", tmptaint);
+> > > > > +               }
+> > > > > ?
+> > > > 
+> > > > Sure that would clarify this.
+> > > > 
+> > > > > > > +
+> > > > > > >  		/*
+> > > > > > >  		 * Poor man's atomic or. Not worth adding a primitive
+> > > > > > >  		 * to everyone's atomic.h for this
+> > > > > > >  		 */
+> > > > > > > -		int i;
+> > > > > > >  		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
+> > > > > > >  			if ((tmptaint >> i) & 1)
+> > > > > > >  				add_taint(i, LOCKDEP_STILL_OK);
+> > > > > > >  		}
+> > > > > > > +
+> > > > > > > +		/*
+> > > > > > > +		 * Users with SYS_ADMIN capability can include any arbitrary
+> > > > > > > +		 * taint flag by writing to this interface. If that's the case,
+> > > > > > > +		 * we also need to mark the kernel "tainted by user".
+> > > > > > > +		 */
+> > > > > > > +		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+> > > > > > 
+> > > > > > I'm in favor of this however I'd like to hear from Ted on if it meets
+> > > > > > the original intention. I would think he had a good reason not to add
+> > > > > > it here.
+> > > > > >
+> > > > > 
+> > > > > Fair enough. The impression I got by reading Ted's original commit
+> > > > > message is that the intent was to have TAINT_USER as the flag set 
+> > > > > via this interface, even though the code was allowing for any 
+> > > > > arbitrary value.
+> > > > 
+> > > > That wasn't my reading, it was that the user did something very odd
+> > > > with user input which we don't like as kernel developers, and it gives
+> > > > us a way to prove: hey you did something stupid, sorry but I cannot
+> > > > support your kernel panic.
+> > > > 
+> > > > > I think it's OK to let the user fiddle with
+> > > > > the flags, as it's been allowed since the introduction of
+> > > > > this interface, but we need to reflect that fact in the
+> > > > > tainting itself. Since TAINT_USER is not used anywhere,
+> > > > 
+> > > > I see users of TAINT_USER sprinkled around
+> > > >
+> > > 
+> > > I meant in the original commit that introduced it
+> > > (commit 34f5a39899f3f3e815da64f48ddb72942d86c366). Sorry I
+> > > miscomunicated that.
+> > > 
+> > > In its current usage, it seems that the other places adding TAINT_USER
+> > > match with what is being proposed here: To signal when we have user 
+> > > fiddling with kernel / module parameters.
+> > 
+> > drivers/base/regmap/regmap-debugfs.c requires *manual* code changes
+> > to compile / enable some knob. i915 complains about unsafe module
+> > params such as module_param_cb_unsafe() core_param_unsafe(). Then
+> > drivers/soundwire/cadence_master.c is for when a debugfs dangerous
+> > param was used.
+> > 
+> > This still doesn't rule out the use of proc_taint() for testing taint,
+> > and that adding it may break some tests. So even though this would
+> > only affect some tests scripts, I can't say that adding this taint won't
+> > cause some headaches to someone. I wouldn't encourage its use on
+> > proc_taint() from what I can see so far.
+> >
+> 
+> OK, I´ll repost without the hunk forcing the taint. If we eventually
+> come to the conclusion that tainting in proc_taint() is the right thing
+> to do, we can do that part of the change later.
 
-Build tested and build pass on x86_64.
+Just add another taint, we have 64 bits and according to you we won't
+ever run out. TAINT_CUSTOM or whatever.
 
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> Do you think we should use printk_ratelimited() in the ignore message,
+> instead? 
 
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+No, that's for when there are many prints at the same time, you probably
+want pr_warn_once().
 
-> ---
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 738d071ba1ef..47c685088a2c 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1401,9 +1401,11 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
->                        (u64)memcg_page_state(memcg, NR_WRITEBACK) *
->                        PAGE_SIZE);
->
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         seq_buf_printf(&s, "anon_thp %llu\n",
->                        (u64)memcg_page_state(memcg, NR_ANON_THPS) *
-> -                      HPAGE_PMD_NR * PAGE_SIZE);
-> +                      HPAGE_PMD_SIZE);
-> +#endif
->
->         for (i = 0; i < NR_LRU_LISTS; i++)
->                 seq_buf_printf(&s, "%s %llu\n", lru_list_name(i),
-> @@ -3752,7 +3754,9 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
->  static const unsigned int memcg1_stats[] = {
->         NR_FILE_PAGES,
->         NR_ANON_MAPPED,
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         NR_ANON_THPS,
-> +#endif
->         NR_SHMEM,
->         NR_FILE_MAPPED,
->         NR_FILE_DIRTY,
-> @@ -3763,7 +3767,9 @@ static const unsigned int memcg1_stats[] = {
->  static const char *const memcg1_stat_names[] = {
->         "cache",
->         "rss",
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         "rss_huge",
-> +#endif
->         "shmem",
->         "mapped_file",
->         "dirty",
-> @@ -3794,8 +3800,10 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->                 if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
->                         continue;
->                 nr = memcg_page_state_local(memcg, memcg1_stats[i]);
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->                 if (memcg1_stats[i] == NR_ANON_THPS)
->                         nr *= HPAGE_PMD_NR;
-> +#endif
->                 seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
->         }
->
-
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+  Luis
