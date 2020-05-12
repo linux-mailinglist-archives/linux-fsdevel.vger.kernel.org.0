@@ -2,120 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9D781CEAAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 04:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5CE1CEABF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 04:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbgELCRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 22:17:15 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:55547 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbgELCRP (ORCPT
+        id S1728110AbgELC3P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 22:29:15 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:38367 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727942AbgELC3O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 22:17:15 -0400
-Received: by mail-io1-f71.google.com with SMTP id o21so4962808ioo.22
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 19:17:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=A+bGB37fUphrdg4rHZUQ/mDG5UQ3vJlqsxE4yR9cEE8=;
-        b=L9/w1gQA60pBUmvnmTy0xf/DsLaQjuOO4M8wHRxai7s5f1kUsN2WHkT2zB+bWPeD/r
-         2Tbyl/2QmZmr8ideqfY4sDsnGvAZYgvsjVw+rqFpQli6CyYLB5H2bE0Bvei+9anwMa9C
-         8oBgw7QgVpiEUSJmhfn9pV8GrMll3a2h90oH8OOnJhvghz1c7sHyXP0vUxkVJ/t+dp37
-         hupiZaGVAUow87wqiJEoVyYCixXZa/X5rSYDLruONWrcf2z2Wppiwj/yNGbncAUsTafS
-         Rj6Q7b0vQCXiFksrCl+WXy2uSZrhwnGUK7BIlBw+XfgXHu4Ftou0CRbZrKMhGQyfNv17
-         UspQ==
-X-Gm-Message-State: AGi0PubfI+HVxAGCa/rJHv4mIFRg/Uq43NQBEvtEpyofG9SYNXUJuhyi
-        uqplIYz3TRiDqgycQqDugkDeiGellCpKpVL6+8MCsnmQNtOu
-X-Google-Smtp-Source: APiQypIctjI4BY678X/t1WAymF2cyXuX2SyTS1+z5w3mFX/fZa4vxhw2dKZ7JTseH4Vka4XJRt2E0ZvpPKA+IcgSpo1VYHbp8iLf
+        Mon, 11 May 2020 22:29:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=eguan@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TyInmMm_1589250552;
+Received: from localhost(mailfrom:eguan@linux.alibaba.com fp:SMTPD_---0TyInmMm_1589250552)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 12 May 2020 10:29:13 +0800
+From:   Eryu Guan <eguan@linux.alibaba.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     virtio-fs@redhat.com, miklos@szeredi.hu,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Eryu Guan <eguan@linux.alibaba.com>
+Subject: [PATCH v2] fuse: invalidate inode attr in writeback cache mode
+Date:   Tue, 12 May 2020 10:29:04 +0800
+Message-Id: <20200512022904.75689-1-eguan@linux.alibaba.com>
+X-Mailer: git-send-email 2.26.1.107.gefe3874
+In-Reply-To: <1588778444-28375-1-git-send-email-eguan@linux.alibaba.com>
+References: <1588778444-28375-1-git-send-email-eguan@linux.alibaba.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d6c5:: with SMTP id z5mr13337735ilp.194.1589249834499;
- Mon, 11 May 2020 19:17:14 -0700 (PDT)
-Date:   Mon, 11 May 2020 19:17:14 -0700
-In-Reply-To: <00000000000009dcd905a3954340@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d845e305a56a0f24@google.com>
-Subject: Re: INFO: rcu detected stall in io_uring_release
-From:   syzbot <syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, dan.carpenter@oracle.com,
-        hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Under writeback mode, inode->i_blocks is not updated, making utils du
+read st.blocks as 0.
 
-HEAD commit:    ac935d22 Add linux-next specific files for 20200415
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a38f0a100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc498783097e9019
-dashboard link: https://syzkaller.appspot.com/bug?extid=66243bb7126c410cefe6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179b3b32100000
+For example, when using virtiofs (cache=always & nondax mode) with
+writeback_cache enabled, writing a new file and check its disk usage
+with du, du reports 0 usage.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
+  # uname -r
+  5.6.0-rc6+
+  # mount -t virtiofs virtiofs /mnt/virtiofs
+  # rm -f /mnt/virtiofs/testfile
 
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (10533 ticks this GP) idle=aea/1/0x4000000000000002 softirq=10553/10555 fqs=5249 
-	(t=10501 jiffies g=12777 q=556)
-NMI backtrace for cpu 0
-CPU: 0 PID: 8729 Comm: syz-executor.3 Not tainted 5.7.0-rc1-next-20200415-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
- trigger_single_cpu_backtrace include/linux/nmi.h:165 [inline]
- rcu_dump_cpu_stacks+0x19b/0x1e5 kernel/rcu/tree_stall.h:254
- print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
- check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
- rcu_pending kernel/rcu/tree.c:3225 [inline]
- rcu_sched_clock_irq.cold+0x55d/0xd00 kernel/rcu/tree.c:2296
- update_process_times+0x25/0x60 kernel/time/timer.c:1727
- tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
- tick_sched_timer+0x4e/0x140 kernel/time/tick-sched.c:1320
- __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
- __hrtimer_run_queues+0x5ca/0xed0 kernel/time/hrtimer.c:1584
- hrtimer_interrupt+0x312/0x770 kernel/time/hrtimer.c:1646
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113 [inline]
- smp_apic_timer_interrupt+0x15b/0x600 arch/x86/kernel/apic/apic.c:1138
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5a0 fs/io_uring.c:7301
-Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 ba 65 9d ff f3 90 <41> 80 3c 24 00 0f 85 53 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
-RSP: 0018:ffffc900054d7a50 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: ffff888097c14400 RBX: ffff8880963a0000 RCX: 1ffff92000a9af37
-RDX: 0000000000000000 RSI: ffffffff81d5ced6 RDI: ffff8880963a0300
-RBP: ffffed1012c7402c R08: 0000000000000001 R09: ffffed1012c74061
-R10: ffff8880963a0307 R11: ffffed1012c74060 R12: ffffed1012c74022
-R13: ffff8880963a0160 R14: ffff8880963a0110 R15: ffffffff81d5d3e0
- io_uring_release+0x3e/0x50 fs/io_uring.c:7324
- __fput+0x33e/0x880 fs/file_table.c:280
- task_work_run+0xf4/0x1b0 kernel/task_work.c:123
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0xb53/0x2e10 kernel/exit.c:795
- do_group_exit+0x125/0x340 kernel/exit.c:893
- get_signal+0x47b/0x24e0 kernel/signal.c:2735
- do_signal+0x81/0x2240 arch/x86/kernel/signal.c:784
- exit_to_usermode_loop+0x26c/0x360 arch/x86/entry/common.c:161
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
- do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x45c829
-Code: Bad RIP value.
-RSP: 002b:00007fdd2a37fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: 0000000000000003 RBX: 00000000004e0ce0 RCX: 000000000045c829
-RDX: 0000000000000000 RSI: 0000000020000580 RDI: 00000000000000f1
-RBP: 000000000078bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000204 R14: 00000000004c425f R15: 00007fdd2a3806d4
+  # create new file and do extend write
+  # xfs_io -fc "pwrite 0 4k" /mnt/virtiofs/testfile
+  wrote 4096/4096 bytes at offset 0
+  4 KiB, 1 ops; 0.0001 sec (28.103 MiB/sec and 7194.2446 ops/sec)
+  # du -k /mnt/virtiofs/testfile
+  0               <==== disk usage is 0
+  # stat -c %s,%b /mnt/virtiofs/testfile
+  4096,0          <==== i_size is correct, but st_blocks is 0
+
+Fix it by invalidating attr in fuse_flush(), so we get up-to-date attr
+from server on next getattr.
+
+Signed-off-by: Eryu Guan <eguan@linux.alibaba.com>
+---
+v2:
+- do fuse_invalidate_attr() in fuse_flush() as Miklos suggested
+
+ fs/fuse/file.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 9d67b830fb7a..4bb399caec01 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -445,8 +445,9 @@ static int fuse_flush(struct file *file, fl_owner_t id)
+ 	if (is_bad_inode(inode))
+ 		return -EIO;
+ 
++	err = 0;
+ 	if (fc->no_flush)
+-		return 0;
++		goto inval_attr_out;
+ 
+ 	err = write_inode_now(inode, 1);
+ 	if (err)
+@@ -475,6 +476,14 @@ static int fuse_flush(struct file *file, fl_owner_t id)
+ 		fc->no_flush = 1;
+ 		err = 0;
+ 	}
++
++inval_attr_out:
++	/*
++	 * In memory i_blocks is not maintained by fuse, if writeback cache is
++	 * enabled, i_blocks from cached attr may not be accurate.
++	 */
++	if (!err && fc->writeback_cache)
++		fuse_invalidate_attr(inode);
+ 	return err;
+ }
+ 
+-- 
+2.26.1.107.gefe3874
 
