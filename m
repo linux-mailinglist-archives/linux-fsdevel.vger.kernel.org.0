@@ -2,35 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA7B1CFA1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 18:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5CDF1CFA56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 18:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgELQEN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 12:04:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbgELQEM (ORCPT
+        id S1728334AbgELQPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 12:15:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56646 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727915AbgELQPB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 12:04:12 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2AFC061A0C;
-        Tue, 12 May 2020 09:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Y7BSP3BlQ61Lb6dN81uzMsCFbdus5l/4uVt1/IWDFJo=; b=cKUpxpJ0u2DERhN04TX7WHJLSN
-        FMUPWssMl6aaphrFgb4INIz6Z3m5iJegCgjSwBjUBQK6ZzSQpyK1PVNNoh+76wcuJsf9kZNIJUUPu
-        Nc6NnaEuH3BCG9Hj+Rg4/306w2OrJqIzCIORyBK1VHJOiPss72MTmN6htGytW1LjJv62Sm5ArJlzE
-        hlr8dxqdgfLLaRuXUqH840+kyAYq1mqskKo4GfXuYwEFI+egZ4+dS0578harKdIMSqthfxoXz5ys2
-        3/dQMRQ7kOI2mxLVjgbicKxGbUkhNsOUgd5RY3UwOi8X9wjbBRV+9qJLbaI14VUid9vG2tFB1MHPd
-        PV2CfNWw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jYXO6-00067e-3n; Tue, 12 May 2020 16:04:10 +0000
-Date:   Tue, 12 May 2020 09:04:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        Tue, 12 May 2020 12:15:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CGCI8B015542;
+        Tue, 12 May 2020 16:14:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=jfNIRjccwnvqnFIrzDzQr48D/17TCvRV1Qnnis5ecl0=;
+ b=niJi7UYHIdNqGmAJy4SWdhaxvpU5EyZA2gNb+WwT7U0Bq06E3aMzWlBD0RQYVgh/sDoJ
+ 7DrJI9qRGuxEm49tSRWCpCrqanWS3neJBvzPbCmTxuixcun2xPH/pucyOGE1HaTyrVoB
+ B10lrcAvo5BRd3xEVCUMvibWbicyUCdxWH8bCBkHlx77qBcIEyxfMtHRgKpqG7gSS6RR
+ TSihKecOJU7Uzws4UR38i1tK2v3zBvVT2aWW6tX/yM7rQbKcIWvCRMLDgqiNg6Yme0lu
+ DyXPdL7WXlODZsXvqp+lSo60AjAv2oJO4EPiH6/7aq8MWkTvOhRyat5ApX00JuTZSBBo IA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 30x3gmm1p0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 May 2020 16:14:56 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CG7wvY100421;
+        Tue, 12 May 2020 16:12:55 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 30ydsqsdm1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 16:12:55 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04CGCrr4005079;
+        Tue, 12 May 2020 16:12:53 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 May 2020 09:12:53 -0700
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Jens Axboe <axboe@kernel.dk>,
         linux-block <linux-block@vger.kernel.org>,
@@ -40,27 +52,45 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH v11 00/10] Introduce Zone Append for writing to zoned
  block devices
-Message-ID: <20200512160410.GA22624@infradead.org>
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
 References: <20200512085554.26366-1-johannes.thumshirn@wdc.com>
- <20200512131748.GA15699@infradead.org>
- <yq14ksl2ldd.fsf@oracle.com>
+        <20200512131748.GA15699@infradead.org> <yq14ksl2ldd.fsf@oracle.com>
+        <20200512160410.GA22624@infradead.org>
+Date:   Tue, 12 May 2020 12:12:50 -0400
+In-Reply-To: <20200512160410.GA22624@infradead.org> (Christoph Hellwig's
+        message of "Tue, 12 May 2020 09:04:10 -0700")
+Message-ID: <yq1zhad169p.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq14ksl2ldd.fsf@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9619 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 mlxscore=0
+ adultscore=0 mlxlogscore=852 malwarescore=0 bulkscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005120122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9619 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=881
+ clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005120123
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 09:01:18AM -0700, Martin K. Petersen wrote:
-> I suspect this series going to clash with my sd revalidate surgery. I
-> may have to stick that in a postmerge branch based on Jens' tree.
 
-Where is that series?  I don't remember any changes in that area.
+Christoph,
 
-> 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
----end quoted text---
+> Where is that series?  I don't remember any changes in that area.
+
+Haven't posted it yet. Still working on a few patches that address
+validating reported values for devices that change parameters in flight.
+
+The first part of the series is here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mkp/linux.git/log/?h=5.8/sd-revalidate
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
