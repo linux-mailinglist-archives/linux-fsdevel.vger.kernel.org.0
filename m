@@ -2,104 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5F41D018B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4BB1D025B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbgELWDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 18:03:45 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53276 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728313AbgELWDo (ORCPT
+        id S1730848AbgELWbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 18:31:14 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:36779 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgELWbN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 18:03:44 -0400
-Received: by mail-pj1-f65.google.com with SMTP id hi11so10202018pjb.3;
-        Tue, 12 May 2020 15:03:43 -0700 (PDT)
+        Tue, 12 May 2020 18:31:13 -0400
+Received: by mail-pj1-f66.google.com with SMTP id q24so10096198pjd.1;
+        Tue, 12 May 2020 15:31:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jPas3FVTQ077tq4XLx1f6zCjNgfjXBxht/KPP+7OEug=;
-        b=az4dz60fUx0TGGjY0OrzgvIn5nL20WbvyWATzslSo72V9Xh97IG4zxDBaUFWstzD83
-         1cJAssqckTzhAJrErel+8Jy5DyzW1W+EHs6SWD/zvCpQmYoe43upNVCoRYFlUXxu/laS
-         Is4FhS9BzLfVBg5gKkA+WS/y8VQHD2eEITkyk9CVaPatEyRsmHwBluvFJsqxGaKIRKor
-         UVPiDusOgvr3IQXwqYS9QqdfNlhVYE6/LZy0l1zRgjL1Qge5g5UnmNltUJcOj2EIadNx
-         aYnCPDUqT3COouxtUA8A631HOJExzblSCrybWmvJalZnexGSuifiJhfImrPJhtJUBKLQ
-         fCdA==
-X-Gm-Message-State: AGi0PuaTP6oVnQzFYJJlsyhQWfZc2pCYQSdyDWzr3/1eW/7jJ4QieZ/r
-        UGk++10ynz+ne2w/ovCeJRU=
-X-Google-Smtp-Source: APiQypLRR8P3Hy27Aan2ceEueeRcL0xTQS/0wfLdqo/lGe83BBK2NFiFKG1bubvoAzbVD2Yk3HpUbQ==
-X-Received: by 2002:a17:902:c281:: with SMTP id i1mr21719181pld.85.1589321023383;
-        Tue, 12 May 2020 15:03:43 -0700 (PDT)
+        bh=WkWxKR9pBfc58a1dbN8nbKjJim/7aXCa3UgG7dxJjk4=;
+        b=HYnpmAhDpqHBUiL8RIJFL7CVr4rIBaW4yZRR+kAeWsewegDdK3mZSMscCV9pIKKSeW
+         XoYHp7B0jEHTmAg818tD8mUN/+3HORk6pVrnTRBJspXfpQCcsffFgMsQOjF/fNN76/x1
+         NDZpJ5JxqsQrNzlHgGzffjsEUpsUowhB+BZlxMHI4dE+sZLPJcVf/DrKU1CjFW8CcRdD
+         E8Q4O8CuCdPa++Ky4vjy+kBpV87DrEVerK/nEvKJdoGSAtf1ikfpWrXazVqJWiYw/+8s
+         Z7sNj4/fqU78aQA0+HMZnpn4Ssj3/hGRhVm3o+upNljAhl3ocLpvp/8tUQvgQsYH4guQ
+         dQvQ==
+X-Gm-Message-State: AGi0PuY1wBCVSTohLp1a78E0t4Zl9nnCkLi0KYRim54budfEi4Spoyeu
+        Y3G+ivlWB3OgHusDQT3jVFc=
+X-Google-Smtp-Source: APiQypLrjBA7She0nP+YDikODlUlHGiHQIsgAZbqmYPQb0MLNtvitmQSyo6GKRENaqYo68EVMqNzew==
+X-Received: by 2002:a17:90a:fd8c:: with SMTP id cx12mr30597764pjb.211.1589322672838;
+        Tue, 12 May 2020 15:31:12 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id o27sm681142pgd.18.2020.05.12.15.03.42
+        by smtp.gmail.com with ESMTPSA id d2sm13247052pfc.7.2020.05.12.15.31.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 15:03:42 -0700 (PDT)
+        Tue, 12 May 2020 15:31:11 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 76A134063E; Tue, 12 May 2020 22:03:41 +0000 (UTC)
-Date:   Tue, 12 May 2020 22:03:41 +0000
+        id F17A04063E; Tue, 12 May 2020 22:31:10 +0000 (UTC)
+Date:   Tue, 12 May 2020 22:31:10 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
-Message-ID: <20200512220341.GE11244@42.do-not-panic.com>
-References: <20200511111123.68ccbaa3@canb.auug.org.au>
- <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
- <20200512003305.GX11244@42.do-not-panic.com>
- <87y2pxs73w.fsf@x220.int.ebiederm.org>
- <20200512172413.GC11244@42.do-not-panic.com>
- <87k11hrqzc.fsf@x220.int.ebiederm.org>
+To:     Rafael Aquini <aquini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        keescook@chromium.org, akpm@linux-foundation.org,
+        yzaikin@google.com, tytso@mit.edu
+Subject: Re: [PATCH] kernel: sysctl: ignore out-of-range taint bits
+ introduced via kernel.tainted
+Message-ID: <20200512223110.GF11244@42.do-not-panic.com>
+References: <20200512174653.770506-1-aquini@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87k11hrqzc.fsf@x220.int.ebiederm.org>
+In-Reply-To: <20200512174653.770506-1-aquini@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 12:40:55PM -0500, Eric W. Biederman wrote:
-> Luis Chamberlain <mcgrof@kernel.org> writes:
+On Tue, May 12, 2020 at 01:46:53PM -0400, Rafael Aquini wrote:
+> The sysctl knob allows users with SYS_ADMIN capability to
+> taint the kernel with any arbitrary value, but this might
+> produce an invalid flags bitset being committed to tainted_mask.
 > 
-> > On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
-> >> Luis Chamberlain <mcgrof@kernel.org> writes:
-> >> 
-> >> > +static struct ctl_table fs_base_table[] = {
-> >> > +	{
-> >> > +		.procname	= "fs",
-> >> > +		.mode		= 0555,
-> >> > +		.child		= fs_table,
-> >> > +	},
-> >> > +	{ }
-> >> > +};
-> >>   ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
-> >> > > +static int __init fs_procsys_init(void)
-> >> > +{
-> >> > +	struct ctl_table_header *hdr;
-> >> > +
-> >> > +	hdr = register_sysctl_table(fs_base_table);
-> >>               ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
-> >> 	AKA
-> >>         hdr = register_sysctl("fs", fs_table);
-> >
-> > Ah, much cleaner thanks!
+> This patch introduces a simple way for proc_taint() to ignore
+> any eventual invalid bit coming from the user input before
+> committing those bits to the kernel tainted_mask.
 > 
-> It is my hope you we can get rid of register_sysctl_table one of these
-> days.  It was the original interface but today it is just a
-> compatibility wrapper.
-> 
-> I unfortunately ran out of steam last time before I finished converting
-> everything over.
+> Signed-off-by: Rafael Aquini <aquini@redhat.com>
 
-Let's give it one more go. I'll start with the fs stuff.
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
   Luis
