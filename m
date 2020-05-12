@@ -2,156 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B56D51CFABF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 18:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 974171CFBD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 19:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbgELQbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 12:31:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727778AbgELQbj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 12:31:39 -0400
-Received: from lhreml731-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 6A6C8B1834534D466D91;
-        Tue, 12 May 2020 17:31:32 +0100 (IST)
-Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
- lhreml731-chm.china.huawei.com (10.201.108.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 17:31:32 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 18:31:31 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 18:31:31 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtCAAFxigIAAJvQA///zHACAACsKoA==
-Date:   Tue, 12 May 2020 16:31:31 +0000
-Message-ID: <fcdb168d27214b5e85c3b741f184cde9@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
-         <1589233010.5091.49.camel@linux.ibm.com>
-         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
-         <1589293025.5098.53.camel@linux.ibm.com>
-         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
- <1589298622.5098.67.camel@linux.ibm.com>
-In-Reply-To: <1589298622.5098.67.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730208AbgELRQ4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 13:16:56 -0400
+Received: from mail-oo1-f67.google.com ([209.85.161.67]:33365 "EHLO
+        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbgELRQ4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 May 2020 13:16:56 -0400
+Received: by mail-oo1-f67.google.com with SMTP id b3so1180916oob.0;
+        Tue, 12 May 2020 10:16:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zrV9Na5hegEtMEkEu1KEFc/uSwqOLQP7YJGf/jtNHQc=;
+        b=hbVi0dlBG/Af5wmbiKFsEhCGPHSB+mnXUqoEKaOh06WyX46hhMTDkbOnnwa2ukvqHH
+         BPqhAf/SSxeGWFHzCoAUmr01q4ssaKrXOn98LFuj0CXyUDysFyEgzi/MJp0jGe+W5nSL
+         V1OMICH7EHwkp1vrqwelSEe3vS+IfQP385kMGRrm7AoQk8Xi3jSnrsFfYlHhbLyor8a9
+         s5dcFLWkCtysHISkta9+17KFD9Zr9t4nuVsdIjinnoA3yxkWpbQzevGVOuuRKOaDmhUT
+         hV99HQrQTU7LkPTuE35fi3aR6VMjqlWpVcJS2FbksV/e0x7k1B8HkOWISl6+ZWDq2Tf8
+         ZidQ==
+X-Gm-Message-State: AGi0PuaTr3nJTW5myctIFsZmydh8h6GOwAthtFDtK7beIyKwyHwX5b5G
+        Nr0B2WhaFBJF9MA0UDGT7MIA3C2zmXyLxub0/wCoPw==
+X-Google-Smtp-Source: APiQypJ90cuUdqwS9GCMEDW5toqUx3hGQCswz4bCNJ1HffyAlcgQWXh/NB2EC2pbtqykmvgZCLvi8ISszTO5rm0LxwI=
+X-Received: by 2002:a4a:d44a:: with SMTP id p10mr19049986oos.11.1589303814627;
+ Tue, 12 May 2020 10:16:54 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20200511224430.HDJjRC68z%akpm@linux-foundation.org>
+ <3b612c3e-ce52-ba92-eb02-0fa7fd38819f@infradead.org> <20200512121750.GA397968@cmpxchg.org>
+In-Reply-To: <20200512121750.GA397968@cmpxchg.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 May 2020 19:16:43 +0200
+Message-ID: <CAMuHMdXquJ9321qJmZj8fyWrzc3u_-AbKFQD9SoZ-A=wsRyVww@mail.gmail.com>
+Subject: Re: mmotm 2020-05-11-15-43 uploaded (mm/memcontrol.c, huge pages)
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
-VHVlc2RheSwgTWF5IDEyLCAyMDIwIDU6NTAgUE0NCj4gT24gVHVlLCAyMDIwLTA1LTEyIGF0IDE1
-OjMxICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gRnJvbTogb3duZXItbGludXgt
-c2VjdXJpdHktbW9kdWxlQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOm93bmVyLQ0KPiBsaW51eC0N
-Cj4gPiA+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1p
-IFpvaGFyDQo+ID4gPiBTZW50OiBUdWVzZGF5LCBNYXkgMTIsIDIwMjAgNDoxNyBQTQ0KPiA+ID4g
-T24gVHVlLCAyMDIwLTA1LTEyIGF0IDA3OjU0ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0K
-PiA+ID4gPiA+ID4gPiBSb2JlcnRvLCBFVk0gaXMgb25seSB0cmlnZ2VyZWQgYnkgSU1BLCB1bmxl
-c3MgeW91J3ZlIG1vZGlmaWVkDQo+IHRoZQ0KPiA+ID4gPiA+ID4gPiBrZXJuZWwgdG8gZG8gb3Ro
-ZXJ3aXNlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEVWTSB3b3VsZCBkZW55IHhhdHRyL2F0
-dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBkaXNhYmxlZCBpbg0KPiB0aGUNCj4gPiA+ID4g
-PiA+IGtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3NldHhhdHRyKCkgcmV0
-dXJucyB0aGUNCj4gdmFsdWUNCj4gPiA+ID4gPiA+IGZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4g
-SU1BIGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IENvbW1pdMKg
-YWUxYmExNjc2Yjg4ICgiRVZNOiBBbGxvdyB1c2VybGFuZCB0byBwZXJtaXQgbW9kaWZpY2F0aW9u
-DQo+IG9mDQo+ID4gPiA+ID4gRVZNLXByb3RlY3RlZCBtZXRhZGF0YSIpDQo+ID4gPiBpbnRyb2R1
-Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTDQo+ID4gPiA+ID4gdG8gYWxsb3cgd3JpdGlu
-ZyB0aGUgRVZNIHBvcnRhYmxlIGFuZCBpbW11dGFibGUgZmlsZSBzaWduYXR1cmVzLg0KPiA+ID4g
-Pg0KPiA+ID4gPiBBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9ldm06DQo+
-ID4gPiA+DQo+ID4gPiA+IE5vdGUgdGhhdCBvbmNlIGEga2V5IGhhcyBiZWVuIGxvYWRlZCwgaXQg
-d2lsbCBubyBsb25nZXIgYmUNCj4gPiA+ID4gcG9zc2libGUgdG8gZW5hYmxlIG1ldGFkYXRhIG1v
-ZGlmaWNhdGlvbi4NCj4gPiA+DQo+ID4gPiBOb3QgYW55IGtleSwgYnV0IHRoZSBITUFDIGtleS4N
-Cj4gPiA+DQo+ID4gPiAywqDCoMKgwqDCoMKgwqDCoMKgUGVybWl0IG1vZGlmaWNhdGlvbiBvZiBF
-Vk0tcHJvdGVjdGVkIG1ldGFkYXRhIGF0DQo+ID4gPiDCoCDCoCDCoCDCoCDCoCBydW50aW1lLiBO
-b3Qgc3VwcG9ydGVkIGlmIEhNQUMgdmFsaWRhdGlvbiBhbmQNCj4gPiA+IMKgIMKgIMKgIMKgIMKg
-IGNyZWF0aW9uIGlzIGVuYWJsZWQuDQo+ID4NCj4gPiAjaWZkZWYgQ09ORklHX0VWTV9MT0FEX1g1
-MDkNCj4gPiB2b2lkIF9faW5pdCBldm1fbG9hZF94NTA5KHZvaWQpDQo+ID4gew0KPiA+IFsuLi5d
-DQo+ID4gICAgICAgICByYyA9IGludGVncml0eV9sb2FkX3g1MDkoSU5URUdSSVRZX0tFWVJJTkdf
-RVZNLA0KPiBDT05GSUdfRVZNX1g1MDlfUEFUSCk7DQo+ID4gICAgICAgICBpZiAoIXJjKQ0KPiA+
-ICAgICAgICAgICAgICAgICBldm1faW5pdGlhbGl6ZWQgfD0gRVZNX0lOSVRfWDUwOTsNCj4gPg0K
-PiA+DQo+ID4gc3RhdGljIHNzaXplX3QgZXZtX3dyaXRlX2tleShzdHJ1Y3QgZmlsZSAqZmlsZSwg
-Y29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHNpemVfdCBjb3VudCwgbG9mZl90ICpwcG9zKQ0KPiA+IHsNCj4gPiBbLi4uXQ0KPiA+ICAgICAg
-ICAgLyogRG9uJ3QgYWxsb3cgYSByZXF1ZXN0IHRvIGZyZXNobHkgZW5hYmxlIG1ldGFkYXRhIHdy
-aXRlcyBpZg0KPiA+ICAgICAgICAgICoga2V5cyBhcmUgbG9hZGVkLg0KPiA+ICAgICAgICAgICov
-DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSAmJg0KPiA+
-ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0tFWV9NQVNLKSAhPSAwKSAmJg0K
-PiA+ICAgICAgICAgICAgICEoZXZtX2luaXRpYWxpemVkICYgRVZNX0FMTE9XX01FVEFEQVRBX1dS
-SVRFUykpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRVBFUk07DQo+ID4NCj4gPiBTaG91
-bGQgaGF2ZSBiZWVuOg0KPiA+DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURB
-VEFfV1JJVEVTKSAmJg0KPiA+ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0lO
-SVRfSE1BQykgIT0gMCkgJiYNCj4gPiAgICAgICAgICAgICAhKGV2bV9pbml0aWFsaXplZCAmIEVW
-TV9BTExPV19NRVRBREFUQV9XUklURVMpKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVQ
-RVJNOw0KPiANCj4gT2sNCj4gDQo+ID4NCj4gPiA+IEVhY2ggdGltZSB0aGUgRVZNIHByb3RlY3Rl
-ZCBmaWxlIG1ldGFkYXRhIGlzIHVwZGF0ZWQsIHRoZSBFVk0gSE1BQw0KPiBpcw0KPiA+ID4gdXBk
-YXRlZCwgYXNzdW1pbmcgdGhlIGV4aXN0aW5nIEVWTSBITUFDIGlzIHZhbGlkLiDCoFVzZXJzcGFj
-ZSBzaG91bGQNCj4gPiA+IG5vdCBoYXZlIGFjY2VzcyB0byB0aGUgSE1BQyBrZXksIHNvIHdlIG9u
-bHkgYWxsb3cgd3JpdGluZyBFVk0NCj4gPiA+IHNpZ25hdHVyZXMuDQo+ID4gPg0KPiA+ID4gVGhl
-IG9ubHkgZGlmZmVyZW5jZSBiZXR3ZWVuIHdyaXRpbmcgdGhlIG9yaWdpbmFsIEVWTSBzaWduYXR1
-cmUgYW5kIHRoZQ0KPiA+ID4gbmV3IHBvcnRhYmxlIGFuZCBpbW11dGFibGUgc2lnbmF0dXJlIGlz
-IHRoZSBzZWN1cml0eS5pbWEgeGF0dHINCj4gPiA+IHJlcXVpcmVtZW50LiDCoFNpbmNlIHRoZSBu
-ZXcgRVZNIHNpZ25hdHVyZSBkb2VzIG5vdCBpbmNsdWRlIHRoZQ0KPiA+ID4gZmlsZXN5c3RlbSBz
-cGVjaWZpYyBkYXRhLCBzb21ldGhpbmcgZWxzZSBuZWVkcyB0byBiaW5kIHRoZSBmaWxlDQo+ID4g
-PiBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRhLiDCoFRodXMgdGhlIElNQSB4YXR0ciByZXF1aXJl
-bWVudC4NCj4gPiA+DQo+ID4gPiBBc3N1bWluZyB0aGF0IHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBp
-cyB3cml0dGVuIGxhc3QsIGFzIGxvbmcgYXMgdGhlcmUNCj4gPiA+IGlzIGFuIElNQSB4YXR0ciwg
-dGhlcmUgc2hvdWxkbid0IGJlIGEgcHJvYmxlbSB3cml0aW5nIHRoZSBuZXcgRVZNDQo+ID4gPiBz
-aWduYXR1cmUuDQo+ID4NCj4gPiAgICAgICAgIC8qIGZpcnN0IG5lZWQgdG8ga25vdyB0aGUgc2ln
-IHR5cGUgKi8NCj4gPiAgICAgICAgIHJjID0gdmZzX2dldHhhdHRyX2FsbG9jKGRlbnRyeSwgWEFU
-VFJfTkFNRV9FVk0sIChjaGFyDQo+ICoqKSZ4YXR0cl9kYXRhLCAwLA0KPiA+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgR0ZQX05PRlMpOw0KPiA+ICAgICAgICAgaWYgKHJjIDw9IDAp
-IHsNCj4gPiAgICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9GQUlMOw0KPiA+
-ICAgICAgICAgICAgICAgICBpZiAocmMgPT0gLUVOT0RBVEEpIHsNCj4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICByYyA9IGV2bV9maW5kX3Byb3RlY3RlZF94YXR0cnMoZGVudHJ5KTsNCj4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgICBpZiAocmMgPiAwKQ0KPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9OT0xBQkVMOw0KPiA+ICAgICAg
-ICAgICAgICAgICAgICAgICAgIGVsc2UgaWYgKHJjID09IDApDQo+ID4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBldm1fc3RhdHVzID0gSU5URUdSSVRZX05PWEFUVFJTOyAvKiBuZXcg
-ZmlsZSAqLw0KPiA+DQo+ID4gSWYgRVZNX0FMTE9XX01FVEFEQVRBX1dSSVRFUyBpcyBjbGVhcmVk
-LCBvbmx5IHRoZSBmaXJzdCB4YXR0cg0KPiA+IGNhbiBiZSB3cml0dGVuIChzdGF0dXMgSU5URUdS
-SVRZX05PWEFUVFJTIGlzIG9rKS4gQWZ0ZXIsDQo+ID4gZXZtX2ZpbmRfcHJvdGVjdGVkX3hhdHRy
-cygpIHJldHVybnMgcmMgPiAwLCBzbyB0aGUgc3RhdHVzIGlzDQo+ID4gSU5URUdSSVRZX05PTEFC
-RUwsIHdoaWNoIGlzIG5vdCBpZ25vcmVkIGJ5IGV2bV9wcm90ZWN0X3hhdHRyKCkuDQo+IA0KPiBX
-aXRoIEVWTSBITUFDIGVuYWJsZWQsIGFzIGEgcmVzdWx0IG9mIHdyaXRpbmcgdGhlIGZpcnN0IHBy
-b3RlY3RlZA0KPiB4YXR0ciwgYW4gRVZNIEhNQUMgc2hvdWxkIGJlIGNhbGN1bGF0ZWQgYW5kIHdy
-aXR0ZW4gaW4NCj4gZXZtX2lub2RlX3Bvc3Rfc2V0eGF0dHIoKS4NCg0KVG8gc29sdmUgdGhlIG9y
-ZGVyaW5nIGlzc3VlLCB3b3VsZG4ndCBhbGxvd2luZyBzZXR4YXR0cigpIG9uIGEgZmlsZQ0Kd2l0
-aCBwb3J0YWJsZSBzaWduYXR1cmUgdGhhdCBkb2VzIG5vdCB5ZXQgcGFzcyB2ZXJpZmljYXRpb24g
-YmUgc2FmZT8NCmV2bV91cGRhdGVfZXZteGF0dHIoKSBjaGVja3MgaWYgdGhlIHNpZ25hdHVyZSBp
-cyBwb3J0YWJsZSBhbmQNCmlmIHllcywgZG9lcyBub3QgY2FsY3VsYXRlIHRoZSBITUFDLg0KDQpS
-b2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYz
-DQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
+Hi Johannes,
+
+On Tue, May 12, 2020 at 2:20 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> On Mon, May 11, 2020 at 09:41:24PM -0700, Randy Dunlap wrote:
+> > On 5/11/20 3:44 PM, Andrew Morton wrote:
+> > > The mm-of-the-moment snapshot 2020-05-11-15-43 has been uploaded to
+> > >
+> > >    http://www.ozlabs.org/~akpm/mmotm/
+> > >
+> > > mmotm-readme.txt says
+> > >
+> > > README for mm-of-the-moment:
+> > >
+> > > http://www.ozlabs.org/~akpm/mmotm/
+> > >
+> > > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > > more than once a week.
+> > >
+> > > You will need quilt to apply these patches to the latest Linus release (5.x
+> > > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > > http://ozlabs.org/~akpm/mmotm/series
+> > >
+> > > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > > followed by the base kernel version against which this patch series is to
+> > > be applied.
+> > >
+> > > This tree is partially included in linux-next.  To see which patches are
+> > > included in linux-next, consult the `series' file.  Only the patches
+> > > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> > > linux-next.
+> > >
+> > >
+> > > A full copy of the full kernel tree with the linux-next and mmotm patches
+> > > already applied is available through git within an hour of the mmotm
+> > > release.  Individual mmotm releases are tagged.  The master branch always
+> > > points to the latest release, so it's constantly rebasing.
+> > >
+> > >     https://github.com/hnaz/linux-mm
+> > >
+> > > The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+> > > contains daily snapshots of the -mm tree.  It is updated more frequently
+> > > than mmotm, and is untested.
+> > >
+> > > A git copy of this tree is also available at
+> > >
+> > >     https://github.com/hnaz/linux-mm
+>
+> Thanks for the report, Randy.
+>
+> ---
+>
+> Randy reports:
+>
+> > on x86_64:
+> >
+> > In file included from ../arch/x86/include/asm/atomic.h:5:0,
+> >                  from ../include/linux/atomic.h:7,
+> >                  from ../include/linux/page_counter.h:5,
+> >                  from ../mm/memcontrol.c:25:
+> > ../mm/memcontrol.c: In function ‘memcg_stat_show’:
+> > ../include/linux/compiler.h:394:38: error: call to ‘__compiletime_assert_383’ declared with attribute error: BUILD_BUG failed
+> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+> >                                       ^
+> > ../include/linux/compiler.h:375:4: note: in definition of macro ‘__compiletime_assert’
+> >     prefix ## suffix();    \
+> >     ^~~~~~
+> > ../include/linux/compiler.h:394:2: note: in expansion of macro ‘_compiletime_assert’
+> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+> >   ^~~~~~~~~~~~~~~~~~~
+> > ../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+> >  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+> >                                      ^~~~~~~~~~~~~~~~~~
+> > ../include/linux/build_bug.h:59:21: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+> >  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+> >                      ^~~~~~~~~~~~~~~~
+> > ../include/linux/huge_mm.h:319:28: note: in expansion of macro ‘BUILD_BUG’
+> >  #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+>
+> The THP page size macros are CONFIG_TRANSPARENT_HUGEPAGE only.
+>
+> We already ifdef most THP-related code in memcg, but not these
+> particular stats. Memcg used to track the pages as they came in, and
+> PageTransHuge() + hpage_nr_pages() work when THP is not compiled in.
+>
+> Switching to native vmstat counters, memcg doesn't see the pages, it
+> only gets a count of THPs. To translate that to bytes, it has to know
+> how big the THPs are - and that's only available for CONFIG_THP.
+>
+> Add the necessary ifdefs. /proc/meminfo, smaps etc. also don't show
+> the THP counters when the feature is compiled out. The event counts
+> (THP_FAULT_ALLOC, THP_COLLAPSE_ALLOC) were already conditional also.
+>
+> Style touchup: HPAGE_PMD_NR * PAGE_SIZE is silly. Use HPAGE_PMD_SIZE.
+>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 738d071ba1ef..47c685088a2c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1401,9 +1401,11 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
+>                        (u64)memcg_page_state(memcg, NR_WRITEBACK) *
+>                        PAGE_SIZE);
+>
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         seq_buf_printf(&s, "anon_thp %llu\n",
+>                        (u64)memcg_page_state(memcg, NR_ANON_THPS) *
+> -                      HPAGE_PMD_NR * PAGE_SIZE);
+> +                      HPAGE_PMD_SIZE);
+> +#endif
+>
+>         for (i = 0; i < NR_LRU_LISTS; i++)
+>                 seq_buf_printf(&s, "%s %llu\n", lru_list_name(i),
+> @@ -3752,7 +3754,9 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
+>  static const unsigned int memcg1_stats[] = {
+>         NR_FILE_PAGES,
+>         NR_ANON_MAPPED,
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         NR_ANON_THPS,
+> +#endif
+>         NR_SHMEM,
+>         NR_FILE_MAPPED,
+>         NR_FILE_DIRTY,
+> @@ -3763,7 +3767,9 @@ static const unsigned int memcg1_stats[] = {
+>  static const char *const memcg1_stat_names[] = {
+>         "cache",
+>         "rss",
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         "rss_huge",
+> +#endif
+>         "shmem",
+>         "mapped_file",
+>         "dirty",
+> @@ -3794,8 +3800,10 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+>                 if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
+>                         continue;
+>                 nr = memcg_page_state_local(memcg, memcg1_stats[i]);
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>                 if (memcg1_stats[i] == NR_ANON_THPS)
+>                         nr *= HPAGE_PMD_NR;
+> +#endif
+>                 seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
+>         }
+
+Fixes the build issue with m68k/allmodconfig, too.
+Not boot-tested.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
