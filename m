@@ -2,90 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB49F1D0272
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E47F1D029D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgELWjz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 18:39:55 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:20198 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726031AbgELWjz (ORCPT
+        id S1731399AbgELW4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 18:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728286AbgELW4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 18:39:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589323194;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Gn7nXTm0O1XhEm5zfYkiFb/JrISIuLYstdkDlREWsE8=;
-        b=Y+uC3ojNy3dwXoaI1w5Qoc66frOvfaLHoUP7jcvoeNq6p1zK6uiOOZXhJmSXBcvvJ7NP1z
-        pFImcohAPtDJgIC9BISmFgA84h18PNmIvQxmoaA9QOHV87zzvjIn9KLOddpZoLsfvBbNQF
-        diYwKTUCrIEL1l6HkSYeKtKHrO3XDTc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-k72NQ3s4Pdut49pbsVXbkw-1; Tue, 12 May 2020 18:39:52 -0400
-X-MC-Unique: k72NQ3s4Pdut49pbsVXbkw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02ED3800687;
-        Tue, 12 May 2020 22:39:51 +0000 (UTC)
-Received: from optiplex-lnx.redhat.com (unknown [10.3.128.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D6B6648D7;
-        Tue, 12 May 2020 22:39:49 +0000 (UTC)
-From:   Rafael Aquini <aquini@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        mcgrof@kernel.org
-Cc:     keescook@chromium.org, akpm@linux-foundation.org,
-        yzaikin@google.com, tytso@mit.edu
-Subject: [PATCH v2] kernel: sysctl: ignore out-of-range taint bits introduced via kernel.tainted
-Date:   Tue, 12 May 2020 18:39:46 -0400
-Message-Id: <20200512223946.888020-1-aquini@redhat.com>
+        Tue, 12 May 2020 18:56:49 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE4AC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:56:49 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id l73so997468pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=IXpIsoQged7M/ri/embTMdJh9eC3HGIEafUuSr0Sgp4=;
+        b=N9/eEWjx4KryymG7ZL/gSXanLr0DYNDcTqpqniqQuUXfGEZEOCiOVCUM31Rkg5hbPF
+         RYrLa1KR6sZdrXCo182VyfY9tc7Dc8vFc162i/vIcqYJQGy8FcEAaac5BV+8lc+P9xKZ
+         wBGT4FqmIHHPX2e1wzE8uLoPmiAHm59yHXR8U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=IXpIsoQged7M/ri/embTMdJh9eC3HGIEafUuSr0Sgp4=;
+        b=HwCMur90TIP+rgU3mwXoD+h0jgWOx5T77fO9vbJnmAswpErtkOT/lDtD8l8mC+/KHw
+         BJY2yhunOJzbBNOn1etS1zow4uzFHh+zltN+0OtNRssXhwp8N9la5LqT8qSwUi/WNWqi
+         KdZJGXXaOd1IC5QvwrTG/8GoCYTqb7cTvQFrFd5DUoZ83KfEufENRZKOakh8siVJ2gEQ
+         iN7/S6DFEdQgzttFCJi6U5a2aRqJFwBD6pbcvy1rCIgbxOA5U1c9Rsa+LKpmkoNC+NRs
+         C/b3K6uS4cXWsn12N18LsSInFrk7IsBgTNV1u9lYb3B6/gRV3k3E1S2Q8z0wyeRTa3IU
+         JsHQ==
+X-Gm-Message-State: AGi0PuZGMkIGc3/4tvF5fSMH2jrKu49h3Bnxp1Bc8dVCYQWaZXTTCYkm
+        V8sZeqkAVaFuABWaVwXY0iOrGQ==
+X-Google-Smtp-Source: APiQypKzgC0TF704AZj7wxJgs6uVQ1eXdDqzXBGagWKY3u4jWSDcjnfhuh2eV/DDEm8B+zOSyJm0Nw==
+X-Received: by 2002:a17:90a:7788:: with SMTP id v8mr30342795pjk.111.1589324208728;
+        Tue, 12 May 2020 15:56:48 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u5sm11217857pgi.70.2020.05.12.15.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 15:56:47 -0700 (PDT)
+Date:   Tue, 12 May 2020 15:56:46 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Heimes <christian@python.org>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] fs: Add support for an O_MAYEXEC flag on
+ openat2(2)
+Message-ID: <202005121555.0A446763@keescook>
+References: <20200505153156.925111-1-mic@digikod.net>
+ <20200505153156.925111-2-mic@digikod.net>
+ <202005121258.4213DC8A2@keescook>
+ <0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Users with SYS_ADMIN capability can add arbitrary taint flags
-to the running kernel by writing to /proc/sys/kernel/tainted
-or issuing the command 'sysctl -w kernel.tainted=...'.
-These interface, however, are open for any integer value
-and this might an invalid set of flags being committed to
-the tainted_mask bitset.
+On Tue, May 12, 2020 at 11:40:35PM +0200, Christian Heimes wrote:
+> On 12/05/2020 23.05, Kees Cook wrote:
+> > On Tue, May 05, 2020 at 05:31:51PM +0200, Mickaël Salaün wrote:
+> >> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+> >> additional restrictions depending on a security policy managed by the
+> >> kernel through a sysctl or implemented by an LSM thanks to the
+> >> inode_permission hook.  This new flag is ignored by open(2) and
+> >> openat(2).
+> >>
+> >> The underlying idea is to be able to restrict scripts interpretation
+> >> according to a policy defined by the system administrator.  For this to
+> >> be possible, script interpreters must use the O_MAYEXEC flag
+> >> appropriately.  To be fully effective, these interpreters also need to
+> >> handle the other ways to execute code: command line parameters (e.g.,
+> >> option -e for Perl), module loading (e.g., option -m for Python), stdin,
+> >> file sourcing, environment variables, configuration files, etc.
+> >> According to the threat model, it may be acceptable to allow some script
+> >> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
+> >> TTY or a pipe, because it may not be enough to (directly) perform
+> >> syscalls.  Further documentation can be found in a following patch.
+> > 
+> > You touch on this lightly in the cover letter, but it seems there are
+> > plans for Python to restrict stdin parsing? Are there patches pending
+> > anywhere for other interpreters? (e.g. does CLIP OS have such patches?)
+> > 
+> > There's always a push-back against adding features that have external
+> > dependencies, and then those external dependencies can't happen without
+> > the kernel first adding a feature. :) I like getting these catch-22s
+> > broken, and I think the kernel is the right place to start, especially
+> > since the threat model (and implementation) is already proven out in
+> > CLIP OS, and now with IMA. So, while the interpreter side of this is
+> > still under development, this gives them the tool they need to get it
+> > done on the kernel side. So showing those pieces (as you've done) is
+> > great, and I think finding a little bit more detail here would be even
+> > better.
+> 
+> Hi,
+> 
+> Python core dev here.
+> 
+> Yes, there are plans to use feature for Python in combination with
+> additional restrictions. For backwards compatibility reasons we cannot
+> change the behavior of the default Python interpreter. I have plans to
+> provide a restricted Python binary that prohibits piping from stdin,
+> disables -c "some_code()", restricts import locations, and a couple of
+> other things. O_MAYEXEC flag makes it easier to block imports from
+> noexec filesystems.
+> 
+> My PoC [1] for a talk [2] last year is inspired by IMA appraisal and a
+> previous talk by Mickaël on O_MAYEXEC.
+> 
+> Christian
+> 
+> [1] https://github.com/zooba/spython/blob/master/linux_xattr/spython.c
+> [2]
+> https://speakerdeck.com/tiran/europython-2019-auditing-hooks-and-security-transparency-for-cpython
 
-This patch introduces a simple way for proc_taint() to ignore
-any eventual invalid bit coming from the user input before
-committing those bits to the kernel tainted_mask.
+Ah, fantastic; thank you! Yes, this will go a long way for helping
+demonstration to other folks that there are people who will be using
+this feature. :)
 
-Signed-off-by: Rafael Aquini <aquini@redhat.com>
----
-Changelog:
-v2: simplify the bit iterator within proc_taint(),
-    and silently drop out-of-range bits                         (akpm)
-
- kernel/sysctl.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 8a176d8727a3..fcd46fc41206 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2628,10 +2628,9 @@ static int proc_taint(struct ctl_table *table, int write,
- 		 * to everyone's atomic.h for this
- 		 */
- 		int i;
--		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
--			if ((tmptaint >> i) & 1)
-+		for (i = 0; i < TAINT_FLAGS_COUNT; i++)
-+			if ((1UL << i) & tmptaint)
- 				add_taint(i, LOCKDEP_STILL_OK);
--		}
- 	}
- 
- 	return err;
 -- 
-2.25.4
-
+Kees Cook
