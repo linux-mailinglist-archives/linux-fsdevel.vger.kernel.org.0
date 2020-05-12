@@ -2,138 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF9B41CF930
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5561CF960
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbgELPbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 11:31:05 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2199 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725912AbgELPbE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 11:31:04 -0400
-Received: from lhreml720-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 875C7694F362539982F7;
-        Tue, 12 May 2020 16:31:02 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- lhreml720-chm.china.huawei.com (10.201.108.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 16:31:02 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 17:31:01 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 17:31:01 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtCAAFxigIAAJvQA
-Date:   Tue, 12 May 2020 15:31:01 +0000
-Message-ID: <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
-         <1589233010.5091.49.camel@linux.ibm.com>
-         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
- <1589293025.5098.53.camel@linux.ibm.com>
-In-Reply-To: <1589293025.5098.53.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730823AbgELPha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 11:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730818AbgELPh3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 May 2020 11:37:29 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF740C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:37:28 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id d21so6483183ljg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U3mfWUpC6bH/0PPzXG5Sq3RBRbSppz1EWcuNQTMG4no=;
+        b=OtmcAawdVwZKG0M4kx0M+jrAJrJ1G8XEe6FS6/gIpKW8YlvvcI+MbEI73prV/Re8NB
+         kfVrqKnsXX/z8j2S9JCcSMF+x9IrlFuT/dRhsCYoWSO9brOKkkel3EoQT9HVHNkOAFZR
+         u3SK7kTeFtpAVEIs+r01cEzhEPtSvAoIMgaPmloMPyD3Sr3wevwmfBffVsZkDrv0tiew
+         Ej6+/AVE05h8zDM0MwzyKbGmq6f9TF8ftwLcPe3t24NEOU0sxN5kl8ufSEKoc3N4xNzD
+         S9oXqMeVmjGsNSGA3d2JW1HsaLgJyKm6mEFB19vsJrI2yzuz6Ih6kU4pvoADlSdXFnaV
+         +paQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U3mfWUpC6bH/0PPzXG5Sq3RBRbSppz1EWcuNQTMG4no=;
+        b=UWq1I8LOGHJfYfi1yeZjT4wHmPGPv3vNOlp/niGOQn+in59Q/ig5VB3b75GwsSXOKc
+         eftp6Hmuh1ZvHDc7kBio60WtLakSsZJ7dS7Q2TyBtvv0NVcD83ey1cwtBvKM6TirQskn
+         sybVGeHc9shDpy4H/EWH7oYjzxSZKKK1xJqRa2ICnPAPZHVUGzMBLeWHOrfpxOK22feD
+         GTGe5EAKCPmicKJb/Iwdb4PD8qwgofnh8YbrbT4pvOU1mzuVQf2sPIevMZ/YMQAzSzjj
+         y4hLYQsJn5e5JlU4HvshFNoOLFvdxY3QVZnKmaEEHlxfS8b18Tza0uTLSi/grGJdWxZB
+         S+Kg==
+X-Gm-Message-State: AOAM5302B9aQXLW+oRa7OKSPwpDSlStnjx6Kvgng4aNO6JTgng3/mbvu
+        baJ596esyzEn79F6rvS0UQnPzzNPNXYi+zYnXK+bUA==
+X-Google-Smtp-Source: ABdhPJzSzvPBzHJJyhmdNxeCDNn0RGhxwM4L9OsASaWkxZEseTcQrITCOOAq3lvC6NY1FGK3OODa4SHdRTxY9uynbbg=
+X-Received: by 2002:a2e:9455:: with SMTP id o21mr14273685ljh.245.1589297847090;
+ Tue, 12 May 2020 08:37:27 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20200511224430.HDJjRC68z%akpm@linux-foundation.org>
+ <3b612c3e-ce52-ba92-eb02-0fa7fd38819f@infradead.org> <20200512121750.GA397968@cmpxchg.org>
+In-Reply-To: <20200512121750.GA397968@cmpxchg.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 12 May 2020 21:07:15 +0530
+Message-ID: <CA+G9fYvZ1SFX1b7+3_X9L+snPxV_zGHykuDD96Me+gM++BYTBg@mail.gmail.com>
+Subject: Re: mmotm 2020-05-11-15-43 uploaded (mm/memcontrol.c, huge pages)
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBvd25lci1saW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIFttYWls
-dG86b3duZXItbGludXgtDQo+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJl
-aGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6IFR1ZXNkYXksIE1heSAxMiwgMjAyMCA0OjE3IFBN
-DQo+IE9uIFR1ZSwgMjAyMC0wNS0xMiBhdCAwNzo1NCArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90
-ZToNCj4gPiA+ID4gPiBSb2JlcnRvLCBFVk0gaXMgb25seSB0cmlnZ2VyZWQgYnkgSU1BLCB1bmxl
-c3MgeW91J3ZlIG1vZGlmaWVkIHRoZQ0KPiA+ID4gPiA+IGtlcm5lbCB0byBkbyBvdGhlcndpc2Uu
-DQo+ID4gPiA+DQo+ID4gPiA+IEVWTSB3b3VsZCBkZW55IHhhdHRyL2F0dHIgb3BlcmF0aW9ucyBl
-dmVuIGlmIElNQSBpcyBkaXNhYmxlZCBpbiB0aGUNCj4gPiA+ID4ga2VybmVsIGNvbmZpZ3VyYXRp
-b24uIEZvciBleGFtcGxlLCBldm1fc2V0eGF0dHIoKSByZXR1cm5zIHRoZSB2YWx1ZQ0KPiA+ID4g
-PiBmcm9tIGV2bV9wcm90ZWN0X3hhdHRyKCkuIElNQSBpcyBub3QgaW52b2x2ZWQgdGhlcmUuDQo+
-ID4gPg0KPiA+ID4gQ29tbWl0wqBhZTFiYTE2NzZiODggKCJFVk06IEFsbG93IHVzZXJsYW5kIHRv
-IHBlcm1pdCBtb2RpZmljYXRpb24gb2YNCj4gPiA+IEVWTS1wcm90ZWN0ZWQgbWV0YWRhdGEiKQ0K
-PiBpbnRyb2R1Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTDQo+ID4gPiB0byBhbGxvdyB3
-cml0aW5nIHRoZSBFVk0gcG9ydGFibGUgYW5kIGltbXV0YWJsZSBmaWxlIHNpZ25hdHVyZXMuDQo+
-ID4NCj4gPiBBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9ldm06DQo+ID4N
-Cj4gPiBOb3RlIHRoYXQgb25jZSBhIGtleSBoYXMgYmVlbiBsb2FkZWQsIGl0IHdpbGwgbm8gbG9u
-Z2VyIGJlDQo+ID4gcG9zc2libGUgdG8gZW5hYmxlIG1ldGFkYXRhIG1vZGlmaWNhdGlvbi4NCj4g
-DQo+IE5vdCBhbnkga2V5LCBidXQgdGhlIEhNQUMga2V5Lg0KPiANCj4gMsKgwqDCoMKgwqDCoMKg
-wqDCoFBlcm1pdCBtb2RpZmljYXRpb24gb2YgRVZNLXByb3RlY3RlZCBtZXRhZGF0YSBhdA0KPiDC
-oCDCoCDCoCDCoCDCoCBydW50aW1lLiBOb3Qgc3VwcG9ydGVkIGlmIEhNQUMgdmFsaWRhdGlvbiBh
-bmQNCj4gwqAgwqAgwqAgwqAgwqAgY3JlYXRpb24gaXMgZW5hYmxlZC4NCg0KI2lmZGVmIENPTkZJ
-R19FVk1fTE9BRF9YNTA5DQp2b2lkIF9faW5pdCBldm1fbG9hZF94NTA5KHZvaWQpDQp7DQpbLi4u
-XQ0KICAgICAgICByYyA9IGludGVncml0eV9sb2FkX3g1MDkoSU5URUdSSVRZX0tFWVJJTkdfRVZN
-LCBDT05GSUdfRVZNX1g1MDlfUEFUSCk7DQogICAgICAgIGlmICghcmMpDQogICAgICAgICAgICAg
-ICAgZXZtX2luaXRpYWxpemVkIHw9IEVWTV9JTklUX1g1MDk7DQoNCg0Kc3RhdGljIHNzaXplX3Qg
-ZXZtX3dyaXRlX2tleShzdHJ1Y3QgZmlsZSAqZmlsZSwgY29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwN
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3Mp
-DQp7DQpbLi4uXQ0KICAgICAgICAvKiBEb24ndCBhbGxvdyBhIHJlcXVlc3QgdG8gZnJlc2hseSBl
-bmFibGUgbWV0YWRhdGEgd3JpdGVzIGlmDQogICAgICAgICAqIGtleXMgYXJlIGxvYWRlZC4NCiAg
-ICAgICAgICovDQogICAgICAgIGlmICgoaSAmIEVWTV9BTExPV19NRVRBREFUQV9XUklURVMpICYm
-DQogICAgICAgICAgICAoKGV2bV9pbml0aWFsaXplZCAmIEVWTV9LRVlfTUFTSykgIT0gMCkgJiYN
-CiAgICAgICAgICAgICEoZXZtX2luaXRpYWxpemVkICYgRVZNX0FMTE9XX01FVEFEQVRBX1dSSVRF
-UykpDQogICAgICAgICAgICAgICAgcmV0dXJuIC1FUEVSTTsNCg0KU2hvdWxkIGhhdmUgYmVlbjoN
-Cg0KICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSAmJg0KICAgICAg
-ICAgICAgKChldm1faW5pdGlhbGl6ZWQgJiBFVk1fSU5JVF9ITUFDKSAhPSAwKSAmJg0KICAgICAg
-ICAgICAgIShldm1faW5pdGlhbGl6ZWQgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSkNCiAg
-ICAgICAgICAgICAgICByZXR1cm4gLUVQRVJNOw0KDQo+IEVhY2ggdGltZSB0aGUgRVZNIHByb3Rl
-Y3RlZCBmaWxlIG1ldGFkYXRhIGlzIHVwZGF0ZWQsIHRoZSBFVk0gSE1BQyBpcw0KPiB1cGRhdGVk
-LCBhc3N1bWluZyB0aGUgZXhpc3RpbmcgRVZNIEhNQUMgaXMgdmFsaWQuIMKgVXNlcnNwYWNlIHNo
-b3VsZA0KPiBub3QgaGF2ZSBhY2Nlc3MgdG8gdGhlIEhNQUMga2V5LCBzbyB3ZSBvbmx5IGFsbG93
-IHdyaXRpbmcgRVZNDQo+IHNpZ25hdHVyZXMuDQo+IA0KPiBUaGUgb25seSBkaWZmZXJlbmNlIGJl
-dHdlZW4gd3JpdGluZyB0aGUgb3JpZ2luYWwgRVZNIHNpZ25hdHVyZSBhbmQgdGhlDQo+IG5ldyBw
-b3J0YWJsZSBhbmQgaW1tdXRhYmxlIHNpZ25hdHVyZSBpcyB0aGUgc2VjdXJpdHkuaW1hIHhhdHRy
-DQo+IHJlcXVpcmVtZW50LiDCoFNpbmNlIHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBkb2VzIG5vdCBp
-bmNsdWRlIHRoZQ0KPiBmaWxlc3lzdGVtIHNwZWNpZmljIGRhdGEsIHNvbWV0aGluZyBlbHNlIG5l
-ZWRzIHRvIGJpbmQgdGhlIGZpbGUNCj4gbWV0YWRhdGEgdG8gdGhlIGZpbGUgZGF0YS4gwqBUaHVz
-IHRoZSBJTUEgeGF0dHIgcmVxdWlyZW1lbnQuDQo+IA0KPiBBc3N1bWluZyB0aGF0IHRoZSBuZXcg
-RVZNIHNpZ25hdHVyZSBpcyB3cml0dGVuIGxhc3QsIGFzIGxvbmcgYXMgdGhlcmUNCj4gaXMgYW4g
-SU1BIHhhdHRyLCB0aGVyZSBzaG91bGRuJ3QgYmUgYSBwcm9ibGVtIHdyaXRpbmcgdGhlIG5ldyBF
-Vk0NCj4gc2lnbmF0dXJlLg0KDQogICAgICAgIC8qIGZpcnN0IG5lZWQgdG8ga25vdyB0aGUgc2ln
-IHR5cGUgKi8NCiAgICAgICAgcmMgPSB2ZnNfZ2V0eGF0dHJfYWxsb2MoZGVudHJ5LCBYQVRUUl9O
-QU1FX0VWTSwgKGNoYXIgKiopJnhhdHRyX2RhdGEsIDAsDQogICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIEdGUF9OT0ZTKTsNCiAgICAgICAgaWYgKHJjIDw9IDApIHsNCiAgICAgICAgICAg
-ICAgICBldm1fc3RhdHVzID0gSU5URUdSSVRZX0ZBSUw7DQogICAgICAgICAgICAgICAgaWYgKHJj
-ID09IC1FTk9EQVRBKSB7DQogICAgICAgICAgICAgICAgICAgICAgICByYyA9IGV2bV9maW5kX3By
-b3RlY3RlZF94YXR0cnMoZGVudHJ5KTsNCiAgICAgICAgICAgICAgICAgICAgICAgIGlmIChyYyA+
-IDApDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGV2bV9zdGF0dXMgPSBJTlRFR1JJ
-VFlfTk9MQUJFTDsNCiAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYgKHJjID09IDApDQog
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGV2bV9zdGF0dXMgPSBJTlRFR1JJVFlfTk9Y
-QVRUUlM7IC8qIG5ldyBmaWxlICovDQoNCklmIEVWTV9BTExPV19NRVRBREFUQV9XUklURVMgaXMg
-Y2xlYXJlZCwgb25seSB0aGUgZmlyc3QgeGF0dHINCmNhbiBiZSB3cml0dGVuIChzdGF0dXMgSU5U
-RUdSSVRZX05PWEFUVFJTIGlzIG9rKS4gQWZ0ZXIsDQpldm1fZmluZF9wcm90ZWN0ZWRfeGF0dHJz
-KCkgcmV0dXJucyByYyA+IDAsIHNvIHRoZSBzdGF0dXMgaXMNCklOVEVHUklUWV9OT0xBQkVMLCB3
-aGljaCBpcyBub3QgaWdub3JlZCBieSBldm1fcHJvdGVjdF94YXR0cigpLg0KDQpSb2JlcnRvDQoN
-CkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2lu
-ZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
+> The THP page size macros are CONFIG_TRANSPARENT_HUGEPAGE only.
+>
+> We already ifdef most THP-related code in memcg, but not these
+> particular stats. Memcg used to track the pages as they came in, and
+> PageTransHuge() + hpage_nr_pages() work when THP is not compiled in.
+>
+> Switching to native vmstat counters, memcg doesn't see the pages, it
+> only gets a count of THPs. To translate that to bytes, it has to know
+> how big the THPs are - and that's only available for CONFIG_THP.
+>
+> Add the necessary ifdefs. /proc/meminfo, smaps etc. also don't show
+> the THP counters when the feature is compiled out. The event counts
+> (THP_FAULT_ALLOC, THP_COLLAPSE_ALLOC) were already conditional also.
+>
+> Style touchup: HPAGE_PMD_NR * PAGE_SIZE is silly. Use HPAGE_PMD_SIZE.
+
+Build tested and build pass on x86_64.
+
+>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+
+> ---
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 738d071ba1ef..47c685088a2c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1401,9 +1401,11 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
+>                        (u64)memcg_page_state(memcg, NR_WRITEBACK) *
+>                        PAGE_SIZE);
+>
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         seq_buf_printf(&s, "anon_thp %llu\n",
+>                        (u64)memcg_page_state(memcg, NR_ANON_THPS) *
+> -                      HPAGE_PMD_NR * PAGE_SIZE);
+> +                      HPAGE_PMD_SIZE);
+> +#endif
+>
+>         for (i = 0; i < NR_LRU_LISTS; i++)
+>                 seq_buf_printf(&s, "%s %llu\n", lru_list_name(i),
+> @@ -3752,7 +3754,9 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
+>  static const unsigned int memcg1_stats[] = {
+>         NR_FILE_PAGES,
+>         NR_ANON_MAPPED,
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         NR_ANON_THPS,
+> +#endif
+>         NR_SHMEM,
+>         NR_FILE_MAPPED,
+>         NR_FILE_DIRTY,
+> @@ -3763,7 +3767,9 @@ static const unsigned int memcg1_stats[] = {
+>  static const char *const memcg1_stat_names[] = {
+>         "cache",
+>         "rss",
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         "rss_huge",
+> +#endif
+>         "shmem",
+>         "mapped_file",
+>         "dirty",
+> @@ -3794,8 +3800,10 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+>                 if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
+>                         continue;
+>                 nr = memcg_page_state_local(memcg, memcg1_stats[i]);
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>                 if (memcg1_stats[i] == NR_ANON_THPS)
+>                         nr *= HPAGE_PMD_NR;
+> +#endif
+>                 seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
+>         }
+>
+
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
