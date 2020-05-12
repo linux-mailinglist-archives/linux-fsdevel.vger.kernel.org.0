@@ -2,110 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56ED41D0173
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5F41D018B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbgELWAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 18:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729646AbgELWAV (ORCPT
+        id S1731553AbgELWDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 18:03:45 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53276 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728313AbgELWDo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 18:00:21 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6008BC061A0E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:00:21 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id t7so5997367plr.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=+79i6CNjIBAM9t+ay0r61vFhVwB4nVo6+b6hHSQ4Fro=;
-        b=Z/kjEVE7ijoWI2BF5GmEwAS2TVMlcwmQ3piX8x8xKGksNXYU58li/dNrs7QXxUoz7v
-         WcPUKAYo4D+A3Vjcp2GxS4KQ9NMekKqFlUGG2RHxbDNQhoqZoY/xpwrNADyPpkJA3XMs
-         ldEER+nN+tYegKNCyBNg4B35WbSpqTnd27sU0=
+        Tue, 12 May 2020 18:03:44 -0400
+Received: by mail-pj1-f65.google.com with SMTP id hi11so10202018pjb.3;
+        Tue, 12 May 2020 15:03:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=+79i6CNjIBAM9t+ay0r61vFhVwB4nVo6+b6hHSQ4Fro=;
-        b=mINZpKubsXVAnStjVwmzbi9SRqZ7EhnimCh0J/90vMg50JOcjQn6/stUWa/fNTxTwU
-         CiQym4pimEDzvJwadQSC3gFOPXoCzK1SNl5c4/nBfkVPNkEyAwFeLRV6Vxbd7zNevH6s
-         aOsI0Q6CSVsY2b2p7xELg2e51ynksHHfB5dnB8VDH8gi5Z8qXMbvEIxlXalBp4Sl4Ym5
-         rSkO4r4EAv0s5JYzGLK1oLmC6SzfxL+4LO0nilBX2yMmF0oyX1+c1voz1y18InhAmnJ+
-         UJZNo0InruB5EWPYSWq5nIpcJ00b9APT+Gfem/E+VftVJwyuiQ3ByEmfYJWZd1UixmDh
-         rDsw==
-X-Gm-Message-State: AGi0PuYRHANyTJREW7zM+kmqS7gDv0X9srEMN5C1iZY5JQ8IiMkOUJp4
-        +66Sb8Vf35lVFS+sJ3vEHkzlxg==
-X-Google-Smtp-Source: APiQypKLh7L5M6Z91bm0o0e2Xo3kz9JFIjZHGl9tokP3YDbmJ9kq2VCMFUVZ8H/2dEcftnriFb6DmQ==
-X-Received: by 2002:a17:90a:6343:: with SMTP id v3mr31509425pjs.127.1589320820943;
-        Tue, 12 May 2020 15:00:20 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j2sm13193542pfb.73.2020.05.12.15.00.19
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jPas3FVTQ077tq4XLx1f6zCjNgfjXBxht/KPP+7OEug=;
+        b=az4dz60fUx0TGGjY0OrzgvIn5nL20WbvyWATzslSo72V9Xh97IG4zxDBaUFWstzD83
+         1cJAssqckTzhAJrErel+8Jy5DyzW1W+EHs6SWD/zvCpQmYoe43upNVCoRYFlUXxu/laS
+         Is4FhS9BzLfVBg5gKkA+WS/y8VQHD2eEITkyk9CVaPatEyRsmHwBluvFJsqxGaKIRKor
+         UVPiDusOgvr3IQXwqYS9QqdfNlhVYE6/LZy0l1zRgjL1Qge5g5UnmNltUJcOj2EIadNx
+         aYnCPDUqT3COouxtUA8A631HOJExzblSCrybWmvJalZnexGSuifiJhfImrPJhtJUBKLQ
+         fCdA==
+X-Gm-Message-State: AGi0PuaTP6oVnQzFYJJlsyhQWfZc2pCYQSdyDWzr3/1eW/7jJ4QieZ/r
+        UGk++10ynz+ne2w/ovCeJRU=
+X-Google-Smtp-Source: APiQypLRR8P3Hy27Aan2ceEueeRcL0xTQS/0wfLdqo/lGe83BBK2NFiFKG1bubvoAzbVD2Yk3HpUbQ==
+X-Received: by 2002:a17:902:c281:: with SMTP id i1mr21719181pld.85.1589321023383;
+        Tue, 12 May 2020 15:03:43 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id o27sm681142pgd.18.2020.05.12.15.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 15:00:20 -0700 (PDT)
-Date:   Tue, 12 May 2020 15:00:19 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] doc: Add documentation for the
- fs.open_mayexec_enforce sysctl
-Message-ID: <202005121459.158C3AE75@keescook>
-References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-6-mic@digikod.net>
+        Tue, 12 May 2020 15:03:42 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 76A134063E; Tue, 12 May 2020 22:03:41 +0000 (UTC)
+Date:   Tue, 12 May 2020 22:03:41 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
+        linux-fsdevel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
+Message-ID: <20200512220341.GE11244@42.do-not-panic.com>
+References: <20200511111123.68ccbaa3@canb.auug.org.au>
+ <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
+ <20200512003305.GX11244@42.do-not-panic.com>
+ <87y2pxs73w.fsf@x220.int.ebiederm.org>
+ <20200512172413.GC11244@42.do-not-panic.com>
+ <87k11hrqzc.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200505153156.925111-6-mic@digikod.net>
+In-Reply-To: <87k11hrqzc.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 05, 2020 at 05:31:55PM +0200, Mickaël Salaün wrote:
-> This sysctl enables to propagate executable permission to userspace
-> thanks to the O_MAYEXEC flag.
+On Tue, May 12, 2020 at 12:40:55PM -0500, Eric W. Biederman wrote:
+> Luis Chamberlain <mcgrof@kernel.org> writes:
 > 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Kees Cook <keescook@chromium.org>
+> > On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
+> >> Luis Chamberlain <mcgrof@kernel.org> writes:
+> >> 
+> >> > +static struct ctl_table fs_base_table[] = {
+> >> > +	{
+> >> > +		.procname	= "fs",
+> >> > +		.mode		= 0555,
+> >> > +		.child		= fs_table,
+> >> > +	},
+> >> > +	{ }
+> >> > +};
+> >>   ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
+> >> > > +static int __init fs_procsys_init(void)
+> >> > +{
+> >> > +	struct ctl_table_header *hdr;
+> >> > +
+> >> > +	hdr = register_sysctl_table(fs_base_table);
+> >>               ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
+> >> 	AKA
+> >>         hdr = register_sysctl("fs", fs_table);
+> >
+> > Ah, much cleaner thanks!
+> 
+> It is my hope you we can get rid of register_sysctl_table one of these
+> days.  It was the original interface but today it is just a
+> compatibility wrapper.
+> 
+> I unfortunately ran out of steam last time before I finished converting
+> everything over.
 
-I think this should be folded into the patch that adds the sysctl.
+Let's give it one more go. I'll start with the fs stuff.
 
--- 
-Kees Cook
+  Luis
