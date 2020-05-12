@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 617C51CFD10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 20:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F0B1CFD1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 20:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730993AbgELSSu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 14:18:50 -0400
-Received: from mailrelay115.isp.belgacom.be ([195.238.20.142]:26638 "EHLO
+        id S1730687AbgELSTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 14:19:44 -0400
+Received: from mailrelay115.isp.belgacom.be ([195.238.20.142]:26694 "EHLO
         mailrelay115.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730978AbgELSSt (ORCPT
+        by vger.kernel.org with ESMTP id S1725950AbgELSTn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 14:18:49 -0400
-IronPort-SDR: naegeXBE5vTA3AgOLAzPnFpZ0cCOHR74wGPOWbxeBh16rXhY5FRJsDcaEe3rJO4rILeWPQQ1BX
- MH02uVrBIC6dhxCqKwez6Xe9wgt2m/XtskSmSkx2z70w65tcj6kaorDXHY/ChSq/mPGuGEJu0v
- DOIFJHEPdvzzYFmuwvfiSPkCBOr0LNi0ICI7ogzs99WdgXbUJicHTEwFGAhnGiSnAJ9NM6wUeR
- uAWWlPDJ7z5Ha+DTmMJSh3Z+t7hMKQrjthknRnPsO3+pRBYnkhtBIwOy2FSFH9GtJjEivnoZbA
- SXc=
+        Tue, 12 May 2020 14:19:43 -0400
+IronPort-SDR: QwZxF3PihmMKDV85CkDhGk+l7HWubEZEZ7MZ5zuKkFcs8411iQAqMzbwzeBuHBDVnqrFi3OJ9V
+ CACHe5bE6zV/AZaR1eXoU0mVSyCPzdQfq6+Or/0D6PLNvjjVLF5DVMDbpwziV8uzoVeI/E0i72
+ Jlmg6hfpDjj+O7ErukuXp/sxVLOFo7q1kDhanQ1kjjtZPIctaeMoD6x4n0V9TAEPhs0Msq8OQX
+ 4SX0fsx1hieXeVfOItppXTLtFd7yEKGrrPEx5oJVJ92RdPWOoCUqhreJZFENajX8O/mSG5Ynw7
+ GiM=
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3AABwaFxF2njoKgT/tnRozVp1GYnF86YWxBRYc79?=
- =?us-ascii?q?8ds5kLTJ7yo8SwAkXT6L1XgUPTWs2DsrQY0reQ4vqrADVQqb+681k6OKRWUB?=
- =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
- =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba5yIRmsqQjdqMYajZZ/Jqsy1x?=
- =?us-ascii?q?DEvmZGd+NKyG1yOFmdhQz85sC+/J5i9yRfpfcs/NNeXKv5Yqo1U6VWACwpPG?=
- =?us-ascii?q?4p6sLrswLDTRaU6XsHTmoWiBtIDBPb4xz8Q5z8rzH1tut52CmdIM32UbU5Ui?=
- =?us-ascii?q?ms4qt3VBPljjoMOjgk+2/Vl8NwlrpWrhK/qRJizYDaY4abO/VxcK7GYd8XRn?=
- =?us-ascii?q?BMUtpLWiBdHo+xaZYEAeobPeZfqonwv1sAogGlCgmtHuzvzCJDiH/s3aIkzu?=
- =?us-ascii?q?suDxvG3A08ENINrX/Zq9v1O70JXuC716TI1jbDbvNQ2Tjj9IjEaAsuru+VUL?=
- =?us-ascii?q?92bMHexlUhGRnfgVWMtYzqISmV1uIVvmaV7OdtUeKhhm8npg1vrDWhxtohhp?=
- =?us-ascii?q?XUio4Jy13K+ip3zZs7KNCmVUN2YdypHYVfuS2GOYV4TccvTWFotiokzrALv4?=
- =?us-ascii?q?OwcisSyJk/wxPTduaLf5WL7x79TuqdPDZ1iXJ/dL6ihhu/91WrxPfmWcmuyl?=
- =?us-ascii?q?lKqzJIktzLtn8QyRPe8tOHSv5h/ke53jaPyhzT5vlEIU8qkarbLIYszaUxlp?=
- =?us-ascii?q?ocvkTDAzT2mF7xjK+Sa0Uk4fKk6+TgYrXjuJCQL450igfgPaQygsGyBfk0Ph?=
- =?us-ascii?q?ITU2WY5+iwzqDv8Ez5TblQk/E7k7HVsJXAKsQaoq65DRVV0oEm6xunATepys?=
- =?us-ascii?q?8XnXccIVJeexKGj47pNE/SIPziFviwnUygkC13yPDeIr3hHpLNI2DBkLj7Yb?=
- =?us-ascii?q?l96FVRyBEuzdBE+Z1YEK0OIfPrUE/rqNPYFgM5MxCzw+v/Etp904IeWXiND6?=
- =?us-ascii?q?KXMaPStUSF5u0qI+aWZY8VvCzxJOQi5/7rlXU5g0MSfbG13ZsLb3C1BvBmI0?=
- =?us-ascii?q?SfYXrxjdYNCGkKvhEjQ+P0ll2NTzpTam2sX6Iz+D47EpiqDYTdSYC3hryOwi?=
- =?us-ascii?q?O7EodRZmBcBVCGCW3oeJmcW/cQdCKSJddskjIeWre6RY8szgqutAz6yrphMO?=
- =?us-ascii?q?XU5jcUuon924s92+qGlxg59hRvEt+QlWqfCyl9m2ISGGQ32IhwpEV8zhGI1q?=
- =?us-ascii?q?0rreZfEIl97vlIWwFyG4TRw+FgCtvxElbPd92HYE2lU9OrHXc7Q4RikJc1f0?=
- =?us-ascii?q?9hFoD63Vj41C2wDupNmg=3D=3D?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AUgcCOhSZzK9T29BvLtqnI/LXXNpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa6zYByN2/xhgRfzUJnB7Loc0qyK6v2mCDZLuM/R+Fk5M7V0Hy?=
+ =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
+ =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi2oAnLssQan4RuJrssxh?=
+ =?us-ascii?q?bKv3BFZ/lYyWR0KFyJgh3y/N2w/Jlt8yRRv/Iu6ctNWrjkcqo7ULJVEi0oP3?=
+ =?us-ascii?q?g668P3uxbDSxCP5mYHXWUNjhVIGQnF4wrkUZr3ryD3q/By2CiePc3xULA0RT?=
+ =?us-ascii?q?Gv5LplRRP0lCsKMSMy/WfKgcJyka1bugqsqRxhzYDJbo+bN/1wcazSc94BWW?=
+ =?us-ascii?q?ZMXdxcWzBbD4+gc4cCCfcKM+ZCr4n6olsDtRuwChO3C+Pu0DBIgGL9060g0+?=
+ =?us-ascii?q?s/DA7JwhYgH9MSv3TXsd74M6kSXvquw6nG1jjDdPBW2Df76IfWbhAtu+qDUq?=
+ =?us-ascii?q?xpfMfX1EIgGB/LgE+Kpoz5IzOayP4Ns26D4uRuVu+ij24ppgBxrzSxyMoiip?=
+ =?us-ascii?q?TEip4IxlzY9Ch3z4k7KMC2RUNlfNOpEJlduj+VOYdqTM0sTGVltiY6xLEYvZ?=
+ =?us-ascii?q?O2ejUBxpc/xxPHb/GLbpKE7g/gWeqPOzt0mXNodbKlixqv8EWtzPD3WNOu31?=
+ =?us-ascii?q?ZQtCVFl8HBtnUK1xPO9MeKUuB9/kK92TaX0ADT9/1ELVg0laXFL54hxaY9mY?=
+ =?us-ascii?q?ESsUTMES/2hV72jLSRdkUg5+io8P7rYrXhpp+ZKYB4kgD+MqIwlcyjGek1Nh?=
+ =?us-ascii?q?UCU3KG9em/yrHv51D1TbRKg/Esj6XUsYjWJcEBqa64Bw9V3Jwj6xG6Dzq+3t?=
+ =?us-ascii?q?QXh2IILFxedRKcjIjoO1fOL+7kDfulmFujji9nx+raMb35HpXNMn/Dna/jfb?=
+ =?us-ascii?q?ln90FcyxE+zctC55JPFL4NOu78W07pvtzCEhA5KxC0w/rgCNhlzIweXGOPAr?=
+ =?us-ascii?q?WbPa7csF+I4vkiI+aJZIAPuTb9L+Ip6OLpjX88gVUdZ7Wm3YMLaHCkGfRrO0?=
+ =?us-ascii?q?GZYXvqgtccHmYGpwQ+TPf3h1KcTz5ceXKyUrki5jE0Fo2mF53PRoOzj7yb2i?=
+ =?us-ascii?q?e0AJlWanpBClCWHnfib5+EVOsUaCKOPs9hlSQJVba7RIA62xGjrxT6y7lnL+?=
+ =?us-ascii?q?rS5CIYqYjv28Nr6L6bqRZn9zV/DOyGznqACWpm2isBQj4sg/t+pWRyz16C1e?=
+ =?us-ascii?q?5zhPkLO8ZU4qZnWw07PJiU4fZ3B93oWwnCNoOHQVyoas6lEDc8UpQ7zoldMA?=
+ =?us-ascii?q?5GB9y+g0WbjGKRCLgPmunTCQ=3D=3D?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ChDAAE57pe/xCltltmHQEBPAEFBQE?=
- =?us-ascii?q?CAQkBgV6CKIFkEiyNJYV8jBiKMoU/gWcLAQEBAQEBAQEBNAECBAEBhESCBCc?=
- =?us-ascii?q?4EwIDAQEBAwIFAQEGAQEBAQEBBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoN?=
- =?us-ascii?q?NASMjT3ASgyaCWCmxcIVRg1eBQIE4AYdchQGBQT+EX4QVH4YOBLJrglSCcZU?=
- =?us-ascii?q?rDB2dOi2PcJ87IoFWTSAYgyRQGA2fCkIwNwIGCAEBAwlXASIBi0OCRQEB?=
-X-IPAS-Result: =?us-ascii?q?A2ChDAAE57pe/xCltltmHQEBPAEFBQECAQkBgV6CKIFkE?=
- =?us-ascii?q?iyNJYV8jBiKMoU/gWcLAQEBAQEBAQEBNAECBAEBhESCBCc4EwIDAQEBAwIFA?=
- =?us-ascii?q?QEGAQEBAQEBBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoNNASMjT3ASgyaCW?=
- =?us-ascii?q?CmxcIVRg1eBQIE4AYdchQGBQT+EX4QVH4YOBLJrglSCcZUrDB2dOi2PcJ87I?=
- =?us-ascii?q?oFWTSAYgyRQGA2fCkIwNwIGCAEBAwlXASIBi0OCRQEB?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CsCgB56Lpe/xCltltmglKCKIFkEiy?=
+ =?us-ascii?q?NJYV+jBiRWAsBAQEBAQEBAQE0AQIEAQGERIIEJzkFDQIDAQEBAwIFAQEGAQE?=
+ =?us-ascii?q?BAQEBBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoNNASMjT3ASgyaCWCmxc4V?=
+ =?us-ascii?q?Rg1GBQIE4h12FAYFBP4RfhBWGLQSya4JUgnGVKwwdgkuaby2PcJ88IYFWTSA?=
+ =?us-ascii?q?YgyRQGA2fCkIwNwIGCAEBAwlXASIBi0OCRQEB?=
+X-IPAS-Result: =?us-ascii?q?A2CsCgB56Lpe/xCltltmglKCKIFkEiyNJYV+jBiRWAsBA?=
+ =?us-ascii?q?QEBAQEBAQE0AQIEAQGERIIEJzkFDQIDAQEBAwIFAQEGAQEBAQEBBAQBbAQBA?=
+ =?us-ascii?q?QcKAgGETiEBAwEBBQoBQ4I7IoNNASMjT3ASgyaCWCmxc4VRg1GBQIE4h12FA?=
+ =?us-ascii?q?YFBP4RfhBWGLQSya4JUgnGVKwwdgkuaby2PcJ88IYFWTSAYgyRQGA2fCkIwN?=
+ =?us-ascii?q?wIGCAEBAwlXASIBi0OCRQEB?=
 Received: from 16.165-182-91.adsl-dyn.isp.belgacom.be (HELO biggussolus.home) ([91.182.165.16])
-  by relay.skynet.be with ESMTP; 12 May 2020 20:18:46 +0200
+  by relay.skynet.be with ESMTP; 12 May 2020 20:19:12 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     jack@suse.cz, amir73il@gmail.com
 Cc:     linux-fsdevel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH V2 4/6 linux-next] fanotify: remove reference to fill_event_metadata()
-Date:   Tue, 12 May 2020 20:18:36 +0200
-Message-Id: <20200512181836.405879-1-fabf@skynet.be>
+Subject: [PATCH V2 5/6 linux-next] fsnotify/fdinfo: remove proc_fs.h inclusion
+Date:   Tue, 12 May 2020 20:19:06 +0200
+Message-Id: <20200512181906.405927-1-fabf@skynet.be>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,27 +68,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fill_event_metadata() was removed in commit bb2f7b4542c7
-("fanotify: open code fill_event_metadata()")
+proc_fs.h was already included in fdinfo.h
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/notify/fanotify/fanotify_user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/notify/fdinfo.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 42cb794c62ac..02a314acc757 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -328,7 +328,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	ret = -EFAULT;
- 	/*
- 	 * Sanity check copy size in case get_one_event() and
--	 * fill_event_metadata() event_len sizes ever get out of sync.
-+	 * event_len sizes ever get out of sync.
- 	 */
- 	if (WARN_ON_ONCE(metadata.event_len > count))
- 		goto out_close_fd;
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index ef83f4020554..f0d6b54be412 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -11,7 +11,6 @@
+ #include <linux/sched.h>
+ #include <linux/types.h>
+ #include <linux/seq_file.h>
+-#include <linux/proc_fs.h>
+ #include <linux/exportfs.h>
+ 
+ #include "inotify/inotify.h"
 -- 
 2.26.2
 
