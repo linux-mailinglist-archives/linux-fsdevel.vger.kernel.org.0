@@ -2,178 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0E31D02B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1AB1D02E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731633AbgELXAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 19:00:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
+        id S1729942AbgELXI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 19:08:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731618AbgELXAa (ORCPT
+        with ESMTP id S1728220AbgELXI7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 19:00:30 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51EFAC05BD09
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:00:29 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id u15so2093064plm.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:00:29 -0700 (PDT)
+        Tue, 12 May 2020 19:08:59 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4FC4C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:08:58 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id y18so317780pfl.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TxR+iMR41NNC8Tp0Yh5G0J9anaHo/y+mAo5OJ6FnE3w=;
-        b=YV0IEXO5IABYUMUtMWw6Y0a2xNZhYt4iDNMNdBJAdhkLz+DhDJrEb2/tely+kMRfBe
-         elzT7mfwntttCi0+nBJzpxqW1RzbdA4k2z5m0sbPhXbgm86NhUGJ6ezv1UWvqUAF6AFb
-         GwYEyZnEpPlXtS0AdB1oOMIXhoSzH1oQ3QYdKyFvf7rV9a0F5474HoxquQdEEcVsoVZk
-         mkFDvy/LaDlTuj+uY+/sZnyRH+3w/Rut2ArIzwHPIrhPI856FrWtiOC99MOqCPnAlAt1
-         y5de0EiQgDBn8VhocdW7T7X+feJnXd114pzMo7qEMcn1qfbF3zf4gbB8O6Pkx7p0q4QB
-         ZmJw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jPUDzmB2RaJE7QxC+Esx131H9VCB1o/rpPVErIJAzJU=;
+        b=aJ1pbMalItbAlYJJhzgzjRditf99BLgKT5bBvaX/wxrv2Egf5htQlaV8IS0drwDdL2
+         kKzuKpfK7N2zwzVJb4CmKxatoFDZeT8D5E/BZhkUyPgfD8q67s3KYVFgJJUt26w7AtXn
+         Kxyyz6+IR2xq2F4UCtqDh0TEH1Cnvaq8Hgi4Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=TxR+iMR41NNC8Tp0Yh5G0J9anaHo/y+mAo5OJ6FnE3w=;
-        b=dLiK910igUDzAG6M2Ig4EhGaJDeOPJqy38/HcdMG2DC62Oth2pRfegpcmWed2DyvE3
-         28DLL7iQPPaysldMpKVssMKzGfzg5+G9BtwKz8icD6+l4jnPiNhtwVYYrBvvhQZRL3Hg
-         u7w8bNZMtdiRIgiyNv2HYXkuZqF2jJMTAgyfVaXM0zrawtVYoZgiKBSFOo0BWrzo0JmT
-         Dw+AqfAS+oLXHOlLFPzQKovvVnCLUrvmAq9Ii07DCADe+XVp+nXu0CPlnD62Kfq3Vg2e
-         T8Hs8BKAYYp9TNqcsfi3QPqSgu/JzDIDhfy7e51wyfSHcmU1h2Yr3YanW7e++HLKYvLs
-         x8pQ==
-X-Gm-Message-State: AGi0PuaK76hR1VufpMNDrXMEzUqB6ppZTY1WFHhsSVZAYyBi23TTKE0E
-        TpDfA5iVGwqruWDWJqMb6R1FqA==
-X-Google-Smtp-Source: APiQypKPbiNIuzOhnfWZK3aSuAimZ6kMvjtjoB3PUVWkLgrXCsrrvonJs2vHPqxiHQA1YoMJYuJ02Q==
-X-Received: by 2002:a17:90a:2281:: with SMTP id s1mr31687737pjc.68.1589324428530;
-        Tue, 12 May 2020 16:00:28 -0700 (PDT)
-Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id w143sm12602170pfc.165.2020.05.12.16.00.26
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jPUDzmB2RaJE7QxC+Esx131H9VCB1o/rpPVErIJAzJU=;
+        b=ckobMF2vGS7bNGAwqD/BmZAo4KEFLlObGZOS0GmA55m1G3KKj6V10VqsBdaCQ8mmBj
+         rf/zTyWo79KPfkw8Yy3uHNcyYpvZ2YWeUpUCxvfWBa34cEE3UvUuXDlgNZzppdjUUXiq
+         3ERZBa+yma1kdguPmj0TvJakrJ55cgZHGrLz19WbOk8PHJq12PpE/59LZsNEJixLYRmi
+         8XQS+MxF0Q+qm2oRSWBt/YJ4oYuDEwh0k2wteTJHXJZiYqFfyRprLY5wgwMO4g/0BAF9
+         Yw2CZ5x0PDRGucIIxv7IuhZysVSkP17wyjVbp797j5oTggUdEAf/IInAHME6EQzDa+UJ
+         yDyQ==
+X-Gm-Message-State: AGi0Pua1PrS3v+xTpJ2egyvaT4P4Ujz68uwpI5q5UZ3Aq0J+dfjEhjkT
+        /BscKA/KzDg4D+XeVSbuDT8LOw==
+X-Google-Smtp-Source: APiQypLLWAJW1HvgvZ0iqC9QnHJCwq3TvpniPdwZEBT4rt6mOv1kkAEUxE7vJtCl1JaHryixnIxWUg==
+X-Received: by 2002:aa7:9ac9:: with SMTP id x9mr22349121pfp.304.1589324938284;
+        Tue, 12 May 2020 16:08:58 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s15sm1778377pgv.5.2020.05.12.16.08.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 16:00:26 -0700 (PDT)
-Date:   Tue, 12 May 2020 16:00:26 -0700 (PDT)
-X-Google-Original-Date: Tue, 12 May 2020 15:59:50 PDT (-0700)
-Subject:     Re: [PATCH 19/31] riscv: use asm-generic/cacheflush.h
-In-Reply-To: <20200510075510.987823-20-hch@lst.de>
-CC:     akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        zippel@linux-m68k.org, linux-arch@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, monstr@monstr.eu, jeyu@kernel.org,
-        linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        x86@kernel.org, linux-um@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mm@kvack.org, linux-m68k@lists.linux-m68k.org,
-        openrisc@lists.librecores.org, linux-alpha@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Christoph Hellwig <hch@lst.de>
-Message-ID: <mhng-8adbedbc-0f91-4291-9471-2df5eb7b802b@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 12 May 2020 16:08:57 -0700 (PDT)
+Date:   Tue, 12 May 2020 16:08:56 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+Message-ID: <202005121606.5575978B@keescook>
+References: <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org>
+ <202005111428.B094E3B76A@keescook>
+ <874kslq9jm.fsf@x220.int.ebiederm.org>
+ <202005121218.ED0B728DA@keescook>
+ <87lflwq4hu.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lflwq4hu.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 10 May 2020 00:54:58 PDT (-0700), Christoph Hellwig wrote:
-> RISC-V needs almost no cache flushing routines of its own.  Rely on
-> asm-generic/cacheflush.h for the defaults.
->
-> Also remove the pointless __KERNEL__ ifdef while we're at it.
-> ---
->  arch/riscv/include/asm/cacheflush.h | 62 ++---------------------------
->  1 file changed, 3 insertions(+), 59 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
-> index c8677c75f82cb..a167b4fbdf007 100644
-> --- a/arch/riscv/include/asm/cacheflush.h
-> +++ b/arch/riscv/include/asm/cacheflush.h
-> @@ -8,65 +8,6 @@
->
->  #include <linux/mm.h>
->
-> -#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
-> -
-> -/*
-> - * The cache doesn't need to be flushed when TLB entries change when
-> - * the cache is mapped to physical memory, not virtual memory
-> - */
-> -static inline void flush_cache_all(void)
-> -{
-> -}
-> -
-> -static inline void flush_cache_mm(struct mm_struct *mm)
-> -{
-> -}
-> -
-> -static inline void flush_cache_dup_mm(struct mm_struct *mm)
-> -{
-> -}
-> -
-> -static inline void flush_cache_range(struct vm_area_struct *vma,
-> -				     unsigned long start,
-> -				     unsigned long end)
-> -{
-> -}
-> -
-> -static inline void flush_cache_page(struct vm_area_struct *vma,
-> -				    unsigned long vmaddr,
-> -				    unsigned long pfn)
-> -{
-> -}
-> -
-> -static inline void flush_dcache_mmap_lock(struct address_space *mapping)
-> -{
-> -}
-> -
-> -static inline void flush_dcache_mmap_unlock(struct address_space *mapping)
-> -{
-> -}
-> -
-> -static inline void flush_icache_page(struct vm_area_struct *vma,
-> -				     struct page *page)
-> -{
-> -}
-> -
-> -static inline void flush_cache_vmap(unsigned long start, unsigned long end)
-> -{
-> -}
-> -
-> -static inline void flush_cache_vunmap(unsigned long start, unsigned long end)
-> -{
-> -}
-> -
-> -#define copy_to_user_page(vma, page, vaddr, dst, src, len) \
-> -	do { \
-> -		memcpy(dst, src, len); \
-> -		flush_icache_user_range(vma, page, vaddr, len); \
-> -	} while (0)
-> -#define copy_from_user_page(vma, page, vaddr, dst, src, len) \
-> -	memcpy(dst, src, len)
-> -
->  static inline void local_flush_icache_all(void)
->  {
->  	asm volatile ("fence.i" ::: "memory");
-> @@ -79,6 +20,7 @@ static inline void flush_dcache_page(struct page *page)
->  	if (test_bit(PG_dcache_clean, &page->flags))
->  		clear_bit(PG_dcache_clean, &page->flags);
->  }
-> +#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
->
->  /*
->   * RISC-V doesn't have an instruction to flush parts of the instruction cache,
-> @@ -105,4 +47,6 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
->  #define SYS_RISCV_FLUSH_ICACHE_LOCAL 1UL
->  #define SYS_RISCV_FLUSH_ICACHE_ALL   (SYS_RISCV_FLUSH_ICACHE_LOCAL)
->
-> +#include <asm-generic/cacheflush.h>
-> +
->  #endif /* _ASM_RISCV_CACHEFLUSH_H */
+On Tue, May 12, 2020 at 03:31:57PM -0500, Eric W. Biederman wrote:
+> >> It is possible although unlikely for userspace to find the file
+> >> descriptor without consulting AT_EXECFD so just to be conservative I
+> >> think we should install the file descriptor in begin_new_exec even if
+> >> the next interpreter does not support AT_EXECFD.
+> >
+> > I think universally installing the fd needs to be a distinct patch --
+> > it's going to have a lot of consequences, IMO. We can certainly deal
+> > with them, but I don't think it should be part of this clean-up series.
+> 
+> I meant generically installing the fd not universally installing it.
+> 
+> >> I am still working on how to handle recursive binfmts but I suspect it
+> >> is just a matter of having an array of struct files in struct
+> >> linux_binprm.
+> >
+> > If install is left if binfmt_misc, then the recursive problem goes away,
+> > yes?
+> 
+> I don't think leaving the install in binfmt_misc is responsible at this
+> point.
 
-Thanks!
+I'm nearly certain the answer is "yes", but I wonder if we should stop
+for a moment and ask "does anything still use MISC_FMT_OPEN_BINARY ? It
+looks like either "O" or "C" binfmt_misc registration flag. My installed
+binfmts on Ubuntu don't use them...
 
-Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
-Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+I'm currently pulling a list of all the packages in Debian than depend
+on the binfmt-support package and checking their flags.
 
-Were you trying to get these all in at once, or do you want me to take it into
-my tree?
+-- 
+Kees Cook
