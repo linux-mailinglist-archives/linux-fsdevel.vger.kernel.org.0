@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEE81CFD0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 20:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0DC1CFD0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 20:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbgELSRr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 14:17:47 -0400
-Received: from mailrelay115.isp.belgacom.be ([195.238.20.142]:26549 "EHLO
+        id S1730952AbgELSSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 14:18:10 -0400
+Received: from mailrelay115.isp.belgacom.be ([195.238.20.142]:26587 "EHLO
         mailrelay115.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726300AbgELSRr (ORCPT
+        by vger.kernel.org with ESMTP id S1726300AbgELSSK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 14:17:47 -0400
-IronPort-SDR: ROQLGba36rQBfJwvHnvLW47/ccwB3RyK0+20xl7Syr62SWeufBQz9H5aAjyjjd+g8AIuVFv6Ug
- 4xB05T8YRMoKspb+NuuggNiEOSd+iNKn1EVn0fKi15OXngDCYAfU2xqtePh8GkOjF/6Yxfea4u
- vx+mQE9C31MbX7AZQ1Jo5mAHPHM5B3FHzSRQSgzCaAIqkgjOI3mD2NUN0Zvrtkyr/gazsPrpWq
- p3KXfEqmV9St4rNAz8KLbmHseldkf2GTxF4HUIxmYbLfZLgznYQiRj+5fl1ziGY8x8IvY7bUti
- KnQ=
+        Tue, 12 May 2020 14:18:10 -0400
+IronPort-SDR: Kyn4xYby3BztO1uLKn1HLcsQr2f0KuC6Oz/BnuClbNQTsknOMVdeuoqnAn89T9l7IKtS7x7isj
+ tIlhIa1QMfGRuNnvvfsh+GZTqayB1los43JVgGuQecoO75UY9GfhRY5M7CvDC74OiEDFi12ugR
+ q2mqzi8t0umX9GY9obTPhPv2cNjnxFBTsQgs2su42zrvR0pWm+Na7xqrW+ovPcd1I75yvLa6ys
+ X02dx8abase9ZvVAu/jUHA+WDtjgwlKJbQzPL3QjoG/O81jZx5F3ukeuMP+wiZtSQq/7ZIBH8b
+ 6pU=
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3ARM4YBBZjAr2OFv2eF90WIN3/LSx+4OfEezUN45?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AV/EkSBapINfSme96pxLrUYz/LSx+4OfEezUN45?=
  =?us-ascii?q?9isYplN5qZrsiybnLW6fgltlLVR4KTs6sC17OL9fG6EjVZsd6oizMrSNR0TR?=
  =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
  =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vLBi6twHcutcZjYd/N6o8yQ?=
@@ -45,21 +45,21 @@ X-IronPort-Anti-Spam-Filtered: true
 X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BKBwAE57pe/xCltltmhHqBZBIsjSW?=
  =?us-ascii?q?FfIwYkVgLAQEBAQEBAQEBNAECBAEBhESCBCc4EwIDAQEBAwIFAQEGAQEBAQE?=
  =?us-ascii?q?BBAQBbAQBAQcKAgGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsT0zhVG?=
- =?us-ascii?q?DV4FAgTiHXYUBgUE/hF+KQgSya4JUgnGVKwwdnTqQHZ87IoFWTSAYgyRQGA2?=
- =?us-ascii?q?fCkIwNwIGCAEBAwlXASIBjggBAQ?=
+ =?us-ascii?q?DV4FAgTiHXYUBgUE/hF+KQgSya4JUgnGVKwwdgkuab5AdnzsigVZNIBiDJFA?=
+ =?us-ascii?q?YDZBMF44nQjA3AgYIAQEDCVcBIgGOCAEB?=
 X-IPAS-Result: =?us-ascii?q?A2BKBwAE57pe/xCltltmhHqBZBIsjSWFfIwYkVgLAQEBA?=
  =?us-ascii?q?QEBAQEBNAECBAEBhESCBCc4EwIDAQEBAwIFAQEGAQEBAQEBBAQBbAQBAQcKA?=
  =?us-ascii?q?gGETiEBAwEBBQoBQ4I7IoNCCwEjI09wEoMmglgpsT0zhVGDV4FAgTiHXYUBg?=
- =?us-ascii?q?UE/hF+KQgSya4JUgnGVKwwdnTqQHZ87IoFWTSAYgyRQGA2fCkIwNwIGCAEBA?=
- =?us-ascii?q?wlXASIBjggBAQ?=
+ =?us-ascii?q?UE/hF+KQgSya4JUgnGVKwwdgkuab5AdnzsigVZNIBiDJFAYDZBMF44nQjA3A?=
+ =?us-ascii?q?gYIAQEDCVcBIgGOCAEB?=
 Received: from 16.165-182-91.adsl-dyn.isp.belgacom.be (HELO biggussolus.home) ([91.182.165.16])
-  by relay.skynet.be with ESMTP; 12 May 2020 20:17:45 +0200
+  by relay.skynet.be with ESMTP; 12 May 2020 20:18:08 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     jack@suse.cz, amir73il@gmail.com
 Cc:     linux-fsdevel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH V2 2/6 linux-next] notify: explicit shutdown initialization
-Date:   Tue, 12 May 2020 20:17:40 +0200
-Message-Id: <20200512181740.405774-1-fabf@skynet.be>
+Subject: [PATCH V2 3/6 linux-next] notify: add mutex destroy
+Date:   Tue, 12 May 2020 20:18:03 +0200
+Message-Id: <20200512181803.405832-1-fabf@skynet.be>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,8 +68,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kzalloc should already do it but explicitly initialize group
-shutdown variable to false.
+destroy mutex before group kfree
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
@@ -77,17 +76,17 @@ Signed-off-by: Fabian Frederick <fabf@skynet.be>
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/notify/group.c b/fs/notify/group.c
-index 133f723aca07..f2cba2265061 100644
+index f2cba2265061..0a2dc03d13eb 100644
 --- a/fs/notify/group.c
 +++ b/fs/notify/group.c
-@@ -130,6 +130,7 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
- 	INIT_LIST_HEAD(&group->notification_list);
- 	init_waitqueue_head(&group->notification_waitq);
- 	group->max_events = UINT_MAX;
-+	group->shutdown = false;
+@@ -25,6 +25,7 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
+ 		group->ops->free_group_priv(group);
  
- 	mutex_init(&group->mark_mutex);
- 	INIT_LIST_HEAD(&group->marks_list);
+ 	mem_cgroup_put(group->memcg);
++	mutex_destroy(&group->mark_mutex);
+ 
+ 	kfree(group);
+ }
 -- 
 2.26.2
 
