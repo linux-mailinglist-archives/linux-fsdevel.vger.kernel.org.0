@@ -2,88 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A361CF1A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 11:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25711CF397
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 13:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbgELJa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 05:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728371AbgELJa6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 05:30:58 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAEAC061A0E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 02:30:56 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id o10so10411338ejn.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 02:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7DRU6YPQdNe34vZ3ypovyXSKXraDY9YNCbFCjsK8WL4=;
-        b=eTzfJEXd/zdaa+flumlrEsVDwebay7nkWlkA4jYbLl+qijwq/gU+4PMO45tTA1Ar6l
-         xFECI8R6Ym2riHmoTAKo+XTBktQJA0YhPzBaU3RTcacwWpYmsaFPRIaD7fMSRUGHcx71
-         gubdM6PjLg1/+1UUo5U4APewGv+OjjKT49x5g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7DRU6YPQdNe34vZ3ypovyXSKXraDY9YNCbFCjsK8WL4=;
-        b=Kj3+iG08BlGE1e4phi9w4hLRwDqkXK/Dyfq2s7v0cO/abKvBor+uxjcLDB1hk44NdP
-         wj7oOSO5x73HQLhvKogp1seu+ZQclGjfr3WTsvXoBOfNkFPKv6tUF0FfhpAl/klKQ6iV
-         O9ZvoVycQ6KXzV3UVaewnzFDst+MkBGC2pELYD32iSSIddpjYKOsS4q1nKteyiOzMi8W
-         BJOOQ2744DZIm7bvRlKBnNa+J/Ax/1EK0+eCICb1EEW0M47lo+WVXtFec9oZ5/5hqFYH
-         aWIQT/3TvHj//Hl9gtaSttfClNhAEdU/m3/LjvrjEkSzxhbc7PPo2SjnFGMV3Jcf/6Th
-         lWeQ==
-X-Gm-Message-State: AGi0PuYXWFuk57YG7JcVgKkDHKHstqY0uPonYsAADuwIj1/aajdzdkOi
-        YZ5vbX9+h6fmargI+9gdbRFeEb0FCqXNbcPQgWNdyw==
-X-Google-Smtp-Source: APiQypI4N5wbqrK4kWr3aIZ8ZXXInlBO7Sp/HPEsbwPF9g5O7bMLZsKdWo7n2LLtHQI7U4l9bDEJJ+hhIuIBl0uyAqc=
-X-Received: by 2002:a17:906:1a06:: with SMTP id i6mr16603759ejf.90.1589275855027;
- Tue, 12 May 2020 02:30:55 -0700 (PDT)
+        id S1729540AbgELLrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 07:47:04 -0400
+Received: from foss.arm.com ([217.140.110.172]:53196 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726187AbgELLrE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 May 2020 07:47:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A53430E;
+        Tue, 12 May 2020 04:47:03 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E88BA3F71E;
+        Tue, 12 May 2020 04:47:00 -0700 (PDT)
+Date:   Tue, 12 May 2020 12:46:58 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200512114657.phb3rx7jeebd5i3w@e107158-lin.cambridge.arm.com>
+References: <20200511154053.7822-1-qais.yousef@arm.com>
+ <20200512021056.GA31725@codeaurora.org>
 MIME-Version: 1.0
-References: <20200512071313.4525-1-cgxu519@mykernel.net> <CAOQ4uxiA_Er_VA=m8ORovGyvHDFuGBS4Ss_ef5un5VJbrev3jw@mail.gmail.com>
- <20200512083217.GC13131@miu.piliscsaba.redhat.com> <CAOQ4uxgfPVvFh3cQNoKzL6Y3k1HWF9hWXXutuDCON0dCzmapwA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgfPVvFh3cQNoKzL6Y3k1HWF9hWXXutuDCON0dCzmapwA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 12 May 2020 11:30:43 +0200
-Message-ID: <CAJfpegsUVirkfovV+FJPpBWW0dWcnX_HWP-YoYf8vs=-kNjmgg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] ovl: suppress negative dentry in lookup
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Chengguang Xu <cgxu519@mykernel.net>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200512021056.GA31725@codeaurora.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 10:55 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, May 12, 2020 at 11:32 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Tue, May 12, 2020 at 10:50:31AM +0300, Amir Goldstein wrote:
+On 05/12/20 07:40, Pavan Kondeti wrote:
+> On Mon, May 11, 2020 at 04:40:52PM +0100, Qais Yousef wrote:
+> > RT tasks by default run at the highest capacity/performance level. When
+> > uclamp is selected this default behavior is retained by enforcing the
+> > requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
+> > uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> > value.
+> > 
+> > This is also referred to as 'the default boost value of RT tasks'.
+> > 
+> > See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> > 
+> > On battery powered devices, it is desired to control this default
+> > (currently hardcoded) behavior at runtime to reduce energy consumed by
+> > RT tasks.
+> > 
+> > For example, a mobile device manufacturer where big.LITTLE architecture
+> > is dominant, the performance of the little cores varies across SoCs, and
+> > on high end ones the big cores could be too power hungry.
+> > 
+> > Given the diversity of SoCs, the new knob allows manufactures to tune
+> > the best performance/power for RT tasks for the particular hardware they
+> > run on.
+> > 
+> > They could opt to further tune the value when the user selects
+> > a different power saving mode or when the device is actively charging.
+> > 
+> > The runtime aspect of it further helps in creating a single kernel image
+> > that can be run on multiple devices that require different tuning.
+> > 
+> > Keep in mind that a lot of RT tasks in the system are created by the
+> > kernel. On Android for instance I can see over 50 RT tasks, only
+> > a handful of which created by the Android framework.
+> > 
+> > To control the default behavior globally by system admins and device
+> > integrators, introduce the new sysctl_sched_uclamp_util_min_rt_default
+> > to change the default boost value of the RT tasks.
+> > 
+> > I anticipate this to be mostly in the form of modifying the init script
+> > of a particular device.
+> > 
+> > Whenever the new default changes, it'd be applied lazily on the next
+> > opportunity the scheduler needs to calculate the effective uclamp.min
+> > value for the task, assuming that it still uses the system default value
+> > and not a user applied one.
+> > 
+> > Tested on Juno-r2 in combination with the RT capacity awareness [1].
+> > By default an RT task will go to the highest capacity CPU and run at the
+> > maximum frequency, which is particularly energy inefficient on high end
+> > mobile devices because the biggest core[s] are 'huge' and power hungry.
+> > 
+> > With this patch the RT task can be controlled to run anywhere by
+> > default, and doesn't cause the frequency to be maximum all the time.
+> > Yet any task that really needs to be boosted can easily escape this
+> > default behavior by modifying its requested uclamp.min value
+> > (p->uclamp_req[UCLAMP_MIN]) via sched_setattr() syscall.
+> > 
+> > [1] 804d402fb6f6: ("sched/rt: Make RT capacity-aware")
+> > 
+> 
+> I have tested this patch on SDM845 running V5.7-rc4 and it works as expected.
+> 
+> Default: i.e /proc/sys/kernel/sched_util_clamp_min_rt_default = 1024.
+> 
+> RT task runs on BIG cluster every time at max frequency. Both effective
+> and requested uclamp.min are set to 1024
+> 
+> With /proc/sys/kernel/sched_util_clamp_min_rt_default = 128
+> 
+> RT task runs on Little cluster (max capacity is 404) and frequency scaling
+> happens as per the change in utilization. Both effective and requested
+> uclamp are set to 128.
+> 
+> Feel free to add
+> 
+> Tested-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
 
-> > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> > index a4bb992623c4..4896eeeeea46 100644
-> > --- a/include/linux/namei.h
-> > +++ b/include/linux/namei.h
-> > @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
-> >  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
-> >  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
-> >
-> > +#define LOOKUP_NO_NEGATIVE     0x200000 /* Hint: don't cache negative */
-> > +
->
-> The language lawyers will call this double negative, but I do
-> prefer this over LOOKUP_POSITIVE :-)
+Thanks Pavan!
 
-Maybe LOOKUP_NOCACHE_NEGATIVE...
-
-And yeah, LOOKUP_POSITIVE and LOOKUP_CACHE_POSITIVE are sort of
-meaningless, since we cache everything by default.
-
-Thanks,
-Miklos
+--
+Qais Yousef
