@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 627AC1D0159
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 23:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56ED41D0173
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 00:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbgELV5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 17:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51474 "EHLO
+        id S1731396AbgELWAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 18:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731190AbgELV53 (ORCPT
+        by vger.kernel.org with ESMTP id S1729646AbgELWAV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 17:57:29 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA4D9C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 14:57:29 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id t40so10058648pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 14:57:29 -0700 (PDT)
+        Tue, 12 May 2020 18:00:21 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6008BC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:00:21 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id t7so5997367plr.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 15:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=e7QDP26KIcvXxlMBDMenIfkDI5g81klinZXY+V/2a0c=;
-        b=EKNj4UhWvYLYC+esrF6wIPSlTbES/pi+t5+UQ0FZzqy/47ARXRNq0vx4AjTCa/AKXt
-         6Xuy4ZU/p0Wwaf1GllvqRSgZfR+YY+Hc4i5fEDhbCj0JsbqDndK+ZVWdwzHmfT5O9IEG
-         BGnWj2ANI1p6ggTHcQmlDREvxqMxzq37T3E0s=
+        bh=+79i6CNjIBAM9t+ay0r61vFhVwB4nVo6+b6hHSQ4Fro=;
+        b=Z/kjEVE7ijoWI2BF5GmEwAS2TVMlcwmQ3piX8x8xKGksNXYU58li/dNrs7QXxUoz7v
+         WcPUKAYo4D+A3Vjcp2GxS4KQ9NMekKqFlUGG2RHxbDNQhoqZoY/xpwrNADyPpkJA3XMs
+         ldEER+nN+tYegKNCyBNg4B35WbSpqTnd27sU0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=e7QDP26KIcvXxlMBDMenIfkDI5g81klinZXY+V/2a0c=;
-        b=CHlx5RM3JRBp3/kGmsJ7buPwENQM/K2gjdUyjg6SwMsKt7K05cSOtlp7l1sdU+0Kg6
-         4HFafXYXKG9aufoRNFYC+lOyoeoUhwbyn6Bmrch/kOAAhB6xOPZ2+cL42ZA1FVMwq7If
-         pvKGrAOnhrVHOpmWYZAD3/yCNzZ4hJtl/5YsKrrpqRhzKCmxQsbiMgdiumMzFBgqJr1b
-         HP7ej6PjytX+AMo+pptbmuTXbs2jWoWyHvGavTI3tchVIEBywWZVOcWWzuPmjkuopFvA
-         sTPappCfzoV0PgZ3Hx/nQxwEFNOM/vF7+N9oM9KwcVCOjCMrpJvFPwwfmSX6kl0+hvHH
-         2FDA==
-X-Gm-Message-State: AGi0PubTTq9C8bgbRfAagWJRIavkZu914ILZGL6bQX19ojYLfkHUz28O
-        dX0IZLg2kxVMek6hH7rgHFgvRg==
-X-Google-Smtp-Source: APiQypIiqN1d23Fkal6XnfP7M0OVBHWWKQI6z1c+Lxm1tB4W6iJPBSoHHobQonUpZ1R5kSF3kW/fRg==
-X-Received: by 2002:a17:902:ac87:: with SMTP id h7mr20712377plr.119.1589320649149;
-        Tue, 12 May 2020 14:57:29 -0700 (PDT)
+        bh=+79i6CNjIBAM9t+ay0r61vFhVwB4nVo6+b6hHSQ4Fro=;
+        b=mINZpKubsXVAnStjVwmzbi9SRqZ7EhnimCh0J/90vMg50JOcjQn6/stUWa/fNTxTwU
+         CiQym4pimEDzvJwadQSC3gFOPXoCzK1SNl5c4/nBfkVPNkEyAwFeLRV6Vxbd7zNevH6s
+         aOsI0Q6CSVsY2b2p7xELg2e51ynksHHfB5dnB8VDH8gi5Z8qXMbvEIxlXalBp4Sl4Ym5
+         rSkO4r4EAv0s5JYzGLK1oLmC6SzfxL+4LO0nilBX2yMmF0oyX1+c1voz1y18InhAmnJ+
+         UJZNo0InruB5EWPYSWq5nIpcJ00b9APT+Gfem/E+VftVJwyuiQ3ByEmfYJWZd1UixmDh
+         rDsw==
+X-Gm-Message-State: AGi0PuYRHANyTJREW7zM+kmqS7gDv0X9srEMN5C1iZY5JQ8IiMkOUJp4
+        +66Sb8Vf35lVFS+sJ3vEHkzlxg==
+X-Google-Smtp-Source: APiQypKLh7L5M6Z91bm0o0e2Xo3kz9JFIjZHGl9tokP3YDbmJ9kq2VCMFUVZ8H/2dEcftnriFb6DmQ==
+X-Received: by 2002:a17:90a:6343:: with SMTP id v3mr31509425pjs.127.1589320820943;
+        Tue, 12 May 2020 15:00:20 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 184sm13196569pfy.144.2020.05.12.14.57.27
+        by smtp.gmail.com with ESMTPSA id j2sm13193542pfb.73.2020.05.12.15.00.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 14:57:28 -0700 (PDT)
-Date:   Tue, 12 May 2020 14:57:27 -0700
+        Tue, 12 May 2020 15:00:20 -0700 (PDT)
+Date:   Tue, 12 May 2020 15:00:19 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -79,70 +79,33 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] selftest/openat2: Add tests for O_MAYEXEC
- enforcing
-Message-ID: <202005121452.4DED41A@keescook>
+Subject: Re: [PATCH v5 5/6] doc: Add documentation for the
+ fs.open_mayexec_enforce sysctl
+Message-ID: <202005121459.158C3AE75@keescook>
 References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-5-mic@digikod.net>
+ <20200505153156.925111-6-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200505153156.925111-5-mic@digikod.net>
+In-Reply-To: <20200505153156.925111-6-mic@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 05, 2020 at 05:31:54PM +0200, Mickaël Salaün wrote:
-> Test propagation of noexec mount points or file executability through
-> files open with or without O_MAYEXEC, thanks to the
-> fs.open_mayexec_enforce sysctl.
+On Tue, May 05, 2020 at 05:31:55PM +0200, Mickaël Salaün wrote:
+> This sysctl enables to propagate executable permission to userspace
+> thanks to the O_MAYEXEC flag.
 > 
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 > Cc: Aleksa Sarai <cyphar@cyphar.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Jonathan Corbet <corbet@lwn.net>
 > Cc: Kees Cook <keescook@chromium.org>
-> Cc: Shuah Khan <shuah@kernel.org>
 
-Yay tests! :) Notes below...
-
-> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
-> index 4b93b1417b86..cb98bdb4d5b1 100644
-> --- a/tools/testing/selftests/openat2/Makefile
-> +++ b/tools/testing/selftests/openat2/Makefile
-> @@ -1,7 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0-or-later
->  
->  CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
-> -TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
-> +LDLIBS += -lcap
-> +TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test omayexec_test
-
-I realize the others have _test in their name, but that feels intensely
-redundant to me. :)
-
-> [...]
-> diff --git a/tools/testing/selftests/openat2/omayexec_test.c b/tools/testing/selftests/openat2/omayexec_test.c
-> new file mode 100644
-> index 000000000000..7052c852daf8
-> --- /dev/null
-> +++ b/tools/testing/selftests/openat2/omayexec_test.c
-> [...]
-> +FIXTURE_DATA(mount_exec_file_exec) { };
-
-For each of these, Please use "FIXTURE" not "FIXTURE_DATA". See:
-1ae81d78a8b2 ("selftests/seccomp: Adjust test fixture counts")
-
-> +FIXTURE_SETUP(mount_exec_file_exec)
-> +{
-> +	create_workspace(_metadata, 1, 1);
-
-Maybe save the system's original sysctl in create_workspace() instead
-of always restoring it to 0 in delete_workspace()?
-
-Otherwise, looks good!
+I think this should be folded into the patch that adds the sysctl.
 
 -- 
 Kees Cook
