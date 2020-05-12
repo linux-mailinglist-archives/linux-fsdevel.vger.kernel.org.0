@@ -2,217 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 974171CFBD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 19:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A67E1CFC16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 19:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbgELRQ4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 13:16:56 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:33365 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbgELRQ4 (ORCPT
+        id S1728314AbgELRYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 13:24:17 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44992 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgELRYR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 13:16:56 -0400
-Received: by mail-oo1-f67.google.com with SMTP id b3so1180916oob.0;
-        Tue, 12 May 2020 10:16:55 -0700 (PDT)
+        Tue, 12 May 2020 13:24:17 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b8so6427431pgi.11;
+        Tue, 12 May 2020 10:24:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zrV9Na5hegEtMEkEu1KEFc/uSwqOLQP7YJGf/jtNHQc=;
-        b=hbVi0dlBG/Af5wmbiKFsEhCGPHSB+mnXUqoEKaOh06WyX46hhMTDkbOnnwa2ukvqHH
-         BPqhAf/SSxeGWFHzCoAUmr01q4ssaKrXOn98LFuj0CXyUDysFyEgzi/MJp0jGe+W5nSL
-         V1OMICH7EHwkp1vrqwelSEe3vS+IfQP385kMGRrm7AoQk8Xi3jSnrsFfYlHhbLyor8a9
-         s5dcFLWkCtysHISkta9+17KFD9Zr9t4nuVsdIjinnoA3yxkWpbQzevGVOuuRKOaDmhUT
-         hV99HQrQTU7LkPTuE35fi3aR6VMjqlWpVcJS2FbksV/e0x7k1B8HkOWISl6+ZWDq2Tf8
-         ZidQ==
-X-Gm-Message-State: AGi0PuaTr3nJTW5myctIFsZmydh8h6GOwAthtFDtK7beIyKwyHwX5b5G
-        Nr0B2WhaFBJF9MA0UDGT7MIA3C2zmXyLxub0/wCoPw==
-X-Google-Smtp-Source: APiQypJ90cuUdqwS9GCMEDW5toqUx3hGQCswz4bCNJ1HffyAlcgQWXh/NB2EC2pbtqykmvgZCLvi8ISszTO5rm0LxwI=
-X-Received: by 2002:a4a:d44a:: with SMTP id p10mr19049986oos.11.1589303814627;
- Tue, 12 May 2020 10:16:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200511224430.HDJjRC68z%akpm@linux-foundation.org>
- <3b612c3e-ce52-ba92-eb02-0fa7fd38819f@infradead.org> <20200512121750.GA397968@cmpxchg.org>
-In-Reply-To: <20200512121750.GA397968@cmpxchg.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 May 2020 19:16:43 +0200
-Message-ID: <CAMuHMdXquJ9321qJmZj8fyWrzc3u_-AbKFQD9SoZ-A=wsRyVww@mail.gmail.com>
-Subject: Re: mmotm 2020-05-11-15-43 uploaded (mm/memcontrol.c, huge pages)
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dcdkn+8Y5yBPrArGp86XHP6unAj0YxcB3Hd+tWo8Yjg=;
+        b=IyjfHZy6iytVpBvgLxBu072vH0d1L/jvIlljXyM5J2Fnrns208X/aD7S0olWEo0nFR
+         8HV9UoseOb1WqV5J0TwRWzz5k3WN58yLoWWGpclpaplpWgyKgeyK04FC7JJAsFSKOdPT
+         FdJbCCXLD9DBj0p3YxniN3n16sFflv11BPh2ljXx9741gH+JYmGjDpsQ3cfdqrBQf571
+         tVV7j+syG9lcJuSMG8VS8k9Xh8UPv7PpPSH+3JbdkPvFqJ8XR9TrHd1s8gAgwjibg5Ta
+         13Fh2xcmY6IzxB6drxQ6nG6TzjdAmg7ydb86Y5nlGSGI5WaW6WggEaEYFJA+kgfauKq0
+         2uuQ==
+X-Gm-Message-State: AGi0PuYols8eOL4d7mdvAvjrQkXL1l//+t6uD5TzTuBtgAXFyBDS684C
+        x45rwd/+0GWNYh9m7434frg=
+X-Google-Smtp-Source: APiQypJnFxLzvcTaWa+2Y6oDWm5iEONX7kM4uSNpvwOfnQtK9cQpf+fXrVwOMIbTchbliL/bJ9uDGw==
+X-Received: by 2002:a63:d501:: with SMTP id c1mr19999745pgg.186.1589304255599;
+        Tue, 12 May 2020 10:24:15 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p9sm3871513pgb.19.2020.05.12.10.24.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 10:24:14 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 7A68B4063E; Tue, 12 May 2020 17:24:13 +0000 (UTC)
+Date:   Tue, 12 May 2020 17:24:13 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
+        linux-fsdevel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
+Message-ID: <20200512172413.GC11244@42.do-not-panic.com>
+References: <20200511111123.68ccbaa3@canb.auug.org.au>
+ <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
+ <20200512003305.GX11244@42.do-not-panic.com>
+ <87y2pxs73w.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y2pxs73w.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Johannes,
-
-On Tue, May 12, 2020 at 2:20 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> On Mon, May 11, 2020 at 09:41:24PM -0700, Randy Dunlap wrote:
-> > On 5/11/20 3:44 PM, Andrew Morton wrote:
-> > > The mm-of-the-moment snapshot 2020-05-11-15-43 has been uploaded to
-> > >
-> > >    http://www.ozlabs.org/~akpm/mmotm/
-> > >
-> > > mmotm-readme.txt says
-> > >
-> > > README for mm-of-the-moment:
-> > >
-> > > http://www.ozlabs.org/~akpm/mmotm/
-> > >
-> > > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > > more than once a week.
-> > >
-> > > You will need quilt to apply these patches to the latest Linus release (5.x
-> > > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > > http://ozlabs.org/~akpm/mmotm/series
-> > >
-> > > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > > followed by the base kernel version against which this patch series is to
-> > > be applied.
-> > >
-> > > This tree is partially included in linux-next.  To see which patches are
-> > > included in linux-next, consult the `series' file.  Only the patches
-> > > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > > linux-next.
-> > >
-> > >
-> > > A full copy of the full kernel tree with the linux-next and mmotm patches
-> > > already applied is available through git within an hour of the mmotm
-> > > release.  Individual mmotm releases are tagged.  The master branch always
-> > > points to the latest release, so it's constantly rebasing.
-> > >
-> > >     https://github.com/hnaz/linux-mm
-> > >
-> > > The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-> > > contains daily snapshots of the -mm tree.  It is updated more frequently
-> > > than mmotm, and is untested.
-> > >
-> > > A git copy of this tree is also available at
-> > >
-> > >     https://github.com/hnaz/linux-mm
->
-> Thanks for the report, Randy.
->
-> ---
->
-> Randy reports:
->
-> > on x86_64:
+On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
+> Luis Chamberlain <mcgrof@kernel.org> writes:
+> 
+> > On Mon, May 11, 2020 at 09:55:16AM +0800, Xiaoming Ni wrote:
+> >> On 2020/5/11 9:11, Stephen Rothwell wrote:
+> >> > Hi all,
+> >> > 
+> >> > Today's linux-next merge of the vfs tree got a conflict in:
+> >> > 
+> >> >    kernel/sysctl.c
+> >> > 
+> >> > between commit:
+> >> > 
+> >> >    b6522fa409cf ("parisc: add sysctl file interface panic_on_stackoverflow")
+> >> > 
+> >> > from the parisc-hd tree and commit:
+> >> > 
+> >> >    f461d2dcd511 ("sysctl: avoid forward declarations")
+> >> > 
+> >> > from the vfs tree.
+> >> > 
+> >> > I fixed it up (see below) and can carry the fix as necessary. This
+> >> > is now fixed as far as linux-next is concerned, but any non trivial
+> >> > conflicts should be mentioned to your upstream maintainer when your tree
+> >> > is submitted for merging.  You may also want to consider cooperating
+> >> > with the maintainer of the conflicting tree to minimise any particularly
+> >> > complex conflicts.
+> >> > 
+> >> 
+> >> 
+> >> Kernel/sysctl.c contains more than 190 interface files, and there are a
+> >> large number of config macro controls. When modifying the sysctl interface
+> >> directly in kernel/sysctl.c , conflicts are very easy to occur.
+> >> 
+> >> At the same time, the register_sysctl_table() provided by the system can
+> >> easily add the sysctl interface, and there is no conflict of kernel/sysctl.c
+> >> .
+> >> 
+> >> Should we add instructions in the patch guide (coding-style.rst
+> >> submitting-patches.rst):
+> >> Preferentially use register_sysctl_table() to add a new sysctl interface,
+> >> centralize feature codes, and avoid directly modifying kernel/sysctl.c ?
 > >
-> > In file included from ../arch/x86/include/asm/atomic.h:5:0,
-> >                  from ../include/linux/atomic.h:7,
-> >                  from ../include/linux/page_counter.h:5,
-> >                  from ../mm/memcontrol.c:25:
-> > ../mm/memcontrol.c: In function ‘memcg_stat_show’:
-> > ../include/linux/compiler.h:394:38: error: call to ‘__compiletime_assert_383’ declared with attribute error: BUILD_BUG failed
-> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >                                       ^
-> > ../include/linux/compiler.h:375:4: note: in definition of macro ‘__compiletime_assert’
-> >     prefix ## suffix();    \
-> >     ^~~~~~
-> > ../include/linux/compiler.h:394:2: note: in expansion of macro ‘_compiletime_assert’
-> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >   ^~~~~~~~~~~~~~~~~~~
-> > ../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
-> >  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-> >                                      ^~~~~~~~~~~~~~~~~~
-> > ../include/linux/build_bug.h:59:21: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-> >  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-> >                      ^~~~~~~~~~~~~~~~
-> > ../include/linux/huge_mm.h:319:28: note: in expansion of macro ‘BUILD_BUG’
-> >  #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
->
-> The THP page size macros are CONFIG_TRANSPARENT_HUGEPAGE only.
->
-> We already ifdef most THP-related code in memcg, but not these
-> particular stats. Memcg used to track the pages as they came in, and
-> PageTransHuge() + hpage_nr_pages() work when THP is not compiled in.
->
-> Switching to native vmstat counters, memcg doesn't see the pages, it
-> only gets a count of THPs. To translate that to bytes, it has to know
-> how big the THPs are - and that's only available for CONFIG_THP.
->
-> Add the necessary ifdefs. /proc/meminfo, smaps etc. also don't show
-> the THP counters when the feature is compiled out. The event counts
-> (THP_FAULT_ALLOC, THP_COLLAPSE_ALLOC) were already conditional also.
->
-> Style touchup: HPAGE_PMD_NR * PAGE_SIZE is silly. Use HPAGE_PMD_SIZE.
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 738d071ba1ef..47c685088a2c 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1401,9 +1401,11 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
->                        (u64)memcg_page_state(memcg, NR_WRITEBACK) *
->                        PAGE_SIZE);
->
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         seq_buf_printf(&s, "anon_thp %llu\n",
->                        (u64)memcg_page_state(memcg, NR_ANON_THPS) *
-> -                      HPAGE_PMD_NR * PAGE_SIZE);
-> +                      HPAGE_PMD_SIZE);
-> +#endif
->
->         for (i = 0; i < NR_LRU_LISTS; i++)
->                 seq_buf_printf(&s, "%s %llu\n", lru_list_name(i),
-> @@ -3752,7 +3754,9 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
->  static const unsigned int memcg1_stats[] = {
->         NR_FILE_PAGES,
->         NR_ANON_MAPPED,
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         NR_ANON_THPS,
-> +#endif
->         NR_SHMEM,
->         NR_FILE_MAPPED,
->         NR_FILE_DIRTY,
-> @@ -3763,7 +3767,9 @@ static const unsigned int memcg1_stats[] = {
->  static const char *const memcg1_stat_names[] = {
->         "cache",
->         "rss",
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         "rss_huge",
-> +#endif
->         "shmem",
->         "mapped_file",
->         "dirty",
-> @@ -3794,8 +3800,10 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->                 if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
->                         continue;
->                 nr = memcg_page_state_local(memcg, memcg1_stats[i]);
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->                 if (memcg1_stats[i] == NR_ANON_THPS)
->                         nr *= HPAGE_PMD_NR;
-> +#endif
->                 seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
->         }
+> > Yes, however I don't think folks know how to do this well. So I think we
+> > just have to do at least start ourselves, and then reflect some of this
+> > in the docs.  The reason that this can be not easy is that we need to
+> > ensure that at an init level we haven't busted dependencies on setting
+> > this. We also just don't have docs on how to do this well.
+> >
+> >> In addition, is it necessary to transfer the architecture-related sysctl
+> >> interface to arch/xxx/kernel/sysctl.c ?
+> 
+> 
+> >
+> > Well here's an initial attempt to start with fs stuff in a very
+> > conservative way. What do folks think?
+> 
+> I don't see how any of that deals with the current conflict in -next.
 
-Fixes the build issue with m68k/allmodconfig, too.
-Not boot-tested.
+The point is to cleanup the kitchen sink full of knobs everyone from
+different subsystem has put in place for random things so to reduce
+the amount of edits on the file, so to then avoid the possibility
+of merge conflicts.
 
-Gr{oetje,eeting}s,
+> You are putting the fs sysctls in the wrong place.  The should live
+> in fs/ not in fs/proc/.
 
-                        Geert
+That's an easy fix, sure, I'll do that.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> Otherwise you are pretty much repeating
+> the problem the problem of poorly located code in another location.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sure, alright, well I'll chug on with trying to clean up the kitchen
+sink. We can decide where we put items during review.
+
+> >  fs/proc/Makefile          |  1 +
+> >  fs/proc/fs_sysctl_table.c | 97 +++++++++++++++++++++++++++++++++++++++
+> >  kernel/sysctl.c           | 48 -------------------
+> >  3 files changed, 98 insertions(+), 48 deletions(-)
+> >  create mode 100644 fs/proc/fs_sysctl_table.c
+> >
+> > diff --git a/fs/proc/Makefile b/fs/proc/Makefile
+> > index bd08616ed8ba..8bf419b2ac7d 100644
+> > --- a/fs/proc/Makefile
+> > +++ b/fs/proc/Makefile
+> > @@ -28,6 +28,7 @@ proc-y	+= namespaces.o
+> >  proc-y	+= self.o
+> >  proc-y	+= thread_self.o
+> >  proc-$(CONFIG_PROC_SYSCTL)	+= proc_sysctl.o
+> > +proc-$(CONFIG_SYSCTL)		+= fs_sysctl_table.o
+> >  proc-$(CONFIG_NET)		+= proc_net.o
+> >  proc-$(CONFIG_PROC_KCORE)	+= kcore.o
+> >  proc-$(CONFIG_PROC_VMCORE)	+= vmcore.o
+> > diff --git a/fs/proc/fs_sysctl_table.c b/fs/proc/fs_sysctl_table.c
+> > new file mode 100644
+> > index 000000000000..f56a49989872
+> > --- /dev/null
+> > +++ b/fs/proc/fs_sysctl_table.c
+> > @@ -0,0 +1,97 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * /proc/sys/fs sysctl table
+> > + */
+> > +#include <linux/init.h>
+> > +#include <linux/sysctl.h>
+> > +#include <linux/poll.h>
+> > +#include <linux/proc_fs.h>
+> > +#include <linux/printk.h>
+> > +#include <linux/security.h>
+> > +#include <linux/sched.h>
+> > +#include <linux/cred.h>
+> > +#include <linux/namei.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/module.h>
+> > +#include <linux/bpf-cgroup.h>
+> > +#include <linux/mount.h>
+> > +#include <linux/dnotify.h>
+> > +#include <linux/pipe_fs_i.h>
+> > +#include <linux/aio.h>
+> > +#include <linux/inotify.h>
+> > +#include <linux/kmemleak.h>
+> > +#include <linux/binfmts.h>
+> > +
+> > +static unsigned long zero_ul;
+> > +static unsigned long long_max = LONG_MAX;
+> > +
+> > +static struct ctl_table fs_table[] = {
+> > +	{
+> > +		.procname	= "inode-nr",
+> > +		.data		= &inodes_stat,
+> > +		.maxlen		= 2*sizeof(long),
+> > +		.mode		= 0444,
+> > +		.proc_handler	= proc_nr_inodes,
+> > +	},
+> > +	{
+> > +		.procname	= "inode-state",
+> > +		.data		= &inodes_stat,
+> > +		.maxlen		= 7*sizeof(long),
+> > +		.mode		= 0444,
+> > +		.proc_handler	= proc_nr_inodes,
+> > +	},
+> > +	{
+> > +		.procname	= "file-nr",
+> > +		.data		= &files_stat,
+> > +		.maxlen		= sizeof(files_stat),
+> > +		.mode		= 0444,
+> > +		.proc_handler	= proc_nr_files,
+> > +	},
+> > +	{
+> > +		.procname	= "file-max",
+> > +		.data		= &files_stat.max_files,
+> > +		.maxlen		= sizeof(files_stat.max_files),
+> > +		.mode		= 0644,
+> > +		.proc_handler	= proc_doulongvec_minmax,
+> > +		.extra1		= &zero_ul,
+> > +		.extra2		= &long_max,
+> > +	},
+> > +	{
+> > +		.procname	= "nr_open",
+> > +		.data		= &sysctl_nr_open,
+> > +		.maxlen		= sizeof(unsigned int),
+> > +		.mode		= 0644,
+> > +		.proc_handler	= proc_dointvec_minmax,
+> > +		.extra1		= &sysctl_nr_open_min,
+> > +		.extra2		= &sysctl_nr_open_max,
+> > +	},
+> > +	{
+> > +		.procname	= "dentry-state",
+> > +		.data		= &dentry_stat,
+> > +		.maxlen		= 6*sizeof(long),
+> > +		.mode		= 0444,
+> > +		.proc_handler	= proc_nr_dentry,
+> > +	},
+> > +	{ }
+> > +};
+> > +
+> > +static struct ctl_table fs_base_table[] = {
+> > +	{
+> > +		.procname	= "fs",
+> > +		.mode		= 0555,
+> > +		.child		= fs_table,
+> > +	},
+> > +	{ }
+> > +};
+>   ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
+> > > +static int __init fs_procsys_init(void)
+> > +{
+> > +	struct ctl_table_header *hdr;
+> > +
+> > +	hdr = register_sysctl_table(fs_base_table);
+>               ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
+> 	AKA
+>         hdr = register_sysctl("fs", fs_table);
+
+Ah, much cleaner thanks!
+
+  Luis
