@@ -2,169 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 313A91CF7CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 16:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C6F1CF88F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 17:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgELOtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 10:49:16 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49575 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727100AbgELOtQ (ORCPT
+        id S1730926AbgELPFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 11:05:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730753AbgELPFF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 10:49:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589294954;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jx+puuCmllp6pyXQNaubWo+qtrpR0nODcwxMTtKrcSI=;
-        b=aJIcjuPKEpaVl6SiGsJdu7L3OKnBfMyvFei8MbirkybnuVHAU3rajN1JsOShkY5+XxKm/Z
-        bEoGjzPYvZdlMs2nR2pBDNHg227EXTLsV8m5a4UEZSEZcEeWGPu/qABcxgZIQ3A44uYu7x
-        fSc3eF4l6SaxZNBWowA43w1GhwRjDMY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-4-Mfu0zy3TOOmWSoFOm3Tffw-1; Tue, 12 May 2020 10:49:12 -0400
-X-MC-Unique: Mfu0zy3TOOmWSoFOm3Tffw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4FEAC100A614;
-        Tue, 12 May 2020 14:49:11 +0000 (UTC)
-Received: from optiplex-lnx (unknown [10.3.128.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99BB462A28;
-        Tue, 12 May 2020 14:49:09 +0000 (UTC)
-Date:   Tue, 12 May 2020 10:49:06 -0400
-From:   Rafael Aquini <aquini@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Tso Ted <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, keescook@chromium.org,
-        yzaikin@google.com
-Subject: Re: [PATCH] kernel: sysctl: ignore invalid taint bits introduced via
- kernel.tainted and taint the kernel with TAINT_USER on writes
-Message-ID: <20200512144906.GG367616@optiplex-lnx>
-References: <20200511215904.719257-1-aquini@redhat.com>
- <20200511231045.GV11244@42.do-not-panic.com>
- <20200511235914.GF367616@optiplex-lnx>
- <20200512001702.GW11244@42.do-not-panic.com>
- <20200512010313.GA725253@optiplex-lnx>
- <20200512050405.GY11244@42.do-not-panic.com>
+        Tue, 12 May 2020 11:05:05 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD96FC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:05:04 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id r7so11379638edo.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uN80p8DJDhfAR4BxggcaeXg6nSSyC+bDlV85RCsNRjg=;
+        b=NENUacsnhPU0zD7KO/+ipwA9SuVNmY9UHZjGfCTWzTkhmHqyeYpqZWyE6eLhDwTWzd
+         thulbLe3YTwxlqTSb5hqgahvMwswhALC195DJYjTSzO7KvOvMZBK9kFUoRjLHoVHqbeZ
+         W9CS6SXht8VgOZEVKSakhXbnj98yDF7DAfJyg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uN80p8DJDhfAR4BxggcaeXg6nSSyC+bDlV85RCsNRjg=;
+        b=UD6x6ebwQotKVxyXIcszl68IFDPlNhIkqhtF1QyhNe/skJuBL4d/7k9DhJkYzunkKF
+         piJbZWHu8arSYllM0H2WWauM/j/pu7Jy+XvbRrWRzhHyy4i2yyuiznzSmaIbwznAa72u
+         twoByrb2x0j48O0BxyWVjUqv7Hy4VwLifltiwTdD8ttip9dS9trnqBSrNhD9roYYD3Er
+         H2OAMcEYY0WW7SSGanSqZ70p2NAcLivjJ9Z+bhGJL9DbGJCBSSzFLpsTOe9kcLuBmJvz
+         VskM7u2Ee0fYFvtIs4K+Ot6cYtAPpTc7fyalhyVAqIB6pMOpoGfbiHYPK4stcJNdmckn
+         rkkQ==
+X-Gm-Message-State: AOAM533QnpWSKRBknxs1G3vAB+5xTWse7NJlhym2xyDsLmDRy6ucuuEz
+        rzvdShFYXwDlAPUUW4iWShBNuz7mQx3Gj18+wTeYQQ==
+X-Google-Smtp-Source: ABdhPJy5PhHQIA+eXsfjbgCq7jpWgLiM63J3f2hPfGv2ioIDV+PhHdwx7NwUDZxdaIQ7FYcVX3vWfPaHngiFBqi7Tb8=
+X-Received: by 2002:a50:d785:: with SMTP id w5mr2645261edi.212.1589295903058;
+ Tue, 12 May 2020 08:05:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200512050405.GY11244@42.do-not-panic.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <000000000000b4684e05a2968ca6@google.com> <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
+In-Reply-To: <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 12 May 2020 17:04:51 +0200
+Message-ID: <CAJfpegtVca6H1JPW00OF-7sCwpomMCo=A2qr5K=9uGKEGjEp3w@mail.gmail.com>
+Subject: Re: kernel BUG at mm/hugetlb.c:LINE!
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Miklos Szeredi <mszeredi@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 05:04:05AM +0000, Luis Chamberlain wrote:
-> On Mon, May 11, 2020 at 09:03:13PM -0400, Rafael Aquini wrote:
-> > On Tue, May 12, 2020 at 12:17:03AM +0000, Luis Chamberlain wrote:
-> > > On Mon, May 11, 2020 at 07:59:14PM -0400, Rafael Aquini wrote:
-> > > > On Mon, May 11, 2020 at 11:10:45PM +0000, Luis Chamberlain wrote:
-> > > > > On Mon, May 11, 2020 at 05:59:04PM -0400, Rafael Aquini wrote:
-> > > > > > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > > > > > index 8a176d8727a3..f0a4fb38ac62 100644
-> > > > > > --- a/kernel/sysctl.c
-> > > > > > +++ b/kernel/sysctl.c
-> > > > > > @@ -2623,17 +2623,32 @@ static int proc_taint(struct ctl_table *table, int write,
-> > > > > >  		return err;
-> > > > > >  
-> > > > > >  	if (write) {
-> > > > > > +		int i;
-> > > > > > +
-> > > > > > +		/*
-> > > > > > +		 * Ignore user input that would make us committing
-> > > > > > +		 * arbitrary invalid TAINT flags in the loop below.
-> > > > > > +		 */
-> > > > > > +		tmptaint &= (1UL << TAINT_FLAGS_COUNT) - 1;
-> > > > > 
-> > > > > This looks good but we don't pr_warn() of information lost on intention.
-> > > > >
-> > > > 
-> > > > Are you thinking in sth like:
-> > > > 
-> > > > +               if (tmptaint > TAINT_FLAGS_MAX) {
-> > > > +                       tmptaint &= TAINT_FLAGS_MAX;
-> > > > +                       pr_warn("proc_taint: out-of-range invalid input ignored"
-> > > > +                               " tainted_mask adjusted to 0x%x\n", tmptaint);
-> > > > +               }
-> > > > ?
-> > > 
-> > > Sure that would clarify this.
-> > > 
-> > > > > > +
-> > > > > >  		/*
-> > > > > >  		 * Poor man's atomic or. Not worth adding a primitive
-> > > > > >  		 * to everyone's atomic.h for this
-> > > > > >  		 */
-> > > > > > -		int i;
-> > > > > >  		for (i = 0; i < BITS_PER_LONG && tmptaint >> i; i++) {
-> > > > > >  			if ((tmptaint >> i) & 1)
-> > > > > >  				add_taint(i, LOCKDEP_STILL_OK);
-> > > > > >  		}
-> > > > > > +
-> > > > > > +		/*
-> > > > > > +		 * Users with SYS_ADMIN capability can include any arbitrary
-> > > > > > +		 * taint flag by writing to this interface. If that's the case,
-> > > > > > +		 * we also need to mark the kernel "tainted by user".
-> > > > > > +		 */
-> > > > > > +		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-> > > > > 
-> > > > > I'm in favor of this however I'd like to hear from Ted on if it meets
-> > > > > the original intention. I would think he had a good reason not to add
-> > > > > it here.
-> > > > >
-> > > > 
-> > > > Fair enough. The impression I got by reading Ted's original commit
-> > > > message is that the intent was to have TAINT_USER as the flag set 
-> > > > via this interface, even though the code was allowing for any 
-> > > > arbitrary value.
-> > > 
-> > > That wasn't my reading, it was that the user did something very odd
-> > > with user input which we don't like as kernel developers, and it gives
-> > > us a way to prove: hey you did something stupid, sorry but I cannot
-> > > support your kernel panic.
-> > > 
-> > > > I think it's OK to let the user fiddle with
-> > > > the flags, as it's been allowed since the introduction of
-> > > > this interface, but we need to reflect that fact in the
-> > > > tainting itself. Since TAINT_USER is not used anywhere,
-> > > 
-> > > I see users of TAINT_USER sprinkled around
-> > >
-> > 
-> > I meant in the original commit that introduced it
-> > (commit 34f5a39899f3f3e815da64f48ddb72942d86c366). Sorry I
-> > miscomunicated that.
-> > 
-> > In its current usage, it seems that the other places adding TAINT_USER
-> > match with what is being proposed here: To signal when we have user 
-> > fiddling with kernel / module parameters.
-> 
-> drivers/base/regmap/regmap-debugfs.c requires *manual* code changes
-> to compile / enable some knob. i915 complains about unsafe module
-> params such as module_param_cb_unsafe() core_param_unsafe(). Then
-> drivers/soundwire/cadence_master.c is for when a debugfs dangerous
-> param was used.
-> 
-> This still doesn't rule out the use of proc_taint() for testing taint,
-> and that adding it may break some tests. So even though this would
-> only affect some tests scripts, I can't say that adding this taint won't
-> cause some headaches to someone. I wouldn't encourage its use on
-> proc_taint() from what I can see so far.
+On Tue, Apr 7, 2020 at 12:06 AM Mike Kravetz <mike.kravetz@oracle.com> wrot=
+e:
 >
+> On 4/5/20 8:06 PM, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    1a323ea5 x86: get rid of 'errret' argument to __get_use=
+r_x..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D132e940be00=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D8c1e9845833=
+5a7d1
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd6ec23007e951=
+dadf3de
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12921933e=
+00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D172e940be00=
+000
+> >
+> > The bug was bisected to:
+> >
+> > commit e950564b97fd0f541b02eb207685d0746f5ecf29
+> > Author: Miklos Szeredi <mszeredi@redhat.com>
+> > Date:   Tue Jul 24 13:01:55 2018 +0000
+> >
+> >     vfs: don't evict uninitialized inode
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D115cad33=
+e00000
+> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=3D135cad33=
+e00000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D155cad33e00=
+000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com
+> > Fixes: e950564b97fd ("vfs: don't evict uninitialized inode")
+> >
+> > overlayfs: upper fs does not support xattr, falling back to index=3Doff=
+ and metacopy=3Doff.
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/hugetlb.c:3416!
+> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 7036 Comm: syz-executor110 Not tainted 5.6.0-syzkaller #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 01/01/2011
+> > RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
+> > Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6=
+ ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 =
+90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
+> > RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
+> > RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
+> > RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
+> > RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
+> > R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
+> > R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
+> > FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000020000140 CR3: 0000000093554000 CR4: 00000000001406f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  __unmap_hugepage_range_final+0x30/0x70 mm/hugetlb.c:3507
+> >  unmap_single_vma+0x238/0x300 mm/memory.c:1296
+> >  unmap_vmas+0x16f/0x2f0 mm/memory.c:1332
+> >  exit_mmap+0x2aa/0x510 mm/mmap.c:3126
+> >  __mmput kernel/fork.c:1082 [inline]
+> >  mmput+0x168/0x4b0 kernel/fork.c:1103
+> >  exit_mm kernel/exit.c:477 [inline]
+> >  do_exit+0xa51/0x2dd0 kernel/exit.c:780
+> >  do_group_exit+0x125/0x340 kernel/exit.c:891
+> >  __do_sys_exit_group kernel/exit.c:902 [inline]
+> >  __se_sys_exit_group kernel/exit.c:900 [inline]
+> >  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:900
+> >  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+>
+> This is not new and certainly not caused by commit e950564b97fd.
 
-OK, I´ll repost without the hunk forcing the taint. If we eventually
-come to the conclusion that tainting in proc_taint() is the right thing
-to do, we can do that part of the change later.
+Sorry for replying late...
 
-Do you think we should use printk_ratelimited() in the ignore message,
-instead? 
+> hugetlbf only operates on huge page aligned and sized files/mappings.
+> To make sure this happens, the mmap code contians the following to 'round
+> up' length to huge page size:
+>
+>         if (!(flags & MAP_ANONYMOUS)) {
+>                 audit_mmap_fd(fd, flags);
+>                 file =3D fget(fd);
+>                 if (!file)
+>                         return -EBADF;
+>                 if (is_file_hugepages(file))
+>                         len =3D ALIGN(len, huge_page_size(hstate_file(fil=
+e)));
+>                 retval =3D -EINVAL;
+>                 if (unlikely(flags & MAP_HUGETLB && !is_file_hugepages(fi=
+le)))
+>                         goto out_fput;
+>         } else if (flags & MAP_HUGETLB) {
+>                 struct user_struct *user =3D NULL;
+>                 struct hstate *hs;
+>
+>                 hs =3D hstate_sizelog((flags >> MAP_HUGE_SHIFT) & MAP_HUG=
+E_MASK);
+>                 if (!hs)
+>                         return -EINVAL;
+>
+>                 len =3D ALIGN(len, huge_page_size(hs));
+>
+> However, in this syzbot test case the 'file' is in an overlayfs filesyste=
+m
+> created as follows:
+>
+> mkdir("./file0", 000)                   =3D 0
+> mount(NULL, "./file0", "hugetlbfs", MS_MANDLOCK|MS_POSIXACL, NULL) =3D 0
+> chdir("./file0")                        =3D 0
+> mkdir("./file1", 000)                   =3D 0
+> mkdir("./bus", 000)                     =3D 0
+> mkdir("./file0", 000)                   =3D 0
+> mount("\177ELF\2\1\1", "./bus", "overlay", 0, "lowerdir=3D./bus,workdir=
+=3D./file1,u"...) =3D 0
+>
+> The routine is_file_hugepages() is just comparing the file ops to huegtlb=
+fs:
+>
+>         if (file->f_op =3D=3D &hugetlbfs_file_operations)
+>                 return true;
+>
+> Since the file is in an overlayfs, file->f_op =3D=3D ovl_file_operations.
+> Therefore, length will not be rounded up to huge page size and we create =
+a
+> mapping with incorrect size which leads to the BUG.
+>
+> Because of the code in mmap, the hugetlbfs mmap() routine assumes length =
+is
+> rounded to a huge page size.  I can easily add a check to hugetlbfs mmap
+> to validate length and return -EINVAL.  However, I think we really want t=
+o
+> do the 'round up' earlier in mmap.  This is because the man page says:
+>
+>    Huge page (Huge TLB) mappings
+>        For mappings that employ huge pages, the requirements for the argu=
+ments
+>        of  mmap()  and munmap() differ somewhat from the requirements for=
+ map=E2=80=90
+>        pings that use the native system page size.
+>
+>        For mmap(), offset must be a multiple of the underlying huge page =
+size.
+>        The system automatically aligns length to be a multiple of the und=
+erly=E2=80=90
+>        ing huge page size.
+>
+> Since the location for the mapping is chosen BEFORE getting to the hugetl=
+bfs
+> mmap routine, we can not wait until then to round up the length.  Is ther=
+e a
+> defined way to go from a struct file * to the underlying filesystem so we
+> can continue to do the 'round up' in early mmap code?
 
-Cheers,
--- Rafael
+That's easy enough:
 
+static inline struct file *real_file(struct file *file)
+{
+    return file->f_op !=3D ovl_file_operations ? file : file->private_data;
+}
+
+But adding more filesystem specific code to generic code does not
+sound like the cleanest way to solve this...
+
+> One other thing I noticed with overlayfs is that it does not contain a
+> specific get_unmapped_area file_operations routine.  I would expect it to=
+ at
+> least check for and use the get_unmapped_area of the underlying filesyste=
+m?
+> Can someone comment if this is by design?
+
+Not sure.  What exactly is f_op->get_unmapped_area supposed to do?
+
+> In the case of hugetlbfs, get_unmapped_area is even provided by most
+> architectures.  So, it seems like we would like/need to be calling the co=
+rrect
+> routine.
+
+Okay.
+
+Thanks,
+Miklos
