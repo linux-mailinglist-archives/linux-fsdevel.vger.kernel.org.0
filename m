@@ -2,157 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C9D1CEE95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 09:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 019551CEEEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 10:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbgELHyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 03:54:46 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2190 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726067AbgELHyq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 03:54:46 -0400
-Received: from lhreml707-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 22CA67EF6883194331E5;
-        Tue, 12 May 2020 08:54:43 +0100 (IST)
-Received: from fraeml705-chm.china.huawei.com (10.206.15.54) by
- lhreml707-chm.china.huawei.com (10.201.108.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 08:54:42 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 09:54:42 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 09:54:42 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtA=
-Date:   Tue, 12 May 2020 07:54:42 +0000
-Message-ID: <09ee169cfd70492cb526bcb30f99d693@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
- <1589233010.5091.49.camel@linux.ibm.com>
-In-Reply-To: <1589233010.5091.49.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728941AbgELIPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 04:15:31 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:49460 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgELIPa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 May 2020 04:15:30 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200512081528epoutp029263d4b9b3f6a174d9a9bde24ca92b0a~OOdpJ-Hsw1235712357epoutp02e
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:15:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200512081528epoutp029263d4b9b3f6a174d9a9bde24ca92b0a~OOdpJ-Hsw1235712357epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589271328;
+        bh=jqs4TDpEL0IlO57aJ40jD4Oits9vgvlarKqKQm2otXc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mQ2QlGEjlPsIkwhBxmbCyw97AEMt0UTmjul85KxpdUXamzYdPDsmvJzTZoSdBrpMG
+         fJE4q6KrQ0yhmEk84jzJCVvx8oaAgO9qmx3kSydGuWVRebZNZfDtQvpwb1bFl4EQbj
+         tnHsmeJxskzJ1r/0ESUxw1jTmj6ipJMeTGB4gDj8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200512081528epcas1p4f836afdda116959fa63f36a82f687734~OOdpABKX_0091300913epcas1p4f;
+        Tue, 12 May 2020 08:15:28 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.159]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 49LrG70DQmzMqYlv; Tue, 12 May
+        2020 08:15:27 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        63.0C.04658.E1B5ABE5; Tue, 12 May 2020 17:15:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff~OOdnmWTZ90981009810epcas1p3f;
+        Tue, 12 May 2020 08:15:26 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200512081526epsmtrp28ea5fcbac1db5848fd8fa4378ce32e4e~OOdnlaQkw0720107201epsmtrp2w;
+        Tue, 12 May 2020 08:15:26 +0000 (GMT)
+X-AuditID: b6c32a39-a99ff70000001232-9b-5eba5b1e5c09
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.41.18461.E1B5ABE5; Tue, 12 May 2020 17:15:26 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200512081526epsmtip2f4c2b54d873af0ab98097cd798ea5c7f~OOdna_rR20899708997epsmtip2d;
+        Tue, 12 May 2020 08:15:26 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Cc:     "'Eric Sandeen'" <sandeen@sandeen.net>,
+        "'Goldwyn Rodrigues'" <rgoldwyn@suse.com>,
+        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
+        "'Nicolas Boos'" <nicolas.boos@wanadoo.fr>
+Subject: exfatprogs-1.0.3 version released 
+Date:   Tue, 12 May 2020 17:15:26 +0900
+Message-ID: <000201d62835$7ddafe50$7990faf0$@samsung.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdYoKlFwERpUCPhIS8+ZusGyqDKKeA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXd2tiktjnPWw4JaB/rgarq5ZkfJCroNi7L6kBSph3nYRrux
+        M6UbYWRmdrfSXBajwKw+WEtKJR1NU0agUJqkVEoXc+K9cnazbUfJb//3eX//9/88PK8Ik9wS
+        yEQmq5NxWGkzKYjmP2mOVymX7m/IUvmHUqk3H0aF1LNGP5963VApoApaW/hU0Z8GnDrVqdgg
+        0NW73gl1tXf6ebqa2i6+btKzVDf5rgbPwPeZ1xoZOpdxyBmr3pZrshrSyG17sjdma5NVaqU6
+        hVpDyq20hUkjN23PUG4xmUMNkPJ82pwXKmXQLEsmrlvrsOU5GbnRxjrTSMaea7arVfYElraw
+        eVZDgt5mSVWrVEnaEJljNs6U+zF7teBQacd7XgEqxEtQlAiI1fDC3cIrQdEiCVGH4Of0LUH4
+        QkJMIAj2xnH6B4IPjw/NGU7enME4QyOCps4BnDsMIui/3s0LUwJCCX9/eyMvSQk9NA15URjC
+        iAcIAp8CESiWWAm/K77ww5pPrICyE8GIQUykQFWgVMjpGPBXfIowGLEMng5XYlwbcpj+XIVz
+        AQlQNv4V4xgp3DhTFGkPiGkhjLm9s4ZNMN49JeR0LATaame1DCZHGkPBopA+CuNzeDGCr1Np
+        nNbA25qHeBjBiHioaUjkysuh/tdNxMUuhJHv53DuFTEUF0k4ZAVceNXM4/QSKDk9Nhuqg3M9
+        F3mX0HLXvCFd84Z0zRvG9T/Yjfj30SLGzloMDKu2a+fv2oMif1ORUoda27f7ECFC5AJxcVJ9
+        lgSn89nDFh8CEUZKxYWmUEmcSx8+wjhs2Y48M8P6kDa0g8uYLE5vC/10qzNbrU3SaDTU6uQ1
+        yVoNuVh8rducJSEMtJM5yDB2xjHn44miZAWoDLM09n2RjgUPziybyMxRDXc89/hSffFF6R8L
+        3peKM2L27fjW+515lH57PTreHn2m3EeNbs3saTuw6ximCBik5Zvv9fEm3LK6dYGzV3ZrZX3G
+        4iWt+gV3H1/1KgausYHqnzvTTd5To82DXSXD9vr+oHfiPFSsKvTf2Js45Qm+JPmskVYrMAdL
+        /wN20rP4sQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsWy7bCSvK5c9K44g95ZMhbX7r9nt9iz9ySL
+        xeVdc9gsGo4dYbFo+7uL1aL1ipYDm8fOWXfZPbYsfsjksX7LVRaPz5vkPD7fXc8awBrFZZOS
+        mpNZllqkb5fAlfF/+knmghVsFZPO32NqYGxh7WLk5JAQMJFonvufuYuRi0NIYDejxMwFD6ES
+        0hLHTpwBSnAA2cIShw8XQ9Q8Z5S4OP8UWA2bgK7Evz/72UBsEYFkiX2v9zOCFDELrGWUuP/v
+        JzNIQlhAW+LPzGcsIDaLgKrEtMYfYA28ApYSy15NYoewBSVOznzCArKMWUBPom0jI0iYWUBe
+        YvvbOcwQ9yhI/Hy6jBVil57EtI8vmCFqRCRmd7YxT2AUnIVk0iyESbOQTJqFpGMBI8sqRsnU
+        guLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgeNDS3MG4fdUHvUOMTByMhxglOJiVRHhbMnfG
+        CfGmJFZWpRblxxeV5qQWH2KU5mBREue9UbgwTkggPbEkNTs1tSC1CCbLxMEp1cB04XJOoIf/
+        rinK27hYvEMiejKnFKxec3HK26//smUN7Is9rvSd/sRx95rdbT7n/bvSTRuaDnxyEA+8K9WS
+        ae933eHHvD8ftRy37JwjZR3J5aP19bXolH9MIsGlmXF3+K5VdZX1rHzK2++e1KH1vulijU6t
+        9rfa2H15B+c22Eb1vWd+pzrD7a5bB+fb1iLND1nbE31rZN7maSZfaj8kw6u0KOfgq9SG29V5
+        9S/X39kgP8n8dIzN4spn0deEo/ukH2ztkq459uCmwdf1fz9rNP+4n6zZqvc8Z92p193h+csc
+        je15axb+2bnq7eyAN7uTmCYIrW43uVoXwndpR+X6tTrrg/jyzd8eS2W4Fn2Qo0qJpTgj0VCL
+        uag4EQBbWgdF9gIAAA==
+X-CMS-MailID: 20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff
+References: <CGME20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff@epcas1p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
-TW9uZGF5LCBNYXkgMTEsIDIwMjAgMTE6MzcgUE0NCj4gT24gTW9uLCAyMDIwLTA1LTExIGF0IDE0
-OjEzICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gRnJvbTogTWltaSBab2hhciBb
-bWFpbHRvOnpvaGFyQGxpbnV4LmlibS5jb21dDQo+ID4gPiBTZW50OiBGcmlkYXksIE1heSA4LCAy
-MDIwIDc6MDggUE0NCj4gPiA+IE9uIEZyaSwgMjAyMC0wNS0wOCBhdCAxMDoyMCArMDAwMCwgUm9i
-ZXJ0byBTYXNzdSB3cm90ZToNCj4gPiA+ID4gPiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9o
-YXJAbGludXguaWJtLmNvbV0NCj4gPiA+ID4gPiBPbiBUaHUsIDIwMjAtMDUtMDcgYXQgMTY6NDcg
-KzAwMDAsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4gPg0KPiA+ID4gPHNuaXA+DQo+ID4gPg0K
-PiA+ID4gPiA+ID4gPiB0aGUgZmlsZSBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRhLiDCoFRoZSBJ
-TUEgYW5kIEVWTSBwb2xpY2llcw0KPiByZWFsbHkNCj4gPiA+ID4gPiA+ID4gbmVlZCB0byBiZSBp
-biBzeW5jLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEl0IHdvdWxkIGJlIG5pY2UsIGJ1dCBh
-dCB0aGUgbW9tZW50IEVWTSBjb25zaWRlcnMgYWxzbyBmaWxlcyB0aGF0DQo+IGFyZQ0KPiA+ID4g
-PiA+ID4gbm90IHNlbGVjdGVkIGJ5IHRoZSBJTUEgcG9saWN5LiBBbiBleGFtcGxlIG9mIHdoeSB0
-aGlzIGlzIGENCj4gcHJvYmxlbSBpcw0KPiA+ID4gPiA+ID4gdGhlIGF1ZGl0IHNlcnZpY2UgdGhh
-dCBmYWlscyB0byBzdGFydCB3aGVuIGl0IHRyaWVzIHRvIGFkanVzdCB0aGUNCj4gPiA+IHBlcm1p
-c3Npb25zDQo+ID4gPiA+ID4gPiBvZiB0aGUgbG9nIGZpbGVzLiBUaG9zZSBmaWxlcyBkb24ndCBo
-YXZlIHNlY3VyaXR5LmV2bSBiZWNhdXNlIHRoZXkNCj4gYXJlDQo+ID4gPiA+ID4gPiBub3QgYXBw
-cmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9wZXJhdGlvbi4NCj4gPiA+ID4gPg0K
-PiA+ID4gPiA+IE5vLCB0aGlzIGlzIGEgdGltaW5nIGlzc3VlIGFzIHRvIHdoZXRoZXIgb3Igbm90
-IHRoZSBidWlsdGluIHBvbGljeSBvcg0KPiA+ID4gPiA+IGEgY3VzdG9tIHBvbGljeSBoYXMgYmVl
-biBsb2FkZWQuIMKgQSBjdXN0b20gcG9saWN5IGNvdWxkIGV4Y2x1ZGUgdGhlDQo+ID4gPiA+ID4g
-bG9nIGZpbGVzIGJhc2VkIG9uIExTTSBsYWJlbHMsIGJ1dCB0aGV5IGFyZSBpbmNsdWRlZCBpbiB0
-aGUgYnVpbHRpbg0KPiA+ID4gPiA+IHBvbGljeS4NCj4gPiA+ID4NCj4gPiA+ID4gWWVzLCBJIHdh
-cyByZWZlcnJpbmcgdG8gYSBjdXN0b20gcG9saWN5LiBJbiB0aGlzIGNhc2UsIEVWTSB3aWxsIG5v
-dCBhZGFwdA0KPiA+ID4gPiB0byB0aGUgY3VzdG9tIHBvbGljeSBidXQgc3RpbGwgdmVyaWZpZXMg
-YWxsIGZpbGVzLiBJZiBhY2Nlc3MgY29udHJvbCBpcyBkb25lDQo+ID4gPiA+IGV4Y2x1c2l2ZWx5
-IGJ5IElNQSBhdCB0aGUgdGltZSBldm1fdmVyaWZ5eGF0dHIoKSBpcyBjYWxsZWQsIHdlIHdvdWxk
-bid0DQo+ID4gPiA+IG5lZWQgdG8gYWRkIHNlY3VyaXR5LmV2bSB0byBhbGwgZmlsZXMuDQo+ID4g
-Pg0KPiA+ID4gUm9iZXJ0bywgRVZNIGlzIG9ubHkgdHJpZ2dlcmVkIGJ5IElNQSwgdW5sZXNzIHlv
-dSd2ZSBtb2RpZmllZCB0aGUNCj4gPiA+IGtlcm5lbCB0byBkbyBvdGhlcndpc2UuDQo+ID4NCj4g
-PiBFVk0gd291bGQgZGVueSB4YXR0ci9hdHRyIG9wZXJhdGlvbnMgZXZlbiBpZiBJTUEgaXMgZGlz
-YWJsZWQgaW4gdGhlDQo+ID4ga2VybmVsIGNvbmZpZ3VyYXRpb24uIEZvciBleGFtcGxlLCBldm1f
-c2V0eGF0dHIoKSByZXR1cm5zIHRoZSB2YWx1ZQ0KPiA+IGZyb20gZXZtX3Byb3RlY3RfeGF0dHIo
-KS4gSU1BIGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCj4gDQo+IENvbW1pdMKgYWUxYmExNjc2Yjg4
-ICgiRVZNOiBBbGxvdyB1c2VybGFuZCB0byBwZXJtaXQgbW9kaWZpY2F0aW9uIG9mDQo+IEVWTS1w
-cm90ZWN0ZWQgbWV0YWRhdGEiKSBpbnRyb2R1Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVT
-DQo+IHRvIGFsbG93DQo+IHdyaXRpbmcgdGhlIEVWTSBwb3J0YWJsZSBhbmQgaW1tdXRhYmxlIGZp
-bGUgc2lnbmF0dXJlcy4NCg0KQWNjb3JkaW5nIHRvIERvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcv
-ZXZtOg0KDQpOb3RlIHRoYXQgb25jZSBhIGtleSBoYXMgYmVlbiBsb2FkZWQsIGl0IHdpbGwgbm8g
-bG9uZ2VyIGJlDQpwb3NzaWJsZSB0byBlbmFibGUgbWV0YWRhdGEgbW9kaWZpY2F0aW9uLg0KDQpX
-ZSBsb2FkIHRoZSBFVk0ga2V5IGZyb20gL2V0Yy9rZXlzL3g1MDlfZXZtLmRlciwgZHVyaW5nIGtl
-cm5lbA0KaW5pdGlhbGl6YXRpb24sIHdoaWNoIGV4Y2x1ZGVzIHRoZSBwb3NzaWJpbGl0eSBvZiB1
-c2luZyB0aGF0IGZsYWcuIERlZmVycmluZw0KdGhlIGxvYWRpbmcgb2YgdGhlIGtleSBpcyBub3Qg
-cG9zc2libGUgaWYgdGhhdCBrZXkgaXMgdXNlZCBmb3IgYXBwcmFpc2FsIGFuZA0KZW5mb3JjZW1l
-bnQgaXMgZW5hYmxlZCBmcm9tIHRoZSBiZWdpbm5pbmcuDQoNCkFsc28sIG9uY2UgdGhlIGZsYWcg
-aXMgY2xlYXJlZCBwb3J0YWJsZSBzaWduYXR1cmVzIGNhbm5vdCBiZSBpbnN0YWxsZWQNCnVudGls
-IHJlYm9vdC4gVGhpcyBzZWVtcyBhIGJpZyBsaW1pdGF0aW9uIGVzcGVjaWFsbHkgd2hlbiBzb2Z0
-d2FyZQ0KdXBkYXRlcyBhcmUgaW5zdGFsbGVkIG9uIGEgcnVubmluZyBzeXN0ZW0uDQoNCj4gPiA+
-IEknbSBub3QgaW50ZXJlc3RlZCBpbiBhIGNvbXBsaWNhdGVkIHNvbHV0aW9uLCBqdXN0IG9uZSB0
-aGF0IGFkZHJlc3Nlcw0KPiA+ID4gdGhlIG5ldyBFVk0gaW1tdXRhYmxlIGFuZCBwb3J0YWJsZSBz
-aWduYXR1cmUuIMKgSXQgbWlnaHQgcmVxdWlyZSBFVk0NCj4gPiA+IEhNQUMsIElNQSBkaWZmZXJl
-bnRpYXRpbmcgYmV0d2VlbiBhIG5ldyBmaWxlIGFuZCBhbiBleGlzdGluZyBmaWxlLCBvcjpxDQo+
-IA0KPiA+ID4gaXQgbWlnaHQgcmVxdWlyZSB3cml0aW5nIHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBs
-YXN0LCBhZnRlciBhbGwgdGhlDQo+ID4gPiBvdGhlciB4YXR0cnMgb3IgbWV0YWRhdGEgYXJlIHVw
-ZGF0ZWQuIMKgUGxlYXNlIG5vdGhpbmcgdGhhdCBjaGFuZ2VzDQo+ID4gPiBleGlzdGluZyBleHBl
-Y3RhdGlvbnMuDQo+ID4NCj4gPiBPay4gSW50cm9kdWNpbmcgdGhlIG5ldyBzdGF0dXMgSU5URUdS
-SVRZX0ZBSUxfSU1NVVRBQkxFLCBhcyBJDQo+ID4gbWVudGlvbmVkIGluICdbUEFUQ0hdIGltYTog
-QWxsb3cgaW1hc2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KPiA+IEVWTSBwb3J0
-YWJsZSBzaWduYXR1cmVzJyBzZWVtcyB0byBoYXZlIGFuIGFkZGl0aW9uYWwgYmVuZWZpdC4gV2UN
-Cj4gPiBjb3VsZCBpbnRyb2R1Y2UgYW4gYWRkaXRpb25hbCBleGNlcHRpb24gaW4gZXZtX3Byb3Rl
-Y3RfeGF0dHIoKSwgb3RoZXINCj4gPiB0aGFuIElOVEVHUklUWV9OT1hBVFRSUywgYXMgd2Uga25v
-dyB0aGF0IHhhdHRyL2F0dHIgdXBkYXRlIHdvbid0DQo+ID4gY2F1c2UgSE1BQyB1cGRhdGUuDQo+
-IA0KPiBSZWZlciB0byBEb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL2V2bSBkZXNjcmliZXMgb24g
-aG93IHRvIHBlcm1pdA0KPiB3cml0aW5nIHRoZSBzZWN1cml0eS5ldm0gc2lnbmF0dXJlcy4NCg0K
-SXQgZG9lc24ndCBzZWVtIHRoZXJlIGlzIGEgc29sdXRpb24gZm9yIGFkZGluZyBwb3J0YWJsZSBz
-aWduYXR1cmVzIGF0DQpydW4tdGltZS4NCg0KPiA+IEhvd2V2ZXIsIGl0IHdvbid0IHdvcmsgdW5s
-ZXNzIHRoZSBJTUEgcG9saWN5IHNheXMgdGhhdCB0aGUgZmlsZSBzaG91bGQNCj4gPiBiZSBhcHBy
-YWlzZWQgd2hlbiB0aGUgbWtub2QoKSBzeXN0ZW0gY2FsbCBpcyBleGVjdXRlZC4gT3RoZXJ3aXNl
-LA0KPiA+IGludGVncml0eV9paW50X2NhY2hlIGlzIG5vdCBjcmVhdGVkIGZvciB0aGUgZmlsZSBh
-bmQgdGhlIElNQV9ORVdfRklMRQ0KPiA+IGZsYWcgaXMgbm90IHNldC4NCj4gPg0KPiA+IEdyYW50
-aW5nIGFuIGV4Y2VwdGlvbiBmb3IgSU5URUdSSVRZX0ZBSUxfSU1NVVRBQkxFIHNvbHZlcyB0aGUg
-Y2FzZQ0KPiA+IHdoZXJlIHNlY3VyaXR5LmV2bSBpcyB0aGUgZmlyc3QgeGF0dHIgc2V0LiBJZiBh
-IHByb3RlY3RlZCB4YXR0ciBpcyB0aGUgZmlyc3QgdG8NCj4gPiBiZSBhZGRlZCwgdGhlbiB3ZSBh
-bHNvIGhhdmUgdG8gaGFuZGxlIHRoZSBJTlRFR1JJVFlfTk9MQUJFTCBlcnJvci4NCj4gPiBJdCBz
-aG91bGQgYmUgZmluZSB0byBhZGQgYW4gZXhjZXB0aW9uIGZvciB0aGlzIGVycm9yIGlmIHRoZSBI
-TUFDIGtleSBpcyBub3QNCj4gPiBsb2FkZWQuDQo+ID4NCj4gPiBUaGlzIHN0aWxsIGRvZXMgbm90
-IHNvbHZlIGFsbCBwcm9ibGVtcy4gSU5URUdSSVRZX05PTEFCRUwgY2Fubm90IGJlDQo+ID4gaWdu
-b3JlZCBpZiB0aGUgSE1BQyBrZXkgaXMgbG9hZGVkLCB3aGljaCBtZWFucyB0aGF0IGFsbCBmaWxl
-cyBuZWVkIHRvIGJlDQo+ID4gcHJvdGVjdGVkIGJ5IEVWTSB0byBhdm9pZCBpc3N1ZXMgbGlrZSB0
-aGUgb25lIEkgZGVzY3JpYmVkIChhdWRpdGQpLg0KPiANCj4gVGhlIGFwcGxpY2F0aW9uIHN0aWxs
-IG5lZWRzIHRvIGRlZmVyIHdyaXRpbmcgdGhlIEVWTSBwb3J0YWJsZSBhbmQNCj4gaW1tdXRhYmxl
-IGZpbGUgc2lnbmF0dXJlcyB1bnRpbCBhZnRlciBhbGwgdGhlIG90aGVyIHhhdHRycyBhcmUgd3Jp
-dHRlbg0KPiBvdGhlcndpc2UgaXQgd29uJ3QgdmFsaWRhdGUuDQoNCkVWTSB3b24ndCBhbGxvdyB0
-aGF0IGJlY2F1c2UgYXQgdGhlIHNlY29uZCBzZXR4YXR0cigpIGl0IHdpbGwgZmluZCB0aGF0DQpz
-ZWN1cml0eS5ldm0gaXMgbWlzc2luZy4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVT
-IER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcs
-IExpIEppYW4sIFNoaSBZYW5saQ0K
+Hi folk,
+
+We have released exfatprogs-1.0.3 version.
+Any feedback is welcome!:)
+
+CHANGES :
+ * Rename label.exfat to tune.exfat.
+ * tune.exfat: change argument style(-l option for print level,
+   -L option for setting label)
+ * mkfs.exfat: harmonize set volume label option with tune.exfat.
+
+NEW FEATURES :
+ * Add man page.
+
+BUG FIXES :
+ * Fix the reported build warnings/errors.
+ * Add memset to clean garbage in allocation.
+ * Fix wrong volume label array size.
+ * Open a device using O_EXCL to avoid formatting it while it is mounted.
+ * Fix incomplete "make dist" generated tarball.
+
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
+
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/download/1.0.3/exfatprogs-1.0.3.tar.gz
+
