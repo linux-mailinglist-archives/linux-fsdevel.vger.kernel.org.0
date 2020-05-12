@@ -2,136 +2,306 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 019551CEEEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 10:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F054B1CEF2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 10:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbgELIPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 04:15:31 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:49460 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgELIPa (ORCPT
+        id S1728949AbgELIcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 04:32:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38432 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726187AbgELIcW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 04:15:30 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200512081528epoutp029263d4b9b3f6a174d9a9bde24ca92b0a~OOdpJ-Hsw1235712357epoutp02e
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 08:15:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200512081528epoutp029263d4b9b3f6a174d9a9bde24ca92b0a~OOdpJ-Hsw1235712357epoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589271328;
-        bh=jqs4TDpEL0IlO57aJ40jD4Oits9vgvlarKqKQm2otXc=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=mQ2QlGEjlPsIkwhBxmbCyw97AEMt0UTmjul85KxpdUXamzYdPDsmvJzTZoSdBrpMG
-         fJE4q6KrQ0yhmEk84jzJCVvx8oaAgO9qmx3kSydGuWVRebZNZfDtQvpwb1bFl4EQbj
-         tnHsmeJxskzJ1r/0ESUxw1jTmj6ipJMeTGB4gDj8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200512081528epcas1p4f836afdda116959fa63f36a82f687734~OOdpABKX_0091300913epcas1p4f;
-        Tue, 12 May 2020 08:15:28 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.159]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 49LrG70DQmzMqYlv; Tue, 12 May
-        2020 08:15:27 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.0C.04658.E1B5ABE5; Tue, 12 May 2020 17:15:26 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff~OOdnmWTZ90981009810epcas1p3f;
-        Tue, 12 May 2020 08:15:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200512081526epsmtrp28ea5fcbac1db5848fd8fa4378ce32e4e~OOdnlaQkw0720107201epsmtrp2w;
-        Tue, 12 May 2020 08:15:26 +0000 (GMT)
-X-AuditID: b6c32a39-a99ff70000001232-9b-5eba5b1e5c09
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        15.41.18461.E1B5ABE5; Tue, 12 May 2020 17:15:26 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200512081526epsmtip2f4c2b54d873af0ab98097cd798ea5c7f~OOdna_rR20899708997epsmtip2d;
-        Tue, 12 May 2020 08:15:26 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Cc:     "'Eric Sandeen'" <sandeen@sandeen.net>,
-        "'Goldwyn Rodrigues'" <rgoldwyn@suse.com>,
-        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
-        "'Nicolas Boos'" <nicolas.boos@wanadoo.fr>
-Subject: exfatprogs-1.0.3 version released 
-Date:   Tue, 12 May 2020 17:15:26 +0900
-Message-ID: <000201d62835$7ddafe50$7990faf0$@samsung.com>
+        Tue, 12 May 2020 04:32:22 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C324C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 01:32:22 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id h17so5354529wrc.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 01:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jEUMt72AsTKxfme4wNG0oUTNwGvf5pH41IsNwcOgwms=;
+        b=RifJNjUt64Icz1NiKHKwkCKh2RKa2VgjpicSyBfYKSBlmRrove9w8ntdLgSr8qV4zx
+         r5IFUvgOS/kGlCkiaDnz2RWKlMWnLzgfM+mY8wJwgvweDjKnaQ9iV+1KsN3k+ySL5vIp
+         5lBdfjopVc7IZ2tRfn4NKJQ7PkaYKcTtZX508=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jEUMt72AsTKxfme4wNG0oUTNwGvf5pH41IsNwcOgwms=;
+        b=hKlaRw0EgiPeEcT5OkFMXqA5xA+CQVjWyq7KAUXOKpN5egGXfzhAk4QVJ45ztAY5ll
+         AQWcB3ZMj4IA5qMQ2xkElLkszlg0zzZB93boy89mryLWnBwHBo6+n1q6xXkr6MAJp/hu
+         +6Zdsh1agTOq4StOyMaqr4rx1xGWZFs2sHalQAzO3HFMhJK2LF2+7bDx4iuj6ON64KWS
+         zuZ/O1qMOmDCAm65ytGWoCz+OAfH19W8wf675UlMk1Zxe1XQ8MZlTX6E1pUxLLLLoswO
+         2feiL0cRdlXZwERVvVyNpe8az9IdH/9G7ddFN/rXFltIn0Pjv8qFsg1rx6dVF64RacqV
+         9Ung==
+X-Gm-Message-State: AGi0Pubh3X+LEbiNNRGp+czse7bgOpQKRkTB+KZNeyVn7ozLvQH1Vrp1
+        0J+5KUflGd2+hiYh4cAwRc+6AA==
+X-Google-Smtp-Source: APiQypK88FqMBq9cfTkp7YQHtHg0zGTKwhN+qa3uxM7LH8SVKFYOEzbVqy+p2Vs15jP8mEpgbWjRgA==
+X-Received: by 2002:adf:e5cd:: with SMTP id a13mr3654656wrn.266.1589272340694;
+        Tue, 12 May 2020 01:32:20 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id s8sm21000989wrt.69.2020.05.12.01.32.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 01:32:19 -0700 (PDT)
+Date:   Tue, 12 May 2020 10:32:17 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Chengguang Xu <cgxu519@mykernel.net>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ovl: suppress negative dentry in lookup
+Message-ID: <20200512083217.GC13131@miu.piliscsaba.redhat.com>
+References: <20200512071313.4525-1-cgxu519@mykernel.net>
+ <CAOQ4uxiA_Er_VA=m8ORovGyvHDFuGBS4Ss_ef5un5VJbrev3jw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdYoKlFwERpUCPhIS8+ZusGyqDKKeA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXd2tiktjnPWw4JaB/rgarq5ZkfJCroNi7L6kBSph3nYRrux
-        M6UbYWRmdrfSXBajwKw+WEtKJR1NU0agUJqkVEoXc+K9cnazbUfJb//3eX//9/88PK8Ik9wS
-        yEQmq5NxWGkzKYjmP2mOVymX7m/IUvmHUqk3H0aF1LNGP5963VApoApaW/hU0Z8GnDrVqdgg
-        0NW73gl1tXf6ebqa2i6+btKzVDf5rgbPwPeZ1xoZOpdxyBmr3pZrshrSyG17sjdma5NVaqU6
-        hVpDyq20hUkjN23PUG4xmUMNkPJ82pwXKmXQLEsmrlvrsOU5GbnRxjrTSMaea7arVfYElraw
-        eVZDgt5mSVWrVEnaEJljNs6U+zF7teBQacd7XgEqxEtQlAiI1fDC3cIrQdEiCVGH4Of0LUH4
-        QkJMIAj2xnH6B4IPjw/NGU7enME4QyOCps4BnDsMIui/3s0LUwJCCX9/eyMvSQk9NA15URjC
-        iAcIAp8CESiWWAm/K77ww5pPrICyE8GIQUykQFWgVMjpGPBXfIowGLEMng5XYlwbcpj+XIVz
-        AQlQNv4V4xgp3DhTFGkPiGkhjLm9s4ZNMN49JeR0LATaame1DCZHGkPBopA+CuNzeDGCr1Np
-        nNbA25qHeBjBiHioaUjkysuh/tdNxMUuhJHv53DuFTEUF0k4ZAVceNXM4/QSKDk9Nhuqg3M9
-        F3mX0HLXvCFd84Z0zRvG9T/Yjfj30SLGzloMDKu2a+fv2oMif1ORUoda27f7ECFC5AJxcVJ9
-        lgSn89nDFh8CEUZKxYWmUEmcSx8+wjhs2Y48M8P6kDa0g8uYLE5vC/10qzNbrU3SaDTU6uQ1
-        yVoNuVh8rducJSEMtJM5yDB2xjHn44miZAWoDLM09n2RjgUPziybyMxRDXc89/hSffFF6R8L
-        3peKM2L27fjW+515lH57PTreHn2m3EeNbs3saTuw6ximCBik5Zvv9fEm3LK6dYGzV3ZrZX3G
-        4iWt+gV3H1/1KgausYHqnzvTTd5To82DXSXD9vr+oHfiPFSsKvTf2Js45Qm+JPmskVYrMAdL
-        /wN20rP4sQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsWy7bCSvK5c9K44g95ZMhbX7r9nt9iz9ySL
-        xeVdc9gsGo4dYbFo+7uL1aL1ipYDm8fOWXfZPbYsfsjksX7LVRaPz5vkPD7fXc8awBrFZZOS
-        mpNZllqkb5fAlfF/+knmghVsFZPO32NqYGxh7WLk5JAQMJFonvufuYuRi0NIYDejxMwFD6ES
-        0hLHTpwBSnAA2cIShw8XQ9Q8Z5S4OP8UWA2bgK7Evz/72UBsEYFkiX2v9zOCFDELrGWUuP/v
-        JzNIQlhAW+LPzGcsIDaLgKrEtMYfYA28ApYSy15NYoewBSVOznzCArKMWUBPom0jI0iYWUBe
-        YvvbOcwQ9yhI/Hy6jBVil57EtI8vmCFqRCRmd7YxT2AUnIVk0iyESbOQTJqFpGMBI8sqRsnU
-        guLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgeNDS3MG4fdUHvUOMTByMhxglOJiVRHhbMnfG
-        CfGmJFZWpRblxxeV5qQWH2KU5mBREue9UbgwTkggPbEkNTs1tSC1CCbLxMEp1cB04XJOoIf/
-        rinK27hYvEMiejKnFKxec3HK26//smUN7Is9rvSd/sRx95rdbT7n/bvSTRuaDnxyEA+8K9WS
-        ae933eHHvD8ftRy37JwjZR3J5aP19bXolH9MIsGlmXF3+K5VdZX1rHzK2++e1KH1vulijU6t
-        9rfa2H15B+c22Eb1vWd+pzrD7a5bB+fb1iLND1nbE31rZN7maSZfaj8kw6u0KOfgq9SG29V5
-        9S/X39kgP8n8dIzN4spn0deEo/ukH2ztkq459uCmwdf1fz9rNP+4n6zZqvc8Z92p193h+csc
-        je15axb+2bnq7eyAN7uTmCYIrW43uVoXwndpR+X6tTrrg/jyzd8eS2W4Fn2Qo0qJpTgj0VCL
-        uag4EQBbWgdF9gIAAA==
-X-CMS-MailID: 20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff
-References: <CGME20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff@epcas1p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiA_Er_VA=m8ORovGyvHDFuGBS4Ss_ef5un5VJbrev3jw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folk,
+On Tue, May 12, 2020 at 10:50:31AM +0300, Amir Goldstein wrote:
 
-We have released exfatprogs-1.0.3 version.
-Any feedback is welcome!:)
+> This helper should be in vfs code, not duplicating vfs code
+> and please don't duplicate code in vfs either.
+> 
+> I think you can use a lookup flag (LOOKUP_POSITIVE_CACHE???)
+> to describe the desired behavior and implement it inside
+> lookup_slow(). Document the semantics as well as explain
+> in the context of the helper the cases where modules might
+> find this useful (because they have higher level caches).
+> 
+> Besides the fact that this helper really needs review by Al
+> and that duplicating subtle code is wrong in so many levels,
+> I suppose the functionality could prove useful to other subsystems
+> as well.
 
-CHANGES :
- * Rename label.exfat to tune.exfat.
- * tune.exfat: change argument style(-l option for print level,
-   -L option for setting label)
- * mkfs.exfat: harmonize set volume label option with tune.exfat.
+Something like this (untested).  Needs splitup and changelogs.
 
-NEW FEATURES :
- * Add man page.
+Thanks,
+Miklos
 
-BUG FIXES :
- * Fix the reported build warnings/errors.
- * Add memset to clean garbage in allocation.
- * Fix wrong volume label array size.
- * Open a device using O_EXCL to avoid formatting it while it is mounted.
- * Fix incomplete "make dist" generated tarball.
-
-The git tree is at:
-      https://github.com/exfatprogs/exfatprogs
-
-The tarballs can be found at:
-      https://github.com/exfatprogs/exfatprogs/releases/download/1.0.3/exfatprogs-1.0.3.tar.gz
-
+---
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index c31f362fa098..e52a3b35ebac 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -752,7 +752,7 @@ cifs_get_root(struct smb_vol *vol, struct super_block *sb)
+ 		while (*s && *s != sep)
+ 			s++;
+ 
+-		child = lookup_positive_unlocked(p, dentry, s - p);
++		child = lookup_positive_unlocked(p, dentry, s - p, 0);
+ 		dput(dentry);
+ 		dentry = child;
+ 	} while (!IS_ERR(dentry));
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index b7f2e971ecbc..df4f37a6a9ab 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -299,7 +299,7 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
+ 	if (!parent)
+ 		parent = debugfs_mount->mnt_root;
+ 
+-	dentry = lookup_positive_unlocked(name, parent, strlen(name));
++	dentry = lookup_positive_unlocked(name, parent, strlen(name), 0);
+ 	if (IS_ERR(dentry))
+ 		return NULL;
+ 	return dentry;
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index e23752d9a79f..e39af6313ad9 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -407,7 +407,7 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
+ 		name = encrypted_and_encoded_name;
+ 	}
+ 
+-	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
++	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len, 0);
+ 	if (IS_ERR(lower_dentry)) {
+ 		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
+ 				"[%ld] on lower_dentry = [%s]\n", __func__,
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 2dd55b172d57..a4276d14aebb 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -145,7 +145,7 @@ static struct dentry *reconnect_one(struct vfsmount *mnt,
+ 	if (err)
+ 		goto out_err;
+ 	dprintk("%s: found name: %s\n", __func__, nbuf);
+-	tmp = lookup_one_len_unlocked(nbuf, parent, strlen(nbuf));
++	tmp = lookup_one_len_unlocked(nbuf, parent, strlen(nbuf), 0);
+ 	if (IS_ERR(tmp)) {
+ 		dprintk("%s: lookup failed: %d\n", __func__, PTR_ERR(tmp));
+ 		err = PTR_ERR(tmp);
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index 9dc7e7a64e10..92e7f264baa1 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -224,7 +224,7 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 		dtmp = lookup_positive_unlocked(kntmp->name, dentry,
+-					       strlen(kntmp->name));
++						strlen(kntmp->name), 0);
+ 		dput(dentry);
+ 		if (IS_ERR(dtmp))
+ 			return dtmp;
+diff --git a/fs/namei.c b/fs/namei.c
+index a320371899cf..e70b7a14bdcc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1532,6 +1532,9 @@ static struct dentry *__lookup_slow(const struct qstr *name,
+ 		if (unlikely(old)) {
+ 			dput(dentry);
+ 			dentry = old;
++		} else if ((flags & LOOKUP_NO_NEGATIVE) &&
++			   d_is_negative(dentry)) {
++			d_drop(dentry);
+ 		}
+ 	}
+ 	return dentry;
+@@ -2562,7 +2565,8 @@ EXPORT_SYMBOL(lookup_one_len);
+  * i_mutex held, and will take the i_mutex itself if necessary.
+  */
+ struct dentry *lookup_one_len_unlocked(const char *name,
+-				       struct dentry *base, int len)
++				       struct dentry *base, int len,
++				       unsigned int flags)
+ {
+ 	struct qstr this;
+ 	int err;
+@@ -2572,9 +2576,9 @@ struct dentry *lookup_one_len_unlocked(const char *name,
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+-	ret = lookup_dcache(&this, base, 0);
++	ret = lookup_dcache(&this, base, flags);
+ 	if (!ret)
+-		ret = lookup_slow(&this, base, 0);
++		ret = lookup_slow(&this, base, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(lookup_one_len_unlocked);
+@@ -2588,9 +2592,10 @@ EXPORT_SYMBOL(lookup_one_len_unlocked);
+  * this one avoids such problems.
+  */
+ struct dentry *lookup_positive_unlocked(const char *name,
+-				       struct dentry *base, int len)
++					struct dentry *base, int len,
++					unsigned int flags)
+ {
+-	struct dentry *ret = lookup_one_len_unlocked(name, base, len);
++	struct dentry *ret = lookup_one_len_unlocked(name, base, len, flags);
+ 	if (!IS_ERR(ret) && d_flags_negative(smp_load_acquire(&ret->d_flags))) {
+ 		dput(ret);
+ 		ret = ERR_PTR(-ENOENT);
+diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
+index aae514d40b64..19628922969c 100644
+--- a/fs/nfsd/nfs3xdr.c
++++ b/fs/nfsd/nfs3xdr.c
+@@ -855,7 +855,7 @@ compose_entry_fh(struct nfsd3_readdirres *cd, struct svc_fh *fhp,
+ 		} else
+ 			dchild = dget(dparent);
+ 	} else
+-		dchild = lookup_positive_unlocked(name, dparent, namlen);
++		dchild = lookup_positive_unlocked(name, dparent, namlen, 0);
+ 	if (IS_ERR(dchild))
+ 		return rv;
+ 	if (d_mountpoint(dchild))
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 996ac01ee977..0c3c7928a319 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3066,7 +3066,7 @@ nfsd4_encode_dirent_fattr(struct xdr_stream *xdr, struct nfsd4_readdir *cd,
+ 	__be32 nfserr;
+ 	int ignore_crossmnt = 0;
+ 
+-	dentry = lookup_positive_unlocked(name, cd->rd_fhp->fh_dentry, namlen);
++	dentry = lookup_positive_unlocked(name, cd->rd_fhp->fh_dentry, namlen, 0);
+ 	if (IS_ERR(dentry))
+ 		return nfserrno(PTR_ERR(dentry));
+ 
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 0db23baf98e7..193857487060 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -200,7 +200,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
+ 	int err;
+ 	bool last_element = !post[0];
+ 
+-	this = lookup_positive_unlocked(name, base, namelen);
++	this = lookup_positive_unlocked(name, base, namelen,
++					LOOKUP_NO_NEGATIVE);
+ 	if (IS_ERR(this)) {
+ 		err = PTR_ERR(this);
+ 		this = NULL;
+@@ -657,7 +658,7 @@ struct dentry *ovl_get_index_fh(struct ovl_fs *ofs, struct ovl_fh *fh)
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+-	index = lookup_positive_unlocked(name.name, ofs->indexdir, name.len);
++	index = lookup_positive_unlocked(name.name, ofs->indexdir, name.len, 0);
+ 	kfree(name.name);
+ 	if (IS_ERR(index)) {
+ 		if (PTR_ERR(index) == -ENOENT)
+@@ -689,7 +690,7 @@ struct dentry *ovl_lookup_index(struct ovl_fs *ofs, struct dentry *upper,
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+-	index = lookup_positive_unlocked(name.name, ofs->indexdir, name.len);
++	index = lookup_positive_unlocked(name.name, ofs->indexdir, name.len, 0);
+ 	if (IS_ERR(index)) {
+ 		err = PTR_ERR(index);
+ 		if (err == -ENOENT) {
+@@ -1137,7 +1138,7 @@ bool ovl_lower_positive(struct dentry *dentry)
+ 		struct dentry *lowerdir = poe->lowerstack[i].dentry;
+ 
+ 		this = lookup_positive_unlocked(name->name, lowerdir,
+-					       name->len);
++						name->len, 0);
+ 		if (IS_ERR(this)) {
+ 			switch (PTR_ERR(this)) {
+ 			case -ENOENT:
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index b6a4f692d345..f588839ebe2e 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2488,7 +2488,7 @@ int dquot_quota_on_mount(struct super_block *sb, char *qf_name,
+ 	struct dentry *dentry;
+ 	int error;
+ 
+-	dentry = lookup_positive_unlocked(qf_name, sb->s_root, strlen(qf_name));
++	dentry = lookup_positive_unlocked(qf_name, sb->s_root, strlen(qf_name), 0);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index a4bb992623c4..4896eeeeea46 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
+ #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
+ 
++#define LOOKUP_NO_NEGATIVE	0x200000 /* Hint: don't cache negative */
++
+ extern int path_pts(struct path *path);
+ 
+ extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+@@ -68,8 +70,8 @@ extern struct dentry *kern_path_locked(const char *, struct path *);
+ 
+ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
+ extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
+-extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
+-extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
++extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int, unsigned int);
++extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int, unsigned int);
+ 
+ extern int follow_down_one(struct path *);
+ extern int follow_down(struct path *);
