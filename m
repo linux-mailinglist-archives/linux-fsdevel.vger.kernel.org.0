@@ -2,155 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D72D21CEA8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 04:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9D781CEAAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 04:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgELCLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 May 2020 22:11:19 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:18612 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727892AbgELCLS (ORCPT
+        id S1728591AbgELCRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 May 2020 22:17:15 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:55547 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbgELCRP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 May 2020 22:11:18 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1589249477; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=QNYQNyInAghRaEYuVraZ7NwiX9YVEOfA+XK0Ft46+dA=; b=kJii45J+fTasiNiquEW/U11xnKWaASc/F2rl2Wwp3X4iFS/oO35YJ6Liesg1FyFQRRW7/Tns
- BW89qXSzsbKnPOLatz2orRen5NCUVHqbCCBW5hqrhKXrTuL1nz6JDrMS1N76B/gPZp1FYzpf
- a/QXXWNJHUvTnAQNdx32TXp0nFE=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5eba05bb.7f2dc19e9c38-smtp-out-n03;
- Tue, 12 May 2020 02:11:07 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DDD58C433BA; Tue, 12 May 2020 02:11:06 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pkondeti)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1CE62C433CB;
-        Tue, 12 May 2020 02:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CE62C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Tue, 12 May 2020 07:40:56 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200512021056.GA31725@codeaurora.org>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
+        Mon, 11 May 2020 22:17:15 -0400
+Received: by mail-io1-f71.google.com with SMTP id o21so4962808ioo.22
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 May 2020 19:17:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=A+bGB37fUphrdg4rHZUQ/mDG5UQ3vJlqsxE4yR9cEE8=;
+        b=L9/w1gQA60pBUmvnmTy0xf/DsLaQjuOO4M8wHRxai7s5f1kUsN2WHkT2zB+bWPeD/r
+         2Tbyl/2QmZmr8ideqfY4sDsnGvAZYgvsjVw+rqFpQli6CyYLB5H2bE0Bvei+9anwMa9C
+         8oBgw7QgVpiEUSJmhfn9pV8GrMll3a2h90oH8OOnJhvghz1c7sHyXP0vUxkVJ/t+dp37
+         hupiZaGVAUow87wqiJEoVyYCixXZa/X5rSYDLruONWrcf2z2Wppiwj/yNGbncAUsTafS
+         Rj6Q7b0vQCXiFksrCl+WXy2uSZrhwnGUK7BIlBw+XfgXHu4Ftou0CRbZrKMhGQyfNv17
+         UspQ==
+X-Gm-Message-State: AGi0PubfI+HVxAGCa/rJHv4mIFRg/Uq43NQBEvtEpyofG9SYNXUJuhyi
+        uqplIYz3TRiDqgycQqDugkDeiGellCpKpVL6+8MCsnmQNtOu
+X-Google-Smtp-Source: APiQypIctjI4BY678X/t1WAymF2cyXuX2SyTS1+z5w3mFX/fZa4vxhw2dKZ7JTseH4Vka4XJRt2E0ZvpPKA+IcgSpo1VYHbp8iLf
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200511154053.7822-1-qais.yousef@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Received: by 2002:a92:d6c5:: with SMTP id z5mr13337735ilp.194.1589249834499;
+ Mon, 11 May 2020 19:17:14 -0700 (PDT)
+Date:   Mon, 11 May 2020 19:17:14 -0700
+In-Reply-To: <00000000000009dcd905a3954340@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d845e305a56a0f24@google.com>
+Subject: Re: INFO: rcu detected stall in io_uring_release
+From:   syzbot <syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, dan.carpenter@oracle.com,
+        hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 11, 2020 at 04:40:52PM +0100, Qais Yousef wrote:
-> RT tasks by default run at the highest capacity/performance level. When
-> uclamp is selected this default behavior is retained by enforcing the
-> requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
-> uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
-> value.
-> 
-> This is also referred to as 'the default boost value of RT tasks'.
-> 
-> See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
-> 
-> On battery powered devices, it is desired to control this default
-> (currently hardcoded) behavior at runtime to reduce energy consumed by
-> RT tasks.
-> 
-> For example, a mobile device manufacturer where big.LITTLE architecture
-> is dominant, the performance of the little cores varies across SoCs, and
-> on high end ones the big cores could be too power hungry.
-> 
-> Given the diversity of SoCs, the new knob allows manufactures to tune
-> the best performance/power for RT tasks for the particular hardware they
-> run on.
-> 
-> They could opt to further tune the value when the user selects
-> a different power saving mode or when the device is actively charging.
-> 
-> The runtime aspect of it further helps in creating a single kernel image
-> that can be run on multiple devices that require different tuning.
-> 
-> Keep in mind that a lot of RT tasks in the system are created by the
-> kernel. On Android for instance I can see over 50 RT tasks, only
-> a handful of which created by the Android framework.
-> 
-> To control the default behavior globally by system admins and device
-> integrators, introduce the new sysctl_sched_uclamp_util_min_rt_default
-> to change the default boost value of the RT tasks.
-> 
-> I anticipate this to be mostly in the form of modifying the init script
-> of a particular device.
-> 
-> Whenever the new default changes, it'd be applied lazily on the next
-> opportunity the scheduler needs to calculate the effective uclamp.min
-> value for the task, assuming that it still uses the system default value
-> and not a user applied one.
-> 
-> Tested on Juno-r2 in combination with the RT capacity awareness [1].
-> By default an RT task will go to the highest capacity CPU and run at the
-> maximum frequency, which is particularly energy inefficient on high end
-> mobile devices because the biggest core[s] are 'huge' and power hungry.
-> 
-> With this patch the RT task can be controlled to run anywhere by
-> default, and doesn't cause the frequency to be maximum all the time.
-> Yet any task that really needs to be boosted can easily escape this
-> default behavior by modifying its requested uclamp.min value
-> (p->uclamp_req[UCLAMP_MIN]) via sched_setattr() syscall.
-> 
-> [1] 804d402fb6f6: ("sched/rt: Make RT capacity-aware")
-> 
+syzbot has found a reproducer for the following crash on:
 
-I have tested this patch on SDM845 running V5.7-rc4 and it works as expected.
+HEAD commit:    ac935d22 Add linux-next specific files for 20200415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a38f0a100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc498783097e9019
+dashboard link: https://syzkaller.appspot.com/bug?extid=66243bb7126c410cefe6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179b3b32100000
 
-Default: i.e /proc/sys/kernel/sched_util_clamp_min_rt_default = 1024.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
 
-RT task runs on BIG cluster every time at max frequency. Both effective
-and requested uclamp.min are set to 1024
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (10533 ticks this GP) idle=aea/1/0x4000000000000002 softirq=10553/10555 fqs=5249 
+	(t=10501 jiffies g=12777 q=556)
+NMI backtrace for cpu 0
+CPU: 0 PID: 8729 Comm: syz-executor.3 Not tainted 5.7.0-rc1-next-20200415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
+ trigger_single_cpu_backtrace include/linux/nmi.h:165 [inline]
+ rcu_dump_cpu_stacks+0x19b/0x1e5 kernel/rcu/tree_stall.h:254
+ print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
+ rcu_pending kernel/rcu/tree.c:3225 [inline]
+ rcu_sched_clock_irq.cold+0x55d/0xd00 kernel/rcu/tree.c:2296
+ update_process_times+0x25/0x60 kernel/time/timer.c:1727
+ tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
+ tick_sched_timer+0x4e/0x140 kernel/time/tick-sched.c:1320
+ __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+ __hrtimer_run_queues+0x5ca/0xed0 kernel/time/hrtimer.c:1584
+ hrtimer_interrupt+0x312/0x770 kernel/time/hrtimer.c:1646
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113 [inline]
+ smp_apic_timer_interrupt+0x15b/0x600 arch/x86/kernel/apic/apic.c:1138
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5a0 fs/io_uring.c:7301
+Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 ba 65 9d ff f3 90 <41> 80 3c 24 00 0f 85 53 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
+RSP: 0018:ffffc900054d7a50 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff888097c14400 RBX: ffff8880963a0000 RCX: 1ffff92000a9af37
+RDX: 0000000000000000 RSI: ffffffff81d5ced6 RDI: ffff8880963a0300
+RBP: ffffed1012c7402c R08: 0000000000000001 R09: ffffed1012c74061
+R10: ffff8880963a0307 R11: ffffed1012c74060 R12: ffffed1012c74022
+R13: ffff8880963a0160 R14: ffff8880963a0110 R15: ffffffff81d5d3e0
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7324
+ __fput+0x33e/0x880 fs/file_table.c:280
+ task_work_run+0xf4/0x1b0 kernel/task_work.c:123
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0xb53/0x2e10 kernel/exit.c:795
+ do_group_exit+0x125/0x340 kernel/exit.c:893
+ get_signal+0x47b/0x24e0 kernel/signal.c:2735
+ do_signal+0x81/0x2240 arch/x86/kernel/signal.c:784
+ exit_to_usermode_loop+0x26c/0x360 arch/x86/entry/common.c:161
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+ do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x45c829
+Code: Bad RIP value.
+RSP: 002b:00007fdd2a37fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: 0000000000000003 RBX: 00000000004e0ce0 RCX: 000000000045c829
+RDX: 0000000000000000 RSI: 0000000020000580 RDI: 00000000000000f1
+RBP: 000000000078bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000204 R14: 00000000004c425f R15: 00007fdd2a3806d4
 
-With /proc/sys/kernel/sched_util_clamp_min_rt_default = 128
-
-RT task runs on Little cluster (max capacity is 404) and frequency scaling
-happens as per the change in utilization. Both effective and requested
-uclamp are set to 128.
-
-Feel free to add
-
-Tested-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-
-Thanks,
-Pavan
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
