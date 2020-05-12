@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C53E11D0333
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D77741D0339
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgELXrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 19:47:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        id S1731703AbgELXvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 19:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728313AbgELXrS (ORCPT
+        with ESMTP id S1731695AbgELXvc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 19:47:18 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6EAC061A0F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id t11so6926972pgg.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
+        Tue, 12 May 2020 19:51:32 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354ACC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:51:32 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id t16so6083747plo.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
-        b=Xd5AlNqUyqa5uevb82kFVRNWgJc4lnvPLl2on8kfIv/uv+g8vxQ9dGBJFLbWtLIDRP
-         JSQcp54jIaNJhB0NVPwzNjFlX6LcqAX9z8zSDwNohzAWR4gXbprlhPjWN1YyuRl4Bzfw
-         pPSz+ZEIBEy1PBgcBn9P5S0RJobVsxwgU1JAg=
+        bh=7+F4liAaMr4vgR2fMURd01YkZSvvte2W6gqbbzWKG5c=;
+        b=SrKIZ8AEXY1eEqueHNpwaWV+9SfeA1ktJrITPsb+4ODj2OLx3HeoWSVg4b1yiBK0kk
+         6MROIbFjB6t0AOStv7l25VgYcJLvH4J1cFT3bMK+Hb/sttDC/HHYMSJ6wqV0ytmucRxo
+         Vv6Ki9QiL8gnNgKQeoJ6ivZeumPVZXIHJ2kXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
-        b=bQX+SVg1/EGzTdVr/GXB+o1kMLyA/W7mhLJmLf2xe9zam6nYTS7xKK4D3tMRzHioQd
-         sXJn30skWBKYJXzCYGb5YeecHPu0Vn1jIZUazvmV5WiBoT42nPKex0WyBByfnDWlXwNX
-         x+kuPCI7/AIE9EW4UImfKBHHTLAbJuH+gJqHxK/O3Co0nUtnF5zB+Hu1CfGLVuh0CWqF
-         ALMBcKYtoeh6BXvIHsZF0rFCla17Wt17v2pLBDzRsqZoG5FpYz5g6xfE5yLZcSdAx7DW
-         hK9er4s+gk7MrqasIgWS09Hi3W81mcTlof09lAwkePlFFpJ3Qc79kaJaoaHta2Z95418
-         WiUw==
-X-Gm-Message-State: AGi0PuYYjTcoaVYnOdJhjZllOtyaRxo563qWkd1GCvoAOx2CfsE9nwE6
-        oL/FHRJtTp/VDC3RB+ICwOF8mg==
-X-Google-Smtp-Source: APiQypLwHnNOyZgGCIToGkDBHxSScBz+H/qybjJmf7uN9nNY8ZiE4xAZfpg+M67XRGGVV7oYCqqYRQ==
-X-Received: by 2002:a63:c80e:: with SMTP id z14mr21445995pgg.170.1589327236437;
-        Tue, 12 May 2020 16:47:16 -0700 (PDT)
+        bh=7+F4liAaMr4vgR2fMURd01YkZSvvte2W6gqbbzWKG5c=;
+        b=syn6iUBW9Vu3fd3j4QmguU3YkZBevqjtLKqikHyYPckbpaVvDE561jnf5UN3rU4ZuB
+         AXOU2gid5ZvR9JGe+O05kfyMFfcL9L+NgZT561yUhN+4FlX+UZyXjXhzEBDogb8SWw7a
+         vtRNJ9X6n/Xxgp9FkPCZUwDhuuCW9mKiEfTVDutIB48diIES495bhR44FiRHrdgUYZlc
+         oGvjJpkXBsXtMIxKzWefTWizBYMqjx71I1BG1yN0PtsYOvRKOD1Ul9dd37GQhhDr2AHS
+         u8eBrboV9XoFHILylRYXlfUBPdKFinhJlBqi+ZAxy7fn9eT6kCHG6xT+yOMRqj24bapB
+         Lp/w==
+X-Gm-Message-State: AGi0PuZ0gvswVZaWfe2fsMSEHs+RbLrCD4jFLqEqm6sGMrkKqyAvS1K9
+        aALHbT1Dad2uhRrnnd2mBJcvIA==
+X-Google-Smtp-Source: APiQypIsjXL5Mme58Z3NS8DKdjPSdKDukPTRuwRTh1n5ysNxcgUm6R8R0NcxFEIPIOiwow+wowUAow==
+X-Received: by 2002:a17:902:ec04:: with SMTP id l4mr22412099pld.6.1589327491660;
+        Tue, 12 May 2020 16:51:31 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h15sm13078255pfr.161.2020.05.12.16.47.15
+        by smtp.gmail.com with ESMTPSA id o11sm2521576pfd.195.2020.05.12.16.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 16:47:15 -0700 (PDT)
-Date:   Tue, 12 May 2020 16:47:14 -0700
+        Tue, 12 May 2020 16:51:30 -0700 (PDT)
+Date:   Tue, 12 May 2020 16:51:29 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -65,9 +65,8 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Andy Lutomirski <luto@amacapital.net>
 Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-Message-ID: <202005121625.20B35A3@keescook>
-References: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <202005121649.4ED677068@keescook>
+References: <87eerszyim.fsf_-_@x220.int.ebiederm.org>
  <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
  <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
  <87sgg6v8we.fsf@x220.int.ebiederm.org>
@@ -76,49 +75,32 @@ References: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
  <202005121218.ED0B728DA@keescook>
  <87lflwq4hu.fsf@x220.int.ebiederm.org>
  <202005121606.5575978B@keescook>
+ <202005121625.20B35A3@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202005121606.5575978B@keescook>
+In-Reply-To: <202005121625.20B35A3@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 04:08:56PM -0700, Kees Cook wrote:
-> I'm nearly certain the answer is "yes", but I wonder if we should stop
-> for a moment and ask "does anything still use MISC_FMT_OPEN_BINARY ? It
-> looks like either "O" or "C" binfmt_misc registration flag. My installed
-> binfmts on Ubuntu don't use them...
-> 
-> I'm currently pulling a list of all the packages in Debian than depend
-> on the binfmt-support package and checking their flags.
+On Tue, May 12, 2020 at 04:47:14PM -0700, Kees Cook wrote:
+> And now I wonder if qemu actually uses the resulting AT_EXECFD ...
 
-So, binfmt-support in Debian doesn't in _support_ MISC_FMT_OPEN_BINARY
-("O"):
+It does, though I'm not sure if this is to support crossing mount points,
+dropping privileges, or something else, since it does fall back to just
+trying to open the file.
 
+    execfd = qemu_getauxval(AT_EXECFD);
+    if (execfd == 0) {
+        execfd = open(filename, O_RDONLY);
+        if (execfd < 0) {
+            printf("Error while loading %s: %s\n", filename, strerror(errno));
+            _exit(EXIT_FAILURE);
+        }
+    }
 
-        credentials =
-                (binfmt->credentials && !strcmp (binfmt->credentials, "yes"))
-                ? "C" : "";
-        preserve = (binfmt->preserve && !strcmp (binfmt->preserve, "yes"))
-                ? "P" : "";
-        fix_binary =
-                (binfmt->fix_binary && !strcmp (binfmt->fix_binary, "yes"))
-                ? "F" : "";
-...
-        regstring = xasprintf (":%s:%c:%s:%s:%s:%s:%s%s%s\n",
-                               name, type, binfmt->offset, binfmt->magic,
-                               binfmt->mask, interpreter,
-                               credentials, preserve, fix_binary);
-
-However, "credentials" ("C") does imply MISC_FMT_OPEN_BINARY.
-
-
-I looked at every Debian package using binfmt-support, and "only" qemu
-uses "credential".
-
-And now I wonder if qemu actually uses the resulting AT_EXECFD ...
 
 -- 
 Kees Cook
