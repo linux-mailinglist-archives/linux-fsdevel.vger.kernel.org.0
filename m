@@ -2,138 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA01D1CEC7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 07:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 592661CED6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 May 2020 09:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgELFoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 01:44:11 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:34245 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbgELFoK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 01:44:10 -0400
-Received: by mail-pj1-f65.google.com with SMTP id l73so96519pjb.1;
-        Mon, 11 May 2020 22:44:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GP5Aq+uFAcHSWqf5TbEfKkqCWH10YwxwBjLnjkDpTgw=;
-        b=iykkvtPajnLR2cEz1UTvVbqN0frqRWsE1PajfI6ssASpG9/XDkGCQ4Tu9UdHN3Jo0Z
-         kJmyoUf+O4Z4Rhl+LVjTxSSe7b2KVX/58Huvkhwsgcta3Wmc2pvyb8n3zzLMq8O1PKAq
-         Gi9h8Bj5t/0l4odcpISBmBs0Odu5tWvDM9HSj8Rnsk8810Mqb3zFTDuCyQUrQyXKuh3N
-         CODGvU38ZSSvP5gPygmcaMkTgLePRej+fQBhjJ5e3Qn+03+gQdmUyGVFGsYEUJyG7kRR
-         CMt587coANvMRz8W8geuU9k9Ihgl/XFRPQVkOHOAYuAi/56dim53M4qe0JAafAcuvZYs
-         9P8A==
-X-Gm-Message-State: AOAM532WXanVou9L609t5eScBiLYHS7QwH25XYxynfybSxhR5RFp3/gX
-        7aeTVERcZSQ1UA8DDq4yhhY=
-X-Google-Smtp-Source: ABdhPJy5FNalWj7ad0WRBq8wpf33KSe4zNF7L5vvmMJu5PysnhTwIrnkXKA904loq4xm9a62tNMEDQ==
-X-Received: by 2002:a17:902:b618:: with SMTP id b24mr2897635pls.155.1589262250172;
-        Mon, 11 May 2020 22:44:10 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id s9sm10913434pfc.179.2020.05.11.22.44.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 22:44:09 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 986C640E88; Tue, 12 May 2020 05:44:08 +0000 (UTC)
-Date:   Tue, 12 May 2020 05:44:08 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
-Message-ID: <20200512054408.GZ11244@42.do-not-panic.com>
-References: <20200511111123.68ccbaa3@canb.auug.org.au>
- <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
- <20200512003305.GX11244@42.do-not-panic.com>
- <202005112219.0FB0A7A@keescook>
+        id S1726193AbgELHA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 03:00:28 -0400
+Received: from mail-bgr052100133062.outbound.protection.outlook.com ([52.100.133.62]:30923
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725814AbgELHA1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 May 2020 03:00:27 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LN4uV2/F8rRRoZCXFJjTdeP2Ho7Jaq3cdT28YYyaeZRq20CJo3jMV3bkWncfVUyqtyUdQwkeWoVSx56JkMCUKIf6+QllI1xRm6QDo0RqppnK27jA8zgV2bVPxGLjExkyTt4LwShEvWq0hm21J6SKnib/sCBnS3hIhmVcRh0WcWdLh2/PV+fRKGoxiYKg8uf1MwmM4c2g69c+zarIzrma9VrRHCuE6v02u/ATEzW5dV6/2yRS8TBzrVct91VRhgTMoZjGfxk5YsYyZFceEQ63CIrWllYNJQxyC06BFilVddWTKhX4maAijlORPVdYDiX6eEzPhI2fcWDvEm+rh1Wevw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oBhjaoWNsYjaFrHkBumgtKY4esCOOxHjsdQoLNQzMas=;
+ b=BAfs5Ouq4caO83ARfnJ8Et19nkUkUjO7otvrzSAc6lxnBvBsJMJYkJaLWNJ5rshwaPhLpR3QUfjjYx0S3Z+0WqoNboAtt1hJmCpYg5/YRwRJUla96nNm9k2wTCmXwVkU1xhFozSpnodaJoBhckWKWT9z4xBY7v0MWS3ppL+0tJhhI7yoM3g4Htx4vqpngJInj6GJ1OXrsB/RmRoenxpCElpQQUg32T4BBQN1hqyNEqrD/peMGkbo90bNVslmMVIEpz2O8JokNiY451kOWmxHlAZMKZLXgz/qSNjE8q3BHQLqk6TdR2Z73KEtdXIVxA/boBKFPGM+C5lKmt3dzNBQrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oBhjaoWNsYjaFrHkBumgtKY4esCOOxHjsdQoLNQzMas=;
+ b=OkfcX50gpSycsfkpWt2OELNiPLdL17yu/rqqAXgyi8UQ4k9M8RbY2ndq9A5y2hMmfVry4uN3Tup3hAkkxSxezHDR3Qdji4gYPbTQZ4t8N6CDtDCQFplyzADTHeifV0kOqVaJNZ0t28JvnA6O8rSv7lpGbUuOdYL+SIlcwY5aHe8=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=windriver.com;
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
+ by SN6PR11MB2639.namprd11.prod.outlook.com (2603:10b6:805:59::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2979.34; Tue, 12 May
+ 2020 07:00:22 +0000
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::75b1:da01:9747:ae65]) by SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::75b1:da01:9747:ae65%4]) with mapi id 15.20.2979.033; Tue, 12 May 2020
+ 07:00:22 +0000
+Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
+To:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200410114720.24838-1-zhe.he@windriver.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <367c2762-485d-a2bf-d0a7-f1f059346166@windriver.com>
+Date:   Tue, 12 May 2020 15:00:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+In-Reply-To: <20200410114720.24838-1-zhe.he@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: YTBPR01CA0009.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:14::22) To SN6PR11MB3360.namprd11.prod.outlook.com
+ (2603:10b6:805:c8::30)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202005112219.0FB0A7A@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [128.224.162.175] (60.247.85.82) by YTBPR01CA0009.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:14::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.20 via Frontend Transport; Tue, 12 May 2020 07:00:20 +0000
+X-Originating-IP: [60.247.85.82]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1fd27ffe-57c1-493d-0d8d-08d7f64223af
+X-MS-TrafficTypeDiagnostic: SN6PR11MB2639:
+X-Microsoft-Antispam-PRVS: <SN6PR11MB2639FDE458918F918957C2448FBE0@SN6PR11MB2639.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0401647B7F
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HWS9WvsqMK/N1GqaAK+mN29WISGlOii7HtByanGXQV/ujuNXHUTjJd3VnKOhvdS648a6xIblc/ZvzJxNQ6qG2IrxyKOvo1tGjNUyfi2IP0HxzVFuG+C62tj7o8O8kJcK62br7F27iNZ65OmSq//mnj5RH0+U9jiLJQMTiCtA8aMxSw/efIqPr7a2Ri/a/XyGVDgah8ncPmlKLB1XCFAIcbBrx5sMmm6+kBc0ATcI8CeM6pa413rMI5xGBgS2PM/ol4nVXu5dAISi0+B1sIxj8lApIoFk3KSNG164pODmx6bTbuWYugiyJIPuruihofHRy3zf4p9mMwNZBeizq7dIz3yAhmhvFQpwZ2/1U7Gk2fDKZHAbAUr54auxI5pgNtM517YagOIL2XMNRYrOCkG9ko0qItxp5XGouKoVIBeIP4eTy22TN31iPcYY2cVBYXPkXWjPPA+fBGDTqPPTFOnA/VbKLBRIm6Tr+9LT6dQSLxLRp1ryYgpggQrK0X6INxBByuAgqW4utHmWEXahgGRSFxDAEW9HFOc/8i2mR+UkUqYobjxqLuc5VoJBJm5dgfSSa3UW8NCGW73BRx2m/nxyXD91F1jJqJp1QTMaM7MznZxx59zItHMQZ8FBJQrMZe0XfsvMTZ48M2V+SuZkOiMI9k0rynC8lUoCnEHQhmMMldQ6hB5dPpjcaXa6G1bmrP7OHIdMq2/kUTjcb6jxtd5Br8z2n1ddvetMUvVgwtsqRQyrxIPzLWJ2b2aXJKv753ooZR74SBGYiNNwTNX4uxmjjOc2LSKl8eyoWePpi2dl6XMojK1VFlo/YvW5lcN1AXZakESqr0I9AB1oZcBlBU1bdawH3e969o4GQ2uGyKDM1D1UjrQv7HnzGcunMSe6aFmcodDKQ4N2RczNTsWoT6RNSA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:SN6PR11MB3360.namprd11.prod.outlook.com;PTR:;CAT:OSPM;SFTY:;SFS:(346002)(396003)(136003)(366004)(376002)(39850400004)(33430700001)(31696002)(2906002)(26005)(16526019)(186003)(86362001)(52116002)(5660300002)(6666004)(478600001)(31686004)(6706004)(956004)(33440700001)(2616005)(36756003)(16576012)(6486002)(316002)(53546011)(66556008)(8676002)(8936002)(66476007)(66946007)(78286006)(161623001);DIR:OUT;SFP:1501;
+X-MS-Exchange-AntiSpam-MessageData: 1CQWiIbEUnn2xMjNhw4BmCScBzXdzqRbKMwLY3GCMhNBPGZ6DZ15fpvz5pG2IBwg2/xQUwTT/PIuTEqYHsMlRFgcCjui9uUKc5C36Ktr92m7jiYLpEkgjsAtQmvVUvYNtc1nfN6mVuEnWUvM1+uMPyhbH1Tqp8VvsDoir1J8vANomqMrtoVylehnGuiND9WbDaZeTeQ6Nj6silZPuKQlmIOvwuHkodPX1ow9rm7COIJyhfBoka2y5UPcq5EkZ3X2wNiq0ksplk8Lp0oydhD9/dPlmPqO3igCi3qaxzHeocryvS7UeDZ/SYm25bagI3khrCAUFc7VmvRMswitT16PNfgx+PQoHqSIBOyZPgi78yhA+CgXZplwqRMyfSSbi6d7UsezExxWECi/Bt42joyO4uzoDrtXwpedd6Ynhe826wWMZos3B/8i+/M10X9w5WM7iHVu4Lf30rkFVxjWRS6vgsVmdObPkhv6KweASAGzNjE=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fd27ffe-57c1-493d-0d8d-08d7f64223af
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2020 07:00:22.6621
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0GPYTY+cFKrqzbO58BnpwiBqbwQAxFBPcnIjQK5O2dayccDdM71Lj9Abc+WC/ZL8iLfFt1KxZhR36whV4nePUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2639
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 11, 2020 at 10:22:04PM -0700, Kees Cook wrote:
-> On Tue, May 12, 2020 at 12:33:05AM +0000, Luis Chamberlain wrote:
-> > On Mon, May 11, 2020 at 09:55:16AM +0800, Xiaoming Ni wrote:
-> > > On 2020/5/11 9:11, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Today's linux-next merge of the vfs tree got a conflict in:
-> > > > 
-> > > >    kernel/sysctl.c
-> > > > 
-> > > > between commit:
-> > > > 
-> > > >    b6522fa409cf ("parisc: add sysctl file interface panic_on_stackoverflow")
-> > > > 
-> > > > from the parisc-hd tree and commit:
-> > > > 
-> > > >    f461d2dcd511 ("sysctl: avoid forward declarations")
-> > > > 
-> > > > from the vfs tree.
-> > > > 
-> > > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > > is submitted for merging.  You may also want to consider cooperating
-> > > > with the maintainer of the conflicting tree to minimise any particularly
-> > > > complex conflicts.
-> > > > 
-> > > 
-> > > 
-> > > Kernel/sysctl.c contains more than 190 interface files, and there are a
-> > > large number of config macro controls. When modifying the sysctl interface
-> > > directly in kernel/sysctl.c , conflicts are very easy to occur.
-> > > 
-> > > At the same time, the register_sysctl_table() provided by the system can
-> > > easily add the sysctl interface, and there is no conflict of kernel/sysctl.c
-> > > .
-> > > 
-> > > Should we add instructions in the patch guide (coding-style.rst
-> > > submitting-patches.rst):
-> > > Preferentially use register_sysctl_table() to add a new sysctl interface,
-> > > centralize feature codes, and avoid directly modifying kernel/sysctl.c ?
-> > 
-> > Yes, however I don't think folks know how to do this well. So I think we
-> > just have to do at least start ourselves, and then reflect some of this
-> > in the docs.  The reason that this can be not easy is that we need to
-> > ensure that at an init level we haven't busted dependencies on setting
-> > this. We also just don't have docs on how to do this well.
-> > 
-> > > In addition, is it necessary to transfer the architecture-related sysctl
-> > > interface to arch/xxx/kernel/sysctl.c ?
-> > 
-> > Well here's an initial attempt to start with fs stuff in a very
-> > conservative way. What do folks think?
-> > 
-> > [...]
-> > +static unsigned long zero_ul;
-> > +static unsigned long long_max = LONG_MAX;
-> 
-> I think it'd be nice to keep these in one place for others to reuse,
-> though that means making them non-static. (And now that I look at them,
-> I thought they were supposed to be const?)
+Can this be considered for this moment?
+This is actually v2 of
+"[PATCH 1/2] eventfd: Make wake counter work for single fd instead of all".
 
-So much spring cleaning to do. I can add the const and share it.
-It seems odd to stuff this into a sysctl.h, types.h doesn't seem
-right... I can't think of something proper, so I'll just move them
-to sysctl.h for now.
+Thanks,
+Zhe
 
-Any thought on the approach though? I mean, I realize that this will
-require more of the subsystem specific folks to look at the code and
-review, but if this seems fair, I'll get the ball rolling.
+On 4/10/20 7:47 PM, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+>
+> commit b5e683d5cab8 ("eventfd: track eventfd_signal() recursion depth")
+> introduces a percpu counter that tracks the percpu recursion depth and
+> warn if it greater than zero, to avoid potential deadlock and stack
+> overflow.
+>
+> However sometimes different eventfds may be used in parallel. Specifically,
+> when heavy network load goes through kvm and vhost, working as below, it
+> would trigger the following call trace.
+>
+> -  100.00%
+>    - 66.51%
+>         ret_from_fork
+>         kthread
+>       - vhost_worker
+>          - 33.47% handle_tx_kick
+>               handle_tx
+>               handle_tx_copy
+>               vhost_tx_batch.isra.0
+>               vhost_add_used_and_signal_n
+>               eventfd_signal
+>          - 33.05% handle_rx_net
+>               handle_rx
+>               vhost_add_used_and_signal_n
+>               eventfd_signal
+>    - 33.49%
+>         ioctl
+>         entry_SYSCALL_64_after_hwframe
+>         do_syscall_64
+>         __x64_sys_ioctl
+>         ksys_ioctl
+>         do_vfs_ioctl
+>         kvm_vcpu_ioctl
+>         kvm_arch_vcpu_ioctl_run
+>         vmx_handle_exit
+>         handle_ept_misconfig
+>         kvm_io_bus_write
+>         __kvm_io_bus_write
+>         eventfd_signal
+>
+> 001: WARNING: CPU: 1 PID: 1503 at fs/eventfd.c:73 eventfd_signal+0x85/0xa0
+> ---- snip ----
+> 001: Call Trace:
+> 001:  vhost_signal+0x15e/0x1b0 [vhost]
+> 001:  vhost_add_used_and_signal_n+0x2b/0x40 [vhost]
+> 001:  handle_rx+0xb9/0x900 [vhost_net]
+> 001:  handle_rx_net+0x15/0x20 [vhost_net]
+> 001:  vhost_worker+0xbe/0x120 [vhost]
+> 001:  kthread+0x106/0x140
+> 001:  ? log_used.part.0+0x20/0x20 [vhost]
+> 001:  ? kthread_park+0x90/0x90
+> 001:  ret_from_fork+0x35/0x40
+> 001: ---[ end trace 0000000000000003 ]---
+>
+> This patch enlarges the limit to 1 which is the maximum recursion depth we
+> have found so far.
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> ---
+>  fs/eventfd.c            | 3 ++-
+>  include/linux/eventfd.h | 3 +++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index 78e41c7c3d05..8b9bd6fb08cd 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -70,7 +70,8 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+>  	 * it returns true, the eventfd_signal() call should be deferred to a
+>  	 * safe context.
+>  	 */
+> -	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
+> +	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count) >
+> +	    EFD_WAKE_COUNT_MAX))
+>  		return 0;
+>  
+>  	spin_lock_irqsave(&ctx->wqh.lock, flags);
+> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+> index dc4fd8a6644d..e7684d768e3f 100644
+> --- a/include/linux/eventfd.h
+> +++ b/include/linux/eventfd.h
+> @@ -29,6 +29,9 @@
+>  #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+>  #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+>  
+> +/* This is the maximum recursion depth we find so far */
+> +#define EFD_WAKE_COUNT_MAX 1
+> +
+>  struct eventfd_ctx;
+>  struct file;
+>  
 
-  Luis
