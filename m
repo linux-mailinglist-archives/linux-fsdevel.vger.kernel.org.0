@@ -2,68 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 154571D0313
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C53E11D0333
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 01:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbgELXaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 May 2020 19:30:01 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21841 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728319AbgELXaB (ORCPT
+        id S1728220AbgELXrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 May 2020 19:47:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728313AbgELXrS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 May 2020 19:30:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589326200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IqdlvKpMoIpWtbvNPmb2zhCeciUUo4G6qYPFhXtCsiU=;
-        b=VXtwTr8ewAvyIP8+DHoZz54OZB6Pd8XtaWqpf14VDA1TYf0ixJ8CJZLDmxGnF6oNM2BcOY
-        WrqWA727sLvUdhPbVSrGlHU+ge4P72lNVOATKTgJ5V/Dj8ReohtHtIw3s7SVtx8gsrbMxb
-        k6YBYp1Kvzo7L4R5Dbhxs/MDlEXHE2Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-468-SvcAXEulM1S1hoMbITGG9A-1; Tue, 12 May 2020 19:29:56 -0400
-X-MC-Unique: SvcAXEulM1S1hoMbITGG9A-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4483A1841920;
-        Tue, 12 May 2020 23:29:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-59.rdu2.redhat.com [10.10.112.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 853A15C1B5;
-        Tue, 12 May 2020 23:29:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <31941725-BEB0-4839-945A-4952C2B5ADC7@lca.pw>
-References: <31941725-BEB0-4839-945A-4952C2B5ADC7@lca.pw>
-To:     Qian Cai <cai@lca.pw>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Null-ptr-deref due to "vfs, fsinfo: Add an RCU safe per-ns mount list"
+        Tue, 12 May 2020 19:47:18 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6EAC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id t11so6926972pgg.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
+        b=Xd5AlNqUyqa5uevb82kFVRNWgJc4lnvPLl2on8kfIv/uv+g8vxQ9dGBJFLbWtLIDRP
+         JSQcp54jIaNJhB0NVPwzNjFlX6LcqAX9z8zSDwNohzAWR4gXbprlhPjWN1YyuRl4Bzfw
+         pPSz+ZEIBEy1PBgcBn9P5S0RJobVsxwgU1JAg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
+        b=bQX+SVg1/EGzTdVr/GXB+o1kMLyA/W7mhLJmLf2xe9zam6nYTS7xKK4D3tMRzHioQd
+         sXJn30skWBKYJXzCYGb5YeecHPu0Vn1jIZUazvmV5WiBoT42nPKex0WyBByfnDWlXwNX
+         x+kuPCI7/AIE9EW4UImfKBHHTLAbJuH+gJqHxK/O3Co0nUtnF5zB+Hu1CfGLVuh0CWqF
+         ALMBcKYtoeh6BXvIHsZF0rFCla17Wt17v2pLBDzRsqZoG5FpYz5g6xfE5yLZcSdAx7DW
+         hK9er4s+gk7MrqasIgWS09Hi3W81mcTlof09lAwkePlFFpJ3Qc79kaJaoaHta2Z95418
+         WiUw==
+X-Gm-Message-State: AGi0PuYYjTcoaVYnOdJhjZllOtyaRxo563qWkd1GCvoAOx2CfsE9nwE6
+        oL/FHRJtTp/VDC3RB+ICwOF8mg==
+X-Google-Smtp-Source: APiQypLwHnNOyZgGCIToGkDBHxSScBz+H/qybjJmf7uN9nNY8ZiE4xAZfpg+M67XRGGVV7oYCqqYRQ==
+X-Received: by 2002:a63:c80e:: with SMTP id z14mr21445995pgg.170.1589327236437;
+        Tue, 12 May 2020 16:47:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h15sm13078255pfr.161.2020.05.12.16.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 16:47:15 -0700 (PDT)
+Date:   Tue, 12 May 2020 16:47:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+Message-ID: <202005121625.20B35A3@keescook>
+References: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org>
+ <202005111428.B094E3B76A@keescook>
+ <874kslq9jm.fsf@x220.int.ebiederm.org>
+ <202005121218.ED0B728DA@keescook>
+ <87lflwq4hu.fsf@x220.int.ebiederm.org>
+ <202005121606.5575978B@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 13 May 2020 00:29:52 +0100
-Message-ID: <2961585.1589326192@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202005121606.5575978B@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Qian Cai <cai@lca.pw> wrote:
+On Tue, May 12, 2020 at 04:08:56PM -0700, Kees Cook wrote:
+> I'm nearly certain the answer is "yes", but I wonder if we should stop
+> for a moment and ask "does anything still use MISC_FMT_OPEN_BINARY ? It
+> looks like either "O" or "C" binfmt_misc registration flag. My installed
+> binfmts on Ubuntu don't use them...
+> 
+> I'm currently pulling a list of all the packages in Debian than depend
+> on the binfmt-support package and checking their flags.
 
-> Reverted the linux-next commit ee8ad8190cb1 (=E2=80=9Cvfs, fsinfo: Add an=
- RCU safe per-ns mount list=E2=80=9D) fixed the null-ptr-deref.
+So, binfmt-support in Debian doesn't in _support_ MISC_FMT_OPEN_BINARY
+("O"):
 
-Okay, I'm dropping this commit for now.
 
-David
+        credentials =
+                (binfmt->credentials && !strcmp (binfmt->credentials, "yes"))
+                ? "C" : "";
+        preserve = (binfmt->preserve && !strcmp (binfmt->preserve, "yes"))
+                ? "P" : "";
+        fix_binary =
+                (binfmt->fix_binary && !strcmp (binfmt->fix_binary, "yes"))
+                ? "F" : "";
+...
+        regstring = xasprintf (":%s:%c:%s:%s:%s:%s:%s%s%s\n",
+                               name, type, binfmt->offset, binfmt->magic,
+                               binfmt->mask, interpreter,
+                               credentials, preserve, fix_binary);
 
+However, "credentials" ("C") does imply MISC_FMT_OPEN_BINARY.
+
+
+I looked at every Debian package using binfmt-support, and "only" qemu
+uses "credential".
+
+And now I wonder if qemu actually uses the resulting AT_EXECFD ...
+
+-- 
+Kees Cook
