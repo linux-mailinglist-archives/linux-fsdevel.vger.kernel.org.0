@@ -2,31 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1273D1D1AB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 18:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DC81D1AD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 18:16:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389437AbgEMQJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 12:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730657AbgEMQJj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 12:09:39 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB670205CB;
-        Wed, 13 May 2020 16:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589386179;
-        bh=WdqE4cKf0ccXinlbg1MvpbxgyN4LOmP75On1HjwnySE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jCsO6gbqEaPkje+ceZ0NpYvOXh4pFINJxnLiCkUnjFcYlrkB/1tFYRbX/+8YCbglc
-         RvqicPTHZwK14lZl9OdlxuC8F6HA4xisy00wtjjz5GKlPatRkgcBrlpI3oY8eMBOLK
-         +2YqkwukULXM8ZIENDPPAlJaQwfu+wMaKaXJQhgI=
-Date:   Wed, 13 May 2020 18:09:36 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        id S2389520AbgEMQQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 12:16:25 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42344 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbgEMQQZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 12:16:25 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k19so22176pll.9;
+        Wed, 13 May 2020 09:16:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MR3hivTTbv7WsNknULGT8vpeXwpVVOP1nEJHvXl4q6Q=;
+        b=CGXlki91Z2AbkgMsh7IlOWcTNbnmSz+EJS9v9wrqLzHQJ48nzZ6IMVeeZ30THNgvBo
+         +uyhrOfa4h/rA73eunJA29vtgNtIBqZNAzp1fpIEDnBBWPwHTjhUUosvYpu5JS+ZOBRC
+         AhYk0Y9uOt4qdQoSPMCChWPRKPPKUV0ip3lTEmPSXX8Yo3EQXlB4EsIu14MRTAsYmUuL
+         +ujxDfoP4Y01jEdRwBMpJ9Q9ppkj10i4yywDMbfensA7oJUZ0zGsyQNh1oTy4BFCJBX1
+         D2sT++pbbU5y65x0r+H5/VfaOC54oK61WsCr+nqnYNPms1vhoYKWkZi11qggGDJuYRNz
+         euDA==
+X-Gm-Message-State: AGi0PubaRUfos4UQAprK/z+HuztdMu3AjvgJS+JjrLwbVgUnGOWQ//FL
+        RUJpK6OnkpIw9NnazSZR980=
+X-Google-Smtp-Source: APiQypKPVhDd5eVJvoALh7b71wk5lXOmnq50MN3QI/KJHyjv/UYQSNnqyFg2fSxJ63d2CJSyRyXsXg==
+X-Received: by 2002:a17:902:ba95:: with SMTP id k21mr24684399pls.160.1589386584264;
+        Wed, 13 May 2020 09:16:24 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b15sm21492pfd.139.2020.05.13.09.16.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 09:16:23 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 452DA4063E; Wed, 13 May 2020 16:16:22 +0000 (UTC)
+Date:   Wed, 13 May 2020 16:16:22 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
         rafael@kernel.org, jeyu@kernel.org, jmorris@namei.org,
         keescook@chromium.org, paul@paul-moore.com,
         stephen.smalley.work@gmail.com, eparis@parisplace.org,
@@ -38,7 +52,7 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
         kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/3] security: add symbol namespace for reading file data
-Message-ID: <20200513160936.GC1362525@kroah.com>
+Message-ID: <20200513161622.GS11244@42.do-not-panic.com>
 References: <20200513152108.25669-1-mcgrof@kernel.org>
  <20200513152108.25669-3-mcgrof@kernel.org>
  <87k11fonbk.fsf@x220.int.ebiederm.org>
@@ -46,6 +60,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <87k11fonbk.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -63,21 +78,29 @@ On Wed, May 13, 2020 at 10:40:31AM -0500, Eric W. Biederman wrote:
 > > types of operations happen as a whole.
 > 
 > Why not just remove the ability for the firmware loader to be a module?
-
-I agree, it's been a mess of build options to try to keep alive over
-time.
-
+> 
 > Is there some important use case that requires the firmware loader
 > to be a module?
-
-I don't think so anymore.
-
+> 
 > We already compile the code in by default.  So it is probably just
 > easier to remove the modular support all together.  Which would allow
 > the export of the security hooks to be removed as well.
 
-Agreed.
+Yeah, that's a better solution. The only constaint I am aware of is
+we *cannot* change the name of the module from firmware_class since the
+old fallback sysfs loader depends on the module name. So, so long as we
+take care with that on built-in and document this very well, I think
+we should be good.
 
-thanks,
+I checked the commit logs and this was tristate since the code was added
+upstream, so I cannot see any good reason it was enabled as modular.
 
-greg k-h
+Speaking with a *backports experience* hat on, we did have a use case
+to use a module for it in case a new feature was added upstream which
+was not present on older kernels. However I think that using a separate
+symbol prefix would help with that.
+
+Would any Android stakeholders / small / embedded folks whave any issue
+with this?
+
+  Luis
