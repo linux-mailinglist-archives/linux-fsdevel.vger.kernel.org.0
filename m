@@ -2,70 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EDB51D06A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 07:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8C21D071C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 08:23:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgEMFtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 01:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728680AbgEMFtz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 01:49:55 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 389B9C061A0C;
-        Tue, 12 May 2020 22:49:55 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jYkH8-007EUK-Qh; Wed, 13 May 2020 05:49:51 +0000
-Date:   Wed, 13 May 2020 06:49:50 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     axboe@kernel.dk, zohar@linux.vnet.ibm.com, mcgrof@kernel.org,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fs: avoid fdput() after failed fdget() in
- kernel_read_file_from_fd()
-Message-ID: <20200513054950.GT23230@ZenIV.linux.org.uk>
-References: <cover.1589311577.git.skhan@linuxfoundation.org>
- <1159d74f88d100521c568037327ebc8ec7ffc6ef.1589311577.git.skhan@linuxfoundation.org>
+        id S1729298AbgEMGXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 02:23:24 -0400
+Received: from verein.lst.de ([213.95.11.211]:44438 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728913AbgEMGXY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 02:23:24 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E27C468C65; Wed, 13 May 2020 08:23:18 +0200 (CEST)
+Date:   Wed, 13 May 2020 08:23:18 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     Christoph Hellwig <hch@lst.de>, akpm@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, zippel@linux-m68k.org,
+        linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        monstr@monstr.eu, jeyu@kernel.org, linux-ia64@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, x86@kernel.org,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-m68k@lists.linux-m68k.org, openrisc@lists.librecores.org,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 19/31] riscv: use asm-generic/cacheflush.h
+Message-ID: <20200513062318.GA24133@lst.de>
+References: <20200510075510.987823-20-hch@lst.de> <mhng-8adbedbc-0f91-4291-9471-2df5eb7b802b@palmerdabbelt-glaptop1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1159d74f88d100521c568037327ebc8ec7ffc6ef.1589311577.git.skhan@linuxfoundation.org>
+In-Reply-To: <mhng-8adbedbc-0f91-4291-9471-2df5eb7b802b@palmerdabbelt-glaptop1>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 01:43:05PM -0600, Shuah Khan wrote:
-> Fix kernel_read_file_from_fd() to avoid fdput() after a failed fdget().
-> fdput() doesn't do fput() on this file since FDPUT_FPUT isn't set
-> in fd.flags. Fix it anyway since failed fdget() doesn't require
-> a fdput().
-> 
-> This was introduced in a commit that added kernel_read_file_from_fd() as
-> a wrapper for the VFS common kernel_read_file().
-> 
-> Fixes: b844f0ecbc56 ("vfs: define kernel_copy_file_from_fd()")
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->  fs/exec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 06b4c550af5d..ea24bdce939d 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1021,8 +1021,8 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
->  		goto out;
->  
->  	ret = kernel_read_file(f.file, buf, size, max_size, id);
-> -out:
->  	fdput(f);
-> +out:
->  	return ret;
+On Tue, May 12, 2020 at 04:00:26PM -0700, Palmer Dabbelt wrote:
+> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+>
+> Were you trying to get these all in at once, or do you want me to take it into
+> my tree?
 
-Again, that goto is a pointless obfuscation; just return -EBADF
-and be done with that.
-
-Incidentally, why is that thing exported?
+Except for the small fixups at the beginning of the series this needs
+to go in together.  I'll have to do at least another resend, and after
+that I hope Andrew is going to pick it up.
