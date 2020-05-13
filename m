@@ -2,87 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C57F1D068C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 07:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B56B01D06A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 07:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbgEMFnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 01:43:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:28729 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729161AbgEMFnf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 01:43:35 -0400
-IronPort-SDR: 0NDnqg+bzE/iMMLaRXyDn2viLqZy08dOX04dgZ1lMOkIAWYwzBWybg/2uNQ9J6u1kzKtaKB5Rx
- a3ZbKtzyWy4g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2020 22:43:34 -0700
-IronPort-SDR: /7J2wgvlbA4JuFwXtFDpWIH4fynSgaRQnUJ8n65Npv3+9AnFcDm6osBNahWG9MM8WdhtUkcd/U
- SXsjxbLwd9EA==
-X-IronPort-AV: E=Sophos;i="5.73,386,1583222400"; 
-   d="scan'208";a="341142971"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2020 22:43:33 -0700
-From:   ira.weiny@intel.com
-To:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] Documentation/dax: Update DAX enablement for ext4
-Date:   Tue, 12 May 2020 22:43:24 -0700
-Message-Id: <20200513054324.2138483-10-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200513054324.2138483-1-ira.weiny@intel.com>
-References: <20200513054324.2138483-1-ira.weiny@intel.com>
+        id S1728803AbgEMFqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 01:46:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728131AbgEMFqS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 01:46:18 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD9FC061A0C;
+        Tue, 12 May 2020 22:46:18 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jYkDZ-007EO7-Jb; Wed, 13 May 2020 05:46:09 +0000
+Date:   Wed, 13 May 2020 06:46:09 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     axboe@kernel.dk, zohar@linux.vnet.ibm.com, mcgrof@kernel.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fs: avoid fdput() after failed fdget() in
+ ksys_sync_file_range()
+Message-ID: <20200513054609.GS23230@ZenIV.linux.org.uk>
+References: <cover.1589311577.git.skhan@linuxfoundation.org>
+ <71cc3966f60f884924f9dff8875ed478e858dca1.1589311577.git.skhan@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71cc3966f60f884924f9dff8875ed478e858dca1.1589311577.git.skhan@linuxfoundation.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Tue, May 12, 2020 at 01:43:04PM -0600, Shuah Khan wrote:
 
-Update the document to reflect ext4 and xfs now behave the same.
+> @@ -364,15 +364,15 @@ int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
+>  int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
+>  			 unsigned int flags)
+>  {
+> -	int ret;
+> -	struct fd f;
+> +	int ret = -EBADF;
+> +	struct fd f = fdget(fd);
+>  
+> -	ret = -EBADF;
+> -	f = fdget(fd);
+> -	if (f.file)
+> -		ret = sync_file_range(f.file, offset, nbytes, flags);
+> +	if (!f.file)
+> +		goto out;
+>  
+> +	ret = sync_file_range(f.file, offset, nbytes, flags);
+>  	fdput(f);
+> +out:
+>  	return ret;
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
----
-Changes from RFC:
-	Update with ext2 text...
----
- Documentation/filesystems/dax.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
-index 735fb4b54117..265c4f808dbf 100644
---- a/Documentation/filesystems/dax.txt
-+++ b/Documentation/filesystems/dax.txt
-@@ -25,7 +25,7 @@ size when creating the filesystem.
- Currently 3 filesystems support DAX: ext2, ext4 and xfs.  Enabling DAX on them
- is different.
- 
--Enabling DAX on ext4 and ext2
-+Enabling DAX on ext2
- -----------------------------
- 
- When mounting the filesystem, use the "-o dax" option on the command line or
-@@ -33,8 +33,8 @@ add 'dax' to the options in /etc/fstab.  This works to enable DAX on all files
- within the filesystem.  It is equivalent to the '-o dax=always' behavior below.
- 
- 
--Enabling DAX on xfs
---------------------
-+Enabling DAX on xfs and ext4
-+----------------------------
- 
- Summary
- -------
--- 
-2.25.1
-
+IDGI...  What's the point of that goto out, when it leads straight to return?
