@@ -2,156 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEE9D1D17E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 16:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 755BE1D17DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 16:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389013AbgEMOsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 10:48:32 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:43190 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732972AbgEMOsa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 10:48:30 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYsgK-0000yu-51; Wed, 13 May 2020 08:48:24 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYsg9-0006lM-P3; Wed, 13 May 2020 08:48:23 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200511111123.68ccbaa3@canb.auug.org.au>
-        <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
-        <20200512003305.GX11244@42.do-not-panic.com>
-        <87y2pxs73w.fsf@x220.int.ebiederm.org>
-        <20200512172413.GC11244@42.do-not-panic.com>
-        <87k11hrqzc.fsf@x220.int.ebiederm.org>
-        <20200512220341.GE11244@42.do-not-panic.com>
-        <87d078oss9.fsf@x220.int.ebiederm.org>
-        <20200513141421.GP11244@42.do-not-panic.com>
-Date:   Wed, 13 May 2020 09:44:40 -0500
-In-Reply-To: <20200513141421.GP11244@42.do-not-panic.com> (Luis Chamberlain's
-        message of "Wed, 13 May 2020 14:14:22 +0000")
-Message-ID: <87tv0jopwn.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S2389027AbgEMOrK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 10:47:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40868 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389013AbgEMOrK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 10:47:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2EC9DB0BA;
+        Wed, 13 May 2020 14:47:11 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D98B41E12AE; Wed, 13 May 2020 16:47:06 +0200 (CEST)
+Date:   Wed, 13 May 2020 16:47:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     ira.weiny@intel.com
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] fs/ext4: Introduce DAX inode flag
+Message-ID: <20200513144706.GH27709@quack2.suse.cz>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-9-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jYsg9-0006lM-P3;;;mid=<87tv0jopwn.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19FNoLfkTBHcu+1wfubNVYoTzAxcIgHFsA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong,XMSubMetaSx_00
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4992]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 0; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-X-Spam-DCC: ; sa01 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Luis Chamberlain <mcgrof@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 9935 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.4 (0.0%), b_tie_ro: 2.3 (0.0%), parse: 0.69
-        (0.0%), extract_message_metadata: 2.6 (0.0%), get_uri_detail_list:
-        1.14 (0.0%), tests_pri_-1000: 2.3 (0.0%), tests_pri_-950: 1.00 (0.0%),
-        tests_pri_-900: 0.82 (0.0%), tests_pri_-90: 82 (0.8%), check_bayes: 81
-        (0.8%), b_tokenize: 6 (0.1%), b_tok_get_all: 5 (0.1%), b_comp_prob:
-        1.56 (0.0%), b_tok_touch_all: 65 (0.7%), b_finish: 0.75 (0.0%),
-        tests_pri_0: 6226 (62.7%), check_dkim_signature: 0.39 (0.0%),
-        check_dkim_adsp: 6008 (60.5%), poll_dns_idle: 9605 (96.7%),
-        tests_pri_10: 1.72 (0.0%), tests_pri_500: 3608 (36.3%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200513054324.2138483-9-ira.weiny@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Luis Chamberlain <mcgrof@kernel.org> writes:
+On Tue 12-05-20 22:43:23, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
+> 
+> Set the flag to be user visible and changeable.  Set the flag to be
+> inherited.  Allow applications to change the flag at any time.
+> 
+> Finally, on regular files, flag the inode to not be cached to facilitate
+> changing S_DAX on the next creation of the inode.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> ---
+> Change from RFC:
+> 	use new d_mark_dontcache()
+> 	Allow caching if ALWAYS/NEVER is set
+> 	Rebased to latest Linus master
+> 	Change flag to unused 0x01000000
+> 	update ext4_should_enable_dax()
+> ---
+>  fs/ext4/ext4.h  | 13 +++++++++----
+>  fs/ext4/inode.c |  4 +++-
+>  fs/ext4/ioctl.c | 25 ++++++++++++++++++++++++-
+>  3 files changed, 36 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 01d1de838896..715f8f2029b2 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -415,13 +415,16 @@ struct flex_groups {
+>  #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+>  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+>  /* 0x00400000 was formerly EXT4_EOFBLOCKS_FL */
+> +
+> +#define EXT4_DAX_FL			0x01000000 /* Inode is DAX */
+> +
+>  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+>  #define EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+>  #define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
+>  #define EXT4_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
+>  
+> -#define EXT4_FL_USER_VISIBLE		0x705BDFFF /* User visible flags */
+> -#define EXT4_FL_USER_MODIFIABLE		0x604BC0FF /* User modifiable flags */
+> +#define EXT4_FL_USER_VISIBLE		0x715BDFFF /* User visible flags */
+> +#define EXT4_FL_USER_MODIFIABLE		0x614BC0FF /* User modifiable flags */
 
-> On Wed, May 13, 2020 at 08:42:30AM -0500, Eric W. Biederman wrote:
->> Luis Chamberlain <mcgrof@kernel.org> writes:
->> 
->> > On Tue, May 12, 2020 at 12:40:55PM -0500, Eric W. Biederman wrote:
->> >> Luis Chamberlain <mcgrof@kernel.org> writes:
->> >> 
->> >> > On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
->> >> >> Luis Chamberlain <mcgrof@kernel.org> writes:
->> >> >> 
->> >> >> > +static struct ctl_table fs_base_table[] = {
->> >> >> > +	{
->> >> >> > +		.procname	= "fs",
->> >> >> > +		.mode		= 0555,
->> >> >> > +		.child		= fs_table,
->> >> >> > +	},
->> >> >> > +	{ }
->> >> >> > +};
->> >> >>   ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
->> >> >> > > +static int __init fs_procsys_init(void)
->> >> >> > +{
->> >> >> > +	struct ctl_table_header *hdr;
->> >> >> > +
->> >> >> > +	hdr = register_sysctl_table(fs_base_table);
->> >> >>               ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
->> >> >> 	AKA
->> >> >>         hdr = register_sysctl("fs", fs_table);
->> >> >
->> >> > Ah, much cleaner thanks!
->> >> 
->> >> It is my hope you we can get rid of register_sysctl_table one of these
->> >> days.  It was the original interface but today it is just a
->> >> compatibility wrapper.
->> >> 
->> >> I unfortunately ran out of steam last time before I finished converting
->> >> everything over.
->> >
->> > Let's give it one more go. I'll start with the fs stuff.
->> 
->> Just to be clear moving the tables out of kernel/sysctl.c is a related
->> but slightly different problem.
->
-> Sure, but also before we go on this crusade, how about we add a few
-> helpers:
->
-> register_sysctl_kernel()
-> register_sysctl_vm()
-> register_sysctl_fs()
-> register_sysctl_debug()
-> register_sysctl_dev()
+Hum, I think this was already mentioned but there are also definitions in
+include/uapi/linux/fs.h which should be kept in sync... Also if DAX flag
+gets modified through FS_IOC_SETFLAGS, we should call ext4_doncache() as
+well, shouldn't we?
 
-Hmm.
+> @@ -802,6 +807,21 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
+>  	return error;
+>  }
+>  
+> +static void ext4_dax_dontcache(struct inode *inode, unsigned int flags)
+> +{
+> +	struct ext4_inode_info *ei = EXT4_I(inode);
+> +
+> +	if (S_ISDIR(inode->i_mode))
+> +		return;
+> +
+> +	if (test_opt2(inode->i_sb, DAX_NEVER) ||
+> +	    test_opt(inode->i_sb, DAX_ALWAYS))
+> +		return;
+> +
+> +	if (((ei->i_flags ^ flags) & EXT4_DAX_FL) == EXT4_DAX_FL)
+> +		d_mark_dontcache(inode);
+> +}
+> +
+>  long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>  	struct inode *inode = file_inode(filp);
+> @@ -1267,6 +1287,9 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  			return err;
+>  
+>  		inode_lock(inode);
+> +
+> +		ext4_dax_dontcache(inode, flags);
+> +
 
-  register_sysctl("kernel")
+I don't think we should set dontcache flag when setting of DAX flag fails -
+it could event be a security issue). So I think you'll have to check
+whether DAX flag is being changed, call vfs_ioc_fssetxattr_check(), and
+only if it succeeded and DAX flags was changing call ext4_dax_dontcache().
 
-> That should make it easier to look for these, and shorter. We *know*
-> this is a common path, given the size of the existing table.
-
-I don't really care but one character shorter doesn't look like it
-really helps.  Not really for grepping and not maintenance as we get a
-bunch of trivial one line implementations.
-
-Eric
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
