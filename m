@@ -2,203 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D8C1D1171
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 13:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE1EE1D12AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 14:30:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731092AbgEMLda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 07:33:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43274 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbgEMLda (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 07:33:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 56838AD2A;
-        Wed, 13 May 2020 11:33:31 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3BA731E12AE; Wed, 13 May 2020 13:33:28 +0200 (CEST)
-Date:   Wed, 13 May 2020 13:33:28 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] fs/ext4: Only change S_DAX on inode load
-Message-ID: <20200513113328.GF27709@quack2.suse.cz>
-References: <20200513054324.2138483-1-ira.weiny@intel.com>
- <20200513054324.2138483-7-ira.weiny@intel.com>
+        id S1731678AbgEMMah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 08:30:37 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39872 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729975AbgEMMag (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 08:30:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b190so2184148pfg.6;
+        Wed, 13 May 2020 05:30:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=s6UKwXNDP9/u6KtJrcoesDc1tFaVGyXaG/2QuDgOJR0=;
+        b=co8jHKFL+Mb5LtsFAWfz0YLxscLUWImEz3JVJoLLy+1eHoHJIi4hF4uTrWG9HJgDTn
+         ZToyMAiUq6QvCHrPeAWZ96cCXKk1eFQ/02XJMBb7qo7wKKIgXWQo2zBe963txR4Yxatw
+         fM86kAWoRt5Ax8A9Dc/mB9pWO/Qe3NT1tPnlX35HxDVRTrHx5lExXQDfoccQ5ZxkuoZY
+         L0qzOJl8vPHZbVbzNRstQuNAVB0hGC95jvV3g8vhhEjLTra9wm35eq6z/GnTFZvkgrf8
+         f1G3PmOqwXgW8xnMq6/+jhQpCy2zei1NulWChf0s0X/mTzSyPXjRWqB5rUS/Apjv3VRo
+         5mCg==
+X-Gm-Message-State: AGi0Pub+uZ7owmH5WLkKMnUpFV8w076KIJ0R0rdMsPp6eDZs7JyarhB+
+        PQuDbcVwAUaOq9i1PRja/FE=
+X-Google-Smtp-Source: APiQypJgfhEo9WP6IGCoJH2PF3oIVLchRnTrr8jLp5QQMzfIh8kliCILIbT2GCnajLPHNpJWyqBd/w==
+X-Received: by 2002:a63:f809:: with SMTP id n9mr24815453pgh.355.1589373036088;
+        Wed, 13 May 2020 05:30:36 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id x23sm12936041pgf.32.2020.05.13.05.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 05:30:34 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id A33864063E; Wed, 13 May 2020 12:30:33 +0000 (UTC)
+Date:   Wed, 13 May 2020 12:30:33 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Desmond Yan <desmond.yan@broadcom.com>,
+        James Hu <james.hu@broadcom.com>
+Subject: Re: [PATCH v5 6/7] misc: bcm-vk: add Broadcom VK driver
+Message-ID: <20200513123033.GL11244@42.do-not-panic.com>
+References: <20200508002739.19360-1-scott.branden@broadcom.com>
+ <20200508002739.19360-7-scott.branden@broadcom.com>
+ <20200513003830.GJ11244@42.do-not-panic.com>
+ <60372b2f-c03d-6384-43a7-8b97413b6672@broadcom.com>
+ <20200513065046.GA764247@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200513054324.2138483-7-ira.weiny@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200513065046.GA764247@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 12-05-20 22:43:21, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Wed, May 13, 2020 at 08:50:46AM +0200, Greg Kroah-Hartman wrote:
+> On Tue, May 12, 2020 at 11:31:28PM -0700, Scott Branden wrote:
+> > Hi Luis,
+> > 
+> > On 2020-05-12 5:38 p.m., Luis Chamberlain wrote:
+> > > On Thu, May 07, 2020 at 05:27:38PM -0700, Scott Branden wrote:
+> > > > +#if defined(CONFIG_REQ_FW_INTO_BUF_PRIV)
+> > > > +
+> > > > +#define KERNEL_PREAD_FLAG_PART	0x0001 /* Allow reading part of file */
+> > > > +#define REQUEST_FIRMWARE_INTO_BUF request_firmware_into_buf_priv
+> > > > +int request_firmware_into_buf_priv(const struct firmware **firmware_p,
+> > > > +				   const char *name, struct device *device,
+> > > > +				   void *buf, size_t size,
+> > > > +				   size_t offset, unsigned int pread_flags);
+> > > > +
+> > > > +#else
+> > > > +
+> > > > +#define REQUEST_FIRMWARE_INTO_BUF request_firmware_into_buf
+> > > > +
+> > > > +#endif
+> > > > +
+> > > > +#endif
+> > > Please clean this up, the code must reflect only the code upstream. No
+> > > config stuff like this should be used on the driver. I had to stop my
+> > > review here.
+> > The CONFIG_ prefix shouldn't have been there as there is no Kconfig option
+> > to select this.
+> > Would like to just change it to a normal define without CONFIG_ prefix
+> > instead?
+> > This code is here to allow a limited version of the driver to run on older
+> > kernels which do not have the necessary partial file read support.
+> > By having it in the upstream codebase we don't need to maintain an internal
+> > version of the driver.  User can take the upstream kernel module and compile
+> > it against an old version of the kernel by via the define.
 > 
-> To prevent complications with in memory inodes we only set S_DAX on
-> inode load.  FS_XFLAG_DAX can be changed at any time and S_DAX will
-> change after inode eviction and reload.
+> That's not how kernel drivers in the tree work, sorry.  They do not
+> contain "older kernel support" in them, they work as a whole with the
+> rest of the kernel they ship with only.
 > 
-> Add init bool to ext4_set_inode_flags() to indicate if the inode is
-> being newly initialized.
-> 
-> Assert that S_DAX is not set on an inode which is just being loaded.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Otherwise all drivers would be a total mess over time, can you imagine
+> doing this for the next 20+ years?  Not maintainable.
 
-The patch looks good to me. You can add:
+Scott, now imagine the amount of cleanup you'd need to do to your driver
+to get it to a state where it doesn't depend on any old kernel. That's
+the exact shape of the driver we want.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+To backport, you can look into the backports project which strives to
+backport drivers automatically [0] to older kernels.
 
-								Honza
+[0] https://backports.wiki.kernel.org/index.php/Main_Page
 
-
-> 
-> ---
-> Changes from RFC:
-> 	Change J_ASSERT() to WARN_ON_ONCE()
-> 	Fix bug which would clear S_DAX incorrectly
-> ---
->  fs/ext4/ext4.h   |  2 +-
->  fs/ext4/ialloc.c |  2 +-
->  fs/ext4/inode.c  | 13 ++++++++++---
->  fs/ext4/ioctl.c  |  3 ++-
->  fs/ext4/super.c  |  4 ++--
->  fs/ext4/verity.c |  2 +-
->  6 files changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 1a3daf2d18ef..86a0994332ce 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2692,7 +2692,7 @@ extern int ext4_can_truncate(struct inode *inode);
->  extern int ext4_truncate(struct inode *);
->  extern int ext4_break_layouts(struct inode *);
->  extern int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length);
-> -extern void ext4_set_inode_flags(struct inode *);
-> +extern void ext4_set_inode_flags(struct inode *, bool init);
->  extern int ext4_alloc_da_blocks(struct inode *inode);
->  extern void ext4_set_aops(struct inode *inode);
->  extern int ext4_writepage_trans_blocks(struct inode *);
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index 4b8c9a9bdf0c..7941c140723f 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -1116,7 +1116,7 @@ struct inode *__ext4_new_inode(handle_t *handle, struct inode *dir,
->  	ei->i_block_group = group;
->  	ei->i_last_alloc_group = ~0;
->  
-> -	ext4_set_inode_flags(inode);
-> +	ext4_set_inode_flags(inode, true);
->  	if (IS_DIRSYNC(inode))
->  		ext4_handle_sync(handle);
->  	if (insert_inode_locked(inode) < 0) {
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d3a4c2ed7a1c..23e42a223235 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4419,11 +4419,13 @@ static bool ext4_should_enable_dax(struct inode *inode)
->  	return false;
->  }
->  
-> -void ext4_set_inode_flags(struct inode *inode)
-> +void ext4_set_inode_flags(struct inode *inode, bool init)
->  {
->  	unsigned int flags = EXT4_I(inode)->i_flags;
->  	unsigned int new_fl = 0;
->  
-> +	WARN_ON_ONCE(IS_DAX(inode) && init);
-> +
->  	if (flags & EXT4_SYNC_FL)
->  		new_fl |= S_SYNC;
->  	if (flags & EXT4_APPEND_FL)
-> @@ -4434,8 +4436,13 @@ void ext4_set_inode_flags(struct inode *inode)
->  		new_fl |= S_NOATIME;
->  	if (flags & EXT4_DIRSYNC_FL)
->  		new_fl |= S_DIRSYNC;
-> -	if (ext4_should_enable_dax(inode))
-> +
-> +	/* Because of the way inode_set_flags() works we must preserve S_DAX
-> +	 * here if already set. */
-> +	new_fl |= (inode->i_flags & S_DAX);
-> +	if (init && ext4_should_enable_dax(inode))
->  		new_fl |= S_DAX;
-> +
->  	if (flags & EXT4_ENCRYPT_FL)
->  		new_fl |= S_ENCRYPTED;
->  	if (flags & EXT4_CASEFOLD_FL)
-> @@ -4649,7 +4656,7 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  		 * not initialized on a new filesystem. */
->  	}
->  	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
-> -	ext4_set_inode_flags(inode);
-> +	ext4_set_inode_flags(inode, true);
->  	inode->i_blocks = ext4_inode_blocks(raw_inode, ei);
->  	ei->i_file_acl = le32_to_cpu(raw_inode->i_file_acl_lo);
->  	if (ext4_has_feature_64bit(sb))
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index 5813e5e73eab..145083e8cd1e 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -381,7 +381,8 @@ static int ext4_ioctl_setflags(struct inode *inode,
->  			ext4_clear_inode_flag(inode, i);
->  	}
->  
-> -	ext4_set_inode_flags(inode);
-> +	ext4_set_inode_flags(inode, false);
-> +
->  	inode->i_ctime = current_time(inode);
->  
->  	err = ext4_mark_iloc_dirty(handle, inode, &iloc);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index d0434b513919..5ec900fdf73c 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1344,7 +1344,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
->  			ext4_clear_inode_state(inode,
->  					EXT4_STATE_MAY_INLINE_DATA);
-> -			ext4_set_inode_flags(inode);
-> +			ext4_set_inode_flags(inode, false);
->  		}
->  		return res;
->  	}
-> @@ -1367,7 +1367,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  				    ctx, len, 0);
->  	if (!res) {
->  		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
-> -		ext4_set_inode_flags(inode);
-> +		ext4_set_inode_flags(inode, false);
->  		res = ext4_mark_inode_dirty(handle, inode);
->  		if (res)
->  			EXT4_ERROR_INODE(inode, "Failed to mark inode dirty");
-> diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> index f05a09fb2ae4..89a155ece323 100644
-> --- a/fs/ext4/verity.c
-> +++ b/fs/ext4/verity.c
-> @@ -244,7 +244,7 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
->  		if (err)
->  			goto out_stop;
->  		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
-> -		ext4_set_inode_flags(inode);
-> +		ext4_set_inode_flags(inode, false);
->  		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
->  	}
->  out_stop:
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  Luis
