@@ -2,85 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2E91D0AA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 10:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D05A1D0BE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 11:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbgEMIQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 04:16:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729547AbgEMIQg (ORCPT
+        id S1729416AbgEMJVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 05:21:16 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59802 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbgEMJVQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 04:16:36 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF762C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 01:16:35 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id y16so12513526wrs.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 01:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=68iwW7UL5e+iBKHN9tLOFWom89CxDwBg9Pl7JVWSM4A=;
-        b=iQxgcZlfMjQRPPSZ5uhlo40CDVFDwQDPhpCcdsYyHOfgi4n0ZaVS++9T0jRrzyRZ04
-         fU6dl0Pen+0Z0PIn6Vx5xNs5Jl6MUspRHOuRbEMq7iEmLkbBRKDrKkhRyczBYPML//aq
-         edMFxpqStGDfiV3UKCM3zyuQ57zUGb2xVAaec=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=68iwW7UL5e+iBKHN9tLOFWom89CxDwBg9Pl7JVWSM4A=;
-        b=AXJDx9VXhgLiCqGpChDGpwMpHbBt7jjoFF1aGC8p91431o6oK5+opPrZ6TcuS+TJAo
-         4Wq5b63+zEi8O6lP2Ohu3+gKKGKWP/K2foIzwYeQ2slE8JGXKr830ezxXO5XoRWzCAf2
-         Um5iuLRWdvu4kvrSojnF5nvon9krX8sr7AwCjv7Hz09JJ/XWGLZUcYZAgOIGfN/n+UzG
-         +nuCddvSp/nC6D+LxjTmjM5ypJ6xxfy/fP5HjasyTXFSAZRUi1mKVfC4xqOXG2INLksn
-         PKH651HWUCU+uA+JbhdIGhPC2vo2gAdqXXxP4AZL0BoAfx5rwyEne+K902ir5cky5rJj
-         hSMg==
-X-Gm-Message-State: AGi0PuZQWLgyz8+vK/lDWZBpzMoHZeQH0BBlMDZov9RXshrB4bjh2Rjk
-        3DOh2AEI1Os4J4Id6QaWA3ui6g==
-X-Google-Smtp-Source: APiQypIGGpDRAERxZPNv77vPASHntgpN+ldwaZOVqADykf4NdpezOORDz6NX3UgSVw9HxdlctxvzpQ==
-X-Received: by 2002:adf:f5c4:: with SMTP id k4mr27137925wrp.23.1589357794549;
-        Wed, 13 May 2020 01:16:34 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id j206sm25587279wmj.20.2020.05.13.01.16.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 May 2020 01:16:33 -0700 (PDT)
-Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
+        Wed, 13 May 2020 05:21:16 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04D9Kixe120808;
+        Wed, 13 May 2020 04:20:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1589361644;
+        bh=IlqvhSvX7dm7U6fNCP86Eh1rVu3aygJpNYeXEiRbTwk=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=N4WBlCpAf/TS9QYfLJ7UD/CdMegYlurlnTJmuVycuArXL4cpSl05bQcj3R8odRjcZ
+         OjufQOaNPKqfqP+HrrXFGan1Nxk/Cru82bInTbI4tod0Kmca/FlOUZhePsvc2KxT44
+         3KqUdSpbmjK5KWn0q7xSu8c4/ED8QDEjD4TK5YZs=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04D9KiNK027980
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 May 2020 04:20:44 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 13
+ May 2020 04:20:43 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 13 May 2020 04:20:43 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04D9KeXT046041;
+        Wed, 13 May 2020 04:20:41 -0500
+Subject: Re: mmotm 2020-05-11-15-43 uploaded (ethernet/ti/ti_cpsw)
+To:     Randy Dunlap <rdunlap@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-References: <20200508002739.19360-1-scott.branden@broadcom.com>
- <20200508002739.19360-2-scott.branden@broadcom.com>
- <20200513002741.GG11244@42.do-not-panic.com>
- <2e4bc125-5fe5-e3e5-4881-29374da942aa@broadcom.com>
- <20200513065133.GB764247@kroah.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <6f12fada-3ff6-e0f2-279a-20a2363c8881@broadcom.com>
-Date:   Wed, 13 May 2020 01:16:26 -0700
+        <broonie@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-next@vger.kernel.org>, <mhocko@suse.cz>,
+        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20200511224430.HDJjRC68z%akpm@linux-foundation.org>
+ <9ba4bac8-d4ec-c2d2-373f-3a631523cb2f@infradead.org>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <a6e2a4ff-1ec5-4d86-4d00-ce62fbf1813f@ti.com>
+Date:   Wed, 13 May 2020 12:20:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200513065133.GB764247@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9ba4bac8-d4ec-c2d2-373f-3a631523cb2f@infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -88,20 +66,71 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2020-05-12 11:51 p.m., Greg Kroah-Hartman wrote:
-> On Tue, May 12, 2020 at 11:23:27PM -0700, Scott Branden wrote:
->> Hi Luis,
+On 12/05/2020 05:12, Randy Dunlap wrote:
+> On 5/11/20 3:44 PM, Andrew Morton wrote:
+>> The mm-of-the-moment snapshot 2020-05-11-15-43 has been uploaded to
 >>
->> A few comments inline before I cleanup.
+>>     http://www.ozlabs.org/~akpm/mmotm/
 >>
->> We do not export symbols when there are no in-kernel users.
+>> mmotm-readme.txt says
 >>
->> Note: Existing kernel_read_file_from_path_initns is not used in the kernel.
->> Should we delete that as well?
-> Probably, yes.
-I found drivers/base/firmware_loader calls 
-kernel_read_file_from_path_initns so EXPORT_SYMBOL_GPL can stay there.
-> thanks,
->
-> greg k-h
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> http://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
+>> This tree is partially included in linux-next.  To see which patches are
+>> included in linux-next, consult the `series' file.  Only the patches
+>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+>> linux-next.
+>>
+>>
+>> A full copy of the full kernel tree with the linux-next and mmotm patches
+>> already applied is available through git within an hour of the mmotm
+>> release.  Individual mmotm releases are tagged.  The master branch always
+>> points to the latest release, so it's constantly rebasing.
+>>
+>> 	https://github.com/hnaz/linux-mm
+>>
+>> The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+>> contains daily snapshots of the -mm tree.  It is updated more frequently
+>> than mmotm, and is untested.
+>>
+>> A git copy of this tree is also available at
+>>
+>> 	https://github.com/hnaz/linux-mm
+> 
+> on i386:
+> 
+> ERROR: modpost: "cpts_register" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_unregister" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_tx_timestamp" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_create" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_misc_interrupt" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_release" [drivers/net/ethernet/ti/ti_cpsw_new.ko] undefined!
+> ERROR: modpost: "cpts_tx_timestamp" [drivers/net/ethernet/ti/ti_cpsw.ko] undefined!
+> ERROR: modpost: "cpts_create" [drivers/net/ethernet/ti/ti_cpsw.ko] undefined!
+> ERROR: modpost: "cpts_misc_interrupt" [drivers/net/ethernet/ti/ti_cpsw.ko] undefined!
+> ERROR: modpost: "cpts_release" [drivers/net/ethernet/ti/ti_cpsw.ko] undefined!
+> 
+> 
+> Full randconfig file is attached.
+> 
 
+It's expected to be fixed by
+https://lkml.org/lkml/2020/5/12/333
+
+-- 
+Best regards,
+grygorii
