@@ -2,120 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 855701D210B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 23:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 329D61D2146
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 23:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbgEMV2v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 17:28:51 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:50457 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728879AbgEMV2u (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 17:28:50 -0400
-Received: by mail-pj1-f65.google.com with SMTP id t9so11666936pjw.0;
-        Wed, 13 May 2020 14:28:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jFpZxJjBWza/kWR3tD171A9RdRcfWTU4Z4g63bnqZJQ=;
-        b=MXCkU6xI6IpcuACtIHMntxwRWcX5rt9K4YNzkCn+FF6wXtHQSwhfb84wUHf8iSNe4J
-         +KmNJgVPnwCnIdC9PujSz50jeePyRF4FfjbkCbtU9s3Ph+OzvS5q1nEQMSu10koDvjjC
-         bU3B53dxr9P/pF856iTKjhEyRi7j5BeWoSVks68BEDRCUfQ+zNs2zQwygxZ27dilh+L1
-         iutpZRFnjZTHs5PIwGUzeBdUZMjB9YRMrGlFeFFalyorWVRym2bFqM847OOjaEkF35/u
-         14h7gaxzyBEp0VCpdz8ZGdoQ4plJJzosX4wo5j+SzydlgtOXz1v+MzPDDDM1Bq3VUBrH
-         fTDA==
-X-Gm-Message-State: AGi0Pua5Q5h8OqRvZ/Lnh2+pXKFC/ecP3QSamFmB54DeI5khulfXSr64
-        byHbXx66Z7hapTqZV3ADv0N7sh449Mlmlg==
-X-Google-Smtp-Source: APiQypIK+uC5UrzbKxzZc1CCBNVsrdbUnp3vZEUQzYdaSLvxgjqSKS3rrrSs5sXQv9l3ptXF/JHruw==
-X-Received: by 2002:a17:90a:9311:: with SMTP id p17mr36891312pjo.145.1589405329840;
-        Wed, 13 May 2020 14:28:49 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id 82sm414078pfv.214.2020.05.13.14.28.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 14:28:48 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id D5FDC4063E; Wed, 13 May 2020 21:28:47 +0000 (UTC)
-Date:   Wed, 13 May 2020 21:28:47 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Mimi Zohar <zohar@kernel.org>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
-Message-ID: <20200513212847.GT11244@42.do-not-panic.com>
-References: <20200508002739.19360-1-scott.branden@broadcom.com>
- <20200508002739.19360-2-scott.branden@broadcom.com>
- <1589395153.5098.158.camel@kernel.org>
- <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
- <1589396593.5098.166.camel@kernel.org>
- <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
- <1589398747.5098.178.camel@kernel.org>
- <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
- <1589404814.5098.185.camel@kernel.org>
+        id S1729646AbgEMVl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 17:41:56 -0400
+Received: from mga03.intel.com ([134.134.136.65]:7010 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729196AbgEMVl4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 17:41:56 -0400
+IronPort-SDR: myQYB0V2K15ihPEq0wI4Fb0P7OmkFUFxIx6NF0KkBCns6Ai9ZtL2zsWdpIeoUSfomxiawMXo4s
+ tF2f8zw8o0pA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 14:41:55 -0700
+IronPort-SDR: G91xqFVTAl1hSUCjiwpQwMkoghQt2IXBwgchoMMwgdQiwBlQRpFohg3BNmQTWp29uqsQEIxCnk
+ 4cV+pl4zDYeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,389,1583222400"; 
+   d="scan'208";a="253307995"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga008.fm.intel.com with ESMTP; 13 May 2020 14:41:55 -0700
+Date:   Wed, 13 May 2020 14:41:55 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] fs/ext4: Introduce DAX inode flag
+Message-ID: <20200513214154.GB2140786@iweiny-DESK2.sc.intel.com>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-9-ira.weiny@intel.com>
+ <20200513144706.GH27709@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1589404814.5098.185.camel@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200513144706.GH27709@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 13, 2020 at 05:20:14PM -0400, Mimi Zohar wrote:
-> On Wed, 2020-05-13 at 12:41 -0700, Scott Branden wrote:
+On Wed, May 13, 2020 at 04:47:06PM +0200, Jan Kara wrote:
+> On Tue 12-05-20 22:43:23, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > On 2020-05-13 12:39 p.m., Mimi Zohar wrote:
-> > > On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
-> > >> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
-> > >>> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
-> > >> Even if the kernel successfully verified the firmware file signature it
-> > >> would just be wasting its time.  The kernel in these use cases is not always
-> > >> trusted.  The device needs to authenticate the firmware image itself.
-> > > There are also environments where the kernel is trusted and limits the
-> > > firmware being provided to the device to one which they signed.
-> > >
-> > >>> The device firmware is being downloaded piecemeal from somewhere and
-> > >>> won't be measured?
-> > >> It doesn't need to be measured for current driver needs.
-> > > Sure the device doesn't need the kernel measuring the firmware, but
-> > > hardened environments do measure firmware.
-> > >
-> > >> If someone has such need the infrastructure could be added to the kernel
-> > >> at a later date.  Existing functionality is not broken in any way by
-> > >> this patch series.
-> > > Wow!  You're saying that your patch set takes precedence over the
-> > > existing expectations and can break them.
-> > Huh? I said existing functionality is NOT broken by this patch series.
+> > Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
+> > 
+> > Set the flag to be user visible and changeable.  Set the flag to be
+> > inherited.  Allow applications to change the flag at any time.
+> > 
+> > Finally, on regular files, flag the inode to not be cached to facilitate
+> > changing S_DAX on the next creation of the inode.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Change from RFC:
+> > 	use new d_mark_dontcache()
+> > 	Allow caching if ALWAYS/NEVER is set
+> > 	Rebased to latest Linus master
+> > 	Change flag to unused 0x01000000
+> > 	update ext4_should_enable_dax()
+> > ---
+> >  fs/ext4/ext4.h  | 13 +++++++++----
+> >  fs/ext4/inode.c |  4 +++-
+> >  fs/ext4/ioctl.c | 25 ++++++++++++++++++++++++-
+> >  3 files changed, 36 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index 01d1de838896..715f8f2029b2 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -415,13 +415,16 @@ struct flex_groups {
+> >  #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> >  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+> >  /* 0x00400000 was formerly EXT4_EOFBLOCKS_FL */
+> > +
+> > +#define EXT4_DAX_FL			0x01000000 /* Inode is DAX */
+> > +
+> >  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+> >  #define EXT4_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+> >  #define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
+> >  #define EXT4_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
+> >  
+> > -#define EXT4_FL_USER_VISIBLE		0x705BDFFF /* User visible flags */
+> > -#define EXT4_FL_USER_MODIFIABLE		0x604BC0FF /* User modifiable flags */
+> > +#define EXT4_FL_USER_VISIBLE		0x715BDFFF /* User visible flags */
+> > +#define EXT4_FL_USER_MODIFIABLE		0x614BC0FF /* User modifiable flags */
 > 
-> Assuming a system is configured to measure and appraise firmware
-> (rules below), with this change the firmware file will not be properly
-> measured and will fail signature verification.
+> Hum, I think this was already mentioned but there are also definitions in
+> include/uapi/linux/fs.h which should be kept in sync... Also if DAX flag
+> gets modified through FS_IOC_SETFLAGS, we should call ext4_doncache() as
+> well, shouldn't we?
+
+Ah yea it was mentioned.  Sorry.
+
 > 
-> Sample IMA policy rules:
-> measure func=FIRMWARE_CHECK
-> appraise func=FIRMWARE_CHECK appraise_type=imasig
+> > @@ -802,6 +807,21 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
+> >  	return error;
+> >  }
+> >  
+> > +static void ext4_dax_dontcache(struct inode *inode, unsigned int flags)
+> > +{
+> > +	struct ext4_inode_info *ei = EXT4_I(inode);
+> > +
+> > +	if (S_ISDIR(inode->i_mode))
+> > +		return;
+> > +
+> > +	if (test_opt2(inode->i_sb, DAX_NEVER) ||
+> > +	    test_opt(inode->i_sb, DAX_ALWAYS))
+> > +		return;
+> > +
+> > +	if (((ei->i_flags ^ flags) & EXT4_DAX_FL) == EXT4_DAX_FL)
+> > +		d_mark_dontcache(inode);
+> > +}
+> > +
+> >  long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  {
+> >  	struct inode *inode = file_inode(filp);
+> > @@ -1267,6 +1287,9 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  			return err;
+> >  
+> >  		inode_lock(inode);
+> > +
+> > +		ext4_dax_dontcache(inode, flags);
+> > +
+> 
+> I don't think we should set dontcache flag when setting of DAX flag fails -
+> it could event be a security issue).
 
-Would a pre and post lsm hook for pread do it?
+good point.
 
-  Luis
+>
+> So I think you'll have to check
+> whether DAX flag is being changed,
+
+ext4_dax_dontcache() does check if the flag is being changed.
+
+> call vfs_ioc_fssetxattr_check(), and
+> only if it succeeded and DAX flags was changing call ext4_dax_dontcache().
+
+Yes I think it would be better to ensure all of the ioctl succeeds prior to
+setting the don't cache.  The logic is easier to follow.
+
+Ira
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
