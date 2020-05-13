@@ -2,255 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DBB1D1324
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 14:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2214E1D13B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 15:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbgEMMvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 08:51:01 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:34125 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbgEMMvB (ORCPT
+        id S1729492AbgEMNA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 09:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50808 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbgEMNAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 08:51:01 -0400
-Received: by mail-pj1-f66.google.com with SMTP id l73so1683023pjb.1;
-        Wed, 13 May 2020 05:51:00 -0700 (PDT)
+        Wed, 13 May 2020 09:00:24 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE64C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 06:00:23 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id f83so17123830qke.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 06:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+cW70ChImxuqV2RBsl6w7NV4YFDYwLH2CWpZPYn8bwc=;
+        b=ueBZ7XbbZpEcGa6ncc1N99qMbGVjWNDNqkGunZjHci2h023ddhN8dJF1xJmuaONvN+
+         9TslYt/mBrZfFRMUkZb5agEyvyh5UhClFCX8DxTW9eEizKKEOfRycRQMTr4rMIjDot/o
+         2S1/8fFrfFxOfEbPhC5ryqLCeT+ahFmll6lbagvvUuCl/dCAQvux7Imp3edG0zObITXY
+         FQdfjaibsbo0zy2Y98ouPjVoqSnHj+N+OSzDvhSoWupA8W4KCX+NwYzCuc9mnmYL8jEO
+         OEnsjfGAuj6B/HOEA/3Mo835BKZDDu9hEyQNf++9enhJKbUQWDpFnZcS+rTSXyWFFyXA
+         5VQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6BvwL5VtTpPQh7+ZmwOEfJsJh+MpmaSNjEDc7fe17Cg=;
-        b=Fkek79DlDffswWdHSOgeeE7JK4Q/5BG/IxxYMALliBPZ5WbyphGOLhXmhVkebRAvTg
-         v8IlOEBvzLj1d5koNKZgt6vdKy3SgAJzUzUgmWJ1uKs/ratWFUf0nUbH1krQhlN+luFG
-         Y3LCmkKeCjnbeYihblv/ijWZf2m/SN7qvNjF8oZFLSB0Y45lDHwH8MtTmqNqGZpi6X0b
-         6RUCFy8g6HpymFDmsFoCTFrcINoMi4zvxh82M5k4e4i2y0Ai/NVxsNyXopU1W4Y5tR0Q
-         wtv/XEqJaM9+XZzQQSY7s6rIov/8jXJnxGVsBVr6IzPPCRPjuMsC1Z4NDhenIxJNwHLJ
-         ZVNw==
-X-Gm-Message-State: AOAM5335OwijoB4CYaSFOS7/hg/AfmvlEqwPa0zucC5I4YhCTub+opW1
-        xMqzGVtr4Zo8dWP+UiSEsVs=
-X-Google-Smtp-Source: ABdhPJxU6OZTFJl9CuEar2G//kflpf1HvLC9sMqCBGP9NVlaiP14CRGt8VPr7k+V9EoPThlFqVPOjg==
-X-Received: by 2002:a17:90a:2051:: with SMTP id n75mr9566197pjc.112.1589374259957;
-        Wed, 13 May 2020 05:50:59 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id z5sm14825173pfz.109.2020.05.13.05.50.58
+         :mime-version:content-disposition:in-reply-to;
+        bh=+cW70ChImxuqV2RBsl6w7NV4YFDYwLH2CWpZPYn8bwc=;
+        b=j+phKuqQMsASoZD72sqH0KZjcXNgHbu23Y6fXakL0FTUJ8Hz6UcAhUwUxPl2T9y0fd
+         1Nc/2xjPcR+2mwy7wcJlqyf8BbDT+PUm7DNQQW/RY+vEgnJKGicPsM5gb0jlPJ/Hs1xL
+         Cl5Iqh/RwXow/VMzkJKOsxnxEVNE7IQn9jpFqS3YFjm1CIzCMvkHNmUxoE5O1vYn0RTC
+         aF9XmyaL5W0djpIdryGIUIuWFPvqduYkfNsR6i+2agkySwRMe/iUFxfZZhzpH85K5G88
+         YzV4HrKnUGf2bkvdjm/yFr58ZtmgcHxx5W0ZpSCggmL70UmONvYw/Yymu9R8V0GIqDzK
+         3+UQ==
+X-Gm-Message-State: AGi0PuY7t3mI9ANE+hO7MoqhICqE6OlU1cNAecITqsNC2TQc8jNU9De0
+        KxPvXAnmPESVKuenBGkODE/+xA==
+X-Google-Smtp-Source: APiQypKwvGZuJBxRqVUHNYuvoj8QpY7uTR3OAQ4b8juIRpGo91ZqMW8ow8DkU+0C6ZNMsRFoLm9hcg==
+X-Received: by 2002:a37:84b:: with SMTP id 72mr15538452qki.252.1589374821767;
+        Wed, 13 May 2020 06:00:21 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:2627])
+        by smtp.gmail.com with ESMTPSA id t202sm13798497qke.97.2020.05.13.06.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 05:50:58 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C87234063E; Wed, 13 May 2020 12:50:57 +0000 (UTC)
-Date:   Wed, 13 May 2020 12:50:57 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, gregkh@linuxfoundation.org
-Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
-Message-ID: <20200513125057.GM11244@42.do-not-panic.com>
-References: <20200511111123.68ccbaa3@canb.auug.org.au>
- <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
- <20200512003305.GX11244@42.do-not-panic.com>
- <87y2pxs73w.fsf@x220.int.ebiederm.org>
- <20200512172413.GC11244@42.do-not-panic.com>
- <87k11hrqzc.fsf@x220.int.ebiederm.org>
- <20200512220341.GE11244@42.do-not-panic.com>
- <3ccd08a5-cac6-3ca1-ed33-3cb62c982443@huawei.com>
+        Wed, 13 May 2020 06:00:20 -0700 (PDT)
+Date:   Wed, 13 May 2020 09:00:02 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200513130002.GC488426@cmpxchg.org>
+References: <20200211175507.178100-1-hannes@cmpxchg.org>
+ <20200512212936.GA450429@cmpxchg.org>
+ <CALOAHbAZ0eUmrBGt=J0cJZzPmDtPKpfMK0jrUNa0Z_-JfDLoXA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3ccd08a5-cac6-3ca1-ed33-3cb62c982443@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALOAHbAZ0eUmrBGt=J0cJZzPmDtPKpfMK0jrUNa0Z_-JfDLoXA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 13, 2020 at 12:04:02PM +0800, Xiaoming Ni wrote:
-> On 2020/5/13 6:03, Luis Chamberlain wrote:
-> > On Tue, May 12, 2020 at 12:40:55PM -0500, Eric W. Biederman wrote:
-> > > Luis Chamberlain <mcgrof@kernel.org> writes:
-> > > 
-> > > > On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
-> > > > > Luis Chamberlain <mcgrof@kernel.org> writes:
-> > > > > 
-> > > > > > +static struct ctl_table fs_base_table[] = {
-> > > > > > +	{
-> > > > > > +		.procname	= "fs",
-> > > > > > +		.mode		= 0555,
-> > > > > > +		.child		= fs_table,
-> > > > > > +	},
-> > > > > > +	{ }
-> > > > > > +};
-> > > > >    ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
-> > > > > > > +static int __init fs_procsys_init(void)
-> > > > > > +{
-> > > > > > +	struct ctl_table_header *hdr;
-> > > > > > +
-> > > > > > +	hdr = register_sysctl_table(fs_base_table);
-> > > > >                ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
-> > > > > 	AKA
-> > > > >          hdr = register_sysctl("fs", fs_table);
-> > > > 
-> > > > Ah, much cleaner thanks!
-> > > 
-> > > It is my hope you we can get rid of register_sysctl_table one of these
-> > > days.  It was the original interface but today it is just a
-> > > compatibility wrapper.
-> > > 
-> > > I unfortunately ran out of steam last time before I finished converting
-> > > everything over.
-> > 
-> > Let's give it one more go. I'll start with the fs stuff.
-> > 
-> >    Luis
-> > 
-> > .
-> > 
+On Wed, May 13, 2020 at 09:32:58AM +0800, Yafang Shao wrote:
+> On Wed, May 13, 2020 at 5:29 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > On Tue, Feb 11, 2020 at 12:55:07PM -0500, Johannes Weiner wrote:
+> > > The VFS inode shrinker is currently allowed to reclaim inodes with
+> > > populated page cache. As a result it can drop gigabytes of hot and
+> > > active page cache on the floor without consulting the VM (recorded as
+> > > "inodesteal" events in /proc/vmstat).
+> >
+> > I'm sending a rebased version of this patch.
+> >
+> > We've been running with this change in the Facebook fleet since
+> > February with no ill side effects observed.
+> >
+> > However, I just spent several hours chasing a mysterious reclaim
+> > problem that turned out to be this bug again on an unpatched system.
+> >
+> > In the scenario I was debugging, the problem wasn't that we were
+> > losing cache, but that we were losing the non-resident information for
+> > previously evicted cache.
+> >
+> > I understood the file set enough to know it was thrashing like crazy,
+> > but it didn't register as refaults to the kernel. Without detecting
+> > the refaults, reclaim wouldn't start swapping to relieve the
+> > struggling cache (plenty of cold anon memory around). It also meant
+> > the IO delays of those refaults didn't contribute to memory pressure
+> > in psi, which made userspace blind to the situation as well.
+> >
+> > The first aspect means we can get stuck in pathological thrashing, the
+> > second means userspace OOM detection breaks and we can leave servers
+> > (or Android devices, for that matter) hopelessly livelocked.
+> >
+> > New patch attached below. I hope we can get this fixed in 5.8, it's
+> > really quite a big hole in our cache management strategy.
+> >
+> > ---
+> > From 8db0b846ca0b7a136c0d3d8a1bee3d576990ba11 Mon Sep 17 00:00:00 2001
+> > From: Johannes Weiner <hannes@cmpxchg.org>
+> > Date: Tue, 11 Feb 2020 12:55:07 -0500
+> > Subject: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+> >
+> > The VFS inode shrinker is currently allowed to reclaim cold inodes
+> > with populated page cache. This behavior goes back to CONFIG_HIGHMEM
+> > setups, which required the ability to drop page cache in large highem
+> > zones to free up struct inodes in comparatively tiny lowmem zones.
+> >
+> > However, it has significant side effects that are hard to justify on
+> > systems without highmem:
+> >
+> > - It can drop gigabytes of hot and active page cache on the floor
+> > without consulting the VM (recorded as "inodesteal" events in
+> > /proc/vmstat). Such an "aging inversion" between unreferenced inodes
+> > holding hot cache easily happens in practice: for example, a git tree
+> > whose objects are accessed frequently but no open file descriptors are
+> > maintained throughout.
+> >
 > 
-> If we register each feature in its own feature code file using register() to
-> register the sysctl interface. To avoid merge conflicts when different
-> features modify sysctl.c at the same time.
-> that is, try to Avoid mixing code with multiple features in the same code
-> file.
+> Hi Johannes,
 > 
-> For example, the multiple file interfaces defined in sysctl.c by the
-> hung_task feature can  be moved to hung_task.c.
-> 
-> Perhaps later, without centralized sysctl.c ?
-> Is this better?
-> 
-> Thanks
-> Xiaoming Ni
-> 
-> ---
->  include/linux/sched/sysctl.h |  8 +----
->  kernel/hung_task.c           | 78
-> +++++++++++++++++++++++++++++++++++++++++++-
->  kernel/sysctl.c              | 50 ----------------------------
->  3 files changed, 78 insertions(+), 58 deletions(-)
-> 
-> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-> index d4f6215..bb4e0d3 100644
-> --- a/include/linux/sched/sysctl.h
-> +++ b/include/linux/sched/sysctl.h
-> @@ -7,14 +7,8 @@
->  struct ctl_table;
-> 
->  #ifdef CONFIG_DETECT_HUNG_TASK
-> -extern int	     sysctl_hung_task_check_count;
-> -extern unsigned int  sysctl_hung_task_panic;
-> +/* used for block/ */
->  extern unsigned long sysctl_hung_task_timeout_secs;
-> -extern unsigned long sysctl_hung_task_check_interval_secs;
-> -extern int sysctl_hung_task_warnings;
-> -extern int proc_dohung_task_timeout_secs(struct ctl_table *table, int
-> write,
-> -					 void __user *buffer,
-> -					 size_t *lenp, loff_t *ppos);
->  #else
->  /* Avoid need for ifdefs elsewhere in the code */
->  enum { sysctl_hung_task_timeout_secs = 0 };
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 14a625c..53589f2 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -20,10 +20,10 @@
->  #include <linux/utsname.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/debug.h>
-> +#include <linux/kmemleak.h>
->  #include <linux/sched/sysctl.h>
-> 
->  #include <trace/events/sched.h>
-> -
->  /*
->   * The number of tasks checked:
->   */
-> @@ -296,8 +296,84 @@ static int watchdog(void *dummy)
->  	return 0;
->  }
-> 
-> +/*
-> + * This is needed for proc_doulongvec_minmax of
-> sysctl_hung_task_timeout_secs
-> + * and hung_task_check_interval_secs
-> + */
-> +static unsigned long hung_task_timeout_max = (LONG_MAX / HZ);
+> I think it is reasonable to keep inodes with _active_ page cache off
+> the inode shrinker LRU, but I'm not sure whether it is proper to keep
+> the inodes with _only_ inactive page cache off the inode list lru
+> neither. Per my understanding, if the inode has only inactive page
+> cache, then invalidate all these inactive page cache could save the
+> reclaimer's time, IOW, it may improve the performance in this case.
 
-This is not generic so it can stay in this file.
+The shrinker doesn't know whether pages are active or inactive.
 
-> +static int __maybe_unused neg_one = -1;
+There is a PageActive() flag, but that's a sampled state that's only
+uptodate when page reclaim is running. All the active pages could be
+stale and getting deactivated on the next scan; all the inactive pages
+could have page table references that would get them activated on the
+next reclaim run etc.
 
-This is generic so we can share it, I suggest we just rename this
-for now to sysctl_neg_one, export it to a symbol namespace,
-EXPORT_SYMBOL_NS_GPL(sysctl_neg_one, SYSCTL) and then import it with
-MODULE_IMPORT_NS(SYSCTL)
+You'd have to duplicate aspects of page reclaim itself to be sure
+you're axing the right pages.
 
-
-> +static struct ctl_table hung_task_sysctls[] = {
-
-We want to wrap this around with CONFIG_SYSCTL, so a cleaner solution
-is something like this:
-
-diff --git a/kernel/Makefile b/kernel/Makefile
-index a42ac3a58994..689718351754 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -88,7 +88,9 @@ obj-$(CONFIG_KCOV) += kcov.o
- obj-$(CONFIG_KPROBES) += kprobes.o
- obj-$(CONFIG_FAIL_FUNCTION) += fail_function.o
- obj-$(CONFIG_KGDB) += debug/
--obj-$(CONFIG_DETECT_HUNG_TASK) += hung_task.o
-+obj-$(CONFIG_DETECT_HUNG_TASK) += hung_tasks.o
-+hung_tasks-y := hung_task.o
-+hung_tasks-$(CONFIG_SYSCTL) += hung_task_sysctl.o
- obj-$(CONFIG_LOCKUP_DETECTOR) += watchdog.o
- obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF) += watchdog_hld.o
- obj-$(CONFIG_SECCOMP) += seccomp.o
-
-> +/* get /proc/sys/kernel root */
-> +static struct ctl_table sysctls_root[] = {
-> +	{
-> +		.procname       = "kernel",
-> +		.mode           = 0555,
-> +		.child          = hung_task_sysctls,
-> +	},
-> +	{}
-> +};
-> +
-
-And as per Eric, this is not needed, we can simplify this more, as noted
-below.
-
-> +static int __init hung_task_sysctl_init(void)
-> +{
-> +	struct ctl_table_header *srt = register_sysctl_table(sysctls_root);
-
-You want instead something like::
-
-        struct ctl_table_header *srt;
-
-	srt = register_sysctl("kernel", hung_task_sysctls);
-> +
-> +	if (!srt)
-> +		return -ENOMEM;
-> +	kmemleak_not_leak(srt);
-> +	return 0;
-> +}
-> +
-
->  static int __init hung_task_init(void)
->  {
-> +	int ret = hung_task_sysctl_init();
-> +
-> +	if (ret != 0)
-> +		return ret;
-> +
-
-And just #ifdef this around CONFIG_SYSCTL.
-
-  Luis
+It also wouldn't be a reliable optimization. This only happens when
+there is a disconnect between the inode and the cache life time, which
+is true for some situations but not others.
