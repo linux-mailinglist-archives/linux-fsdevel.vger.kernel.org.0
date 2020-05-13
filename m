@@ -2,150 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA321D20C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 23:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D480E1D20D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 23:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgEMVSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 17:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbgEMVSU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 17:18:20 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63588C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 14:18:20 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id x2so294770pfx.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 May 2020 14:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=1rNHcVkoVP3m00RxTkA3Drc3OuzgByLtKnsWl4c3mwc=;
-        b=AWIPRU+Gs9jvsCVgoVdhohoiXM5q/v586JSBh8skrSC0ezJMpZCDQqMhasTNTGpjW/
-         hA0CZGCJRp/BHYX0oc42rpX50ggvU9RU9nq2INCzab3jx92lkrrgntNkdlu1K1794f41
-         Zm6Kj8IjpNwLQAASuUseFRPLo7VZXeDEUDPmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=1rNHcVkoVP3m00RxTkA3Drc3OuzgByLtKnsWl4c3mwc=;
-        b=CamTQNw3SwOK56zwDcyLCd4XpeAB6ScjbmzdyZTCo+Fvr5DPAIMzxPiotqGLQHUS3n
-         7pi8JzECU/YpPxBBA3OmAQNZI+2qC6kRoN5YPnJXC3FidJBU5EEmSH+BePkECONmJTcW
-         44yCojsh7nXpJYo8pDpUJpsQl9hmjb/UsA0v3jS41wdtJsff2jPV5M7Rg7/imzyfV1+f
-         dhvWZFWXEle/yNhWlN8bgWHgORzd89m5IihrZ1E8/M1uub1iG4svOk88sYTa27l6a6NO
-         XI9uLcYy2MdKP1P1s8Y5nt6dgBaSpGw2WVNB1feeMjnXngVqh8Yp79ElNPvNfczlIBPo
-         pN8Q==
-X-Gm-Message-State: AOAM530cx8Bt0F1YmVyXydEDu48AiYj0TFDwNA1Iwpz8frLNTALXe9qe
-        oep64H6QR3rNKf1DmChSVmUv8d+qmEQ=
-X-Google-Smtp-Source: ABdhPJzRUUmxr0AoAn8WKx3bz7xSG1VsJwZL2EO2FmZzAI6BnJiQlbI/HmymBNtGDGNF/plcOvIgQg==
-X-Received: by 2002:a62:4e87:: with SMTP id c129mr1163753pfb.178.1589404699797;
-        Wed, 13 May 2020 14:18:19 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r12sm501950pgv.59.2020.05.13.14.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 14:18:18 -0700 (PDT)
-Date:   Wed, 13 May 2020 14:18:17 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jeffrey Vander Stoep <jeffv@google.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] seccomp: Report number of loaded filters in /proc/$pid/status
-Message-ID: <202005131414.410DFE77DC@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S1728575AbgEMVUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 17:20:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbgEMVUS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 17:20:18 -0400
+Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38336205ED;
+        Wed, 13 May 2020 21:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589404817;
+        bh=xWHjq8JYrcnKLKaLhAt/3Qu+CGeCVNq+g1GySEuPYRc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PwJfPtEX6tp0QTHNEjB9QjrHmEOqN4ySwN4pxgVhjjg3ETeUb0TY4DXaxevUnby8+
+         EokyG0p+/y45QWzXzEKs2sgYFqd+tkFTTlPWzX0xov+GrSpiQ9A29xKfyJOHTMmiL3
+         i/n7KTWK2eIQJQSIq4Y9w8AfkxzotlkTFt2FmPX8=
+Message-ID: <1589404814.5098.185.camel@kernel.org>
+Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Wed, 13 May 2020 17:20:14 -0400
+In-Reply-To: <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
+References: <20200508002739.19360-1-scott.branden@broadcom.com>
+         <20200508002739.19360-2-scott.branden@broadcom.com>
+         <1589395153.5098.158.camel@kernel.org>
+         <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
+         <1589396593.5098.166.camel@kernel.org>
+         <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
+         <1589398747.5098.178.camel@kernel.org>
+         <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A common question asked when debugging seccomp filters is "how many
-filters are attached to your process?" A common mistake for process
-launchers is applying filters before fork, instead of after, which means
-each progressive child has an extra redundant filter added, which will
-slowly increase syscall overhead. Provide a way to easily diagnose these
-conditions through /proc/$pid/status with a "Seccomp_filters" line.
+On Wed, 2020-05-13 at 12:41 -0700, Scott Branden wrote:
+> 
+> On 2020-05-13 12:39 p.m., Mimi Zohar wrote:
+> > On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
+> >> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
+> >>> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
+> >> Even if the kernel successfully verified the firmware file signature it
+> >> would just be wasting its time.  The kernel in these use cases is not always
+> >> trusted.  The device needs to authenticate the firmware image itself.
+> > There are also environments where the kernel is trusted and limits the
+> > firmware being provided to the device to one which they signed.
+> >
+> >>> The device firmware is being downloaded piecemeal from somewhere and
+> >>> won't be measured?
+> >> It doesn't need to be measured for current driver needs.
+> > Sure the device doesn't need the kernel measuring the firmware, but
+> > hardened environments do measure firmware.
+> >
+> >> If someone has such need the infrastructure could be added to the kernel
+> >> at a later date.  Existing functionality is not broken in any way by
+> >> this patch series.
+> > Wow!  You're saying that your patch set takes precedence over the
+> > existing expectations and can break them.
+> Huh? I said existing functionality is NOT broken by this patch series.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/proc/array.c         | 2 ++
- include/linux/seccomp.h | 2 ++
- init/init_task.c        | 3 +++
- kernel/seccomp.c        | 3 +++
- 4 files changed, 10 insertions(+)
+Assuming a system is configured to measure and appraise firmware
+(rules below), with this change the firmware file will not be properly
+measured and will fail signature verification.
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 8e16f14bb05a..8542a9c21dff 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -342,6 +342,8 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
- 	seq_put_decimal_ull(m, "NoNewPrivs:\t", task_no_new_privs(p));
- #ifdef CONFIG_SECCOMP
- 	seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);
-+	seq_put_decimal_ull(m, "\nSeccomp_filters:\t",
-+			    atomic_read(&p->seccomp.filter_count));
- #endif
- 	seq_puts(m, "\nSpeculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
-diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-index 4192369b8418..2ec2720f83cc 100644
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -13,6 +13,7 @@
- #ifdef CONFIG_SECCOMP
- 
- #include <linux/thread_info.h>
-+#include <linux/atomic.h>
- #include <asm/seccomp.h>
- 
- struct seccomp_filter;
-@@ -29,6 +30,7 @@ struct seccomp_filter;
-  */
- struct seccomp {
- 	int mode;
-+	atomic_t filter_count;
- 	struct seccomp_filter *filter;
- };
- 
-diff --git a/init/init_task.c b/init/init_task.c
-index bd403ed3e418..dd108a8689ac 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -182,6 +182,9 @@ struct task_struct init_task
- #ifdef CONFIG_SECURITY
- 	.security	= NULL,
- #endif
-+#ifdef CONFIG_SECCOMP
-+	.seccomp	= { .filter_count = ATOMIC_INIT(0) },
-+#endif
- };
- EXPORT_SYMBOL(init_task);
- 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 55a6184f5990..46d883574476 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -398,6 +398,8 @@ static inline void seccomp_sync_threads(unsigned long flags)
- 		put_seccomp_filter(thread);
- 		smp_store_release(&thread->seccomp.filter,
- 				  caller->seccomp.filter);
-+		atomic_set(&thread->seccomp.filter_count,
-+			   atomic_read(&thread->seccomp.filter_count));
- 
- 		/*
- 		 * Don't let an unprivileged task work around
-@@ -544,6 +546,7 @@ static long seccomp_attach_filter(unsigned int flags,
- 	 */
- 	filter->prev = current->seccomp.filter;
- 	current->seccomp.filter = filter;
-+	atomic_inc(&current->seccomp.filter_count);
- 
- 	/* Now that the new filter is in place, synchronize to all threads. */
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
--- 
-2.20.1
+Sample IMA policy rules:
+measure func=FIRMWARE_CHECK
+appraise func=FIRMWARE_CHECK appraise_type=imasig
 
-
--- 
-Kees Cook
+Mimi
