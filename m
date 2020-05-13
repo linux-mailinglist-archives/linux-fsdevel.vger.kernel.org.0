@@ -2,67 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D301D1F5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 21:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 094001D1F6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 May 2020 21:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390740AbgEMTiC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 May 2020 15:38:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390607AbgEMTiB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 May 2020 15:38:01 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54A5C061A0C;
-        Wed, 13 May 2020 12:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=reReYgo4WVO4ahY77rC0AlOaDn1eni/2YS9v5iW5ApQ=; b=t2i8OYxdYVoUKhqrXceLxMmdw+
-        +Mebd98m1GvsGp0wQweT9JujipVyjWxIS6jX3BN55aP4vxEl6kYoZSwn9DbPMS5bbJNskJSKKnZns
-        s5JFhN7SqHGAnrg5rw7YNUuzVnOldDh+tN+8ZU7CgRhX45pGjQrvJsPuj5QOmbgCDI89SLpPd0Qrj
-        eOLgrz3l8E9o5npkW6rzCPk1okuh90NRoZvUmdIR9CtEMoswTdzMkoMhzXsmPPWw4ewMRe/SkgNj/
-        r6SPZJaDLDGFTyuZArsNKQQx4RU7PNszLXPzUs1IiXYdp5tERSuwiE9v7NWPEZo7YvjNE1QBnutbl
-        4k8kJSAA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jYxCb-0002NH-AH; Wed, 13 May 2020 19:38:01 +0000
-Date:   Wed, 13 May 2020 12:38:01 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu
-Subject: Re: [PATCH 04/20] FIEMAP: don't bother with access_ok()
-Message-ID: <20200513193801.GC484@infradead.org>
-References: <20200509234124.GM23230@ZenIV.linux.org.uk>
- <20200509234557.1124086-1-viro@ZenIV.linux.org.uk>
- <20200509234557.1124086-4-viro@ZenIV.linux.org.uk>
- <20200510070241.GA23496@infradead.org>
- <20200513190207.GV23230@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200513190207.GV23230@ZenIV.linux.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S2390696AbgEMTjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 May 2020 15:39:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732218AbgEMTjL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 May 2020 15:39:11 -0400
+Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A7620659;
+        Wed, 13 May 2020 19:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589398751;
+        bh=KXxqBrzLeeAqHk4gtdn0I0ZYxOj9nDjdnEZkDmE/AD0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=icAvLYRsMmmlKalnFgVitIB6YgqA5lAMu+YhIRLXxIIiq3BVLuq9N95zqswodsRBB
+         1iKYOsmVyCZO60BoDYbCKNJEIhejePOe3LB4KNE1PQagmFEiJF8x/qSDynheLtg1Pf
+         3SUpbR9S+ZBoeJkotoGwwocdmG39FBSjNE2dKy/k=
+Message-ID: <1589398747.5098.178.camel@kernel.org>
+Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Wed, 13 May 2020 15:39:07 -0400
+In-Reply-To: <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
+References: <20200508002739.19360-1-scott.branden@broadcom.com>
+         <20200508002739.19360-2-scott.branden@broadcom.com>
+         <1589395153.5098.158.camel@kernel.org>
+         <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
+         <1589396593.5098.166.camel@kernel.org>
+         <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 13, 2020 at 08:02:07PM +0100, Al Viro wrote:
-> > https://lore.kernel.org/linux-fsdevel/20200507145924.GA28854@lst.de/T/#t
-> > 
-> > which is waiting to be picked up [1], and also has some chance for conflicts
-> > due to changes next to the access_ok.
-> > 
-> > [1] except for the first two patches, which Ted plans to send for 5.7
-> 
-> I can drop this commit, of course, it's not a prereq for anything else in there.
-> Or I could pick your series into never-rebased branch, but it would complicate
-> the life wrt ext4 tree - up to you and Ted...
+On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
+> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
+> > On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
 
-I really don't care - the first two really need to go in ASAP and
-Ted promised to pick them up, but I've not seen them in linux-next
-yet.  The rest can go wherever once the first ones hit mainline.
+> Even if the kernel successfully verified the firmware file signature it
+> would just be wasting its time.  The kernel in these use cases is not always
+> trusted.  The device needs to authenticate the firmware image itself.
+
+There are also environments where the kernel is trusted and limits the
+firmware being provided to the device to one which they signed.
+
+> > The device firmware is being downloaded piecemeal from somewhere and
+> > won't be measured?
+> It doesn't need to be measured for current driver needs.
+
+Sure the device doesn't need the kernel measuring the firmware, but
+hardened environments do measure firmware.
+
+> If someone has such need the infrastructure could be added to the kernel
+> at a later date.  Existing functionality is not broken in any way by 
+> this patch series.
+
+Wow!  You're saying that your patch set takes precedence over the
+existing expectations and can break them.
+
+Mimi
