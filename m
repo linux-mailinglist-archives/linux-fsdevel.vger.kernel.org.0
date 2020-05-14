@@ -2,106 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA6F11D2A00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 10:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B99E11D2B48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 11:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbgENIZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 04:25:46 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39501 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725935AbgENIZp (ORCPT
+        id S1726073AbgENJYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 05:24:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44512 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbgENJYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 04:25:45 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 435655C0221;
-        Thu, 14 May 2020 04:25:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 14 May 2020 04:25:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        /xysc5mZRRwSPhJfTdSoHNPvt4tx6ue/BYIZHaszruM=; b=vgKyk2WVbBTezi5J
-        KZZxhb5cZm9Y59EZs1jkDIEB3QN/51GbotXc56FPv7Xfcym56gv3O1qR+nljkg5u
-        9idmRjW8ePiEQlecNuBuJQMR4LbrOqBGXTBX0nE1nXFcEUdhaX57FmZCO4ejJA+J
-        Yhd88QhBv40BAsI1Uw7//IWhAdOnxk0Q1hU+xUGjlQRutLzOhGiVppZIn5WlmQyD
-        Wt0ryMujwkZVPejYBHC9M/ajKDJuwtJswUPv/MxVIas0AzIhh+strqXutV3caOqg
-        PBBB+ny9WUpKGb9ebSby/tJeHZOH3yKkcXhC0E4lF/15UEI2E3uNoEZMgFXPOQnU
-        RcxNuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=/xysc5mZRRwSPhJfTdSoHNPvt4tx6ue/BYIZHaszr
-        uM=; b=vQ2dab9dHMuPMC/E2g2BRHkokaNfzXVMkruZHrf1jsACbLHGamb8VmNqE
-        P5ZMhljttd/zS6DTJl7pPkbGBq5pIdNs6F9L+H9NXWVaZBO/E5ezTCv5r4n8PfTn
-        vd6wIwoC+xrNjrmwgGSL04apsHcNpNL65tRPQsCT+TJUjv4g1hOkyGCcJZtzrS3H
-        GxdexL1hxNOW5HIFBTmpckbYeFUC/rVVBmsvfPKukng83zIWcsShNYxamcdefhnC
-        GOA11+klUWv8VNUT+ToY+DAEhUTixAU0HSzzWg+P0gDoXzDTQZ0lupWKqCnoPlvF
-        QS2xTtr/Z+jSUz7/eNmgrBk3ZPE8w==
-X-ME-Sender: <xms:hwC9Xo-am4RF6LNTv7m07mH48iDckWHKMZFJz4JNxG9SYk4P3qqlIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleeigddtudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peduudekrddvtdekrddukeejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:hwC9Xgtl5wjK72rTScXd71Y-TFGpnL1_uTrxuWn3nX2w28PKsMdFiw>
-    <xmx:hwC9XuA_0lZdHSpSDYw85PV35YMnEkEQa8qWZUpt-wi_mJk0mXcCFg>
-    <xmx:hwC9XofeS0RrUpnYeV3V6IFkhOLUBIv4FGnrR_tWrcfFjyCZx6PQ4A>
-    <xmx:iAC9XmaibCZ2K5m1rscL-SbvJiOKKfft5rL7AmEL5B5DeSmZEnf0bg>
-Received: from mickey.themaw.net (unknown [118.208.187.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BEA023060A88;
-        Thu, 14 May 2020 04:25:40 -0400 (EDT)
-Message-ID: <a98e32eb5ad4486fc58e5ce79700a20abecbd69b.camel@themaw.net>
-Subject: Re: [PATCH 02/14] autofs: switch to kernel_write
-From:   Ian Kent <raven@themaw.net>
-To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Date:   Thu, 14 May 2020 16:25:36 +0800
-In-Reply-To: <20200513065656.2110441-3-hch@lst.de>
-References: <20200513065656.2110441-1-hch@lst.de>
-         <20200513065656.2110441-3-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Thu, 14 May 2020 05:24:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 50so2905009wrc.11;
+        Thu, 14 May 2020 02:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HvLcRj3zFxBfrwvPJw8Re1n0yA4eLs/LIsJCgzVzMpU=;
+        b=Wfa7s4KOnvy2WzGq5GAQqe6zsCqtq+vgOYACvyWVQfDCLwTmzWnlDxGOyCHLw1gx+l
+         Ezcfys6ihKO73hbP3IKQsEnbPYwzQOpSfKPkEzkXuwOTLOyOxlciYY7f9O6iwta+vu9p
+         1Oe35wOVz+RiwzB/4eVhG9pD5GZr/46QUCbXZVclNZuoQv7fETtJViYrK23XQNHttjVm
+         fKOn84+VMk5jRB8xGiq5stnmLFbZRRmjeMFu1jVCis/OTaOnI/GYjileppWHi0GtOSyj
+         tK83ltTYz0YcTD6E2SXU3BQrSSknLkn9Nple3YaKNeS149VytLSYzHV41DBtVVlQz01u
+         2q3w==
+X-Gm-Message-State: AOAM532aHs6T1QD7eOWCb0FRvGO+vVQOPJWd2b/SyIZEoT4QkeAKP37y
+        CcaYgjmfLjT7Ry/pqyr6aPY=
+X-Google-Smtp-Source: ABdhPJzMksLJ4HOEMDykfeERVMe+0JLicmjf2ryyiIAz2rIlrZvHs1eJh9g0Ll74wg/sb2kVU6cV2A==
+X-Received: by 2002:adf:fa4d:: with SMTP id y13mr4490865wrr.263.1589448279652;
+        Thu, 14 May 2020 02:24:39 -0700 (PDT)
+Received: from linux-t19r.fritz.box (ppp-46-244-223-154.dynamic.mnet-online.de. [46.244.223.154])
+        by smtp.gmail.com with ESMTPSA id z132sm38877763wmc.29.2020.05.14.02.24.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 May 2020 02:24:39 -0700 (PDT)
+From:   Johannes Thumshirn <jth@kernel.org>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v3 0/3] Add file-system authentication to BTRFS
+Date:   Thu, 14 May 2020 11:24:12 +0200
+Message-Id: <20200514092415.5389-1-jth@kernel.org>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-05-13 at 08:56 +0200, Christoph Hellwig wrote:
-> While pipes don't really need sb_writers projection, __kernel_write
-> is an
-> interface better kept private, and the additional rw_verify_area does
-> not
-> hurt here.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Right, should be fine AFAICS.
-Acked-by: Ian Kent <raven@themaw.net>
+This series adds file-system authentication to BTRFS. 
 
-> ---
->  fs/autofs/waitq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-> index b04c528b19d34..74c886f7c51cb 100644
-> --- a/fs/autofs/waitq.c
-> +++ b/fs/autofs/waitq.c
-> @@ -53,7 +53,7 @@ static int autofs_write(struct autofs_sb_info *sbi,
->  
->  	mutex_lock(&sbi->pipe_mutex);
->  	while (bytes) {
-> -		wr = __kernel_write(file, data, bytes, &file->f_pos);
-> +		wr = kernel_write(file, data, bytes, &file->f_pos);
->  		if (wr <= 0)
->  			break;
->  		data += wr;
+Unlike other verified file-system techniques like fs-verity the
+authenticated version of BTRFS does not need extra meta-data on disk.
+
+This works because in BTRFS every on-disk block has a checksum, for meta-data
+the checksum is in the header of each meta-data item. For data blocks, a
+separate checksum tree exists, which holds the checksums for each block.
+
+Currently BRTFS supports CRC32C, XXHASH64, SHA256 and Blake2b for checksumming
+these blocks. This series adds a new checksum algorithm, HMAC(SHA-256), which
+does need an authentication key. When no, or an incoreect authentication key
+is supplied no valid checksum can be generated and a read, fsck or scrub
+operation would detect invalid or tampered blocks once the file-system is
+mounted again with the correct key. 
+
+Getting the key inside the kernel is out of scope of this implementation, the
+file-system driver assumes the key is already in the kernel's keyring at mount
+time.
+
+There was interest in also using keyed Blake2b from the community, but this
+support is not yet included.
+
+I have CCed Eric Biggers and Richard Weinberger in the submission, as they
+previously have worked on filesystem authentication and I hope we can get
+input from them as well.
+
+Example usage:
+Create a file-system with authentication key 0123456
+mkfs.btrfs --csum "hmac(sha256)" --auth-key 0123456 /dev/disk
+
+Add the key to the kernel's keyring as keyid 'btrfs:foo'
+keyctl add logon btrfs:foo 0123456 @u
+
+Mount the fs using the 'btrfs:foo' key
+mount -t btrfs -o auth_key=btrfs:foo,auth_hash_name="hmac(sha256)" /dev/disk /mnt/point
+
+Note, this is a re-base of the work I did when I was still at SUSE, hence the
+S-o-b being my SUSE address, while the Author being with my WDC address (to
+not generate bouncing mails).
+
+Changes since v2:
+- Select CONFIG_CRYPTO_HMAC and CONFIG_KEYS (kbuild robot)
+- Fix double free in error path
+- Fix memory leak in error path
+- Disallow nodatasum and nodatacow when authetication is use (Eric)
+- Pass in authentication algorithm as mount option (Eric)
+- Don't use the work "replay" in the documentation, as it is wrong and
+  harmful in this context (Eric)
+- Force key name to begin with 'btrfs:' (Eric)
+- Use '4' as on-disk checksum type for HMAC(SHA256) to not have holes in the
+  checksum types array.
+
+Changes since v1:
+- None, only rebased the series
+
+Johannes Thumshirn (3):
+  btrfs: rename btrfs_parse_device_options back to
+    btrfs_parse_early_options
+  btrfs: add authentication support
+  btrfs: document btrfs authentication
+
+ .../filesystems/btrfs-authentication.rst      | 168 ++++++++++++++++++
+ fs/btrfs/Kconfig                              |   2 +
+ fs/btrfs/ctree.c                              |  22 ++-
+ fs/btrfs/ctree.h                              |   5 +-
+ fs/btrfs/disk-io.c                            |  71 +++++++-
+ fs/btrfs/ioctl.c                              |   7 +-
+ fs/btrfs/super.c                              |  65 ++++++-
+ include/uapi/linux/btrfs_tree.h               |   1 +
+ 8 files changed, 326 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/filesystems/btrfs-authentication.rst
+
+-- 
+2.26.1
 
