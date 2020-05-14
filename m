@@ -2,100 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 387B81D308A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 15:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3886A1D317A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 15:39:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbgENNBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 09:01:33 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:60169 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbgENNBc (ORCPT
+        id S1727811AbgENNjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 09:39:47 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53388 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbgENNjq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 09:01:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589461291;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RPUoVQhPIe2yM06OVwXPGrLVKPBJs8B5xCOPXjBDKHc=;
-        b=faWN9SShQj2SRWt2ZnwB8kf1hfEb8GxkhAplE/zVlRaKTf+mme3txR0lvPnkaVKz0bwPyT
-        8yjt3VIQgOlP5XJz60jqzdULscnYMrycNMuE8Vlbp9Tiv/rsPbUlfAnVRLB1fLnOCnetbu
-        VG0xUzxe3K2v0/ovLV2FIq+63bB15Jw=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-3-k0D4IUgaMlCd7BfaQGvCYw-1; Thu, 14 May 2020 09:01:30 -0400
-X-MC-Unique: k0D4IUgaMlCd7BfaQGvCYw-1
-Received: by mail-qt1-f199.google.com with SMTP id v18so3371940qtq.22
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 06:01:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RPUoVQhPIe2yM06OVwXPGrLVKPBJs8B5xCOPXjBDKHc=;
-        b=oXP2pJJv+g296+wZi0+jigEj5yPlWSyyWAPQWg1U1G+s6u+z/fa4FH5SMCCDRpBPNL
-         Qr0BPLvoQ0jIMxBl0T58GuAEhs4wEmFCgdc6HDMGH2d9J/vMtokMWGoZb9MHRAkIjsc0
-         aebGGINGysqk0h7Rp08F9d/yBfKTR5qcwvgyqeD4fs6yTlvUZ3aXnrLbgcGkvFm0ZpJG
-         QvOXqr8xZUtWqc4uOaFqkW7wTL+MVSDva674FAprCEMdkZ6gojai6vF3ntcz5T+OGZPz
-         VMQsH6u/wvklmyrtynx7qETXtgJo0k1kj/rdit6fGUpbxo/C6TSpRCtVL/h6cPWju9sY
-         cskg==
-X-Gm-Message-State: AOAM532VeHHtImZOmZplV5CbnbCRg7IU7mHTNmdXSfz2aLLX9Ow9ucJt
-        JW8w2oPc1r2Vg74DFY1G+s3Ow9hj3sxbaSloAT0l7pJxyl5T043D7UvNmupS5Pl1DWe+KZh8jdK
-        dzbX5QVGF+jDQcBE+aUU6ebWy4ngoAFCKyWEBpz0jOA==
-X-Received: by 2002:ac8:60d4:: with SMTP id i20mr4249008qtm.324.1589461285370;
-        Thu, 14 May 2020 06:01:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx2pGkMmrvk4NwbKD1e7NVk4MsM30jYPz4g8rvzp4ik5zEpxXqHkBU6VN4gTNwSkFtwOQij9VpR+N1uXI3vTBI=
-X-Received: by 2002:ac8:60d4:: with SMTP id i20mr4248970qtm.324.1589461284935;
- Thu, 14 May 2020 06:01:24 -0700 (PDT)
+        Thu, 14 May 2020 09:39:46 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200514133945euoutp02e1adeb5d7ffa34df45e1efc4f31e6025~O6LWbtGpN1620016200euoutp02Z
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 13:39:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200514133945euoutp02e1adeb5d7ffa34df45e1efc4f31e6025~O6LWbtGpN1620016200euoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589463585;
+        bh=fWx0YMUp/JMtvmNqrUDqO8Zb5vgF1GKtXhH/LVX0fYY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=HLWCLjI/770gPJMadpcWM3NeSxssOPuLiZmRwF7UbRcpTNMrihfvWd0ocx8x59R/r
+         qMLquXMgzuJyLKRnlDUbjeqF7b05d4mhOLebLtoQqdXomOfRfbwR0m5BGA7V3W5BnA
+         M1ut1ZcehuoaV/FnDSrkyaoZr6zvO7uo+uOrLZ9E=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200514133944eucas1p1c83134058526c09d938d5a3035abae7d~O6LWPESKz1865318653eucas1p1Q;
+        Thu, 14 May 2020 13:39:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 97.38.61286.02A4DBE5; Thu, 14
+        May 2020 14:39:44 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200514133944eucas1p2fb43685052347ab281924ef91a9538aa~O6LVtPLQ12683826838eucas1p2H;
+        Thu, 14 May 2020 13:39:44 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200514133944eusmtrp1c94ae43e151473eaf211964d0f36f374~O6LVstZuV0296802968eusmtrp1L;
+        Thu, 14 May 2020 13:39:44 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-5a-5ebd4a206a68
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.B2.07950.02A4DBE5; Thu, 14
+        May 2020 14:39:44 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200514133944eusmtip1ad25d7e2251d2ea96e578cbfc820a524~O6LVepM9E1597315973eusmtip1N;
+        Thu, 14 May 2020 13:39:44 +0000 (GMT)
+Subject: Re: [PATCH 12/20] omapfb: get rid of pointless access_ok() calls
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <8e349e00-817f-6c3e-82db-ce4c1f72bada@samsung.com>
+Date:   Thu, 14 May 2020 15:39:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20200505095915.11275-1-mszeredi@redhat.com> <20200505095915.11275-6-mszeredi@redhat.com>
- <20200513100432.GC7720@infradead.org> <CAJfpeguPhJApOQgw02-yCPJZ5Tx_Zy2ZFh+De5DC560FNqdFSA@mail.gmail.com>
-In-Reply-To: <CAJfpeguPhJApOQgw02-yCPJZ5Tx_Zy2ZFh+De5DC560FNqdFSA@mail.gmail.com>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Thu, 14 May 2020 15:01:13 +0200
-Message-ID: <CAOssrKeV7g0wPg4ozspG4R7a+5qARqWdG+GxWtXB-MCfbVM=9A@mail.gmail.com>
-Subject: Re: [PATCH 05/12] f*xattr: allow O_PATH descriptors
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200509234557.1124086-12-viro@ZenIV.linux.org.uk>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87oKXnvjDNZ/t7TYs/cki8XlXXPY
+        LB71vWW3OP/3OKsDi8eJGb9ZPD5vkvPY9OQtUwBzFJdNSmpOZllqkb5dAlfGx1P3GAtaOSpO
+        3vvA0sB4na2LkZNDQsBEYtGjo8xdjFwcQgIrGCV6bp5jAUkICXxhlHjVbg2R+Mwosb1rFTNM
+        x8JF69khEssZJf5uvM8I4bxllPjRvYgRpEpYwFPi59Z/YB0iAqoSd06dYQKxmQUKJTbe+QpW
+        wyZgJTGxfRWYzStgJ3Ho9Tawehag+lm39oPZogIREp8eHGaFqBGUODnzCdh5nAIOEr2fW9kg
+        ZopL3HoyH2q+vMT2t3PA/pEQ6GaXON/1ggXibBeJvk+HoGxhiVfHt7BD2DISpyf3sEA0rAN6
+        p+MFVPd2Ronlk/9Bg8la4s65X0A2B9AKTYn1u/Qhwo4SXaufMYKEJQT4JG68FYQ4gk9i0rbp
+        zBBhXomONiGIajWJDcs2sMGs7dq5knkCo9IsJK/NQvLOLCTvzELYu4CRZRWjeGppcW56arFh
+        Xmq5XnFibnFpXrpecn7uJkZgSjn97/inHYxfLyUdYhTgYFTi4bW4tTtOiDWxrLgy9xCjBAez
+        kgiv33qgEG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYy2
+        f65MWWhVPfd2sGDy5p3q8z89Et3au/iWm+iHb9O7/vJllopGfF+2rnNNsdBni/+Ln52dqHVs
+        ZfrxXXbCAj94r/OG+7l941EO+s4fIlGQ3f1sjYfj5nMrmKZE79kfs9mrW9Du+RoFTZssx+Jp
+        OvwlAW3JuYfutJo7nAvzdpFfN8vI84G/no4SS3FGoqEWc1FxIgAPxDKuJQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xu7oKXnvjDGY2S1js2XuSxeLyrjls
+        Fo/63rJbnP97nNWBxePEjN8sHp83yXlsevKWKYA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
+        yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j46l7jAWtHBUn731gaWC8ztbFyMkhIWAisXDR
+        evYuRi4OIYGljBLzui6wdDFyACVkJI6vL4OoEZb4c62LDaLmNaPEzPk32UESwgKeEj+3/mMG
+        sUUEVCXunDrDBGIzCxRKtE/9zgLR8I1R4mnPMbAiNgEriYntqxhBbF4BO4lDr7eBxVmAmmfd
+        2g9miwpESBzeMQuqRlDi5MwnLCA2p4CDRO/nVjaIBeoSf+ZdYoawxSVuPZkPtVheYvvbOcwT
+        GIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiMoW3Hfm7Zwdj1
+        LvgQowAHoxIPr8Wt3XFCrIllxZW5hxglOJiVRHj91gOFeFMSK6tSi/Lji0pzUosPMZoCPTeR
+        WUo0OR8Y33kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhiX8nuE
+        lJx49rehIpFNtFAxYt9K4+qARzzfpr3h1FsnIKq5lk9fedpuf8v/2ktnnTjTbSXx9+cJz88W
+        CkLtgjyH/P2b7EoyLmyLy2h9/oal5oOUQPiqSdIPn9ZIdz366Ts1fLU3t9uRb7l9y9Rufewv
+        WDHzLWNg3q8FOwuy58T5TUw6veGmEosSS3FGoqEWc1FxIgC/UVHgtwIAAA==
+X-CMS-MailID: 20200514133944eucas1p2fb43685052347ab281924ef91a9538aa
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200509234608eucas1p13a673239d8145e2dfd12d0ecc98a4cca
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200509234608eucas1p13a673239d8145e2dfd12d0ecc98a4cca
+References: <20200509234124.GM23230@ZenIV.linux.org.uk>
+        <20200509234557.1124086-1-viro@ZenIV.linux.org.uk>
+        <CGME20200509234608eucas1p13a673239d8145e2dfd12d0ecc98a4cca@eucas1p1.samsung.com>
+        <20200509234557.1124086-12-viro@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 14, 2020 at 10:02 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, May 13, 2020 at 12:04 PM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > Needs a Cc to linux-api and linux-man.
-> >
-> > On Tue, May 05, 2020 at 11:59:08AM +0200, Miklos Szeredi wrote:
-> > > This allows xattr ops on symlink/special files referenced by an O_PATH
-> > > descriptor without having to play games with /proc/self/fd/NN (which
-> > > doesn't work for symlinks anyway).
-> >
-> > Do we even intent to support xattrs on say links?  They never wire up
-> > ->listxattr and would only get them through s_xattr.  I'm defintively
-> > worried that this could break things without a very careful audit.
->
-> Why do you think listxattr is not wired up for symlinks?
->
-> Xfs and ext4 definitely do have it, and it seems most others too:
->
-> $ git grep -A10  "struct inode_operations.*symlink" | grep listxattr | wc -l
-> 29
 
-In any case, I'm dropping this patch for now.   The comment about
-/proc/self/fd/NN not working is actually wrong; it does work despite
-the target being a symlink: LOOKUP_FOLLOW only follows the magic
-symlink in this case, not the symlink that is the target.  So it's
-possible to get (set, remove, list) the xattr on an O_PATH descriptor
-using
+On 5/10/20 1:45 AM, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> address is passed only to copy_to_user()
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-sprintf("/proc/self/fd/%i", procpath, sizeof(procpath));
-getxattr(procpath, ...);
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Thanks,
-Miklos
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+> index 56995f44e76d..f40be68d5aac 100644
+> --- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+> +++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+> @@ -482,9 +482,6 @@ static int omapfb_memory_read(struct fb_info *fbi,
+>  	if (!display || !display->driver->memory_read)
+>  		return -ENOENT;
+>  
+> -	if (!access_ok(mr->buffer, mr->buffer_size))
+> -		return -EFAULT;
+> -
+>  	if (mr->w > 4096 || mr->h > 4096)
+>  		return -EINVAL;
+>  
+> 
 
