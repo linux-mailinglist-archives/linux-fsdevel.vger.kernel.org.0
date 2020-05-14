@@ -2,82 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD1D1D298F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 10:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8771D29C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 10:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725979AbgENIC0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 04:02:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
+        id S1725970AbgENIOR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 04:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725935AbgENICZ (ORCPT
+        by vger.kernel.org with ESMTP id S1725935AbgENIOQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 04:02:25 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD51C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 01:02:25 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id s9so2032737eju.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 01:02:25 -0700 (PDT)
+        Thu, 14 May 2020 04:14:16 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BF3C061A0C;
+        Thu, 14 May 2020 01:14:16 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id l20so269957ilj.10;
+        Thu, 14 May 2020 01:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OQohwe4L50M/oJP7LFqy+JHItl7Ty+QkEmlWmoe7rwE=;
-        b=MLiqnTRw3pAF+JO9xJmo4W/KRXGJy7RGRXLxh/82rGI9zQZdbIbkOc1I8dJYzcPVaw
-         DeKWNlNQEdHdb5e151pA0IO5UJOf5oMB3tTyxF118f81RmSp5s/MVxcFS8yK5kc2HEba
-         UXRE45piJmIVrmuiHJ2lJtHvIi78htE0HeLyU=
+         :cc:content-transfer-encoding;
+        bh=nW/L8VcZBCn80T+Kxyr4Dt/TzE3U0N3QD8lxLQvkAAk=;
+        b=S5Hfe/92gHJ2Kc5wk3x43B4+o6swGaM2Z99CePQdyLGPJPMn30W1UreaPgeaV7cbVx
+         6Ksj0zhjZIigUVz3G05Ipvagq3eQpb1Q/Q/Tx8tyQa+Y3+yu0Go8cUlgCEqV6W7Cl/13
+         w0tULc6B16J+R+YpVtDBGL0dmKDdpkX/lRVs2dX0SK5Ff3zLv8WUeueCQedF96giMbNd
+         /6pcYHqFmFrjBvh+QkmsZoYCmdDYs9frT687Ym8rCKaV5JeSURUb2M9GFNDf+CfgHlRj
+         3gpOiN0aHTJt4SRY/3RyuY/0GLK+031DG3E9DyxAiHEq0GrDJ8iLgIcf7dZVSGgZlVW3
+         7i/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OQohwe4L50M/oJP7LFqy+JHItl7Ty+QkEmlWmoe7rwE=;
-        b=I1oy1LNcD8hvkxU7wG3J6I6mQZH+w8mgg1e8F5LjP335w7YdFkSFWT1sVMD1uJrh6/
-         lOVfryPwEAtvBOzT+a0cq3UFmleDFTLd8Dq+AClbZlD+yGrIivW1cPYZnDLfznbbjwzI
-         5wnREZbbd3azkO8I4J5Srmu55EeYe9a1ac1d8Tnm2AIZyEmeX4IltqAM6bM+EOJDOMvX
-         RrU74kYQ+bn/PsdLFk79aMnHG1oSrktHESXmu8Xju2UOWZw2pH53xod3kfQdRaSZFbbE
-         05QqnTfIhVqO04Fu4BexE8CkcOKAqjJUP/884kKvtHxU5SS1DyKIbghbpwcrGowKmSai
-         JXtw==
-X-Gm-Message-State: AOAM532K8ZLiJIJXlDhAaFuExt9h53D/khhs5oVjQH9bFXVTmpFUIT24
-        FbJzz71IbCFULMetB7Tpz5y3X6nhepvtPO2GIFMB9Q==
-X-Google-Smtp-Source: ABdhPJw5XNmFn1XHD6BXWQ/WtMFU9a2KVsncpWhHCuS1iWHLGucTCVnLn0zb6upOvWBn9mtpwKvexECZykZ6reVNZnE=
-X-Received: by 2002:a17:906:cd08:: with SMTP id oz8mr509387ejb.90.1589443343915;
- Thu, 14 May 2020 01:02:23 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nW/L8VcZBCn80T+Kxyr4Dt/TzE3U0N3QD8lxLQvkAAk=;
+        b=uUBl6+o/RHM3/5bJzWZqr0Vuil9ByFu3NsDOiBTUI56A81FmhV6g9aU2zil4cf2K06
+         zl2dXqvHcvGRaDfxw5SMnpzy1Cev0Bs9aPzw8DDbP5OtUTv0zvzL+b2tuC1s52Yav2Cj
+         kVE+e2R4I+V1SigKaVBXKWxfoK5jzgpRXmzPPRB/4LViZG+KrBAvCylroEHaVAksaFy7
+         rNW47U7r9D4htfInIkmBDQubLjsDwLGSgn2r0TNrZsX7/CzISfHvZeuL2PRhniXt3ugW
+         R5+aZNmlTXl7xge74CUsapZWCaGhn7Vi785RnV7Qv48trAnexe2kMnXbz3p5ru26zPmS
+         P4dQ==
+X-Gm-Message-State: AOAM531ogXL2IUXX4V41UF0oZaaSaJdEF5Hjep0lMoF45+bGxtVwmQTk
+        339b4dj8iIIkxfL0TVnJJZF56bHgzvleluen7uk=
+X-Google-Smtp-Source: ABdhPJxcM2ITNF+8krp3jsHuj5Njt/CXRsPi+FnkXodqYy9dz/7KlWDbKIAYy/B1u704BgQzZ5vke1Oax5ReAe5a8IA=
+X-Received: by 2002:a92:84d6:: with SMTP id y83mr1157606ilk.73.1589444055744;
+ Thu, 14 May 2020 01:14:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200505095915.11275-1-mszeredi@redhat.com> <20200505095915.11275-6-mszeredi@redhat.com>
- <20200513100432.GC7720@infradead.org>
-In-Reply-To: <20200513100432.GC7720@infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 14 May 2020 10:02:12 +0200
-Message-ID: <CAJfpeguPhJApOQgw02-yCPJZ5Tx_Zy2ZFh+De5DC560FNqdFSA@mail.gmail.com>
-Subject: Re: [PATCH 05/12] f*xattr: allow O_PATH descriptors
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+References: <20200505153156.925111-1-mic@digikod.net> <20200505153156.925111-3-mic@digikod.net>
+ <202005121407.A339D31A@keescook>
+In-Reply-To: <202005121407.A339D31A@keescook>
+From:   "Lev R. Oshvang ." <levonshe@gmail.com>
+Date:   Thu, 14 May 2020 11:14:04 +0300
+Message-ID: <CAP22eLEWW+KjD5rHosZV8vSuBB4YBLh0BQ=4-=kJQt9o=Fx1ig@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] fs: Add a MAY_EXECMOUNT flag to infer the noexec
+ mount property
+To:     Kees Cook <keescook@chromium.org>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 13, 2020 at 12:04 PM Christoph Hellwig <hch@infradead.org> wrote:
+On Wed, May 13, 2020 at 12:09 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> Needs a Cc to linux-api and linux-man.
+> On Tue, May 05, 2020 at 05:31:52PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > This new MAY_EXECMOUNT flag enables to check if the underlying mount
+> > point of an inode is marked as executable.  This is useful to implement
+> > a security policy taking advantage of the noexec mount option.
+> >
+Security policy is expressed by sysadmin by mount -noexec very clear,
+I don't think there is a need
+in sysctl, wish is system-wide
+
+> > This flag is set according to path_noexec(), which checks if a mount
+> > point is mounted with MNT_NOEXEC or if the underlying superblock is
+> > SB_I_NOEXEC.
+> >
+> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > Reviewed-by: Philippe Tr=C3=A9buchet <philippe.trebuchet@ssi.gouv.fr>
+> > Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> > Cc: Aleksa Sarai <cyphar@cyphar.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > ---
+> >  fs/namei.c         | 2 ++
+> >  include/linux/fs.h | 2 ++
+> >  2 files changed, 4 insertions(+)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index a320371899cf..33b6d372e74a 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -2849,6 +2849,8 @@ static int may_open(const struct path *path, int =
+acc_mode, int flag)
+> >               break;
+> >       }
+> >
+> > +     /* Pass the mount point executability. */
+> > +     acc_mode |=3D path_noexec(path) ? 0 : MAY_EXECMOUNT;
+> >       error =3D inode_permission(inode, MAY_OPEN | acc_mode);
+> >       if (error)
+> >               return error;
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 313c934de9ee..79435fca6c3e 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -103,6 +103,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff=
+_t offset,
+> >  #define MAY_NOT_BLOCK                0x00000080
+> >  /* the inode is opened with O_MAYEXEC */
+> >  #define MAY_OPENEXEC         0x00000100
+> > +/* the mount point is marked as executable */
+> > +#define MAY_EXECMOUNT                0x00000200
+> >
+> >  /*
+> >   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must co=
+rrespond
 >
-> On Tue, May 05, 2020 at 11:59:08AM +0200, Miklos Szeredi wrote:
-> > This allows xattr ops on symlink/special files referenced by an O_PATH
-> > descriptor without having to play games with /proc/self/fd/NN (which
-> > doesn't work for symlinks anyway).
+> I find this name unintuitive, but I cannot think of anything better,
+> since I think my problem is that "MAY" doesn't map to the language I
+> want to use to describe what this flag is indicating.
 >
-> Do we even intent to support xattrs on say links?  They never wire up
-> ->listxattr and would only get them through s_xattr.  I'm defintively
-> worried that this could break things without a very careful audit.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> --
+> Kees Cook
 
-Why do you think listxattr is not wired up for symlinks?
 
-Xfs and ext4 definitely do have it, and it seems most others too:
+I think that the original patch was perfect, I quite it again
+@@ -3167,6 +3167,14 @@ static int may_open(struct path *path, int
+acc_mode, int flag)
 
-$ git grep -A10  "struct inode_operations.*symlink" | grep listxattr | wc -l
-29
++
++ if ((acc_mode & MAY_OPENEXEC)
++ && (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))
++ && (path->mnt && (path->mnt->mnt_flags & MNT_NOEXEC)))
++            return -EACCES;
++
++
++
+error =3D inode_permission(inode, MAY_OPEN | acc_mode);
 
-Thanks,
-Miklos
+As I said in the inline comment above, sysadmin had already express
+security policy in a very clear way,
+mount -noexec !
+I would only check inside inode_permission() whether the file mode is
+any  ---x  permission and deny such
+open when file is opened with O_MAYEXEC under MNT_NOEXEC mount point
+
+New sysctl is indeed required to allow userspace that places scripts
+or libs under noexec mounts.
+fs.mnt_noexec_strict =3D0 (allow, e) , 1 (deny any file with --x
+permission), 2 (deny when O_MAYEXEC absent), for any file with ---x
+permissions)
