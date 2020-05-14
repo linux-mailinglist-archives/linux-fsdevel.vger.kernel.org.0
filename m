@@ -2,142 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EEE11D3341
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 16:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B63881D339C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 16:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbgENOlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 10:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgENOlo (ORCPT
+        id S1726197AbgENOy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 10:54:27 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:20352 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbgENOy1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 10:41:44 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418AEC05BD43
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 07:41:44 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id s69so4338686pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 07:41:44 -0700 (PDT)
+        Thu, 14 May 2020 10:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1589468067; x=1621004067;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=3GLBWtH/KUDR0TFkCIDwdeO7XDGRGLBffidUheRf/jo=;
+  b=N3iKzY2a0z9n8P/uNnNDc+kR2Zh6FRxHq8jsjf9/D6iJEVM1jF6hKozz
+   6Jd5zwqeUk8fAppsEdUJj0f3UxvmHyFCFDeW+d1C3FsTXjMjBuQ0/xnC5
+   rwHkicFyQ3fyAKaBUBBCnaTqVmg83sXUUFgPaXqowDX4uRdWsn6h4MI12
+   krj08DoHVkBjDiuM8se6EPSiaO72SzJHy7AvLHdAQK2QsVC+/chEyvkG9
+   Z81WXX8SlzV0qecQ6uG1fRucgxzCUTyHYnXAWWkZeSU/K1hvgLFUK+FMn
+   naHVpRrRuUbn+SPHAOMaHgVAYQE5Vkxu/MiUyAQLLDHU6aFP8NIlaOt87
+   Q==;
+IronPort-SDR: MZ3yqk2qUdYkj33hQxXZEqmdOvnkAvviCKBP3+he7Xi42cNnXMcpnLWCrIZcgoyHS86SZIk2RU
+ Mhv3nc8IWcA+v+2ZqaKFYMWTmwoNd6wQtEZF5o/K++hv01UmPH9BmMs5i8Tz47ip/k8/7mzJBR
+ r/fwfxmj8JFgZ8dBxK8/5VmmagGhjjq9uJQVPOKrr6CsX+vn7O3KhkXTnc+U5UaWlO6WGcmk9P
+ NFgYDrn2MgLw5hTMi5EvZF5TbNDEuDde6qTP/PabdDrwj53A8TUog1svEhKxBnx1mWySFFfE9V
+ 3KA=
+X-IronPort-AV: E=Sophos;i="5.73,391,1583164800"; 
+   d="scan'208";a="138024377"
+Received: from mail-co1nam04lp2056.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.56])
+  by ob1.hgst.iphmx.com with ESMTP; 14 May 2020 22:54:14 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l/wP6GhvVxQE0qqblivwVVB+bhqWbFdgbGe+pRWFWKHF5cNXsPwFpEKB8sJ6T6GBNVPZDyg1/MT8HzI+DgplsI4h7lBQzluRh5AFAOw/czgR1ONo46m1l+bgwNyHF8YD/Y4vAWA/ykqCerP/vaRlIkNRkmk4n2ZrKAb0yLJFCCVvDUL1PplYPRE4XPUdUpYA11bF12f+KplgHu6MmN+xCIbaO9qKFORI3mEh7Qbz288OpHPombXx3SGZAB4w0UTTh4i3wqoilKYzT5HlPBGYoqQt4PPoqjsrPKSxdGoHgVjyHy92rYnCfrWPrF6r3lT1fI92fR+Rm3ycnYtuFwuGbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=odFqRLu7szqZ0Q4h3ggworrTUxOl2J8vYDUxyWXRxOw=;
+ b=D3kB+c0yzuDdwsqMGArxgmpy/s4kI/BaqcyEasEsE4IFzejZLxfpODC9E6PYyM30gOrkv3FX+LiftP0wPdNJic9SFsfxvYLUW4hWifB6E3QMuUwRReIoIivIdVFWmwGpCyDO6HL7ka9W4JzrfbgtvuiEU5NngJSQ8dVqPa4vXzLKmo3+2sj4EZMCroJj/Af0GUVUv3aEGO8ukLnuozlMeSImiT5G4715pkZ3xyDR9vk/GARdEJx3nE6yajGkmvSavfo2jXcSMBq8RQFHz6n90mMg3p0cJJwxO9Xu0lcyuQfAkGVTkwP+8aFQC1oUi/oepedaeF/TczgrRMRKaZ+2jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IpKyFs1yszxKs0lfKzxRyfm8sy/4V4zXUkzdtSdkHLU=;
-        b=X+1M/fmbQRViUiNWq5i8Wnhzf2ZxZWa44EfPqXFdhzGNfFrnMMGFlC9RiMxXJ091Ma
-         NG/CNZqhzV1Qho131HIRtHnMmH2dd1a0u/Lnxs7n0oy487ROOuwOgwTDBO2IRRCDsPb3
-         hmLh+/ITWKzvGRhNGI8R89GJSU8kqpyPsfmQQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IpKyFs1yszxKs0lfKzxRyfm8sy/4V4zXUkzdtSdkHLU=;
-        b=amnf+5OklqcP6uBt9/PgnSWm17ze3wtwH5Z/lxa3n9T12EtmBaWicanGoqkt598XvC
-         he4S5UC6i1pcpl4wNrqvvkbt2RdNyZDwhSSgzXOdK7ggGp8R45bgswVzCexPA/Cquo43
-         8cBZAyDQR17ER+U/w8M/2kG7FNqz9fwtC69Yw1uHfXhC+Jqw+2a1L0lM/vTBtfZKSn5m
-         SussCmsBI/8QEjxLeai8NzU1CWXH8W1UkyTLk0q4eMU/hksgmjDre9JHshO10osuqhIE
-         GYTAMV74T96jhtY4hC2tGSyhIhEKxNVKobptoe+i9Xph5mtqEhuCZsmyYwQzfccjR4NP
-         YqXA==
-X-Gm-Message-State: AOAM5329qc9SPEVOVeFdMfpAXxRPuxfsjuVbl5rzST1JO3pRkFLbFl/U
-        9EM5lQdBQl1+LpcDfTSWH1AYIw==
-X-Google-Smtp-Source: ABdhPJw803NLliwJdw3Qk5o4x+XH/SQaDwZsQ2JFMZ1iNHIhcyH1GCLb3+bU8sx5k7WA09KC4Ps+iQ==
-X-Received: by 2002:a17:902:b608:: with SMTP id b8mr4282064pls.163.1589467303571;
-        Thu, 14 May 2020 07:41:43 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g10sm2542952pfk.103.2020.05.14.07.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2020 07:41:41 -0700 (PDT)
-Date:   Thu, 14 May 2020 07:41:40 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
- through O_MAYEXEC
-Message-ID: <202005140739.F3A4D8F3@keescook>
-References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-4-mic@digikod.net>
- <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
- <202005131525.D08BFB3@keescook>
- <202005132002.91B8B63@keescook>
- <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=odFqRLu7szqZ0Q4h3ggworrTUxOl2J8vYDUxyWXRxOw=;
+ b=TIFPl20yFnwPtYrlPQYmoa2uBeyYmvK30tAJ2jiTp04lHMvb65JrSO600Zcrl0aEjBBQXigMBPtH7q5tI7m6izsWQLKVCN7j6AVs6DO1VAZdFxuEGddjjkP/7NW0kk1I4JmqYs1wPizIj6fhpxQrlD6raU7cjGszimYWhc+e1JQ=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3581.namprd04.prod.outlook.com
+ (2603:10b6:803:46::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.25; Thu, 14 May
+ 2020 14:54:12 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.3000.022; Thu, 14 May 2020
+ 14:54:12 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Johannes Thumshirn <jth@kernel.org>
+CC:     David Sterba <dsterba@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH v3 3/3] btrfs: document btrfs authentication
+Thread-Topic: [PATCH v3 3/3] btrfs: document btrfs authentication
+Thread-Index: AQHWKdGHpFk4qUNYxkaDbw38lHwpUg==
+Date:   Thu, 14 May 2020 14:54:12 +0000
+Message-ID: <SN4PR0401MB3598FFE2AC30EA4E7B85533C9BBC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200514092415.5389-1-jth@kernel.org>
+ <20200514092415.5389-4-jth@kernel.org> <20200514062611.563ec1ea@lwn.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lwn.net; dkim=none (message not signed)
+ header.d=none;lwn.net; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: dfa7b2c0-c4c8-47f1-2d3b-08d7f816aa38
+x-ms-traffictypediagnostic: SN4PR0401MB3581:
+x-microsoft-antispam-prvs: <SN4PR0401MB3581F7A490E3467978E7AC7E9BBC0@SN4PR0401MB3581.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 040359335D
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: V+6dsdzNMLWO+rmDZkhQbYk33IsRWDGTA052blkJ0aCkZh7aBZRLzcSKdqRidCJ3qMA/0mawMsogiNMuOzjtKj4IOu7a+RBni0CInhnjJIVT6y3VbsCXsBEiWRRgtiK2Icd+ob9VHB2Jwlxe44wWGbgNioTf1SnSPZT5dZe9orko787lbp0ON8KSyHFAeGk4t5MMon4Kubugco4HohuVvBBiV8h1jwt5PTpyMQZO/XtNBYs9Pru+uv9Akk5W3l3NxH1pFyF3LZrgVagfKYuLXtpvhOki+8Ftbj3imsezqOw96aMpm2+ffRG+6IGcOnBvN1HQh8SyfG0dS81ffkfeDQxklEiWPx1L+aueyEJrvIfwdDB+JWyF59HVh88AGsChZ5BY6L6g8ZSuCZ6xkaSNuL8iFwXjpLSI6/hT1tS7qz87iyBI0WWRm23XyC/gNn+p
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(396003)(376002)(136003)(366004)(346002)(9686003)(55016002)(4326008)(91956017)(7696005)(33656002)(8676002)(8936002)(86362001)(5660300002)(52536014)(2906002)(478600001)(53546011)(6506007)(54906003)(66476007)(64756008)(66446008)(66556008)(26005)(71200400001)(76116006)(316002)(186003)(66946007)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: hOAuWwze85woRqyncpGPs/e7ZhBkP2BgDcK+90FJToEcPVcSoxvY7j3OC0h69cS/mL9ZAQQPCSTugt7lvjbOKA5bkJWRcOkQbuCQnmXCpIGmdAquztxTEsX7rictkpGKIVkE3Wh7RN+rWdrP5u1RtiefzQHupqKG2p83pCp7ajmS8V19Pe3kwcJaFMuBL2d5lGSviDgUbk+7XNephr93YlacowljJ/3WipUQeHwnvg7xTmgSHdPUArg1WMwo1rnX6GD+JyyQxQSavg7Kqy/28Nk5XVHgivmG9Vz1Wc2LCyi4EKqQODD0UYDuxAhaAG9bN8tWjYJyWdNn/1rOjxNZ/Lr+rcWpq7KIUeRHeZucEkf9zykR+wMVOd4X0vo/L2BbAKsKmCmRzfPraruvhbagampI+XmFRYmZzXAktK9sUwp2IDjKUC7ualIH/uEkMrDTEn3kJ5VcQK/HZ0LLz/O/24PZ/QiV/qs+ZmwTQ0Vruu5Dv5nT6rCOcg7lh+yYkqkE
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfa7b2c0-c4c8-47f1-2d3b-08d7f816aa38
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2020 14:54:12.3492
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6wqpcYY/mzCIx0E6DgMOWNzgcolYwBYzvPMy12RAgyE6mLyLD9Y7a6YzXNFomYcB2iIGdlWEbPjgv33fSDdTRec4g8Z69bn5KwuSkgMXQeY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3581
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 14, 2020 at 08:22:01AM -0400, Stephen Smalley wrote:
-> On Wed, May 13, 2020 at 11:05 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Wed, May 13, 2020 at 04:27:39PM -0700, Kees Cook wrote:
-> > > Like, couldn't just the entire thing just be:
-> > >
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index a320371899cf..0ab18e19f5da 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -2849,6 +2849,13 @@ static int may_open(const struct path *path, int acc_mode, int flag)
-> > >               break;
-> > >       }
-> > >
-> > > +     if (unlikely(mask & MAY_OPENEXEC)) {
-> > > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT &&
-> > > +                 path_noexec(path))
-> > > +                     return -EACCES;
-> > > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
-> > > +                     acc_mode |= MAY_EXEC;
-> > > +     }
-> > >       error = inode_permission(inode, MAY_OPEN | acc_mode);
-> > >       if (error)
-> > >               return error;
-> > >
-> >
-> > FYI, I've confirmed this now. Effectively with patch 2 dropped, patch 3
-> > reduced to this plus the Kconfig and sysctl changes, the self tests
-> > pass.
-> >
-> > I think this makes things much cleaner and correct.
-> 
-> I think that covers inode-based security modules but not path-based
-> ones (they don't implement the inode_permission hook).  For those, I
-> would tentatively guess that we need to make sure FMODE_EXEC is set on
-> the open file and then they need to check for that in their file_open
-> hooks.
-
-Does there need to be an FMODE_OPENEXEC, or is the presence of
-FMODE_OPEN with FMODE_EXEC sufficient?
-
--- 
-Kees Cook
+On 14/05/2020 14:26, Jonathan Corbet wrote:=0A=
+> On Thu, 14 May 2020 11:24:15 +0200=0A=
+> Johannes Thumshirn <jth@kernel.org> wrote:=0A=
+> =0A=
+> Quick question...=0A=
+> =0A=
+>> Document the design, guarantees and limitations of an authenticated BTRF=
+S=0A=
+>> file-system.=0A=
+>>=0A=
+>> Cc: Jonathan Corbet <corbet@lwn.net>=0A=
+>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+>> ---=0A=
+>>  .../filesystems/btrfs-authentication.rst      | 168 ++++++++++++++++++=
+=0A=
+>>  1 file changed, 168 insertions(+)=0A=
+>>  create mode 100644 Documentation/filesystems/btrfs-authentication.rst=
+=0A=
+>>=0A=
+>> diff --git a/Documentation/filesystems/btrfs-authentication.rst b/Docume=
+ntation/filesystems/btrfs-authentication.rst=0A=
+>> new file mode 100644=0A=
+>> index 000000000000..f13cab248fc0=0A=
+>> --- /dev/null=0A=
+>> +++ b/Documentation/filesystems/btrfs-authentication.rst=0A=
+>> @@ -0,0 +1,168 @@=0A=
+>> +.. SPDX-License-Identifier: GPL-2.0=0A=
+>> +=0A=
+>> +:orphan:=0A=
+>> +=0A=
+> =0A=
+> Why mark this "orphan" rather than just adding it to index.rst so it gets=
+=0A=
+> built with the rest of the docs?=0A=
+>=0A=
+I've no idea of rst and the ubifs-authentication.rst which I had open at th=
+e=0A=
+time did have this as well, so I blindly copied it. Thanks for spotting, wi=
+ll=0A=
+remove in the next iteration.=0A=
