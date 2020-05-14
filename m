@@ -2,81 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F0A1D34BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 17:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C02E1D3522
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 17:32:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgENPOj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 11:14:39 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:38946 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgENPOj (ORCPT
+        id S1727902AbgENPc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 11:32:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbgENPc1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 11:14:39 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DF8166071A6F;
-        Thu, 14 May 2020 17:14:36 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SyhtsM6CPx8Z; Thu, 14 May 2020 17:14:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 82BF46071A7C;
-        Thu, 14 May 2020 17:14:36 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ahyWRP0IqOKq; Thu, 14 May 2020 17:14:36 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5E8D56071A6F;
-        Thu, 14 May 2020 17:14:36 +0200 (CEST)
-Date:   Thu, 14 May 2020 17:14:36 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Johannes Thumshirn <jth@kernel.org>,
-        David Sterba <dsterba@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-Message-ID: <1363039146.219999.1589469276242.JavaMail.zimbra@nod.at>
-In-Reply-To: <SN4PR0401MB3598FFE2AC30EA4E7B85533C9BBC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200514092415.5389-1-jth@kernel.org> <20200514092415.5389-4-jth@kernel.org> <20200514062611.563ec1ea@lwn.net> <SN4PR0401MB3598FFE2AC30EA4E7B85533C9BBC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-Subject: Re: [PATCH v3 3/3] btrfs: document btrfs authentication
+        Thu, 14 May 2020 11:32:27 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213A9C061A0C;
+        Thu, 14 May 2020 08:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=Imjw8/xvmPYYIWqOxAq9Oe4r0JfAc7MY0eytOtHjJBY=; b=ldKCrufxuOjk+yF5HpaPyFyEVs
+        gabqtbSaTGKMiF47Z7FVsw6Zp95wsmXxYBcm9/7c0OpApixYOhkKSJBd16UJwazwS2lM4E7xL9G1V
+        e8Pa8sxoZc7AXpHIWRVMcjdH2WxXT5TCAPv6EccwEuumrnnFpMVjiDX7j11ZszW5a3oPrexUQJczA
+        1wv+kWJhmdMNVyz0/tbRKRl8N2Hf/7vplNyQwNbVmp5oFGQiOy/FtO++mqGbfAXRyt6CoVh0+s2xW
+        TYx+W6ocWBXk3S4nuo+P2JLVMAkYyPfcunYh4pqx+HxTZ/rOTZ3CK+o46qKA2wj5K1OrWu96oDe+G
+        QkBD45PA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jZFqR-0005bQ-T0; Thu, 14 May 2020 15:32:23 +0000
+Subject: Re: mmotm 2020-05-13-20-30 uploaded (objtool warnings)
+To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20200514033104.kRFL_ctMQ%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
+Date:   Thu, 14 May 2020 08:32:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <20200514033104.kRFL_ctMQ%akpm@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Topic: btrfs: document btrfs authentication
-Thread-Index: AQHWKdGHpFk4qUNYxkaDbw38lHwpUkjAs1EV
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
->> Why mark this "orphan" rather than just adding it to index.rst so it gets
->> built with the rest of the docs?
->>
-> I've no idea of rst and the ubifs-authentication.rst which I had open at the
-> time did have this as well, so I blindly copied it. Thanks for spotting, will
-> remove in the next iteration.
+On 5/13/20 8:31 PM, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2020-05-13-20-30 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
 
-Well, the original ubifs-authentication documentation was written in in markdown
-(which is IMHO muss less pain to write), later it was converted to rst by:
 
-commit 09f4c750a8c7d1fc0b7bb3a7aa1de55de897a375
-Author: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Date:   Fri Jul 26 09:51:14 2019 -0300
+on x86_64:
 
-    docs: ubifs-authentication.md: convert to ReST
-    
-    The documentation standard is ReST and not markdown.
-    
-    Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-    Acked-by: Rob Herring <robh@kernel.org>
-    Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_from_user()+0x2a4: call to memset() with UACCESS enabled
+arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_to_user()+0x243: return with UACCESS enabled
 
-But I have no idea what this orphan thingy is.
 
-Thanks,
-//richard
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
