@@ -2,87 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BF11D2845
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 08:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C34381D2858
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 08:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgENGx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 02:53:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60192 "EHLO mga02.intel.com"
+        id S1725938AbgENGz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 02:55:26 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24279 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgENGxZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 02:53:25 -0400
-IronPort-SDR: dfafrfPfAQYfj8xhCoRqd2CmrsrJ3EwHxSFR7jhcg+/VTn+FAL4/yM6WAszt0MVkNWftafypuP
- VIvIX0v+dvgQ==
+        id S1725831AbgENGz0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 May 2020 02:55:26 -0400
+IronPort-SDR: LmGVgLkRdaEFxxRrNnTbG+YU0GlEAgYw34/dzCUlj86jByMeJRw6Vgoc+9xFH6z0bNVLytw6bW
+ tdG0oK4nQqHw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 23:53:24 -0700
-IronPort-SDR: oi1LFRnSZHG0FKAwTJER7HsvYD3Mw8saY2OA7VH2bga/VhYsCcjgEIJ0XRqYkhpthYZ9bdvPr9
- ok48CgMNTvcQ==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 23:55:25 -0700
+IronPort-SDR: 4EAhcH2eyjRNOzx8+C1/Q5Cp+otOL2Ga0272rzp6JWprrN/Q7Ido8gTOuH7YhUPeM66uO8vav/
+ LKhqViWQUQGA==
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,390,1583222400"; 
-   d="scan'208";a="266144719"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 23:53:24 -0700
-From:   ira.weiny@intel.com
-To:     linux-ext4@vger.kernel.org,
+   d="scan'208";a="464413086"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga006.fm.intel.com with ESMTP; 13 May 2020 23:55:25 -0700
+Date:   Wed, 13 May 2020 23:55:25 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org,
         Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V1 9/9] Documentation/dax: Update DAX enablement for ext4
-Date:   Wed, 13 May 2020 23:53:15 -0700
-Message-Id: <20200514065316.2500078-10-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200514065316.2500078-1-ira.weiny@intel.com>
-References: <20200514065316.2500078-1-ira.weiny@intel.com>
+Subject: Re: [PATCH 8/9] fs/ext4: Introduce DAX inode flag
+Message-ID: <20200514065524.GC2140786@iweiny-DESK2.sc.intel.com>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-9-ira.weiny@intel.com>
+ <20200513144706.GH27709@quack2.suse.cz>
+ <20200513214154.GB2140786@iweiny-DESK2.sc.intel.com>
+ <20200514064335.GB9569@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200514064335.GB9569@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Thu, May 14, 2020 at 08:43:35AM +0200, Jan Kara wrote:
+> On Wed 13-05-20 14:41:55, Ira Weiny wrote:
+> > On Wed, May 13, 2020 at 04:47:06PM +0200, Jan Kara wrote:
+> > >
+> > > So I think you'll have to check
+> > > whether DAX flag is being changed,
+> > 
+> > ext4_dax_dontcache() does check if the flag is being changed.
+> 
+> Yes, but if you call it after inode flags change, you cannot determine that
+> just from flags and EXT4_I(inode)->i_flags. So that logic needs to change.
 
-Update the document to reflect ext4 and xfs now behave the same.
+I just caught this email... just after sending V1.
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+I've moved where ext4_dax_dontcache() is called.  I think it is ok now with the
+current check.
 
----
-Changes from RFC:
-	Update with ext2 text...
----
- Documentation/filesystems/dax.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+LMK if I've messed it up...  :-/
 
-diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
-index 735fb4b54117..265c4f808dbf 100644
---- a/Documentation/filesystems/dax.txt
-+++ b/Documentation/filesystems/dax.txt
-@@ -25,7 +25,7 @@ size when creating the filesystem.
- Currently 3 filesystems support DAX: ext2, ext4 and xfs.  Enabling DAX on them
- is different.
- 
--Enabling DAX on ext4 and ext2
-+Enabling DAX on ext2
- -----------------------------
- 
- When mounting the filesystem, use the "-o dax" option on the command line or
-@@ -33,8 +33,8 @@ add 'dax' to the options in /etc/fstab.  This works to enable DAX on all files
- within the filesystem.  It is equivalent to the '-o dax=always' behavior below.
- 
- 
--Enabling DAX on xfs
---------------------
-+Enabling DAX on xfs and ext4
-+----------------------------
- 
- Summary
- -------
--- 
-2.25.1
+Ira
 
+> 
+> 								Honza
+> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
