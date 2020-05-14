@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303801D3D42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 21:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D9C1D3D55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 21:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgENTQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 15:16:19 -0400
-Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:38443 "EHLO
-        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727829AbgENTQT (ORCPT
+        id S1727885AbgENTV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 15:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727840AbgENTV1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 15:16:19 -0400
+        Thu, 14 May 2020 15:21:27 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21092C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 12:21:27 -0700 (PDT)
 Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49NLqj360nzlhjYr;
-        Thu, 14 May 2020 21:16:17 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49NLxc0FXZzlhNp2;
+        Thu, 14 May 2020 21:21:24 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49NLqf39VKzljTrt;
-        Thu, 14 May 2020 21:16:14 +0200 (CEST)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49NLxZ3CmQzljTrx;
+        Thu, 14 May 2020 21:21:22 +0200 (CEST)
 Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
  through O_MAYEXEC
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Kees Cook <keescook@chromium.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         Aleksa Sarai <cyphar@cyphar.com>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -59,19 +59,16 @@ Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
 References: <20200505153156.925111-1-mic@digikod.net>
  <20200505153156.925111-4-mic@digikod.net>
  <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
- <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
- <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
- <202005140830.2475344F86@keescook>
- <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
+ <202005131525.D08BFB3@keescook>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
-Date:   Thu, 14 May 2020 21:16:13 +0200
+Message-ID: <0e654c90-bec5-6ba1-771e-648da94ef547@digikod.net>
+Date:   Thu, 14 May 2020 21:21:21 +0200
 User-Agent: 
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <202005131525.D08BFB3@keescook>
+Content-Type: text/plain; charset=iso-8859-15
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
 X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -80,72 +77,75 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 14/05/2020 18:10, Stephen Smalley wrote:
-> On Thu, May 14, 2020 at 11:45 AM Kees Cook <keescook@chromium.org> wrote:
->>
->> On Thu, May 14, 2020 at 08:22:01AM -0400, Stephen Smalley wrote:
->>> On Wed, May 13, 2020 at 11:05 PM Kees Cook <keescook@chromium.org> wrote:
->>>>
->>>> On Wed, May 13, 2020 at 04:27:39PM -0700, Kees Cook wrote:
->>>>> Like, couldn't just the entire thing just be:
->>>>>
->>>>> diff --git a/fs/namei.c b/fs/namei.c
->>>>> index a320371899cf..0ab18e19f5da 100644
->>>>> --- a/fs/namei.c
->>>>> +++ b/fs/namei.c
->>>>> @@ -2849,6 +2849,13 @@ static int may_open(const struct path *path, int acc_mode, int flag)
->>>>>               break;
->>>>>       }
->>>>>
->>>>> +     if (unlikely(mask & MAY_OPENEXEC)) {
->>>>> +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT &&
->>>>> +                 path_noexec(path))
->>>>> +                     return -EACCES;
->>>>> +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
->>>>> +                     acc_mode |= MAY_EXEC;
->>>>> +     }
->>>>>       error = inode_permission(inode, MAY_OPEN | acc_mode);
->>>>>       if (error)
->>>>>               return error;
->>>>>
->>>>
->>>> FYI, I've confirmed this now. Effectively with patch 2 dropped, patch 3
->>>> reduced to this plus the Kconfig and sysctl changes, the self tests
->>>> pass.
->>>>
->>>> I think this makes things much cleaner and correct.
->>>
->>> I think that covers inode-based security modules but not path-based
->>> ones (they don't implement the inode_permission hook).  For those, I
->>> would tentatively guess that we need to make sure FMODE_EXEC is set on
->>> the open file and then they need to check for that in their file_open
->>> hooks.
->>
->> I kept confusing myself about what order things happened in, so I made
->> these handy notes about the call graph:
->>
->> openat2(dfd, char * filename, open_how)
->>     do_filp_open(dfd, filename, open_flags)
->>         path_openat(nameidata, open_flags, flags)
->>             do_open(nameidata, file, open_flags)
->>                 may_open(path, acc_mode, open_flag)
->>                     inode_permission(inode, MAY_OPEN | acc_mode)
->>                         security_inode_permission(inode, acc_mode)
->>                 vfs_open(path, file)
->>                     do_dentry_open(file, path->dentry->d_inode, open)
->>                         if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) ...
->>                         security_file_open(f)
->>                         open()
->>
->> So, it looks like adding FMODE_EXEC into f_flags in do_open() is needed in
->> addition to injecting MAY_EXEC into acc_mode in do_open()? Hmmm
-> 
-> Just do both in build_open_flags() and be done with it? Looks like he
-> was already setting FMODE_EXEC in patch 1 so we just need to teach
-> AppArmor/TOMOYO to check for it and perform file execute checking in
-> that case if !current->in_execve?
 
-I can postpone the file permission check for another series to make this
-one simpler (i.e. mount noexec only). Because it depends on the sysctl
-setting, it is OK to add this check later, if needed. In the meantime,
-AppArmor and Tomoyo could be getting ready for this.
+On 14/05/2020 01:27, Kees Cook wrote:
+> On Wed, May 13, 2020 at 11:37:16AM -0400, Stephen Smalley wrote:
+>> On Tue, May 5, 2020 at 11:33 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>>
+>>> Enable to forbid access to files open with O_MAYEXEC.  Thanks to the
+>>> noexec option from the underlying VFS mount, or to the file execute
+>>> permission, userspace can enforce these execution policies.  This may
+>>> allow script interpreters to check execution permission before reading
+>>> commands from a file, or dynamic linkers to allow shared object loading.
+>>>
+>>> Add a new sysctl fs.open_mayexec_enforce to enable system administrators
+>>> to enforce two complementary security policies according to the
+>>> installed system: enforce the noexec mount option, and enforce
+>>> executable file permission.  Indeed, because of compatibility with
+>>> installed systems, only system administrators are able to check that
+>>> this new enforcement is in line with the system mount points and file
+>>> permissions.  A following patch adds documentation.
+>>>
+>>> For tailored Linux distributions, it is possible to enforce such
+>>> restriction at build time thanks to the CONFIG_OMAYEXEC_STATIC option.
+>>> The policy can then be configured with CONFIG_OMAYEXEC_ENFORCE_MOUNT and
+>>> CONFIG_OMAYEXEC_ENFORCE_FILE.
+>>>
+>>> Being able to restrict execution also enables to protect the kernel by
+>>> restricting arbitrary syscalls that an attacker could perform with a
+>>> crafted binary or certain script languages.  It also improves multilevel
+>>> isolation by reducing the ability of an attacker to use side channels
+>>> with specific code.  These restrictions can natively be enforced for ELF
+>>> binaries (with the noexec mount option) but require this kernel
+>>> extension to properly handle scripts (e.g., Python, Perl).  To get a
+>>> consistent execution policy, additional memory restrictions should also
+>>> be enforced (e.g. thanks to SELinux).
+>>>
+>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>>> Cc: Aleksa Sarai <cyphar@cyphar.com>
+>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> ---
+>>
+>>> diff --git a/fs/namei.c b/fs/namei.c
+>>> index 33b6d372e74a..70f179f6bc6c 100644
+>>> --- a/fs/namei.c
+>>> +++ b/fs/namei.c
+>>> @@ -411,10 +412,90 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
+>> <snip>
+>>> +#if defined(CONFIG_SYSCTL) && !defined(CONFIG_OMAYEXEC_STATIC)
+>>> +int proc_omayexec(struct ctl_table *table, int write, void __user *buffer,
+>>> +               size_t *lenp, loff_t *ppos)
+>>> +{
+>>> +       int error;
+>>> +
+>>> +       if (write) {
+>>> +               struct ctl_table table_copy;
+>>> +               int tmp_mayexec_enforce;
+>>> +
+>>> +               if (!capable(CAP_MAC_ADMIN))
+>>> +                       return -EPERM;
+>>
+>> Not fond of using CAP_MAC_ADMIN here (or elsewhere outside of security
+>> modules).  The ability to set this sysctl is not equivalent to being
+>> able to load a MAC policy, set arbitrary MAC labels on
+>> processes/files, etc.
+> 
+> That's fair. In that case, perhaps this could just use the existing
+> _sysadmin helper? (Though I should note that these perm checks actually
+> need to be in the open, not the read/write ... I thought there was a
+> series to fix that, but I can't find it now. Regardless, that's
+> orthogonal to this series.)
+
+OK, I'll switch to CAP_SYS_ADMIN with proc_dointvec_minmax_sysadmin().
