@@ -2,81 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C34381D2858
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 08:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD1D1D298F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 10:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbgENGz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 02:55:26 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24279 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbgENGz0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 02:55:26 -0400
-IronPort-SDR: LmGVgLkRdaEFxxRrNnTbG+YU0GlEAgYw34/dzCUlj86jByMeJRw6Vgoc+9xFH6z0bNVLytw6bW
- tdG0oK4nQqHw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 23:55:25 -0700
-IronPort-SDR: 4EAhcH2eyjRNOzx8+C1/Q5Cp+otOL2Ga0272rzp6JWprrN/Q7Ido8gTOuH7YhUPeM66uO8vav/
- LKhqViWQUQGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,390,1583222400"; 
-   d="scan'208";a="464413086"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga006.fm.intel.com with ESMTP; 13 May 2020 23:55:25 -0700
-Date:   Wed, 13 May 2020 23:55:25 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] fs/ext4: Introduce DAX inode flag
-Message-ID: <20200514065524.GC2140786@iweiny-DESK2.sc.intel.com>
-References: <20200513054324.2138483-1-ira.weiny@intel.com>
- <20200513054324.2138483-9-ira.weiny@intel.com>
- <20200513144706.GH27709@quack2.suse.cz>
- <20200513214154.GB2140786@iweiny-DESK2.sc.intel.com>
- <20200514064335.GB9569@quack2.suse.cz>
+        id S1725979AbgENIC0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 04:02:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725935AbgENICZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 May 2020 04:02:25 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD51C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 01:02:25 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id s9so2032737eju.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 May 2020 01:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OQohwe4L50M/oJP7LFqy+JHItl7Ty+QkEmlWmoe7rwE=;
+        b=MLiqnTRw3pAF+JO9xJmo4W/KRXGJy7RGRXLxh/82rGI9zQZdbIbkOc1I8dJYzcPVaw
+         DeKWNlNQEdHdb5e151pA0IO5UJOf5oMB3tTyxF118f81RmSp5s/MVxcFS8yK5kc2HEba
+         UXRE45piJmIVrmuiHJ2lJtHvIi78htE0HeLyU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OQohwe4L50M/oJP7LFqy+JHItl7Ty+QkEmlWmoe7rwE=;
+        b=I1oy1LNcD8hvkxU7wG3J6I6mQZH+w8mgg1e8F5LjP335w7YdFkSFWT1sVMD1uJrh6/
+         lOVfryPwEAtvBOzT+a0cq3UFmleDFTLd8Dq+AClbZlD+yGrIivW1cPYZnDLfznbbjwzI
+         5wnREZbbd3azkO8I4J5Srmu55EeYe9a1ac1d8Tnm2AIZyEmeX4IltqAM6bM+EOJDOMvX
+         RrU74kYQ+bn/PsdLFk79aMnHG1oSrktHESXmu8Xju2UOWZw2pH53xod3kfQdRaSZFbbE
+         05QqnTfIhVqO04Fu4BexE8CkcOKAqjJUP/884kKvtHxU5SS1DyKIbghbpwcrGowKmSai
+         JXtw==
+X-Gm-Message-State: AOAM532K8ZLiJIJXlDhAaFuExt9h53D/khhs5oVjQH9bFXVTmpFUIT24
+        FbJzz71IbCFULMetB7Tpz5y3X6nhepvtPO2GIFMB9Q==
+X-Google-Smtp-Source: ABdhPJw5XNmFn1XHD6BXWQ/WtMFU9a2KVsncpWhHCuS1iWHLGucTCVnLn0zb6upOvWBn9mtpwKvexECZykZ6reVNZnE=
+X-Received: by 2002:a17:906:cd08:: with SMTP id oz8mr509387ejb.90.1589443343915;
+ Thu, 14 May 2020 01:02:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200514064335.GB9569@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20200505095915.11275-1-mszeredi@redhat.com> <20200505095915.11275-6-mszeredi@redhat.com>
+ <20200513100432.GC7720@infradead.org>
+In-Reply-To: <20200513100432.GC7720@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 14 May 2020 10:02:12 +0200
+Message-ID: <CAJfpeguPhJApOQgw02-yCPJZ5Tx_Zy2ZFh+De5DC560FNqdFSA@mail.gmail.com>
+Subject: Re: [PATCH 05/12] f*xattr: allow O_PATH descriptors
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 14, 2020 at 08:43:35AM +0200, Jan Kara wrote:
-> On Wed 13-05-20 14:41:55, Ira Weiny wrote:
-> > On Wed, May 13, 2020 at 04:47:06PM +0200, Jan Kara wrote:
-> > >
-> > > So I think you'll have to check
-> > > whether DAX flag is being changed,
-> > 
-> > ext4_dax_dontcache() does check if the flag is being changed.
-> 
-> Yes, but if you call it after inode flags change, you cannot determine that
-> just from flags and EXT4_I(inode)->i_flags. So that logic needs to change.
+On Wed, May 13, 2020 at 12:04 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> Needs a Cc to linux-api and linux-man.
+>
+> On Tue, May 05, 2020 at 11:59:08AM +0200, Miklos Szeredi wrote:
+> > This allows xattr ops on symlink/special files referenced by an O_PATH
+> > descriptor without having to play games with /proc/self/fd/NN (which
+> > doesn't work for symlinks anyway).
+>
+> Do we even intent to support xattrs on say links?  They never wire up
+> ->listxattr and would only get them through s_xattr.  I'm defintively
+> worried that this could break things without a very careful audit.
 
-I just caught this email... just after sending V1.
+Why do you think listxattr is not wired up for symlinks?
 
-I've moved where ext4_dax_dontcache() is called.  I think it is ok now with the
-current check.
+Xfs and ext4 definitely do have it, and it seems most others too:
 
-LMK if I've messed it up...  :-/
+$ git grep -A10  "struct inode_operations.*symlink" | grep listxattr | wc -l
+29
 
-Ira
-
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Thanks,
+Miklos
