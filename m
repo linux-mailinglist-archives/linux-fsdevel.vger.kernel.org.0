@@ -2,29 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A831D3701
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 18:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BFB1D371C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 18:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgENQw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 12:52:57 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:44220 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbgENQw4 (ORCPT
+        id S1726171AbgENQ4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 12:56:52 -0400
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:34938
+        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726119AbgENQ4s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 12:52:56 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jZH6E-0000LW-Og; Thu, 14 May 2020 10:52:46 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jZH69-0007Jx-TF; Thu, 14 May 2020 10:52:46 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Thu, 14 May 2020 12:56:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1589475406; bh=VePP3AlCwJg2EGO8jXY+WnQEJRNt7KiDPu2EU0qafGE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=a2QXbLrBAzG7aupD9Sma6DrFN+iYGRPqrttHtwtIW0rxSUfgKSotGYhOQyHF12TB//sRylkfSGVW4dvSW4BZFz/HVuriWTwqokTeICHARZG3TExcLQCooQWt7fMPO3KozoFeMbqUtmixxKbUZcG5uSXQARV9Ghf3ijkw4nEhsB64dU9Xg5OOC3y85oq4CbgJLLGbK9PJ5T2nKl2MWXAA7VCaEkmZYsp/xNgtZlU99CW3heAjE92BrUO7AQinqbclGEZeameS4l0XGs8mzJmu81g5sU2kuMCqz9vxO3ezFi0VVBwhHafe6k2PlP0Gd8qyr9lG8GfxLU9gtYdpkQYozw==
+X-YMail-OSG: Dtwa1ykVM1m_YbIOhcWQsOljD.NCOwBhPkSuUU8M5pdiRqij7nc9jVKJ87y1rlb
+ tsMtLoRagRXXApA1_DqRhtE63yXMoDEIQb_fP7w7LXd10skMzAXQ.x5QvrDYG5aup0i6LBHCdhix
+ QWZK5Vwp.fJdsEqDc3VvQI.cB7qdm_6TFmqAZISniOohKcnhBGMlTe_Pnhi5o63xknzJt9QNcpoR
+ tgH94r4dOP_XV7L79LMKhJajG6zUz5oqkBWManvdSfRtjQcGos.hedRXGYbyrPdCLE7lFCGiSNCQ
+ X.IzwjZ1CBiHYZTJYAnjN7p.DYAZ7OXQLwLA8Y_YFUB3ikDy9mfon5Br3mY_byB3gN47UgC9axH6
+ Zk1AHFImqRLbIH3IpzwXI8GybuKW2X_2rzf65HGeUExDurOEtIrQw0YHcG_lx3npPgTQj.2vUT6y
+ s9iz6szDsSg9LMhG6dRpTs5wZbaLqn7xjVv2oho_2jT0k0VJye8ZNueM7tb2J4cNvFZWwaJmBbnZ
+ cO1WQmybqDEiMtTTO7E1jPqbUCJqar71nMp02RTkRYW79MtxyfMugH1tfJhaSRmFk5tibmuPe6vM
+ noj9QcPq6D52gCE4yVYNbLhapSsyNf7pl95WzwseGZWJyMChjJqyubCYxNweLBeo19WaYIPHs.tj
+ 1nvCz6d627Pf_N6A5EBxOdfC6lvHdOnBj8EbSa.3GA7p8xJQpDz.EPv9lYd_pNqzZPCi6U9RGNbJ
+ kyMni9YZONKDJNylY2WPud5B2WdzIe1wG3VIBT03jOre8UWCudZiEyaUnvWXzfR0dr5DxS2abMdL
+ ZTxZxufKK3DbE62gMLhmiL5jWhP1_iVSJrSWUiMr03a_ckMoFSOYCi3nnwNCeFhfZiMkgnI_7pfg
+ LGmEWixvo.dThwEJaugVaf9BheIp291L_A8zKpUEMrEfr55HUzFgP0fbe2TqXUZ9umh7nASPHksj
+ ZRbFcCoV1KPcTDjzGH4v.CrncVFMCR0cF7X3CkcjW6XYgqS.qZ51hGStJFFXLb.gyWhngeNy.LPB
+ FGBykCGwpJlPODHxpxMBANar7PFLnIXn0htucMoRI9cF3ONAPvx9dM8j.vlSMt54pjFycCMapwly
+ 97_YwJg8rXwcDsD4_4NmwuCNWJ5U.K1jbc5yFCpiUF.uXYceW6Mhn354LVgVVE1MDcnQlj1LlF4J
+ vLNwZl84z8VLJjQy8hwy1UOc2hP6Z2TUNlKC8uekppssUivrofKLcJ_V4G.8_o8xpzY1qbWT_r4y
+ QEKv5mI2SvNet9qTQ.uqf8bNZs18LJ7..Ewef3y_qCE1.3YNSx_tW83wodI5RXUAGbnBSet3UDHZ
+ iGwY3M3jTVY3ce9uViIDFwC4lWFaf0_2qi5sNXrWC2L0u2ZNxOhNRi6lFPnXRugkjp_BZYbgDcW8
+ p3ps0h_nhZPOYLFUnwFbBl2MqihVEvyM2efVVp7lIWpSQbYY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 May 2020 16:56:46 +0000
+Received: by smtp414.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID cdcbb12f8b30853379a6f99b595cefe7;
+          Thu, 14 May 2020 16:56:44 +0000 (UTC)
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
@@ -35,150 +50,164 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
         LSM List <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <87eerszyim.fsf_-_@x220.int.ebiederm.org>
-        <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
-        <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
-        <87sgg6v8we.fsf@x220.int.ebiederm.org>
-        <202005111428.B094E3B76A@keescook>
-        <874kslq9jm.fsf@x220.int.ebiederm.org>
-        <CAHk-=wjhmoGLcMgcDB0rT-n6waC+rdnjU3FRKAwSTMSG=gaK9Q@mail.gmail.com>
-Date:   Thu, 14 May 2020 11:49:06 -0500
-In-Reply-To: <CAHk-=wjhmoGLcMgcDB0rT-n6waC+rdnjU3FRKAwSTMSG=gaK9Q@mail.gmail.com>
-        (Linus Torvalds's message of "Tue, 12 May 2020 17:20:00 -0700")
-Message-ID: <87zhaaea2l.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org> <202005111428.B094E3B76A@keescook>
+ <874kslq9jm.fsf@x220.int.ebiederm.org> <202005121218.ED0B728DA@keescook>
+ <87lflwq4hu.fsf@x220.int.ebiederm.org> <202005121606.5575978B@keescook>
+ <202005121625.20B35A3@keescook> <202005121649.4ED677068@keescook>
+ <87sgg2ftuj.fsf@x220.int.ebiederm.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <a2169b6f-b527-7e35-2d41-1e9cd1f8436c@schaufler-ca.com>
+Date:   Thu, 14 May 2020 09:56:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jZH69-0007Jx-TF;;;mid=<87zhaaea2l.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/S9hkDbdmo1U/5J47Uj+MjNVaSt5QThaA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 4454 ms - load_scoreonly_sql: 0.10 (0.0%),
-        signal_user_changed: 12 (0.3%), b_tie_ro: 10 (0.2%), parse: 1.58
-        (0.0%), extract_message_metadata: 18 (0.4%), get_uri_detail_list: 2.8
-        (0.1%), tests_pri_-1000: 17 (0.4%), tests_pri_-950: 1.39 (0.0%),
-        tests_pri_-900: 1.24 (0.0%), tests_pri_-90: 93 (2.1%), check_bayes: 82
-        (1.9%), b_tokenize: 12 (0.3%), b_tok_get_all: 16 (0.4%), b_comp_prob:
-        3.8 (0.1%), b_tok_touch_all: 47 (1.1%), b_finish: 0.92 (0.0%),
-        tests_pri_0: 389 (8.7%), check_dkim_signature: 0.78 (0.0%),
-        check_dkim_adsp: 2.4 (0.1%), poll_dns_idle: 3903 (87.6%),
-        tests_pri_10: 3.2 (0.1%), tests_pri_500: 3914 (87.9%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <87sgg2ftuj.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15941 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-
-> On Tue, May 12, 2020 at 11:46 AM Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
+On 5/14/2020 7:56 AM, Eric W. Biederman wrote:
+> Kees Cook <keescook@chromium.org> writes:
+>
+>> On Tue, May 12, 2020 at 04:47:14PM -0700, Kees Cook wrote:
+>>> And now I wonder if qemu actually uses the resulting AT_EXECFD ...
+>> It does, though I'm not sure if this is to support crossing mount poin=
+ts,
+>> dropping privileges, or something else, since it does fall back to jus=
+t
+>> trying to open the file.
 >>
->> I am still thinking about this one, but here is where I am at.  At a
->> practical level passing the file descriptor of the script to interpreter
->> seems like something we should encourage in the long term.  It removes
->> races and it is cheaper because then the interpreter does not have to
->> turn around and open the script itself.
->
-> Yeah, I think we should continue to support it, because I think it's
-> the right thing to do (and we might just end up having compatibility
-> issues if we don't).
->
-> How about trying to move the logic to the common code, out of binfmt_misc?
->
-> IOW, how about something very similar to your "brpm->preserve_creds"
-> thing that you did for the credentials (also for binfmt_misc, which
-> shouldn't surprise anybody: binfmt_misc is simply the "this is the
-> generic thing for letting user mode do the final details").
->
->> Calling fd_install in binfmt_misc still seems wrong, as that exposes
->> the new file descriptor to user space with the old creds.
->
-> Right.  And it really would be good to simply not have these kinds of
-> very special cases inside the low-level binfmt code: I'd much rather
-> have the special cases in the generic code, so that we see what the
-> ordering is etc. One of the big problems with all these binfmt
-> callbacks has been the fact that it makes it so hard to think about
-> and change the generic code, because the low-level binfmt handlers all
-> do their own special thing.
->
-> So moving it to generic code would likely simplify things from that
-> angle, even if the actual complexity of the feature itself remains.
->
-> Besides, we really have exposed this to other code anyway thanks to
-> that whole bprm->interp_data thing, and the AT_EXECFD AUX entries that
-> we have. So it's not really "internal" to binfmt_misc _anyway_.
->
-> So how about we just move the fd_binary logic to the generic execve
-> code, and just binfmt_misc set the flag for "yes, please do this",
-> exactly like "preserve_creds"?
->
->> It is possible although unlikely for userspace to find the file
->> descriptor without consulting AT_EXECFD so just to be conservative I
->> think we should install the file descriptor in begin_new_exec even if
->> the next interpreter does not support AT_EXECFD.
->
-> Ack. I think the AT_EXECFD thing is a sign that this isn't internal to
-> binfmt_misc, but it also shouldn't be gating this issue. In reality,
-> ELF is the only real binary format that matters - the script/misc
-> binfmts are just indirection entries - and it supports AT_EXECFD, so
-> let's just ignore the theoretical case of "maybe nobody exposes it".
->
-> So yes, just make it part of begin_new_exec(), and there's no reason
-> to support more than a single fd. No stacks or arrays of these things
-> required, I feel. It's not like AT_EXECFD supports the notion of
-> multiple fd's being reported anyway, nor does it make any sense to
-> have some kind of nested misc->misc binfmt nesting.
->
-> So making that whole interp_data and fd_binary thing be a generic
-> layer thing would make the search_binary_handler() code in binfmt_misc
-> be a pure tailcall too, and then the conversion to a loop ends up
-> working and being the right thing.
+>>     execfd =3D qemu_getauxval(AT_EXECFD);
+>>     if (execfd =3D=3D 0) {
+>>         execfd =3D open(filename, O_RDONLY);
+>>         if (execfd < 0) {
+>>             printf("Error while loading %s: %s\n", filename, strerror(=
+errno));
+>>             _exit(EXIT_FAILURE);
+>>         }
+>>     }
+> My hunch is that the fallback exists from a time when the kernel did no=
+t
+> implement AT_EXECFD, or so that qemu can run on kernels that don't
+> implement AT_EXECFD.  It doesn't really matter unless the executable is=
 
-That is pretty much what I have been thinking.  I have just been taking
-it slow so I find as many funny corner cases as I can.
+> suid, or otherwise changes privileges.
+>
+>
+> I looked into this a bit to remind myself why exec works the way it
+> works, with changing privileges.
+>
+> The classic attack is pointing a symlink at a #! script that is suid or=
 
-Nothing ever clears the BINPRM_FLAGS_EXECFD so the current code can
-not support nesting.
+> otherwise changes privileges.  The kernel will open the script and set
+> the privileges, read the interpreter from the first line, and proceed t=
+o
+> exec the interpreter.  The interpreter will then open the script using
+> the pathname supplied by the kernel.  The name of the symlink.
+> Before the interpreter reopens the script the attack would replace
+> the symlink with a script that does something else, but gets to run
+> with the privileges of the script.
+>
+>
+> Defending against that time of check vs time of use attack is why
+> bprm_fill_uid, and cap_bprm_set_creds use the credentials derived from
+> the interpreter instead of the credentials derived from the script.
+>
+>
+> The other defense is to replace the pathname of the executable that the=
 
-Now I do think a nested misc->misc binfmt thing can make sense in
-principal.  I have an old dos spectrum emulator that I use to play some
-of the games that I grew up with.  Running that emulator makes me two
-emulators deep.  I can also imagine writting a domain specific language
-in python or perl, and setting things up so scripts in the domain
-specific language can be run directly.
+> intepreter will open with /dev/fd/N.
+>
+> All of this predates Linux entirely.  I do remember this was fixed at
+> some point in Linux but I don't remember the details.  I can just read
+> the solution that was picked in the code.
+>
+>
+>
+> All of this makes me wonder how are the LSMs protected against this
+> attack.
+>
+> Let's see the following LSMS implement brpm_set_creds:
+> tomoyo   - Abuses bprm_set_creds to call tomoyo_load_policy [ safe ]
+> smack    - Requires CAP_MAC_ADMIN to smack setxattrs        [ vulnerabl=
+e? ]
+>            Uses those xattrs in smack_bprm_set_creds
 
-So I think I need to deliberately test and prevent a nested misc->misc,
-just so data structures don't get stomped.  If the cases where it could
-useful prove sufficiently interesting we can enable them later.
+What is the concern? If the xattrs change after the check,
+the behavior should still be consistent.=20
 
-Eric
+> apparmor - Everything is based on names so the symlink      [ safe? ]
+>            attack won't work as it has the wrong name.
+>            As long as the trusted names can't be renamed
+>            apparmor appears good.
+> selinux  - Appears to let anyone set selinux xattrs         [ safe? ]
+>            Requires permission for a sid transfer
+>            As the attack appears not to allow anything that
+>            would not be allowed anyway it looks like selinux
+>            is safe.
+>
+> LSM folks, especially Casey am I reading this correctly?  Did I
+> correctly infer how your LSMs deal with the time of check to time of us=
+e
+> attack on the script name?
+>
+> Eric
+>
+
