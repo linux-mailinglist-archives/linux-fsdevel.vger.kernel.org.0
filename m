@@ -2,132 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9226F1D2C92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 12:24:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A82B1D2CAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 May 2020 12:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbgENKXt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 06:23:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57120 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbgENKXs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 06:23:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8E97AAE67;
-        Thu, 14 May 2020 10:23:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 62C4A1E12A8; Thu, 14 May 2020 12:23:46 +0200 (CEST)
-Date:   Thu, 14 May 2020 12:23:46 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V1 3/9] fs/ext4: Disallow encryption if inode is DAX
-Message-ID: <20200514102346.GE9569@quack2.suse.cz>
-References: <20200514065316.2500078-1-ira.weiny@intel.com>
- <20200514065316.2500078-4-ira.weiny@intel.com>
+        id S1726317AbgENK1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 06:27:53 -0400
+Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:52757 "EHLO
+        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726241AbgENK1x (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 May 2020 06:27:53 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49N75w45kTzlhj0J;
+        Thu, 14 May 2020 12:27:48 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49N75t2qqnzljHmw;
+        Thu, 14 May 2020 12:27:46 +0200 (CEST)
+Subject: Re: [PATCH v17 02/10] landlock: Add ruleset and domain management
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200511192156.1618284-1-mic@digikod.net>
+ <20200511192156.1618284-3-mic@digikod.net>
+ <alpine.LRH.2.21.2005141302330.30052@namei.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <f646e1c7-33cf-333f-070c-0a40ad0468cd@digikod.net>
+Date:   Thu, 14 May 2020 12:27:45 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200514065316.2500078-4-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LRH.2.21.2005141302330.30052@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 13-05-20 23:53:09, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> Encryption and DAX are incompatible.  Changing the DAX mode due to a
-> change in Encryption mode is wrong without a corresponding
-> address_space_operations update.
-> 
-> Make the 2 options mutually exclusive by returning an error if DAX was
-> set first.
-> 
-> Furthermore, clarify the documentation of the exclusivity and how that
-> will work.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Looks good to me. You can add:
+On 14/05/2020 05:09, James Morris wrote:
+> On Mon, 11 May 2020, Mickaël Salaün wrote:
+> 
+>> + * .. warning::
+>> + *
+>> + *   It is currently not possible to restrict some file-related actions
+>> + *   accessible through these syscall families: :manpage:`chdir(2)`,
+>> + *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
+>> + *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
+>> + *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`.
+>> + *   Future Landlock evolutions will enable to restrict them.
+> 
+> I have to wonder how useful Landlock will be without more coverage per 
+> the above.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This is the result of previous discussions (on mailing lists and
+conferences) to minimize the code of Landlock to ease review. There is
+also network and other subsystems which are not covered, the same way
+other LSMs may not cover everything. However, Landlock is designed to be
+extensible without breaking user space, so extending this access-control
+will not be a problem. Previous versions of this patch series handled
+much more.
 
-								Honza
+Moreover, we can compare the current situation with seccomp. Indeed,
+seccomp only enables to restrict system calls according to their number
+and their raw arguments. seccomp is designed to limit the attack surface
+of the kernel but it is also used to remove ways to access kernel
+resources. Application developers willing to sandbox their products are
+already using seccomp but there is limitations (e.g. file access
+control). Landlock addresses such limitations, which improves the
+current situation.
 
+We can also view seccomp as a complementary solution to the current
+limitations of Landlock. Indeed, seccomp filters can block or restrict
+the use of syscall families which may not be currently handled by Landlock.
 
 > 
-> ---
-> Changes:
-> 	remove WARN_ON_ONCE
-> 	Add documentation to the encrypt doc WRT DAX
-> ---
->  Documentation/filesystems/fscrypt.rst |  4 +++-
->  fs/ext4/super.c                       | 10 +---------
->  2 files changed, 4 insertions(+), 10 deletions(-)
+> It would be helpful if you could outline a threat model for this initial 
+> version, so people can get an idea of what kind of useful protection may
+> be gained from it.
+
+The main threat model may be seen as protecting from vulnerable (i.e.
+malicious) code. But because Landlock policies are defined by
+application developers, they also define their own threat model.
+
 > 
-> diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-> index aa072112cfff..1475b8d52fef 100644
-> --- a/Documentation/filesystems/fscrypt.rst
-> +++ b/Documentation/filesystems/fscrypt.rst
-> @@ -1038,7 +1038,9 @@ astute users may notice some differences in behavior:
->  - The ext4 filesystem does not support data journaling with encrypted
->    regular files.  It will fall back to ordered data mode instead.
->  
-> -- DAX (Direct Access) is not supported on encrypted files.
-> +- DAX (Direct Access) is not supported on encrypted files.  Attempts to enable
-> +  DAX on an encrypted file will fail.  Mount options will _not_ enable DAX on
-> +  encrypted files.
->  
->  - The st_size of an encrypted symlink will not necessarily give the
->    length of the symlink target as required by POSIX.  It will actually
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index bf5fcb477f66..9873ab27e3fa 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1320,7 +1320,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  	if (inode->i_ino == EXT4_ROOT_INO)
->  		return -EPERM;
->  
-> -	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
-> +	if (IS_DAX(inode))
->  		return -EINVAL;
->  
->  	res = ext4_convert_inline_data(inode);
-> @@ -1344,10 +1344,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
->  			ext4_clear_inode_state(inode,
->  					EXT4_STATE_MAY_INLINE_DATA);
-> -			/*
-> -			 * Update inode->i_flags - S_ENCRYPTED will be enabled,
-> -			 * S_DAX may be disabled
-> -			 */
->  			ext4_set_inode_flags(inode);
->  		}
->  		return res;
-> @@ -1371,10 +1367,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  				    ctx, len, 0);
->  	if (!res) {
->  		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
-> -		/*
-> -		 * Update inode->i_flags - S_ENCRYPTED will be enabled,
-> -		 * S_DAX may be disabled
-> -		 */
->  		ext4_set_inode_flags(inode);
->  		res = ext4_mark_inode_dirty(handle, inode);
->  		if (res)
-> -- 
-> 2.25.1
+> Are there any distros or other major users who are planning on enabling or 
+> at least investigating Landlock?
+
+I think the question should be: is there any distros which are not
+interested to improve the security of their users? :)
+Landlock is mainly designed for application developers, and most Linux
+distros rely on applications which are not developed by themselves.
+
+Some hardened distros such as CLIP OS and Chrome OS are interested to
+extend the security of the whole system with tailored sandboxing (e.g.
+internal and critical services, security brokers). For example, Chrome
+OS folks investigated with a previous version of Landlock:
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel-next/+/658517/
+I'm sure there is other tailored distros which will be interested once
+Landlock will be upstream (e.g. Tails, Qubes OS, Subgraph OS, etc.).
+
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Do you have any examples of a practical application of this scheme?
+
+We can start with applications with builtin sandboxing, like web
+browsers, web services, email services, SSH, etc. There is also all
+system services handled by an init system which provides security
+features (e.g. systemd). There is also the security sandbox tools (e.g.
+Minijail [1], Firejail [2], nsjail [3], Flatpak [4], etc.). And finally,
+security-oriented APIs such as Sandboxed API [5]. Most of them should
+welcome new Linux sandboxing features provided by Landlock.
+
+[1] https://android.googlesource.com/platform/external/minijail
+[2] https://firejail.wordpress.com/
+[3] https://nsjail.dev/
+[4] https://flatpak.org/
+[5] https://github.com/google/sandboxed-api
