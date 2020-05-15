@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3E21D51C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D098D1D5103
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgEOOjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 10:39:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
+        id S1727819AbgEOOhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:37:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727097AbgEOOhh (ORCPT
+        by vger.kernel.org with ESMTP id S1727799AbgEOOhl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 10:37:37 -0400
+        Fri, 15 May 2020 10:37:41 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71DE8C05BD0A;
-        Fri, 15 May 2020 07:37:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45619C05BD09;
+        Fri, 15 May 2020 07:37:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=9OkRp1p3UvpvhrMloqYZ5BRhhjLRydsct9faQtkGwTk=; b=DdyZcp26/ow147BL9gUGZZnER7
-        vcCTRmMp36OtMyz9pn19PFkols5p+Nj3kQQ+jlz3xQh4MH/sjs2KmvQIAZVQQceUPBHHlCJNPsBhE
-        +V4VFDQRDsfz4ppjxrPcVC0i3Znl6X0WZ+eB02i4ZAUvjHiteAVQo16H/TU3CzVSOW9lJG0ALia4r
-        ovxaKmklN2eUI0ytL0Xzw2pUigOnnXYHm4EAbYD4UjXdBFdaCsw5Eft4WE8hp7WGJOJZgD6A9e+WW
-        z7TDLg9mqbBwkpvdSpQOyl6PRMV3rhIGbixYdQJOTjhWvpkxEleX4gG2HEIv1CzggF07ZucRfNtL/
-        pgIYQmMA==;
+        bh=aVQ1xLZiwZwftiaH3jhCNlEcJ33SLJz0PSYci41Jgd4=; b=OZZbKqQS7yRJ9ydeXAseXDrGPR
+        pCqtvpuNCx4h0c+Kutl3MBL/FRJAKV1XNxx0NGunIFjUln9zHcpS19ogGzj5Z6lkeIHcy2Io0MHs5
+        vzmFw9UizVw8q38+CxQ4klLHCYhZiIV+2NcqyeXFoeBHLUMSvZ1vTdGBBhoDSkp9aNrXq8rCDjxju
+        BJC34ZsMp2go3jzsikwk4bWdY128y85jVQVtOvd5CbXvkF9hISoRVHqZIlat0xeveRmNV2PQnKYFP
+        j3R6GevPGnLNNPVmlBIFC9wcp9FcuWg45rYfky2q0sROWnH7kIBgWP3rKOknfe6d8k1QCZA5b9qY5
+        jb3BFk5g==;
 Received: from [2001:4bb8:188:1506:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZbSe-0004HF-J3; Fri, 15 May 2020 14:37:17 +0000
+        id 1jZbSh-0004MA-75; Fri, 15 May 2020 14:37:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +43,9 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/29] c6x: use asm-generic/cacheflush.h
-Date:   Fri, 15 May 2020 16:36:27 +0200
-Message-Id: <20200515143646.3857579-11-hch@lst.de>
+Subject: [PATCH 11/29] hexagon: use asm-generic/cacheflush.h
+Date:   Fri, 15 May 2020 16:36:28 +0200
+Message-Id: <20200515143646.3857579-12-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200515143646.3857579-1-hch@lst.de>
 References: <20200515143646.3857579-1-hch@lst.de>
@@ -57,56 +57,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-C6x needs almost no cache flushing routines of its own.  Rely on
+Hexagon needs almost no cache flushing routines of its own.  Rely on
 asm-generic/cacheflush.h for the defaults.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/c6x/include/asm/cacheflush.h | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+ arch/hexagon/include/asm/cacheflush.h | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/arch/c6x/include/asm/cacheflush.h b/arch/c6x/include/asm/cacheflush.h
-index 4540b40475e6c..10922d528de6d 100644
---- a/arch/c6x/include/asm/cacheflush.h
-+++ b/arch/c6x/include/asm/cacheflush.h
-@@ -16,21 +16,6 @@
- #include <asm/page.h>
- #include <asm/string.h>
+diff --git a/arch/hexagon/include/asm/cacheflush.h b/arch/hexagon/include/asm/cacheflush.h
+index fb447de45d54c..6eff0730e6efd 100644
+--- a/arch/hexagon/include/asm/cacheflush.h
++++ b/arch/hexagon/include/asm/cacheflush.h
+@@ -25,29 +25,17 @@
+ #define LINESIZE	32
+ #define LINEBITS	5
  
--/*
-- * virtually-indexed cache management (our cache is physically indexed)
-- */
--#define flush_cache_all()			do {} while (0)
--#define flush_cache_mm(mm)			do {} while (0)
--#define flush_cache_dup_mm(mm)			do {} while (0)
--#define flush_cache_range(mm, start, end)	do {} while (0)
--#define flush_cache_page(vma, vmaddr, pfn)	do {} while (0)
--#define flush_cache_vmap(start, end)		do {} while (0)
--#define flush_cache_vunmap(start, end)		do {} while (0)
+-#define flush_cache_all()			do { } while (0)
+-#define flush_cache_mm(mm)			do { } while (0)
+-#define flush_cache_dup_mm(mm)			do { } while (0)
+-#define flush_cache_range(vma, start, end)	do { } while (0)
+-#define flush_cache_page(vma, vmaddr, pfn)	do { } while (0)
 -#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
--#define flush_dcache_page(page)			do {} while (0)
--#define flush_dcache_mmap_lock(mapping)		do {} while (0)
--#define flush_dcache_mmap_unlock(mapping)	do {} while (0)
+-#define flush_dcache_page(page)			do { } while (0)
+-#define flush_dcache_mmap_lock(mapping)		do { } while (0)
+-#define flush_dcache_mmap_unlock(mapping)	do { } while (0)
+-#define flush_icache_page(vma, pg)		do { } while (0)
+-#define flush_icache_user_range(vma, pg, adr, len)	do { } while (0)
+-#define flush_cache_vmap(start, end)		do { } while (0)
+-#define flush_cache_vunmap(start, end)		do { } while (0)
 -
  /*
-  * physically-indexed cache management
+  * Flush Dcache range through current map.
   */
-@@ -49,14 +34,12 @@ do {								  \
- 			(unsigned long) page_address(page) + PAGE_SIZE)); \
- } while (0)
+ extern void flush_dcache_range(unsigned long start, unsigned long end);
++#define flush_dcache_range flush_dcache_range
  
--
- #define copy_to_user_page(vma, page, vaddr, dst, src, len) \
- do {						     \
- 	memcpy(dst, src, len);			     \
- 	flush_icache_range((unsigned) (dst), (unsigned) (dst) + (len)); \
- } while (0)
+ /*
+  * Flush Icache range through current map.
+  */
+ extern void flush_icache_range(unsigned long start, unsigned long end);
++#define flush_icache_range flush_icache_range
  
--#define copy_from_user_page(vma, page, vaddr, dst, src, len) \
--	memcpy(dst, src, len)
+ /*
+  * Memory-management related flushes are there to ensure in non-physically
+@@ -78,6 +66,7 @@ static inline void update_mmu_cache(struct vm_area_struct *vma,
+ 
+ void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
+ 		       unsigned long vaddr, void *dst, void *src, int len);
++#define copy_to_user_page copy_to_user_page
+ 
+ #define copy_from_user_page(vma, page, vaddr, dst, src, len) \
+ 	memcpy(dst, src, len)
+@@ -85,4 +74,6 @@ void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
+ extern void hexagon_inv_dcache_range(unsigned long start, unsigned long end);
+ extern void hexagon_clean_dcache_range(unsigned long start, unsigned long end);
+ 
 +#include <asm-generic/cacheflush.h>
- 
- #endif /* _ASM_C6X_CACHEFLUSH_H */
++
+ #endif
 -- 
 2.26.2
 
