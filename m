@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEDDD1D4EE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D7221D4ED9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:17:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbgEONSI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:18:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51270 "EHLO
+        id S1727051AbgEONRl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:17:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbgEONRD (ORCPT
+        with ESMTP id S1726597AbgEONRD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 15 May 2020 09:17:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DC3C05BD19;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A09F8C05BD1A;
         Fri, 15 May 2020 06:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=aYJkiZGtapS3EI3nSaAZcijPUCj2H7jj4UUNli9ipQA=; b=o4xNijdiMl41kDuFLB3H7T+TfA
-        ACNPaBxZh46ndjsZiHyYF3dDxXndNhMFBUhJqvCMnfBteuYm+BEfeAJIul5qFc+AS9zwJZ4YAHjty
-        rmoD9yQE518yqJBXyMG6+M5mUj0txhwYqPBT1hDhK49s3rYGZiltF9giu+fLqchQRh/sAXz2jBwMt
-        1AbQEcqW+lcCKGgkMN5+s9hOs0DQxMWqO/AhiBHQb78C+oZKlwKCCHSRQ4Zz9WJC0Ug21UmeG0KOZ
-        cmcpY9zzaFhYhTguPZAZrROFHS2QEkgoyg17db6hydV0l/96HS1CC6q00yEjQkxoNJ9oAGtH2Jylt
-        etBt+Y4g==;
+        bh=J5D9xGGBSFhSBZQFLLkizdfmJQQ9VTJ9BzrD2DVYvp4=; b=KB8xI84bU5Vdya+GCcFphefntf
+        wvsHkKCp9bbfGbppQcNHNf0QFh6cqNy4qevBWrUv4XigrxvTYt7pGT1ayXXp4iY3XnLHKuwQuTgVn
+        QIzGJ1AceBBekhcvWCH1Ey8JApsbu6mRWmarzmhSBEmWCSYI0vBqmRGwRrNqEMHeODJo1ezIfjIgU
+        AruDLjDFMPNoMYqmC7XcY4WSlT2NlmNV0h9XIQlL2yPwQjDbFk05SXROE3H+VMm8LdAwB4WDt1/hV
+        6hzYPKZtpgqcgsn38IPEnXi0ikz1GiuytgTqR/ieyDBB+VSJ7/9N0Id2VTIRrHEMx45Wodh+KySa8
+        O3CPAJ5A==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZaD0-0005kq-B3; Fri, 15 May 2020 13:17:02 +0000
+        id 1jZaD0-0005li-Du; Fri, 15 May 2020 13:17:02 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 27/36] mm: Fix truncation for pages of arbitrary size
-Date:   Fri, 15 May 2020 06:16:47 -0700
-Message-Id: <20200515131656.12890-28-willy@infradead.org>
+Subject: [PATCH v4 28/36] mm: Support storing shadow entries for large pages
+Date:   Fri, 15 May 2020 06:16:48 -0700
+Message-Id: <20200515131656.12890-29-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 References: <20200515131656.12890-1-willy@infradead.org>
@@ -46,42 +46,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Remove the assumption that a compound page is HPAGE_PMD_SIZE,
-and the assumption that any page is PAGE_SIZE.
+If the page is being replaced with a NULL, we can do a single large store,
+but for now we have to use a loop to store one shadow entry in each entry.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/truncate.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ mm/filemap.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index dd9ebc1da356..dad384a4dc6d 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -168,7 +168,7 @@ void do_invalidatepage(struct page *page, unsigned int offset,
-  * becomes orphaned.  It will be left on the LRU and may even be mapped into
-  * user pagetables if we're racing with filemap_fault().
-  *
-- * We need to bale out if page->mapping is no longer equal to the original
-+ * We need to bail out if page->mapping is no longer equal to the original
-  * mapping.  This happens a) when the VM reclaimed the page while we waited on
-  * its lock, b) when a concurrent invalidate_mapping_pages got there first and
-  * c) when tmpfs swizzles a page between a tmpfs inode and swapper_space.
-@@ -177,12 +177,12 @@ static void
- truncate_cleanup_page(struct address_space *mapping, struct page *page)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 9c760dd7208e..0ec7f25a07b2 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -120,22 +120,27 @@ static void page_cache_delete(struct address_space *mapping,
+ 				   struct page *page, void *shadow)
  {
- 	if (page_mapped(page)) {
--		pgoff_t nr = PageTransHuge(page) ? HPAGE_PMD_NR : 1;
-+		unsigned int nr = hpage_nr_pages(page);
- 		unmap_mapping_pages(mapping, page->index, nr, false);
+ 	XA_STATE(xas, &mapping->i_pages, page->index);
+-	unsigned int nr = 1;
++	unsigned int i, nr = 1, entries = 1;
+ 
+ 	mapping_set_update(&xas, mapping);
+ 
+ 	/* hugetlb pages are represented by a single entry in the xarray */
+ 	if (!PageHuge(page)) {
+-		xas_set_order(&xas, page->index, compound_order(page));
+-		nr = compound_nr(page);
++		entries = nr = hpage_nr_pages(page);
++		if (!shadow) {
++			xas_set_order(&xas, page->index, thp_order(page));
++			entries = 1;
++		}
  	}
  
- 	if (page_has_private(page))
--		do_invalidatepage(page, 0, PAGE_SIZE);
-+		do_invalidatepage(page, 0, thp_size(page));
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+-	VM_BUG_ON_PAGE(nr != 1 && shadow, page);
  
- 	/*
- 	 * Some filesystems seem to re-dirty the page even after
+-	xas_store(&xas, shadow);
+-	xas_init_marks(&xas);
++	for (i = 0; i < entries; i++) {
++		xas_store(&xas, shadow);
++		xas_init_marks(&xas);
++		xas_next(&xas);
++	}
+ 
+ 	page->mapping = NULL;
+ 	/* Leave page->index set: truncation lookup relies upon it */
 -- 
 2.26.2
 
