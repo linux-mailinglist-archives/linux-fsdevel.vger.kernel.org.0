@@ -2,110 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F341D4CC6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 13:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 093D71D4CE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 13:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbgEOLk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 07:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbgEOLk1 (ORCPT
+        id S1726084AbgEOLog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 07:44:36 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43682 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbgEOLog (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 07:40:27 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A090DC061A0C;
-        Fri, 15 May 2020 04:40:26 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id d7so1379809eja.7;
-        Fri, 15 May 2020 04:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=vx+rjdJtrqWDo1iVdx81WH5syu+StElM96JO8y30OpU=;
-        b=WPgjtmvuU+9RwoLj/n0H1YhScjg1h4Hgu330I4kqOUDcfeSuQOZKl+5ux8rbb0A1+r
-         7ELm48Nk8g4Iq8itsNp7nRoCsTlAKAoHnK2ah+xePeZp2pK0stb6n4zW7y9MitNbYdDS
-         bNg0TemLo6X1Wgm4LbjMS91beAkfCoPyvVNVG0xkHsjsU38LIBSiNPr88k5yhaJMl2mH
-         5eqEVtZV3131W/HDvA1aAfjmoreTAFOE/V6gi/szPbw3TsONPhAJeXwsxwdtqP1sG/pY
-         Ej20wI+N6z6ZiALRxth0w2i3BmnjBrdrQ0f5/Jd0EBrHTFEvOrXEbpUpoKxv8TREGGdn
-         cagQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=vx+rjdJtrqWDo1iVdx81WH5syu+StElM96JO8y30OpU=;
-        b=HZGYHONT4WO708GtyeZN6eKcpcXCGLpq6LXJk/r5n0iKT14Quw1CzxtpW9ElCZ4/95
-         IBS7ZMKrLSPYjFOJPRsAk/M7EAmhe+L8tZdELGkjDLQLFN1w0VoQCnBM+oKFeUAWpV7L
-         9YLUqQ4VB8IVq4puPqIXIppH2SPAPTMIlIWNnw7fA4AkQwUBDm2SsnzOBJ4N4IcQoWMI
-         CwTisAzrKa3B8c+vv6LYPrBS5t9fkB+r9DU8pZnEnwtkqCUfhA7/Ah340bfHlMQb3lpT
-         hdh7+5Dg3Ht6wc8PqxNTMiszU5SkWwlSqTWCYL6rox8ZF4qN6TUe1ujis7dbz+0T8PL+
-         rx9Q==
-X-Gm-Message-State: AOAM531nfBhkprFPJojQTX+spcT+vp+o+jJJmf5VO7UBQOld7Q56Hbsd
-        Dd8u/0sgSIXINyysxgs17Wh0U8H/z5Q/A/phfPA=
-X-Google-Smtp-Source: ABdhPJx0AgOk2Zn12eGSfHnaAvM6elutzBoNttSm5PyZ1UJxJxfvsS0M4rtJbN9T/Be3JEHKy9yQwj/NrvyofhO0SFM=
-X-Received: by 2002:a17:906:add7:: with SMTP id lb23mr2366474ejb.6.1589542825282;
- Fri, 15 May 2020 04:40:25 -0700 (PDT)
+        Fri, 15 May 2020 07:44:36 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04FBW7Xt044575;
+        Fri, 15 May 2020 11:44:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=UhhCxoNLJrPMLTNqTO9hZfOma0sVhYCIwfmbTF0mvhY=;
+ b=zui8nBDwZj2UG+wfj9pbRBuhZ9tTLh3Nzu00xhYVTWERlUj652Y9JH3SbdqpoJI5UBR9
+ lHE+VV2wOUKOG7HY9dVC/9TlJC/0YJIw9TXEthFp6KObFnAjFm9rappANQs2x5BxDjyh
+ +aSKiyoZSFIHiaAGC3wUs2A02+e/lgNAYJH59be9xvvcagkmpnJJjVjydZpxSIQ4RuM+
+ 7AzMgdSrq7DuiUeBxnx8Av4CN92EKb3rrHMC1nBLNjabp/S3P4dHnkKK2wlyDBBQc5V0
+ 5rFLlktpFFJxkP/KKwUBmvYa02Hufbal6WaTifOiwV14ASZqcAoRUhQ+C3qjrfWl7wwQ 3g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 3100xwteqm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 May 2020 11:44:33 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04FBY9As009657;
+        Fri, 15 May 2020 11:44:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 3100yept6q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 May 2020 11:44:32 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04FBiVIk015056;
+        Fri, 15 May 2020 11:44:31 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 May 2020 04:44:31 -0700
+Date:   Fri, 15 May 2020 14:44:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     smayhew@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [bug report] NFS: Convert mount option parsing to use functionality
+ from fs_parser.h
+Message-ID: <20200515114426.GA574054@mwanda>
 MIME-Version: 1.0
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Fri, 15 May 2020 13:40:14 +0200
-Message-ID: <CAKgNAkioH1z-pVimHziWP=ZtyBgCOwoC7ekWGFwzaZ1FPYg-tA@mail.gmail.com>
-Subject: Setting mount propagation type in new mount API
-To:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Petr Vorel <pvorel@suse.cz>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-man <linux-man@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9621 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 phishscore=0
+ adultscore=0 suspectscore=3 mlxscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005150101
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9621 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 lowpriorityscore=0
+ suspectscore=3 mlxlogscore=999 clxscore=1011 cotscore=-2147483648
+ mlxscore=0 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005150101
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello David, Miklos,
+Hello Scott Mayhew,
 
-I've been looking at the new mount API (fsopen(), fsconfig(),
-fsmount(), move_mount(), etc.) and among the details that remain
-mysterious to me is this: how does one set the propagation type
-(private/shared/slave/unbindable) of a new mount and change the
-propagation type of an existing mount?
+The patch e38bb238ed8c: "NFS: Convert mount option parsing to use
+functionality from fs_parser.h" from Dec 10, 2019, leads to the
+following static checker warning:
 
-I've looked at the kernel source for a bit, and did not see how this
-is possible.
+	fs/namespace.c:1011 vfs_kern_mount()
+	error: passing non negative 1 to ERR_PTR
 
-The draft manual pages sent out a few months ago provide little clue,
-with the only hint being in the draft fsopen(2) page, which says of
-fsmount():
+fs/namespace.c
+   988  struct vfsmount *vfs_kern_mount(struct file_system_type *type,
+   989                                  int flags, const char *name,
+   990                                  void *data)
+   991  {
+   992          struct fs_context *fc;
+   993          struct vfsmount *mnt;
+   994          int ret = 0;
+   995  
+   996          if (!type)
+   997                  return ERR_PTR(-EINVAL);
+   998  
+   999          fc = fs_context_for_mount(type, flags);
+  1000          if (IS_ERR(fc))
+  1001                  return ERR_CAST(fc);
+  1002  
+  1003          if (name)
+  1004                  ret = vfs_parse_fs_string(fc, "source",
+  1005                                            name, strlen(name));
 
-       fsmount()  takes the file descriptor returned by fsopen() and cre=E2=
-=80=90
-       ates a mount object for the filesystem root specified there.   The
-       attributes of the mount object are set from the mount_attrs param=E2=
-=80=90
-       eter.  The attributes specify the propagation and  mount  restric=E2=
-=80=90
-       tions to be applied to accesses through this mount.
+The nfs_fs_context_parse_param() function returns 1 if ->sloppy is true.
+There are no comments explaining what the 1 means, but the comments for
+vfs_parse_fs_param() say it should only return zero or negative error
+codes.
 
-However, that text appears *not* to be true. The 'mount_attrs'
-argument of fsmount() does not seem to permit specification of
-propagation type, since in the kernel there is this check:
+        opt = fs_parse(fc, nfs_fs_parameters, param, &result);
+        if (opt < 0)
+                return ctx->sloppy ? 1 : opt;
 
-        if (attr_flags & ~(MOUNT_ATTR_RDONLY |
-                           MOUNT_ATTR_NOSUID |
-                           MOUNT_ATTR_NODEV |
-                           MOUNT_ATTR_NOEXEC |
-                           MOUNT_ATTR__ATIME |
-                           MOUNT_ATTR_NODIRATIME))
-                return -EINVAL;
+I feel like this code is buggy, but if it's not then it really needs
+some documentation.
 
-Thanks,
+  1006          if (!ret)
+  1007                  ret = parse_monolithic_mount_data(fc, data);
+  1008          if (!ret)
+  1009                  mnt = fc_mount(fc);
+  1010          else
+  1011                  mnt = ERR_PTR(ret);
+  1012  
+  1013          put_fs_context(fc);
+  1014          return mnt;
+  1015  }
+  1016  EXPORT_SYMBOL_GPL(vfs_kern_mount);
 
-Michael
-
-
---=20
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+regards,
+dan carpenter
