@@ -2,102 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8850A1D5ADC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4D551D5B0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbgEOUrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 16:47:04 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45269 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgEOUrD (ORCPT
+        id S1726541AbgEOU4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 16:56:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgEOU4m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 16:47:03 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u22so1377457plq.12;
-        Fri, 15 May 2020 13:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bl4gmCDPSUzHnX+jLpXyZUJERfeGYaFlQRMMArtCGYw=;
-        b=oeOXGsr4+HBzYqZnxvIM2ZOj7Jn+xUjXCTSOan+GC9hFglZuNbccQlY1DDZsPy7gHl
-         gpbwsRsp+qh0rFDCxsiOOkS+peI3zeLUS4mnTRnkg77WVrnLcvVH0iU4TPHKvNGuSmgs
-         9OVmoU/wD51jBHwmjVbVf3vvO7fzwNvNSPD7VBmkfIFOE0OP39LctnuYeV5q3gOF4Tt4
-         B7MkKNpnIa43QOuGsZUp3f4gEZy3g67FNILOxpAXAqnykLHeZKkgeJ4wFqAdUVEcel4Q
-         HK9RStpZDTsaRB8PdEoIqP03zu4AAtSApppguTBnZCKnf+GzLl8rE4F3eLzx/eWD47Sl
-         EOrw==
-X-Gm-Message-State: AOAM533+AfYSBNNGDenxpFcF+WGyjrtoso8IfhSNCVwXo6tUH5nojLN7
-        GQuuaVk3jIgTVvne8y56aKs=
-X-Google-Smtp-Source: ABdhPJzvKeCybmqcU3uCZ47Ca1r5orOtVdlDMNpjFIpmiXjNhQsQ3lh6XlyPvdvbjVArLirXx76prA==
-X-Received: by 2002:a17:902:7596:: with SMTP id j22mr5189994pll.226.1589575623031;
-        Fri, 15 May 2020 13:47:03 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id e12sm2387775pgv.16.2020.05.15.13.47.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 13:47:01 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id A324540246; Fri, 15 May 2020 20:47:00 +0000 (UTC)
-Date:   Fri, 15 May 2020 20:47:00 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Mimi Zohar <zohar@kernel.org>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v5 0/7] firmware: add partial read support in
- request_firmware_into_buf
-Message-ID: <20200515204700.GC11244@42.do-not-panic.com>
-References: <20200508002739.19360-1-scott.branden@broadcom.com>
- <1589387039.5098.147.camel@kernel.org>
+        Fri, 15 May 2020 16:56:42 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D092AC061A0C;
+        Fri, 15 May 2020 13:56:41 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jZhNV-009Hh7-7g; Fri, 15 May 2020 20:56:21 +0000
+Date:   Fri, 15 May 2020 21:56:21 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Olga Kornievskaia <kolga@netapp.com>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        ".Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: linux-next boot error: general protection fault in
+ tomoyo_get_local_path
+Message-ID: <20200515205621.GH23230@ZenIV.linux.org.uk>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+ <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+ <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
+ <20200515201357.GG23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1589387039.5098.147.camel@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200515201357.GG23230@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 13, 2020 at 12:23:59PM -0400, Mimi Zohar wrote:
-> Hi Scott,
+On Fri, May 15, 2020 at 09:13:57PM +0100, Al Viro wrote:
+> On Sat, May 16, 2020 at 12:36:28AM +0900, Tetsuo Handa wrote:
+> > On 2020/05/16 0:18, Tetsuo Handa wrote:
+[snip]
+> > A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
+> > commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
+> > not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
 > 
-> On Thu, 2020-05-07 at 17:27 -0700, Scott Branden wrote:
-> > Please consider this version series ready for upstream acceptance.
-> > 
-> > This patch series adds partial read support in request_firmware_into_buf.
-> > In order to accept the enhanced API it has been requested that kernel
-> > selftests and upstreamed driver utilize the API enhancement and so
-> > are included in this patch series.
-> > 
-> > Also in this patch series is the addition of a new Broadcom VK driver
-> > utilizing the new request_firmware_into_buf enhanced API.
-> 
-> Up to now, the firmware blob was read into memory allowing IMA to
-> verify the file signature.  With this change, ima_post_read_file()
-> will not be able to verify the file signature.
-> 
-> (I don't think any of the other LSMs are on this hook, but you might
-> want to Cc the LSM or integrity mailing list.)
+> Could you explain why do you want to bother with d_inode() anyway?  Anything that
+> does dentry->d_inode->i_sb can bloody well use dentry->d_sb.  And that's never
+> changed over the struct dentry lifetime - ->d_sb is set on allocation and never
+> modified afterwards.
 
-Scott, so it sounds we need a resolution for pread for IMA for file
-signature verification. It seems that can be addressed though. Feel
-free to submit the u32 flag changes which you picked up on though in
-the meantime.
+Incidentally, this
+        r_ino = nfs_fhget(ss_mnt->mnt_root->d_inode->i_sb, src_fh, &fattr,
+                        NULL);
+(in nfs42_ssc_open()) is just plain weird.
 
-  Luis
+	1) d->d_inode->i_sb is equal to d->d_sb
+	2) m->mnt_root->d_sb is equal to m->mnt_sb
+IOW, the whole thing should be 
+        r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, &fattr, NULL);
+
+Moreover,
+	server = NFS_SERVER(ss_mnt->mnt_root->d_inode);
+in the same function is again too convoluted for no good reason, seeing that
+NFS_SERVER(inode) is NFS_SB(inode->i_sb).
+
+Something along the lines of
+
+nfs: don't obfuscate ->mnt_sb as ->mnt_root->d_inode->i_sb
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 8e5d6223ddd3..1e8ca45bc806 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -317,15 +317,14 @@ nfs42_ssc_open(struct vfsmount *ss_mnt, struct nfs_fh *src_fh,
+ {
+ 	struct nfs_fattr fattr;
+ 	struct file *filep, *res;
+-	struct nfs_server *server;
++	struct super_block *sb = ss_mnt->mnt_sb;
++	struct nfs_server *server = NFS_SB(sb);
+ 	struct inode *r_ino = NULL;
+ 	struct nfs_open_context *ctx;
+ 	struct nfs4_state_owner *sp;
+ 	char *read_name = NULL;
+ 	int len, status = 0;
+ 
+-	server = NFS_SERVER(ss_mnt->mnt_root->d_inode);
+-
+ 	nfs_fattr_init(&fattr);
+ 
+ 	status = nfs4_proc_getattr(server, src_fh, &fattr, NULL, NULL);
+@@ -341,8 +340,7 @@ nfs42_ssc_open(struct vfsmount *ss_mnt, struct nfs_fh *src_fh,
+ 		goto out;
+ 	snprintf(read_name, len, SSC_READ_NAME_BODY, read_name_gen++);
+ 
+-	r_ino = nfs_fhget(ss_mnt->mnt_root->d_inode->i_sb, src_fh, &fattr,
+-			NULL);
++	r_ino = nfs_fhget(sb, src_fh, &fattr, NULL);
+ 	if (IS_ERR(r_ino)) {
+ 		res = ERR_CAST(r_ino);
+ 		goto out_free_name;
