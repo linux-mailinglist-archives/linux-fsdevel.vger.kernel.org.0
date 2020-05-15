@@ -2,69 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA4D1D53E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 17:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6964C1D5426
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 17:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbgEOPNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 11:13:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726275AbgEOPNg (ORCPT
+        id S1726584AbgEOPSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 11:18:55 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59415 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgEOPSz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 11:13:36 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C13C05BD0A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 08:13:36 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id z1so1080024pfn.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 08:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bfBhHYTtohVO95sNvjwzNyBK2wYpRf6EXbUlmqF97hY=;
-        b=xD33G4jCnZyZK/tVplz8bvqfeTRe8c8TYLRHnuCfRcELdIU9IUSSMWdH4cg8VNjBTB
-         XFKndQLtX8nj+DkAz7hT1qCu84OdkLnoxEIHrNIWszFtboQ2VAP05Qz0KdE5f5gSr/Fr
-         EhDnYKdxeQBr0qrekR4PnuQD6V26t4Sb1RMDxwnuiABeZOY2piNE8c/+NVO9+OjysYnz
-         fgqdjcRmmxb01XKczSvP6+Ve5gdeM5ipZ8mI+Wj28HgWDe4sd3PG5FhDQxanwZw6joxz
-         JN9EFqwErcw7YRJ6fQC+5d+v9jcQEqlqsPck3/o763qssedKbJwO/M7sFOEfMaP2fsW7
-         kELg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bfBhHYTtohVO95sNvjwzNyBK2wYpRf6EXbUlmqF97hY=;
-        b=FdlZmQmH4v8FVfIQxaKNyUaCkN1RL+W1OC06zM1aXXrwgMHWZPH/gHwsSaT2B0MEpC
-         TOnBqFI+86S349HdnnymJ6vpzEiq4YZ5Y08/hNdpm6zthBoBvIxwPtvqVP10y2lifkAl
-         jt0PtPo9R873jWpF4HGxrw/torpB5i71mQOwtX3W+Seox7oNDbZlB51VUKwelrFsaUD8
-         X6wwFQ6spuT32mE/sMC8RODvMBuvdvaQH2dERSv3oQgo8vpGRpwJvY9UakzoZvdZMYdD
-         y8PRedNbCJ5427AhGJdq5apsurOJwA6CBC1I/ic2fWf/uogHWrJuLiqzxz+4TJvPVxts
-         EG4Q==
-X-Gm-Message-State: AOAM532TcvzHAkp8v6UhL62gUafVKt7fEP7rx+NhYPohj4PeJlBxR6vc
-        HsPyjAJOK4ZhdA2AthDdH6q9p3gPi/g=
-X-Google-Smtp-Source: ABdhPJwjkUi4YQauXs6/fEa1OaygsEMg8M7xaZVFabwiAKCRkC0c9/HThyf43z2ib0G01cAbex7X0g==
-X-Received: by 2002:a62:1d4c:: with SMTP id d73mr4244848pfd.226.1589555615469;
-        Fri, 15 May 2020 08:13:35 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:aca2:b1c9:3206:e390? ([2605:e000:100e:8c61:aca2:b1c9:3206:e390])
-        by smtp.gmail.com with ESMTPSA id co16sm823398pjb.55.2020.05.15.08.13.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2020 08:13:34 -0700 (PDT)
-Subject: Re: [PATCH 0/2] io_uring: add a CQ ring flag to enable/disable
- eventfd notification
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20200515105414.68683-1-sgarzare@redhat.com>
- <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
- <20200515143419.f3uggj7h3nyolfqb@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a7ac101d-0f5d-2ab2-b36b-b40607d65878@kernel.dk>
-Date:   Fri, 15 May 2020 09:13:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 15 May 2020 11:18:55 -0400
+Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04FFI6fi099445;
+        Sat, 16 May 2020 00:18:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp);
+ Sat, 16 May 2020 00:18:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04FFI5l1099429
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 16 May 2020 00:18:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next boot error: general protection fault in
+ tomoyo_get_local_path
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+Cc:     syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Date:   Sat, 16 May 2020 00:18:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200515143419.f3uggj7h3nyolfqb@steredhat>
+In-Reply-To: <0000000000002f0c7505a5b0e04c@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,50 +52,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/15/20 8:34 AM, Stefano Garzarella wrote:
-> On Fri, May 15, 2020 at 08:24:58AM -0600, Jens Axboe wrote:
->> On 5/15/20 4:54 AM, Stefano Garzarella wrote:
->>> The first patch adds the new 'cq_flags' field for the CQ ring. It
->>> should be written by the application and read by the kernel.
->>>
->>> The second patch adds a new IORING_CQ_NEED_WAKEUP flag that can be
->>> used by the application to enable/disable eventfd notifications.
->>>
->>> I'm not sure the name is the best one, an alternative could be
->>> IORING_CQ_NEED_EVENT.
->>>
->>> This feature can be useful if the application are using eventfd to be
->>> notified when requests are completed, but they don't want a notification
->>> for every request.
->>> Of course the application can already remove the eventfd from the event
->>> loop, but as soon as it adds the eventfd again, it will be notified,
->>> even if it has already handled all the completed requests.
->>>
->>> The most important use case is when the registered eventfd is used to
->>> notify a KVM guest through irqfd and we want a mechanism to
->>> enable/disable interrupts.
->>>
->>> I also extended liburing API and added a test case here:
->>> https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
->>
->> Don't mind the feature, and I think the patches look fine. But the name
->> is really horrible, I'd have no idea what that flag does without looking
->> at the code or a man page. Why not call it IORING_CQ_EVENTFD_ENABLED or
->> something like that? Or maybe IORING_CQ_EVENTFD_DISABLED, and then you
->> don't have to muck with the default value either. The app would set the
->> flag to disable eventfd, temporarily, and clear it again when it wants
->> notifications again.
+This is
+
+        if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+                char *ep;
+                const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+                struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+
+                if (*ep == '/' && pid && pid ==
+                    task_tgid_nr_ns(current, proc_pidns)) {
+
+which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+
+@@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+        if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+                char *ep;
+                const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
++               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+
+                if (*ep == '/' && pid && pid ==
+-                   task_tgid_nr_ns(current, sb->s_fs_info)) {
++                   task_tgid_nr_ns(current, proc_pidns)) {
+                        pos = ep - 5;
+                        if (pos < buffer)
+                                goto out;
+
+Alexey and Eric, any clue?
+
+On 2020/05/15 23:46, syzbot wrote:
+> Hello,
 > 
-> You're clearly right! :-) The name was horrible.
-
-Sometimes you go down that path on naming and just can't think of
-the right one. I think we've all been there.
-
-> I agree that IORING_CQ_EVENTFD_DISABLED should be the best.
-> I'll send a v2 changing the name and removing the default value.
-
-Great thanks, and please do queue a pull for the liburing side too.
-
--- 
-Jens Axboe
+> syzbot found the following crash on:
+> 
+> HEAD commit:    bdecf38f Add linux-next specific files for 20200515
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=155a43b2100000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=27a5e30c87a59937
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c1af344512918c61362c
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
+> 
+> general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+> CPU: 0 PID: 6698 Comm: sshd Not tainted 5.7.0-rc5-next-20200515-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:tomoyo_get_local_path+0x450/0x800 security/tomoyo/realpath.c:165
+> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b4 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 60 49 8d 7f 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 87 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+> RSP: 0018:ffffc900063d7450 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: ffff88809975c000 RCX: ffffffff8363deda
+> RDX: 0000000000000005 RSI: ffffffff8363dee8 RDI: 0000000000000028
+> RBP: 1ffff92000c7ae8b R08: ffff8880a47644c0 R09: fffffbfff155a0a2
+> R10: ffffffff8aad050f R11: fffffbfff155a0a1 R12: ffff88809df3cfea
+> R13: ffff88809df3c000 R14: 0000000000001a2a R15: 0000000000000000
+> FS:  00007efe13ce28c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055e78cf578f5 CR3: 00000000987ed000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  tomoyo_realpath_from_path+0x393/0x620 security/tomoyo/realpath.c:282
+>  tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+>  tomoyo_path_number_perm+0x1c2/0x4d0 security/tomoyo/file.c:723
+>  tomoyo_path_mknod+0x10d/0x190 security/tomoyo/tomoyo.c:246
+>  security_path_mknod+0x116/0x180 security/security.c:1072
+>  may_o_create fs/namei.c:2905 [inline]
+>  lookup_open+0x5ae/0x1320 fs/namei.c:3046
+>  open_last_lookups fs/namei.c:3155 [inline]
+>  path_openat+0x93c/0x27f0 fs/namei.c:3343
+>  do_filp_open+0x192/0x260 fs/namei.c:3373
+>  do_sys_openat2+0x585/0x7d0 fs/open.c:1179
+>  do_sys_open+0xc3/0x140 fs/open.c:1195
+>  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+>  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+> RIP: 0033:0x7efe11e4b6f0
+> Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 19 30 2c 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 fe 9d 01 00 48 89 04 24
+> RSP: 002b:00007ffc3d0894d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 000055e78f0bc110 RCX: 00007efe11e4b6f0
+> RDX: 00000000000001b6 RSI: 0000000000000241 RDI: 000055e78cf578f5
+> RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000001
+> R10: 0000000000000240 R11: 0000000000000246 R12: 000055e78cf2851e
+> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace 0a58064de06d50f4 ]---
+> RIP: 0010:tomoyo_get_local_path+0x450/0x800 security/tomoyo/realpath.c:165
+> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b4 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 60 49 8d 7f 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 87 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+> RSP: 0018:ffffc900063d7450 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: ffff88809975c000 RCX: ffffffff8363deda
+> RDX: 0000000000000005 RSI: ffffffff8363dee8 RDI: 0000000000000028
+> RBP: 1ffff92000c7ae8b R08: ffff8880a47644c0 R09: fffffbfff155a0a2
+> R10: ffffffff8aad050f R11: fffffbfff155a0a1 R12: ffff88809df3cfea
+> R13: ffff88809df3c000 R14: 0000000000001a2a R15: 0000000000000000
+> FS:  00007efe13ce28c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055dfe16c15f8 CR3: 00000000987ed000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
 
