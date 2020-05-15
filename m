@@ -2,92 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B861D4D25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 13:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AE1D1D4D71
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 14:09:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbgEOL60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 07:58:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52914 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgEOL60 (ORCPT
+        id S1726233AbgEOMJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 08:09:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35318 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbgEOMJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 07:58:26 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jZYys-0000GF-HN; Fri, 15 May 2020 11:58:22 +0000
-Date:   Fri, 15 May 2020 13:58:21 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
- pidfd on listener trap
-Message-ID: <20200515115821.5qvkaeuxzklhikuo@wittgenstein>
-References: <20200124091743.3357-1-sargun@sargun.me>
- <20200124091743.3357-4-sargun@sargun.me>
- <20200124180332.GA4151@cisco>
- <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
- <20200126054256.GB4151@cisco>
- <CAMp4zn_Xv2iicmH2Nc4-EZceD7T8AFe9PQRNX4bNEiAuoKs+vA@mail.gmail.com>
+        Fri, 15 May 2020 08:09:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04FC7fpX171402;
+        Fri, 15 May 2020 12:09:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=YG59WWrOXkSM7KZ6vsbZULXPJjele+2syPNjd4BAXlI=;
+ b=MjDpntIKqRLcyBuGq5sqsI8NVaNV/jHLyhmoWgjnD87rhy6J3HBj79y5syxCQSPDZJ/K
+ ++2LOSemBVGRRyu4EplnqNuhMTUxIAlgbBSGicEcxpRjMW+8rd+kULrWVM+HDqWhzAg8
+ VpyEQFX+58dUmKmW4Xt75HNTu5ZIFf7JjB1Ov+z1pbn+xVuvs39KU/uWl6m7qA9lHHc4
+ XQgws7xPqKfRVH+WGKLjX5zNHKI/lR0gdVRr44bFyPMj+OUOmvDYpmt9KpsS96fWVnYa
+ zudUeS3eeyQ27Zlj1r/PCaFc2oST+DhLlVAitgS3h7hSjZHGF465+ml78cccUd7V7BPf 0A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 3100xwtja9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 May 2020 12:09:15 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04FC8m2i102907;
+        Fri, 15 May 2020 12:09:14 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 3100yrfbhr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 May 2020 12:09:14 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04FC9EJM002764;
+        Fri, 15 May 2020 12:09:14 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 May 2020 05:09:13 -0700
+Date:   Fri, 15 May 2020 15:09:08 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fsinfo: Fix uninitialized variable in
+ fsinfo_generic_mount_all()
+Message-ID: <20200515120908.GB575846@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMp4zn_Xv2iicmH2Nc4-EZceD7T8AFe9PQRNX4bNEiAuoKs+vA@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9621 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2005150105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9621 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 lowpriorityscore=0
+ suspectscore=0 mlxlogscore=999 clxscore=1015 cotscore=-2147483648
+ mlxscore=0 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005150105
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 04:49:14AM -0700, Sargun Dhillon wrote:
-> On Sat, Jan 25, 2020 at 9:42 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> 
-> > On Fri, Jan 24, 2020 at 12:09:37PM -0800, Sargun Dhillon wrote:
-> > > On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >
-> > > > On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
-> > > > > Currently, this just opens the group leader of the thread that
-> > triggere
-> > > > > the event, as pidfds (currently) are limited to group leaders.
-> > > >
-> > > > I don't love the semantics of this; when they're not limited to thread
-> > > > group leaders any more, we won't be able to change this. Is that work
-> > > > far off?
-> > > >
-> > > > Tycho
-> > >
-> > > We would be able to change this in the future if we introduced a flag
-> > like
-> > > SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
-> > > pidfd that's for the thread, and not just the group leader. The flag
-> > could
-> > > either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
-> > > could require both. Alternatively, we can rename
-> > > SECCOMP_USER_NOTIF_FLAG_PIDFD to
-> > > SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
-> >
-> > Ok, but then isn't this just another temporary API? Seems like it's
-> > worth waiting until the Right Way exists.
-> >
-> > Tycho
-> >
-> 
-> It's been a few months. It does not appear like much progress has been made
-> moving away from
-> pidfd being only useful for leaders.
-> 
-> I would either like to respin this patch, or at a minimum, include the
-> process group leader pid number
-> in the seccomp notification, to simplify things for tracers.
+The "conn" variable is never set to false.
 
-I'd prefer if you went with the second option where you include the
-process group leader pid number.
-I'm against adding countless ways of producing pidfds through various
-unrelated apis. The api is still quite fresh so I'd like to not overdo
-it.
+Fixes: f2494de388bd ("fsinfo: Add an attribute that lists all the visible mounts in a namespace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The buggy commit looks like preliminary stuff not pushed to anywhere so
+probably this can just be folded in.
 
-Christian
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 3fd24575756b..ae489cbac467 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4433,7 +4433,7 @@ int fsinfo_generic_mount_all(struct path *path, struct fsinfo_context *ctx)
+ 	struct mnt_namespace *ns;
+ 	struct mount *m, *p;
+ 	struct path chroot;
+-	bool conn;
++	bool conn = false;
+ 
+ 	m = real_mount(path->mnt);
+ 	ns = m->mnt_ns;
+-- 
+2.26.2
+
