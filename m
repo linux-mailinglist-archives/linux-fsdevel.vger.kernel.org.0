@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98CDE1D4F5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE251D4F60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:39:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgEONiz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:38:55 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:42674 "EHLO
+        id S1726170AbgEONju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:39:50 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43306 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726141AbgEONiy (ORCPT
+        by vger.kernel.org with ESMTP id S1726174AbgEONjt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 09:38:54 -0400
+        Fri, 15 May 2020 09:39:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589549932;
+        s=mimecast20190719; t=1589549988;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=IrGI0DZbjpPmctsiQFo4Cv0GcRUtJJCYrBz4CvoBjWo=;
-        b=jFmypT7vS0cvTQIv044XJgj4Gij8Jyte0URJ+BuMrabCVnxMZDeK1n3k3/SZW2SeRP6rtS
-        2dOsALdwfpidonCP7yfqQHlhFjBzBv+nc4Tm0KHx+PlpHR3nrvHve1BtzXGIKraMzNbvyX
-        e990N3xH39Hj+pjAIZ0AO/xWJokxWG4=
+        bh=7O/zM0NAvqChxTfX4nxkeKnjC8XczbdTIP2Xx8nIyJM=;
+        b=Bq8HdMjlURzpDRMikkcNwCaNX0ITfxmaUazvnAS0ULBwldHp5pVHyqAdqGJLa8xbrM1AXn
+        TIflr1IAVXaQy4BpD9DOlnwiHnWt6L9mqQAXU5vst1zUn+V/GYoyk3YGzGFE01N6YDzkhy
+        7pIY2o5LSjvExe6lbE2Cm0Fe1R03RtE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-Yq-CiclcP8CbpI35jLsV0Q-1; Fri, 15 May 2020 09:38:50 -0400
-X-MC-Unique: Yq-CiclcP8CbpI35jLsV0Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-420-V103GEKIOumIjCQRLXE8pg-1; Fri, 15 May 2020 09:39:45 -0400
+X-MC-Unique: V103GEKIOumIjCQRLXE8pg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35D631005510;
-        Fri, 15 May 2020 13:38:49 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CB33319057A5;
+        Fri, 15 May 2020 13:39:44 +0000 (UTC)
 Received: from [10.36.114.77] (ovpn-114-77.ams2.redhat.com [10.36.114.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C2EC5D9C9;
-        Fri, 15 May 2020 13:38:47 +0000 (UTC)
-Subject: Re: [PATCH v4 04/36] mm: Introduce thp_size
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3B302FC72;
+        Fri, 15 May 2020 13:39:43 +0000 (UTC)
+Subject: Re: [PATCH v4 06/36] mm: Introduce offset_in_thp
 To:     Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-5-willy@infradead.org>
+ <20200515131656.12890-7-willy@infradead.org>
 From:   David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  mQINBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -84,16 +84,16 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  njnuI31KBiLUks+paRkHQlFcgS2N3gkRBzH7xSZ+t7Re3jvXdXEzKBbQ+dC3lpJB0wPnyMcX
  FOTT3aZT7IgePkt5iC/BKBk3hqKteTnJFeVIT7EC+a6YUFg=
 Organization: Red Hat GmbH
-Message-ID: <d48ec2d8-4335-5628-0189-1ad4b6799a9f@redhat.com>
-Date:   Fri, 15 May 2020 15:38:47 +0200
+Message-ID: <f82d7209-73b0-aee0-8098-dbb793ea8a97@redhat.com>
+Date:   Fri, 15 May 2020 15:39:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200515131656.12890-5-willy@infradead.org>
+In-Reply-To: <20200515131656.12890-7-willy@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -102,127 +102,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 15.05.20 15:16, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> This is like page_size(), but compiles down to just PAGE_SIZE if THP
-> are disabled.  Convert the users of hpage_nr_pages() which would prefer
-> this interface.
+> Mirroring offset_in_page(), this gives you the offset within this
+> particular page, no matter what size page it is.  It optimises down
+> to offset_in_page() if CONFIG_TRANSPARENT_HUGEPAGE is not set.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  drivers/nvdimm/btt.c    | 4 +---
->  drivers/nvdimm/pmem.c   | 6 ++----
->  include/linux/huge_mm.h | 7 +++++++
->  mm/internal.h           | 2 +-
->  mm/page_io.c            | 2 +-
->  mm/page_vma_mapped.c    | 4 ++--
->  6 files changed, 14 insertions(+), 11 deletions(-)
+>  include/linux/mm.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-> index 3b09419218d6..78e8d972d45a 100644
-> --- a/drivers/nvdimm/btt.c
-> +++ b/drivers/nvdimm/btt.c
-> @@ -1488,10 +1488,8 @@ static int btt_rw_page(struct block_device *bdev, sector_t sector,
->  {
->  	struct btt *btt = bdev->bd_disk->private_data;
->  	int rc;
-> -	unsigned int len;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 088acbda722d..9a55dce6a535 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1577,6 +1577,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>  extern void pagefault_out_of_memory(void);
 >  
-> -	len = hpage_nr_pages(page) * PAGE_SIZE;
-> -	rc = btt_do_bvec(btt, NULL, page, len, 0, op, sector);
-> +	rc = btt_do_bvec(btt, NULL, page, thp_size(page), 0, op, sector);
->  	if (rc == 0)
->  		page_endio(page, op_is_write(op), 0);
+>  #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
+> +#define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
 >  
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 2df6994acf83..d511504d07af 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -235,11 +235,9 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
->  	blk_status_t rc;
->  
->  	if (op_is_write(op))
-> -		rc = pmem_do_write(pmem, page, 0, sector,
-> -				   hpage_nr_pages(page) * PAGE_SIZE);
-> +		rc = pmem_do_write(pmem, page, 0, sector, thp_size(page));
->  	else
-> -		rc = pmem_do_read(pmem, page, 0, sector,
-> -				   hpage_nr_pages(page) * PAGE_SIZE);
-> +		rc = pmem_do_read(pmem, page, 0, sector, thp_size(page));
->  	/*
->  	 * The ->rw_page interface is subtle and tricky.  The core
->  	 * retries on any error, so we can only invoke page_endio() in
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 6bec4b5b61e1..e944f9757349 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -271,6 +271,11 @@ static inline int hpage_nr_pages(struct page *page)
->  	return compound_nr(page);
->  }
->  
-> +static inline unsigned long thp_size(struct page *page)
-> +{
-> +	return page_size(page);
-> +}
-> +
->  struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->  		pmd_t *pmd, int flags, struct dev_pagemap **pgmap);
->  struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
-> @@ -329,6 +334,8 @@ static inline int hpage_nr_pages(struct page *page)
->  	return 1;
->  }
->  
-> +#define thp_size(x)		PAGE_SIZE
-> +
->  static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
->  {
->  	return false;
-> diff --git a/mm/internal.h b/mm/internal.h
-> index f762a34b0c57..5efb13d5c226 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -386,7 +386,7 @@ vma_address(struct page *page, struct vm_area_struct *vma)
->  	unsigned long start, end;
->  
->  	start = __vma_address(page, vma);
-> -	end = start + PAGE_SIZE * (hpage_nr_pages(page) - 1);
-> +	end = start + thp_size(page) - PAGE_SIZE;
->  
->  	/* page should be within @vma mapping range */
->  	VM_BUG_ON_VMA(end < vma->vm_start || start >= vma->vm_end, vma);
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 76965be1d40e..dd935129e3cb 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -41,7 +41,7 @@ static struct bio *get_swap_bio(gfp_t gfp_flags,
->  		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
->  		bio->bi_end_io = end_io;
->  
-> -		bio_add_page(bio, page, PAGE_SIZE * hpage_nr_pages(page), 0);
-> +		bio_add_page(bio, page, thp_size(page), 0);
->  	}
->  	return bio;
->  }
-> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-> index 719c35246cfa..e65629c056e8 100644
-> --- a/mm/page_vma_mapped.c
-> +++ b/mm/page_vma_mapped.c
-> @@ -227,7 +227,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
->  			if (pvmw->address >= pvmw->vma->vm_end ||
->  			    pvmw->address >=
->  					__vma_address(pvmw->page, pvmw->vma) +
-> -					hpage_nr_pages(pvmw->page) * PAGE_SIZE)
-> +					thp_size(pvmw->page))
->  				return not_found(pvmw);
->  			/* Did we cross page table boundary? */
->  			if (pvmw->address % PMD_SIZE == 0) {
-> @@ -268,7 +268,7 @@ int page_mapped_in_vma(struct page *page, struct vm_area_struct *vma)
->  	unsigned long start, end;
->  
->  	start = __vma_address(page, vma);
-> -	end = start + PAGE_SIZE * (hpage_nr_pages(page) - 1);
-> +	end = start + thp_size(page) - PAGE_SIZE;
->  
->  	if (unlikely(end < vma->vm_start || start >= vma->vm_end))
->  		return 0;
+>  /*
+>   * Flags passed to show_mem() and show_free_areas() to suppress output in
 > 
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
