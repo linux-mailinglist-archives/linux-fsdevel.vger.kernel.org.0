@@ -2,107 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5751D5058
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 262BF1D5099
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbgEOOZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 10:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726221AbgEOOZB (ORCPT
+        id S1726223AbgEOOeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:34:31 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59904 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726163AbgEOOea (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 10:25:01 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C015C05BD0A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 07:25:01 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id f4so1017191pgi.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 07:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rKuzsBx4cSJvriSVGbzt79618OPfv8Eok+sl7EaCGvk=;
-        b=WVFYeKIqdMj/Srr/1bTEErA+epgu+DH+A/WDQyM9gqFzEDwvVElUrZIWg3Hz7hF8B/
-         N6OFUChnBSxKwDrv2ZcBMpYlw/D3nMEVVhOu+wnoFz8bTp7xKEM0g0vZ1Y/L1yaD7dv6
-         YF3ko6LQF1QF5smUIgJS9wu9x0iOXq4Dtw4z+cJfcJeFkFikqtN3ghM1YCL4kuCvU1nb
-         HTaUZgljc/QHWyB22xy44i3YN+G9yBlMYil+1NnfMt5IQgwQL7Vx/lajWvOm21jX+tHP
-         nwgYhzGlUOWwqvfzqys0GLa0+3gzCn05ZKHiOwbIUK4Yvmcn6ejcUUTq1h5T4ToXnMPE
-         DY8Q==
+        Fri, 15 May 2020 10:34:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589553267;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YPPW99mhER0DTLJrY7k7qjs6mYGaRfNuIWRsMS5DxD4=;
+        b=igt42rWm4p4EqajSx6DBEUjv6ehvL7SExGmclIV60PPw9lJBWQSlF3MU7M04fRlR6I9an5
+        E8B0xwENYfDolObOhWUvvKaLV7uK9s92HmsCNWruWYC1gIVJ2+EcjCJ7GI1/NF6p2DNZ8a
+        vO/lSnh3nzuNA532+W1HS3ZpC4/6aSw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-213-aaNZc5HbNSm9buyQOuVNVA-1; Fri, 15 May 2020 10:34:24 -0400
+X-MC-Unique: aaNZc5HbNSm9buyQOuVNVA-1
+Received: by mail-wr1-f70.google.com with SMTP id 30so1277907wrq.15
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 07:34:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rKuzsBx4cSJvriSVGbzt79618OPfv8Eok+sl7EaCGvk=;
-        b=M0nSg06HkoLjpE9/614ZkSvZUTNJWe0Qwbkk8jffbCTG81xUSUTIyPbDhBSJ348ksR
-         U9zijpBE0CPrjaLhEW+sbYhDGO4TCRMxCHsV5lhu2PPO+trEwQk77F04wvCr0813teAA
-         R/8RzSJM8gFs8PG6o9UEestU/4j8IRmSQi5dTPCX8+FXN7UgEMY3Br2j2fQWX0R5/e5j
-         hD2VDAC6cxrl3FbZkdrRGWSsgq9tzQ0lbnumwkWgPxOj+hIyga1ERlC1Fv69A2WXW88l
-         TZJYNEhHiww1K71p/WmipSp+bFPxZmXAmZCMw8ppDLFesyg3z/ckwBs/0FlJQJ5XPa0g
-         FgMw==
-X-Gm-Message-State: AOAM53358X97h4BejWg2nrCG9FUXQGUGbpXpE28pVR/IGrtp9FvbxWYJ
-        IAbagUu9ayoTEAkrli42B8QESBYhIps=
-X-Google-Smtp-Source: ABdhPJyBtrljQApl8ZHuJbXFW2dv6fiVrkv63Op/bK/6nAFNHesQEkrdhwsL4yZ3suq6ubX8WngyDQ==
-X-Received: by 2002:a63:5320:: with SMTP id h32mr3443963pgb.28.1589552700514;
-        Fri, 15 May 2020 07:25:00 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21d6::1089? ([2620:10d:c090:400::5:7df0])
-        by smtp.gmail.com with ESMTPSA id n16sm2152078pfq.61.2020.05.15.07.24.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2020 07:24:59 -0700 (PDT)
-Subject: Re: [PATCH 0/2] io_uring: add a CQ ring flag to enable/disable
- eventfd notification
-To:     Stefano Garzarella <sgarzare@redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YPPW99mhER0DTLJrY7k7qjs6mYGaRfNuIWRsMS5DxD4=;
+        b=pXCFl8PHLdqyHdfztw3xv8JUbns2HgjeF6IMjaGaiJgLiqqHOZLPZI93GjRZiZh2Fq
+         tlOi6k849e9NJmY22n5Pa11FC2FbJAujtaAPNtnRgEL2Y4+gnETXJTSe7xybkTptbHsM
+         51bBLBZK1uaH6B8AGWeEDL7/z2QqaZ8XZ0mXv+wINAtdHzD2eNjB815JM9D5gwJeCdfB
+         y4wIqCw4nUEqFJkGQf9JBbT1jc4veHEW+MbHC0AxK/+21ZljHXvEHVK19hhe7nGDtmqb
+         D85x6wSbk3EFWm0tZtP1s00qqSwnB8TyudkCBPbP9TvzFl31za4MLkkPzTUDh/0k7D/y
+         yTyA==
+X-Gm-Message-State: AOAM530gv+x0y9zNdU+mwIkeUpz30h6OtcQOnHSFVCt0FRXUjIO7R0Tl
+        JkOp+C7Rb+VZ/rr40gHuma/OOtk/6bnxdrPQOA4VJC0PESQH9USNw2jLYrIyQGHzWQk/oejBWQY
+        R/evTXHstvGLwS/6BOnOoQ4WpBw==
+X-Received: by 2002:a05:600c:2146:: with SMTP id v6mr4491351wml.142.1589553263227;
+        Fri, 15 May 2020 07:34:23 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxswSXxzRjvhiNjXtgD2tyDEe9Vc6xVHhiMSsIK2eJA3hHSpV0QUQQqX9uJlYnALaP1QwuvJQ==
+X-Received: by 2002:a05:600c:2146:: with SMTP id v6mr4491326wml.142.1589553262983;
+        Fri, 15 May 2020 07:34:22 -0700 (PDT)
+Received: from steredhat ([79.49.207.108])
+        by smtp.gmail.com with ESMTPSA id a184sm3970985wmh.24.2020.05.15.07.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2020 07:34:22 -0700 (PDT)
+Date:   Fri, 15 May 2020 16:34:19 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 0/2] io_uring: add a CQ ring flag to enable/disable
+ eventfd notification
+Message-ID: <20200515143419.f3uggj7h3nyolfqb@steredhat>
 References: <20200515105414.68683-1-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
-Date:   Fri, 15 May 2020 08:24:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200515105414.68683-1-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/15/20 4:54 AM, Stefano Garzarella wrote:
-> The first patch adds the new 'cq_flags' field for the CQ ring. It
-> should be written by the application and read by the kernel.
+On Fri, May 15, 2020 at 08:24:58AM -0600, Jens Axboe wrote:
+> On 5/15/20 4:54 AM, Stefano Garzarella wrote:
+> > The first patch adds the new 'cq_flags' field for the CQ ring. It
+> > should be written by the application and read by the kernel.
+> > 
+> > The second patch adds a new IORING_CQ_NEED_WAKEUP flag that can be
+> > used by the application to enable/disable eventfd notifications.
+> > 
+> > I'm not sure the name is the best one, an alternative could be
+> > IORING_CQ_NEED_EVENT.
+> > 
+> > This feature can be useful if the application are using eventfd to be
+> > notified when requests are completed, but they don't want a notification
+> > for every request.
+> > Of course the application can already remove the eventfd from the event
+> > loop, but as soon as it adds the eventfd again, it will be notified,
+> > even if it has already handled all the completed requests.
+> > 
+> > The most important use case is when the registered eventfd is used to
+> > notify a KVM guest through irqfd and we want a mechanism to
+> > enable/disable interrupts.
+> > 
+> > I also extended liburing API and added a test case here:
+> > https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
 > 
-> The second patch adds a new IORING_CQ_NEED_WAKEUP flag that can be
-> used by the application to enable/disable eventfd notifications.
-> 
-> I'm not sure the name is the best one, an alternative could be
-> IORING_CQ_NEED_EVENT.
-> 
-> This feature can be useful if the application are using eventfd to be
-> notified when requests are completed, but they don't want a notification
-> for every request.
-> Of course the application can already remove the eventfd from the event
-> loop, but as soon as it adds the eventfd again, it will be notified,
-> even if it has already handled all the completed requests.
-> 
-> The most important use case is when the registered eventfd is used to
-> notify a KVM guest through irqfd and we want a mechanism to
-> enable/disable interrupts.
-> 
-> I also extended liburing API and added a test case here:
-> https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
+> Don't mind the feature, and I think the patches look fine. But the name
+> is really horrible, I'd have no idea what that flag does without looking
+> at the code or a man page. Why not call it IORING_CQ_EVENTFD_ENABLED or
+> something like that? Or maybe IORING_CQ_EVENTFD_DISABLED, and then you
+> don't have to muck with the default value either. The app would set the
+> flag to disable eventfd, temporarily, and clear it again when it wants
+> notifications again.
 
-Don't mind the feature, and I think the patches look fine. But the name
-is really horrible, I'd have no idea what that flag does without looking
-at the code or a man page. Why not call it IORING_CQ_EVENTFD_ENABLED or
-something like that? Or maybe IORING_CQ_EVENTFD_DISABLED, and then you
-don't have to muck with the default value either. The app would set the
-flag to disable eventfd, temporarily, and clear it again when it wants
-notifications again.
+You're clearly right! :-) The name was horrible.
 
--- 
-Jens Axboe
+I agree that IORING_CQ_EVENTFD_DISABLED should be the best.
+I'll send a v2 changing the name and removing the default value.
+
+Thanks,
+Stefano
 
