@@ -2,260 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90FE01D586A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 19:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB651D58F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 20:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgEORzn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 13:55:43 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:46533 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726504AbgEORzg (ORCPT
+        id S1726438AbgEOSU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 14:20:58 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49858 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgEOSU5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 13:55:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589565333;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=PfIWRsElvqGc1a1ZBGt5Fj6BS3GWuiq8tGXZcYtnc2s=;
-        b=RsqaKJAc0X1usDYqNsvTUHNYcnkU7DokDc4Z2Vfy8iIzJGMq6SCXZwCQ6lavKIO/hFcTRl
-        8UiGwCCvW+X+qhYfFsW3dMUX9xDiRigV4joW07jqesTkT9FtrOCB5ZXmeqAc5aUt09uuWJ
-        LUBqH+u11v8jAB5+dPvG/rUDaVZ38Jo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-320-ugvvugxwPda0kLyZTmCMoA-1; Fri, 15 May 2020 13:55:29 -0400
-X-MC-Unique: ugvvugxwPda0kLyZTmCMoA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B03368005AD;
-        Fri, 15 May 2020 17:55:24 +0000 (UTC)
-Received: from optiplex-lnx.redhat.com (unknown [10.10.110.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CFE111C8;
-        Fri, 15 May 2020 17:55:14 +0000 (UTC)
-From:   Rafael Aquini <aquini@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, dyoung@redhat.com, bhe@redhat.com,
-        corbet@lwn.net, mcgrof@kernel.org, keescook@chromium.org,
-        akpm@linux-foundation.org, cai@lca.pw, rdunlap@infradead.org,
-        tytso@mit.edu, bunk@kernel.org, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, labbott@redhat.com, jeffm@suse.com,
-        jikos@kernel.org, jeyu@suse.de, tiwai@suse.de, AnDavis@suse.com,
-        rpalethorpe@suse.de
-Subject: [PATCH v5] kernel: add panic_on_taint
-Date:   Fri, 15 May 2020 13:55:02 -0400
-Message-Id: <20200515175502.146720-1-aquini@redhat.com>
+        Fri, 15 May 2020 14:20:57 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewv-0000TY-Jb; Fri, 15 May 2020 12:20:46 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewl-0004yB-GR; Fri, 15 May 2020 12:20:42 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+        <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Date:   Fri, 15 May 2020 13:16:59 -0500
+In-Reply-To: <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Sat, 16 May 2020 00:18:00 +0900")
+Message-ID: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain
+X-XM-SPF: eid=1jZewl-0004yB-GR;;;mid=<87lfltcbc4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/5CZAGXdnSF9gJYpnj+DVwF9M3wdqkovE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMGappySubj_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  0.7 XMSubLong Long Subject
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 4682 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 11 (0.2%), b_tie_ro: 10 (0.2%), parse: 1.05
+        (0.0%), extract_message_metadata: 11 (0.2%), get_uri_detail_list: 1.23
+        (0.0%), tests_pri_-1000: 4.1 (0.1%), tests_pri_-950: 1.27 (0.0%),
+        tests_pri_-900: 1.07 (0.0%), tests_pri_-90: 54 (1.2%), check_bayes: 53
+        (1.1%), b_tokenize: 7 (0.1%), b_tok_get_all: 6 (0.1%), b_comp_prob:
+        2.0 (0.0%), b_tok_touch_all: 34 (0.7%), b_finish: 0.94 (0.0%),
+        tests_pri_0: 340 (7.3%), check_dkim_signature: 0.59 (0.0%),
+        check_dkim_adsp: 3.4 (0.1%), poll_dns_idle: 4237 (90.5%),
+        tests_pri_10: 2.9 (0.1%), tests_pri_500: 4251 (90.8%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: linux-next boot error: general protection fault in tomoyo_get_local_path
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Analogously to the introduction of panic_on_warn, this patch introduces a kernel
-option named panic_on_taint in order to provide a simple and generic way to stop
-execution and catch a coredump when the kernel gets tainted by any given flag.
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-This is useful for debugging sessions as it avoids having to rebuild the kernel
-to explicitly add calls to panic() into the code sites that introduce the taint
-flags of interest. For instance, if one is interested in proceeding with a
-post-mortem analysis at the point a given code path is hitting a bad page
-(i.e. unaccount_page_cache_page(), or slab_bug()), a coredump can be collected
-by rebooting the kernel with 'panic_on_taint=0x20' amended to the command line.
+> This is
+>
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+>                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+>
+>                 if (*ep == '/' && pid && pid ==
+>                     task_tgid_nr_ns(current, proc_pidns)) {
+>
+> which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+>
+> @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+>
+>                 if (*ep == '/' && pid && pid ==
+> -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> +                   task_tgid_nr_ns(current, proc_pidns)) {
+>                         pos = ep - 5;
+>                         if (pos < buffer)
+>                                 goto out;
+>
+> Alexey and Eric, any clue?
 
-Another, perhaps less frequent, use for this option would be as a mean for
-assuring a security policy case where only a subset of taints, or no single
-taint (in paranoid mode), is allowed for the running system.
-The optional switch 'nousertaint' is handy in this particular scenario,
-as it will avoid userspace induced crashes by writes to sysctl interface
-/proc/sys/kernel/tainted causing false positive hits for such policies.
+Looking at the stack backtrace this is happening as part of creating a
+file or a device node.  The dentry that is passed in most likely
+comes from d_alloc_parallel.  So we have d_inode == NULL.
 
-Suggested-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Rafael Aquini <aquini@redhat.com>
----
-Changelog:
-* v2: get rid of unnecessary/misguided compiler hints		(Luis)
-      enhance documentation text for the new kernel parameter	(Randy)
-* v3: drop sysctl interface, keep it only as a kernel parameter	(Luis)
-* v4: change panic_on_taint input from alphabetical taint flags
-      to hexadecimal bitmasks, for clarity and extendability	(Luis)
-* v5: add doc note on the potential effects of panic_on_taint
-      with notaintuser on writes to kernel.tainted sysctl knob	(Luis)
+I want to suggest doing the very simple fix:
 
- Documentation/admin-guide/kdump/kdump.rst     |  8 +++++
- .../admin-guide/kernel-parameters.txt         | 13 +++++++
- Documentation/admin-guide/sysctl/kernel.rst   |  7 ++++
- include/linux/kernel.h                        |  3 ++
- kernel/panic.c                                | 34 +++++++++++++++++++
- kernel/sysctl.c                               | 11 +++++-
- 6 files changed, 75 insertions(+), 1 deletion(-)
+-	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
++	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/' && denty->d_inode) {
 
-diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-index ac7e131d2935..2da65fef2a1c 100644
---- a/Documentation/admin-guide/kdump/kdump.rst
-+++ b/Documentation/admin-guide/kdump/kdump.rst
-@@ -521,6 +521,14 @@ will cause a kdump to occur at the panic() call.  In cases where a user wants
- to specify this during runtime, /proc/sys/kernel/panic_on_warn can be set to 1
- to achieve the same behaviour.
- 
-+Trigger Kdump on add_taint()
-+============================
-+
-+The kernel parameter panic_on_taint facilitates a conditional call to panic()
-+from within add_taint() whenever the value set in this bitmask matches with the
-+bit flag being set by add_taint().
-+This will cause a kdump to occur at the add_taint()->panic() call.
-+
- Contact
- =======
- 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d9197499aad1..27b988acb4db 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3422,6 +3422,19 @@
- 			bit 4: print ftrace buffer
- 			bit 5: print all printk messages in buffer
- 
-+	panic_on_taint=	Bitmask for conditionally call panic() in add_taint()
-+			Format: <hex>[,nousertaint]
-+			Hexadecimal bitmask representing the set of TAINT flags
-+			that will cause the kernel to panic when add_taint() is
-+			called with any of the flags in this set.
-+			The optional switch "nousertaint" can be utilized to
-+			prevent userspace forced crashes by writing to sysctl
-+			/proc/sys/kernel/tainted any flagset matching with the
-+			bitmask set on panic_on_taint.
-+			See Documentation/admin-guide/tainted-kernels.rst for
-+			extra details on the taint flags that users can pick
-+			to compose the bitmask to assign to panic_on_taint.
-+
- 	panic_on_warn	panic() instead of WARN().  Useful to cause kdump
- 			on a WARN().
- 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index c6c27db68d4c..427ce0a86b36 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1241,6 +1241,13 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
- 
- See :doc:`/admin-guide/tainted-kernels` for more information.
- 
-+Note:
-+  writes to this sysctl interface will fail with ``EINVAL`` if the kernel is
-+  booted with the command line option ``panic_on_taint=<bitmask>,nousertaint``
-+  and any of the ORed together values being written to ``tainted`` match with
-+  the bitmask declared on panic_on_taint.
-+  See :doc:`/admin-guide/kernel-parameters` for more details on that particular
-+  kernel command line option and its optional ``nousertaint`` switch.
- 
- threads-max
- ===========
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 04a5885cec1b..82d91547d122 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -534,6 +534,8 @@ extern int panic_on_oops;
- extern int panic_on_unrecovered_nmi;
- extern int panic_on_io_nmi;
- extern int panic_on_warn;
-+extern unsigned long panic_on_taint;
-+extern bool panic_on_taint_nousertaint;
- extern int sysctl_panic_on_rcu_stall;
- extern int sysctl_panic_on_stackoverflow;
- 
-@@ -602,6 +604,7 @@ extern enum system_states {
- #define TAINT_AUX			16
- #define TAINT_RANDSTRUCT		17
- #define TAINT_FLAGS_COUNT		18
-+#define TAINT_FLAGS_MAX			((1UL << TAINT_FLAGS_COUNT) - 1)
- 
- struct taint_flag {
- 	char c_true;	/* character printed when tainted */
-diff --git a/kernel/panic.c b/kernel/panic.c
-index ec6d7d788ce7..85568bbfb12b 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -52,6 +52,8 @@ static int pause_on_oops_flag;
- static DEFINE_SPINLOCK(pause_on_oops_lock);
- bool crash_kexec_post_notifiers;
- int panic_on_warn __read_mostly;
-+unsigned long panic_on_taint;
-+bool panic_on_taint_nousertaint = false;
- 
- int panic_timeout = CONFIG_PANIC_TIMEOUT;
- EXPORT_SYMBOL_GPL(panic_timeout);
-@@ -442,6 +444,11 @@ void add_taint(unsigned flag, enum lockdep_ok lockdep_ok)
- 		pr_warn("Disabling lock debugging due to kernel taint\n");
- 
- 	set_bit(flag, &tainted_mask);
-+
-+	if (tainted_mask & panic_on_taint) {
-+		panic_on_taint = 0;
-+		panic("panic_on_taint set ...");
-+	}
- }
- EXPORT_SYMBOL(add_taint);
- 
-@@ -697,3 +704,30 @@ static int __init oops_setup(char *s)
- 	return 0;
- }
- early_param("oops", oops_setup);
-+
-+static int __init panic_on_taint_setup(char *s)
-+{
-+	char *taint_str;
-+
-+	if (!s)
-+		return -EINVAL;
-+
-+	taint_str = strsep(&s, ",");
-+	if (kstrtoul(taint_str, 16, &panic_on_taint))
-+		return -EINVAL;
-+
-+	/* make sure panic_on_taint doesn't hold out-of-range TAINT flags */
-+	panic_on_taint &= TAINT_FLAGS_MAX;
-+
-+	if (!panic_on_taint)
-+		return -EINVAL;
-+
-+	if (s && !strcmp(s, "nousertaint"))
-+		panic_on_taint_nousertaint = true;
-+
-+	pr_info("panic_on_taint: bitmask=0x%lx nousertaint_mode=%sabled\n",
-+		panic_on_taint, panic_on_taint_nousertaint ? "en" : "dis");
-+
-+	return 0;
-+}
-+early_param("panic_on_taint", panic_on_taint_setup);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 349cab382081..c8ec67c1e137 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -865,11 +865,20 @@ static int proc_taint(struct ctl_table *table, int write,
- 		return err;
- 
- 	if (write) {
-+		int i;
-+
-+		/*
-+		 * If we are relying on panic_on_taint not producing
-+		 * false positives due to userspace input, bail out
-+		 * before setting the requested taint flags.
-+		 */
-+		if (panic_on_taint_nousertaint && (tmptaint & panic_on_taint))
-+			return -EINVAL;
-+
- 		/*
- 		 * Poor man's atomic or. Not worth adding a primitive
- 		 * to everyone's atomic.h for this
- 		 */
--		int i;
- 		for (i = 0; i < TAINT_FLAGS_COUNT; i++)
- 			if ((1UL << i) & tmptaint)
- 				add_taint(i, LOCKDEP_STILL_OK);
--- 
-2.25.4
+But I don't know if there are any other security hooks early in lookup,
+that could be called for an already existing dentry.
 
+So it looks like we need a version proc_pid_ns that works for a dentry,
+or a superblock.
+
+Alex do you think you can code up an patch against my proc-next branch
+to fix this?
+
+Eric
