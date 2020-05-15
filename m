@@ -2,82 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3881D5A94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A35DA1D5AA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbgEOUOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 16:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbgEOUOY (ORCPT
+        id S1726197AbgEOUVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 16:21:30 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44007 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbgEOUVa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 16:14:24 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CA9C061A0C;
-        Fri, 15 May 2020 13:14:23 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZgiT-009GPf-NM; Fri, 15 May 2020 20:13:57 +0000
-Date:   Fri, 15 May 2020 21:13:57 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: linux-next boot error: general protection fault in
- tomoyo_get_local_path
-Message-ID: <20200515201357.GG23230@ZenIV.linux.org.uk>
-References: <0000000000002f0c7505a5b0e04c@google.com>
- <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
- <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
+        Fri, 15 May 2020 16:21:30 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k22so1356063pls.10;
+        Fri, 15 May 2020 13:21:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aSUN+6mJpWuP6Of+IJbDE1swWmWrU0mZkmJ837Io9Jc=;
+        b=TqjWOIPpNm7Q9QgzYwTdZzvOnu/rbVVbf5scL5/dzTt5x0basnk7htPeqZbYyHAMwN
+         zRg8HudCqRFdGigUQosebddz+ci5Tv0BWJvHgHoTaNeo7KzsQ4vqS47zZpYzuoJbHeK8
+         g9vVcYRxW5vXP5ToJBvwT3CVuVsmLlkuS2kH7Oyg0blbTPuMgMFi2mvBG94WRw3hmO6k
+         A+TdBEkfybb+0d5O8fJ8rrmA9jGyfxk/SfAKLC06hr6+bv0CcpK9yb7gjZjPqmzX9sQ+
+         kOxySfPlpOXXyQ5KFa2mu59N2XDiGCjSY/dsJ79IM0Muwvl18L1q9enj5SdS2wzH3kp0
+         raVg==
+X-Gm-Message-State: AOAM531VXGcLQcCJLJuQp495AUdYXEJRcRfAk4nzT1RWvqZV8VV73GhP
+        hTz+AcTV/Y18LxaouykLGpMJjSy4yV8=
+X-Google-Smtp-Source: ABdhPJzDKstdoEAfNtdPXwb/uILqnTT69eTIYpdZ5GurBwer3cFOtdawny/GPsI7kVqMwlRo4sJv+A==
+X-Received: by 2002:a17:90b:3887:: with SMTP id mu7mr5128138pjb.168.1589574089350;
+        Fri, 15 May 2020 13:21:29 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id r2sm2621097pfq.194.2020.05.15.13.21.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2020 13:21:27 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id D608240246; Fri, 15 May 2020 20:21:26 +0000 (UTC)
+Date:   Fri, 15 May 2020 20:21:26 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>, yzaikin@google.com,
+        adobriyan@gmail.com, mingo@kernel.org, peterz@infradead.org,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        bauerman@linux.ibm.com, gregkh@linuxfoundation.org,
+        skhan@linuxfoundation.org, dvyukov@google.com,
+        svens@stackframe.org, joel@joelfernandes.org, tglx@linutronix.de,
+        Jisheng.Zhang@synaptics.com, pmladek@suse.com,
+        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, wangle6@huawei.com
+Subject: Re: [PATCH 1/4] hung_task: Move hung_task sysctl interface to
+ hung_task_sysctl.c
+Message-ID: <20200515202126.GY11244@42.do-not-panic.com>
+References: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
+ <1589517224-123928-2-git-send-email-nixiaoming@huawei.com>
+ <202005150103.6DD6F07@keescook>
+ <b72e0721-d08a-0fef-f55d-eb854483d04f@huawei.com>
+ <202005150902.9293E99B8@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
+In-Reply-To: <202005150902.9293E99B8@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 16, 2020 at 12:36:28AM +0900, Tetsuo Handa wrote:
-> On 2020/05/16 0:18, Tetsuo Handa wrote:
-> > This is
-> > 
-> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
-> >                 char *ep;
-> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
-> >                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
-> > 
-> >                 if (*ep == '/' && pid && pid ==
-> >                     task_tgid_nr_ns(current, proc_pidns)) {
-> > 
-> > which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
-> > 
-> > @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
-> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
-> >                 char *ep;
-> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
-> > +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
-> > 
-> >                 if (*ep == '/' && pid && pid ==
-> > -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
-> > +                   task_tgid_nr_ns(current, proc_pidns)) {
-> >                         pos = ep - 5;
-> >                         if (pos < buffer)
-> >                                 goto out;
-> > 
-> > Alexey and Eric, any clue?
-> > 
+On Fri, May 15, 2020 at 09:03:54AM -0700, Kees Cook wrote:
+> On Fri, May 15, 2020 at 04:56:34PM +0800, Xiaoming Ni wrote:
+> > On 2020/5/15 16:04, Kees Cook wrote:
+> > > On Fri, May 15, 2020 at 12:33:41PM +0800, Xiaoming Ni wrote:
+> > > > Move hung_task sysctl interface to hung_task_sysctl.c.
+> > > > Use register_sysctl() to register the sysctl interface to avoid
+> > > > merge conflicts when different features modify sysctl.c at the same time.
+> > > > 
+> > > > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+> > > > ---
+> > > >   include/linux/sched/sysctl.h |  8 +----
+> > > >   kernel/Makefile              |  4 ++-
+> > > >   kernel/hung_task.c           |  6 ++--
+> > > >   kernel/hung_task.h           | 21 ++++++++++++
+> > > >   kernel/hung_task_sysctl.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++
+> > > 
+> > > Why a separate file? That ends up needing changes to Makefile, the
+> > > creation of a new header file, etc. Why not just put it all into
+> > > hung_task.c directly?
+> > > 
+> > > -Kees
+> > > 
+> > But Luis Chamberlain's suggestion is to put the hung_task sysctl code in a
+> > separate file. Details are in https://lkml.org/lkml/2020/5/13/762.
+> > I am a little confused, not sure which way is better.
 > 
-> A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
-> commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
-> not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
+> Ah, yes, I see now. Luis, I disagree with your recommendation here -- I
+> think complicating the Makefile is much less intuitive than just
+> wrapping this code in an #ifdef block in the existing .c file.
 
-Could you explain why do you want to bother with d_inode() anyway?  Anything that
-does dentry->d_inode->i_sb can bloody well use dentry->d_sb.  And that's never
-changed over the struct dentry lifetime - ->d_sb is set on allocation and never
-modified afterwards.
+That's fine, sorry for the trouble Xiaoming.
+
+  Luis
