@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 441991D4EDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6519C1D4EEB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:18:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbgEONRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51248 "EHLO
+        id S1726592AbgEONSQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbgEONRD (ORCPT
+        with ESMTP id S1726292AbgEONRD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 15 May 2020 09:17:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE092C05BD1B;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE0CC05BD0D;
         Fri, 15 May 2020 06:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=MKRr7ww84nPVgNZDl/LbIY5Kct5MfTlH0fl1kdElxWI=; b=kiAbDPTewmgI3eISPMqX72XGNu
-        yzCMKUQ+gWQse6OYoJ/inqZDWB4YjDAvvsDgsA69+ZBDJa/0NfS/F2RIXWl/C5LmYBBYF1xtJ8G3J
-        nXNkmnt9T6sQUCO9BQS1MeTNGuZmWF71da1I8CLu5FY/3fBm35aO5aMu4a+wNEdDKZmb/myAzCJ71
-        Y2FtehLRyQjb/ENPUt7AOVHxzULSFW8whEZm3fK4ckkmMesrK8tEDZWCGa/Lyz7l7a3VWyokbbVvG
-        vb9ddS9t/jI/cTX7fqDnOQ4JZUW2QOtA6/NR3eH0rhzM/qMBZWUp5npwPS1kpmHgAYuEBSbKmdhD3
-        SZv88Kuw==;
+        bh=9r9vORbOytoazW3UXAiDTCw79E+Sm2pnv9qrsCelaEs=; b=ET9GLrmZusiuGd8+w8wbCKtksq
+        dHQouvGiIMBcgTOT5pbeue0pK+qjSdB4XU53P5KZf+KkVyWWMLGd/5A7XSv+hk8gMvOSOzRbA/CBS
+        zpROQ0FzI6PUN9sdNnMI64kAIza+LuDxMTcwDacw5xYVpT1GmY6vfRWQIljHVlR726StSb3Bq3E1E
+        ABUqKezeRQBX1+lpFso9xn4dngqpoIJNBOS4xFWiojxiVRA/ui30BwtXQBry49aSljgMHIU7sNmqE
+        5DWE0n/jlkooNQ9JbFG5QRNiXeQFyKJM+YNLO84ZMqhdtACVIY/aaGrFsm8CstM34BdFES1qrnpt5
+        p/9GiqWg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZaD0-0005jq-5j; Fri, 15 May 2020 13:17:02 +0000
+        id 1jZaD0-0005kH-8J; Fri, 15 May 2020 13:17:02 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 25/36] mm: Fix total_mapcount assumption of page size
-Date:   Fri, 15 May 2020 06:16:45 -0700
-Message-Id: <20200515131656.12890-26-willy@infradead.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 26/36] mm: Avoid splitting large pages
+Date:   Fri, 15 May 2020 06:16:46 -0700
+Message-Id: <20200515131656.12890-27-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 References: <20200515131656.12890-1-willy@infradead.org>
@@ -44,49 +44,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-File THPs may now be of arbitrary order.
-
-Signed-off-by: Kirill A. Shutemov <kirill@shutemov.name>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+If the filesystem supports large pages, then do not split them before
+removing them from the page cache; remove them as a unit.
 ---
- mm/huge_memory.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ mm/vmscan.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 7a5e2b470bc7..15a86b06befc 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2668,7 +2668,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- int total_mapcount(struct page *page)
- {
--	int i, compound, ret;
-+	int i, compound, nr, ret;
- 
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 
-@@ -2676,16 +2676,17 @@ int total_mapcount(struct page *page)
- 		return atomic_read(&page->_mapcount) + 1;
- 
- 	compound = compound_mapcount(page);
-+	nr = compound_nr(page);
- 	if (PageHuge(page))
- 		return compound;
- 	ret = compound;
--	for (i = 0; i < HPAGE_PMD_NR; i++)
-+	for (i = 0; i < nr; i++)
- 		ret += atomic_read(&page[i]._mapcount) + 1;
- 	/* File pages has compound_mapcount included in _mapcount */
- 	if (!PageAnon(page))
--		return ret - compound * HPAGE_PMD_NR;
-+		return ret - compound * nr;
- 	if (PageDoubleMap(page))
--		ret -= HPAGE_PMD_NR;
-+		ret -= nr;
- 	return ret;
- }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b06868fc4926..51e6c135575d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1271,9 +1271,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 				/* Adding to swap updated mapping */
+ 				mapping = page_mapping(page);
+ 			}
+-		} else if (unlikely(PageTransHuge(page))) {
++		} else if (PageTransHuge(page)) {
+ 			/* Split file THP */
+-			if (split_huge_page_to_list(page, page_list))
++			if (!mapping_large_pages(mapping) &&
++			    split_huge_page_to_list(page, page_list))
+ 				goto keep_locked;
+ 		}
  
 -- 
 2.26.2
