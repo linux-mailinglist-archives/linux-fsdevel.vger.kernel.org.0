@@ -2,167 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBCD1D44AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 06:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF3C1D44CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 06:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726624AbgEOEeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 00:34:12 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46384 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725616AbgEOEeI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 00:34:08 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3650B3FC3A5A4A9C49D3;
-        Fri, 15 May 2020 12:33:58 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.189.174) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 15 May 2020 12:33:48 +0800
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
-        <adobriyan@gmail.com>, <mingo@kernel.org>, <peterz@infradead.org>,
-        <akpm@linux-foundation.org>, <yamada.masahiro@socionext.com>,
-        <bauerman@linux.ibm.com>, <gregkh@linuxfoundation.org>,
-        <skhan@linuxfoundation.org>, <dvyukov@google.com>,
-        <svens@stackframe.org>, <joel@joelfernandes.org>,
-        <tglx@linutronix.de>, <Jisheng.Zhang@synaptics.com>,
-        <pmladek@suse.com>, <bigeasy@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <nixiaoming@huawei.com>, <wangle6@huawei.com>
-Subject: [PATCH 4/4] sysctl: Add register_sysctl_init() interface
-Date:   Fri, 15 May 2020 12:33:44 +0800
-Message-ID: <1589517224-123928-5-git-send-email-nixiaoming@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-In-Reply-To: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
-References: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
+        id S1726244AbgEOEl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 00:41:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:45791 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726064AbgEOEl1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 00:41:27 -0400
+IronPort-SDR: 4Z6AkquiHgTCJQEsv+vMsauIH7nn38UT/t2T0BI7pa3emCRqb7XndaML06d5BFwjlf0BMGwsDo
+ ri7jsABsnuDw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:26 -0700
+IronPort-SDR: XvCID+xrSHmqvNt9J29YB2SrWaVHM6cDjVEAKJ3qzIdoeexsMeCoAiDH1ayTXqGU+VAG+5A7Cm
+ /NygluhkY13g==
+X-IronPort-AV: E=Sophos;i="5.73,394,1583222400"; 
+   d="scan'208";a="341858147"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:25 -0700
+From:   ira.weiny@intel.com
+To:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] Enable ext4 support for per-file/directory DAX operations
+Date:   Thu, 14 May 2020 21:41:12 -0700
+Message-Id: <20200515044121.2987940-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to eliminate the duplicate code for registering the sysctl
-interface during the initialization of each feature, add the
-register_sysctl_init() interface
+From: Ira Weiny <ira.weiny@intel.com>
 
-Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+Enable the same per file DAX support in ext4 as was done for xfs.  This series
+builds and depends on the V11 series for xfs.[1]
+
+This passes the same xfstests test as XFS.
+
+The only issue is that this modifies the old mount option parsing code rather
+than waiting for the new parsing code to be finalized.
+
+This series starts with 3 fixes which include making Verity and Encrypt truly
+mutually exclusive from DAX.  I think these first 3 patches should be picked up
+for 5.8 regardless of what is decided regarding the mount parsing.
+
+[1] https://lore.kernel.org/lkml/20200428002142.404144-1-ira.weiny@intel.com/
+
 ---
- include/linux/sysctl.h    |  2 ++
- kernel/hung_task_sysctl.c | 15 +--------------
- kernel/sysctl.c           | 19 +++++++++++++++++++
- kernel/watchdog.c         | 18 +-----------------
- 4 files changed, 23 insertions(+), 31 deletions(-)
+Changes from V1:
+	Fix up mount options
+	Pick up reviews
 
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 6d741d6..3cdbe89 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -207,6 +207,8 @@ struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
- void unregister_sysctl_table(struct ctl_table_header * table);
- 
- extern int sysctl_init(void);
-+extern void register_sysctl_init(const char *path, struct ctl_table *table,
-+				 const char *table_name);
- 
- extern struct ctl_table sysctl_mount_point[];
- 
-diff --git a/kernel/hung_task_sysctl.c b/kernel/hung_task_sysctl.c
-index 62a51f5..14d2ed6 100644
---- a/kernel/hung_task_sysctl.c
-+++ b/kernel/hung_task_sysctl.c
-@@ -59,21 +59,8 @@
- 	{}
- };
- 
--/*
-- * The hung task sysctl has a default value.
-- * Even if register_sysctl() fails, it does not affect the main function of
-- * the hung task. At the same time, during the system initialization phase,
-- * malloc small memory will almost never fail.
-- * So the return value is ignored here
-- */
- void __init hung_task_sysctl_init(void)
- {
--	struct ctl_table_header *srt = register_sysctl("kernel", hung_task_sysctls);
--
--	if (unlikely(!srt)) {
--		pr_err("%s fail\n", __func__);
--		return;
--	}
--	kmemleak_not_leak(srt);
-+	register_sysctl_init("kernel", hung_task_sysctls, "hung_task_sysctls");
- }
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e394990..0a09742 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1823,6 +1823,25 @@ int __init sysctl_init(void)
- 	return 0;
- }
- 
-+/*
-+ * The sysctl interface is used to modify the interface value,
-+ * but the feature interface has default values. Even if register_sysctl fails,
-+ * the feature body function can also run. At the same time, malloc small
-+ * fragment of memory during the system initialization phase, almost does
-+ * not fail. Therefore, the function return is designed as void
-+ */
-+void __init register_sysctl_init(const char *path, struct ctl_table *table,
-+				 const char *table_name)
-+{
-+	struct ctl_table_header *hdr = register_sysctl(path, table);
-+
-+	if (unlikely(!hdr)) {
-+		pr_err("failed when register_sysctl %s to %s\n", table_name, path);
-+		return;
-+	}
-+	kmemleak_not_leak(hdr);
-+}
-+
- #endif /* CONFIG_SYSCTL */
- 
- /*
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 05e1d58..c1bebb1 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -23,9 +23,6 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/isolation.h>
- #include <linux/stop_machine.h>
--#ifdef CONFIG_SYSCTL
--#include <linux/kmemleak.h>
--#endif
- 
- #include <asm/irq_regs.h>
- #include <linux/kvm_para.h>
-@@ -853,22 +850,9 @@ int proc_watchdog_cpumask(struct ctl_table *table, int write,
- 	{}
- };
- 
--/*
-- * The watchdog sysctl has a default value.
-- * Even if register_sysctl() fails, it does not affect the main function of
-- * the watchdog. At the same time, during the system initialization phase,
-- * malloc small memory will almost never fail.
-- * So the return value is ignored here
-- */
- static void __init watchdog_sysctl_init(void)
- {
--	struct ctl_table_header *p = register_sysctl("kernel", watchdog_sysctls);
--
--	if (unlikely(!p)) {
--		pr_err("%s fail\n", __func__);
--		return;
--	}
--	kmemleak_not_leak(p);
-+	register_sysctl_init("kernel", watchdog_sysctls, "watchdog_sysctls");
- }
- #else
- #define watchdog_sysctl_init() do { } while (0)
+To: linux-kernel@vger.kernel.org
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+
+
+Ira Weiny (9):
+  fs/ext4: Narrow scope of DAX check in setflags
+  fs/ext4: Disallow verity if inode is DAX
+  fs/ext4: Disallow encryption if inode is DAX
+  fs/ext4: Change EXT4_MOUNT_DAX to EXT4_MOUNT_DAX_ALWAYS
+  fs/ext4: Update ext4_should_use_dax()
+  fs/ext4: Only change S_DAX on inode load
+  fs/ext4: Make DAX mount option a tri-state
+  fs/ext4: Introduce DAX inode flag
+  Documentation/dax: Update DAX enablement for ext4
+
+ Documentation/filesystems/dax.txt         |  6 +-
+ Documentation/filesystems/ext4/verity.rst |  7 ++
+ Documentation/filesystems/fscrypt.rst     |  4 +-
+ fs/ext4/ext4.h                            | 21 ++++--
+ fs/ext4/ialloc.c                          |  2 +-
+ fs/ext4/inode.c                           | 27 +++++--
+ fs/ext4/ioctl.c                           | 31 ++++++--
+ fs/ext4/super.c                           | 87 ++++++++++++++++-------
+ fs/ext4/verity.c                          |  5 +-
+ include/uapi/linux/fs.h                   |  1 +
+ 10 files changed, 144 insertions(+), 47 deletions(-)
+
 -- 
-1.8.5.6
+2.25.1
 
