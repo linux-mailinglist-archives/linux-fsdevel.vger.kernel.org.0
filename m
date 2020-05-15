@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B731D50D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 916E21D50DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbgEOOh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 10:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35626 "EHLO
+        id S1726890AbgEOOhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726302AbgEOOh0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726831AbgEOOh3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 10:37:26 -0400
+        Fri, 15 May 2020 10:37:29 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E94C061A0C;
-        Fri, 15 May 2020 07:37:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9120C061A0C;
+        Fri, 15 May 2020 07:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=TnbCkkwCrUJoVyKDF526uiErLGT3jwDipU5D/anO8xc=; b=Yg/1sGMNgegwbtPN8e3l3mjuT5
-        IG+U9qiqX2BpWZW5HdvwsSQA60De/nQt3TpJXPQRKQ7EPXuSZnetBVwuqRDjvblJFfZGHQFJgAnXm
-        HexvWXx282zsGkHTgK8V+Kd436i+xu/35S62Ifj7kzJOc63js73HolOH2dm+6DNkeK8wmsVd/pHiv
-        pI6ZzdcQKdTw7Q4ycGaIyCQnPUoHk667HjzWtokNqIMMIU2kUM76aQFAk9Q75/oTkTrIldGqYPJbA
-        8wZis1cE5a+R1kI7WETW1Wx9A0zLLClKWp+6llj5sI6qEEPPSQR2DPvTvgNP/olc941lb5Mlc9TaE
-        L8gNcDBA==;
+        bh=A0UMmbAtyFU8Mgmehd8BwFzZHE+DazTplWu/8/CZIxQ=; b=thoKBgaMbx1Cx5CA4Atq9h0Hjc
+        5bfoBkf6B6l70gHgjHiu6NtD6O4OiCWdLEd2/qYyYSAwD8YOCsdDHCYKc7NJBE4lvcItE8kFKfk/E
+        IVklxzatDYx9U7wNUuJTfivt1P5gFyUyJ0cD0MBYfURGrTEyT9PcaERhdoIrOVnJcj2MdfKw25GEa
+        83N3SgpWztqjuy5GD/iOZWBJOJraIKdnfZwSWd1Lw6YgUv3HwmgOto1NGYTv/CZDZ6fb9R4cBehIU
+        B0bWmc1D8ab7q6CIbZuMjtll0x83iAkVdTSwiU1/VosyGWqL0mewvIilhiIUZoL8og6TsJMFiOW21
+        nycS90Qg==;
 Received: from [2001:4bb8:188:1506:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZbSQ-0003wV-8r; Fri, 15 May 2020 14:37:02 +0000
+        id 1jZbSS-0003yz-QR; Fri, 15 May 2020 14:37:05 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +43,9 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/29] asm-generic: fix the inclusion guards for cacheflush.h
-Date:   Fri, 15 May 2020 16:36:22 +0200
-Message-Id: <20200515143646.3857579-6-hch@lst.de>
+Subject: [PATCH 06/29] asm-generic: don't include <linux/mm.h> in cacheflush.h
+Date:   Fri, 15 May 2020 16:36:23 +0200
+Message-Id: <20200515143646.3857579-7-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200515143646.3857579-1-hch@lst.de>
 References: <20200515143646.3857579-1-hch@lst.de>
@@ -57,33 +57,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cacheflush.h uses a somewhat to generic include guard name that clashes
-with various arch files.  Use a more specific one.
+This seems to lead to some crazy include loops when using
+asm-generic/cacheflush.h on more architectures, so leave it
+to the arch header for now.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/asm-generic/cacheflush.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/um/include/asm/tlb.h         | 2 ++
+ arch/x86/include/asm/cacheflush.h | 2 ++
+ drivers/nvdimm/pmem.c             | 3 ++-
+ include/asm-generic/cacheflush.h  | 3 ---
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/arch/um/include/asm/tlb.h b/arch/um/include/asm/tlb.h
+index 70ee603839006..ff9c62828962c 100644
+--- a/arch/um/include/asm/tlb.h
++++ b/arch/um/include/asm/tlb.h
+@@ -2,6 +2,8 @@
+ #ifndef __UM_TLB_H
+ #define __UM_TLB_H
+ 
++#include <linux/mm.h>
++
+ #include <asm/tlbflush.h>
+ #include <asm-generic/cacheflush.h>
+ #include <asm-generic/tlb.h>
+diff --git a/arch/x86/include/asm/cacheflush.h b/arch/x86/include/asm/cacheflush.h
+index 63feaf2a5f93d..b192d917a6d0b 100644
+--- a/arch/x86/include/asm/cacheflush.h
++++ b/arch/x86/include/asm/cacheflush.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_CACHEFLUSH_H
+ #define _ASM_X86_CACHEFLUSH_H
+ 
++#include <linux/mm.h>
++
+ /* Caches aren't brain-dead on the intel. */
+ #include <asm-generic/cacheflush.h>
+ #include <asm/special_insns.h>
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 2df6994acf836..55282a6217407 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -7,7 +7,6 @@
+  * Copyright (c) 2015, Boaz Harrosh <boaz@plexistor.com>.
+  */
+ 
+-#include <asm/cacheflush.h>
+ #include <linux/blkdev.h>
+ #include <linux/hdreg.h>
+ #include <linux/init.h>
+@@ -25,6 +24,8 @@
+ #include <linux/dax.h>
+ #include <linux/nd.h>
+ #include <linux/backing-dev.h>
++#include <linux/mm.h>
++#include <asm/cacheflush.h>
+ #include "pmem.h"
+ #include "pfn.h"
+ #include "nd.h"
 diff --git a/include/asm-generic/cacheflush.h b/include/asm-generic/cacheflush.h
-index cac7404b2bdd2..906277492ec59 100644
+index 906277492ec59..bf9bb83e9fc8d 100644
 --- a/include/asm-generic/cacheflush.h
 +++ b/include/asm-generic/cacheflush.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_CACHEFLUSH_H
--#define __ASM_CACHEFLUSH_H
-+#ifndef _ASM_GENERIC_CACHEFLUSH_H
-+#define _ASM_GENERIC_CACHEFLUSH_H
+@@ -2,9 +2,6 @@
+ #ifndef _ASM_GENERIC_CACHEFLUSH_H
+ #define _ASM_GENERIC_CACHEFLUSH_H
  
- /* Keep includes the same across arches.  */
- #include <linux/mm.h>
-@@ -109,4 +109,4 @@ static inline void flush_cache_vunmap(unsigned long start, unsigned long end)
- 	memcpy(dst, src, len)
- #endif
+-/* Keep includes the same across arches.  */
+-#include <linux/mm.h>
+-
+ #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
  
--#endif /* __ASM_CACHEFLUSH_H */
-+#endif /* _ASM_GENERIC_CACHEFLUSH_H */
+ /*
 -- 
 2.26.2
 
