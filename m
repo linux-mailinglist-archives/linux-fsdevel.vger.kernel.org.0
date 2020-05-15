@@ -2,88 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5B01D594B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 20:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB99B1D59C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 21:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbgEOSoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 14:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46576 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbgEOSoU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 14:44:20 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4481C061A0C;
-        Fri, 15 May 2020 11:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eFWvwLKFGzyiQJFsBdanngzoQxBkkdEj+F7mphDLxWo=; b=lTfU4JiLO4rvJaOgBk2NqxYW3T
-        r7Kubiu5kiBwMf7d1hoMbm0czYSTR9RH9Kms3OSitDKBTX1a53oSE57RFovvFwN0YaEPjoFuUc/9n
-        lAnw4XnNRIRCeGwfzN9s/qYZSF8kdXKQQ3Fr9M9Ij+J1A4QmBI16m/czKM4ARCjvpY0oP/ezuFSPk
-        TOfDeFiEMIqTrtZ30ED6vqh8O2YQjW8dp+BOTi8k7xslvQjBNJ24tjD/MDRPsufRY4EWb012d0DK4
-        8ATYyVr/WmqUmT1ZQPQrSi0Huu4+3s4d06hGb+JVg0OaMwWNhxPvVIdAYeGOekKbML0my53lEPx0C
-        azFjaYAQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZfJO-0001Ee-Vd; Fri, 15 May 2020 18:43:58 +0000
-Date:   Fri, 15 May 2020 11:43:58 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Karstens, Nate" <Nate.Karstens@garmin.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        David Laight <David.Laight@aculab.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Changli Gao <xiaosuo@gmail.com>,
-        "a.josey@opengroup.org" <a.josey@opengroup.org>
-Subject: Re: [PATCH v2] Implement close-on-fork
-Message-ID: <20200515184358.GH16070@bombadil.infradead.org>
-References: <20200515152321.9280-1-nate.karstens@garmin.com>
- <20200515155730.GF16070@bombadil.infradead.org>
- <5b1929aa9f424e689c7f430663891827@garmin.com>
- <1589559950.3653.11.camel@HansenPartnership.com>
- <4964fe0ccdf7495daf4045c195b14ed6@garmin.com>
+        id S1726301AbgEOTOS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 15:14:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbgEOTOR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 15:14:17 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D9A420727;
+        Fri, 15 May 2020 19:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589570057;
+        bh=U7+OMuFXR/wq18HNvqccFPF/InNFiHHmpdGzaBnusqM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ifb4fJo3Dl+eLlVApJmTNfbDilmqheqSqzn2qUyYk0f8iP4mAG4OZcfV9GHMQy5RJ
+         L+mLGksUiX1OMEzS8/grcZFB2qAiZa4SWCzkuXpjibyXjBzPfCG7iLVSYe01k0RDYB
+         dWfRVeZylqOt9OUuuluTbnndrgZDAWAzx1fjPfuI=
+Date:   Fri, 15 May 2020 12:14:15 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-ext4@vger.kernel.org
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
+Subject: Re: [PATCH] ext4: fix race between ext4_sync_parent() and rename()
+Message-ID: <20200515191415.GC1009@sol.localdomain>
+References: <20200506183140.541194-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4964fe0ccdf7495daf4045c195b14ed6@garmin.com>
+In-Reply-To: <20200506183140.541194-1-ebiggers@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 06:28:20PM +0000, Karstens, Nate wrote:
-> Our first attempt, which was to use the pthread_atfork() handlers, failed because system() is not required to call the handlers.
+On Wed, May 06, 2020 at 11:31:40AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Most of the feedback we're getting on this seems to say "don't use system(), it is unsafe for threaded applications". Is that documented anywhere? The man page says it is "MT-Safe".
+> 'igrab(d_inode(dentry->d_parent))' without holding dentry->d_lock is
+> broken because without d_lock, d_parent can be concurrently changed due
+> to a rename().  Then if the old directory is immediately deleted, old
+> d_parent->inode can be NULL.  That causes a NULL dereference in igrab().
+> 
+> To fix this, use dget_parent() to safely grab a reference to the parent
+> dentry, which pins the inode.  This also eliminates the need to use
+> d_find_any_alias() other than for the initial inode, as we no longer
+> throw away the dentry at each step.
+> 
+> This is an extremely hard race to hit, but it is possible.  Adding a
+> udelay() in between the reads of ->d_parent and its ->d_inode makes it
+> reproducible on a no-journal filesystem using the following program:
+> 
+>     #include <fcntl.h>
+>     #include <unistd.h>
+> 
+>     int main()
+>     {
+>         if (fork()) {
+>             for (;;) {
+>                 mkdir("dir1", 0700);
+>                 int fd = open("dir1/file", O_RDWR|O_CREAT|O_SYNC);
+>                 write(fd, "X", 1);
+>                 close(fd);
+>             }
+>         } else {
+>             mkdir("dir2", 0700);
+>             for (;;) {
+>                 rename("dir1/file", "dir2/file");
+>                 rmdir("dir1");
+>             }
+>         }
+>     }
+> 
+> Fixes: d59729f4e794 ("ext4: fix races in ext4_sync_parent()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-https://pubs.opengroup.org/onlinepubs/9699919799/functions/system.html
 
-> Aside from that, even if we remove all uses of system() from our application (which we already have), then our application, like many other applications, needs to use third-party shared libraries. There is nothing that prevents those libraries from using system(). We can audit those libraries and go back with the vendor with a request to replace system() with a standard fork/exec, but they will also want documentation supporting that.
+Any comments on this patch?
 
-They might also be using any number of other interfaces which aren't
-thread-safe.
-
-> If the feedback from the community is truly and finally that system() should not be used in these applications, then is there support for updating the man page to better communicate that?
-
-Yes, absolutely.
-
-I think you're mischaracterising our feedback.  It's not "We don't want
-to fix this interface".  It's "We don't want to slow down everything else
-to fix this interface (and by the way there are lots of other problems
-with this interface that you aren't even trying to address)".
+- Eric
