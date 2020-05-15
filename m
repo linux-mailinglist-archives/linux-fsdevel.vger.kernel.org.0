@@ -2,133 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE251D4F60
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5751D5058
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgEONju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:39:50 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43306 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726174AbgEONjt (ORCPT
+        id S1726229AbgEOOZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33678 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726221AbgEOOZB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 09:39:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589549988;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=7O/zM0NAvqChxTfX4nxkeKnjC8XczbdTIP2Xx8nIyJM=;
-        b=Bq8HdMjlURzpDRMikkcNwCaNX0ITfxmaUazvnAS0ULBwldHp5pVHyqAdqGJLa8xbrM1AXn
-        TIflr1IAVXaQy4BpD9DOlnwiHnWt6L9mqQAXU5vst1zUn+V/GYoyk3YGzGFE01N6YDzkhy
-        7pIY2o5LSjvExe6lbE2Cm0Fe1R03RtE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-420-V103GEKIOumIjCQRLXE8pg-1; Fri, 15 May 2020 09:39:45 -0400
-X-MC-Unique: V103GEKIOumIjCQRLXE8pg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CB33319057A5;
-        Fri, 15 May 2020 13:39:44 +0000 (UTC)
-Received: from [10.36.114.77] (ovpn-114-77.ams2.redhat.com [10.36.114.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3B302FC72;
-        Fri, 15 May 2020 13:39:43 +0000 (UTC)
-Subject: Re: [PATCH v4 06/36] mm: Introduce offset_in_thp
-To:     Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-7-willy@infradead.org>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <f82d7209-73b0-aee0-8098-dbb793ea8a97@redhat.com>
-Date:   Fri, 15 May 2020 15:39:42 +0200
+        Fri, 15 May 2020 10:25:01 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C015C05BD0A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 07:25:01 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id f4so1017191pgi.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 07:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rKuzsBx4cSJvriSVGbzt79618OPfv8Eok+sl7EaCGvk=;
+        b=WVFYeKIqdMj/Srr/1bTEErA+epgu+DH+A/WDQyM9gqFzEDwvVElUrZIWg3Hz7hF8B/
+         N6OFUChnBSxKwDrv2ZcBMpYlw/D3nMEVVhOu+wnoFz8bTp7xKEM0g0vZ1Y/L1yaD7dv6
+         YF3ko6LQF1QF5smUIgJS9wu9x0iOXq4Dtw4z+cJfcJeFkFikqtN3ghM1YCL4kuCvU1nb
+         HTaUZgljc/QHWyB22xy44i3YN+G9yBlMYil+1NnfMt5IQgwQL7Vx/lajWvOm21jX+tHP
+         nwgYhzGlUOWwqvfzqys0GLa0+3gzCn05ZKHiOwbIUK4Yvmcn6ejcUUTq1h5T4ToXnMPE
+         DY8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rKuzsBx4cSJvriSVGbzt79618OPfv8Eok+sl7EaCGvk=;
+        b=M0nSg06HkoLjpE9/614ZkSvZUTNJWe0Qwbkk8jffbCTG81xUSUTIyPbDhBSJ348ksR
+         U9zijpBE0CPrjaLhEW+sbYhDGO4TCRMxCHsV5lhu2PPO+trEwQk77F04wvCr0813teAA
+         R/8RzSJM8gFs8PG6o9UEestU/4j8IRmSQi5dTPCX8+FXN7UgEMY3Br2j2fQWX0R5/e5j
+         hD2VDAC6cxrl3FbZkdrRGWSsgq9tzQ0lbnumwkWgPxOj+hIyga1ERlC1Fv69A2WXW88l
+         TZJYNEhHiww1K71p/WmipSp+bFPxZmXAmZCMw8ppDLFesyg3z/ckwBs/0FlJQJ5XPa0g
+         FgMw==
+X-Gm-Message-State: AOAM53358X97h4BejWg2nrCG9FUXQGUGbpXpE28pVR/IGrtp9FvbxWYJ
+        IAbagUu9ayoTEAkrli42B8QESBYhIps=
+X-Google-Smtp-Source: ABdhPJyBtrljQApl8ZHuJbXFW2dv6fiVrkv63Op/bK/6nAFNHesQEkrdhwsL4yZ3suq6ubX8WngyDQ==
+X-Received: by 2002:a63:5320:: with SMTP id h32mr3443963pgb.28.1589552700514;
+        Fri, 15 May 2020 07:25:00 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21d6::1089? ([2620:10d:c090:400::5:7df0])
+        by smtp.gmail.com with ESMTPSA id n16sm2152078pfq.61.2020.05.15.07.24.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 May 2020 07:24:59 -0700 (PDT)
+Subject: Re: [PATCH 0/2] io_uring: add a CQ ring flag to enable/disable
+ eventfd notification
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20200515105414.68683-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
+Date:   Fri, 15 May 2020 08:24:58 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200515131656.12890-7-willy@infradead.org>
+In-Reply-To: <20200515105414.68683-1-sgarzare@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15.05.20 15:16, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On 5/15/20 4:54 AM, Stefano Garzarella wrote:
+> The first patch adds the new 'cq_flags' field for the CQ ring. It
+> should be written by the application and read by the kernel.
 > 
-> Mirroring offset_in_page(), this gives you the offset within this
-> particular page, no matter what size page it is.  It optimises down
-> to offset_in_page() if CONFIG_TRANSPARENT_HUGEPAGE is not set.
+> The second patch adds a new IORING_CQ_NEED_WAKEUP flag that can be
+> used by the application to enable/disable eventfd notifications.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/mm.h | 1 +
->  1 file changed, 1 insertion(+)
+> I'm not sure the name is the best one, an alternative could be
+> IORING_CQ_NEED_EVENT.
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 088acbda722d..9a55dce6a535 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1577,6 +1577,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  extern void pagefault_out_of_memory(void);
->  
->  #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
-> +#define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
->  
->  /*
->   * Flags passed to show_mem() and show_free_areas() to suppress output in
+> This feature can be useful if the application are using eventfd to be
+> notified when requests are completed, but they don't want a notification
+> for every request.
+> Of course the application can already remove the eventfd from the event
+> loop, but as soon as it adds the eventfd again, it will be notified,
+> even if it has already handled all the completed requests.
 > 
+> The most important use case is when the registered eventfd is used to
+> notify a KVM guest through irqfd and we want a mechanism to
+> enable/disable interrupts.
+> 
+> I also extended liburing API and added a test case here:
+> https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Don't mind the feature, and I think the patches look fine. But the name
+is really horrible, I'd have no idea what that flag does without looking
+at the code or a man page. Why not call it IORING_CQ_EVENTFD_ENABLED or
+something like that? Or maybe IORING_CQ_EVENTFD_DISABLED, and then you
+don't have to muck with the default value either. The app would set the
+flag to disable eventfd, temporarily, and clear it again when it wants
+notifications again.
 
 -- 
-Thanks,
-
-David / dhildenb
+Jens Axboe
 
