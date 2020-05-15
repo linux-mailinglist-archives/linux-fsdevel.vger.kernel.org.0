@@ -2,96 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F871D5A86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE3881D5A94
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgEOUFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 16:05:20 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:48425 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbgEOUFU (ORCPT
+        id S1726226AbgEOUOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 16:14:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbgEOUOY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 16:05:20 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 8A8816E4;
-        Fri, 15 May 2020 16:05:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 15 May 2020 16:05:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm2; bh=LXBXH9o+rLdwwbUDuQJ021k0pL
-        Z0G5I8ZpYzswhyhKI=; b=W40qUF72mmSfP877BF/5nJuFxZUAkLYHddd8j7w8J9
-        QGAf3ydLOmWQ7gAof0J7dushWAn99bwq1gXbAfIDmXxFUn+JPgWMbTra93UIoBFH
-        DsC0KkfO/WFSmMWHRFsFfn0vl5gnPUJa7Rwg86ExhyMIzrD0Vqaf9LMVyPs6LiQ1
-        j188AnP6m6LjGs2tF21r1vBGdV2qqLGUaas3VKaSJUBp1g4DAc7W/DiM7YM7ZFPi
-        kojbb+7BN3l4mJDZ+iC+te6Q2Ce+UQYXcIiYxIcXtf6SKcOnSxSShF/8+YdpH3vc
-        LudGX1/bIWzITDiIMQ8Ds+CayfiWLGxocqV0GChh6JtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=LXBXH9
-        o+rLdwwbUDuQJ021k0pLZ0G5I8ZpYzswhyhKI=; b=WnYWUI/mHpcqm5i0uifUlm
-        AibvzGkhgSikM7tufwQ5xE0HC4t3gdYnvjM3GUbmR62fTNzKL/hnKtcGkS2lf+re
-        KfR/y7MlFPs1+cm1KFB3LUiosmDUsMFi3SzUCE6UlH6Fsk9MngNr1iCMNX1gxHFq
-        v9RtAQHA5vuOQ4gJzujLa6VF/8MSWDsYn2MapVvSLIbEvbZf0ykJrdbR7IpOivMt
-        2ZI/PVhWeNop9QkeWzEYFyd9nPzq1EsSizuSLnAlNs3bnlJGwAYYOO+u2PgSAIKd
-        l9HaOZD7xzglfz3dSpnrxUFP+KIc2IjIyANgUTd71QbiQb1TLlkLLjpe3MMG/CYg
-        ==
-X-ME-Sender: <xms:_vW-Xt8F3dR1b_JmQ72Jrp7sp1RnWXZmZ8BWbweXGCgZjvxtoF82Vw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleekgddugedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkfgggtgfgsehtqhdttd
-    dtreejnecuhfhrohhmpefpihhkohhlrghushcutfgrthhhuceopfhikhholhgruhhssehr
-    rghthhdrohhrgheqnecuggftrfgrthhtvghrnhepfeethffgjefhleekudeileduueffud
-    evvdevfeekvedtveegveefjefgvdeutdeknecukfhppedukeehrdefrdelgedrudelgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkoh
-    hlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:_vW-Xhv260jQNtNw_N8dg7B2floPRsMHUTc_SsiQ2-my-4kNIPcMOg>
-    <xmx:_vW-XrBj2E25BLGMdxWmjYpX0Mt3Dq6LD4isxbt0BOVE8WSZQAXGBw>
-    <xmx:_vW-Xhf-1VlysVXORqZDatGNU_zHtg2UswnNHFJJtvnt29YKlSHKVQ>
-    <xmx:__W-XrYso6P_ks26fiz5YcFPephhFUMQQBi0pKGH1NnSi0JykRvHPQ>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 16D493066352;
-        Fri, 15 May 2020 16:05:18 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 32A8337;
-        Fri, 15 May 2020 20:05:17 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 18EAEE0317; Fri, 15 May 2020 21:03:54 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        miklos <mszeredi@redhat.com>
-Subject: Unable to access fuse mountpoint with seteuid()
-Mail-Copies-To: never
-Mail-Followup-To: linux-fsdevel@vger.kernel.org, fuse-devel
-        <fuse-devel@lists.sourceforge.net>, miklos <mszeredi@redhat.com>
-Date:   Fri, 15 May 2020 21:03:54 +0100
-Message-ID: <871rnlq82d.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 15 May 2020 16:14:24 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CA9C061A0C;
+        Fri, 15 May 2020 13:14:23 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jZgiT-009GPf-NM; Fri, 15 May 2020 20:13:57 +0000
+Date:   Fri, 15 May 2020 21:13:57 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: linux-next boot error: general protection fault in
+ tomoyo_get_local_path
+Message-ID: <20200515201357.GG23230@ZenIV.linux.org.uk>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+ <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+ <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat, May 16, 2020 at 12:36:28AM +0900, Tetsuo Handa wrote:
+> On 2020/05/16 0:18, Tetsuo Handa wrote:
+> > This is
+> > 
+> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> >                 char *ep;
+> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> >                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+> > 
+> >                 if (*ep == '/' && pid && pid ==
+> >                     task_tgid_nr_ns(current, proc_pidns)) {
+> > 
+> > which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+> > 
+> > @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> >                 char *ep;
+> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> > +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+> > 
+> >                 if (*ep == '/' && pid && pid ==
+> > -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> > +                   task_tgid_nr_ns(current, proc_pidns)) {
+> >                         pos = ep - 5;
+> >                         if (pos < buffer)
+> >                                 goto out;
+> > 
+> > Alexey and Eric, any clue?
+> > 
+> 
+> A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
+> commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
+> not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
 
-I've written a setuid root program that tries to access a FUSE
-mountpoint owned by the calling user. I'm running seteuid(getuid()) to
-drop privileges, but still don't seem to be able to access the
-mountpoint.
-
-Is that a bug or a feature? If it's a feature, is there any other way to
-get access to the mountpoint? All I want is the st_dev value...
-
-Best,
--Nikolaus
-
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+Could you explain why do you want to bother with d_inode() anyway?  Anything that
+does dentry->d_inode->i_sb can bloody well use dentry->d_sb.  And that's never
+changed over the struct dentry lifetime - ->d_sb is set on allocation and never
+modified afterwards.
