@@ -2,112 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D551D5B0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 22:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99BE21D5B91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 23:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbgEOU4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 16:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgEOU4m (ORCPT
+        id S1728081AbgEOV3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 17:29:37 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40350 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbgEOV3g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 16:56:42 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D092AC061A0C;
-        Fri, 15 May 2020 13:56:41 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZhNV-009Hh7-7g; Fri, 15 May 2020 20:56:21 +0000
-Date:   Fri, 15 May 2020 21:56:21 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Olga Kornievskaia <kolga@netapp.com>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        ".Tetsuo Handa" <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: linux-next boot error: general protection fault in
- tomoyo_get_local_path
-Message-ID: <20200515205621.GH23230@ZenIV.linux.org.uk>
-References: <0000000000002f0c7505a5b0e04c@google.com>
- <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
- <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
- <20200515201357.GG23230@ZenIV.linux.org.uk>
+        Fri, 15 May 2020 17:29:36 -0400
+Received: by mail-pj1-f66.google.com with SMTP id fu13so1558325pjb.5;
+        Fri, 15 May 2020 14:29:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pYa0xileFKL+iC5XDDg4dnFXtyyvns7Y/zYemD6hOLM=;
+        b=gMTNjZ4bDGtefHm3LrL+FxL97FY9KGd1W+xg4axUYkFCjqSTVOzb2V6U5cVGh9LiRO
+         oCi98zFFeFQ2Z6kBEtAEgSh6lNtbRaT+fqIDT9Zcpf7v7XQEOQ84U44yPce7y7YBjz+C
+         +9dmQXOgFjEjCcr9ZbQpjbaW4rO09VV6eXThGLwkXmfzY4PV1cfRzlj2rNKginBlo2uS
+         8D2t7sR37C0cbGSkHjfm90IVEmgwPPEWOkeoYeSEv8VWh5vUI9BcB2c3BzYvs+/ujh+r
+         i3jmgUe8oj3QYDFMCNdfgQasY+kOpbdkFN/bKbzIe/69PVYK9MySfHW9yc/wYdSWVGrR
+         7PkQ==
+X-Gm-Message-State: AOAM530nJwjojty/LqA4N9iS9t5flIvg1nA6LOxR9jDO7L/soZnqwIj1
+        UfKxG+rK3D1XKfXuBOZorAg=
+X-Google-Smtp-Source: ABdhPJxPAb82N40CtrgVa22e2Jx7aU8YwsQhmb49exg+lY4xmlnjWtUKTOMO5be5VLroJHQEhh4qMQ==
+X-Received: by 2002:a17:902:a5c2:: with SMTP id t2mr5435815plq.151.1589578175373;
+        Fri, 15 May 2020 14:29:35 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id k5sm2225238pjl.32.2020.05.15.14.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2020 14:29:34 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 9F48140246; Fri, 15 May 2020 21:29:33 +0000 (UTC)
+Date:   Fri, 15 May 2020 21:29:33 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
+        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        nayna@linux.ibm.com, zohar@linux.ibm.com,
+        scott.branden@broadcom.com, dan.carpenter@oracle.com,
+        skhan@linuxfoundation.org, geert@linux-m68k.org,
+        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
+        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
+Message-ID: <20200515212933.GD11244@42.do-not-panic.com>
+References: <20200513152108.25669-1-mcgrof@kernel.org>
+ <20200513181736.GA24342@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200515201357.GG23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200513181736.GA24342@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 09:13:57PM +0100, Al Viro wrote:
-> On Sat, May 16, 2020 at 12:36:28AM +0900, Tetsuo Handa wrote:
-> > On 2020/05/16 0:18, Tetsuo Handa wrote:
-[snip]
-> > A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
-> > commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
-> > not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
-> 
-> Could you explain why do you want to bother with d_inode() anyway?  Anything that
-> does dentry->d_inode->i_sb can bloody well use dentry->d_sb.  And that's never
-> changed over the struct dentry lifetime - ->d_sb is set on allocation and never
-> modified afterwards.
+On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
+> Can you also move kernel_read_* out of fs.h?  That header gets pulled
+> in just about everywhere and doesn't really need function not related
+> to the general fs interface.
 
-Incidentally, this
-        r_ino = nfs_fhget(ss_mnt->mnt_root->d_inode->i_sb, src_fh, &fattr,
-                        NULL);
-(in nfs42_ssc_open()) is just plain weird.
+Sure, where should I dump these?
 
-	1) d->d_inode->i_sb is equal to d->d_sb
-	2) m->mnt_root->d_sb is equal to m->mnt_sb
-IOW, the whole thing should be 
-        r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, &fattr, NULL);
-
-Moreover,
-	server = NFS_SERVER(ss_mnt->mnt_root->d_inode);
-in the same function is again too convoluted for no good reason, seeing that
-NFS_SERVER(inode) is NFS_SB(inode->i_sb).
-
-Something along the lines of
-
-nfs: don't obfuscate ->mnt_sb as ->mnt_root->d_inode->i_sb
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index 8e5d6223ddd3..1e8ca45bc806 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -317,15 +317,14 @@ nfs42_ssc_open(struct vfsmount *ss_mnt, struct nfs_fh *src_fh,
- {
- 	struct nfs_fattr fattr;
- 	struct file *filep, *res;
--	struct nfs_server *server;
-+	struct super_block *sb = ss_mnt->mnt_sb;
-+	struct nfs_server *server = NFS_SB(sb);
- 	struct inode *r_ino = NULL;
- 	struct nfs_open_context *ctx;
- 	struct nfs4_state_owner *sp;
- 	char *read_name = NULL;
- 	int len, status = 0;
- 
--	server = NFS_SERVER(ss_mnt->mnt_root->d_inode);
--
- 	nfs_fattr_init(&fattr);
- 
- 	status = nfs4_proc_getattr(server, src_fh, &fattr, NULL, NULL);
-@@ -341,8 +340,7 @@ nfs42_ssc_open(struct vfsmount *ss_mnt, struct nfs_fh *src_fh,
- 		goto out;
- 	snprintf(read_name, len, SSC_READ_NAME_BODY, read_name_gen++);
- 
--	r_ino = nfs_fhget(ss_mnt->mnt_root->d_inode->i_sb, src_fh, &fattr,
--			NULL);
-+	r_ino = nfs_fhget(sb, src_fh, &fattr, NULL);
- 	if (IS_ERR(r_ino)) {
- 		res = ERR_CAST(r_ino);
- 		goto out_free_name;
+  Luis
