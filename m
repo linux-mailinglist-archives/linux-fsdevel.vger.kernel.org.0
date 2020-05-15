@@ -2,111 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F30AD1D48BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EED4B1D48EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgEOInz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 04:43:55 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32736 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727116AbgEOInz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 04:43:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589532233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+98viFOd9jTdpHCY3sUvt3t0b4J5Yg6795DHu7DfVIk=;
-        b=fKScrmokPCuiEv3RuFPvqUqtSW4pRmkmMSR+m4lh38ZgD+He292FGbDa0d1vO+m+zQM/FS
-        hZS2ZoMIm6vpaQmRVG+WTcp5H2ZGUlT6LGY28+K/tGKndmvV9ym5GKCV4EXnuQEpX8Wv68
-        TnnOhRJ7AnJGXiPknOKzEniP49FHPNI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-164-u_nUq3bSN8OR1tg-mmpQdg-1; Fri, 15 May 2020 04:43:49 -0400
-X-MC-Unique: u_nUq3bSN8OR1tg-mmpQdg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C8CC9801503;
-        Fri, 15 May 2020 08:43:44 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-112-77.ams2.redhat.com [10.36.112.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6435B5D9D7;
-        Fri, 15 May 2020 08:43:36 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
+        id S1727803AbgEOI4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 04:56:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44076 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726922AbgEOI4y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 04:56:54 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DBAF970E520CAE57BCD2;
+        Fri, 15 May 2020 16:56:51 +0800 (CST)
+Received: from [127.0.0.1] (10.67.102.197) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Fri, 15 May 2020
+ 16:56:44 +0800
+Subject: Re: [PATCH 1/4] hung_task: Move hung_task sysctl interface to
+ hung_task_sysctl.c
 To:     Kees Cook <keescook@chromium.org>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Lev R. Oshvang ." <levonshe@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC)
-References: <20200505153156.925111-1-mic@digikod.net>
-        <20200505153156.925111-4-mic@digikod.net>
-        <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
-        <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
-        <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
-        <202005140830.2475344F86@keescook>
-        <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
-        <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
-        <202005142343.D580850@keescook>
-Date:   Fri, 15 May 2020 10:43:34 +0200
-In-Reply-To: <202005142343.D580850@keescook> (Kees Cook's message of "Fri, 15
-        May 2020 01:01:32 -0700")
-Message-ID: <87a729wpu1.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+CC:     <mcgrof@kernel.org>, <yzaikin@google.com>, <adobriyan@gmail.com>,
+        <mingo@kernel.org>, <peterz@infradead.org>,
+        <akpm@linux-foundation.org>, <yamada.masahiro@socionext.com>,
+        <bauerman@linux.ibm.com>, <gregkh@linuxfoundation.org>,
+        <skhan@linuxfoundation.org>, <dvyukov@google.com>,
+        <svens@stackframe.org>, <joel@joelfernandes.org>,
+        <tglx@linutronix.de>, <Jisheng.Zhang@synaptics.com>,
+        <pmladek@suse.com>, <bigeasy@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <wangle6@huawei.com>
+References: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
+ <1589517224-123928-2-git-send-email-nixiaoming@huawei.com>
+ <202005150103.6DD6F07@keescook>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <b72e0721-d08a-0fef-f55d-eb854483d04f@huawei.com>
+Date:   Fri, 15 May 2020 16:56:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <202005150103.6DD6F07@keescook>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.102.197]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Kees Cook:
+On 2020/5/15 16:04, Kees Cook wrote:
+> On Fri, May 15, 2020 at 12:33:41PM +0800, Xiaoming Ni wrote:
+>> Move hung_task sysctl interface to hung_task_sysctl.c.
+>> Use register_sysctl() to register the sysctl interface to avoid
+>> merge conflicts when different features modify sysctl.c at the same time.
+>>
+>> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+>> ---
+>>   include/linux/sched/sysctl.h |  8 +----
+>>   kernel/Makefile              |  4 ++-
+>>   kernel/hung_task.c           |  6 ++--
+>>   kernel/hung_task.h           | 21 ++++++++++++
+>>   kernel/hung_task_sysctl.c    | 80 ++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Why a separate file? That ends up needing changes to Makefile, the
+> creation of a new header file, etc. Why not just put it all into
+> hung_task.c directly?
+> 
+> -Kees
+> 
+But Luis Chamberlain's suggestion is to put the hung_task sysctl code in 
+a separate file. Details are in https://lkml.org/lkml/2020/5/13/762.
+I am a little confused, not sure which way is better.
 
-> Maybe I've missed some earlier discussion that ruled this out, but I
-> couldn't find it: let's just add O_EXEC and be done with it. It actually
-> makes the execve() path more like openat2() and is much cleaner after
-> a little refactoring. Here are the results, though I haven't emailed it
-> yet since I still want to do some more testing:
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
+Thanks
+Xiaoming Ni
 
-I think POSIX specifies O_EXEC in such a way that it does not confer
-read permissions.  This seems incompatible with what we are trying to
-achieve here.
 
-Thanks,
-Florian
+
 
