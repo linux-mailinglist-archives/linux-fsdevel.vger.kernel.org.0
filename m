@@ -2,134 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 872631D4744
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 09:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB691D4795
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbgEOHlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 03:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55390 "EHLO
+        id S1727001AbgEOIBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 04:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726624AbgEOHle (ORCPT
+        by vger.kernel.org with ESMTP id S1726694AbgEOIBi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 03:41:34 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD219C061A0C;
-        Fri, 15 May 2020 00:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5F5020LXe/PKeW2E7HP+KIsjpPbHby4z569GcXavvzw=; b=HbpcDNi3cjt95r1YCRFokz/Cxj
-        P+8RahgC1lAn/32KwuHkV4Lvhyhsk97XCxxP0im6h+5rMpUaSLveo3+kRZlKvMsoccaigaCPWm1cy
-        qLJ0wTKT1MLNqAGARFe/2g2elZChAcggp62D7/BfxeDnVplokiU+xeDaFSkipusQsgp50BZkC4QCs
-        1GC5JyHov7b6RP7pfumvwoG8cFIdaqTzqMYYr19s9rekZo9R5CGENqmBlqKBDBqmSGhAo6+3NJkic
-        Hk5pup2crDyCB948jsfNP0kCfoLy2tU6hHMpyfWcRcJLPEHubtPFNggqhzA2Eerfysdcuiz7ClvSL
-        fAiHMJXg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZUyF-0005Jq-7l; Fri, 15 May 2020 07:41:27 +0000
-Date:   Fri, 15 May 2020 00:41:27 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v13 00/12] Inline Encryption Support
-Message-ID: <20200515074127.GA13926@infradead.org>
-References: <20200514003727.69001-1-satyat@google.com>
- <20200514051053.GA14829@sol.localdomain>
- <8fa1aafe-1725-e586-ede3-a3273e674470@kernel.dk>
+        Fri, 15 May 2020 04:01:38 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E3FC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:01:38 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id 23so601139pfy.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Ur+hb+yciYy1xQ68pS5XyzW31c915My4tqJ2beLm4bQ=;
+        b=lKBBB6TBcN0o1HU4UgdMxAG6vhpa1qK6VNim7Q3I07ra18sLY43itwc35OZNGOPACS
+         ymYWlFxO9PvwCf0zrIQ1pxa6GzHHGDHo1jgwyp6aBR8wZKa0Hx5uKMGpHEAZGyjeZ8iK
+         mxsL/SfdN7bkAODR1xFfclPFJE9UsG7Mt5GjM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Ur+hb+yciYy1xQ68pS5XyzW31c915My4tqJ2beLm4bQ=;
+        b=Hbx0E+egWZ3opD0RQw3S0lsMyWysnk9fkSz4bqaZ893yHK73otx2u7W9Gollaz5egO
+         EsAslSRkpIRh394lCWXib69EPFPTq6YUBxUUYWWcEfptBFmQMNmZioOPlydhTIF7+lp4
+         jLOJ2XlWuLaVgEWRsvo5P51C4UVFqUO2makJKL6YWxYEIDAAVx8j70x6iANj9/rGEqsm
+         4+fDqmDISYwgJzfd2SG74wJf0SpHRv8p0u9WKsDEKpQ/Jx1Abak0WXYsmu0N09iPmFxQ
+         wAuH+bLLDgGxZWLc9vExQtokhB/ilFUSHGRhFdYpoRixJh5WzEpjniQ0E9EagYhEs48V
+         YlqA==
+X-Gm-Message-State: AOAM530XMTNzuNEYsDfM2cGpAXM7C7v0jn2mCIhtSOWPjYGny0weeZJx
+        WezO8TehVl5a3MVUpGDTCthKGQ==
+X-Google-Smtp-Source: ABdhPJyd7lafomptCZ7ujKP5O758shT8BUso0xPAsVuMxJDi6WBMT/SqJQvpseht52t2m4Hfz/w/2Q==
+X-Received: by 2002:a63:f958:: with SMTP id q24mr1977355pgk.338.1589529694841;
+        Fri, 15 May 2020 01:01:34 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o7sm1178366pgs.35.2020.05.15.01.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2020 01:01:33 -0700 (PDT)
+Date:   Fri, 15 May 2020 01:01:32 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        "Lev R. Oshvang ." <levonshe@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to enforce
+ noexec mounts or file exec through O_MAYEXEC)
+Message-ID: <202005142343.D580850@keescook>
+References: <20200505153156.925111-1-mic@digikod.net>
+ <20200505153156.925111-4-mic@digikod.net>
+ <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+ <202005131525.D08BFB3@keescook>
+ <202005132002.91B8B63@keescook>
+ <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+ <202005140830.2475344F86@keescook>
+ <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
+ <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <8fa1aafe-1725-e586-ede3-a3273e674470@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 14, 2020 at 09:48:40AM -0600, Jens Axboe wrote:
-> I have applied 1-5 for 5.8. Small tweak needed in patch 3 due to a header
-> inclusion, but clean apart from that.
+On Thu, May 14, 2020 at 09:16:13PM +0200, Mickaël Salaün wrote:
+> On 14/05/2020 18:10, Stephen Smalley wrote:
+> > On Thu, May 14, 2020 at 11:45 AM Kees Cook <keescook@chromium.org> wrote:
+> >> So, it looks like adding FMODE_EXEC into f_flags in do_open() is needed in
+> >> addition to injecting MAY_EXEC into acc_mode in do_open()? Hmmm
+> > 
+> > Just do both in build_open_flags() and be done with it? Looks like he
+> > was already setting FMODE_EXEC in patch 1 so we just need to teach
+> > AppArmor/TOMOYO to check for it and perform file execute checking in
+> > that case if !current->in_execve?
+> 
+> I can postpone the file permission check for another series to make this
+> one simpler (i.e. mount noexec only). Because it depends on the sysctl
+> setting, it is OK to add this check later, if needed. In the meantime,
+> AppArmor and Tomoyo could be getting ready for this.
 
-I looked at this a bit more as it clashed with my outstanding
-q_usage_counter optimization, and I think we should move the
-blk_crypto_bio_prep call into blk-mq, similar to what we do about
-the integrity_prep call.  Comments?
+So, after playing around with this series, investigating Stephen's
+comments, digging through the existing FMODE_EXEC uses, and spending a
+bit more time thinking about Lev and Aleksa's dislike of the sysctls, I've
+got a much more radically simplified solution that I think could work.
 
----
-From b7a78be7de0f39ef972d6a2f97a3982a422bf3ab Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 15 May 2020 09:32:40 +0200
-Subject: block: move blk_crypto_bio_prep into blk_mq_make_request
+Maybe I've missed some earlier discussion that ruled this out, but I
+couldn't find it: let's just add O_EXEC and be done with it. It actually
+makes the execve() path more like openat2() and is much cleaner after
+a little refactoring. Here are the results, though I haven't emailed it
+yet since I still want to do some more testing:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
 
-Currently blk_crypto_bio_prep is called for every block driver, including
-stacking drivers, which is probably not the right thing to do.  Instead
-move it to blk_mq_make_request, similar to how we handle integrity data.
-If we ever grow a low-level make_request based driver that wants
-encryption it will have to call blk_crypto_bio_prep manually, but I really
-hope we don't grow more non-stacking make_request drivers to start with.
+I look forward to flames! ;)
 
-This also means we only need to do the crypto preparation after splitting
-and bouncing the bio, which means we don't bother allocating the fallback
-context for a bio that might only be a dummy and gets split or bounced
-later.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-core.c | 13 +++++--------
- block/blk-mq.c   |  2 ++
- 2 files changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 1e97f99735232..ac59afaa26960 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1131,12 +1131,10 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			/* Create a fresh bio_list for all subordinate requests */
- 			bio_list_on_stack[1] = bio_list_on_stack[0];
- 			bio_list_init(&bio_list_on_stack[0]);
--			if (blk_crypto_bio_prep(&bio)) {
--				if (q->make_request_fn)
--					ret = q->make_request_fn(q, bio);
--				else
--					ret = blk_mq_make_request(q, bio);
--			}
-+			if (q->make_request_fn)
-+				ret = q->make_request_fn(q, bio);
-+			else
-+				ret = blk_mq_make_request(q, bio);
- 
- 			blk_queue_exit(q);
- 
-@@ -1185,8 +1183,7 @@ blk_qc_t direct_make_request(struct bio *bio)
- 		return BLK_QC_T_NONE;
- 	if (unlikely(bio_queue_enter(bio)))
- 		return BLK_QC_T_NONE;
--	if (blk_crypto_bio_prep(&bio))
--		ret = blk_mq_make_request(q, bio);
-+	ret = blk_mq_make_request(q, bio);
- 	blk_queue_exit(q);
- 	return ret;
- }
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index d2962863e629f..0b5a0fa0d124b 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2033,6 +2033,8 @@ blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 	blk_queue_bounce(q, &bio);
- 	__blk_queue_split(q, &bio, &nr_segs);
- 
-+	if (!blk_crypto_bio_prep(&bio))
-+		return BLK_QC_T_NONE;
- 	if (!bio_integrity_prep(bio))
- 		return BLK_QC_T_NONE;
- 
 -- 
-2.26.2
-
+Kees Cook
