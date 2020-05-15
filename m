@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1BB1D44C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 06:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0281D44BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 06:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgEOElb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 00:41:31 -0400
-Received: from mga02.intel.com ([134.134.136.20]:20096 "EHLO mga02.intel.com"
+        id S1726342AbgEOElc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 00:41:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:36394 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726297AbgEOEla (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 00:41:30 -0400
-IronPort-SDR: 5lt57BOMdwOojI+mBV+sXnzXgvUtTgrtvXK7k54hSSspmxesy7THpq4WRvY4DxpP+tW40MzkfZ
- 8NPQsHVapQqw==
+        id S1726311AbgEOElc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 00:41:32 -0400
+IronPort-SDR: v5P0NgXWShSzoEeOJV29HPIjl2EQS7O6DUBIAX7ohWXGvXO9FqQlaqIw+/+qTAioTzq7b/ES5O
+ hvWedJDfbMmA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:29 -0700
-IronPort-SDR: HO3SSB59fZruLXgip52JCfG+5bGtjDhMLe7Sey8YN0dr7xI9rDjeaJgepyhkqilA8pKkhJgCHe
- zWdM0Y4EVV+g==
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:29 -0700
+IronPort-SDR: h0dusB/z3gPwWClmcYIGIaMDgwHPpSbMHWcH11YxZd9rUXbPm/qYRChpCelysihSMrCXmHqn1G
+ RiPXg1A4yZSQ==
 X-IronPort-AV: E=Sophos;i="5.73,394,1583222400"; 
-   d="scan'208";a="287660943"
+   d="scan'208";a="266482062"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:29 -0700
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 21:41:29 -0700
 From:   ira.weiny@intel.com
 To:     linux-ext4@vger.kernel.org,
         Andreas Dilger <adilger.kernel@dilger.ca>,
@@ -33,9 +33,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/9] fs/ext4: Only change S_DAX on inode load
-Date:   Thu, 14 May 2020 21:41:18 -0700
-Message-Id: <20200515044121.2987940-7-ira.weiny@intel.com>
+Subject: [PATCH v2 7/9] fs/ext4: Make DAX mount option a tri-state
+Date:   Thu, 14 May 2020 21:41:19 -0700
+Message-Id: <20200515044121.2987940-8-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200515044121.2987940-1-ira.weiny@intel.com>
 References: <20200515044121.2987940-1-ira.weiny@intel.com>
@@ -48,149 +48,192 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-To prevent complications with in memory inodes we only set S_DAX on
-inode load.  FS_XFLAG_DAX can be changed at any time and S_DAX will
-change after inode eviction and reload.
+We add 'always', 'never', and 'inode' (default).  '-o dax' continues to
+operate the same which is equivalent to 'always'.  This new
+functionality is limited to ext4 only.
 
-Add init bool to ext4_set_inode_flags() to indicate if the inode is
-being newly initialized.
+Specifically we introduce a 2nd DAX mount flag EXT4_MOUNT2_DAX_NEVER and set
+it and EXT4_MOUNT_DAX_ALWAYS appropriately for the mode.
 
-Assert that S_DAX is not set on an inode which is just being loaded.
+We also force EXT4_MOUNT2_DAX_NEVER if !CONFIG_FS_DAX.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Finally, EXT4_MOUNT2_DAX_INODE is used solely to detect if the user
+specified that option for printing.
+
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
+Changes from V1:
+	Fix up mounting options to only show an option if specified
+	Fix remount to prevent dax changes
+	Isolate behavior to ext4 only
+
 Changes from RFC:
-	Change J_ASSERT() to WARN_ON_ONCE()
-	Fix bug which would clear S_DAX incorrectly
+	Combine remount check for DAX_NEVER with DAX_ALWAYS
+	Update ext4_should_enable_dax()
 ---
- fs/ext4/ext4.h   |  2 +-
- fs/ext4/ialloc.c |  2 +-
- fs/ext4/inode.c  | 13 ++++++++++---
- fs/ext4/ioctl.c  |  3 ++-
- fs/ext4/super.c  |  4 ++--
- fs/ext4/verity.c |  2 +-
- 6 files changed, 17 insertions(+), 9 deletions(-)
+ fs/ext4/ext4.h  |  2 ++
+ fs/ext4/inode.c |  2 ++
+ fs/ext4/super.c | 67 +++++++++++++++++++++++++++++++++++++++++--------
+ 3 files changed, 61 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 1a3daf2d18ef..86a0994332ce 100644
+index 86a0994332ce..6235440e4c39 100644
 --- a/fs/ext4/ext4.h
 +++ b/fs/ext4/ext4.h
-@@ -2692,7 +2692,7 @@ extern int ext4_can_truncate(struct inode *inode);
- extern int ext4_truncate(struct inode *);
- extern int ext4_break_layouts(struct inode *);
- extern int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length);
--extern void ext4_set_inode_flags(struct inode *);
-+extern void ext4_set_inode_flags(struct inode *, bool init);
- extern int ext4_alloc_da_blocks(struct inode *inode);
- extern void ext4_set_aops(struct inode *inode);
- extern int ext4_writepage_trans_blocks(struct inode *);
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 4b8c9a9bdf0c..7941c140723f 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1116,7 +1116,7 @@ struct inode *__ext4_new_inode(handle_t *handle, struct inode *dir,
- 	ei->i_block_group = group;
- 	ei->i_last_alloc_group = ~0;
+@@ -1168,6 +1168,8 @@ struct ext4_inode_info {
+ 						      blocks */
+ #define EXT4_MOUNT2_HURD_COMPAT		0x00000004 /* Support HURD-castrated
+ 						      file systems */
++#define EXT4_MOUNT2_DAX_NEVER		0x00000008 /* Do not allow Direct Access */
++#define EXT4_MOUNT2_DAX_INODE		0x00000010 /* For printing options only */
  
--	ext4_set_inode_flags(inode);
-+	ext4_set_inode_flags(inode, true);
- 	if (IS_DIRSYNC(inode))
- 		ext4_handle_sync(handle);
- 	if (insert_inode_locked(inode) < 0) {
+ #define EXT4_MOUNT2_EXPLICIT_JOURNAL_CHECKSUM	0x00000008 /* User explicitly
+ 						specified journal checksum */
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d3a4c2ed7a1c..23e42a223235 100644
+index 23e42a223235..140b1930e2f4 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -4419,11 +4419,13 @@ static bool ext4_should_enable_dax(struct inode *inode)
- 	return false;
- }
+@@ -4400,6 +4400,8 @@ int ext4_get_inode_loc(struct inode *inode, struct ext4_iloc *iloc)
  
--void ext4_set_inode_flags(struct inode *inode)
-+void ext4_set_inode_flags(struct inode *inode, bool init)
+ static bool ext4_should_enable_dax(struct inode *inode)
  {
- 	unsigned int flags = EXT4_I(inode)->i_flags;
- 	unsigned int new_fl = 0;
- 
-+	WARN_ON_ONCE(IS_DAX(inode) && init);
-+
- 	if (flags & EXT4_SYNC_FL)
- 		new_fl |= S_SYNC;
- 	if (flags & EXT4_APPEND_FL)
-@@ -4434,8 +4436,13 @@ void ext4_set_inode_flags(struct inode *inode)
- 		new_fl |= S_NOATIME;
- 	if (flags & EXT4_DIRSYNC_FL)
- 		new_fl |= S_DIRSYNC;
--	if (ext4_should_enable_dax(inode))
-+
-+	/* Because of the way inode_set_flags() works we must preserve S_DAX
-+	 * here if already set. */
-+	new_fl |= (inode->i_flags & S_DAX);
-+	if (init && ext4_should_enable_dax(inode))
- 		new_fl |= S_DAX;
-+
- 	if (flags & EXT4_ENCRYPT_FL)
- 		new_fl |= S_ENCRYPTED;
- 	if (flags & EXT4_CASEFOLD_FL)
-@@ -4649,7 +4656,7 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		 * not initialized on a new filesystem. */
- 	}
- 	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
--	ext4_set_inode_flags(inode);
-+	ext4_set_inode_flags(inode, true);
- 	inode->i_blocks = ext4_inode_blocks(raw_inode, ei);
- 	ei->i_file_acl = le32_to_cpu(raw_inode->i_file_acl_lo);
- 	if (ext4_has_feature_64bit(sb))
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 5813e5e73eab..145083e8cd1e 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -381,7 +381,8 @@ static int ext4_ioctl_setflags(struct inode *inode,
- 			ext4_clear_inode_flag(inode, i);
- 	}
- 
--	ext4_set_inode_flags(inode);
-+	ext4_set_inode_flags(inode, false);
-+
- 	inode->i_ctime = current_time(inode);
- 
- 	err = ext4_mark_iloc_dirty(handle, inode, &iloc);
++	if (test_opt2(inode->i_sb, DAX_NEVER))
++		return false;
+ 	if (!S_ISREG(inode->i_mode))
+ 		return false;
+ 	if (ext4_should_journal_data(inode))
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index d0434b513919..5ec900fdf73c 100644
+index 5ec900fdf73c..4753de53b186 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -1344,7 +1344,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
- 			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
- 			ext4_clear_inode_state(inode,
- 					EXT4_STATE_MAY_INLINE_DATA);
--			ext4_set_inode_flags(inode);
-+			ext4_set_inode_flags(inode, false);
+@@ -1504,7 +1504,8 @@ enum {
+ 	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
+ 	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
+ 	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
+-	Opt_usrquota, Opt_grpquota, Opt_prjquota, Opt_i_version, Opt_dax,
++	Opt_usrquota, Opt_grpquota, Opt_prjquota, Opt_i_version,
++	Opt_dax, Opt_dax_always, Opt_dax_inode, Opt_dax_never,
+ 	Opt_stripe, Opt_delalloc, Opt_nodelalloc, Opt_warn_on_error,
+ 	Opt_nowarn_on_error, Opt_mblk_io_submit,
+ 	Opt_lazytime, Opt_nolazytime, Opt_debug_want_extra_isize,
+@@ -1571,6 +1572,9 @@ static const match_table_t tokens = {
+ 	{Opt_nobarrier, "nobarrier"},
+ 	{Opt_i_version, "i_version"},
+ 	{Opt_dax, "dax"},
++	{Opt_dax_always, "dax=always"},
++	{Opt_dax_inode, "dax=inode"},
++	{Opt_dax_never, "dax=never"},
+ 	{Opt_stripe, "stripe=%u"},
+ 	{Opt_delalloc, "delalloc"},
+ 	{Opt_warn_on_error, "warn_on_error"},
+@@ -1718,6 +1722,7 @@ static int clear_qf_name(struct super_block *sb, int qtype)
+ #define MOPT_NO_EXT3	0x0200
+ #define MOPT_EXT4_ONLY	(MOPT_NO_EXT2 | MOPT_NO_EXT3)
+ #define MOPT_STRING	0x0400
++#define MOPT_SKIP	0x0800
+ 
+ static const struct mount_opts {
+ 	int	token;
+@@ -1767,7 +1772,13 @@ static const struct mount_opts {
+ 	{Opt_min_batch_time, 0, MOPT_GTE0},
+ 	{Opt_inode_readahead_blks, 0, MOPT_GTE0},
+ 	{Opt_init_itable, 0, MOPT_GTE0},
+-	{Opt_dax, EXT4_MOUNT_DAX_ALWAYS, MOPT_SET},
++	{Opt_dax, EXT4_MOUNT_DAX_ALWAYS, MOPT_SET | MOPT_SKIP},
++	{Opt_dax_always, EXT4_MOUNT_DAX_ALWAYS,
++		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
++	{Opt_dax_inode, EXT4_MOUNT2_DAX_INODE,
++		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
++	{Opt_dax_never, EXT4_MOUNT2_DAX_NEVER,
++		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
+ 	{Opt_stripe, 0, MOPT_GTE0},
+ 	{Opt_resuid, 0, MOPT_GTE0},
+ 	{Opt_resgid, 0, MOPT_GTE0},
+@@ -2076,13 +2087,32 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
  		}
- 		return res;
+ 		sbi->s_jquota_fmt = m->mount_opt;
+ #endif
+-	} else if (token == Opt_dax) {
++	} else if (token == Opt_dax || token == Opt_dax_always ||
++		   token == Opt_dax_inode || token == Opt_dax_never) {
+ #ifdef CONFIG_FS_DAX
+-		ext4_msg(sb, KERN_WARNING,
+-		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+-		sbi->s_mount_opt |= m->mount_opt;
++		switch (token) {
++		case Opt_dax:
++		case Opt_dax_always:
++			ext4_msg(sb, KERN_WARNING,
++				"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
++			sbi->s_mount_opt |= EXT4_MOUNT_DAX_ALWAYS;
++			sbi->s_mount_opt2 &= ~EXT4_MOUNT2_DAX_NEVER;
++			break;
++		case Opt_dax_never:
++			sbi->s_mount_opt2 |= EXT4_MOUNT2_DAX_NEVER;
++			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
++			break;
++		case Opt_dax_inode:
++			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
++			sbi->s_mount_opt2 &= ~EXT4_MOUNT2_DAX_NEVER;
++			/* Strictly for printing options */
++			sbi->s_mount_opt2 |= EXT4_MOUNT2_DAX_INODE;
++			break;
++		}
+ #else
+ 		ext4_msg(sb, KERN_INFO, "dax option not supported");
++		sbi->s_mount_opt2 |= EXT4_MOUNT2_DAX_NEVER;
++		sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
+ 		return -1;
+ #endif
+ 	} else if (token == Opt_data_err_abort) {
+@@ -2246,7 +2276,7 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
+ 	for (m = ext4_mount_opts; m->token != Opt_err; m++) {
+ 		int want_set = m->flags & MOPT_SET;
+ 		if (((m->flags & (MOPT_SET|MOPT_CLEAR)) == 0) ||
+-		    (m->flags & MOPT_CLEAR_ERR))
++		    (m->flags & MOPT_CLEAR_ERR) || m->flags & MOPT_SKIP)
+ 			continue;
+ 		if (!nodefs && !(m->mount_opt & (sbi->s_mount_opt ^ def_mount_opt)))
+ 			continue; /* skip if same as the default */
+@@ -2306,6 +2336,17 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
+ 	if (DUMMY_ENCRYPTION_ENABLED(sbi))
+ 		SEQ_OPTS_PUTS("test_dummy_encryption");
+ 
++	if (test_opt(sb, DAX_ALWAYS)) {
++		if (IS_EXT2_SB(sb))
++			SEQ_OPTS_PUTS("dax");
++		else
++			SEQ_OPTS_PUTS("dax=always");
++	} else if (test_opt2(sb, DAX_NEVER)) {
++		SEQ_OPTS_PUTS("dax=never");
++	} else if (test_opt2(sb, DAX_INODE)) {
++		SEQ_OPTS_PUTS("dax=inode");
++	}
++
+ 	ext4_show_quota_options(seq, sb);
+ 	return 0;
+ }
+@@ -5425,10 +5466,16 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+ 		goto restore_opts;
  	}
-@@ -1367,7 +1367,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
- 				    ctx, len, 0);
- 	if (!res) {
- 		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
--		ext4_set_inode_flags(inode);
-+		ext4_set_inode_flags(inode, false);
- 		res = ext4_mark_inode_dirty(handle, inode);
- 		if (res)
- 			EXT4_ERROR_INODE(inode, "Failed to mark inode dirty");
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index f05a09fb2ae4..89a155ece323 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -244,7 +244,7 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
- 		if (err)
- 			goto out_stop;
- 		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
--		ext4_set_inode_flags(inode);
-+		ext4_set_inode_flags(inode, false);
- 		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
+ 
+-	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_DAX_ALWAYS) {
++	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_DAX_ALWAYS ||
++	    (sbi->s_mount_opt2 ^ old_opts.s_mount_opt2) & EXT4_MOUNT2_DAX_NEVER ||
++	    (sbi->s_mount_opt2 ^ old_opts.s_mount_opt2) & EXT4_MOUNT2_DAX_INODE) {
+ 		ext4_msg(sb, KERN_WARNING, "warning: refusing change of "
+-			"dax flag with busy inodes while remounting");
+-		sbi->s_mount_opt ^= EXT4_MOUNT_DAX_ALWAYS;
++			"dax mount option with busy inodes while remounting");
++		sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
++		sbi->s_mount_opt |= old_opts.s_mount_opt & EXT4_MOUNT_DAX_ALWAYS;
++		sbi->s_mount_opt2 &= ~(EXT4_MOUNT2_DAX_NEVER | EXT4_MOUNT2_DAX_INODE);
++		sbi->s_mount_opt2 |= old_opts.s_mount_opt2 &
++				     (EXT4_MOUNT2_DAX_NEVER | EXT4_MOUNT2_DAX_INODE);
  	}
- out_stop:
+ 
+ 	if (sbi->s_mount_flags & EXT4_MF_FS_ABORTED)
 -- 
 2.25.1
 
