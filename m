@@ -2,92 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AC91D59E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 21:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A955C1D59E4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 21:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbgEOTWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 15:22:44 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:40089 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726188AbgEOTWo (ORCPT
+        id S1726227AbgEOTXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 15:23:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50840 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726183AbgEOTXA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 15:22:44 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 712C0AD4;
-        Fri, 15 May 2020 15:22:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 15 May 2020 15:22:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm2; bh=EItfF4iKTPwzzfpr4Yj8ZuxwQb
-        kCS9atun/WMEk8O0Q=; b=waDxF1HrkN9oE5rhj7GNEQwnM39Vak3v2TcT8+P3zM
-        tP91oas46JXCsNXYxQ8fgNabkh49gGFUvcUbwidPzpCAq+7VV5CRZQH5LaBDTXab
-        rFQKYid4zcECwQFzaj4lqFfxD8/cUKAaH9SJIlRuoz36l0KN+V/AMMNYe0sL/66N
-        9m+T3nWMS0pBM3Gd9ZZdrr0xT4MQiAdOddOI9NPBPGFljWyha+5HPBucaTz/fzkB
-        l0eI2QwnwijwKlnGxOGtjPthvbvJHLWVtRJpBFTeXTAVFyzjTkYN8F37w+0rqWVZ
-        GSpUJtyMIojc1a3eCJTZvSn7/+w9QY/RYfBn5hUIHZpw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=EItfF4
-        iKTPwzzfpr4Yj8ZuxwQbkCS9atun/WMEk8O0Q=; b=BKEsmB0fjX0f7ITnoooEt/
-        lh6VcmpnUn4urDRFG3fuhg504cLhuxMILluCjSMsgmZGHvKz2MGKzmhJ/HfQR3n7
-        5HGrUP9HwuA62g2fHbR9WCmJ5qncw2508nkAy8HYsHd8ZPMwYd9qtK7PwgHYTNIz
-        EK0ASXxmIUtS7Gt0YPbeCVtZuP7SVW1ULe/nsGTfRdWW2HDcpTQUZXCYBODWZePm
-        +okGb8f6s/ccyBa5GxVm4vUuvKsZppvgGhMLFogAMuR81XWxGapGNdp1R00VVLyu
-        yKHrX7Ssf6ILbqHpfp26gBpnWVSOS2AYFOM4JtLo7T3AFhEsZTG/Y/4T6vLu8sig
-        ==
-X-ME-Sender: <xms:Auy-Xg6Vr4sBHCCryej43vkTMq5q-NumOlrnl5j_tOawrN8mTBtPTw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleekgddufeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhholhgr
-    uhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeeftefhgfejhfelkeduieeludeuffduvedvveefkeevtdevgeevfeejgfdvuedt
-    keenucfkphepudekhedrfedrleegrdduleegnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:Auy-Xh4niw4RFCf0irvitUTf3N9nhHS66VbMH7vToPyVLW5CVcWMdQ>
-    <xmx:Auy-XvfzbEG1YdQhTLQN2xBXiLzc3Y1xyKhkk481LgaK94XKT7qVSw>
-    <xmx:Auy-XlI2Kx2npKKZMkSqkP4U8N5LEiIV2i6vsKTVlAMH9zvimr9Xog>
-    <xmx:A-y-XrXEjlC3mkCeTBbd0G3ZUOuqJMrALGC7NN27TP2Q-NDDzLKowA>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0F7B13280065;
-        Fri, 15 May 2020 15:22:42 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 3D23C37;
-        Fri, 15 May 2020 19:22:41 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 25900E0317; Fri, 15 May 2020 20:21:18 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     fuse-devel@lists.sourceforge.net, miklos <mszeredi@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Determining owner of a (fuse) mountpoint?
-Mail-Copies-To: never
-Mail-Followup-To: fuse-devel@lists.sourceforge.net, miklos
-        <mszeredi@redhat.com>, Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 15 May 2020 20:21:18 +0100
-Message-ID: <874kshqa1d.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 May 2020 15:23:00 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04FJ3j20036564;
+        Fri, 15 May 2020 15:22:54 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 310t9pysxn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 15 May 2020 15:22:53 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04FJKYwo032716;
+        Fri, 15 May 2020 19:22:52 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 3100ub65j1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 15 May 2020 19:22:51 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04FJMnhF10092974
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 May 2020 19:22:49 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D1C44C046;
+        Fri, 15 May 2020 19:22:49 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A1674C04E;
+        Fri, 15 May 2020 19:22:48 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.153.130])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 15 May 2020 19:22:48 +0000 (GMT)
+Message-ID: <1589570568.5111.46.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 2/2] fs: avoid fdput() after failed fdget() in
+ kernel_read_file_from_fd()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Shuah Khan <skhan@linuxfoundation.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, zohar@linux.vnet.ibm.com, mcgrof@kernel.org,
+        keescook@chromium.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 15 May 2020 15:22:48 -0400
+In-Reply-To: <62659de2dbf32e8c05cff7fe09f6efd24cfaf445.1589411496.git.skhan@linuxfoundation.org>
+References: <cover.1589411496.git.skhan@linuxfoundation.org>
+         <62659de2dbf32e8c05cff7fe09f6efd24cfaf445.1589411496.git.skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-15_07:2020-05-15,2020-05-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=981 phishscore=0
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
+ cotscore=-2147483648 suspectscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1011 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005150155
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, 2020-05-13 at 17:33 -0600, Shuah Khan wrote:
+> Fix kernel_read_file_from_fd() to avoid fdput() after a failed fdget().
+> fdput() doesn't do fput() on this file since FDPUT_FPUT isn't set
+> in fd.flags. Fix it anyway since failed fdget() doesn't require
+> a fdput().
+> 
+> This was introduced in a commit that added kernel_read_file_from_fd() as
+> a wrapper for the VFS common kernel_read_file().
+> 
+> Fixes: b844f0ecbc56 ("vfs: define kernel_copy_file_from_fd()")
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Given a (FUSE) mountpoint (potentially mounted without -o allow_root),
-is there a way for root to determine its "owner" (i.e. the user who has
-started the FUSE process and invoked fusermount) that does not depend on
-cooperation of the user/filesystem?
+Thanks, Shuah.
 
-Best,
--Nikolaus
-
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
