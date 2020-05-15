@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 056DA1D4F22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5F61D4F1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbgEONUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51230 "EHLO
+        id S1728150AbgEONTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbgEONRA (ORCPT
+        with ESMTP id S1726228AbgEONRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 09:17:00 -0400
+        Fri, 15 May 2020 09:17:01 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD96FC05BD0B;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6216C05BD0C;
         Fri, 15 May 2020 06:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=oT+8lwQ/brzvgB0YZUbOhpyCrOjpQvYYX3M679KauI8=; b=a21HfUxL4qKMzbYlfJMwxwrn5g
-        qOr5K5DDqigF/dbQAX3Pk0lp+UnY++CXQoL8tBH7VGujO3i/WxcOdVbQzdpKL4yNZ3vvl+e/gROcJ
-        qsDcalotRLfYDfHlRWDIKAxfhP1WuoNBYv63+rwjTvN3jeEoGOSwVN3KJdn/gu/BeKcOHl5yLGwYr
-        M5pHRmg1XZY4+XpIv1rh5HlQzWoNbbjD8wUTxB2WRYP1AoDxi/mEzmQwD+1fWL7dnEoPB2S+hVb2G
-        P8Bn5Q/GQyFl/0v5GwGRjIoxkScMcBPbXgnzWI1XoeGKLFAxGHqmY3/vDUdktOHtrhSh9R4q5LXot
-        oEh8jjfg==;
+        bh=Yi1wYt4iXlkSO38vWez4amiBBSDF7tSr77p/65sccCE=; b=jo82I22QMm2KBHidhmGYpoi/zJ
+        YfmR3Tr80iJZambkfkO1pLuzCkICxPVQv9PCucoQs4SMfYdSqpVkUpooU9vkVvTEAz8QUcO1jMSPf
+        nA8+zPuKGFWzGn9qYJIJ1xrtTTG41Fa1I87+/mV9b6nGZVAlfVfi7p5zNgQZ532A3TSYNeTnszFBQ
+        MmfL/99chr/F6uYotEoekkHqGgiXDEbzuMpzeFShMhAjhTyItojtsdBeRKdnJWWqqrwGKR6udXDgt
+        9j0yM3fpk3dEYEbuSnZy+5LNZdndVYcUZ9w6jeHMvbOJTPxdlnAecUl9GnpovBupjG3VcxfV+dEN0
+        1sPsMDcA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZaCy-0005W5-Kt; Fri, 15 May 2020 13:17:00 +0000
+        id 1jZaCy-0005Wl-NO; Fri, 15 May 2020 13:17:00 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 05/36] mm: Introduce thp_order
-Date:   Fri, 15 May 2020 06:16:25 -0700
-Message-Id: <20200515131656.12890-6-willy@infradead.org>
+Subject: [PATCH v4 06/36] mm: Introduce offset_in_thp
+Date:   Fri, 15 May 2020 06:16:26 -0700
+Message-Id: <20200515131656.12890-7-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 References: <20200515131656.12890-1-willy@infradead.org>
@@ -46,37 +46,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Like compound_order() except 0 when THP is disabled.
+Mirroring offset_in_page(), this gives you the offset within this
+particular page, no matter what size page it is.  It optimises down
+to offset_in_page() if CONFIG_TRANSPARENT_HUGEPAGE is not set.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/huge_mm.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/linux/mm.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e944f9757349..1f6245091917 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -276,6 +276,11 @@ static inline unsigned long thp_size(struct page *page)
- 	return page_size(page);
- }
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 088acbda722d..9a55dce6a535 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1577,6 +1577,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+ extern void pagefault_out_of_memory(void);
  
-+static inline unsigned int thp_order(struct page *page)
-+{
-+	return compound_order(page);
-+}
-+
- struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		pmd_t *pmd, int flags, struct dev_pagemap **pgmap);
- struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
-@@ -335,6 +340,7 @@ static inline int hpage_nr_pages(struct page *page)
- }
+ #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
++#define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
  
- #define thp_size(x)		PAGE_SIZE
-+#define thp_order(x)		0U
- 
- static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
- {
+ /*
+  * Flags passed to show_mem() and show_free_areas() to suppress output in
 -- 
 2.26.2
 
