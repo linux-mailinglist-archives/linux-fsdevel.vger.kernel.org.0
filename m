@@ -2,150 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E771D442F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 05:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0777C1D44A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 06:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbgEODzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 23:55:44 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:17311 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726665AbgEODzo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 23:55:44 -0400
-X-UUID: 8a4f21b0b7d84073b78ae9e67e94ec41-20200515
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=FIgtJPFxyfCI4OyCVzpT8IeOjmdr2nF5V1WfWYeRSDo=;
-        b=Do86qxYH39Brv/cvZSm/P3gZCC4EVUvzLH4BEaEG9Y+KEcKpBbEatL3xXFJcIhD0Lbd/BH6RLCwOCRzkk1hKpzaZO01NPqsHtA7TnljbwfUXhKBcUvabiOjUiaHRIPHmLDWdljVooxYDpmV4JE0woRgEkUf/GpI+R/keh61YJ5w=;
-X-UUID: 8a4f21b0b7d84073b78ae9e67e94ec41-20200515
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 216926550; Fri, 15 May 2020 11:55:37 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 15 May 2020 11:55:36 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 15 May 2020 11:55:36 +0800
-Message-ID: <1589514936.3197.108.camel@mtkswgap22>
-Subject: Re: [PATCH v13 06/12] scsi: ufs: UFS driver v2.1 spec crypto
- additions
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Satya Tangirala <satyat@google.com>
-CC:     <linux-block@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-ext4@vger.kernel.org>,
-        "Barani Muthukumaran" <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>,
-        "Eric Biggers" <ebiggers@google.com>
-Date:   Fri, 15 May 2020 11:55:36 +0800
-In-Reply-To: <20200514003727.69001-7-satyat@google.com>
-References: <20200514003727.69001-1-satyat@google.com>
-         <20200514003727.69001-7-satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726198AbgEOEd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 00:33:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4845 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725616AbgEOEd4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 00:33:56 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 212CB54EA7F1D3547B1B;
+        Fri, 15 May 2020 12:33:53 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 15 May 2020 12:33:47 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+        <adobriyan@gmail.com>, <mingo@kernel.org>, <peterz@infradead.org>,
+        <akpm@linux-foundation.org>, <yamada.masahiro@socionext.com>,
+        <bauerman@linux.ibm.com>, <gregkh@linuxfoundation.org>,
+        <skhan@linuxfoundation.org>, <dvyukov@google.com>,
+        <svens@stackframe.org>, <joel@joelfernandes.org>,
+        <tglx@linutronix.de>, <Jisheng.Zhang@synaptics.com>,
+        <pmladek@suse.com>, <bigeasy@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <nixiaoming@huawei.com>, <wangle6@huawei.com>
+Subject: [PATCH 0/4] Move the sysctl interface to the corresponding feature code file
+Date:   Fri, 15 May 2020 12:33:40 +0800
+Message-ID: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgU2F0eWEsDQoNCk9uIFRodSwgMjAyMC0wNS0xNCBhdCAwMDozNyArMDAwMCwgU2F0eWEgVGFu
-Z2lyYWxhIHdyb3RlOg0KPiBBZGQgdGhlIGNyeXB0byByZWdpc3RlcnMgYW5kIHN0cnVjdHMgZGVm
-aW5lZCBpbiB2Mi4xIG9mIHRoZSBKRURFQyBVRlNIQ0kNCj4gc3BlY2lmaWNhdGlvbiBpbiBwcmVw
-YXJhdGlvbiB0byBhZGQgc3VwcG9ydCBmb3IgaW5saW5lIGVuY3J5cHRpb24gdG8NCj4gVUZTLg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogU2F0eWEgVGFuZ2lyYWxhIDxzYXR5YXRAZ29vZ2xlLmNvbT4N
-Cj4gUmV2aWV3ZWQtYnk6IEVyaWMgQmlnZ2VycyA8ZWJpZ2dlcnNAZ29vZ2xlLmNvbT4NCj4gLS0t
-DQo+ICBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jIHwgIDIgKysNCj4gIGRyaXZlcnMvc2NzaS91
-ZnMvdWZzaGNkLmggfCAgNiArKysrDQo+ICBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjaS5oIHwgNjcg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+ICAzIGZpbGVzIGNoYW5n
-ZWQsIDczIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuYyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMNCj4g
-aW5kZXggNjk4ZThkMjBiNGJhYy4uMjQzNWM2MDBjYjJkOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9zY3NpL3Vmcy91ZnNoY2QuYw0KPiArKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jDQo+
-IEBAIC00NzY3LDYgKzQ3NjcsOCBAQCB1ZnNoY2RfdHJhbnNmZXJfcnNwX3N0YXR1cyhzdHJ1Y3Qg
-dWZzX2hiYSAqaGJhLCBzdHJ1Y3QgdWZzaGNkX2xyYiAqbHJicCkNCj4gIAljYXNlIE9DU19NSVNN
-QVRDSF9SRVNQX1VQSVVfU0laRToNCj4gIAljYXNlIE9DU19QRUVSX0NPTU1fRkFJTFVSRToNCj4g
-IAljYXNlIE9DU19GQVRBTF9FUlJPUjoNCj4gKwljYXNlIE9DU19JTlZBTElEX0NSWVBUT19DT05G
-SUc6DQo+ICsJY2FzZSBPQ1NfR0VORVJBTF9DUllQVE9fRVJST1I6DQo+ICAJZGVmYXVsdDoNCj4g
-IAkJcmVzdWx0IHw9IERJRF9FUlJPUiA8PCAxNjsNCj4gIAkJZGV2X2VycihoYmEtPmRldiwNCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmggYi9kcml2ZXJzL3Njc2kvdWZz
-L3Vmc2hjZC5oDQo+IGluZGV4IDZmZmMwOGFkODVmNjMuLjgzNWI5YTg0NGFhMjEgMTAwNjQ0DQo+
-IC0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmgNCj4gKysrIGIvZHJpdmVycy9zY3NpL3Vm
-cy91ZnNoY2QuaA0KPiBAQCAtNTU1LDYgKzU1NSwxMiBAQCBlbnVtIHVmc2hjZF9jYXBzIHsNCj4g
-IAkgKiBmb3IgdXNlcnNwYWNlIHRvIGNvbnRyb2wgdGhlIHBvd2VyIG1hbmFnZW1lbnQuDQo+ICAJ
-ICovDQo+ICAJVUZTSENEX0NBUF9SUE1fQVVUT1NVU1BFTkQJCQk9IDEgPDwgNiwNCj4gKw0KPiAr
-CS8qDQo+ICsJICogVGhpcyBjYXBhYmlsaXR5IGFsbG93cyB0aGUgaG9zdCBjb250cm9sbGVyIGRy
-aXZlciB0byB1c2UgdGhlDQo+ICsJICogaW5saW5lIGNyeXB0byBlbmdpbmUsIGlmIGl0IGlzIHBy
-ZXNlbnQNCj4gKwkgKi8NCj4gKwlVRlNIQ0RfQ0FQX0NSWVBUTwkJCQk9IDEgPDwgNywNCj4gIH07
-DQo+ICANCj4gIC8qKg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2kuaCBi
-L2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNpLmgNCj4gaW5kZXggYzI5NjFkMzdjYzFjZi4uYzA2NTFm
-ZTZkYmJjNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2kuaA0KPiArKysg
-Yi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjaS5oDQo+IEBAIC05MCw2ICs5MCw3IEBAIGVudW0gew0K
-PiAgCU1BU0tfNjRfQUREUkVTU0lOR19TVVBQT1JUCQk9IDB4MDEwMDAwMDAsDQo+ICAJTUFTS19P
-VVRfT0ZfT1JERVJfREFUQV9ERUxJVkVSWV9TVVBQT1JUCT0gMHgwMjAwMDAwMCwNCj4gIAlNQVNL
-X1VJQ19ETUVfVEVTVF9NT0RFX1NVUFBPUlQJCT0gMHgwNDAwMDAwMCwNCj4gKwlNQVNLX0NSWVBU
-T19TVVBQT1JUCQkJPSAweDEwMDAwMDAwLA0KPiAgfTsNCj4gIA0KPiAgI2RlZmluZSBVRlNfTUFT
-SyhtYXNrLCBvZmZzZXQpCQkoKG1hc2spIDw8IChvZmZzZXQpKQ0KPiBAQCAtMTQzLDYgKzE0NCw3
-IEBAIGVudW0gew0KPiAgI2RlZmluZSBERVZJQ0VfRkFUQUxfRVJST1IJCQkweDgwMA0KPiAgI2Rl
-ZmluZSBDT05UUk9MTEVSX0ZBVEFMX0VSUk9SCQkJMHgxMDAwMA0KPiAgI2RlZmluZSBTWVNURU1f
-QlVTX0ZBVEFMX0VSUk9SCQkJMHgyMDAwMA0KPiArI2RlZmluZSBDUllQVE9fRU5HSU5FX0ZBVEFM
-X0VSUk9SCQkweDQwMDAwDQo+ICANCj4gICNkZWZpbmUgVUZTSENEX1VJQ19ISUJFUk44X01BU0sJ
-KFVJQ19ISUJFUk5BVEVfRU5URVIgfFwNCj4gIAkJCQlVSUNfSElCRVJOQVRFX0VYSVQpDQo+IEBA
-IC0xNTUsMTEgKzE1NywxMyBAQCBlbnVtIHsNCj4gICNkZWZpbmUgVUZTSENEX0VSUk9SX01BU0sJ
-KFVJQ19FUlJPUiB8XA0KPiAgCQkJCURFVklDRV9GQVRBTF9FUlJPUiB8XA0KPiAgCQkJCUNPTlRS
-T0xMRVJfRkFUQUxfRVJST1IgfFwNCj4gLQkJCQlTWVNURU1fQlVTX0ZBVEFMX0VSUk9SKQ0KPiAr
-CQkJCVNZU1RFTV9CVVNfRkFUQUxfRVJST1IgfFwNCj4gKwkJCQlDUllQVE9fRU5HSU5FX0ZBVEFM
-X0VSUk9SKQ0KPiAgDQo+ICAjZGVmaW5lIElOVF9GQVRBTF9FUlJPUlMJKERFVklDRV9GQVRBTF9F
-UlJPUiB8XA0KPiAgCQkJCUNPTlRST0xMRVJfRkFUQUxfRVJST1IgfFwNCj4gLQkJCQlTWVNURU1f
-QlVTX0ZBVEFMX0VSUk9SKQ0KPiArCQkJCVNZU1RFTV9CVVNfRkFUQUxfRVJST1IgfFwNCj4gKwkJ
-CQlDUllQVE9fRU5HSU5FX0ZBVEFMX0VSUk9SKQ0KPiAgDQo+ICAvKiBIQ1MgLSBIb3N0IENvbnRy
-b2xsZXIgU3RhdHVzIDMwaCAqLw0KPiAgI2RlZmluZSBERVZJQ0VfUFJFU0VOVAkJCQkweDENCj4g
-QEAgLTMxOCw2ICszMjIsNjEgQEAgZW51bSB7DQo+ICAJSU5URVJSVVBUX01BU0tfQUxMX1ZFUl8y
-MQk9IDB4NzFGRkYsDQo+ICB9Ow0KPiAgDQo+ICsvKiBDQ0FQIC0gQ3J5cHRvIENhcGFiaWxpdHkg
-MTAwaCAqLw0KPiArdW5pb24gdWZzX2NyeXB0b19jYXBhYmlsaXRpZXMgew0KPiArCV9fbGUzMiBy
-ZWdfdmFsOw0KPiArCXN0cnVjdCB7DQo+ICsJCXU4IG51bV9jcnlwdG9fY2FwOw0KPiArCQl1OCBj
-b25maWdfY291bnQ7DQo+ICsJCXU4IHJlc2VydmVkOw0KPiArCQl1OCBjb25maWdfYXJyYXlfcHRy
-Ow0KPiArCX07DQo+ICt9Ow0KPiArDQo+ICtlbnVtIHVmc19jcnlwdG9fa2V5X3NpemUgew0KPiAr
-CVVGU19DUllQVE9fS0VZX1NJWkVfSU5WQUxJRAk9IDB4MCwNCj4gKwlVRlNfQ1JZUFRPX0tFWV9T
-SVpFXzEyOAkJPSAweDEsDQo+ICsJVUZTX0NSWVBUT19LRVlfU0laRV8xOTIJCT0gMHgyLA0KPiAr
-CVVGU19DUllQVE9fS0VZX1NJWkVfMjU2CQk9IDB4MywNCj4gKwlVRlNfQ1JZUFRPX0tFWV9TSVpF
-XzUxMgkJPSAweDQsDQo+ICt9Ow0KPiArDQo+ICtlbnVtIHVmc19jcnlwdG9fYWxnIHsNCj4gKwlV
-RlNfQ1JZUFRPX0FMR19BRVNfWFRTCQkJPSAweDAsDQo+ICsJVUZTX0NSWVBUT19BTEdfQklUTE9D
-S0VSX0FFU19DQkMJPSAweDEsDQo+ICsJVUZTX0NSWVBUT19BTEdfQUVTX0VDQgkJCT0gMHgyLA0K
-PiArCVVGU19DUllQVE9fQUxHX0VTU0lWX0FFU19DQkMJCT0gMHgzLA0KPiArfTsNCj4gKw0KPiAr
-LyogeC1DUllQVE9DQVAgLSBDcnlwdG8gQ2FwYWJpbGl0eSBYICovDQo+ICt1bmlvbiB1ZnNfY3J5
-cHRvX2NhcF9lbnRyeSB7DQo+ICsJX19sZTMyIHJlZ192YWw7DQo+ICsJc3RydWN0IHsNCj4gKwkJ
-dTggYWxnb3JpdGhtX2lkOw0KPiArCQl1OCBzZHVzX21hc2s7IC8qIFN1cHBvcnRlZCBkYXRhIHVu
-aXQgc2l6ZSBtYXNrICovDQo+ICsJCXU4IGtleV9zaXplOw0KPiArCQl1OCByZXNlcnZlZDsNCj4g
-Kwl9Ow0KPiArfTsNCj4gKw0KPiArI2RlZmluZSBVRlNfQ1JZUFRPX0NPTkZJR1VSQVRJT05fRU5B
-QkxFICgxIDw8IDcpDQo+ICsjZGVmaW5lIFVGU19DUllQVE9fS0VZX01BWF9TSVpFIDY0DQo+ICsv
-KiB4LUNSWVBUT0NGRyAtIENyeXB0byBDb25maWd1cmF0aW9uIFggKi8NCj4gK3VuaW9uIHVmc19j
-cnlwdG9fY2ZnX2VudHJ5IHsNCj4gKwlfX2xlMzIgcmVnX3ZhbFszMl07DQo+ICsJc3RydWN0IHsN
-Cj4gKwkJdTggY3J5cHRvX2tleVtVRlNfQ1JZUFRPX0tFWV9NQVhfU0laRV07DQo+ICsJCXU4IGRh
-dGFfdW5pdF9zaXplOw0KPiArCQl1OCBjcnlwdG9fY2FwX2lkeDsNCj4gKwkJdTggcmVzZXJ2ZWRf
-MTsNCj4gKwkJdTggY29uZmlnX2VuYWJsZTsNCj4gKwkJdTggcmVzZXJ2ZWRfbXVsdGlfaG9zdDsN
-Cj4gKwkJdTggcmVzZXJ2ZWRfMjsNCj4gKwkJdTggdnNiWzJdOw0KPiArCQl1OCByZXNlcnZlZF8z
-WzU2XTsNCj4gKwl9Ow0KPiArfTsNCj4gKw0KPiAgLyoNCj4gICAqIFJlcXVlc3QgRGVzY3JpcHRv
-ciBEZWZpbml0aW9ucw0KPiAgICovDQo+IEBAIC0zMzksNiArMzk4LDcgQEAgZW51bSB7DQo+ICAJ
-VVRQX05BVElWRV9VRlNfQ09NTUFORAkJPSAweDEwMDAwMDAwLA0KPiAgCVVUUF9ERVZJQ0VfTUFO
-QUdFTUVOVF9GVU5DVElPTgk9IDB4MjAwMDAwMDAsDQo+ICAJVVRQX1JFUV9ERVNDX0lOVF9DTUQJ
-CT0gMHgwMTAwMDAwMCwNCj4gKwlVVFBfUkVRX0RFU0NfQ1JZUFRPX0VOQUJMRV9DTUQJPSAweDAw
-ODAwMDAwLA0KPiAgfTsNCj4gIA0KPiAgLyogVVRQIFRyYW5zZmVyIFJlcXVlc3QgRGF0YSBEaXJl
-Y3Rpb24gKEREKSAqLw0KPiBAQCAtMzU4LDYgKzQxOCw5IEBAIGVudW0gew0KPiAgCU9DU19QRUVS
-X0NPTU1fRkFJTFVSRQkJPSAweDUsDQo+ICAJT0NTX0FCT1JURUQJCQk9IDB4NiwNCj4gIAlPQ1Nf
-RkFUQUxfRVJST1IJCQk9IDB4NywNCj4gKwlPQ1NfREVWSUNFX0ZBVEFMX0VSUk9SCQk9IDB4OCwN
-Cj4gKwlPQ1NfSU5WQUxJRF9DUllQVE9fQ09ORklHCT0gMHg5LA0KPiArCU9DU19HRU5FUkFMX0NS
-WVBUT19FUlJPUgk9IDB4QSwNCg0KQSBuaXQgaXMgdGhhdCBPQ1NfREVWSUNFX0ZBVEFMX0VSUk9S
-IGRlZmluaXRpb24gaXMgYWRkZWQgaGVyZSBidXQgbm90DQphZGRlZCBpbiB1ZnNoY2RfdHJhbnNm
-ZXJfcnNwX3N0YXR1cygpLg0KDQpUaGlzIHdpbGwgbm90IGhhdmUgYW55IHNpZGUgZWZmZWN0IGJl
-Y2F1c2UgT0NTX0RFVklDRV9GQVRBTF9FUlJPUiB3YXMNCmFscmVhZHkgaGFuZGxlZCBieSAiZGVm
-YXVsdCIgbGFiZWwgaW4gdWZzaGNkX3RyYW5zZmVyX3JzcF9zdGF0dXMoKS4NCg0KPiAgCU9DU19J
-TlZBTElEX0NPTU1BTkRfU1RBVFVTCT0gMHgwRiwNCj4gIAlNQVNLX09DUwkJCT0gMHgwRiwNCj4g
-IH07DQoNCk90aGVyd2lzZSBsb29rcyBnb29kIHRvIG1lLg0KDQpSZXZpZXdlZC1ieTogU3Rhbmxl
-eSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbT4NCg0KVGhhbmtzLg0KDQo=
+Use register_sysctl() to register the sysctl interface to avoid
+merge conflicts when different features modify sysctl.c at the same time.
+
+Here, the sysctl interfaces of hung task and watchdog are moved to the
+corresponding feature code files
+
+https://lkml.org/lkml/2020/5/11/1419
+
+Xiaoming Ni (4):
+  hung_task: Move hung_task syscl interface to hung_task_sysctl.c
+  proc/sysctl: add shared variables -1
+  watchdog: move watchdog sysctl to watchdog.c
+  sysctl: Add register_sysctl_init() interface
+
+ fs/proc/proc_sysctl.c        |   2 +-
+ include/linux/sched/sysctl.h |   8 +--
+ include/linux/sysctl.h       |   3 +
+ kernel/Makefile              |   4 +-
+ kernel/hung_task.c           |   6 +-
+ kernel/hung_task.h           |  21 ++++++
+ kernel/hung_task_sysctl.c    |  66 +++++++++++++++++
+ kernel/sysctl.c              | 168 ++++++-------------------------------------
+ kernel/watchdog.c            | 101 ++++++++++++++++++++++++++
+ 9 files changed, 219 insertions(+), 160 deletions(-)
+ create mode 100644 kernel/hung_task.h
+ create mode 100644 kernel/hung_task_sysctl.c
+
+-- 
+1.8.5.6
 
