@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6520A1D50E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB8A1D50FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgEOOhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 10:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35654 "EHLO
+        id S1727122AbgEOOhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:37:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727033AbgEOOhf (ORCPT
+        by vger.kernel.org with ESMTP id S1727082AbgEOOhh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 10:37:35 -0400
+        Fri, 15 May 2020 10:37:37 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90886C061A0C;
-        Fri, 15 May 2020 07:37:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC645C05BD09;
+        Fri, 15 May 2020 07:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=nX/OxofzDc3fd8yYsXOf0skifLYVUPlkWiksPKDCM7I=; b=FXLIDS/DY4Fj1boiW2rPFwTzrf
-        TLYCawH6OO9WWcT32gM3EgdCV7jiRmXxHZgB1iFLz68wxD0wObOuUUchLBpN59Pj6xGTTlvy9JaYf
-        6GSInclud5EUw6NHZ5sybEVriC4nvVAcCGj48E/rkyJkybkGvFvh9o8wyRMidHYBKQBNgfqs51bPu
-        EG/JDYZ57S+4srwVZVTRC+dD5olxYQmWSpOqbb8IbN/2GOpLiSsjn0wknhezyt80x+IvF214YlG6b
-        h/73p9ZozmTVnJtX3b0NmkHzH2hfZ1s4lYMlQA6L05L7znOxrIASs48wi0vK64ZyNtNM2S1FXw4uT
-        xGmnSTIw==;
+        bh=oMznyGWmUnH+800kT8BMkDZAQHI6XtvfS5jJWouEfDQ=; b=Fil8zzWGgM7bTiLZqcGMW+YJ5z
+        KWiKqxsF9PsHBsoGTjF3M1/6BpcRcrB87gg7fSSrUKG2ViuiDFILsVXTAGiiQFvWZl7302yJv2QDp
+        2gdx1QAdET+uvFc0ze5HduS8IJ9srBZdOqL/1nqMHeCh3YBZQaMxq/bdZHgdR67JaPY2iVoS1shDo
+        6pyU9IPRQ9Q52AD4zwxw4+qQ7zeiwXt3usfWVUxDx+fAryeslEs5RvNsfp0pYwplX4l6i6toHPASG
+        mV2sWCHOlJLsWvBZ89rDzt4kZI4unFON90otMsIMyf+zqnwfQ1s79AFeTZmzqJZZ6+kGlXAlM4ASM
+        cgFW93ag==;
 Received: from [2001:4bb8:188:1506:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZbSW-00041m-AW; Fri, 15 May 2020 14:37:08 +0000
+        id 1jZbSZ-000457-1G; Fri, 15 May 2020 14:37:11 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -43,9 +43,9 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 07/29] asm-generic: improve the flush_dcache_page stub
-Date:   Fri, 15 May 2020 16:36:24 +0200
-Message-Id: <20200515143646.3857579-8-hch@lst.de>
+Subject: [PATCH 08/29] alpha: use asm-generic/cacheflush.h
+Date:   Fri, 15 May 2020 16:36:25 +0200
+Message-Id: <20200515143646.3857579-9-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200515143646.3857579-1-hch@lst.de>
 References: <20200515143646.3857579-1-hch@lst.de>
@@ -57,44 +57,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a magic ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE cpp symbol that
-guards non-stub availability of flush_dcache_pagge.  Use that to
-check if flush_dcache_pagg is implemented.
+Alpha needs almost no cache flushing routines of its own.  Rely on
+asm-generic/cacheflush.h for the defaults.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/asm-generic/cacheflush.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/alpha/include/asm/cacheflush.h | 28 ++++++----------------------
+ 1 file changed, 6 insertions(+), 22 deletions(-)
 
-diff --git a/include/asm-generic/cacheflush.h b/include/asm-generic/cacheflush.h
-index bf9bb83e9fc8d..bbbb4d4ef6516 100644
---- a/include/asm-generic/cacheflush.h
-+++ b/include/asm-generic/cacheflush.h
-@@ -2,8 +2,6 @@
- #ifndef _ASM_GENERIC_CACHEFLUSH_H
- #define _ASM_GENERIC_CACHEFLUSH_H
+diff --git a/arch/alpha/include/asm/cacheflush.h b/arch/alpha/include/asm/cacheflush.h
+index 89128489cb598..636d7ca0d05f6 100644
+--- a/arch/alpha/include/asm/cacheflush.h
++++ b/arch/alpha/include/asm/cacheflush.h
+@@ -4,19 +4,6 @@
  
+ #include <linux/mm.h>
+ 
+-/* Caches aren't brain-dead on the Alpha. */
+-#define flush_cache_all()			do { } while (0)
+-#define flush_cache_mm(mm)			do { } while (0)
+-#define flush_cache_dup_mm(mm)			do { } while (0)
+-#define flush_cache_range(vma, start, end)	do { } while (0)
+-#define flush_cache_page(vma, vmaddr, pfn)	do { } while (0)
 -#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
+-#define flush_dcache_page(page)			do { } while (0)
+-#define flush_dcache_mmap_lock(mapping)		do { } while (0)
+-#define flush_dcache_mmap_unlock(mapping)	do { } while (0)
+-#define flush_cache_vmap(start, end)		do { } while (0)
+-#define flush_cache_vunmap(start, end)		do { } while (0)
 -
- /*
-  * The cache doesn't need to be flushed when TLB entries change when
-  * the cache is mapped to physical memory, not virtual memory
-@@ -42,12 +40,14 @@ static inline void flush_cache_page(struct vm_area_struct *vma,
+ /* Note that the following two definitions are _highly_ dependent
+    on the contexts in which they are used in the kernel.  I personally
+    think it is criminal how loosely defined these macros are.  */
+@@ -59,20 +46,17 @@ flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
+ 			mm->context[smp_processor_id()] = 0;
+ 	}
  }
- #endif
+-#else
++#define flush_icache_user_range flush_icache_user_range
++#else /* CONFIG_SMP */
+ extern void flush_icache_user_range(struct vm_area_struct *vma,
+ 		struct page *page, unsigned long addr, int len);
+-#endif
++#define flush_icache_user_range flush_icache_user_range
++#endif /* CONFIG_SMP */
  
--#ifndef flush_dcache_page
-+#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE
- static inline void flush_dcache_page(struct page *page)
- {
- }
-+#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
- #endif
+ /* This is used only in __do_fault and do_swap_page.  */
+ #define flush_icache_page(vma, page) \
+-  flush_icache_user_range((vma), (page), 0, 0)
++	flush_icache_user_range((vma), (page), 0, 0)
  
-+
- #ifndef flush_dcache_mmap_lock
- static inline void flush_dcache_mmap_lock(struct address_space *mapping)
- {
+-#define copy_to_user_page(vma, page, vaddr, dst, src, len) \
+-do { memcpy(dst, src, len); \
+-     flush_icache_user_range(vma, page, vaddr, len); \
+-} while (0)
+-#define copy_from_user_page(vma, page, vaddr, dst, src, len) \
+-	memcpy(dst, src, len)
++#include <asm-generic/cacheflush.h>
+ 
+ #endif /* _ALPHA_CACHEFLUSH_H */
 -- 
 2.26.2
 
