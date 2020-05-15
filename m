@@ -2,212 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BA11D441F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 05:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E771D442F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 05:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbgEODjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 May 2020 23:39:00 -0400
-Received: from mga06.intel.com ([134.134.136.31]:46650 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgEODi7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 May 2020 23:38:59 -0400
-IronPort-SDR: fY68yZquNQDbS2A827prcLANqkwVChvpdZKEXUa/e7eTybr74/blePQGMbDkyvdj9O9CfD4jsd
- RvcW6JPkd+/A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 20:38:58 -0700
-IronPort-SDR: T4cM1uZ2flAItzX+MQz5ei98EtCAdtIwnVbjhkmIoV0zLm0ze9GZnWDMsuNauIFg2+EpfK9OwF
- myEPk3r620BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,393,1583222400"; 
-   d="scan'208";a="372565874"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga001.fm.intel.com with ESMTP; 14 May 2020 20:38:58 -0700
-Date:   Thu, 14 May 2020 20:38:58 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V1 7/9] fs/ext4: Make DAX mount option a tri-state
-Message-ID: <20200515033858.GE2140786@iweiny-DESK2.sc.intel.com>
-References: <20200514065316.2500078-1-ira.weiny@intel.com>
- <20200514065316.2500078-8-ira.weiny@intel.com>
- <20200514150839.GB2077014@magnolia>
+        id S1728166AbgEODzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 May 2020 23:55:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:17311 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726665AbgEODzo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 May 2020 23:55:44 -0400
+X-UUID: 8a4f21b0b7d84073b78ae9e67e94ec41-20200515
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=FIgtJPFxyfCI4OyCVzpT8IeOjmdr2nF5V1WfWYeRSDo=;
+        b=Do86qxYH39Brv/cvZSm/P3gZCC4EVUvzLH4BEaEG9Y+KEcKpBbEatL3xXFJcIhD0Lbd/BH6RLCwOCRzkk1hKpzaZO01NPqsHtA7TnljbwfUXhKBcUvabiOjUiaHRIPHmLDWdljVooxYDpmV4JE0woRgEkUf/GpI+R/keh61YJ5w=;
+X-UUID: 8a4f21b0b7d84073b78ae9e67e94ec41-20200515
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 216926550; Fri, 15 May 2020 11:55:37 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 15 May 2020 11:55:36 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 15 May 2020 11:55:36 +0800
+Message-ID: <1589514936.3197.108.camel@mtkswgap22>
+Subject: Re: [PATCH v13 06/12] scsi: ufs: UFS driver v2.1 spec crypto
+ additions
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Satya Tangirala <satyat@google.com>
+CC:     <linux-block@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-ext4@vger.kernel.org>,
+        "Barani Muthukumaran" <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>,
+        "Eric Biggers" <ebiggers@google.com>
+Date:   Fri, 15 May 2020 11:55:36 +0800
+In-Reply-To: <20200514003727.69001-7-satyat@google.com>
+References: <20200514003727.69001-1-satyat@google.com>
+         <20200514003727.69001-7-satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200514150839.GB2077014@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 14, 2020 at 08:08:39AM -0700, Darrick J. Wong wrote:
-> On Wed, May 13, 2020 at 11:53:13PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > We add 'always', 'never', and 'inode' (default).  '-o dax' continue to
-> > operate the same.
-> > 
-> > Specifically we introduce a 2nd DAX mount flag EXT4_MOUNT2_DAX_NEVER and set
-> > it and EXT4_MOUNT_DAX_ALWAYS appropriately.
-> > 
-> > We also force EXT4_MOUNT2_DAX_NEVER if !CONFIG_FS_DAX.
-> > 
-> > https://lore.kernel.org/lkml/20200405061945.GA94792@iweiny-DESK2.sc.intel.com/
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes from RFC:
-> > 	Combine remount check for DAX_NEVER with DAX_ALWAYS
-> > 	Update ext4_should_enable_dax()
-> > ---
-> >  fs/ext4/ext4.h  |  1 +
-> >  fs/ext4/inode.c |  2 ++
-> >  fs/ext4/super.c | 43 +++++++++++++++++++++++++++++++++++++------
-> >  3 files changed, 40 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index 86a0994332ce..01d1de838896 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -1168,6 +1168,7 @@ struct ext4_inode_info {
-> >  						      blocks */
-> >  #define EXT4_MOUNT2_HURD_COMPAT		0x00000004 /* Support HURD-castrated
-> >  						      file systems */
-> > +#define EXT4_MOUNT2_DAX_NEVER		0x00000008 /* Do not allow Direct Access */
-> >  
-> >  #define EXT4_MOUNT2_EXPLICIT_JOURNAL_CHECKSUM	0x00000008 /* User explicitly
-> >  						specified journal checksum */
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index 23e42a223235..140b1930e2f4 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -4400,6 +4400,8 @@ int ext4_get_inode_loc(struct inode *inode, struct ext4_iloc *iloc)
-> >  
-> >  static bool ext4_should_enable_dax(struct inode *inode)
-> >  {
-> > +	if (test_opt2(inode->i_sb, DAX_NEVER))
-> > +		return false;
-> >  	if (!S_ISREG(inode->i_mode))
-> >  		return false;
-> >  	if (ext4_should_journal_data(inode))
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 5ec900fdf73c..e01a040a58a9 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -1505,6 +1505,7 @@ enum {
-> >  	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
-> >  	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
-> >  	Opt_usrquota, Opt_grpquota, Opt_prjquota, Opt_i_version, Opt_dax,
-> > +	Opt_dax_str,
-> >  	Opt_stripe, Opt_delalloc, Opt_nodelalloc, Opt_warn_on_error,
-> >  	Opt_nowarn_on_error, Opt_mblk_io_submit,
-> >  	Opt_lazytime, Opt_nolazytime, Opt_debug_want_extra_isize,
-> > @@ -1570,6 +1571,7 @@ static const match_table_t tokens = {
-> >  	{Opt_barrier, "barrier"},
-> >  	{Opt_nobarrier, "nobarrier"},
-> >  	{Opt_i_version, "i_version"},
-> > +	{Opt_dax_str, "dax=%s"},
-> >  	{Opt_dax, "dax"},
-> >  	{Opt_stripe, "stripe=%u"},
-> >  	{Opt_delalloc, "delalloc"},
-> > @@ -1767,6 +1769,7 @@ static const struct mount_opts {
-> >  	{Opt_min_batch_time, 0, MOPT_GTE0},
-> >  	{Opt_inode_readahead_blks, 0, MOPT_GTE0},
-> >  	{Opt_init_itable, 0, MOPT_GTE0},
-> > +	{Opt_dax_str, 0, MOPT_STRING},
-> >  	{Opt_dax, EXT4_MOUNT_DAX_ALWAYS, MOPT_SET},
-> >  	{Opt_stripe, 0, MOPT_GTE0},
-> >  	{Opt_resuid, 0, MOPT_GTE0},
-> > @@ -2076,13 +2079,32 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
-> >  		}
-> >  		sbi->s_jquota_fmt = m->mount_opt;
-> >  #endif
-> > -	} else if (token == Opt_dax) {
-> > +	} else if (token == Opt_dax || token == Opt_dax_str) {
-> >  #ifdef CONFIG_FS_DAX
-> > -		ext4_msg(sb, KERN_WARNING,
-> > -		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-> > -		sbi->s_mount_opt |= m->mount_opt;
-> > +		char *tmp = match_strdup(&args[0]);
-> > +
-> > +		if (!tmp || !strcmp(tmp, "always")) {
-> > +			ext4_msg(sb, KERN_WARNING,
-> > +				"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-> > +			sbi->s_mount_opt |= EXT4_MOUNT_DAX_ALWAYS;
-> > +			sbi->s_mount_opt2 &= ~EXT4_MOUNT2_DAX_NEVER;
-> > +		} else if (!strcmp(tmp, "never")) {
-> > +			sbi->s_mount_opt2 |= EXT4_MOUNT2_DAX_NEVER;
-> > +			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
-> > +		} else if (!strcmp(tmp, "inode")) {
-> > +			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
-> > +			sbi->s_mount_opt2 &= ~EXT4_MOUNT2_DAX_NEVER;
-> > +		} else {
-> > +			ext4_msg(sb, KERN_WARNING, "DAX invalid option.");
-> > +			kfree(tmp);
-> > +			return -1;
-> > +		}
-> > +
-> > +		kfree(tmp);
-> >  #else
-> >  		ext4_msg(sb, KERN_INFO, "dax option not supported");
-> > +		sbi->s_mount_opt2 |= EXT4_MOUNT2_DAX_NEVER;
-> > +		sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
-> >  		return -1;
-> >  #endif
-> >  	} else if (token == Opt_data_err_abort) {
-> > @@ -2306,6 +2328,13 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
-> >  	if (DUMMY_ENCRYPTION_ENABLED(sbi))
-> >  		SEQ_OPTS_PUTS("test_dummy_encryption");
-> >  
-> > +	if (test_opt2(sb, DAX_NEVER))
-> > +		SEQ_OPTS_PUTS("dax=never");
-> > +	else if (test_opt(sb, DAX_ALWAYS))
-> > +		SEQ_OPTS_PUTS("dax=always");
-> > +	else
-> > +		SEQ_OPTS_PUTS("dax=inode");
-> 
-> dax=inode is the default; do you need to show it?
-> 
-> (Especially since xfs doesn't...)
+SGkgU2F0eWEsDQoNCk9uIFRodSwgMjAyMC0wNS0xNCBhdCAwMDozNyArMDAwMCwgU2F0eWEgVGFu
+Z2lyYWxhIHdyb3RlOg0KPiBBZGQgdGhlIGNyeXB0byByZWdpc3RlcnMgYW5kIHN0cnVjdHMgZGVm
+aW5lZCBpbiB2Mi4xIG9mIHRoZSBKRURFQyBVRlNIQ0kNCj4gc3BlY2lmaWNhdGlvbiBpbiBwcmVw
+YXJhdGlvbiB0byBhZGQgc3VwcG9ydCBmb3IgaW5saW5lIGVuY3J5cHRpb24gdG8NCj4gVUZTLg0K
+PiANCj4gU2lnbmVkLW9mZi1ieTogU2F0eWEgVGFuZ2lyYWxhIDxzYXR5YXRAZ29vZ2xlLmNvbT4N
+Cj4gUmV2aWV3ZWQtYnk6IEVyaWMgQmlnZ2VycyA8ZWJpZ2dlcnNAZ29vZ2xlLmNvbT4NCj4gLS0t
+DQo+ICBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jIHwgIDIgKysNCj4gIGRyaXZlcnMvc2NzaS91
+ZnMvdWZzaGNkLmggfCAgNiArKysrDQo+ICBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjaS5oIHwgNjcg
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+ICAzIGZpbGVzIGNoYW5n
+ZWQsIDczIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuYyBiL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMNCj4g
+aW5kZXggNjk4ZThkMjBiNGJhYy4uMjQzNWM2MDBjYjJkOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
+cy9zY3NpL3Vmcy91ZnNoY2QuYw0KPiArKysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jDQo+
+IEBAIC00NzY3LDYgKzQ3NjcsOCBAQCB1ZnNoY2RfdHJhbnNmZXJfcnNwX3N0YXR1cyhzdHJ1Y3Qg
+dWZzX2hiYSAqaGJhLCBzdHJ1Y3QgdWZzaGNkX2xyYiAqbHJicCkNCj4gIAljYXNlIE9DU19NSVNN
+QVRDSF9SRVNQX1VQSVVfU0laRToNCj4gIAljYXNlIE9DU19QRUVSX0NPTU1fRkFJTFVSRToNCj4g
+IAljYXNlIE9DU19GQVRBTF9FUlJPUjoNCj4gKwljYXNlIE9DU19JTlZBTElEX0NSWVBUT19DT05G
+SUc6DQo+ICsJY2FzZSBPQ1NfR0VORVJBTF9DUllQVE9fRVJST1I6DQo+ICAJZGVmYXVsdDoNCj4g
+IAkJcmVzdWx0IHw9IERJRF9FUlJPUiA8PCAxNjsNCj4gIAkJZGV2X2VycihoYmEtPmRldiwNCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmggYi9kcml2ZXJzL3Njc2kvdWZz
+L3Vmc2hjZC5oDQo+IGluZGV4IDZmZmMwOGFkODVmNjMuLjgzNWI5YTg0NGFhMjEgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmgNCj4gKysrIGIvZHJpdmVycy9zY3NpL3Vm
+cy91ZnNoY2QuaA0KPiBAQCAtNTU1LDYgKzU1NSwxMiBAQCBlbnVtIHVmc2hjZF9jYXBzIHsNCj4g
+IAkgKiBmb3IgdXNlcnNwYWNlIHRvIGNvbnRyb2wgdGhlIHBvd2VyIG1hbmFnZW1lbnQuDQo+ICAJ
+ICovDQo+ICAJVUZTSENEX0NBUF9SUE1fQVVUT1NVU1BFTkQJCQk9IDEgPDwgNiwNCj4gKw0KPiAr
+CS8qDQo+ICsJICogVGhpcyBjYXBhYmlsaXR5IGFsbG93cyB0aGUgaG9zdCBjb250cm9sbGVyIGRy
+aXZlciB0byB1c2UgdGhlDQo+ICsJICogaW5saW5lIGNyeXB0byBlbmdpbmUsIGlmIGl0IGlzIHBy
+ZXNlbnQNCj4gKwkgKi8NCj4gKwlVRlNIQ0RfQ0FQX0NSWVBUTwkJCQk9IDEgPDwgNywNCj4gIH07
+DQo+ICANCj4gIC8qKg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2kuaCBi
+L2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNpLmgNCj4gaW5kZXggYzI5NjFkMzdjYzFjZi4uYzA2NTFm
+ZTZkYmJjNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2kuaA0KPiArKysg
+Yi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjaS5oDQo+IEBAIC05MCw2ICs5MCw3IEBAIGVudW0gew0K
+PiAgCU1BU0tfNjRfQUREUkVTU0lOR19TVVBQT1JUCQk9IDB4MDEwMDAwMDAsDQo+ICAJTUFTS19P
+VVRfT0ZfT1JERVJfREFUQV9ERUxJVkVSWV9TVVBQT1JUCT0gMHgwMjAwMDAwMCwNCj4gIAlNQVNL
+X1VJQ19ETUVfVEVTVF9NT0RFX1NVUFBPUlQJCT0gMHgwNDAwMDAwMCwNCj4gKwlNQVNLX0NSWVBU
+T19TVVBQT1JUCQkJPSAweDEwMDAwMDAwLA0KPiAgfTsNCj4gIA0KPiAgI2RlZmluZSBVRlNfTUFT
+SyhtYXNrLCBvZmZzZXQpCQkoKG1hc2spIDw8IChvZmZzZXQpKQ0KPiBAQCAtMTQzLDYgKzE0NCw3
+IEBAIGVudW0gew0KPiAgI2RlZmluZSBERVZJQ0VfRkFUQUxfRVJST1IJCQkweDgwMA0KPiAgI2Rl
+ZmluZSBDT05UUk9MTEVSX0ZBVEFMX0VSUk9SCQkJMHgxMDAwMA0KPiAgI2RlZmluZSBTWVNURU1f
+QlVTX0ZBVEFMX0VSUk9SCQkJMHgyMDAwMA0KPiArI2RlZmluZSBDUllQVE9fRU5HSU5FX0ZBVEFM
+X0VSUk9SCQkweDQwMDAwDQo+ICANCj4gICNkZWZpbmUgVUZTSENEX1VJQ19ISUJFUk44X01BU0sJ
+KFVJQ19ISUJFUk5BVEVfRU5URVIgfFwNCj4gIAkJCQlVSUNfSElCRVJOQVRFX0VYSVQpDQo+IEBA
+IC0xNTUsMTEgKzE1NywxMyBAQCBlbnVtIHsNCj4gICNkZWZpbmUgVUZTSENEX0VSUk9SX01BU0sJ
+KFVJQ19FUlJPUiB8XA0KPiAgCQkJCURFVklDRV9GQVRBTF9FUlJPUiB8XA0KPiAgCQkJCUNPTlRS
+T0xMRVJfRkFUQUxfRVJST1IgfFwNCj4gLQkJCQlTWVNURU1fQlVTX0ZBVEFMX0VSUk9SKQ0KPiAr
+CQkJCVNZU1RFTV9CVVNfRkFUQUxfRVJST1IgfFwNCj4gKwkJCQlDUllQVE9fRU5HSU5FX0ZBVEFM
+X0VSUk9SKQ0KPiAgDQo+ICAjZGVmaW5lIElOVF9GQVRBTF9FUlJPUlMJKERFVklDRV9GQVRBTF9F
+UlJPUiB8XA0KPiAgCQkJCUNPTlRST0xMRVJfRkFUQUxfRVJST1IgfFwNCj4gLQkJCQlTWVNURU1f
+QlVTX0ZBVEFMX0VSUk9SKQ0KPiArCQkJCVNZU1RFTV9CVVNfRkFUQUxfRVJST1IgfFwNCj4gKwkJ
+CQlDUllQVE9fRU5HSU5FX0ZBVEFMX0VSUk9SKQ0KPiAgDQo+ICAvKiBIQ1MgLSBIb3N0IENvbnRy
+b2xsZXIgU3RhdHVzIDMwaCAqLw0KPiAgI2RlZmluZSBERVZJQ0VfUFJFU0VOVAkJCQkweDENCj4g
+QEAgLTMxOCw2ICszMjIsNjEgQEAgZW51bSB7DQo+ICAJSU5URVJSVVBUX01BU0tfQUxMX1ZFUl8y
+MQk9IDB4NzFGRkYsDQo+ICB9Ow0KPiAgDQo+ICsvKiBDQ0FQIC0gQ3J5cHRvIENhcGFiaWxpdHkg
+MTAwaCAqLw0KPiArdW5pb24gdWZzX2NyeXB0b19jYXBhYmlsaXRpZXMgew0KPiArCV9fbGUzMiBy
+ZWdfdmFsOw0KPiArCXN0cnVjdCB7DQo+ICsJCXU4IG51bV9jcnlwdG9fY2FwOw0KPiArCQl1OCBj
+b25maWdfY291bnQ7DQo+ICsJCXU4IHJlc2VydmVkOw0KPiArCQl1OCBjb25maWdfYXJyYXlfcHRy
+Ow0KPiArCX07DQo+ICt9Ow0KPiArDQo+ICtlbnVtIHVmc19jcnlwdG9fa2V5X3NpemUgew0KPiAr
+CVVGU19DUllQVE9fS0VZX1NJWkVfSU5WQUxJRAk9IDB4MCwNCj4gKwlVRlNfQ1JZUFRPX0tFWV9T
+SVpFXzEyOAkJPSAweDEsDQo+ICsJVUZTX0NSWVBUT19LRVlfU0laRV8xOTIJCT0gMHgyLA0KPiAr
+CVVGU19DUllQVE9fS0VZX1NJWkVfMjU2CQk9IDB4MywNCj4gKwlVRlNfQ1JZUFRPX0tFWV9TSVpF
+XzUxMgkJPSAweDQsDQo+ICt9Ow0KPiArDQo+ICtlbnVtIHVmc19jcnlwdG9fYWxnIHsNCj4gKwlV
+RlNfQ1JZUFRPX0FMR19BRVNfWFRTCQkJPSAweDAsDQo+ICsJVUZTX0NSWVBUT19BTEdfQklUTE9D
+S0VSX0FFU19DQkMJPSAweDEsDQo+ICsJVUZTX0NSWVBUT19BTEdfQUVTX0VDQgkJCT0gMHgyLA0K
+PiArCVVGU19DUllQVE9fQUxHX0VTU0lWX0FFU19DQkMJCT0gMHgzLA0KPiArfTsNCj4gKw0KPiAr
+LyogeC1DUllQVE9DQVAgLSBDcnlwdG8gQ2FwYWJpbGl0eSBYICovDQo+ICt1bmlvbiB1ZnNfY3J5
+cHRvX2NhcF9lbnRyeSB7DQo+ICsJX19sZTMyIHJlZ192YWw7DQo+ICsJc3RydWN0IHsNCj4gKwkJ
+dTggYWxnb3JpdGhtX2lkOw0KPiArCQl1OCBzZHVzX21hc2s7IC8qIFN1cHBvcnRlZCBkYXRhIHVu
+aXQgc2l6ZSBtYXNrICovDQo+ICsJCXU4IGtleV9zaXplOw0KPiArCQl1OCByZXNlcnZlZDsNCj4g
+Kwl9Ow0KPiArfTsNCj4gKw0KPiArI2RlZmluZSBVRlNfQ1JZUFRPX0NPTkZJR1VSQVRJT05fRU5B
+QkxFICgxIDw8IDcpDQo+ICsjZGVmaW5lIFVGU19DUllQVE9fS0VZX01BWF9TSVpFIDY0DQo+ICsv
+KiB4LUNSWVBUT0NGRyAtIENyeXB0byBDb25maWd1cmF0aW9uIFggKi8NCj4gK3VuaW9uIHVmc19j
+cnlwdG9fY2ZnX2VudHJ5IHsNCj4gKwlfX2xlMzIgcmVnX3ZhbFszMl07DQo+ICsJc3RydWN0IHsN
+Cj4gKwkJdTggY3J5cHRvX2tleVtVRlNfQ1JZUFRPX0tFWV9NQVhfU0laRV07DQo+ICsJCXU4IGRh
+dGFfdW5pdF9zaXplOw0KPiArCQl1OCBjcnlwdG9fY2FwX2lkeDsNCj4gKwkJdTggcmVzZXJ2ZWRf
+MTsNCj4gKwkJdTggY29uZmlnX2VuYWJsZTsNCj4gKwkJdTggcmVzZXJ2ZWRfbXVsdGlfaG9zdDsN
+Cj4gKwkJdTggcmVzZXJ2ZWRfMjsNCj4gKwkJdTggdnNiWzJdOw0KPiArCQl1OCByZXNlcnZlZF8z
+WzU2XTsNCj4gKwl9Ow0KPiArfTsNCj4gKw0KPiAgLyoNCj4gICAqIFJlcXVlc3QgRGVzY3JpcHRv
+ciBEZWZpbml0aW9ucw0KPiAgICovDQo+IEBAIC0zMzksNiArMzk4LDcgQEAgZW51bSB7DQo+ICAJ
+VVRQX05BVElWRV9VRlNfQ09NTUFORAkJPSAweDEwMDAwMDAwLA0KPiAgCVVUUF9ERVZJQ0VfTUFO
+QUdFTUVOVF9GVU5DVElPTgk9IDB4MjAwMDAwMDAsDQo+ICAJVVRQX1JFUV9ERVNDX0lOVF9DTUQJ
+CT0gMHgwMTAwMDAwMCwNCj4gKwlVVFBfUkVRX0RFU0NfQ1JZUFRPX0VOQUJMRV9DTUQJPSAweDAw
+ODAwMDAwLA0KPiAgfTsNCj4gIA0KPiAgLyogVVRQIFRyYW5zZmVyIFJlcXVlc3QgRGF0YSBEaXJl
+Y3Rpb24gKEREKSAqLw0KPiBAQCAtMzU4LDYgKzQxOCw5IEBAIGVudW0gew0KPiAgCU9DU19QRUVS
+X0NPTU1fRkFJTFVSRQkJPSAweDUsDQo+ICAJT0NTX0FCT1JURUQJCQk9IDB4NiwNCj4gIAlPQ1Nf
+RkFUQUxfRVJST1IJCQk9IDB4NywNCj4gKwlPQ1NfREVWSUNFX0ZBVEFMX0VSUk9SCQk9IDB4OCwN
+Cj4gKwlPQ1NfSU5WQUxJRF9DUllQVE9fQ09ORklHCT0gMHg5LA0KPiArCU9DU19HRU5FUkFMX0NS
+WVBUT19FUlJPUgk9IDB4QSwNCg0KQSBuaXQgaXMgdGhhdCBPQ1NfREVWSUNFX0ZBVEFMX0VSUk9S
+IGRlZmluaXRpb24gaXMgYWRkZWQgaGVyZSBidXQgbm90DQphZGRlZCBpbiB1ZnNoY2RfdHJhbnNm
+ZXJfcnNwX3N0YXR1cygpLg0KDQpUaGlzIHdpbGwgbm90IGhhdmUgYW55IHNpZGUgZWZmZWN0IGJl
+Y2F1c2UgT0NTX0RFVklDRV9GQVRBTF9FUlJPUiB3YXMNCmFscmVhZHkgaGFuZGxlZCBieSAiZGVm
+YXVsdCIgbGFiZWwgaW4gdWZzaGNkX3RyYW5zZmVyX3JzcF9zdGF0dXMoKS4NCg0KPiAgCU9DU19J
+TlZBTElEX0NPTU1BTkRfU1RBVFVTCT0gMHgwRiwNCj4gIAlNQVNLX09DUwkJCT0gMHgwRiwNCj4g
+IH07DQoNCk90aGVyd2lzZSBsb29rcyBnb29kIHRvIG1lLg0KDQpSZXZpZXdlZC1ieTogU3Rhbmxl
+eSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbT4NCg0KVGhhbmtzLg0KDQo=
 
-I'll only show it if -o dax or -o dax=inode was actually specified per earlier
-comments regarding ext4 behavior.
-
-Ira
-
-> 
-> --D
-> 
-> > +
-> >  	ext4_show_quota_options(seq, sb);
-> >  	return 0;
-> >  }
-> > @@ -5425,10 +5454,12 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
-> >  		goto restore_opts;
-> >  	}
-> >  
-> > -	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_DAX_ALWAYS) {
-> > +	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_DAX_ALWAYS ||
-> > +	    (sbi->s_mount_opt2 ^ old_opts.s_mount_opt2) & EXT4_MOUNT2_DAX_NEVER) {
-> >  		ext4_msg(sb, KERN_WARNING, "warning: refusing change of "
-> > -			"dax flag with busy inodes while remounting");
-> > +			"dax mount option with busy inodes while remounting");
-> >  		sbi->s_mount_opt ^= EXT4_MOUNT_DAX_ALWAYS;
-> > +		sbi->s_mount_opt2 ^= EXT4_MOUNT2_DAX_NEVER;
-> >  	}
-> >  
-> >  	if (sbi->s_mount_flags & EXT4_MF_FS_ABORTED)
-> > -- 
-> > 2.25.1
-> > 
