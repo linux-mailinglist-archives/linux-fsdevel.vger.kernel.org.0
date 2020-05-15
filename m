@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE991D5177
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C3771D5186
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 16:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbgEOOie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 10:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35836 "EHLO
+        id S1728298AbgEOOio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 10:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728230AbgEOOi1 (ORCPT
+        by vger.kernel.org with ESMTP id S1728215AbgEOOi0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 10:38:27 -0400
+        Fri, 15 May 2020 10:38:26 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C36C05BD0B;
-        Fri, 15 May 2020 07:38:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E83C061A0C;
+        Fri, 15 May 2020 07:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2Xdr7If4G7tlq1M/OLagjELexqLovtR85HrbwT8o5D0=; b=aKuM/IuZGNMxQJ+txtJ5ChLiO9
-        jgRu5IvQBhmQvsyQ6/tX1AwBW4qI7pc/hLSkgNnaYqK3tZnN4jXJuYrKMFwXINCILvmITyTkWBGyq
-        jFRKUUwH6dq7lYNFmx2GLqJw+EL+4rvVlaBjqiFFNolUMbA/eRnz/YCKnBetEYTEB1zu9d/ibFFsd
-        s+6anIu4IhN8wAgtQxueZd0zvcXv9o4iooxCT6SP5C3NG9PKmnNCmKTBZkl79s/wInEl3upE2O1HU
-        uNBV437kfWy7Ap5NeVKUwXWpl3ukGmCINI/nM4NHP1YXOI2mHuEgdsF7zSZNYCiKrqFVqaiJ93UnM
-        YkoHC6JA==;
+        bh=4ek5EujzgHPIbdEvHkQJFfygtnYVEDi+YXEorFGRVI0=; b=l4tX9YFz1biQcqnXAemRnxp5lx
+        7vqRgeqRIM/XatP0wlI3r53NWkSatcw1JkXrkTawHRnmaQBlT8KuOTt+J4BcCTkdGkQu3rT7bWyke
+        NX9OoUXznrAXIJQctXHyRhx9Y2p3y64yEKDoJRhsu0CyLBLe+T587LSnThHwB4WLxmPrd/Rkr3c50
+        Z+g03UXrGqenMeETgm8UGInxZ7ETcQM2A1HTnzRQvjDcKBE1QA76OmzUAkN+IRiyrbC/4Smuc9tEg
+        J4Dd1AmjTzPqWdEyWEo9O7WTJXIJhU65h5gjraEBoNCOLQqqryFgdSjtY44x78yOGMWmDj7qUiYHo
+        qWAE+Z9Q==;
 Received: from [2001:4bb8:188:1506:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZbTV-0005Fj-SN; Fri, 15 May 2020 14:38:10 +0000
+        id 1jZbTY-0005IX-Ha; Fri, 15 May 2020 14:38:13 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -42,10 +42,10 @@ Cc:     Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux-fsdevel@vger.kernel.org, Greg Ungerer <gerg@linux-m68k.org>
-Subject: [PATCH 27/29] binfmt_flat: use flush_icache_user_range
-Date:   Fri, 15 May 2020 16:36:44 +0200
-Message-Id: <20200515143646.3857579-28-hch@lst.de>
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 28/29] nommu: use flush_icache_user_range in brk and mmap
+Date:   Fri, 15 May 2020 16:36:45 +0200
+Message-Id: <20200515143646.3857579-29-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200515143646.3857579-1-hch@lst.de>
 References: <20200515143646.3857579-1-hch@lst.de>
@@ -57,27 +57,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-load_flat_file works on user addresses.
+These obviously operate on user addresses.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Greg Ungerer <gerg@linux-m68k.org>
 ---
- fs/binfmt_flat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/nommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index 831a2b25ba79f..6f0aca5379da2 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -854,7 +854,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- #endif /* CONFIG_BINFMT_FLAT_OLD */
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 318df4e236c99..aed7acaed2383 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -443,7 +443,7 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ 	/*
+ 	 * Ok, looks good - let it rip.
+ 	 */
+-	flush_icache_range(mm->brk, brk);
++	flush_icache_user_range(mm->brk, brk);
+ 	return mm->brk = brk;
+ }
+ 
+@@ -1287,7 +1287,7 @@ unsigned long do_mmap(struct file *file,
+ 	/* we flush the region from the icache only when the first executable
+ 	 * mapping of it is made  */
+ 	if (vma->vm_flags & VM_EXEC && !region->vm_icache_flushed) {
+-		flush_icache_range(region->vm_start, region->vm_end);
++		flush_icache_user_range(region->vm_start, region->vm_end);
+ 		region->vm_icache_flushed = true;
  	}
  
--	flush_icache_range(start_code, end_code);
-+	flush_icache_user_range(start_code, end_code);
- 
- 	/* zero the BSS,  BRK and stack areas */
- 	if (clear_user((void __user *)(datapos + data_len), bss_len +
 -- 
 2.26.2
 
