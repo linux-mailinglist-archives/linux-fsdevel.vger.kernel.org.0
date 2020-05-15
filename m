@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9CD1D4ED8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 944AF1D4ED1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbgEONRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
+        id S1726731AbgEONRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:17:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbgEONRD (ORCPT
+        with ESMTP id S1726624AbgEONRE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 09:17:03 -0400
+        Fri, 15 May 2020 09:17:04 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B985DC05BD1C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05727C05BD1F;
         Fri, 15 May 2020 06:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ZvCAGtrDAcAsja+QmzFW6sNRVbIwR7f84uLooOJs50k=; b=d7HGG80tN6Vh0xs+XPqofRQTkN
-        i/9CY2TSUURCgYZW5bGV8/giGx3/aly85rxPadBm4xbWWLgM6wFvC2thkJustR6QhfFx5i7yn/Di0
-        FX2ui0TDSmccfhzmkim/jmUucgw/+u5R77FPvbdTc6FC/Yvg/32pdcNVXOix4Dfe3qeM8PsCNpboJ
-        cCXRrLFl0gMKfoEtilibzrFQ7gzOW6CAtNDkgmGz0dj0nMebnWH/0eWoA7U3lhpsRB/0ahj3TxCTB
-        mUhR8D8RpfMS4T8ClglEYnxh9D19HReKYb+vd9cdJobXp2orwiULHG5mooly4YHOqbx7ROrcp008+
-        nkjvNPQQ==;
+        bh=EpnkLjZqk1S3DSmVdcLM12MdJ2sgIE4S7yU2k8eu7Iw=; b=Ouac5fKOcAvAmnZMVvgIPIulHz
+        DBYXu8tRuuU2a1+ObC+C8BwL0TvJlGyVB2yuMmX+Yt5T2jW2NDuiC1XnYHtaW2rmMH15oyeWPkVDd
+        uWHxTwHy06J+v1q+Z7YcZmhjqG+5wkRycaYFO6Td47uoQiauEsfZWpQJH/MOutPZmGXJt7AW20Nfq
+        NZU/AQg9di4fKaqnG3jm/1CZ4gb0IFH/WgWCC2yb1Aw8MlUVSooBh2QbM+UrqLwZ2kGNSKXsN0qO1
+        F/QddNe1SrlYeEjhcgOYx2ZIpQmezI0VcBi2wn45FMUyqdG8I6/gQwedLDAzNeQUhpUCoCbspc1Tb
+        slpHaFWA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZaD0-0005mT-Fs; Fri, 15 May 2020 13:17:02 +0000
+        id 1jZaD0-0005nF-Jh; Fri, 15 May 2020 13:17:02 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 29/36] mm: Support retrieving tail pages from the page cache
-Date:   Fri, 15 May 2020 06:16:49 -0700
-Message-Id: <20200515131656.12890-30-willy@infradead.org>
+Subject: [PATCH v4 30/36] mm: Support tail pages in wait_for_stable_page
+Date:   Fri, 15 May 2020 06:16:50 -0700
+Message-Id: <20200515131656.12890-31-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 References: <20200515131656.12890-1-willy@infradead.org>
@@ -46,27 +46,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-page->index is not meaningful for tail pages; we have to use
-page_to_index() in this assertion.
+page->mapping is undefined for tail pages, so operate exclusively on
+the head page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/filemap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page-writeback.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0ec7f25a07b2..56eb086acef8 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1655,7 +1655,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
- 			put_page(page);
- 			goto repeat;
- 		}
--		VM_BUG_ON_PAGE(page->index != index, page);
-+		VM_BUG_ON_PAGE(page_to_index(page) != index, page);
- 	}
- 
- 	if (fgp_flags & FGP_ACCESSED)
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 7326b54ab728..e2da7d7e93b8 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2841,6 +2841,7 @@ EXPORT_SYMBOL_GPL(wait_on_page_writeback);
+  */
+ void wait_for_stable_page(struct page *page)
+ {
++	page = compound_head(page);
+ 	if (bdi_cap_stable_pages_required(inode_to_bdi(page->mapping->host)))
+ 		wait_on_page_writeback(page);
+ }
 -- 
 2.26.2
 
