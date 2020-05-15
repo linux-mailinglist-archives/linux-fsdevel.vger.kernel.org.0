@@ -2,108 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9871D48B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F30AD1D48BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgEOImm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 04:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726922AbgEOIml (ORCPT
+        id S1726730AbgEOInz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 04:43:55 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32736 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727116AbgEOInz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 04:42:41 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75399C05BD09
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:42:41 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id d16so1530814edq.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=B20IIqgVPN5EsJCsjMuXMwagsi+l/qnqtyAK/Hxxl78=;
-        b=Lwj7yc3CLPjGQmlYTvBQB5aNkHaZ/QIaZTuSWArFVmjaAykhy83SZgUHcPxSsLLk2Q
-         ieSqvIv2N/mZpP+rvFAtJUe0KDbDqG2xR1bME0yH49vVchjGnGollMSgvNbmMlKvU7Sp
-         qd1lchhwW27PJjC2vBT9tJSt7ZTUGg1JO/9nQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=B20IIqgVPN5EsJCsjMuXMwagsi+l/qnqtyAK/Hxxl78=;
-        b=MCp2CS7xTpGRnLQiLR5BqIoys8libEmcwxqBjmltWUmDrzA9NTpekLNvpDA2mqFs6/
-         LXOQie9NbIIwd+jQKZs7wEIFjoplbQx+d0hJ/dxx+I+bSxpQJB5lXInrR1DqgV5ufcUc
-         g6tBfQmDQ0zc0AUqPx6QOIJYZH3/26omcWSudfyq/38Ixnia37mBuWcIH+BKkOkFUae1
-         OSJlRw2f0CIvjp4D4/stW/7U0NuWV2i5hLr3UZPuoaQvmuMKkY9S50aqtu1tiwPeAHXW
-         k4VPietaVzCayt1Fa5aJ6ovDb4BxuhI/Sw6JCPJy0iBR9kQIokcmBpq2VxD3FhGD5p90
-         KiMA==
-X-Gm-Message-State: AOAM530GVFnpSSFCo8evrTVorFZpv8/4U1qA7geKz5PU5Pk/JiCIEQrI
-        J+OM1gcukGPEGpGSnkD/2AV1rZ5eSUWnhu72HdzNjiPeXFE=
-X-Google-Smtp-Source: ABdhPJwdcrWF3G7Rq+qfYkIVbIazzm/I9qPrWKhfieUqOBMC9ltDEavfEhg2N/npBshJ4yLUirzpyxuS5OLN9w7sghw=
-X-Received: by 2002:a50:d785:: with SMTP id w5mr1709907edi.212.1589532160099;
- Fri, 15 May 2020 01:42:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200515072047.31454-1-cgxu519@mykernel.net> <CAOQ4uxhytw8YPY5WR+txeeHhuO+Hvr0eDFuKOahrN_htXtH_rA@mail.gmail.com>
- <17217706984.f5e20fe88512.8363313618084688988@mykernel.net>
-In-Reply-To: <17217706984.f5e20fe88512.8363313618084688988@mykernel.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 15 May 2020 10:42:29 +0200
-Message-ID: <CAJfpegvfEeDkBbgL0SXgZORkd2+eLaosNDG+_o=+qksyHcfurQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Fri, 15 May 2020 04:43:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589532233;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+98viFOd9jTdpHCY3sUvt3t0b4J5Yg6795DHu7DfVIk=;
+        b=fKScrmokPCuiEv3RuFPvqUqtSW4pRmkmMSR+m4lh38ZgD+He292FGbDa0d1vO+m+zQM/FS
+        hZS2ZoMIm6vpaQmRVG+WTcp5H2ZGUlT6LGY28+K/tGKndmvV9ym5GKCV4EXnuQEpX8Wv68
+        TnnOhRJ7AnJGXiPknOKzEniP49FHPNI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-164-u_nUq3bSN8OR1tg-mmpQdg-1; Fri, 15 May 2020 04:43:49 -0400
+X-MC-Unique: u_nUq3bSN8OR1tg-mmpQdg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C8CC9801503;
+        Fri, 15 May 2020 08:43:44 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-112-77.ams2.redhat.com [10.36.112.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6435B5D9D7;
+        Fri, 15 May 2020 08:43:36 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        "Lev R. Oshvang ." <levonshe@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC)
+References: <20200505153156.925111-1-mic@digikod.net>
+        <20200505153156.925111-4-mic@digikod.net>
+        <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+        <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
+        <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+        <202005140830.2475344F86@keescook>
+        <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
+        <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
+        <202005142343.D580850@keescook>
+Date:   Fri, 15 May 2020 10:43:34 +0200
+In-Reply-To: <202005142343.D580850@keescook> (Kees Cook's message of "Fri, 15
+        May 2020 01:01:32 -0700")
+Message-ID: <87a729wpu1.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 10:26 AM Chengguang Xu <cgxu519@mykernel.net> wrote=
-:
->
->  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2020-05-15 15:30:27 Amir Gol=
-dstein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
->  > On Fri, May 15, 2020 at 10:21 AM Chengguang Xu <cgxu519@mykernel.net> =
-wrote:
->  > >
->  > > This series adds a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
->  > > to indicate to drop negative dentry in slow path of lookup.
->  > >
->  > > In overlayfs, negative dentries in upper/lower layers are useless
->  > > after construction of overlayfs' own dentry, so in order to
->  > > effectively reclaim those dentries, specify LOOKUP_DONTCACHE_NEGATIV=
-E
->  > > flag when doing lookup in upper/lower layers.
->  > >
->  > > Patch 1 adds flag LOOKUP_DONTCACHE_NEGATIVE and related logic in vfs=
- layer.
->  > > Patch 2 does lookup optimazation for overlayfs.
->  > > Patch 3-9 just adjusts function argument when calling
->  > > lookup_positive_unlocked() and lookup_one_len_unlocked().
->  >
->  > Hmm you cannot do that, build must not be broken mid series.
->  > When Miklos said split he meant to patch 1 and 2.
->  > Patch 1 must convert all callers to the new argument list,
->  > at which point all overlayfs calls are with 0 flags.
->  >
->  > Once that's done, you may add:
->  > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->  >
->
-> OK, I got it, I'll still wait for a while in case of other feedbacks.
->
-> Miklos, AI
->
-> I'm not sure this series will go into whose tree in the end,
-> so I just rebased on current linus-tree, any suggestion for the code base=
-?
+* Kees Cook:
 
-Linus' tree is a good base in this case.  I'm happier if VFS changes
-go through Al's tree, but simple stuff can go through overlayfs tree
-as well.
+> Maybe I've missed some earlier discussion that ruled this out, but I
+> couldn't find it: let's just add O_EXEC and be done with it. It actually
+> makes the execve() path more like openat2() and is much cleaner after
+> a little refactoring. Here are the results, though I haven't emailed it
+> yet since I still want to do some more testing:
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
+
+I think POSIX specifies O_EXEC in such a way that it does not confer
+read permissions.  This seems incompatible with what we are trying to
+achieve here.
 
 Thanks,
-Miklos
+Florian
+
