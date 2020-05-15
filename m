@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2101D4F1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C391D4ED0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 15:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbgEONRB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 09:17:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51224 "EHLO
+        id S1726797AbgEONRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 09:17:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbgEONRA (ORCPT
+        with ESMTP id S1726643AbgEONRE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 09:17:00 -0400
+        Fri, 15 May 2020 09:17:04 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CBA5C061A0C;
-        Fri, 15 May 2020 06:17:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F490C05BD0A;
+        Fri, 15 May 2020 06:17:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=VHXm1L+rObZHMg/ZFaxYy0B7In8iJsSQq6tf5Ix1Zow=; b=UqUPO/AS2C7nEDmWKnfBwxvMuZ
-        FRpK0JzrFPRL2ip0W/rlV4zc+quu0zhsUrETROgrrcdhcstdxlSvrVuc6TKNc00LFhLjFLzumzuAy
-        6Dnmk/NQ75lXIs//uCViZIXhm1wkb5XRsibNmobrMfdjrDIla4Ew5BeWk12LiITWkMRyVPzvJ6Hd9
-        zRdEjLk3Hdtf6ckuqUFfxObSB/iuajVnA2RbJ1HvZbibSIPWTsgVh98aOvTJBcSY3atAw0GEGFGDF
-        bUy3XL78CHh9tr4nt9PaD/zdQFzh3lQicCf+Zrg3Lyv1MU0B+8M3ReoV5w31s2CMKQuFV1NBuNXIm
-        Umkj+nnA==;
+        bh=8tGdVMSWeas8R2bSKE6AqR3+R5LRIfaVDMdjwwPPyK0=; b=WhPmJBJSOgnOF3ooep5OzVpDYF
+        POCkNm2xsyLEnK7pW6aZr7fW8VRnyBsNlzuCaulgdtx1bij7wSF0fyiL4lZbF5+7VIYoBpPR7kBmQ
+        N4/bFgssgva/U9r3Gt5ncw6Qz6cigrYUtc5HAG7Gh8gppgTxZRaIr/KtTLydtM07h5JT6xu1JYS5I
+        axv23xhYPll1i7f/UyAwrzSrFxdiNUW8vEP4anFDJboao5DExIINtcORx9BRaKMpowsW5eMPjar75
+        SLygYKWBIj04UrEP4qQ/4i19bkBKRR2bkfQoHvFnrHsOG2B2GITT8w6Ay+F9fsB3TCB2jV3Rrc0YJ
+        KKTsXm8A==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZaCy-0005Rz-8b; Fri, 15 May 2020 13:17:00 +0000
+        id 1jZaCy-0005Sp-BI; Fri, 15 May 2020 13:17:00 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 01/36] mm: Move PageDoubleMap bit
-Date:   Fri, 15 May 2020 06:16:21 -0700
-Message-Id: <20200515131656.12890-2-willy@infradead.org>
+Subject: [PATCH v4 02/36] mm: Simplify PageDoubleMap with PF_SECOND policy
+Date:   Fri, 15 May 2020 06:16:22 -0700
+Message-Id: <20200515131656.12890-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 References: <20200515131656.12890-1-willy@infradead.org>
@@ -46,31 +46,93 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-PG_private_2 is defined as being PF_ANY (applicable to tail pages
-as well as regular & head pages).  That means that the first tail
-page of a double-map page will appear to have Private2 set.  Use the
-Workingset bit instead which is defined as PF_HEAD so any attempt to
-access the Workingset bit on a tail page will redirect to the head page's
-Workingset bit.
+Introduce the new page policy of PF_SECOND which lets us use the
+normal pageflags generation machinery to create the various DoubleMap
+manipulation functions.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/page-flags.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/page-flags.h | 40 ++++++++++----------------------------
+ 1 file changed, 10 insertions(+), 30 deletions(-)
 
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 222f6f7b2bb3..de6e0696f55c 100644
+index de6e0696f55c..979460df4768 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -164,7 +164,7 @@ enum pageflags {
- 	PG_slob_free = PG_private,
+@@ -232,6 +232,9 @@ static inline void page_init_poison(struct page *page, size_t size)
+  *
+  * PF_NO_COMPOUND:
+  *     the page flag is not relevant for compound pages.
++ *
++ * PF_SECOND:
++ *     the page flag is stored in the first tail page.
+  */
+ #define PF_POISONED_CHECK(page) ({					\
+ 		VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);		\
+@@ -247,6 +250,9 @@ static inline void page_init_poison(struct page *page, size_t size)
+ #define PF_NO_COMPOUND(page, enforce) ({				\
+ 		VM_BUG_ON_PGFLAGS(enforce && PageCompound(page), page);	\
+ 		PF_POISONED_CHECK(page); })
++#define PF_SECOND(page, enforce) ({					\
++		VM_BUG_ON_PGFLAGS(!PageHead(page), page);		\
++		PF_POISONED_CHECK(&page[1]); })
  
- 	/* Compound pages. Stored in first tail page's flags */
--	PG_double_map = PG_private_2,
-+	PG_double_map = PG_workingset,
+ /*
+  * Macros to create function definitions for page flags
+@@ -685,42 +691,15 @@ static inline int PageTransTail(struct page *page)
+  *
+  * See also __split_huge_pmd_locked() and page_remove_anon_compound_rmap().
+  */
+-static inline int PageDoubleMap(struct page *page)
+-{
+-	return PageHead(page) && test_bit(PG_double_map, &page[1].flags);
+-}
+-
+-static inline void SetPageDoubleMap(struct page *page)
+-{
+-	VM_BUG_ON_PAGE(!PageHead(page), page);
+-	set_bit(PG_double_map, &page[1].flags);
+-}
+-
+-static inline void ClearPageDoubleMap(struct page *page)
+-{
+-	VM_BUG_ON_PAGE(!PageHead(page), page);
+-	clear_bit(PG_double_map, &page[1].flags);
+-}
+-static inline int TestSetPageDoubleMap(struct page *page)
+-{
+-	VM_BUG_ON_PAGE(!PageHead(page), page);
+-	return test_and_set_bit(PG_double_map, &page[1].flags);
+-}
+-
+-static inline int TestClearPageDoubleMap(struct page *page)
+-{
+-	VM_BUG_ON_PAGE(!PageHead(page), page);
+-	return test_and_clear_bit(PG_double_map, &page[1].flags);
+-}
+-
++PAGEFLAG(DoubleMap, double_map, PF_SECOND)
++	TESTSCFLAG(DoubleMap, double_map, PF_SECOND)
+ #else
+ TESTPAGEFLAG_FALSE(TransHuge)
+ TESTPAGEFLAG_FALSE(TransCompound)
+ TESTPAGEFLAG_FALSE(TransCompoundMap)
+ TESTPAGEFLAG_FALSE(TransTail)
+ PAGEFLAG_FALSE(DoubleMap)
+-	TESTSETFLAG_FALSE(DoubleMap)
+-	TESTCLEARFLAG_FALSE(DoubleMap)
++	TESTSCFLAG_FALSE(DoubleMap)
+ #endif
  
- 	/* non-lru isolated movable page */
- 	PG_isolated = PG_reclaim,
+ /*
+@@ -875,6 +854,7 @@ static inline int page_has_private(struct page *page)
+ #undef PF_ONLY_HEAD
+ #undef PF_NO_TAIL
+ #undef PF_NO_COMPOUND
++#undef PF_SECOND
+ #endif /* !__GENERATING_BOUNDS_H */
+ 
+ #endif	/* PAGE_FLAGS_H */
 -- 
 2.26.2
 
