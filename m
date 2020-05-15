@@ -2,79 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF64C1D47D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E00D81D4816
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 10:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbgEOILC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 04:11:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726648AbgEOILB (ORCPT
+        id S1727097AbgEOI0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 04:26:40 -0400
+Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247]:21152 "EHLO
+        sender2-of-o52.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726727AbgEOI0k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 04:11:01 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E6FC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:11:01 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id b8so622304pgi.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 01:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xOrE5zGn6uPvmnJr7dBeSUQ5HqdT7v+oxYQZGlXnk+k=;
-        b=aQuQ7L7Kspm6klbOPbMp85wrVBOSaFLGPXT2ylm2Afy/8IpK0mPfvSEdSe0lS8gV9F
-         lSbC2KcZQLcUd+RalxmvtSoHOKNH5H3GUoyNArCaRmplNtS71CZGR+49REu1kZmATNj0
-         ek0PqLhGJ97mwudkzZ3IV8oV6tboH+V8sy1Rw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xOrE5zGn6uPvmnJr7dBeSUQ5HqdT7v+oxYQZGlXnk+k=;
-        b=YNWMP/qRLFKv7uJHKBOzSbQbYov0x4V7sYQ2FURdgWC2axZhGjfkQtv6ugMWK2qfFz
-         kYIP8VTgpn24WItJ4iMsySVqqqkXYutx62gIbEYnCrjt3qS8a/wlobOYBeJGW0AGFkj3
-         liDPPvgqVnf7eUymCJjBXWurSb9j+mn9eqqFj1UcZ3HbQHUdiuKbd4zj2GdWWqfJdtEa
-         PUQ1bln1A81jM2j0Q4I0FQhLtRP6ccNhGCEe8PxpTqSkQvW2hx909z8t9U2TvY24ks9Y
-         17HrsKxsTatXf1QrEstzQ9CicPSu8i79vTX4suVxuK/0h/HOai0295FWPG5l2lJD3xhE
-         ukAw==
-X-Gm-Message-State: AOAM533xmuxTKM4ynINk3x50pMwaJwUG93PUz1TanmKMN45OXU1I/CS5
-        wCITYjHvU8omfpUbPROg4kGGJg==
-X-Google-Smtp-Source: ABdhPJyP3BeKXl/GD0/wS+1lUTuYpFPeJVCT1f8Nl02MY/sGyaBt5ioRr7b1dUWMy5lSsevjMtp1ew==
-X-Received: by 2002:a63:211b:: with SMTP id h27mr2033439pgh.207.1589530261328;
-        Fri, 15 May 2020 01:11:01 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i9sm1262581pfk.199.2020.05.15.01.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 01:11:00 -0700 (PDT)
-Date:   Fri, 15 May 2020 01:10:59 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     mcgrof@kernel.org, yzaikin@google.com, adobriyan@gmail.com,
-        mingo@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        yamada.masahiro@socionext.com, bauerman@linux.ibm.com,
-        gregkh@linuxfoundation.org, skhan@linuxfoundation.org,
-        dvyukov@google.com, svens@stackframe.org, joel@joelfernandes.org,
-        tglx@linutronix.de, Jisheng.Zhang@synaptics.com, pmladek@suse.com,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, wangle6@huawei.com
-Subject: Re: [PATCH 4/4] sysctl: Add register_sysctl_init() interface
-Message-ID: <202005150110.988A691@keescook>
-References: <1589517224-123928-1-git-send-email-nixiaoming@huawei.com>
- <1589517224-123928-5-git-send-email-nixiaoming@huawei.com>
+        Fri, 15 May 2020 04:26:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1589531144; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=ixFbuSBPPVCG6ruwRqaLDPMMYnO3GDMoccu9a2/5uxO0Iawht3Aa7XEGc8qvWutIF5YD4Yf1dv7GBXgS+OUWyFVtvzM1YWdCSzSZrRNCHv/qcbYSpQSarmwqWQUemHuIOukWfzBz69xS3a4mZ3uJf2oKmm7YYw0VG4rkTGid1wg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1589531144; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=v1j7yEUJl56Wd+AibdnWdMvB5tgV4YAFK3rS7smIP0g=; 
+        b=Yo6KoS5jfWndY1sPxgn2P3MS8BjC2kPHNglNzvW/Kr8IJNWUoBdHvq3PybPKe1cJMnm6wN8RN5zr9njVeNzqUYmT4bCZAjk+CvkEifo6mHPBVZcsMJpjGb8ENbo697GmyZC19NbtwPFhuG/cw/gFJzaV/cX96MKUJKDuzvKqbWM=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1589531144;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=v1j7yEUJl56Wd+AibdnWdMvB5tgV4YAFK3rS7smIP0g=;
+        b=TI33a0FFY0CCfXG7PMfm8QQgL08VL1d+0dpF0IHSw32OU0zUnsPh9vFScdP3Nap2
+        rJnvF5SH2ItAkWXgCfArrFYw474F0CYXOG5Cwc0+F+DuCeYgw4r+9WNCGDLocNNLfhs
+        7KJcdt1ZMYxwDPYacblo57I3BxF3U1afYnqnZ9go=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1589531142535211.24543515194716; Fri, 15 May 2020 16:25:42 +0800 (CST)
+Date:   Fri, 15 May 2020 16:25:42 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Amir Goldstein" <amir73il@gmail.com>
+Cc:     "Miklos Szeredi" <miklos@szeredi.hu>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>
+Message-ID: <17217706984.f5e20fe88512.8363313618084688988@mykernel.net>
+In-Reply-To: <CAOQ4uxhytw8YPY5WR+txeeHhuO+Hvr0eDFuKOahrN_htXtH_rA@mail.gmail.com>
+References: <20200515072047.31454-1-cgxu519@mykernel.net> <CAOQ4uxhytw8YPY5WR+txeeHhuO+Hvr0eDFuKOahrN_htXtH_rA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589517224-123928-5-git-send-email-nixiaoming@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 12:33:44PM +0800, Xiaoming Ni wrote:
-> In order to eliminate the duplicate code for registering the sysctl
-> interface during the initialization of each feature, add the
-> register_sysctl_init() interface
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2020-05-15 15:30:27 Amir Golds=
+tein <amir73il@gmail.com> =E6=92=B0=E5=86=99 ----
+ > On Fri, May 15, 2020 at 10:21 AM Chengguang Xu <cgxu519@mykernel.net> wr=
+ote:
+ > >
+ > > This series adds a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
+ > > to indicate to drop negative dentry in slow path of lookup.
+ > >
+ > > In overlayfs, negative dentries in upper/lower layers are useless
+ > > after construction of overlayfs' own dentry, so in order to
+ > > effectively reclaim those dentries, specify LOOKUP_DONTCACHE_NEGATIVE
+ > > flag when doing lookup in upper/lower layers.
+ > >
+ > > Patch 1 adds flag LOOKUP_DONTCACHE_NEGATIVE and related logic in vfs l=
+ayer.
+ > > Patch 2 does lookup optimazation for overlayfs.
+ > > Patch 3-9 just adjusts function argument when calling
+ > > lookup_positive_unlocked() and lookup_one_len_unlocked().
+ >=20
+ > Hmm you cannot do that, build must not be broken mid series.
+ > When Miklos said split he meant to patch 1 and 2.
+ > Patch 1 must convert all callers to the new argument list,
+ > at which point all overlayfs calls are with 0 flags.
+ >=20
+ > Once that's done, you may add:
+ > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+ >=20
 
-I think this should come before the code relocations.
+OK, I got it, I'll still wait for a while in case of other feedbacks.
 
--- 
-Kees Cook
+Miklos, AI
+
+I'm not sure this series will go into whose tree in the end,=20
+so I just rebased on current linus-tree, any suggestion for the code base?
+
+Thanks,
+cgxu
+
+
+
