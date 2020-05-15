@@ -2,85 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A955C1D59E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 21:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6EDE1D59FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 21:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgEOTXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 15:23:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50840 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726183AbgEOTXA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 15:23:00 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04FJ3j20036564;
-        Fri, 15 May 2020 15:22:54 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 310t9pysxn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 May 2020 15:22:53 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04FJKYwo032716;
-        Fri, 15 May 2020 19:22:52 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 3100ub65j1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 May 2020 19:22:51 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04FJMnhF10092974
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 May 2020 19:22:49 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D1C44C046;
-        Fri, 15 May 2020 19:22:49 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A1674C04E;
-        Fri, 15 May 2020 19:22:48 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.153.130])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 15 May 2020 19:22:48 +0000 (GMT)
-Message-ID: <1589570568.5111.46.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/2] fs: avoid fdput() after failed fdget() in
- kernel_read_file_from_fd()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, zohar@linux.vnet.ibm.com, mcgrof@kernel.org,
-        keescook@chromium.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 15 May 2020 15:22:48 -0400
-In-Reply-To: <62659de2dbf32e8c05cff7fe09f6efd24cfaf445.1589411496.git.skhan@linuxfoundation.org>
-References: <cover.1589411496.git.skhan@linuxfoundation.org>
-         <62659de2dbf32e8c05cff7fe09f6efd24cfaf445.1589411496.git.skhan@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-15_07:2020-05-15,2020-05-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=981 phishscore=0
- malwarescore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- cotscore=-2147483648 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 spamscore=0 clxscore=1011 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005150155
+        id S1726226AbgEOT0L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 15:26:11 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:50062 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbgEOT0K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 May 2020 15:26:10 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 4FC8020A0B;
+        Fri, 15 May 2020 19:26:05 +0000 (UTC)
+Date:   Fri, 15 May 2020 21:25:59 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: linux-next boot error: general protection fault in
+ tomoyo_get_local_path
+Message-ID: <20200515192559.e5ofmmzxdviierkb@comp-core-i7-2640m-0182e6>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+ <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+ <87lfltcbc4.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 15 May 2020 19:26:08 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-05-13 at 17:33 -0600, Shuah Khan wrote:
-> Fix kernel_read_file_from_fd() to avoid fdput() after a failed fdget().
-> fdput() doesn't do fput() on this file since FDPUT_FPUT isn't set
-> in fd.flags. Fix it anyway since failed fdget() doesn't require
-> a fdput().
+On Fri, May 15, 2020 at 01:16:59PM -0500, Eric W. Biederman wrote:
+> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 > 
-> This was introduced in a commit that added kernel_read_file_from_fd() as
-> a wrapper for the VFS common kernel_read_file().
+> > This is
+> >
+> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> >                 char *ep;
+> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> >                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+> >
+> >                 if (*ep == '/' && pid && pid ==
+> >                     task_tgid_nr_ns(current, proc_pidns)) {
+> >
+> > which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+> >
+> > @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+> >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> >                 char *ep;
+> >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> > +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+> >
+> >                 if (*ep == '/' && pid && pid ==
+> > -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> > +                   task_tgid_nr_ns(current, proc_pidns)) {
+> >                         pos = ep - 5;
+> >                         if (pos < buffer)
+> >                                 goto out;
+> >
+> > Alexey and Eric, any clue?
 > 
-> Fixes: b844f0ecbc56 ("vfs: define kernel_copy_file_from_fd()")
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> Looking at the stack backtrace this is happening as part of creating a
+> file or a device node.  The dentry that is passed in most likely
+> comes from d_alloc_parallel.  So we have d_inode == NULL.
+> 
+> I want to suggest doing the very simple fix:
+> 
+> -	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> +	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/' && denty->d_inode) {
+> 
+> But I don't know if there are any other security hooks early in lookup,
+> that could be called for an already existing dentry.
+> 
+> So it looks like we need a version proc_pid_ns that works for a dentry,
+> or a superblock.
+> 
+> Alex do you think you can code up an patch against my proc-next branch
+> to fix this?
 
-Thanks, Shuah.
+Sure.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+-- 
+Rgrds, legion
+
