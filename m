@@ -2,83 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51CFA1D531E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 17:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA4D1D53E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 May 2020 17:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgEOPGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 11:06:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        id S1726615AbgEOPNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 May 2020 11:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726140AbgEOPGG (ORCPT
+        by vger.kernel.org with ESMTP id S1726275AbgEOPNg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 11:06:06 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388D9C061A0C;
-        Fri, 15 May 2020 08:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=7K6CdWf4N8dxVLXNgInfVtSHh5OYnenmWosUImu2nCs=; b=eKRCQooTT9w0nJQ/xGCYcjEsBX
-        qdaZV40WsNTpJ+G0v+rd18Tq2j4Fdq6QdTA0L6mrVpwfTTklPCtK5Hs0GQGzXV3nF1ZvzXcCMBlVy
-        JJyDMjNoz5kdfhUq06tvfZtW4wF99R4o3/rDLZWPlsZmlgfxzmd3P5EXP5XmCCXjrbTdHR3YMy49g
-        ysZA9QIAXADeICE/fyr+KVWWq6OA9NBgsxRmwBHtk1MZV4mwySPBOLQhLp5V2z5fop6vJLLDnJVN3
-        fb9nGOAE2lBfs4+pHENQGiZTlltaYDoz6/uW6c6n1I23rK8jU4uPZVexK+eiC9N0cN8eOtsMPJ6Zs
-        rh5nDlrg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZbuV-0006VS-6f; Fri, 15 May 2020 15:06:03 +0000
-Subject: Re: linux-next: Tree for May 12 (fs/namespace.c)
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-References: <20200512225400.6abf0bda@canb.auug.org.au>
- <22d91c05-49ed-0c32-ba02-e2ded4947f46@infradead.org>
-Message-ID: <12fa4586-a47d-4b6f-7b3c-23a036e45f8d@infradead.org>
-Date:   Fri, 15 May 2020 08:06:00 -0700
+        Fri, 15 May 2020 11:13:36 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C13C05BD0A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 08:13:36 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id z1so1080024pfn.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 May 2020 08:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bfBhHYTtohVO95sNvjwzNyBK2wYpRf6EXbUlmqF97hY=;
+        b=xD33G4jCnZyZK/tVplz8bvqfeTRe8c8TYLRHnuCfRcELdIU9IUSSMWdH4cg8VNjBTB
+         XFKndQLtX8nj+DkAz7hT1qCu84OdkLnoxEIHrNIWszFtboQ2VAP05Qz0KdE5f5gSr/Fr
+         EhDnYKdxeQBr0qrekR4PnuQD6V26t4Sb1RMDxwnuiABeZOY2piNE8c/+NVO9+OjysYnz
+         fgqdjcRmmxb01XKczSvP6+Ve5gdeM5ipZ8mI+Wj28HgWDe4sd3PG5FhDQxanwZw6joxz
+         JN9EFqwErcw7YRJ6fQC+5d+v9jcQEqlqsPck3/o763qssedKbJwO/M7sFOEfMaP2fsW7
+         kELg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bfBhHYTtohVO95sNvjwzNyBK2wYpRf6EXbUlmqF97hY=;
+        b=FdlZmQmH4v8FVfIQxaKNyUaCkN1RL+W1OC06zM1aXXrwgMHWZPH/gHwsSaT2B0MEpC
+         TOnBqFI+86S349HdnnymJ6vpzEiq4YZ5Y08/hNdpm6zthBoBvIxwPtvqVP10y2lifkAl
+         jt0PtPo9R873jWpF4HGxrw/torpB5i71mQOwtX3W+Seox7oNDbZlB51VUKwelrFsaUD8
+         X6wwFQ6spuT32mE/sMC8RODvMBuvdvaQH2dERSv3oQgo8vpGRpwJvY9UakzoZvdZMYdD
+         y8PRedNbCJ5427AhGJdq5apsurOJwA6CBC1I/ic2fWf/uogHWrJuLiqzxz+4TJvPVxts
+         EG4Q==
+X-Gm-Message-State: AOAM532TcvzHAkp8v6UhL62gUafVKt7fEP7rx+NhYPohj4PeJlBxR6vc
+        HsPyjAJOK4ZhdA2AthDdH6q9p3gPi/g=
+X-Google-Smtp-Source: ABdhPJwjkUi4YQauXs6/fEa1OaygsEMg8M7xaZVFabwiAKCRkC0c9/HThyf43z2ib0G01cAbex7X0g==
+X-Received: by 2002:a62:1d4c:: with SMTP id d73mr4244848pfd.226.1589555615469;
+        Fri, 15 May 2020 08:13:35 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:aca2:b1c9:3206:e390? ([2605:e000:100e:8c61:aca2:b1c9:3206:e390])
+        by smtp.gmail.com with ESMTPSA id co16sm823398pjb.55.2020.05.15.08.13.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 May 2020 08:13:34 -0700 (PDT)
+Subject: Re: [PATCH 0/2] io_uring: add a CQ ring flag to enable/disable
+ eventfd notification
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20200515105414.68683-1-sgarzare@redhat.com>
+ <eaab5cc7-0297-a8f8-f7a9-e00bcf12b678@kernel.dk>
+ <20200515143419.f3uggj7h3nyolfqb@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a7ac101d-0f5d-2ab2-b36b-b40607d65878@kernel.dk>
+Date:   Fri, 15 May 2020 09:13:33 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <22d91c05-49ed-0c32-ba02-e2ded4947f46@infradead.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200515143419.f3uggj7h3nyolfqb@steredhat>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/12/20 8:12 AM, Randy Dunlap wrote:
-> On 5/12/20 5:54 AM, Stephen Rothwell wrote:
->> Hi all,
+On 5/15/20 8:34 AM, Stefano Garzarella wrote:
+> On Fri, May 15, 2020 at 08:24:58AM -0600, Jens Axboe wrote:
+>> On 5/15/20 4:54 AM, Stefano Garzarella wrote:
+>>> The first patch adds the new 'cq_flags' field for the CQ ring. It
+>>> should be written by the application and read by the kernel.
+>>>
+>>> The second patch adds a new IORING_CQ_NEED_WAKEUP flag that can be
+>>> used by the application to enable/disable eventfd notifications.
+>>>
+>>> I'm not sure the name is the best one, an alternative could be
+>>> IORING_CQ_NEED_EVENT.
+>>>
+>>> This feature can be useful if the application are using eventfd to be
+>>> notified when requests are completed, but they don't want a notification
+>>> for every request.
+>>> Of course the application can already remove the eventfd from the event
+>>> loop, but as soon as it adds the eventfd again, it will be notified,
+>>> even if it has already handled all the completed requests.
+>>>
+>>> The most important use case is when the registered eventfd is used to
+>>> notify a KVM guest through irqfd and we want a mechanism to
+>>> enable/disable interrupts.
+>>>
+>>> I also extended liburing API and added a test case here:
+>>> https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
 >>
->> News: there will be no linux-next release tomorrow.
->>
->> Changes since 20200511:
->>
->> New trees: notifications, fsinfo
->>
+>> Don't mind the feature, and I think the patches look fine. But the name
+>> is really horrible, I'd have no idea what that flag does without looking
+>> at the code or a man page. Why not call it IORING_CQ_EVENTFD_ENABLED or
+>> something like that? Or maybe IORING_CQ_EVENTFD_DISABLED, and then you
+>> don't have to muck with the default value either. The app would set the
+>> flag to disable eventfd, temporarily, and clear it again when it wants
+>> notifications again.
 > 
-> on i386 or x86_64:
-> 
->   CC      fs/namespace.o
-> ../fs/namespace.c: In function ‘fsinfo_generic_mount_topology’:
-> ../fs/namespace.c:4274:42: error: ‘struct mount’ has no member named ‘mnt_topology_changes’
->   p->mnt_topology_changes = atomic_read(&m->mnt_topology_changes);
->                                           ^~
-> 
-> i.e., CONFIG_MOUNT_NOTIFICATIONS is not set/enabled.
-> 
-> Full randconfig file is attached.
-> 
+> You're clearly right! :-) The name was horrible.
 
-This build error is still present in linux-next 20200515.
+Sometimes you go down that path on naming and just can't think of
+the right one. I think we've all been there.
 
+> I agree that IORING_CQ_EVENTFD_DISABLED should be the best.
+> I'll send a v2 changing the name and removing the default value.
+
+Great thanks, and please do queue a pull for the liburing side too.
 
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Jens Axboe
+
