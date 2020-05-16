@@ -2,92 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9723F1D5E2F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 May 2020 05:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F13E1D5EF5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 May 2020 07:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbgEPDUX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 May 2020 23:20:23 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45015 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbgEPDUI (ORCPT
+        id S1726402AbgEPFyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 May 2020 01:54:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725803AbgEPFyD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 May 2020 23:20:08 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b8so1686318plm.11;
-        Fri, 15 May 2020 20:20:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WSjrRs+0uw9ZlSZjuW3x7w+Qi8+kmil3SD7+oVGrims=;
-        b=PXMBp90YZy9hdyqb7OsyGKERnhgpdRQoYUvE48W4O8IpBtwxGIpvUJL3qob1aOMsF8
-         o6d3SNnNuQn87JBdgxkkr1uuqY1XU9/p/MEUrzNhsOO+MaAjG5DF3shvrfNDdB2U+KYY
-         O/QQt5acOVM4k3Bq4b+ZHAcHqXjFyMmGhfExfzyhIv0iHtJ8bk6XWEHhG7e/ZkD/i1XM
-         BJryuh/VrtesvePhID/O0OfgrIKi37MToRxsnEgcuNIIl+Pj3SUi8aBVKS6NfW7kq1BD
-         ydHTbvf1zfN2PF3VJXE5VR7tZA8ar6uK2n45Y2DsTWiiNXjW5gftMq51N5BgFqpyTkyj
-         uMdw==
-X-Gm-Message-State: AOAM531BhGzdYnkcMMGrozQkUA5dULCDX9jXat6VariDsYBYOzWnzZhK
-        odnx1Jwzf3lsEJUY2ijwwPw=
-X-Google-Smtp-Source: ABdhPJzX3emfY2u5XlGWmWnMHz1FoWzaUTuwWxyn8o3ueiTdT13lL7oD1fI78RNo5dxjkInTLInT+A==
-X-Received: by 2002:a17:90a:1912:: with SMTP id 18mr6556766pjg.115.1589599207438;
-        Fri, 15 May 2020 20:20:07 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id t22sm2578636pjs.1.2020.05.15.20.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 20:20:04 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E0FF742309; Sat, 16 May 2020 03:19:59 +0000 (UTC)
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v5 7/7] loop: be paranoid on exit and prevent new additions / removals
-Date:   Sat, 16 May 2020 03:19:56 +0000
-Message-Id: <20200516031956.2605-8-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20200516031956.2605-1-mcgrof@kernel.org>
-References: <20200516031956.2605-1-mcgrof@kernel.org>
+        Sat, 16 May 2020 01:54:03 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A70C061A0C;
+        Fri, 15 May 2020 22:54:03 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49PDx33qpWz9sTD;
+        Sat, 16 May 2020 15:53:59 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1589608440;
+        bh=/Xv1K0V8e5x1o5N7rHUJncIKDE5SDukl2Jj+ad1XTxE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HDFvJlXGRRNvzpM6wxWhGBzTVl8geEicWIbeExTC5eFN5NGn7rBit0s+Tbij65QFg
+         LObZcmOuXxSuaAjLQY3ZY0o7XBDQCyRgdLgS24CtPn53Sako9ozuQwpsbEqtyQYBXR
+         G5CXdnsO2B/qn9rqMXoYOKzBRsj+AHiKZZym+VXw5+YVFCVr3xXRrb8IDvkdgq5XRq
+         Y8jTiIgBsNVkDA1OLnYK1JqKwWr5FuaRKfR51oyyrbk1DY4+2vi7+NbIz7oqwNI8pI
+         tUaRIg40Gg/1IuAbYVPK36seNIVDFbAqFQMPBLIhWo8r3ieR+BOqr34SNB51oVG1cd
+         3NkanHIL2WgIg==
+Date:   Sat, 16 May 2020 15:53:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org
+Subject: Re: mmotm 2020-05-15-16-29 uploaded
+Message-ID: <20200516155358.3683f11e@canb.auug.org.au>
+In-Reply-To: <20200515233018.ScdtkUJMA%akpm@linux-foundation.org>
+References: <20200513175005.1f4839360c18c0238df292d1@linux-foundation.org>
+        <20200515233018.ScdtkUJMA%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/6.ECiSJ2jczuaYFAUa6=kZA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Be pedantic on removal as well and hold the mutex.
-This should prevent uses of addition while we exit.
+--Sig_/6.ECiSJ2jczuaYFAUa6=kZA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- drivers/block/loop.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi Andrew,
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 14372df0f354..54fbcbd930de 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2333,6 +2333,8 @@ static void __exit loop_exit(void)
- 
- 	range = max_loop ? max_loop << part_shift : 1UL << MINORBITS;
- 
-+	mutex_lock(&loop_ctl_mutex);
-+
- 	idr_for_each(&loop_index_idr, &loop_exit_cb, NULL);
- 	idr_destroy(&loop_index_idr);
- 
-@@ -2340,6 +2342,8 @@ static void __exit loop_exit(void)
- 	unregister_blkdev(LOOP_MAJOR, "loop");
- 
- 	misc_deregister(&loop_misc);
-+
-+	mutex_unlock(&loop_ctl_mutex);
- }
- 
- module_init(loop_init);
--- 
-2.26.2
+On Fri, 15 May 2020 16:30:18 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> * mm-introduce-external-memory-hinting-api.patch
 
+The above patch should have
+
+#define __NR_process_madvise 443
+
+not 442, in arch/arm64/include/asm/unistd32.h
+
+and
+
+ 442    common  fsinfo                          sys_fsinfo
++443    common  process_madvise                 sys_process_madvise
+
+in arch/microblaze/kernel/syscalls/syscall.tbl
+
+> * mm-introduce-external-memory-hinting-api-fix.patch
+
+The above patch should have
+
+#define __NR_process_madvise 443
+
+not 442
+
+> * mm-support-vector-address-ranges-for-process_madvise-fix.patch
+
+The above patch should have
+
+#define __NR_process_madvise 443
+
+not 442 in arch/arm64/include/asm/unistd32.h
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6.ECiSJ2jczuaYFAUa6=kZA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6/f/YACgkQAVBC80lX
+0Gx1Jwf/eRWBhmLSqpgnXUM0UQDqPab5/Kay6/R+98MSWQmlkhm/0d5z8Dw/GSDc
+LcETLKrcnCbZ/TGJuICVH3AkMm/wMWS4WD0IQbcUaPfCMzhyJWj7LXG8pTuWQY9v
+yl096HQroXUQvXj8OzXPuSnnFj1nmD8LitksoGkcUu+G4q3pkNwExtQP4q6OKlXF
+STkz92gDLQYUozFVg5z+eAgj+P2ViQFeUNlB2DBuwN6mYszScul6jnPMJS4Sl36J
+YFDTOgakQBI3xzWlWmnhHLUL6K/jF6iQfVbF3nFU14WKU2xcGJG7oT3kheQ7/Rs6
+/npruo5vlN0mwIXTf8qwo1g3eDV8og==
+=lUKJ
+-----END PGP SIGNATURE-----
+
+--Sig_/6.ECiSJ2jczuaYFAUa6=kZA--
