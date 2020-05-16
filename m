@@ -2,113 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F13E1D5EF5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 May 2020 07:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAE91D5FCD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 May 2020 10:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgEPFyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 May 2020 01:54:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725803AbgEPFyD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 May 2020 01:54:03 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A70C061A0C;
-        Fri, 15 May 2020 22:54:03 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49PDx33qpWz9sTD;
-        Sat, 16 May 2020 15:53:59 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1589608440;
-        bh=/Xv1K0V8e5x1o5N7rHUJncIKDE5SDukl2Jj+ad1XTxE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HDFvJlXGRRNvzpM6wxWhGBzTVl8geEicWIbeExTC5eFN5NGn7rBit0s+Tbij65QFg
-         LObZcmOuXxSuaAjLQY3ZY0o7XBDQCyRgdLgS24CtPn53Sako9ozuQwpsbEqtyQYBXR
-         G5CXdnsO2B/qn9rqMXoYOKzBRsj+AHiKZZym+VXw5+YVFCVr3xXRrb8IDvkdgq5XRq
-         Y8jTiIgBsNVkDA1OLnYK1JqKwWr5FuaRKfR51oyyrbk1DY4+2vi7+NbIz7oqwNI8pI
-         tUaRIg40Gg/1IuAbYVPK36seNIVDFbAqFQMPBLIhWo8r3ieR+BOqr34SNB51oVG1cd
-         3NkanHIL2WgIg==
-Date:   Sat, 16 May 2020 15:53:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2020-05-15-16-29 uploaded
-Message-ID: <20200516155358.3683f11e@canb.auug.org.au>
-In-Reply-To: <20200515233018.ScdtkUJMA%akpm@linux-foundation.org>
-References: <20200513175005.1f4839360c18c0238df292d1@linux-foundation.org>
-        <20200515233018.ScdtkUJMA%akpm@linux-foundation.org>
+        id S1726703AbgEPIz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 May 2020 04:55:29 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50446 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726202AbgEPIz3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 16 May 2020 04:55:29 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7865712EED413F44AA3F;
+        Sat, 16 May 2020 16:55:25 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 16 May 2020 16:55:17 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+        <adobriyan@gmail.com>, <peterz@infradead.org>, <mingo@kernel.org>,
+        <patrick.bellasi@arm.com>, <gregkh@linuxfoundation.org>,
+        <tglx@linutronix.de>, <Jisheng.Zhang@synaptics.com>,
+        <bigeasy@linutronix.de>, <pmladek@suse.com>,
+        <ebiederm@xmission.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <nixiaoming@huawei.com>, <wangle6@huawei.com>
+Subject: [PATCH v2 0/4] cleaning up the sysctls table (hung_task watchdog)
+Date:   Sat, 16 May 2020 16:55:11 +0800
+Message-ID: <1589619315-65827-1-git-send-email-nixiaoming@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6.ECiSJ2jczuaYFAUa6=kZA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/6.ECiSJ2jczuaYFAUa6=kZA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Kernel/sysctl.c contains more than 190 interface files, and there are a 
+large number of config macro controls. When modifying the sysctl 
+interface directly in kernel/sysctl.c, conflicts are very easy to occur.
+E.g: https://lkml.org/lkml/2020/5/10/413.
 
-Hi Andrew,
+Use register_sysctl() to register the sysctl interface to avoid
+merge conflicts when different features modify sysctl.c at the same time.
 
-On Fri, 15 May 2020 16:30:18 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> * mm-introduce-external-memory-hinting-api.patch
+So consider cleaning up the sysctls table, details are in:
+	https://kernelnewbies.org/KernelProjects/proc
+	https://lkml.org/lkml/2020/5/13/990
 
-The above patch should have
+The current patch set extracts register_sysctl_init and some sysctl_vals
+variables, and clears the interface of hung_task and watchdog in sysctl.c.
 
-#define __NR_process_madvise 443
+changes in v2:
+  1. Adjusted the order of patches, first do public function
+     extraction, then do feature code movement
+  2. Move hung_task sysctl to hung_task.c instead of adding new file
+  3. Extract multiple common variables instead of only neg_one, and keep
+     the order of member values in sysctl_vals
+  4. Add const modification to the variable sixty in watchdog sysctl
 
-not 442, in arch/arm64/include/asm/unistd32.h
+V1: https://lkml.org/lkml/2020/5/15/17
 
-and
+Xiaoming Ni (4):
+  sysctl: Add register_sysctl_init() interface
+  sysctl: Move some boundary constants form sysctl.c to sysctl_vals
+  hung_task: Move hung_task sysctl interface to hung_task.c
+  watchdog: move watchdog sysctl interface to watchdog.c
 
- 442    common  fsinfo                          sys_fsinfo
-+443    common  process_madvise                 sys_process_madvise
+ fs/proc/proc_sysctl.c        |   2 +-
+ include/linux/sched/sysctl.h |   8 +-
+ include/linux/sysctl.h       |  13 ++-
+ kernel/hung_task.c           |  63 +++++++++++++-
+ kernel/sysctl.c              | 202 ++++++++-----------------------------------
+ kernel/watchdog.c            | 101 ++++++++++++++++++++++
+ 6 files changed, 210 insertions(+), 179 deletions(-)
 
-in arch/microblaze/kernel/syscalls/syscall.tbl
+-- 
+1.8.5.6
 
-> * mm-introduce-external-memory-hinting-api-fix.patch
-
-The above patch should have
-
-#define __NR_process_madvise 443
-
-not 442
-
-> * mm-support-vector-address-ranges-for-process_madvise-fix.patch
-
-The above patch should have
-
-#define __NR_process_madvise 443
-
-not 442 in arch/arm64/include/asm/unistd32.h
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6.ECiSJ2jczuaYFAUa6=kZA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6/f/YACgkQAVBC80lX
-0Gx1Jwf/eRWBhmLSqpgnXUM0UQDqPab5/Kay6/R+98MSWQmlkhm/0d5z8Dw/GSDc
-LcETLKrcnCbZ/TGJuICVH3AkMm/wMWS4WD0IQbcUaPfCMzhyJWj7LXG8pTuWQY9v
-yl096HQroXUQvXj8OzXPuSnnFj1nmD8LitksoGkcUu+G4q3pkNwExtQP4q6OKlXF
-STkz92gDLQYUozFVg5z+eAgj+P2ViQFeUNlB2DBuwN6mYszScul6jnPMJS4Sl36J
-YFDTOgakQBI3xzWlWmnhHLUL6K/jF6iQfVbF3nFU14WKU2xcGJG7oT3kheQ7/Rs6
-/npruo5vlN0mwIXTf8qwo1g3eDV8og==
-=lUKJ
------END PGP SIGNATURE-----
-
---Sig_/6.ECiSJ2jczuaYFAUa6=kZA--
