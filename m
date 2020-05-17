@@ -2,97 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 415691D687E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 17:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 467A71D6890
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 17:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbgEQPA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 May 2020 11:00:56 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:60701 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727970AbgEQPAz (ORCPT
+        id S1728058AbgEQPT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 May 2020 11:19:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727973AbgEQPTZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 May 2020 11:00:55 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7B2C95C0091
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 May 2020 11:00:54 -0400 (EDT)
-Received: from imap7 ([10.202.2.57])
-  by compute1.internal (MEProxy); Sun, 17 May 2020 11:00:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=
-        mime-version:message-id:in-reply-to:references:date:from:to
-        :subject:content-type:content-transfer-encoding; s=fm2; bh=PYQdK
-        a4yEw9ZT/evyfWGU9X9I4J6+RvfX5WenXXhhzw=; b=mMgblVV6pJjqRv2PQ093z
-        WMKULfoywwpwvqKwNDK1wh+I+gu79t5P7F3G7wprdhlob58gAvtdXvFswiWl9GTH
-        oEcSup6YbzvZwMJ8s6YogwJ9TQmVKzTWCdtKfyNO0z43ORux95pwjF/8iihXlFiC
-        oxA9CBPZuEuGMA3u9eYG8uLZ4UgZIy0vOOpHkuDjt4e0eFozoF+YNzviAU/Q9XuL
-        yA4wS0ei/nHE+NHcZI00OIaeJo/eBJGYA+aBYM3KoFHsr/7CoCVipIwRqqBB1man
-        Os+sZ855w7qnWddaJKsvjwxnPgncDoikgzCLHO+iG08RHwmxi63c3SqESdL817PJ
-        w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=PYQdKa4yEw9ZT/evyfWGU9X9I4J6+RvfX5WenXXhh
-        zw=; b=3erz6sa5/gtyOODTcltCRciXq4W9IbCxCSK+ZvVDoKEPx4HCj3tkaeAqD
-        5KLTJ62zZqfvgmoMJ9tstCIvwgrIiKtH7uxFWOqmEcfYmwdH73w6W6pMB8Olp2Ta
-        BvzMJJlivTX8vieGiBO/3iU7/QT+EhM6RbbjvMDehlDdy+I/bWtVhmy9lPbRbWVw
-        TYL9j/OtLdGKY2jemOUT9mw3GeElhG9xFjmwFVGDsukQZ/wi0ZrTegY1Y3jJ+X4Y
-        a5UxNqCVAFWrsbCLrdTf8S1NVrm3saMmkYa41yvZLxJo58/ZLcu5O5s/EcamOmDO
-        jgDbZYZkH/11OqxEK1tOi0pZV2Q8w==
-X-ME-Sender: <xms:plHBXkXINl2qejpxPQ541I3SPV3xNNUnJGmQbO-xXCi5PYe3KFvu8w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddtfedgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgfgsehtqhertderreejnecuhfhrohhmpedfpfhi
-    khholhgruhhsucftrghthhdfuceonhhikhholhgruhhssehrrghthhdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepffdutdegvdegtddtgeekueevfeelgfejleetudegieelhfdtvefg
-    jeejffefkedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepnhhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:plHBXolf06UvnvoWaaBz9a0cM60GFpJKgajgVJArGsy2w0954UBPig>
-    <xmx:plHBXoYbgVqjyeJb-g3i4P9iaAZV97p6KDt3MqBv6v0il5BXjy0NkQ>
-    <xmx:plHBXjWIHmCqrGqObIcVXSagGWqz2yQQN9mQFvdWcMrgfZmeTwGymg>
-    <xmx:plHBXlvjZzejzcuha4y4ye3yjLfw4OUVb0Bu-A6qAuztgFwE0xTY9w>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 1CDC9180091; Sun, 17 May 2020 11:00:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.3.0-dev0-413-g750b809-fmstable-20200507v1
-Mime-Version: 1.0
-Message-Id: <f52ddbc4-4551-4997-8fda-235f2c461260@www.fastmail.com>
-In-Reply-To: <20200517080909.lod7sjfio5jvsjr3@yavin.dot.cyphar.com>
-References: <874kshqa1d.fsf@vostro.rath.org>
- <20200517080909.lod7sjfio5jvsjr3@yavin.dot.cyphar.com>
-Date:   Sun, 17 May 2020 15:59:08 +0100
-From:   "Nikolaus Rath" <nikolaus@rath.org>
-To:     "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [fuse-devel] Determining owner of a (fuse) mountpoint?
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Sun, 17 May 2020 11:19:25 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A52C05BD0A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 May 2020 08:19:24 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id x13so3632131pfn.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 May 2020 08:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=aChvVOXDtTrzTicsuCDZeQtZsdk7OrVDpZeM6DuP/0k=;
+        b=dV/38bE3ktMX4c6AP99OCbIYvIdaoGe+Q8L0QizruL1lP4k97pJxioEj3NjUxMAJuS
+         wN8iWiaIdNgY/pXsQJDYHF3HQema41wnMmEhKcS34VMwJeyUU6rdbY14a/1xJqkQYp6m
+         86vdS4Wn4kKgD9bQi/ya6LiR5+TTzPRUu1UPZV8sBPB/FIVMr3MKaQT5bd8M1GQU2yUW
+         wjxw1geSCgKs9fgICkJ/fDgz0XnDese2Sg+lk9fX5yy0+7OpmcwuDbx39HZYVnIKpg1n
+         iZn/exEjU+SkPpJBo7jO1wWouBoSGwCMWUeFiq8fnhaZGX2XKWASyizIRLxoYsICOZ4p
+         0vXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aChvVOXDtTrzTicsuCDZeQtZsdk7OrVDpZeM6DuP/0k=;
+        b=uX394D/GY0UqJdgj2aLtnhzw7yQaixZUr2MtFEoA1ijnQZ3QXdARMiCt1e+xWcsHIw
+         z3oYBCxLp+srjFtTEdy8O0y6nQoDKWy1IlwWXByYb4Kb4K+h+8Ba6Zwtk+yvKVB2ONl0
+         8Btoa6vWIGDYC84pLEdcvqhPT8tsUeBoQbAk+dJW64wJtRfYv+wuYRuszXAnvDVFEUhN
+         TU8X9+m1w9829EISGgQYQa5EUd/YbilhEDoWA0jlztJ+wB9jvthBSvzAO/TnoKQTUMgT
+         8uB6rHtmjm9Cc7Q8G55zdFHSZvUT1QepSHM4FE6MpqN9NEy2swLFOq1jdsai+Epsi+Dp
+         AeZA==
+X-Gm-Message-State: AOAM531h7Xo1jeXi9O1uaeqn/A4GUOYs01fYppSjAM5j+EpkhViq3Cu7
+        HMKo9V3k4yTTkL4+RPSA7MTAww==
+X-Google-Smtp-Source: ABdhPJy8Mtw1m+G8hWbkB0eZ9ksLVsC9OmKVlZ62NwhpsOoOXfy0qP+lvGJudNZ2+3NLvGni5QpLHw==
+X-Received: by 2002:a63:4555:: with SMTP id u21mr5301124pgk.127.1589728763622;
+        Sun, 17 May 2020 08:19:23 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:91d6:39a4:5ac7:f84a? ([2605:e000:100e:8c61:91d6:39a4:5ac7:f84a])
+        by smtp.gmail.com with ESMTPSA id h9sm6458481pfo.129.2020.05.17.08.19.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 May 2020 08:19:23 -0700 (PDT)
+Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
+ (3)
+To:     syzbot <syzbot+8c91f5d054e998721c57@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000009cb15805a5d080d6@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <923510f4-fd6f-dee2-dd40-d3bee55d4449@kernel.dk>
+Date:   Sun, 17 May 2020 09:19:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <0000000000009cb15805a5d080d6@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 17 May 2020, at 09:09, Aleksa Sarai wrote:
-> On 2020-05-15, Nikolaus Rath <Nikolaus@rath.org> wrote:
-> > Given a (FUSE) mountpoint (potentially mounted without -o allow_root=
-),
-> > is there a way for root to determine its "owner" (i.e. the user who =
-has
-> > started the FUSE process and invoked fusermount) that does not depen=
-d on
-> > cooperation of the user/filesystem?
->=20
-> The mount options of a FUSE mount contain the entries "user_id=3DN" an=
-d
-> "group_id=3DM" which correspond to the "mount owner" and those entries=
- are
-> filled by fusermount. Is that not sufficient?
+On 5/16/20 10:30 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    ac935d22 Add linux-next specific files for 20200415
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12deaa5e100000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=bc498783097e9019
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8c91f5d054e998721c57
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d54c02100000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17461e06100000
+> 
+> The bug was bisected to:
+> 
+> commit b41e98524e424d104aa7851d54fd65820759875a
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Mon Feb 17 16:52:41 2020 +0000
+> 
+>     io_uring: add per-task callback handler
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1488dc3c100000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=1688dc3c100000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1288dc3c100000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+8c91f5d054e998721c57@syzkaller.appspotmail.com
+> Fixes: b41e98524e42 ("io_uring: add per-task callback handler")
+> 
+> RSP: 002b:00007fffb1fb9aa8 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441319
+> RDX: 0000000000000001 RSI: 0000000020000140 RDI: 000000000000047b
+> RBP: 0000000000010475 R08: 0000000000000001 R09: 00000000004002c8
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402260
+> R13: 00000000004022f0 R14: 0000000000000000 R15: 0000000000000000
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
+> turning off the locking correctness validator.
+> CPU: 1 PID: 7090 Comm: syz-executor222 Not tainted 5.7.0-rc1-next-20200415-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+>  assign_lock_key kernel/locking/lockdep.c:913 [inline]
+>  register_lock_class+0x1664/0x1760 kernel/locking/lockdep.c:1225
+>  __lock_acquire+0x104/0x4c50 kernel/locking/lockdep.c:4234
+>  lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4934
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
+>  __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:122
+>  io_cqring_ev_posted+0xa5/0x1e0 fs/io_uring.c:1160
+>  io_poll_remove_all fs/io_uring.c:4357 [inline]
+>  io_ring_ctx_wait_and_kill+0x2bc/0x5a0 fs/io_uring.c:7305
+>  io_uring_create fs/io_uring.c:7843 [inline]
+>  io_uring_setup+0x115e/0x22b0 fs/io_uring.c:7870
+>  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+>  entry_SYSCALL_64_after_hwframe+0x49/0xb3
 
-I think it is sufficient, I just never noticed it. Thanks!
+I think this will likely fix it.
 
-Best,
--Nikolaus
 
---
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 70ae7e840c85..79c90eb28c0d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -924,6 +924,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
+ 
+ 	ctx->flags = p->flags;
++	init_waitqueue_head(&ctx->sqo_wait);
+ 	init_waitqueue_head(&ctx->cq_wait);
+ 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
+ 	init_completion(&ctx->completions[0]);
+@@ -6837,7 +6838,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ {
+ 	int ret;
+ 
+-	init_waitqueue_head(&ctx->sqo_wait);
+ 	mmgrab(current->mm);
+ 	ctx->sqo_mm = current->mm;
+ 
 
- =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=AB
+-- 
+Jens Axboe
+
