@@ -2,80 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4FDE1D6563
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 04:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 229A41D656C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 05:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgEQCoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 May 2020 22:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbgEQCoa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 May 2020 22:44:30 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40852C05BD09
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 May 2020 19:44:30 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id r22so2976270pga.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 May 2020 19:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uq35MuQh3BQE+DEOjJ7MGVBKpzrL1FTb+VJBwvU0AHk=;
-        b=Vq/A/08d+NZoCgyOliCZLorADWTSYNvj6xapzwZHoaC6teYOP2FUgFGAwp5kRgXP2U
-         WebvMdP05Dt0Wf7N0hXDc6ZKwwhmU09sLVqoQVqPMpBWnfO2K/RTcxN3/czYC+W7b4cf
-         ar7NC7/fE6rN9MVdNtAyE95jwARW0VlxM+x1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uq35MuQh3BQE+DEOjJ7MGVBKpzrL1FTb+VJBwvU0AHk=;
-        b=sTi0rp97k8Vb3JSD3/vkP+SBz+wRnrNqxrWYijGifaoVOmv3bX+53m2NAJCw8Qk39a
-         lS+HhcY4BTG+Xp7EyJ9H+TuLXc/8/gB4pM8iVkmjqDfXBo1ukAF60w2fyWz5SG1xLqpF
-         9bPQdWMbMolsDfxUmNo5D3N8XJ/wYUVZHIcJFDIjSIVWWAkUO6Zzw0cgKv6CNh+XBUru
-         doL1VQ8hkOVHNEVgqve739OQE74coCSGVp6Spxw/o2ptOt3JKxzWrooZaeZOhsqGq0YX
-         cqAEgwredXvPs29TNOSgbZxFZ5ArIgfHiCXxaVHJiAZk7M528+YEG8c6t/QG2uBkl5CC
-         WE4g==
-X-Gm-Message-State: AOAM532mgljIdy5YWWS6KiXsic3O17Sy2eMzMoVD9PrC3lWBvsRfCyNP
-        AoX8Si2sn/ZJR/ckAl/hpoU1GA==
-X-Google-Smtp-Source: ABdhPJy3BU6dz6uT5khRoyvolBvyM5FsmNt5nbdXI6CfaDE94Hq4l+4J14lStQnkWTOViSRy0+5V0g==
-X-Received: by 2002:aa7:8ad6:: with SMTP id b22mr6394643pfd.251.1589683469828;
-        Sat, 16 May 2020 19:44:29 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x13sm5153898pfn.200.2020.05.16.19.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 May 2020 19:44:29 -0700 (PDT)
-Date:   Sat, 16 May 2020 19:44:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     mcgrof@kernel.org, yzaikin@google.com, adobriyan@gmail.com,
-        peterz@infradead.org, mingo@kernel.org, patrick.bellasi@arm.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        Jisheng.Zhang@synaptics.com, bigeasy@linutronix.de,
-        pmladek@suse.com, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        wangle6@huawei.com
-Subject: Re: [PATCH v2 1/4] sysctl: Add register_sysctl_init() interface
-Message-ID: <202005161944.CD304B5@keescook>
+        id S1726947AbgEQDCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 May 2020 23:02:01 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4800 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726880AbgEQDCB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 16 May 2020 23:02:01 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8DB29A34692D8E1137C3;
+        Sun, 17 May 2020 11:01:59 +0800 (CST)
+Received: from [127.0.0.1] (10.67.102.197) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.487.0; Sun, 17 May 2020
+ 11:01:52 +0800
+Subject: Re: [PATCH v2 3/4] hung_task: Move hung_task sysctl interface to
+ hung_task.c
+To:     Kees Cook <keescook@chromium.org>
+CC:     <mcgrof@kernel.org>, <yzaikin@google.com>, <adobriyan@gmail.com>,
+        <peterz@infradead.org>, <mingo@kernel.org>,
+        <patrick.bellasi@arm.com>, <gregkh@linuxfoundation.org>,
+        <tglx@linutronix.de>, <Jisheng.Zhang@synaptics.com>,
+        <bigeasy@linutronix.de>, <pmladek@suse.com>,
+        <ebiederm@xmission.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <wangle6@huawei.com>,
+        <akpm@linux-foundation.org>
 References: <1589619315-65827-1-git-send-email-nixiaoming@huawei.com>
- <1589619315-65827-2-git-send-email-nixiaoming@huawei.com>
+ <1589619315-65827-4-git-send-email-nixiaoming@huawei.com>
+ <202005161942.682497BF@keescook>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <7ab9ac85-2b60-623f-e585-f6bb95500c38@huawei.com>
+Date:   Sun, 17 May 2020 11:01:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589619315-65827-2-git-send-email-nixiaoming@huawei.com>
+In-Reply-To: <202005161942.682497BF@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.102.197]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 16, 2020 at 04:55:12PM +0800, Xiaoming Ni wrote:
-> In order to eliminate the duplicate code for registering the sysctl
-> interface during the initialization of each feature, add the
-> register_sysctl_init() interface
+On 2020/5/17 10:43, Kees Cook wrote:
+> On Sat, May 16, 2020 at 04:55:14PM +0800, Xiaoming Ni wrote:
+>> +/*
+>> + * This is needed for proc_doulongvec_minmax of sysctl_hung_task_timeout_secs
+>> + * and hung_task_check_interval_secs
+>> + */
+>> +static unsigned long hung_task_timeout_max = (LONG_MAX / HZ);
 > 
-> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+> Please make this const. With that done, yes, looks great!
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Thank you for your guidance, I will fix it in v3
 
--- 
-Kees Cook
+In addition, I am a bit confused about the patch submission, and hope to 
+get everyone's answer.
+   I made this patch based on the master branch. But as in conflict at 
+https://lkml.org/lkml/2020/5/10/413, my patch will inevitably conflict. 
+Should I modify to make patch based on "linux-next" branch to avoid 
+conflict, or other branches?
+
+Thanks
+Xiaoming Ni
+
