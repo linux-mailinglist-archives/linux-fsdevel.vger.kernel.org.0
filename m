@@ -2,63 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE8081D6DAC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 23:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EAF41D6DDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 00:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgEQVyH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 May 2020 17:54:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbgEQVyH (ORCPT
+        id S1726559AbgEQWhF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 May 2020 18:37:05 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21771 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726550AbgEQWhF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 May 2020 17:54:07 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89DBCC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 May 2020 14:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=4wE6HZyn5NHMAEjBe+RVfS16/Kx8mk+DDuFTZkI9/DM=; b=l+uDP7uTzyCZ2yFxJ0O31i6ERC
-        MnJVn9H34+4v8Uh1lHf9bsFDx5FuMIJlu7nce7iZm8sBHC2KbZWJuzxbYkmr48Selad9ZgERuT8iI
-        3WYiHsUlqwQ34aWeH45FsSl/TTpWRSkDwvDHexvDV8iUdifFhMnG8GXfmCZdNCXzfgHKawEjo1XHa
-        ZEvhBm/B6aDM01wpW1yi4DMmORVSQO3XjaxbB3L9QUkdHhK4dbDxmrPmxQBtdlbLQ/vBZo/uJhO2c
-        d/s3QJbHNxtmxJEX6UgIOhfMq3kZGWgtpWDxkNMZjknILdZEbLn8Eg9qzFU3TXZOJ3mMVSfhxuFks
-        8rEI2gwA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jaREV-00068P-4C; Sun, 17 May 2020 21:54:07 +0000
-Date:   Sun, 17 May 2020 14:54:07 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: truncate for block size > page size
-Message-ID: <20200517215407.GS16070@bombadil.infradead.org>
+        Sun, 17 May 2020 18:37:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589755024;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R6DBtpMAn3ekiwiyAskbqzCTE2dKTfdjjBHrVuQWSx4=;
+        b=DB+3QeZo7NLRokjCEDUd288kzPbBlZT/4TTz6y9jZifZ9YnUEn8BYdYG44/25F+yIk0YRV
+        YZ+7mB95VN7BSxQZJNVuMFZIEgZncAmzpxIE2JM71NIJ+FCYGByMxapXSHp0qIlK3gXeYq
+        jrEN2H90/lHN+8Smd/tGbRejPMU9f48=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-75-ZTKbhoElMFOsXiTYA5qa7g-1; Sun, 17 May 2020 18:37:01 -0400
+X-MC-Unique: ZTKbhoElMFOsXiTYA5qa7g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2D01461;
+        Sun, 17 May 2020 22:36:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-95.rdu2.redhat.com [10.10.112.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C1D4A5C1C8;
+        Sun, 17 May 2020 22:36:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200517210811.GQ16070@bombadil.infradead.org>
+References: <20200517210811.GQ16070@bombadil.infradead.org> <158974686528.785191.2525276665446566911.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Don't unlock fetched data pages until the op completes successfully
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <796666.1589755017.1@warthog.procyon.org.uk>
+Date:   Sun, 17 May 2020 23:36:57 +0100
+Message-ID: <796667.1589755017@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm currently looking at the truncate path for large pages and I suspect
-you have thought about the situation with block size > page size more
-than I have.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Let's say you have a fs with 8kB blocks and a CPU with 4kB PAGE_SIZE.
-If you have a 32kB file with all its pages in the cache, and the user
-truncates it down to 10kB, should we leave three pages in the page cache
-or four?
+> > +	if (req->page_done)
+> > +		for (req->index = 0; req->index < req->nr_pages; req->index++)
+> > +			req->page_done(req);
+> > +
+> 
+> I'd suggest doing one call rather than N and putting the page iteration
+> inside the callback.  But this patch is appropriate for this late in
+> the -rc series, just something to consider for the future.
 
-Three pages means (if the last page of the file is dirty) we'd need to
-add in either a freshly allocated zero page or the generic zero page to
-the bio when writing back the last page.
+My rewrite of the fscache stuff changes this bit of the code anyway, and makes
+it one call which may start a write out to the cache.
 
-Four pages mean we'll need to teach the truncate code to use the larger
-of page size and block size when deciding the boundary to truncate the
-page cache to, and zero the last page(s) of the file if needed.
+David
 
-Depending on your answer, I may have some follow-up questions about how
-we handle reading a 10kB file with an 8kB block size on a 4kB PAGE SIZE
-machine (whether we allocate 3 or 4 pages, and what we do about the
-extra known-to-be-zero bytes that will come from the device).
