@@ -2,86 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F8D1D64A9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 01:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06D021D6506
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 May 2020 03:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbgEPXNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 May 2020 19:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726670AbgEPXNu (ORCPT
+        id S1726831AbgEQBQE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 May 2020 21:16:04 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:58059 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726763AbgEQBQD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 May 2020 19:13:50 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199B6C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 May 2020 16:13:50 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id e125so4070611lfd.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 May 2020 16:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=d+NkeDzmq42ewn5Y9d2f0rGRujZU/ohXRwau+HCH4Fk=;
-        b=M+NPBvC6fstKfvPU57CM6YWd03C7Le0WiXAXO7SlPOZclo6eowdaQ5yE+TUBYEkTy6
-         UBt0+y7ErCOHPUnjexqMF0zDleR/2GyxxJxCgB7r/04GBDy2fhoXIK2UA5eNRTO3TXfv
-         kvY/BLvy723z5t4AltxaGwJg9ug1WbA1Jg9j40Tc0k1AEGDg4dGb9vv3HRjNeKSinHEk
-         KPBK0x7n3IwVcIlL2HSnb22EPMSuGSHjs3GtTEMJLV0A0Cu4vp0TjzcRP0tSekJVuaKE
-         ffHZNLCvzE4a/OEdv85VN4m4154p1D4hK7TW1xqJL7f8HEw2xZyfxy5yElUCrXfD3Xmh
-         a1xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=d+NkeDzmq42ewn5Y9d2f0rGRujZU/ohXRwau+HCH4Fk=;
-        b=r/32916N+4LNtnJjy7zqYIeoIRXEEt+VU1uusHToHh7HQ8EeghOWzKDjHBeU2n9ww8
-         wixxDZVrGJQpxf6+HCBKSyYESuOwTk9CUS8CTLbsyA5mfpYFvAS3nm90gbt8GShl3uxX
-         pW+/JW8U9Jw3gEpr5IMZEfhtgLYgD2LYo55CnQGsgEpmPcTDPvdh9cRpAeHYv5wFU2lg
-         RjjNfr8RaFMA2DITNkzbaak8/UubRmRNPgCGb5rwM9HOnrR3gQ5cVyk08qpVUXoGE5Xg
-         +MIBZZEZ4oslMYTuj6JGJVvHDHqoFT3h36h2Ne5sYFAbvsBwmnE8IARoIYrr7CIMZMvh
-         39jA==
-X-Gm-Message-State: AOAM531vTteaIc1rViYE/YW3OpmNnyiZSDclhWOjw/qaA4FOUwSWkuGu
-        gFizFjH0NsN2X7QVssSWHeE9DPgy6YG53XtV4jw=
-X-Google-Smtp-Source: ABdhPJwzCg0+riL7UmvzYhx/vQ785j3UIsqoSXY2twZtOq+2eiZZLGjYcGVV03hB4P2CyXMxh8NtEicOAYykVTmTJ80=
-X-Received: by 2002:ac2:4554:: with SMTP id j20mr2721067lfm.3.1589670828475;
- Sat, 16 May 2020 16:13:48 -0700 (PDT)
+        Sat, 16 May 2020 21:16:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589678160;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DkMpg+DAZVobJN3z7nH0TAxZiR3oF4oJ3zndpFda8ag=;
+        b=WayT9XOoEURYH4R2ywfSeIrJlcEfXa552jfiDOgcP+zQVQy87CMgf8jsRW8HB5Q5JoSySW
+        mEKu+AWowwYHTkcgdpwcALyR3rJQgNpJEoLZLOxR+npzzZW4x6UR2yGFOjKnZkbmF5p89B
+        Yt3QPE33vwvpoo68Vgmq46t3UOEbcWM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-291-sw_h2SfLOCSt6ovumpljBA-1; Sat, 16 May 2020 21:15:58 -0400
+X-MC-Unique: sw_h2SfLOCSt6ovumpljBA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 771F01009440;
+        Sun, 17 May 2020 01:15:57 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-112-26.rdu2.redhat.com [10.10.112.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E7D805C1D6;
+        Sun, 17 May 2020 01:15:55 +0000 (UTC)
+Subject: Re: "BUG: MAX_LOCKDEP_ENTRIES too low" with 6979
+ "&type->s_umount_key"
+To:     Qian Cai <cai@lca.pw>, Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <F430E503-F8E9-41B6-B23E-D350FD73359B@lca.pw>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <e8c6d3af-3045-0a37-5e9e-bfd60c09f97d@redhat.com>
+Date:   Sat, 16 May 2020 21:15:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Received: by 2002:ab3:7e14:0:0:0:0:0 with HTTP; Sat, 16 May 2020 16:13:47
- -0700 (PDT)
-From:   Mrs Aisha Gaddafi <mrsaishaay798@gmail.com>
-Date:   Sat, 16 May 2020 16:13:47 -0700
-X-Google-Sender-Auth: N0SWyVGdIHdLmg5nRGpc0kGRWcs
-Message-ID: <CAAs+7uQuBKJQS7qLOfuO98rduKTtKrdFbw1jPOW2eys08-g5_Q@mail.gmail.com>
-Subject: HELLO
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <F430E503-F8E9-41B6-B23E-D350FD73359B@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ASSALAMU ALAIKUM,
+On 5/15/20 1:21 AM, Qian Cai wrote:
+> Lockdep is screwed here in next-20200514 due to "BUG: MAX_LOCKDEP_ENTRIES too low". One of the traces below pointed to this linux-next commit,
+>
+> 8c8e824d4ef0 watch_queue: Introduce a non-repeating system-unique superblock ID
+>
+> which was accidentally just showed up in next-20200514 along with,
+>
+> 46896d79c514 watch_queue: Add superblock notifications
+>
+> I did have here,
+>
+> CONFIG_SB_NOTIFICATIONS=y
+> CONFIG_MOUNT_NOTIFICATIONS=y
+> CONFIG_FSINFO=y
+>
+> While MAX_LOCKDEP_ENTRIES is 32768, I noticed there is one type of lock had a lot along,
+>
+> # grep  'type->s_umount_key’ /proc/lockdep_chains | wc -l
+> 6979
 
-How are you doing today,I came across your e-mail contact prior a
-private search while in need of your assistance. I hope my mail meet
-you in good condition of health? Dear I have decided to contact you
-after much thought considering the fact that we have not meet before,
-but because of some circumstance obliged me, I decided to contact you
-due to the urgency of my present situation here in the refugee camp
-for your rescue and also for a business venture/project which I need
-your assistant in this business establishment in your country as my
-foreign partner as well as my legal appointed trustee.
+The lock_list table entries are for tracking a lock's forward and 
+backward dependencies. The lockdep_chains isn't the right lockdep file 
+to look at. Instead, check the lockdep files for entries with the 
+maximum BD (backward dependency) + FD (forward dependency). That will 
+give you a better view of which locks are consuming most of the 
+lock_list entries. Also take a look at lockdep_stats for an overall view 
+of how much various table entries are being consumed.
 
-My name is Aisha Gaddafi the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi) a single Mother and a Widow
-with three Children. I'm presently living in Oman as a refugee with my
-three children, i have been under political asylum protection by the
-Government of Oman however, I have funds worth "Twenty Seven Million
-Five Hundred Thousand United State Dollars" -$27.500.000.00 US Dollars
-which i want to entrust on you for investment project in your country
+Cheers,
+Longman
 
-I hope to hear from you for more details if you're interested, Contact
-me with below:
 
-mrsaishaay798@gmail.com
-
-Warmest regards
-Mrs Aisha Gaddafi
