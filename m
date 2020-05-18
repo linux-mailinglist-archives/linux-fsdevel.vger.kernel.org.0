@@ -2,110 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 210681D741F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 11:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A391D7438
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 11:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbgERJdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 05:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
+        id S1726505AbgERJki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 05:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbgERJdA (ORCPT
+        with ESMTP id S1726040AbgERJkh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 05:33:00 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B0CC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:32:59 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id i16so3441244edv.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:32:59 -0700 (PDT)
+        Mon, 18 May 2020 05:40:37 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CC6C061A0C;
+        Mon, 18 May 2020 02:40:37 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id w18so9136051ilm.13;
+        Mon, 18 May 2020 02:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=2VgpfXcNwy7TREHNFQ18NMpwIG1aLQl5IHZiO+aFRFg=;
-        b=QP0+JFbB42FP8b0D9HjpzR1E6N6d/ZxgiGmuevEMpNy/a4lrt5vm2EhQ69w6loWJox
-         rm0jIH0TyynJRmaTlQIb2HZjZK8kJb9um+WHblQIWyBSZNEd/VAQavvEIGPP++Ts15Hs
-         TK/p0qGwPdEzXNxKh3RcttUAAjZlLZbQfP0A0=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pdms6kI1V+FygiJbqs2W9+OWW1Eb6sNR1jWF1nmy7jI=;
+        b=s2IUKdbY3enMQmG1dX2eyNAXUxWkhxcjtIOASGmTWs5lo4cTy3LOBI6XuqCI4YewSG
+         i5i+JsDBd4ABTFkMB9jBUuHqLtKn9+j/xBvCpJixXRo59tMDud/DQ/McDu1glkWq8Io8
+         6bXJXwj0/lqCHc1S0rf2DKr/ldfzWZoroabktl6SLP0T7OsKjOiawzO8cn53dIVSIx2L
+         fjleVT2mcjvwry5lvvRyZrMw3TXb5uOTxdNwOsHdL4gRCqpKo8VugF2O2ehbTQNfJyns
+         CvmQ1zdUD/bx9o5NUcxoPFXVgzLem8GsociSdXyrZT/ymZwT4W+HSD9A7qgnQIdilLjb
+         sM0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=2VgpfXcNwy7TREHNFQ18NMpwIG1aLQl5IHZiO+aFRFg=;
-        b=aqJxcpstah2b4hwLL822n/HiwIE14u9iq7HScLVtlA2xsrrfwbZvllBnQ6BzKIvaWr
-         OT4HaOf9O/R6kLL3VSjh/2f51iF462PqsyhCovT+58E7pkmui27HrY+JKFsCf2+FID/h
-         wUHyHkXvk4JGkkeNN13JtujAeWtpBS9hc5RIeUj7PEIG5CjATwFrm240QXVMGBh4M/Vz
-         522dEv3Szs3MPFsuAFIcw6uloqjymwrsZfScdQbkfVXtjzMDiIXHXMEE9oqHqHof+MB8
-         P/uoJm83BJcRT7wKg+TcSWfbLRklhM9rncDxoSDtVz/l+oTIOXPK6S4aLjCz5UPP+OKP
-         5V2A==
-X-Gm-Message-State: AOAM5300CQ4GlPjw1UrXfQ+VsRlvrVcI/TnWII2cTnr7BQU0BPbHinJz
-        0g2EheOQtH0CCdWc2kNHKDrIjwM3+0bbVEk31heAx66mIjy/Tw==
-X-Google-Smtp-Source: ABdhPJyxA0x8w1n4vgblorzwwP4PlDWFNBc8JIRKpAEQZKkJ4OJZMc0y6wP/gBfFHC6ii/HQOSa8g5ffD8mMnZKb9bY=
-X-Received: by 2002:a05:6402:1296:: with SMTP id w22mr12015540edv.364.1589794378263;
- Mon, 18 May 2020 02:32:58 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=pdms6kI1V+FygiJbqs2W9+OWW1Eb6sNR1jWF1nmy7jI=;
+        b=i5egenXkPxq7E/HJUYV+bzduC8VlxnTuyJDZTGSbJX82pdoowKwSiAc9vpLQqqTIr/
+         JyePIkZJiJlzOe2jzeoXwnNqQB9CLqYDw0HXn3COV5zdOQR0A2KwoSQWwVDdCEWqB7uf
+         EeubL42yj1pjcyTf6VirecMv3ToMy/d5r12YzEPxdkIe7SfVt0oHnUhyEE/lK4mFQxJc
+         yW5qlYXFGac2d9bnvMNPLiGd8rud/ADXW1VQ1UJibcQtQHkwv32bJph/QrzB5D2V2uHp
+         xUCyp8BQQslZq93ARHl7YvIBN5eETaHQF2zDjabaYq46SRdoXGz1rFVR+dBOfTDgBlgB
+         QLfg==
+X-Gm-Message-State: AOAM5300x5JNA5Hv8fRtrg0nyZDjdXcJtCLLpHtwqfFGRnlsD9h3wUrZ
+        tmY1lJJWQG+wkc5K2JwVZz+ajWl++PqqmfsbHY4=
+X-Google-Smtp-Source: ABdhPJxgg7rmKLZhAoede28E3JcidgqEy/oebAmR/EeZK7KjnvrIRBSTRAbaCZr7oZACwVn1jBpjjgcz7O/uuqaMRAg=
+X-Received: by 2002:a92:b69b:: with SMTP id m27mr15494381ill.250.1589794836888;
+ Mon, 18 May 2020 02:40:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <871rnlq82d.fsf@vostro.rath.org>
-In-Reply-To: <871rnlq82d.fsf@vostro.rath.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 18 May 2020 11:32:46 +0200
-Message-ID: <CAJfpegs7wwnxgnWc4JRqRdTjVwFGd-KjhFqtmaJfpSxA4uzBrg@mail.gmail.com>
-Subject: Re: Unable to access fuse mountpoint with seteuid()
-To:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        miklos <mszeredi@redhat.com>
-Content-Type: multipart/mixed; boundary="0000000000002f01d505a5e8d942"
+References: <20200505162014.10352-1-amir73il@gmail.com>
+In-Reply-To: <20200505162014.10352-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 18 May 2020 12:40:25 +0300
+Message-ID: <CAOQ4uxjAz5ytbyJMJGvwitpepVnnAKEiQV8QEkzc9yeRyXZoKA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] fanotify events on child with name info
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000002f01d505a5e8d942
-Content-Type: text/plain; charset="UTF-8"
-
-On Fri, May 15, 2020 at 10:05 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+On Tue, May 5, 2020 at 7:20 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Hello,
+> Jan,
 >
-> I've written a setuid root program that tries to access a FUSE
-> mountpoint owned by the calling user. I'm running seteuid(getuid()) to
-> drop privileges, but still don't seem to be able to access the
-> mountpoint.
+> In the v3 posting of the name info patches [1] I dropped the
+> FAN_REPORT_NAME patches as agreed to defer them to next cycle.
 >
-> Is that a bug or a feature? If it's a feature, is there any other way to
-> get access to the mountpoint? All I want is the st_dev value...
+> Following is remainder of the series to complement the FAN_DIR_MODIFY
+> patches that were merged to v5.7-rc1.
+>
+> The v3 patches are available on my github branch fanotify_name [2].
+> Same branch names for LTP tests [3], man page draft [4] and a demo [5].
+>
+> Patches 1-4 are cleanup and minor re-factoring in prep for the name
+> info patches.
+>
+> Patch 5 adds the FAN_REPORT_NAME flag and the new event reporting format
+> combined of FAN_EVENT_INFO_TYPE_DFID_NAME and FAN_EVENT_INFO_TYPE_FID
+> info records, but provides not much added value beyond inotify.
+>
+> Patches 6-7 add the new capability of filesystem/mount watch with events
+> including name info.
+>
+> I have made an API decision that stems from consolidating the
+> implementation with fsnotify_parent() that requires your approval -
+> A filesystem/mount mark with FAN_REPORT_NAME behaves as if all the
+> directories and inodes are marked.  This results in user getting all
+> relevant events in two flavors - one with both info records and one with just
+> FAN_EVENT_INFO_TYPE_FID.  I have tries several approaches to work around this
+> bizarrity, but in the end I decided that would be the lesser evil and that
+> bizarre behavior is at least easy to document.
+>
 
-It's a feature:
+Hi Jan,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fuse/dir.c?h=v5.6#n1071
+Were you able to give some thought to the API question above?
 
-However, st_dev is definitely not something that could be used for DoS
-(it's not even controlled by the fuse daemon).  The attached patch
-(untested) allows querying st_dev with statx(2) and a zero mask
-argument.
+I would really like to be able to finalize the design of the API, so
+that I will be able to continue working on the man page patches.
 
-The other option is to parse /proc/self/mountinfo, but that comes with
-some caveats.
+Re-phrasing the API question that needs addressing:
+
+With FAN_REPORT_NAME, filesystem/mount watches get -
+1. ONLY events with name (no events on root and no SELF events)
+2. Each event in one flavor (with name info when available)
+3. ALL events in both flavors (where name info is available)
+4. Something else?
+
+The current v3 patches implement API choice #3, which is derived
+from the implementation choice to emit two events via fsnotify_parent().
+
+My v2 patches implemented API choice #2, which was the reason
+for duplicating name snapshot code inside handle_event().
+I considered implementing merge of event with and without name,
+but it seemed too ugly to live.
+
+We could also go for an API that allows any combination of
+FAN_REPORT_NAME and FAN_REPORT_FID:
+FAN_REPORT_FID - current upstream behavior
+FAN_REPORT_FID_NAME - choice #3 above as implemented in v3
+FAN_REPORT_NAME - choice #1 above
+
+At one point, I also considered that user needs to opt-in
+for named events per filesystem/mount mark with
+FAN_EVENT_ON_CHILD. This flag is implied in v3 for
+all filesystem/mount marks by FAN_REPORT_NAME, while
+for directory marks it is opt-in as it has always been.
+
+At the moment I went with choice #3 in v3 because I felt it
+would be the simplest of all choices to document.
+
+I didn't want to invest time in documenting behavior if you find it
+unacceptable. If you are swaying between more than one option,
+then I am willing to try documenting more than one option, so we
+can see what the result looks like.
 
 Thanks,
-Miklos
-
---0000000000002f01d505a5e8d942
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="fuse-always-allow-query-of-st_dev.patch"
-Content-Disposition: attachment; 
-	filename="fuse-always-allow-query-of-st_dev.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kacahr9g0>
-X-Attachment-Id: f_kacahr9g0
-
-ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jCmluZGV4IGRlMWUyZmRl
-NjBiZC4uMjZmMDI4YmM3NjBiIDEwMDY0NAotLS0gYS9mcy9mdXNlL2Rpci5jCisrKyBiL2ZzL2Z1
-c2UvZGlyLmMKQEAgLTE2ODksOCArMTY4OSwxOCBAQCBzdGF0aWMgaW50IGZ1c2VfZ2V0YXR0cihj
-b25zdCBzdHJ1Y3QgcGF0aCAqcGF0aCwgc3RydWN0IGtzdGF0ICpzdGF0LAogCXN0cnVjdCBpbm9k
-ZSAqaW5vZGUgPSBkX2lub2RlKHBhdGgtPmRlbnRyeSk7CiAJc3RydWN0IGZ1c2VfY29ubiAqZmMg
-PSBnZXRfZnVzZV9jb25uKGlub2RlKTsKIAotCWlmICghZnVzZV9hbGxvd19jdXJyZW50X3Byb2Nl
-c3MoZmMpKQorCWlmICghZnVzZV9hbGxvd19jdXJyZW50X3Byb2Nlc3MoZmMpKSB7CisJCWlmICgh
-cmVxdWVzdF9tYXNrKSB7CisJCQkvKgorCQkJICogSWYgdXNlciBleHBsaWNpdGx5IHJlcXVlc3Rl
-ZCAqbm90aGluZyogdGhlbiBkb24ndAorCQkJICogZXJyb3Igb3V0LCBidXQgcmV0dXJuIHN0X2Rl
-diBvbmx5LgorCQkJICovCisJCQlzdGF0LT5yZXN1bHRfbWFzayA9IDA7CisJCQlzdGF0LT5kZXYg
-PSBpbm9kZS0+aV9zYi0+c19kZXY7CisJCQlyZXR1cm4gMDsKKwkJfQogCQlyZXR1cm4gLUVBQ0NF
-UzsKKwl9CiAKIAlyZXR1cm4gZnVzZV91cGRhdGVfZ2V0X2F0dHIoaW5vZGUsIE5VTEwsIHN0YXQs
-IHJlcXVlc3RfbWFzaywgZmxhZ3MpOwogfQo=
---0000000000002f01d505a5e8d942--
+Amir.
