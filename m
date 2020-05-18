@@ -2,97 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D10D1D8629
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C5F1D872B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732795AbgERSXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 14:23:22 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:56747 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732115AbgERSXT (ORCPT
+        id S1729427AbgERSbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 14:31:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41153 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729437AbgERSa5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 14:23:19 -0400
-Received: by mail-il1-f200.google.com with SMTP id v87so10600905ill.23
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 11:23:18 -0700 (PDT)
+        Mon, 18 May 2020 14:30:57 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 23so5343701pfy.8;
+        Mon, 18 May 2020 11:30:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=5GDXvHftE40qhmbLit/31FtiAnQnj7YGrZQtgyNVNzo=;
-        b=hR45l0c89koZZuTIxiEMm3+lO0RqdHMGVeommZvRJrB09jsam51aaBYDKrcDBPk1dn
-         NDyWiS+UD1EBUhImBSjQwL0JetCxn59uujsJ4kXt4GIMFZIePEZOVNgvHsTuQWwO4uOn
-         aZZLzb48Oue5/56/cPo7DNO+GxTZkZHuhfJcSNetZL2uebzNaVbJlGV8E9GtbYYIcP2F
-         GOrenZicdCZpgpniXal2jiZqkgi6Y2gEpLMOxyMLwIUg3YuUto05LB8+1TiJLr/bLk38
-         sB8wf0sy77XXSBYgf830ow9rFs7VYbOy8+VPy25F5CvfS5eus2nJRK+R45TFhP8Spxhe
-         Txfw==
-X-Gm-Message-State: AOAM532EZSjNB2YH3EvnKLk2I4Gx2fplDlWMpxsx4a1wHn2FFlBZfe0c
-        C6qVvDNPZcgWk1L9XOPHOqZcr7lLZ8HQPnUR85RQbPMyFe/j
-X-Google-Smtp-Source: ABdhPJz6jvTBhzuO2kUg4MtSU0NvJqHYnHhWe7phBqOIpbNawC/RTHy4kiwFQGpTluxeMeHx/JQvrVWZmg3jKp6cwrUtABmOoCbp
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MNvGxXH70pUk2rUMUm7OX5VYVn/vSKKSqC8ibxkcQ+c=;
+        b=LkgTRMtFHTuflen9VfDx0gPUZ9vaone1bh8mAUpu1gCsvBMvO7vynQe5RiwSNx4uL4
+         Y/+KW7FeLOehpsAxoQ7jetQPVmJe9YkEJgIYpzthLIkEkmuraEsGm31hy+g/Tp7A+VtA
+         6T8GMFygIOGfB47pjBC9E3AU6eGuwd9bJFQAy68qFT+bjSfT8OSK5ko2y0MW8VlTCXQB
+         vyBrc0oZcMTXVQUFZrtNlEAi69UaIPvrRuyspeWQs4MBPerj05vKyomXYM2z5MwkOVVE
+         gTse/ka6xx3uoQk9O6R6ATUtwG7fad5SvTSvFV68xtLUZ+WK98eUtitPeg0Cib6cTmAC
+         JI0w==
+X-Gm-Message-State: AOAM531/5eBfGFBw4+M5mS9nbkTzVs0wB4QmCQc0KAZBs2NgR58ymepJ
+        It5tidZ9VAPV5uvINJ/Y5cI=
+X-Google-Smtp-Source: ABdhPJxbvrW+K08SVhBUxVXXcUph4FjFiKVCfMGxgL5mBKoSOvhTiXC3EzL18F1ArNzKTIDwUMUidQ==
+X-Received: by 2002:a63:3d7:: with SMTP id 206mr16076823pgd.45.1589826657018;
+        Mon, 18 May 2020 11:30:57 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id gt10sm204901pjb.30.2020.05.18.11.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2020 11:30:56 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 3B5A8404B0; Mon, 18 May 2020 18:30:55 +0000 (UTC)
+Date:   Mon, 18 May 2020 18:30:55 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Kitt <steve@sk2.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: const-ify ngroups_max
+Message-ID: <20200518183055.GN11244@42.do-not-panic.com>
+References: <20200518155727.10514-1-steve@sk2.org>
+ <202005180908.C016C44D2@keescook>
+ <20200518172509.GM11244@42.do-not-panic.com>
+ <202005181117.BB74974@keescook>
 MIME-Version: 1.0
-X-Received: by 2002:a02:77c7:: with SMTP id g190mr16476344jac.14.1589826198161;
- Mon, 18 May 2020 11:23:18 -0700 (PDT)
-Date:   Mon, 18 May 2020 11:23:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cbcdae05a5f041db@google.com>
-Subject: INFO: trying to register non-static key in clear_inode
-From:   syzbot <syzbot+78cf4962d1cf5f23a0c9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202005181117.BB74974@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, May 18, 2020 at 11:17:47AM -0700, Kees Cook wrote:
+> On Mon, May 18, 2020 at 05:25:09PM +0000, Luis Chamberlain wrote:
+> > On Mon, May 18, 2020 at 09:08:22AM -0700, Kees Cook wrote:
+> > > On Mon, May 18, 2020 at 05:57:27PM +0200, Stephen Kitt wrote:
+> > > > ngroups_max is a read-only sysctl entry, reflecting NGROUPS_MAX. Make
+> > > > it const, in the same way as cap_last_cap.
+> > > > 
+> > > > Signed-off-by: Stephen Kitt <steve@sk2.org>
+> > > 
+> > > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > 
+> > Kees, since there is quite a bit of sysctl cleanup stuff going on and I
+> > have a fs sysctl kitchen cleanup, are you alright if I carry this in a
+> > tree and send this to Andrew once done? This would hopefully avoid
+> > merge conflicts between these patches.
+> > 
+> > I have to still re-spin my fs sysctl stuff, but will wait to do that
+> > once Xiaoming bases his series on linux-next.
+> 
+> Yeah, totally. I don't technically have a sysctl tree (I've always just
+> had akpm take stuff), so go for it. I'm just doing reviews. :)
 
-syzbot found the following crash on:
+Oh, I don't want a tree either, it was just that I can imagine these
+series can easily create conflcits, so I wanted to avoid that before
+passing them on to Andrew.
 
-HEAD commit:    5a9ffb95 Merge tag '5.7-rc5-smb3-fixes' of git://git.samba..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=175e90d6100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c14212794ed9ad24
-dashboard link: https://syzkaller.appspot.com/bug?extid=78cf4962d1cf5f23a0c9
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+78cf4962d1cf5f23a0c9@syzkaller.appspotmail.com
-
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 1 PID: 235 Comm: kworker/u4:5 Not tainted 5.7.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: krdsd rds_tcp_accept_worker
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- assign_lock_key kernel/locking/lockdep.c:913 [inline]
- register_lock_class+0x1664/0x1760 kernel/locking/lockdep.c:1225
- __lock_acquire+0x104/0x4c50 kernel/locking/lockdep.c:4234
- lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4934
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
- _raw_spin_lock_irq+0x5b/0x80 kernel/locking/spinlock.c:167
- spin_lock_irq include/linux/spinlock.h:378 [inline]
- clear_inode+0x1b/0x1e0 fs/inode.c:529
- evict+0x4ee/0x650 fs/inode.c:579
- iput_final fs/inode.c:1572 [inline]
- iput+0x536/0x8c0 fs/inode.c:1598
- __sock_release+0x20c/0x280 net/socket.c:617
- rds_tcp_accept_one+0x582/0xb70 net/rds/tcp_listen.c:251
- rds_tcp_accept_worker+0x50/0x80 net/rds/tcp.c:525
- process_one_work+0x965/0x16a0 kernel/workqueue.c:2268
- worker_thread+0x96/0xe20 kernel/workqueue.c:2414
- kthread+0x388/0x470 kernel/kthread.c:268
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  Luis
