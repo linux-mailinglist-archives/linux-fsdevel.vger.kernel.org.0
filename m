@@ -2,131 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF161D7954
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 15:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C64331D7B43
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 16:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbgERNIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 09:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbgERNIy (ORCPT
+        id S1727803AbgEROal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 10:30:41 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42914 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727005AbgEROak (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 09:08:54 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C844C061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 06:08:53 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id j21so4072697ejy.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 06:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uJYJ4o7t1pg9R2gIPcN4zzbpq0Q24iptjTl2i6ziRkM=;
-        b=AMylTRptUKbeiRIYDdGQ4mTFyABaC5QVTJ2uTNrhVhLDVCmaX/DMIPuOfXkWLhBLgN
-         V4wRgMgzWhTbcybXWmekeK+bElZSG/J9+dyyuMrXu5eHdsv94g0LCBGRXlsvW53h7a6L
-         2/YqIVc9ksdwE3EDqEnpMq6h2cFXh1HXpzmvg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uJYJ4o7t1pg9R2gIPcN4zzbpq0Q24iptjTl2i6ziRkM=;
-        b=LKf3kJo1/7X1wMJqcUq21v5J+HDhn/PqprHQQ0SeYszjXHGxnEx49bHaB37EHyFDTd
-         QegXj0XGaYIn5Pv6dOZON3EF6wbXqrcvE9lIxYIhs/FD175uJPIrojuwidNFzKPNA8at
-         vY8wZB2gYlWguyUsYouONL2phmXCbp7DCi3OOOe8LDcjYcO8Sdwf3+/82qYrn8oIwXkB
-         LEEXNLTA4IkAHvOKJS811pgxBCRXscsy1fJPSzX+Csxd9jl46ayaR3Vi/ok29qxDXkv3
-         C0t1GU1j/V/K3KDrNX+rJjs/QzVAOel74ycdcG3nGwZ0VfBcmdQZivazIC+UAMPsqJP+
-         cOYw==
-X-Gm-Message-State: AOAM531zWzrktqWkzxFNYW2M6b0oC2CPhC2trUGEwIChDVdT/eiNk3h2
-        suDOoa7+K2L+PBVNKvhMfkE+rvqOR0oL27SWcufTLw==
-X-Google-Smtp-Source: ABdhPJwlrzrmLdxmiju0e8yeti5vPEFsTaYPyacAxvEip/Bti0tJLAhOAKpb1VlbKd3tATjfXRjGGVwoJupSlVlLQSI=
-X-Received: by 2002:a17:906:3e0d:: with SMTP id k13mr14196843eji.145.1589807331883;
- Mon, 18 May 2020 06:08:51 -0700 (PDT)
+        Mon, 18 May 2020 10:30:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589812239;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/qLGWwr7pu6uwkkCaEo2q9GcnoY6Eg3hYnb4VN3qBPU=;
+        b=EAX+Ye5r4M/iQO4Igog1cqP0euM1OqUQcVHXnQ7PFtkqcLy+42QwxxdbLCut5vs8Pm+bPG
+        bOJ+nzlgK9ea9WKCQWFnYHpI8bD/wZ3H6XbLfTgiYuvPsTNVwoPbz4zWhH3405xw7T7KxU
+        0iwVAfN5N3j/H4rvfYP31AV6lXncNgs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-201-fSgEJzz0PV2LPqGaVrE7Gw-1; Mon, 18 May 2020 10:30:38 -0400
+X-MC-Unique: fSgEJzz0PV2LPqGaVrE7Gw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2166B80B71F;
+        Mon, 18 May 2020 14:30:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-95.rdu2.redhat.com [10.10.112.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 57E311001925;
+        Mon, 18 May 2020 14:30:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKgNAkioH1z-pVimHziWP=ZtyBgCOwoC7ekWGFwzaZ1FPYg-tA@mail.gmail.com>
+References: <CAKgNAkioH1z-pVimHziWP=ZtyBgCOwoC7ekWGFwzaZ1FPYg-tA@mail.gmail.com>
+To:     mtk.manpages@gmail.com
+Cc:     dhowells@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Petr Vorel <pvorel@suse.cz>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: Setting mount propagation type in new mount API
 MIME-Version: 1.0
-References: <846ae13f-acd9-9791-3f1b-855e4945012a@9livesdata.com>
-In-Reply-To: <846ae13f-acd9-9791-3f1b-855e4945012a@9livesdata.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 18 May 2020 15:08:40 +0200
-Message-ID: <CAJfpegs+auq0TQ4SaFiLb7w9E+ksWHCzgBoOhCCFGF6R9DMFdA@mail.gmail.com>
-Subject: Re: fuse_notify_inval_inode() may be ineffective when getattr request
- is in progress
-To:     Krzysztof Rusek <rusek@9livesdata.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000047764505a5ebdd89"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <909695.1589812234.1@warthog.procyon.org.uk>
+Date:   Mon, 18 May 2020 15:30:34 +0100
+Message-ID: <909768.1589812234@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---00000000000047764505a5ebdd89
-Content-Type: text/plain; charset="UTF-8"
+Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
 
-On Mon, May 4, 2020 at 1:00 PM Krzysztof Rusek <rusek@9livesdata.com> wrote:
->
-> Hello,
->
-> I'm working on a user-space file system implementation utilizing fuse
-> kernel module (and libfuse user-space library). This file system
-> implementation provides a custom ioctl operation that uses
-> fuse_lowlevel_notify_inval_inode() function (which translates to
-> fuse_notify_inval_inode() in kernel) to notify the kernel that the file
-> was changed by the ioctl. However, under certain circumstances,
-> fuse_notify_inval_inode() call is ineffective, resulting in incorrect
-> file attributes being cached by the kernel. The problem occurs when
-> ioctl() is executed in parallel with getattr().
->
-> I noticed this problem on RedHat 7.7 (3.10.0-1062.el7.x86_64), but I
-> believe mainline kernel is affected as well.
->
-> I think there is a bug in the way fuse_notify_inval_inode() invalidates
-> file attributes. If getattr() started before fuse_notify_inval_inode()
-> was called, then the attributes returned by user-space process may be
-> out of date, and should not be cached. But fuse_notify_inval_inode()
-> only clears attribute validity time, which does not prevent getattr()
-> result from being cached.
->
-> More precisely, this bug occurs in the following scenario:
->
-> 1. kernel starts handling ioctl
-> 2. file system process receives ioctl request
-> 3. kernel starts handling getattr
-> 4. file system process receives getattr request
-> 5. file system process executes getattr
-> 6. file system process executes ioctl, changing file state
-> 7. file system process invokes fuse_lowlevel_notify_inval_inode(), which
-> invalidates file attributes in kernel
-> 8. file system process sends ioctl reply, ioctl handling ends
-> 9. file system process sends getattr reply, attributes are incorrectly
-> cached in the kernel
->
-> (Note that this scenario assumes that file system implementation is
-> multi-threaded, therefore allowing ioctl() and getattr() to be handled
-> in parallel.)
+> I've been looking at the new mount API (fsopen(), fsconfig(),
+> fsmount(), move_mount(), etc.) and among the details that remain
+> mysterious to me is this: how does one set the propagation type
+> (private/shared/slave/unbindable) of a new mount and change the
+> propagation type of an existing mount?
 
-Can you please try the attached patch?
+Christian said he was going to have a go at writing mount_setattr().  It's not
+trivial as it has to be able to handle AT_RECURSIVE.
 
-Thanks,
-Miklos
+David
 
---00000000000047764505a5ebdd89
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="fuse-update-attr_version-counter-on-fuse_notify_inval_inode.patch"
-Content-Disposition: attachment; 
-	filename="fuse-update-attr_version-counter-on-fuse_notify_inval_inode.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kaci7jlk0>
-X-Attachment-Id: f_kaci7jlk0
-
-LS0tCiBmcy9mdXNlL2lub2RlLmMgfCAgICA3ICsrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA3IGlu
-c2VydGlvbnMoKykKCi0tLSBhL2ZzL2Z1c2UvaW5vZGUuYworKysgYi9mcy9mdXNlL2lub2RlLmMK
-QEAgLTMyMSw2ICszMjEsOCBAQCBzdHJ1Y3QgaW5vZGUgKmZ1c2VfaWdldChzdHJ1Y3Qgc3VwZXJf
-YmxvCiBpbnQgZnVzZV9yZXZlcnNlX2ludmFsX2lub2RlKHN0cnVjdCBzdXBlcl9ibG9jayAqc2Is
-IHU2NCBub2RlaWQsCiAJCQkgICAgIGxvZmZfdCBvZmZzZXQsIGxvZmZfdCBsZW4pCiB7CisJc3Ry
-dWN0IGZ1c2VfY29ubiAqZmMgPSBnZXRfZnVzZV9jb25uX3N1cGVyKHNiKTsKKwlzdHJ1Y3QgZnVz
-ZV9pbm9kZSAqZmk7CiAJc3RydWN0IGlub2RlICppbm9kZTsKIAlwZ29mZl90IHBnX3N0YXJ0Owog
-CXBnb2ZmX3QgcGdfZW5kOwpAQCAtMzI5LDYgKzMzMSwxMSBAQCBpbnQgZnVzZV9yZXZlcnNlX2lu
-dmFsX2lub2RlKHN0cnVjdCBzdXBlCiAJaWYgKCFpbm9kZSkKIAkJcmV0dXJuIC1FTk9FTlQ7CiAK
-KwlmaSA9IGdldF9mdXNlX2lub2RlKGlub2RlKTsKKwlzcGluX2xvY2soJmZpLT5sb2NrKTsKKwlm
-aS0+YXR0cl92ZXJzaW9uID0gYXRvbWljNjRfaW5jX3JldHVybigmZmMtPmF0dHJfdmVyc2lvbik7
-CisJc3Bpbl91bmxvY2soJmZpLT5sb2NrKTsKKwogCWZ1c2VfaW52YWxpZGF0ZV9hdHRyKGlub2Rl
-KTsKIAlmb3JnZXRfYWxsX2NhY2hlZF9hY2xzKGlub2RlKTsKIAlpZiAob2Zmc2V0ID49IDApIHsK
---00000000000047764505a5ebdd89--
