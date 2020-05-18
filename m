@@ -2,123 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8630A1D85C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D10D1D8629
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387699AbgERSU7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 14:20:59 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31604 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729774AbgERSU6 (ORCPT
+        id S1732795AbgERSXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 14:23:22 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:56747 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732115AbgERSXT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 14:20:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589826057;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bgUgYOhXHVrOhAbBYxlnYyhMzdekwGrXn9fI5GzJacU=;
-        b=LHpMJHvTqR4bS7BOLhElvkKPeYOYcOnKdUDWTIN1DiiFEuBj1Wfpg5VAxD8lGTo7Xqpq6m
-        fzJDo8yH9BGRHSZPsnBWeWIc47ShwX3Uy5323Khj9iu9hDqS3kxwPZvxz9cZKg/557JR6C
-        Mcl3BWeu/IUouc77fUatFePTVcQ61I0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-266-kVRrudnWNEOZ64966nyy_Q-1; Mon, 18 May 2020 14:20:52 -0400
-X-MC-Unique: kVRrudnWNEOZ64966nyy_Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 428731005510;
-        Mon, 18 May 2020 18:20:48 +0000 (UTC)
-Received: from ovpn-115-234.rdu2.redhat.com (ovpn-115-234.rdu2.redhat.com [10.10.115.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AF23398;
-        Mon, 18 May 2020 18:20:43 +0000 (UTC)
-Message-ID: <5260142047d0339e00d4a74865c2f0b7511c89f6.camel@redhat.com>
-Subject: Re: [PATCH 10/29] c6x: use asm-generic/cacheflush.h
-From:   Mark Salter <msalter@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Roman Zippel <zippel@linux-m68k.org>
-Cc:     linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Michal Simek <monstr@monstr.eu>, Jessica Yu <jeyu@kernel.org>,
-        linux-ia64@vger.kernel.org, linux-c6x-dev@linux-c6x.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        x86@kernel.org, linux-um@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mm@kvack.org, linux-m68k@lists.linux-m68k.org,
-        openrisc@lists.librecores.org, linux-alpha@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Mon, 18 May 2020 14:20:42 -0400
-In-Reply-To: <20200515143646.3857579-11-hch@lst.de>
-References: <20200515143646.3857579-1-hch@lst.de>
-         <20200515143646.3857579-11-hch@lst.de>
-Organization: Red Hat, Inc
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        Mon, 18 May 2020 14:23:19 -0400
+Received: by mail-il1-f200.google.com with SMTP id v87so10600905ill.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 11:23:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5GDXvHftE40qhmbLit/31FtiAnQnj7YGrZQtgyNVNzo=;
+        b=hR45l0c89koZZuTIxiEMm3+lO0RqdHMGVeommZvRJrB09jsam51aaBYDKrcDBPk1dn
+         NDyWiS+UD1EBUhImBSjQwL0JetCxn59uujsJ4kXt4GIMFZIePEZOVNgvHsTuQWwO4uOn
+         aZZLzb48Oue5/56/cPo7DNO+GxTZkZHuhfJcSNetZL2uebzNaVbJlGV8E9GtbYYIcP2F
+         GOrenZicdCZpgpniXal2jiZqkgi6Y2gEpLMOxyMLwIUg3YuUto05LB8+1TiJLr/bLk38
+         sB8wf0sy77XXSBYgf830ow9rFs7VYbOy8+VPy25F5CvfS5eus2nJRK+R45TFhP8Spxhe
+         Txfw==
+X-Gm-Message-State: AOAM532EZSjNB2YH3EvnKLk2I4Gx2fplDlWMpxsx4a1wHn2FFlBZfe0c
+        C6qVvDNPZcgWk1L9XOPHOqZcr7lLZ8HQPnUR85RQbPMyFe/j
+X-Google-Smtp-Source: ABdhPJz6jvTBhzuO2kUg4MtSU0NvJqHYnHhWe7phBqOIpbNawC/RTHy4kiwFQGpTluxeMeHx/JQvrVWZmg3jKp6cwrUtABmOoCbp
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Received: by 2002:a02:77c7:: with SMTP id g190mr16476344jac.14.1589826198161;
+ Mon, 18 May 2020 11:23:18 -0700 (PDT)
+Date:   Mon, 18 May 2020 11:23:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cbcdae05a5f041db@google.com>
+Subject: INFO: trying to register non-static key in clear_inode
+From:   syzbot <syzbot+78cf4962d1cf5f23a0c9@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-05-15 at 16:36 +0200, Christoph Hellwig wrote:
-> C6x needs almost no cache flushing routines of its own.  Rely on
-> asm-generic/cacheflush.h for the defaults.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/c6x/include/asm/cacheflush.h | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/arch/c6x/include/asm/cacheflush.h b/arch/c6x/include/asm/cacheflush.h
-> index 4540b40475e6c..10922d528de6d 100644
-> --- a/arch/c6x/include/asm/cacheflush.h
-> +++ b/arch/c6x/include/asm/cacheflush.h
-> @@ -16,21 +16,6 @@
->  #include <asm/page.h>
->  #include <asm/string.h>
->  
-> -/*
-> - * virtually-indexed cache management (our cache is physically indexed)
-> - */
-> -#define flush_cache_all()			do {} while (0)
-> -#define flush_cache_mm(mm)			do {} while (0)
-> -#define flush_cache_dup_mm(mm)			do {} while (0)
-> -#define flush_cache_range(mm, start, end)	do {} while (0)
-> -#define flush_cache_page(vma, vmaddr, pfn)	do {} while (0)
-> -#define flush_cache_vmap(start, end)		do {} while (0)
-> -#define flush_cache_vunmap(start, end)		do {} while (0)
-> -#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
-> -#define flush_dcache_page(page)			do {} while (0)
-> -#define flush_dcache_mmap_lock(mapping)		do {} while (0)
-> -#define flush_dcache_mmap_unlock(mapping)	do {} while (0)
-> -
->  /*
->   * physically-indexed cache management
->   */
-> @@ -49,14 +34,12 @@ do {								  \
->  			(unsigned long) page_address(page) + PAGE_SIZE)); \
->  } while (0)
->  
-> -
->  #define copy_to_user_page(vma, page, vaddr, dst, src, len) \
->  do {						     \
->  	memcpy(dst, src, len);			     \
->  	flush_icache_range((unsigned) (dst), (unsigned) (dst) + (len)); \
->  } while (0)
->  
-> -#define copy_from_user_page(vma, page, vaddr, dst, src, len) \
-> -	memcpy(dst, src, len)
-> +#include <asm-generic/cacheflush.h>
->  
->  #endif /* _ASM_C6X_CACHEFLUSH_H */
+Hello,
 
-Acked-by: Mark Salter <msalter@redhat.com>
+syzbot found the following crash on:
+
+HEAD commit:    5a9ffb95 Merge tag '5.7-rc5-smb3-fixes' of git://git.samba..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=175e90d6100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c14212794ed9ad24
+dashboard link: https://syzkaller.appspot.com/bug?extid=78cf4962d1cf5f23a0c9
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+78cf4962d1cf5f23a0c9@syzkaller.appspotmail.com
+
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 1 PID: 235 Comm: kworker/u4:5 Not tainted 5.7.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: krdsd rds_tcp_accept_worker
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ assign_lock_key kernel/locking/lockdep.c:913 [inline]
+ register_lock_class+0x1664/0x1760 kernel/locking/lockdep.c:1225
+ __lock_acquire+0x104/0x4c50 kernel/locking/lockdep.c:4234
+ lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4934
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+ _raw_spin_lock_irq+0x5b/0x80 kernel/locking/spinlock.c:167
+ spin_lock_irq include/linux/spinlock.h:378 [inline]
+ clear_inode+0x1b/0x1e0 fs/inode.c:529
+ evict+0x4ee/0x650 fs/inode.c:579
+ iput_final fs/inode.c:1572 [inline]
+ iput+0x536/0x8c0 fs/inode.c:1598
+ __sock_release+0x20c/0x280 net/socket.c:617
+ rds_tcp_accept_one+0x582/0xb70 net/rds/tcp_listen.c:251
+ rds_tcp_accept_worker+0x50/0x80 net/rds/tcp.c:525
+ process_one_work+0x965/0x16a0 kernel/workqueue.c:2268
+ worker_thread+0x96/0xe20 kernel/workqueue.c:2414
+ kthread+0x388/0x470 kernel/kthread.c:268
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
