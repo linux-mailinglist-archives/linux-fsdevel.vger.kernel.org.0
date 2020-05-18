@@ -2,118 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B22631D7CB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 17:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875B31D7CCC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 17:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbgERPVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 11:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37554 "EHLO
+        id S1728281AbgERP0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 11:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbgERPVM (ORCPT
+        with ESMTP id S1728079AbgERP0C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 11:21:12 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 184E7C05BD0A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 08:21:11 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id f23so4984917pgj.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 08:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=8eIa0Vhcalrg30hExhgbFyLNmHPU3sV6rgHITb5pZ5w=;
-        b=htaIZ7s8kHdd9JhXfpJr62T+PbcWV0P9HH48JxCHos2qCOwdAffTSsVfouROZN6Mcx
-         OsT1n9x1239rkbG6hdpojAEmxPN0Ini8eKc3MOs0rk/oWTZl1F9JjZbGrWGPiJf+w5zL
-         YtiyZ9HL2YUsIAekksROIFa5+16FSNv2M8/J8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=8eIa0Vhcalrg30hExhgbFyLNmHPU3sV6rgHITb5pZ5w=;
-        b=ma1Z21brnvLlN8t7Ag8dphpMJGxkF2G7qHhHIZYwaungv0G1OuHuFR54y1DdpCHMWs
-         9WokkjySByxhJ0tDmElL8NpoAGvg8iFtOyJILc9TRYa1zECsy7MtbCojrfUz8PkWmni+
-         eEnKzBNv7mqDfolysyqAUjfi90nMfUhoHspf0WJ1rI/0oecFpJ0KlIVWwojL4ft1M8Iw
-         IWWO8NZupSH3kTbt9Oszpq1xQ4lpBYf1HE/gWR1SdbKR0c1Hz00f6AGTslZVkxtNpK84
-         sXt6hoD1uY0kMnpPFO9CXdlMMj1QAR7NX6QO3tv7dfSrDUrxDEAXDBA4fvpCxWnKIU9q
-         SdhA==
-X-Gm-Message-State: AOAM5314XyJZpXJqbLisTeb8tGBqr2Lj/tvjyTEXox57xycV7DYf2Wkq
-        DdtEAJMiKzDdfw1WsAoxwqGcFA==
-X-Google-Smtp-Source: ABdhPJzV/8/H/dtCPYbOvT1/Nbv8m+JVx3a0WuH1CfwiIsZx/wce2vLAkKKd/khb6PmDQ5vsnT0fng==
-X-Received: by 2002:a63:1415:: with SMTP id u21mr15114423pgl.366.1589815270596;
-        Mon, 18 May 2020 08:21:10 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h7sm6207978pgg.17.2020.05.18.08.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 08:21:09 -0700 (PDT)
-Date:   Mon, 18 May 2020 08:21:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        ebiederm@xmission.com, jeyu@kernel.org, jmorris@namei.org,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, nayna@linux.ibm.com,
-        scott.branden@broadcom.com, dan.carpenter@oracle.com,
-        skhan@linuxfoundation.org, geert@linux-m68k.org,
-        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
-        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-Message-ID: <202005180820.46CEF3C2@keescook>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
- <20200513181736.GA24342@infradead.org>
- <20200515212933.GD11244@42.do-not-panic.com>
- <20200518062255.GB15641@infradead.org>
- <1589805462.5111.107.camel@linux.ibm.com>
+        Mon, 18 May 2020 11:26:02 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2547DC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 08:26:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5JgLj2+DCv1+0yfBDC+57Xxa+VbNaCmUQuN65CNtdGs=; b=JMphm1HFkx34iCMwxbaxGU6ONt
+        PKTFL0wcixP1KXZMFUWMjiN36Q75Ohiwq17R3+IYkAm8KUBIBCmcXb3rDtnDRouUUdrkEDA7iVrHw
+        4hQdNZL1lDz0qIyW7+DYDdG8dRBwDMbH+qcwGvqAZaz9R/WkLA2kBzcLh4UBGP3T6nrcl6PK9ACP2
+        Xys01wrdcxVHilBEJKsWr2Dcg0mkuYgCQF2R4hWA2DR1yg6HbDay4/6doT1cFsIgYQ4PoMeG4HBA5
+        3nng6OOy9XbauYvK/BWvzNaMJtS7IYLcio2u7QNPX9g4izcv4qmOtttmSJgVoaCLKSsn+0ACH+VXF
+        4Uglmmhg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jaheT-0005ZQ-KN; Mon, 18 May 2020 15:26:01 +0000
+Date:   Mon, 18 May 2020 08:26:01 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>
+Subject: Re: [fuse-devel] fuse: trying to steal weird page
+Message-ID: <20200518152601.GU16070@bombadil.infradead.org>
+References: <87a72qtaqk.fsf@vostro.rath.org>
+ <877dxut8q7.fsf@vostro.rath.org>
+ <20200503032613.GE29705@bombadil.infradead.org>
+ <87368hz9vm.fsf@vostro.rath.org>
+ <20200503102742.GF29705@bombadil.infradead.org>
+ <CAJfpegseoCE_mVGPR5Bt8S1WZ2bi2DnUb7QqgPm=okzx_wT31A@mail.gmail.com>
+ <20200518144853.GT16070@bombadil.infradead.org>
+ <CAJfpegtKQ85K2iJUvm-A+cTD1TKsa1AVTDnwbeky4hyf+SJfgQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1589805462.5111.107.camel@linux.ibm.com>
+In-Reply-To: <CAJfpegtKQ85K2iJUvm-A+cTD1TKsa1AVTDnwbeky4hyf+SJfgQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 08:37:42AM -0400, Mimi Zohar wrote:
-> Hi Christoph,
+On Mon, May 18, 2020 at 04:58:05PM +0200, Miklos Szeredi wrote:
+> On Mon, May 18, 2020 at 4:48 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Mon, May 18, 2020 at 02:45:02PM +0200, Miklos Szeredi wrote:
 > 
-> On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
-> > On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
-> > > On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
-> > > > Can you also move kernel_read_* out of fs.h?  That header gets pulled
-> > > > in just about everywhere and doesn't really need function not related
-> > > > to the general fs interface.
-> > > 
-> > > Sure, where should I dump these?
-> > 
-> > Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
-> > of the file comment explaining the point of the interface, which I
-> > still don't get :)
+> > > page_cache_pipe_buf_steal() calls remove_mapping() which calls
+> > > page_ref_unfreeze(page, 1).  That sets the refcount to 1, right?
+> > >
+> > > What am I missing?
+> >
+> > find_get_entry() calling page_cache_get_speculative().
+> >
+> > In a previous allocation, this page belonged to the page cache.  Then it
+> > was freed, but another thread is in the middle of a page cache lookup and
+> > has already loaded the pointer.  It is now delayed by a few clock ticks.
+> >
+> > Now the page is allocated to FUSE, which calls page_ref_unfreeze().
+> > And then the refcount gets bumped to 2 by page_cache_get_speculative().
+> > find_get_entry() calls xas_reload() and discovers this page is no longer
+> > at that index, so it calls put_page(), but in that narrow window, FUSE
+> > checks the refcount and finds it's not 1.
 > 
-> Instead of rolling your own method of having the kernel read a file,
-> which requires call specific security hooks, this interface provides a
-> single generic set of pre and post security hooks.  The
-> kernel_read_file_id enumeration permits the security hook to
-> differentiate between callers.
-> 
-> To comply with secure and trusted boot concepts, a file cannot be
-> accessible to the caller until after it has been measured and/or the
-> integrity (hash/signature) appraised.
-> 
-> In some cases, the file was previously read twice, first to measure
-> and/or appraise the file and then read again into a buffer for
-> use.  This interface reads the file into a buffer once, calls the
-> generic post security hook, before providing the buffer to the caller.
->  (Note using firmware pre-allocated memory might be an issue.)
-> 
-> Partial reading firmware will result in needing to pre-read the entire
-> file, most likely on the security pre hook.
+> What if that page_cache_get_speculative() happens just before
+> page_ref_unfreeze()?  The speculative reference would be lost and on
+> put_page() the page would be freed, even though fuse is still holding
+> the pointer.
 
-Well described! :)
+static inline void page_ref_unfreeze(struct page *page, int count)
+{
+        VM_BUG_ON_PAGE(page_count(page) != 0, page);
+        VM_BUG_ON(count == 0);
 
--- 
-Kees Cook
+        atomic_set_release(&page->_refcount, count);
+
+static inline int __page_cache_add_speculative(struct page *page, int count)
+{
+        if (unlikely(!page_ref_add_unless(page, count, 0))) {
+                return 0;
+
