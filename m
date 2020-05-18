@@ -2,115 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 664671D7F1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 18:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A67BE1D7F2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 18:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbgERQtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 12:49:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:44270 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgERQtf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 12:49:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD5D8106F;
-        Mon, 18 May 2020 09:49:34 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 683E73F305;
-        Mon, 18 May 2020 09:49:32 -0700 (PDT)
-Date:   Mon, 18 May 2020 17:49:30 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200518164929.dja4ry6iiq3jny72@e107158-lin.cambridge.arm.com>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
- <01c318b6-a109-2b8a-0ac3-a25b3c61e45a@arm.com>
+        id S1728486AbgERQuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 12:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbgERQup (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 May 2020 12:50:45 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7874C061A0C;
+        Mon, 18 May 2020 09:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kZ1kt/vvSWLV22qkWN7aKlxZz7wcX+WgFj2oUslFSoQ=; b=j3ozo5YHhZD8k6To6Kx6JYBtFf
+        3ro7WFhgIcFxk9sM8YyXJMP1ljUysW3CEYKqKWLP2qaP1VCDz6hG1+RO2o48RMHX57B2pgMWsTRHm
+        6qBznsPTqj9W41MCa36Vj34K2scnpByyAH9hk4n4QgEXgqPsfPMqKctkdvqZ7CGVT9Kiu7m2eG0Xg
+        Z2S552l1JSMN6/ihF5mjDfESDw9j42b5Dk/ljZbE4GQkDocvWkFANRe792+jf+a62b7+a2MOwkY6h
+        9rT/3ag8Svxuei5DS+/8LTm1jF4aabP4NRraZDwyB4/0lNAIu6kjG/Hr6ujWcERiWB5IZCd5yGJ4J
+        yiJHceqg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jaiyS-0000NI-EH; Mon, 18 May 2020 16:50:44 +0000
+Date:   Mon, 18 May 2020 09:50:44 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Satya Tangirala <satyat@google.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v13 00/12] Inline Encryption Support
+Message-ID: <20200518165044.GA23230@infradead.org>
+References: <20200514003727.69001-1-satyat@google.com>
+ <20200514051053.GA14829@sol.localdomain>
+ <8fa1aafe-1725-e586-ede3-a3273e674470@kernel.dk>
+ <20200515074127.GA13926@infradead.org>
+ <20200515122540.GA143740@google.com>
+ <20200515144224.GA12040@infradead.org>
+ <20200515170059.GA1009@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01c318b6-a109-2b8a-0ac3-a25b3c61e45a@arm.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20200515170059.GA1009@sol.localdomain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/18/20 10:31, Dietmar Eggemann wrote:
-> On 11/05/2020 17:40, Qais Yousef wrote:
+On Fri, May 15, 2020 at 10:00:59AM -0700, Eric Biggers wrote:
+> The fallback is actually really useful.  First, for testing: it allows all the
+> filesystem code that uses inline crypto to be tested using gce-xfstests and
+> kvm-xfstests, so that it's covered by the usual ext4 and f2fs regression testing
+> and it's much easier to develop patches for.  It also allowed us to enable the
+> inlinecrypt mount option in Cuttlefish, which is the virtual Android device used
+> to test the Android common kernels.  So, it gets the kernel test platform as
+> similar to a real Android device as possible.
 > 
-> [..]
-> 
-> > @@ -790,6 +790,26 @@ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
-> >  /* Max allowed maximum utilization */
-> >  unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
-> >  
-> > +/*
-> > + * By default RT tasks run at the maximum performance point/capacity of the
-> > + * system. Uclamp enforces this by always setting UCLAMP_MIN of RT tasks to
-> > + * SCHED_CAPACITY_SCALE.
-> > + *
-> > + * This knob allows admins to change the default behavior when uclamp is being
-> > + * used. In battery powered devices, particularly, running at the maximum
-> > + * capacity and frequency will increase energy consumption and shorten the
-> > + * battery life.
-> > + *
-> > + * This knob only affects RT tasks that their uclamp_se->user_defined == false.
-> 
-> Nit pick: Isn't there a verb missing in this sentence?
-> 
-> [...]
-> 
-> > @@ -1114,12 +1161,13 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  				loff_t *ppos)
-> >  {
-> >  	bool update_root_tg = false;
-> > -	int old_min, old_max;
-> > +	int old_min, old_max, old_min_rt;
-> 
-> Nit pick: Order local variable declarations according to length.
-> 
-> [...]
-> 
-> > @@ -1128,7 +1176,9 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
-> >  		goto done;
-> >  
-> >  	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
-> > -	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
-> > +	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE		||
-> 
-> Nit pick: This extra space looks weird to me.
-> 
-> [...]
-> 
-> Apart from that, LGTM
-> 
-> For both patches of this v5:
-> 
-> Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Ideally we'd implement virtualized inline encryption as you suggested.  But
+> these platforms use a mix of VMM's (QEMU, GCE, and crosvm) and storage types
+> (virtio-blk, virtio-scsi, and maybe others; none of these even have an inline
+> encryption standard defined yet).  So it's not currently feasible.
 
-Thanks Dietmar and Patrick.
+Not that you don't need to implement it in the hypervisor.  You can
+also trivially wire up for things like null_blk.
 
-Peter, let me know if you'd like me to address the nitpicks or you're okay with
-this as-is.
+> Second, it creates a clean design where users can just use blk-crypto, and not
+> have to implement a second encryption implementation.
 
-Thanks!
-
---
-Qais Yousef
+And I very much disagree about that being a clean implementation.  It is
+fine if the user doesn't care, but you should catch this before hitting
+the block stack and do the encryption there without hardware blk-crypt
+support.
