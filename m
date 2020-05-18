@@ -2,101 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2901D89D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 23:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233581D8B88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 01:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgERVOP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 17:14:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbgERVOO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 17:14:14 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3858EC05BD09
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 14:14:14 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id nu7so412803pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 14:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iOTqBFjbUc15JVKUZQ3fGM2L6h0BsYo4USOrm5zOjvU=;
-        b=QyJ2yabWgeLSe3uhlxGEGCdqXI7GGUQMHdHhZaMMgw/WkN7Ij2ODRj0KXr2ScfSqjB
-         jy/FL1DUlvhZhUope/ZuuMXh4KneVfXf2MmI3mlhTREqRQ+7xz8aAy4xZmKt0svsG2Sa
-         +2I9yrT7Ek3YJ30F1VDFRrtaLFmPpqUusgWm4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iOTqBFjbUc15JVKUZQ3fGM2L6h0BsYo4USOrm5zOjvU=;
-        b=OfckGDN7DrZbhl+/BefTc7rVHGvJR4VsMJtpcmOQVH8qVR3R6z+5C0AkWU6z+v1XJq
-         5MndaNy4Rc2v2WXu2N/T+KpNClI844VMUHyhC6jqWOZgXiNvp/d+3JKr4T1cHhUv7Cjh
-         /cqEh/fFPSfPhjE3sHSQ/yB9eZ0fhUsaHy9Rkq5y1HjIBWdeLgLxP4AqNZqirotFrnqP
-         g9NN/8NwLNDahSAH8zIf2a61hk5KrXzqUOGO1E+G0LmeHgUmPuXCAsER4/mJ+InUoPj9
-         tsZrKsvsWBaTvMcT/ZvioJiMnfbVm/10+DJgpE//Zztmk6tG0czAoK5ObGctq4aiqOD8
-         RNig==
-X-Gm-Message-State: AOAM533DY0GHiwNsS/YEPdLwyW/RtkgcYAPbPUqHfUYk2pyXTr7AVxvx
-        VFeegV7EN5RLiE0zC7sQ7GbFLA==
-X-Google-Smtp-Source: ABdhPJyhODLbzmuFhF6JGyvviQduFf54TxfdMAQHhQKoZO4RfjPkqc/t/GeGJicV4WkxDddupDqT0w==
-X-Received: by 2002:a17:90a:8c83:: with SMTP id b3mr1395133pjo.141.1589836453742;
-        Mon, 18 May 2020 14:14:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k4sm8280834pgg.88.2020.05.18.14.14.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 14:14:12 -0700 (PDT)
-Date:   Mon, 18 May 2020 14:14:11 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Kitt <steve@sk2.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: const-ify ngroups_max
-Message-ID: <202005181413.A9A985574@keescook>
-References: <20200518155727.10514-1-steve@sk2.org>
- <202005180908.C016C44D2@keescook>
- <20200518172509.GM11244@42.do-not-panic.com>
- <202005181117.BB74974@keescook>
- <20200518183055.GN11244@42.do-not-panic.com>
+        id S1727006AbgERXPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 19:15:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44625 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgERXPu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 May 2020 19:15:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49QvyC16t4z9sPF;
+        Tue, 19 May 2020 09:15:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1589843748;
+        bh=Yr6CwYHiLwBFpM58o+pP6uQFb+BzpavnPqWxARGMspk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=i0lP0ArHYOopLpo/ulIzUZV0Eyz56WR+lHqqzeLmXw05m3Anvhox79Cnjg1087o0C
+         CeQco0K7wIx3tKUZpQ+5mCAi3CTznXI7hbu6PAvJefS/WXRec8ErSCqWkh0pbpKFvw
+         XB4rMIC8qFaMVqw7vBbMfgxNkL9ltRe9KquDO4B/lNn1vwwOCl3wwfApCkMSaryqt0
+         l/De8Mle/0FVN0535lJKQJJiBMsktAuui4OE0DB6zHW4auR02VsV7EYGolatGHNIPW
+         8Xqz0oiTYAWbKoh5quL/2vflhUHAeRv10Lp3zOwEf51sRCkW1pD6eioX66RanNHZES
+         bqhChVdIPtjOQ==
+Date:   Tue, 19 May 2020 09:15:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org
+Subject: Re: mmotm 2020-05-15-16-29 uploaded
+Message-ID: <20200519091546.3a46bc9a@canb.auug.org.au>
+In-Reply-To: <20200516155358.3683f11e@canb.auug.org.au>
+References: <20200513175005.1f4839360c18c0238df292d1@linux-foundation.org>
+        <20200515233018.ScdtkUJMA%akpm@linux-foundation.org>
+        <20200516155358.3683f11e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200518183055.GN11244@42.do-not-panic.com>
+Content-Type: multipart/signed; boundary="Sig_/NX+9Qji75+ZpECdglkZfFOu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 06:30:55PM +0000, Luis Chamberlain wrote:
-> On Mon, May 18, 2020 at 11:17:47AM -0700, Kees Cook wrote:
-> > On Mon, May 18, 2020 at 05:25:09PM +0000, Luis Chamberlain wrote:
-> > > On Mon, May 18, 2020 at 09:08:22AM -0700, Kees Cook wrote:
-> > > > On Mon, May 18, 2020 at 05:57:27PM +0200, Stephen Kitt wrote:
-> > > > > ngroups_max is a read-only sysctl entry, reflecting NGROUPS_MAX. Make
-> > > > > it const, in the same way as cap_last_cap.
-> > > > > 
-> > > > > Signed-off-by: Stephen Kitt <steve@sk2.org>
-> > > > 
-> > > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > 
-> > > Kees, since there is quite a bit of sysctl cleanup stuff going on and I
-> > > have a fs sysctl kitchen cleanup, are you alright if I carry this in a
-> > > tree and send this to Andrew once done? This would hopefully avoid
-> > > merge conflicts between these patches.
-> > > 
-> > > I have to still re-spin my fs sysctl stuff, but will wait to do that
-> > > once Xiaoming bases his series on linux-next.
-> > 
-> > Yeah, totally. I don't technically have a sysctl tree (I've always just
-> > had akpm take stuff), so go for it. I'm just doing reviews. :)
-> 
-> Oh, I don't want a tree either, it was just that I can imagine these
-> series can easily create conflcits, so I wanted to avoid that before
-> passing them on to Andrew.
+--Sig_/NX+9Qji75+ZpECdglkZfFOu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yup, that's cool. I happily defer to you on these cleanups! :)
+Hi Andrew,
 
--- 
-Kees Cook
+On Sat, 16 May 2020 15:53:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Fri, 15 May 2020 16:30:18 -0700 Andrew Morton <akpm@linux-foundation.o=
+rg> wrote:
+> >
+> > * mm-introduce-external-memory-hinting-api.patch =20
+>=20
+> The above patch should have
+>=20
+> #define __NR_process_madvise 443
+>=20
+> not 442, in arch/arm64/include/asm/unistd32.h
+>=20
+> and
+>=20
+>  442    common  fsinfo                          sys_fsinfo
+> +443    common  process_madvise                 sys_process_madvise
+>=20
+> in arch/microblaze/kernel/syscalls/syscall.tbl
+>=20
+> > * mm-introduce-external-memory-hinting-api-fix.patch =20
+>=20
+> The above patch should have
+>=20
+> #define __NR_process_madvise 443
+>=20
+> not 442
+>=20
+> > * mm-support-vector-address-ranges-for-process_madvise-fix.patch =20
+>=20
+> The above patch should have
+>=20
+> #define __NR_process_madvise 443
+>=20
+> not 442 in arch/arm64/include/asm/unistd32.h
+
+I fixed those up in yesterday's linux-next.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NX+9Qji75+ZpECdglkZfFOu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7DFyIACgkQAVBC80lX
+0Gyv5wf/bFZWdRWdC4qRrizPtE6GYb9OWZSjQllEKYi+bG5mPwhKpdrYEmD7DIoj
+6am/5l1Apt0m2G81GvJIfDGr6jDAuNRYMEu5PqAInKtNKVH9ZaqJPbtaL0DxB0IV
+rW6QvgSs7Lyg8K4ne38w5rRCTnRhpE5EzgfSmYaoo1q2roVYtjBHPN7cYAGVSKjy
+jT9bUUGJnR8U0QvbiGSJzkKCsnBDmCgq9w4Sirin4VCiPVU8nQpOqSqQwBMZ2W4t
+htIFSsF/oBmRc+RLB33Ugy34q+p5GaI+HT7vRbcYH07Jf2IgSuwySMwn0TiwFLSt
+m3RyI3PIYidLBRo/WuPj14FpcVxMIg==
+=GhoY
+-----END PGP SIGNATURE-----
+
+--Sig_/NX+9Qji75+ZpECdglkZfFOu--
