@@ -2,121 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76BAB1D78C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 14:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE9C1D78E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 14:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbgERMix (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 08:38:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22500 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726739AbgERMiw (ORCPT
+        id S1727917AbgERMpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 08:45:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41300 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbgERMpP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 08:38:52 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04ICX7lY088693;
-        Mon, 18 May 2020 08:37:52 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31292e4yye-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 May 2020 08:37:51 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04ICYhbj094964;
-        Mon, 18 May 2020 08:37:51 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31292e4yx8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 May 2020 08:37:50 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04ICa50C017752;
-        Mon, 18 May 2020 12:37:48 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3127t5hnhx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 May 2020 12:37:48 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04ICbjrD24838244
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 May 2020 12:37:45 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BD284C059;
-        Mon, 18 May 2020 12:37:45 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9F7144C04E;
-        Mon, 18 May 2020 12:37:42 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.145.145])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 18 May 2020 12:37:42 +0000 (GMT)
-Message-ID: <1589805462.5111.107.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
-        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        nayna@linux.ibm.com, scott.branden@broadcom.com,
-        dan.carpenter@oracle.com, skhan@linuxfoundation.org,
-        geert@linux-m68k.org, tglx@linutronix.de, bauerman@linux.ibm.com,
-        dhowells@redhat.com, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 18 May 2020 08:37:42 -0400
-In-Reply-To: <20200518062255.GB15641@infradead.org>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
-         <20200513181736.GA24342@infradead.org>
-         <20200515212933.GD11244@42.do-not-panic.com>
-         <20200518062255.GB15641@infradead.org>
+        Mon, 18 May 2020 08:45:15 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADD3C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 05:45:15 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id e10so8351119edq.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 05:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rPrxUG2VzBC+d21iH+Uuo13Up0+FO8AW/wuv49py0mM=;
+        b=OW/PsWN6Hoegb00/LQ25omfqqozJIUQRjqg07PKl4CMUSwLli48y5IpA5+eah0tB8n
+         h3Nsrci462IEhg2uDMGdoBRmDyYVSJi6fmZnEGqkSulY3YDlUST1tyLFaU2DilgVhnlS
+         Walu9a5WIvRHHQdStNb7uZsOPs0bC19r5fMh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rPrxUG2VzBC+d21iH+Uuo13Up0+FO8AW/wuv49py0mM=;
+        b=MGmHNcucKp0+l6Gh7Iu5QpbxU7XQ2YCdkuFHAQYm5NvOeUw72GR8s60+sBkoF4p7HU
+         sG+Yl1MlAxST21mtarkp2k9+Y89NN1qpHFIR3+9bxedbv6PgBBEXr1KnxbFopYV1n8Xh
+         cf8Fp4Ty9cZ+aCnN9O0jfQRMkDW2KYFC9ndLas0VvUsYqrtpTPWHrs0Of4KQ2PlR3b1h
+         KNpEbj+6esbW1OE/995ZNTj/hZOZ8vPZn4Ai1XJKM+Qztxb7JNwd8CgO/9yksDrbas0h
+         WQQuzR2jn5at3tGXNgz+Ksj57y5qaVt6iD2z+RODbBv6ul9NBsdrRl/kr7zdn7OFhMX2
+         fKcw==
+X-Gm-Message-State: AOAM5306ZaQcPfruHkzdIF5h5oux7GSfGG4jlIblCUXwNrTWPl4ugHgq
+        FC5BEo/BAnDzhFJcQZxPloN5KDp/Wd1hSP7T2YqFUg==
+X-Google-Smtp-Source: ABdhPJxxkHRnK0QwvUUSI41SvwLvfgHTYQktHFViaMEDjF9HrsxR+il1tnZE0kfZJEv5vs8Q3zbQm2M7bzD68wUjds8=
+X-Received: by 2002:a05:6402:3076:: with SMTP id bs22mr4131739edb.161.1589805913768;
+ Mon, 18 May 2020 05:45:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <87a72qtaqk.fsf@vostro.rath.org> <877dxut8q7.fsf@vostro.rath.org>
+ <20200503032613.GE29705@bombadil.infradead.org> <87368hz9vm.fsf@vostro.rath.org>
+ <20200503102742.GF29705@bombadil.infradead.org>
+In-Reply-To: <20200503102742.GF29705@bombadil.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 18 May 2020 14:45:02 +0200
+Message-ID: <CAJfpegseoCE_mVGPR5Bt8S1WZ2bi2DnUb7QqgPm=okzx_wT31A@mail.gmail.com>
+Subject: Re: [fuse-devel] fuse: trying to steal weird page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-18_05:2020-05-15,2020-05-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 suspectscore=0 spamscore=0
- malwarescore=0 cotscore=-2147483648 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005180114
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Sun, May 3, 2020 at 12:27 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sun, May 03, 2020 at 09:43:41AM +0100, Nikolaus Rath wrote:
+> > Here's what I got:
+> >
+> > [  221.277260] page:ffffec4bbd639880 refcount:1 mapcount:0 mapping:0000000000000000 index:0xd9
+> > [  221.277265] flags: 0x17ffffc0000097(locked|waiters|referenced|uptodate|lru)
+> > [  221.277269] raw: 0017ffffc0000097 ffffec4bbd62f048 ffffec4bbd619308 0000000000000000
+> > [  221.277271] raw: 00000000000000d9 0000000000000000 00000001ffffffff ffff9aec11beb000
+> > [  221.277272] page dumped because: fuse: trying to steal weird page
+> > [  221.277273] page->mem_cgroup:ffff9aec11beb000
+>
+> Great!  Here's the condition:
+>
+>         if (page_mapcount(page) ||
+>             page->mapping != NULL ||
+>             page_count(page) != 1 ||
+>             (page->flags & PAGE_FLAGS_CHECK_AT_PREP &
+>              ~(1 << PG_locked |
+>                1 << PG_referenced |
+>                1 << PG_uptodate |
+>                1 << PG_lru |
+>                1 << PG_active |
+>                1 << PG_reclaim))) {
+>
+> mapcount is 0, mapping is NULL, refcount is 1, so that's all fine.
+> flags has 'waiters' set, which is not in the allowed list.  I don't
+> know the internals of FUSE, so I don't know why that is.
+>
+> Also, page_count() is unstable.  Unless there has been an RCU grace period
+> between when the page was freed and now, a speculative reference may exist
+> from the page cache.  So I would say this is a bad thing to check for.
 
-On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
-> On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
-> > On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
-> > > Can you also move kernel_read_* out of fs.h?  That header gets pulled
-> > > in just about everywhere and doesn't really need function not related
-> > > to the general fs interface.
-> > 
-> > Sure, where should I dump these?
-> 
-> Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
-> of the file comment explaining the point of the interface, which I
-> still don't get :)
+page_cache_pipe_buf_steal() calls remove_mapping() which calls
+page_ref_unfreeze(page, 1).  That sets the refcount to 1, right?
 
-Instead of rolling your own method of having the kernel read a file,
-which requires call specific security hooks, this interface provides a
-single generic set of pre and post security hooks.  The
-kernel_read_file_id enumeration permits the security hook to
-differentiate between callers.
+What am I missing?
 
-To comply with secure and trusted boot concepts, a file cannot be
-accessible to the caller until after it has been measured and/or the
-integrity (hash/signature) appraised.
-
-In some cases, the file was previously read twice, first to measure
-and/or appraise the file and then read again into a buffer for
-use.  This interface reads the file into a buffer once, calls the
-generic post security hook, before providing the buffer to the caller.
- (Note using firmware pre-allocated memory might be an issue.)
-
-Partial reading firmware will result in needing to pre-read the entire
-file, most likely on the security pre hook.
-
-Mimi
+Thanks,
+Miklos
