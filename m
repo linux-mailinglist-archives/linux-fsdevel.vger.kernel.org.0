@@ -2,122 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B46E1D73BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 11:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 210681D741F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 11:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbgERJRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 05:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
+        id S1726993AbgERJdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 05:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgERJRS (ORCPT
+        with ESMTP id S1726274AbgERJdA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 05:17:18 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 411ADC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:17:17 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id be9so3695594edb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:17:17 -0700 (PDT)
+        Mon, 18 May 2020 05:33:00 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B0CC061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:32:59 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id i16so3441244edv.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 02:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8xlz8GsaEbqA7+Q0OgDVIVF7fZyrH+eyib1SwOfcFkk=;
-        b=GwLWHDJpAgtpfvRU2Fl0XDrm+cFz4QU1FCrNrXPGsMOh9MUPIXxxx/3Lu8Q77ZsTfP
-         QMhnLgCbloAHRfhuT9x29yE5bYKzLSOk9n3b5ynOwjNVCiJTyCp2gnhRJuhmeHLP5kVD
-         vsENIg0p4v6RIzz74CLJvqgxw3JCcY0Fa9KIQ=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=2VgpfXcNwy7TREHNFQ18NMpwIG1aLQl5IHZiO+aFRFg=;
+        b=QP0+JFbB42FP8b0D9HjpzR1E6N6d/ZxgiGmuevEMpNy/a4lrt5vm2EhQ69w6loWJox
+         rm0jIH0TyynJRmaTlQIb2HZjZK8kJb9um+WHblQIWyBSZNEd/VAQavvEIGPP++Ts15Hs
+         TK/p0qGwPdEzXNxKh3RcttUAAjZlLZbQfP0A0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8xlz8GsaEbqA7+Q0OgDVIVF7fZyrH+eyib1SwOfcFkk=;
-        b=hISG18UmrEHcOIbH6IQHVqmowLQNCnHtXsOYTdjkrX+PuHHzBdQsXp2ZBHuhwGnaLo
-         G0rc5pX/ISftClkI/sKafGFjMWhRZ9tZe/W+zIKgOcdZeWyGNdZIifvK9U6KC5SzLkK5
-         bfyZhCKfcM47vwbYPrAtIjebhxcOpjnDQarI7IJDEarxqQKk+KN5UsLgdTC4i/7w6hNl
-         f72R8oHlGuN5Jd76SjXUntRgYwLpVC4j9UgLueyMLYgHLqcQwZc3RjXNAPO7r0wvuBhV
-         7UIlhs0KJG0O24syZT2DcvqhhmmNhUEVgIDcuPxIbk/dIV7mxH2HTvtN8VG64Li8MFt+
-         pXWQ==
-X-Gm-Message-State: AOAM5330xlor1EiRwgPic5gEE/SGWwdCk2mbJer9u6Pmyh7VQRhXI4dE
-        tc2WADTs32WsNYFDlo0B29XGRyVdSkgN+h7s8mC9dg==
-X-Google-Smtp-Source: ABdhPJwpDqdsy9lmKmYTn6XGegQYLl2kT288a0DXA49iyCvZtD8jstRHqiY9fH6eZ1ZmbGlu5YMqc03a2MQokxkbGSM=
-X-Received: by 2002:a50:8d57:: with SMTP id t23mr12955766edt.168.1589793435950;
- Mon, 18 May 2020 02:17:15 -0700 (PDT)
+         :message-id:subject:to;
+        bh=2VgpfXcNwy7TREHNFQ18NMpwIG1aLQl5IHZiO+aFRFg=;
+        b=aqJxcpstah2b4hwLL822n/HiwIE14u9iq7HScLVtlA2xsrrfwbZvllBnQ6BzKIvaWr
+         OT4HaOf9O/R6kLL3VSjh/2f51iF462PqsyhCovT+58E7pkmui27HrY+JKFsCf2+FID/h
+         wUHyHkXvk4JGkkeNN13JtujAeWtpBS9hc5RIeUj7PEIG5CjATwFrm240QXVMGBh4M/Vz
+         522dEv3Szs3MPFsuAFIcw6uloqjymwrsZfScdQbkfVXtjzMDiIXHXMEE9oqHqHof+MB8
+         P/uoJm83BJcRT7wKg+TcSWfbLRklhM9rncDxoSDtVz/l+oTIOXPK6S4aLjCz5UPP+OKP
+         5V2A==
+X-Gm-Message-State: AOAM5300CQ4GlPjw1UrXfQ+VsRlvrVcI/TnWII2cTnr7BQU0BPbHinJz
+        0g2EheOQtH0CCdWc2kNHKDrIjwM3+0bbVEk31heAx66mIjy/Tw==
+X-Google-Smtp-Source: ABdhPJyxA0x8w1n4vgblorzwwP4PlDWFNBc8JIRKpAEQZKkJ4OJZMc0y6wP/gBfFHC6ii/HQOSa8g5ffD8mMnZKb9bY=
+X-Received: by 2002:a05:6402:1296:: with SMTP id w22mr12015540edv.364.1589794378263;
+ Mon, 18 May 2020 02:32:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200515072047.31454-1-cgxu519@mykernel.net> <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
- <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
- <CAJfpegtpi1SVJRbQb8zM0t66WnrjKsPEGEN3qZKRzrZePP06dA@mail.gmail.com> <CAOQ4uxgfEBksbtLtPVA2L-JhRUQ5aEh9+W4dXGREuoMe40V8tQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgfEBksbtLtPVA2L-JhRUQ5aEh9+W4dXGREuoMe40V8tQ@mail.gmail.com>
+References: <871rnlq82d.fsf@vostro.rath.org>
+In-Reply-To: <871rnlq82d.fsf@vostro.rath.org>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 18 May 2020 11:17:04 +0200
-Message-ID: <CAJfpegseFkdiKQ-_h64-9O-euoy8FDr_fA=wLxpR9cnpC2NHtg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ian Kent <raven@themaw.net>, Chengguang Xu <cgxu519@mykernel.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Mon, 18 May 2020 11:32:46 +0200
+Message-ID: <CAJfpegs7wwnxgnWc4JRqRdTjVwFGd-KjhFqtmaJfpSxA4uzBrg@mail.gmail.com>
+Subject: Re: Unable to access fuse mountpoint with seteuid()
+To:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        miklos <mszeredi@redhat.com>
+Content-Type: multipart/mixed; boundary="0000000000002f01d505a5e8d942"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 10:52 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > > > I also do really see the need for it because only hashed negative
-> > > > dentrys will be retained by the VFS so, if you see a hashed negative
-> > > > dentry then you can cause it to be discarded on release of the last
-> > > > reference by dropping it.
-> > > >
-> > > > So what's different here, why is adding an argument to do that drop
-> > > > in the VFS itself needed instead of just doing it in overlayfs?
-> > >
-> > > That was v1 patch. It was dealing with the possible race of
-> > > returned negative dentry becoming positive before dropping it
-> > > in an intrusive manner.
-> > >
-> > > In retrospect, I think this race doesn't matter and there is no
-> > > harm in dropping a positive dentry in a race obviously caused by
-> > > accessing the underlying layer, which as documented results in
-> > > "undefined behavior".
-> > >
-> > > Miklos, am I missing something?
-> >
-> > Dropping a positive dentry is harmful in case there's a long term
-> > reference to the dentry (e.g. an open file) since it will look as if
-> > the file was deleted, when in fact it wasn't.
-> >
->
-> I see. My point was that the negative->positive transition cannot
-> happen on underlying layers without user modifying underlying
-> layers underneath overlay, so it is fine to be in the "undefined" behavior
-> zone.
+--0000000000002f01d505a5e8d942
+Content-Type: text/plain; charset="UTF-8"
 
-Right, I don't think you can actually crash a filesystem by unhashing
-a positive dentry in the middle of a create op, but it would
-definitely be prudent to avoid that.
+On Fri, May 15, 2020 at 10:05 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> Hello,
+>
+> I've written a setuid root program that tries to access a FUSE
+> mountpoint owned by the calling user. I'm running seteuid(getuid()) to
+> drop privileges, but still don't seem to be able to access the
+> mountpoint.
+>
+> Is that a bug or a feature? If it's a feature, is there any other way to
+> get access to the mountpoint? All I want is the st_dev value...
 
->
-> > It's possible to unhash a negative dentry in a safe way if we make
-> > sure it cannot become positive.  One way is to grab d_lock and remove
-> > it from the hash table only if count is one.
-> >
-> > So yes, we could have a helper to do that instead of the lookup flag.
-> > The disadvantage being that we'd also be dropping negatives that did
-> > not enter the cache because of our lookup.
-> >
-> > I don't really care, both are probably good enough for the overlayfs case.
-> >
->
-> There is another point to consider.
-> A negative underlying fs dentry may be useless for *this* overlayfs instance,
-> but since lower layers can be shared among many overlayfs instances,
-> for example, thousands of containers all testing for existence of file /etc/FOO
-> on startup.
->
-> It sounds like if we want to go through with DONTCACHE_NEGATIVE, that
-> it should be opt-in behavior for overlayfs.
+It's a feature:
 
-Good point.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fuse/dir.c?h=v5.6#n1071
+
+However, st_dev is definitely not something that could be used for DoS
+(it's not even controlled by the fuse daemon).  The attached patch
+(untested) allows querying st_dev with statx(2) and a zero mask
+argument.
+
+The other option is to parse /proc/self/mountinfo, but that comes with
+some caveats.
 
 Thanks,
 Miklos
+
+--0000000000002f01d505a5e8d942
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="fuse-always-allow-query-of-st_dev.patch"
+Content-Disposition: attachment; 
+	filename="fuse-always-allow-query-of-st_dev.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kacahr9g0>
+X-Attachment-Id: f_kacahr9g0
+
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jCmluZGV4IGRlMWUyZmRl
+NjBiZC4uMjZmMDI4YmM3NjBiIDEwMDY0NAotLS0gYS9mcy9mdXNlL2Rpci5jCisrKyBiL2ZzL2Z1
+c2UvZGlyLmMKQEAgLTE2ODksOCArMTY4OSwxOCBAQCBzdGF0aWMgaW50IGZ1c2VfZ2V0YXR0cihj
+b25zdCBzdHJ1Y3QgcGF0aCAqcGF0aCwgc3RydWN0IGtzdGF0ICpzdGF0LAogCXN0cnVjdCBpbm9k
+ZSAqaW5vZGUgPSBkX2lub2RlKHBhdGgtPmRlbnRyeSk7CiAJc3RydWN0IGZ1c2VfY29ubiAqZmMg
+PSBnZXRfZnVzZV9jb25uKGlub2RlKTsKIAotCWlmICghZnVzZV9hbGxvd19jdXJyZW50X3Byb2Nl
+c3MoZmMpKQorCWlmICghZnVzZV9hbGxvd19jdXJyZW50X3Byb2Nlc3MoZmMpKSB7CisJCWlmICgh
+cmVxdWVzdF9tYXNrKSB7CisJCQkvKgorCQkJICogSWYgdXNlciBleHBsaWNpdGx5IHJlcXVlc3Rl
+ZCAqbm90aGluZyogdGhlbiBkb24ndAorCQkJICogZXJyb3Igb3V0LCBidXQgcmV0dXJuIHN0X2Rl
+diBvbmx5LgorCQkJICovCisJCQlzdGF0LT5yZXN1bHRfbWFzayA9IDA7CisJCQlzdGF0LT5kZXYg
+PSBpbm9kZS0+aV9zYi0+c19kZXY7CisJCQlyZXR1cm4gMDsKKwkJfQogCQlyZXR1cm4gLUVBQ0NF
+UzsKKwl9CiAKIAlyZXR1cm4gZnVzZV91cGRhdGVfZ2V0X2F0dHIoaW5vZGUsIE5VTEwsIHN0YXQs
+IHJlcXVlc3RfbWFzaywgZmxhZ3MpOwogfQo=
+--0000000000002f01d505a5e8d942--
