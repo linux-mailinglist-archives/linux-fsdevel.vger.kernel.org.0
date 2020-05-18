@@ -2,140 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A391D7438
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 11:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74EA01D7521
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 12:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgERJki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 05:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgERJkh (ORCPT
+        id S1726391AbgERK05 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 06:26:57 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:48791 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726180AbgERK05 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 05:40:37 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CC6C061A0C;
-        Mon, 18 May 2020 02:40:37 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id w18so9136051ilm.13;
-        Mon, 18 May 2020 02:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pdms6kI1V+FygiJbqs2W9+OWW1Eb6sNR1jWF1nmy7jI=;
-        b=s2IUKdbY3enMQmG1dX2eyNAXUxWkhxcjtIOASGmTWs5lo4cTy3LOBI6XuqCI4YewSG
-         i5i+JsDBd4ABTFkMB9jBUuHqLtKn9+j/xBvCpJixXRo59tMDud/DQ/McDu1glkWq8Io8
-         6bXJXwj0/lqCHc1S0rf2DKr/ldfzWZoroabktl6SLP0T7OsKjOiawzO8cn53dIVSIx2L
-         fjleVT2mcjvwry5lvvRyZrMw3TXb5uOTxdNwOsHdL4gRCqpKo8VugF2O2ehbTQNfJyns
-         CvmQ1zdUD/bx9o5NUcxoPFXVgzLem8GsociSdXyrZT/ymZwT4W+HSD9A7qgnQIdilLjb
-         sM0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pdms6kI1V+FygiJbqs2W9+OWW1Eb6sNR1jWF1nmy7jI=;
-        b=i5egenXkPxq7E/HJUYV+bzduC8VlxnTuyJDZTGSbJX82pdoowKwSiAc9vpLQqqTIr/
-         JyePIkZJiJlzOe2jzeoXwnNqQB9CLqYDw0HXn3COV5zdOQR0A2KwoSQWwVDdCEWqB7uf
-         EeubL42yj1pjcyTf6VirecMv3ToMy/d5r12YzEPxdkIe7SfVt0oHnUhyEE/lK4mFQxJc
-         yW5qlYXFGac2d9bnvMNPLiGd8rud/ADXW1VQ1UJibcQtQHkwv32bJph/QrzB5D2V2uHp
-         xUCyp8BQQslZq93ARHl7YvIBN5eETaHQF2zDjabaYq46SRdoXGz1rFVR+dBOfTDgBlgB
-         QLfg==
-X-Gm-Message-State: AOAM5300x5JNA5Hv8fRtrg0nyZDjdXcJtCLLpHtwqfFGRnlsD9h3wUrZ
-        tmY1lJJWQG+wkc5K2JwVZz+ajWl++PqqmfsbHY4=
-X-Google-Smtp-Source: ABdhPJxgg7rmKLZhAoede28E3JcidgqEy/oebAmR/EeZK7KjnvrIRBSTRAbaCZr7oZACwVn1jBpjjgcz7O/uuqaMRAg=
-X-Received: by 2002:a92:b69b:: with SMTP id m27mr15494381ill.250.1589794836888;
- Mon, 18 May 2020 02:40:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200505162014.10352-1-amir73il@gmail.com>
-In-Reply-To: <20200505162014.10352-1-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 18 May 2020 12:40:25 +0300
-Message-ID: <CAOQ4uxjAz5ytbyJMJGvwitpepVnnAKEiQV8QEkzc9yeRyXZoKA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] fanotify events on child with name info
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Mon, 18 May 2020 06:26:57 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id 32DEB7DA;
+        Mon, 18 May 2020 06:26:56 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 18 May 2020 06:26:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        nj84T2AgGMFdKx/IlmKijpQnstWkieyPqiag9D9uTp8=; b=HPwW5NNiB3aNO8sJ
+        RXkx+/Kd3P2FLHI6M5pQbHHNyZY8mJX95CIsK/M3uVHW8crueq73NM5y2D5muyAT
+        aUAy99V/uG681/cYyPfTwWGaXk5kRO8hSjsiSBEUSTrtfnd7NlYfgabb+d5co7ij
+        j/jnDa1FZC5UHn8uK/EzeVpwsuDVdBEAPTR/ce8ABLN1K5ou2c9bc7vJhay0Qi/s
+        /phZ8+GSWSjsBnK4O5hmO9c5DiX6ZD1zs5tv6fX5Pb1S/ev36ngZUEIVWgNCWvhD
+        lxJJI1DFzDaaIQlsFSaJapBV+lW8qv+3P7qZtXB+RXRXZ+EYsDCZMdYHiXds1Jij
+        6bec0g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=nj84T2AgGMFdKx/IlmKijpQnstWkieyPqiag9D9uT
+        p8=; b=fynj+e6ZtZwJeMRLHrbIDok9DHXBGYS/zECRCftKW5uyBXjz86s5SKR0f
+        D0VZRLfqsTyT5EawJlkAtUqk6l5Jy0P5cmG2SoHrG+SxP0Za1+1hEFn98ESA6SUy
+        EhijXDdtMs50ULVbehFwsiBpXVkt0uyxq1/2LMQg7IJT4X9Xe/Ul83N/eVgFqA9G
+        1XvThX35XyAMlPtpq52wL1rLlQ8z6dy/X/fvh8In0JoJXOuCdPuoFQWvUPyE8aIW
+        /YNjD3n6T3C0qHzQRVHSFNk1SirlOXNofdG1XYYPWyydPiW7v+ZcKLKooK6JFckD
+        oaKN3H4nLkwCibx56Hk8SBAjNf4Zw==
+X-ME-Sender: <xms:7mLCXjiZ5gsS6XgnuW34cWZZ3MUQlSg-iqFPadSc8ZH-r_6MHtxSew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddthedgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
+    phepuddukedrvddtkedrudekiedrudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:7mLCXgCpbVYMEPCsKh5X6d_sFM6ZRJP_eGA8WDLNYUJ__D_ZYvy_nw>
+    <xmx:7mLCXjFN5xUeQbeEPuJLOtxF3--0sAOywQsj0s3hn0gNtU4T9vBRQg>
+    <xmx:7mLCXgRQ5Q7NM50DQKTh65-v6E84rAM-XPZ2py0BsubIl-PcpMB2fg>
+    <xmx:72LCXtrXLIDnlyjOpnBaxnX7g7Yu8OGWtOAmKOlvxDAxSbi8q5wBVw>
+Received: from mickey.themaw.net (unknown [118.208.186.1])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6F5CF30663EF;
+        Mon, 18 May 2020 06:26:52 -0400 (EDT)
+Message-ID: <cfc4e94f6667eabee664b63cc23051e9d816456c.camel@themaw.net>
+Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
+From:   Ian Kent <raven@themaw.net>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Chengguang Xu <cgxu519@mykernel.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        overlayfs <linux-unionfs@vger.kernel.org>
+Date:   Mon, 18 May 2020 18:26:48 +0800
+In-Reply-To: <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
+References: <20200515072047.31454-1-cgxu519@mykernel.net>
+         <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
+         <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 5, 2020 at 7:20 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Jan,
->
-> In the v3 posting of the name info patches [1] I dropped the
-> FAN_REPORT_NAME patches as agreed to defer them to next cycle.
->
-> Following is remainder of the series to complement the FAN_DIR_MODIFY
-> patches that were merged to v5.7-rc1.
->
-> The v3 patches are available on my github branch fanotify_name [2].
-> Same branch names for LTP tests [3], man page draft [4] and a demo [5].
->
-> Patches 1-4 are cleanup and minor re-factoring in prep for the name
-> info patches.
->
-> Patch 5 adds the FAN_REPORT_NAME flag and the new event reporting format
-> combined of FAN_EVENT_INFO_TYPE_DFID_NAME and FAN_EVENT_INFO_TYPE_FID
-> info records, but provides not much added value beyond inotify.
->
-> Patches 6-7 add the new capability of filesystem/mount watch with events
-> including name info.
->
-> I have made an API decision that stems from consolidating the
-> implementation with fsnotify_parent() that requires your approval -
-> A filesystem/mount mark with FAN_REPORT_NAME behaves as if all the
-> directories and inodes are marked.  This results in user getting all
-> relevant events in two flavors - one with both info records and one with just
-> FAN_EVENT_INFO_TYPE_FID.  I have tries several approaches to work around this
-> bizarrity, but in the end I decided that would be the lesser evil and that
-> bizarre behavior is at least easy to document.
->
+On Mon, 2020-05-18 at 08:27 +0300, Amir Goldstein wrote:
+> On Mon, May 18, 2020 at 3:53 AM Ian Kent <raven@themaw.net> wrote:
+> > On Fri, 2020-05-15 at 15:20 +0800, Chengguang Xu wrote:
+> > > This series adds a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
+> > > to indicate to drop negative dentry in slow path of lookup.
+> > > 
+> > > In overlayfs, negative dentries in upper/lower layers are useless
+> > > after construction of overlayfs' own dentry, so in order to
+> > > effectively reclaim those dentries, specify
+> > > LOOKUP_DONTCACHE_NEGATIVE
+> > > flag when doing lookup in upper/lower layers.
+> > 
+> > I've looked at this a couple of times now.
+> > 
+> > I'm not at all sure of the wisdom of adding a flag to a VFS
+> > function
+> > that allows circumventing what a file system chooses to do.
+> 
+> But it is not really a conscious choice is it?
 
-Hi Jan,
+I thought that too until recently when I had the need to ask the
+question "how do these negative hashed dentries get into the dcache.
 
-Were you able to give some thought to the API question above?
+> How exactly does a filesystem express its desire to cache a negative
+> dentry? The documentation of lookup() in vfs.rst makes it clear that
+> it is not up to the filesystem to make that decision.
 
-I would really like to be able to finalize the design of the API, so
-that I will be able to continue working on the man page patches.
+That's the question I had too and, somewhat embarrassingly, got
+a response that started with "Are you serious ..." for Al when
+I made a claim that ext4 doesn't create negative hashed dentries.
 
-Re-phrasing the API question that needs addressing:
+What was so bad about that claim is it's really obvious that ext4
+does do this in ext4/namei.c:ext4_lookup():
 
-With FAN_REPORT_NAME, filesystem/mount watches get -
-1. ONLY events with name (no events on root and no SELF events)
-2. Each event in one flavor (with name info when available)
-3. ALL events in both flavors (where name info is available)
-4. Something else?
+...
+inode = NULL;
+if (bh) {
+...
+}
+...
+return d_splice_alias(inode, dentry);
 
-The current v3 patches implement API choice #3, which is derived
-from the implementation choice to emit two events via fsnotify_parent().
+and inode can be negative here.
 
-My v2 patches implemented API choice #2, which was the reason
-for duplicating name snapshot code inside handle_event().
-I considered implementing merge of event with and without name,
-but it seemed too ugly to live.
+Now d_splice_alias() is pretty complicated but, if passed a NULL
+dentry it amounts to calling __d_add(dentry, NULL) which produces
+a negative hashed dentry, a decision made by ext4 ->lookup() (and
+I must say typical of the very few ways such dentries get into
+the dcache).
 
-We could also go for an API that allows any combination of
-FAN_REPORT_NAME and FAN_REPORT_FID:
-FAN_REPORT_FID - current upstream behavior
-FAN_REPORT_FID_NAME - choice #3 above as implemented in v3
-FAN_REPORT_NAME - choice #1 above
+Now on final dput of the walk these dentries should end up with a
+reference count of zero which triggers dput() to add them to the
+lru list so they can be considered as prune targets and can be
+found in subsequent lookups (they are hashed).
 
-At one point, I also considered that user needs to opt-in
-for named events per filesystem/mount mark with
-FAN_EVENT_ON_CHILD. This flag is implied in v3 for
-all filesystem/mount marks by FAN_REPORT_NAME, while
-for directory marks it is opt-in as it has always been.
+This is how using negative hashed detries helps to avoid the
+expensive alloc/free (at least) that occurs when looking up paths
+that don't exist.
 
-At the moment I went with choice #3 in v3 because I felt it
-would be the simplest of all choices to document.
+Negative "unhashed" dentries are discarded on final dput() so
+don't really come into the picture except that dropping a negative
+hashed dentry will cause it to be discarded on final dput().
 
-I didn't want to invest time in documenting behavior if you find it
-unacceptable. If you are swaying between more than one option,
-then I am willing to try documenting more than one option, so we
-can see what the result looks like.
+But nothing is ever quite as simple as a description of how it
+appears to (is meant to) work so, by all means, take what I say
+with a grain of salt, ;)
 
-Thanks,
-Amir.
+> The VFS needs to cache the negative dentry on lookup(), so
+> it can turn it positive on create().
+> Low level kernel modules that call the VFS lookup() might know
+> that caching the negative dentry is counter productive.
+> 
+> > I also do really see the need for it because only hashed negative
+> > dentrys will be retained by the VFS so, if you see a hashed
+> > negative
+> > dentry then you can cause it to be discarded on release of the last
+> > reference by dropping it.
+> > 
+> > So what's different here, why is adding an argument to do that drop
+> > in the VFS itself needed instead of just doing it in overlayfs?
+> 
+> That was v1 patch. It was dealing with the possible race of
+> returned negative dentry becoming positive before dropping it
+> in an intrusive manner.
+
+Right, very much something that overlay fs must care about, file
+systems not so much.
+
+It might be possible to assume that if the underlying file system
+->lookup() call has produced a negative hashed dentry that it will
+stay negative. That assumption definitely can't be made for negative
+unhashed dentries, of course, since they may still be in the process
+of being filled in.
+
+But, unfortunately, I see your point, it's a risky assumption.
+
+> 
+> In retrospect, I think this race doesn't matter and there is no
+> harm in dropping a positive dentry in a race obviously caused by
+> accessing the underlying layer, which as documented results in
+> "undefined behavior".
+
+Umm ... I thought we were talking about negative dentries ...
+
+Ian
+
