@@ -2,73 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAF41D6DDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 00:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731071D6E5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 02:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbgEQWhF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 May 2020 18:37:05 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21771 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726550AbgEQWhF (ORCPT
+        id S1726707AbgERAxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 May 2020 20:53:40 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:54457 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726675AbgERAxj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 May 2020 18:37:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589755024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=R6DBtpMAn3ekiwiyAskbqzCTE2dKTfdjjBHrVuQWSx4=;
-        b=DB+3QeZo7NLRokjCEDUd288kzPbBlZT/4TTz6y9jZifZ9YnUEn8BYdYG44/25F+yIk0YRV
-        YZ+7mB95VN7BSxQZJNVuMFZIEgZncAmzpxIE2JM71NIJ+FCYGByMxapXSHp0qIlK3gXeYq
-        jrEN2H90/lHN+8Smd/tGbRejPMU9f48=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-75-ZTKbhoElMFOsXiTYA5qa7g-1; Sun, 17 May 2020 18:37:01 -0400
-X-MC-Unique: ZTKbhoElMFOsXiTYA5qa7g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2D01461;
-        Sun, 17 May 2020 22:36:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-95.rdu2.redhat.com [10.10.112.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1D4A5C1C8;
-        Sun, 17 May 2020 22:36:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200517210811.GQ16070@bombadil.infradead.org>
-References: <20200517210811.GQ16070@bombadil.infradead.org> <158974686528.785191.2525276665446566911.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Don't unlock fetched data pages until the op completes successfully
+        Sun, 17 May 2020 20:53:39 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id BBC075C003D;
+        Sun, 17 May 2020 20:53:38 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 17 May 2020 20:53:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        x8+wYDtaURVodIiWZG1wMgfzVKUJnR2YLZKOn2qHRVo=; b=l7b/UVbrCIzRfBLH
+        jU6YTC5Oy99qgxihuT3ZgDgc1V3pg7m1YCLDOpmlMbihk9LpG0Ib+Oamrt/75eGR
+        KrcCjmNUe4EFl+q3+a76DFLM7LZkCfCaJnhDoLukDkSzR2LCmDpBmAYgWZEZmPfA
+        JJ80AaqJr0U9Z5fma8py+bMFcwr5k/7i3epPJ4dZCB5hL3SdnN9n0cPwTVCQEsdv
+        nQTaFU29iF6Xk4kdhMZMELuiMV5s+M26ebPO51jp/fhdKb+0uuYINbZbgSnxR5j6
+        Wxp6Z2vdfUeEOY71iZExdjU0qfljD0vlRhFDXcyFavdYn4vCaRLDoPYAjMyFlkxE
+        vER5Bg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=x8+wYDtaURVodIiWZG1wMgfzVKUJnR2YLZKOn2qHR
+        Vo=; b=CNyz+ORvE+N2eDrGyfebvU/zZkX4n2iBAnyWjwsJ2KDKWtOv/ftO0eYNr
+        4OfKbz2ZV+iNCLQmG9N7hJ78Mvw/hQUgnoxwH0gwQX3kk8q0uCX5h6yQwvP85qiv
+        7RUsYpsgHb/I4hf4DORToEjvF31NyCrl3AKB8RLdwbygPN0RVUO2G5ApFa92I7WB
+        d4/k1h06Z19J6pnBYTX0PRetdk0w21eS+iV0SDoJh2IhPntnzvFq930hqtol/rOs
+        UnhddLVGNSXOUu2gsE/yM8gBXHU/CM736rjU3rSeV0VYsOgwt+TLWnx8kkg3wjmA
+        l44n2CxeJ9ZbrdwGJJlKthLakeyFw==
+X-ME-Sender: <xms:kdzBXufrjYoBq14cjGP9MgtcFAIUCEIN_V8UhAByyykTAtrZjy6-8w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddtgedgfeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefkuffhvfffjghftggfggfgsehtje
+    ertddtreejnecuhfhrohhmpefkrghnucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidr
+    nhgvtheqnecuggftrfgrthhtvghrnhepfeefteetvdeguddvveefveeftedtffduudehue
+    eihfeuvefgveehffeludeggfejnecukfhppeduudekrddvtdekrdduiedurddufedtnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:kdzBXoMXSZOWMt-HR8tjin1ksPHMlzI3qNo54RqoWCZwWLSDJSPqqA>
+    <xmx:kdzBXvgMY5_n0FpvHsofpreycr0jEtqVeKzYkPGhVLZa-Ys3zarLow>
+    <xmx:kdzBXr_BViR-59odoAltTFSKR6vlE0S5OWc_2XSyWkh6tLszbROb7Q>
+    <xmx:ktzBXvWldk709pLNw4l0LnII8fLrihAxk-Z1w5AMlrcFyWL5B8qkIg>
+Received: from mickey.themaw.net (unknown [118.208.161.130])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1E6DC3280059;
+        Sun, 17 May 2020 20:53:34 -0400 (EDT)
+Message-ID: <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
+Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
+From:   Ian Kent <raven@themaw.net>
+To:     Chengguang Xu <cgxu519@mykernel.net>, miklos@szeredi.hu,
+        viro@zeniv.linux.org.uk, amir73il@gmail.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date:   Mon, 18 May 2020 08:53:31 +0800
+In-Reply-To: <20200515072047.31454-1-cgxu519@mykernel.net>
+References: <20200515072047.31454-1-cgxu519@mykernel.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <796666.1589755017.1@warthog.procyon.org.uk>
-Date:   Sun, 17 May 2020 23:36:57 +0100
-Message-ID: <796667.1589755017@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
-
-> > +	if (req->page_done)
-> > +		for (req->index = 0; req->index < req->nr_pages; req->index++)
-> > +			req->page_done(req);
-> > +
+On Fri, 2020-05-15 at 15:20 +0800, Chengguang Xu wrote:
+> This series adds a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
+> to indicate to drop negative dentry in slow path of lookup.
 > 
-> I'd suggest doing one call rather than N and putting the page iteration
-> inside the callback.  But this patch is appropriate for this late in
-> the -rc series, just something to consider for the future.
+> In overlayfs, negative dentries in upper/lower layers are useless
+> after construction of overlayfs' own dentry, so in order to
+> effectively reclaim those dentries, specify LOOKUP_DONTCACHE_NEGATIVE
+> flag when doing lookup in upper/lower layers.
 
-My rewrite of the fscache stuff changes this bit of the code anyway, and makes
-it one call which may start a write out to the cache.
+I've looked at this a couple of times now.
 
-David
+I'm not at all sure of the wisdom of adding a flag to a VFS function
+that allows circumventing what a file system chooses to do.
+
+I also do really see the need for it because only hashed negative
+dentrys will be retained by the VFS so, if you see a hashed negative
+dentry then you can cause it to be discarded on release of the last
+reference by dropping it.
+
+So what's different here, why is adding an argument to do that drop
+in the VFS itself needed instead of just doing it in overlayfs?
+
+> 
+> Patch 1 adds flag LOOKUP_DONTCACHE_NEGATIVE and related logic in vfs
+> layer.
+> Patch 2 does lookup optimazation for overlayfs.
+> Patch 3-9 just adjusts function argument when calling
+> lookup_positive_unlocked() and lookup_one_len_unlocked().
+> 
+> v1->v2:
+> - Only drop negative dentry in slow path of lookup.
+> 
+> v2->v3:
+> - Drop negative dentry in vfs layer.
+> - Rebase on latest linus-tree(5.7.0-rc5).
+> 
+> Chengguang Xu (9):
+>   fs/dcache: Introduce a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
+>   ovl: Suppress negative dentry in lookup
+>   cifs: Adjust argument for lookup_positive_unlocked()
+>   debugfs: Adjust argument for lookup_positive_unlocked()
+>   ecryptfs: Adjust argument for lookup_one_len_unlocked()
+>   exportfs: Adjust argument for lookup_one_len_unlocked()
+>   kernfs: Adjust argument for lookup_positive_unlocked()
+>   nfsd: Adjust argument for lookup_positive_unlocked()
+>   quota: Adjust argument for lookup_positive_unlocked()
+> 
+>  fs/cifs/cifsfs.c      |  2 +-
+>  fs/debugfs/inode.c    |  2 +-
+>  fs/ecryptfs/inode.c   |  2 +-
+>  fs/exportfs/expfs.c   |  2 +-
+>  fs/kernfs/mount.c     |  2 +-
+>  fs/namei.c            | 14 ++++++++++----
+>  fs/nfsd/nfs3xdr.c     |  2 +-
+>  fs/nfsd/nfs4xdr.c     |  3 ++-
+>  fs/overlayfs/namei.c  |  9 +++++----
+>  fs/quota/dquot.c      |  3 ++-
+>  include/linux/namei.h |  9 +++++++--
+>  11 files changed, 32 insertions(+), 18 deletions(-)
+> 
 
