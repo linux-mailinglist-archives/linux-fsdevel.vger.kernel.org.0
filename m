@@ -2,238 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 376971D83E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7D71D8546
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 20:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387494AbgERSIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 14:08:23 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:35962 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733067AbgERSHv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 14:07:51 -0400
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 9201D20479;
-        Mon, 18 May 2020 18:07:42 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-next@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v4] proc: proc_pid_ns takes super_block as an argument
-Date:   Mon, 18 May 2020 20:07:38 +0200
-Message-Id: <20200518180738.2939611-1-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <87lfltcbc4.fsf@x220.int.ebiederm.org>
-References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+        id S1732234AbgERSRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 14:17:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728838AbgERSRt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 May 2020 14:17:49 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7385C061A0C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 11:17:49 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id s10so2962406pgm.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 11:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q9RvB5nbI09wHpLfw3yLJLanIbQbqsip0Oo5ChvdNdM=;
+        b=QHkMv/WeF/pAoW2hxh1xX1qlre1qL6s8OM9laV1Dprb2X+Kv+QDkyRApG+Qv54H+xi
+         mFtUOtyNXm76nMSWE2RvWWDyrdZ8YCY0Aln67yOEVQrVfwph+FoiZfxlbucNEqpnQfzl
+         oHDRJomHU8uO4ZYiUHp5YyuxUewGtX/XVK1BE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q9RvB5nbI09wHpLfw3yLJLanIbQbqsip0Oo5ChvdNdM=;
+        b=NXCBtoXajtRVJIX+nHVWgQ8p9mHmQb7UZUsWlLOsz/7BiU/5Sy+DIQ9XHDKTgsoME0
+         ryK//ZC4XxdAxnu5HKuajHKtVEePb3ttCOZCBWyVSlZFkrPlKOdmXPhLBxvuFQHEk2oE
+         OX1bmq/GZTv2UDQb3vNUhLkui72oMQAYSUmxRrnizzi0Qxlb1NWnmaz211BjBmSHAH1R
+         Ju5iQyaK8I16fTbtYdXX/48pwYMluaTnlrTtUo/gyESwcTTSGVjzvgiIlDGSdVzwLGwT
+         mbePA1yhduo91pJ+vMD5rXE4B3uAUpXVMn94zxKYn+90YOW+DKbxMR2tsOyWjhfCGFgU
+         nJ7w==
+X-Gm-Message-State: AOAM531Tbh7dy2kgkaxr4YeGBOq1kVhm82K3VyCJJLjTQ5RsVppIEmYT
+        okBeoI4V4oXDFWWXg0Zin8EKSgHIySc=
+X-Google-Smtp-Source: ABdhPJwWb935U8X4b3gsmekq3Adu+9arHCIUVn//jGRc1Z1HlHZPmASWj6IesI7CMnbrDuo9K8hLug==
+X-Received: by 2002:a63:3c17:: with SMTP id j23mr15579357pga.343.1589825869244;
+        Mon, 18 May 2020 11:17:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w7sm9014646pfw.82.2020.05.18.11.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2020 11:17:48 -0700 (PDT)
+Date:   Mon, 18 May 2020 11:17:47 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Kitt <steve@sk2.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: const-ify ngroups_max
+Message-ID: <202005181117.BB74974@keescook>
+References: <20200518155727.10514-1-steve@sk2.org>
+ <202005180908.C016C44D2@keescook>
+ <20200518172509.GM11244@42.do-not-panic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 18 May 2020 18:07:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200518172509.GM11244@42.do-not-panic.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot found that
+On Mon, May 18, 2020 at 05:25:09PM +0000, Luis Chamberlain wrote:
+> On Mon, May 18, 2020 at 09:08:22AM -0700, Kees Cook wrote:
+> > On Mon, May 18, 2020 at 05:57:27PM +0200, Stephen Kitt wrote:
+> > > ngroups_max is a read-only sysctl entry, reflecting NGROUPS_MAX. Make
+> > > it const, in the same way as cap_last_cap.
+> > > 
+> > > Signed-off-by: Stephen Kitt <steve@sk2.org>
+> > 
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> Kees, since there is quite a bit of sysctl cleanup stuff going on and I
+> have a fs sysctl kitchen cleanup, are you alright if I carry this in a
+> tree and send this to Andrew once done? This would hopefully avoid
+> merge conflicts between these patches.
+> 
+> I have to still re-spin my fs sysctl stuff, but will wait to do that
+> once Xiaoming bases his series on linux-next.
 
-  touch /proc/testfile
+Yeah, totally. I don't technically have a sysctl tree (I've always just
+had akpm take stuff), so go for it. I'm just doing reviews. :)
 
-causes NULL pointer dereference at tomoyo_get_local_path()
-because inode of the dentry is NULL.
-
-Before c59f415a7cb6, Tomoyo received pid_ns from proc's s_fs_info
-directly. Since proc_pid_ns() can only work with inode, using it in
-the tomoyo_get_local_path() was wrong.
-
-To avoid creating more functions for getting proc_ns, change the
-argument type of the proc_pid_ns() function. Then, Tomoyo can use
-the existing super_block to get pid_ns.
-
-Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
-Fixes: c59f415a7cb6 ("Use proc_pid_ns() to get pid_namespace from the proc superblock")
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- fs/locks.c                 |  4 ++--
- fs/proc/array.c            |  2 +-
- fs/proc/base.c             | 10 +++++-----
- fs/proc/self.c             |  2 +-
- fs/proc/thread_self.c      |  2 +-
- include/linux/proc_fs.h    |  4 ++--
- kernel/fork.c              |  2 +-
- net/ipv6/ip6_flowlabel.c   |  2 +-
- security/tomoyo/realpath.c |  2 +-
- 9 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index 399c5dbb72c4..ab702d6efb55 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- {
- 	struct inode *inode = NULL;
- 	unsigned int fl_pid;
--	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-+	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 
- 	fl_pid = locks_translate_pid(fl, proc_pidns);
- 	/*
-@@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
- {
- 	struct locks_iterator *iter = f->private;
- 	struct file_lock *fl, *bfl;
--	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-+	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 
- 	fl = hlist_entry(v, struct file_lock, fl_link);
- 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 8e16f14bb05a..043311014db2 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -728,7 +728,7 @@ static int children_seq_show(struct seq_file *seq, void *v)
- {
- 	struct inode *inode = file_inode(seq->file);
- 
--	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)));
-+	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode->i_sb)));
- 	return 0;
- }
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 5a307b3bb2d1..30c9fceca0b7 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -754,7 +754,7 @@ static const struct inode_operations proc_def_inode_operations = {
- static int proc_single_show(struct seq_file *m, void *v)
- {
- 	struct inode *inode = m->private;
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	struct pid *pid = proc_pid(inode);
- 	struct task_struct *task;
- 	int ret;
-@@ -1423,7 +1423,7 @@ static const struct file_operations proc_fail_nth_operations = {
- static int sched_show(struct seq_file *m, void *v)
- {
- 	struct inode *inode = m->private;
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	struct task_struct *p;
- 
- 	p = get_proc_task(inode);
-@@ -2466,7 +2466,7 @@ static int proc_timers_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 
- 	tp->pid = proc_pid(inode);
--	tp->ns = proc_pid_ns(inode);
-+	tp->ns = proc_pid_ns(inode->i_sb);
- 	return 0;
- }
- 
-@@ -3377,7 +3377,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct tgid_iter iter;
- 	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
--	struct pid_namespace *ns = proc_pid_ns(file_inode(file));
-+	struct pid_namespace *ns = proc_pid_ns(file_inode(file)->i_sb);
- 	loff_t pos = ctx->pos;
- 
- 	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
-@@ -3730,7 +3730,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
- 	/* f_version caches the tgid value that the last readdir call couldn't
- 	 * return. lseek aka telldir automagically resets f_version to 0.
- 	 */
--	ns = proc_pid_ns(inode);
-+	ns = proc_pid_ns(inode->i_sb);
- 	tid = (int)file->f_version;
- 	file->f_version = 0;
- 	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
-diff --git a/fs/proc/self.c b/fs/proc/self.c
-index 309301ac0136..ca5158fa561c 100644
---- a/fs/proc/self.c
-+++ b/fs/proc/self.c
-@@ -12,7 +12,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
- 				      struct inode *inode,
- 				      struct delayed_call *done)
- {
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	pid_t tgid = task_tgid_nr_ns(current, ns);
- 	char *name;
- 
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index 2493cbbdfa6f..ac284f409568 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -12,7 +12,7 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
- 					     struct inode *inode,
- 					     struct delayed_call *done)
- {
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	pid_t tgid = task_tgid_nr_ns(current, ns);
- 	pid_t pid = task_pid_nr_ns(current, ns);
- 	char *name;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 2cb424e6f36a..6ec524d8842c 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -202,9 +202,9 @@ int open_related_ns(struct ns_common *ns,
- 		   struct ns_common *(*get_ns)(struct ns_common *ns));
- 
- /* get the associated pid namespace for a file in procfs */
--static inline struct pid_namespace *proc_pid_ns(const struct inode *inode)
-+static inline struct pid_namespace *proc_pid_ns(struct super_block *sb)
- {
--	return proc_sb_info(inode->i_sb)->pid_ns;
-+	return proc_sb_info(sb)->pid_ns;
- }
- 
- #endif /* _LINUX_PROC_FS_H */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 4385f3d639f2..e7bdaccad942 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1745,7 +1745,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
- 	pid_t nr = -1;
- 
- 	if (likely(pid_has_task(pid, PIDTYPE_PID))) {
--		ns = proc_pid_ns(file_inode(m->file));
-+		ns = proc_pid_ns(file_inode(m->file)->i_sb);
- 		nr = pid_nr_ns(pid, ns);
- 	}
- 
-diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
-index d64b83e85642..ce4fbba4acce 100644
---- a/net/ipv6/ip6_flowlabel.c
-+++ b/net/ipv6/ip6_flowlabel.c
-@@ -779,7 +779,7 @@ static void *ip6fl_seq_start(struct seq_file *seq, loff_t *pos)
- {
- 	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
- 
--	state->pid_ns = proc_pid_ns(file_inode(seq->file));
-+	state->pid_ns = proc_pid_ns(file_inode(seq->file)->i_sb);
- 
- 	rcu_read_lock_bh();
- 	return *pos ? ip6fl_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
-diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
-index 08b096e2f7e3..df4798980416 100644
---- a/security/tomoyo/realpath.c
-+++ b/security/tomoyo/realpath.c
-@@ -162,7 +162,7 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
- 	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
- 		char *ep;
- 		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
--		struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
-+		struct pid_namespace *proc_pidns = proc_pid_ns(sb);
- 
- 		if (*ep == '/' && pid && pid ==
- 		    task_tgid_nr_ns(current, proc_pidns)) {
 -- 
-2.25.4
-
+Kees Cook
