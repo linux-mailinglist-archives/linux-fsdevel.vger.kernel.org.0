@@ -2,92 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3FA1D7FD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 19:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0DC1D8006
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 19:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbgERRQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 13:16:06 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45064 "EHLO
+        id S1728295AbgERRZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 13:25:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43558 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbgERRQF (ORCPT
+        with ESMTP id S1726958AbgERRZM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 13:16:05 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z26so5119893pfk.12;
-        Mon, 18 May 2020 10:16:05 -0700 (PDT)
+        Mon, 18 May 2020 13:25:12 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v63so5251734pfb.10;
+        Mon, 18 May 2020 10:25:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oSxgBphvkiJdu6V2dtQBN/0DGb4vzo835la/M2fjiy8=;
-        b=tshHZE1aMxmYZm7w2jyAWilxOJJw9JNrvWFgvWCZuK/RNkyhAFGlLRhN/h3dB0Eate
-         Rvn7ARQ9ZYFGrYlKdpyMhgxkuT3JpExfGWfBbdoELtGquSWlhyzMylRJkOcui4VxiapH
-         hhWAnzvLHSVg/bISyS3eKKD8MuxXr89oTY8xqfcX5KJmhgjkU4Xp5foNHYIhzCm+6RSU
-         5mdHgINu+MXzkG6VioYMeZgtoCZF+svkfQ/bK9fzbSmYvOTWfY/sM4akI1dCc2TGdi1r
-         O+GukjhC20FpCES+bTYARBgUIBbUQoFdCKJOFBYZ0SEIDf5pSe2ji/KtUfBOIoOH9MYA
-         sBqQ==
-X-Gm-Message-State: AOAM532gaQ/tQYwm9EaaAj6bns8mnIT1dc1qDFZAJfqErbF9RmSuc8jv
-        OD6lcmUlnjHnYpwFVvU1JzU=
-X-Google-Smtp-Source: ABdhPJyAshFHOjZ/KBTljVH5Y/wZaJfQQJBDG8ktwGBNfOC7BLDqNWjToZdGNvIsJHsELXZqITgg1g==
-X-Received: by 2002:a65:62d6:: with SMTP id m22mr16290471pgv.314.1589822164760;
-        Mon, 18 May 2020 10:16:04 -0700 (PDT)
+        bh=Rf4+hBoD1TufFAfP8oFpnGmCmQq8DRRl+yC7GIzRnls=;
+        b=NhQurF0swK75au3jCljjIk+T7onO26pMHv2X+vSZjOoBH+PNQNYM6pN8K+gTDEZi5r
+         gc6C3rIhup07M9HZ6QHLtU+18fdR8+LQHASFX3zCJj5x4Iomr+4GIe4ctvYZ8FvWxhwB
+         vh3kzdXPhKTTvlGwUuSGfVYq9vmNwKiwIshHZTACXLKMPr4OIjBIE4KM5A0C91bZj58+
+         IixZBrJoVR9fxR41HHdg551iUxqR9NwDGyK154jj0n3EEKhaJz+HIXQGAsp9f4BPZOJV
+         jpLte7c3x59G0Ax5aXjtRHBt0AJgcIZT8U0nJTtNbMy5CGWTS9jYdYRIYcwg0C40FXag
+         FRsg==
+X-Gm-Message-State: AOAM531jb8IziEd+kKN00T6NHLNsHe/s3zY/2sfK9Af0zuSqHzY99tPl
+        r8WMdmnZOvk14Gk8GY+gnMo=
+X-Google-Smtp-Source: ABdhPJwoIGmdm0EAOz7T19rzlTCGw86tRefARI9ZDYNn44SDMrYtVhJEFmKj0/1owuC3GWI0j0VyGA==
+X-Received: by 2002:a62:e402:: with SMTP id r2mr18153266pfh.300.1589822711513;
+        Mon, 18 May 2020 10:25:11 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id h7sm3412336pgn.60.2020.05.18.10.16.03
+        by smtp.gmail.com with ESMTPSA id c3sm3614080pgk.76.2020.05.18.10.25.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 10:16:03 -0700 (PDT)
+        Mon, 18 May 2020 10:25:10 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id DE896404B0; Mon, 18 May 2020 17:16:02 +0000 (UTC)
-Date:   Mon, 18 May 2020 17:16:02 +0000
+        id D0475404B0; Mon, 18 May 2020 17:25:09 +0000 (UTC)
+Date:   Mon, 18 May 2020 17:25:09 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     keescook@chromium.org, yzaikin@google.com, adobriyan@gmail.com,
-        patrick.bellasi@arm.com, mingo@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, gregkh@linuxfoundation.org,
-        Jisheng.Zhang@synaptics.com, bigeasy@linutronix.de,
-        pmladek@suse.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        wangle6@huawei.com, alex.huangjianhui@huawei.com
-Subject: Re: [PATCH v3 0/4] cleaning up the sysctls table (hung_task watchdog)
-Message-ID: <20200518171602.GK11244@42.do-not-panic.com>
-References: <1589774397-42485-1-git-send-email-nixiaoming@huawei.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Stephen Kitt <steve@sk2.org>, Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: const-ify ngroups_max
+Message-ID: <20200518172509.GM11244@42.do-not-panic.com>
+References: <20200518155727.10514-1-steve@sk2.org>
+ <202005180908.C016C44D2@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1589774397-42485-1-git-send-email-nixiaoming@huawei.com>
+In-Reply-To: <202005180908.C016C44D2@keescook>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 11:59:53AM +0800, Xiaoming Ni wrote:
-> Kernel/sysctl.c contains more than 190 interface files, and there are a 
-> large number of config macro controls. When modifying the sysctl 
-> interface directly in kernel/sysctl.c, conflicts are very easy to occur.
-> E.g: https://lkml.org/lkml/2020/5/10/413.
+On Mon, May 18, 2020 at 09:08:22AM -0700, Kees Cook wrote:
+> On Mon, May 18, 2020 at 05:57:27PM +0200, Stephen Kitt wrote:
+> > ngroups_max is a read-only sysctl entry, reflecting NGROUPS_MAX. Make
+> > it const, in the same way as cap_last_cap.
+> > 
+> > Signed-off-by: Stephen Kitt <steve@sk2.org>
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-FWIW un the future please avoid using lkmk.org and instead use
-https://lkml.kernel.org/r/<MESSAGE-ID> for references.
+Kees, since there is quite a bit of sysctl cleanup stuff going on and I
+have a fs sysctl kitchen cleanup, are you alright if I carry this in a
+tree and send this to Andrew once done? This would hopefully avoid
+merge conflicts between these patches.
 
-> Use register_sysctl() to register the sysctl interface to avoid
-> merge conflicts when different features modify sysctl.c at the same time.
-> 
-> So consider cleaning up the sysctls table, details are in:
-> 	https://kernelnewbies.org/KernelProjects/proc
-> 	https://lkml.org/lkml/2020/5/13/990
-> 
-> The current patch set extracts register_sysctl_init and some sysctl_vals
-> variables, and clears the interface of hung_task and watchdog in sysctl.c.
-> 
-> The current patch set is based on commit b9bbe6ed63b2b9 ("Linux 5.7-rc6"),
-> which conflicts with the latest branch of linux-next:
-> 	9b4caf6941fc41d ("kernel / hung_task.c: introduce sysctl to print
-> all traces when a hung task is detected")
-> 
-> Should I modify to make patch based on the "linux-next" branch to avoid
-> conflicts, or other branches?
-
-If you can do that, that would be appreciated. I have a sysctl fs cleanup
-stuff, so I can take your patches, and put my work ont op of yours and
-then send this to Andrew once done.
+I have to still re-spin my fs sysctl stuff, but will wait to do that
+once Xiaoming bases his series on linux-next.
 
   Luis
