@@ -2,94 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 875B31D7CCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 17:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E1A1D7D05
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 17:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbgERP0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 11:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbgERP0C (ORCPT
+        id S1728162AbgERPhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 11:37:34 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57636 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbgERPhe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 11:26:02 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2547DC061A0C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 May 2020 08:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5JgLj2+DCv1+0yfBDC+57Xxa+VbNaCmUQuN65CNtdGs=; b=JMphm1HFkx34iCMwxbaxGU6ONt
-        PKTFL0wcixP1KXZMFUWMjiN36Q75Ohiwq17R3+IYkAm8KUBIBCmcXb3rDtnDRouUUdrkEDA7iVrHw
-        4hQdNZL1lDz0qIyW7+DYDdG8dRBwDMbH+qcwGvqAZaz9R/WkLA2kBzcLh4UBGP3T6nrcl6PK9ACP2
-        Xys01wrdcxVHilBEJKsWr2Dcg0mkuYgCQF2R4hWA2DR1yg6HbDay4/6doT1cFsIgYQ4PoMeG4HBA5
-        3nng6OOy9XbauYvK/BWvzNaMJtS7IYLcio2u7QNPX9g4izcv4qmOtttmSJgVoaCLKSsn+0ACH+VXF
-        4Uglmmhg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jaheT-0005ZQ-KN; Mon, 18 May 2020 15:26:01 +0000
-Date:   Mon, 18 May 2020 08:26:01 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-mm <linux-mm@kvack.org>, miklos <mszeredi@redhat.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>
-Subject: Re: [fuse-devel] fuse: trying to steal weird page
-Message-ID: <20200518152601.GU16070@bombadil.infradead.org>
-References: <87a72qtaqk.fsf@vostro.rath.org>
- <877dxut8q7.fsf@vostro.rath.org>
- <20200503032613.GE29705@bombadil.infradead.org>
- <87368hz9vm.fsf@vostro.rath.org>
- <20200503102742.GF29705@bombadil.infradead.org>
- <CAJfpegseoCE_mVGPR5Bt8S1WZ2bi2DnUb7QqgPm=okzx_wT31A@mail.gmail.com>
- <20200518144853.GT16070@bombadil.infradead.org>
- <CAJfpegtKQ85K2iJUvm-A+cTD1TKsa1AVTDnwbeky4hyf+SJfgQ@mail.gmail.com>
+        Mon, 18 May 2020 11:37:34 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04IFaqlj007747;
+        Tue, 19 May 2020 00:36:52 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
+ Tue, 19 May 2020 00:36:52 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04IFacsP007670
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 19 May 2020 00:36:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3] proc: proc_pid_ns takes super_block as an argument
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-next@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+ <20200518150818.2929164-1-gladkov.alexey@gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <ffcf787e-8380-96e8-0432-54742140f490@i-love.sakura.ne.jp>
+Date:   Tue, 19 May 2020 00:36:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtKQ85K2iJUvm-A+cTD1TKsa1AVTDnwbeky4hyf+SJfgQ@mail.gmail.com>
+In-Reply-To: <20200518150818.2929164-1-gladkov.alexey@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 04:58:05PM +0200, Miklos Szeredi wrote:
-> On Mon, May 18, 2020 at 4:48 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Mon, May 18, 2020 at 02:45:02PM +0200, Miklos Szeredi wrote:
-> 
-> > > page_cache_pipe_buf_steal() calls remove_mapping() which calls
-> > > page_ref_unfreeze(page, 1).  That sets the refcount to 1, right?
-> > >
-> > > What am I missing?
-> >
-> > find_get_entry() calling page_cache_get_speculative().
-> >
-> > In a previous allocation, this page belonged to the page cache.  Then it
-> > was freed, but another thread is in the middle of a page cache lookup and
-> > has already loaded the pointer.  It is now delayed by a few clock ticks.
-> >
-> > Now the page is allocated to FUSE, which calls page_ref_unfreeze().
-> > And then the refcount gets bumped to 2 by page_cache_get_speculative().
-> > find_get_entry() calls xas_reload() and discovers this page is no longer
-> > at that index, so it calls put_page(), but in that narrow window, FUSE
-> > checks the refcount and finds it's not 1.
-> 
-> What if that page_cache_get_speculative() happens just before
-> page_ref_unfreeze()?  The speculative reference would be lost and on
-> put_page() the page would be freed, even though fuse is still holding
-> the pointer.
+I would shorten like below:
 
-static inline void page_ref_unfreeze(struct page *page, int count)
-{
-        VM_BUG_ON_PAGE(page_count(page) != 0, page);
-        VM_BUG_ON(count == 0);
+syzbot found that
 
-        atomic_set_release(&page->_refcount, count);
+  touch /proc/testfile
 
-static inline int __page_cache_add_speculative(struct page *page, int count)
-{
-        if (unlikely(!page_ref_add_unless(page, count, 0))) {
-                return 0;
+causes NULL pointer dereference at tomoyo_get_local_path()
+because inode of the dentry is NULL.
+
+Before c59f415a7cb6, Tomoyo received pid_ns from proc's s_fs_info
+directly. Since proc_pid_ns() can only work with inode, using it in
+the tomoyo_get_local_path() was wrong.
+
+To avoid creating more functions for getting proc_ns, change the
+argument type of the proc_pid_ns() function. Then, Tomoyo can use
+the existing super_block to get pid_ns.
 
