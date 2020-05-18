@@ -2,295 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F831D6F84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 06:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D13601D7010
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 07:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgEREA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 00:00:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58022 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725280AbgEREAM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 00:00:12 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6266B7D7BBF977549C7A;
-        Mon, 18 May 2020 12:00:09 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.189.174) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 18 May 2020 12:00:00 +0800
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
-        <adobriyan@gmail.com>, <patrick.bellasi@arm.com>,
-        <mingo@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
-        <gregkh@linuxfoundation.org>, <Jisheng.Zhang@synaptics.com>,
-        <bigeasy@linutronix.de>, <pmladek@suse.com>,
-        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <nixiaoming@huawei.com>, <wangle6@huawei.com>,
-        <alex.huangjianhui@huawei.com>
-Subject: [PATCH v3 4/4] watchdog: move watchdog sysctl interface to watchdog.c
-Date:   Mon, 18 May 2020 11:59:57 +0800
-Message-ID: <1589774397-42485-5-git-send-email-nixiaoming@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-In-Reply-To: <1589774397-42485-1-git-send-email-nixiaoming@huawei.com>
-References: <1589774397-42485-1-git-send-email-nixiaoming@huawei.com>
+        id S1726428AbgERFDR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 01:03:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:56575 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726127AbgERFDQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 May 2020 01:03:16 -0400
+IronPort-SDR: /tnj4bQjdTs8NRxoa7h1ut5yU/w7o/RGuD1lLEcZCLuGOhBA35sZ6sQ0QEgH3kc5UVmzfkqAeH
+ n6fYajJDlIwg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2020 22:03:15 -0700
+IronPort-SDR: 9ufmNh8mqDO79BHCNYP9XySbx/nxhCPkvJhSzFy/yTOzq4r2/iAyZPXCEyg7DAFrlgdZsvV3/f
+ s/9cRM04vYSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,406,1583222400"; 
+   d="scan'208";a="342681737"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga001.jf.intel.com with ESMTP; 17 May 2020 22:03:15 -0700
+Date:   Sun, 17 May 2020 22:03:15 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/9] fs/ext4: Disallow encryption if inode is DAX
+Message-ID: <20200518050315.GA3025231@iweiny-DESK2.sc.intel.com>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-4-ira.weiny@intel.com>
+ <20200516020253.GG1009@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200516020253.GG1009@sol.localdomain>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move watchdog syscl interface to watchdog.c.
-Use register_sysctl() to register the sysctl interface to avoid
-merge conflicts when different features modify sysctl.c at the same time.
+On Fri, May 15, 2020 at 07:02:53PM -0700, Eric Biggers wrote:
+> On Tue, May 12, 2020 at 10:43:18PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Encryption and DAX are incompatible.  Changing the DAX mode due to a
+> > change in Encryption mode is wrong without a corresponding
+> > address_space_operations update.
+> > 
+> > Make the 2 options mutually exclusive by returning an error if DAX was
+> > set first.
+> > 
+> > Furthermore, clarify the documentation of the exclusivity and how that
+> > will work.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Changes:
+> > 	remove WARN_ON_ONCE
+> > 	Add documentation to the encrypt doc WRT DAX
+> > ---
+> >  Documentation/filesystems/fscrypt.rst |  4 +++-
+> >  fs/ext4/super.c                       | 10 +---------
+> >  2 files changed, 4 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+> > index aa072112cfff..1475b8d52fef 100644
+> > --- a/Documentation/filesystems/fscrypt.rst
+> > +++ b/Documentation/filesystems/fscrypt.rst
+> > @@ -1038,7 +1038,9 @@ astute users may notice some differences in behavior:
+> >  - The ext4 filesystem does not support data journaling with encrypted
+> >    regular files.  It will fall back to ordered data mode instead.
+> >  
+> > -- DAX (Direct Access) is not supported on encrypted files.
+> > +- DAX (Direct Access) is not supported on encrypted files.  Attempts to enable
+> > +  DAX on an encrypted file will fail.  Mount options will _not_ enable DAX on
+> > +  encrypted files.
+> >  
+> >  - The st_size of an encrypted symlink will not necessarily give the
+> >    length of the symlink target as required by POSIX.  It will actually
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index bf5fcb477f66..9873ab27e3fa 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -1320,7 +1320,7 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  	if (inode->i_ino == EXT4_ROOT_INO)
+> >  		return -EPERM;
+> >  
+> > -	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
+> > +	if (IS_DAX(inode))
+> >  		return -EINVAL;
+> >  
+> >  	res = ext4_convert_inline_data(inode);
+> > @@ -1344,10 +1344,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> >  			ext4_clear_inode_state(inode,
+> >  					EXT4_STATE_MAY_INLINE_DATA);
+> > -			/*
+> > -			 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> > -			 * S_DAX may be disabled
+> > -			 */
+> >  			ext4_set_inode_flags(inode);
+> >  		}
+> >  		return res;
+> > @@ -1371,10 +1367,6 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
+> >  				    ctx, len, 0);
+> >  	if (!res) {
+> >  		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> > -		/*
+> > -		 * Update inode->i_flags - S_ENCRYPTED will be enabled,
+> > -		 * S_DAX may be disabled
+> > -		 */
+> >  		ext4_set_inode_flags(inode);
+> >  		res = ext4_mark_inode_dirty(handle, inode);
+> >  		if (res)
+> 
+> I'm confused by the ext4_set_context() change.
+> 
+> ext4_set_context() is only called when FS_IOC_SET_ENCRYPTION_POLICY sets an
+> encryption policy on an empty directory, *or* when a new inode (regular, dir, or
+> symlink) is created in an encrypted directory (thus inheriting encryption from
+> its parent).
 
-Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
- kernel/sysctl.c   |  96 ---------------------------------------------------
- kernel/watchdog.c | 101 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+), 96 deletions(-)
+I don't see the check which prevents FS_IOC_SET_ENCRYPTION_POLICY on a file?
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 90e3ea8..cd85a1c 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -97,9 +97,6 @@
- #ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
- #include <linux/stackleak.h>
- #endif
--#ifdef CONFIG_LOCKUP_DETECTOR
--#include <linux/nmi.h>
--#endif
- 
- #if defined(CONFIG_SYSCTL)
- 
-@@ -120,9 +117,6 @@
- #endif
- 
- /* Constants used for minimum and  maximum */
--#ifdef CONFIG_LOCKUP_DETECTOR
--static int sixty = 60;
--#endif
- 
- static unsigned long zero_ul;
- static unsigned long one_ul = 1;
-@@ -883,96 +877,6 @@ static int sysrq_sysctl_handler(struct ctl_table *table, int write,
- 		.mode		= 0444,
- 		.proc_handler	= proc_dointvec,
- 	},
--#if defined(CONFIG_LOCKUP_DETECTOR)
--	{
--		.procname       = "watchdog",
--		.data		= &watchdog_user_enabled,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler   = proc_watchdog,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--	{
--		.procname	= "watchdog_thresh",
--		.data		= &watchdog_thresh,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_watchdog_thresh,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= &sixty,
--	},
--	{
--		.procname       = "nmi_watchdog",
--		.data		= &nmi_watchdog_user_enabled,
--		.maxlen		= sizeof(int),
--		.mode		= NMI_WATCHDOG_SYSCTL_PERM,
--		.proc_handler   = proc_nmi_watchdog,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--	{
--		.procname	= "watchdog_cpumask",
--		.data		= &watchdog_cpumask_bits,
--		.maxlen		= NR_CPUS,
--		.mode		= 0644,
--		.proc_handler	= proc_watchdog_cpumask,
--	},
--#ifdef CONFIG_SOFTLOCKUP_DETECTOR
--	{
--		.procname       = "soft_watchdog",
--		.data		= &soft_watchdog_user_enabled,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler   = proc_soft_watchdog,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--	{
--		.procname	= "softlockup_panic",
--		.data		= &softlockup_panic,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#ifdef CONFIG_SMP
--	{
--		.procname	= "softlockup_all_cpu_backtrace",
--		.data		= &sysctl_softlockup_all_cpu_backtrace,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif /* CONFIG_SMP */
--#endif
--#ifdef CONFIG_HARDLOCKUP_DETECTOR
--	{
--		.procname	= "hardlockup_panic",
--		.data		= &hardlockup_panic,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#ifdef CONFIG_SMP
--	{
--		.procname	= "hardlockup_all_cpu_backtrace",
--		.data		= &sysctl_hardlockup_all_cpu_backtrace,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif /* CONFIG_SMP */
--#endif
--#endif
--
- #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
- 	{
- 		.procname       = "unknown_nmi_panic",
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index b6b1f54..8c833b6 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -756,6 +756,106 @@ int proc_watchdog_cpumask(struct ctl_table *table, int write,
- 	mutex_unlock(&watchdog_mutex);
- 	return err;
- }
-+
-+static const int sixty = 60;
-+
-+static struct ctl_table watchdog_sysctls[] = {
-+	{
-+		.procname       = "watchdog",
-+		.data		= &watchdog_user_enabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler   = proc_watchdog,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "watchdog_thresh",
-+		.data		= &watchdog_thresh,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_watchdog_thresh,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= (void *)&sixty,
-+	},
-+	{
-+		.procname       = "nmi_watchdog",
-+		.data		= &nmi_watchdog_user_enabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= NMI_WATCHDOG_SYSCTL_PERM,
-+		.proc_handler   = proc_nmi_watchdog,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "watchdog_cpumask",
-+		.data		= &watchdog_cpumask_bits,
-+		.maxlen		= NR_CPUS,
-+		.mode		= 0644,
-+		.proc_handler	= proc_watchdog_cpumask,
-+	},
-+#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-+	{
-+		.procname       = "soft_watchdog",
-+		.data		= &soft_watchdog_user_enabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler   = proc_soft_watchdog,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "softlockup_panic",
-+		.data		= &softlockup_panic,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#ifdef CONFIG_SMP
-+	{
-+		.procname	= "softlockup_all_cpu_backtrace",
-+		.data		= &sysctl_softlockup_all_cpu_backtrace,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif /* CONFIG_SMP */
-+#endif
-+#ifdef CONFIG_HARDLOCKUP_DETECTOR
-+	{
-+		.procname	= "hardlockup_panic",
-+		.data		= &hardlockup_panic,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#ifdef CONFIG_SMP
-+	{
-+		.procname	= "hardlockup_all_cpu_backtrace",
-+		.data		= &sysctl_hardlockup_all_cpu_backtrace,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif /* CONFIG_SMP */
-+#endif
-+	{}
-+};
-+
-+static void __init watchdog_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", watchdog_sysctls, "watchdog_sysctls");
-+}
-+#else
-+#define watchdog_sysctl_init() do { } while (0)
- #endif /* CONFIG_SYSCTL */
- 
- void __init lockup_detector_init(void)
-@@ -769,4 +869,5 @@ void __init lockup_detector_init(void)
- 	if (!watchdog_nmi_probe())
- 		nmi_watchdog_available = true;
- 	lockup_detector_setup();
-+	watchdog_sysctl_init();
- }
--- 
-1.8.5.6
+On inode creation, encryption will always usurp S_DAX...
 
+> 
+> So when is it reachable when IS_DAX()?  Is the issue that the DAX flag can now
+> be set on directories?  The commit message doesn't seem to be talking about
+> directories.  Is the behavior we want is that on an (empty) directory with the
+> DAX flag set, FS_IOC_SET_ENCRYPTION_POLICY should fail with EINVAL?
+
+We would want that but AFIAK S_DAX is never set on directories.  Perhaps this
+is another place where S_DAX needs to be changed to the new inode flag?
+However, this would not be appropriate at this point in the series.  At this
+point in the series S_DAX is still set based on the mount option and I'm 99%
+sure that only happens on regular files, not directories.  So I'm confused now.
+
+This is, AFAICS, not going to affect correctness.  It will only be confusing
+because the user will be able to set both DAX and encryption on the directory
+but files there will only see encryption being used...  :-(
+
+Assuming you are correct about this call path only being valid on directories.
+It seems this IS_DAX() needs to be changed to check for EXT4_DAX_FL in
+"fs/ext4: Introduce DAX inode flag"?  Then at that point we can prevent DAX and
+encryption on a directory.  ...  and at this point IS_DAX() could be removed at
+this point in the series???
+
+> 
+> I don't see why the i_size_read(inode) check is there though, so I think you're
+> at least right to remove that.
+
+Agreed.
+Ira
+
+> 
+> - Eric
