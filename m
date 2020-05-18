@@ -2,111 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 530C71D705A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 07:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B621D7063
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 May 2020 07:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbgERF1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 May 2020 01:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57622 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgERF1c (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 May 2020 01:27:32 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19650C061A0C;
-        Sun, 17 May 2020 22:27:32 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id l20so8607824ilj.10;
-        Sun, 17 May 2020 22:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2QR4aGtyUsOayVjV8xb4dtdBzcBW2eWKNOlzdZZnoWY=;
-        b=bvvX8594ZBJJr+iHr2Mq99oq8+A1Ih/2X1vPajRR5sXKOLqjbxtTO1P3kztLMHrwoB
-         WGClO+0gHivdYz7+6Ed3+RrztYBwFhyFmaVdmKZSgDn5CzVNAWYxz46/QT3NJQcs+jTj
-         SI9diF507sth34u2wCW3+Ct3l6TeiF2wjMUjb6giX7I3juxOQ0TguJp9Oa/SylgAUFKm
-         5Mh4n1daU1pbYaSl/gQckYzrtfy1IdZaX9hKo5+UeoYNHytXxsfJBZd3qKIBuCjUNXIW
-         882iV58Zz5xC8f2INKEW1NwtCAiklT3mWdtIpTSkdHW/cLOmdB3lTruYVTW1jY7/8Es/
-         WOEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2QR4aGtyUsOayVjV8xb4dtdBzcBW2eWKNOlzdZZnoWY=;
-        b=ufAE0CZbYmJxzgQCNPYe7ag3eXDESKLuhIzqFrZDVU6DJTj3iOni9cupHqCbImxfv3
-         91gipXOMU0sPQQ6oVlImnn7bQEV3UmWBnF+m5YInq+zNWKScxT1Y5d68MWoxsW5/beGP
-         HO91Ejd/PbQdRoXoHxDLcu3n6Zyku+lK5pzsbIITp0Xk6D7/CqiK4biS998W1Ish2x4c
-         QFk7iAGXB0dYrPl7zAEesabHGfrS4cenNplfiHPaxmjjzh9QDkbtz11c9nceUYOutNiw
-         biDdnaGOe15bD+UWjs3NBaJZiuz79NxU7zkp1o/GwVmhXqofHYfE1lrB3P99NWyEsbRo
-         07pA==
-X-Gm-Message-State: AOAM530Ti60BdR9n5e1SsKI482V9ZIj61X/6Dc7ziEXWQ0S6o+sSqZSc
-        BGtuFt+A7xgNAAGOJxvhE0ZgOatnbutN3zRZP2rSTA==
-X-Google-Smtp-Source: ABdhPJwmavOHQKDeN7rY0YMd9Je5obkFVfVstvV4BG0S/nWkjc07gLymnvuEt17jO70OKPem27dDg2eoYUQuZsXYxok=
-X-Received: by 2002:a92:495d:: with SMTP id w90mr14742485ila.275.1589779651179;
- Sun, 17 May 2020 22:27:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200515072047.31454-1-cgxu519@mykernel.net> <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
-In-Reply-To: <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 18 May 2020 08:27:19 +0300
-Message-ID: <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
-To:     Ian Kent <raven@themaw.net>
-Cc:     Chengguang Xu <cgxu519@mykernel.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        id S1726596AbgERFcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 May 2020 01:32:09 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46275 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbgERFcJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 May 2020 01:32:09 -0400
+IronPort-SDR: t0drqDhrAzvgctAUMj7WXYBl0b5h+AxtllxUbFufHP+JU4Uv0swHI3ZSS99eniFEyctclbK9AT
+ qSAOiCnmyMVA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2020 22:32:08 -0700
+IronPort-SDR: 3FYr8W0oCV4c/oQ+sOt5p5Nh3NtHqVgXkB8CfcYLE9vAyq++sGDiWLe0tRVzXtw154rDbxCydD
+ QzVc++4Nsl2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,406,1583222400"; 
+   d="scan'208";a="342686939"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga001.jf.intel.com with ESMTP; 17 May 2020 22:32:07 -0700
+Date:   Sun, 17 May 2020 22:32:07 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/9] fs/ext4: Disallow verity if inode is DAX
+Message-ID: <20200518053207.GB3025231@iweiny-DESK2.sc.intel.com>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-3-ira.weiny@intel.com>
+ <20200516014916.GF1009@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200516014916.GF1009@sol.localdomain>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 18, 2020 at 3:53 AM Ian Kent <raven@themaw.net> wrote:
->
-> On Fri, 2020-05-15 at 15:20 +0800, Chengguang Xu wrote:
-> > This series adds a new lookup flag LOOKUP_DONTCACHE_NEGATIVE
-> > to indicate to drop negative dentry in slow path of lookup.
-> >
-> > In overlayfs, negative dentries in upper/lower layers are useless
-> > after construction of overlayfs' own dentry, so in order to
-> > effectively reclaim those dentries, specify LOOKUP_DONTCACHE_NEGATIVE
-> > flag when doing lookup in upper/lower layers.
->
-> I've looked at this a couple of times now.
->
-> I'm not at all sure of the wisdom of adding a flag to a VFS function
-> that allows circumventing what a file system chooses to do.
+On Fri, May 15, 2020 at 06:49:16PM -0700, Eric Biggers wrote:
+> On Tue, May 12, 2020 at 10:43:17PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Verity and DAX are incompatible.  Changing the DAX mode due to a verity
+> > flag change is wrong without a corresponding address_space_operations
+> > update.
+> > 
+> > Make the 2 options mutually exclusive by returning an error if DAX was
+> > set first.
+> > 
+> > (Setting DAX is already disabled if Verity is set first.)
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Changes:
+> > 	remove WARN_ON_ONCE
+> > 	Add documentation for DAX/Verity exclusivity
+> > ---
+> >  Documentation/filesystems/ext4/verity.rst | 7 +++++++
+> >  fs/ext4/verity.c                          | 3 +++
+> >  2 files changed, 10 insertions(+)
+> > 
+> > diff --git a/Documentation/filesystems/ext4/verity.rst b/Documentation/filesystems/ext4/verity.rst
+> > index 3e4c0ee0e068..51ab1aa17e59 100644
+> > --- a/Documentation/filesystems/ext4/verity.rst
+> > +++ b/Documentation/filesystems/ext4/verity.rst
+> > @@ -39,3 +39,10 @@ is encrypted as well as the data itself.
+> >  
+> >  Verity files cannot have blocks allocated past the end of the verity
+> >  metadata.
+> > +
+> > +Verity and DAX
+> > +--------------
+> > +
+> > +Verity and DAX are not compatible and attempts to set both of these flags on a
+> > +file will fail.
+> > +
+> 
+> If you build the documentation, this shows up as its own subsection
+> "2.13. Verity and DAX" alongside "2.12. Verity files", which looks odd.
+> I think you should delete this new subsection header so that this paragraph goes
+> in the existing "Verity files" subsection.
 
-But it is not really a conscious choice is it?
-How exactly does a filesystem express its desire to cache a negative
-dentry? The documentation of lookup() in vfs.rst makes it clear that
-it is not up to the filesystem to make that decision.
-The VFS needs to cache the negative dentry on lookup(), so
-it can turn it positive on create().
-Low level kernel modules that call the VFS lookup() might know
-that caching the negative dentry is counter productive.
+Ok...  I'll fix it up...
 
->
-> I also do really see the need for it because only hashed negative
-> dentrys will be retained by the VFS so, if you see a hashed negative
-> dentry then you can cause it to be discarded on release of the last
-> reference by dropping it.
->
-> So what's different here, why is adding an argument to do that drop
-> in the VFS itself needed instead of just doing it in overlayfs?
+> 
+> Also, Documentation/filesystems/fsverity.rst already mentions DAX (similar to
+> fscrypt.rst).  Is it intentional that you added this to the ext4-specific
+> documentation instead?
 
-That was v1 patch. It was dealing with the possible race of
-returned negative dentry becoming positive before dropping it
-in an intrusive manner.
+I proposed this text[1] and there were no objections...  I was looking at ext4
+because only ext4 supports verity and DAX.  I think having this in both the
+ext4 docs and the verity docs helps.
 
-In retrospect, I think this race doesn't matter and there is no
-harm in dropping a positive dentry in a race obviously caused by
-accessing the underlying layer, which as documented results in
-"undefined behavior".
+Ira
 
-Miklos, am I missing something?
+[1] https://lore.kernel.org/lkml/20200415191451.GA2305801@iweiny-DESK2.sc.intel.com/
 
-Thanks,
-Amir.
+> 
+> - Eric
