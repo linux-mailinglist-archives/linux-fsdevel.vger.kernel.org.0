@@ -2,84 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 022351D8F13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 07:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05181D90D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 09:17:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbgESFMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 01:12:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbgESFMh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 01:12:37 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B93020758;
-        Tue, 19 May 2020 05:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589865156;
-        bh=qrHKafA0ZTttPnEqF3hkLOvbCl6Fprw9RuG7qytReC8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nlbIrf8Fy8HDlKACQi91AHg9NqzN0RQ0bvP2OUb2TFrW0wClvkadR8udy9FhxT6j0
-         QUNapjpdTE6IrfWtYzBdLzBnAHKQj3h7a4JlCowDPcDkGEKeDdsS/iNy8dk528O4qg
-         nbm9Y07gMePXo5wP9r4/4P2ShQhKEdTZ2+DDbmOc=
-Date:   Mon, 18 May 2020 22:12:35 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david@fromorbit.com,
-        hch@infradead.org, willy@infradead.org
-Subject: Re: [PATCH 10/10] mm/migrate.c: call detach_page_private to cleanup
- code
-Message-Id: <20200518221235.1fa32c38e5766113f78e3f0d@linux-foundation.org>
-In-Reply-To: <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
-References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
-        <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728407AbgESHQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 03:16:55 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:57933 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbgESHQz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 03:16:55 -0400
+X-Originating-IP: 78.194.159.98
+Received: from clip-os.org (unknown [78.194.159.98])
+        (Authenticated sender: thibaut.sautereau@clip-os.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id DE5FF40006;
+        Tue, 19 May 2020 07:16:52 +0000 (UTC)
+Date:   Tue, 19 May 2020 09:16:52 +0200
+From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: NULL pointer dereference in coredump code
+Message-ID: <20200519071652.GA924@clip-os.org>
+References: <20200330083158.GA21845@clip-os.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200330083158.GA21845@clip-os.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 17 May 2020 23:47:18 +0200 Guoqing Jiang <guoqing.jiang@cloud.ionos.com> wrote:
-
-> We can cleanup code a little by call detach_page_private here.
+On Mon, Mar 30, 2020 at 10:31:59AM +0200, Thibaut Sautereau wrote:
+> I hit a kernel NULL pointer dereference caused by the following call chain:
 > 
-> ...
->
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -804,10 +804,7 @@ static int __buffer_migrate_page(struct address_space *mapping,
->  	if (rc != MIGRATEPAGE_SUCCESS)
->  		goto unlock_buffers;
->  
-> -	ClearPagePrivate(page);
-> -	set_page_private(newpage, page_private(page));
-> -	set_page_private(page, 0);
-> -	put_page(page);
-> +	set_page_private(newpage, detach_page_private(page));
->  	get_page(newpage);
->  
->  	bh = head;
+> do_coredump()
+>   file_start_write(cprm.file) # cprm.file is NULL
+>     file_inode(file) # NULL ptr deref
+> 
+> The `ispipe` path is followed in do_coredump(), and:
+>     # cat /proc/sys/kernel/core_pattern
+>     |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> 
+> It seems that cprm.file can be NULL after the call to the usermode
+> helper, especially when setting CONFIG_STATIC_USERMODEHELPER=y and
+> CONFIG_STATIC_USERMODEHELPER_PATH="", which is the case for me.
+> 
+> One may say it's a strange combination of configuration options but I
+> think it should not crash the kernel anyway. As I don't know much about
+> coredumps in general and this code, I don't know what's the best way to
+> fix this issue in a clean and comprehensive way.
+> 
+> I attached the patch I used to temporarily work around this issue, if
+> that can clarify anything.
+> 
+> Thanks,
 
-mm/migrate.c: In function '__buffer_migrate_page':
-./include/linux/mm_types.h:243:52: warning: assignment makes integer from pointer without a cast [-Wint-conversion]
- #define set_page_private(page, v) ((page)->private = (v))
-                                                    ^
-mm/migrate.c:800:2: note: in expansion of macro 'set_page_private'
-  set_page_private(newpage, detach_page_private(page));
-  ^~~~~~~~~~~~~~~~
+For the record, this had previously been reported [1] and was eventually
+fixed by 3740d93e3790 ("coredump: fix crash when umh is disabled").
 
-The fact that set_page_private(detach_page_private()) generates a type
-mismatch warning seems deeply wrong, surely.
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=199795
 
-Please let's get the types sorted out - either unsigned long or void *,
-not half-one and half-the other.  Whatever needs the least typecasting
-at callsites, I suggest.
-
-And can we please implement set_page_private() and page_private() with
-inlined C code?  There is no need for these to be macros.
-
+-- 
+Thibaut Sautereau
+CLIP OS developer
