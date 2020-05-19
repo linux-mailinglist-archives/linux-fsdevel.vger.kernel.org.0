@@ -2,112 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE6B1D9AC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 17:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD521D9AF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 17:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbgESPKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 11:10:17 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:44388 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728737AbgESPKR (ORCPT
+        id S1728994AbgESPQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 11:16:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728847AbgESPQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 11:10:17 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb3sk-0005GH-Fu; Tue, 19 May 2020 09:10:14 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb3si-0001s6-RW; Tue, 19 May 2020 09:10:13 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Tue, 19 May 2020 11:16:36 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1A5C08C5C0;
+        Tue, 19 May 2020 08:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AdOEDRxDGCk7juxgiVag4rwDu7GUxBm+spqJHfRFL34=; b=izuWj3PJVtncbaRo/nVgukcTqN
+        gJwJsEpWDLAmFjONjk5zY/gtlAJc4LQm9DXzpQJLwO1mCvGwYQxXPWIj8i69WA7sfGGCr+zhJXznT
+        O68emi4Dtzi7vm5WPUasi8WHHLxsGFKvU1iNuMrl5kdTerDlBClqUfV2kYbtMbEoXY/ltudMz9tW0
+        La/sno1U4DOWwkJ2knHfns+oTvJxC43ChATw0NwycWOynhizKkhqX81z7XcKKWE7wjFse12SncBCT
+        FxujU9PUiOCMGureSWUB9xVJ4qxJNyR8XiyBqvEuB7QFKnYBwUy2QS0ZkGqQKsPQ3bSoEKd1aw8ML
+        EP05HoPQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jb3yq-0004DD-Ul; Tue, 19 May 2020 15:16:32 +0000
+Date:   Tue, 19 May 2020 08:16:32 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@gmx.com>
+Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200518055457.12302-1-keescook@chromium.org>
-Date:   Tue, 19 May 2020 10:06:32 -0500
-In-Reply-To: <20200518055457.12302-1-keescook@chromium.org> (Kees Cook's
-        message of "Sun, 17 May 2020 22:54:53 -0700")
-Message-ID: <87a724t153.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, david@fromorbit.com,
+        hch@infradead.org
+Subject: Re: [PATCH 10/10] mm/migrate.c: call detach_page_private to cleanup
+ code
+Message-ID: <20200519151632.GX16070@bombadil.infradead.org>
+References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
+ <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
+ <20200518221235.1fa32c38e5766113f78e3f0d@linux-foundation.org>
+ <aade5d75-c9e9-4021-6eb7-174a921a7958@cloud.ionos.com>
+ <20200519100612.GA3687@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jb3si-0001s6-RW;;;mid=<87a724t153.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+A3FfcWjqtqqukiK5gO20MFpn1V2jd41Y=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMNoVowels autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4778]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 456 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 11 (2.4%), b_tie_ro: 9 (2.0%), parse: 1.43 (0.3%),
-         extract_message_metadata: 22 (4.8%), get_uri_detail_list: 2.1 (0.5%),
-        tests_pri_-1000: 7 (1.6%), tests_pri_-950: 1.32 (0.3%),
-        tests_pri_-900: 1.07 (0.2%), tests_pri_-90: 183 (40.1%), check_bayes:
-        169 (37.1%), b_tokenize: 6 (1.3%), b_tok_get_all: 5 (1.2%),
-        b_comp_prob: 1.90 (0.4%), b_tok_touch_all: 153 (33.5%), b_finish: 1.04
-        (0.2%), tests_pri_0: 213 (46.7%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.2 (0.5%), poll_dns_idle: 0.43 (0.1%), tests_pri_10:
-        2.5 (0.6%), tests_pri_500: 9 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 0/4] Relocate execve() sanity checks
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200519100612.GA3687@hsiangkao-HP-ZHAN-66-Pro-G1>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Tue, May 19, 2020 at 06:06:19PM +0800, Gao Xiang wrote:
+> In addition, I found some limitation of new {attach,detach}_page_private
+> helper (that is why I was interested in this series at that time [1] [2],
+> but I gave up finally) since many patterns (not all) in EROFS are
+> 
+> io_submit (origin, page locked):
+> attach_page_private(page);
+> ...
+> put_page(page);
+> 
+> end_io (page locked):
+> SetPageUptodate(page);
+> unlock_page(page);
+> 
+> since the page is always locked, so io_submit could be simplified as
+> set_page_private(page, ...);
+> SetPagePrivate(page);
+> , which can save both one temporary get_page(page) and one
+> put_page(page) since it could be regarded as safe with page locked.
 
-> Hi,
->
-> While looking at the code paths for the proposed O_MAYEXEC flag, I saw
-> some things that looked like they should be fixed up.
->
->   exec: Change uselib(2) IS_SREG() failure to EACCES
-> 	This just regularizes the return code on uselib(2).
->
->   exec: Relocate S_ISREG() check
-> 	This moves the S_ISREG() check even earlier than it was already.
->
->   exec: Relocate path_noexec() check
-> 	This adds the path_noexec() check to the same place as the
-> 	S_ISREG() check.
->
->   fs: Include FMODE_EXEC when converting flags to f_mode
-> 	This seemed like an oversight, but I suspect there is some
-> 	reason I couldn't find for why FMODE_EXEC doesn't get set in
-> 	f_mode and just stays in f_flags.
+It's fine to use page private like this without incrementing the refcount,
+and I can't find any problematic cases in EROFS like those fixed by commit
+8e47a457321ca1a74ad194ab5dcbca764bc70731
 
-So I took a look at this series.
-
-I think the belt and suspenders approach of adding code in open and then
-keeping it in exec and uselib is probably wrong.  My sense of the
-situation is a belt and suspenders approach is more likely to be
-confusing and result in people making mistakes when maintaining the code
-than to actually be helpful.
-
-Eric
+So I think the new helpers are not for you, and that's fine.  They'll be
+useful for other filesystems which are using page_private differently
+from the way that you do.
