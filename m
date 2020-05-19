@@ -2,91 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5F41DA403
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 23:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C8A1DA424
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 23:53:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbgESVrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 17:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbgESVry (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 17:47:54 -0400
-Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BC7C08C5C1;
-        Tue, 19 May 2020 14:47:54 -0700 (PDT)
-Received: from [5.158.153.53] (helo=debian-buster-darwi.lab.linutronix.de.)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <a.darwish@linutronix.de>)
-        id 1jbA5R-0002xn-8E; Tue, 19 May 2020 23:47:45 +0200
-From:   "Ahmed S. Darwish" <a.darwish@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Sebastian A. Siewior" <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 23/25] userfaultfd: Use sequence counter with associated spinlock
-Date:   Tue, 19 May 2020 23:45:45 +0200
-Message-Id: <20200519214547.352050-24-a.darwish@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200519214547.352050-1-a.darwish@linutronix.de>
-References: <20200519214547.352050-1-a.darwish@linutronix.de>
+        id S1727918AbgESVxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 17:53:01 -0400
+Received: from namei.org ([65.99.196.166]:38346 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726199AbgESVxA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 17:53:00 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 04JLqgRE031922;
+        Tue, 19 May 2020 21:52:42 GMT
+Date:   Wed, 20 May 2020 07:52:42 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 3/8] exec: Convert security_bprm_set_creds into
+ security_bprm_repopulate_creds
+In-Reply-To: <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <alpine.LRH.2.21.2005200750490.30843@namei.org>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org> <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <877dx822er.fsf_-_@x220.int.ebiederm.org> <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A sequence counter write side critical section must be protected by some
-form of locking to serialize writers. A plain seqcount_t does not
-contain the information of which lock must be held when entering a write
-side critical section.
+On Mon, 18 May 2020, Eric W. Biederman wrote:
 
-Use the new seqcount_spinlock_t data type, which allows to associate a
-spinlock with the sequence counter. This enables lockdep to verify that
-the spinlock used for writer serialization is held when the write side
-critical section is entered.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 9e70da47f8d9..8e3b93d51d31 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1366,7 +1366,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	 * the final state of setuid/setgid/fscaps can be merged into the
+>  	 * secureexec flag.
+>  	 */
+> -	bprm->secureexec |= bprm->cap_elevated;
+> +	bprm->secureexec |= bprm->active_secureexec;
 
-If lockdep is disabled this lock association is compiled out and has
-neither storage size nor runtime overhead.
+Which kernel tree are these patches for? Seems like begin_new_exec() is 
+from a prerequisite patchset.
 
-Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
----
- fs/userfaultfd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index e39fdec8a0b0..dd3aab31c50f 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -61,7 +61,7 @@ struct userfaultfd_ctx {
- 	/* waitqueue head for events */
- 	wait_queue_head_t event_wqh;
- 	/* a refile sequence protected by fault_pending_wqh lock */
--	struct seqcount refile_seq;
-+	seqcount_spinlock_t refile_seq;
- 	/* pseudo fd refcounting */
- 	refcount_t refcount;
- 	/* userfaultfd syscall flags */
-@@ -1998,7 +1998,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 	init_waitqueue_head(&ctx->fault_wqh);
- 	init_waitqueue_head(&ctx->event_wqh);
- 	init_waitqueue_head(&ctx->fd_wqh);
--	seqcount_init(&ctx->refile_seq);
-+	seqcount_spinlock_init(&ctx->refile_seq, &ctx->fault_pending_wqh.lock);
- }
- 
- SYSCALL_DEFINE1(userfaultfd, int, flags)
 -- 
-2.20.1
+James Morris
+<jmorris@namei.org>
 
