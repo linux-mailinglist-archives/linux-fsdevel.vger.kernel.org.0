@@ -2,28 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 054141DA0C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 21:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D12961DA0C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 21:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbgESTMX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 15:12:23 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39744 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgESTMW (ORCPT
+        id S1726658AbgESTOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 15:14:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgESTOm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 15:12:22 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb7ez-0008UU-9H; Tue, 19 May 2020 13:12:17 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb7ey-00014b-3r; Tue, 19 May 2020 13:12:16 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
+        Tue, 19 May 2020 15:14:42 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93702C08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 12:14:42 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id n18so357809pfa.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 12:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hzUIWpf2COJGu10K9zNA4alrQYEQDf2ZxnZ+vLrtLOs=;
+        b=J2dvXZG++NKRPJGTT7H8hZxKOiRbCEO0NPkYH8e/WSip7ia/fghW2ryML++SjOJivD
+         3w4qWG541m3+I4jObP3wmuFMPB6X5nmJME2bH+SHtK8tKuI0yUnXdUfBJUsLrs/srBs5
+         1T83uq+SrW/TDwqo2A0Q+jIRCayxBiQhfcJ0k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hzUIWpf2COJGu10K9zNA4alrQYEQDf2ZxnZ+vLrtLOs=;
+        b=awUvp5vpUM5HXKQM00erAr05u7T0K55TTQMHGQLf6m7/Sk0WsdTze7ux2XOh6XO4ot
+         GmUdxkJbEFtJ1dh6nTVP+lT7uxOfHp24WJa23MZG5NlKHoR8yYtNxZMjO129KM0zZm50
+         9mR/K1KQdk0T3Ieuq9rJ6oTRo4VhotU1uZHzj4TnZg3vmXUolhdyfsjYie0wbcbTqfgY
+         evozEUnwi6YpmxZMZvAlrgyMXNX8tjrQv23TojFgCZxstXbv09XB6ZEcrwVt+FX/kKJU
+         BApji4pyQ5gQAUbVKNaY9xgE0h5kITCD9pivGYimy00lp1wwsyHcnbNIWT/sXWQuuqDM
+         gZ5g==
+X-Gm-Message-State: AOAM530jvZmcuYWLhMv5mCoPEG8u4+Ng9r1iSPdxMc01NvrtjbW9x3Ky
+        4a1kHZZ1eaNUvKWmPAhM2BlREQ==
+X-Google-Smtp-Source: ABdhPJwti/qBt30q0tzc1ytgag0FAtjpL1Zx0HGmxi2XXuFmfXwbUXXIhiOcrt59HkCR+E7SMGiUSA==
+X-Received: by 2002:a63:546:: with SMTP id 67mr704972pgf.364.1589915682040;
+        Tue, 19 May 2020 12:14:42 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m3sm261612pjs.17.2020.05.19.12.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 12:14:41 -0700 (PDT)
+Date:   Tue, 19 May 2020 12:14:40 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
@@ -38,106 +62,74 @@ Cc:     linux-kernel@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 3/8] exec: Convert security_bprm_set_creds into
+ security_bprm_repopulate_creds
+Message-ID: <202005191211.97BCF9DA@keescook>
 References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <87imgszrwo.fsf_-_@x220.int.ebiederm.org>
-        <202005191122.0A1FD07@keescook>
-Date:   Tue, 19 May 2020 14:08:34 -0500
-In-Reply-To: <202005191122.0A1FD07@keescook> (Kees Cook's message of "Tue, 19
-        May 2020 11:27:25 -0700")
-Message-ID: <87sgfvoi8d.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
+ <202005191111.9B389D33@keescook>
+ <875zcrpx1g.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jb7ey-00014b-3r;;;mid=<87sgfvoi8d.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/kgQUwX+CSXDS53ITr/pklJfenYpzNP1g=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4998]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 406 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 11 (2.7%), b_tie_ro: 10 (2.4%), parse: 0.95
-        (0.2%), extract_message_metadata: 11 (2.7%), get_uri_detail_list: 1.30
-        (0.3%), tests_pri_-1000: 6 (1.4%), tests_pri_-950: 1.30 (0.3%),
-        tests_pri_-900: 1.06 (0.3%), tests_pri_-90: 139 (34.2%), check_bayes:
-        129 (31.7%), b_tokenize: 7 (1.8%), b_tok_get_all: 8 (2.0%),
-        b_comp_prob: 2.5 (0.6%), b_tok_touch_all: 107 (26.3%), b_finish: 0.99
-        (0.2%), tests_pri_0: 225 (55.3%), check_dkim_signature: 0.52 (0.1%),
-        check_dkim_adsp: 2.2 (0.5%), poll_dns_idle: 0.62 (0.2%), tests_pri_10:
-        2.1 (0.5%), tests_pri_500: 6 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 4/8] exec: Allow load_misc_binary to call prepare_binfmt unconditionally
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875zcrpx1g.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Tue, May 19, 2020 at 02:03:23PM -0500, Eric W. Biederman wrote:
+> Kees Cook <keescook@chromium.org> writes:
+> 
+> > On Mon, May 18, 2020 at 07:31:14PM -0500, Eric W. Biederman wrote:
+> >> [...]
+> >> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> >> index d1217fcdedea..8605ab4a0f89 100644
+> >> --- a/include/linux/binfmts.h
+> >> +++ b/include/linux/binfmts.h
+> >> @@ -27,10 +27,10 @@ struct linux_binprm {
+> >>  	unsigned long argmin; /* rlimit marker for copy_strings() */
+> >>  	unsigned int
+> >>  		/*
+> >> -		 * True if most recent call to cap_bprm_set_creds
+> >> +		 * True if most recent call to security_bprm_set_creds
+> >>  		 * resulted in elevated privileges.
+> >>  		 */
+> >> -		cap_elevated:1,
+> >> +		active_secureexec:1,
+> >
+> > Also, I'd like it if this comment could be made more verbose as well, for
+> > anyone trying to understand the binfmt execution flow for the first time.
+> > Perhaps:
+> >
+> > 		/*
+> > 		 * Must be set True during the any call to
+> > 		 * bprm_set_creds hook where the execution would
+> > 		 * reuslt in elevated privileges. (The hook can be
+> > 		 * called multiple times during nested interpreter
+> > 		 * resolution across binfmt_script, binfmt_misc, etc).
+> > 		 */
+> Well it is not during but after the call that it becomes true.
+> I think most recent covers the case of multiple calls.
 
-> On Mon, May 18, 2020 at 07:31:51PM -0500, Eric W. Biederman wrote:
->> 
->> Add a flag preserve_creds that binfmt_misc can set to prevent
->> credentials from being updated.  This allows binfmt_misc to always
->> call prepare_binfmt.  Allowing the credential computation logic to be
->
-> typo: prepare_binprm()
+I'm thinking of an LSM writing reading these comments to decide what
+they need to do to the flags, so it's a direction to them to set it to
+true if they have determined that privilege was gained. (Though in
+theory, this is all moot since only the commoncap hook cares.)
 
-Thank you.
+> I think having the loop explicitly in the code a few patches
+> later makes it clear that there is a loop dealing with interpreters.
+> 
+> Conciseness has a virtue in that it is easy to absorb.  Seeing
+> active says most recent and secureexec does not is enough to ask
+> questions and look at the code.
 
->> consolidated.
->> 
->> Not replacing the credentials with the interpreters credentials is
->> safe because because an open file descriptor to the executable is
->> passed to the interpreter.   As the interpreter does not need to
->> reopen the executable it is guaranteed to see the same file that
->> exec sees.
->
-> Yup, looks good. Note below on comment.
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
->> [...]
->> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
->> index 8605ab4a0f89..dbb5614d62a2 100644
->> --- a/include/linux/binfmts.h
->> +++ b/include/linux/binfmts.h
->> @@ -26,6 +26,8 @@ struct linux_binprm {
->>  	unsigned long p; /* current top of mem */
->>  	unsigned long argmin; /* rlimit marker for copy_strings() */
->>  	unsigned int
->> +		/* It is safe to use the creds of a script (see binfmt_misc) */
->> +		preserve_creds:1,
->
-> How about:
->
-> 		/*
-> 		 * A binfmt handler will set this to True before calling
-> 		 * prepare_binprm() if it is safe to reuse the previous
-> 		 * credentials, based on bprm->file (see binfmt_misc).
-> 		 */
+I still think a hint about the nature of nested exec resolution would be
+nice in here somewhere, especially given that this value is zeroed
+before each call to the hook.
 
-I think that is more words saying less.
-
-While I agree it might be better.  I don't see what your comment adds to
-the understanding.  What do you see my comment not saying that is important?
-
-Eric
-
+-- 
+Kees Cook
