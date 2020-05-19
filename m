@@ -2,109 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D77281DA430
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 23:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E03161DA438
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 00:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbgESV7H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 17:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42770 "EHLO
+        id S1726283AbgESWEP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 18:04:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbgESV7G (ORCPT
+        with ESMTP id S1725885AbgESWEP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 17:59:06 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB01FC08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 14:59:06 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id b18so883401oti.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 14:59:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aJ30tY44Y1IVnHTs0oYR9AupzvvK3j296liG3N8OpVo=;
-        b=ftiUb59LkFILedozGY9XVYdMy2l42E9hAhepGXbGxUyVa+wAu6aqRNDMJALil6/O8J
-         booNhbKuCLrJsvfeGYjMVBbrzm+mRolULhd3N/LGe1R7ZdYQZzgHYrtpJe1Rq05peuT4
-         SQk27e6lcCUHwKixSX6yhM/JFqcggLFmwNd5gg8N9HHaBZCEayCGGf3J4Ks/Kpuj9Pej
-         A3YhDP9GJDMu627RGDh+4viwdlrocpgf05zpzxRYjp5SXVWViTZ+1x5ji3fdzeawktay
-         3oKrus4lO58304pOZVtJGawndLbdhjykoMteObMV2UkVXKcxGi2g6rBzwPJLXHgcEHzI
-         m1/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aJ30tY44Y1IVnHTs0oYR9AupzvvK3j296liG3N8OpVo=;
-        b=oIf/5e4m3gcrR5C1xJuqduPgbAuQ254j8rkfPLbEIlISqSE8UKUppo5oqD85cj6eej
-         mRyAyZ/bfrL33SR84TcwZUY+tuBvdIZR8QsKpkaXiH4SAwIKOyhFab4fLodf169dsAhc
-         g0zW1qC6b/cVH9q8FAHsJvvq41+cWKqPGZJRtkR/kkVZ+bdQfXW0a0KmYORwned/GFUp
-         bAX285Njx4DyhezleTkDIZN12cmuLnCma9ipc5vBWE8idZLn/geE2sh5qK7yQcMrwyw8
-         sM9jb1uL/VCXQ0v3j0BL86YOyrKeJsqmnckqML2bENgXJQATgIUL5kjkK3DWek0yq9Ya
-         IzNg==
-X-Gm-Message-State: AOAM532kaYZvdQaayZhB4JOpb9hhLO+cFeRcn5HGatA6iy3IpQCGs0ph
-        lMjY+M6PhPaKIUK8tBganNz9Uw==
-X-Google-Smtp-Source: ABdhPJz5fkUdyC6I3ITtCnUF9yioNlVJohurqkOOttvOIHzsFSgiV696yiAtufwGdVlHGXJPR6FFyw==
-X-Received: by 2002:a9d:7657:: with SMTP id o23mr694391otl.255.1589925546087;
-        Tue, 19 May 2020 14:59:06 -0700 (PDT)
-Received: from [192.168.86.21] ([136.62.4.88])
-        by smtp.gmail.com with ESMTPSA id k7sm235221otp.46.2020.05.19.14.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 14:59:05 -0700 (PDT)
-Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <adaced72-d757-e3e4-cfeb-5512533d0aa5@landley.net>
-Date:   Tue, 19 May 2020 16:59:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Tue, 19 May 2020 18:04:15 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE7BC061A0F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 15:04:14 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jbALJ-00C2eu-U1; Tue, 19 May 2020 22:04:10 +0000
+Date:   Tue, 19 May 2020 23:04:09 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Thiago Macieira <thiago.macieira@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: fcntl(F_DUPFD) causing apparent file descriptor table corruption
+Message-ID: <20200519220409.GT23230@ZenIV.linux.org.uk>
+References: <1645568.el9gB4U55B@tjmaciei-mobl1>
+ <20200519214520.GS23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200519214520.GS23230@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/18/20 7:33 PM, Eric W. Biederman wrote:
+On Tue, May 19, 2020 at 10:45:20PM +0100, Al Viro wrote:
+
+> The obvious fix would be to turn cpy and set into size_t - as in
+> ed fs/file.c <<'EOF'
+> /copy_fdtable/+2s/unsigned int/size_t/
+> w
+> q
+> EOF
 > 
-> Most of the support for passing the file descriptor of an executable
-> to an interpreter already lives in the generic code and in binfmt_elf.
-> Rework the fields in binfmt_elf that deal with executable file
-> descriptor passing to make executable file descriptor passing a first
-> class concept.
+> On size_t overflow you would've failed allocation before getting to that
+> point - see sysctl_nr_open_max initializer.  Overflow in alloc_fdtable()
+> (nr is unsigned int there) also can't happen, AFAICS - the worst you
+> can get is 1U<<31, which will fail sysctl_nr_open comparison.
+> 
+> I really wonder about the missing couple of syscalls in your strace, though;
+> could you verify that they _are_ missing and see what the fix above does to
+> your testcase?
 
-I was reading this to try to figure out how to do execve(NULL, argv[], envp) to
-re-exec self after a vfork() in a chroot with no /proc, and hit the most trivial
-quibble ever:
+Anyway, whether it's all there is to your reproducers or not, the bug
+is obvious; I've pushed the following into #fixes.
 
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1323,7 +1323,10 @@ int begin_new_exec(struct linux_binprm * bprm)
->  	 */
->  	set_mm_exe_file(bprm->mm, bprm->file);
->  
-> +	/* If the binary is not readable than enforce mm->dumpable=0 */
+commit 784233a6d4a56f1d0e6e4490fbf38d3cce5742ec
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue May 19 17:48:52 2020 -0400
 
-then
+    fix multiplication overflow in copy_fdtable()
+    
+    cpy and set really should be size_t; we won't get an overflow on that,
+    since sysctl_nr_open can't be set above ~(size_t)0 / sizeof(void *),
+    so nr that would've managed to overflow size_t on that multiplication
+    won't get anywhere near copy_fdtable() - we'll fail with EMFILE
+    before that.
+    
+    Cc: stable@kernel.org # v2.6.25+
+    Fixes: 9cfe015aa424 (get rid of NR_OPEN and introduce a sysctl_nr_open)
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Rob
+diff --git a/fs/file.c b/fs/file.c
+index c8a4e4c86e55..abb8b7081d7a 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -70,7 +70,7 @@ static void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
+  */
+ static void copy_fdtable(struct fdtable *nfdt, struct fdtable *ofdt)
+ {
+-	unsigned int cpy, set;
++	size_t cpy, set;
+ 
+ 	BUG_ON(nfdt->max_fds < ofdt->max_fds);
+ 
