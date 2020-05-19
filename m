@@ -2,118 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9231D9F06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 20:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4091D9F19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 20:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbgESSRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 14:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35908 "EHLO
+        id S1728133AbgESSVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 14:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbgESSRR (ORCPT
+        with ESMTP id S1726903AbgESSVh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 14:17:17 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF4BC08C5C0;
-        Tue, 19 May 2020 11:17:17 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id l18so460024wrn.6;
-        Tue, 19 May 2020 11:17:17 -0700 (PDT)
+        Tue, 19 May 2020 14:21:37 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C1CC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 11:21:37 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id x13so274597pfn.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 11:21:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9i8fE9UcQoMjC7gZk0f5UIj2Ufp+6XHlfmp4ao/4O3I=;
-        b=M0B7KgpZsBQt4E5X8OxXyD2yTNZWolR2/f+H8u41fyIpqXTQ/IBkg+PIk5pQaf9vVM
-         B7FvAhfWR1Ys+m0PgvW4bYZdhRkSN72vW+NPWuFXNjOut7tyAU1zAhCgo0t/tzzyScxo
-         7v428tVbz9c1onq0wHUsVOODP7mwAeG57d5EcWSgVjstv5AnNaRYDSg+IpUshqa4jCi0
-         ZY2uUsdYSopy9gG2dy9+JsJkNabpMVOrmLEYO8GpjMhHzvTmmQ5E1cffTvmnVK3bJfol
-         dRf+5Rb+dfJpS7ZkbpmYXVwTnfBgs42KLrH5bAIpl7PIt9yglAJbH2e4ykXBWz8d9oL3
-         neqA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q5UHC553rY05IEMbXCgL1ZU4LhfKGIJXOMI9F65WCM0=;
+        b=Eab3V0aeJWywuatvac89Xj4XfyMtuFx+KgHTWt/TJ0ol7YVVNUJR29bRRwtmUXTfNv
+         TJanh8oN4Dslf95TZKpQ7qOUzyj/NLKttxV/yLvC5qRMUVUm1q23QwzohNMEBsTQIMPe
+         5G/981yXHcsvGBAwRdLh/CFiEL2sWB7oDcJDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=9i8fE9UcQoMjC7gZk0f5UIj2Ufp+6XHlfmp4ao/4O3I=;
-        b=mFW6msmY4FYrToxgnLx8a5szJiSSh2psvYSGOO4BXmOi/k1Zwl6+TeSuLPTuD518Ac
-         oXJrC8+woD3ilShbWN84gpxt6NgHiSeybgCpqe283sm7vQEGxIURAoJfMCtgTfynBhfK
-         7yTnZknBpBQ0kjIssBmAPu7JSM6xfcpb7jShdB+Zi6XOUj6VpId67gXGZhI8145WQeMM
-         WRAhEj8RlURPIOW7lsC6btbGq33bfs+os/CS4IOd6qrfGl3CUi3B+/Dbc8ll5XJnSpjR
-         XgzDEit32QEeeGfk6E1cl6LJQ7tS77KhIqrUJA48QzJCKSLC0esg3MFy8OuO8fPJ6o33
-         Jzyg==
-X-Gm-Message-State: AOAM530W7GTnNqbAEIJm/vMGRn3QWhybP5ifeYRAq80Xx6PFkHbBMHh6
-        KxSGui0euEg7A0Rsa/IWnS4=
-X-Google-Smtp-Source: ABdhPJyxXQek9kmfiklyRswq34puGT0/qkq70Y1A0X+1ql8Y7CIbt8KUIclIUmKsIVrJHd1bSQywiA==
-X-Received: by 2002:adf:b301:: with SMTP id j1mr148805wrd.221.1589912236198;
-        Tue, 19 May 2020 11:17:16 -0700 (PDT)
-Received: from dumbo ([185.220.101.209])
-        by smtp.gmail.com with ESMTPSA id d4sm250548wre.22.2020.05.19.11.17.15
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q5UHC553rY05IEMbXCgL1ZU4LhfKGIJXOMI9F65WCM0=;
+        b=CTrIUcCkAfxgHG+klRZniEdslohwXayBTJKbGNtlItIDpC0ekn8XujcMqPeMaECbS0
+         MTnttJKBXrlxFPEHV8LQ9trFGuvFzJ+jDIip6bzTxK+tGEgDnSsnnVfmz1kaWk49RJ7/
+         DiIkElEiv570fUkTdqYbm8QTOpjv3gyPjEyoplfdu/bjKHX+SJ9ared7/BndYPRfoC1E
+         ELv4FwRttRfqadywra7E4q/Ke4zwr9dOJVVgeSd16Ex1IZ5MMMV+rI4CPReuS0i+JmHZ
+         6Eh4/lt068CJt3YZFc1xf78LeyTtNJilvRYgRov/zqpZay/ky1/rgKnFsAVBwoBFF5Vz
+         opXw==
+X-Gm-Message-State: AOAM533exffc0eKYsB8fALWKuno9GHJOPZlJozlLneooUCJQ+X3fGA6o
+        KvBcV1b8zvlex1UNMq3Ialfe9w==
+X-Google-Smtp-Source: ABdhPJzynbql9pKULdgukQFTy4Z4t7DJQ/sjiUfpzwdYxlnUTNW41tR9eCeNK8c47FummadelJ5jQw==
+X-Received: by 2002:a63:1451:: with SMTP id 17mr472860pgu.242.1589912496698;
+        Tue, 19 May 2020 11:21:36 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d184sm147336pfc.130.2020.05.19.11.21.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 11:17:15 -0700 (PDT)
-Received: from cavok by dumbo with local (Exim 4.92)
-        (envelope-from <cavok@dumbo>)
-        id 1jb6ni-0004ND-0s; Tue, 19 May 2020 20:17:14 +0200
-Date:   Tue, 19 May 2020 20:17:13 +0200
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Pavel Machek <pavel@ucw.cz>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ted Ts'o <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] hibernate: restrict writes to the snapshot device
-Message-ID: <20200519181713.GB1963@dumbo>
-Mail-Followup-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Pavel Machek <pavel@ucw.cz>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ted Ts'o <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200507080456.069724962@linux.com>
- <20200507080650.439636033@linux.com>
- <CAJZ5v0jnfeAQ4JDz+BTZp8P98h6emTizGWLYNL_QtbQ=3Nw03Q@mail.gmail.com>
+        Tue, 19 May 2020 11:21:35 -0700 (PDT)
+Date:   Tue, 19 May 2020 11:21:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 3/8] exec: Convert security_bprm_set_creds into
+ security_bprm_repopulate_creds
+Message-ID: <202005191111.9B389D33@keescook>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jnfeAQ4JDz+BTZp8P98h6emTizGWLYNL_QtbQ=3Nw03Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 19, 2020 at 05:59:15PM +0200, Rafael J. Wysocki wrote:
-> It would be better to paste the patch instead of attaching it.
-
-Done with v2.
-
-> Anyway, note that the snapshot special device is not the target block
-> device for saving the image, so it would be good to avoid that
-> confusion in the naming.
-
-I realize that it was a bit hazy in my head as well. It should be fixed
-in v2.
-
+On Mon, May 18, 2020 at 07:31:14PM -0500, Eric W. Biederman wrote:
 > 
-> I.e. I would rename is_hibernate_snapshot_dev() to something like
-> is_hibernate_image_dev() or is_hibernate_resume_dev() (for consistency
-> with the resume= kernel command line parameter name).
+> Rename bprm->cap_elevated to bprm->active_secureexec and initialize it
+> in prepare_binprm instead of in cap_bprm_set_creds.  Initializing
+> bprm->active_secureexec in prepare_binprm allows multiple
+> implementations of security_bprm_repopulate_creds to play nicely with
+> each other.
+> 
+> Rename security_bprm_set_creds to security_bprm_reopulate_creds to
+> emphasize that this path recomputes part of bprm->cred.  This
+> recomputation avoids the time of check vs time of use problems that
+> are inherent in unix #! interpreters.
+> 
+> In short two renames and a move in the location of initializing
+> bprm->active_secureexec.
 
-Done as well.
+I like this much better than the direct call to the capabilities hook.
+Thanks!
 
-> Thanks!
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Thank you!
+One nit is a bikeshed on the name "active_secureexec", since
+the word "active" isn't really associated with any other part of the
+binfmt logic. It's supposed to be "latest state from the binfmt loop",
+so instead of "active", I considered these words that I also didn't
+like: "current", "this", "recent", and "now". Is "latest" better than
+"active"? Probably not.
 
-Dom
+> [...]
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index d1217fcdedea..8605ab4a0f89 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -27,10 +27,10 @@ struct linux_binprm {
+>  	unsigned long argmin; /* rlimit marker for copy_strings() */
+>  	unsigned int
+>  		/*
+> -		 * True if most recent call to cap_bprm_set_creds
+> +		 * True if most recent call to security_bprm_set_creds
+>  		 * resulted in elevated privileges.
+>  		 */
+> -		cap_elevated:1,
+> +		active_secureexec:1,
+
+Also, I'd like it if this comment could be made more verbose as well, for
+anyone trying to understand the binfmt execution flow for the first time.
+Perhaps:
+
+		/*
+		 * Must be set True during the any call to
+		 * bprm_set_creds hook where the execution would
+		 * reuslt in elevated privileges. (The hook can be
+		 * called multiple times during nested interpreter
+		 * resolution across binfmt_script, binfmt_misc, etc).
+		 */
+
 
 -- 
-rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
-ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+Kees Cook
