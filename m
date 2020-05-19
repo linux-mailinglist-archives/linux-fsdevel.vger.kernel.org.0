@@ -2,28 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7F91DA0F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 21:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D967D1DA13B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 21:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgESTXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 15:23:46 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:42842 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbgESTXq (ORCPT
+        id S1726898AbgESTqU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 15:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbgESTqU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 15:23:46 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb7py-000156-HH; Tue, 19 May 2020 13:23:38 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb7px-0002fg-EF; Tue, 19 May 2020 13:23:38 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
+        Tue, 19 May 2020 15:46:20 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FBFC08C5C0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 12:46:20 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id l73so1508675pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 12:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q3Ivtwo+9O98WnhcJnwaFt95/Hwxgd+0h4XCSucwWQ0=;
+        b=FlcR34MzrEghbl3vy0OL8MTgoR2QS5ql+EgOS6TLT9J/mjNPWyw1q/1x/GPc6spBVR
+         zIBXeYd140wKdDH6I1j0BK7rPSzWRoIAU5pL+ymoblh8j7HDhXPXdrRuwb4KU4RHbbCX
+         IkV25J7JchNWKWg80zDSG2ZDnZvColidCwd38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q3Ivtwo+9O98WnhcJnwaFt95/Hwxgd+0h4XCSucwWQ0=;
+        b=Qj1cX1pdPhWL/WDsq7Rs+30kOV/J0/EfCZmGsfyqxsL8fJVMSJLoyFUg9A5Tst4kLP
+         Xt/SxyFl65o2r/SNJfemCLKgPzNxWCTobn5mE0iCZypNAKYIrYsXk2l+kWlPVl/OGqtG
+         b+s/o0siUXxKp4QBcCdcSrUaQ0kqRXgfm8PzZflSnslSerMUuniyo8NmtNJMVLJFWBf0
+         XMSNS1398+3hXxyBy15Qlhr8HoVuleB448QEh21FapdukTB4LRL2yjH6I+r8+Ew9IkmW
+         W1dIA2zIhIEiTTTx9w9go0ukRsBgXPiRQw+t8dkOdw8hbiVGYh4m4h24AIzEWxGZ1B/F
+         QTwQ==
+X-Gm-Message-State: AOAM531ydOz6SePxLdzV5EVzFS7ZPRsK0iwfvsa+V6NBpIm0OVjrb/GX
+        8z4VuP3ge1oK0XZ9XsTD2q9oXA==
+X-Google-Smtp-Source: ABdhPJzdXNjb2gwJKNeMLT5AEIU9DnLXEYFye7s+DenXWUh8I4fQdMy4wmHogqrZPX7U/5jAByEZOA==
+X-Received: by 2002:a17:90a:2ac2:: with SMTP id i2mr1186297pjg.80.1589917579552;
+        Tue, 19 May 2020 12:46:19 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id fw4sm288758pjb.31.2020.05.19.12.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 12:46:18 -0700 (PDT)
+Date:   Tue, 19 May 2020 12:46:17 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
@@ -38,204 +62,106 @@ Cc:     linux-kernel@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
+Message-ID: <202005191220.2DB7B7C7@keescook>
 References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <874ksczru6.fsf_-_@x220.int.ebiederm.org>
-        <202005191144.E3112135@keescook>
-Date:   Tue, 19 May 2020 14:19:56 -0500
-In-Reply-To: <202005191144.E3112135@keescook> (Kees Cook's message of "Tue, 19
-        May 2020 12:08:25 -0700")
-Message-ID: <87zha3n34z.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jb7px-0002fg-EF;;;mid=<87zha3n34z.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/o3JOqx7Xhio3cLEEFkP2sYm5qyEXZ5Q0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,T_TooManySym_04,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4966]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_04 7+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: ; sa02 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 495 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 4.1 (0.8%), b_tie_ro: 2.8 (0.6%), parse: 0.93
-        (0.2%), extract_message_metadata: 11 (2.2%), get_uri_detail_list: 2.8
-        (0.6%), tests_pri_-1000: 10 (2.1%), tests_pri_-950: 1.01 (0.2%),
-        tests_pri_-900: 0.81 (0.2%), tests_pri_-90: 57 (11.5%), check_bayes:
-        56 (11.3%), b_tokenize: 10 (2.0%), b_tok_get_all: 10 (2.0%),
-        b_comp_prob: 2.3 (0.5%), b_tok_touch_all: 31 (6.2%), b_finish: 0.63
-        (0.1%), tests_pri_0: 397 (80.2%), check_dkim_signature: 0.42 (0.1%),
-        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 0.19 (0.0%), tests_pri_10:
-        2.5 (0.5%), tests_pri_500: 7 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 6/8] exec/binfmt_script: Don't modify bprm->buf and then return -ENOEXEC
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On Mon, May 18, 2020 at 07:33:46PM -0500, Eric W. Biederman wrote:
+> 
+> Most of the support for passing the file descriptor of an executable
+> to an interpreter already lives in the generic code and in binfmt_elf.
+> Rework the fields in binfmt_elf that deal with executable file
+> descriptor passing to make executable file descriptor passing a first
+> class concept.
+> 
+> Move the fd_install from binfmt_misc into begin_new_exec after the new
+> creds have been installed.  This means that accessing the file through
+> /proc/<pid>/fd/N is able to see the creds for the new executable
+> before allowing access to the new executables files.
+> 
+> Performing the install of the executables file descriptor after
+> the point of no return also means that nothing special needs to
+> be done on error.  The exiting of the process will close all
+> of it's open files.
+> 
+> Move the would_dump from binfmt_misc into begin_new_exec right
+> after would_dump is called on the bprm->file.  This makes it
+> obvious this case exists and that no nesting of bprm->file is
+> currently supported.
+> 
+> In binfmt_misc the movement of fd_install into generic code means
+> that it's special error exit path is no longer needed.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-> On Mon, May 18, 2020 at 07:33:21PM -0500, Eric W. Biederman wrote:
->> 
->> When replacing loops with next_non_spacetab and next_terminator care
->> has been take that the logic of the parsing code (short of replacing
->> characters by '\0') remains the same.
->
-> Ah, interesting. As in, bprm->buf must not be modified unless the binfmt
-> handler is going to succeed. I think this requirement should be
-> documented in the binfmt struct header file.
+Yes, this is so much nicer. :) My head did spin a little between changing
+the management of bprm->executable between this patch and the next,
+but I'm okay now. ;)
 
-I think the best way to document this is to modify bprm->buf to be
-"const char buf[BINPRM_BUF_SIZE]" or something like that and not
-allow any modifications by anything except for the code that
-initially reads in contets of the file.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-That unfortunately requires copy_strings_kernel which has become
-copy_string_kernel to take a length.  Then I don't need to modify the
-buffer at all here.
+nits/thoughts below...
 
-I believe binfmt_scripts is a bit unique in wanting to modify the buffer
-because it is parsing strings.
+> [...]
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index 8c7779d6bf19..653508b25815 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> [...]
+> @@ -48,6 +51,7 @@ struct linux_binprm {
+>  	unsigned int taso:1;
+>  #endif
+>  	unsigned int recursion_depth; /* only for search_binary_handler() */
+> +	struct file * executable; /* Executable to pass to the interpreter */
+>  	struct file * file;
+>  	struct cred *cred;	/* new credentials */
 
-The requirement is that a binfmt should not modify bprm unless it will
-succeed or fail with an error that is not -ENOEXEC.  The fundamental
-issue is that search_binary_handler will reuse bprm if -ENOEXEC is
-returned.
+nit: can we fix the "* " stuff here? This should be *file and *executable.
 
-Until the next patch there is an escape hatch by clearing and closing
-bprm->file but that goes away.  Which is why I need this patch.
+> [...]
+> @@ -69,10 +73,6 @@ struct linux_binprm {
+>  #define BINPRM_FLAGS_ENFORCE_NONDUMP_BIT 0
+>  #define BINPRM_FLAGS_ENFORCE_NONDUMP (1 << BINPRM_FLAGS_ENFORCE_NONDUMP_BIT)
+>  
+> -/* fd of the binary should be passed to the interpreter */
+> -#define BINPRM_FLAGS_EXECFD_BIT 1
+> -#define BINPRM_FLAGS_EXECFD (1 << BINPRM_FLAGS_EXECFD_BIT)
+> -
+>  /* filename of the binary will be inaccessible after exec */
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
 
-I guess I can see adding a comment about the general case of not
-changing bprm unless you are doing something other than returning
--ENOEXEC and letting the search continue.
+nit: may as well renumber BINPRM_FLAGS_PATH_INACCESSIBLE_BIT to 1,
+they're not UAPI. And, actually, nothing uses the *_BIT defines, so
+probably the entire chunk of code could just be reduced to:
 
-Eric
+/* either interpreter or executable was unreadable */
+#define BINPRM_FLAGS_ENFORCE_NONDUMP    BIT(0)
+/* filename of the binary will be inaccessible after exec */
+#define BINPRM_FLAGS_PATH_INACCESSIBLE  BIT(1)
 
+Though frankly, I wonder if interp_flags could just be removed in favor
+of two new bit members, especially since interp_data is gone:
 
->> [...]
->> diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
->> index 8d718d8fd0fe..85e0ef86eb11 100644
->> --- a/fs/binfmt_script.c
->> +++ b/fs/binfmt_script.c
->> @@ -71,39 +56,48 @@ static int load_script(struct linux_binprm *bprm)
->>  	 * parse them on its own.
->>  	 */
->>  	buf_end = bprm->buf + sizeof(bprm->buf) - 1;
->> -	cp = strnchr(bprm->buf, sizeof(bprm->buf), '\n');
->> -	if (!cp) {
->> -		cp = next_non_spacetab(bprm->buf + 2, buf_end);
->> -		if (!cp)
->> +	i_end = strnchr(bprm->buf, sizeof(bprm->buf), '\n');
->> +	if (!i_end) {
->> +		i_end = next_non_spacetab(bprm->buf + 2, buf_end);
->> +		if (!i_end)
->>  			return -ENOEXEC; /* Entire buf is spaces/tabs */
->>  		/*
->>  		 * If there is no later space/tab/NUL we must assume the
->>  		 * interpreter path is truncated.
->>  		 */
->> -		if (!next_terminator(cp, buf_end))
->> +		if (!next_terminator(i_end, buf_end))
->>  			return -ENOEXEC;
->> -		cp = buf_end;
->> +		i_end = buf_end;
->>  	}
->> -	/* NUL-terminate the buffer and any trailing spaces/tabs. */
->> -	*cp = '\0';
->> -	while (cp > bprm->buf) {
->> -		cp--;
->> -		if ((*cp == ' ') || (*cp == '\t'))
->> -			*cp = '\0';
->> -		else
->> -			break;
->> -	}
->> -	for (cp = bprm->buf+2; (*cp == ' ') || (*cp == '\t'); cp++);
->> -	if (*cp == '\0')
->> +	/* Trim any trailing spaces/tabs from i_end */
->> +	while (spacetab(i_end[-1]))
->> +		i_end--;
->> +
->> +	/* Skip over leading spaces/tabs */
->> +	i_name = next_non_spacetab(bprm->buf+2, i_end);
->> +	if (!i_name || (i_name == i_end))
->>  		return -ENOEXEC; /* No interpreter name found */
->> -	i_name = cp;
->> +
->> +	/* Is there an optional argument? */
->>  	i_arg = NULL;
->> -	for ( ; *cp && (*cp != ' ') && (*cp != '\t'); cp++)
->> -		/* nothing */ ;
->> -	while ((*cp == ' ') || (*cp == '\t'))
->> -		*cp++ = '\0';
->> -	if (*cp)
->> -		i_arg = cp;
->> +	i_sep = next_terminator(i_name, i_end);
->> +	if (i_sep && (*i_sep != '\0'))
->> +		i_arg = next_non_spacetab(i_sep, i_end);
->> +
->> +	/*
->> +	 * If the script filename will be inaccessible after exec, typically
->> +	 * because it is a "/dev/fd/<fd>/.." path against an O_CLOEXEC fd, give
->> +	 * up now (on the assumption that the interpreter will want to load
->> +	 * this file).
->> +	 */
->> +	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
->> +		return -ENOENT;
->> +
->> +	/* Release since we are not mapping a binary into memory. */
->> +	allow_write_access(bprm->file);
->> +	fput(bprm->file);
->> +	bprm->file = NULL;
->> +
->>  	/*
->>  	 * OK, we've parsed out the interpreter name and
->>  	 * (optional) argument.
->> @@ -121,7 +115,9 @@ static int load_script(struct linux_binprm *bprm)
->>  	if (retval < 0)
->>  		return retval;
->>  	bprm->argc++;
->> +	*((char *)i_end) = '\0';
->>  	if (i_arg) {
->> +		*((char *)i_sep) = '\0';
->>  		retval = copy_strings_kernel(1, &i_arg, bprm);
->>  		if (retval < 0)
->>  			return retval;
->
-> I think this is all correct, though I'm always suspicious of my visual
-> inspection of string parsers. ;)
->
-> I had a worry the \n was not handled correctly in some case. I.e. before
-> any \n was converted into \0, and so next_terminator() didn't need to
-> consider \n separately. (next_non_spacetab() doesn't care since \n and \0
-> are both not ' ' nor '\t'.) For next_terminator(), though, I was worried
-> there was a case where *i_end == '\n', and next_terminator()
-> will return NULL instead of "last" due to *last being '\n' instead of
-> '\0', causing a problem, but you're using the adjusted i_end so I think
-> it's correct. And you've handled i_name == i_end.
->
-> I will see if I can find my testing scripts I used when commit
-> b5372fe5dc84 originally landed to double-check... until then:
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
++               /* Either interpreter or executable was unreadable. */
++               nondumpable:1;
++               /* Filename of the binary will be inaccessible after exec. */
++               path_inaccessible:1;
+...
+-       unsigned interp_flags;
+...etc
+
+-- 
+Kees Cook
