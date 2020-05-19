@@ -2,104 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 388E21D9346
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 11:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD7A1D940E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 12:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgESJYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 05:24:51 -0400
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17131 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726358AbgESJYv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 05:24:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1589880226; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=rPLf6BZXNRwRygrVTWWcl6Kh4ruisNl/lO5H0X5Eiz2p+OWd/AFJblw8f5TMl6R1SJ0lK79wpR6ezeoNc3Ai60JJWVzlSetQiLGl3vZtGR6VMsjxxa3hbZ2l8nRwnmvSp26rPFWz9NwZZvvAhmWmii5yjCcNDtrTsW5g2IYN98g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1589880226; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=faHruH5bAhzKqF04LUNXHwbBbdcKtjl3CA/Wbrii4WM=; 
-        b=Nffl1eSaHxy2f77jcpp7juf9s74aUFcEACidQnFVVwaOll6cqccE4fEWA/3NUyVVcZKnCDIO+N2goaTzK3Zb9T/Ns7JGiucqv4pIGRTzu1iOIY4LolyYfC0P4KicLHCbXBzb7/khSgJe/oy0tcc1wnw9pZ+u2krXp7v6aUQcnRw=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1589880226;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=faHruH5bAhzKqF04LUNXHwbBbdcKtjl3CA/Wbrii4WM=;
-        b=PknJ7I0Zh8bKBxWKec2ABB9yN4qQ9bAeJDP6NRXDeK6u/ey0cPTeMqGeY6WhxZE2
-        lCDVGFOI2DfkPtHNnAZxQ3c3uKxGanYhNTh1tApreN+YhjrQFOovX0TX+QL0bzmTiJj
-        2wr49+bP+srs6IURuZND61M9TgjOioajRaxjbwsc=
-Received: from [192.168.166.138] (218.18.229.179 [218.18.229.179]) by mx.zoho.com.cn
-        with SMTPS id 158988022399284.96793522637824; Tue, 19 May 2020 17:23:43 +0800 (CST)
-Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Ian Kent <raven@themaw.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-References: <20200515072047.31454-1-cgxu519@mykernel.net>
- <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
- <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
- <CAJfpegtpi1SVJRbQb8zM0t66WnrjKsPEGEN3qZKRzrZePP06dA@mail.gmail.com>
- <05e92557-055c-0dea-4fe4-0194606b6c77@mykernel.net>
- <CAJfpegtyZw=6zqWQWm-fN0KpGEp9stcfvnbA7eh6E-7XHxaG=Q@mail.gmail.com>
-From:   cgxu <cgxu519@mykernel.net>
-Message-ID: <7fcb778f-ba80-8095-4d48-20682f5242a9@mykernel.net>
-Date:   Tue, 19 May 2020 17:23:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726717AbgESKH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 06:07:29 -0400
+Received: from mout.gmx.net ([212.227.17.21]:40815 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbgESKH3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 06:07:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1589882788;
+        bh=+UZpikoCSDiNYkpOkgtAFZkoPVCVL9V39mTTHmo5RnU=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=OYCe8E2lNau8mXcdkFBTDa50UmWb6PEPnr2owHjqOlS8BZw2UzeFUJ8r3WH2NFKhf
+         cnw+PkUf3dkRcuehv4sW29J+qtObVlQHUCcJqSbsZCuXZnjX2+V4GVyauaRG6Sq6w1
+         nI+vmAar6fAwMLZLTh6+MM6oZj4Z+sx9M79Xbt8g=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from hsiangkao-HP-ZHAN-66-Pro-G1 ([120.242.72.127]) by mail.gmx.com
+ (mrgmx104 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 1MbzyJ-1j46lY1mO7-00dZSO; Tue, 19 May 2020 12:06:28 +0200
+Date:   Tue, 19 May 2020 18:06:19 +0800
+From:   Gao Xiang <hsiangkao@gmx.com>
+To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org, willy@infradead.org
+Subject: Re: [PATCH 10/10] mm/migrate.c: call detach_page_private to cleanup
+ code
+Message-ID: <20200519100612.GA3687@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
+ <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
+ <20200518221235.1fa32c38e5766113f78e3f0d@linux-foundation.org>
+ <aade5d75-c9e9-4021-6eb7-174a921a7958@cloud.ionos.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegtyZw=6zqWQWm-fN0KpGEp9stcfvnbA7eh6E-7XHxaG=Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ZohoCNMailClient: External
+Content-Type: text/plain; charset="utf-8\""
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aade5d75-c9e9-4021-6eb7-174a921a7958@cloud.ionos.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:LTsOTq1mPEelHR2l4o0rGDmComg0jxTf99Vkf8suxa+YY03ofnM
+ kUeZeFjDAmpCwnFsBHf3kmSRCIsSEbcvK3Ap6q8pTGMp30JZpDNca/GF/ADZnxTUAVU6TNB
+ oJaMiBZlDOe98Kdbx1vhprmzieIrq5i0li7tskswUcm7v+bwi32+8/Z66AMvAY+nE1yW+xV
+ BrCzgrlUqli1rAVIZ+5Xw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jXscTq9KYn4=:W3BMIpbm0zHl72sFflO65j
+ x3PEswh9uw6Mx9ZTLhyx0/qJsa5wkWWIzmP5mR96adqo6J4j7TS5ZM5W5h/lyusKgxrjADCZu
+ XsYqp8+7yNRa/pG+fnERjolHIxLrkBt0ZAtKz+XCylXUtUruO7IIJtxTsj3NC3CXygy7NBtCL
+ Crk5tzj7/CGhKHOLKdNKQrHywokGmCiPK4XcN++izNCPfDo5kY9KHPUvv5pV05Dd7+9nrfKak
+ LEWCdTp669qgGzcIeO8dRMvTWqduTTfoI3p6xJ4XRa8yH8GsdGWh6RL2YhRxX1kEz8UZnXcCh
+ 2/fvGFn5SDUNuzI/AlHO0pVr9HJLMH9QCgedJEy25TZenkiwgP4n+qep3fJAlWDL620aYvOGV
+ A7sv9XTy8EF6uJ0Y1JE+dKjrUFcXykWe/H2m5Zd8OvQlE6m3y//sOTOP7M8aMpqPc0lOQ/1Rf
+ Y43bpwHXdCSaPIHAm/nmarEtXVPQliJc3eY46D6GDE06o7jURQsnqZBEW34SDHCJBBuUFXxcG
+ ovm0R0qp3EVBx2TqD2/HCoFStimBw8NWyhfRHTyrmKGL9FVOif6D0Ei+6VXi1cjwNZEHcKjSz
+ c35AAaEkig+lD6+hHF3Wi5toHrwzDveIbVHJtahwSVuxnAbHx31lGnRQaoMtimIJRS0RrKosp
+ dI5oLhd6lqYefYC/3/+uL3h2iYvlfimWS6KGwDX0PAqqRN7Zdnnn3i8witGQJjMlmYvSwrkNQ
+ PQBtoqlv1gObbNMnIDEJxDhsyeuq6vO1U6jEBavLVWJpGEH6RJ3L8MUoUYkODimPE0xNq/Za0
+ d+MSPFBf+6e5j/vaDaYqKn6Nvc7LThgMdpMjUmEXnX9MHXcY9D4przCLI8ExMxpEoBpKOGx4w
+ okdjuqz/Kh0UJYykiwSewoZuCq6bzrsmxcYY6Q/X314pFLjt746UGRIS55mPKUXXbyISoH1ZA
+ 5glTm2d9braOFn4gmuWo8JV4XUfpZwBaxW2Eg4Qc9eksLHObgggnbsFwUk32rBniSjKEBViFP
+ goRI594CZDZzOkPWlZHdtOaCEPMS/upEwOp1RE04Jv80ZQw5CyapzsuFyK0rnbmtkYm0Hr14A
+ /ZGuCnkHfPuWjaN1Bmpq5Ksevq2BGPcP/5RuX0jdSBK5aQM2kTCi+sUlSkEES817LUWRJEUlM
+ mg5giDlq8JnUHQ9G197JDZCLZ+YzBhJrnUCGEjyUbLG8QMadWiIdXpEN7Eym2waT6GsmnOBge
+ O7npqi7ha43LyhfsQ
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/19/20 4:21 PM, Miklos Szeredi wrote:
-> On Tue, May 19, 2020 at 7:02 AM cgxu <cgxu519@mykernel.net> wrote:
+On Tue, May 19, 2020 at 09:35:59AM +0200, Guoqing Jiang wrote:
+> On 5/19/20 7:12 AM, Andrew Morton wrote:
+> > On Sun, 17 May 2020 23:47:18 +0200 Guoqing Jiang <guoqing.jiang@cloud.=
+ionos.com> wrote:
+> >
+> > > We can cleanup code a little by call detach_page_private here.
+> > >
+> > > ...
+> > >
+> > > --- a/mm/migrate.c
+> > > +++ b/mm/migrate.c
+> > > @@ -804,10 +804,7 @@ static int __buffer_migrate_page(struct address=
+_space *mapping,
+> > >   	if (rc !=3D MIGRATEPAGE_SUCCESS)
+> > >   		goto unlock_buffers;
+> > > -	ClearPagePrivate(page);
+> > > -	set_page_private(newpage, page_private(page));
+> > > -	set_page_private(page, 0);
+> > > -	put_page(page);
+> > > +	set_page_private(newpage, detach_page_private(page));
+> > >   	get_page(newpage);
+> > >   	bh =3D head;
+> > mm/migrate.c: In function '__buffer_migrate_page':
+> > ./include/linux/mm_types.h:243:52: warning: assignment makes integer f=
+rom pointer without a cast [-Wint-conversion]
+> >   #define set_page_private(page, v) ((page)->private =3D (v))
+> >                                                      ^
+> > mm/migrate.c:800:2: note: in expansion of macro 'set_page_private'
+> >    set_page_private(newpage, detach_page_private(page));
+> >    ^~~~~~~~~~~~~~~~
+> >
+> > The fact that set_page_private(detach_page_private()) generates a type
+> > mismatch warning seems deeply wrong, surely.
+> >
+> > Please let's get the types sorted out - either unsigned long or void *=
+,
+> > not half-one and half-the other.  Whatever needs the least typecasting
+> > at callsites, I suggest.
 >
->> If we don't consider that only drop negative dentry of our lookup,
->> it is possible to do like below, isn't it?
-> Yes, the code looks good, though I'd consider using d_lock on dentry
-> instead if i_lock on parent, something like this:
+> Sorry about that, I should notice the warning before. I will double chec=
+k if
+> other
+> places need the typecast or not, then send a new version.
 >
-> if (d_is_negative(dentry) && dentry->d_lockref.count == 1) {
->      spin_lock(&dentry->d_lock);
->      /* Recheck condition under lock */
->      if (d_is_negative(dentry) && dentry->d_lockref.count == 1)
->          __d_drop(dentry)
->      spin_unlock(&dentry->d_lock);
-
-And after this we will still treat 'dentry' as negative dentry and dput it
-regardless of the second check result of d_is_negative(dentry), right?
-
-
-> }
+> > And can we please implement set_page_private() and page_private() with
+> > inlined C code?  There is no need for these to be macros.
 >
-> But as Amir noted, we do need to take into account the case where
-> lower layers are shared by multiple overlays, in which case dropping
-> the negative dentries could result in a performance regression.
-> Have you looked at that case, and the effect of this patch on negative
-> dentry lookup performance?
+> Just did a quick change.
+>
+> -#define page_private(page)=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=
+=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ((page)->private)
+> -#define set_page_private(page, v)=C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ((=
+page)->private =3D (v))
+> +static inline unsigned long page_private(struct page *page)
+> +{
+> +=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  return page->private;
+> +}
+> +
+> +static inline void set_page_private(struct page *page, unsigned long
+> priv_data)
+> +{
+> +=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  page->private =3D priv_data;
+> +}
+>
+> Then I get error like.
+>
+> fs/erofs/zdata.h: In function =C3=A2=E2=82=AC=CB=9Cz_erofs_onlinepage_in=
+dex=C3=A2=E2=82=AC=E2=84=A2:
+> fs/erofs/zdata.h:126:8: error: lvalue required as unary =C3=A2=E2=82=AC=
+=CB=9C&=C3=A2=E2=82=AC=E2=84=A2 operand
+> =C3=82  u.v =3D &page_private(page);
+> =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ^
+>
+> I guess it is better to keep page_private as macro, please correct me in
+> case I
+> missed something.
 
-The container which is affected by this feature is just take advantage
-of previous another container but we could not guarantee that always
-happening. I think there no way for best of both worlds, consider that
-some malicious containers continuously make negative dentries by
-searching non-exist files, so that page cache of clean data, clean
-inodes/dentries will be freed by memory reclaim. All of those
-behaviors will impact the performance of other container instances.
+I guess that you could Cc me in the reply.
 
-On the other hand, if this feature significantly affects particular 
-container,
-doesn't that mean the container is noisy neighbor and should be restricted
-in some way?
+In that case, EROFS uses page->private as an atomic integer to
+trace 2 partial subpages in one page.
+
+I think that you could also use &page->private instead directly to
+replace &page_private(page) here since I didn't find some hint to
+pick &page_private(page) or &page->private.
+
+
+In addition, I found some limitation of new {attach,detach}_page_private
+helper (that is why I was interested in this series at that time [1] [2],
+but I gave up finally) since many patterns (not all) in EROFS are
+
+io_submit (origin, page locked):
+attach_page_private(page);
+...
+put_page(page);
+
+end_io (page locked):
+SetPageUptodate(page);
+unlock_page(page);
+
+since the page is always locked, so io_submit could be simplified as
+set_page_private(page, ...);
+SetPagePrivate(page);
+, which can save both one temporary get_page(page) and one
+put_page(page) since it could be regarded as safe with page locked.
+
+
+btw, I noticed the patchset versions are PATCH [3], RFC PATCH [4],
+RFC PATCH v2 [5], RFC PATCH v3 [6], PATCH [7]. Although I also
+noticed the patchset title was once changed, but it could be some
+harder to trace the whole history discussion.
+
+[1] https://lore.kernel.org/linux-fsdevel/20200419051404.GA30986@hsiangkao=
+-HP-ZHAN-66-Pro-G1/
+[2] https://lore.kernel.org/linux-fsdevel/20200427025752.GA3979@hsiangkao-=
+HP-ZHAN-66-Pro-G1/
+[3] https://lore.kernel.org/linux-fsdevel/20200418225123.31850-1-guoqing.j=
+iang@cloud.ionos.com/
+[4] https://lore.kernel.org/linux-fsdevel/20200426214925.10970-1-guoqing.j=
+iang@cloud.ionos.com/
+[5] https://lore.kernel.org/linux-fsdevel/20200430214450.10662-1-guoqing.j=
+iang@cloud.ionos.com/
+[6] https://lore.kernel.org/linux-fsdevel/20200507214400.15785-1-guoqing.j=
+iang@cloud.ionos.com/
+[7] https://lore.kernel.org/linux-fsdevel/20200517214718.468-1-guoqing.jia=
+ng@cloud.ionos.com/
 
 Thanks,
-cgxu
+Gao Xiang
 
+>
+> Thanks,
+> Guoqing
+>
+>
+>
