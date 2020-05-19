@@ -2,177 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0683B1DA32D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 23:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0BC1DA362
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 23:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbgESVDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 17:03:11 -0400
-Received: from mga05.intel.com ([192.55.52.43]:35417 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbgESVDL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 17:03:11 -0400
-IronPort-SDR: Pvxv98GFp6DzoAGwB+APo+NcDwutFrRiJQ5wcCUh5e6+fkRw3+tzLPaL6MpIBccHAZOthQH9Cg
- dPA8dUrooG5Q==
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2020 14:03:09 -0700
-IronPort-SDR: 3RtozwuR9HUH34ZT37qT34YNIweXgxnd3IF6MhxN3YcdKiSykbWHp4cY9/kgHplTLc9C3T9BgZ
- dFlY2iVAiHvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,410,1583222400"; 
-   d="c'?scan'208";a="264442159"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by orsmga003.jf.intel.com with ESMTP; 19 May 2020 14:03:09 -0700
-Received: from tjmaciei-mobl1.localnet (10.255.229.215) by
- ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 19 May 2020 14:03:09 -0700
-From:   Thiago Macieira <thiago.macieira@intel.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>
-Subject: fcntl(F_DUPFD) causing apparent file descriptor table corruption
-Date:   Tue, 19 May 2020 14:03:03 -0700
-Message-ID: <1645568.el9gB4U55B@tjmaciei-mobl1>
-Organization: Intel Corporation
+        id S1726862AbgESVR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 17:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgESVR0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 17:17:26 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C44C08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 14:17:25 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id s10so420029pgm.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 14:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Cz7ypDwiQcY75biLKEJQMmwCg/gVg2A/D/by2yCpR7U=;
+        b=hpwirQ0Xs1SorucIF2v9uRq9u46loiYGcq4NK3JplwhSqVwyhavNf0YBGEMwX0Bma4
+         0qiabCHNEWCuGkSTjRhFXEwKkHxrDYGRFoHjGzsfnqLEIv9+DK/ZHc5YRuhfY23dKBN2
+         AHQMsFVocsK8Gz4nmxoV8PjJo6Hfj0jub8qS0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Cz7ypDwiQcY75biLKEJQMmwCg/gVg2A/D/by2yCpR7U=;
+        b=XLT1wMspTK23qkWpTJ54AnHRpG/4x+xV8/EAlubltQGqDC3DCqE/RFK6vDZwenlaIZ
+         WtUt5XhaTIMtW5SDRtILqKLJWmTXgIDiUaoNiWfozRVCXG0PWZ8yYEuwgUO5a9KEFvKP
+         DXq8soKA0b77sfDG7B4ry6882hqVoUJ84fFaPkHQ6YyBSajFqYUyAXlsBE+lUHLtq70b
+         01MnQd+qgFOTS/5iGuLmQmTlT/gN40sqYT8z+r4LzKifm9eG7pfq4Ks6sMaMo36cqBWo
+         N5vw/UUJTewxUVMJDdN5FUaUg8d1syMwQSSnr3GZJRdjqXogr36/AYaHdxSvcY9+I4JF
+         tGaQ==
+X-Gm-Message-State: AOAM533hGLpz9MFuKoI6MZZDvNsoiLvtkBWTFDkJHTePE3kN73onmqDs
+        jA3wBuoSGzn5KEcSpt0GQRIkkA==
+X-Google-Smtp-Source: ABdhPJxbEob6J6f6hJy0GeqN5fD4zEgoeNcFb9XU7fUpXsQJwNl9Ou6crVqMvKvg1aajIHr6QDJ0Ww==
+X-Received: by 2002:a62:7c94:: with SMTP id x142mr1036481pfc.155.1589923044367;
+        Tue, 19 May 2020 14:17:24 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p62sm334352pfb.93.2020.05.19.14.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 14:17:23 -0700 (PDT)
+Date:   Tue, 19 May 2020 14:17:22 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>
+Subject: Re: [PATCH 0/4] Relocate execve() sanity checks
+Message-ID: <202005191342.97EE972E3@keescook>
+References: <20200518055457.12302-1-keescook@chromium.org>
+ <87a724t153.fsf@x220.int.ebiederm.org>
+ <202005190918.D2BD83F7C@keescook>
+ <87o8qjstyw.fsf@x220.int.ebiederm.org>
+ <202005191052.0A6B1D5843@keescook>
+ <87sgfvrckr.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="nextPart7613756.9Z4iiRFd73"
-Content-Transfer-Encoding: 7Bit
-X-Originating-IP: [10.255.229.215]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgfvrckr.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---nextPart7613756.9Z4iiRFd73
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+On Tue, May 19, 2020 at 01:42:28PM -0500, Eric W. Biederman wrote:
+> Kees Cook <keescook@chromium.org> writes:
+> 
+> > On Tue, May 19, 2020 at 12:41:27PM -0500, Eric W. Biederman wrote:
+> >> Kees Cook <keescook@chromium.org> writes:
+> >> > and given the LSM hooks, I think the noexec check is too late as well.
+> >> > (This is especially true for the coming O_MAYEXEC series, which will
+> >> > absolutely need those tests earlier as well[1] -- the permission checking
+> >> > is then in the correct place: during open, not exec.) I think the only
+> >> > question is about leaving the redundant checks in fs/exec.c, which I
+> >> > think are a cheap way to retain a sense of robustness.
+> >> 
+> >> The trouble is when someone passes through changes one of the permission
+> >> checks for whatever reason (misses that they are duplicated in another
+> >> location) and things then fail in some very unexpected way.
+> >
+> > Do you think this series should drop the "late" checks in fs/exec.c?
+> > Honestly, the largest motivation for me to move the checks earlier as
+> > I've done is so that other things besides execve() can use FMODE_EXEC
+> > during open() and receive the same sanity-checking as execve() (i.e the
+> > O_MAYEXEC series -- the details are still under discussion but this
+> > cleanup will be needed regardless).
+> 
+> I think this series should drop the "late" checks in fs/exec.c  It feels
+> less error prone, and it feels like that would transform this into
+> something Linus would be eager to merge because series becomes a cleanup
+> that reduces line count.
 
-Hello Al & others
+Yeah, that was my initial sense too. I just started to get nervous about
+removing the long-standing exec sanity checks. ;)
 
-While doing something I shouldn't be doing in my code, I realised that my code 
-stopped responding. Turns out that after some F_DUPFD forcing the file 
-descriptor preposterously high, the low file descriptors become EBADF. 
-Something must be wrong in expand_files, but I don't have the expertise to 
-debug it. I'm hoping someone else will.
+> I haven't been inside of open recently enough to remember if the
+> location you are putting the check fundamentally makes sense.  But the
+> O_MAYEXEC bits make a pretty strong case that something of the sort
+> needs to happen.
 
-I've attached a testcase for it. It needs to be run as root. It's not threaded 
-and it reproduces the problem 100% of the time on my stable kernel (5.6.13). 
-This is not a security issue, since it affects only the calling process 
-itself.
+Right. I *think* it's correct place for now, based on my understanding
+of the call graph (which is why I included it in the commit logs).
 
-On my machine, /proc/sys/fs/nr_open is 1073741816 and I have 32 GB of RAM (if 
-the problem is related to memory consumption).
+> I took a quick look but I can not see clearly where path_noexec
+> and the regular file tests should go.
+> 
+> I do see that you have code duplication with faccessat which suggests
+> that you haven't put the checks in the right place.
 
-The problem only occurs when growing the table.
+Yeah, I have notes on the similar call sites (which I concluded, perhaps
+wrongly) to ignore:
 
-strace shows something like:
-fcntl(2, F_DUPFD, 1024)                 = 1024
-close(1024)                             = 0
-fcntl(2, F_DUPFD, 2048)                 = 2048
-close(2048)                             = 0
-fcntl(2, F_DUPFD, 4096)                 = 4096
-close(4096)                             = 0
-fcntl(2, F_DUPFD, 8192)                 = 8192
-close(8192)                             = 0
-fcntl(2, F_DUPFD, 16384)                = 16384
-close(16384)                            = 0
-fcntl(2, F_DUPFD, 32768)                = 32768
-close(32768)                            = 0
-fcntl(2, F_DUPFD, 65536)                = 65536
-close(65536)                            = 0
-fcntl(2, F_DUPFD, 131072)               = 131072
-close(131072)                           = 0
-fcntl(2, F_DUPFD, 262144)               = 262144
-close(262144)                           = 0
-fcntl(2, F_DUPFD, 524288)               = 524288
-close(524288)                           = 0
-fcntl(2, F_DUPFD, 1048576)              = 1048576
-close(1048576)                          = 0
-fcntl(2, F_DUPFD, 2097152)              = 2097152
-close(2097152)                          = 0
-fcntl(2, F_DUPFD, 4194304)              = 4194304
-close(4194304)                          = 0
-fcntl(2, F_DUPFD, 8388608)              = 8388608
-close(8388608)                          = 0
-fcntl(2, F_DUPFD, 16777216)             = 16777216
-close(16777216)                         = 0
-fcntl(2, F_DUPFD, 33554432)             = 33554432
-close(33554432)                         = 0
-fcntl(2, F_DUPFD, 67108864)             = 67108864
-close(67108864)                         = 0
-fcntl(2, F_DUPFD, 134217728)            = 134217728
-close(134217728)                        = 0
-fcntl(2, F_DUPFD, 536870912)            = 536870912
-close(536870912)                        = 0
-write(1, "success\n", 8)                = EBADF
+do_faccessat()
+    user_path_at(dfd, filename, lookup_flags, &path);
+    if (acc_mode & MAY_EXEC .... path_noexec()
+    inode_permission(inode, mode | MAY_ACCESS);
+
+This appears to be strictly advisory, and the path_noexec() test is
+there to, perhaps, avoid surprises when doing access() then fexecve()?
+I would note, however, that that path-based LSMs appear to have no hook
+in this call graph at all. I was expecting a call like:
+
+	security_file_permission(..., mode | MAY_ACCESS)
+
+but I couldn't find one (or anything like it), so only
+inode_permission() is being tested (which means also the existing
+execve() late tests are missed, and the newly added S_ISREG() test from
+do_dentry_open() is missed).
+
+
+prctl_set_mm_exe_file()
+    err = -EACCESS;
+    if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
+        goto exit;
+    err = inode_permission(inode, MAY_EXEC);
+
+This is similar (no path-based LSM hooks present, only inode_permission()
+used for permission checking), but it is at least gated by CAP_SYS_ADMIN.
+
+
+And this bring me to a related question from my review: does
+dentry_open() intentionally bypass security_inode_permission()? I.e. it
+calls vfs_open() not do_open():
+
+openat2(dfd, char * filename, open_how)
+    build_open_flags(open_how, open_flags)
+    do_filp_open(dfd, filename, open_flags)
+        path_openat(nameidata, open_flags, flags)
+            file = alloc_empty_file(open_flags, current_cred());
+            do_open(nameidata, file, open_flags)
+                may_open(path, acc_mode, open_flag)
+                    inode_permission(inode, MAY_OPEN | acc_mode)
+                        security_inode_permission(inode, acc_mode)
+                vfs_open(path, file)
+                    do_dentry_open(file, path->dentry->d_inode, open)
+                        if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) ...
+                        security_file_open(f)
+                                /* path-based LSMs check for open here
+				 * and use FMODE_* flags to determine how a file
+                                 * is being opened. */
+                        open()
+
+vs
+
+dentry_open(path, flags, cred)
+        f = alloc_empty_file(flags, cred);
+        vfs_open(path, f);
+
+I would expect dentry_open() to mostly duplicate a bunch of
+path_openat(), but it lacks the may_open() call, etc.
+
+I really got the feeling that there was some new conceptual split needed
+inside do_open() where the nameidata details have been finished, after
+we've gained the "file" information, but before we've lost the "path"
+information. For example, may_open(path, ...) has no sense of "file",
+though it does do the inode_permission() call.
+
+Note also that may_open() is used in do_tmpfile() too, and has a comment
+implying it needs to be checking only a subset of the path details. So
+I'm not sure how to split things up.
+
+So, that's why I put the new checks just before the may_open() call in
+do_open(): it's the most central, positions itself correctly for dealing
+with O_MAYEXEC, and doesn't appear to make any existing paths worse.
+
+> I am wondering if we need something distinct to request the type of the
+> file being opened versus execute permissions.
+
+Well, this is why I wanted to centralize it -- the knowledge of how a
+file is going to be used needs to be tested both by the core VFS
+(S_ISREG, path_noexec) and the LSMs. Things were inconsistent before.
+
+> All I know is being careful and putting the tests in a good logical
+> place makes the code more maintainable, whereas not being careful
+> results in all kinds of sharp corners that might be exploitable.
+> So I think it is worth digging in and figuring out where those checks
+> should live.  Especially so that code like faccessat does not need
+> to duplicate them.
+
+I think this is the right place with respect to execve(), though I think
+there are other cases that could use to be improved (or at least made
+more consistent).
+
+-Kees
+
 -- 
-Thiago Macieira - thiago.macieira (AT) intel.com
-  Software Architect - Intel System Software Products
-
---nextPart7613756.9Z4iiRFd73
-Content-Disposition: attachment; filename="dupfd-bug.c"
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"; name="dupfd-bug.c"
-
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/resource.h>
-#include <unistd.h>
-
-void run_test(int maxfd)
-{
-    int srcfd = STDERR_FILENO;
-    int minfd = 1024;
-
-    /* Linux kernel expands the file descriptor table exponentially, so
-     * keep requesting a minimum file descriptor exponentially. */
-    for ( ; minfd < maxfd; minfd *= 2) {
-        int fd;
-        do {
-            fd = fcntl(srcfd, F_DUPFD, minfd);
-        } while (fd == -1 && errno == EINTR);
-
-        if (fd == -1) {
-            if (errno != EMFILE)
-                perror("fcntl");
-            return;
-        }
-        close(fd);
-    }
-}
-
-int main(int argc, char **argv)
-{
-    struct rlimit lim;
-    if (argc > 1) {
-        lim.rlim_max = lim.rlim_cur = strtol(argv[1], NULL, 0);
-    } else {
-        int n;
-        FILE *f = fopen("/proc/sys/fs/nr_open","r");
-        if (!f) {
-            perror("fopen");
-            return EXIT_FAILURE;
-        }
-        if (fscanf(f, "%d", &n) != 1)
-            return EXIT_FAILURE;
-        fclose(f);
-        lim.rlim_max = lim.rlim_cur = n;
-    }
-
-    if (setrlimit(RLIMIT_NOFILE, &lim) == -1) {
-        perror("setrlimit");
-        return EXIT_FAILURE;
-    }
-
-    run_test(lim.rlim_cur);
-
-    static const char msg[] = "success\n";
-    int ok1 = write(STDOUT_FILENO, msg, strlen(msg)) == strlen(msg);
-    return ok1 ? EXIT_SUCCESS : 255;
-}
-
---nextPart7613756.9Z4iiRFd73--
+Kees Cook
