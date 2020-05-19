@@ -2,207 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD7A1D940E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 12:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476D51D9419
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 12:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbgESKH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 06:07:29 -0400
-Received: from mout.gmx.net ([212.227.17.21]:40815 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbgESKH3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 06:07:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1589882788;
-        bh=+UZpikoCSDiNYkpOkgtAFZkoPVCVL9V39mTTHmo5RnU=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=OYCe8E2lNau8mXcdkFBTDa50UmWb6PEPnr2owHjqOlS8BZw2UzeFUJ8r3WH2NFKhf
-         cnw+PkUf3dkRcuehv4sW29J+qtObVlQHUCcJqSbsZCuXZnjX2+V4GVyauaRG6Sq6w1
-         nI+vmAar6fAwMLZLTh6+MM6oZj4Z+sx9M79Xbt8g=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from hsiangkao-HP-ZHAN-66-Pro-G1 ([120.242.72.127]) by mail.gmx.com
- (mrgmx104 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 1MbzyJ-1j46lY1mO7-00dZSO; Tue, 19 May 2020 12:06:28 +0200
-Date:   Tue, 19 May 2020 18:06:19 +0800
-From:   Gao Xiang <hsiangkao@gmx.com>
-To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@fromorbit.com, hch@infradead.org, willy@infradead.org
-Subject: Re: [PATCH 10/10] mm/migrate.c: call detach_page_private to cleanup
- code
-Message-ID: <20200519100612.GA3687@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
- <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
- <20200518221235.1fa32c38e5766113f78e3f0d@linux-foundation.org>
- <aade5d75-c9e9-4021-6eb7-174a921a7958@cloud.ionos.com>
+        id S1726494AbgESKNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 06:13:40 -0400
+Received: from smtp-42a9.mail.infomaniak.ch ([84.16.66.169]:52227 "EHLO
+        smtp-42a9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726412AbgESKNk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 06:13:40 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49RBYF2vl5zlhWfh;
+        Tue, 19 May 2020 12:13:37 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49RBY15MbkzlkJkD;
+        Tue, 19 May 2020 12:13:25 +0200 (CEST)
+Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to
+ enforce noexec mounts or file exec through O_MAYEXEC)
+To:     Aleksa Sarai <cyphar@cyphar.com>, Kees Cook <keescook@chromium.org>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        "Lev R. Oshvang ." <levonshe@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <202005132002.91B8B63@keescook>
+ <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+ <202005140830.2475344F86@keescook>
+ <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
+ <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
+ <202005142343.D580850@keescook> <87a729wpu1.fsf@oldenburg2.str.redhat.com>
+ <202005150732.17C5EE0@keescook> <87r1vluuli.fsf@oldenburg2.str.redhat.com>
+ <202005150847.2B1ED8F81@keescook>
+ <20200519022307.oqpdb4vzghs3coyi@yavin.dot.cyphar.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <1477d3d7-4b36-afad-7077-a38f42322238@digikod.net>
+Date:   Tue, 19 May 2020 12:13:10 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8\""
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aade5d75-c9e9-4021-6eb7-174a921a7958@cloud.ionos.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:LTsOTq1mPEelHR2l4o0rGDmComg0jxTf99Vkf8suxa+YY03ofnM
- kUeZeFjDAmpCwnFsBHf3kmSRCIsSEbcvK3Ap6q8pTGMp30JZpDNca/GF/ADZnxTUAVU6TNB
- oJaMiBZlDOe98Kdbx1vhprmzieIrq5i0li7tskswUcm7v+bwi32+8/Z66AMvAY+nE1yW+xV
- BrCzgrlUqli1rAVIZ+5Xw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jXscTq9KYn4=:W3BMIpbm0zHl72sFflO65j
- x3PEswh9uw6Mx9ZTLhyx0/qJsa5wkWWIzmP5mR96adqo6J4j7TS5ZM5W5h/lyusKgxrjADCZu
- XsYqp8+7yNRa/pG+fnERjolHIxLrkBt0ZAtKz+XCylXUtUruO7IIJtxTsj3NC3CXygy7NBtCL
- Crk5tzj7/CGhKHOLKdNKQrHywokGmCiPK4XcN++izNCPfDo5kY9KHPUvv5pV05Dd7+9nrfKak
- LEWCdTp669qgGzcIeO8dRMvTWqduTTfoI3p6xJ4XRa8yH8GsdGWh6RL2YhRxX1kEz8UZnXcCh
- 2/fvGFn5SDUNuzI/AlHO0pVr9HJLMH9QCgedJEy25TZenkiwgP4n+qep3fJAlWDL620aYvOGV
- A7sv9XTy8EF6uJ0Y1JE+dKjrUFcXykWe/H2m5Zd8OvQlE6m3y//sOTOP7M8aMpqPc0lOQ/1Rf
- Y43bpwHXdCSaPIHAm/nmarEtXVPQliJc3eY46D6GDE06o7jURQsnqZBEW34SDHCJBBuUFXxcG
- ovm0R0qp3EVBx2TqD2/HCoFStimBw8NWyhfRHTyrmKGL9FVOif6D0Ei+6VXi1cjwNZEHcKjSz
- c35AAaEkig+lD6+hHF3Wi5toHrwzDveIbVHJtahwSVuxnAbHx31lGnRQaoMtimIJRS0RrKosp
- dI5oLhd6lqYefYC/3/+uL3h2iYvlfimWS6KGwDX0PAqqRN7Zdnnn3i8witGQJjMlmYvSwrkNQ
- PQBtoqlv1gObbNMnIDEJxDhsyeuq6vO1U6jEBavLVWJpGEH6RJ3L8MUoUYkODimPE0xNq/Za0
- d+MSPFBf+6e5j/vaDaYqKn6Nvc7LThgMdpMjUmEXnX9MHXcY9D4przCLI8ExMxpEoBpKOGx4w
- okdjuqz/Kh0UJYykiwSewoZuCq6bzrsmxcYY6Q/X314pFLjt746UGRIS55mPKUXXbyISoH1ZA
- 5glTm2d9braOFn4gmuWo8JV4XUfpZwBaxW2Eg4Qc9eksLHObgggnbsFwUk32rBniSjKEBViFP
- goRI594CZDZzOkPWlZHdtOaCEPMS/upEwOp1RE04Jv80ZQw5CyapzsuFyK0rnbmtkYm0Hr14A
- /ZGuCnkHfPuWjaN1Bmpq5Ksevq2BGPcP/5RuX0jdSBK5aQM2kTCi+sUlSkEES817LUWRJEUlM
- mg5giDlq8JnUHQ9G197JDZCLZ+YzBhJrnUCGEjyUbLG8QMadWiIdXpEN7Eym2waT6GsmnOBge
- O7npqi7ha43LyhfsQ
+In-Reply-To: <20200519022307.oqpdb4vzghs3coyi@yavin.dot.cyphar.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 19, 2020 at 09:35:59AM +0200, Guoqing Jiang wrote:
-> On 5/19/20 7:12 AM, Andrew Morton wrote:
-> > On Sun, 17 May 2020 23:47:18 +0200 Guoqing Jiang <guoqing.jiang@cloud.=
-ionos.com> wrote:
-> >
-> > > We can cleanup code a little by call detach_page_private here.
-> > >
-> > > ...
-> > >
-> > > --- a/mm/migrate.c
-> > > +++ b/mm/migrate.c
-> > > @@ -804,10 +804,7 @@ static int __buffer_migrate_page(struct address=
-_space *mapping,
-> > >   	if (rc !=3D MIGRATEPAGE_SUCCESS)
-> > >   		goto unlock_buffers;
-> > > -	ClearPagePrivate(page);
-> > > -	set_page_private(newpage, page_private(page));
-> > > -	set_page_private(page, 0);
-> > > -	put_page(page);
-> > > +	set_page_private(newpage, detach_page_private(page));
-> > >   	get_page(newpage);
-> > >   	bh =3D head;
-> > mm/migrate.c: In function '__buffer_migrate_page':
-> > ./include/linux/mm_types.h:243:52: warning: assignment makes integer f=
-rom pointer without a cast [-Wint-conversion]
-> >   #define set_page_private(page, v) ((page)->private =3D (v))
-> >                                                      ^
-> > mm/migrate.c:800:2: note: in expansion of macro 'set_page_private'
-> >    set_page_private(newpage, detach_page_private(page));
-> >    ^~~~~~~~~~~~~~~~
-> >
-> > The fact that set_page_private(detach_page_private()) generates a type
-> > mismatch warning seems deeply wrong, surely.
-> >
-> > Please let's get the types sorted out - either unsigned long or void *=
-,
-> > not half-one and half-the other.  Whatever needs the least typecasting
-> > at callsites, I suggest.
->
-> Sorry about that, I should notice the warning before. I will double chec=
-k if
-> other
-> places need the typecast or not, then send a new version.
->
-> > And can we please implement set_page_private() and page_private() with
-> > inlined C code?  There is no need for these to be macros.
->
-> Just did a quick change.
->
-> -#define page_private(page)=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=
-=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ((page)->private)
-> -#define set_page_private(page, v)=C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ((=
-page)->private =3D (v))
-> +static inline unsigned long page_private(struct page *page)
-> +{
-> +=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  return page->private;
-> +}
-> +
-> +static inline void set_page_private(struct page *page, unsigned long
-> priv_data)
-> +{
-> +=C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  page->private =3D priv_data;
-> +}
->
-> Then I get error like.
->
-> fs/erofs/zdata.h: In function =C3=A2=E2=82=AC=CB=9Cz_erofs_onlinepage_in=
-dex=C3=A2=E2=82=AC=E2=84=A2:
-> fs/erofs/zdata.h:126:8: error: lvalue required as unary =C3=A2=E2=82=AC=
-=CB=9C&=C3=A2=E2=82=AC=E2=84=A2 operand
-> =C3=82  u.v =3D &page_private(page);
-> =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82 =C3=82  ^
->
-> I guess it is better to keep page_private as macro, please correct me in
-> case I
-> missed something.
 
-I guess that you could Cc me in the reply.
+On 19/05/2020 04:23, Aleksa Sarai wrote:
+> On 2020-05-15, Kees Cook <keescook@chromium.org> wrote:
+>> On Fri, May 15, 2020 at 04:43:37PM +0200, Florian Weimer wrote:
+>>> * Kees Cook:
+>>>
+>>>> On Fri, May 15, 2020 at 10:43:34AM +0200, Florian Weimer wrote:
+>>>>> * Kees Cook:
+>>>>>
+>>>>>> Maybe I've missed some earlier discussion that ruled this out, but I
+>>>>>> couldn't find it: let's just add O_EXEC and be done with it. It actually
+>>>>>> makes the execve() path more like openat2() and is much cleaner after
+>>>>>> a little refactoring. Here are the results, though I haven't emailed it
+>>>>>> yet since I still want to do some more testing:
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
+>>>>>
+>>>>> I think POSIX specifies O_EXEC in such a way that it does not confer
+>>>>> read permissions.  This seems incompatible with what we are trying to
+>>>>> achieve here.
+>>>>
+>>>> I was trying to retain this behavior, since we already make this
+>>>> distinction between execve() and uselib() with the MAY_* flags:
+>>>>
+>>>> execve():
+>>>>         struct open_flags open_exec_flags = {
+>>>>                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+>>>>                 .acc_mode = MAY_EXEC,
+>>>>
+>>>> uselib():
+>>>>         static const struct open_flags uselib_flags = {
+>>>>                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+>>>>                 .acc_mode = MAY_READ | MAY_EXEC,
+>>>>
+>>>> I tried to retain this in my proposal, in the O_EXEC does not imply
+>>>> MAY_READ:
+>>>
+>>> That doesn't quite parse for me, sorry.
+>>>
+>>> The point is that the script interpreter actually needs to *read* those
+>>> files in order to execute them.
+>>
+>> I think I misunderstood what you meant (Mickaël got me sorted out
+>> now). If O_EXEC is already meant to be "EXEC and _not_ READ nor WRITE",
+>> then yes, this new flag can't be O_EXEC. I was reading the glibc
+>> documentation (which treats it as a permission bit flag, not POSIX,
+>> which treats it as a complete mode description).
+> 
+> On the other hand, if we had O_EXEC (or O_EXONLY a-la O_RDONLY) then the
+> interpreter could re-open the file descriptor as O_RDONLY after O_EXEC
+> succeeds. Not ideal, but I don't think it's a deal-breaker.
+> 
+> Regarding O_MAYEXEC, I do feel a little conflicted.
+> 
+> I do understand that its goal is not to be what O_EXEC was supposed to
+> be (which is loosely what O_PATH has effectively become), so I think
+> that this is not really a huge problem -- especially since you could
+> just do O_MAYEXEC|O_PATH if you wanted to disallow reading explicitly.
+> It would be nice to have an O_EXONLY concept, but it's several decades
+> too late to make it mandatory (and making it optional has questionable
+> utility IMHO).
+> 
+> However, the thing I still feel mildly conflicted about is the sysctl. I
+> do understand the argument for it (ultimately, whether O_MAYEXEC is
+> usable on a system depends on the distribution) but it means that any
+> program which uses O_MAYEXEC cannot rely on it to provide the security
+> guarantees they expect. Even if the program goes and reads the sysctl
+> value, it could change underneath them. If this is just meant to be a
+> best-effort protection then this doesn't matter too much, but I just
+> feel uneasy about these kinds of best-effort protections.
 
-In that case, EROFS uses page->private as an atomic integer to
-trace 2 partial subpages in one page.
+I think there is a cognitive bias here. There is a difference between
+application-centric policies and system policies. For example, openat2
+RESOLVE_* flags targets application developers and are self-sufficient:
+the kernel provides features (applied to FDs, owned and managed by user
+space) which must be known (by the application) to be supported (by the
+kernel), otherwise the application may give more privileges than
+expected. However, the O_MAYEXEC flag targets system administrators: it
+does not make sense to enable an application to know nor enforce the
+system(-wide) policy, but only to enable applications to follow this
+policy (i.e. best-effort *from the application developer point of
+view*). Indeed, access-control such as file executability depends on
+multiple layers (e.g. file permission, mount options, ACL, SELinux
+policy), most of them managed and enforced in a consistent way by
+(multiple parts of) the system.
 
-I think that you could also use &page->private instead directly to
-replace &page_private(page) here since I didn't find some hint to
-pick &page_private(page) or &page->private.
+Applications should not and it does not make sense for them to expect
+anything from O_MAYEXEC. This flag only enables the system to enforce a
+security policy and that's all. It is really a different use case than
+FD management. This feature is meant to extend the system ability thanks
+to applications collaboration. Here the sysctl should not be looked at
+by applications, the same way an application should not look at the
+currently enforced SELinux policy nor the mount options. An application
+may be launched differently according to the system-wide policy, but
+this is again a system configuration. There is a difference between ABI
+compatibility (i.e. does this feature is supported by the kernel?) and
+system-wide security policy (what is the policy of the running system?),
+in which case (common) applications should not care about system-wide
+policy management but only care about policy enforcement (at their
+level, if it makes sense from the system point of view). If the feature
+is not provided by the system, then it is not the job of applications to
+change their behavior, which means applications do their job by using
+O_MAYEXEC but they do not care if it is enforce or not. It does not make
+sense for an application to stop because the system does not provide a
+system-centric security feature, moreover based on system introspection
+(i.e. through sysctl read). It is the system role to provide and
+*manage* other components executability.
 
+More explanation can be found in a separate thread:
+https://lore.kernel.org/lkml/d5df691d-bfcb-2106-08a2-cfe589b0a86c@digikod.net/
 
-In addition, I found some limitation of new {attach,detach}_page_private
-helper (that is why I was interested in this series at that time [1] [2],
-but I gave up finally) since many patterns (not all) in EROFS are
+> 
+> I do wonder if we could require that fexecve(3) can only be done with
+> file descriptors that have been opened with O_MAYEXEC (obviously this
+> would also need to be a sysctl -- *sigh*). This would tie in to some of
+> the magic-link changes I wanted to push (namely, upgrade_mask).
+> 
 
-io_submit (origin, page locked):
-attach_page_private(page);
-...
-put_page(page);
-
-end_io (page locked):
-SetPageUptodate(page);
-unlock_page(page);
-
-since the page is always locked, so io_submit could be simplified as
-set_page_private(page, ...);
-SetPagePrivate(page);
-, which can save both one temporary get_page(page) and one
-put_page(page) since it could be regarded as safe with page locked.
-
-
-btw, I noticed the patchset versions are PATCH [3], RFC PATCH [4],
-RFC PATCH v2 [5], RFC PATCH v3 [6], PATCH [7]. Although I also
-noticed the patchset title was once changed, but it could be some
-harder to trace the whole history discussion.
-
-[1] https://lore.kernel.org/linux-fsdevel/20200419051404.GA30986@hsiangkao=
--HP-ZHAN-66-Pro-G1/
-[2] https://lore.kernel.org/linux-fsdevel/20200427025752.GA3979@hsiangkao-=
-HP-ZHAN-66-Pro-G1/
-[3] https://lore.kernel.org/linux-fsdevel/20200418225123.31850-1-guoqing.j=
-iang@cloud.ionos.com/
-[4] https://lore.kernel.org/linux-fsdevel/20200426214925.10970-1-guoqing.j=
-iang@cloud.ionos.com/
-[5] https://lore.kernel.org/linux-fsdevel/20200430214450.10662-1-guoqing.j=
-iang@cloud.ionos.com/
-[6] https://lore.kernel.org/linux-fsdevel/20200507214400.15785-1-guoqing.j=
-iang@cloud.ionos.com/
-[7] https://lore.kernel.org/linux-fsdevel/20200517214718.468-1-guoqing.jia=
-ng@cloud.ionos.com/
-
-Thanks,
-Gao Xiang
-
->
-> Thanks,
-> Guoqing
->
->
->
+An O_EXEC flag could make sense for execveat(2), but O_MAYEXEC targets a
+different and complementary use case. See
+https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
+But again, see the above comment about the rational of system-wide
+policy management.
