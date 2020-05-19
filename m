@@ -2,101 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 512711D9F7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 20:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A6E1D9FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 20:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbgESS2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 14:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729515AbgESS2g (ORCPT
+        id S1726721AbgESSqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 14:46:12 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:60656 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgESSqM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 14:28:36 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9064C08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 11:28:35 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id a9so350591lfb.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 11:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RAQPJr9ukcoBKjOXNq0ngI2FbToix/GR1U4DwPpfSy0=;
-        b=JjHp/TA1wdi209GQDxk83iIpqXnffl3eJS5MEEAgukuWcKDbwj37gts7DFLkHruGuU
-         nuDn1vvGhdSeq273vqMgVsMiaMP4nc1F6Pk64YouAMejNS/pKU4WwKHY+HH7P561hq9G
-         XIbucUyW2ftN8EdLLtxsWXuyZC+00nekrisfU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RAQPJr9ukcoBKjOXNq0ngI2FbToix/GR1U4DwPpfSy0=;
-        b=HyQ6RRbBjkvnSaFlyXykVuocU6lcRDYzcM9Oabltm0Qhgst1wt9fnjJ460lJ3nkj8+
-         WMCXvtvyoamnef9LUJR/voWVwKnspryrn0yANAIuBTpRwln4ogOAmnKo459dCwWniKSI
-         oWzBzWHIyBbXar8Y+NTyyP8Uq68GB2KMkqcOR8gOh6n9RLzEA9pE5SDkj/yNrUb9tHbO
-         ctLCgijezQVlhzY6OLIWrIC1dGTgsNufDg167KO6DoWWIlhe/aGP9RWZytnD8KI8qJD4
-         23AXH8wWhWg7F7mT8QUliUOO/hcwiZGTwweQ01vyHaxRB3yZbQTsjnDyvULt5c0qD/Mj
-         CjEg==
-X-Gm-Message-State: AOAM531oZGlucDboIuUedh7bUSO9viApA+L1ABquYRkWSogWApcZlZcO
-        1mTqMy07gO6NcUOdXFLLmMdvZ9yaa0g=
-X-Google-Smtp-Source: ABdhPJwQctWklkGPyZwvWrLG2TqQ6+6fkfDJhv+Gbiyj/N/8rU4b3y4zviuQGFiYvOv8ET8Dqh5ZXg==
-X-Received: by 2002:ac2:5473:: with SMTP id e19mr130007lfn.21.1589912913220;
-        Tue, 19 May 2020 11:28:33 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 6sm215494lju.54.2020.05.19.11.28.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 11:28:31 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id c21so375186lfb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 11:28:30 -0700 (PDT)
-X-Received: by 2002:ac2:5a4c:: with SMTP id r12mr156726lfn.10.1589912910469;
- Tue, 19 May 2020 11:28:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <871rng22dm.fsf_-_@x220.int.ebiederm.org> <202005191101.1D420E03@keescook>
-In-Reply-To: <202005191101.1D420E03@keescook>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 19 May 2020 11:28:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjeoeh-F-PJmpYRpR_HoiB4r4qYgd3U6igtrUD6q5d_cg@mail.gmail.com>
-Message-ID: <CAHk-=wjeoeh-F-PJmpYRpR_HoiB4r4qYgd3U6igtrUD6q5d_cg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] exec: Teach prepare_exec_creds how exec treats
- uids & gids
+        Tue, 19 May 2020 14:46:12 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jb7Fi-0005kT-4o; Tue, 19 May 2020 12:46:10 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jb7Fh-00056u-AM; Tue, 19 May 2020 12:46:09 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Kees Cook <keescook@chromium.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Content-Type: text/plain; charset="UTF-8"
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200518055457.12302-1-keescook@chromium.org>
+        <87a724t153.fsf@x220.int.ebiederm.org>
+        <202005190918.D2BD83F7C@keescook>
+        <87o8qjstyw.fsf@x220.int.ebiederm.org>
+        <202005191052.0A6B1D5843@keescook>
+Date:   Tue, 19 May 2020 13:42:28 -0500
+In-Reply-To: <202005191052.0A6B1D5843@keescook> (Kees Cook's message of "Tue,
+        19 May 2020 10:56:08 -0700")
+Message-ID: <87sgfvrckr.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jb7Fh-00056u-AM;;;mid=<87sgfvrckr.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18MccEeDar1/0mLamXCyDMxW4fspzZPKe8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMNoVowels autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1588]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 433 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 11 (2.6%), b_tie_ro: 10 (2.2%), parse: 1.40
+        (0.3%), extract_message_metadata: 20 (4.7%), get_uri_detail_list: 2.8
+        (0.6%), tests_pri_-1000: 9 (2.1%), tests_pri_-950: 2.1 (0.5%),
+        tests_pri_-900: 1.84 (0.4%), tests_pri_-90: 81 (18.7%), check_bayes:
+        79 (18.2%), b_tokenize: 12 (2.8%), b_tok_get_all: 10 (2.2%),
+        b_comp_prob: 4.6 (1.1%), b_tok_touch_all: 47 (10.9%), b_finish: 1.10
+        (0.3%), tests_pri_0: 289 (66.8%), check_dkim_signature: 1.10 (0.3%),
+        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 0.49 (0.1%), tests_pri_10:
+        2.3 (0.5%), tests_pri_500: 9 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/4] Relocate execve() sanity checks
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 19, 2020 at 11:03 AM Kees Cook <keescook@chromium.org> wrote:
+Kees Cook <keescook@chromium.org> writes:
+
+> On Tue, May 19, 2020 at 12:41:27PM -0500, Eric W. Biederman wrote:
+>> Kees Cook <keescook@chromium.org> writes:
+>> > and given the LSM hooks, I think the noexec check is too late as well.
+>> > (This is especially true for the coming O_MAYEXEC series, which will
+>> > absolutely need those tests earlier as well[1] -- the permission checking
+>> > is then in the correct place: during open, not exec.) I think the only
+>> > question is about leaving the redundant checks in fs/exec.c, which I
+>> > think are a cheap way to retain a sense of robustness.
+>> 
+>> The trouble is when someone passes through changes one of the permission
+>> checks for whatever reason (misses that they are duplicated in another
+>> location) and things then fail in some very unexpected way.
 >
-> One question, though: why add this, since the repeat calling of the caps
-> LSM hook will do this?
+> Do you think this series should drop the "late" checks in fs/exec.c?
+> Honestly, the largest motivation for me to move the checks earlier as
+> I've done is so that other things besides execve() can use FMODE_EXEC
+> during open() and receive the same sanity-checking as execve() (i.e the
+> O_MAYEXEC series -- the details are still under discussion but this
+> cleanup will be needed regardless).
 
-I assume it's for the "preserve_creds" case where we don't even end up
-setting creds at all.
+I think this series should drop the "late" checks in fs/exec.c  It feels
+less error prone, and it feels like that would transform this into
+something Linus would be eager to merge because series becomes a cleanup
+that reduces line count.
 
-Yeah, at some point we'll hit a bprm handler that doesn't set
-'preserve_creds', and it all does get set in the end, but that's not
-statically all that obvious.
+I haven't been inside of open recently enough to remember if the
+location you are putting the check fundamentally makes sense.  But the
+O_MAYEXEC bits make a pretty strong case that something of the sort
+needs to happen.
 
-I think it makes sense to initialize as much as possible from the
-generic code, and rely as little as possible on what the binfmt
-handlers end up actually doing.
+I took a quick look but I can not see clearly where path_noexec
+and the regular file tests should go.
 
-              Linus
+I do see that you have code duplication with faccessat which suggests
+that you haven't put the checks in the right place.
+
+I am wondering if we need something distinct to request the type of the
+file being opened versus execute permissions.
+
+All I know is being careful and putting the tests in a good logical
+place makes the code more maintainable, whereas not being careful
+results in all kinds of sharp corners that might be exploitable.
+So I think it is worth digging in and figuring out where those checks
+should live.  Especially so that code like faccessat does not need
+to duplicate them.
+
+Eric
+
