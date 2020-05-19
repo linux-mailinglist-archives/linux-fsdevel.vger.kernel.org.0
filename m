@@ -2,113 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 668611DA280
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 22:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 031091DA2DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 May 2020 22:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgESUYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 16:24:14 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:54046 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgESUYO (ORCPT
+        id S1726862AbgESUiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 16:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbgESUiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 16:24:14 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb8mX-0002h2-BJ; Tue, 19 May 2020 14:24:09 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jb8mW-0002mR-Ik; Tue, 19 May 2020 14:24:09 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tue, 19 May 2020 16:38:00 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF76C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 13:38:00 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id z26so431072pfk.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 13:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1ajSll4bK53Qb2Ak/L8hDSxkSGAnkpDcgNlbRYtpvdY=;
+        b=bdpue+Ojf13IRe6EAqF+S2fM9FW1U9KJIwBTq1d4UtGhfpgkzxqbNMwL2t9gD/HgLg
+         dzeF1gIHEz8PErdvGj7aC4MbQMcPkV3d3d2qYtkVu2Wif68mY8/Wm6UD9TIbyOM18bXQ
+         GIF7TGksPetl0XqMWhyuq9wcVAqbqi+bOu8+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1ajSll4bK53Qb2Ak/L8hDSxkSGAnkpDcgNlbRYtpvdY=;
+        b=WoMi5R2BWk4lKWpjZszIxYRjdcJhxXc85iYiQasky/9C16eEjLALKM1hkbeAWWTOJf
+         BZ96dMGoDXji8Mwsh9fbu4N7zFSo3gIJ0nYYBp5/Ky7s7GKGeCMAlwmpL7zYuBJZ+SO6
+         jcFyETmvxKCEnY3N4Xjt917HLCjvcGPVGtJ3jryO9R0HOovAneWHE1hyhRxQH9OZvFew
+         56cgYIp6J9I5VX+vG9Eb1Amt5F4V/Zj0mmOGFM+kFwjH0GQMcTWvqfxmSSSepCQaynz4
+         NbqDG1hVCEJNeHwJwrz5khmsLeRPEDX0L96tt3jSBlWU1fvNDLpIlRF3oXBpI8/Og9Fw
+         ahDQ==
+X-Gm-Message-State: AOAM531IXtCMFJ+aW2C5UrmfeVtwe/pyteRKUYnbuDebkmpgEjz8Q9Zm
+        m/GuRHNlgwMCR1/PU4kKJRueCQ==
+X-Google-Smtp-Source: ABdhPJzOaJoPTT49vaOBrznFkW9TmN9W+ndpxwI48V37k7vrHTnQHLcXHDI+QItVM51xmiO2ue42TQ==
+X-Received: by 2002:aa7:91da:: with SMTP id z26mr954615pfa.18.1589920680112;
+        Tue, 19 May 2020 13:38:00 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i184sm278051pgc.36.2020.05.19.13.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 13:37:59 -0700 (PDT)
+Date:   Tue, 19 May 2020 13:37:57 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
         Greg Ungerer <gerg@linux-m68k.org>,
         Rob Landley <rob@landley.net>,
         Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 8/8] exec: Remove recursion from search_binary_handler
+Message-ID: <202005191320.230EFDFCB@keescook>
 References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
-        <202005191220.2DB7B7C7@keescook>
-        <CAHk-=wg=cHD0oZTFgj0z33=8H8yKEcbn=eNpTj19GPEgJwrQzg@mail.gmail.com>
-Date:   Tue, 19 May 2020 15:20:27 -0500
-In-Reply-To: <CAHk-=wg=cHD0oZTFgj0z33=8H8yKEcbn=eNpTj19GPEgJwrQzg@mail.gmail.com>
-        (Linus Torvalds's message of "Tue, 19 May 2020 12:54:40 -0700")
-Message-ID: <87a723n0c4.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87sgfwyd84.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jb8mW-0002mR-Ik;;;mid=<87a723n0c4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Go4GcdBQ9Hlcsq7Wxbs0FCcH2FRifgGQ=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4996]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa05 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 392 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 13 (3.2%), b_tie_ro: 11 (2.8%), parse: 1.35
-        (0.3%), extract_message_metadata: 22 (5.6%), get_uri_detail_list: 1.46
-        (0.4%), tests_pri_-1000: 23 (5.8%), tests_pri_-950: 1.58 (0.4%),
-        tests_pri_-900: 1.26 (0.3%), tests_pri_-90: 62 (15.8%), check_bayes:
-        60 (15.3%), b_tokenize: 8 (2.2%), b_tok_get_all: 7 (1.8%),
-        b_comp_prob: 2.4 (0.6%), b_tok_touch_all: 38 (9.8%), b_finish: 1.08
-        (0.3%), tests_pri_0: 221 (56.4%), check_dkim_signature: 0.68 (0.2%),
-        check_dkim_adsp: 2.7 (0.7%), poll_dns_idle: 0.77 (0.2%), tests_pri_10:
-        7 (1.7%), tests_pri_500: 35 (9.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgfwyd84.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Mon, May 18, 2020 at 07:34:19PM -0500, Eric W. Biederman wrote:
+> 
+> Recursion in kernel code is generally a bad idea as it can overflow
+> the kernel stack.  Recursion in exec also hides that the code is
+> looping and that the loop changes bprm->file.
+> 
+> Instead of recursing in search_binary_handler have the methods that
+> would recurse set bprm->interpreter and return 0.  Modify exec_binprm
+> to loop when bprm->interpreter is set.  Consolidate all of the
+> reassignments of bprm->file in that loop to make it clear what is
+> going on.
+> 
+> The structure of the new loop in exec_binprm is that all errors return
+> immediately, while successful completion (ret == 0 &&
+> !bprm->interpreter) just breaks out of the loop and runs what
+> exec_bprm has always run upon successful completion.
+> 
+> Fail if the an interpreter is being call after execfd has been set.
+> The code has never properly handled an interpreter being called with
+> execfd being set and with reassignments of bprm->file and the
+> assignment of bprm->executable in generic code it has finally become
+> possible to test and fail when if this problematic condition happens.
+> 
+> With the reassignments of bprm->file and the assignment of
+> bprm->executable moved into the generic code add a test to see if
+> bprm->executable is being reassigned.
+> 
+> In search_binary_handler remove the test for !bprm->file.  With all
+> reassignments of bprm->file moved to exec_binprm bprm->file can never
+> be NULL in search_binary_handler.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-> On Tue, May 19, 2020 at 12:46 PM Kees Cook <keescook@chromium.org> wrote:
->>
->> Though frankly, I wonder if interp_flags could just be removed in favor
->> of two new bit members, especially since interp_data is gone:
->
-> Yeah, I think that might be a good cleanup - but please keep it as a
-> separate thing at the end of the series (or maybe the beginning)
+Lovely!
 
-I will.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-With a little care we can replace setting BINPRM_FLAGS_ENFORCE_NONDUMP
-and clearing bprm->mm->dumpable.
+I spent some time following the file lifetimes of deny/allow_write_access()
+and the fget/fput() paths. It all looks correct to me; it's tricky
+(especially bprm->executable) but so very much cleaner than before. :)
 
-Which is the direction I have been looking.
+The only suggestion I could come up with is more comments (surprise) to
+help anyone new to this loop realize what the "common" path is (and
+similarly, a compiler hint too):
 
-Now that I think about it I believe that the loop in exec_binprm should
-be clearing BINPRM_FLAGS_PATH_INACCESSIBLE as it is only relevant to
-fexec/execveat with a close on exec file descriptor.
+diff --git a/fs/exec.c b/fs/exec.c
+index a9f421ec9e27..738051a698e1 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1790,15 +1790,19 @@ static int exec_binprm(struct linux_binprm *bprm)
+ 	/* This allows 4 levels of binfmt rewrites before failing hard. */
+ 	for (depth = 0;; depth++) {
+ 		struct file *exec;
++
+ 		if (depth > 5)
+ 			return -ELOOP;
+ 
+ 		ret = search_binary_handler(bprm);
++		/* Unrecoverable error, give up. */
+ 		if (ret < 0)
+ 			return ret;
+-		if (!bprm->interpreter)
++		/* Found final handler, start execution. */
++		if (likely(!bprm->interpreter))
+ 			break;
+ 
++		/* Found an interpreter, so try again and attempt to run it. */
+ 		exec = bprm->file;
+ 		bprm->file = bprm->interpreter;
+ 		bprm->interpreter = NULL;
 
-Eric
+-- 
+Kees Cook
