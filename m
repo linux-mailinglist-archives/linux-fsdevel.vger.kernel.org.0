@@ -2,74 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 003EE1DB327
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 14:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B4B1DB32D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 14:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgETM0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 May 2020 08:26:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36990 "EHLO
+        id S1726560AbgETM2k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 May 2020 08:28:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbgETM0w (ORCPT
+        with ESMTP id S1726452AbgETM2k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 May 2020 08:26:52 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5707C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 05:26:51 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id bs4so2868167edb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 05:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=McMZFOEJApCVKvLlRF0WXyD2whtx730/Zkke9IfZqYs=;
-        b=W4giJ65Y6zhy5gAoGGYOAnUIhr7wiJywxZbW2FgtF2XmiGYw6j7mF/AX9rpxkx0OZz
-         ktMhNgoPD8mIdRuzBfYiWZ/wrZ1Vz5lEV3m48sQ249eEm9dT+exPl1oZoPeQjHTd6yML
-         YLQFAhu0bXuYxsENYcTRo2yi8GY0HvWrDHMc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=McMZFOEJApCVKvLlRF0WXyD2whtx730/Zkke9IfZqYs=;
-        b=m+QeEOf2VwOb8BrJ2Lz/1txvzmiOh//kK1WdNrLwUEekooOJYMcOaBsCr1YW7qAHlF
-         gNRMV+B8WZ2NyHiK1obXQCxt9wfCJsFFZ0AiQ73u/rTslSQJJ7ay5lCcLG5bCUx+K1T8
-         zKwZYgtDAWHXBDuz104FGnlCnzbHavZgy0RixBByfEQjGRo3mmesU3Qom4yB7f79hgtE
-         hmLSgdqAE0nwxL4A5up9GHJYK3970wddGFgnPqiJU3+bQJF1XW8862xCZ0XQ5ZmV/Ggn
-         RJbTGPGbPYGtbg8Q5OXyrqQyl7OCeWaH+iyWgXox3q1y3N/MOpKSXe/LFeow+PpFj0SK
-         TlYA==
-X-Gm-Message-State: AOAM531pC3Nj7XR3sTn6dUHQRKNMi/i2U1FUpgvtMBoBTtQrjlGnb29O
-        f7Fdu/a/AhgUi5N36YXaiHI+vxxAc07QgLrYiZojKA==
-X-Google-Smtp-Source: ABdhPJwP6mMja9Zs3GE104+EzGCultDkU2pSZQWhOYxGLN6zP2cc7JCzbXLJZlhcVNqruXUfsVTbGd0jiVZFJEdGtMU=
-X-Received: by 2002:a05:6402:b06:: with SMTP id bm6mr3285872edb.17.1589977609839;
- Wed, 20 May 2020 05:26:49 -0700 (PDT)
+        Wed, 20 May 2020 08:28:40 -0400
+Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2081AC061A0E;
+        Wed, 20 May 2020 05:28:40 -0700 (PDT)
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jbNpT-0007eq-NN; Wed, 20 May 2020 14:28:11 +0200
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 1AC03100C99; Wed, 20 May 2020 14:28:11 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/8] radix-tree: Use local_lock for protection
+In-Reply-To: <20200520102110.GE317569@hirez.programming.kicks-ass.net>
+References: <20200519201912.1564477-1-bigeasy@linutronix.de> <20200519201912.1564477-3-bigeasy@linutronix.de> <20200520102110.GE317569@hirez.programming.kicks-ass.net>
+Date:   Wed, 20 May 2020 14:28:11 +0200
+Message-ID: <874ksa6bac.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <846ae13f-acd9-9791-3f1b-855e4945012a@9livesdata.com>
- <CAJfpegs+auq0TQ4SaFiLb7w9E+ksWHCzgBoOhCCFGF6R9DMFdA@mail.gmail.com> <d9459e74-92b4-187b-4b73-bd807e79d813@9livesdata.com>
-In-Reply-To: <d9459e74-92b4-187b-4b73-bd807e79d813@9livesdata.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 20 May 2020 14:26:38 +0200
-Message-ID: <CAJfpegt8HjHRNEWw9KVasP4eANduDK6v0S-V09JavHRMdP7hzw@mail.gmail.com>
-Subject: Re: fuse_notify_inval_inode() may be ineffective when getattr request
- is in progress
-To:     Krzysztof Rusek <rusek@9livesdata.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 20, 2020 at 2:24 PM Krzysztof Rusek <rusek@9livesdata.com> wrote:
+Peter Zijlstra <peterz@infradead.org> writes:
+> On Tue, May 19, 2020 at 10:19:06PM +0200, Sebastian Andrzej Siewior wrote:
+>> @@ -64,6 +64,7 @@ struct radix_tree_preload {
+>>  	struct radix_tree_node *nodes;
+>>  };
+>>  static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) = { 0, };
+>> +static DEFINE_LOCAL_LOCK(radix_tree_preloads_lock);
+>>  
+>>  static inline struct radix_tree_node *entry_to_node(void *ptr)
+>>  {
 >
-> Hi Miklos,
+> So I'm all with Andrew on the naming and pass-by-pointer thing, but
+> also, the above is pretty crap. You want the local_lock to be in the
+> structure you're actually protecting, and there really isn't anything
+> stopping you from doing that.
 >
-> I've checked that after applying the patch, the problem no longer occurs.
->
-> Since I'm running tests on RedHat 7.7, I had to slightly modify the
-> patch, because on that kernel version locking around attr_version is
-> done differently. I'm attaching modified patch, just in case.
+> The below builds just fine and is ever so much more sensible.
 
-Hi Krzysztof,
+Right you are. It's pretty obvious now that you hit me over the head
+with it.
 
-Thanks for the report and testing!
-
-Miklos
+Note to self: Remove the brown paperbag _before_ touching code.
