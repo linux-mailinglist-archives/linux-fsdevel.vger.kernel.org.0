@@ -2,93 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 333BA1DC003
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 22:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 822401DC014
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 22:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbgETURd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 May 2020 16:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbgETURd (ORCPT
+        id S1727123AbgETU02 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 May 2020 16:26:28 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45686 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbgETU02 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 May 2020 16:17:33 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB30AC061A0F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 13:17:32 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id e18so4752250iog.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 13:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VyaSYeCN7SlfNpIcnaBLrvnj4Za8Y5YWee7k0M093LM=;
-        b=EfnCZypmdGa8VpCH0ge9lM32x0XwnmHj2izqsNgRTS3I07JG3e/hF4lLCo5kXYO4/g
-         GtxgCniYtCnG++FB/8kG6zPSRmFLKhxRqmmq4IdVKeBaftKKpwV9wCZorD+0tHjfkdlf
-         iKIaBkXsdUOcUzEbaSjKSZqabgCT3OCAuVYYojsL0oGeaGv8yix5Xa36HevdrmZQA1d3
-         oZiCFN22Zq85rpV1iC6H6WuqAmzoFZO6oguZ9pkB1ojjDMsp42z1ILZhpfs69Ar45MbZ
-         DEZchCUERGXKZVtVhJ2ntdiyp4CuUJlSp/UEMGtBpuJcdmq5WBjbssYBuRlEU2sLgeuf
-         ZmiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VyaSYeCN7SlfNpIcnaBLrvnj4Za8Y5YWee7k0M093LM=;
-        b=oLrkMh6J7DPt1pE3o6W5lf+og4l5pRTjwNqM1+JHuOXSdnGngd7xzKrB4CqWIHTt1E
-         QyhQFuWxIhoc37tNxBFFCxOFsuJLVCNG8JPcVPUQh4jAnYhpSTubz5tO+SaAk/yfJJBk
-         850196+jYtGOPjHy7TSXA97ea8/MlWTqnzWJ+YAZVkwkW7YCf2VsWcA32jciwdb8BVJI
-         K+jBBygz84fPZl+GJKL1SRlPdywu9OnFwgAVrpd2/MDXRloJVDTdtNnRH93LaxgPgiCw
-         9qLtFk/l1Td5FG3wMDbfAa89NwkBNx8i5Q2mnck3Hs8cmWoAuxaJBqdWXEyeORAaIUKp
-         8Hsw==
-X-Gm-Message-State: AOAM533SwFchYTuhmWDF/s4147Av+VI0hpIddSA/LUdFp7qNJYU4EUBH
-        SrO6iD0Uytb8rXyt5xt3YnKgHbdBkryKg9yKwek+fA==
-X-Google-Smtp-Source: ABdhPJxf5r3SCDgK6PuxVrPSpsHX45TKCMtlgHtmR2oB4Pr8N10SC5JVUCM3UWZi1m7AGto9SCPNRm16+lOlW4mhbLA=
-X-Received: by 2002:a5d:8a10:: with SMTP id w16mr4683295iod.95.1590005851709;
- Wed, 20 May 2020 13:17:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200423002632.224776-1-dancol@google.com> <20200423002632.224776-3-dancol@google.com>
- <20200508125054-mutt-send-email-mst@kernel.org> <20200508125314-mutt-send-email-mst@kernel.org>
- <20200520045938.GC26186@redhat.com> <202005200921.2BD5A0ADD@keescook>
- <20200520194804.GJ26186@redhat.com> <20200520195134.GK26186@redhat.com>
-In-Reply-To: <20200520195134.GK26186@redhat.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Wed, 20 May 2020 13:17:20 -0700
-Message-ID: <CA+EESO4wEQz3CMxNLh8mQmTpUHdO+zZbV10zUfYGKEwfRPK2nQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Add a new sysctl knob: unprivileged_userfaultfd_user_mode_only
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Daniel Colascione <dancol@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wed, 20 May 2020 16:26:28 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbVIE-0002sC-AR; Wed, 20 May 2020 14:26:22 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbVID-0004lz-BV; Wed, 20 May 2020 14:26:22 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Tim Murray <timmurray@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Sandeep Patil <sspatil@google.com>, kernel@android.com
-Content-Type: text/plain; charset="UTF-8"
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <877dx822er.fsf_-_@x220.int.ebiederm.org>
+        <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
+        <202005191111.9B389D33@keescook>
+        <875zcrpx1g.fsf@x220.int.ebiederm.org>
+        <202005191211.97BCF9DA@keescook>
+Date:   Wed, 20 May 2020 15:22:38 -0500
+In-Reply-To: <202005191211.97BCF9DA@keescook> (Kees Cook's message of "Tue, 19
+        May 2020 12:14:40 -0700")
+Message-ID: <87wo56gxv5.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jbVID-0004lz-BV;;;mid=<87wo56gxv5.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18kgvN+Xbm23VQqCP+JxcT7Yj0OsUMkK+w=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        XMGappySubj_01,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4995]
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 579 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 10 (1.8%), b_tie_ro: 9 (1.6%), parse: 0.87 (0.2%),
+         extract_message_metadata: 11 (2.0%), get_uri_detail_list: 1.77 (0.3%),
+         tests_pri_-1000: 5 (0.9%), tests_pri_-950: 1.21 (0.2%),
+        tests_pri_-900: 1.07 (0.2%), tests_pri_-90: 68 (11.8%), check_bayes:
+        67 (11.5%), b_tokenize: 9 (1.5%), b_tok_get_all: 10 (1.8%),
+        b_comp_prob: 2.9 (0.5%), b_tok_touch_all: 42 (7.2%), b_finish: 0.78
+        (0.1%), tests_pri_0: 324 (55.9%), check_dkim_signature: 0.58 (0.1%),
+        check_dkim_adsp: 2.5 (0.4%), poll_dns_idle: 140 (24.1%), tests_pri_10:
+        3.0 (0.5%), tests_pri_500: 151 (26.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 3/8] exec: Convert security_bprm_set_creds into security_bprm_repopulate_creds
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding the Android kernel team in the discussion.
+Kees Cook <keescook@chromium.org> writes:
 
-On Wed, May 20, 2020 at 12:51 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+> On Tue, May 19, 2020 at 02:03:23PM -0500, Eric W. Biederman wrote:
+>> Kees Cook <keescook@chromium.org> writes:
+>> 
+>> > On Mon, May 18, 2020 at 07:31:14PM -0500, Eric W. Biederman wrote:
+>> >> [...]
+>> >> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+>> >> index d1217fcdedea..8605ab4a0f89 100644
+>> >> --- a/include/linux/binfmts.h
+>> >> +++ b/include/linux/binfmts.h
+>> >> @@ -27,10 +27,10 @@ struct linux_binprm {
+>> >>  	unsigned long argmin; /* rlimit marker for copy_strings() */
+>> >>  	unsigned int
+>> >>  		/*
+>> >> -		 * True if most recent call to cap_bprm_set_creds
+>> >> +		 * True if most recent call to security_bprm_set_creds
+>> >>  		 * resulted in elevated privileges.
+>> >>  		 */
+>> >> -		cap_elevated:1,
+>> >> +		active_secureexec:1,
+>> >
+>> > Also, I'd like it if this comment could be made more verbose as well, for
+>> > anyone trying to understand the binfmt execution flow for the first time.
+>> > Perhaps:
+>> >
+>> > 		/*
+>> > 		 * Must be set True during the any call to
+>> > 		 * bprm_set_creds hook where the execution would
+>> > 		 * reuslt in elevated privileges. (The hook can be
+>> > 		 * called multiple times during nested interpreter
+>> > 		 * resolution across binfmt_script, binfmt_misc, etc).
+>> > 		 */
+>> Well it is not during but after the call that it becomes true.
+>> I think most recent covers the case of multiple calls.
 >
-> On Wed, May 20, 2020 at 03:48:04PM -0400, Andrea Arcangeli wrote:
-> > The sysctl /proc/sys/kernel/unprivileged_bpf_disabled is already there
->
-> Oops I picked the wrong unprivileged_* :) of course I meant:
-> /proc/sys/vm/unprivileged_userfaultfd
->
+> I'm thinking of an LSM writing reading these comments to decide what
+> they need to do to the flags, so it's a direction to them to set it to
+> true if they have determined that privilege was gained. (Though in
+> theory, this is all moot since only the commoncap hook cares.)
+
+The comments for an LSM writer are in include/linux/lsm_hooks.h
+
+ * @bprm_repopulate_creds:
+ *	Assuming that the relevant bits of @bprm->cred->security have been
+ *	previously set, examine @bprm->file and regenerate them.  This is
+ *	so that the credentials derived from the interpreter the code is
+ *	actually going to run are used rather than credentials derived
+ *	from a script.  This done because the interpreter binary needs to
+ *	reopen script, and may end up opening something completely different.
+ *	This hook may also optionally check permissions (e.g. for
+ *	transitions between security domains).
+ *	The hook must set @bprm->active_secureexec to 1 if AT_SECURE should be set to
+ *	request libc enable secure mode.
+ *	@bprm contains the linux_binprm structure.
+ *	Return 0 if the hook is successful and permission is granted.
+
+I hope that is detailed enough.
+
+I will leave the rest of the comments for the maintainer of the code.
+
+I really don't think we should duplicate the prescriptive comments in
+multiple locations.
+
+Eric
