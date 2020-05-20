@@ -2,92 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6301DB5FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 16:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 954B91DB692
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 16:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgETOLl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 May 2020 10:11:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37452 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgETOLl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 May 2020 10:11:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1655AABCE;
-        Wed, 20 May 2020 14:11:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 719CE1E126F; Wed, 20 May 2020 16:11:38 +0200 (CEST)
-Date:   Wed, 20 May 2020 16:11:38 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 7/8] fs/ext4: Introduce DAX inode flag
-Message-ID: <20200520141138.GE30597@quack2.suse.cz>
-References: <20200520055753.3733520-1-ira.weiny@intel.com>
- <20200520055753.3733520-8-ira.weiny@intel.com>
+        id S1728380AbgETOZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 May 2020 10:25:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728372AbgETOZl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 May 2020 10:25:41 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1675C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 07:25:40 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id l5so3244734edn.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 07:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=wMA33dnba4I1xySChm1PiZx/HzxTpqEY+2IJD7PaIUo=;
+        b=UXPruK/n94mCL0Cf+r1Ubc53NG+qGqAjJZ3m1rxiheqyt+TgR43B2MZbM3G5oGBvzH
+         AOmqtTnWkh5iqqbiEkcBoF/eGI9s12ijRF5DSEFdXYqldqojRK/RtnCu58WVNOX+2pRm
+         wgliTMuFTtUZrWBUOF9mxC0NFJq5ZwsahXtew=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=wMA33dnba4I1xySChm1PiZx/HzxTpqEY+2IJD7PaIUo=;
+        b=Nf6UkS3/Eo44YuPo3PCYRZi2UbG2xnh6z2DKTQtwwsjtjHcJ48+IzcWJhJmrhFcym/
+         ZIkj77A9ekM6mIl9yLZ8jcCQAnIgVFQTxrc3A3u0wZSkOpaASu9quqicibSxWuByuc9B
+         s2Q39HA3VHkKr6T6JOF54MmQwqcwt/Nw4rb3gsKTxYsMfmSQTbOhspucElsZsAbGOuMj
+         UQQEMRpebdFs7ZAyNNUQpIZRh3LK9HqYkN0rfJGK6SUhOrChDP8g+1ifVnte7oa6tN2L
+         a3bz+3b9PKYqGDP2I3gCBgk8KVFDj6WAkO5hfo99pzYbdl2sNXMEk90W1NXiaBCdF0I1
+         JPcA==
+X-Gm-Message-State: AOAM531GrPPuZfCtj0yKaIdnCpowMl1pfh7ygPJXGQ+YOpwm9FBMHTzW
+        1z6ZZrt3wQsxeYJ1o6HBYdTtxQ==
+X-Google-Smtp-Source: ABdhPJy10hSN7EIWDkG1mJa1W1U+NkhQqewSXt1VJ7mXWUfgHVHzkudGM39RqPLVe4KIr1tJs9kLSA==
+X-Received: by 2002:aa7:d042:: with SMTP id n2mr1976267edo.226.1589984739557;
+        Wed, 20 May 2020 07:25:39 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id o18sm2029759eji.97.2020.05.20.07.25.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2020 07:25:38 -0700 (PDT)
+Date:   Wed, 20 May 2020 16:25:37 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs fixes for 5.7-rc7
+Message-ID: <20200520142537.GD13131@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200520055753.3733520-8-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 19-05-20 22:57:52, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
-> 
-> Set the flag to be user visible and changeable.  Set the flag to be
-> inherited.  Allow applications to change the flag at any time with the
-> exception of if VERITY or ENCRYPT is set.
-> 
-> Disallow setting VERITY or ENCRYPT if DAX is set.
-> 
-> Finally, on regular files, flag the inode to not be cached to facilitate
-> changing S_DAX on the next creation of the inode.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Hi Linus,
 
-The patch looks good to me. You can add:
+Please pull from:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.7-rc7
 
-One comment below:
+Fix two bugs introduced in this cycle and one introduced in v5.5.
 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 5ba65eb0e2ef..be9713e898eb 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1323,6 +1323,9 @@ static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
->  	if (WARN_ON_ONCE(IS_DAX(inode) && i_size_read(inode)))
->  		return -EINVAL;
+Thanks,
+Miklos
 
-AFAIU this check is here so that fscrypt_inherit_context() is able call us
-and we can clear S_DAX flag. So can't we rather move this below the
-EXT4_INODE_DAX check and change this to
+----------------------------------------------------------------
+Dan Carpenter (1):
+      ovl: potential crash in ovl_fid_to_fh()
 
-	IS_DAX(inode) && !(inode->i_flags & I_NEW)
+Vivek Goyal (2):
+      ovl: clear ATTR_FILE from attr->ia_valid
+      ovl: clear ATTR_OPEN from attr->ia_valid
 
-? Because as I'm reading the code now, this should never trigger?
-
->  
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_DAX))
-> +		return -EOPNOTSUPP;
-> +
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+---
+ fs/overlayfs/export.c |  3 +++
+ fs/overlayfs/inode.c  | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+)
