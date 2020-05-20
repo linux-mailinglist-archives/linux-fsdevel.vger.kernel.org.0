@@ -2,114 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0AAB1DB165
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 13:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ECB51DB321
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 14:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgETLUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 May 2020 07:20:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgETLUk (ORCPT
+        id S1726525AbgETMYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 May 2020 08:24:03 -0400
+Received: from mailhub.9livesdata.com ([194.181.36.210]:44538 "EHLO
+        mailhub.9livesdata.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbgETMYD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 May 2020 07:20:40 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA823C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 04:20:39 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id h21so3332486ejq.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 04:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=56SGhcyK7h3nlixc/WhwZR2DoIL8pNFZvChxJ3qBgro=;
-        b=TxfYKVxYVFfCs8i2Vi9BQbNqxUsBlp737CU0QRWDFGflGGUqQ4KL0DrSCj9f5f8B9A
-         srhor7uAaj568a/aA6w2KN1ZCj78ruiLf0w8AbVcmpl077VvtkSUPqEd5VpkpSCdIUb9
-         Cfjv1GMVvlTf5E8AbNLN3bn55sKNfaVjuvKp4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=56SGhcyK7h3nlixc/WhwZR2DoIL8pNFZvChxJ3qBgro=;
-        b=aWRZNkzHi/JccT3QPvXnVYNDIopmSeNMExktcK8p/0W4/MsAGAVo4RrUbGsMo9Rr5G
-         d4W8WpTpJpzoVcmjTean4qDeGuBxnJYTD48T02rUaHoolwxHuyov9xxS1P9ebZoKPPAT
-         twBGMjn1qReP2YMmzFzmZhBxBU4PdFttTr2Qpm7/trIn+W9r05s0xsRm/KWO9XoiRcOs
-         ZatnvC71JR2vTW8+rKTMnTxEvO8KxiuPXTFIdBO/lPridI9duwabxGoRaVCqxJ2lomp9
-         8b2bH3BxcBApuYyfTT1wSKkRJ8ZvMtskg05x5A1ecSOqA8lNRy0Qvynn6lV8r2Eaw02X
-         ASVg==
-X-Gm-Message-State: AOAM531SiTFmMXeaTPMCJf971+O8ganKS2jFCqHDvX4knPG+QIq201do
-        tYmeHAOjdq3tV541C7So5bzfnOK2AXb1x6dN7trFxQ==
-X-Google-Smtp-Source: ABdhPJx+P94dGQ64ppbHjlnXmNryVQv5No+atzEiem400vzryPPIDwWWuPy1i2M+gn6vmeZdZUDvyc08UUJyNWG+QyE=
-X-Received: by 2002:a17:906:1199:: with SMTP id n25mr3543965eja.14.1589973638596;
- Wed, 20 May 2020 04:20:38 -0700 (PDT)
+        Wed, 20 May 2020 08:24:03 -0400
+Received: from [192.168.6.101] (icore01.9livesdata.com [192.168.6.101])
+        by mailhub.9livesdata.com (Postfix) with ESMTP id AF5B53464B9E;
+        Wed, 20 May 2020 14:23:57 +0200 (CEST)
+Subject: Re: fuse_notify_inval_inode() may be ineffective when getattr request
+ is in progress
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <846ae13f-acd9-9791-3f1b-855e4945012a@9livesdata.com>
+ <CAJfpegs+auq0TQ4SaFiLb7w9E+ksWHCzgBoOhCCFGF6R9DMFdA@mail.gmail.com>
+From:   Krzysztof Rusek <rusek@9livesdata.com>
+Message-ID: <d9459e74-92b4-187b-4b73-bd807e79d813@9livesdata.com>
+Date:   Wed, 20 May 2020 14:23:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <000000000000b4684e05a2968ca6@google.com> <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
- <CAJfpegtVca6H1JPW00OF-7sCwpomMCo=A2qr5K=9uGKEGjEp3w@mail.gmail.com>
- <bb232cfa-5965-42d0-88cf-46d13f7ebda3@www.fastmail.com> <9a56a79a-88ed-9ff4-115e-ec169cba5c0b@oracle.com>
-In-Reply-To: <9a56a79a-88ed-9ff4-115e-ec169cba5c0b@oracle.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 20 May 2020 13:20:27 +0200
-Message-ID: <CAJfpegsNVB12MQ-Jgbb-f=+i3g0Xy52miT3TmUAYL951HVQS_w@mail.gmail.com>
-Subject: Re: kernel BUG at mm/hugetlb.c:LINE!
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Colin Walters <walters@verbum.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJfpegs+auq0TQ4SaFiLb7w9E+ksWHCzgBoOhCCFGF6R9DMFdA@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------E3F359F253A6910F7E606C19"
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 19, 2020 at 2:35 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 5/18/20 4:41 PM, Colin Walters wrote:
-> >
-> > On Tue, May 12, 2020, at 11:04 AM, Miklos Szeredi wrote:
-> >
-> >>> However, in this syzbot test case the 'file' is in an overlayfs filesystem
-> >>> created as follows:
-> >>>
-> >>> mkdir("./file0", 000)                   = 0
-> >>> mount(NULL, "./file0", "hugetlbfs", MS_MANDLOCK|MS_POSIXACL, NULL) = 0
-> >>> chdir("./file0")                        = 0
-> >>> mkdir("./file1", 000)                   = 0
-> >>> mkdir("./bus", 000)                     = 0
-> >>> mkdir("./file0", 000)                   = 0
-> >>> mount("\177ELF\2\1\1", "./bus", "overlay", 0, "lowerdir=./bus,workdir=./file1,u"...) = 0
-> >
-> > Is there any actual valid use case for mounting an overlayfs on top of hugetlbfs?  I can't think of one.  Why isn't the response to this to instead only allow mounting overlayfs on top of basically a set of whitelisted filesystems?
-> >
->
-> I can not think of a use case.  I'll let Miklos comment on adding whitelist
-> capability to overlayfs.
+This is a multi-part message in MIME format.
+--------------E3F359F253A6910F7E606C19
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I've not heard of overlayfs being used over hugetlbfs.
+Hi Miklos,
 
-Overlayfs on tmpfs is definitely used, I guess without hugepages.
-But if we'd want to allow tmpfs _without_ hugepages but not tmpfs
-_with_ hugepages, then we can't just whitelist based on filesystem
-type, but need to look at mount options as well.  Which isn't really a
-clean solution either.
+I've checked that after applying the patch, the problem no longer occurs.
 
-> IMO - This BUG/report revealed two issues.  First is the BUG by mmap'ing
-> a hugetlbfs file on overlayfs.  The other is that core mmap code will skip
-> any filesystem specific get_unmapped area routine if on a union/overlay.
-> My patch fixes both, but if we go with a whitelist approach and don't allow
-> hugetlbfs I think we still need to address the filesystem specific
-> get_unmapped area issue.  That is easy enough to do by adding a routine to
-> overlayfs which calls the routine for the underlying fs.
+Since I'm running tests on RedHat 7.7, I had to slightly modify the 
+patch, because on that kernel version locking around attr_version is 
+done differently. I'm attaching modified patch, just in case.
 
-I think the two are strongly related:  get_unmapped_area() adjusts the
-address alignment, and the is_file_hugepages() call in
-ksys_mmap_pgoff() adjusts the length alignment.
+Best regards,
+Krzysztof Rusek
 
-Is there any other purpose for which  f_op->get_unmapped_area() is
-used by a filesystem?
+On 5/18/20 3:08 PM, Miklos Szeredi wrote:
+> On Mon, May 4, 2020 at 1:00 PM Krzysztof Rusek <rusek@9livesdata.com> wrote:
+>>
+>> Hello,
+>>
+>> I'm working on a user-space file system implementation utilizing fuse
+>> kernel module (and libfuse user-space library). This file system
+>> implementation provides a custom ioctl operation that uses
+>> fuse_lowlevel_notify_inval_inode() function (which translates to
+>> fuse_notify_inval_inode() in kernel) to notify the kernel that the file
+>> was changed by the ioctl. However, under certain circumstances,
+>> fuse_notify_inval_inode() call is ineffective, resulting in incorrect
+>> file attributes being cached by the kernel. The problem occurs when
+>> ioctl() is executed in parallel with getattr().
+>>
+>> I noticed this problem on RedHat 7.7 (3.10.0-1062.el7.x86_64), but I
+>> believe mainline kernel is affected as well.
+>>
+>> I think there is a bug in the way fuse_notify_inval_inode() invalidates
+>> file attributes. If getattr() started before fuse_notify_inval_inode()
+>> was called, then the attributes returned by user-space process may be
+>> out of date, and should not be cached. But fuse_notify_inval_inode()
+>> only clears attribute validity time, which does not prevent getattr()
+>> result from being cached.
+>>
+>> More precisely, this bug occurs in the following scenario:
+>>
+>> 1. kernel starts handling ioctl
+>> 2. file system process receives ioctl request
+>> 3. kernel starts handling getattr
+>> 4. file system process receives getattr request
+>> 5. file system process executes getattr
+>> 6. file system process executes ioctl, changing file state
+>> 7. file system process invokes fuse_lowlevel_notify_inval_inode(), which
+>> invalidates file attributes in kernel
+>> 8. file system process sends ioctl reply, ioctl handling ends
+>> 9. file system process sends getattr reply, attributes are incorrectly
+>> cached in the kernel
+>>
+>> (Note that this scenario assumes that file system implementation is
+>> multi-threaded, therefore allowing ioctl() and getattr() to be handled
+>> in parallel.)
+> 
+> Can you please try the attached patch?
+> 
+> Thanks,
+> Miklos
+> 
 
-Thanks,
-Miklos
+--------------E3F359F253A6910F7E606C19
+Content-Type: text/x-patch; charset=UTF-8;
+ name="fuse-update-attr_version-counter-on-fuse_notify_inval_inode.patch.el7.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="fuse-update-attr_version-counter-on-fuse_notify_inval_inode.";
+ filename*1="patch.el7.diff"
+
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -332,6 +332,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ int fuse_reverse_inval_inode(struct super_block *sb, u64 nodeid,
+ 			     loff_t offset, loff_t len)
+ {
++	struct fuse_conn *fc = get_fuse_conn_super(sb);
++	struct fuse_inode *fi;
+ 	struct inode *inode;
+ 	pgoff_t pg_start;
+ 	pgoff_t pg_end;
+@@ -340,6 +342,11 @@ int fuse_reverse_inval_inode(struct super_block *sb, u64 nodeid,
+ 	if (!inode)
+ 		return -ENOENT;
+ 
++	fi = get_fuse_inode(inode);
++	spin_lock(&fc->lock);
++	fi->attr_version = ++fc->attr_version;
++	spin_unlock(&fc->lock);
++
+ 	fuse_invalidate_attr(inode);
+ 	if (offset >= 0) {
+ 		pg_start = offset >> PAGE_CACHE_SHIFT;
+
+--------------E3F359F253A6910F7E606C19--
