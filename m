@@ -2,107 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF54E1DA6F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 03:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 159201DA703
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 03:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbgETBHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 21:07:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbgETBHC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 21:07:02 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D8EC08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 18:07:01 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id f4so1309868iov.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 18:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=ef1MTgEAKFw6adwkz7lKMErPGJSzzTLWzjNkQKbUYbc=;
-        b=AhxrKwXAmjHzOJ5Xm4UqFAMN/dj34O1RgzeJqSgw1WAMPI9gCHvTKGIqu7rjRUIMv7
-         5MzUsQ9OmZoVMiatmlJuK/8s78Gn4GjptxfVI7nUEV4HCjH10Z6SUQHYP6kmSSduKoCz
-         jI3N5ao2ay+oV31N7IgrvdMis7f7LyDa10rCZSq4WbnyOc7ieTfRTQISd6TcLvay9QV6
-         RgQiVhD1zqUeinj+NfDbvvgvSmx21eyH63TnO/3YmEI535Es0TApgVmZRgq1cQaThcur
-         u4580hIbRdQlRyImB8AxL0dHhqP7QGdVCQIXSqDAgnOgTrUrVQ/DSUF2QjTzrFW+6arK
-         tjBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=ef1MTgEAKFw6adwkz7lKMErPGJSzzTLWzjNkQKbUYbc=;
-        b=IH+5iu5j5Vkk4lHRIiDRb1fclIW/DggXcQuLkn84rM8w/P48Mgt4rZEne9Kha9o9Dz
-         2FQbp6MwD9T/oX0nwF8S2QSHfDe1TF/1kR7n/z6fHUkmI+v1XzEJDgWIQybXyiA7VB1k
-         CSXmcCTJiS6I3c1jCGp+K9PRB0I4oFsC7WnTzdcffByGplSCquIJdXBHdaPsezBpZ9Ig
-         /yZUQHWhJVOiRZHSrCxJ4xvqrYE/yatqMKjPV8Lk3BKs994d50VeqMcS4W1k1v31VygM
-         gKjvF4ZqWD6ftZaF3wDbGKdEFUFDYOFGdudyAdrz+g0Ol41xj70ZdmQYciAJ4eGPEMvy
-         Cw+g==
-X-Gm-Message-State: AOAM533C4xMm9Wm5JPTgSHDE6y6Xc24/AmgXCoPNM/trqaAKSCJiIHry
-        tqFFLIN4gh2oaB+rBkN9aPQAMO/1fQ/bsCBalTE=
-X-Google-Smtp-Source: ABdhPJy4Z1hVSQaT7VplxzvaN4PD2pG45f7Pma74SkGkx2+mk8bz+uO9emKsZs/IjbRUtD33AvnbxOQim6l5B0doZOg=
-X-Received: by 2002:a02:77c7:: with SMTP id g190mr2264613jac.140.1589936820538;
- Tue, 19 May 2020 18:07:00 -0700 (PDT)
+        id S1728212AbgETBOW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 21:14:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56808 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726178AbgETBOV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 21:14:21 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 45F0110543B7D5B6A0A6;
+        Wed, 20 May 2020 09:14:19 +0800 (CST)
+Received: from [127.0.0.1] (10.67.102.197) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Wed, 20 May 2020
+ 09:14:08 +0800
+Subject: Re: [PATCH v4 2/4] sysctl: Move some boundary constants form sysctl.c
+ to sysctl_vals
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        <keescook@chromium.org>
+CC:     <mcgrof@kernel.org>, <yzaikin@google.com>, <adobriyan@gmail.com>,
+        <mingo@kernel.org>, <gpiccoli@canonical.com>, <rdna@fb.com>,
+        <patrick.bellasi@arm.com>, <sfr@canb.auug.org.au>,
+        <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
+        <tglx@linutronix.de>, <peterz@infradead.org>,
+        <Jisheng.Zhang@synaptics.com>, <khlebnikov@yandex-team.ru>,
+        <bigeasy@linutronix.de>, <pmladek@suse.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <wangle6@huawei.com>, <alex.huangjianhui@huawei.com>
+References: <1589859071-25898-1-git-send-email-nixiaoming@huawei.com>
+ <1589859071-25898-3-git-send-email-nixiaoming@huawei.com>
+ <1bf1aefb-adfd-4f43-35c7-5b320d43faf8@i-love.sakura.ne.jp>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <550a55b8-d2a8-0de3-0bed-8f93a4513efe@huawei.com>
+Date:   Wed, 20 May 2020 09:14:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Received: by 2002:a05:6e02:1061:0:0:0:0 with HTTP; Tue, 19 May 2020 18:07:00
- -0700 (PDT)
-Reply-To: mrs.minaabrunel30@gmail.com
-From:   "Mrs. Mina A. Brunel" <musaik36@gmail.com>
-Date:   Wed, 20 May 2020 03:07:00 +0200
-Message-ID: <CAA-ARrBbavTQJOAy7M2XZeCf_u-H7ArdgE+8WTPEW2hrZZ-OvQ@mail.gmail.com>
-Subject: My Dear in the lord
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1bf1aefb-adfd-4f43-35c7-5b320d43faf8@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.102.197]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My Dear in the lord
+On 2020/5/19 12:44, Tetsuo Handa wrote:
+> On 2020/05/19 12:31, Xiaoming Ni wrote:
+>> Some boundary (.extra1 .extra2) constants (E.g: neg_one two) in
+>> sysctl.c are used in multiple features. Move these variables to
+>> sysctl_vals to avoid adding duplicate variables when cleaning up
+>> sysctls table.
+>>
+>> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> I feel that it is use of
+> 
+> 	void *extra1;
+> 	void *extra2;
+> 
+> in "struct ctl_table" that requires constant values indirection.
+> Can't we get rid of sysctl_vals using some "union" like below?
+> 
+> struct ctl_table {
+> 	const char *procname;           /* Text ID for /proc/sys, or zero */
+> 	void *data;
+> 	int maxlen;
+> 	umode_t mode;
+> 	struct ctl_table *child;        /* Deprecated */
+> 	proc_handler *proc_handler;     /* Callback for text formatting */
+> 	struct ctl_table_poll *poll;
+> 	union {
+> 		void *min_max_ptr[2];
+> 		int min_max_int[2];
+> 		long min_max_long[2];
+> 	};
+> } __randomize_layout;
+> 
+> .
+> 
 
+net/decnet/dn_dev.c:
+static void dn_dev_sysctl_register(struct net_device *dev, struct 
+dn_dev_parms *parms)
+{
+	struct dn_dev_sysctl_table *t;
+	int i;
 
-My name is Mrs. Mina A. Brunel I am a Norway Citizen who is living in
-Burkina Faso, I am married to Mr. Brunel Patrice, a politician who
-owns a small gold company in Burkina Faso; He died of Leprosy and
-Radesyge, in the year February 2010, During his lifetime he deposited
-the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundred thousand
-Euros in a bank in Ouagadougou the capital city of Burkina Faso in
-West Africa. The money was from the sale of his company and death
-benefits payment and entitlements of my deceased husband by his
-company.
+	char path[sizeof("net/decnet/conf/") + IFNAMSIZ];
 
-I am sending you this message with heavy tears in my eyes and great
-sorrow in my heart, and also praying that it will reach you in good
-health because I am not in good health, I sleep every night without
-knowing if I may be alive to see the next day. I am suffering from
-long time cancer and presently I am partially suffering from Leprosy,
-which has become difficult for me to move around. I was married to my
-late husband for more than 6 years without having a child and my
-doctor confided that I have less chance to live, having to know when
-the cup of death will come, I decided to contact you to claim the fund
-since I don't have any relation I grew up from an orphanage home.
+	t = kmemdup(&dn_dev_sysctl, sizeof(*t), GFP_KERNEL);
+	if (t == NULL)
+		return;
 
-I have decided to donate this money for the support of helping
-Motherless babies/Less privileged/Widows and churches also to build
-the house of God because I am dying and diagnosed with cancer for
-about 3 years ago. I have decided to donate from what I have inherited
-from my late husband to you for the good work of Almighty God; I will
-be going in for an operation surgery soon.
+	for(i = 0; i < ARRAY_SIZE(t->dn_dev_vars) - 1; i++) {
+		long offset = (long)t->dn_dev_vars[i].data;
+		t->dn_dev_vars[i].data = ((char *)parms) + offset;
+	}
 
-Now I want you to stand as my next of kin to claim the funds for
-charity purposes. Because of this money remains unclaimed after my
-death, the bank executives or the government will take the money as
-unclaimed fund and maybe use it for selfishness and worthless
-ventures, I need a very honest person who can claim this money and use
-it for Charity works, for orphanages, widows and also build schools
-and churches for less privilege that will be named after my late
-husband and my name.
+	snprintf(path, sizeof(path), "net/decnet/conf/%s",
+		dev? dev->name : parms->name);
 
-I need your urgent answer to know if you will be able to execute this
-project, and I will give you more information on how the fund will be
-transferred to your bank account or online banking.
+	t->dn_dev_vars[0].extra1 = (void *)dev;
+
+	t->sysctl_header = register_net_sysctl(&init_net, path, t->dn_dev_vars);
+	if (t->sysctl_header == NULL)
+		kfree(t);
+	else
+		parms->sysctl = t;
+}
+
+A small amount of code is not used as a boundary value when using 
+extra1. This scenario may not be suitable for renaming to min_max_ptr.
+
+Should we add const to extra1 extra2 ?
+
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -124,8 +124,8 @@ struct ctl_table {
+         struct ctl_table *child;        /* Deprecated */
+         proc_handler *proc_handler;     /* Callback for text formatting */
+         struct ctl_table_poll *poll;
+-       void *extra1;
+-       void *extra2;
++       const void *extra1;
++       const void *extra2;
+  } __randomize_layout;
+
 
 Thanks
-Mrs. Mina A. Brunel
+Xiaoming Ni
+
+
+
+
+
+
+
