@@ -2,97 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFAC1DA5EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 02:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF54E1DA6F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 03:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgETAAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 20:00:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56311 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbgETAAO (ORCPT
+        id S1728351AbgETBHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 21:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgETBHC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 20:00:14 -0400
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04K005Ys065809;
-        Wed, 20 May 2020 09:00:05 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp);
- Wed, 20 May 2020 09:00:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav109.sakura.ne.jp)
-Received: from localhost.localdomain (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04JNxwLe065757
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 20 May 2020 09:00:05 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] pipe: Fix pipe_full() test in opipe_prep().
-Date:   Wed, 20 May 2020 08:59:58 +0900
-Message-Id: <20200519235958.3802-1-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 2.18.2
+        Tue, 19 May 2020 21:07:02 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D8EC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 18:07:01 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id f4so1309868iov.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 May 2020 18:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=ef1MTgEAKFw6adwkz7lKMErPGJSzzTLWzjNkQKbUYbc=;
+        b=AhxrKwXAmjHzOJ5Xm4UqFAMN/dj34O1RgzeJqSgw1WAMPI9gCHvTKGIqu7rjRUIMv7
+         5MzUsQ9OmZoVMiatmlJuK/8s78Gn4GjptxfVI7nUEV4HCjH10Z6SUQHYP6kmSSduKoCz
+         jI3N5ao2ay+oV31N7IgrvdMis7f7LyDa10rCZSq4WbnyOc7ieTfRTQISd6TcLvay9QV6
+         RgQiVhD1zqUeinj+NfDbvvgvSmx21eyH63TnO/3YmEI535Es0TApgVmZRgq1cQaThcur
+         u4580hIbRdQlRyImB8AxL0dHhqP7QGdVCQIXSqDAgnOgTrUrVQ/DSUF2QjTzrFW+6arK
+         tjBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=ef1MTgEAKFw6adwkz7lKMErPGJSzzTLWzjNkQKbUYbc=;
+        b=IH+5iu5j5Vkk4lHRIiDRb1fclIW/DggXcQuLkn84rM8w/P48Mgt4rZEne9Kha9o9Dz
+         2FQbp6MwD9T/oX0nwF8S2QSHfDe1TF/1kR7n/z6fHUkmI+v1XzEJDgWIQybXyiA7VB1k
+         CSXmcCTJiS6I3c1jCGp+K9PRB0I4oFsC7WnTzdcffByGplSCquIJdXBHdaPsezBpZ9Ig
+         /yZUQHWhJVOiRZHSrCxJ4xvqrYE/yatqMKjPV8Lk3BKs994d50VeqMcS4W1k1v31VygM
+         gKjvF4ZqWD6ftZaF3wDbGKdEFUFDYOFGdudyAdrz+g0Ol41xj70ZdmQYciAJ4eGPEMvy
+         Cw+g==
+X-Gm-Message-State: AOAM533C4xMm9Wm5JPTgSHDE6y6Xc24/AmgXCoPNM/trqaAKSCJiIHry
+        tqFFLIN4gh2oaB+rBkN9aPQAMO/1fQ/bsCBalTE=
+X-Google-Smtp-Source: ABdhPJy4Z1hVSQaT7VplxzvaN4PD2pG45f7Pma74SkGkx2+mk8bz+uO9emKsZs/IjbRUtD33AvnbxOQim6l5B0doZOg=
+X-Received: by 2002:a02:77c7:: with SMTP id g190mr2264613jac.140.1589936820538;
+ Tue, 19 May 2020 18:07:00 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:6e02:1061:0:0:0:0 with HTTP; Tue, 19 May 2020 18:07:00
+ -0700 (PDT)
+Reply-To: mrs.minaabrunel30@gmail.com
+From:   "Mrs. Mina A. Brunel" <musaik36@gmail.com>
+Date:   Wed, 20 May 2020 03:07:00 +0200
+Message-ID: <CAA-ARrBbavTQJOAy7M2XZeCf_u-H7ArdgE+8WTPEW2hrZZ-OvQ@mail.gmail.com>
+Subject: My Dear in the lord
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot is reporting unkillable task at splice(), and I found that
-at least opipe_prep() is testing pipe_full() incorrectly.
+My Dear in the lord
 
-CPU: 0 PID: 9460 Comm: syz-executor.5 Not tainted 5.6.0-rc3-next-20200228-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:rol32 include/linux/bitops.h:105 [inline]
-RIP: 0010:iterate_chain_key kernel/locking/lockdep.c:369 [inline]
-RIP: 0010:__lock_acquire+0x6a3/0x5270 kernel/locking/lockdep.c:4178
-Code: 89 c2 29 c1 44 01 e0 c1 c2 08 31 d1 89 ca 41 29 cc c1 c2 10 41 31 d4 8d 14 01 44 89 e1 44 29 e0 c1 c9 0d 89 d6 41 01 d4 31 c8 <89> c1 29 c6 44 01 e0 c1 c1 04 31 f1 48 c1 e1 20 48 09 c1 48 83 3c
-RSP: 0018:ffffc900028e7a60 EFLAGS: 00000006
-RAX: 00000000097f0e7e RBX: 0000000000000000 RCX: 00000000a6d2828a
-RDX: 00000000fee63317 RSI: 00000000fee63317 RDI: ffffffff8c293888
-RBP: ffff88808d606380 R08: 0000000000000001 R09: fffffbfff1852712
-R10: ffff88808d606c20 R11: ffffffff8c29388f R12: 000000004f3787f1
-R13: ffffffffffffffff R14: 0000000000000004 R15: 0000000000000001
-FS:  00007fb7a92eb700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000234cfd0 CR3: 000000009efd9000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- lock_acquire+0x197/0x420 kernel/locking/lockdep.c:4720
- __mutex_lock_common kernel/locking/mutex.c:956 [inline]
- __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
- pipe_lock_nested fs/pipe.c:66 [inline]
- pipe_double_lock+0x1a0/0x1e0 fs/pipe.c:104
- splice_pipe_to_pipe fs/splice.c:1562 [inline]
- do_splice+0x35f/0x1520 fs/splice.c:1141
- __do_sys_splice fs/splice.c:1447 [inline]
- __se_sys_splice fs/splice.c:1427 [inline]
- __x64_sys_splice+0x2b5/0x320 fs/splice.c:1427
- do_syscall_64+0xf6/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 8cefc107ca54c8b0 ("pipe: Use head and tail pointers for the ring, not cursor and length")
-Cc: stable@vger.kernel.org # 5.5+
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/splice.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My name is Mrs. Mina A. Brunel I am a Norway Citizen who is living in
+Burkina Faso, I am married to Mr. Brunel Patrice, a politician who
+owns a small gold company in Burkina Faso; He died of Leprosy and
+Radesyge, in the year February 2010, During his lifetime he deposited
+the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundred thousand
+Euros in a bank in Ouagadougou the capital city of Burkina Faso in
+West Africa. The money was from the sale of his company and death
+benefits payment and entitlements of my deceased husband by his
+company.
 
-diff --git a/fs/splice.c b/fs/splice.c
-index fd0a1e7e5959..4e53efbd621d 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1494,7 +1494,7 @@ static int opipe_prep(struct pipe_inode_info *pipe, unsigned int flags)
- 	 * Check pipe occupancy without the inode lock first. This function
- 	 * is speculative anyways, so missing one is ok.
- 	 */
--	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+	if (!pipe_full(pipe->head, pipe->tail, pipe->max_usage))
- 		return 0;
- 
- 	ret = 0;
--- 
-2.18.2
+I am sending you this message with heavy tears in my eyes and great
+sorrow in my heart, and also praying that it will reach you in good
+health because I am not in good health, I sleep every night without
+knowing if I may be alive to see the next day. I am suffering from
+long time cancer and presently I am partially suffering from Leprosy,
+which has become difficult for me to move around. I was married to my
+late husband for more than 6 years without having a child and my
+doctor confided that I have less chance to live, having to know when
+the cup of death will come, I decided to contact you to claim the fund
+since I don't have any relation I grew up from an orphanage home.
 
+I have decided to donate this money for the support of helping
+Motherless babies/Less privileged/Widows and churches also to build
+the house of God because I am dying and diagnosed with cancer for
+about 3 years ago. I have decided to donate from what I have inherited
+from my late husband to you for the good work of Almighty God; I will
+be going in for an operation surgery soon.
+
+Now I want you to stand as my next of kin to claim the funds for
+charity purposes. Because of this money remains unclaimed after my
+death, the bank executives or the government will take the money as
+unclaimed fund and maybe use it for selfishness and worthless
+ventures, I need a very honest person who can claim this money and use
+it for Charity works, for orphanages, widows and also build schools
+and churches for less privilege that will be named after my late
+husband and my name.
+
+I need your urgent answer to know if you will be able to execute this
+project, and I will give you more information on how the fund will be
+transferred to your bank account or online banking.
+
+Thanks
+Mrs. Mina A. Brunel
