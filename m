@@ -2,156 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AB81DA745
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 03:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30421DA7A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 04:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgETBjx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 May 2020 21:39:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41148 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbgETBjw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 May 2020 21:39:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 23so785089pfy.8;
-        Tue, 19 May 2020 18:39:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2ID/ccNFq5wKcWBo+XOGOt9X+x6/9v2LB7jQF/7sjFA=;
-        b=fqloFST95LDPRWpS5wTbesdtaIXUGbIBU0di7TGdkJg/Gg7BQTYHOOuppzIwPWVgTc
-         Oy99NivSWOfUgczINCqQGbRI7mTS09nDZxcDC3YHoZt1dCIIpo6w1ZYtnOEbXJce9TKT
-         DJtuayo52t9QInc911cRY2QWQ4TAjHhX1lDbnMa0x7bal+IdeyvVT3GSmxFkBHY1U12x
-         CdyQrj97kCvz5csCurspFW8BrjkXZ1z+gVJUDFjRLAckN3L3MWawgRbFojvioHiDIby6
-         nnu+1xMcqOp0VLkLFLxtQLdFPkyv7ZQ5ZkZ39SG2oh5Ei8K5M0JJbjefPEIAgxWBw8kM
-         6uXw==
-X-Gm-Message-State: AOAM531uHCEkw3SKXO2jculyXknhEp1dWqtxkpPU8wP2okWWZIF/Vz15
-        Y6SVstHy5jtBlZEDYrP/jGQ=
-X-Google-Smtp-Source: ABdhPJy+lLjCnNCAYlDgP2k5MqVm9vO8gOr9gbhfRqRz4WxXcrnXH1IdAtKHPnRnbX2t9GCeMuYFUg==
-X-Received: by 2002:a62:e219:: with SMTP id a25mr1875818pfi.303.1589938791597;
-        Tue, 19 May 2020 18:39:51 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id g17sm516795pgg.43.2020.05.19.18.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 18:39:50 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 694AB4088B; Wed, 20 May 2020 01:39:49 +0000 (UTC)
-Date:   Wed, 20 May 2020 01:39:49 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        keescook@chromium.org, yzaikin@google.com, adobriyan@gmail.com,
-        mingo@kernel.org, gpiccoli@canonical.com, rdna@fb.com,
-        patrick.bellasi@arm.com, sfr@canb.auug.org.au,
-        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        tglx@linutronix.de, peterz@infradead.org,
-        Jisheng.Zhang@synaptics.com, khlebnikov@yandex-team.ru,
-        bigeasy@linutronix.de, pmladek@suse.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        wangle6@huawei.com, alex.huangjianhui@huawei.com
-Subject: Re: [PATCH v4 2/4] sysctl: Move some boundary constants form
- sysctl.c to sysctl_vals
-Message-ID: <20200520013949.GV11244@42.do-not-panic.com>
-References: <1589859071-25898-1-git-send-email-nixiaoming@huawei.com>
- <1589859071-25898-3-git-send-email-nixiaoming@huawei.com>
- <1bf1aefb-adfd-4f43-35c7-5b320d43faf8@i-love.sakura.ne.jp>
- <550a55b8-d2a8-0de3-0bed-8f93a4513efe@huawei.com>
+        id S1728444AbgETCCe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 May 2020 22:02:34 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11305 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbgETCCe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 May 2020 22:02:34 -0400
+IronPort-SDR: KXF6qd43oAx8/UnDSaK4asVuHJ+/bSNwS+SENonGqW++3WS/7MnzVhNci1siOL6aCqWtPKxamD
+ w17MzyKZycIQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2020 19:02:34 -0700
+IronPort-SDR: m/fhxx6jPbq7qZ0zgedcE0xpHxfN3zP7A9oZnB302QnVzCHxMgMIzOf8NbcKm47m7FnUyO55hO
+ +uQHaEVufyJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,412,1583222400"; 
+   d="scan'208";a="282519935"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by orsmga002.jf.intel.com with ESMTP; 19 May 2020 19:02:33 -0700
+Date:   Tue, 19 May 2020 19:02:33 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/9] fs/ext4: Disallow encryption if inode is DAX
+Message-ID: <20200520020232.GA3470571@iweiny-DESK2.sc.intel.com>
+References: <20200513054324.2138483-1-ira.weiny@intel.com>
+ <20200513054324.2138483-4-ira.weiny@intel.com>
+ <20200516020253.GG1009@sol.localdomain>
+ <20200518050315.GA3025231@iweiny-DESK2.sc.intel.com>
+ <20200518162447.GA954@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <550a55b8-d2a8-0de3-0bed-8f93a4513efe@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200518162447.GA954@sol.localdomain>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 20, 2020 at 09:14:08AM +0800, Xiaoming Ni wrote:
-> On 2020/5/19 12:44, Tetsuo Handa wrote:
-> > On 2020/05/19 12:31, Xiaoming Ni wrote:
-> > > Some boundary (.extra1 .extra2) constants (E.g: neg_one two) in
-> > > sysctl.c are used in multiple features. Move these variables to
-> > > sysctl_vals to avoid adding duplicate variables when cleaning up
-> > > sysctls table.
-> > > 
-> > > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
-> > I feel that it is use of
-> > 
-> > 	void *extra1;
-> > 	void *extra2;
-> > 
-> > in "struct ctl_table" that requires constant values indirection.
-> > Can't we get rid of sysctl_vals using some "union" like below?
-> > 
-> > struct ctl_table {
-> > 	const char *procname;           /* Text ID for /proc/sys, or zero */
-> > 	void *data;
-> > 	int maxlen;
-> > 	umode_t mode;
-> > 	struct ctl_table *child;        /* Deprecated */
-> > 	proc_handler *proc_handler;     /* Callback for text formatting */
-> > 	struct ctl_table_poll *poll;
-> > 	union {
-> > 		void *min_max_ptr[2];
-> > 		int min_max_int[2];
-> > 		long min_max_long[2];
-> > 	};
-> > } __randomize_layout;
-> > 
-> > .
-> > 
-> 
-> net/decnet/dn_dev.c:
-> static void dn_dev_sysctl_register(struct net_device *dev, struct
-> dn_dev_parms *parms)
-> {
-> 	struct dn_dev_sysctl_table *t;
-> 	int i;
-> 
-> 	char path[sizeof("net/decnet/conf/") + IFNAMSIZ];
-> 
-> 	t = kmemdup(&dn_dev_sysctl, sizeof(*t), GFP_KERNEL);
-> 	if (t == NULL)
-> 		return;
-> 
-> 	for(i = 0; i < ARRAY_SIZE(t->dn_dev_vars) - 1; i++) {
-> 		long offset = (long)t->dn_dev_vars[i].data;
-> 		t->dn_dev_vars[i].data = ((char *)parms) + offset;
-> 	}
-> 
-> 	snprintf(path, sizeof(path), "net/decnet/conf/%s",
-> 		dev? dev->name : parms->name);
-> 
-> 	t->dn_dev_vars[0].extra1 = (void *)dev;
-> 
-> 	t->sysctl_header = register_net_sysctl(&init_net, path, t->dn_dev_vars);
-> 	if (t->sysctl_header == NULL)
-> 		kfree(t);
-> 	else
-> 		parms->sysctl = t;
-> }
-> 
-> A small amount of code is not used as a boundary value when using extra1.
-> This scenario may not be suitable for renaming to min_max_ptr.
-> 
-> Should we add const to extra1 extra2 ?
-> 
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -124,8 +124,8 @@ struct ctl_table {
->         struct ctl_table *child;        /* Deprecated */
->         proc_handler *proc_handler;     /* Callback for text formatting */
->         struct ctl_table_poll *poll;
-> -       void *extra1;
-> -       void *extra2;
-> +       const void *extra1;
-> +       const void *extra2;
->  } __randomize_layout;
+On Mon, May 18, 2020 at 09:24:47AM -0700, Eric Biggers wrote:
+> On Sun, May 17, 2020 at 10:03:15PM -0700, Ira Weiny wrote:
 
-Do that, compile an allyesconfig and it'll fail, but if you fix the
-callers so that they use a const, then yes. That would cover only your
-architecture. It is unclear if we ever used non-const for this on purpose.
+First off...  OMG...
 
-  Luis
+I'm seeing some possible user pitfalls which are complicating things IMO.  It
+probably does not matter because most users don't care and have either enabled
+DAX on _every_ mount or _not_ enabled DAX on _every_ mount.  And have _not_
+used verity nor encryption while using DAX.
+
+Verity is a bit easier because verity is not inherited and we only need to
+protect against setting it if DAX is on.
+
+However, it can be weird for the user thusly:
+
+1) mount _without_ DAX
+2) enable verity on individual inodes
+3) unmount/mount _with_ DAX
+
+Now the verity files are not enabled for DAX without any indication...  <sigh>
+This is still true with my patch.  But at least it closes the hole of trying to
+change the DAX flag after the fact (because verity was set).
+
+Also both this check and the verity need to be maintained to keep the mount
+option working as it was before...
+
+For encryption it is more complicated because encryption can be set on
+directories and inherited so the IS_DAX() check does nothing while '-o dax' is
+used.  Therefore users can:
+
+1) mount _with_ DAX
+2) enable encryption on a directory
+3) files created in that directory will not have DAX set
+
+And I now understand why the WARN_ON() was there...  To tell users about this
+craziness.
+
+...
+
+> > This is, AFAICS, not going to affect correctness.  It will only be confusing
+> > because the user will be able to set both DAX and encryption on the directory
+> > but files there will only see encryption being used...  :-(
+> > 
+> > Assuming you are correct about this call path only being valid on directories.
+> > It seems this IS_DAX() needs to be changed to check for EXT4_DAX_FL in
+> > "fs/ext4: Introduce DAX inode flag"?  Then at that point we can prevent DAX and
+> > encryption on a directory.  ...  and at this point IS_DAX() could be removed at
+> > this point in the series???
+> 
+> I haven't read the whole series, but if you are indeed trying to prevent a
+> directory with EXT4_DAX_FL from being encrypted, then it does look like you'd
+> need to check EXT4_DAX_FL, not S_DAX.
+> 
+> The other question is what should happen when a file is created in an encrypted
+> directory when the filesystem is mounted with -o dax.  Actually, I think I
+> missed something there.  Currently (based on reading the code) the DAX flag will
+> get set first, and then ext4_set_context() will see IS_DAX() && i_size == 0 and
+> clear the DAX flag when setting the encrypt flag.
+
+I think you are correct.
+
+>
+> So, the i_size == 0 check is actually needed.
+> Your patch (AFAICS) just makes creating an encrypted file fail
+> when '-o dax'.  Is that intended?
+
+Yes that is what I intended but it is more complicated I see now.
+
+The intent is that IS_DAX() should _never_ be true on an encrypted or verity
+file...  even if -o dax is specified.  Because IS_DAX() should be a result of
+the inode flags being checked.  The order of the setting of those flags is a
+bit odd for the encrypted case.  I don't really like that DAX is set then
+un-set.  It is convoluted but I'm not clear right now how to fix it.
+
+> If not, maybe you should change it to check
+> S_NEW instead of i_size == 0 to make it clearer?
+
+The patch is completely unnecessary.
+
+It is much easier to make (EXT4_ENCRYPT_FL | EXT4_VERITY_FL) incompatible with
+EXT4_DAX_FL when it is introduced later in the series.  Furthermore this mutual
+exclusion can be done on directories in the encrypt case.  Which I think will
+be nicer for the user if they get an error when trying to set one when the other
+is set.
+
+Ira
+
