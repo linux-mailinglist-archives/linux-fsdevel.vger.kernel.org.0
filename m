@@ -2,200 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E451DAFF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 12:21:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0AAB1DB165
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 May 2020 13:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgETKVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 May 2020 06:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
+        id S1726510AbgETLUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 May 2020 07:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbgETKVY (ORCPT
+        with ESMTP id S1726436AbgETLUk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 May 2020 06:21:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E01C061A0E;
-        Wed, 20 May 2020 03:21:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=byLosyX8OkvGSnd/wUlp1r+QewPCabBxbFeDlkadP7M=; b=flAGazfRzeASVv+VOK57DI2L9r
-        BnZGeYRyRqR/Homc0d9iMHyqn0avvFDpyI0y3bmjV3sVbyBmlBIqf+ZXp5sbRLEAbZgwr0IAoqFBh
-        fhwUH4tahwxDUJKd52fydXH6kbno5GRcBqhw8ipMQ7sT4vZY6beVBDLUu60uID1O3CDBfQbXy3C2V
-        UTX1IPCt9YOa3dU7ziEtloa1FlbteAGVjB06StFvCjkmSokFKp3x5MUQpjlQnzImO0k9pfZXJPoOZ
-        vYmyUK6ezRWlu59XTf1TCSTkSj2Bq/CH9RZjxiKBi9hY5e0jyy7pTfLxV/e1t7moFQkj3Q3vehy38
-        TDZqIlhg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jbLqb-0004Zd-CE; Wed, 20 May 2020 10:21:13 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DA4CB30067C;
-        Wed, 20 May 2020 12:21:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6EDF025D60CB3; Wed, 20 May 2020 12:21:10 +0200 (CEST)
-Date:   Wed, 20 May 2020 12:21:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/8] radix-tree: Use local_lock for protection
-Message-ID: <20200520102110.GE317569@hirez.programming.kicks-ass.net>
-References: <20200519201912.1564477-1-bigeasy@linutronix.de>
- <20200519201912.1564477-3-bigeasy@linutronix.de>
+        Wed, 20 May 2020 07:20:40 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA823C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 04:20:39 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id h21so3332486ejq.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 May 2020 04:20:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=56SGhcyK7h3nlixc/WhwZR2DoIL8pNFZvChxJ3qBgro=;
+        b=TxfYKVxYVFfCs8i2Vi9BQbNqxUsBlp737CU0QRWDFGflGGUqQ4KL0DrSCj9f5f8B9A
+         srhor7uAaj568a/aA6w2KN1ZCj78ruiLf0w8AbVcmpl077VvtkSUPqEd5VpkpSCdIUb9
+         Cfjv1GMVvlTf5E8AbNLN3bn55sKNfaVjuvKp4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=56SGhcyK7h3nlixc/WhwZR2DoIL8pNFZvChxJ3qBgro=;
+        b=aWRZNkzHi/JccT3QPvXnVYNDIopmSeNMExktcK8p/0W4/MsAGAVo4RrUbGsMo9Rr5G
+         d4W8WpTpJpzoVcmjTean4qDeGuBxnJYTD48T02rUaHoolwxHuyov9xxS1P9ebZoKPPAT
+         twBGMjn1qReP2YMmzFzmZhBxBU4PdFttTr2Qpm7/trIn+W9r05s0xsRm/KWO9XoiRcOs
+         ZatnvC71JR2vTW8+rKTMnTxEvO8KxiuPXTFIdBO/lPridI9duwabxGoRaVCqxJ2lomp9
+         8b2bH3BxcBApuYyfTT1wSKkRJ8ZvMtskg05x5A1ecSOqA8lNRy0Qvynn6lV8r2Eaw02X
+         ASVg==
+X-Gm-Message-State: AOAM531SiTFmMXeaTPMCJf971+O8ganKS2jFCqHDvX4knPG+QIq201do
+        tYmeHAOjdq3tV541C7So5bzfnOK2AXb1x6dN7trFxQ==
+X-Google-Smtp-Source: ABdhPJx+P94dGQ64ppbHjlnXmNryVQv5No+atzEiem400vzryPPIDwWWuPy1i2M+gn6vmeZdZUDvyc08UUJyNWG+QyE=
+X-Received: by 2002:a17:906:1199:: with SMTP id n25mr3543965eja.14.1589973638596;
+ Wed, 20 May 2020 04:20:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200519201912.1564477-3-bigeasy@linutronix.de>
+References: <000000000000b4684e05a2968ca6@google.com> <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
+ <CAJfpegtVca6H1JPW00OF-7sCwpomMCo=A2qr5K=9uGKEGjEp3w@mail.gmail.com>
+ <bb232cfa-5965-42d0-88cf-46d13f7ebda3@www.fastmail.com> <9a56a79a-88ed-9ff4-115e-ec169cba5c0b@oracle.com>
+In-Reply-To: <9a56a79a-88ed-9ff4-115e-ec169cba5c0b@oracle.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 20 May 2020 13:20:27 +0200
+Message-ID: <CAJfpegsNVB12MQ-Jgbb-f=+i3g0Xy52miT3TmUAYL951HVQS_w@mail.gmail.com>
+Subject: Re: kernel BUG at mm/hugetlb.c:LINE!
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Colin Walters <walters@verbum.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 19, 2020 at 10:19:06PM +0200, Sebastian Andrzej Siewior wrote:
-> @@ -64,6 +64,7 @@ struct radix_tree_preload {
->  	struct radix_tree_node *nodes;
->  };
->  static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) = { 0, };
-> +static DEFINE_LOCAL_LOCK(radix_tree_preloads_lock);
->  
->  static inline struct radix_tree_node *entry_to_node(void *ptr)
->  {
+On Tue, May 19, 2020 at 2:35 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 5/18/20 4:41 PM, Colin Walters wrote:
+> >
+> > On Tue, May 12, 2020, at 11:04 AM, Miklos Szeredi wrote:
+> >
+> >>> However, in this syzbot test case the 'file' is in an overlayfs filesystem
+> >>> created as follows:
+> >>>
+> >>> mkdir("./file0", 000)                   = 0
+> >>> mount(NULL, "./file0", "hugetlbfs", MS_MANDLOCK|MS_POSIXACL, NULL) = 0
+> >>> chdir("./file0")                        = 0
+> >>> mkdir("./file1", 000)                   = 0
+> >>> mkdir("./bus", 000)                     = 0
+> >>> mkdir("./file0", 000)                   = 0
+> >>> mount("\177ELF\2\1\1", "./bus", "overlay", 0, "lowerdir=./bus,workdir=./file1,u"...) = 0
+> >
+> > Is there any actual valid use case for mounting an overlayfs on top of hugetlbfs?  I can't think of one.  Why isn't the response to this to instead only allow mounting overlayfs on top of basically a set of whitelisted filesystems?
+> >
+>
+> I can not think of a use case.  I'll let Miklos comment on adding whitelist
+> capability to overlayfs.
 
-So I'm all with Andrew on the naming and pass-by-pointer thing, but
-also, the above is pretty crap. You want the local_lock to be in the
-structure you're actually protecting, and there really isn't anything
-stopping you from doing that.
+I've not heard of overlayfs being used over hugetlbfs.
 
-The below builds just fine and is ever so much more sensible.
+Overlayfs on tmpfs is definitely used, I guess without hugepages.
+But if we'd want to allow tmpfs _without_ hugepages but not tmpfs
+_with_ hugepages, then we can't just whitelist based on filesystem
+type, but need to look at mount options as well.  Which isn't really a
+clean solution either.
 
---- a/include/linux/locallock_internal.h
-+++ b/include/linux/locallock_internal.h
-@@ -19,7 +19,7 @@ struct local_lock {
- # define LL_DEP_MAP_INIT(lockname)
- #endif
- 
--#define INIT_LOCAL_LOCK(lockname)	LL_DEP_MAP_INIT(lockname)
-+#define INIT_LOCAL_LOCK(lockname)	{ LL_DEP_MAP_INIT(lockname) }
- 
- #define local_lock_lockdep_init(lock)				\
- do {								\
-@@ -63,35 +63,35 @@ static inline void local_lock_release(st
- #define __local_lock(lock)					\
- 	do {							\
- 		preempt_disable();				\
--		local_lock_acquire(this_cpu_ptr(&(lock)));	\
-+		local_lock_acquire(this_cpu_ptr(lock));		\
- 	} while (0)
- 
- #define __local_lock_irq(lock)					\
- 	do {							\
- 		local_irq_disable();				\
--		local_lock_acquire(this_cpu_ptr(&(lock)));	\
-+		local_lock_acquire(this_cpu_ptr(lock));		\
- 	} while (0)
- 
- #define __local_lock_irqsave(lock, flags)			\
- 	do {							\
- 		local_irq_save(flags);				\
--		local_lock_acquire(this_cpu_ptr(&(lock)));	\
-+		local_lock_acquire(this_cpu_ptr(lock));		\
- 	} while (0)
- 
- #define __local_unlock(lock)					\
- 	do {							\
--		local_lock_release(this_cpu_ptr(&lock));	\
-+		local_lock_release(this_cpu_ptr(lock));		\
- 		preempt_enable();				\
- 	} while (0)
- 
- #define __local_unlock_irq(lock)				\
- 	do {							\
--		local_lock_release(this_cpu_ptr(&lock));	\
-+		local_lock_release(this_cpu_ptr(lock));		\
- 		local_irq_enable();				\
- 	} while (0)
- 
- #define __local_unlock_irqrestore(lock, flags)			\
- 	do {							\
--		local_lock_release(this_cpu_ptr(&lock));	\
-+		local_lock_release(this_cpu_ptr(lock));		\
- 		local_irq_restore(flags);			\
- 	} while (0)
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -59,12 +59,14 @@ struct kmem_cache *radix_tree_node_cache
-  * Per-cpu pool of preloaded nodes
-  */
- struct radix_tree_preload {
-+	struct local_lock lock;
- 	unsigned nr;
- 	/* nodes->parent points to next preallocated node */
- 	struct radix_tree_node *nodes;
- };
--static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) = { 0, };
--static DEFINE_LOCAL_LOCK(radix_tree_preloads_lock);
-+static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) =
-+	{ .lock = INIT_LOCAL_LOCK(lock),
-+	  .nr = 0, };
- 
- static inline struct radix_tree_node *entry_to_node(void *ptr)
- {
-@@ -333,14 +335,14 @@ static __must_check int __radix_tree_pre
- 	 */
- 	gfp_mask &= ~__GFP_ACCOUNT;
- 
--	local_lock(radix_tree_preloads_lock);
-+	local_lock(&radix_tree_preloads.lock);
- 	rtp = this_cpu_ptr(&radix_tree_preloads);
- 	while (rtp->nr < nr) {
--		local_unlock(radix_tree_preloads_lock);
-+		local_unlock(&radix_tree_preloads.lock);
- 		node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
- 		if (node == NULL)
- 			goto out;
--		local_lock(radix_tree_preloads_lock);
-+		local_lock(&radix_tree_preloads.lock);
- 		rtp = this_cpu_ptr(&radix_tree_preloads);
- 		if (rtp->nr < nr) {
- 			node->parent = rtp->nodes;
-@@ -382,14 +384,14 @@ int radix_tree_maybe_preload(gfp_t gfp_m
- 	if (gfpflags_allow_blocking(gfp_mask))
- 		return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
- 	/* Preloading doesn't help anything with this gfp mask, skip it */
--	local_lock(radix_tree_preloads_lock);
-+	local_lock(&radix_tree_preloads.lock);
- 	return 0;
- }
- EXPORT_SYMBOL(radix_tree_maybe_preload);
- 
- void radix_tree_preload_end(void)
- {
--	local_unlock(radix_tree_preloads_lock);
-+	local_unlock(&radix_tree_preloads.lock);
- }
- EXPORT_SYMBOL(radix_tree_preload_end);
- 
-@@ -1477,13 +1479,13 @@ EXPORT_SYMBOL(radix_tree_tagged);
- void idr_preload(gfp_t gfp_mask)
- {
- 	if (__radix_tree_preload(gfp_mask, IDR_PRELOAD_SIZE))
--		local_lock(radix_tree_preloads_lock);
-+		local_lock(&radix_tree_preloads.lock);
- }
- EXPORT_SYMBOL(idr_preload);
- 
- void idr_preload_end(void)
- {
--	local_unlock(radix_tree_preloads_lock);
-+	local_unlock(&radix_tree_preloads.lock);
- }
- EXPORT_SYMBOL(idr_preload_end);
- 
+> IMO - This BUG/report revealed two issues.  First is the BUG by mmap'ing
+> a hugetlbfs file on overlayfs.  The other is that core mmap code will skip
+> any filesystem specific get_unmapped area routine if on a union/overlay.
+> My patch fixes both, but if we go with a whitelist approach and don't allow
+> hugetlbfs I think we still need to address the filesystem specific
+> get_unmapped area issue.  That is easy enough to do by adding a routine to
+> overlayfs which calls the routine for the underlying fs.
+
+I think the two are strongly related:  get_unmapped_area() adjusts the
+address alignment, and the is_file_hugepages() call in
+ksys_mmap_pgoff() adjusts the length alignment.
+
+Is there any other purpose for which  f_op->get_unmapped_area() is
+used by a filesystem?
+
+Thanks,
+Miklos
