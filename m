@@ -2,112 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B351DD55B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 19:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D251DD5B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 20:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbgEUR5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 13:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59374 "EHLO
+        id S1729024AbgEUSKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 14:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbgEUR5a (ORCPT
+        with ESMTP id S1728455AbgEUSKt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 13:57:30 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6F5C061A0E;
-        Thu, 21 May 2020 10:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YEGiyJ5J60rxwdmY4lT+xudS1/jh1/7YclIMmGnHZGE=; b=PIIXS+eC5DD7LBhbkxVl4hQbPo
-        KRjVT1wOlcv35cRLz4KSRkcdxAS5QFauxquIwnF77pgAYeQAwr5G9x6ZulTl59oV242VgnCJgAdx0
-        xP5uwShg7+UQFjaIY+1sW9kSBTIpUTBnHhghxcoW5tcRBKXOEMoBLTUnI6J8ulVjj/rEF6dKQgtsX
-        pqplH781Rty/n4VXCJkoDhKtk6pFoaPtcrJv4oA8F4YRc3+SWs9fA6LkFWCbYZsUBKrtvBvpveVUo
-        Dp9gte6FOWoXvyl1Sb4UDL7f48KfROIVbL5dx3qO8a7O0usw/DHcgSm21k+CZEem4Oic2oayY4cu6
-        8YEwcOfg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jbpRh-0000m4-8s; Thu, 21 May 2020 17:57:29 +0000
-Date:   Thu, 21 May 2020 10:57:29 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH v2] exfat: add the dummy mount options to be backward
- compatible with staging/exfat
-Message-ID: <20200521175729.GE28818@bombadil.infradead.org>
-References: <20200521140502.2409-1-linkinjeon@kernel.org>
- <eb8858fb-c3bc-3f8d-96c1-3b4082c14373@sandeen.net>
+        Thu, 21 May 2020 14:10:49 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4398C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:10:48 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id w18so7973316ilm.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eziYTdN7Cbbju+lQIY5AHmjIyCLBG/Lihey9HYQAoUA=;
+        b=e3l2g9R6G2/OA+p6EjTsU1olNiMUCPLdkodrIQRUD7+k3nvqD3G9oIDn+E7/tyDBTq
+         9XKENtgM3B80WpcMvWWy6x9cceOIFHwrOmRyUrddpnXY7/fyBLy77vrMQvzOcL9V1qDj
+         Mss3nkCHg15b6MHZYo4nEQFL5L83nEt0611/uQuz6N8mPj4Jhy94XansuJn7nChlpda5
+         cN9rPZuU5T8tjzYtSFdHwJbiqSVGDH0CJYRGdyC4R+25nLzph/7JmJhh4pkcGOksGefY
+         SQ+2LNBRJS1+gQzJi7c/MareCwQyq7xDEEJ6PuNzw2TDraYlDiwgDELrtz3ePb5YoqyN
+         YE6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eziYTdN7Cbbju+lQIY5AHmjIyCLBG/Lihey9HYQAoUA=;
+        b=IGpT4/oxgo453qwyExkdYuuFjzGJeg/q6FvfqGkJt9IyKjRESbJN/MglbBAydDxJww
+         CPJ8PfLxZEolPO4Ep/a6AQQSdHccWSE6rLbeni2FYlioEokEvuzGMAMFHtYq77qTrIBE
+         XGQ4sTvkjNl+cHxzDZ5rRqKi2Ao8/cWt7Of7tLm2cKNGVvbTtja7hQzSGcX26B6TOhoK
+         mf2aWwYXLEBFtgRvp2qq/0K3+BpysjeoToqQ6RgoWmkyWI4EUsUUz7/YB1JatDBo+M8T
+         vKdyio1KlXl46pyqg6JlTYx5+gzy3VkY+vFc1SX5SEbyGZaDPyxbGfPqzI+B8sHzGzCI
+         ya+g==
+X-Gm-Message-State: AOAM531usXVgRwvylZsxr5R6b/7JReqxlq+138Kg8jYe1fLUP+wrC1CB
+        RX2LQaQxCCjxD9rA2v22Y5bi6XnzpQuW63ba/+I=
+X-Google-Smtp-Source: ABdhPJxOwr/KDQuQaXPuVwzATQ7XDWwIoc11avhwoqgJxurbzX8hZCEfL2ivXe2/DJCraPuu+hx5RSFO1IPlia2TLCg=
+X-Received: by 2002:a92:db12:: with SMTP id b18mr9753966iln.250.1590084647850;
+ Thu, 21 May 2020 11:10:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb8858fb-c3bc-3f8d-96c1-3b4082c14373@sandeen.net>
+References: <20200521162443.GA26052@quack2.suse.cz>
+In-Reply-To: <20200521162443.GA26052@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 21 May 2020 21:10:36 +0300
+Message-ID: <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
+Subject: Re: Ignore mask handling in fanotify_group_event_mask()
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 21, 2020 at 10:44:28AM -0500, Eric Sandeen wrote:
-> On 5/21/20 9:05 AM, Namjae Jeon wrote:
-> > As Ubuntu and Fedora release new version used kernel version equal to or
-> > higher than v5.4, They started to support kernel exfat filesystem.
-> > 
-> > Linus Torvalds reported mount error with new version of exfat on Fedora.
-> > 
-> > 	exfat: Unknown parameter 'namecase'
-> > 
-> > This is because there is a difference in mount option between old
-> > staging/exfat and new exfat.
-> > And utf8, debug, and codepage options as well as namecase have been
-> > removed from new exfat.
-> > 
-> > This patch add the dummy mount options as deprecated option to be backward
-> > compatible with old one.
-> 
-> Wow, it seems wild that we'd need to maintain compatibility with options
-> which only ever existed in a different codebase in a staging driver
-> (what's the point of staging if every interface that makes it that far has
-> to be maintained in perpetuity?)
-> 
-> Often, when things are deprecated, they are eventually removed.  Perhaps a
-> future removal date stated in this commit, or in Documentation/..../exfat.txt
-> would be good as a reminder to eventually remove this?
+On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
+>
+> Hello Amir!
+>
+> I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
+> merging marks masks with FAN_ONDIR" and realized one oddity in
+> fanotify_group_event_mask(). The thing is: Even if the mark mask is such
+> that current event shouldn't trigger on the mark, we still have to take
+> mark's ignore mask into account.
+>
+> The most realistic example that would demonstrate the issue that comes to my
+> mind is:
+>
+> mount mark watching for FAN_OPEN | FAN_ONDIR.
+> inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
+>
+> I'd expect the group will not get any event for opening the dir but the
+> code in fanotify_group_event_mask() would not prevent event generation. Now
+> as I've tested the event currently actually does not get generated because
+> there is a rough test in send_to_group() that actually finds out that there
+> shouldn't be anything to report and so fanotify handler is actually never
+> called in such case. But I don't think it's good to have an inconsistent
+> test in fanotify_group_event_mask(). What do you think?
+>
 
-For NFS, 'intr' has been deprecated since December 2007 and has been
-printing a warning since June 2008.  How long until we delete it?
+I agree this is not perfect.
+I think that moving the marks_ignored_mask line
+To the top of the foreach loop should fix the broken logic.
+It will not make the code any less complicated to follow though.
+Perhaps with a comment along the lines of:
 
-> >  static const struct constant_table exfat_param_enums[] = {
-> > @@ -223,6 +229,10 @@ static const struct fs_parameter_spec exfat_parameters[] = {
-> >  	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
-> >  	fsparam_flag("discard",			Opt_discard),
-> >  	fsparam_s32("time_offset",		Opt_time_offset),
-> > +	fsparam_flag("utf8",			Opt_utf8),
-> > +	fsparam_flag("debug",			Opt_debug),
-> > +	fsparam_u32("namecase",			Opt_namecase),
-> > +	fsparam_u32("codepage",			Opt_codepage),
+             /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
+             marks_ignored_mask |= mark->ignored_mask;
 
-	__fsparam(NULL, "utf8",		Opt_utf8, fs_param_deprecated, NULL),
-	__fsparam(NULL, "debug",	Opt_debug, fs_param_deprecated, NULL),
-	__fsparam(fs_param_is_u32, "namecase", Opt_namecase,
-						fs_param_deprecated, NULL),
-	__fsparam(fs_param_is_u32, "codepage", Opt_codepage,
-						fs_param_deprecated, NULL),
+Now is there a real bug here?
+Probably not because send_to_group() always applied an ignore mask
+that is greater or equal to that of fanotify_group_event_mask().
 
-> > @@ -278,6 +288,18 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> >  			return -EINVAL;
-> >  		opts->time_offset = result.int_32;
-> >  		break;
-> > +	case Opt_utf8:
-> > +		pr_warn("exFAT-fs: 'utf8' mount option is deprecated and has no effect\n");
-> > +		break;
-> > +	case Opt_debug:
-> > +		pr_warn("exFAT-fs: 'debug' mount option is deprecated and has no effect\n");
-> > +		break;
-> > +	case Opt_namecase:
-> > +		pr_warn("exFAT-fs: 'namecase' mount option is deprecated and has no effect\n");
-> > +		break;
-> > +	case Opt_codepage:
-> > +		pr_warn("exFAT-fs: 'codepage' mount option is deprecated and has no effect\n");
-> > +		break;
+should fanotify_group_event_mask() re-apply the same generic logic
+already applied in send_to_group()? Maybe there is no point.
+After all, fanotify_group_event_mask() also does not handle
+FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY, so the
+assumption that send_to_group() is doing some of the logic is
+already there.
 
-and then you don't need this hunk because the fs parser will print the
-deprecated message for you.
+Not sure if I helped answering your question.
+
+Thanks,
+Amir.
