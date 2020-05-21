@@ -2,121 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8111DDA2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 00:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B651DDA82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 00:49:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730666AbgEUWYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 18:24:46 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:43232 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730041AbgEUWYq (ORCPT
+        id S1730723AbgEUWtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 18:49:11 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:59461 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730690AbgEUWtL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 18:24:46 -0400
+        Thu, 21 May 2020 18:49:11 -0400
 Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id DD61ED585F3;
-        Fri, 22 May 2020 08:24:42 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 480C282078A;
+        Fri, 22 May 2020 08:49:08 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1jbtcE-0000Wh-8K; Fri, 22 May 2020 08:24:38 +1000
-Date:   Fri, 22 May 2020 08:24:38 +1000
+        id 1jbtzu-0000hq-Ta; Fri, 22 May 2020 08:49:06 +1000
+Date:   Fri, 22 May 2020 08:49:06 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 14/36] iomap: Support large pages in
- iomap_adjust_read_range
-Message-ID: <20200521222438.GT2005@dread.disaster.area>
+Subject: Re: [PATCH v4 00/36] Large pages in the page cache
+Message-ID: <20200521224906.GU2005@dread.disaster.area>
 References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-15-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200515131656.12890-15-willy@infradead.org>
+In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
         a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
         a=kj9zAlcOel0A:10 a=sTwFKg_x9MkA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
-        a=IOCeXHPP9RvrO-5I4wsA:9 a=4EiQV0XcPOQVQSqq:21 a=hAGzneUFbVT3-FjE:21
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=2DAmyFJ7tbF1Kr5hZtcA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 06:16:34AM -0700, Matthew Wilcox wrote:
+On Fri, May 15, 2020 at 06:16:20AM -0700, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Pass the struct page instead of the iomap_page so we can determine the
-> size of the page.  Use offset_in_thp() instead of offset_in_page() and use
-> thp_size() instead of PAGE_SIZE.
+> This patch set does not pass xfstests.  Test at your own risk.  It is
+> based on the readahead rewrite which is in Andrew's tree.  I've fixed a
+> lot of issues in the last two weeks, but generic/013 will still crash it.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/iomap/buffered-io.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 4a79061073eb..423ffc9d4a97 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -83,15 +83,16 @@ iomap_page_release(struct page *page)
->   * Calculate the range inside the page that we actually need to read.
->   */
->  static void
-> -iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
-> +iomap_adjust_read_range(struct inode *inode, struct page *page,
->  		loff_t *pos, loff_t length, unsigned *offp, unsigned *lenp)
->  {
-> +	struct iomap_page *iop = to_iomap_page(page);
->  	loff_t orig_pos = *pos;
->  	loff_t isize = i_size_read(inode);
->  	unsigned block_bits = inode->i_blkbits;
->  	unsigned block_size = (1 << block_bits);
-> -	unsigned poff = offset_in_page(*pos);
-> -	unsigned plen = min_t(loff_t, PAGE_SIZE - poff, length);
-> +	unsigned poff = offset_in_thp(page, *pos);
-> +	unsigned plen = min_t(loff_t, thp_size(page) - poff, length);
->  	unsigned first = poff >> block_bits;
->  	unsigned last = (poff + plen - 1) >> block_bits;
->  
-> @@ -129,7 +130,7 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
->  	 * page cache for blocks that are entirely outside of i_size.
->  	 */
->  	if (orig_pos <= isize && orig_pos + length > isize) {
-> -		unsigned end = offset_in_page(isize - 1) >> block_bits;
-> +		unsigned end = offset_in_thp(page, isize - 1) >> block_bits;
->  
->  		if (first <= end && last > end)
->  			plen -= (last - end) * block_size;
-> @@ -256,7 +257,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	}
->  
->  	/* zero post-eof blocks as the page may be mapped */
-> -	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
-> +	iomap_adjust_read_range(inode, page, &pos, length, &poff, &plen);
->  	if (plen == 0)
->  		goto done;
->  
-> @@ -571,7 +572,6 @@ static int
->  __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  		struct page *page, struct iomap *srcmap)
->  {
-> -	struct iomap_page *iop = iomap_page_create(inode, page);
->  	loff_t block_size = i_blocksize(inode);
->  	loff_t block_start = pos & ~(block_size - 1);
->  	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
-> @@ -580,9 +580,10 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
->  
->  	if (PageUptodate(page))
->  		return 0;
-> +	iomap_page_create(inode, page);
+> The primary idea here is that a large part of the overhead in dealing
+> with individual pages is that there's just so darned many of them.
+> We would be better off dealing with fewer, larger pages, even if they
+> don't get to be the size necessary for the CPU to use a larger TLB entry.
 
-What problem does this fix? i.e. if we can get here with an
-uninitialised page, why isn't this a separate bug fix. I don't see
-anything in this patch that actually changes behaviour, and there's
-nothing in the commit description to tell me why this is here,
-so... ???
+Ok, so the main issue I have with the filesystem/iomap side of
+things is that it appears to be adding "transparent huge page"
+awareness to the filesysetm code, not "large page support".
+
+For people that aren't aware of the difference between the
+transparent huge and and a normal compound page (e.g. I have no idea
+what the difference is), this is likely to cause problems,
+especially as you haven't explained at all in this description why
+transparent huge pages are being used rather than bog standard
+compound pages.
+
+And, really, why should iomap or the filesystems care if the large
+page is a THP or just a high order compound page? The interface
+for operating on these things at the page cache level should be the
+same. We already have page_size() and friends for operating on
+high order compound pages, yet the iomap stuff has this new
+thp_size() function instead of just using page_size(). THis is going
+to lead to confusion and future bugs when people who don't know the
+difference use the wrong page size function in their filesystem
+code.
+
+So, really, the "large page" API presented to the filesystems via
+the page cache needs to be unified. Having to use compound_*() in
+some places, thp_* in others, then page_* and Page*, not to mention
+hpage_* just so that we can correctly support "large pages" is a
+total non-starter.
+
+Hence I'd suggest that this patch set needs to start by "hiding" all
+the differences between different types of pages behind a unified,
+consistent API, then it can introduce large page support into code
+outside the mm/ infrastructure via that unified API. I don't care
+what that API looks like so long as it is clear, consistenti, well
+documented and means filesystem developers don't need to know
+anything about how the page (large or not) is managed by the mm
+subsystem.
 
 Cheers,
 
