@@ -2,115 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A721DCC7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 13:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956201DCCB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 14:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbgEUL51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 07:57:27 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:47184 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729002AbgEUL51 (ORCPT
+        id S1729285AbgEUMUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 08:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729214AbgEUMUy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 07:57:27 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jbjpB-0002UN-NE; Thu, 21 May 2020 05:57:21 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jbjpA-00053F-6i; Thu, 21 May 2020 05:57:21 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <87d06ygssl.fsf@x220.int.ebiederm.org>
-        <202005201642.E1C6B4A457@keescook>
-Date:   Thu, 21 May 2020 06:53:36 -0500
-In-Reply-To: <202005201642.E1C6B4A457@keescook> (Kees Cook's message of "Wed,
-        20 May 2020 16:43:28 -0700")
-Message-ID: <875zcph5bz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jbjpA-00053F-6i;;;mid=<875zcph5bz.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+oiz5qlPjrQa2T3u47CbOQrej8gssp24I=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa05 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1127 ms - load_scoreonly_sql: 0.11 (0.0%),
-        signal_user_changed: 14 (1.2%), b_tie_ro: 12 (1.0%), parse: 1.66
-        (0.1%), extract_message_metadata: 19 (1.7%), get_uri_detail_list: 1.72
-        (0.2%), tests_pri_-1000: 8 (0.7%), tests_pri_-950: 1.81 (0.2%),
-        tests_pri_-900: 1.40 (0.1%), tests_pri_-90: 56 (5.0%), check_bayes: 54
-        (4.8%), b_tokenize: 9 (0.8%), b_tok_get_all: 7 (0.6%), b_comp_prob:
-        3.0 (0.3%), b_tok_touch_all: 31 (2.8%), b_finish: 1.17 (0.1%),
-        tests_pri_0: 1013 (89.8%), check_dkim_signature: 0.81 (0.1%),
-        check_dkim_adsp: 3.1 (0.3%), poll_dns_idle: 0.94 (0.1%), tests_pri_10:
-        2.0 (0.2%), tests_pri_500: 6 (0.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 0/8] exec: Control flow simplifications
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Thu, 21 May 2020 08:20:54 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CDAC061A0E;
+        Thu, 21 May 2020 05:20:54 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a5so2987007pjh.2;
+        Thu, 21 May 2020 05:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=stWt/FkAV3whglFbcJ+xccRha/qYgrl6lOTok0wajJI=;
+        b=CiG6I0E9MNcMSok6mI8B8l0WOE1Jhf4njbivNxYqT7m/509HAlg43f4SsWgLClFI3k
+         fPmF/ufGTX6mkSwQC/igr02SXod+141NPaGRZ7sLICSHsL56s0ik5TAAa8y30cKSOPRM
+         CMoxuY75TWChVAaVKQiZaRHVRuk+Y1YaOtjNLsSWyrie6gnUkakPWqR1Jqjq6Tq1y+D6
+         kghA+TLKRNzgzGEXpUfiVJE4Wuv032OxkssdEaGuAwD4q8UITu0Fizu9isEYlXfPd0zE
+         zWvAx5Zj2RCqSjoe6pczEQzxw4AGTaK7gn5LiQ3kJ3i2OrSwLfppVw88uzoC+63qzH7G
+         0w9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=stWt/FkAV3whglFbcJ+xccRha/qYgrl6lOTok0wajJI=;
+        b=alzrpHBfpS17gAdnoMtVlMiqRdGcnGT1VJUMRIIdkuQtIi4H9h2DuF5LX5Hjm0XjRa
+         OGrg+XE9zEcQUdYpScE5noHeaTfpf6+0glE/3L5hjaJ2nq+buv2rLj6ptxLPJoiQT3dD
+         Tj7pVKMNHfJ6xpYe1ilcEJW2U/6VZ+NfvQ3vRCfeUB1wYsiZhzVD/Hukn32vjdcaIpUS
+         UbbnustAyuZKK0eSZuoGptiZ37BhHnnGdALKWSWaVdRqYyifI5suXtGi6T10b6rqRxgb
+         Tl2xeXeuBWydz18CmW02nEGJX6ukQFqk3Jlp6znl/Sox8OCGt761uGdiAOwQVv6i9sDc
+         xDCg==
+X-Gm-Message-State: AOAM530slUdHSXjpqmus1N9ab1vCnVl1GzzyHvVU4Q/apW1GMl0svFNK
+        aYRCni2I6WNRQqCbBVNdafzSIdRp
+X-Google-Smtp-Source: ABdhPJyFihLfVSUUClYWBD16iRFax2GMCdIhiO8QpL/RTTsIlojruoS1SI49pxTjv8nLltLWKBHuMA==
+X-Received: by 2002:a17:902:6bcb:: with SMTP id m11mr9164799plt.264.1590063653750;
+        Thu, 21 May 2020 05:20:53 -0700 (PDT)
+Received: from localhost.localdomain ([221.146.116.86])
+        by smtp.gmail.com with ESMTPSA id m12sm4142169pgj.46.2020.05.21.05.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 May 2020 05:20:53 -0700 (PDT)
+From:   Namjae Jeon <linkinjeon@kernel.org>
+X-Google-Original-From: Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH] exfat: add the dummy mount options to be backward compatible with staging/exfat
+Date:   Thu, 21 May 2020 21:20:34 +0900
+Message-Id: <20200521122034.2254-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+As Ubuntu and Fedora release new version used kernel version equal to or
+higher than v5.4, They started to support kernel exfat filesystem.
 
-> On Wed, May 20, 2020 at 05:12:10PM -0500, Eric W. Biederman wrote:
->> 
->> I have pushed this out to:
->> 
->> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git exec-next
->> 
->> I have collected up the acks and reviewed-by's, and fixed a couple of
->> typos but that is it.
->
-> Awesome!
->
->> If we need comment fixes or additional cleanups we can apply that on top
->> of this series.   This way the code can sit in linux-next until the
->> merge window opens.
->> 
->> Before I pushed this out I also tested this with Kees new test of
->> binfmt_misc and did not find any problems.
->
-> Did this mean to say binfmt_script? It'd be nice to get a binfmt_misc
-> test too, though.
+Linus Torvalds reported mount error with new version of exfat on Fedora.
 
-Yes.  Sorry.  I meant your binfmt_script test.
+	exfat: Unknown parameter 'namecase'
 
-Eric
+This is because there is a difference in mount option between old
+staging/exfat and new exfat.
+And utf8, debug, and codepage options as well as namecase have been
+removed from new exfat.
+
+This patch add the dummy mount options as deprecated option to be backward
+compatible with old one.
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+---
+ fs/exfat/super.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 0565d5539d57..26b0db5b20de 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -203,6 +203,12 @@ enum {
+ 	Opt_errors,
+ 	Opt_discard,
+ 	Opt_time_offset,
++
++	/* Deprecated options */
++	Opt_utf8,
++	Opt_debug,
++	Opt_namecase,
++	Opt_codepage,
+ };
+ 
+ static const struct constant_table exfat_param_enums[] = {
+@@ -223,6 +229,10 @@ static const struct fs_parameter_spec exfat_parameters[] = {
+ 	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
+ 	fsparam_flag("discard",			Opt_discard),
+ 	fsparam_s32("time_offset",		Opt_time_offset),
++	fsparam_flag("utf8",			Opt_utf8),
++	fsparam_flag("debug",			Opt_debug),
++	fsparam_u32("namecase",			Opt_namecase),
++	fsparam_u32("codepage",			Opt_codepage),
+ 	{}
+ };
+ 
+@@ -278,6 +288,18 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 			return -EINVAL;
+ 		opts->time_offset = result.int_32;
+ 		break;
++	case Opt_utf8:
++		pr_warn("exFAT-fs: 'utf8' mount option is deprecated and has no effect\n");
++		break;
++	case Opt_debug:
++		pr_warn("exFAT-fs: 'debug' mount option is deprecated and has no effect\n");
++		break;
++	case Opt_namecase:
++		pr_warn("exFAT-fs: 'namecase' mount option is deprecated and has no effect\n");
++		break;
++	case Opt_codepage:
++		pr_warn("exFAT-fs: 'codepage' mount option is deprecated and has no effect\n");
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+-- 
+2.25.1
+
