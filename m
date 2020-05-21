@@ -2,204 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2111DCD17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 14:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 815221DCDBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 15:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbgEUMi7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 08:38:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729351AbgEUMi6 (ORCPT
+        id S1729197AbgEUNJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 09:09:56 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55578 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727846AbgEUNJ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 08:38:58 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADC49C08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 05:38:58 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id u35so3106485pgk.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 05:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qrPX9G3+4aBI10o4oEHyWzWzharRDL5aHtWT6C1hV1M=;
-        b=eyKMrOdNlKxE4hK1V2DTniBs10Fv951OeqXz10XdX18R8Rfd3190Or/83oF/SH95bY
-         uvnoW91oDo+l1trvF6bBOB35j8/L8HZZmvjmG1NlbB7/RfHjC6Qww+CTnf65DOzg3gBM
-         HvL2UmtJKcRKuvQQcowlTcflRqqMNLvyknjmz06+5/TuFOyzPVS+J2J4s/NUfI7GyClY
-         2tuimsIj3m0Gka/Vcc7ZhL+KpuB/95rD27Z9FDuCuP0i01ZBVcDWacPM1vImhji8nu+B
-         21Ydvn693kQ1m8d0AN4yRG+H/hJ1YTf7jl1qRgSnMAdAn/XNUWoU3hjjPFQjz00HF60A
-         S11w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qrPX9G3+4aBI10o4oEHyWzWzharRDL5aHtWT6C1hV1M=;
-        b=sNo7fzbzlWXY85zqqQ92CDZkSnAq6gMw1NIfiwZ3gQBSBoKJ9gT35Vm5mRLHgG88cy
-         arOINOrv8CZXCOsWuOzwBcOMg68dVlgKMv9aOucOwHn0+O2yP2vdzosWWhyHfpZpLNMC
-         5oA0tCcKS2rBbCW0j0DSdt5uj8FtgJT1vuGGbOIAbEFfWWAyWrJuq5hZFT+etOBPwtTs
-         Fx/9JCBiJFN4e+C1QhlVBAncTv1xjiBssyS8WmE0gv6PJVLs+fsCVbDGd+LvdY89WXmz
-         Hnd/Rsia9u+JzaQhq/ft/QQ+wqDlfrVEzP8F1k4eJ0pF53xzvQqzKR4jcA9INdDPeWon
-         Te4w==
-X-Gm-Message-State: AOAM532GIc/ZwrFoATrIMG9vx4YFrL54b+1p5dBOKoS82xPSznHyI7ro
-        EdxaKZocXEQbyNacORD7gu79Mw==
-X-Google-Smtp-Source: ABdhPJy9gosZTjDkb+FQ3lX5TtFuOdxNa9fPv/j1JyHKILIqEs4RR3/DsnPRh7l5AqHBoL4DlK9LOQ==
-X-Received: by 2002:a62:8241:: with SMTP id w62mr9613358pfd.187.1590064737961;
-        Thu, 21 May 2020 05:38:57 -0700 (PDT)
-Received: from Smcdef-MBP.lan ([103.136.220.73])
-        by smtp.gmail.com with ESMTPSA id w14sm4152316pgi.12.2020.05.21.05.38.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 May 2020 05:38:57 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     adobriyan@gmail.com, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        john.fastabend@gmail.com, kpsingh@chromium.org
-Cc:     ebiederm@xmission.com, bernd.edlinger@hotmail.de,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH] files: Use rcu lock to get the file structures for better performance
-Date:   Thu, 21 May 2020 20:38:35 +0800
-Message-Id: <20200521123835.70069-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
+        Thu, 21 May 2020 09:09:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590066594;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0tHBgCvyZltVrN0JriCw+VgbLMlwZL8WCxbksXie0bo=;
+        b=c17tgnesnqVBVo50K7DBxwy6wsjHJhVR71tC44KcRGr3RCDp24EKS9D5LcO+DcodEixby4
+        Mn1giVkPiGhJ9eb4IbpgS8hcssoUGehMqjSF8PK9pjTR7Lk6G2aj47imFmjgklizXTCU9H
+        K2Lir1TVLHSR8VMEZ9n/pCLzBqe4wz8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-189-cH8H9hgPP622hPLjK9Dncg-1; Thu, 21 May 2020 09:09:52 -0400
+X-MC-Unique: cH8H9hgPP622hPLjK9Dncg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A5A078014D4;
+        Thu, 21 May 2020 13:09:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-138.rdu2.redhat.com [10.10.112.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CA365106222B;
+        Thu, 21 May 2020 13:09:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] Adjust comments in linux/fs_parser.h
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 21 May 2020 14:09:49 +0100
+Message-ID: <159006658996.105720.14023071485286413229.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.22
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is another safe way to get the file structure without
-holding the files->file_lock. That is rcu lock, and this way
-has better performance. So use the rcu lock instead of the
-files->file_lock.
+Fix some comments in linux/fs_parser.h that have not kept up with the
+changes.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- fs/proc/fd.c         | 31 ++++++++++++++++++++++++-------
- kernel/bpf/syscall.c | 17 +++++++++++------
- kernel/kcmp.c        | 15 ++++++++++-----
- 3 files changed, 45 insertions(+), 18 deletions(-)
 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 81882a13212d3..5d5b0f091d32a 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -34,19 +34,27 @@ static int seq_show(struct seq_file *m, void *v)
- 	if (files) {
- 		unsigned int fd = proc_fd(m->private);
+ include/linux/fs_parser.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index 2eab6d5f6736..784f4bfa2aa2 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -53,10 +53,10 @@ struct fs_parameter_spec {
+ struct fs_parse_result {
+ 	bool			negated;	/* T if param was "noxxx" */
+ 	union {
+-		bool		boolean;	/* For spec_bool */
+-		int		int_32;		/* For spec_s32/spec_enum */
+-		unsigned int	uint_32;	/* For spec_u32{,_octal,_hex}/spec_enum */
+-		u64		uint_64;	/* For spec_u64 */
++		bool		boolean;	/* For fs_param_is_bool */
++		int		int_32;		/* For fs_param_is_{s32,enum} */
++		unsigned int	uint_32;	/* For fs_param_is_{u32*,enum,fd) */
++		u64		uint_64;	/* For fs_param_is_u64 */
+ 	};
+ };
  
--		spin_lock(&files->file_lock);
-+		rcu_read_lock();
-+again:
- 		file = fcheck_files(files, fd);
- 		if (file) {
--			struct fdtable *fdt = files_fdtable(files);
-+			struct fdtable *fdt;
-+
-+			if (!get_file_rcu(file)) {
-+				/*
-+				 * we loop to catch the new file (or NULL
-+				 * pointer).
-+				 */
-+				goto again;
-+			}
- 
-+			fdt = files_fdtable(files);
- 			f_flags = file->f_flags;
- 			if (close_on_exec(fd, fdt))
- 				f_flags |= O_CLOEXEC;
--
--			get_file(file);
- 			ret = 0;
- 		}
--		spin_unlock(&files->file_lock);
-+		rcu_read_unlock();
- 		put_files_struct(files);
- 	}
- 
-@@ -160,14 +168,23 @@ static int proc_fd_link(struct dentry *dentry, struct path *path)
- 		unsigned int fd = proc_fd(d_inode(dentry));
- 		struct file *fd_file;
- 
--		spin_lock(&files->file_lock);
-+		rcu_read_lock();
-+again:
- 		fd_file = fcheck_files(files, fd);
- 		if (fd_file) {
-+			if (!get_file_rcu(fd_file)) {
-+				/*
-+				 * we loop to catch the new file
-+				 * (or NULL pointer).
-+				 */
-+				goto again;
-+			}
- 			*path = fd_file->f_path;
- 			path_get(&fd_file->f_path);
-+			fput(fd_file);
- 			ret = 0;
- 		}
--		spin_unlock(&files->file_lock);
-+		rcu_read_unlock();
- 		put_files_struct(files);
- 	}
- 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 8608d6e1b0e0e..441c91378a1fc 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3451,14 +3451,19 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
- 	if (!files)
- 		return -ENOENT;
- 
--	err = 0;
--	spin_lock(&files->file_lock);
-+	rcu_read_lock();
-+again:
- 	file = fcheck_files(files, fd);
--	if (!file)
-+	if (file) {
-+		if (!get_file_rcu(file)) {
-+			/* we loop to catch the new file (or NULL pointer) */
-+			goto again;
-+		}
-+		err = 0;
-+	} else {
- 		err = -EBADF;
--	else
--		get_file(file);
--	spin_unlock(&files->file_lock);
-+	}
-+	rcu_read_unlock();
- 	put_files_struct(files);
- 
- 	if (err)
-diff --git a/kernel/kcmp.c b/kernel/kcmp.c
-index b3ff9288c6cc9..3b4f2a54186f2 100644
---- a/kernel/kcmp.c
-+++ b/kernel/kcmp.c
-@@ -120,13 +120,18 @@ static int kcmp_epoll_target(struct task_struct *task1,
- 	if (!files)
- 		return -EBADF;
- 
--	spin_lock(&files->file_lock);
-+	rcu_read_lock();
-+again:
- 	filp_epoll = fcheck_files(files, slot.efd);
--	if (filp_epoll)
--		get_file(filp_epoll);
--	else
-+	if (filp_epoll) {
-+		if (!get_file_rcu(filp_epoll)) {
-+			/* we loop to catch the new file (or NULL pointer) */
-+			goto again;
-+		}
-+	} else {
- 		filp_tgt = ERR_PTR(-EBADF);
--	spin_unlock(&files->file_lock);
-+	}
-+	rcu_read_unlock();
- 	put_files_struct(files);
- 
- 	if (filp_epoll) {
--- 
-2.11.0
+
 
