@@ -2,64 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF931DCF36
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 16:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B9441DD117
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 17:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbgEUOJx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 10:09:53 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54504 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729710AbgEUOJw (ORCPT
+        id S1729912AbgEUPVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 11:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbgEUPVf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 10:09:52 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04LE9Ikk073192;
-        Thu, 21 May 2020 23:09:19 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
- Thu, 21 May 2020 23:09:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04LE9ImK073188
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 21 May 2020 23:09:18 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: INFO: task hung in locks_remove_posix
-To:     syzbot <syzbot+f5bc30abd8916982419c@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000c866c705a61a95d4@google.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <9a337dfa-175f-e13b-1977-0f63d589f37c@I-love.SAKURA.ne.jp>
-Date:   Thu, 21 May 2020 23:09:13 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Thu, 21 May 2020 11:21:35 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750F5C061A0E;
+        Thu, 21 May 2020 08:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=q0/V8y0Nv8zA7Pp8oKLblpvhLC3VMtOQmusIqCMTC7g=; b=DKXGp2RtTdyH8/q8s6RUq1anmn
+        vJwQd0AvOKxBpp0Q8kSMcneF8wUZA1uqNZd3kTiAb8dVQohGM8Ayhhje/Jn23xXFo49/a4BMstDH6
+        PW9xzhRJ9kbCsK1TPiuUvzuY1yhGhp2NtK577cARhvmyMcyibgB92G+rTwVMHgdPG+//N3KfWdNMg
+        TXtHeamDEE2wpRAwZAT+/6p+ng4gV4rKLtcP9PTVq9rH9JLilKLoTWzCojtnb0q82vtpaKRIFwnRZ
+        Y/K6d7GqMG7/4SPrsn+0r1FQCGLG3T8EHoM0/hZ850+OXsEgcmHwMZZHPazRwLI62UAbKFXFe7z4s
+        5SmXbAsQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jbn0X-0003oT-R1; Thu, 21 May 2020 15:21:18 +0000
+Date:   Thu, 21 May 2020 08:21:17 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     adobriyan@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
+        john.fastabend@gmail.com, kpsingh@chromium.org,
+        ebiederm@xmission.com, bernd.edlinger@hotmail.de,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] files: Use rcu lock to get the file structures for
+ better performance
+Message-ID: <20200521152117.GC28818@bombadil.infradead.org>
+References: <20200521123835.70069-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-In-Reply-To: <000000000000c866c705a61a95d4@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200521123835.70069-1-songmuchun@bytedance.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/05/21 5:53, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    806d8acc USB: dummy-hcd: use configurable endpoint naming ..
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c9ece2100000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d800e9bad158025f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f5bc30abd8916982419c
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
+On Thu, May 21, 2020 at 08:38:35PM +0800, Muchun Song wrote:
+> There is another safe way to get the file structure without
+> holding the files->file_lock. That is rcu lock, and this way
+> has better performance. So use the rcu lock instead of the
+> files->file_lock.
 
-This seems to be a mislabeling due to '?' in all lines in a trace.
+What makes you think this is safe?  Are you actually seeing contention
+on this spinlock?
 
-#syz dup: INFO: task hung in wdm_flush
