@@ -2,109 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D251DD5B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 20:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A295E1DD5D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 20:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbgEUSKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 14:10:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
+        id S1729448AbgEUSPl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 14:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728455AbgEUSKt (ORCPT
+        with ESMTP id S1728067AbgEUSPk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 14:10:49 -0400
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4398C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:10:48 -0700 (PDT)
-Received: by mail-il1-x12a.google.com with SMTP id w18so7973316ilm.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:10:48 -0700 (PDT)
+        Thu, 21 May 2020 14:15:40 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 839D5C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:15:40 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id a4so4978413lfh.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eziYTdN7Cbbju+lQIY5AHmjIyCLBG/Lihey9HYQAoUA=;
-        b=e3l2g9R6G2/OA+p6EjTsU1olNiMUCPLdkodrIQRUD7+k3nvqD3G9oIDn+E7/tyDBTq
-         9XKENtgM3B80WpcMvWWy6x9cceOIFHwrOmRyUrddpnXY7/fyBLy77vrMQvzOcL9V1qDj
-         Mss3nkCHg15b6MHZYo4nEQFL5L83nEt0611/uQuz6N8mPj4Jhy94XansuJn7nChlpda5
-         cN9rPZuU5T8tjzYtSFdHwJbiqSVGDH0CJYRGdyC4R+25nLzph/7JmJhh4pkcGOksGefY
-         SQ+2LNBRJS1+gQzJi7c/MareCwQyq7xDEEJ6PuNzw2TDraYlDiwgDELrtz3ePb5YoqyN
-         YE6w==
+        bh=54W3OV++I2yQ/I7iW3hxLFdkiWppKNPo6faoyw5Mf9Y=;
+        b=UQPD/PT2EW5TVwSaVIjRfipituyHmtA1mBHH4953yfr3LzZinoUha6UIRpkmQUDz4Z
+         sDAviIP5vN1t2wjk01lP4o7PjjKNXmrpkVYHrJlvxFKw9GfnB5uha8WcnjiW0KyJM7Ti
+         9brnyP/zUBG+C2QVoFPdMGDA0IzkPTJ/97s4A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eziYTdN7Cbbju+lQIY5AHmjIyCLBG/Lihey9HYQAoUA=;
-        b=IGpT4/oxgo453qwyExkdYuuFjzGJeg/q6FvfqGkJt9IyKjRESbJN/MglbBAydDxJww
-         CPJ8PfLxZEolPO4Ep/a6AQQSdHccWSE6rLbeni2FYlioEokEvuzGMAMFHtYq77qTrIBE
-         XGQ4sTvkjNl+cHxzDZ5rRqKi2Ao8/cWt7Of7tLm2cKNGVvbTtja7hQzSGcX26B6TOhoK
-         mf2aWwYXLEBFtgRvp2qq/0K3+BpysjeoToqQ6RgoWmkyWI4EUsUUz7/YB1JatDBo+M8T
-         vKdyio1KlXl46pyqg6JlTYx5+gzy3VkY+vFc1SX5SEbyGZaDPyxbGfPqzI+B8sHzGzCI
-         ya+g==
-X-Gm-Message-State: AOAM531usXVgRwvylZsxr5R6b/7JReqxlq+138Kg8jYe1fLUP+wrC1CB
-        RX2LQaQxCCjxD9rA2v22Y5bi6XnzpQuW63ba/+I=
-X-Google-Smtp-Source: ABdhPJxOwr/KDQuQaXPuVwzATQ7XDWwIoc11avhwoqgJxurbzX8hZCEfL2ivXe2/DJCraPuu+hx5RSFO1IPlia2TLCg=
-X-Received: by 2002:a92:db12:: with SMTP id b18mr9753966iln.250.1590084647850;
- Thu, 21 May 2020 11:10:47 -0700 (PDT)
+        bh=54W3OV++I2yQ/I7iW3hxLFdkiWppKNPo6faoyw5Mf9Y=;
+        b=uB7lRxGIGOl4QBfai98DXyql9D/kSEIjxbREklaeUOfeEdZIXcDGKdpzt+IItwJmF+
+         AIPs7U1vwhp2Sobg8NEAR4nkP6kZ8Qv/4ABiCoi6W9RWoJun9B8ltKqE01I4ZOyUEjAB
+         jbRy2NjIaAMPKRdzbxOu6kIZgI70ikffFxPSFMKY6iUP8067A8hPZp4vULcEdh9B/5Gl
+         RrCZvcpJU8ShJzXuvs6y5kFJ89HMYXithszwnWaD1cNJ+VonDXYKHdI5fj4V66XgDfy6
+         aiKTW+QNk0yoQSqTveEuuksoiNsLyuBAs4/byuMXR0gcAXCoTn5geNcYpY2dkmKWbqr6
+         IcSA==
+X-Gm-Message-State: AOAM530F6UOSQyZ5EqWSld2NL4xOSKrbBTW3k9ccjb23vcoazqNsPu9Q
+        r4s6QOFnI39hDg8txdH8+9nAa9cKt/k=
+X-Google-Smtp-Source: ABdhPJyAGrBnFxGyjfmQhlx+8TTL5Fe+zjnYYku+C4Ugi8huoED88pUQxCu/KyFSayHFcMmbQVXQlA==
+X-Received: by 2002:a05:6512:3049:: with SMTP id b9mr5479782lfb.44.1590084938397;
+        Thu, 21 May 2020 11:15:38 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id f2sm993474ljf.113.2020.05.21.11.15.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 May 2020 11:15:37 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id m18so9456144ljo.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 11:15:37 -0700 (PDT)
+X-Received: by 2002:a2e:7e0a:: with SMTP id z10mr3469825ljc.314.1590084936777;
+ Thu, 21 May 2020 11:15:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200521162443.GA26052@quack2.suse.cz>
-In-Reply-To: <20200521162443.GA26052@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 21 May 2020 21:10:36 +0300
-Message-ID: <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
-Subject: Re: Ignore mask handling in fanotify_group_event_mask()
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200521140502.2409-1-linkinjeon@kernel.org> <eb8858fb-c3bc-3f8d-96c1-3b4082c14373@sandeen.net>
+In-Reply-To: <eb8858fb-c3bc-3f8d-96c1-3b4082c14373@sandeen.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 21 May 2020 11:15:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiVi7mSrsMP=fLXQrXK_UimybW=ziLOwSzFTtoXUacWVQ@mail.gmail.com>
+Message-ID: <CAHk-=wiVi7mSrsMP=fLXQrXK_UimybW=ziLOwSzFTtoXUacWVQ@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: add the dummy mount options to be backward
+ compatible with staging/exfat
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
+On Thu, May 21, 2020 at 8:44 AM Eric Sandeen <sandeen@sandeen.net> wrote:
 >
-> Hello Amir!
->
-> I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
-> merging marks masks with FAN_ONDIR" and realized one oddity in
-> fanotify_group_event_mask(). The thing is: Even if the mark mask is such
-> that current event shouldn't trigger on the mark, we still have to take
-> mark's ignore mask into account.
->
-> The most realistic example that would demonstrate the issue that comes to my
-> mind is:
->
-> mount mark watching for FAN_OPEN | FAN_ONDIR.
-> inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
->
-> I'd expect the group will not get any event for opening the dir but the
-> code in fanotify_group_event_mask() would not prevent event generation. Now
-> as I've tested the event currently actually does not get generated because
-> there is a rough test in send_to_group() that actually finds out that there
-> shouldn't be anything to report and so fanotify handler is actually never
-> called in such case. But I don't think it's good to have an inconsistent
-> test in fanotify_group_event_mask(). What do you think?
->
+> Wow, it seems wild that we'd need to maintain compatibility with options
+> which only ever existed in a different codebase in a staging driver
+> (what's the point of staging if every interface that makes it that far has
+> to be maintained in perpetuity?)
 
-I agree this is not perfect.
-I think that moving the marks_ignored_mask line
-To the top of the foreach loop should fix the broken logic.
-It will not make the code any less complicated to follow though.
-Perhaps with a comment along the lines of:
+The rules about regressions have never been about any kind of
+documented behavior, or where the code lives.
 
-             /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
-             marks_ignored_mask |= mark->ignored_mask;
+The rules about regressions are always about "breaks user workflow".
 
-Now is there a real bug here?
-Probably not because send_to_group() always applied an ignore mask
-that is greater or equal to that of fanotify_group_event_mask().
+Users are literally the _only_ thing that matters.
 
-should fanotify_group_event_mask() re-apply the same generic logic
-already applied in send_to_group()? Maybe there is no point.
-After all, fanotify_group_event_mask() also does not handle
-FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY, so the
-assumption that send_to_group() is doing some of the logic is
-already there.
+No amount of "you shouldn't have used this" or "that behavior was
+undefined, it's your own fault your app broke" or "that used to work
+simply because of a kernel bug" is at all relevant.
 
-Not sure if I helped answering your question.
+Now, reality is never entirely black-and-white. So we've had things
+like "serious security issue" etc that just forces us to make changes
+that may break user space. But even then the rule is that we don't
+really have other options that would allow things to continue.
 
-Thanks,
-Amir.
+And obviously, if users take years to even notice that something
+broke, or if we have sane ways to work around the breakage that
+doesn't make for too much trouble for users (ie "ok, there are a
+handful of users, and they can use a kernel command line to work
+around it" kind of things) we've also been a bit less strict.
+
+But no, "that was documented to be broken" (whether it's because the
+code was in staging or because the man-page said something else) is
+irrelevant. If staging code is so useful that people end up using it,
+that means that it's basically regular kernel code with a flag saying
+"please clean this up".
+
+The other side of the coin is that people who talk about "API
+stability" are entirely wrong. API's don't matter either. You can make
+any changes to an API you like - as long as nobody notices.
+
+Again, the regression rule is not about documentation, not about
+API's, and not about the phase of the moon.
+
+It's entirely about "we caused problems for user space that used to work".
+
+                   Linus
+
+PS. Obviously "API stability" is important in the sense that if you
+_don't_ change any user-visible API's, that's a much safer change that
+needs much less care than a change that _does_ change a user-visible
+API.
+
+So "API stability" isn't a meaningless concept, but it's not the"First
+rule of kernel programming" that "no regressions" is. It's just that
+there tends to be a correlation between "I made subtle API changes"
+and "uhhuh, I broke user space".
