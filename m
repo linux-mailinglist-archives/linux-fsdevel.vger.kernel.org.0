@@ -2,89 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC661DD6E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 21:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2D91DD9B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 23:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbgEUTNf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 15:13:35 -0400
-Received: from mga11.intel.com ([192.55.52.93]:19786 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729600AbgEUTNW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 15:13:22 -0400
-IronPort-SDR: FxxonSMC6tJiuTiUx/BZtmlRbPJhsRRlpDNvkn03bd2cFa86H9ci/9/fJ++lLzAfqwtqLHT1Dh
- +lbkoj7f2CFg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2020 12:13:21 -0700
-IronPort-SDR: gzFy9kWxqZIdMsEwpbg2jKAolnP+BsujtVRr4YcSdcbm6WV9Uya0ECtY+AM32+WT2VbiQrzUDb
- oOZd3WNB9OHw==
-X-IronPort-AV: E=Sophos;i="5.73,418,1583222400"; 
-   d="scan'208";a="283158899"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2020 12:13:20 -0700
-From:   ira.weiny@intel.com
-To:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V4 8/8] Documentation/dax: Update DAX enablement for ext4
-Date:   Thu, 21 May 2020 12:13:13 -0700
-Message-Id: <20200521191313.261929-9-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200521191313.261929-1-ira.weiny@intel.com>
-References: <20200521191313.261929-1-ira.weiny@intel.com>
+        id S1730258AbgEUVzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 17:55:32 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56002 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730122AbgEUVzc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 May 2020 17:55:32 -0400
+Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 9F4AD1A7F66;
+        Fri, 22 May 2020 07:55:27 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jbt9v-0000Si-Bl; Fri, 22 May 2020 07:55:23 +1000
+Date:   Fri, 22 May 2020 07:55:23 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 07/36] fs: Add a filesystem flag for large pages
+Message-ID: <20200521215523.GR2005@dread.disaster.area>
+References: <20200515131656.12890-1-willy@infradead.org>
+ <20200515131656.12890-8-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200515131656.12890-8-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
+        a=kj9zAlcOel0A:10 a=sTwFKg_x9MkA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=khlJBHKmE670Q-po3lMA:9 a=70w1-rSo-Nt5nqzG:21 a=UBtUr0dm7oXX99_u:21
+        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Fri, May 15, 2020 at 06:16:27AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> The page cache needs to know whether the filesystem supports pages >
+> PAGE_SIZE.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/fs.h      | 1 +
+>  include/linux/pagemap.h | 5 +++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 55c743925c40..777783c8760b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2241,6 +2241,7 @@ struct file_system_type {
+>  #define FS_HAS_SUBTYPE		4
+>  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+>  #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+> +#define FS_LARGE_PAGES		8192	/* Remove once all fs converted */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	int (*init_fs_context)(struct fs_context *);
+>  	const struct fs_parameter_spec *parameters;
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 36bfc9d855bb..c6db74b5e62f 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -116,6 +116,11 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>  	m->gfp_mask = mask;
+>  }
+>  
+> +static inline bool mapping_large_pages(struct address_space *mapping)
+> +{
+> +	return mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES;
+> +}
 
-Update the document to reflect ext4 and xfs now behave the same.
+If you've got to dereference 4 layers deep to check a behaviour
+flag, the object needs it's own flag.  Can you just propagate this
+to the address space when the inode is instantiated and the address
+space initialised?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Cheers,
 
----
-Changes from RFC:
-	Update with ext2 text...
----
- Documentation/filesystems/dax.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
-index 735fb4b54117..265c4f808dbf 100644
---- a/Documentation/filesystems/dax.txt
-+++ b/Documentation/filesystems/dax.txt
-@@ -25,7 +25,7 @@ size when creating the filesystem.
- Currently 3 filesystems support DAX: ext2, ext4 and xfs.  Enabling DAX on them
- is different.
- 
--Enabling DAX on ext4 and ext2
-+Enabling DAX on ext2
- -----------------------------
- 
- When mounting the filesystem, use the "-o dax" option on the command line or
-@@ -33,8 +33,8 @@ add 'dax' to the options in /etc/fstab.  This works to enable DAX on all files
- within the filesystem.  It is equivalent to the '-o dax=always' behavior below.
- 
- 
--Enabling DAX on xfs
---------------------
-+Enabling DAX on xfs and ext4
-+----------------------------
- 
- Summary
- -------
+Dave.
 -- 
-2.25.1
-
+Dave Chinner
+david@fromorbit.com
