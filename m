@@ -2,97 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B651DDA82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 00:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90EA31DDA8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 00:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730723AbgEUWtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 18:49:11 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:59461 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730690AbgEUWtL (ORCPT
+        id S1730718AbgEUWuk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 18:50:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730666AbgEUWuj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 18:49:11 -0400
-Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 480C282078A;
-        Fri, 22 May 2020 08:49:08 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jbtzu-0000hq-Ta; Fri, 22 May 2020 08:49:06 +1000
-Date:   Fri, 22 May 2020 08:49:06 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/36] Large pages in the page cache
-Message-ID: <20200521224906.GU2005@dread.disaster.area>
-References: <20200515131656.12890-1-willy@infradead.org>
+        Thu, 21 May 2020 18:50:39 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07CDC05BD43
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 15:50:39 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id 23so6463195oiq.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 May 2020 15:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tkpx7ftcTUxzBBIrIGDJ77z6AvaFvZxbexQdFNLy018=;
+        b=y/LvVBBpTk9uRJjMiuEEiVdKPdabb8L19o5Zb7T4ugL7BViYxtww76HDY2t7cOJ52k
+         BjHfqw51q6Tgc8tbASdU5vBOZl6dIoQgBik4GvxOsPmsTv6EFMsmuUJdA8Vz3QM3YShS
+         7SRfKzZwCP4GsaBFIgHXUKR86V28mEr6pC9bifacGWVgCi4kSuYGST9QtQraQBqUVwzN
+         XFEj/ezYSdTmhSY+QAjb5Qc0TD5y8zVjsyx7zMSbm7RWsyQWEulaew6qWG2JaFuQRtt/
+         EyywGeK78QOBsrJpLRYPwHrM1PUsaMWXhyEAEa7tlwu9dqY5AjktXov8UyKrIcd6CZbP
+         syJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tkpx7ftcTUxzBBIrIGDJ77z6AvaFvZxbexQdFNLy018=;
+        b=J3tLSfJwUQ5vlGtgdNXrKRM9Z/qKGbB4N9Z5gJP22vpRARHdvbKAyvY7PhnDgNp2Lm
+         r2CyV7Tk/BHGTmjVIjDzTRY9e4BADb42B2R8j+5x3phqPMAkkY7B4OLi3Sa4Lbu48MKe
+         9N37cW7YHPX53dqjFcRpJAUDEZfuWspNOCeRZgsBvj5NNfdjhkEDW/OSD4dqJ8yALEel
+         GZ35OTOdKGmrdx+gB9X62wxMNkwcebMSbBpxL6nL9r2k401Qix86+aBKtD9G6870Zjtp
+         hIAaCtxmZQ5yvsrouWY+j9ATjr14q4ZkLHKEt5mbQh2NWBhyLrDlMnn6CfeZq5Cs+5eE
+         M3ag==
+X-Gm-Message-State: AOAM532AhGZ3ygz2fVLK1dJ80qMYHnBS7ZdEIDnGcoWztvfwGJv73qCo
+        TIhNFoULS/VgWVXHtAnow5bykg==
+X-Google-Smtp-Source: ABdhPJx4fpvv6Zl+NpcN3oR+e4Smxnwp2+3qasu0LOmjkO/s7nhQAh7KlW2rQPDYj9f0KwBp+Gk/NQ==
+X-Received: by 2002:aca:1e02:: with SMTP id m2mr638451oic.107.1590101438936;
+        Thu, 21 May 2020 15:50:38 -0700 (PDT)
+Received: from [192.168.86.21] ([136.62.4.88])
+        by smtp.gmail.com with ESMTPSA id 61sm1968017otp.13.2020.05.21.15.50.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 May 2020 15:50:38 -0700 (PDT)
+Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
+ <adaced72-d757-e3e4-cfeb-5512533d0aa5@landley.net>
+ <874ksaioc6.fsf@x220.int.ebiederm.org>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <fc2cf2a7-e1a7-3170-32c9-43e593636799@landley.net>
+Date:   Thu, 21 May 2020 17:50:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200515131656.12890-1-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
-        a=kj9zAlcOel0A:10 a=sTwFKg_x9MkA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
-        a=2DAmyFJ7tbF1Kr5hZtcA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <874ksaioc6.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 06:16:20AM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On 5/20/20 11:05 AM, Eric W. Biederman wrote:
+> Rob Landley <rob@landley.net> writes:
 > 
-> This patch set does not pass xfstests.  Test at your own risk.  It is
-> based on the readahead rewrite which is in Andrew's tree.  I've fixed a
-> lot of issues in the last two weeks, but generic/013 will still crash it.
+>> On 5/18/20 7:33 PM, Eric W. Biederman wrote:
+>>>
+>>> Most of the support for passing the file descriptor of an executable
+>>> to an interpreter already lives in the generic code and in binfmt_elf.
+>>> Rework the fields in binfmt_elf that deal with executable file
+>>> descriptor passing to make executable file descriptor passing a first
+>>> class concept.
+>>
+>> I was reading this to try to figure out how to do execve(NULL, argv[], envp) to
+>> re-exec self after a vfork() in a chroot with no /proc, and hit the most trivial
+>> quibble ever:
 > 
-> The primary idea here is that a large part of the overhead in dealing
-> with individual pages is that there's just so darned many of them.
-> We would be better off dealing with fewer, larger pages, even if they
-> don't get to be the size necessary for the CPU to use a larger TLB entry.
+> We have /proc/self/exe today.
 
-Ok, so the main issue I have with the filesystem/iomap side of
-things is that it appears to be adding "transparent huge page"
-awareness to the filesysetm code, not "large page support".
+Not when you first enter a container that's just created a new namespace, or
+initramfs first launches PID 1 and runs a shell script to set up the environment
+and your (subshell) and background& support only has vfork and not fork, or just
+plain "somebody did a chroot"...
 
-For people that aren't aware of the difference between the
-transparent huge and and a normal compound page (e.g. I have no idea
-what the difference is), this is likely to cause problems,
-especially as you haven't explained at all in this description why
-transparent huge pages are being used rather than bog standard
-compound pages.
+(Yes a nommu system with range registers can want _security_ without
+_address_translation_. Strange but true! I haven't actually sat down to try to
+implement nommu containers yet, but I've done worse things on many occasions.
+Remember: the S in IoT stands for Security.)
 
-And, really, why should iomap or the filesystems care if the large
-page is a THP or just a high order compound page? The interface
-for operating on these things at the page cache level should be the
-same. We already have page_size() and friends for operating on
-high order compound pages, yet the iomap stuff has this new
-thp_size() function instead of just using page_size(). THis is going
-to lead to confusion and future bugs when people who don't know the
-difference use the wrong page size function in their filesystem
-code.
+> If I understand you correctly you would
+> like to do the equivalent of 'execve("/proc/self/exe", argv[], envp[])'
+> without having proc mounted.
 
-So, really, the "large page" API presented to the filesystems via
-the page cache needs to be unified. Having to use compound_*() in
-some places, thp_* in others, then page_* and Page*, not to mention
-hpage_* just so that we can correctly support "large pages" is a
-total non-starter.
+Toybox would _like_ proc mounted, but can't assume it. I'm writing a new
+bash-compatible shell with nommu support, which means in order to do subshell
+and background tasks if (!CONFIG_FORK) I need to create a pipe pair, vfork(),
+have the child exec itself to unblock the parent, and then read the context data
+that just got discarded through the pipe from the parent. ("Wheee." And you can
+quote me on that.)
 
-Hence I'd suggest that this patch set needs to start by "hiding" all
-the differences between different types of pages behind a unified,
-consistent API, then it can introduce large page support into code
-outside the mm/ infrastructure via that unified API. I don't care
-what that API looks like so long as it is clear, consistenti, well
-documented and means filesystem developers don't need to know
-anything about how the page (large or not) is managed by the mm
-subsystem.
+I've implemented that already
+(https://github.com/landley/toybox/blob/0.8.3/toys/pending/sh.c#L674 and reentry
+is L2516, yeah it's a work in progress), but "exec self" requires /proc/self/exe
+and since I gave up on getting
+http://lkml.iu.edu/hypermail/linux/kernel/2005.1/09399.html in (I should
+apologize to Randy but I just haven't got the spoons to face
+https://landley.net/notes-2017.html#14-09-2017 again; three strikes and the
+patch stays out) I need /init to be a shell script to set up an initramfs that's
+made by pointing CONFIG_INITRAMFS_SOURCE at a directory that was made without
+running the build as root, because there's no /dev/console and you can't mknod
+as a non-root user.
 
-Cheers,
+Maybe instead of fixing CONFIG_DEVTMPFS_MOUNT to apply to initramfs I could
+instead add a CONFIG_INITRAMFS_EXTRA=blah.txt to usr/{Kconfig,Makefile} to
+append user-supplied extra lines to the end of the gen_initramfs.sh output and
+make a /dev/console that way (kinda like genext2fs and mksquashfs), but getting
+that in through the linux-kernel bureaucracy means consulting a 27 step
+checklist supplementing the basic 17 step submission procedure (with
+bibliographic references) explaining how to fill out the forms, perform the
+validation steps, go through the proper channels, and get the appropriate series
+of signatures and approvals, and I just haven't got the stomach for it anymore.
+I was participating here as a hobbyist. Linux-kernel has aged into a rigid
+bureaucracy. It's no fun anymore.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Which means any kernel patch I write I have to forward port regularly, sometimes
+for a very long time. Heck, I gave linux-kernel three strikes at miniconfig
+fifteen years ago now:
+
+  http://lkml.iu.edu/hypermail/linux/kernel/0511.2/0479.html
+  https://lwn.net/Articles/161086/
+  https://lkml.org/lkml/2006/7/6/404
+
+And was still maintaining it out of tree a decade later:
+
+  https://landley.net/aboriginal/FAQ.html#dev_miniconfig
+  https://github.com/landley/aboriginal/blob/master/more/miniconfig.sh
+
+These days I've moved on to a microconfig format that mostly fits on one line,
+ala the KCONF= stuff in toybox's built in:
+
+  https://github.com/landley/toybox/blob/master/scripts/mkroot.sh#L136
+
+For example, the User Mode Linux miniconfig from my ancient
+https://landley.net/writing/docs/UML.html would translate to microconfig as:
+
+  BINFMT_ELF,HOSTFS,LBD,BLK_DEV,BLK_DEV_LOOP,STDERR_CONSOLE,UNIX98_PTYS,EXT2_FS
+
+The current kernel also needs "64BIT" because my host toolchain doesn't have the
+-m32 headers installed, but then it builds fine ala:
+
+make ARCH=um allnoconfig KCONFIG_ALLCONFIG=<(echo
+BINFMT_ELF,HOSTFS,LBD,BLK_DEV,BLK_DEV_LOOP,STDERR_CONSOLE,UNIX98_PTYS,EXT2_FS,64BIT
+| sed -E 's/([^,]*)(,|$)/CONFIG_\1=y\n/g')
+
+Of course running the resulting ./linux says:
+
+  Checking PROT_EXEC mmap in /dev/shm...Operation not permitted
+  /dev/shm must be not mounted noexec
+
+But *shrug*, Devuan did that not me. I haven't really used UML since QEMU
+started working. Shouldn't the old "create file, map file, delete file" trick
+stop flushing the data to backing store no matter where the file lives? I mean,
+that trick dates back to the VAX, and we argued about it on the UML list a
+decade ago (circa
+https://sourceforge.net/p/user-mode-linux/mailman/message/14000710/) but...
+fixing random things that are wrong with Linux is not my problem anymore. I'm
+only in this thread because I'm cc'd.
+
+Spending five years repeatedly posting perl removal patches and ending up with
+intentional sabotage at the end from the guy who'd added perl in the first place
+when the Gratuitous Build Dependency Removal patches finally got traction
+(https://landley.net/notes-2013.html#28-03-2013) kinda put me off doing that again.
+
+> The file descriptor is stored in mm->exe_file.
+> Probably the most straight forward implementation is to allow
+> execveat(AT_EXE_FILE, ...).
+
+Cool, that works.
+
+> You can look at binfmt_misc for how to reopen an open file descriptor.
+
+Added to the todo heap.
+
+Thanks,
+
+Rob
