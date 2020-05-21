@@ -2,101 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7611DC6DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 08:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28BB51DCAF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 May 2020 12:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgEUGJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 02:09:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726984AbgEUGJZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 02:09:25 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04L61wef066528;
-        Thu, 21 May 2020 02:08:43 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 312cb2g1v2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 21 May 2020 02:08:43 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04L62LtU067906;
-        Thu, 21 May 2020 02:08:42 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 312cb2g1u3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 21 May 2020 02:08:42 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 04L65BHP001836;
-        Thu, 21 May 2020 06:08:39 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04fra.de.ibm.com with ESMTP id 313wne24am-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 21 May 2020 06:08:39 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04L68b9L60358742
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 May 2020 06:08:37 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D28652050;
-        Thu, 21 May 2020 06:08:37 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.40.126])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 855415204F;
-        Thu, 21 May 2020 06:08:33 +0000 (GMT)
-Subject: Re: [PATCH 0/5] ext4/overlayfs: fiemap related fixes
-To:     Murphy Zhou <jencce.kernel@gmail.com>
-Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger@dilger.ca, darrick.wong@oracle.com, hch@infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-References: <cover.1587555962.git.riteshh@linux.ibm.com>
- <20200519024311.7bkxi2fkxboon2ig@xzhoux.usersys.redhat.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Thu, 21 May 2020 11:38:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728965AbgEUKYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 06:24:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55580 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbgEUKYg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 May 2020 06:24:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D6B51ACC3;
+        Thu, 21 May 2020 10:24:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4AC971E126F; Thu, 21 May 2020 12:24:34 +0200 (CEST)
+Date:   Thu, 21 May 2020 12:24:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 4/8] fs/ext4: Update ext4_should_use_dax()
+Message-ID: <20200521102434.GA17431@quack2.suse.cz>
+References: <20200520055753.3733520-1-ira.weiny@intel.com>
+ <20200520055753.3733520-5-ira.weiny@intel.com>
+ <20200520133728.GD30597@quack2.suse.cz>
+ <20200520194050.GF3660833@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200519024311.7bkxi2fkxboon2ig@xzhoux.usersys.redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200521060833.855415204F@d06av21.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-21_02:2020-05-20,2020-05-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=0 spamscore=0 impostorscore=0
- malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 cotscore=-2147483648 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005210035
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200520194050.GF3660833@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Murphy,
-
-On 5/19/20 8:13 AM, Murphy Zhou wrote:
-> On Thu, Apr 23, 2020 at 04:17:52PM +0530, Ritesh Harjani wrote:
->> Hello All,
->>
->> Here are some changes, which as I understand, takes the right approach in fixing
->> the offset/length bounds check problem reported in threads [1]-[2].
->> These warnings in iomap_apply/ext4 path are reported after ext4_fiemap()
->> was moved to use iomap framework and when overlayfs is mounted on top of ext4.
->> Though the issues were identified after ext4 moved to iomap framework, but
->> these changes tries to fix the problem which are anyways present in current code
->> irrespective of ext4 using iomap framework for fiemap or not.
+On Wed 20-05-20 12:40:50, Ira Weiny wrote:
+> On Wed, May 20, 2020 at 03:37:28PM +0200, Jan Kara wrote:
+> > On Tue 19-05-20 22:57:49, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > S_DAX should only be enabled when the underlying block device supports
+> > > dax.
+> > > 
+> > > Change ext4_should_use_dax() to check for device support prior to the
+> > > over riding mount option.
+> > > 
+> > > While we are at it change the function to ext4_should_enable_dax() as
+> > > this better reflects the ask as well as matches xfs.
+> > > 
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ...
+> > 
+> > > @@ -4412,7 +4410,13 @@ static bool ext4_should_use_dax(struct inode *inode)
+> > >  		return false;
+> > >  	if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY))
+> > >  		return false;
+> > > -	return true;
+> > > +	if (!bdev_dax_supported(inode->i_sb->s_bdev,
+> > > +				inode->i_sb->s_blocksize))
+> > > +		return false;
+> > > +	if (test_opt(inode->i_sb, DAX_ALWAYS))
+> > > +		return true;
+> > > +
+> > > +	return false;
+> > >  }
+> > 
+> > Now that I think about it - shouldn't we rather cache the result of
+> > bdev_dax_supported() in sb on mount and then just check the flag here?
+> > Because bdev_dax_supported() isn't exactly cheap (it does a lot of checks
+> > and mappings, tries to read from the pmem, ...).
 > 
-> Ping?
+> Sounds reasonable.
+> 
+> Not sure which flags are appropriate.  So add it here?
 
-It's superseded by below mentioned patch series.
-Please follow below thread.
-https://lore.kernel.org/linux-ext4/20200520032837.GA2744481@mit.edu/T/#t
+Yes, sounds good. Thanks!
 
--ritesh
+								Honza
+
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 1a3daf2d18ef..0b4db9ce7756 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1979,6 +1979,7 @@ static inline bool ext4_has_incompat_features(struct super_block *sb)
+>   */
+>  #define EXT4_FLAGS_RESIZING    0
+>  #define EXT4_FLAGS_SHUTDOWN    1
+> +#define EXT4_FLAGS_BDEV_IS_DAX 2
+>  
+>  static inline int ext4_forced_shutdown(struct ext4_sb_info *sbi)
+>  {
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
