@@ -2,50 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81ED91DEC63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 17:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8771DEC80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 17:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730137AbgEVPr0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 11:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730058AbgEVPr0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 11:47:26 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09540C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 08:47:26 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jc9tH-00DZe0-SX; Fri, 22 May 2020 15:47:20 +0000
-Date:   Fri, 22 May 2020 16:47:19 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Krzysztof Wilczynski <kw@linux.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
+        id S1730609AbgEVPye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 11:54:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:38594 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730137AbgEVPye (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 May 2020 11:54:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54FBC55D;
+        Fri, 22 May 2020 08:54:33 -0700 (PDT)
+Received: from gaia (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 815553F305;
+        Fri, 22 May 2020 08:54:29 -0700 (PDT)
+Date:   Fri, 22 May 2020 16:54:27 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Roman Zippel <zippel@linux-m68k.org>,
+        Jessica Yu <jeyu@kernel.org>, Michal Simek <monstr@monstr.eu>,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Remove duplicated flag from VALID_OPEN_FLAGS
-Message-ID: <20200522154719.GS23230@ZenIV.linux.org.uk>
-References: <20200522133723.1091937-1-kw@linux.com>
+Subject: Re: [PATCH 09/29] arm64: use asm-generic/cacheflush.h
+Message-ID: <20200522155426.GI26492@gaia>
+References: <20200515143646.3857579-1-hch@lst.de>
+ <20200515143646.3857579-10-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200522133723.1091937-1-kw@linux.com>
+In-Reply-To: <20200515143646.3857579-10-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 01:37:23PM +0000, Krzysztof Wilczynski wrote:
-> From: Krzysztof Wilczyński <kw@linux.com>
+On Fri, May 15, 2020 at 04:36:26PM +0200, Christoph Hellwig wrote:
+> ARM64 needs almost no cache flushing routines of its own.  Rely on
+> asm-generic/cacheflush.h for the defaults.
 > 
-> Also, remove extra tab after the FASYNC flag, and keep line under 80
-> characters.  This also resolves the following Coccinelle warning:
-> 
->   include/linux/fcntl.h:11:13-21: duplicated argument to & or |
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Now ask yourself what might be the reason for that "duplicated argument".  
-Try to figure out what the values of those constants might depend upon.
-For extra points, try to guess what has caused the divergences.
-
-Please, post the result of your investigation in followup to this.
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
