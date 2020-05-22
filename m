@@ -2,86 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE521DF03E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 21:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D3A1DF078
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 22:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730972AbgEVT4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 15:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
+        id S1730988AbgEVUXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 16:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730893AbgEVT4d (ORCPT
+        with ESMTP id S1730972AbgEVUXS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 15:56:33 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5AC1C061A0E;
-        Fri, 22 May 2020 12:56:32 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jcDmM-00Dfk3-I0; Fri, 22 May 2020 19:56:26 +0000
-Date:   Fri, 22 May 2020 20:56:26 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ovl: make private mounts longterm
-Message-ID: <20200522195626.GV23230@ZenIV.linux.org.uk>
-References: <20200522085723.29007-1-mszeredi@redhat.com>
- <20200522160815.GT23230@ZenIV.linux.org.uk>
- <CAOssrKcpQwYh39JpcNmV3JiuH2aPDJxgT5MADQ9cZMboPa9QaQ@mail.gmail.com>
- <CAOQ4uxi80CFLgeTYbnHvD7GbY_01z0uywP1jF8gZe76_EZYiug@mail.gmail.com>
- <CAOssrKfXgpRykVN94EiEy8xT4j+HCedN96i31j9iHomtavFaLA@mail.gmail.com>
+        Fri, 22 May 2020 16:23:18 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BDD2C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 13:23:18 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id b190so5675021pfg.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 13:23:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ab5UacrWfMxKEXoTvw+r9z4XQbT+Q8YnFiaJgTUI+4I=;
+        b=eqDNPpx4Yx8kNVwfnScgWQcHCBoZ7c5VUXgFz6LhgOr5p2F74g+oGbfecIsGYaSdQs
+         cN0iE1NTgsEPLNpzJivRdEWhg9BW19nqRF8lhW9X5Fq7xSEuRwCK62gHH2vV1cnEQw8B
+         W81tcC2QqdCxFrXjlmBBiYa6tgTT0IPQmvfa70K5s6O0NQLRGU5zVc9XZuoU5sU7I1QY
+         IUkS4AjhttnQaz0cBpR1uhjgCorl4QNOUjv5pKZdqcReX/1aWYc7/JAaMp8Skg6SVml4
+         hTZecBKBZqHFzZGr1DxRlwnPkzB9Ptgt/1WHt4IqANo3U5t7g1faSXe8aQH9d8vwp66g
+         qR5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ab5UacrWfMxKEXoTvw+r9z4XQbT+Q8YnFiaJgTUI+4I=;
+        b=K1yFNNEhen9WPGXfMxwo2KRNka3w1CGOno1UsRD60oNkqVRC4u/ImXX1Hqj7RSEKKR
+         qDWiOgCU884uDh6FHctyxhRaHrfVpeN1UwML0NCM50kBv+RgxNa8Wtew9xAt8OieA5cW
+         nMjuG4WJ2EbzbY5x8yRVyLtTVQCrYS9r/GyJPAK/wYAsgo1nq6WOSx8qV62QM0VQzb+K
+         38uvLVJk9PcI2p6Aq7PxyaDh4uwH6e2SxSVcOAvwoE1AqXEn/pCFOeICrmo+1gByeIC5
+         fNQDJMr1Tto4XhjhCMEpWXB0BAp86Ecy16hOSzqJ+l9tBeqgynTkMEuE+/Wlbtb5qkOh
+         feEQ==
+X-Gm-Message-State: AOAM5336FEHcjH/t17qcvPSrMOAiBom33j5dA8T57SWXJ9w4OMG9YYtJ
+        zBEiguu03yd/MP/td1QFddMD3Q==
+X-Google-Smtp-Source: ABdhPJxtEjcPbn/EzO8+oMsGHO+DVMqdzYGBQ9GPRAGdMGqIhRdRmBv87H0lkbc7rIesvLYkkBKQ6g==
+X-Received: by 2002:a63:2f41:: with SMTP id v62mr15278765pgv.178.1590178997595;
+        Fri, 22 May 2020 13:23:17 -0700 (PDT)
+Received: from x1.lan ([2605:e000:100e:8c61:e0db:da55:b0a4:601])
+        by smtp.gmail.com with ESMTPSA id e19sm7295561pfn.17.2020.05.22.13.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2020 13:23:17 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCHSET RFC 0/11] Add support for async buffered reads
+Date:   Fri, 22 May 2020 14:23:00 -0600
+Message-Id: <20200522202311.10959-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOssrKfXgpRykVN94EiEy8xT4j+HCedN96i31j9iHomtavFaLA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 08:53:49PM +0200, Miklos Szeredi wrote:
-> On Fri, May 22, 2020 at 7:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > > > > -     mntput(ofs->upper_mnt);
-> > > > > -     for (i = 1; i < ofs->numlayer; i++) {
-> > > > > -             iput(ofs->layers[i].trap);
-> > > > > -             mntput(ofs->layers[i].mnt);
-> > > > > +
-> > > > > +     if (!ofs->layers) {
-> > > > > +             /* Deal with partial setup */
-> > > > > +             kern_unmount(ofs->upper_mnt);
-> > > > > +     } else {
-> > > > > +             /* Hack!  Reuse ofs->layers as a mounts array */
-> > > > > +             struct vfsmount **mounts = (struct vfsmount **) ofs->layers;
-> > > > > +
-> > > > > +             for (i = 0; i < ofs->numlayer; i++) {
-> > > > > +                     iput(ofs->layers[i].trap);
-> > > > > +                     mounts[i] = ofs->layers[i].mnt;
-> > > > > +             }
-> > > > > +             kern_unmount_many(mounts, ofs->numlayer);
-> > > > > +             kfree(ofs->layers);
-> > > >
-> > > > That's _way_ too subtle.  AFAICS, you rely upon ->upper_mnt == ->layers[0].mnt,
-> > > > ->layers[0].trap == NULL, without even mentioning that.  And the hack you do
-> > > > mention...  Yecchhh...  How many layers are possible, again?
-> > >
-> > > 500, mounts array would fit inside a page and a page can be allocated
-> > > with __GFP_NOFAIL. But why bother?  It's not all that bad, is it?
-> >
-> > FWIW, it seems fine to me.
-> > We can transfer the reference from upperdir_trap to layers[0].trap
-> > when initializing layers[0] for the sake of clarity.
-> 
-> Right, we should just get rid of ofs->upper_mnt and ofs->upperdir_trap
-> and use ofs->layers[0] to store those.
+We technically support this already through io_uring, but it's
+implemented with a thread backend to support cases where we would
+block. This isn't ideal.
 
-For that you'd need to allocate ->layers before you get to ovl_get_upper(),
-though.  I'm not saying it's a bad idea - doing plain memory allocations
-before anything else tends to make failure exits cleaner; it's just that
-it'll take some massage.  Basically, do ovl_split_lowerdirs() early,
-then allocate everything you need, then do lookups, etc., filling that
-stuff.
+After a few prep patches, the core of this patchset is adding support
+for async callbacks on page unlock. With this primitive, we can simply
+retry the IO operation. With io_uring, this works a lot like poll based
+retry for files that support it. If a page is currently locked and
+needed, -EIOCBQUEUED is returned with a callback armed. The callers
+callback is responsible for restarting the operation.
 
-Regarding this series - the points regarding the name choice and the
-need to document the calling conventions change still remain.
+With this callback primitive, we can add support for
+generic_file_buffered_read(), which is what most file systems end up
+using for buffered reads. XFS/ext4/btrfs/bdev is wired up, but probably
+trivial to add more.
+
+The file flags support for this by setting FMODE_BUF_RASYNC, similar
+to what we do for FMODE_NOWAIT. Open to suggestions here if this is
+the preferred method or not.
+
+In terms of results, I wrote a small test app that randomly reads 4G
+of data in 4K chunks from a file hosted by ext4. The app uses a queue
+depth of 32.
+
+preadv for comparison:
+	real    1m13.821s
+	user    0m0.558s
+	sys     0m11.125s
+	CPU	~13%
+
+Mainline:
+	real    0m12.054s
+	user    0m0.111s
+	sys     0m5.659s
+	CPU	~32% + ~50% == ~82%
+
+This patchset:
+	real    0m9.283s
+	user    0m0.147s
+	sys     0m4.619s
+	CPU	~52%
+	
+The CPU numbers are just a rough estimate. For the mainline io_uring
+run, this includes the app itself and all the threads doing IO on its
+behalf (32% for the app, ~1.6% per worker and 32 of them). Context
+switch rate is much smaller with the patchset, since we only have the
+one task performing IO.
+
+The goal here is efficiency. Async thread offload adds latency, and
+it also adds noticable overhead on items such as adding pages to the
+page cache. By allowing proper async buffered read support, we don't
+have X threads hammering on the same inode page cache, we have just
+the single app actually doing IO.
+
+Series can also be found here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=async-buffered
+
+or pull from:
+
+git://git.kernel.dk/linux-block async-buffered
+
+ fs/block_dev.c            |   2 +-
+ fs/btrfs/file.c           |   2 +-
+ fs/ext4/file.c            |   2 +-
+ fs/io_uring.c             | 101 ++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_file.c         |   2 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/fs.h        |   5 ++
+ include/linux/pagemap.h   |  40 +++++++++++++++
+ mm/filemap.c              |  71 +++++++++++++++++++++------
+ 9 files changed, 207 insertions(+), 21 deletions(-)
+
+-- 
+Jens Axboe
+
+
