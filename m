@@ -2,78 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE381DE8B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 16:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0B31DE926
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 16:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbgEVOX3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 10:23:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729399AbgEVOX3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 10:23:29 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44504C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 07:23:29 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jc8a1-00DXPx-Di; Fri, 22 May 2020 14:23:21 +0000
-Date:   Fri, 22 May 2020 15:23:21 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [vfs:uaccess.net 16/19] net/atm/ioctl.c:180:29: sparse: sparse:
- Using plain integer as NULL pointer
-Message-ID: <20200522142321.GP23230@ZenIV.linux.org.uk>
-References: <202005222158.Heq0Iqum%lkp@intel.com>
+        id S1730025AbgEVOlD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 10:41:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41890 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729868AbgEVOlD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 May 2020 10:41:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C9FE2B1B6;
+        Fri, 22 May 2020 14:41:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 89DC71E126B; Fri, 22 May 2020 16:41:00 +0200 (CEST)
+Date:   Fri, 22 May 2020 16:41:00 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Martijn Coenen <maco@android.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, miklos@szeredi.hu, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        android-storage-core@google.com, kernel-team@android.com
+Subject: Re: Writeback bug causing writeback stalls
+Message-ID: <20200522144100.GE14199@quack2.suse.cz>
+References: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202005222158.Heq0Iqum%lkp@intel.com>
+In-Reply-To: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 09:58:00PM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git uaccess.net
-> head:   0edecc020b33f8e31d8baa80735b45e8e8434700
-> commit: a3929484af75ee524419edbbc4e9ce012c3d67c9 [16/19] atm: move copyin from atm_getnames() into the caller
-> config: arm64-randconfig-s002-20200521 (attached as .config)
-> compiler: aarch64-linux-gcc (GCC) 9.3.0
-> reproduce:
->         # apt-get install sparse
->         # sparse version: v0.6.1-193-gb8fad4bc-dirty
->         git checkout a3929484af75ee524419edbbc4e9ce012c3d67c9
->         # save the attached .config to linux build tree
->         make W=1 C=1 ARCH=arm64 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
-> >> net/atm/ioctl.c:180:29: sparse: sparse: Using plain integer as NULL pointer
+Hi!
 
-Huh?
+On Fri 22-05-20 11:57:42, Martijn Coenen wrote:
+<snip>
 
->  > 180				if (get_user(buf, &iobuf->buffer))
+> So, the sequence of events is something like this. Let's assume the inode is
+> already on b_dirty_time for valid reasons. Then:
+> 
+> CPU1                                          CPU2
+> fuse_flush()
+>   write_inode_now()
+>     writeback_single_inode()
+>       sets I_SYNC
+>         __writeback_single_inode()
+>           writes back data
+>           clears inode dirty flags
+>           unlocks inode
+>           calls mark_inode_dirty_sync()
+>             sets I_DIRTY_SYNC, but doesn't
+>             update wb list because I_SYNC is
+>             still set
+>                                               write() // somebody else writes
+>                                               mark_inode_dirty(I_DIRTY_PAGES)
+>                                               sets I_DIRTY_PAGES on i_state
+>                                               doesn't update wb list,
+>                                               because I_SYNC set
+>       locks inode again
+>       sees inode is still dirty,
+>       doesn't touch WB list
+>       clears I_SYNC
+> 
+> So now we have an inode on b_dirty_time with I_DIRTY_PAGES | I_DIRTY_SYNC set,
+> and subsequent calls to mark_inode_dirty() with either I_DIRTY_PAGES or
+> I_DIRTY_SYNC will do nothing to change that. The flusher won't touch
+> the inode either,
+> because it's not on a b_dirty or b_io list.
 
-_what_ use of plain integer as a NULL pointer?  <looks>
-Misannotated get_user() on arm64 - should be
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 32fc8061aa76..bc5c7b091152 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -304,7 +304,7 @@ do {									\
- 		__p = uaccess_mask_ptr(__p);				\
- 		__raw_get_user((x), __p, (err));			\
- 	} else {							\
--		(x) = 0; (err) = -EFAULT;				\
-+		(x) = (__force __typeof__(x))0; (err) = -EFAULT;	\
- 	}								\
- } while (0)
- 
-and that's a _lot_ of noise in sparse logs on arm64, obviously - one for
-each get_user() of a pointer...
+Thanks for the detailed analysis and explanation! I agree that what you
+describe is a bug in the writeback code.
+
+> The easiest way to fix this, I think, is to call requeue_inode() at the end of
+> writeback_single_inode(), much like it is called from writeback_sb_inodes().
+> However, requeue_inode() has the following ominous warning:
+> 
+> /*
+>  * Find proper writeback list for the inode depending on its current state and
+>  * possibly also change of its state while we were doing writeback.  Here we
+>  * handle things such as livelock prevention or fairness of writeback among
+>  * inodes. This function can be called only by flusher thread - noone else
+>  * processes all inodes in writeback lists and requeueing inodes behind flusher
+>  * thread's back can have unexpected consequences.
+>  */
+> 
+> Obviously this is very critical code both from a correctness and a performance
+> point of view, so I wanted to run this by the maintainers and folks who have
+> contributed to this code first.
+
+Sadly, the fix won't be so easy. The main problem with calling
+requeue_inode() from writeback_single_inode() is that if there's parallel
+sync(2) call, inode->i_io_list is used to track all inodes that need writing
+before sync(2) can complete. So requeueing inodes in parallel while sync(2)
+runs can result in breaking data integrity guarantees of it. But I agree
+we need to find some mechanism to safely move inode to appropriate dirty
+list reasonably quickly.
+
+Probably I'd add an inode state flag telling that inode is queued for
+writeback by flush worker and we won't touch dirty lists in that case,
+otherwise we are safe to update current writeback list as needed. I'll work
+on fixing this as when I was reading the code I've noticed there are other
+quirks in the code as well. Thanks for the report!
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
