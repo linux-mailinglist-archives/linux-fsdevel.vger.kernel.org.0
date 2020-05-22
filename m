@@ -2,91 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E89B1DDC8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 03:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79A51DDD8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 04:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgEVBVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 May 2020 21:21:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgEVBVd (ORCPT
+        id S1727123AbgEVC57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 May 2020 22:57:59 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:58249 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727050AbgEVC57 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 May 2020 21:21:33 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F0DC061A0E;
-        Thu, 21 May 2020 18:21:33 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jbwNO-00DFAq-2Y; Fri, 22 May 2020 01:21:30 +0000
-Date:   Fri, 22 May 2020 02:21:30 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring: call statx directly
-Message-ID: <20200522012130.GM23230@ZenIV.linux.org.uk>
-References: <1590106777-5826-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1590106777-5826-3-git-send-email-bijan.mottahedeh@oracle.com>
- <20200522005053.GK23230@ZenIV.linux.org.uk>
- <20200522005234.GL23230@ZenIV.linux.org.uk>
+        Thu, 21 May 2020 22:57:59 -0400
+Received: from dread.disaster.area (pa49-195-157-175.pa.nsw.optusnet.com.au [49.195.157.175])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 9E70FD59A09;
+        Fri, 22 May 2020 12:57:55 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jbxsd-0002Cn-Gu; Fri, 22 May 2020 12:57:51 +1000
+Date:   Fri, 22 May 2020 12:57:51 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/36] Large pages in the page cache
+Message-ID: <20200522025751.GX2005@dread.disaster.area>
+References: <20200515131656.12890-1-willy@infradead.org>
+ <20200521224906.GU2005@dread.disaster.area>
+ <20200522000411.GI28818@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200522005234.GL23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200522000411.GI28818@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=ONQRW0k9raierNYdzxQi9Q==:117 a=ONQRW0k9raierNYdzxQi9Q==:17
+        a=kj9zAlcOel0A:10 a=sTwFKg_x9MkA:10 a=7-415B0cAAAA:8
+        a=Eun5lWKXtKsMZPUNUOgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 01:52:34AM +0100, Al Viro wrote:
-> On Fri, May 22, 2020 at 01:50:53AM +0100, Al Viro wrote:
-> > On Thu, May 21, 2020 at 05:19:37PM -0700, Bijan Mottahedeh wrote:
-> > > Calling statx directly both simplifies the interface and avoids potential
-> > > incompatibilities between sync and async invokations.
-> > > 
-> > > Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-> > > ---
-> > >  fs/io_uring.c | 53 +++++++----------------------------------------------
-> > >  1 file changed, 7 insertions(+), 46 deletions(-)
-> > > 
-> > > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > > index 12284ea..0540961 100644
-> > > --- a/fs/io_uring.c
-> > > +++ b/fs/io_uring.c
-> > > @@ -427,7 +427,10 @@ struct io_open {
-> > >  	union {
-> > >  		unsigned		mask;
-> > >  	};
-> > > -	struct filename			*filename;
-> > > +	union {
-> > > +		struct filename		*filename;
-> > > +		const char __user	*fname;
-> > > +	};
+On Thu, May 21, 2020 at 05:04:11PM -0700, Matthew Wilcox wrote:
+> On Fri, May 22, 2020 at 08:49:06AM +1000, Dave Chinner wrote:
+> > Ok, so the main issue I have with the filesystem/iomap side of
+> > things is that it appears to be adding "transparent huge page"
+> > awareness to the filesysetm code, not "large page support".
 > > 
-> > NAK.  io_uring is already has ridiculous amount of multiplexing,
-> > but this kind of shit is right out.
-> > 
-> > And frankly, the more I look at it, the more I want to rip
-> > struct io_open out.  This kind of trashcan structures has
-> > caused tons of headache pretty much every time we had those.
-> > Don't do it.
+> > For people that aren't aware of the difference between the
+> > transparent huge and and a normal compound page (e.g. I have no idea
+> > what the difference is), this is likely to cause problems,
+> > especially as you haven't explained at all in this description why
+> > transparent huge pages are being used rather than bog standard
+> > compound pages.
 > 
-> s/io_open/io_kiocb/, sorry for typo.
+> The primary reason to use a different name from compound_*
+> is so that it can be compiled out for systems that don't enable
+> CONFIG_TRANSPARENT_HUGEPAGE.  So THPs are compound pages, as they always
+> have been, but for a filesystem, using thp_size() will compile to either
+> page_size() or PAGE_SIZE depending on CONFIG_TRANSPARENT_HUGEPAGE.
 
-To elaborate a bit: whenever we have that kind of objects, the question
-for reviewer/author looking at the code several months down the road/
-somebody trying to hunt down a bug is
-	what guarantees that we have an instance of such variant
-	structure always treated as the _same_ variant?
-And the more convoluted it is, the worse.
+Again, why is this dependent on THP? We can allocate compound pages
+without using THP, so why only allow the page cache to use larger
+pages when THP is configured?
 
-_IF_ you have a set of methods (for all variants) and that gets set
-once when you create your object and never changes after that, it
-can be more or less survivable.  You have nothing of that sort.
+i.e. I don't know why this is dependent on THP because you haven't
+explained why this only works for THP and not just plain old
+compound pages....
 
-What's more, when preconditions needed to work with different variants
-are not the same (e.g. different locking is needed, etc.), _their_
-consistency gets added to analysis.  The same goes for "which context
-will it run in/what guarantees that we can do uaccess/etc."
+> Now, maybe thp_size() is the wrong name, but then you need to suggest
+> a better name ;-)
 
-It's really painful to analyse right now.  And it'll get only worse
-as more kludges pile on top of each other...
+First you need to explain why THP is requirement for large pages in
+the page cache when most of the code changes I see only care if the
+page is a compound page or not....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
