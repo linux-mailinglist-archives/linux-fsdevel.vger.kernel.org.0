@@ -2,78 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C111DEE48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 19:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3671DEF8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 20:54:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbgEVRcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 13:32:23 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:38327 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730600AbgEVRcW (ORCPT
+        id S1730894AbgEVSyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 14:54:08 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48917 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730849AbgEVSyG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 13:32:22 -0400
-Received: by mail-ej1-f66.google.com with SMTP id h21so13908399ejq.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 10:32:21 -0700 (PDT)
+        Fri, 22 May 2020 14:54:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590173645;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E/NY7atph5yZUS2SuBQhFRnCbvYDVMYgXeB+elMZM6I=;
+        b=PZc/Ru1rAczb2iuw8XBVs2YRivxuGT6xRIJkYUE+UmbmO0AKqtg3XzVdQ6Lxrf6cpVMef1
+        a4IG/bYzcLk4yuMjkCjfHul0Vo20Pb3kLgT6IfS9J0wqEgaKUsvAPUfuxwEknM8W8c23Sf
+        5V7CTzRPlGX77kgTxsM/RPT5J0Y9XAI=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-33-NhmzOV2RNi-nWOmJ0a2xTA-1; Fri, 22 May 2020 14:54:01 -0400
+X-MC-Unique: NhmzOV2RNi-nWOmJ0a2xTA-1
+Received: by mail-qk1-f200.google.com with SMTP id d19so11976652qkj.21
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 11:54:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SyPJvkOwtsfRkEygo13pRg6+wPBwKMFYl5m53jmPnhA=;
-        b=FmhaJErwcEoDXVSO7gIPXX+KwanAr/iyNxffsWbdP7XSyMmQH+kzwgL7Cud3cj0k7G
-         pDFKM+D/OvBUT6ZPj6PJ0+Qt/Pap247YuMGiOGjTw6N9vXNMAIkv4bc3DWHVUs5h+gTl
-         7yDFjM9+DVocpoxWojbBawXEhwgXStsm0f2eK/bo4RSbtvgjTza6Fre1ubqU5rKlV7Ii
-         PekPd5mWofBO3AizsSlXtJtXObe0spovEtVUrVqpry8X0cqJrjZwKTCcV9szQzW7RHxn
-         IBwAogO4n3l44Icv9F25/x/JGiv9e6DvPwDhrJOFAgss6B1j3emmBuRkHZOpV3A6Uvto
-         0I8A==
-X-Gm-Message-State: AOAM530yPh/JLgQpYc+Qt/htAGXoc6wwKdaXqGvtPxdLnAHQ4PXflNzW
-        7OTbK2ue1jUKUqP7oHA0ZqUxfuWhgPc=
-X-Google-Smtp-Source: ABdhPJzRv5MY8vTa8m85pyMRg7v9P0AJHj0r+03kIRZKsCd6RGW+kdUaER1QSll/uo+dpvMbHciMzA==
-X-Received: by 2002:a17:906:4947:: with SMTP id f7mr9004105ejt.373.1590168740769;
-        Fri, 22 May 2020 10:32:20 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id ef13sm8821240ejb.24.2020.05.22.10.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 10:32:19 -0700 (PDT)
-Date:   Fri, 22 May 2020 19:32:18 +0200
-From:   Krzysztof Wilczynski <kw@linux.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Remove duplicated flag from VALID_OPEN_FLAGS
-Message-ID: <20200522173218.GB40716@rocinante>
-References: <20200522133723.1091937-1-kw@linux.com>
- <20200522154719.GS23230@ZenIV.linux.org.uk>
- <20200522170119.GA31139@bombadil.infradead.org>
- <20200522171856.GU23230@ZenIV.linux.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E/NY7atph5yZUS2SuBQhFRnCbvYDVMYgXeB+elMZM6I=;
+        b=oiMpVLpo55Amosn1S0zys8rEUiWSTBpviU+VaE4Ir5cIthQ4zfVTdhUI00DzB+WXkH
+         UekYrl5SOMZZxpZ/QQJvOBFnXLozIYTd8KFdAD2o6A/0n1jiO5yYafDSY9zB8bDe9tbr
+         /Ew0RGM0Lt1V4F0uydZN2JdrPrG51155ReuFW+2n1FdZck1XzklBTXVzfZafImMR3Gts
+         CIlGGigEhq8N7Kc2jVwltSleibWSI4hABi/P4SwKOZ+O/Jci7f+wTXAvDbCSGy39I2GK
+         UD/tvmG5fqjRWhqFp27s+I6JchWFsWsDRrl9S041ltJdYqhLM5KvosGdo67ljs1a2wBz
+         wBaQ==
+X-Gm-Message-State: AOAM532tJ/w4Hq/oLHzjHx801tsoi5ue/lXLUTqi33hYHpIpVYfF3e2s
+        KNI5mYntdTOB3wuCd5ErHKSq8ktpX4BNpn6ukAImn2zNrRHqVNc0/8uThSxGAsXJK09qC7L+v0M
+        ayltrUjolfAj8Z0LxnrP22hUkI12DcYOgzEWFv912+w==
+X-Received: by 2002:ac8:6a09:: with SMTP id t9mr17251952qtr.7.1590173641102;
+        Fri, 22 May 2020 11:54:01 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwbxr6F952pnH66Ybf4aYPRDiPNGnNWNtV2AqqamKyJkx4ekz3DUmjn2w4Ud12SVL+kOWfT5/QtW00UoW0ai/o=
+X-Received: by 2002:ac8:6a09:: with SMTP id t9mr17251936qtr.7.1590173640781;
+ Fri, 22 May 2020 11:54:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200522171856.GU23230@ZenIV.linux.org.uk>
+References: <20200522085723.29007-1-mszeredi@redhat.com> <20200522160815.GT23230@ZenIV.linux.org.uk>
+ <CAOssrKcpQwYh39JpcNmV3JiuH2aPDJxgT5MADQ9cZMboPa9QaQ@mail.gmail.com> <CAOQ4uxi80CFLgeTYbnHvD7GbY_01z0uywP1jF8gZe76_EZYiug@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi80CFLgeTYbnHvD7GbY_01z0uywP1jF8gZe76_EZYiug@mail.gmail.com>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Fri, 22 May 2020 20:53:49 +0200
+Message-ID: <CAOssrKfXgpRykVN94EiEy8xT4j+HCedN96i31j9iHomtavFaLA@mail.gmail.com>
+Subject: Re: [PATCH] ovl: make private mounts longterm
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Al and Matthew!
+On Fri, May 22, 2020 at 7:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > > > -     mntput(ofs->upper_mnt);
+> > > > -     for (i = 1; i < ofs->numlayer; i++) {
+> > > > -             iput(ofs->layers[i].trap);
+> > > > -             mntput(ofs->layers[i].mnt);
+> > > > +
+> > > > +     if (!ofs->layers) {
+> > > > +             /* Deal with partial setup */
+> > > > +             kern_unmount(ofs->upper_mnt);
+> > > > +     } else {
+> > > > +             /* Hack!  Reuse ofs->layers as a mounts array */
+> > > > +             struct vfsmount **mounts = (struct vfsmount **) ofs->layers;
+> > > > +
+> > > > +             for (i = 0; i < ofs->numlayer; i++) {
+> > > > +                     iput(ofs->layers[i].trap);
+> > > > +                     mounts[i] = ofs->layers[i].mnt;
+> > > > +             }
+> > > > +             kern_unmount_many(mounts, ofs->numlayer);
+> > > > +             kfree(ofs->layers);
+> > >
+> > > That's _way_ too subtle.  AFAICS, you rely upon ->upper_mnt == ->layers[0].mnt,
+> > > ->layers[0].trap == NULL, without even mentioning that.  And the hack you do
+> > > mention...  Yecchhh...  How many layers are possible, again?
+> >
+> > 500, mounts array would fit inside a page and a page can be allocated
+> > with __GFP_NOFAIL. But why bother?  It's not all that bad, is it?
+>
+> FWIW, it seems fine to me.
+> We can transfer the reference from upperdir_trap to layers[0].trap
+> when initializing layers[0] for the sake of clarity.
 
-On 20-05-22 18:18:56, Al Viro wrote:
+Right, we should just get rid of ofs->upper_mnt and ofs->upperdir_trap
+and use ofs->layers[0] to store those.
 
-[...]
-> > I think the patch is actually right, despite the shockingly bad changelog.
-> > He's removed the duplicate 'O_NDELAY' and reformatted the lines.
-> 
-> So he has; my apologies - the obvious false duplicate in there would be
-> O_NDELAY vs. O_NONBLOCK and I'd misread the patch.
-> 
-> Commit message should've been along the lines of "O_NDELAY occurs twice
-> in definition of VALID_OPEN_FLAGS; get rid of the duplicate", possibly
-> along with "Note: O_NONBLOCK in the same expression is *not* another
-> duplicate - on sparc O_NONBLOCK != O_NDELAY (done that way for ABI
-> compatibility with Solaris back when sparc port began)".
+Thanks,
+Miklos
 
-Apologies.  The v2 is coming and will have proper commit message along
-with subject that explains what the intended change is, etc.
-
-Krzysztof
