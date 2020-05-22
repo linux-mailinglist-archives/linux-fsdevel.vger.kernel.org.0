@@ -2,168 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D7E1DE27D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 10:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8791DE39A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 11:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgEVI5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 04:57:32 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57557 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728368AbgEVI5b (ORCPT
+        id S1728459AbgEVJ55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 05:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728212AbgEVJ5z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 04:57:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590137849;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bP0iqVtM6Px0zA+0+w2xKiJv+MfLMqu9uf18xW+5ad0=;
-        b=BlTLlpILTDZWRnEdq6FKGzbSKsVU6o+IjWwFRBKLPNUKa17EylT/q6WrRdjTRWWPpW5svY
-        EtacPJ/LnfVpy090i1yBW1NJMoRe/ghmrbo6A6nXWJbwTsESoc/1e+e+snIRDK0xU47QDY
-        ngb6TubfDM7Oo8Y2hCCUXXUWphcddDo=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-454-CB146HJvN3SvCkzigF1LWg-1; Fri, 22 May 2020 04:57:27 -0400
-X-MC-Unique: CB146HJvN3SvCkzigF1LWg-1
-Received: by mail-ej1-f72.google.com with SMTP id u9so4293829ejz.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 01:57:27 -0700 (PDT)
+        Fri, 22 May 2020 05:57:55 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24782C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 02:57:55 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id v16so11922958ljc.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 02:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=zTT4v84DbNJrNGuRg9j5/ODbFJsAM/aU00CkLjhVRhU=;
+        b=SwpRkcvJmno5jAejAy/rhvSBb67O1fb5ck7ZPITWACBKuY9dpmznRXbj6jV1lekY2q
+         N3y3TEcMQaTRCUQd0wMizTnCZ/W0jJmaumg9DQSv1B7GhIOA3frDFwUSdnwO/ib//uEV
+         gfXFaoyRbDESPUPkeH8vag9sW6FMD7WBTuNAVpJlfTik7ZlJdJo5uNm0yHjzQrCZrjl7
+         3JnPblH7u3dStOMDUYpN4H+DDqKdw5ghXFIKrkn3Jw+/cNNvKOGSv4ShhU5Y6T50nkwF
+         CaPntV9EMDk2coTroj+KBdScfrKZKVFDI1m9iKxOxfERt0u/vRmiy8BW5uaYlHF8pj+v
+         UV2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bP0iqVtM6Px0zA+0+w2xKiJv+MfLMqu9uf18xW+5ad0=;
-        b=lRnuTcDFBtTd8VQ5a3nQlT15Wyww9a7yZCa6RKUNDwz94xtyM2/xLgQ0uZWUwvpox0
-         88L7CWQZil3IbjCuuxVy+hmFwT8EyhUulYHEcuq+N6stfK0qLawHt4DwiVZUnK/AbSW1
-         V+cbhU6BD4gf52GTcsJzK0FSAZ57Np0ivgrJU8d+0vSjw9rfnRTMeEP8AVKCsbgalbfe
-         amH7jFCeT/Y0HhlpNxxCm3lLZ+x0deOTd6xGk4dHdyhTYNofZkBppIGyRu+9fWJn5vKU
-         H7Fd+bnBoJ5luRIoW728wzfTnEBv+JcmwtjgILFHCd8KgVA2lZ0Ie2Ukto6OZ2vA3yEf
-         FU4Q==
-X-Gm-Message-State: AOAM533cxBLDbbddF0u+LJfw6sdPCVNmeLwtl5gK0TpLv111r0xgpw4E
-        LvDfVP8B0iaUznO1Sj9+bwkPTVQqPAmY95G+BNGcayiOsMuDKHhRbY+FDEhorSS+LeL0djjH6o9
-        nR65AvIEwLyD1vmqIIf6v/3DHZw==
-X-Received: by 2002:a17:906:710:: with SMTP id y16mr1189337ejb.97.1590137846287;
-        Fri, 22 May 2020 01:57:26 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzvx4ECuzfcO7Yxgs+SJ8eQIQb55bAIoTi0z35gS0XxAWZefQlHs/YisgXSN00cpaSGxqiJkA==
-X-Received: by 2002:a17:906:710:: with SMTP id y16mr1189332ejb.97.1590137846052;
-        Fri, 22 May 2020 01:57:26 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id h20sm7210041eja.61.2020.05.22.01.57.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 01:57:25 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     linux-unionfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] ovl: make private mounts longterm
-Date:   Fri, 22 May 2020 10:57:23 +0200
-Message-Id: <20200522085723.29007-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.21.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=zTT4v84DbNJrNGuRg9j5/ODbFJsAM/aU00CkLjhVRhU=;
+        b=m3kmTSOrbnhR5hKhFFY5E2e0Yp071SDCXVGx5rsP8378UBuMbg/D7eH/Cqlmv4v4zw
+         eJBtv/UOq7N0JL/2CWJbFPpcoptTnmV28h3eDfbV4m4j0AZVzs+Jn6VBld9GIGsNklZn
+         DTX3LyhKk5t9wLg6ekOImduzRPqju3mafVo0yI6dGZxn3/snhEZva2JEroTtUANTFf4+
+         eLNhk6ID4x0M6d8QLCUMnNE9GUvL9tDPFhYPK9REQVhcBarA9bdNW6sTXyWHxCUCBSIR
+         BbtpTawg8SpGTuO9+1kMUCunJHZzo2f8TfNCGK7b8glYupSUEnR9rqQFUkRdQvZDcO3L
+         anlQ==
+X-Gm-Message-State: AOAM530ih2Mcektu3rFWXMYH9bcxCgNiMYdcd+JP8ItkRbt4KnMbUe4v
+        db3/WsCAVgImIG6ln7oQvRCm2AlASfMUglOQzNVscQ==
+X-Google-Smtp-Source: ABdhPJwvWpHdh12TXJb5Ol2McEEtJCHFS5m/5WUTO909JKTAY8DS+sYl6Sva05hNjkBeAQy4DdsXOSk/koy0cqXwe7I=
+X-Received: by 2002:a05:651c:2046:: with SMTP id t6mr6908884ljo.227.1590141473342;
+ Fri, 22 May 2020 02:57:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Martijn Coenen <maco@android.com>
+Date:   Fri, 22 May 2020 11:57:42 +0200
+Message-ID: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
+Subject: Writeback bug causing writeback stalls
+To:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, miklos@szeredi.hu, tj@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        android-storage-core@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Overlayfs is using clone_private_mount() to create internal mounts for
-underlying layers.  These are used for operations requiring a path, such as
-dentry_open().
+Hi,
 
-Since these private mounts are not in any namespace they are treated as
-short term, "detached" mounts and mntput() involves taking the global
-mount_lock, which can result in serious cacheline pingpong.
+We've been working on implementing a FUSE filesystem in Android, and have
+run into what appears to be a bug in the kernel writeback code. The problem
+that we observed is that an inode in the filesystem is on the b_dirty_time list,
+but its i_state field does have I_DIRTY_PAGES set, which I think means that
+the inode is on the wrong list. This condition doesn't appear to fix itself even
+as new pages are dirtied, because __mark_inode_dirty() has this check:
 
-Make these private mounts longterm instead, which trade the penalty on
-mntput() for a slightly longer shutdown time due to an added RCU grace
-period when putting these mounts.
+    if ((inode->i_state & flags) != flags) {
 
-Introduce a new helper kern_unmount_many() that can take care of multiple
-longterm mounts with a single RCU grace period.
+before considering moving the inode to another list. Since the inode already
+has I_DIRTY_PAGES set, we're not going to move it to the dirty list. I *think*
+the only way the inode gets out of this condition is whenever we handle the
+b_dirty_time list, which can take a while.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/namespace.c        | 16 ++++++++++++++++
- fs/overlayfs/super.c  | 19 ++++++++++++++-----
- include/linux/mount.h |  2 ++
- 3 files changed, 32 insertions(+), 5 deletions(-)
+The reason we even noticed this bug in the first place is that FUSE has a very
+low wb max_ratio by default (1), and so at some point processes get stuck in
+balance_dirty_pages_ratelimited(), waiting for pages to be written. They hold
+the inode's write lock, and when other processes try to acquire it, they get
+stuck. We have a watchdog that reboots the device after ~10 mins of a task
+being stuck in D state, and this triggered regularly in some tests.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a28e4db075ed..5d16d87b6b8b 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1879,6 +1879,9 @@ struct vfsmount *clone_private_mount(const struct path *path)
- 	if (IS_ERR(new_mnt))
- 		return ERR_CAST(new_mnt);
- 
-+	/* Longterm mount to be removed by kern_unmount*() */
-+	new_mnt->mnt_ns = MNT_NS_INTERNAL;
-+
- 	return &new_mnt->mnt;
- }
- EXPORT_SYMBOL_GPL(clone_private_mount);
-@@ -3804,6 +3807,19 @@ void kern_unmount(struct vfsmount *mnt)
- }
- EXPORT_SYMBOL(kern_unmount);
- 
-+void kern_unmount_many(struct vfsmount *mnt[], unsigned int num)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num; i++)
-+		if (mnt[i])
-+			real_mount(mnt[i])->mnt_ns = NULL;
-+	synchronize_rcu_expedited();
-+	for (i = 0; i < num; i++)
-+		mntput(mnt[i]);
-+}
-+EXPORT_SYMBOL(kern_unmount_many);
-+
- bool our_mnt(struct vfsmount *mnt)
- {
- 	return check_mnt(real_mount(mnt));
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 60dfb27bc12b..a938dd2521b2 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -225,12 +225,21 @@ static void ovl_free_fs(struct ovl_fs *ofs)
- 	dput(ofs->workbasedir);
- 	if (ofs->upperdir_locked)
- 		ovl_inuse_unlock(ofs->upper_mnt->mnt_root);
--	mntput(ofs->upper_mnt);
--	for (i = 1; i < ofs->numlayer; i++) {
--		iput(ofs->layers[i].trap);
--		mntput(ofs->layers[i].mnt);
-+
-+	if (!ofs->layers) {
-+		/* Deal with partial setup */
-+		kern_unmount(ofs->upper_mnt);
-+	} else {
-+		/* Hack!  Reuse ofs->layers as a mounts array */
-+		struct vfsmount **mounts = (struct vfsmount **) ofs->layers;
-+
-+		for (i = 0; i < ofs->numlayer; i++) {
-+			iput(ofs->layers[i].trap);
-+			mounts[i] = ofs->layers[i].mnt;
-+		}
-+		kern_unmount_many(mounts, ofs->numlayer);
-+		kfree(ofs->layers);
- 	}
--	kfree(ofs->layers);
- 	for (i = 0; i < ofs->numfs; i++)
- 		free_anon_bdev(ofs->fs[i].pseudo_dev);
- 	kfree(ofs->fs);
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index bf8cc4108b8f..e3e994bfcecb 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -109,4 +109,6 @@ extern unsigned int sysctl_mount_max;
- 
- extern bool path_is_mountpoint(const struct path *path);
- 
-+extern void kern_unmount_many(struct vfsmount *mnt[], unsigned int num);
-+
- #endif /* _LINUX_MOUNT_H */
--- 
-2.21.1
+After careful studying of the kernel code, I found a reliable repro scenario
+for this condition, which is described in more detail below. But essentially
+what I think is happening is this:
 
+__mark_inode_dirty() has an early return condition for when a sync is in
+progress, where it updates the inode i_state but not the writeback list:
+
+    inode->i_state |= flags;
+
+    /*
+    * If the inode is being synced, just update its dirty state.
+    * The unlocker will place the inode on the appropriate
+    * superblock list, based upon its state.
+    */
+    if (inode->i_state & I_SYNC)
+        goto out_unlock_inode;
+
+now this comment is true for the generic flusher threads, which run
+writeback_sb_inodes(), which calls requeue_inode() to move the inode back to the
+correct wb list when the sync is done. However, there is another
+function that uses
+I_SYNC: writeback_single_inode(). This function has some comments saying it
+prefers not to touch writeback lists, and in fact only removes it if the inode
+is clean:
+
+    /*
+    * Skip inode if it is clean and we have no outstanding writeback in
+    * WB_SYNC_ALL mode. We don't want to mess with writeback lists in this
+    * function since flusher thread may be doing for example sync in
+    * parallel and if we move the inode, it could get skipped. So here we
+    * make sure inode is on some writeback list and leave it there unless
+    * we have completely cleaned the inode.
+    */
+
+writeback_single_inode() is called from a few functions, in particular
+write_inode_now(). write_inode_now() is called by FUSE's flush() f_ops.
+
+So, the sequence of events is something like this. Let's assume the inode is
+already on b_dirty_time for valid reasons. Then:
+
+CPU1                                          CPU2
+fuse_flush()
+  write_inode_now()
+    writeback_single_inode()
+      sets I_SYNC
+        __writeback_single_inode()
+          writes back data
+          clears inode dirty flags
+          unlocks inode
+          calls mark_inode_dirty_sync()
+            sets I_DIRTY_SYNC, but doesn't
+            update wb list because I_SYNC is
+            still set
+                                              write() // somebody else writes
+                                              mark_inode_dirty(I_DIRTY_PAGES)
+                                              sets I_DIRTY_PAGES on i_state
+                                              doesn't update wb list,
+                                              because I_SYNC set
+      locks inode again
+      sees inode is still dirty,
+      doesn't touch WB list
+      clears I_SYNC
+
+So now we have an inode on b_dirty_time with I_DIRTY_PAGES | I_DIRTY_SYNC set,
+and subsequent calls to mark_inode_dirty() with either I_DIRTY_PAGES or
+I_DIRTY_SYNC will do nothing to change that. The flusher won't touch
+the inode either,
+because it's not on a b_dirty or b_io list.
+
+The easiest way to fix this, I think, is to call requeue_inode() at the end of
+writeback_single_inode(), much like it is called from writeback_sb_inodes().
+However, requeue_inode() has the following ominous warning:
+
+/*
+ * Find proper writeback list for the inode depending on its current state and
+ * possibly also change of its state while we were doing writeback.  Here we
+ * handle things such as livelock prevention or fairness of writeback among
+ * inodes. This function can be called only by flusher thread - noone else
+ * processes all inodes in writeback lists and requeueing inodes behind flusher
+ * thread's back can have unexpected consequences.
+ */
+
+Obviously this is very critical code both from a correctness and a performance
+point of view, so I wanted to run this by the maintainers and folks who have
+contributed to this code first.
+
+The way I got to reproduce this reliably was by using what is pretty much a
+pass-through FUSE filesystem, and the following two commands run in parallel:
+
+[1] fio --rw=write --size=5G -blocksize=80000 --name=test --directory=/sdcard/
+
+[2] while true; do echo flushme >> /sdcard/test.0.0; sleep 0.1; done
+
+I doubt the blocksize matters, it's just the blocksize that I observed being
+used in one of our testruns that hit this. [2] essentially calls fuse_flush()
+every 100ms, which is often enough to reproduce this problem within seconds;
+FIO will stall and enter balance_dirty_pages_ratelimited(), and [2] will hang
+because it needs the inode write lock.
+
+Other filesystems may hit the same problem, though write_inode_now() is usually
+only used when no more dirty pages are expected (eg in final iput()). There are
+some other functions that call writeback_single_inode() that are more
+widely used,
+like sync_inode() and sync_inode_metadata().
+
+Curious to hear your thoughts on this. I'm happy to provide more info
+or traces if
+needed.
+
+Thanks,
+Martijn
