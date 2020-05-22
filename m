@@ -2,139 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 774D41DE3AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 12:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B0B1DE4A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 May 2020 12:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbgEVKF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 06:05:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbgEVKF6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 06:05:58 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99510C08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 03:05:57 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id h16so8886235eds.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 03:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DtZfx2mo8Milc18ngyMfW1PIcYKBj/EvVpvJqR76B+Y=;
-        b=jw5fHtL/RIM8xz3E7sdN0sc8voc91MwoIIXai4ooDW3LkOeQGwMZMR5x4k7IoykRVw
-         nceGbEdL8kBLjrHQGcoqPbP3QWGcrvwJlGepODGT+tTiexRgI7/fxoU9Dg/0t/nOj0Ax
-         W8a0S8U1i4xN8yv0ngkz1Mjhi30imTAiGDmW0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DtZfx2mo8Milc18ngyMfW1PIcYKBj/EvVpvJqR76B+Y=;
-        b=MSsM7ykvXWH6+0NcaRRAQauyTDZtrMXH+gEPGgm/hPOW9NsuSL5nOX9ZZxscoIUCAa
-         lfQO8OChYgtIQGZ7q2uzZ2OvptadcKFljaZ00hg9H4NVkJfmOUEyOm1WMAVTwi6wdSfk
-         iUf7HRnqJFsb+621xia0+Y5XAu/y8ko+LhmWgherhNyIOiSOWBNm1l25CeUHJo6JGm46
-         tlZyzjUB+Sl+QusohVV9VqlFOR6AAiHryTE5P8yQtj32Y60kFjbd22orVDwRHYqLTBEg
-         63pj6zcpSVe1OyLdNquT7iqeVfco90FVeZzRpSE0bl9rfOzvQbVu1V9vs60IHCywSBPT
-         8v0A==
-X-Gm-Message-State: AOAM533+Hu7J+sS+9Net/jO+wJr/Wi1W0Yzv776az2zSNEhgMSVjNw1/
-        nMPhaAx01hLc3fYOTuHSaNT/wg==
-X-Google-Smtp-Source: ABdhPJxesQBnmboD62I4SZU4WGLsBVnkI5YIilNVuotJbFhyVWl5+N/8HBerDSceQ46v2AtGVAVygQ==
-X-Received: by 2002:a50:dac4:: with SMTP id s4mr2416371edj.84.1590141956086;
-        Fri, 22 May 2020 03:05:56 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s17sm7132537edr.84.2020.05.22.03.05.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 03:05:55 -0700 (PDT)
-Date:   Fri, 22 May 2020 12:05:53 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Colin Walters <walters@verbum.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        id S1728918AbgEVKlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 06:41:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59102 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728703AbgEVKlO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 May 2020 06:41:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DD063ACA5;
+        Fri, 22 May 2020 10:41:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 02B971E126B; Fri, 22 May 2020 12:41:10 +0200 (CEST)
+Date:   Fri, 22 May 2020 12:41:09 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     ira.weiny@intel.com
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Eric Biggers <ebiggers@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-unionfs@vger.kernel.org
-Subject: Re: kernel BUG at mm/hugetlb.c:LINE!
-Message-ID: <20200522100553.GE13131@miu.piliscsaba.redhat.com>
-References: <000000000000b4684e05a2968ca6@google.com>
- <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
- <CAJfpegtVca6H1JPW00OF-7sCwpomMCo=A2qr5K=9uGKEGjEp3w@mail.gmail.com>
- <bb232cfa-5965-42d0-88cf-46d13f7ebda3@www.fastmail.com>
- <9a56a79a-88ed-9ff4-115e-ec169cba5c0b@oracle.com>
- <CAJfpegsNVB12MQ-Jgbb-f=+i3g0Xy52miT3TmUAYL951HVQS_w@mail.gmail.com>
- <78313ae9-8596-9cbe-f648-3152660be9b3@oracle.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 4/8] fs/ext4: Update ext4_should_use_dax()
+Message-ID: <20200522104109.GB14199@quack2.suse.cz>
+References: <20200521191313.261929-1-ira.weiny@intel.com>
+ <20200521191313.261929-5-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78313ae9-8596-9cbe-f648-3152660be9b3@oracle.com>
+In-Reply-To: <20200521191313.261929-5-ira.weiny@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 20, 2020 at 10:27:15AM -0700, Mike Kravetz wrote:
+On Thu 21-05-20 12:13:09, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> S_DAX should only be enabled when the underlying block device supports
+> dax.
+> 
+> Cache the underlying support for DAX in the super block and modify
+> ext4_should_use_dax() to check for device support prior to the over
+> riding mount option.
+> 
+> While we are at it change the function to ext4_should_enable_dax() as
+> this better reflects the ask as well as matches xfs.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-> I am fairly confident it is all about checking limits and alignment.  The
-> filesystem knows if it can/should align to base or huge page size. DAX has
-> some interesting additional restrictions, and several 'traditional' filesystems
-> check if they are 'on DAX'.
+The patch looks good to me. You can add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Okay, I haven't looked at DAX vs. overlay.  I'm sure it's going to come up at
-some point, if it hasn't already.
+									Honza
 
 > 
-> In a previous e-mail, you suggested hugetlb_get_unmapped_area could do the
-> length adjustment in hugetlb_get_unmapped_area (generic and arch specific).
-> I agree, although there may be the need to add length overflow checks in
-> these routines (after round up) as this is done in core code now.  However,
-> this can be done as a separate cleanup patch.
+> ---
+> Changes from V3:
+> 	Add a sb DAX supported flag for performance
 > 
-> In any case, we need to get the core mmap code to call filesystem specific
-> get_unmapped_area if on a union/overlay.  The patch I suggested does this
-> by simply calling real_file to determine if there is a filesystem specific
-> get_unmapped_area.  The other approach would be to provide an overlayfs
-> get_unmapped_area that calls the underlying filesystem get_unmapped_area.
-
-That latter is what's done for all other stacked operations in overlayfs.
-
-Untested patch below.
-
-Thanks,
-Miklos
-
----
- fs/overlayfs/file.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -757,6 +757,17 @@ static loff_t ovl_remap_file_range(struc
- 			    remap_flags, op);
- }
- 
-+static unsigned long ovl_get_unmapped_area(struct file *file,
-+				unsigned long uaddr, unsigned long len,
-+				unsigned long pgoff, unsigned long flags)
-+{
-+	struct file *realfile = file->private_data;
-+
-+	return (realfile->f_op->get_unmapped_area ?:
-+		current->mm->get_unmapped_area)(realfile,
-+						uaddr, len, pgoff, flags);
-+}
-+
- const struct file_operations ovl_file_operations = {
- 	.open		= ovl_open,
- 	.release	= ovl_release,
-@@ -774,6 +785,7 @@ const struct file_operations ovl_file_op
- 
- 	.copy_file_range	= ovl_copy_file_range,
- 	.remap_file_range	= ovl_remap_file_range,
-+	.get_unmapped_area	= ovl_get_unmapped_area,
- };
- 
- int __init ovl_aio_request_cache_init(void)
+> Changes from RFC
+> 	Change function name to 'should enable'
+> 	Clean up bool conversion
+> 	Reorder this for better bisect-ability
+> ---
+>  fs/ext4/ext4.h  |  1 +
+>  fs/ext4/inode.c | 15 ++++++++++-----
+>  fs/ext4/super.c |  5 ++++-
+>  3 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 1a3daf2d18ef..0b4db9ce7756 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1979,6 +1979,7 @@ static inline bool ext4_has_incompat_features(struct super_block *sb)
+>   */
+>  #define EXT4_FLAGS_RESIZING	0
+>  #define EXT4_FLAGS_SHUTDOWN	1
+> +#define EXT4_FLAGS_BDEV_IS_DAX	2
+>  
+>  static inline int ext4_forced_shutdown(struct ext4_sb_info *sbi)
+>  {
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index a10ff12194db..6532870f6a0b 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4398,10 +4398,10 @@ int ext4_get_inode_loc(struct inode *inode, struct ext4_iloc *iloc)
+>  		!ext4_test_inode_state(inode, EXT4_STATE_XATTR));
+>  }
+>  
+> -static bool ext4_should_use_dax(struct inode *inode)
+> +static bool ext4_should_enable_dax(struct inode *inode)
+>  {
+> -	if (!test_opt(inode->i_sb, DAX_ALWAYS))
+> -		return false;
+> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +
+>  	if (!S_ISREG(inode->i_mode))
+>  		return false;
+>  	if (ext4_should_journal_data(inode))
+> @@ -4412,7 +4412,12 @@ static bool ext4_should_use_dax(struct inode *inode)
+>  		return false;
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY))
+>  		return false;
+> -	return true;
+> +	if (!test_bit(EXT4_FLAGS_BDEV_IS_DAX, &sbi->s_ext4_flags))
+> +		return false;
+> +	if (test_opt(inode->i_sb, DAX_ALWAYS))
+> +		return true;
+> +
+> +	return false;
+>  }
+>  
+>  void ext4_set_inode_flags(struct inode *inode)
+> @@ -4430,7 +4435,7 @@ void ext4_set_inode_flags(struct inode *inode)
+>  		new_fl |= S_NOATIME;
+>  	if (flags & EXT4_DIRSYNC_FL)
+>  		new_fl |= S_DIRSYNC;
+> -	if (ext4_should_use_dax(inode))
+> +	if (ext4_should_enable_dax(inode))
+>  		new_fl |= S_DAX;
+>  	if (flags & EXT4_ENCRYPT_FL)
+>  		new_fl |= S_ENCRYPTED;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 7b99c44d0a91..f7d76dcaedfe 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4092,13 +4092,16 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+>  		goto failed_mount;
+>  	}
+>  
+> +	if (bdev_dax_supported(sb->s_bdev, blocksize))
+> +		set_bit(EXT4_FLAGS_BDEV_IS_DAX, &sbi->s_ext4_flags);
+> +
+>  	if (sbi->s_mount_opt & EXT4_MOUNT_DAX_ALWAYS) {
+>  		if (ext4_has_feature_inline_data(sb)) {
+>  			ext4_msg(sb, KERN_ERR, "Cannot use DAX on a filesystem"
+>  					" that may contain inline data");
+>  			goto failed_mount;
+>  		}
+> -		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+> +		if (!test_bit(EXT4_FLAGS_BDEV_IS_DAX, &sbi->s_ext4_flags)) {
+>  			ext4_msg(sb, KERN_ERR,
+>  				"DAX unsupported by block device.");
+>  			goto failed_mount;
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
