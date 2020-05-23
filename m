@@ -2,134 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7411DF474
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 05:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA261DF47E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 06:07:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387562AbgEWD7M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 23:59:12 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14781 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387559AbgEWD7L (ORCPT
+        id S2387592AbgEWEHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 00:07:46 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36903 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726065AbgEWEHq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 23:59:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ec89efd0000>; Fri, 22 May 2020 20:56:45 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 22 May 2020 20:59:11 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 22 May 2020 20:59:11 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 23 May
- 2020 03:59:11 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sat, 23 May 2020 03:59:11 +0000
-Received: from sandstorm.nvidia.com (Not Verified[10.2.52.1]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ec89f8f0000>; Fri, 22 May 2020 20:59:11 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     John Hubbard <jhubbard@nvidia.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        <devel@lists.orangefs.org>, <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v2] orangefs: convert get_user_pages() --> pin_user_pages()
-Date:   Fri, 22 May 2020 20:59:09 -0700
-Message-ID: <20200523035909.418683-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.26.2
+        Sat, 23 May 2020 00:07:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590206865;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=F1bhCGQtRl8cBs0zYrkz/5FLXJrqBYq5wZlx9jEG8Uc=;
+        b=Do/2XryEjbVWZpL7OTuXVJu/mp33opSIiMLK8i/Cxtedy2/YeQzuXj/f6F3zJOzc+B8Lz/
+        zdVZekomj90/phLYp7bnaQlXrsXH9TL1gQJ91I/L04X1F0VxLOkFusT60fjlInKeH5K7J1
+        JztILyaVLdzNmKc2ij9IkZYkwYWaL7o=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-274-4m5kSomCMTavDXH7L-4JDQ-1; Sat, 23 May 2020 00:07:40 -0400
+X-MC-Unique: 4m5kSomCMTavDXH7L-4JDQ-1
+Received: by mail-qk1-f199.google.com with SMTP id n187so694552qkd.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 21:07:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F1bhCGQtRl8cBs0zYrkz/5FLXJrqBYq5wZlx9jEG8Uc=;
+        b=Urflm91NySlG0JHxyUG6idXA7YQhQGQHj4bzSvohSXS9EMT44EsL+jBTwB8V7hE1M1
+         N4h7o44dzh7bNRz3QI4iwtanh/D3CvX9S58aAgoAiMgL6D848GzNRhCogCGfWptbxiKk
+         Ergicr5b4BUS0MZ8L3Xkjau2iNfcJZsAcXPSwq+oAxm1TiWl3MkoRYK7QxvabojkFodt
+         DaQ+YpGoJH/2DxfC9JknKLO71R5DACpP7JduOw1vZuK7LfazBQ58iRGqpCPr5rWWZ9qs
+         bHAMLpVdjVQe/75In7uiar2sx69DdVhvm5j8gCQino11WANQbIpF4y1Grm3MWu1BOgSa
+         4NXQ==
+X-Gm-Message-State: AOAM5304k4zLdRRK7ttJQWlj2egjjbwI6RMwGgkRYN+dhgmE8/3u6zlA
+        ek4ssjUwmurjFZDrzOzJBFSBUNFzsUmYlBB5QPRynsunqoyni8lll6x5hFcObi20ihwkCpCqzjh
+        7Y+xMsClv+antmpnfK/DYK5ZL+k+LGboFfJTwFKs1vw==
+X-Received: by 2002:a37:270a:: with SMTP id n10mr17623767qkn.288.1590206860004;
+        Fri, 22 May 2020 21:07:40 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxqucE/BLDWAWbsUb5BS4pFv+/cIpYb0lPmqP/rcpvyVgWQsH8wbXFsAUfUqER06Q9HPajqCxqlT56dHPAxYvs=
+X-Received: by 2002:a37:270a:: with SMTP id n10mr17623751qkn.288.1590206859751;
+ Fri, 22 May 2020 21:07:39 -0700 (PDT)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1590206205; bh=IUi0GpOpORIfa8wCBq2zBkJfP/EEDe3USpDV5HpfHqc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=FaPlam/S9EqBdtcSpbgQ+XxTdqJLQQznCtA49glUta2sbL6t/offvbJPDLT436xPN
-         5H6NB6RA74NGNEVbDuUozp+1XD29LzgK1RkXieQsCpR4jETKKhIWEEB5o9F7Nbx/qS
-         2nqPrOtYZxWq2cmcVj1sKwEudIBbQXU/s4dYHBmRZRXFZnfW56GYiOhfs5AcXRIE5N
-         8mGmX/CosJ9w1jeDqO8TxkzwFzjfwAVGm70WJQwaLUW6oC2s6Xzy/vR7Pr1TxCM+z7
-         IkaCrdF6bX5bD21RThH0czCqw5VeHmZ8yAn0BMlt9fCT+qUaV44R2u9NGBzQ5DjW2f
-         L1FbLm2dNS9/w==
+References: <20200522085723.29007-1-mszeredi@redhat.com> <20200522160815.GT23230@ZenIV.linux.org.uk>
+ <CAOssrKcpQwYh39JpcNmV3JiuH2aPDJxgT5MADQ9cZMboPa9QaQ@mail.gmail.com>
+ <CAOQ4uxi80CFLgeTYbnHvD7GbY_01z0uywP1jF8gZe76_EZYiug@mail.gmail.com>
+ <CAOssrKfXgpRykVN94EiEy8xT4j+HCedN96i31j9iHomtavFaLA@mail.gmail.com> <20200522195626.GV23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200522195626.GV23230@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Sat, 23 May 2020 06:07:28 +0200
+Message-ID: <CAOssrKcpWj=ACbNfy0iBjGDRogouDZAv-LT3P91XaXY3HD=jBA@mail.gmail.com>
+Subject: Re: [PATCH] ovl: make private mounts longterm
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This code was using get_user_pages*(), in a "Case 1" scenario
-(Direct IO), using the categorization from [1]. That means that it's
-time to convert the get_user_pages*() + put_page() calls to
-pin_user_pages*() + unpin_user_pages() calls.
+On Fri, May 22, 2020 at 9:56 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, May 22, 2020 at 08:53:49PM +0200, Miklos Szeredi wrote:
 
-There is some helpful background in [2]: basically, this is a small
-part of fixing a long-standing disconnect between pinning pages, and
-file systems' use of those pages.
+> > Right, we should just get rid of ofs->upper_mnt and ofs->upperdir_trap
+> > and use ofs->layers[0] to store those.
+>
+> For that you'd need to allocate ->layers before you get to ovl_get_upper(),
+> though.  I'm not saying it's a bad idea - doing plain memory allocations
+> before anything else tends to make failure exits cleaner; it's just that
+> it'll take some massage.  Basically, do ovl_split_lowerdirs() early,
+> then allocate everything you need, then do lookups, etc., filling that
+> stuff.
 
-[1] Documentation/core-api/pin_user_pages.rst
+That was exactly the plan I set out.
 
-[2] "Explicit pinning of user-space pages":
-    https://lwn.net/Articles/807108/
+> Regarding this series - the points regarding the name choice and the
+> need to document the calling conventions change still remain.
 
-Cc: Mike Marshall <hubcap@omnibond.com>
-Cc: Martin Brandenburg <martin@omnibond.com>
-Cc: devel@lists.orangefs.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
+Agreed.
 
-Hi,
-
-Note that I have only compile-tested this patch, although that does
-also include cross-compiling for a few other arches.
-
-Changes since v1 [3]: correct the commit description, so that
-it refers to "Case 1" instead of "Case 2".
-
-
-[3] https://lore.kernel.org/r/20200518060139.2828423-1-jhubbard@nvidia.com
-
-thanks,
-John Hubbard
-NVIDIA
-
- fs/orangefs/orangefs-bufmap.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-index 2bb916d68576..538e839590ef 100644
---- a/fs/orangefs/orangefs-bufmap.c
-+++ b/fs/orangefs/orangefs-bufmap.c
-@@ -168,10 +168,7 @@ static DEFINE_SPINLOCK(orangefs_bufmap_lock);
- static void
- orangefs_bufmap_unmap(struct orangefs_bufmap *bufmap)
- {
--	int i;
--
--	for (i =3D 0; i < bufmap->page_count; i++)
--		put_page(bufmap->page_array[i]);
-+	unpin_user_pages(bufmap->page_array, bufmap->page_count);
- }
-=20
- static void
-@@ -268,7 +265,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
- 	int offset =3D 0, ret, i;
-=20
- 	/* map the pages */
--	ret =3D get_user_pages_fast((unsigned long)user_desc->ptr,
-+	ret =3D pin_user_pages_fast((unsigned long)user_desc->ptr,
- 			     bufmap->page_count, FOLL_WRITE, bufmap->page_array);
-=20
- 	if (ret < 0)
-@@ -280,7 +277,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
-=20
- 		for (i =3D 0; i < ret; i++) {
- 			SetPageError(bufmap->page_array[i]);
--			put_page(bufmap->page_array[i]);
-+			unpin_user_page(bufmap->page_array[i]);
- 		}
- 		return -ENOMEM;
- 	}
---=20
-2.26.2
+Thanks,
+Miklos
 
