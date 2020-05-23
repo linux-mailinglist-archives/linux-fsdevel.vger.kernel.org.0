@@ -2,86 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA82D1DF357
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 01:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F381DF36D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 02:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387459AbgEVXxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 May 2020 19:53:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387437AbgEVXxD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 May 2020 19:53:03 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E057B206BE;
-        Fri, 22 May 2020 23:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590191582;
-        bh=HRrdOuGUdvjl0wXxA5ZTMAtvsW5wKqP1K72cTMtDBds=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1AlseEXERTVm6vSNK1ukfK+IKevlLvrv6Ut5WPfcaxPjEQDtTwQU1c78tP25poSPW
-         Pkl8eSf9lB28MNNLVVALtVRBzSnpqvBMMBfnOi5Q3QgSu4rEMqixny1o33eD6zyvPb
-         ZVWFPXMqETTQHAGv+cqRhqFBFl0fIYa3FdeSmo0I=
-Date:   Fri, 22 May 2020 16:53:01 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Cc:     Dave Chinner <david@fromorbit.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hch@infradead.org, willy@infradead.org
-Subject: Re: [PATCH 10/10] mm/migrate.c: call detach_page_private to cleanup
- code
-Message-Id: <20200522165301.727977de1d39ac5bfb683ed0@linux-foundation.org>
-In-Reply-To: <906f7469-492d-febc-c7ed-b01830ae900d@cloud.ionos.com>
-References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
-        <20200517214718.468-11-guoqing.jiang@cloud.ionos.com>
-        <20200521225220.GV2005@dread.disaster.area>
-        <906f7469-492d-febc-c7ed-b01830ae900d@cloud.ionos.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2387427AbgEWAOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 May 2020 20:14:47 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:50183 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731169AbgEWAOq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 May 2020 20:14:46 -0400
+Received: by mail-pj1-f66.google.com with SMTP id nu7so5689907pjb.0;
+        Fri, 22 May 2020 17:14:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8sh7/Jb1dluiEsgALu1CN7Z9jV8JyhMmSJJWK9ECsGg=;
+        b=DU91Hpgt/x/QsRigWve7HGyG4bCKJ9WM5qw6NgYaOdEzAjTHnAIQZSb0O6HWPYxCRc
+         VpLkwiUaHFBf5HjYRGEp/RV/4IRRqjIVa6ZKtp3wJIeniFMXw7t0h197FpLWXzWAxMT/
+         PeV8CYIY+NP8tE8MOS27Pz5G3C8BUSgc89FXt+a7g09Vjd7odRLXCCuQ1zRh+ND9SE0G
+         0aurk1ZpWpzN6uKUERM8EFfS4iRmKGcb5cLr5UQkXP3yX/xOq0Y0qgMpaSbDDLjXDI6C
+         oirkgAINdmEERmjNOi4PNxkpU2ELB+Ll8uIiRiq9/I5BS+gnXK7yHxaDsMpqHsTazJ90
+         Xd0A==
+X-Gm-Message-State: AOAM533Ar5jdE3VbGFPLl+VyOIpClX6IP0gWiL5vYynFWDsDeOlycLf9
+        62pe2C/JfojRcgOQFm8YwVY=
+X-Google-Smtp-Source: ABdhPJzinHVQBUmTlp57xG6X/Xg4Lcp1Fohv2CAoewS7fdg2SiJzKBWsFw4r9rlUlrkuFx7lNSDfXg==
+X-Received: by 2002:a17:90a:dc10:: with SMTP id i16mr7356372pjv.137.1590192885688;
+        Fri, 22 May 2020 17:14:45 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id o15sm7236031pjq.28.2020.05.22.17.14.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2020 17:14:44 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id C6A9B404B0; Sat, 23 May 2020 00:14:43 +0000 (UTC)
+Date:   Sat, 23 May 2020 00:14:43 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH v2] firmware_loader: change enum fw_opt to u32
+Message-ID: <20200523001443.GI11244@42.do-not-panic.com>
+References: <20200522231202.13681-1-scott.branden@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200522231202.13681-1-scott.branden@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 22 May 2020 09:18:25 +0200 Guoqing Jiang <guoqing.jiang@cloud.ionos.com> wrote:
-
-> >> -	ClearPagePrivate(page);
-> >> -	set_page_private(newpage, page_private(page));
-> >> -	set_page_private(page, 0);
-> >> -	put_page(page);
-> >> +	set_page_private(newpage, detach_page_private(page));
-> > attach_page_private(newpage, detach_page_private(page));
+On Fri, May 22, 2020 at 04:12:02PM -0700, Scott Branden wrote:
+> "enum fw_opt" is not used as an enum.
+> Change fw_opt to u32 as FW_OPT_* values are OR'd together.
 > 
-> Mattew had suggested it as follows, but not sure if we can reorder of 
-> the setup of
-> the bh and setting PagePrivate, so I didn't want to break the original 
-> syntax.
-> 
-> @@ -797,11 +797,7 @@ static int __buffer_migrate_page(struct address_space *mapping,
->          if (rc != MIGRATEPAGE_SUCCESS)
->                  goto unlock_buffers;
->   
-> -       ClearPagePrivate(page);
-> -       set_page_private(newpage, page_private(page));
-> -       set_page_private(page, 0);
-> -       put_page(page);
-> -       get_page(newpage);
-> +       attach_page_private(newpage, detach_page_private(page));
->   
->          bh = head;
->          do {
-> @@ -810,8 +806,6 @@ static int __buffer_migrate_page(struct address_space *mapping,
->   
->          } while (bh != head);
->   
-> -       SetPagePrivate(newpage);
-> -
->          if (mode != MIGRATE_SYNC_NO_COPY)
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 
-This is OK - coherency between PG_private and the page's buffer
-ring is maintained by holding lock_page().
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
-I have (effectively) applied the above change.
+  Luis
