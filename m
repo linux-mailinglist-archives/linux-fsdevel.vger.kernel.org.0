@@ -2,92 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA261DF47E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 06:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7178E1DF4D7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 06:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387592AbgEWEHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 00:07:46 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36903 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726065AbgEWEHq (ORCPT
+        id S2387592AbgEWEbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 00:31:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36118 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387430AbgEWEbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 00:07:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590206865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=F1bhCGQtRl8cBs0zYrkz/5FLXJrqBYq5wZlx9jEG8Uc=;
-        b=Do/2XryEjbVWZpL7OTuXVJu/mp33opSIiMLK8i/Cxtedy2/YeQzuXj/f6F3zJOzc+B8Lz/
-        zdVZekomj90/phLYp7bnaQlXrsXH9TL1gQJ91I/L04X1F0VxLOkFusT60fjlInKeH5K7J1
-        JztILyaVLdzNmKc2ij9IkZYkwYWaL7o=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-274-4m5kSomCMTavDXH7L-4JDQ-1; Sat, 23 May 2020 00:07:40 -0400
-X-MC-Unique: 4m5kSomCMTavDXH7L-4JDQ-1
-Received: by mail-qk1-f199.google.com with SMTP id n187so694552qkd.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 May 2020 21:07:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F1bhCGQtRl8cBs0zYrkz/5FLXJrqBYq5wZlx9jEG8Uc=;
-        b=Urflm91NySlG0JHxyUG6idXA7YQhQGQHj4bzSvohSXS9EMT44EsL+jBTwB8V7hE1M1
-         N4h7o44dzh7bNRz3QI4iwtanh/D3CvX9S58aAgoAiMgL6D848GzNRhCogCGfWptbxiKk
-         Ergicr5b4BUS0MZ8L3Xkjau2iNfcJZsAcXPSwq+oAxm1TiWl3MkoRYK7QxvabojkFodt
-         DaQ+YpGoJH/2DxfC9JknKLO71R5DACpP7JduOw1vZuK7LfazBQ58iRGqpCPr5rWWZ9qs
-         bHAMLpVdjVQe/75In7uiar2sx69DdVhvm5j8gCQino11WANQbIpF4y1Grm3MWu1BOgSa
-         4NXQ==
-X-Gm-Message-State: AOAM5304k4zLdRRK7ttJQWlj2egjjbwI6RMwGgkRYN+dhgmE8/3u6zlA
-        ek4ssjUwmurjFZDrzOzJBFSBUNFzsUmYlBB5QPRynsunqoyni8lll6x5hFcObi20ihwkCpCqzjh
-        7Y+xMsClv+antmpnfK/DYK5ZL+k+LGboFfJTwFKs1vw==
-X-Received: by 2002:a37:270a:: with SMTP id n10mr17623767qkn.288.1590206860004;
-        Fri, 22 May 2020 21:07:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxqucE/BLDWAWbsUb5BS4pFv+/cIpYb0lPmqP/rcpvyVgWQsH8wbXFsAUfUqER06Q9HPajqCxqlT56dHPAxYvs=
-X-Received: by 2002:a37:270a:: with SMTP id n10mr17623751qkn.288.1590206859751;
- Fri, 22 May 2020 21:07:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200522085723.29007-1-mszeredi@redhat.com> <20200522160815.GT23230@ZenIV.linux.org.uk>
- <CAOssrKcpQwYh39JpcNmV3JiuH2aPDJxgT5MADQ9cZMboPa9QaQ@mail.gmail.com>
- <CAOQ4uxi80CFLgeTYbnHvD7GbY_01z0uywP1jF8gZe76_EZYiug@mail.gmail.com>
- <CAOssrKfXgpRykVN94EiEy8xT4j+HCedN96i31j9iHomtavFaLA@mail.gmail.com> <20200522195626.GV23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200522195626.GV23230@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Sat, 23 May 2020 06:07:28 +0200
-Message-ID: <CAOssrKcpWj=ACbNfy0iBjGDRogouDZAv-LT3P91XaXY3HD=jBA@mail.gmail.com>
-Subject: Re: [PATCH] ovl: make private mounts longterm
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 23 May 2020 00:31:43 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04N4VfB5015315;
+        Sat, 23 May 2020 04:31:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=mWgNTQumQ1encShq6SogN6drXIr1/uryGkMcf27ofJ4=;
+ b=zKrtr+tBkK+GLVbkzFwDFkwTEwU/42CAwv3yt39oJK44txwAmu/1vXt7uEDmwz510lKV
+ wsTFcpRQSWH/fTncRiyuOM9Fz7fRnR4rBMku/EdoTiUC7jJ8ESEBdYHPoe3fG4AoYD6N
+ FsoOi/34/ulTKGdYtARGC3P5kNqpsdmkFzR5Ynkxge/3Zqmi8nljHUeYvZe1NC3RyXDW
+ y+Ejy8/myJ/yeqQcqzdQRK//wRYuMV597/os6EJSCNU7z3qqOwIO4Vqpf9V0A7ne0spZ
+ NVbrKCbU81lJgSeLiFX6s/qzuZidmGveTFwVv5tuRzd5LKq7dB4I4PBndzCRO9S2zSkP Sw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 316vfn010w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 23 May 2020 04:31:41 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04N4Tng3043501;
+        Sat, 23 May 2020 04:31:41 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 316u5gw4qx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 23 May 2020 04:31:41 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04N4Vcrv013966;
+        Sat, 23 May 2020 04:31:38 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 22 May 2020 21:31:38 -0700
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/4] io_uring: call statx directly
+Date:   Fri, 22 May 2020 21:31:15 -0700
+Message-Id: <1590208279-33811-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9629 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=3 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005230035
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9629 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=3
+ cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2005230036
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 9:56 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, May 22, 2020 at 08:53:49PM +0200, Miklos Szeredi wrote:
+v1 -> v2
 
-> > Right, we should just get rid of ofs->upper_mnt and ofs->upperdir_trap
-> > and use ofs->layers[0] to store those.
->
-> For that you'd need to allocate ->layers before you get to ovl_get_upper(),
-> though.  I'm not saying it's a bad idea - doing plain memory allocations
-> before anything else tends to make failure exits cleaner; it's just that
-> it'll take some massage.  Basically, do ovl_split_lowerdirs() early,
-> then allocate everything you need, then do lookups, etc., filling that
-> stuff.
+- Separate statx and open in io_kiocb 
+- Remove external declarations for unused statx interfaces
 
-That was exactly the plan I set out.
+This patch set is a fix for the liburing statx test failure.
 
-> Regarding this series - the points regarding the name choice and the
-> need to document the calling conventions change still remain.
+The test fails with a "Miscompare between io_uring and statx" error
+because the statx system call path has additional processing in vfs_statx():
 
-Agreed.
+        stat->result_mask |= STATX_MNT_ID;
+        if (path.mnt->mnt_root == path.dentry)
+                stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+        stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
 
-Thanks,
-Miklos
+which then results in different result_mask values.
+
+Allowing the system call to be invoked directly simplifies the io_uring
+interface and avoids potential future incompatibilities.  I'm not sure
+if there was other reasoning fort not doing so initially.
+
+One issue I cannot account for is the difference in "used" memory reported
+by free(1) after running the statx a large (10000) number of times.
+
+The difference is significant ~100k and doesn't really change after
+dropping caches.
+
+I enabled memory leak detection and couldn't see anything related to the test.
+
+Bijan Mottahedeh (4):
+  io_uring: add io_statx structure
+  statx: allow system call to be invoked from io_uring
+  io_uring: call statx directly
+  statx: hide interfaces no longer used by io_uring
+
+ fs/internal.h |  4 ++--
+ fs/io_uring.c | 72 +++++++++++++++--------------------------------------------
+ fs/stat.c     | 37 +++++++++++++++++-------------
+ 3 files changed, 42 insertions(+), 71 deletions(-)
+
+-- 
+1.8.3.1
 
