@@ -2,122 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 542301DF8AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 19:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E501DF9EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 20:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387980AbgEWRPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 13:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48508 "EHLO
+        id S2387876AbgEWSAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 14:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387571AbgEWRPL (ORCPT
+        with ESMTP id S1726984AbgEWSAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 13:15:11 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D16C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 10:15:11 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id d7so14891948ioq.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 10:15:11 -0700 (PDT)
+        Sat, 23 May 2020 14:00:24 -0400
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C70CC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 11:00:21 -0700 (PDT)
+Received: by mail-qv1-xf41.google.com with SMTP id z9so6234896qvi.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 11:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OJLDRRYi0j2+KObfjb+c8PErL8WuW63dv28p7/3ds0U=;
-        b=GWe+VKXN+ZFC05Q/7VLva5fv1UouA1+lkSUvPDlDv7NY8jI/Cplo8aZ5isfRpTtwqG
-         yOvED3b5udDOs7IXj05q7WpxkkCJZU/Ee5gbruNvOD0yunge/IwtSiU/j6U/KpwhQaAC
-         aTurTxaozUYhZmmKDsxdGQ0bQ3vWY6mqcSetrSDbWd7TCNX2wX7rqS9gnaxUctrOKVpA
-         9K3vSeLaSUCcs62HhECe9LJ6RFSxi6caCRWvlc4VE65zKAokic2KRjMBupVe5DQezCRw
-         eWiCW+6ak3lgA3qKbB85ISlxxQODufIiz/HNrJxvxljKmSQn3JKE1hlHAMj/xVY4JGpo
-         5gtg==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=F3NMDrR9dummcUXdRfruEEfbIS6yB2vx68nB8Asq/5Q=;
+        b=DLUdlLdqK1bsV3DbEuTTyBWxouo7TOwyxri4APWQD3NqiMSIjirU+KuWgkxjC+SPXd
+         U5bKcUrFxXkujPWjXtLFF/k/nfilKzP5EjBajrS/8510fneO07cpMqdcHCxwrpi40/q7
+         /O0e1HoJlTbh5NB1junI0CHT5u7OlL96wLc3EVtoU1jy6h6mu/94Ij3+HmmWjDrdLWVh
+         jTwO4Rc/jE6wel14tPJDJsn6k0/UDkI9Or/XCFS691xyvyogoxyI2h7yK06Suh6ePv/U
+         +lZz7VywgsFgSxYL/B5mLPOXcZ0fktkIkUnyPxHg9tbmvqat4Bb8GZAodniIxvBVB3XB
+         mJxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OJLDRRYi0j2+KObfjb+c8PErL8WuW63dv28p7/3ds0U=;
-        b=RNvad0JFnponEnmPoy2QF+bdaqaZbhm69WMdozu3/jeS/tageFqQm1cZc/90x3vuvJ
-         f54R+Ri6WTSBFV6yDgDc5MRlPIvg8VcUMrUmeiI9niSFSvMG4Sc4kAsKLLpnGJUQ31Id
-         rWq+ZVI9iVJpjcBN/5kzgppZ++01YFn7nKTTD978v0uxou+RzRMRMmNb2RHpV6MGE624
-         xNgpbA0lM4VFgSVc/wk5kFdMGO1ciSlPTzvSqc4lTWyCrzX0AaJotyTjGX25hjGv4GKd
-         +S2L4a7XGVPLzj1DgGWMbQnMaECkQ2XOg9HaT3dh2LZIL0pRu4JsTUr9akMNvseU8YWx
-         b4eA==
-X-Gm-Message-State: AOAM530McgUUK6THdzXfpeHEheviSb3GRLD2trtTxidflFlyrG2b7ZTo
-        XFiuES6uEBOMsThO2+20sSMjl4GwGFXpm+OJhFfCDO3E
-X-Google-Smtp-Source: ABdhPJzF3bgnL7zWPqCZJMPrJ37IJtsD7C7tw7KHJlOAEZGgpNCWobf29kQjn9wxLUQZK1TZcLDxtJGSTlS5RhWDeqw=
-X-Received: by 2002:a5d:8c95:: with SMTP id g21mr7591623ion.72.1590254109493;
- Sat, 23 May 2020 10:15:09 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=F3NMDrR9dummcUXdRfruEEfbIS6yB2vx68nB8Asq/5Q=;
+        b=Spe8GDRo7xKwdjeYImTNeVwOD32urepSiwUSgIF4fR0PVb6eugC3/cjU7dLaSKeDp1
+         S2gsXNWBgME2+CQPkOsNUbyagtDlRzBvyLtjhChKFbY9Fs3U5trph/a+ew2BBUxoyd46
+         gTDwbRpGHvYTnkuR2iu/vAjPsVJXKHF4qsV3jSQ7tgL5Zg0ByvfabT/6mF5uXoAj2Da6
+         rLdV7nXs8Hjk7/8aBPEBhkNIWeD8quq+GSoFUTipG15L28v8LrLjpQEaezlHPNKhpfL0
+         E6pbh2iY4K/6NYegGQ8pQZ3F9cTq9+/d8rpEOi6G7QiALaROzWF9ZbbShsCMdnaOAkJH
+         dLcw==
+X-Gm-Message-State: AOAM531IuyZaW9VKM/Ar1ZEv4wliIe+wOOShpKpHqqt2jkrU3YlW0+lN
+        AiN99pXPVn+tniUnrGJqw8ppm8nBZjjmaF6tSc5Z0fVy
+X-Google-Smtp-Source: ABdhPJxI0GNvtYFRzubiNKehFnBmeNa8IdxO7hQ3TxAldsg7mTxyy0v9X6v2Fayhxp/lnxt7tCbB9QFJVJ60H98MgEQ=
+X-Received: by 2002:a0c:ed4b:: with SMTP id v11mr9120627qvq.179.1590256818769;
+ Sat, 23 May 2020 11:00:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200521162443.GA26052@quack2.suse.cz> <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 23 May 2020 20:14:58 +0300
-Message-ID: <CAOQ4uxgBGTAnZUedY3dEwR9V=hdrr_4PH_snj9E=sz-_UuVzTg@mail.gmail.com>
-Subject: Re: Ignore mask handling in fanotify_group_event_mask()
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Received: by 2002:aed:3ac5:0:0:0:0:0 with HTTP; Sat, 23 May 2020 11:00:18
+ -0700 (PDT)
+Reply-To: mrs.chantala2055@gmail.com
+From:   mrs chantal <mrs.chantaltwo@gmail.com>
+Date:   Sat, 23 May 2020 18:00:18 +0000
+Message-ID: <CAGVwK0UnqGdMqCxvjeR06i5Ca=SScOHB3E1kfQEUa4_tgZN-cQ@mail.gmail.com>
+Subject: jjCompliment
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 21, 2020 at 9:10 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > Hello Amir!
-> >
-> > I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
-> > merging marks masks with FAN_ONDIR" and realized one oddity in
-> > fanotify_group_event_mask(). The thing is: Even if the mark mask is such
-> > that current event shouldn't trigger on the mark, we still have to take
-> > mark's ignore mask into account.
-> >
-> > The most realistic example that would demonstrate the issue that comes to my
-> > mind is:
-> >
-> > mount mark watching for FAN_OPEN | FAN_ONDIR.
-> > inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
-> >
-> > I'd expect the group will not get any event for opening the dir but the
-> > code in fanotify_group_event_mask() would not prevent event generation. Now
-> > as I've tested the event currently actually does not get generated because
-> > there is a rough test in send_to_group() that actually finds out that there
-> > shouldn't be anything to report and so fanotify handler is actually never
-> > called in such case. But I don't think it's good to have an inconsistent
-> > test in fanotify_group_event_mask(). What do you think?
-> >
->
-> I agree this is not perfect.
-> I think that moving the marks_ignored_mask line
-> To the top of the foreach loop should fix the broken logic.
-> It will not make the code any less complicated to follow though.
-> Perhaps with a comment along the lines of:
->
->              /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
->              marks_ignored_mask |= mark->ignored_mask;
->
-> Now is there a real bug here?
-> Probably not because send_to_group() always applied an ignore mask
-> that is greater or equal to that of fanotify_group_event_mask().
->
-
-That's a wrong statement of course.
-We do need to re-apply the ignore mask when narrowing the event mask.
-
-Exposing the bug requires a "compound" event.
-
-The only case of compound event I could think of is this:
-
-mount mark with mask == 0 and ignore_mask == FAN_OPEN. inode mark
-on a directory with mask == FAN_EXEC | FAN_EVENT_ON_CHILD.
-
-The event: FAN_OPEN | FAN_EXEC | FAN_EVENT_ON_CHILD
-would be reported to group with the FAN_OPEN flag despite the
-fact that FAN_OPEN is in ignore mask of mount mark because
-the mark iteration loop skips over non-inode marks for events
-on child.
-
-I'll try to work that case into the relevant LTP test to prove it and
-post a fix.
-
-Thanks,
-Amir.
+     Compliment of the day to you. I am Mrs.CHANTAL I am sending this brief
+    letter to solicit your partnership to transfer $13.5 Million US
+    Dollars.I shall send you more information and procedures when I receive
+    positive response From you. Please send me a message in My private
+    email address is ( mrschantal066@gmail.com  )
+    Best Regards
+    MrS.Chantal
