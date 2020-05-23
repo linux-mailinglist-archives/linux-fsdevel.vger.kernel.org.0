@@ -2,77 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 196EC1DF5B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 09:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D26A61DF5FE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 10:15:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387713AbgEWHaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 03:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42606 "EHLO
+        id S2387712AbgEWIPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 04:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387471AbgEWHao (ORCPT
+        with ESMTP id S2387471AbgEWIPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 03:30:44 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9220BC061A0E;
-        Sat, 23 May 2020 00:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=wwwBPMXZk0+Xy+2OxrNolNTyI26gvme/Du4ivy1Q6t8=; b=MX13GNdfKHFYqFR1ZMr/SJu1gn
-        QOmCVB6di3sAOKoZlzMZTM/fSuNAvxoJjZR5ez2TztPnQN/3XnbgoEeFhnkX28Vl8g+154tq0XZ38
-        d8zeLRlDWUehL+qv7eVGM7xTCPchrJKB/6MecTOyYsS/KoMBAwKiQK/ys59VbaP7vRS86WxyS3tev
-        2eqwno7eSv1TYynXsNNhRFG6OfbXdaY6kLPGNY25zG28fJGfB8pJPz0SzbomX2pclcXYf1NvoQiLv
-        js91SsShLQ50KR/68n4m0XC5zVvh2C4U/mXFEKbG7hUkPxnNog0mMJDCIE9FiBmllcNN8EPPDzu9V
-        DzO2R5RQ==;
-Received: from [2001:4bb8:18c:5da7:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jcOcG-0007wq-0b; Sat, 23 May 2020 07:30:44 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-ext4@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     jack@suse.cz, tytso@mit.edu, adilger@dilger.ca,
-        riteshh@linux.ibm.com, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH 9/9] ext4: remove the access_ok() check in ext4_ioctl_get_es_cache
-Date:   Sat, 23 May 2020 09:30:16 +0200
-Message-Id: <20200523073016.2944131-10-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200523073016.2944131-1-hch@lst.de>
-References: <20200523073016.2944131-1-hch@lst.de>
+        Sat, 23 May 2020 04:15:33 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C875EC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 01:15:32 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id u16so6069041lfl.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 01:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pz5IpPnqQym07imPNP194ldsEOzZ722IuM/LHmahs88=;
+        b=etpppD3sOhIuLu49I0DwFkGMuMOwg81haclPsGJC6TBxDPOzmARLArZ+94DZe7XjaI
+         if+G+Tz9DDYBejUypSC6+YKWQCFdwX9qKuzxM4muG/u1YGN7Orh3vE6EP70pz9QTy5Hx
+         hERr9XsH2jGplGfO1dojGu+oDZ/oegoC4XbS/4wmbP5WB7cAL3owdAE6GOTRuMHXdxW2
+         b0Ah3Od4zX895f/c+exQZOR//IVsTTHorAsgPt0qW0wtqoT7Wl3dm6HVBfk7rODX3y5W
+         XTue48Lb2ZgHsLy5Ry4Yl/LCn55q4i05u4Nm5ICrvMi0yH7G/zSLfAaW3n0PSkkD1N8E
+         s8/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pz5IpPnqQym07imPNP194ldsEOzZ722IuM/LHmahs88=;
+        b=Ae56gqDcLVQN4hA36m2hAO4zmL4MFNrHQlQ6Vafw413IekGKSX+rhBBIDSLy5SAQbf
+         AyRdf9LIugeuXZlc01wI9Aj+pJcPLijUtA9MB9BX0taLAuBBSJtcwAX/OQNAQcWwCZCH
+         5LLWjpGhtL5QqnWrWq+bUHxLNL9w58+wHhVgGTep/J2aiKdaQKc4lAf9sXbXatNdsjop
+         6gtuD9ijekt3Pfm+jyrEsV017REp1bEylpscj4FMXHZNNv7vif/BlB2UeB6gG9ZcEvmP
+         wiHLSKgz8CfgW6kTfDVD/sJ6+qxFUPje8OOXqXMZUP3x+Pjj297kPoXk/vCeuBixkll8
+         vshA==
+X-Gm-Message-State: AOAM531A3rjbiDYHTwFOuvti1XdzepnGEYZs5NTb4Z40zN3pVV8p9Hgg
+        Zsc/t3vrdMhceo4JOwYzeMJrtDt93/IqYp8QXsxcSw==
+X-Google-Smtp-Source: ABdhPJzwUlJicPJUTEKreO42XNW0mvKvzEQny4lvYylKlEBBDRSJvHgMmTQ8SE7D7kREHF2lDZKMKkJ/2VMQz8z48u4=
+X-Received: by 2002:ac2:5bc1:: with SMTP id u1mr1002223lfn.61.1590221731279;
+ Sat, 23 May 2020 01:15:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
+ <20200522144100.GE14199@quack2.suse.cz> <CAB0TPYF+Nqd63Xf_JkuepSJV7CzndBw6_MUqcnjusy4ztX24hQ@mail.gmail.com>
+ <20200522153615.GF14199@quack2.suse.cz>
+In-Reply-To: <20200522153615.GF14199@quack2.suse.cz>
+From:   Martijn Coenen <maco@android.com>
+Date:   Sat, 23 May 2020 10:15:20 +0200
+Message-ID: <CAB0TPYGJ6WkaKLoqQhsxa2FQ4s-jYKkDe1BDJ89CE_QUM_aBVw@mail.gmail.com>
+Subject: Re: Writeback bug causing writeback stalls
+To:     Jan Kara <jack@suse.cz>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        miklos@szeredi.hu, tj@kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-access_ok just checks we are fed a proper user pointer.  We also do that
-in copy_to_user itself, so no need to do this early.
+Jaegeuk wondered whether callers of write_inode_now() should hold
+i_rwsem, and whether that would also prevent this problem. Some
+existing callers of write_inode_now() do, eg ntfs and hfs:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/ioctl.c | 5 -----
- 1 file changed, 5 deletions(-)
+hfs_file_fsync()
+    inode_lock(inode);
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index f81acbbb1b12e..2162db0c747d2 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -754,11 +754,6 @@ static int ext4_ioctl_get_es_cache(struct file *filp, unsigned long arg)
- 	fieinfo.fi_extents_max = fiemap.fm_extent_count;
- 	fieinfo.fi_extents_start = ufiemap->fm_extents;
- 
--	if (fiemap.fm_extent_count != 0 &&
--	    !access_ok(fieinfo.fi_extents_start,
--		       fieinfo.fi_extents_max * sizeof(struct fiemap_extent)))
--		return -EFAULT;
--
- 	error = ext4_get_es_cache(inode, &fieinfo, fiemap.fm_start,
- 			fiemap.fm_length);
- 	fiemap.fm_flags = fieinfo.fi_flags;
--- 
-2.26.2
+    /* sync the inode to buffers */
+    ret = write_inode_now(inode, 0);
 
+but there are also some that don't (eg fat, fuse, orangefs).
+
+Thanks,
+Martijn
+
+
+On Fri, May 22, 2020 at 5:36 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 22-05-20 17:23:30, Martijn Coenen wrote:
+> > [ dropped android-storage-core@google.com from CC: since that list
+> > can't receive emails from outside google.com - sorry about that ]
+> >
+> > Hi Jan,
+> >
+> > On Fri, May 22, 2020 at 4:41 PM Jan Kara <jack@suse.cz> wrote:
+> > > > The easiest way to fix this, I think, is to call requeue_inode() at the end of
+> > > > writeback_single_inode(), much like it is called from writeback_sb_inodes().
+> > > > However, requeue_inode() has the following ominous warning:
+> > > >
+> > > > /*
+> > > >  * Find proper writeback list for the inode depending on its current state and
+> > > >  * possibly also change of its state while we were doing writeback.  Here we
+> > > >  * handle things such as livelock prevention or fairness of writeback among
+> > > >  * inodes. This function can be called only by flusher thread - noone else
+> > > >  * processes all inodes in writeback lists and requeueing inodes behind flusher
+> > > >  * thread's back can have unexpected consequences.
+> > > >  */
+> > > >
+> > > > Obviously this is very critical code both from a correctness and a performance
+> > > > point of view, so I wanted to run this by the maintainers and folks who have
+> > > > contributed to this code first.
+> > >
+> > > Sadly, the fix won't be so easy. The main problem with calling
+> > > requeue_inode() from writeback_single_inode() is that if there's parallel
+> > > sync(2) call, inode->i_io_list is used to track all inodes that need writing
+> > > before sync(2) can complete. So requeueing inodes in parallel while sync(2)
+> > > runs can result in breaking data integrity guarantees of it.
+> >
+> > Ah, makes sense.
+> >
+> > > But I agree
+> > > we need to find some mechanism to safely move inode to appropriate dirty
+> > > list reasonably quickly.
+> > >
+> > > Probably I'd add an inode state flag telling that inode is queued for
+> > > writeback by flush worker and we won't touch dirty lists in that case,
+> > > otherwise we are safe to update current writeback list as needed. I'll work
+> > > on fixing this as when I was reading the code I've noticed there are other
+> > > quirks in the code as well. Thanks for the report!
+> >
+> > Thanks! While looking at the code I also saw some other paths that
+> > appeared to be racy, though I haven't worked them out in detail to
+> > confirm that - the locking around the inode and writeback lists is
+> > tricky. What's the best way to follow up on those? Happy to post them
+> > to this same thread after I spend a bit more time looking at the code.
+>
+> Sure, if you are aware some some other problems, just write them to this
+> thread. FWIW stuff that I've found so far:
+>
+> 1) __I_DIRTY_TIME_EXPIRED setting in move_expired_inodes() can get lost as
+> there are other places doing RMW modifications of inode->i_state.
+>
+> 2) sync(2) is prone to livelocks as when we queue inodes from b_dirty_time
+> list, we don't take dirtied_when into account (and that's the only thing
+> that makes sure aggressive dirtier cannot livelock sync).
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
