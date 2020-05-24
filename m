@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C6A1E0212
+	by mail.lfdr.de (Postfix) with ESMTP id 864C71E0213
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 21:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbgEXTWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 May 2020 15:22:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36942 "EHLO
+        id S2388154AbgEXTWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 May 2020 15:22:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387744AbgEXTWT (ORCPT
+        with ESMTP id S2388139AbgEXTWV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 May 2020 15:22:19 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C171C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:18 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id z64so3423148pfb.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:18 -0700 (PDT)
+        Sun, 24 May 2020 15:22:21 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC49C08C5C4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:19 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id z64so3423165pfb.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dRxVLULuo23vPsgtEWsGYGFpCYUxsZhIaT6u42Hql2E=;
-        b=V4mIXVQFyA2xlU324aezgz7hoH5/kwrcukrZDA1MEw3qMNYi6vXFPLbiXDJ35lEn1M
-         cz+I3E0aSOYnWOWKnM05PwTsEls9yrhFa1tZ/Oyxfddc2RtB03mcUSpferTg5lavJIqJ
-         Dj5UTA49dxBRYaCq/zzgZHSotdJgYJMe4YTpXOUfPwjxszbv2+Rj3Diq6hu6rCdGQgeR
-         jCdV/0Q2QAhgKJmNRqUY3HFNQUHsB+4Yt2ZVj5amRvJ7o3JkwGLTixFLXi1j/pnfGltP
-         8shg/8s9ZL/+mu2rqdj8zLMzh+R2KH1VtFdrw+ufEj28wz2kyOkdQqQeGPprP02KtqDR
-         DvoA==
+        bh=ooHBrOZD/3Y3JOqiI+j5WGnGx9rNLKp4UPlTrA3k0fA=;
+        b=OxFpYtFBwzHltasPWMU+lcpGv4rU/W2vOx/T4krzJTwDePkK92WnP8Q9D4KmLLpY6f
+         Gd2powlWYp6amNjj/pqEmErKe4G4P2gbejJam6uJcPC941s8l3j4LkrKcWofDhf2REGi
+         YTJZ81xesGaQk5qxaVPuAbcllAJUCMysF5nbqjuG4CmorTuNG9vIpk0d1uNk8acf8Rff
+         1jlX4yGiljx2GdZ16Qma2k/cZGqRuC3kacJw2yDCzjvloXbodfZK/edA2Q6I/0OGROAn
+         1nP5uZaH7v6Ns2RKRSS6SiYvJFi0QZwo9hTw2Aqe4//xgAmUbZgp7F+hMebtqROV82zc
+         2Wlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dRxVLULuo23vPsgtEWsGYGFpCYUxsZhIaT6u42Hql2E=;
-        b=iWh1u/Aqjb6+R4g/5sDG32vCZT88Lrz1W+MBTWoPlj01/cYwHzCixN7nd2Z8GRGUaW
-         NWjhX4PNWPufghsoWXq+pESS5uspNDdpKkqVchkoWMth6y1HlBSzuzRZJX7DbeakmB72
-         IRkYkRlVej5nKynNoIXYtCqVx3TSuZx2Yh19BiEa5b4viSqGYVD5q8UVAe8jHyPZduh9
-         NqXJS+H8bOSrrxQt6C29EeBh00eZ+HTM/mavF7veizaF4m0wweiJ25Autv8GNu6tiDS0
-         BKRJyVwYRlX51GERo3hxy967+STStJbLXkZO66+/6UR0dau6h5Oxx4vKedG8eV5Fincv
-         FN5g==
-X-Gm-Message-State: AOAM531LVTTOec4R/zp7GvsIaW5CjH6N4MEBM1ZtZe2xEILwjbdH1t8s
-        WZfKY2SEWz3rgkKojw8CCSWbFQ==
-X-Google-Smtp-Source: ABdhPJxHDlFcrCLi5owVvTlCdr8UZ55c4LZkRSpCvAXkOESdBdFKXVcEhLCnvkoAqx+qXu+nn3WEWg==
-X-Received: by 2002:a63:712:: with SMTP id 18mr22778908pgh.96.1590348138120;
-        Sun, 24 May 2020 12:22:18 -0700 (PDT)
+        bh=ooHBrOZD/3Y3JOqiI+j5WGnGx9rNLKp4UPlTrA3k0fA=;
+        b=W2fJJVB4I+e2HOXBRhDqrLnOZ2bWM9BRWYq12fzvwZxGp3pPUlBlTPX0RMqIsz3PUU
+         FsBg1XXLnu2XNT6CZ7VEcsiYwX4pmONCnfA+2mY66kI2z0P3TmCQM/biJwGh9/UZFsJ3
+         lLN06zw4b3XyCEFg8i/+UPOq6+KPOU74KcXSjjFOKV5zhImq9t6yvKoooMKadZ1LOk5K
+         iFjqHDk7t/olECreFzbDFbzzgcNU/3Grcv7oJiS4LAYW+LGiyQnAOuNz2qQwgEeWbx43
+         XlbOSpaDU4/Tt3693pUnY1dt/VjB4oNSI+Xx4+O9vveUh4JW+8+ZYsiGNCfVZvlJq4bu
+         vZxQ==
+X-Gm-Message-State: AOAM530NA7Nsg8N3OJsuJawinMat7G4MRuqdkS0mWLzipIMQ4opmn0ep
+        Vlt2EAGbdcTi4WO/9v9wbipbog==
+X-Google-Smtp-Source: ABdhPJwRpkNyoDLEGaBTPeF9s7BrdfA7F20JjdHpfn1NdnYqPnUj6c2W2tKIFVS9+VwQSQs0Ka0myQ==
+X-Received: by 2002:a63:381c:: with SMTP id f28mr22576826pga.361.1590348139455;
+        Sun, 24 May 2020 12:22:19 -0700 (PDT)
 Received: from x1.lan ([2605:e000:100e:8c61:c871:e701:52fa:2107])
-        by smtp.gmail.com with ESMTPSA id t21sm10312426pgu.39.2020.05.24.12.22.16
+        by smtp.gmail.com with ESMTPSA id t21sm10312426pgu.39.2020.05.24.12.22.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2020 12:22:17 -0700 (PDT)
+        Sun, 24 May 2020 12:22:18 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 04/12] mm: add support for async page locking
-Date:   Sun, 24 May 2020 13:21:58 -0600
-Message-Id: <20200524192206.4093-5-axboe@kernel.dk>
+Subject: [PATCH 05/12] mm: support async buffered reads in generic_file_buffered_read()
+Date:   Sun, 24 May 2020 13:21:59 -0600
+Message-Id: <20200524192206.4093-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200524192206.4093-1-axboe@kernel.dk>
 References: <20200524192206.4093-1-axboe@kernel.dk>
@@ -65,134 +65,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Normally waiting for a page to become unlocked, or locking the page,
-requires waiting for IO to complete. Add support for lock_page_async()
-and wait_on_page_locked_async(), which are callback based instead. This
-allows a caller to get notified when a page becomes unlocked, rather
-than wait for it.
-
-We use the iocb->private field to pass in this necessary data for this
-to happen. struct wait_page_key is made public, and we define struct
-wait_page_async as the interface between the caller and the core.
+Use the async page locking infrastructure, if IOCB_WAITQ is set in the
+passed in iocb. The caller must expect an -EIOCBQUEUED return value,
+which means that IO is started but not done yet. This is similar to how
+O_DIRECT signals the same operation. Once the callback is received by
+the caller for IO completion, the caller must retry the operation.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h      |  7 ++++++-
- include/linux/pagemap.h |  9 +++++++++
- mm/filemap.c            | 41 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 56 insertions(+), 1 deletion(-)
+ mm/filemap.c | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7e84d823c6a8..5a5434ff7543 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -314,6 +314,8 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+/* iocb->ki_waitq is valid */
-+#define IOCB_WAITQ		(1 << 8)
- 
- struct kiocb {
- 	struct file		*ki_filp;
-@@ -327,7 +329,10 @@ struct kiocb {
- 	int			ki_flags;
- 	u16			ki_hint;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
--	unsigned int		ki_cookie; /* for ->iopoll */
-+	union {
-+		unsigned int		ki_cookie; /* for ->iopoll */
-+		struct wait_page_queue	*ki_waitq; /* for async buffered IO */
-+	};
- 
- 	randomized_struct_fields_end
- };
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 53d980f2208d..d3e63c9c61ae 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -495,6 +495,7 @@ static inline int wake_page_match(struct wait_page_queue *wait_page,
- 
- extern void __lock_page(struct page *page);
- extern int __lock_page_killable(struct page *page);
-+extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				unsigned int flags);
- extern void unlock_page(struct page *page);
-@@ -531,6 +532,14 @@ static inline int lock_page_killable(struct page *page)
- 	return 0;
- }
- 
-+static inline int lock_page_async(struct page *page,
-+				  struct wait_page_queue *wait)
-+{
-+	if (!trylock_page(page))
-+		return __lock_page_async(page, wait);
-+	return 0;
-+}
-+
- /*
-  * lock_page_or_retry - Lock the page, unless this would block and the
-  * caller indicated that it can handle a retry.
 diff --git a/mm/filemap.c b/mm/filemap.c
-index e891b5bee8fd..c746541b1d49 100644
+index c746541b1d49..18022de7dc33 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1183,6 +1183,42 @@ int wait_on_page_bit_killable(struct page *page, int bit_nr)
+@@ -1219,6 +1219,14 @@ static int __wait_on_page_locked_async(struct page *page,
+ 	return ret;
  }
- EXPORT_SYMBOL(wait_on_page_bit_killable);
  
-+static int __wait_on_page_locked_async(struct page *page,
-+				       struct wait_page_queue *wait, bool set)
++static int wait_on_page_locked_async(struct page *page,
++				     struct wait_page_queue *wait)
 +{
-+	struct wait_queue_head *q = page_waitqueue(page);
-+	int ret = 0;
-+
-+	wait->page = page;
-+	wait->bit_nr = PG_locked;
-+
-+	spin_lock_irq(&q->lock);
-+	if (set)
-+		ret = !trylock_page(page);
-+	else
-+		ret = PageLocked(page);
-+	if (ret) {
-+		__add_wait_queue_entry_tail(q, &wait->wait);
-+		SetPageWaiters(page);
-+		if (set)
-+			ret = !trylock_page(page);
-+		else
-+			ret = PageLocked(page);
-+		/*
-+		 * If we were succesful now, we know we're still on the
-+		 * waitqueue as we're still under the lock. This means it's
-+		 * safe to remove and return success, we know the callback
-+		 * isn't going to trigger.
-+		 */
-+		if (!ret)
-+			__remove_wait_queue(q, &wait->wait);
-+		else
-+			ret = -EIOCBQUEUED;
-+	}
-+	spin_unlock_irq(&q->lock);
-+	return ret;
++	if (!PageLocked(page))
++		return 0;
++	return __wait_on_page_locked_async(compound_head(page), wait, false);
 +}
 +
  /**
   * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
   * @page: The page to wait for.
-@@ -1345,6 +1381,11 @@ int __lock_page_killable(struct page *__page)
- }
- EXPORT_SYMBOL_GPL(__lock_page_killable);
+@@ -2058,17 +2066,25 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 					index, last_index - index);
+ 		}
+ 		if (!PageUptodate(page)) {
+-			if (iocb->ki_flags & IOCB_NOWAIT) {
+-				put_page(page);
+-				goto would_block;
+-			}
+-
+ 			/*
+ 			 * See comment in do_read_cache_page on why
+ 			 * wait_on_page_locked is used to avoid unnecessarily
+ 			 * serialisations and why it's safe.
+ 			 */
+-			error = wait_on_page_locked_killable(page);
++			if (iocb->ki_flags & IOCB_WAITQ) {
++				if (written) {
++					put_page(page);
++					goto out;
++				}
++				error = wait_on_page_locked_async(page,
++								iocb->ki_waitq);
++			} else {
++				if (iocb->ki_flags & IOCB_NOWAIT) {
++					put_page(page);
++					goto would_block;
++				}
++				error = wait_on_page_locked_killable(page);
++			}
+ 			if (unlikely(error))
+ 				goto readpage_error;
+ 			if (PageUptodate(page))
+@@ -2156,7 +2172,10 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
  
-+int __lock_page_async(struct page *page, struct wait_page_queue *wait)
-+{
-+	return __wait_on_page_locked_async(page, wait, true);
-+}
-+
- /*
-  * Return values:
-  * 1 - page is locked; mmap_sem is still held.
+ page_not_up_to_date:
+ 		/* Get exclusive access to the page ... */
+-		error = lock_page_killable(page);
++		if (iocb->ki_flags & IOCB_WAITQ)
++			error = lock_page_async(page, iocb->ki_waitq);
++		else
++			error = lock_page_killable(page);
+ 		if (unlikely(error))
+ 			goto readpage_error;
+ 
 -- 
 2.26.2
 
