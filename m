@@ -2,211 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E04F91DFC9A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 04:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D461DFCAE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 05:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388306AbgEXCxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 22:53:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55614 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388262AbgEXCxu (ORCPT
+        id S2388335AbgEXD20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 23:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388318AbgEXD20 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 22:53:50 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04O2WueA118978;
-        Sat, 23 May 2020 22:52:25 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 316xn3hqc0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 23 May 2020 22:52:25 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04O2XQhe120524;
-        Sat, 23 May 2020 22:52:24 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 316xn3hqbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 23 May 2020 22:52:24 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 04O2pcoi020197;
-        Sun, 24 May 2020 02:52:23 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma01fra.de.ibm.com with ESMTP id 316uf8gmuw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 24 May 2020 02:52:22 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04O2p6C066060664
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 24 May 2020 02:51:07 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7F6311C050;
-        Sun, 24 May 2020 02:52:19 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 398BE11C04C;
-        Sun, 24 May 2020 02:52:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.203.161])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 24 May 2020 02:52:17 +0000 (GMT)
-Message-ID: <1590288736.5111.431.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Scott Branden <scott.branden@broadcom.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        ebiederm@xmission.com, jeyu@kernel.org, jmorris@namei.org,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, nayna@linux.ibm.com,
-        dan.carpenter@oracle.com, skhan@linuxfoundation.org,
-        geert@linux-m68k.org, tglx@linutronix.de, bauerman@linux.ibm.com,
-        dhowells@redhat.com, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 23 May 2020 22:52:16 -0400
-In-Reply-To: <c48a80f5-a09c-6747-3db8-be23a260a0cb@broadcom.com>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
-         <20200513181736.GA24342@infradead.org>
-         <20200515212933.GD11244@42.do-not-panic.com>
-         <20200518062255.GB15641@infradead.org>
-         <1589805462.5111.107.camel@linux.ibm.com>
-         <7525ca03-def7-dfe2-80a9-25270cb0ae05@broadcom.com>
-         <202005221551.5CA1372@keescook>
-         <c48a80f5-a09c-6747-3db8-be23a260a0cb@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Sat, 23 May 2020 23:28:26 -0400
+Received: from omr2.cc.vt.edu (omr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:33:fb76:806e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A264C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 20:28:25 -0700 (PDT)
+Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 04O3SMYf010880
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 23:28:22 -0400
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 04O3SHot027639
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 23:28:22 -0400
+Received: by mail-qk1-f198.google.com with SMTP id g20so14808194qkl.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 20:28:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version
+         :content-transfer-encoding:date:message-id;
+        bh=i58OCaMAvQBYliGiBa5+vTtK/78utl6tdtCjNYsEte8=;
+        b=ShnoIdYlesXPgnggFKBEubLZOikekrlH6kfiqz1lMqLdsGkb4I+nZFhMtblUgi8QA4
+         CruTMuh/dw9XUeTrAAHgSU7zD/KG8lk/5jeZykcTVKfTAaitOVs/OKwAwWi5eC30+MnR
+         143D7+00Tl0Ajf7vRJ13mq1ECcN3YbsjlSdn86CEoB8CvTY+aklndyLasfGG5TSthP5H
+         y8j4t+OoPmjPEgrWEcNFho7bcZKXYCldnhO1AcnebpmApTlXiMCkTKN4nbgn0K5iTMsO
+         VD0TssoiGfQev+xW7uCUYd6CKnxEU1TsbB9ZJ+sd1eNQuiedbASFmG5+IFVDRGqc5Jop
+         n4/Q==
+X-Gm-Message-State: AOAM5332ksXjQw2UqqN5styoKViUVJni0TgZCMuckQF+IdB0EjhrHf6U
+        AvZA9V2T8QSN6GJpXodo+fuQn8gIn4ND7389lIaEdChuYCHW/RoPMVNDG6/WTr3HXYRvPLHenfC
+        qaYL9A1bcyyYPyg4UXIkVA6vSEKB7jSjw69w/
+X-Received: by 2002:a05:620a:1524:: with SMTP id n4mr22092048qkk.490.1590290897443;
+        Sat, 23 May 2020 20:28:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzTv3M8riA+KCQEJ7UovI1OPJ0n7n+QJ0IE5YxSOmpO2i0TDa2rJYRwX0A2430HsIuZYpNvCw==
+X-Received: by 2002:a05:620a:1524:: with SMTP id n4mr22092030qkk.490.1590290896986;
+        Sat, 23 May 2020 20:28:16 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id p25sm2768539qtj.18.2020.05.23.20.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 May 2020 20:28:15 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: next-20200522 - build fail in fs/binfmt_elf_fdpic.c
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-23_14:2020-05-22,2020-05-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 clxscore=1015 impostorscore=0
- lowpriorityscore=0 cotscore=-2147483648 phishscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005240020
+Content-Type: multipart/signed; boundary="==_Exmh_1590290894_16657P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 23 May 2020 23:28:14 -0400
+Message-ID: <22928.1590290894@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-05-22 at 16:25 -0700, Scott Branden wrote:
-> Hi Kees,
-> 
-> On 2020-05-22 4:04 p.m., Kees Cook wrote:
-> > On Fri, May 22, 2020 at 03:24:32PM -0700, Scott Branden wrote:
-> >> On 2020-05-18 5:37 a.m., Mimi Zohar wrote:
-> >>> On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
-> >>>> On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
-> >>>>> On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
-> >>>>>> Can you also move kernel_read_* out of fs.h?  That header gets pulled
-> >>>>>> in just about everywhere and doesn't really need function not related
-> >>>>>> to the general fs interface.
-> >>>>> Sure, where should I dump these?
-> >>>> Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
-> >>>> of the file comment explaining the point of the interface, which I
-> >>>> still don't get :)
-> >>> Instead of rolling your own method of having the kernel read a file,
-> >>> which requires call specific security hooks, this interface provides a
-> >>> single generic set of pre and post security hooks.  The
-> >>> kernel_read_file_id enumeration permits the security hook to
-> >>> differentiate between callers.
-> >>>
-> >>> To comply with secure and trusted boot concepts, a file cannot be
-> >>> accessible to the caller until after it has been measured and/or the
-> >>> integrity (hash/signature) appraised.
-> >>>
-> >>> In some cases, the file was previously read twice, first to measure
-> >>> and/or appraise the file and then read again into a buffer for
-> >>> use.  This interface reads the file into a buffer once, calls the
-> >>> generic post security hook, before providing the buffer to the caller.
-> >>>    (Note using firmware pre-allocated memory might be an issue.)
-> >>>
-> >>> Partial reading firmware will result in needing to pre-read the entire
-> >>> file, most likely on the security pre hook.
-> >> The entire file may be very large and not fit into a buffer.
-> >> Hence one of the reasons for a partial read of the file.
-> >> For security purposes, you need to change your code to limit the amount
-> >> of data it reads into a buffer at one time to not consume or run out of much
-> >> memory.
-> > Hm? That's not how whole-file hashing works. :)
-> 
-> >
-> > These hooks need to finish their hashing and policy checking before they
-> > can allow the rest of the code to move forward. (That's why it's a
-> > security hook.) If kernel memory utilization is the primary concern,
-> > then sure, things could be rearranged to do partial read and update the
-> > hash incrementally, but the entire file still needs to be locked,
-> > entirely hashed by hook, then read by the caller, then unlocked and
-> > released.
+--==_Exmh_1590290894_16657P
+Content-Type: text/plain; charset=us-ascii
 
-Exactly.
+Eric:  looks like you missed one?
 
-> >
-> > So, if you want to have partial file reads work, you'll need to
-> > rearchitect the way this works to avoid regressing the security coverage
-> > of these operations.
-> I am not familiar with how the security handling code works at all.
-> Is the same security check run on files opened from user space?
-> A file could be huge.
-> 
-> If it assumes there is there is enough memory available to read the 
-> entire file into kernel space then the improvement below can be left as
-> a memory optimization to be done in an independent (or future) patch series.
+commit b8a61c9e7b4a0fec493d191429e9653d66a79ccc
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu May 14 15:17:40 2020 -0500
 
-There are two security hooks - security_kernel_read_file(),
-security_kernel_post_read_file - in kernel_read_file().  The first
-hook is called before the file is read into a buffer, while the second
-hook is called afterwards.
+    exec: Generic execfd support
 
-For partial reads, measuring the firmware and verifying the firmware's
-signature will need to be done on the security_kernel_read_file()
-hook.
+  CHECK   fs/binfmt_elf_fdpic.c
+fs/binfmt_elf_fdpic.c:591:34: error: undefined identifier 'BINPRM_FLAGS_EXECFD'
+  CC      fs/binfmt_elf_fdpic.o
+fs/binfmt_elf_fdpic.c: In function 'create_elf_fdpic_tables':
+fs/binfmt_elf_fdpic.c:591:27: error: 'BINPRM_FLAGS_EXECFD' undeclared (first use in this function); did you mean 'VM_DATA_FLAGS_EXEC'?
+  if (bprm->interp_flags & BINPRM_FLAGS_EXECFD)
+                           ^~~~~~~~~~~~~~~~~~~
+                           VM_DATA_FLAGS_EXEC
+fs/binfmt_elf_fdpic.c:591:27: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [scripts/Makefile.build:273: fs/binfmt_elf_fdpic.o] Error 1
+23:14:07 0 [/usr/src/linux-next]2
 
-> 
-> > So, probably, the code will look something like:
-> >
-> >
-> > file = kernel_open_file_for_reading(...)
-> > 	file = open...
-> > 	disallow_writes(file);
-> > 	while (processed < size-of-file) {
-> > 		buf = read(file, size...)
-> > 		security_file_read_partial(buf)
-> > 	}
-> > 	ret = security_file_read_finished(file);
-> > 	if (ret < 0) {
-> > 		allow_writes(file);
-> > 		return PTR_ERR(ret);
-> > 	}
-> > 	return file;
-> >
-> > while (processed < size-of-file) {
-> > 	buf = read(file, size...)
-> > 	firmware_send_partial(buf);
-> > }
-> >
-> > kernel_close_file_for_reading(file)
-> > 	allow_writes(file);
 
-Right, the ima_file_mmap(), ima_bprm_check(), and ima_file_check()
-hooks call process_measurement() to do this.  ima_post_read_file()
-passes a buffer to process_measurement() instead.
+--==_Exmh_1590290894_16657P
+Content-Type: application/pgp-signature
 
-Scott, the change should be straight forward.  The additional patch
-needs to:
-- define a new kernel_read_file_id enumeration, like
-FIRMWARE_PARTIAL_READ.
-- Currently ima_read_file() has a comment about pre-allocated firmware
-buffers.  Update ima_read_file() to call process_measurement() for the
-new enumeration FIRMWARE_PARTIAL_READ and update ima_post_read_file()
-to return immediately.
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
-The built-in IMA measurement policy contains a rule to measure
-firmware.  The policy can be specified on the boot command line by
-specifying "ima_policy=tcb".  After reading the firmware, the firmware
-measurement should be in <securityfs>/ima/ascii_runtime_measurements.
+iQIVAwUBXsnpzQdmEQWDXROgAQKL5BAAjI/OXaLC+STtx047fdE5RkoaXShnqUSw
+GhJ1TJnAtDtaDQTtX1BGLWaUtLlBqndad5OBRri0fspOPB2iL4nRscZCojqNupAv
+Mja4gDYmlNhvHjO6Vzs/OHGRObz01+WD0SGAs7vEx2Sxpbm2rq37sWe7dzblznVl
+VUyc3t+AUJek45kuOyxP6MrvvakLQLJdLWTHbg0bqUh0byRU6LT97Xu5gdyYoGsi
+a/DfSNQFJHYbAzqR8cZA+/u9m04uEaJ+1eaz1NTQqq9fxN4fFFSXkqokkUAhezbq
+OyFz8Q1cW7R3rB/EsrcmQ+hpGrZmlFR/N8qtK7Frp6ALwM1kgvpLpRAOWsVdlFTq
+W7km69mUe3eBrUNGQ0UD0SUxGDIYwu2Z1GKUjmTDe3kPzH2PCk+/TIpYtVvXMnCe
+T8vmu/yR37VgEOepko8Zgo9pNY6V5CGr/e/UiZHnA7DgFp5cT2YD3G6OLoXsibnf
+k/qzNNJ0mmu+iDduIH+rBIOE5bpFn41Un8vuZRxb8FQD1PLFdwlT/V6BHqIuhAnU
+ZtIjOlC0AUu15jzFZFrpUsOKC22BCNBSMzrHlli+G5BsDB4hR/xWSMHaedTAQwdH
+cxOm75EAhXpwBj5xlnXyujyRvTSw52Lt5fNzVVGboYP4SEFIeePuenaKmkpCYs0e
+3HPmljnddXE=
+=6Us+
+-----END PGP SIGNATURE-----
 
-thanks,
-
-Mimi
+--==_Exmh_1590290894_16657P--
