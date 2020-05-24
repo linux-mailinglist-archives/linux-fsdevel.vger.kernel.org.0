@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D92C61E0225
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 21:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F17721E0223
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 21:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388127AbgEXTWp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 May 2020 15:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
+        id S2388029AbgEXTWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 May 2020 15:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388232AbgEXTW0 (ORCPT
+        with ESMTP id S2388250AbgEXTW2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 May 2020 15:22:26 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57175C05BD43
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:26 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id 5so7646604pjd.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:26 -0700 (PDT)
+        Sun, 24 May 2020 15:22:28 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC94C08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:27 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id f4so7764330pgi.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mDbeWlveWyEr17EututM6ewZlLrenoq+wrG4TB+c+O8=;
-        b=uRHMeG7h0qyUWA7vuWqk7MVYR+0HFA9+hLVEVjHnDq9/bGqeemt5utvzvZZgUdnrIy
-         U+lba7Qp6iQLZ4c8z3yex1xsl7NBK51bH9ntOiA1bzrAsnflM9kzXN7kNcJ7N0emlteQ
-         f6PTLXDnlvMvkO0+xbsF0n3KM+R3esV6iaI/VrxgFuKg6m/QCwh29NieyfZ0bGIkLBzC
-         N0tz472lFi/FcUthEq7qQBwQ8YXqMbnsRrwlnS1p3BAEfpEt6RqH5JLCBFEKqy0ijFcH
-         WD0e0R9E3NAVkMWZKPvQJyEy1N1km2FpSHT2g5nK9H0/Uh1ImNoyNvY6xNut1BwqV9ew
-         Tb8Q==
+        bh=egusxH2Kf4IsegITvpm+Q3F8VxKliDk7k1e8lkissGM=;
+        b=TglGLCKYUK3IUheNw2tbkabE4Tsvn6fX7wkDCP1B329i3fyJ7ym0/4jC6PlxFEJkCh
+         xq1XNX2hwngAJ5RcbIVexVcP9jjvdaD9osyY+kMe+yMGUekQEI9NIpkmMfLWwshr5yaT
+         9x1b/h2VkjbTsRSyVybp3IKTaneYp2AbkvguvjSaI6bwG+QNsK/bdCW5gf+XuRt4xgqE
+         Ve96sQETJ61P1rmIYCDy5zh+xyCExYatJgRwEB3WAFACCj4ZKPLryT+2Z3vNLi5FK4vI
+         pcc4/jxFI1Biav3NYID6de289fcInGHFS4DS31EtXvYZlBGY5Kh1XFpLtfn3lKFAilan
+         CVUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mDbeWlveWyEr17EututM6ewZlLrenoq+wrG4TB+c+O8=;
-        b=O221G0Y2NrL4ZtQ+68nHrxNIOWARxQoGzxBqcr8DU2p8p2qYc7UbL1luLT4E7yUVjp
-         VMZ1eWYB4OL9I4dcjLa1HPEMOkk8sYSolczXPUG9TolewOhe/DZJoWOdTnWoof1pEaYz
-         JYQ0pshAjCHszVittDCwpVjt3Q89wAmpc/UlFYuWm2G7UxU9oQN+4kpqGzQaqqyVof8J
-         ZqM3lk564fzvP+73PvjezftLbrFtPJa5ChbTxOMU7Vn9she4tY5PKszNvXCZ7dOAITfT
-         hstPf2J3PRHI03Dmp35J71lqcfkQTx0WnNBS1kMUf441K0qjd8TYlEIU+z6YLduGSDHg
-         TgkA==
-X-Gm-Message-State: AOAM532334HxU09jzJd17+8TBTVo5UsUL3kSuLTATBufSRThbyBIzDoc
-        6f5WrSYYbwIuZTnHeoBZ8vvDXA==
-X-Google-Smtp-Source: ABdhPJx5oK/myeVn3bRCetPZQwQdNS3kfvzT2VTrfAxdR1BbKcm7G7xwvH5T6Twt2b9anXcaIgaOgg==
-X-Received: by 2002:a17:90a:fd85:: with SMTP id cx5mr16698146pjb.146.1590348145904;
-        Sun, 24 May 2020 12:22:25 -0700 (PDT)
+        bh=egusxH2Kf4IsegITvpm+Q3F8VxKliDk7k1e8lkissGM=;
+        b=X+c7stXaDYaQca8v5Yh7cdc214AjG9YuiFlUJwCYMNyHJDOJIWflRjTylhVFobXmFh
+         +4Yi96O/9qMTFo+PPy1rNGUzIL6OIwejw63lybO1qUDv0kxTEs0xj+3lSOc3lPcQBPNF
+         0x/cN6m5VoFMGPyFk5WO/goTtQ1vntqmXI7v0mD1JeIJcvzIzfBoiDl06uR48d27HoIq
+         nHYSvsz+UCQLOd+yF55Et2AFd2aMBdJYMq3bJzUXv250vr2pfD9s+syxcL8Qb9RbOBV1
+         UL4aiv2JCKUE5ijrxhDD70cVKNfkcHypOzgrniL0pqCkUtwfTqE7VxNN1ut1GghdobLh
+         dR6A==
+X-Gm-Message-State: AOAM5314y5151EYrBrvQTiO8H45wyJRZEn01gLD02u5zROf8VIwMqW9V
+        We11v+zQuGB+muex0q0U/kCJhL8eygs6MA==
+X-Google-Smtp-Source: ABdhPJxKr0QyshEARDFf894CnVwX/DlbGPjUKUr7q571X3XzSjjUdNUUq4yA3N0OBw7dm2okvEdSNw==
+X-Received: by 2002:a63:1d4:: with SMTP id 203mr22607763pgb.74.1590348147189;
+        Sun, 24 May 2020 12:22:27 -0700 (PDT)
 Received: from x1.lan ([2605:e000:100e:8c61:c871:e701:52fa:2107])
-        by smtp.gmail.com with ESMTPSA id t21sm10312426pgu.39.2020.05.24.12.22.24
+        by smtp.gmail.com with ESMTPSA id t21sm10312426pgu.39.2020.05.24.12.22.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2020 12:22:25 -0700 (PDT)
+        Sun, 24 May 2020 12:22:26 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 10/12] btrfs: flag files as supporting buffered async reads
-Date:   Sun, 24 May 2020 13:22:04 -0600
-Message-Id: <20200524192206.4093-11-axboe@kernel.dk>
+Subject: [PATCH 11/12] mm: add kiocb_wait_page_queue_init() helper
+Date:   Sun, 24 May 2020 13:22:05 -0600
+Message-Id: <20200524192206.4093-12-axboe@kernel.dk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200524192206.4093-1-axboe@kernel.dk>
 References: <20200524192206.4093-1-axboe@kernel.dk>
@@ -65,26 +65,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfs uses generic_file_read_iter(), which already supports this.
+Checks if the file supports it, and initializes the values that we need.
+Caller passes in 'data' pointer, if any, and the callback function to
+be used.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/btrfs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/pagemap.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 719e68ab552c..c933b6a1b4a8 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3480,7 +3480,7 @@ static loff_t btrfs_file_llseek(struct file *file, loff_t offset, int whence)
- 
- static int btrfs_file_open(struct inode *inode, struct file *filp)
- {
--	filp->f_mode |= FMODE_NOWAIT;
-+	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
- 	return generic_file_open(inode, filp);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index d3e63c9c61ae..8b65420410ee 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -493,6 +493,27 @@ static inline int wake_page_match(struct wait_page_queue *wait_page,
+ 	return 1;
  }
  
++static inline int kiocb_wait_page_queue_init(struct kiocb *kiocb,
++					     struct wait_page_queue *wait,
++					     wait_queue_func_t func,
++					     void *data)
++{
++	/* Can't support async wakeup with polled IO */
++	if (kiocb->ki_flags & IOCB_HIPRI)
++		return -EINVAL;
++	if (kiocb->ki_filp->f_mode & FMODE_BUF_RASYNC) {
++		wait->wait.func = func;
++		wait->wait.private = data;
++		wait->wait.flags = 0;
++		INIT_LIST_HEAD(&wait->wait.entry);
++		kiocb->ki_flags |= IOCB_WAITQ;
++		kiocb->ki_waitq = wait;
++		return 0;
++	}
++
++	return -EOPNOTSUPP;
++}
++
+ extern void __lock_page(struct page *page);
+ extern int __lock_page_killable(struct page *page);
+ extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
 -- 
 2.26.2
 
