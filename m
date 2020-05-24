@@ -2,167 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF961DFAA8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 May 2020 21:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04F91DFC9A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 04:53:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgEWTUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 15:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgEWTUp (ORCPT
+        id S2388306AbgEXCxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 May 2020 22:53:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55614 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388262AbgEXCxu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 15:20:45 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED57AC061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 12:20:44 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id ci21so6473280pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 12:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hA9QPDx7hlE3ND4DwWRlDMJ19Frvrmq/H2EqY+eNJ64=;
-        b=0q+YU9P9GK7f7corz/MS41QLym929QjELiRrpW8MG8nwgFwcsxsqzCbNyC7laJ1+PF
-         glJphrkI1udiLmwSzBkbGBRq+UPe73XZoD2mvtEOZ4ia2S44JuxRfUumeDe4yb98XkRZ
-         P5yD3lBb+VKq6WVq34r3Ou4D6u7gizH6e7wDh7/5gwBjIVCkJ5KgFhS+c6pf7/vrEzJy
-         AkgSLIH8Z/r7HU6xk2xehOVbOp05rjgCDx4olsrirOGmqMR80ofSNU686R2TjN7Rhvct
-         fjYmAUM0vHO1N3eVEB+5PPKJmsdd0ligK7RL/JZb1osl2D7+Z2ZNcRhTw69SNr8BEkjg
-         r9Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hA9QPDx7hlE3ND4DwWRlDMJ19Frvrmq/H2EqY+eNJ64=;
-        b=mxpOFj+oehR1IvvPqz7mabG4O0j0lsQVycI8fFRN5uxgbmf0sVcUGnbF9VKBL0eKk0
-         9xjZBM4C1S6JA/8l3+LjCLNOEWlLSZTyAegI4ovB+hMMnc0qkSzX85nNAY89uruLK1xN
-         opAxvubSmtyaphAPjAdxTLtZNgn7S/vRut3b/j1o4ZdKXhKtuIylAPvUe+J2aYwp0hjI
-         i9sX9WFI6si6GMJWyhLJcakxxygfjXu6AUPNDTy/YkSL/cawmA6KCCXxubjhB0ecaKXj
-         vvkf+hVQeloqzZ53Ch+plz5EcYfTQEgiuXr3+09CS2APXimV9NWNw2ZJHRhsY0bQWg+L
-         aLBA==
-X-Gm-Message-State: AOAM532cOTEEc6KQhu9dApj9XD80jNofuQ5D5rT598h+/bY6m7iJJdZi
-        zvM0cF4wtuLEv+5pr5+Z1Tx2CQ==
-X-Google-Smtp-Source: ABdhPJxXzjl6T/Z1yURPua6/Yup1Xp5ljESCno0qdshH4asOxNjDPYFoS3I9T3IMOBXTfYoB8AZclg==
-X-Received: by 2002:a17:90a:8545:: with SMTP id a5mr11496077pjw.200.1590261644246;
-        Sat, 23 May 2020 12:20:44 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:c94:a67a:9209:cf5f? ([2605:e000:100e:8c61:c94:a67a:9209:cf5f])
-        by smtp.gmail.com with ESMTPSA id 202sm2033541pfv.155.2020.05.23.12.20.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 May 2020 12:20:43 -0700 (PDT)
-Subject: Re: [PATCHSET v2 0/12] Add support for async buffered reads
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200523185755.8494-1-axboe@kernel.dk>
-Message-ID: <2b42c0c3-5d3c-e381-4193-83cb3f971399@kernel.dk>
-Date:   Sat, 23 May 2020 13:20:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200523185755.8494-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 23 May 2020 22:53:50 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04O2WueA118978;
+        Sat, 23 May 2020 22:52:25 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 316xn3hqc0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 23 May 2020 22:52:25 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04O2XQhe120524;
+        Sat, 23 May 2020 22:52:24 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 316xn3hqbk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 23 May 2020 22:52:24 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 04O2pcoi020197;
+        Sun, 24 May 2020 02:52:23 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma01fra.de.ibm.com with ESMTP id 316uf8gmuw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 24 May 2020 02:52:22 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04O2p6C066060664
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 24 May 2020 02:51:07 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7F6311C050;
+        Sun, 24 May 2020 02:52:19 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 398BE11C04C;
+        Sun, 24 May 2020 02:52:17 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.203.161])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 24 May 2020 02:52:17 +0000 (GMT)
+Message-ID: <1590288736.5111.431.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        ebiederm@xmission.com, jeyu@kernel.org, jmorris@namei.org,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, nayna@linux.ibm.com,
+        dan.carpenter@oracle.com, skhan@linuxfoundation.org,
+        geert@linux-m68k.org, tglx@linutronix.de, bauerman@linux.ibm.com,
+        dhowells@redhat.com, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 23 May 2020 22:52:16 -0400
+In-Reply-To: <c48a80f5-a09c-6747-3db8-be23a260a0cb@broadcom.com>
+References: <20200513152108.25669-1-mcgrof@kernel.org>
+         <20200513181736.GA24342@infradead.org>
+         <20200515212933.GD11244@42.do-not-panic.com>
+         <20200518062255.GB15641@infradead.org>
+         <1589805462.5111.107.camel@linux.ibm.com>
+         <7525ca03-def7-dfe2-80a9-25270cb0ae05@broadcom.com>
+         <202005221551.5CA1372@keescook>
+         <c48a80f5-a09c-6747-3db8-be23a260a0cb@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-23_14:2020-05-22,2020-05-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ lowpriorityscore=0 cotscore=-2147483648 phishscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005240020
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-And this one is v3, obviously, not v2...
+On Fri, 2020-05-22 at 16:25 -0700, Scott Branden wrote:
+> Hi Kees,
+> 
+> On 2020-05-22 4:04 p.m., Kees Cook wrote:
+> > On Fri, May 22, 2020 at 03:24:32PM -0700, Scott Branden wrote:
+> >> On 2020-05-18 5:37 a.m., Mimi Zohar wrote:
+> >>> On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
+> >>>> On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
+> >>>>> On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
+> >>>>>> Can you also move kernel_read_* out of fs.h?  That header gets pulled
+> >>>>>> in just about everywhere and doesn't really need function not related
+> >>>>>> to the general fs interface.
+> >>>>> Sure, where should I dump these?
+> >>>> Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
+> >>>> of the file comment explaining the point of the interface, which I
+> >>>> still don't get :)
+> >>> Instead of rolling your own method of having the kernel read a file,
+> >>> which requires call specific security hooks, this interface provides a
+> >>> single generic set of pre and post security hooks.  The
+> >>> kernel_read_file_id enumeration permits the security hook to
+> >>> differentiate between callers.
+> >>>
+> >>> To comply with secure and trusted boot concepts, a file cannot be
+> >>> accessible to the caller until after it has been measured and/or the
+> >>> integrity (hash/signature) appraised.
+> >>>
+> >>> In some cases, the file was previously read twice, first to measure
+> >>> and/or appraise the file and then read again into a buffer for
+> >>> use.  This interface reads the file into a buffer once, calls the
+> >>> generic post security hook, before providing the buffer to the caller.
+> >>>    (Note using firmware pre-allocated memory might be an issue.)
+> >>>
+> >>> Partial reading firmware will result in needing to pre-read the entire
+> >>> file, most likely on the security pre hook.
+> >> The entire file may be very large and not fit into a buffer.
+> >> Hence one of the reasons for a partial read of the file.
+> >> For security purposes, you need to change your code to limit the amount
+> >> of data it reads into a buffer at one time to not consume or run out of much
+> >> memory.
+> > Hm? That's not how whole-file hashing works. :)
+> 
+> >
+> > These hooks need to finish their hashing and policy checking before they
+> > can allow the rest of the code to move forward. (That's why it's a
+> > security hook.) If kernel memory utilization is the primary concern,
+> > then sure, things could be rearranged to do partial read and update the
+> > hash incrementally, but the entire file still needs to be locked,
+> > entirely hashed by hook, then read by the caller, then unlocked and
+> > released.
 
+Exactly.
 
-On 5/23/20 12:57 PM, Jens Axboe wrote:
-> We technically support this already through io_uring, but it's
-> implemented with a thread backend to support cases where we would
-> block. This isn't ideal.
+> >
+> > So, if you want to have partial file reads work, you'll need to
+> > rearchitect the way this works to avoid regressing the security coverage
+> > of these operations.
+> I am not familiar with how the security handling code works at all.
+> Is the same security check run on files opened from user space?
+> A file could be huge.
 > 
-> After a few prep patches, the core of this patchset is adding support
-> for async callbacks on page unlock. With this primitive, we can simply
-> retry the IO operation. With io_uring, this works a lot like poll based
-> retry for files that support it. If a page is currently locked and
-> needed, -EIOCBQUEUED is returned with a callback armed. The callers
-> callback is responsible for restarting the operation.
-> 
-> With this callback primitive, we can add support for
-> generic_file_buffered_read(), which is what most file systems end up
-> using for buffered reads. XFS/ext4/btrfs/bdev is wired up, but probably
-> trivial to add more.
-> 
-> The file flags support for this by setting FMODE_BUF_RASYNC, similar
-> to what we do for FMODE_NOWAIT. Open to suggestions here if this is
-> the preferred method or not.
-> 
-> In terms of results, I wrote a small test app that randomly reads 4G
-> of data in 4K chunks from a file hosted by ext4. The app uses a queue
-> depth of 32. If you want to test yourself, you can just use buffered=1
-> with ioengine=io_uring with fio. No application changes are needed to
-> use the more optimized buffered async read.
-> 
-> preadv for comparison:
-> 	real    1m13.821s
-> 	user    0m0.558s
-> 	sys     0m11.125s
-> 	CPU	~13%
-> 
-> Mainline:
-> 	real    0m12.054s
-> 	user    0m0.111s
-> 	sys     0m5.659s
-> 	CPU	~32% + ~50% == ~82%
-> 
-> This patchset:
-> 	real    0m9.283s
-> 	user    0m0.147s
-> 	sys     0m4.619s
-> 	CPU	~52%
-> 
-> The CPU numbers are just a rough estimate. For the mainline io_uring
-> run, this includes the app itself and all the threads doing IO on its
-> behalf (32% for the app, ~1.6% per worker and 32 of them). Context
-> switch rate is much smaller with the patchset, since we only have the
-> one task performing IO.
-> 
-> The goal here is efficiency. Async thread offload adds latency, and
-> it also adds noticable overhead on items such as adding pages to the
-> page cache. By allowing proper async buffered read support, we don't
-> have X threads hammering on the same inode page cache, we have just
-> the single app actually doing IO.
-> 
-> Been beating on this and it's solid for me, and I'm now pretty happy
-> with how it all turned out. Not aware of any missing bits/pieces or
-> code cleanups that need doing.
-> 
-> Series can also be found here:
-> 
-> https://git.kernel.dk/cgit/linux-block/log/?h=async-buffered.3
-> 
-> or pull from:
-> 
-> git://git.kernel.dk/linux-block async-buffered.3
-> 
->  fs/block_dev.c            |   2 +-
->  fs/btrfs/file.c           |   2 +-
->  fs/ext4/file.c            |   2 +-
->  fs/io_uring.c             |  99 ++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_file.c         |   2 +-
->  include/linux/blk_types.h |   3 +-
->  include/linux/fs.h        |   5 ++
->  include/linux/pagemap.h   |  64 ++++++++++++++++++++++
->  mm/filemap.c              | 111 ++++++++++++++++++++++++--------------
->  9 files changed, 245 insertions(+), 45 deletions(-)
-> 
-> Changes since v2:
-> - Get rid of unnecessary wait_page_async struct, just use wait_page_async
-> - Add another prep handler, adding wake_page_match()
-> - Use wake_page_match() in both callers
-> Changes since v1:
-> - Fix an issue with inline page locking
-> - Fix a potential race with __wait_on_page_locked_async()
-> - Fix a hang related to not setting page_match, thus missing a wakeup
-> 
+> If it assumes there is there is enough memory available to read the 
+> entire file into kernel space then the improvement below can be left as
+> a memory optimization to be done in an independent (or future) patch series.
 
+There are two security hooks - security_kernel_read_file(),
+security_kernel_post_read_file - in kernel_read_file().  The first
+hook is called before the file is read into a buffer, while the second
+hook is called afterwards.
 
--- 
-Jens Axboe
+For partial reads, measuring the firmware and verifying the firmware's
+signature will need to be done on the security_kernel_read_file()
+hook.
 
+> 
+> > So, probably, the code will look something like:
+> >
+> >
+> > file = kernel_open_file_for_reading(...)
+> > 	file = open...
+> > 	disallow_writes(file);
+> > 	while (processed < size-of-file) {
+> > 		buf = read(file, size...)
+> > 		security_file_read_partial(buf)
+> > 	}
+> > 	ret = security_file_read_finished(file);
+> > 	if (ret < 0) {
+> > 		allow_writes(file);
+> > 		return PTR_ERR(ret);
+> > 	}
+> > 	return file;
+> >
+> > while (processed < size-of-file) {
+> > 	buf = read(file, size...)
+> > 	firmware_send_partial(buf);
+> > }
+> >
+> > kernel_close_file_for_reading(file)
+> > 	allow_writes(file);
+
+Right, the ima_file_mmap(), ima_bprm_check(), and ima_file_check()
+hooks call process_measurement() to do this.  ima_post_read_file()
+passes a buffer to process_measurement() instead.
+
+Scott, the change should be straight forward.  The additional patch
+needs to:
+- define a new kernel_read_file_id enumeration, like
+FIRMWARE_PARTIAL_READ.
+- Currently ima_read_file() has a comment about pre-allocated firmware
+buffers.  Update ima_read_file() to call process_measurement() for the
+new enumeration FIRMWARE_PARTIAL_READ and update ima_post_read_file()
+to return immediately.
+
+The built-in IMA measurement policy contains a rule to measure
+firmware.  The policy can be specified on the boot command line by
+specifying "ima_policy=tcb".  After reading the firmware, the firmware
+measurement should be in <securityfs>/ima/ascii_runtime_measurements.
+
+thanks,
+
+Mimi
