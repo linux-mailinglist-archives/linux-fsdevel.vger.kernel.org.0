@@ -2,83 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD64D1E01F6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 21:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C8551E0234
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 21:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388103AbgEXTR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 May 2020 15:17:27 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56895 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387823AbgEXTR0 (ORCPT
+        id S2387982AbgEXTWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 May 2020 15:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387792AbgEXTWO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 May 2020 15:17:26 -0400
-Received: from callcc.thunk.org (pool-100-0-195-244.bstnma.fios.verizon.net [100.0.195.244])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 04OJHDUC017213
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 24 May 2020 15:17:13 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 238DA420304; Sun, 24 May 2020 15:17:13 -0400 (EDT)
-Date:   Sun, 24 May 2020 15:17:13 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        jack@suse.cz, adilger@dilger.ca, riteshh@linux.ibm.com,
-        amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: Re: fiemap cleanups v4
-Message-ID: <20200524191713.GA228632@mit.edu>
-References: <20200523073016.2944131-1-hch@lst.de>
- <20200523155216.GZ23230@ZenIV.linux.org.uk>
+        Sun, 24 May 2020 15:22:14 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E02C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:13 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id z26so7930988pfk.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 12:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PRgTWBIUIof3K+e/CBH42LWEIO1ioATTUwPeCqp2UHQ=;
+        b=QoOW0b+9anaSH1PynN6EMvziqcD6SYQPSEyhxExvJ4fIbobZWkV+qjOWZY58TVG7/j
+         XFzrw/TO8ZNuU9Wy1Kf0MtJNqmALcX1/fJ/5NQp7C3CXyHN9qTAhMDHMuZ1P5N0QLICT
+         SPtZkbXpx1yp8TjNzUYVx5kDRq5UU+8wJ4/KNP5CVFR4UX6FTCLFGCgQ1D3Lsqx7QjuV
+         tYMuVOBoMg+OEnWFCvHKiMZQ4b/JUMaF2BwDINXvScHsgfWF3j0okK8Xtc5dWYKAP6mD
+         Gfl8OHlvFdVv3AnJaeKNPTRCWKLc+m5FLCtY12XqW+yTOwdElb93BOVQczWu3zRG1Tfj
+         7hbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PRgTWBIUIof3K+e/CBH42LWEIO1ioATTUwPeCqp2UHQ=;
+        b=C+QliVmIXKLmhEa4p2fZjqPGyT6H7NP0xTh7z5vHfzo6zq3gCsXmI/eQKxPBqTkpvA
+         /Jcc6FcYOgHL/EBVAJuliCiKE4NWPPP6GRTLii34Q9MLWU+2bZ7oKwGaceWN/Klt0JQv
+         UsV2GSm1SuqZ4myHDzMJHO4/kMo2EkRDQQvJCo8YRh+KgMZi9Bn9xguY1+GH81R9TgI0
+         KH6AlyUgfpYe8X9/vLVEPZpLb9LQ1LM6VHdbuyPOuiL+eBnHuk0Bs1T/7y/SO714NryQ
+         dOl6t/34TXmGY2Yc1UcOWEf27bEAsyPSiY834Vrn5SLCYTLa6kYDkoVLY8LDwAODrYxN
+         rTlw==
+X-Gm-Message-State: AOAM530RRiVlzqkcPbC+3CTuksLOn86Ay0ZX1wGmOVW7cX5LzvPVBdjH
+        nvC84RxII21k0PE0K6yl550fUA==
+X-Google-Smtp-Source: ABdhPJxpWNMA85eA4BcwCQuyHmnnwKmYr9/iXxe1Qr6NlCvQdWZu5puz/A2BlfDne/CKV/J4XCu1QA==
+X-Received: by 2002:a63:1207:: with SMTP id h7mr17624890pgl.241.1590348132344;
+        Sun, 24 May 2020 12:22:12 -0700 (PDT)
+Received: from x1.lan ([2605:e000:100e:8c61:c871:e701:52fa:2107])
+        by smtp.gmail.com with ESMTPSA id t21sm10312426pgu.39.2020.05.24.12.22.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2020 12:22:11 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCHSET v4 0/12] Add support for async buffered reads
+Date:   Sun, 24 May 2020 13:21:54 -0600
+Message-Id: <20200524192206.4093-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200523155216.GZ23230@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 23, 2020 at 04:52:16PM +0100, Al Viro wrote:
-> On Sat, May 23, 2020 at 09:30:07AM +0200, Christoph Hellwig wrote:
-> > Hi all,
-> > 
-> > This series cleans up the fiemap support in ext4 and in general.
-> > 
-> > Ted or Al, can one of you pick this up?  It touches both ext4 and core
-> > code, so either tree could work.
-> > 
-> > 
-> > Changes since v3:
-> >  - dropped the fixes that have been merged int mainline
-> > 
-> > Changes since v2:
-> >  - commit message typo
-> >  - doc updates
-> >  - use d_inode in cifs
-> >  - add a missing return statement in cifs
-> >  - remove the filemap_write_and_wait call from ext4_ioctl_get_es_cache
-> > 
-> > Changes since v1:
-> >  - rename fiemap_validate to fiemap_prep
-> >  - lift FIEMAP_FLAG_SYNC handling to common code
-> >  - add a new linux/fiemap.h header
-> >  - remove __generic_block_fiemap
-> >  - remove access_ok calls from fiemap and ext4
-> 
-> Hmmm...  I can do an immutable shared branch, no problem.  What would
-> you prefer for a branchpoint for that one?
+We technically support this already through io_uring, but it's
+implemented with a thread backend to support cases where we would
+block. This isn't ideal.
 
-I thought we had already agreed to run these patches through the ext4
-git tree, since most of the changes affect the ext4 tree (and there
-aren't any other iomap fiemap changes pending as far as I know).
+After a few prep patches, the core of this patchset is adding support
+for async callbacks on page unlock. With this primitive, we can simply
+retry the IO operation. With io_uring, this works a lot like poll based
+retry for files that support it. If a page is currently locked and
+needed, -EIOCBQUEUED is returned with a callback armed. The callers
+callback is responsible for restarting the operation.
 
-The v3 versions of these patches have been part of the ext4 dev tree
-since May 19th.  Since the ext4 dev tree is rewinding, I can easily
-update it fiemap-fixes patch to be on top of the first two patches
-which Linus has already accepted, and then merge it into the ext4 dev
-branch.
+With this callback primitive, we can add support for
+generic_file_buffered_read(), which is what most file systems end up
+using for buffered reads. XFS/ext4/btrfs/bdev is wired up, but probably
+trivial to add more.
 
-							- Ted
+The file flags support for this by setting FMODE_BUF_RASYNC, similar
+to what we do for FMODE_NOWAIT. Open to suggestions here if this is
+the preferred method or not.
+
+In terms of results, I wrote a small test app that randomly reads 4G
+of data in 4K chunks from a file hosted by ext4. The app uses a queue
+depth of 32. If you want to test yourself, you can just use buffered=1
+with ioengine=io_uring with fio. No application changes are needed to
+use the more optimized buffered async read.
+
+preadv for comparison:
+	real    1m13.821s
+	user    0m0.558s
+	sys     0m11.125s
+	CPU	~13%
+
+Mainline:
+	real    0m12.054s
+	user    0m0.111s
+	sys     0m5.659s
+	CPU	~32% + ~50% == ~82%
+
+This patchset:
+	real    0m9.283s
+	user    0m0.147s
+	sys     0m4.619s
+	CPU	~52%
+
+The CPU numbers are just a rough estimate. For the mainline io_uring
+run, this includes the app itself and all the threads doing IO on its
+behalf (32% for the app, ~1.6% per worker and 32 of them). Context
+switch rate is much smaller with the patchset, since we only have the
+one task performing IO.
+
+Also ran a simple fio based test case, varying the queue depth from 1
+to 16, doubling every time:
+
+[buf-test]
+filename=/data/file
+direct=0
+ioengine=io_uring
+norandommap
+rw=randread
+bs=4k
+iodepth=${QD}
+randseed=89
+runtime=10s
+
+QD/Test		Patchset IOPS		Mainline IOPS
+1		9046			8294
+2		19.8k			18.9k
+4		39.2k			28.5k
+8		64.4k			31.4k
+16		65.7k			37.8k
+
+Outside of my usual environment, so this is just running on a virtualized
+NVMe device in qemu, using ext4 as the file system. NVMe isn't very
+efficient virtualized, so we run out of steam at ~65K which is why we
+flatline on the patched side (nvme_submit_cmd() eats ~75% of the test app
+CPU). Before that happens, it's a linear increase. Not shown is context
+switch rate, which is massively lower with the new code. The old thread
+offload adds a blocking thread per pending IO, so context rate quickly
+goes through the roof.
+
+The goal here is efficiency. Async thread offload adds latency, and
+it also adds noticable overhead on items such as adding pages to the
+page cache. By allowing proper async buffered read support, we don't
+have X threads hammering on the same inode page cache, we have just
+the single app actually doing IO.
+
+Been beating on this and it's solid for me, and I'm now pretty happy
+with how it all turned out. Not aware of any missing bits/pieces or
+code cleanups that need doing.
+
+Series can also be found here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=async-buffered.4
+
+or pull from:
+
+git://git.kernel.dk/linux-block async-buffered.4
+
+ fs/block_dev.c            |   2 +-
+ fs/btrfs/file.c           |   2 +-
+ fs/ext4/file.c            |   2 +-
+ fs/io_uring.c             | 114 ++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_file.c         |   2 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/fs.h        |  10 +++-
+ include/linux/pagemap.h   |  67 ++++++++++++++++++++++
+ mm/filemap.c              | 111 ++++++++++++++++++++++++-------------
+ 9 files changed, 267 insertions(+), 46 deletions(-)
+
+Changes since v3:
+- io_uring: don't retry if REQ_F_NOWAIT is set
+- io_uring: alloc req->io if the request type didn't already
+- Add iocb->ki_waitq instead of (ab)using iocb->private
+Changes since v2:
+- Get rid of unnecessary wait_page_async struct, just use wait_page_async
+- Add another prep handler, adding wake_page_match()
+- Use wake_page_match() in both callers
+Changes since v1:
+- Fix an issue with inline page locking
+- Fix a potential race with __wait_on_page_locked_async()
+- Fix a hang related to not setting page_match, thus missing a wakeup
+
+-- 
+Jens Axboe
+
 
