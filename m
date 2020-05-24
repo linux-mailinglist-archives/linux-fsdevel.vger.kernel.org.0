@@ -2,111 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D461DFCAE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 05:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CC71DFD87
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 May 2020 09:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388335AbgEXD20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 May 2020 23:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58886 "EHLO
+        id S1728420AbgEXHYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 May 2020 03:24:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388318AbgEXD20 (ORCPT
+        with ESMTP id S1728168AbgEXHYt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 May 2020 23:28:26 -0400
-Received: from omr2.cc.vt.edu (omr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:33:fb76:806e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A264C05BD43
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 20:28:25 -0700 (PDT)
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 04O3SMYf010880
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 23:28:22 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 04O3SHot027639
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 23:28:22 -0400
-Received: by mail-qk1-f198.google.com with SMTP id g20so14808194qkl.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 May 2020 20:28:22 -0700 (PDT)
+        Sun, 24 May 2020 03:24:49 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C48DC061A0E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 00:24:49 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id n24so17484129ejd.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 00:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JO4uU65ZOkWM7aYMwy1rabi0l1Bb0mKSWzHjLOZcE/0=;
+        b=QPomLnJHAOoa4UdCCI3k5puY3aiAsA/39LyTyr4w/1z8HMVxhd3wWMdAWRd0Tm645h
+         PvCrP+nhA5qugQ9nOK6EHS2aU5de4zyJmVJT+xmaUbUH9CBQUGmbyY280wqHIX3aVU9l
+         6xjt1M/lEDqHpWBD//H/++WMZISskfr7uN0q3NSyBRanhGGSVHYYnw9ogyQpR45Ny3PB
+         J8L1cwbiwaHG2XBJGAJKjo7iMFNoN2lx3osVrrpMjanJL69ygd5+y1vneFhTK9oHCwHG
+         QadOOLZA3H8EDrO8cFYWFHET/jBv0XJIv5v6kUSdr/cePZGpDkIn1ahnbA5gGsZt3GLO
+         h11Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:mime-version
-         :content-transfer-encoding:date:message-id;
-        bh=i58OCaMAvQBYliGiBa5+vTtK/78utl6tdtCjNYsEte8=;
-        b=ShnoIdYlesXPgnggFKBEubLZOikekrlH6kfiqz1lMqLdsGkb4I+nZFhMtblUgi8QA4
-         CruTMuh/dw9XUeTrAAHgSU7zD/KG8lk/5jeZykcTVKfTAaitOVs/OKwAwWi5eC30+MnR
-         143D7+00Tl0Ajf7vRJ13mq1ECcN3YbsjlSdn86CEoB8CvTY+aklndyLasfGG5TSthP5H
-         y8j4t+OoPmjPEgrWEcNFho7bcZKXYCldnhO1AcnebpmApTlXiMCkTKN4nbgn0K5iTMsO
-         VD0TssoiGfQev+xW7uCUYd6CKnxEU1TsbB9ZJ+sd1eNQuiedbASFmG5+IFVDRGqc5Jop
-         n4/Q==
-X-Gm-Message-State: AOAM5332ksXjQw2UqqN5styoKViUVJni0TgZCMuckQF+IdB0EjhrHf6U
-        AvZA9V2T8QSN6GJpXodo+fuQn8gIn4ND7389lIaEdChuYCHW/RoPMVNDG6/WTr3HXYRvPLHenfC
-        qaYL9A1bcyyYPyg4UXIkVA6vSEKB7jSjw69w/
-X-Received: by 2002:a05:620a:1524:: with SMTP id n4mr22092048qkk.490.1590290897443;
-        Sat, 23 May 2020 20:28:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzTv3M8riA+KCQEJ7UovI1OPJ0n7n+QJ0IE5YxSOmpO2i0TDa2rJYRwX0A2430HsIuZYpNvCw==
-X-Received: by 2002:a05:620a:1524:: with SMTP id n4mr22092030qkk.490.1590290896986;
-        Sat, 23 May 2020 20:28:16 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id p25sm2768539qtj.18.2020.05.23.20.28.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JO4uU65ZOkWM7aYMwy1rabi0l1Bb0mKSWzHjLOZcE/0=;
+        b=GQsYC80efSyMG4ej3WOkkZdvU+wUUdh05fuzFhWvmKT6RyNIhQ9IOMR5yv6nQpW8Qx
+         5DxFtG6T8cIASo891BkK7RIK8PbJjSPvL4pINNTW9/4PvaCVYTO0Qv/2pe87ZgvoXiQc
+         1sqXTap1jQ2H6RgA5cYBF3RvX/JNvqOUIc1aFbAg4EvxLb14aU0gJJN3DgoRkwKjISe5
+         uU6UX6UY/PcZXU1comKVZ2Y6/npWJyK+yBb5c3VLStUSkL9AvUZBeuiyliUJW/gj2xnw
+         PRcSe0vlWDuZL0qw2zRKBF2UWRPMRxg8hmQtmd1W4eCyCVVAdkPgJ1zW1mi60vpfJ84b
+         sUfA==
+X-Gm-Message-State: AOAM531tH9wAgncSv7PlOJabyetHqB4hepvCt+hzNijBNKdbnHm4HBQL
+        Rt4kANqjs+H/gTB8O/1+B/c=
+X-Google-Smtp-Source: ABdhPJxBLf8SSKsBN+n+k9fc7a27wWlauaxRSUB+JHjF2q6eCsro5hyGmupuFL2gSCUitwKPNck+Pw==
+X-Received: by 2002:a17:906:914a:: with SMTP id y10mr13943094ejw.355.1590305088060;
+        Sun, 24 May 2020 00:24:48 -0700 (PDT)
+Received: from localhost.localdomain ([141.226.12.123])
+        by smtp.gmail.com with ESMTPSA id rn17sm12515540ejb.115.2020.05.24.00.24.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 May 2020 20:28:15 -0700 (PDT)
-From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: next-20200522 - build fail in fs/binfmt_elf_fdpic.c
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1590290894_16657P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 23 May 2020 23:28:14 -0400
-Message-ID: <22928.1590290894@turing-police>
+        Sun, 24 May 2020 00:24:47 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fanotify: fix ignore mask logic for events on child and on dir
+Date:   Sun, 24 May 2020 10:24:41 +0300
+Message-Id: <20200524072441.18258-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1590290894_16657P
-Content-Type: text/plain; charset=us-ascii
+The comments in fanotify_group_event_mask() say:
 
-Eric:  looks like you missed one?
+  "If the event is on dir/child and this mark doesn't care about
+   events on dir/child, don't send it!"
 
-commit b8a61c9e7b4a0fec493d191429e9653d66a79ccc
-Author: Eric W. Biederman <ebiederm@xmission.com>
-Date:   Thu May 14 15:17:40 2020 -0500
+Specifically, mount and filesystem marks do not care about events
+on child, but they can still specify an ignore mask for those events.
+For example, a group that has:
+- A mount mark with mask 0 and ignore_mask FAN_OPEN
+- An inode mark on a directory with mask FAN_OPEN | FAN_OPEN_EXEC
+  with flag FAN_EVENT_ON_CHILD
 
-    exec: Generic execfd support
+A child file open for exec would be reported to group with the FAN_OPEN
+event despite the fact that FAN_OPEN is in ignore mask of mount mark,
+because the mark iteration loop skips over non-inode marks for events
+on child when calculating the ignore mask.
 
-  CHECK   fs/binfmt_elf_fdpic.c
-fs/binfmt_elf_fdpic.c:591:34: error: undefined identifier 'BINPRM_FLAGS_EXECFD'
-  CC      fs/binfmt_elf_fdpic.o
-fs/binfmt_elf_fdpic.c: In function 'create_elf_fdpic_tables':
-fs/binfmt_elf_fdpic.c:591:27: error: 'BINPRM_FLAGS_EXECFD' undeclared (first use in this function); did you mean 'VM_DATA_FLAGS_EXEC'?
-  if (bprm->interp_flags & BINPRM_FLAGS_EXECFD)
-                           ^~~~~~~~~~~~~~~~~~~
-                           VM_DATA_FLAGS_EXEC
-fs/binfmt_elf_fdpic.c:591:27: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [scripts/Makefile.build:273: fs/binfmt_elf_fdpic.o] Error 1
-23:14:07 0 [/usr/src/linux-next]2
+Move ignore mask calculation to the top of the iteration loop block
+before excluding marks for events on dir/child.
 
+Reported-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/linux-fsdevel/20200521162443.GA26052@quack2.suse.cz/
+Fixes: 55bf882c7f13 "fanotify: fix merging marks masks with FAN_ONDIR"
+Fixes: b469e7e47c8a "fanotify: fix handling of events on child..."
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
---==_Exmh_1590290894_16657P
-Content-Type: application/pgp-signature
+Jan,
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
+As you suspected we had a bug in ignore mask logic.
+The actual test case is quite asoteric, but it's worth fixing the logic
+anyway.
 
-iQIVAwUBXsnpzQdmEQWDXROgAQKL5BAAjI/OXaLC+STtx047fdE5RkoaXShnqUSw
-GhJ1TJnAtDtaDQTtX1BGLWaUtLlBqndad5OBRri0fspOPB2iL4nRscZCojqNupAv
-Mja4gDYmlNhvHjO6Vzs/OHGRObz01+WD0SGAs7vEx2Sxpbm2rq37sWe7dzblznVl
-VUyc3t+AUJek45kuOyxP6MrvvakLQLJdLWTHbg0bqUh0byRU6LT97Xu5gdyYoGsi
-a/DfSNQFJHYbAzqR8cZA+/u9m04uEaJ+1eaz1NTQqq9fxN4fFFSXkqokkUAhezbq
-OyFz8Q1cW7R3rB/EsrcmQ+hpGrZmlFR/N8qtK7Frp6ALwM1kgvpLpRAOWsVdlFTq
-W7km69mUe3eBrUNGQ0UD0SUxGDIYwu2Z1GKUjmTDe3kPzH2PCk+/TIpYtVvXMnCe
-T8vmu/yR37VgEOepko8Zgo9pNY6V5CGr/e/UiZHnA7DgFp5cT2YD3G6OLoXsibnf
-k/qzNNJ0mmu+iDduIH+rBIOE5bpFn41Un8vuZRxb8FQD1PLFdwlT/V6BHqIuhAnU
-ZtIjOlC0AUu15jzFZFrpUsOKC22BCNBSMzrHlli+G5BsDB4hR/xWSMHaedTAQwdH
-cxOm75EAhXpwBj5xlnXyujyRvTSw52Lt5fNzVVGboYP4SEFIeePuenaKmkpCYs0e
-3HPmljnddXE=
-=6Us+
------END PGP SIGNATURE-----
+Judging by LTP tests fanotify10 and fanotify12, we were pretty paranoid
+about adding the compound event FAN_OPEN | FAN_OPEN_EXEC, so Matthew
+wrote a lot of tests even for ignore mask, but we still missed this
+corner case.
 
---==_Exmh_1590290894_16657P--
+It was, however, trivial to add a test case for this issue [1].
+I couldn't figure out if a similar bug exists with FAN_ONDIR, because
+the FAN_OPEN_EXEC event is not applicable and it is quite hard to figure
+out if fsnotify_change() is ever called with a combination of ia_valid
+flags that ends up with a compound event on dir.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/ltp/commits/fsnotify-fixes
+
+ fs/notify/fanotify/fanotify.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 95480d3dcff7..e22fd8f8c281 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -232,6 +232,10 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+ 			continue;
+ 		mark = iter_info->marks[type];
++
++		/* Apply ignore mask regardless of ISDIR and ON_CHILD flags */
++		marks_ignored_mask |= mark->ignored_mask;
++
+ 		/*
+ 		 * If the event is on dir and this mark doesn't care about
+ 		 * events on dir, don't send it!
+@@ -249,7 +253,6 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 			continue;
+ 
+ 		marks_mask |= mark->mask;
+-		marks_ignored_mask |= mark->ignored_mask;
+ 	}
+ 
+ 	test_mask = event_mask & marks_mask & ~marks_ignored_mask;
+-- 
+2.17.1
+
