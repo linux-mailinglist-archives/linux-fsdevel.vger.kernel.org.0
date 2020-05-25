@@ -2,110 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A75101E080D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 09:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C041E0811
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 09:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389100AbgEYHbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 03:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34314 "EHLO mail.kernel.org"
+        id S2389119AbgEYHbn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 03:31:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59820 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388947AbgEYHbO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 03:31:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C8022065F;
-        Mon, 25 May 2020 07:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590391873;
-        bh=xMXUOo0qUlfkTmmWrZzTeNI+eU0+PvvQaCHgKt8XDkc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=agf9JwW0RDZBYiOQLSQdTc0qCLL5zwkRyDEOOreXtPGgaUrEPwijD5pfsk9qWjneJ
-         X+a1D0vI3vpN3eAMEG0hBBAyrne7sGZeHNqHfakRDalj07fIs2Wp25UfiENzRlO4ER
-         Qh01qkK7REPf1xLBV4wRcGe4jvVFxegm6rdzE2dI=
-Date:   Mon, 25 May 2020 09:31:11 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] kernfs: proposed locking and concurrency improvement
-Message-ID: <20200525073111.GA261205@kroah.com>
-References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
- <20200525061616.GA57080@kroah.com>
- <b9e8f8171096813c76df3719719bdda87033fd78.camel@themaw.net>
+        id S2388947AbgEYHbn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 03:31:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A307B084;
+        Mon, 25 May 2020 07:31:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9515D1E1270; Mon, 25 May 2020 09:31:40 +0200 (CEST)
+Date:   Mon, 25 May 2020 09:31:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Martijn Coenen <maco@android.com>
+Cc:     Jan Kara <jack@suse.cz>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, miklos@szeredi.hu, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com
+Subject: Re: Writeback bug causing writeback stalls
+Message-ID: <20200525073140.GI14199@quack2.suse.cz>
+References: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
+ <20200522144100.GE14199@quack2.suse.cz>
+ <CAB0TPYF+Nqd63Xf_JkuepSJV7CzndBw6_MUqcnjusy4ztX24hQ@mail.gmail.com>
+ <20200522153615.GF14199@quack2.suse.cz>
+ <CAB0TPYGJ6WkaKLoqQhsxa2FQ4s-jYKkDe1BDJ89CE_QUM_aBVw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b9e8f8171096813c76df3719719bdda87033fd78.camel@themaw.net>
+In-Reply-To: <CAB0TPYGJ6WkaKLoqQhsxa2FQ4s-jYKkDe1BDJ89CE_QUM_aBVw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 25, 2020 at 03:23:35PM +0800, Ian Kent wrote:
-> On Mon, 2020-05-25 at 08:16 +0200, Greg Kroah-Hartman wrote:
-> > On Mon, May 25, 2020 at 01:46:59PM +0800, Ian Kent wrote:
-> > > For very large systems with hundreds of CPUs and TBs of RAM booting
-> > > can
-> > > take a very long time.
-> > > 
-> > > Initial reports showed that booting a configuration of several
-> > > hundred
-> > > CPUs and 64TB of RAM would take more than 30 minutes and require
-> > > kernel
-> > > parameters of udev.children-max=1024
-> > > systemd.default_timeout_start_sec=3600
-> > > to prevent dropping into emergency mode.
-> > > 
-> > > Gathering information about what's happening during the boot is a
-> > > bit
-> > > challenging. But two main issues appeared to be, a large number of
-> > > path
-> > > lookups for non-existent files, and high lock contention in the VFS
-> > > during
-> > > path walks particularly in the dentry allocation code path.
-> > > 
-> > > The underlying cause of this was believed to be the sheer number of
-> > > sysfs
-> > > memory objects, 100,000+ for a 64TB memory configuration.
-> > 
-> > Independant of your kernfs changes, why do we really need to
-> > represent
-> > all of this memory with that many different "memory objects"?  What
-> > is
-> > that providing to userspace?
-> > 
-> > I remember Ben Herrenschmidt did a lot of work on some of the kernfs
-> > and
-> > other functions to make large-memory systems boot faster to remove
-> > some
-> > of the complexity in our functions, but that too did not look into
-> > why
-> > we needed to create so many objects in the first place.
-> > 
-> > Perhaps you might want to look there instead?
+On Sat 23-05-20 10:15:20, Martijn Coenen wrote:
+> Jaegeuk wondered whether callers of write_inode_now() should hold
+> i_rwsem, and whether that would also prevent this problem. Some
+> existing callers of write_inode_now() do, eg ntfs and hfs:
 > 
-> I presumed it was a hardware design requirement or IBM VM design
-> requirement.
+> hfs_file_fsync()
+>     inode_lock(inode);
 > 
-> Perhaps Rick can find out more on that question.
+>     /* sync the inode to buffers */
+>     ret = write_inode_now(inode, 0);
+> 
+> but there are also some that don't (eg fat, fuse, orangefs).
 
-Also, why do you need to create the devices _when_ you create them?  Can
-you wait until after init is up and running to start populating the
-device tree with them?  That way boot can be moving on and disks can be
-spinning up earlier?
+Well, most importantly filesystems like ext4, xfs, btrfs don't hold i_rwsem
+when writing back inode and that's deliberate because of performance. We
+don't want to block writes (or event reads in case of XFS) for the inode
+during writeback.
 
-Also, what about just hot-adding all of that memory after init happens?
-
-Those two options only delay the long delay, but it could allow other
-things to be moving and speed up the overall boot process.
-
-thanks,
-
-greg k-h
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
