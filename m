@@ -2,135 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F2C1E095D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 10:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EB411E0BD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 12:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388574AbgEYIxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 04:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388465AbgEYIxG (ORCPT
+        id S2389752AbgEYKbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 06:31:02 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42459 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389532AbgEYKbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 04:53:06 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26205C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 May 2020 01:53:06 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id q8so16548579iow.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 May 2020 01:53:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rSdiz594vlONC2gWZST0Vpac9KT+4VGrVUO768ccf7Q=;
-        b=EMcILyQMTh34AGkxt9mkFNmzQqRq0fwRmTgI4QH5lhqhjMu7DY4I3lr7R2T1FOLDXC
-         SoLVYbEIJUUEl91O5AzzoqT1dm+6EJUjl/yeBrf2W/q2W+MCtJnBaRsu9rWRPa7Bmgo7
-         6XrlOpC7+GTd/n9pqX3ZCH58vfawu9/jCMC9mkLw7lneCVO9e5MutGQF9xs0tzys7z6W
-         O/7XoxsBkkjjjCuUtk0oMAArSfebNs0YfYIlXCBXAP+nbZbaDl1tmAWJQ5w/9Tjk2X3P
-         g7ZT5D3WlDbcHr9qdxuGUQbRi9V5/MWzjW0TujNpygtk6gtHv8MHxaiAVOTHnC2kIlgj
-         15LQ==
+        Mon, 25 May 2020 06:31:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590402658;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Tjh+ltjJrGCNlnFU+WVmr7LcnYdZcqi33gjE65+/QHI=;
+        b=TyUplGI8c2ZP5h66rD62WcIHOW+kleU1/MP1bBsmvxgtf5RwECGsyKiZtX8t5G/ARCT2UZ
+        /m+dd5XgFuPO5V9ObveMZiUzbwUxDUQZFeoXYewrQd3sJ5cputqpRr22ynEDJ+XUCvzlEs
+        gFqSYMZd+uIV6+EV3wCvIeoZPkFNSOA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-80-UovuSaJ6N9avO7g2jHOhyA-1; Mon, 25 May 2020 06:30:56 -0400
+X-MC-Unique: UovuSaJ6N9avO7g2jHOhyA-1
+Received: by mail-wm1-f71.google.com with SMTP id t62so6545597wmt.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 May 2020 03:30:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rSdiz594vlONC2gWZST0Vpac9KT+4VGrVUO768ccf7Q=;
-        b=lCS4OWUXd2zvSdpnhP6rodPhOMEJ222GgfXHc6XkQl5WpKOgexbwOmKH5z0q5JU/iD
-         9KtxXAQyWA54ciojx8NMQNcDH8EsZXwmIqRytANPOwT/w5Dm8qPP47HGZetZkP+Ye++P
-         F29pnIUSe5AYgctfVtFiTjUvMtSVi/o/gQt97XMuWW2x44vEWT+go6+3ZzHL0+mhH7fe
-         55K9BWcwMck9YH2Zpk8uo3E7kYeujUwYfmAm9nsfdeBxxvaZcy84AjqpU6aITUxQ/3je
-         0v3j1OgIBcm6DvgbjcFzYeoP6VciS5aQlvVA/slVSgczgKSOI7MkWKF+rhEkJoXSDIfT
-         9/tA==
-X-Gm-Message-State: AOAM533y9ZBW6gxdq2txQm4VZC/DGo/bFL+/DX9kwkQK4rbsf0MarKwe
-        ERQaKsqxr+SmsY77gyZwlYB9Rz95CnUYeOONTYDZDq6m
-X-Google-Smtp-Source: ABdhPJy6vBY9ZY/AkqIvFkLPNwSH7Ie56SzvzyWuDVb0BHly2MbW8Ru/MSdik7QEb+4PSgH+R7q9oFbQcpw9YOLn3P4=
-X-Received: by 2002:a02:85a5:: with SMTP id d34mr10296785jai.123.1590396785277;
- Mon, 25 May 2020 01:53:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Tjh+ltjJrGCNlnFU+WVmr7LcnYdZcqi33gjE65+/QHI=;
+        b=Po6BlRv9G/pt6TYiWmqjCJ7oi9RCarjHofxGiWtfylxtqyG5JQlP5JOaWZdUGo9Ybz
+         bjhILrBZcFibotvEUyd+wnwUlkLgNYDhXf2MZ9vVbvDViXMMELQdisf5z4Aa87Aycj00
+         Y2OLseJyFUa1ZyRhnLt3g6nbI0E2+ahvRx9D9cRnZV420cJoAjxQB7kLL/oJDC+7rBqe
+         ktODpneuhtZaItyxUo70zGwWa1+iwRhfkZ6AuRnOx9GZYNnodfbetaqVaGLDu+Ad27wt
+         Zfnf+nJvuEugcmvK/0nIox4/hrsGJ+oxWvnoqhdgAbdUyi9Ex2zmbnNQyuRQFlFcvTDX
+         FNuA==
+X-Gm-Message-State: AOAM533Gz1oxipB383zL4age/9Mqn3tWljU1J4O3sWe2e2blpy2o4F+c
+        o60IbP/woeounQJLv71qadAep4odRCT6SXxx8u9Lolx1dD6yhSfUg9B7P7UyWX6Cboy0Da9RnB6
+        pArRiQIS5wq9svBZnzEAXfND9Wg==
+X-Received: by 2002:a5d:40d2:: with SMTP id b18mr12013301wrq.131.1590402655387;
+        Mon, 25 May 2020 03:30:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzgOrrF27/Hn0VM1GmU3rUqzoyOepUfPocXD27ULwMBIu2ooviKdrTTzCDQq+mFLo1bwXdzwQ==
+X-Received: by 2002:a5d:40d2:: with SMTP id b18mr12013273wrq.131.1590402655030;
+        Mon, 25 May 2020 03:30:55 -0700 (PDT)
+Received: from steredhat ([79.49.207.108])
+        by smtp.gmail.com with ESMTPSA id o15sm4356417wmm.31.2020.05.25.03.30.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 May 2020 03:30:54 -0700 (PDT)
+Date:   Mon, 25 May 2020 12:30:51 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: io_uring: BUG: kernel NULL pointer dereference
+Message-ID: <20200525103051.lztpbl33hsgv6grz@steredhat>
 MIME-Version: 1.0
-References: <20200521162443.GA26052@quack2.suse.cz> <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
- <CAOQ4uxgBGTAnZUedY3dEwR9V=hdrr_4PH_snj9E=sz-_UuVzTg@mail.gmail.com> <20200525072322.GG14199@quack2.suse.cz>
-In-Reply-To: <20200525072322.GG14199@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 25 May 2020 11:52:54 +0300
-Message-ID: <CAOQ4uxiL8W4S7qdc+AOJCf0GND0K_EgxuxKY1uhY3Qbvi1RAVA@mail.gmail.com>
-Subject: Re: Ignore mask handling in fanotify_group_event_mask()
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 25, 2020 at 10:23 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Sat 23-05-20 20:14:58, Amir Goldstein wrote:
-> > On Thu, May 21, 2020 at 9:10 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > Hello Amir!
-> > > >
-> > > > I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
-> > > > merging marks masks with FAN_ONDIR" and realized one oddity in
-> > > > fanotify_group_event_mask(). The thing is: Even if the mark mask is such
-> > > > that current event shouldn't trigger on the mark, we still have to take
-> > > > mark's ignore mask into account.
-> > > >
-> > > > The most realistic example that would demonstrate the issue that comes to my
-> > > > mind is:
-> > > >
-> > > > mount mark watching for FAN_OPEN | FAN_ONDIR.
-> > > > inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
-> > > >
-> > > > I'd expect the group will not get any event for opening the dir but the
-> > > > code in fanotify_group_event_mask() would not prevent event generation. Now
-> > > > as I've tested the event currently actually does not get generated because
-> > > > there is a rough test in send_to_group() that actually finds out that there
-> > > > shouldn't be anything to report and so fanotify handler is actually never
-> > > > called in such case. But I don't think it's good to have an inconsistent
-> > > > test in fanotify_group_event_mask(). What do you think?
-> > > >
-> > >
-> > > I agree this is not perfect.
-> > > I think that moving the marks_ignored_mask line
-> > > To the top of the foreach loop should fix the broken logic.
-> > > It will not make the code any less complicated to follow though.
-> > > Perhaps with a comment along the lines of:
-> > >
-> > >              /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
-> > >              marks_ignored_mask |= mark->ignored_mask;
-> > >
-> > > Now is there a real bug here?
-> > > Probably not because send_to_group() always applied an ignore mask
-> > > that is greater or equal to that of fanotify_group_event_mask().
-> > >
-> >
-> > That's a wrong statement of course.
-> > We do need to re-apply the ignore mask when narrowing the event mask.
-> >
-> > Exposing the bug requires a "compound" event.
-> >
-> > The only case of compound event I could think of is this:
-> >
-> > mount mark with mask == 0 and ignore_mask == FAN_OPEN. inode mark
-> > on a directory with mask == FAN_EXEC | FAN_EVENT_ON_CHILD.
-> >
-> > The event: FAN_OPEN | FAN_EXEC | FAN_EVENT_ON_CHILD
-> > would be reported to group with the FAN_OPEN flag despite the
-> > fact that FAN_OPEN is in ignore mask of mount mark because
-> > the mark iteration loop skips over non-inode marks for events
-> > on child.
-> >
-> > I'll try to work that case into the relevant LTP test to prove it and
-> > post a fix.
->
-> Ha, that's clever. But FAN_EXEC does not exist in current fanotify. We only
-> have FAN_OPEN_EXEC... And I don't think we have any compound events.
->
+Hi Jens,
+using fio and io_uring engine with SQPOLL and IOPOLL enabled, I had the
+following issue that happens after 4/5 seconds fio has started.
+Initially I had this issue on Linux v5.7-rc6, but I just tried also
+Linux v5.7-rc7:
 
-Typo. I meant FAN_OPEN_EXEC and you can see from LTP test
-we do have at least this one compound event.
+[   75.343479] nvme nvme0: pci function 0000:04:00.0
+[   75.355110] nvme nvme0: 16/0/15 default/read/poll queues
+[   75.364946]  nvme0n1: p1
+[   82.739285] BUG: kernel NULL pointer dereference, address: 00000000000003b0
+[   82.747054] #PF: supervisor read access in kernel mode
+[   82.752785] #PF: error_code(0x0000) - not-present page
+[   82.758516] PGD 800000046c042067 P4D 800000046c042067 PUD 461fcf067 PMD 0 
+[   82.766186] Oops: 0000 [#1] SMP PTI
+[   82.770076] CPU: 2 PID: 1307 Comm: io_uring-sq Not tainted 5.7.0-rc7 #11
+[   82.777939] Hardware name: Dell Inc. PowerEdge R430/03XKDV, BIOS 1.2.6 06/08/2015
+[   82.786290] RIP: 0010:task_numa_work+0x4f/0x2c0
+[   82.791341] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
+[   82.812296] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
+[   82.818123] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
+[   82.826083] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
+[   82.834042] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
+[   82.842002] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
+[   82.849962] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
+[   82.857922] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
+[   82.866948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   82.873357] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
+[   82.881316] Call Trace:
+[   82.884046]  task_work_run+0x68/0xa0
+[   82.888026]  io_sq_thread+0x252/0x3d0
+[   82.892111]  ? finish_wait+0x80/0x80
+[   82.896097]  kthread+0xf9/0x130
+[   82.899598]  ? __ia32_sys_io_uring_enter+0x370/0x370
+[   82.905134]  ? kthread_park+0x90/0x90
+[   82.909217]  ret_from_fork+0x35/0x40
+[   82.913203] Modules linked in: nvme nvme_core xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rfkill sunrpc intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul iTCO_wdt crc32_pclmul dcdbas ghash_clmulni_intel iTCO_vendor_support intel_cstate intel_uncore pcspkr intel_rapl_perf ipmi_ssif ixgbe mei_me mdio tg3 dca mei lpc_ich ipmi_si acpi_power_meter ipmi_devintf ipmi_msghandler ip_tables xfs libcrc32c mgag200 drm_kms_helper drm_vram_helper drm_ttm_helper ttm drm megaraid_sas crc32c_intel i2c_algo_bit wmi
+[   82.990613] CR2: 00000000000003b0
+[   82.994307] ---[ end trace 6d1725e8f60fece7 ]---
+[   83.039157] RIP: 0010:task_numa_work+0x4f/0x2c0
+[   83.044211] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
+[   83.065165] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
+[   83.070993] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
+[   83.078953] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
+[   83.086913] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
+[   83.094873] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
+[   83.102833] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
+[   83.110793] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
+[   83.119821] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   83.126230] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
+[  113.113624] nvme nvme0: I/O 219 QID 19 timeout, aborting
+[  113.120135] nvme nvme0: Abort status: 0x0
 
-We could also split it if we wanted to, but no reason to do it now.
+Steps I did:
+
+  $ modprobe nvme poll_queues=15
+  $ fio fio_iou.job
+
+This is the fio_iou.job that I used:
+
+  [global]
+  filename=/dev/nvme0n1
+  ioengine=io_uring
+  direct=1
+  runtime=60
+  ramp_time=5
+  gtod_reduce=1
+
+  cpus_allowed=4
+
+  [job1]
+  rw=randread
+  bs=4K
+  iodepth=1
+  registerfiles
+  sqthread_poll=1
+  sqthread_poll_cpu=2
+  hipri
+
+I'll try to bisect, but I have some suspicions about:
+b41e98524e42 io_uring: add per-task callback handler
 
 Thanks,
-Amir.
+Stefano
+
