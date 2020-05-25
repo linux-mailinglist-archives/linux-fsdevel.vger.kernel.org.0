@@ -2,78 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2621E06C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 08:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D331E06EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 08:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbgEYGQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 02:16:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729125AbgEYGQU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 02:16:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE2852071A;
-        Mon, 25 May 2020 06:16:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590387379;
-        bh=LVk87GPlRu/4Mx4FL7prPIF6kv14E4enALjMXoF8s3o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ox3+DMVR+TP1ql4ww2IUcmNlgRTyuHIsitzZOsYw8csiwU0/+kBKMenZ/rH8Wb+cn
-         ExJ7DfoPXcypfY3FdVuTPOweVG5zuCfNHcXrBJgFNUjv/HfsdyoNwWvwOfC92Osl1e
-         l56JTu7WyQ4kAuDL6v/IqWwjAYbAqFn6mcpQJeTY=
-Date:   Mon, 25 May 2020 08:16:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] kernfs: proposed locking and concurrency improvement
-Message-ID: <20200525061616.GA57080@kroah.com>
-References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
+        id S2388847AbgEYG37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 02:29:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388631AbgEYG37 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 02:29:59 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF4D4C061A0E;
+        Sun, 24 May 2020 23:29:58 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id n5so15655705wmd.0;
+        Sun, 24 May 2020 23:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MVopmvtYGB1b9bHkVcbXJiWcVuB0dUcjUj4cs56wKkU=;
+        b=hDh+S6QCdSehPj95aKmKTm3I0VeYiGFY7sz5xSscxAXDgFi8cy9Ztci24OWDBOojka
+         BQhik6IbopRus9Ayb9yYmYdzkWYIobUYMPR2uZ+AvCHONF3dzowrnMV6sh/YJ37jrHGf
+         MkBE5VjZopbnzRSi8EMpAEpF6DKSLxu55g6aLKzk+ejNa9QU5aL70lsREMz5AXQjD4Qa
+         kAeJyo7Io9FvhhiG0/STpno/7u2o/kyWwlXHZKKvZ0vIzsPgKZxj+hpGtGK6ClQ+b40u
+         pgDh3GiOr2PYmbo/hpOUGBiizF8iHLO9PGhsWCvWxW49Harvcv6pNXw3Tw2ZoILtvRpO
+         sGxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=MVopmvtYGB1b9bHkVcbXJiWcVuB0dUcjUj4cs56wKkU=;
+        b=I23DGAcBybnkl2KKBzEXWQc2BmQKP+o7SAVP2yCnJRfAowJEC1i3kwe+dV0TnKIzsL
+         NG7vm5QV66oXGhb+o+M72BHsNIoHWX5BKyl10bMRsfbHGsKhg12F/ILiW27I29IAOhKs
+         VsMddfOiufSKjcyUj9g+GJsKizojS+7mvYK10/C7qqp+VXGSHVo/nv88UOtUMFIKFVow
+         NI8ITjEBsktwEjoCtNYIjNE+aSJ7NRj2vDJy+6SpS7WhR12cFNtCfgqH2CFzbUo0+G+6
+         9ZoiC6+KrQIodNyjE0JY6+52l1vApHFqh+j/b6SzWctE+U841xpZE0YT31hqLJofZbap
+         YQcQ==
+X-Gm-Message-State: AOAM530hlCQ8PFEhLqpkm/IWdIteTp3KwYCYMRtT+SLFgF/44RspLHR9
+        QtfUbMQno3wwTEmpT2YFMIdS2kDz
+X-Google-Smtp-Source: ABdhPJzLCZqwaeNvaz4N1oysLtto8Mit3Fzp4ZptAX7WA44IG4WKWggtVPXRuIX/ovFe5NT0SB/DEA==
+X-Received: by 2002:a1c:cc1a:: with SMTP id h26mr22697452wmb.127.1590388197706;
+        Sun, 24 May 2020 23:29:57 -0700 (PDT)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id w10sm5986380wrp.16.2020.05.24.23.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2020 23:29:56 -0700 (PDT)
+Date:   Mon, 25 May 2020 08:29:54 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] radix-tree: Use local_lock for protection
+Message-ID: <20200525062954.GA3180782@gmail.com>
+References: <20200524215739.551568-1-bigeasy@linutronix.de>
+ <20200524215739.551568-3-bigeasy@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
+In-Reply-To: <20200524215739.551568-3-bigeasy@linutronix.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 25, 2020 at 01:46:59PM +0800, Ian Kent wrote:
-> For very large systems with hundreds of CPUs and TBs of RAM booting can
-> take a very long time.
+
+* Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+
+> The radix-tree and idr preload mechanisms use preempt_disable() to protect
+> the complete operation between xxx_preload() and xxx_preload_end().
 > 
-> Initial reports showed that booting a configuration of several hundred
-> CPUs and 64TB of RAM would take more than 30 minutes and require kernel
-> parameters of udev.children-max=1024 systemd.default_timeout_start_sec=3600
-> to prevent dropping into emergency mode.
+> As the code inside the preempt disabled section acquires regular spinlocks,
+> which are converted to 'sleeping' spinlocks on a PREEMPT_RT kernel and
+> eventually calls into a memory allocator, this conflicts with the RT
+> semantics.
 > 
-> Gathering information about what's happening during the boot is a bit
-> challenging. But two main issues appeared to be, a large number of path
-> lookups for non-existent files, and high lock contention in the VFS during
-> path walks particularly in the dentry allocation code path.
+> Convert it to a local_lock which allows RT kernels to substitute them with
+> a real per CPU lock. On non RT kernels this maps to preempt_disable() as
+> before, but provides also lockdep coverage of the critical region.
+> No functional change.
 > 
-> The underlying cause of this was believed to be the sheer number of sysfs
-> memory objects, 100,000+ for a 64TB memory configuration.
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  include/linux/idr.h        |  5 +----
+>  include/linux/radix-tree.h |  6 +-----
+>  lib/radix-tree.c           | 29 ++++++++++++++++++++++-------
+>  3 files changed, 24 insertions(+), 16 deletions(-)
 
-Independant of your kernfs changes, why do we really need to represent
-all of this memory with that many different "memory objects"?  What is
-that providing to userspace?
+> -static inline void idr_preload_end(void)
+> -{
+> -	preempt_enable();
+> -}
+> +void idr_preload_end(void);
 
-I remember Ben Herrenschmidt did a lot of work on some of the kernfs and
-other functions to make large-memory systems boot faster to remove some
-of the complexity in our functions, but that too did not look into why
-we needed to create so many objects in the first place.
+> +void idr_preload_end(void)
+> +{
+> +	local_unlock(&radix_tree_preloads.lock);
+> +}
+> +EXPORT_SYMBOL(idr_preload_end);
 
-Perhaps you might want to look there instead?
+> +void radix_tree_preload_end(void);
 
-thanks,
+> -static inline void radix_tree_preload_end(void)
+> -{
+> -	preempt_enable();
+> -}
 
-greg k-h
+> +void radix_tree_preload_end(void)
+> +{
+> +	local_unlock(&radix_tree_preloads.lock);
+> +}
+> +EXPORT_SYMBOL(radix_tree_preload_end);
+
+Since upstream we are still mapping the local_lock primitives to
+preempt_disable()/preempt_enable(), I believe these uninlining changes should not be done
+in this patch, i.e. idr_preload_end() and radix_tree_preload_end() should stay inline.
+
+Thanks,
+
+	Ingo
