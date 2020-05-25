@@ -2,123 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D02481E0636
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 06:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F161E063B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 06:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgEYEzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 00:55:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
+        id S2388745AbgEYE7r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 00:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbgEYEzU (ORCPT
+        with ESMTP id S1726649AbgEYE7q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 00:55:20 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E25C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:55:19 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id x22so9789695lfd.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:55:19 -0700 (PDT)
+        Mon, 25 May 2020 00:59:46 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84994C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:59:46 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id m18so19320048ljo.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:59:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ta+gKITSaDFXbddptw1PycpUmizB8GirSrm5Sv99kI8=;
-        b=Fdz79PEvtruLyLOx8oikptAOCD4uLGZYUKf1BFLDTPaj2cCbCMlhFQgMqqfETPXX0x
-         AZ9H/1r4wGJy6VRcXJewAODKxPYihv6kv2xeyw6i9VmKCxCJFSVSMu3mSMNlQXWKqPul
-         8M8HIvIARh9/Ir9GBQ4dqjSwskZasNX09MdwpC1p6N868SwXgAmqK4Z4AfWvhuYer0w/
-         qnZILt634RDRm63MKcOmX2aCh3Ji8myuncnMyir4GjFHUU+GSIAgpt4lBHwLwsv5Jg8J
-         /jjH3FDU8tmASZnfRtMi6vBvRRNrvtwuAImxJdLmkJ7wCZhtUIXTqICJTEjyv8mzZ5ep
-         ZKSQ==
+        bh=+n9rUAP4H6+Zi0TTUL1JxYkv/zQYKpYIKNpCWjLtusE=;
+        b=ZB2bMapTM0gZ3T/pJxS+tIAjDieTMBYojZ0mwW7XuuEWD+Fv+k1JtiyzD+ZqaBr9Tq
+         lH8i3F7zAGGxPGXuTWnJm9Te/UUSV9cqtaEZZG7sQ1yVfu7pjqZXGmOZbQZ7YCEp6xBE
+         4fm2u6hmW3kKMvvIu51nvAPRHQ46c4IKra087+r7Va256OtaGkLjwLkOorTUxEdBsAmr
+         XnmXf6OmMz/WmDrnKLg6gDYFWdak47KotwHkuSZCX9HSmPFcHJci0FqyN7NN5ZdCVJP0
+         hszBVumbnqx0pFYBFLzeidtDBQtf7eqEj0775nkJ1h0ho+RWfKdHcKpQ8ZBa7ee6WNl6
+         rrDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ta+gKITSaDFXbddptw1PycpUmizB8GirSrm5Sv99kI8=;
-        b=LwkHsxIAE37vIplak/S6suxLt5B3GfQpHV1O6lazBL9QplQ/vINtUEWGHniOxC68q2
-         02nF5ZwlzfOX7Sgoz5HZaO/tmjRDEa+NlGDtwNPR2C4l7UHbJttsvoiGvzhDBBYSLNL6
-         TY1mBX6/C7kZl1RCJyFyEMG48wBLsAOqUhMGSm3wBxXWgIpAR63m36G7gnf/rTxk1YK0
-         OOHbW0yDg5yPX8NI7246HyPEabZy7xJ0b29myQtb8QM8Uci3el3zn5RKPGLyghENoknb
-         G/AAcSCnzYLtxpokKWBaKQpPK8TDSoGynN7Y4miQ/kRsFUTb0VaJ05iB72iwdExzJs/R
-         BARw==
-X-Gm-Message-State: AOAM530oJyff2xPi7CBftb2dMV/uayja1HDlXSCoT4MvUNx5ILRykI+w
-        eagMGBWdJYaCcXOYsnRq5RVU/h20Fr4=
-X-Google-Smtp-Source: ABdhPJxHYXGYhHPr163MFt0+8DI04wONMTR8geyOar2shTxMyVvgmv7QPrP+pQhnhBRd9z6ng0Fxgg==
-X-Received: by 2002:a19:5f04:: with SMTP id t4mr13359691lfb.208.1590382518277;
-        Sun, 24 May 2020 21:55:18 -0700 (PDT)
+        bh=+n9rUAP4H6+Zi0TTUL1JxYkv/zQYKpYIKNpCWjLtusE=;
+        b=Gkfxc+3GNAiT/EBQTFi1EGThWXxy6Oy9ior3qyFVfZcM9luHvD/3aPe8Jdl+/CrRhI
+         5KsM0uWESA8J//FvtiQokLF0iXmMqXgmgq70me54/Fnr7ZwPaPKsJtVgdIK+Zbo5+eAa
+         ZM0G4CV+4kB+5sQvNvOkXt+WGyIUuth9HjvfPAjf9JhEOjwpM4w4NR1nE5XDFGcNMVek
+         Wgg1W86scruHLWMnFr0mcccH1seRyz5/YuDAONQsz0y0pwngBJAEHLVrmWyW1yhE55U0
+         r2+M2GlUEOy9ltP8D/LqbKW1pSIIHzfV6p/vayrT4oTDlkteTM6thDZR7wYqT6sgxf7g
+         iA3Q==
+X-Gm-Message-State: AOAM533KAOXPwzjdwQrM19qAOA5hGm3Sn/A0uvdA2SWHsk9Tg4J5oPD1
+        r3G0EN7+m0O1xWQOjMbceuwldA==
+X-Google-Smtp-Source: ABdhPJyCwJ2sAx2IX4iHY4LLE2cNk9uJ0NgIZnJVby3cTBD/nQ12Uvgtsyf7i4RxGbVF7B8X5BKElQ==
+X-Received: by 2002:a2e:9a41:: with SMTP id k1mr13615461ljj.143.1590382784839;
+        Sun, 24 May 2020 21:59:44 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t27sm3321814ljo.114.2020.05.24.21.55.17
+        by smtp.gmail.com with ESMTPSA id f5sm903566ljm.69.2020.05.24.21.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2020 21:55:17 -0700 (PDT)
+        Sun, 24 May 2020 21:59:44 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 558C01012E6; Mon, 25 May 2020 07:55:18 +0300 (+03)
-Date:   Mon, 25 May 2020 07:55:18 +0300
+        id 367BE1012E6; Mon, 25 May 2020 07:59:45 +0300 (+03)
+Date:   Mon, 25 May 2020 07:59:45 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/36] fs: Support THPs in zero_user_segments
-Message-ID: <20200525045518.ydro3k2h5ct3pxxj@box>
+Subject: Re: [PATCH v4 24/36] mm: Remove page fault assumption of compound
+ page size
+Message-ID: <20200525045945.lkw36jergxwg7bfj@box>
 References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-12-willy@infradead.org>
+ <20200515131656.12890-25-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200515131656.12890-12-willy@infradead.org>
+In-Reply-To: <20200515131656.12890-25-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 15, 2020 at 06:16:31AM -0700, Matthew Wilcox wrote:
+On Fri, May 15, 2020 at 06:16:44AM -0700, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> We can only kmap() one subpage of a THP at a time, so loop over all
-> relevant subpages, skipping ones which don't need to be zeroed.  This is
-> too large to inline when THPs are enabled and we actually need highmem,
-> so put it in highmem.c.
+> A compound page in the page cache will not necessarily be of PMD size,
+> so check explicitly.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  include/linux/highmem.h | 15 +++++++---
->  mm/highmem.c            | 62 +++++++++++++++++++++++++++++++++++++++--
->  2 files changed, 71 insertions(+), 6 deletions(-)
+>  mm/memory.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index ea5cdbd8c2c3..74614903619d 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -215,13 +215,18 @@ static inline void clear_highpage(struct page *page)
->  	kunmap_atomic(kaddr);
->  }
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f703fe8c8346..d68ce428ddd2 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3549,13 +3549,14 @@ static vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+>  	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>  	pmd_t entry;
+>  	int i;
+> -	vm_fault_t ret;
+> +	vm_fault_t ret = VM_FAULT_FALLBACK;
 >  
-> +#if defined(CONFIG_HIGHMEM) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> +void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
-> +		unsigned start2, unsigned end2);
-> +#else /* !HIGHMEM || !TRANSPARENT_HUGEPAGE */
->  static inline void zero_user_segments(struct page *page,
-> -	unsigned start1, unsigned end1,
-> -	unsigned start2, unsigned end2)
-> +		unsigned start1, unsigned end1,
-> +		unsigned start2, unsigned end2)
->  {
-> +	unsigned long i;
->  	void *kaddr = kmap_atomic(page);
+>  	if (!transhuge_vma_suitable(vma, haddr))
+> -		return VM_FAULT_FALLBACK;
+> +		return ret;
 >  
-> -	BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
-> +	BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
->  
->  	if (end1 > start1)
->  		memset(kaddr + start1, 0, end1 - start1);
-> @@ -230,8 +235,10 @@ static inline void zero_user_segments(struct page *page,
->  		memset(kaddr + start2, 0, end2 - start2);
->  
->  	kunmap_atomic(kaddr);
-> -	flush_dcache_page(page);
-> +	for (i = 0; i < hpage_nr_pages(page); i++)
-> +		flush_dcache_page(page + i);
+> -	ret = VM_FAULT_FALLBACK;
+>  	page = compound_head(page);
+> +	if (page_order(page) != HPAGE_PMD_ORDER)
+> +		return ret;
 
-Well, we need to settle on whether flush_dcache_page() has to be aware
-about compound pages. There are already architectures that know how to
-flush compound page, see ARM.
+Maybe WARN() for page_order(page) > HPAGE_PMD_ORDER. It would be fun to
+handle :P
+>  
+>  	/*
+>  	 * Archs like ppc64 need additonal space to store information
+> -- 
+> 2.26.2
+> 
 
 -- 
  Kirill A. Shutemov
