@@ -2,122 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9751E0E9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 14:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9129B1E0F24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 15:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390567AbgEYMmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 08:42:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49700 "EHLO mx2.suse.de"
+        id S2390609AbgEYNLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 09:11:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37898 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390488AbgEYMmT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 08:42:19 -0400
+        id S2388738AbgEYNLj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 09:11:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 35AC6AD17;
-        Mon, 25 May 2020 12:42:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E19411E127E; Mon, 25 May 2020 14:42:16 +0200 (CEST)
-Date:   Mon, 25 May 2020 14:42:16 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Ignore mask handling in fanotify_group_event_mask()
-Message-ID: <20200525124216.GN14199@quack2.suse.cz>
-References: <20200521162443.GA26052@quack2.suse.cz>
- <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
- <CAOQ4uxgBGTAnZUedY3dEwR9V=hdrr_4PH_snj9E=sz-_UuVzTg@mail.gmail.com>
- <20200525072322.GG14199@quack2.suse.cz>
- <CAOQ4uxiL8W4S7qdc+AOJCf0GND0K_EgxuxKY1uhY3Qbvi1RAVA@mail.gmail.com>
+        by mx2.suse.de (Postfix) with ESMTP id 6066AAC46;
+        Mon, 25 May 2020 13:11:40 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id A0A66DA728; Mon, 25 May 2020 15:10:40 +0200 (CEST)
+Date:   Mon, 25 May 2020 15:10:40 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Johannes Thumshirn <jth@kernel.org>
+Cc:     David Sterba <dsterba@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
+Message-ID: <20200525131040.GS18421@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Johannes Thumshirn <jth@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20200514092415.5389-1-jth@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiL8W4S7qdc+AOJCf0GND0K_EgxuxKY1uhY3Qbvi1RAVA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200514092415.5389-1-jth@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-05-20 11:52:54, Amir Goldstein wrote:
-> On Mon, May 25, 2020 at 10:23 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 23-05-20 20:14:58, Amir Goldstein wrote:
-> > > On Thu, May 21, 2020 at 9:10 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
-> > > > >
-> > > > > Hello Amir!
-> > > > >
-> > > > > I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
-> > > > > merging marks masks with FAN_ONDIR" and realized one oddity in
-> > > > > fanotify_group_event_mask(). The thing is: Even if the mark mask is such
-> > > > > that current event shouldn't trigger on the mark, we still have to take
-> > > > > mark's ignore mask into account.
-> > > > >
-> > > > > The most realistic example that would demonstrate the issue that comes to my
-> > > > > mind is:
-> > > > >
-> > > > > mount mark watching for FAN_OPEN | FAN_ONDIR.
-> > > > > inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
-> > > > >
-> > > > > I'd expect the group will not get any event for opening the dir but the
-> > > > > code in fanotify_group_event_mask() would not prevent event generation. Now
-> > > > > as I've tested the event currently actually does not get generated because
-> > > > > there is a rough test in send_to_group() that actually finds out that there
-> > > > > shouldn't be anything to report and so fanotify handler is actually never
-> > > > > called in such case. But I don't think it's good to have an inconsistent
-> > > > > test in fanotify_group_event_mask(). What do you think?
-> > > > >
-> > > >
-> > > > I agree this is not perfect.
-> > > > I think that moving the marks_ignored_mask line
-> > > > To the top of the foreach loop should fix the broken logic.
-> > > > It will not make the code any less complicated to follow though.
-> > > > Perhaps with a comment along the lines of:
-> > > >
-> > > >              /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
-> > > >              marks_ignored_mask |= mark->ignored_mask;
-> > > >
-> > > > Now is there a real bug here?
-> > > > Probably not because send_to_group() always applied an ignore mask
-> > > > that is greater or equal to that of fanotify_group_event_mask().
-> > > >
-> > >
-> > > That's a wrong statement of course.
-> > > We do need to re-apply the ignore mask when narrowing the event mask.
-> > >
-> > > Exposing the bug requires a "compound" event.
-> > >
-> > > The only case of compound event I could think of is this:
-> > >
-> > > mount mark with mask == 0 and ignore_mask == FAN_OPEN. inode mark
-> > > on a directory with mask == FAN_EXEC | FAN_EVENT_ON_CHILD.
-> > >
-> > > The event: FAN_OPEN | FAN_EXEC | FAN_EVENT_ON_CHILD
-> > > would be reported to group with the FAN_OPEN flag despite the
-> > > fact that FAN_OPEN is in ignore mask of mount mark because
-> > > the mark iteration loop skips over non-inode marks for events
-> > > on child.
-> > >
-> > > I'll try to work that case into the relevant LTP test to prove it and
-> > > post a fix.
-> >
-> > Ha, that's clever. But FAN_EXEC does not exist in current fanotify. We only
-> > have FAN_OPEN_EXEC... And I don't think we have any compound events.
-> >
+On Thu, May 14, 2020 at 11:24:12AM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> Typo. I meant FAN_OPEN_EXEC and you can see from LTP test
-> we do have at least this one compound event.
+> This series adds file-system authentication to BTRFS. 
+> 
+> Unlike other verified file-system techniques like fs-verity the
+> authenticated version of BTRFS does not need extra meta-data on disk.
+> 
+> This works because in BTRFS every on-disk block has a checksum, for meta-data
+> the checksum is in the header of each meta-data item. For data blocks, a
+> separate checksum tree exists, which holds the checksums for each block.
+> 
+> Currently BRTFS supports CRC32C, XXHASH64, SHA256 and Blake2b for checksumming
+> these blocks. This series adds a new checksum algorithm, HMAC(SHA-256), which
+> does need an authentication key. When no, or an incoreect authentication key
+> is supplied no valid checksum can be generated and a read, fsck or scrub
+> operation would detect invalid or tampered blocks once the file-system is
+> mounted again with the correct key. 
 
-Yeah, I understood what you meant once I saw the changelog of your patch.
-Thanks for it.
+As mentioned in the discussion under LWN article, https://lwn.net/Articles/818842/
+ZFS implements split hash where one half is (partial) authenticated hash
+and the other half is a checksum. This allows to have at least some sort
+of verification when the auth key is not available. This applies to the
+fixed size checksum area of metadata blocks, for data we can afford to
+store both hashes in full.
 
-> We could also split it if we wanted to, but no reason to do it now.
+I like this idea, however it brings interesting design decisions, "what
+if" and corner cases:
 
-Agreed.
+- what hashes to use for the plain checksum, and thus what's the split
+- what if one hash matches and the other not
+- increased checksum calculation time due to doubled block read
+- whether to store the same parital hash+checksum for data too
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+As the authenticated hash is the main usecase, I'd reserve most of the
+32 byte buffer to it and use a weak hash for checksum: 24 bytes for HMAC
+and 8 bytes for checksum. As an example: sha256+xxhash or
+blake2b+xxhash.
+
+I'd outright skip crc32c for the checksum so we have only small number
+of authenticated checksums and avoid too many options, eg.
+hmac-sha256-crc32c etc. The result will be still 2 authenticated hashes
+with the added checksum hardcoded to xxhash.
