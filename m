@@ -2,251 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B35A1E0DC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 13:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9751E0E9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 14:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390406AbgEYLvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 07:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390401AbgEYLvT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 07:51:19 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F79AC061A0E;
-        Mon, 25 May 2020 04:51:19 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id b190so8744811pfg.6;
-        Mon, 25 May 2020 04:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JbNRen2/Tk695LLfZwS5txYYClAhgTrM7DAlNWvlVRw=;
-        b=WfIjr0zAdwYGFfkOYct2uo06KaEt3yXAbzowOaYxPvJ3GOqyrv1KATzSSL/2G3eMfm
-         QkO/BvqIdcMVKU+q5VAH/5py+wYM63pvo86CEI6UoPk3hyGKjv3EdEERJ6FjMCFOvd4k
-         OocjIC2cuXE8WF9DV2Wobx0TqrGBdI85639ExBIr+hu6N646cNVWbk4gh6PoimTU2NZQ
-         NeIpcsQY01hyFWs2XcuoGzp7s9RVsNIDMNGXFjVOgs/QtrZNv1SRFGMJNXIAJl0NLHe4
-         rkHJpOGj0B07IpTmQ86OTH87dLg7/KkAt9KclRZOCj0AlUrKYdCSVfQ86ieYfvd7/ght
-         EUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JbNRen2/Tk695LLfZwS5txYYClAhgTrM7DAlNWvlVRw=;
-        b=YLuUG842/PSONBK9rNl0YNVJWqcshxlsMmI3EIz92ghMePj8QY8D8pDg+1pzOKyVR2
-         rbGgfDefpSeaB3fSkLUwV8MKRHJUxqt3guSBBCRCvW5LboMcoxzQXE1y0pT6pxZc8Two
-         8JCvvhDjMUP/Kv34qmRby0z4Wxo+fPNKLdyrXMtD8Q0f+dRtceWSr7lUQzyinsyjV92B
-         Ou/mIBzwZOcYN5zvdyjQUN8//XR4kzLDWUnMmgJOAc8TUqxmUebKt4bIHViVeZFWvDeU
-         m2fGqJ/rrRL/2bLms7L2+ExVLgXu8M0tcHZGh+ZZstKqPIVYa+aZ6jgsfhQT9iskoF+N
-         UxPw==
-X-Gm-Message-State: AOAM5314DANqmX7WzYTgxTosz/DPBj/OfKJ6qJAgX+NA6FJMTsIQpkmd
-        WLX6ZLUJQAJhSqlFM2SvOz4=
-X-Google-Smtp-Source: ABdhPJwD07+oD2blvOdw1Pq+mG8i2KN3GG3rejNmZKM09J2vAwJXsLipwMFq5mLzNiQerQQPvYhqiA==
-X-Received: by 2002:a62:8c15:: with SMTP id m21mr16852203pfd.59.1590407478647;
-        Mon, 25 May 2020 04:51:18 -0700 (PDT)
-Received: from dc803.flets-west.jp ([2404:7a87:83e0:f800:b9cb:9f91:3c10:565c])
-        by smtp.gmail.com with ESMTPSA id h16sm13017537pfq.56.2020.05.25.04.51.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2020 04:51:18 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] exfat: standardize checksum calculation
-Date:   Mon, 25 May 2020 20:50:51 +0900
-Message-Id: <20200525115052.19243-4-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200525115052.19243-1-kohada.t2@gmail.com>
-References: <20200525115052.19243-1-kohada.t2@gmail.com>
+        id S2390567AbgEYMmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 08:42:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49700 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390488AbgEYMmT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 08:42:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 35AC6AD17;
+        Mon, 25 May 2020 12:42:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E19411E127E; Mon, 25 May 2020 14:42:16 +0200 (CEST)
+Date:   Mon, 25 May 2020 14:42:16 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Ignore mask handling in fanotify_group_event_mask()
+Message-ID: <20200525124216.GN14199@quack2.suse.cz>
+References: <20200521162443.GA26052@quack2.suse.cz>
+ <CAOQ4uxirUfcpOdxFG9TAHUFSz+A5FMJdT=y4UKwpFUVov43nSA@mail.gmail.com>
+ <CAOQ4uxgBGTAnZUedY3dEwR9V=hdrr_4PH_snj9E=sz-_UuVzTg@mail.gmail.com>
+ <20200525072322.GG14199@quack2.suse.cz>
+ <CAOQ4uxiL8W4S7qdc+AOJCf0GND0K_EgxuxKY1uhY3Qbvi1RAVA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiL8W4S7qdc+AOJCf0GND0K_EgxuxKY1uhY3Qbvi1RAVA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To clarify that it is a 16-bit checksum, the parts related to the 16-bit
-checksum are renamed and change type to u16.
-Furthermore, replace checksum calculation in exfat_load_upcase_table()
-with exfat_calc_checksum32().
+On Mon 25-05-20 11:52:54, Amir Goldstein wrote:
+> On Mon, May 25, 2020 at 10:23 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Sat 23-05-20 20:14:58, Amir Goldstein wrote:
+> > > On Thu, May 21, 2020 at 9:10 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > On Thu, May 21, 2020 at 7:24 PM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > Hello Amir!
+> > > > >
+> > > > > I was looking into backporting of commit 55bf882c7f13dd "fanotify: fix
+> > > > > merging marks masks with FAN_ONDIR" and realized one oddity in
+> > > > > fanotify_group_event_mask(). The thing is: Even if the mark mask is such
+> > > > > that current event shouldn't trigger on the mark, we still have to take
+> > > > > mark's ignore mask into account.
+> > > > >
+> > > > > The most realistic example that would demonstrate the issue that comes to my
+> > > > > mind is:
+> > > > >
+> > > > > mount mark watching for FAN_OPEN | FAN_ONDIR.
+> > > > > inode mark on a directory with mask == 0 and ignore_mask == FAN_OPEN.
+> > > > >
+> > > > > I'd expect the group will not get any event for opening the dir but the
+> > > > > code in fanotify_group_event_mask() would not prevent event generation. Now
+> > > > > as I've tested the event currently actually does not get generated because
+> > > > > there is a rough test in send_to_group() that actually finds out that there
+> > > > > shouldn't be anything to report and so fanotify handler is actually never
+> > > > > called in such case. But I don't think it's good to have an inconsistent
+> > > > > test in fanotify_group_event_mask(). What do you think?
+> > > > >
+> > > >
+> > > > I agree this is not perfect.
+> > > > I think that moving the marks_ignored_mask line
+> > > > To the top of the foreach loop should fix the broken logic.
+> > > > It will not make the code any less complicated to follow though.
+> > > > Perhaps with a comment along the lines of:
+> > > >
+> > > >              /* Ignore mask is applied regardless of ISDIR and ON_CHILD flags */
+> > > >              marks_ignored_mask |= mark->ignored_mask;
+> > > >
+> > > > Now is there a real bug here?
+> > > > Probably not because send_to_group() always applied an ignore mask
+> > > > that is greater or equal to that of fanotify_group_event_mask().
+> > > >
+> > >
+> > > That's a wrong statement of course.
+> > > We do need to re-apply the ignore mask when narrowing the event mask.
+> > >
+> > > Exposing the bug requires a "compound" event.
+> > >
+> > > The only case of compound event I could think of is this:
+> > >
+> > > mount mark with mask == 0 and ignore_mask == FAN_OPEN. inode mark
+> > > on a directory with mask == FAN_EXEC | FAN_EVENT_ON_CHILD.
+> > >
+> > > The event: FAN_OPEN | FAN_EXEC | FAN_EVENT_ON_CHILD
+> > > would be reported to group with the FAN_OPEN flag despite the
+> > > fact that FAN_OPEN is in ignore mask of mount mark because
+> > > the mark iteration loop skips over non-inode marks for events
+> > > on child.
+> > >
+> > > I'll try to work that case into the relevant LTP test to prove it and
+> > > post a fix.
+> >
+> > Ha, that's clever. But FAN_EXEC does not exist in current fanotify. We only
+> > have FAN_OPEN_EXEC... And I don't think we have any compound events.
+> >
+> 
+> Typo. I meant FAN_OPEN_EXEC and you can see from LTP test
+> we do have at least this one compound event.
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
----
- fs/exfat/dir.c      | 12 ++++++------
- fs/exfat/exfat_fs.h |  5 ++---
- fs/exfat/misc.c     | 10 ++++------
- fs/exfat/nls.c      | 19 +++++++------------
- 4 files changed, 19 insertions(+), 27 deletions(-)
+Yeah, I understood what you meant once I saw the changelog of your patch.
+Thanks for it.
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index b5a237c33d50..b673362a895c 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -496,7 +496,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
- 	int ret = 0;
- 	int i, num_entries;
- 	sector_t sector;
--	unsigned short chksum;
-+	u16 chksum;
- 	struct exfat_dentry *ep, *fep;
- 	struct buffer_head *fbh, *bh;
- 
-@@ -505,7 +505,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
- 		return -EIO;
- 
- 	num_entries = fep->dentry.file.num_ext + 1;
--	chksum = exfat_calc_chksum_2byte(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
-+	chksum = exfat_calc_chksum16(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
- 
- 	for (i = 1; i < num_entries; i++) {
- 		ep = exfat_get_dentry(sb, p_dir, entry + i, &bh, NULL);
-@@ -513,7 +513,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
- 			ret = -EIO;
- 			goto release_fbh;
- 		}
--		chksum = exfat_calc_chksum_2byte(ep, DENTRY_SIZE, chksum,
-+		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
- 				CS_DEFAULT);
- 		brelse(bh);
- 	}
-@@ -600,10 +600,10 @@ int exfat_update_dir_chksum_with_entry_set(struct super_block *sb,
- 	int chksum_type = CS_DIR_ENTRY, i, num_entries = es->num_entries;
- 	unsigned int buf_off = (off - es->offset);
- 	unsigned int remaining_byte_in_sector, copy_entries, clu;
--	unsigned short chksum = 0;
-+	u16 chksum = 0;
- 
- 	for (i = 0; i < num_entries; i++) {
--		chksum = exfat_calc_chksum_2byte(&es->entries[i], DENTRY_SIZE,
-+		chksum = exfat_calc_chksum16(&es->entries[i], DENTRY_SIZE,
- 			chksum, chksum_type);
- 		chksum_type = CS_DEFAULT;
- 	}
-@@ -1047,7 +1047,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 			}
- 
- 			if (entry_type == TYPE_STREAM) {
--				unsigned short name_hash;
-+				u16 name_hash;
- 
- 				if (step != DIRENT_STEP_STRM) {
- 					step = DIRENT_STEP_FILE;
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 15817281b3c8..993d13bbebec 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -139,7 +139,7 @@ struct exfat_dentry_namebuf {
- struct exfat_uni_name {
- 	/* +3 for null and for converting */
- 	unsigned short name[MAX_NAME_LENGTH + 3];
--	unsigned short name_hash;
-+	u16 name_hash;
- 	unsigned char name_len;
- };
- 
-@@ -515,8 +515,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- void exfat_truncate_atime(struct timespec64 *ts);
- void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
--unsigned short exfat_calc_chksum_2byte(void *data, int len,
--		unsigned short chksum, int type);
-+u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
- u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
- void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
- void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
-diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-index b82d2dd5bd7c..17d41f3d3709 100644
---- a/fs/exfat/misc.c
-+++ b/fs/exfat/misc.c
-@@ -136,17 +136,15 @@ void exfat_truncate_atime(struct timespec64 *ts)
- 	ts->tv_nsec = 0;
- }
- 
--unsigned short exfat_calc_chksum_2byte(void *data, int len,
--		unsigned short chksum, int type)
-+u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type)
- {
- 	int i;
--	unsigned char *c = (unsigned char *)data;
-+	u8 *c = (u8 *)data;
- 
- 	for (i = 0; i < len; i++, c++) {
--		if (((i == 2) || (i == 3)) && (type == CS_DIR_ENTRY))
-+		if (unlikely(type == CS_DIR_ENTRY && (i == 2 || i == 3)))
- 			continue;
--		chksum = (((chksum & 1) << 15) | ((chksum & 0xFFFE) >> 1)) +
--			(unsigned short)*c;
-+		chksum = ((chksum << 15) | (chksum >> 1)) + *c;
- 	}
- 	return chksum;
- }
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 1ebda90cbdd7..19321773dd07 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -527,7 +527,7 @@ static int exfat_utf8_to_utf16(struct super_block *sb,
- 
- 	*uniname = '\0';
- 	p_uniname->name_len = unilen;
--	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1, 0,
-+	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
- 			CS_DEFAULT);
- 
- 	if (p_lossy)
-@@ -623,7 +623,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
- 
- 	*uniname = '\0';
- 	p_uniname->name_len = unilen;
--	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1, 0,
-+	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
- 			CS_DEFAULT);
- 
- 	if (p_lossy)
-@@ -655,7 +655,8 @@ static int exfat_load_upcase_table(struct super_block *sb,
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	unsigned int sect_size = sb->s_blocksize;
--	unsigned int i, index = 0, checksum = 0;
-+	unsigned int i, index = 0;
-+	u32 chksum = 0;
- 	int ret;
- 	unsigned char skip = false;
- 	unsigned short *upcase_table;
-@@ -681,13 +682,6 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 		for (i = 0; i < sect_size && index <= 0xFFFF; i += 2) {
- 			unsigned short uni = get_unaligned_le16(bh->b_data + i);
- 
--			checksum = ((checksum & 1) ? 0x80000000 : 0) +
--				(checksum >> 1) +
--				*(((unsigned char *)bh->b_data) + i);
--			checksum = ((checksum & 1) ? 0x80000000 : 0) +
--				(checksum >> 1) +
--				*(((unsigned char *)bh->b_data) + (i + 1));
--
- 			if (skip) {
- 				index += uni;
- 				skip = false;
-@@ -701,13 +695,14 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 			}
- 		}
- 		brelse(bh);
-+		chksum = exfat_calc_chksum32(bh->b_data, i, chksum, CS_DEFAULT);
- 	}
- 
--	if (index >= 0xFFFF && utbl_checksum == checksum)
-+	if (index >= 0xFFFF && utbl_checksum == chksum)
- 		return 0;
- 
- 	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)",
--		  index, checksum, utbl_checksum);
-+		  index, chksum, utbl_checksum);
- 	ret = -EINVAL;
- free_table:
- 	exfat_free_upcase_table(sbi);
+> We could also split it if we wanted to, but no reason to do it now.
+
+Agreed.
+
+								Honza
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
