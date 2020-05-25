@@ -2,124 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 125461E062B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 06:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02481E0636
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 06:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgEYEjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 00:39:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:12919 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbgEYEjL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 00:39:11 -0400
-IronPort-SDR: 02gefz82HyRqGfp/DRwWDX50sWBfFAzDWMGuXzBsU1a73YdFMPpbQM72TATUXdRw5AdQA3eSLW
- 2+0/b/HqfNPQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2020 21:39:11 -0700
-IronPort-SDR: mkPIiir/SIIp5RsIl2SkJX+dMgspH7qHmH92MoBbroHS+PWpT9tKflWqEGsybUNTzLAYcNacxR
- ymSYNh1hOXyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,432,1583222400"; 
-   d="scan'208";a="269644158"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by orsmga006.jf.intel.com with ESMTP; 24 May 2020 21:39:10 -0700
-Date:   Sun, 24 May 2020 21:39:10 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 7/8] fs/ext4: Introduce DAX inode flag
-Message-ID: <20200525043910.GA319107@iweiny-DESK2.sc.intel.com>
-References: <20200521191313.261929-1-ira.weiny@intel.com>
- <20200521191313.261929-8-ira.weiny@intel.com>
- <20200522114848.GC14199@quack2.suse.cz>
+        id S1728057AbgEYEzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 00:55:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbgEYEzU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 00:55:20 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E25C061A0E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:55:19 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id x22so9789695lfd.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 May 2020 21:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ta+gKITSaDFXbddptw1PycpUmizB8GirSrm5Sv99kI8=;
+        b=Fdz79PEvtruLyLOx8oikptAOCD4uLGZYUKf1BFLDTPaj2cCbCMlhFQgMqqfETPXX0x
+         AZ9H/1r4wGJy6VRcXJewAODKxPYihv6kv2xeyw6i9VmKCxCJFSVSMu3mSMNlQXWKqPul
+         8M8HIvIARh9/Ir9GBQ4dqjSwskZasNX09MdwpC1p6N868SwXgAmqK4Z4AfWvhuYer0w/
+         qnZILt634RDRm63MKcOmX2aCh3Ji8myuncnMyir4GjFHUU+GSIAgpt4lBHwLwsv5Jg8J
+         /jjH3FDU8tmASZnfRtMi6vBvRRNrvtwuAImxJdLmkJ7wCZhtUIXTqICJTEjyv8mzZ5ep
+         ZKSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ta+gKITSaDFXbddptw1PycpUmizB8GirSrm5Sv99kI8=;
+        b=LwkHsxIAE37vIplak/S6suxLt5B3GfQpHV1O6lazBL9QplQ/vINtUEWGHniOxC68q2
+         02nF5ZwlzfOX7Sgoz5HZaO/tmjRDEa+NlGDtwNPR2C4l7UHbJttsvoiGvzhDBBYSLNL6
+         TY1mBX6/C7kZl1RCJyFyEMG48wBLsAOqUhMGSm3wBxXWgIpAR63m36G7gnf/rTxk1YK0
+         OOHbW0yDg5yPX8NI7246HyPEabZy7xJ0b29myQtb8QM8Uci3el3zn5RKPGLyghENoknb
+         G/AAcSCnzYLtxpokKWBaKQpPK8TDSoGynN7Y4miQ/kRsFUTb0VaJ05iB72iwdExzJs/R
+         BARw==
+X-Gm-Message-State: AOAM530oJyff2xPi7CBftb2dMV/uayja1HDlXSCoT4MvUNx5ILRykI+w
+        eagMGBWdJYaCcXOYsnRq5RVU/h20Fr4=
+X-Google-Smtp-Source: ABdhPJxHYXGYhHPr163MFt0+8DI04wONMTR8geyOar2shTxMyVvgmv7QPrP+pQhnhBRd9z6ng0Fxgg==
+X-Received: by 2002:a19:5f04:: with SMTP id t4mr13359691lfb.208.1590382518277;
+        Sun, 24 May 2020 21:55:18 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id t27sm3321814ljo.114.2020.05.24.21.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2020 21:55:17 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 558C01012E6; Mon, 25 May 2020 07:55:18 +0300 (+03)
+Date:   Mon, 25 May 2020 07:55:18 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/36] fs: Support THPs in zero_user_segments
+Message-ID: <20200525045518.ydro3k2h5ct3pxxj@box>
+References: <20200515131656.12890-1-willy@infradead.org>
+ <20200515131656.12890-12-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200522114848.GC14199@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20200515131656.12890-12-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 01:48:48PM +0200, Jan Kara wrote:
-> On Thu 21-05-20 12:13:12, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > Add a flag to preserve FS_XFLAG_DAX in the ext4 inode.
-> > 
-> > Set the flag to be user visible and changeable.  Set the flag to be
-> > inherited.  Allow applications to change the flag at any time with the
-> > exception of if VERITY or ENCRYPT is set.
-> > 
-> > Disallow setting VERITY or ENCRYPT if DAX is set.
-> > 
-> > Finally, on regular files, flag the inode to not be cached to facilitate
-> > changing S_DAX on the next creation of the inode.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On Fri, May 15, 2020 at 06:16:31AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> ...
+> We can only kmap() one subpage of a THP at a time, so loop over all
+> relevant subpages, skipping ones which don't need to be zeroed.  This is
+> too large to inline when THPs are enabled and we actually need highmem,
+> so put it in highmem.c.
 > 
-> > @@ -303,6 +318,16 @@ static int ext4_ioctl_setflags(struct inode *inode,
-> >  	unsigned int jflag;
-> >  	struct super_block *sb = inode->i_sb;
-> >  
-> > +	if (ext4_test_inode_flag(inode, EXT4_INODE_DAX)) {
-> > +		if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY) ||
-> > +		    ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT) ||
-> > +		    ext4_test_inode_state(inode,
-> > +					  EXT4_STATE_VERITY_IN_PROGRESS)) {
-> > +			err = -EOPNOTSUPP;
-> > +			goto flags_out;
-> > +		}
-> > +	}
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/highmem.h | 15 +++++++---
+>  mm/highmem.c            | 62 +++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 71 insertions(+), 6 deletions(-)
 > 
-> The way this check is implemented wouldn't IMO do what we need... It
-> doesn't check the flags that are being set but just the current inode
-> state. I think it should rather be:
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index ea5cdbd8c2c3..74614903619d 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -215,13 +215,18 @@ static inline void clear_highpage(struct page *page)
+>  	kunmap_atomic(kaddr);
+>  }
+>  
+> +#if defined(CONFIG_HIGHMEM) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
+> +void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
+> +		unsigned start2, unsigned end2);
+> +#else /* !HIGHMEM || !TRANSPARENT_HUGEPAGE */
+>  static inline void zero_user_segments(struct page *page,
+> -	unsigned start1, unsigned end1,
+> -	unsigned start2, unsigned end2)
+> +		unsigned start1, unsigned end1,
+> +		unsigned start2, unsigned end2)
+>  {
+> +	unsigned long i;
+>  	void *kaddr = kmap_atomic(page);
+>  
+> -	BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
+> +	BUG_ON(end1 > thp_size(page) || end2 > thp_size(page));
+>  
+>  	if (end1 > start1)
+>  		memset(kaddr + start1, 0, end1 - start1);
+> @@ -230,8 +235,10 @@ static inline void zero_user_segments(struct page *page,
+>  		memset(kaddr + start2, 0, end2 - start2);
+>  
+>  	kunmap_atomic(kaddr);
+> -	flush_dcache_page(page);
+> +	for (i = 0; i < hpage_nr_pages(page); i++)
+> +		flush_dcache_page(page + i);
 
-Sorry, I got confused by the flags when I wrote this.
+Well, we need to settle on whether flush_dcache_page() has to be aware
+about compound pages. There are already architectures that know how to
+flush compound page, see ARM.
 
-> 
-> 	if ((flags ^ oldflags) & EXT4_INODE_DAX_FL) {
-> 		...
-> 	}
-> 
-> And perhaps move this to a place in ext4_ioctl_setflags() where we check
-> other similar conflicts.
-
-Sure.  It seems like a ext4_setflags_prepare() helper would be in order.  I'll
-see what I can do.
-
-> 
-> And then we should check conflicts with the journal flag as well, as I
-> mentioned in reply to the first patch. There it is more complicated by the
-> fact that we should disallow setting of both EXT4_INODE_DAX_FL and
-> EXT4_JOURNAL_DATA_FL at the same time so the checks will be somewhat more
-> complicated.
-
-I'm confused by jflag.  Why is EXT4_JOURNAL_DATA_FL stored in jflag?
-
-Ira
-
-> 
-> 								Honza
-> 
-> > +
-> >  	/* Is it quota file? Do not allow user to mess with it */
-> >  	if (ext4_is_quota_file(inode))
-> >  		goto flags_out;
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+-- 
+ Kirill A. Shutemov
