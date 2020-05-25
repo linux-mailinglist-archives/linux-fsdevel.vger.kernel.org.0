@@ -2,105 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E531E0F73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 15:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D73B11E0FA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 15:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390790AbgEYN0M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 09:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390609AbgEYN0K (ORCPT
+        id S2390781AbgEYNi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 09:38:58 -0400
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17120 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388794AbgEYNi5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 09:26:10 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551C9C061A0E;
-        Mon, 25 May 2020 06:26:10 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id j16so4629611wrb.7;
-        Mon, 25 May 2020 06:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MP6DRNEuCMRyiUZleYcforgbKGB3a+zep0oAe43tg2I=;
-        b=fvrBvY4ibEdQQM5pF6/IquSIewV5ZavHaNrfE1JSOhz1kwkuaWt5LjmZc8u4KzkR0O
-         ccXuCuaUZHp3sPZM/3LCQMlxk0RCjGSpgBMsBx1i/rYSc8/OHkTul3XcBYnPwxkv8Pg5
-         64xnojveJsctzcQQzoCNIYbVF5+Vy5DvN8rtlL92/HgCVAQ11A+wP5WyvfFzRne5eHNJ
-         q1uQzJ5UpG4k72AodRlyhlpsyiaP9fB4vCl1dTUnGv2vlDl1BKLYP1tp9nUw7V2yBjCM
-         uRt51NuJUfFTu+whDAMZ7GUe5UAfvO1aiSuNw6uQcjyBhyK1aPTHn+Ea+uyUZQhviM3W
-         j1Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=MP6DRNEuCMRyiUZleYcforgbKGB3a+zep0oAe43tg2I=;
-        b=l1pf+RKJb3k8g/YLXflX21KGmXl+aFRlZOxbwhAMbOaIOElliSES5Er+3KZqAxCFa+
-         dype1zpcY2nu5vuvgMXwbMMS2JkdR2pgXSnB+D1QAyJNwt7KtoNrsswu5CKFVkm0QJyc
-         FCp6s3u1jEYDZg9Ltemq41SJRK6m+wseJI2lUhJAMPMuzWHqldVbIMXd2ts4DB4b+l6P
-         UxdXgt5BvBSGbKNc6nJ4USh3INH/2JANXWLufO/a8GETkbESQmpuR5648h6PTM0NC25r
-         dK1MrkbSWsa4/kT14lHk1BlzKl+WGRAR6F2lbDzJ/2iKmVRMNca9mKb51XHEXCC3SAG1
-         /XMQ==
-X-Gm-Message-State: AOAM530ue/S/WaHJrHrg95TQ1A7IkRsrD7V2VXmFxjqDfEqTxuX6ZfNm
-        t3kI0es3VHEZJdqEfweF4Nk=
-X-Google-Smtp-Source: ABdhPJwYR19qizr+nnGBgvRXxEom4sWziXWEWb5qxZbh+w1tAiIwUp6ASTljA50PM/sQpOkzPSr/WA==
-X-Received: by 2002:adf:f74e:: with SMTP id z14mr15962530wrp.338.1590413169128;
-        Mon, 25 May 2020 06:26:09 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id r6sm20363405wmh.1.2020.05.25.06.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2020 06:26:08 -0700 (PDT)
-Date:   Mon, 25 May 2020 15:26:06 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] radix-tree: Use local_lock for protection
-Message-ID: <20200525132606.GB3066456@gmail.com>
-References: <20200524215739.551568-1-bigeasy@linutronix.de>
- <20200524215739.551568-3-bigeasy@linutronix.de>
- <20200525062954.GA3180782@gmail.com>
- <20200525111114.GB17206@bombadil.infradead.org>
+        Mon, 25 May 2020 09:38:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1590413843; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=qDT6LMzGh8lxZZ8pSZOPw1InJ6c2NdHTqD7WX8gAYcv0sivGjGsUQIw6W5CCoOBvCAF747z9u2TqH7AVMxMBB4IcTugDonkfgKPgSSQK0fBqzP7H6PToEtBxB9dwmkOyx3pXZAAlleiCX0lkFK7LEQ9mA0r/bzjP6F0fiWA0bCQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1590413843; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=mquSMkM5+AALl36igoWM9/F1M5XrDJ+imBVLNdmmnbw=; 
+        b=MJoxeU4X5K2Nq1fM8jjW+J/XTa3Xv47dKzyOgvdv0uqlwPRjFfuKr52NowQ3sQL4XFzQJZjAFSmOaHBAyjQdzHBDn89oyj2wdYIXlxUZc8QcVeumGdKWcz0mI1+d3ifkg1aPkLmAaV3ThAbgQOaAYrfiDhsCVmphFjcnwR0281s=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1590413843;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:Subject:To:Cc:Message-ID:References:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=mquSMkM5+AALl36igoWM9/F1M5XrDJ+imBVLNdmmnbw=;
+        b=fGQ2tLy5EOaNF4olYAq2VkL2trY+GQ+K4bOAPLGh01ZO0I4xQnSJLtc403cWcA1E
+        eRMNgeIfD6krdeme7RE4oHmvraSYkNSAiynYm9GLxsbadYzbo4K7WBl5KJ8zwDaQKWV
+        YAsOKyNBHISPCAwEo75DKBmdDfbB+nu2KQ6TTJms=
+Received: from [10.0.0.9] (113.87.88.197 [113.87.88.197]) by mx.zoho.com.cn
+        with SMTPS id 1590413841507658.3265125907473; Mon, 25 May 2020 21:37:21 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Subject: Re: [RFC PATCH v3 0/9] Suppress negative dentry
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Ian Kent <raven@themaw.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Message-ID: <778de44a-17d5-a5ba-fc54-6839b67fe7b1@mykernel.net>
+References: <20200515072047.31454-1-cgxu519@mykernel.net>
+ <e994d56ff1357013a85bde7be2e901476f743b83.camel@themaw.net>
+ <CAOQ4uxjT8DouPmf1mk1x24X8FcN5peYAqwdr362P4gcW+x15dw@mail.gmail.com>
+ <CAJfpegtpi1SVJRbQb8zM0t66WnrjKsPEGEN3qZKRzrZePP06dA@mail.gmail.com>
+ <05e92557-055c-0dea-4fe4-0194606b6c77@mykernel.net>
+ <CAJfpegtyZw=6zqWQWm-fN0KpGEp9stcfvnbA7eh6E-7XHxaG=Q@mail.gmail.com>
+ <7fcb778f-ba80-8095-4d48-20682f5242a9@mykernel.net>
+ <CAJfpegu1XVB5ABGMzNpyomgWqu+gtd2RCoDpuqGcEYJ7tmWdew@mail.gmail.com>
+Date:   Mon, 25 May 2020 21:37:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200525111114.GB17206@bombadil.infradead.org>
+In-Reply-To: <CAJfpegu1XVB5ABGMzNpyomgWqu+gtd2RCoDpuqGcEYJ7tmWdew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+=E5=9C=A8 5/20/2020 10:44 PM, Miklos Szeredi =E5=86=99=E9=81=93:
+> On Tue, May 19, 2020 at 11:24 AM cgxu <cgxu519@mykernel.net> wrote:
+>> On 5/19/20 4:21 PM, Miklos Szeredi wrote:
+>>> On Tue, May 19, 2020 at 7:02 AM cgxu <cgxu519@mykernel.net> wrote:
+>>>
+>>>> If we don't consider that only drop negative dentry of our lookup,
+>>>> it is possible to do like below, isn't it?
+>>> Yes, the code looks good, though I'd consider using d_lock on dentry
+>>> instead if i_lock on parent, something like this:
+>>>
+>>> if (d_is_negative(dentry) && dentry->d_lockref.count =3D=3D 1) {
+>>>       spin_lock(&dentry->d_lock);
+>>>       /* Recheck condition under lock */
+>>>       if (d_is_negative(dentry) && dentry->d_lockref.count =3D=3D 1)
+>>>           __d_drop(dentry)
+>>>       spin_unlock(&dentry->d_lock);
+>> And after this we will still treat 'dentry' as negative dentry and dput =
+it
+>> regardless of the second check result of d_is_negative(dentry), right?
+> I'd restructure it in the same way as lookup_positive_unlocked()...
+>
+>>> }
+>>>
+>>> But as Amir noted, we do need to take into account the case where
+>>> lower layers are shared by multiple overlays, in which case dropping
+>>> the negative dentries could result in a performance regression.
+>>> Have you looked at that case, and the effect of this patch on negative
+>>> dentry lookup performance?
+>> The container which is affected by this feature is just take advantage
+>> of previous another container but we could not guarantee that always
+>> happening. I think there no way for best of both worlds, consider that
+>> some malicious containers continuously make negative dentries by
+>> searching non-exist files, so that page cache of clean data, clean
+>> inodes/dentries will be freed by memory reclaim. All of those
+>> behaviors will impact the performance of other container instances.
+>>
+>> On the other hand, if this feature significantly affects particular
+>> container,
+>> doesn't that mean the container is noisy neighbor and should be restrict=
+ed
+>> in some way?
+> Not necessarily.   Negative dentries can be useful and in case of
+> layers shared between two containers having negative dentries cached
+> in the lower layer can in theory positively affect performance.   I
+> don't have data to back this up, nor the opposite.  You should run
+> some numbers for container startup times with and without this patch.
 
-* Matthew Wilcox <willy@infradead.org> wrote:
-
-> On Mon, May 25, 2020 at 08:29:54AM +0200, Ingo Molnar wrote:
-> > > +void radix_tree_preload_end(void)
-> > > +{
-> > > +	local_unlock(&radix_tree_preloads.lock);
-> > > +}
-> > > +EXPORT_SYMBOL(radix_tree_preload_end);
-> > 
-> > Since upstream we are still mapping the local_lock primitives to
-> > preempt_disable()/preempt_enable(), I believe these uninlining changes should not be done
-> > in this patch, i.e. idr_preload_end() and radix_tree_preload_end() should stay inline.
-> 
-> But radix_tree_preloads is static, and I wouldn't be terribly happy to
-> see that exported to modules.
-
-Well, it seems a bit silly to make radix_tree_preload_end() a 
-standalone function, on most distro kernels that don't have 
-CONFIG_PREEMPT=y, preempt_enable() is a NOP:
-
- 0000000000002bf0 <radix_tree_preload_end>:
-     2bf0:       c3                      retq   
-
-I.e. we'd be introducing a separate function call for no good reason.
+I did some simple tests=C2=A0 for it but the result seems not very steady, =
+so=20
+I need to take time to do more detail tests later. Is it possible to=20
+apply the patch for upper layer first?
 
 Thanks,
+cgxu
 
-	Ingo
+
