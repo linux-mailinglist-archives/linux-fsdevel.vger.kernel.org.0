@@ -2,129 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E89EC1E07EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 09:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933F31E0803
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 May 2020 09:28:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389054AbgEYHXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 03:23:45 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:52133 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388951AbgEYHXp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 03:23:45 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 54ECB5C0073;
-        Mon, 25 May 2020 03:23:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 25 May 2020 03:23:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        qw3U0CcqTo0cQeMDt+HS3gLTNE8CpK3Apl/Gtn5gyiw=; b=M+NHqWcV3e6Dl6cX
-        MmzZCPQf3JaTVzLakiNvkneJQUA5WA9R+kWATP62u0feYzRH6GWcDRSA+psz8pNa
-        hAOU1yKWdQiOMoqCfEQdj0uFRX4uEj+QyIZVS+yN9KLfpT2U+MV4sBt+LC4jX4ZW
-        QT63eoHRMMokTBqbCa6G/2/m+AEqaUCNgopyU6NvSH0mQRhhKnfDcmaNclD5kjRC
-        YmGXbjmao+YDGlX2SG0m5PJkMEZ7XR25Hf1BKINCiSP6l7NJtWa6Oo1fylLYG2xG
-        xiVzePIPK+EXzd28VwVRYO90nWOQimYcMEzL8pf2XtOyhYOPrZJIHeXdHhuAMNmK
-        uCldTA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=qw3U0CcqTo0cQeMDt+HS3gLTNE8CpK3Apl/Gtn5gy
-        iw=; b=0wtSGzV1CP6240VoYMM4RT9ZZFuQpRETg6vGRPUjqOMU3Ca08HSIzDSdk
-        spwXYraB1Fwy5SxZ1kCPdPR9viQIAAsFKXVFGEZ8E8JvyYos4Gpk4dkhCxPstgZK
-        PT05ZhVNCsovXD+/yqAjz7OE8RbE5G5J01x8NBJKYxVlvd4K79lhHKKYlkcowWDE
-        i/Fkk2jidF9GdBjpLz+0YjoD/ByVCXWasQ9XcgnwhC5hgd44ArVEFF7pn+nk9IOe
-        mrfcU3qxfUJCzoVAg9J//b7njrw5V+q+cXWroVYixTN6fTJ4tU+2Pcz5r+hhpQcu
-        5nqNjKH5Rya0qZvCZGFOq4IiYqfQQ==
-X-ME-Sender: <xms:f3LLXs1zI0Q62uDw2dghUkhOGvR1tuCn0JjNeGWnBQvFekqEancsUw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudduledguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epfeefteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecu
-    kfhppeduudekrddvtdekrddujeekrddukeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:f3LLXnGYFKy91zeZ2ss4hglmbL2KTU8gxQ-adUXizPXG8R1l6qi4AQ>
-    <xmx:f3LLXk7GRkOz31e7ASSubgJ-587PmRXRnfANdUaJsF3Ci_995-7w2Q>
-    <xmx:f3LLXl3vF_RzAGWoJxq7AJZYvdyqGH1_eAyvsx91iGTgIy63pLK23Q>
-    <xmx:gHLLXgPS_9gYpCZ0-xtk-nhZ4niLrVPWtRfK4x5UAZKJNPvecwbYVA>
-Received: from mickey.themaw.net (unknown [118.208.178.18])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 71ADD3066552;
-        Mon, 25 May 2020 03:23:39 -0400 (EDT)
-Message-ID: <b9e8f8171096813c76df3719719bdda87033fd78.camel@themaw.net>
-Subject: Re: [PATCH 0/4] kernfs: proposed locking and concurrency improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 25 May 2020 15:23:35 +0800
-In-Reply-To: <20200525061616.GA57080@kroah.com>
-References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
-         <20200525061616.GA57080@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S2389109AbgEYH2r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 03:28:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58302 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388948AbgEYH2r (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 May 2020 03:28:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 56897B083;
+        Mon, 25 May 2020 07:28:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EF42C1E1270; Mon, 25 May 2020 09:28:44 +0200 (CEST)
+Date:   Mon, 25 May 2020 09:28:44 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 7/8] fs/ext4: Introduce DAX inode flag
+Message-ID: <20200525072844.GH14199@quack2.suse.cz>
+References: <20200521191313.261929-1-ira.weiny@intel.com>
+ <20200521191313.261929-8-ira.weiny@intel.com>
+ <20200522114848.GC14199@quack2.suse.cz>
+ <20200525043910.GA319107@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200525043910.GA319107@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-05-25 at 08:16 +0200, Greg Kroah-Hartman wrote:
-> On Mon, May 25, 2020 at 01:46:59PM +0800, Ian Kent wrote:
-> > For very large systems with hundreds of CPUs and TBs of RAM booting
-> > can
-> > take a very long time.
-> > 
-> > Initial reports showed that booting a configuration of several
-> > hundred
-> > CPUs and 64TB of RAM would take more than 30 minutes and require
-> > kernel
-> > parameters of udev.children-max=1024
-> > systemd.default_timeout_start_sec=3600
-> > to prevent dropping into emergency mode.
-> > 
-> > Gathering information about what's happening during the boot is a
-> > bit
-> > challenging. But two main issues appeared to be, a large number of
-> > path
-> > lookups for non-existent files, and high lock contention in the VFS
-> > during
-> > path walks particularly in the dentry allocation code path.
-> > 
-> > The underlying cause of this was believed to be the sheer number of
-> > sysfs
-> > memory objects, 100,000+ for a 64TB memory configuration.
+On Sun 24-05-20 21:39:10, Ira Weiny wrote:
+> On Fri, May 22, 2020 at 01:48:48PM +0200, Jan Kara wrote:
+> > And then we should check conflicts with the journal flag as well, as I
+> > mentioned in reply to the first patch. There it is more complicated by the
+> > fact that we should disallow setting of both EXT4_INODE_DAX_FL and
+> > EXT4_JOURNAL_DATA_FL at the same time so the checks will be somewhat more
+> > complicated.
 > 
-> Independant of your kernfs changes, why do we really need to
-> represent
-> all of this memory with that many different "memory objects"?  What
-> is
-> that providing to userspace?
-> 
-> I remember Ben Herrenschmidt did a lot of work on some of the kernfs
-> and
-> other functions to make large-memory systems boot faster to remove
-> some
-> of the complexity in our functions, but that too did not look into
-> why
-> we needed to create so many objects in the first place.
-> 
-> Perhaps you might want to look there instead?
+> I'm confused by jflag.  Why is EXT4_JOURNAL_DATA_FL stored in jflag?
 
-I presumed it was a hardware design requirement or IBM VM design
-requirement.
+It isn't just EXT4_JOURNAL_DATA_FL. It is:
 
-Perhaps Rick can find out more on that question.
+	jflag = flags & EXT4_JOURNAL_DATA_FL;
 
-Ian
+so it is EXT4_JOURNAL_DATA_FL if it should be set by the current ioctl and 0
+otherwise. But I agree that since we mostly do
 
+	(jflag ^ oldflags) & EXT4_JOURNAL_DATA_FL
+
+jflags is mostly useless as we could do just
+
+	(flags ^ oldflags) & EXT4_JOURNAL_DATA_FL
+
+I guess it's mostly a relict from the past...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
