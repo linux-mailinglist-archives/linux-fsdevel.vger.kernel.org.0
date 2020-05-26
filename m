@@ -2,73 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A9151E26C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 18:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1681E26E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 18:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388591AbgEZQUB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 12:20:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:60240 "EHLO
+        id S2388447AbgEZQZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 12:25:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36238 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388447AbgEZQUA (ORCPT
+        with ESMTP id S1726930AbgEZQZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 12:20:00 -0400
+        Tue, 26 May 2020 12:25:33 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04QGHhbg075545;
-        Tue, 26 May 2020 16:19:41 GMT
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04QGHm0u075607;
+        Tue, 26 May 2020 16:25:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2020-01-29;
- bh=ZBzh/ybbV61B1Qei3812YPkuod4SSPrDyvvb4BUpNrU=;
- b=s2Af90imq+R8Ct3jec5smTb58lz3XYj28S2RmI5QOq1qrahWHRbSiWGEgByDxN4OWP+g
- xdi1+jm77RmAU5Z00zbI4yalzSEObd93gkYp8sRuDnQ5dTrBQKx4f4Oy5i3M8qdw6jFh
- qiqZgzZ4J4PtyuOHTkfhNkQd4nQMNXc/I1T2/SfTcsTbdhIEdlbXm58GLj5MJvCnw2G4
- ubfHKtPrpzNqTN9kKFYrfcQYR3feq0x323wC/Xyw+nWJ4iovYe2aS0Y9Z3MIGsgkjjBp
- CUOVJwL8tWedyytmhSu+KW0QfgZv0dnMGVnNsat2u9/qBriY3Jgr2EU2ZfEKvruH6OHu EQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 318xbjtvjg-1
+ bh=76aLELeLO0JWPuhqb4dEFdJMwX5Q75x/l2EgC5/0hdo=;
+ b=X0ZC2RT1Eqt+ztzZbx5OnH3vmpFXc097w2UsGhiTZUKVr1lpfeLhN/ZD5bOx9Rfa1Vv8
+ vCsvkcTG+yJlPlcK22V30cQwJB92caZvbQEr/pYWcvlwSfl7PgxeFA2tc+CTxOV1WeMl
+ 5lo8IhO0lUCEiCj2GbXqNwk/1UZWDBde+DPAs6UXj+Nvocmvo9/C6bRx8iDMTOgjTZOn
+ kLPSbBNVuiWZw1cEjTfUlDJGBwHYbtTIYq3f+RIUmKkFwCnMKUupgDfv5PoAQEqqqPKV
+ egaMnLuAArdWEm5hLRB8mEMfbSg71tyjHatsgDmJmeHmu17xh+WdTwKjB3+3S8m/VwUS fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 318xbjtwfe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 May 2020 16:19:41 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04QGJ0S0032213;
-        Tue, 26 May 2020 16:19:40 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 317ddp54r5-1
+        Tue, 26 May 2020 16:25:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04QGMpGa196255;
+        Tue, 26 May 2020 16:25:19 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 317drxrj82-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 May 2020 16:19:38 +0000
+        Tue, 26 May 2020 16:25:19 +0000
 Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04QGJYhv023079;
-        Tue, 26 May 2020 16:19:34 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04QGPDiF031427;
+        Tue, 26 May 2020 16:25:13 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 May 2020 09:19:34 -0700
-Date:   Tue, 26 May 2020 09:19:32 -0700
+        with ESMTP ; Tue, 26 May 2020 09:25:13 -0700
+Date:   Tue, 26 May 2020 09:25:12 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Domenico Andreoli <domenico.andreoli@linux.com>,
-        Pavel Machek <pavel@ucw.cz>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, "Ted Ts'o" <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PM: hibernate: restrict writes to the resume device
-Message-ID: <20200526161932.GD252930@magnolia>
-References: <20200519181410.GA1963@dumbo>
- <CAJZ5v0jgA3hh3nB60ANKN1WG9py9BoBqp8N8BuM2W-gpcUaPpg@mail.gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-ext4@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+        tytso@mit.edu, adilger@dilger.ca, riteshh@linux.ibm.com,
+        amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH 6/9] fs: move fiemap range validation into the file
+ systems instances
+Message-ID: <20200526162512.GA8204@magnolia>
+References: <20200523073016.2944131-1-hch@lst.de>
+ <20200523073016.2944131-7-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jgA3hh3nB60ANKN1WG9py9BoBqp8N8BuM2W-gpcUaPpg@mail.gmail.com>
+In-Reply-To: <20200523073016.2944131-7-hch@lst.de>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- phishscore=0 adultscore=0 suspectscore=5 spamscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 suspectscore=2 bulkscore=0 mlxscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005260126
+ definitions=main-2005260127
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
  lowpriorityscore=0 priorityscore=1501 phishscore=0 cotscore=-2147483648
- suspectscore=5 bulkscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ suspectscore=2 bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2004280000 definitions=main-2005260126
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -76,170 +73,296 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 25, 2020 at 12:52:17PM +0200, Rafael J. Wysocki wrote:
-> On Tue, May 19, 2020 at 8:14 PM Domenico Andreoli
-> <domenico.andreoli@linux.com> wrote:
-> >
-> > From: Domenico Andreoli <domenico.andreoli@linux.com>
-> >
-> > Hibernation via snapshot device requires write permission to the swap
-> > block device, the one that more often (but not necessarily) is used to
-> > store the hibernation image.
-> >
-> > With this patch, such permissions are granted iff:
-> >
-> > 1) snapshot device config option is enabled
-> > 2) swap partition is used as resume device
-> >
-> > In other circumstances the swap device is not writable from userspace.
-> >
-> > In order to achieve this, every write attempt to a swap device is
-> > checked against the device configured as part of the uswsusp API [0]
-> > using a pointer to the inode struct in memory. If the swap device being
-> > written was not configured for resuming, the write request is denied.
-> >
-> > NOTE: this implementation works only for swap block devices, where the
-> > inode configured by swapon (which sets S_SWAPFILE) is the same used
-> > by SNAPSHOT_SET_SWAP_AREA.
-> >
-> > In case of swap file, SNAPSHOT_SET_SWAP_AREA indeed receives the inode
-> > of the block device containing the filesystem where the swap file is
-> > located (+ offset in it) which is never passed to swapon and then has
-> > not set S_SWAPFILE.
-> >
-> > As result, the swap file itself (as a file) has never an option to be
-> > written from userspace. Instead it remains writable if accessed directly
-> > from the containing block device, which is always writeable from root.
-> >
-> > [0] Documentation/power/userland-swsusp.rst
-> >
-> > v2:
-> >  - rename is_hibernate_snapshot_dev() to is_hibernate_resume_dev()
-> >  - fix description so to correctly refer to the resume device
-> >
-> > Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: viro@zeniv.linux.org.uk
-> > Cc: tytso@mit.edu
-> > Cc: len.brown@intel.com
-> > Cc: linux-pm@vger.kernel.org
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> >
-> > ---
-> >  fs/block_dev.c          |    3 +--
-> >  include/linux/suspend.h |    6 ++++++
-> >  kernel/power/user.c     |   14 +++++++++++++-
-> >  3 files changed, 20 insertions(+), 3 deletions(-)
-> >
-> > Index: b/include/linux/suspend.h
-> > ===================================================================
-> > --- a/include/linux/suspend.h
-> > +++ b/include/linux/suspend.h
-> > @@ -466,6 +466,12 @@ static inline bool system_entering_hiber
-> >  static inline bool hibernation_available(void) { return false; }
-> >  #endif /* CONFIG_HIBERNATION */
-> >
-> > +#ifdef CONFIG_HIBERNATION_SNAPSHOT_DEV
-> > +int is_hibernate_resume_dev(const struct inode *);
-> > +#else
-> > +static inline int is_hibernate_resume_dev(const struct inode *i) { return 0; }
-> > +#endif
-> > +
-> >  /* Hibernation and suspend events */
-> >  #define PM_HIBERNATION_PREPARE 0x0001 /* Going to hibernate */
-> >  #define PM_POST_HIBERNATION    0x0002 /* Hibernation finished */
-> > Index: b/kernel/power/user.c
-> > ===================================================================
-> > --- a/kernel/power/user.c
-> > +++ b/kernel/power/user.c
-> > @@ -35,8 +35,14 @@ static struct snapshot_data {
-> >         bool ready;
-> >         bool platform_support;
-> >         bool free_bitmaps;
-> > +       struct inode *bd_inode;
-> >  } snapshot_state;
-> >
-> > +int is_hibernate_resume_dev(const struct inode *bd_inode)
-> > +{
-> > +       return hibernation_available() && snapshot_state.bd_inode == bd_inode;
-> > +}
-> > +
-> >  static int snapshot_open(struct inode *inode, struct file *filp)
-> >  {
-> >         struct snapshot_data *data;
-> > @@ -95,6 +101,7 @@ static int snapshot_open(struct inode *i
-> >         data->frozen = false;
-> >         data->ready = false;
-> >         data->platform_support = false;
-> > +       data->bd_inode = NULL;
-> >
-> >   Unlock:
-> >         unlock_system_sleep();
-> > @@ -110,6 +117,7 @@ static int snapshot_release(struct inode
-> >
-> >         swsusp_free();
-> >         data = filp->private_data;
-> > +       data->bd_inode = NULL;
-> >         free_all_swap_pages(data->swap);
-> >         if (data->frozen) {
-> >                 pm_restore_gfp_mask();
-> > @@ -202,6 +210,7 @@ struct compat_resume_swap_area {
-> >  static int snapshot_set_swap_area(struct snapshot_data *data,
-> >                 void __user *argp)
-> >  {
-> > +       struct block_device *bdev;
-> >         sector_t offset;
-> >         dev_t swdev;
-> >
-> > @@ -232,9 +241,12 @@ static int snapshot_set_swap_area(struct
-> >                 data->swap = -1;
-> >                 return -EINVAL;
-> >         }
-> > -       data->swap = swap_type_of(swdev, offset, NULL);
-> > +       data->swap = swap_type_of(swdev, offset, &bdev);
-> >         if (data->swap < 0)
-> >                 return -ENODEV;
-> > +
-> > +       data->bd_inode = bdev->bd_inode;
-> > +       bdput(bdev);
-> >         return 0;
-> >  }
-> >
-> > Index: b/fs/block_dev.c
-> > ===================================================================
-> > --- a/fs/block_dev.c
-> > +++ b/fs/block_dev.c
-> > @@ -2023,8 +2023,7 @@ ssize_t blkdev_write_iter(struct kiocb *
-> >         if (bdev_read_only(I_BDEV(bd_inode)))
-> >                 return -EPERM;
-> >
-> > -       /* uswsusp needs write permission to the swap */
-> > -       if (IS_SWAPFILE(bd_inode) && !hibernation_available())
-> > +       if (IS_SWAPFILE(bd_inode) && !is_hibernate_resume_dev(bd_inode))
-> >                 return -ETXTBSY;
-> >
-> >         if (!iov_iter_count(from))
-> >
-> > --
+On Sat, May 23, 2020 at 09:30:13AM +0200, Christoph Hellwig wrote:
+> Replace fiemap_check_flags with a fiemap_prep helper that also takes the
+> inode and mapped range, and performs the sanity check and truncation
+> previously done in fiemap_check_range.  This way the validation is inside
+> the file system itself and thus properly works for the stacked overlayfs
+> case as well.
 > 
-> The patch looks OK to me.
-> 
-> Darrick, what do you think?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Looks fine to me too.
-
-I kinda wonder how uswsusp prevents the bdev from being swapoff'd (or
-just plain disappearing) such that bd_inode will never point to a
-recycled inode, but I guess since we're only comparing pointer values
-it's not a big deal for this patch...
-
-Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+Still looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
+> ---
+>  Documentation/filesystems/fiemap.txt | 12 +++---
+>  fs/btrfs/inode.c                     |  2 +-
+>  fs/cifs/smb2ops.c                    |  6 ++-
+>  fs/ext4/extents.c                    |  5 ++-
+>  fs/f2fs/data.c                       |  3 +-
+>  fs/ioctl.c                           | 63 +++++++++++-----------------
+>  fs/iomap/fiemap.c                    |  2 +-
+>  fs/nilfs2/inode.c                    |  2 +-
+>  fs/ocfs2/extent_map.c                |  3 +-
+>  include/linux/fiemap.h               |  3 +-
+>  10 files changed, 47 insertions(+), 54 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/fiemap.txt b/Documentation/filesystems/fiemap.txt
+> index ac87e6fda842b..35c8571eccb6e 100644
+> --- a/Documentation/filesystems/fiemap.txt
+> +++ b/Documentation/filesystems/fiemap.txt
+> @@ -203,16 +203,18 @@ EINTR once fatal signal received.
+>  
+>  
+>  Flag checking should be done at the beginning of the ->fiemap callback via the
+> -fiemap_check_flags() helper:
+> +fiemap_prep() helper:
+>  
+> -int fiemap_check_flags(struct fiemap_extent_info *fieinfo, u32 fs_flags);
+> +int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> +		u64 start, u64 *len, u32 supported_flags);
+>  
+>  The struct fieinfo should be passed in as received from ioctl_fiemap(). The
+>  set of fiemap flags which the fs understands should be passed via fs_flags. If
+> -fiemap_check_flags finds invalid user flags, it will place the bad values in
+> +fiemap_prep finds invalid user flags, it will place the bad values in
+>  fieinfo->fi_flags and return -EBADR. If the file system gets -EBADR, from
+> -fiemap_check_flags(), it should immediately exit, returning that error back to
+> -ioctl_fiemap().
+> +fiemap_prep(), it should immediately exit, returning that error back to
+> +ioctl_fiemap().  Additionally the range is validate against the supported
+> +maximum file size.
+>  
+>  
+>  For each extent in the request range, the file system should call
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 320d1062068d3..1f1ec361089b3 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -8250,7 +8250,7 @@ static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  {
+>  	int	ret;
+>  
+> -	ret = fiemap_check_flags(fieinfo, BTRFS_FIEMAP_FLAGS);
+> +	ret = fiemap_prep(inode, fieinfo, start, &len, BTRFS_FIEMAP_FLAGS);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index 09047f1ddfb66..828e53e795c6d 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -3408,8 +3408,10 @@ static int smb3_fiemap(struct cifs_tcon *tcon,
+>  	int i, num, rc, flags, last_blob;
+>  	u64 next;
+>  
+> -	if (fiemap_check_flags(fei, FIEMAP_FLAG_SYNC))
+> -		return -EBADR;
+> +	rc = fiemap_prep(d_inode(cfile->dentry), fei, start, &len,
+> +			FIEMAP_FLAG_SYNC);
+> +	if (rc)
+> +		return rc;
+>  
+>  	xid = get_xid();
+>   again:
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index a41ae7c510170..41f73dea92cac 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4908,8 +4908,9 @@ int ext4_get_es_cache(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  		fieinfo->fi_flags &= ~FIEMAP_FLAG_CACHE;
+>  	}
+>  
+> -	if (fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC))
+> -		return -EBADR;
+> +	error = fiemap_prep(inode, fieinfo, start, &len, FIEMAP_FLAG_SYNC);
+> +	if (error)
+> +		return error;
+>  
+>  	error = ext4_fiemap_check_ranges(inode, start, &len);
+>  	if (error)
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 25abbbb65ba09..03faafc591b17 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1825,7 +1825,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  			return ret;
+>  	}
+>  
+> -	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+> +	ret = fiemap_prep(inode, fieinfo, start, &len,
+> +			FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 3f300cc07dee4..56bbf02209aef 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -149,61 +149,50 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+>  EXPORT_SYMBOL(fiemap_fill_next_extent);
+>  
+>  /**
+> - * fiemap_check_flags - check validity of requested flags for fiemap
+> + * fiemap_prep - check validity of requested flags for fiemap
+> + * @inode:	Inode to operate on
+>   * @fieinfo:	Fiemap context passed into ->fiemap
+> - * @fs_flags:	Set of fiemap flags that the file system understands
+> + * @start:	Start of the mapped range
+> + * @len:	Length of the mapped range, can be truncated by this function.
+> + * @supported_flags:	Set of fiemap flags that the file system understands
+>   *
+> - * Called from file system ->fiemap callback. This will compute the
+> - * intersection of valid fiemap flags and those that the fs supports. That
+> - * value is then compared against the user supplied flags. In case of bad user
+> - * flags, the invalid values will be written into the fieinfo structure, and
+> - * -EBADR is returned, which tells ioctl_fiemap() to return those values to
+> - * userspace. For this reason, a return code of -EBADR should be preserved.
+> + * This function must be called from each ->fiemap instance to validate the
+> + * fiemap request against the file system parameters.
+>   *
+> - * Returns 0 on success, -EBADR on bad flags.
+> + * Returns 0 on success, or a negative error on failure.
+>   */
+> -int fiemap_check_flags(struct fiemap_extent_info *fieinfo, u32 fs_flags)
+> +int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> +		u64 start, u64 *len, u32 supported_flags)
+>  {
+> +	u64 maxbytes = inode->i_sb->s_maxbytes;
+>  	u32 incompat_flags;
+>  
+> -	incompat_flags = fieinfo->fi_flags & ~(FIEMAP_FLAGS_COMPAT & fs_flags);
+> -	if (incompat_flags) {
+> -		fieinfo->fi_flags = incompat_flags;
+> -		return -EBADR;
+> -	}
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL(fiemap_check_flags);
+> -
+> -static int fiemap_check_ranges(struct super_block *sb,
+> -			       u64 start, u64 len, u64 *new_len)
+> -{
+> -	u64 maxbytes = (u64) sb->s_maxbytes;
+> -
+> -	*new_len = len;
+> -
+> -	if (len == 0)
+> +	if (*len == 0)
+>  		return -EINVAL;
+> -
+>  	if (start > maxbytes)
+>  		return -EFBIG;
+>  
+>  	/*
+>  	 * Shrink request scope to what the fs can actually handle.
+>  	 */
+> -	if (len > maxbytes || (maxbytes - len) < start)
+> -		*new_len = maxbytes - start;
+> +	if (*len > maxbytes || (maxbytes - *len) < start)
+> +		*len = maxbytes - start;
+>  
+> +	supported_flags &= FIEMAP_FLAGS_COMPAT;
+> +	incompat_flags = fieinfo->fi_flags & ~supported_flags;
+> +	if (incompat_flags) {
+> +		fieinfo->fi_flags = incompat_flags;
+> +		return -EBADR;
+> +	}
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(fiemap_prep);
+>  
+>  static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
+>  {
+>  	struct fiemap fiemap;
+>  	struct fiemap_extent_info fieinfo = { 0, };
+>  	struct inode *inode = file_inode(filp);
+> -	struct super_block *sb = inode->i_sb;
+> -	u64 len;
+>  	int error;
+>  
+>  	if (!inode->i_op->fiemap)
+> @@ -215,11 +204,6 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
+>  	if (fiemap.fm_extent_count > FIEMAP_MAX_EXTENTS)
+>  		return -EINVAL;
+>  
+> -	error = fiemap_check_ranges(sb, fiemap.fm_start, fiemap.fm_length,
+> -				    &len);
+> -	if (error)
+> -		return error;
+> -
+>  	fieinfo.fi_flags = fiemap.fm_flags;
+>  	fieinfo.fi_extents_max = fiemap.fm_extent_count;
+>  	fieinfo.fi_extents_start = ufiemap->fm_extents;
+> @@ -232,7 +216,8 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
+>  	if (fieinfo.fi_flags & FIEMAP_FLAG_SYNC)
+>  		filemap_write_and_wait(inode->i_mapping);
+>  
+> -	error = inode->i_op->fiemap(inode, &fieinfo, fiemap.fm_start, len);
+> +	error = inode->i_op->fiemap(inode, &fieinfo, fiemap.fm_start,
+> +			fiemap.fm_length);
+>  	fiemap.fm_flags = fieinfo.fi_flags;
+>  	fiemap.fm_mapped_extents = fieinfo.fi_extents_mapped;
+>  	if (copy_to_user(ufiemap, &fiemap, sizeof(fiemap)))
+> @@ -320,7 +305,7 @@ static int __generic_block_fiemap(struct inode *inode,
+>  	bool past_eof = false, whole_file = false;
+>  	int ret = 0;
+>  
+> -	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
+> +	ret = fiemap_prep(inode, fieinfo, start, &len, FIEMAP_FLAG_SYNC);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+> index 449705575acf9..89dca4a97e4a2 100644
+> --- a/fs/iomap/fiemap.c
+> +++ b/fs/iomap/fiemap.c
+> @@ -75,7 +75,7 @@ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
+>  	ctx.fi = fi;
+>  	ctx.prev.type = IOMAP_HOLE;
+>  
+> -	ret = fiemap_check_flags(fi, FIEMAP_FLAG_SYNC);
+> +	ret = fiemap_prep(inode, fi, start, &len, FIEMAP_FLAG_SYNC);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+> index 6e1aca38931f3..052c2da11e4d7 100644
+> --- a/fs/nilfs2/inode.c
+> +++ b/fs/nilfs2/inode.c
+> @@ -1006,7 +1006,7 @@ int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  	unsigned int blkbits = inode->i_blkbits;
+>  	int ret, n;
+>  
+> -	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
+> +	ret = fiemap_prep(inode, fieinfo, start, &len, FIEMAP_FLAG_SYNC);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+> index e3e2d1b2af51a..3744179b73fa1 100644
+> --- a/fs/ocfs2/extent_map.c
+> +++ b/fs/ocfs2/extent_map.c
+> @@ -746,7 +746,8 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  	struct buffer_head *di_bh = NULL;
+>  	struct ocfs2_extent_rec rec;
+>  
+> -	ret = fiemap_check_flags(fieinfo, OCFS2_FIEMAP_FLAGS);
+> +	ret = fiemap_prep(inode, fieinfo, map_start, &map_len,
+> +			OCFS2_FIEMAP_FLAGS);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/include/linux/fiemap.h b/include/linux/fiemap.h
+> index 240d4f7d9116a..4e624c4665837 100644
+> --- a/include/linux/fiemap.h
+> +++ b/include/linux/fiemap.h
+> @@ -13,9 +13,10 @@ struct fiemap_extent_info {
+>  							fiemap_extent array */
+>  };
+>  
+> +int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> +		u64 start, u64 *len, u32 supported_flags);
+>  int fiemap_fill_next_extent(struct fiemap_extent_info *info, u64 logical,
+>  			    u64 phys, u64 len, u32 flags);
+> -int fiemap_check_flags(struct fiemap_extent_info *fieinfo, u32 fs_flags);
+>  
+>  int generic_block_fiemap(struct inode *inode,
+>  		struct fiemap_extent_info *fieinfo, u64 start, u64 len,
+> -- 
+> 2.26.2
+> 
