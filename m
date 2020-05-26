@@ -2,214 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C551E2353
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 15:50:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F8181E23D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 16:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbgEZNuw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 09:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729533AbgEZNuv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 09:50:51 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8C7C03E96F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 06:50:51 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id t8so1364220pju.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 06:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TsJ+ya7DLaAC9EC4liADTO0tprvxGjdA+7opmVl0FVA=;
-        b=g1/7QOjKa61RC7wBeOn5GBPb3KCi20eVgYcsv13bLH50Z/106HIIkaLsu8OSxDSIFg
-         ucdGdTmC48KzoU4rK60EfjAk9scExcaZ13dVFvi3tSLDoUcxKj/R/NFPqtNpe7MfrRXU
-         dw3ZyFTS7C4diWZUxMwp9bdibC+YFYfzhQPe0AE89vq49rIBUReh4cFWufHq8nko2pco
-         MTFYlOIl/V3YBqvvgIqihIeVIK2gPJx4HV3jVvEEkdeJvSqdMMBhrCeZukUvWBQCBePu
-         DWM01ieH5nVgZ2sYu/3BF4pfwo2Ml59RwghLR5qHs2m6V1axIso60dJSSbANhObcrRa8
-         V7Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TsJ+ya7DLaAC9EC4liADTO0tprvxGjdA+7opmVl0FVA=;
-        b=E0ibgYBju4DcS/8NAPz9TKhzl7p8dX3ZX3itoYQHUYe+pA5+YjI5jyHCgsh0ZPQjwF
-         kq7MnhHVspwG60O0OmJBurDFholWUV1EHg5m8pa3Tzc5Du3RY8czjp++Od6bJXlQQKz9
-         2YGp+AqGP53CABllGA8M6PRz2WS6Ww1PDUm+hZx/12VAA19A+6PwXJ1CRdaUSj74lo3v
-         179PjufM+cu/uuqeLJJJBIC8oH7quw/XKbf15QMocXDNE7Dt7T1KrwwOMuutJTmYFd4I
-         xdEjMM0ThFQZroLWoVAGSP0blX8KXSPcLYWUrqsGLP6iLcF2PoJYQ3bhMtV+N9uiVR0T
-         x52g==
-X-Gm-Message-State: AOAM532DrS3qTACfO60DZx2E2hODwB1POfwxOek3twJONXat2GITXWDL
-        zmEhym5cHUPDpJwPHNeg0I6syg==
-X-Google-Smtp-Source: ABdhPJwb1HZnXvh9qc7bN00VRiWnUaq6RK+j3csWhmS5gI/dE6tv/8uzHsGkFpESYgQ0S8vnjlSm/A==
-X-Received: by 2002:a17:902:502:: with SMTP id 2mr1199090plf.134.1590501051121;
-        Tue, 26 May 2020 06:50:51 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:a9e6:df54:e55e:4c47? ([2605:e000:100e:8c61:a9e6:df54:e55e:4c47])
-        by smtp.gmail.com with ESMTPSA id i3sm15567936pfe.44.2020.05.26.06.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2020 06:50:50 -0700 (PDT)
-Subject: Re: [PATCH 12/12] io_uring: support true async buffered reads, if
- file provides it
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200523185755.8494-1-axboe@kernel.dk>
- <20200523185755.8494-13-axboe@kernel.dk>
- <8d429d6b-81ee-0a28-8533-2e1d4faa6b37@gmail.com>
- <717e474a-5168-8e1e-2e02-c1bdff007bd9@kernel.dk>
- <a8212987-bd06-5c67-73d7-e77a654df4ac@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <69516a01-a209-8a7e-6b9a-7d5b6fef4e96@kernel.dk>
-Date:   Tue, 26 May 2020 07:50:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1728515AbgEZOQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 10:16:26 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:49646 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbgEZOQ0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 May 2020 10:16:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ZEZ1+yG3T0vEd58X58pERPcfzN4dbTvcTqCMRc8b9RQ=; b=mwjDL+wWgCxatP4XIvGOhsucBR
+        sYYetvGOeYtDiCDaYnPMf19gGi5la/8GEIhcC3Me4+QEzKqUEPzQ8E2INyTB3j6c8qBAew7S/s4g3
+        Yr6FjMBwCT5Re5vMGbX/NZ4MqVfNEmWtY8VJFGpTnXQwMYyiIMn+3pRNonmA+TDQxhQI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jdaNB-003HxR-V6; Tue, 26 May 2020 16:16:05 +0200
+Date:   Tue, 26 May 2020 16:16:05 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Cc:     kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] [not for merge] netstats: example use of stats_fs
+ API
+Message-ID: <20200526141605.GJ768009@lunn.ch>
+References: <20200526110318.69006-1-eesposit@redhat.com>
+ <20200526110318.69006-8-eesposit@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <a8212987-bd06-5c67-73d7-e77a654df4ac@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200526110318.69006-8-eesposit@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/20 1:44 AM, Pavel Begunkov wrote:
-> On 25/05/2020 22:59, Jens Axboe wrote:
->> On 5/25/20 1:29 AM, Pavel Begunkov wrote:
->>> On 23/05/2020 21:57, Jens Axboe wrote:
->>>> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
->>>> the buffered read to an io-wq worker. Instead we can rely on page
->>>> unlocking callbacks to support retry based async IO. This is a lot more
->>>> efficient than doing async thread offload.
->>>>
->>>> The retry is done similarly to how we handle poll based retry. From
->>>> the unlock callback, we simply queue the retry to a task_work based
->>>> handler.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  fs/io_uring.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 99 insertions(+)
->>>>
->>> ...
->>>> +
->>>> +	init_task_work(&rw->task_work, io_async_buf_retry);
->>>> +	/* submit ref gets dropped, acquire a new one */
->>>> +	refcount_inc(&req->refs);
->>>> +	tsk = req->task;
->>>> +	ret = task_work_add(tsk, &rw->task_work, true);
->>>> +	if (unlikely(ret)) {
->>>> +		/* queue just for cancelation */
->>>> +		init_task_work(&rw->task_work, io_async_buf_cancel);
->>>> +		tsk = io_wq_get_task(req->ctx->io_wq);
->>>
->>> IIRC, task will be put somewhere around io_free_req(). Then shouldn't here be
->>> some juggling with reassigning req->task with task_{get,put}()?
->>
->> Not sure I follow? Yes, we'll put this task again when the request
->> is freed, but not sure what you mean with juggling?
+On Tue, May 26, 2020 at 01:03:17PM +0200, Emanuele Giuseppe Esposito wrote:
+> Apply stats_fs on the networking statistics subsystem.
 > 
-> I meant something like:
-> 
-> ...
-> /* queue just for cancelation */
-> init_task_work(&rw->task_work, io_async_buf_cancel);
-> + put_task_struct(req->task);
-> + req->task = get_task_struct(io_wq_task);
-> 
-> 
-> but, thinking twice, if I got the whole idea right, it should be ok as
-> is -- io-wq won't go away before the request anyway, and leaving
-> req->task pinned down for a bit is not a problem.
+> Currently it only works with disabled network namespace
+> (CONFIG_NET_NS=n), because multiple namespaces will have the same
+> device name under the same root source that will cause a conflict in
+> stats_fs.
 
-OK good, then I thin kwe agree it's fine.
+Hi Emanuele
 
->>>> +		task_work_add(tsk, &rw->task_work, true);
->>>> +	}
->>>> +	wake_up_process(tsk);
->>>> +	return 1;
->>>> +}
->>> ...
->>>>  static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  {
->>>>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
->>>> @@ -2601,6 +2696,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  	if (!ret) {
->>>>  		ssize_t ret2;
->>>>  
->>>> +retry:
->>>>  		if (req->file->f_op->read_iter)
->>>>  			ret2 = call_read_iter(req->file, kiocb, &iter);
->>>>  		else
->>>> @@ -2619,6 +2715,9 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  			if (!(req->flags & REQ_F_NOWAIT) &&
->>>>  			    !file_can_poll(req->file))
->>>>  				req->flags |= REQ_F_MUST_PUNT;
->>>> +			if (io_rw_should_retry(req))
->>>
->>> It looks like a state machine with IOCB_WAITQ and gotos. Wouldn't it be cleaner
->>> to call call_read_iter()/loop_rw_iter() here directly instead of "goto retry" ?
->>
->> We could, probably making that part a separate helper then. How about the
->> below incremental?
-> 
-> IMHO, it was easy to get lost with such implicit state switching.
-> Looks better now! See a small comment below.
+How do you atomically get and display a group of statistics?
 
-Agree, that is cleaner.
+If you look at how the netlink socket works, you will see code like:
 
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index a5a4d9602915..669dccd81207 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2677,6 +2677,13 @@ static bool io_rw_should_retry(struct io_kiocb *req)
->>  	return false;
->>  }
->>  
->> +static int __io_read(struct io_kiocb *req, struct iov_iter *iter)
->> +{
->> +	if (req->file->f_op->read_iter)
->> +		return call_read_iter(req->file, &req->rw.kiocb, iter);
->> +	return loop_rw_iter(READ, req->file, &req->rw.kiocb, iter);
->> +}
->> +
->>  static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  {
->>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
->> @@ -2710,11 +2717,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  	if (!ret) {
->>  		ssize_t ret2;
->>  
->> -retry:
->> -		if (req->file->f_op->read_iter)
->> -			ret2 = call_read_iter(req->file, kiocb, &iter);
->> -		else
->> -			ret2 = loop_rw_iter(READ, req->file, kiocb, &iter);
->> +		ret2 = __io_read(req, &iter);
->>  
->>  		/* Catch -EAGAIN return for forced non-blocking submission */
->>  		if (!force_nonblock || ret2 != -EAGAIN) {
->> @@ -2729,8 +2732,11 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  			if (!(req->flags & REQ_F_NOWAIT) &&
->>  			    !file_can_poll(req->file))
->>  				req->flags |= REQ_F_MUST_PUNT;
->> -			if (io_rw_should_retry(req))
->> -				goto retry;
->> +			if (io_rw_should_retry(req)) {
->> +				ret2 = __io_read(req, &iter);
->> +				if (ret2 != -EAGAIN)
->> +					goto out_free;
-> 
-> "goto out_free" returns ret=0, so someone should add a cqe
-> 
-> if (ret2 != -EAGAIN) {
-> 	kiocb_done(kiocb, ret2);
-> 	goto free_out;
-> }
+                do {
+                        start = u64_stats_fetch_begin_irq(&cpu_stats->syncp);
+                        rx_packets = cpu_stats->rx_packets;
+                        rx_bytes = cpu_stats->rx_bytes;
+			....
+                } while (u64_stats_fetch_retry_irq(&cpu_stats->syncp, start));
 
-Fixed up in the current one.
+It will ensure that rx_packets and rx_bytes are consistent with each
+other. If the value of the sequence counter changes while inside the
+loop, the loop so repeated until it does not change.
 
--- 
-Jens Axboe
+In general, hardware counters in NICs are the same.  You tell it to
+take a snapshot of the statistics counters, and then read them all
+back, to give a consistent view across all the statistics.
 
+I've not looked at this new code in detail, but it looks like you have
+one file per statistic, and assume each statistic is independent of
+every other statistic. This independence can limit how you use the
+values, particularly when debugging. The netlink interface we use does
+not have this limitation.
+
+	     Andrew
