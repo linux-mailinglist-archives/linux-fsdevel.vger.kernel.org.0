@@ -2,304 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA851E1C4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 09:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55DAC1E1C65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 09:40:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbgEZHcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 03:32:45 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:42443 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbgEZHcp (ORCPT
+        id S1731610AbgEZHj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 03:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgEZHj5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 03:32:45 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200526073239epoutp0379acef783b44db7cfc0e2369507a8c8a~Sg6RClF7o1028410284epoutp03k
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 07:32:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200526073239epoutp0379acef783b44db7cfc0e2369507a8c8a~Sg6RClF7o1028410284epoutp03k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1590478359;
-        bh=PfJimvdiNEazsfnAJ3KOEpunw/5Jm4262M9Vn1U1FA4=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=n7F5ZXety9SDa2LC8LyBD1UkVqpuHL7pA6hWSBHJDn/vDCwjiV1GQmPJAkUd5MXpM
-         cnluRGvbToEyRmrFFgkX52mzAm4w+JHwraAIwCJGK3DCWzS50k+SIwPR/9RNt55D9e
-         fBInprpoO171PVWpiFn1QEzWnN5cF7wptgY+0Ypc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200526073239epcas1p104192b116709e48eb03e721eb6cfcc76~Sg6QmbRlm0183201832epcas1p15;
-        Tue, 26 May 2020 07:32:39 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 49WQfG32J7zMqYkr; Tue, 26 May
-        2020 07:32:38 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A7.FD.04801.616CCCE5; Tue, 26 May 2020 16:32:38 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200526073237epcas1p3eabdc05a210b552797469acd103d0ba8~Sg6PIARzw1816618166epcas1p3i;
-        Tue, 26 May 2020 07:32:37 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200526073237epsmtrp11924a4909ab68f7926c7e13659af52b5~Sg6PG8YlE1548215482epsmtrp1L;
-        Tue, 26 May 2020 07:32:37 +0000 (GMT)
-X-AuditID: b6c32a38-f89ff700000012c1-aa-5eccc6160fc8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        48.04.08303.516CCCE5; Tue, 26 May 2020 16:32:37 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200526073237epsmtip298d04cd994f4a19ba6079caaca4f365b~Sg6O6wMKE1888518885epsmtip2U;
-        Tue, 26 May 2020 07:32:37 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200525115052.19243-4-kohada.t2@gmail.com>
-Subject: RE: [PATCH 4/4] exfat: standardize checksum calculation
-Date:   Tue, 26 May 2020 16:32:37 +0900
-Message-ID: <00d301d6332f$d4a52300$7def6900$@samsung.com>
+        Tue, 26 May 2020 03:39:57 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F323C061A0E;
+        Tue, 26 May 2020 00:39:56 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id nr22so6370690ejb.6;
+        Tue, 26 May 2020 00:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=skSMG6X/+WKS/bVjBD77N/pFg3Dhya72NQQT1usQTkk=;
+        b=Mi+k/GZUtchNwfVbDjUj5E6CPwy77us5bbXMOw/Pkj6VWDfYfTspLOncUddCoSIYaH
+         pmmZ/9gfhbnmzM1leOIddqbtvWeToj1tPpROZ/ENqcE44yayPWuIfKtsfFvYKOoMVKFt
+         mK/ahUpkcgY3+DrPqdpYVfUOqwyvuPRSxBh8IpFelFruARbsAcCGIobFNe3iKXvQg+6G
+         BJv8Q439LSstmfG9FIR8F9X+ubttsxFMuPX4SGge7w6uUZdy/PffZyL/VY1clQuiVg67
+         WZdVu8NnINm7TU+56VqIDTNvCfcQ5V+1slAm4CCWyTcHWME1fuSr8p7bJw3B/gOUlv/G
+         o4Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=skSMG6X/+WKS/bVjBD77N/pFg3Dhya72NQQT1usQTkk=;
+        b=nL7+hVwz7aDR2N8VkCt4+V6sY30UQcJL3othzFi6adfnxhfiJfZRYke6LfNJwkiYy2
+         kXRJLti2ruvg9JBp9T9XjVfsjJM42sYMdyRDRaBx7YRiXFVmGSYC5xABO7tvBRym0iSI
+         FuSqNs/dgGeVp6xpa8AGYy2cypylOeatzbqqicFWNWAjYipxY14hC7f2jMyf5xH4Db/6
+         UURoFBEtGQFborXgUpq3c0ckI9Cr6zG5fbfqCC/D0CCuAldyJ6b5WyHcVXx48xDjtN71
+         2qsCzx3LD8lTxIo3+xxsg4/i/YUSdEDydYDBl0vK4E17RSirzSEQWiifS/4a8DK4cTE/
+         AXfg==
+X-Gm-Message-State: AOAM533OjZvUQxPYtnobZHDhPC6LReo8u5lge+fs6NslXfiKnWv2rI+g
+        tnWV5zl4liQ652pU0XqcflQ=
+X-Google-Smtp-Source: ABdhPJyUJQLtuoRKDJxESdd3vHZdvtsDMFogWIKBb4hMwDgxOG2+203wQ3t2VB/jPhNDJPuV2D0NAA==
+X-Received: by 2002:a17:906:660f:: with SMTP id b15mr1675ejp.113.1590478795067;
+        Tue, 26 May 2020 00:39:55 -0700 (PDT)
+Received: from [192.168.43.172] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id y17sm17471500edo.23.2020.05.26.00.39.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 May 2020 00:39:54 -0700 (PDT)
+Subject: Re: [PATCH 12/12] io_uring: support true async buffered reads, if
+ file provides it
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20200523185755.8494-1-axboe@kernel.dk>
+ <20200523185755.8494-13-axboe@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <9c2cc031-e4ce-4c5f-5e14-21ea48c327f6@gmail.com>
+Date:   Tue, 26 May 2020 10:38:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <20200523185755.8494-13-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQEl0VwLAqGTGno4seWfP7lwGg+RAAKJW6foAcSd2fWp+EvHYA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTu3b3bruXiNq0ORrkuWCrMNuf0WhphUoP6odUPK3De9LZJd9tl
-        d/ZhBH2YlYmW5o/WrAy0FM1Q8QtFp5WNPiDLVMK+cJCVUaZUFNrmVfLfc57znPOc876HwJQ1
-        shAi2+pg7VaGo2SL8ebeCI16xcMn6ZpPxUD/Kn+N0188ZTjd0enB6RftLhn9YmYCp6smS3G6
-        afq+dIvcMOnqkxvyS6flhjMPq2WGNueI3FDUVIMMPxrWpMj2cQlmlsli7SrWmmnLyraaEqkd
-        u41bjfpYjVatjafjKJWVsbCJVPLOFPW2bM43C6U6zHA5PiqFEQRqw+YEuy3HwarMNsGRSLF8
-        FsdrNXyUwFiEHKspKtNm2ajVaKL1PmUGZx6v65bwn+OPvh94i51EI+oCFEAAGQMzD9yoAC0m
-        lGQrgo6p+WACQVvnGYkY/EBwo2hGNl9S9LtBJibaEXh/euViMIbgw7BL6lfJSDVM/+2arQgm
-        o8DjGZytwMhTErj9aBLzJwLIeHg8ddXnQRBB5BZ4UBHup3EyDN60NCM/VvgkVZ8HcBEvA8/V
-        0VmMkaHQMu7CxIlU8NtbJRW9kiDvSiESNcFw7UI+5vcFsoKAYW/Z3ArJcPd6iUTEQfCpr0ku
-        4hAYK86X++cB8jh875rrfx7Bx5+JItbBcP09qV+CkRFQ375BpNdC25/yOdul8HWqUCp2UcD5
-        fKUoCYOi/t4501VQcO6b/BKinAsWcy5YzLlgAed/s5sIr0ErWF6wmFhBy8cs/OwGNHunkXQr
-        6ni2sweRBKICFXTt43SllDksHLP0ICAwKliR9NRHKbKYY7ms3Wa053Cs0IP0vne/jIUsz7T5
-        rt7qMGr10Tqdjo6JjYvV66iVirJBLl1JmhgHe4hledY+XychAkJOovCVguJAZVit+1rJ+kBO
-        X6jc0Xhk/9hoVZ37zui6tP5Nvalfw6gTmcY9Q3RX7NDziZp4d3Nx6t68tLGmitBI4Psb245L
-        KpnastHynvtnX14/vf3dSPfgriMZUXGh7tUDt94evHgumXlVvYgwv+y7NZ5retU8PFDxLdcT
-        5Hq3mfcuoXDBzGgjMbvA/AOYB9KpvQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXlf02Jk4gyV9+hY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWGz5d4TVgd3jy5zj7B5tk/+xezQfW8nmsXPWXXaPvi2r
-        GD0+b5ILYIvisklJzcksSy3St0vgyni79gBTwWvLiodX7zM3MN7V7WLk5JAQMJHo+7mJrYuR
-        i0NIYAejRO/mZUwQCWmJYyfOMHcxcgDZwhKHDxdD1DxnlFjy/zY7SA2bgK7Evz/72UBsEQE9
-        iZMnr4MNYhZoZpL49mwJM0hCSGA7o8TtK9UgNqeApcTprzOZQIYKCzhIHF2oARJmEVCVuLd9
-        GyOIzQtUsuz1VRYIW1Di5MwnLCDlzEDz2zaClTALyEtsfzuHGeJMBYmfT5exQpzgJNEypQeq
-        RkRidmcb8wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P
-        3cQIjiktrR2Me1Z90DvEyMTBeIhRgoNZSYTX6ezpOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8
-        X2ctjBMSSE8sSc1OTS1ILYLJMnFwSjUwGQgdY1YsKFxj/O+d2E1utW7RuRMT378Sr5HmUd90
-        0tOL07AyKySGKZR/muy/rPaSy6sfFTF33/p9SSTivtObaz76QS/2eD/9GLpS6v+sR0lRYfdF
-        K8L7tu8IumsVwPmr5IKXuomVam744ayTZ3nZ/sVKJbGuZfixxZpl8c+3KhdOm+c1vL20R2Vl
-        Cl+AyaGNesEvOr+t0Pxe+Xz6b09u7zdbzby1Qvc4HtY2mPu2V0bllE6eg+PWiXG7Raw/LogS
-        ynbML9beGRZ07fesfX+ffE44/6F1dnS025YOSftGD23R6HkFj9O2tobzh6ldaNvyW2Wua/IC
-        p53WhS9Xssctfnus9HJQ+t3e2+d7D21UYinOSDTUYi4qTgQAD3ZAbBgDAAA=
-X-CMS-MailID: 20200526073237epcas1p3eabdc05a210b552797469acd103d0ba8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8
-References: <20200525115052.19243-1-kohada.t2@gmail.com>
-        <CGME20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8@epcas1p2.samsung.com>
-        <20200525115052.19243-4-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> To clarify that it is a 16-bit checksum, the parts related to the 16-bit checksum are renamed and
-> change type to u16.
-> Furthermore, replace checksum calculation in exfat_load_upcase_table() with exfat_calc_checksum32().
+On 23/05/2020 21:57, Jens Axboe wrote:
+> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
+> the buffered read to an io-wq worker. Instead we can rely on page
+> unlocking callbacks to support retry based async IO. This is a lot more
+> efficient than doing async thread offload.
 > 
-> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
-
-I can not apply this patch to exfat dev tree. Could you please check it ?
-patching file fs/exfat/dir.c
-Hunk #1 succeeded at 491 (offset -5 lines).
-Hunk #2 succeeded at 500 (offset -5 lines).
-Hunk #3 succeeded at 508 (offset -5 lines).
-Hunk #4 FAILED at 600.
-Hunk #5 succeeded at 1000 (offset -47 lines).
-1 out of 5 hunks FAILED -- saving rejects to file fs/exfat/dir.c.rej
-patching file fs/exfat/exfat_fs.h
-Hunk #1 succeeded at 137 (offset -2 lines).
-Hunk #2 succeeded at 512 (offset -3 lines).
-patching file fs/exfat/misc.c
-patching file fs/exfat/nls.c
-
-Thanks!
+> The retry is done similarly to how we handle poll based retry. From
+> the unlock callback, we simply queue the retry to a task_work based
+> handler.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->  fs/exfat/dir.c      | 12 ++++++------
->  fs/exfat/exfat_fs.h |  5 ++---
->  fs/exfat/misc.c     | 10 ++++------
->  fs/exfat/nls.c      | 19 +++++++------------
->  4 files changed, 19 insertions(+), 27 deletions(-)
+>  fs/io_uring.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 99 insertions(+)
 > 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index b5a237c33d50..b673362a895c 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-> @@ -496,7 +496,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
->  	int ret = 0;
->  	int i, num_entries;
->  	sector_t sector;
-> -	unsigned short chksum;
-> +	u16 chksum;
->  	struct exfat_dentry *ep, *fep;
->  	struct buffer_head *fbh, *bh;
-> 
-> @@ -505,7 +505,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
->  		return -EIO;
-> 
->  	num_entries = fep->dentry.file.num_ext + 1;
-> -	chksum = exfat_calc_chksum_2byte(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
-> +	chksum = exfat_calc_chksum16(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
-> 
->  	for (i = 1; i < num_entries; i++) {
->  		ep = exfat_get_dentry(sb, p_dir, entry + i, &bh, NULL); @@ -513,7 +513,7 @@ int
-> exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
->  			ret = -EIO;
->  			goto release_fbh;
->  		}
-> -		chksum = exfat_calc_chksum_2byte(ep, DENTRY_SIZE, chksum,
-> +		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
->  				CS_DEFAULT);
->  		brelse(bh);
->  	}
-> @@ -600,10 +600,10 @@ int exfat_update_dir_chksum_with_entry_set(struct super_block *sb,
->  	int chksum_type = CS_DIR_ENTRY, i, num_entries = es->num_entries;
->  	unsigned int buf_off = (off - es->offset);
->  	unsigned int remaining_byte_in_sector, copy_entries, clu;
-> -	unsigned short chksum = 0;
-> +	u16 chksum = 0;
-> 
->  	for (i = 0; i < num_entries; i++) {
-> -		chksum = exfat_calc_chksum_2byte(&es->entries[i], DENTRY_SIZE,
-> +		chksum = exfat_calc_chksum16(&es->entries[i], DENTRY_SIZE,
->  			chksum, chksum_type);
->  		chksum_type = CS_DEFAULT;
->  	}
-> @@ -1047,7 +1047,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
->  			}
-> 
->  			if (entry_type == TYPE_STREAM) {
-> -				unsigned short name_hash;
-> +				u16 name_hash;
-> 
->  				if (step != DIRENT_STEP_STRM) {
->  					step = DIRENT_STEP_FILE;
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index 15817281b3c8..993d13bbebec 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -139,7 +139,7 @@ struct exfat_dentry_namebuf {  struct exfat_uni_name {
->  	/* +3 for null and for converting */
->  	unsigned short name[MAX_NAME_LENGTH + 3];
-> -	unsigned short name_hash;
-> +	u16 name_hash;
->  	unsigned char name_len;
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index e95481c552ff..dd532d2634c2 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -498,6 +498,8 @@ struct io_async_rw {
+>  	struct iovec			*iov;
+>  	ssize_t				nr_segs;
+>  	ssize_t				size;
+> +	struct wait_page_queue		wpq;
+> +	struct callback_head		task_work;
 >  };
-> 
-> @@ -515,8 +515,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,  void
-> exfat_truncate_atime(struct timespec64 *ts);  void exfat_set_entry_time(struct exfat_sb_info *sbi,
-> struct timespec64 *ts,
->  		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs); -unsigned short
-> exfat_calc_chksum_2byte(void *data, int len,
-> -		unsigned short chksum, int type);
-> +u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
->  u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);  void exfat_update_bh(struct
-> super_block *sb, struct buffer_head *bh, int sync);  void exfat_chain_set(struct exfat_chain *ec,
-> unsigned int dir, diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c index b82d2dd5bd7c..17d41f3d3709
-> 100644
-> --- a/fs/exfat/misc.c
-> +++ b/fs/exfat/misc.c
-> @@ -136,17 +136,15 @@ void exfat_truncate_atime(struct timespec64 *ts)
->  	ts->tv_nsec = 0;
+>  
+>  struct io_async_ctx {
+> @@ -2568,6 +2570,99 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  	return 0;
 >  }
-> 
-> -unsigned short exfat_calc_chksum_2byte(void *data, int len,
-> -		unsigned short chksum, int type)
-> +u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type)
->  {
->  	int i;
-> -	unsigned char *c = (unsigned char *)data;
-> +	u8 *c = (u8 *)data;
-> 
->  	for (i = 0; i < len; i++, c++) {
-> -		if (((i == 2) || (i == 3)) && (type == CS_DIR_ENTRY))
-> +		if (unlikely(type == CS_DIR_ENTRY && (i == 2 || i == 3)))
->  			continue;
-> -		chksum = (((chksum & 1) << 15) | ((chksum & 0xFFFE) >> 1)) +
-> -			(unsigned short)*c;
-> +		chksum = ((chksum << 15) | (chksum >> 1)) + *c;
->  	}
->  	return chksum;
->  }
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c index 1ebda90cbdd7..19321773dd07 100644
-> --- a/fs/exfat/nls.c
-> +++ b/fs/exfat/nls.c
-> @@ -527,7 +527,7 @@ static int exfat_utf8_to_utf16(struct super_block *sb,
-> 
->  	*uniname = '\0';
->  	p_uniname->name_len = unilen;
-> -	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1, 0,
-> +	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
->  			CS_DEFAULT);
-> 
->  	if (p_lossy)
-> @@ -623,7 +623,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
-> 
->  	*uniname = '\0';
->  	p_uniname->name_len = unilen;
-> -	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1, 0,
-> +	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
->  			CS_DEFAULT);
-> 
->  	if (p_lossy)
-> @@ -655,7 +655,8 @@ static int exfat_load_upcase_table(struct super_block *sb,  {
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
->  	unsigned int sect_size = sb->s_blocksize;
-> -	unsigned int i, index = 0, checksum = 0;
-> +	unsigned int i, index = 0;
-> +	u32 chksum = 0;
->  	int ret;
->  	unsigned char skip = false;
->  	unsigned short *upcase_table;
-> @@ -681,13 +682,6 @@ static int exfat_load_upcase_table(struct super_block *sb,
->  		for (i = 0; i < sect_size && index <= 0xFFFF; i += 2) {
->  			unsigned short uni = get_unaligned_le16(bh->b_data + i);
-> 
-> -			checksum = ((checksum & 1) ? 0x80000000 : 0) +
-> -				(checksum >> 1) +
-> -				*(((unsigned char *)bh->b_data) + i);
-> -			checksum = ((checksum & 1) ? 0x80000000 : 0) +
-> -				(checksum >> 1) +
-> -				*(((unsigned char *)bh->b_data) + (i + 1));
-> -
->  			if (skip) {
->  				index += uni;
->  				skip = false;
-> @@ -701,13 +695,14 @@ static int exfat_load_upcase_table(struct super_block *sb,
->  			}
->  		}
->  		brelse(bh);
-> +		chksum = exfat_calc_chksum32(bh->b_data, i, chksum, CS_DEFAULT);
->  	}
-> 
-> -	if (index >= 0xFFFF && utbl_checksum == checksum)
-> +	if (index >= 0xFFFF && utbl_checksum == chksum)
->  		return 0;
-> 
->  	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum :
-> 0x%08x)",
-> -		  index, checksum, utbl_checksum);
-> +		  index, chksum, utbl_checksum);
->  	ret = -EINVAL;
->  free_table:
->  	exfat_free_upcase_table(sbi);
-> --
-> 2.25.1
+>  
+> +static void io_async_buf_cancel(struct callback_head *cb)
+> +{
+> +	struct io_async_rw *rw;
+> +	struct io_ring_ctx *ctx;
+> +	struct io_kiocb *req;
+> +
+> +	rw = container_of(cb, struct io_async_rw, task_work);
+> +	req = rw->wpq.wait.private;
+> +	ctx = req->ctx;
+> +
+> +	spin_lock_irq(&ctx->completion_lock);
+> +	io_cqring_fill_event(req, -ECANCELED);
+
+It seems like it should go through kiocb_done()/io_complete_rw_common().
+My concern is missing io_put_kbuf().
+
+> +	io_commit_cqring(ctx);
+> +	spin_unlock_irq(&ctx->completion_lock);
+> +
+> +	io_cqring_ev_posted(ctx);
+> +	req_set_fail_links(req);
+> +	io_double_put_req(req);
+> +}
 
 
+-- 
+Pavel Begunkov
