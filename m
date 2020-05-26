@@ -2,113 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AD61E240D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 16:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654111E25D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 17:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbgEZO2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 10:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgEZO2I (ORCPT
+        id S1729478AbgEZPpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 11:45:24 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29580 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728166AbgEZPpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 10:28:08 -0400
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB48C03E96D;
-        Tue, 26 May 2020 07:28:08 -0700 (PDT)
-Received: by mail-qk1-x744.google.com with SMTP id f18so3941855qkh.1;
-        Tue, 26 May 2020 07:28:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0TJ6yYccZvVBdf4f/G2i6OowH5C25Z8m9Ap0zEnVgR8=;
-        b=TLMKcn3xE73A18nE6utedMS8Vz8HXK+b0q/Divfxr42WLvfCj1VnejFo7V5BPdLF0q
-         W+VJW80hsx5pkyn2afaGJzSd1NY9lzi/WflZh7Okd/ujLflmIzup/UUhAjVe3hjLW/ov
-         /ckbc/JaidWP13F1n6QRu3E3MBXNO+SL6qBL9nAMf03UnJq5zUo+MGasn74WqYB3nHlM
-         RMvAQzvfJ3xtHcnQf7mOLh7b54gRFUEIEGn2cQ5cWzw7drZMeoCaq8lvxlN5DiCjmw1j
-         OWij/qP1w+bHGLFTVBEmayKa6pI5nJLWTt6wzU97k3DMGp051NXEEKMYkQDFm1nLdmm9
-         mfkA==
+        Tue, 26 May 2020 11:45:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590507922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dt6LQHnd8XQKjoczzuKu5+J73yx/PTFTJmXrE029Qj0=;
+        b=MuDE1EeNGCQ7ZtyasjHIeRquVoyGlw4ms/cF48n+wazvpvZJXtfMaHWohfbEpb6eu/b5pd
+        cagcXwYz82p5Nr22SwvYHKapCY9bDujsdyxeL5jbNE0kD6wB2awofKGhTvYwW4Qc8IF3qm
+        sR+IEuKfj/j1E+CuQh5LmGbRLqBM3+E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71--cN4ttcmOEW9jeqlajlLWA-1; Tue, 26 May 2020 11:45:20 -0400
+X-MC-Unique: -cN4ttcmOEW9jeqlajlLWA-1
+Received: by mail-wr1-f70.google.com with SMTP id h92so5680639wrh.23
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 08:45:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0TJ6yYccZvVBdf4f/G2i6OowH5C25Z8m9Ap0zEnVgR8=;
-        b=sWSG7rVHI6UhGH2cnK87AAiwlT/M2F1QHjCYfc9SX94bo+TKyxNOuCd6QDUis2mvGf
-         QNVihmYN3HqmLU5TqKOyJtgs+RKzoZt3AAd9+934j3JF67QnypK6NMR35XWkhcxOf/50
-         e2W31VfsON/dvS5hoJxlxYIpSnaDw00DoJFecTTKvfTBleUprwlPsi6EJPiJG+oxiuQQ
-         ynuwr0tX9l0Q6o/8DgJd6SKFSW6NiiZ6APZc4GwxKHy9YrXXX16S4TVbNXSHTclNAkCc
-         Yic+aekVfdeAt9dh5MhlIimDQ5244wMaykDU6lnsZu1JM/gPN2X7QKqYX3IKX3kXevwM
-         Phog==
-X-Gm-Message-State: AOAM532tGdnh9n/DpdPjWL5A6R70E8FMF5pN4C4vJBcpOLi90d7oaiZ/
-        S00JNO2l72xVBSiiI7okChI=
-X-Google-Smtp-Source: ABdhPJyK3oMuyeJ+F6B+ZijqpLzxAJ4vgdbS/Dm2ZGwMW4CXq3uWQNM1w7dewvLbX9tlS3HD2SWAuA==
-X-Received: by 2002:a37:78c1:: with SMTP id t184mr1585988qkc.213.1590503287516;
-        Tue, 26 May 2020 07:28:07 -0700 (PDT)
-Received: from dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com ([2620:10d:c091:480::1:6991])
-        by smtp.gmail.com with ESMTPSA id i14sm4786794qkl.105.2020.05.26.07.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 07:28:06 -0700 (PDT)
-Date:   Tue, 26 May 2020 10:28:03 -0400
-From:   Dan Schatzberg <schatzberg.dan@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Dt6LQHnd8XQKjoczzuKu5+J73yx/PTFTJmXrE029Qj0=;
+        b=Hm7yyxcvJxDfZL1vGdMy+tmUBu7DDxtXDLrCsroFYvtT5sXQB6BmjO9zzm/LTPXio6
+         4e562PZYdm8ucE8vz1otITV9gOl9WV90qx1SgdROAiLvTOezpZ43NOHOZXuEO1ESDIRi
+         sqIQRhOv3ck/HivGxD6jrnTGSgoa8RpbNTfz+YUl3ZGtYt04HewQ2AXmWVhGRmOX05xB
+         1Pj95exV+OO1cqZ2Q2A0i9dmxPa6zGZwidf4KB6CBZbeQqvEOQ5kDu2Oo7Q14Cwp6iYm
+         yyAs7xD+F/86kFQZpGBwi43tnT/Zm1mp4pAkDXuG4z9HWtid+cq5yvATr9I0lcJFMOqb
+         EOTQ==
+X-Gm-Message-State: AOAM533TrE85Er3vrHwUEV/wtt5UFVG3fWHnT3JAXXXGKmfZG1CO9F5b
+        mWRachfgtpTUjxZ0a9Olz3wH9TRFhJovMc1wz/ugPQl2jhKccWoOD5HORxHAv1T5p2QWHHa7ccE
+        FSbq2EVU3ddAMKz8ElTxamwgA8g==
+X-Received: by 2002:a05:6000:1202:: with SMTP id e2mr2590857wrx.231.1590507919724;
+        Tue, 26 May 2020 08:45:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw5If1uNgTKWEisUAJowYTPwcuzMOOow4nahat1ESbDjPkHGjhZwTTbQrIPi02UQ5LtAAq4hw==
+X-Received: by 2002:a05:6000:1202:: with SMTP id e2mr2590848wrx.231.1590507919516;
+        Tue, 26 May 2020 08:45:19 -0700 (PDT)
+Received: from localhost.localdomain ([194.230.155.118])
+        by smtp.gmail.com with ESMTPSA id u10sm32544wmc.31.2020.05.26.08.45.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 May 2020 08:45:18 -0700 (PDT)
+Subject: Re: [PATCH v3 7/7] [not for merge] netstats: example use of stats_fs
+ API
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH v5 0/4] Charge loop device i/o to issuing cgroup
-Message-ID: <20200526142803.GA1061@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
-References: <20200428161355.6377-1-schatzberg.dan@gmail.com>
- <20200512132521.GA28700@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
- <20200512133545.GA26535@infradead.org>
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
+References: <20200526110318.69006-1-eesposit@redhat.com>
+ <20200526110318.69006-8-eesposit@redhat.com>
+ <20200526141605.GJ768009@lunn.ch>
+From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Message-ID: <99217496-929f-ed3b-8e9e-bbd26d06e234@redhat.com>
+Date:   Tue, 26 May 2020 17:45:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200512133545.GA26535@infradead.org>
+In-Reply-To: <20200526141605.GJ768009@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 12, 2020 at 06:35:45AM -0700, Christoph Hellwig wrote:
-> On Tue, May 12, 2020 at 09:25:21AM -0400, Dan Schatzberg wrote:
-> > Seems like discussion on this patch series has died down. There's been
-> > a concern raised that we could generalize infrastructure across loop,
-> > md, etc. This may be possible, in the future, but it isn't clear to me
-> > how this would look like. I'm inclined to fix the existing issue with
-> > loop devices now (this is a problem we hit at FB) and address
-> > consolidation with other cases if and when those are addressed.
-> > 
-> > Jens, you've expressed interest in seeing this series go through the
-> > block tree so I'm interested in your perspective here. Barring any
-> > concrete implementation bugs, would you be okay merging this version?
-> 
-> Independ of any higher level issues you need to sort out the spinlock
-> mess I pointed out.
 
-Will do - I'll split out the lock-use refactor into a separate
-patch. Do you have particular concerns about re-using the existing
-spinlock? Its existing use is not contended so I didn't see any harm
-in extending its use. I'll add this justification to the commit
-message as well, but I'm tempted to leave the re-use as is instead of
-creating a new lock.
+Hi Andrew
+
+> How do you atomically get and display a group of statistics?
+> 
+> If you look at how the netlink socket works, you will see code like:
+> 
+>                  do {
+>                          start = u64_stats_fetch_begin_irq(&cpu_stats->syncp);
+>                          rx_packets = cpu_stats->rx_packets;
+>                          rx_bytes = cpu_stats->rx_bytes;
+> 			....
+>                  } while (u64_stats_fetch_retry_irq(&cpu_stats->syncp, start));
+> 
+> It will ensure that rx_packets and rx_bytes are consistent with each
+> other. If the value of the sequence counter changes while inside the
+> loop, the loop so repeated until it does not change.
+> 
+> In general, hardware counters in NICs are the same.  You tell it to
+> take a snapshot of the statistics counters, and then read them all
+> back, to give a consistent view across all the statistics.
+> 
+> I've not looked at this new code in detail, but it looks like you have
+> one file per statistic, and assume each statistic is independent of
+> every other statistic. This independence can limit how you use the
+> values, particularly when debugging. The netlink interface we use does
+> not have this limitation.
+
+You're right, statistics are treated independently so what you describe 
+is currently not supported.
+
+In KVM the utilization is more qualitative, so there isn't such problem.
+But as long as the interface is based on file access, the possibility of 
+snapshotting might not be useful; however, it could still be considered 
+to be added later together with the binary access.
+
+Jonathan, how is your metricfs handling this case?
+
+Thank you,
+Emanuele
+
