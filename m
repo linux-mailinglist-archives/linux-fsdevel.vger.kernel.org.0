@@ -2,178 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD771E1C86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 09:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B14DC1E205C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 13:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbgEZHu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 03:50:57 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:42506 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbgEZHu4 (ORCPT
+        id S2388892AbgEZLDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 07:03:50 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27868 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388683AbgEZLDs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 03:50:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1590479456; x=1622015456;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
-  b=DA7f7xqw0ozhbM8JzFy9w+amvm1kbRjJS4ESlogxrlZypoUUqPoQN7+S
-   /q988gZ2eXp4EDuKI5iTevlHTlbsWcuQca4VkWsWcQ8RR1VnD0wBkC6z5
-   FwKnsKGznJjBRa+4j/8eULvPASaNQqE+mGhPBO5L0tASlqS8STwhWPb/N
-   yUSfBUx4EGH7GLn4uwkOH8w1OMpoOaK0shqXimN6PWM1xlV3EotrqLdtq
-   Wb91JJeDz5soRdVrfJWRyp4rywMnP1wQY+/0zQf2kQamlmcs9darV4Vzy
-   dcT8J/h2e0bc1zTt/gtJa8edCZVT45W/W5eS0tbAXZHE5qI8F0oDdmYqJ
-   w==;
-IronPort-SDR: bdsl0NR44mvLMzcU0zBHSqLv2iUkms0zQaZ/CsSNXgKWjyFvpJy8duOGdTBrzMgHwRdA7oyMIn
- /9cq1Yt3GcOazjfeFUW22IsqJgwC+kvd+900gVAOhC1TSKj3y1uTETJwsR+AleZB23TPGefGab
- 3kL+uuI8B8+FuWy77NOx95EMpGCdWBrDLnwomq6vcNFuIIQTNqWiK6KATjNxjvrjlwSFt7mO+h
- 4bW7Q71d9OZBs2tObVwcdm97ZiWcYL+HiSwdagJiKpQKUFmeKYrvgOaxx7KJorR9nc2JI2SQEz
- grk=
-X-IronPort-AV: E=Sophos;i="5.73,436,1583164800"; 
-   d="scan'208";a="138829540"
-Received: from mail-bl2nam02lp2051.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.51])
-  by ob1.hgst.iphmx.com with ESMTP; 26 May 2020 15:50:55 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z4vx1PwP6+KkLyDcL2B7uO5jqK81nRSN7jIgSH443+WFWQrPTCV/k2lPgsQTxLwRhnxdWPRMchOHedvxvTkKognt7Sn5AaLXDBREE+yDb30SFSBV9Bu20xjrAkgvphZbzThO2Ivcz2et53jGcycoK3YhJ9gcBG/zUzstrGEsd6+3JKm5oUNGKLrx3jS8jMaNwD0Bpi0GNRinqs9tvtX0zUpFMlkqEhWvGtfhAbmNSBJaJhz5WaesNGvSHXTRc65OJN2qeJ1V1gusihIr15BaC2nE7jBfjWzFuePCpvRVAA/u7R5U6QmUctI/21rC7scha8gSQ/K0RJPxW7V2tJAGtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
- b=OnQku7LJ+E2kcO1slnQTEzdH+29euN62g/mH9wBjCAX90vwd5MJPsfSE+bsDcf1kf7hz0j3UjMsuv9h+Rv4+4RzmKouazH4sGvmWsCnA8Mr2DQHOxg/fyg5vYigCm0jbMi2a/DQMWPQzN3YKUMzrpHUTs6PZcRuOUG/eZ/UG2A1loGQgRzUiaMUpWjvUP+CmXJuA5j4IRnB+5r7/7Get9Qwynanwgn0d40mF7i6TxOA82GhjJU6fU8CAwcdco9dK5QAjdNrniFBhb00i9FPagY5owrIhJHmyO/zQVttvcYTPmA3F90/nCprCVOHhZ23ctZD5PqIVrgz/9RN3UjcDag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
- b=t5HjKO5G2hoSpsk/6TwPqYRY8VicIU2N/vi0U91mmI4Va8JmrDvfcz5f0/uDvfUO+gpIFSh8058UJ///zlLipFgkfU5PW0MSVeWMn3TnXvX8TSG5AmhpAM4b7/bLbGG9LqhUGBmCokIC+RVznQify7Xi8on9LsqS4ExjMvrRQ0E=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3696.namprd04.prod.outlook.com
- (2603:10b6:803:48::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3021.27; Tue, 26 May
- 2020 07:50:53 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::1447:186c:326e:30b2]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::1447:186c:326e:30b2%7]) with mapi id 15.20.3021.029; Tue, 26 May 2020
- 07:50:53 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     "dsterba@suse.cz" <dsterba@suse.cz>,
-        Johannes Thumshirn <jth@kernel.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
-Thread-Topic: [PATCH v3 0/3] Add file-system authentication to BTRFS
-Thread-Index: AQHWKdGB/2P28p4DZEOYp4TPCgjJxQ==
-Date:   Tue, 26 May 2020 07:50:53 +0000
-Message-ID: <SN4PR0401MB35986E7B3F88F1EB288051A79BB00@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200514092415.5389-1-jth@kernel.org>
- <20200525131040.GS18421@twin.jikos.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: suse.cz; dkim=none (message not signed)
- header.d=none;suse.cz; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [46.244.204.43]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: eb874fea-133e-4fdf-d6ca-08d801498426
-x-ms-traffictypediagnostic: SN4PR0401MB3696:
-x-microsoft-antispam-prvs: <SN4PR0401MB3696C1E180727A1908850A549BB00@SN4PR0401MB3696.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 041517DFAB
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: iSQ2Oq/ErtuA1i/19kzCfWnfazoe7VKywsQ4OeFtj1tHo8t917b3SxBLo5oxLUkJsVrbaS68hRV1USU3nZd/zqzA+qTVZ4Johf3c8zQuVrV8ybTlevz7ANlFw2gLb0r2U3TpiqVSS75zYXilLSNzCpwNqNf6TzSE6FDc+F+3xxX3ZB5K+qplLttrwn8d+6tJ7EuUvgTUAGL+u44CV/ZIag8tFDQc+yKS0P4tKN6QZbYqjG2wNSRUP98BlVCPgsi4Y+APqxJ1cT9MnmnFJcJih1a3iZdGIGGF4V3VWm9Bde8O8uLbEBeu2cIRzTagRx86a1/EQEFa3IdiEDcdXv1q7puE3BrOKkw6HSNf2Dyt+5FlR+ShOiGSbievVVWzuscoVM0TMkav17HcYEk95JKraA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(396003)(39860400002)(136003)(346002)(376002)(33656002)(316002)(54906003)(110136005)(71200400001)(8936002)(55016002)(7696005)(66446008)(66476007)(64756008)(66556008)(66946007)(76116006)(478600001)(86362001)(966005)(6506007)(91956017)(5660300002)(52536014)(2906002)(9686003)(4326008)(53546011)(8676002)(26005)(186003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: LwUXsttAvwueNhtt+zUh3KJw27ygEhT9LK9MdA88jASWvLivkJnt5lpqmwku+ODKjRj2Szk2P/yNrc2/YoYo2SRb5FMDPbpnflsp6oGBDlxi+r0us+ER8E6NpeZqyhZDq3uoMO2OL0PQvlcdK4m//spq5jClsjdn1F3ZIVq3D6ZdZaxRMetbpZgsE8DPZYj+TRN2TnNDnHoGPvXhT9GcsWpjkgKF9qTTLlswA/S4KzIWt6BlvloEKp1PzRJlukTgX53wf+8doDo27xkyvR3bBD26xuDll78QqgGE8YDaOw0yH+60qzao5ebUrbWrW0zYCAIkpckwZ4BiLtcWS7P28W2Nrns2w98aMMUF2+ecC/XqrEcV0kduMzdpOyoNYTtGe9J5t8APXb8dC+laWoCTA2Fe26p0hsKhd1ju24IuXu1N+y7SUTHIAdfXCBj1xdw/DJUT5ul8sLhYDQZ764v/nfiETa4lN2rqZpVvKfR0G8k=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 May 2020 07:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590491025;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YiHC1jSZ9odIhljl+OEk0Z9XTPo94KqwVQ3mMvdqhCY=;
+        b=I1fjp5XgQW6FPaTls6PoNGs5V/mqK5DkHd2jHkW810kDdtPBYBylY+wB+LPqvzs565HYHR
+        r4Be4nWecOeR8kjnxVzClG2ieZLrbdx0DgwgSZqp/U8gqKOrbmE+q5jLEmFct6lPKhrWTN
+        e9WbXX/ovxy5eunR6qh1/eWk+RdQFWQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-395-epgCzNugPUW-Tlv9c5E0PQ-1; Tue, 26 May 2020 07:03:44 -0400
+X-MC-Unique: epgCzNugPUW-Tlv9c5E0PQ-1
+Received: by mail-wm1-f72.google.com with SMTP id k185so949605wme.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 04:03:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YiHC1jSZ9odIhljl+OEk0Z9XTPo94KqwVQ3mMvdqhCY=;
+        b=nu0Ov5rQ5nWV3p4Keoyg6hKRyxvJpg7uyar6+QcvvRKEhEdT1pDdqCT2fg86ciptUv
+         HENf0F3tRoOj71oiy/UmYXejHmDbgP5eQFSgrbA+0NaBitUucXvhO45URgPZErjLvty6
+         4CWcKzViaY3VUuyVNrOyPSZ5qzkxTJ01RGOuwBdDQeQ8SYHaQldkjntFH8fiTLPB6YOt
+         WKWYo7S+p07pitlVR2PWn795HlHqgLyBkAN9uz9VgyRag/Rqw50VssKVIaV11afzo8fR
+         kktTNBJyI3lyAo/IZAVzew82MHI0/H4svFdP+czI73KgHsbLMoIBiShH/sb0lDc3z3BL
+         E0Gw==
+X-Gm-Message-State: AOAM533I8NsrYl/NEtIcnH0OtZQHehbVRddvybWQNLxyvHzoQktVidBg
+        LkUeL0JFD3dn0O0XVdMAoMiLNIyj/RYn7/tsd6hSQAc5cduIDktSA3+dCFFJySpptBiYAgBLP42
+        gayxWbyQf8uA9/mYWEUSJEkXMZw==
+X-Received: by 2002:a7b:c8d6:: with SMTP id f22mr867253wml.108.1590491022777;
+        Tue, 26 May 2020 04:03:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy+r1rjVk/6TMhaP3IgReV3uZsywmdIrm1MH7nDDpPZhbJkQGL0WqDauUTDI+FV3ViYCaqhZA==
+X-Received: by 2002:a7b:c8d6:: with SMTP id f22mr867213wml.108.1590491022381;
+        Tue, 26 May 2020 04:03:42 -0700 (PDT)
+Received: from localhost.localdomain.com ([194.230.155.118])
+        by smtp.gmail.com with ESMTPSA id d6sm22928240wrj.90.2020.05.26.04.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 04:03:31 -0700 (PDT)
+From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Subject: [PATCH v3 0/7] Statsfs: a new ram-based file system for Linux kernel statistics
+Date:   Tue, 26 May 2020 13:03:10 +0200
+Message-Id: <20200526110318.69006-1-eesposit@redhat.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb874fea-133e-4fdf-d6ca-08d801498426
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2020 07:50:53.3074
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oXsSwoK/if6CLxvqdHloQqPTkRc/+41jMyHn68H7q9QrOP9gqsLHYEIkojrkitMfkMkkoCDseOoUteYlnwZvCAu4zNJEStYlHtSWoudKvGQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3696
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25/05/2020 15:11, David Sterba wrote:=0A=
-> On Thu, May 14, 2020 at 11:24:12AM +0200, Johannes Thumshirn wrote:=0A=
->> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
->>=0A=
->> This series adds file-system authentication to BTRFS. =0A=
->>=0A=
->> Unlike other verified file-system techniques like fs-verity the=0A=
->> authenticated version of BTRFS does not need extra meta-data on disk.=0A=
->>=0A=
->> This works because in BTRFS every on-disk block has a checksum, for meta=
--data=0A=
->> the checksum is in the header of each meta-data item. For data blocks, a=
-=0A=
->> separate checksum tree exists, which holds the checksums for each block.=
-=0A=
->>=0A=
->> Currently BRTFS supports CRC32C, XXHASH64, SHA256 and Blake2b for checks=
-umming=0A=
->> these blocks. This series adds a new checksum algorithm, HMAC(SHA-256), =
-which=0A=
->> does need an authentication key. When no, or an incoreect authentication=
- key=0A=
->> is supplied no valid checksum can be generated and a read, fsck or scrub=
-=0A=
->> operation would detect invalid or tampered blocks once the file-system i=
-s=0A=
->> mounted again with the correct key. =0A=
-> =0A=
-> As mentioned in the discussion under LWN article, https://lwn.net/Article=
-s/818842/=0A=
-> ZFS implements split hash where one half is (partial) authenticated hash=
-=0A=
-> and the other half is a checksum. This allows to have at least some sort=
-=0A=
-> of verification when the auth key is not available. This applies to the=
-=0A=
-> fixed size checksum area of metadata blocks, for data we can afford to=0A=
-> store both hashes in full.=0A=
-> =0A=
-> I like this idea, however it brings interesting design decisions, "what=
-=0A=
-> if" and corner cases:=0A=
-> =0A=
-> - what hashes to use for the plain checksum, and thus what's the split=0A=
-> - what if one hash matches and the other not=0A=
-> - increased checksum calculation time due to doubled block read=0A=
-> - whether to store the same parital hash+checksum for data too=0A=
-> =0A=
-> As the authenticated hash is the main usecase, I'd reserve most of the=0A=
-> 32 byte buffer to it and use a weak hash for checksum: 24 bytes for HMAC=
-=0A=
-> and 8 bytes for checksum. As an example: sha256+xxhash or=0A=
-> blake2b+xxhash.=0A=
-> =0A=
-> I'd outright skip crc32c for the checksum so we have only small number=0A=
-> of authenticated checksums and avoid too many options, eg.=0A=
-> hmac-sha256-crc32c etc. The result will be still 2 authenticated hashes=
-=0A=
-> with the added checksum hardcoded to xxhash.=0A=
-> =0A=
-=0A=
-Hmm I'm really not a fan of this. We would have to use something like =0A=
-sha2-224 to get the room for the 2nd checksum. So we're using a weaker=0A=
-hash just so we can add a second checksum. On the other hand you've asked =
-=0A=
-me to add the known pieces of information into the hashes as a salt to=0A=
-"make attacks harder at a small cost".=0A=
+There is currently no common way for Linux kernel subsystems to expose
+statistics to userspace shared throughout the Linux kernel; subsystems have
+to take care of gathering and displaying statistics by themselves, for
+example in the form of files in debugfs. For example KVM has its own code
+section that takes care of this in virt/kvm/kvm_main.c, where it sets up
+debugfs handlers for displaying values and aggregating them from various
+subfolders to obtain information about the system state (i.e. displaying
+the total number of exits, calculated by summing all exits of all cpus of
+all running virtual machines).
+
+Allowing each section of the kernel to do so has two disadvantages. First,
+it will introduce redundant code. Second, debugfs is anyway not the right
+place for statistics (for example it is affected by lockdown)
+
+In this patch series I introduce statsfs, a synthetic ram-based virtual
+filesystem that takes care of gathering and displaying statistics for the
+Linux kernel subsystems.
+
+The file system is mounted on /sys/kernel/stats and would be already used
+by kvm. Statsfs was initially introduced by Paolo Bonzini [1].
+
+Statsfs offers a generic and stable API, allowing any kind of
+directory/file organization and supporting multiple kind of aggregations
+(not only sum, but also average, max, min and count_zero) and data types
+(boolean, unsigned/signed and custom types). The implementation, which is
+a generalization of KVM’s debugfs statistics code, takes care of gathering
+and displaying information at run time; users only need to specify the
+values to be included in each source.
+
+Statsfs would also be a different mountpoint from debugfs, and would not
+suffer from limited access due to the security lock down patches. Its main
+function is to display each statistics as a file in the desired folder
+hierarchy defined through the API. Statsfs files can be read, and possibly
+cleared if their file mode allows it.
+
+Statsfs has two main components: the public API defined by
+include/linux/statsfs.h, and the virtual file system which should end up in
+/sys/kernel/stats.
+
+The API has two main elements, values and sources. Kernel subsystems like
+KVM can use the API to create a source, add child sources/values/aggregates
+and register it to the root source (that on the virtual fs would be
+/sys/kernel/statsfs).
+
+Sources are created via statsfs_source_create(), and each source becomes a
+directory in the file system. Sources form a parent-child relationship;
+root sources are added to the file system via statsfs_source_register().
+Every other source is added to or removed from a parent through the
+statsfs_source_add_subordinate and statsfs_source_remote_subordinate APIs.
+Once a source is created and added to the tree (via add_subordinate), it
+will be used to compute aggregate values in the parent source.
+A source can optionally be hidden from the filesystem
+but still considered in the aggregation operations if the corresponding
+flag is set during initialization.
+
+Values represent quantites that are gathered by the statsfs user. Examples
+of values include the number of vm exits of a given kind, the amount of
+memory used by some data structure, the length of the longest hash table
+chain, or anything like that. Values are defined with the
+statsfs_source_add_values function. Each value is defined by a struct
+statsfs_value; the same statsfs_value can be added to many different
+sources. A value can be considered "simple" if it fetches data from a
+user-provided location, or "aggregate" if it groups all values in the
+subordinates sources that include the same statsfs_value.
+Each value has a stats_fs_type pointer in order to allow the user to
+provide custom get and clear functions. The library, however, also
+exports default stats_fs_type structs for the standard types
+(all unsigned and signed types plus boolean).
+A value can also provide a show function, that takes care
+of displaying the value in a custom string format. This can be especially
+useful when displaying enums.
+
+For more information, please consult the kerneldoc documentation in patch 2
+and the sample uses in the kunit tests, KVM and networking.
+
+This series of patches is based on my previous series "libfs: group and
+simplify linux fs code" and the single patch sent to kvm "kvm_host: unify
+VM_STAT and VCPU_STAT definitions in a single place". The former simplifies
+code duplicated in debugfs and tracefs (from which statsfs is based on),
+the latter groups all macros definition for statistics in kvm in a single
+common file shared by all architectures.
+
+Patch 1 adds a new refcount and kref destructor wrappers that take a
+semaphore, as those are used later by statsfs. Patch 2 introduces the
+statsfs API, patch 3 provides extensive tests that can also be used as
+example on how to use the API and patch 4 adds the file system support.
+Finally, patch 5 provides a real-life example of statsfs usage in KVM,
+with patch 6 providing a concrete example of the show function and
+patch 7 another real-life example in the networking subsystem.
+
+[1] https://lore.kernel.org/kvm/5d6cdcb1-d8ad-7ae6-7351-3544e2fa366d@redhat.com/?fbclid=IwAR18LHJ0PBcXcDaLzILFhHsl3qpT3z2vlG60RnqgbpGYhDv7L43n0ZXJY8M
+
+Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+
+v2 -> v3 move kconfig entry in the pseudo filesystem menu, add
+documentation, get/clear function for value types, show function,
+floating/cumulative and hidden flags. Also added the netstat
+example
+
+Emanuele Giuseppe Esposito (7):
+  stats_fs API: create, add and remove stats_fs sources and values
+  documentation for stats_fs
+  kunit: tests for stats_fs API
+  stats_fs fs: virtual fs to show stats to the end-user
+  kvm_main: replace debugfs with stats_fs
+  [not for merge] kvm: example of stats_fs_value show function
+  [not for merge] netstats: example use of stats_fs API
+
+ Documentation/filesystems/index.rst    |    1 +
+ Documentation/filesystems/stats_fs.rst |  222 +++++
+ MAINTAINERS                            |    7 +
+ arch/arm64/kvm/Kconfig                 |    1 +
+ arch/arm64/kvm/guest.c                 |    2 +-
+ arch/mips/kvm/Kconfig                  |    1 +
+ arch/mips/kvm/mips.c                   |    2 +-
+ arch/powerpc/kvm/Kconfig               |    1 +
+ arch/powerpc/kvm/book3s.c              |   12 +-
+ arch/powerpc/kvm/booke.c               |    8 +-
+ arch/s390/kvm/Kconfig                  |    1 +
+ arch/s390/kvm/kvm-s390.c               |   16 +-
+ arch/x86/include/asm/kvm_host.h        |    2 +-
+ arch/x86/kvm/Kconfig                   |    1 +
+ arch/x86/kvm/Makefile                  |    2 +-
+ arch/x86/kvm/debugfs.c                 |   64 --
+ arch/x86/kvm/stats_fs.c                |  114 +++
+ arch/x86/kvm/x86.c                     |   11 +-
+ fs/Kconfig                             |   20 +
+ fs/Makefile                            |    1 +
+ fs/stats_fs/Makefile                   |    7 +
+ fs/stats_fs/inode.c                    |  461 ++++++++++
+ fs/stats_fs/internal.h                 |   34 +
+ fs/stats_fs/stats_fs-tests.c           | 1097 ++++++++++++++++++++++++
+ fs/stats_fs/stats_fs.c                 |  642 ++++++++++++++
+ fs/stats_fs/stub.c                     |   13 +
+ include/linux/kvm_host.h               |   45 +-
+ include/linux/netdevice.h              |    2 +
+ include/linux/stats_fs.h               |  381 ++++++++
+ include/uapi/linux/magic.h             |    1 +
+ net/Kconfig                            |    1 +
+ net/core/dev.c                         |   68 ++
+ tools/lib/api/fs/fs.c                  |   21 +
+ virt/kvm/arm/arm.c                     |    2 +-
+ virt/kvm/kvm_main.c                    |  317 +------
+ 35 files changed, 3193 insertions(+), 388 deletions(-)
+ create mode 100644 Documentation/filesystems/stats_fs.rst
+ delete mode 100644 arch/x86/kvm/debugfs.c
+ create mode 100644 arch/x86/kvm/stats_fs.c
+ create mode 100644 fs/stats_fs/Makefile
+ create mode 100644 fs/stats_fs/inode.c
+ create mode 100644 fs/stats_fs/internal.h
+ create mode 100644 fs/stats_fs/stats_fs-tests.c
+ create mode 100644 fs/stats_fs/stats_fs.c
+ create mode 100644 fs/stats_fs/stub.c
+ create mode 100644 include/linux/stats_fs.h
+
+-- 
+2.25.4
+
