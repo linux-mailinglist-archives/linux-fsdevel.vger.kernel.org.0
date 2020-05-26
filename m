@@ -2,89 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8181E23D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 16:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8AD61E240D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 16:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbgEZOQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 10:16:26 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:49646 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbgEZOQ0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 10:16:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ZEZ1+yG3T0vEd58X58pERPcfzN4dbTvcTqCMRc8b9RQ=; b=mwjDL+wWgCxatP4XIvGOhsucBR
-        sYYetvGOeYtDiCDaYnPMf19gGi5la/8GEIhcC3Me4+QEzKqUEPzQ8E2INyTB3j6c8qBAew7S/s4g3
-        Yr6FjMBwCT5Re5vMGbX/NZ4MqVfNEmWtY8VJFGpTnXQwMYyiIMn+3pRNonmA+TDQxhQI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jdaNB-003HxR-V6; Tue, 26 May 2020 16:16:05 +0200
-Date:   Tue, 26 May 2020 16:16:05 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
+        id S1728111AbgEZO2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 10:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbgEZO2I (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 May 2020 10:28:08 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB48C03E96D;
+        Tue, 26 May 2020 07:28:08 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id f18so3941855qkh.1;
+        Tue, 26 May 2020 07:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0TJ6yYccZvVBdf4f/G2i6OowH5C25Z8m9Ap0zEnVgR8=;
+        b=TLMKcn3xE73A18nE6utedMS8Vz8HXK+b0q/Divfxr42WLvfCj1VnejFo7V5BPdLF0q
+         W+VJW80hsx5pkyn2afaGJzSd1NY9lzi/WflZh7Okd/ujLflmIzup/UUhAjVe3hjLW/ov
+         /ckbc/JaidWP13F1n6QRu3E3MBXNO+SL6qBL9nAMf03UnJq5zUo+MGasn74WqYB3nHlM
+         RMvAQzvfJ3xtHcnQf7mOLh7b54gRFUEIEGn2cQ5cWzw7drZMeoCaq8lvxlN5DiCjmw1j
+         OWij/qP1w+bHGLFTVBEmayKa6pI5nJLWTt6wzU97k3DMGp051NXEEKMYkQDFm1nLdmm9
+         mfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0TJ6yYccZvVBdf4f/G2i6OowH5C25Z8m9Ap0zEnVgR8=;
+        b=sWSG7rVHI6UhGH2cnK87AAiwlT/M2F1QHjCYfc9SX94bo+TKyxNOuCd6QDUis2mvGf
+         QNVihmYN3HqmLU5TqKOyJtgs+RKzoZt3AAd9+934j3JF67QnypK6NMR35XWkhcxOf/50
+         e2W31VfsON/dvS5hoJxlxYIpSnaDw00DoJFecTTKvfTBleUprwlPsi6EJPiJG+oxiuQQ
+         ynuwr0tX9l0Q6o/8DgJd6SKFSW6NiiZ6APZc4GwxKHy9YrXXX16S4TVbNXSHTclNAkCc
+         Yic+aekVfdeAt9dh5MhlIimDQ5244wMaykDU6lnsZu1JM/gPN2X7QKqYX3IKX3kXevwM
+         Phog==
+X-Gm-Message-State: AOAM532tGdnh9n/DpdPjWL5A6R70E8FMF5pN4C4vJBcpOLi90d7oaiZ/
+        S00JNO2l72xVBSiiI7okChI=
+X-Google-Smtp-Source: ABdhPJyK3oMuyeJ+F6B+ZijqpLzxAJ4vgdbS/Dm2ZGwMW4CXq3uWQNM1w7dewvLbX9tlS3HD2SWAuA==
+X-Received: by 2002:a37:78c1:: with SMTP id t184mr1585988qkc.213.1590503287516;
+        Tue, 26 May 2020 07:28:07 -0700 (PDT)
+Received: from dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com ([2620:10d:c091:480::1:6991])
+        by smtp.gmail.com with ESMTPSA id i14sm4786794qkl.105.2020.05.26.07.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 07:28:06 -0700 (PDT)
+Date:   Tue, 26 May 2020 10:28:03 -0400
+From:   Dan Schatzberg <schatzberg.dan@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] [not for merge] netstats: example use of stats_fs
- API
-Message-ID: <20200526141605.GJ768009@lunn.ch>
-References: <20200526110318.69006-1-eesposit@redhat.com>
- <20200526110318.69006-8-eesposit@redhat.com>
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v5 0/4] Charge loop device i/o to issuing cgroup
+Message-ID: <20200526142803.GA1061@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
+References: <20200428161355.6377-1-schatzberg.dan@gmail.com>
+ <20200512132521.GA28700@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
+ <20200512133545.GA26535@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200526110318.69006-8-eesposit@redhat.com>
+In-Reply-To: <20200512133545.GA26535@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 26, 2020 at 01:03:17PM +0200, Emanuele Giuseppe Esposito wrote:
-> Apply stats_fs on the networking statistics subsystem.
+On Tue, May 12, 2020 at 06:35:45AM -0700, Christoph Hellwig wrote:
+> On Tue, May 12, 2020 at 09:25:21AM -0400, Dan Schatzberg wrote:
+> > Seems like discussion on this patch series has died down. There's been
+> > a concern raised that we could generalize infrastructure across loop,
+> > md, etc. This may be possible, in the future, but it isn't clear to me
+> > how this would look like. I'm inclined to fix the existing issue with
+> > loop devices now (this is a problem we hit at FB) and address
+> > consolidation with other cases if and when those are addressed.
+> > 
+> > Jens, you've expressed interest in seeing this series go through the
+> > block tree so I'm interested in your perspective here. Barring any
+> > concrete implementation bugs, would you be okay merging this version?
 > 
-> Currently it only works with disabled network namespace
-> (CONFIG_NET_NS=n), because multiple namespaces will have the same
-> device name under the same root source that will cause a conflict in
-> stats_fs.
+> Independ of any higher level issues you need to sort out the spinlock
+> mess I pointed out.
 
-Hi Emanuele
-
-How do you atomically get and display a group of statistics?
-
-If you look at how the netlink socket works, you will see code like:
-
-                do {
-                        start = u64_stats_fetch_begin_irq(&cpu_stats->syncp);
-                        rx_packets = cpu_stats->rx_packets;
-                        rx_bytes = cpu_stats->rx_bytes;
-			....
-                } while (u64_stats_fetch_retry_irq(&cpu_stats->syncp, start));
-
-It will ensure that rx_packets and rx_bytes are consistent with each
-other. If the value of the sequence counter changes while inside the
-loop, the loop so repeated until it does not change.
-
-In general, hardware counters in NICs are the same.  You tell it to
-take a snapshot of the statistics counters, and then read them all
-back, to give a consistent view across all the statistics.
-
-I've not looked at this new code in detail, but it looks like you have
-one file per statistic, and assume each statistic is independent of
-every other statistic. This independence can limit how you use the
-values, particularly when debugging. The netlink interface we use does
-not have this limitation.
-
-	     Andrew
+Will do - I'll split out the lock-use refactor into a separate
+patch. Do you have particular concerns about re-using the existing
+spinlock? Its existing use is not contended so I didn't see any harm
+in extending its use. I'll add this justification to the commit
+message as well, but I'm tempted to leave the re-use as is instead of
+creating a new lock.
