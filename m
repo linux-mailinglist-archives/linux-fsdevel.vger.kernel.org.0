@@ -2,92 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD061E1904
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 03:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55DAC1E1920
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 03:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387794AbgEZBVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 May 2020 21:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388348AbgEZBVq (ORCPT
+        id S2388447AbgEZBhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 May 2020 21:37:11 -0400
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17137 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387794AbgEZBhL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 May 2020 21:21:46 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177CBC061A0E;
-        Mon, 25 May 2020 18:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9F2IX9GgTvEb6k7D/DzwUrK1uYLCIrUvEsxYTJKhsdk=; b=t6eOMl0JNnb+SIm8E94AZBTWQd
-        jcW4Cdyz24EI7ciD73XHeRqeGM8RuaJDmagR+eEsvcRyjNQmcyBvAJUi8W7yCp7B7/Swo0yphGycA
-        eD8BptiQw4yrEBSz0ur4KB3AfWNZa+/eYWIpLjK8AfEYQWHcyZvxzZyH4Y6OpLtZ3jn42DDA7a2YR
-        XYGh4pPCev3XJdaCb2FXmBcyEcVQY0mJgkTm5alCRaL5aa4em3vSMwMalRxbM9hcDgP3sfJsNbx7y
-        yYA//d5YfzQ1J4uGZwY5WMJfNtdlHcA7Bbw2ZArY4KfS1x7dmS9KAb3GcifCKkAGbPIBq84OMyfKy
-        19OS0MQQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jdOHm-0002Jw-0N; Tue, 26 May 2020 01:21:42 +0000
-Date:   Mon, 25 May 2020 18:21:41 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/36] Large pages in the page cache
-Message-ID: <20200526012141.GE17206@bombadil.infradead.org>
-References: <20200515131656.12890-1-willy@infradead.org>
- <20200521224906.GU2005@dread.disaster.area>
- <20200522000411.GI28818@bombadil.infradead.org>
- <20200522025751.GX2005@dread.disaster.area>
- <20200522030553.GK28818@bombadil.infradead.org>
- <20200525230751.GZ2005@dread.disaster.area>
+        Mon, 25 May 2020 21:37:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1590456977; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kebxn3oeMU6m9o1J6r+1+15WCCAgG3YkxkL7wV2cdRZSn858nQxv/WcDvq9y/Jgi9k1pGZ1eDKYaQtOlPAG6tshkQQsreev480TgOGKRBXVkKcgBT3OqSeZxS+VzZc/yuHY49c21DT/x1KWpRPPcl/qyXi/AF8QU2waG4DCe7zA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1590456977; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=W+BQC2GaJHDT2mZ2pan3p02uuV3yAycUAHrs51y9XMU=; 
+        b=e2yXPWJ6R9lt9OvLQNV41d+cxAUvOPJeMSruJJsW0fAwZI5sg54TUBEk9z708qnk4HMoPTvRhoujr1uFNI/0i0wzshc0PDs3YRJ0LcbgXJetcOt5nHFG0zARNvqZp6jV9DbQJM/Q/2y7+kr8+kBw3dSZHFXPUF30AqEbtAM4aV8=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1590456977;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=W+BQC2GaJHDT2mZ2pan3p02uuV3yAycUAHrs51y9XMU=;
+        b=fOxuspGiZgH3Goq7eH+7aqR826RJAIbIcE40NdkhcbzXfio2+jF1GSU2Itk00Ddo
+        a/k6WBT0yBiZzt2sXVORj9BbBFSKg7j0f8Kn7RMwocylPYyLHvHpS7SRxq+O4njtzMj
+        293VilV65aOHdZ44zrHAsLLsA2oSl4TouY7cM7uE=
+Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by mx.zoho.com.cn
+        with SMTPS id 1590456975196819.058477717145; Tue, 26 May 2020 09:36:15 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     miklos@szeredi.hu, amir73il@gmail.com, viro@zeniv.linux.org.uk
+Cc:     raven@themaw.net, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
+Message-ID: <20200526013557.11121-1-cgxu519@mykernel.net>
+Subject: [RFC PATCH v4] ovl: drop negative dentry in upper layer
+Date:   Tue, 26 May 2020 09:35:57 +0800
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200525230751.GZ2005@dread.disaster.area>
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 26, 2020 at 09:07:51AM +1000, Dave Chinner wrote:
-> On Thu, May 21, 2020 at 08:05:53PM -0700, Matthew Wilcox wrote:
-> > On Fri, May 22, 2020 at 12:57:51PM +1000, Dave Chinner wrote:
-> > > Again, why is this dependent on THP? We can allocate compound pages
-> > > without using THP, so why only allow the page cache to use larger
-> > > pages when THP is configured?
-> > 
-> > We have too many CONFIG options.  My brain can't cope with adding
-> > CONFIG_LARGE_PAGES because then we might have neither THP nor LP, LP and
-> > not THP, THP and not LP or both THP and LP.  And of course HUGETLBFS,
-> > which has its own special set of issues that one has to think about when
-> > dealing with the page cache.
-> 
-> That sounds like something that should be fixed. :/
+Negative dentries of upper layer are useless after construction
+of overlayfs' own dentry and may keep in the memory long time even
+after unmount of overlayfs instance. This patch tries to drop
+unnecessary negative dentry of upper layer to effectively reclaim
+memory.
 
-If I have to fix hugetlbfs before doing large pages in the page cache,
-we'll be five years away and at least two mental breakdowns.  Honestly,
-I'd rather work on almost anything else.  Some of the work I'm doing
-will help make hugetlbfs more similar to everything else, eventually,
-but ... no, not going to put all this on hold to fix hugetlbfs.  Sorry.
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+---
+v1->v2:
+- Only drop negative dentry in slow path of lookup.
 
-> Really, I don't care about the historical mechanisms that people can
-> configure large pages with. If the mm subsystem does not have a
-> unified abstraction and API for working with large pages, then that
-> is the first problem that needs to be addressed before other
-> subsystems start trying to use large pages. 
+v2->v3:
+- Drop negative dentry in vfs layer.
+- Rebase on latest linus-tree(5.7.0-rc5).
 
-I think you're reading too quickly.  Let me try again.
+v3->v4:
+- Check negative dentry with dentry lock.
+- Only drop negative dentry in upper layer.
 
-Historically, Transparent Huge Pages have been PMD sized.  They have also
-had a complicated interface to use.  I am changing both those things;
-THPs may now be arbitrary order, and I'm adding interfaces to make THPs
-easier to work with.
+ fs/overlayfs/namei.c | 45 +++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 38 insertions(+), 7 deletions(-)
 
-Now, if you want to contend that THPs are inextricably linked with
-PMD sizes and I need to choose a different name, I've been thinking
-about other options a bit.  One would be 'lpage' for 'large page'.
-Another would be 'mop' for 'multi-order page'.
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 723d17744758..47cc79ec8205 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -191,16 +191,46 @@ static bool ovl_is_opaquedir(struct dentry *dentry)
+ =09return ovl_check_dir_xattr(dentry, OVL_XATTR_OPAQUE);
+ }
+=20
++static struct dentry *ovl_lookup_positive_unlocked(const char *name,
++=09=09=09=09=09struct dentry *base, int len)
++{
++=09struct dentry *dentry;
++=09bool drop =3D false;
++
++=09dentry =3D lookup_one_len_unlocked(name, base, len);
++=09if (!IS_ERR(dentry) && d_is_negative(dentry) &&
++=09    dentry->d_lockref.count =3D=3D 1) {
++=09=09spin_lock(&dentry->d_lock);
++=09=09/* Recheck condition under lock */
++=09=09if (d_is_negative(dentry) && dentry->d_lockref.count =3D=3D 1) {
++=09=09=09__d_drop(dentry);
++=09=09=09drop =3D true;
++=09=09}
++=09=09spin_unlock(&dentry->d_lock);
++
++=09=09if (drop) {
++=09=09=09dput(dentry);
++=09=09=09dentry =3D ERR_PTR(-ENOENT);
++=09=09}
++=09}
++
++=09return dentry;
++}
++
+ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *=
+d,
+ =09=09=09     const char *name, unsigned int namelen,
+ =09=09=09     size_t prelen, const char *post,
+-=09=09=09     struct dentry **ret)
++=09=09=09     struct dentry **ret, bool drop_negative)
+ {
+ =09struct dentry *this;
+ =09int err;
+ =09bool last_element =3D !post[0];
+=20
+-=09this =3D lookup_positive_unlocked(name, base, namelen);
++=09if (drop_negative)
++=09=09this =3D ovl_lookup_positive_unlocked(name, base, namelen);
++=09else
++=09=09this =3D lookup_positive_unlocked(name, base, namelen);
++
+ =09if (IS_ERR(this)) {
+ =09=09err =3D PTR_ERR(this);
+ =09=09this =3D NULL;
+@@ -276,7 +306,7 @@ static int ovl_lookup_single(struct dentry *base, struc=
+t ovl_lookup_data *d,
+ }
+=20
+ static int ovl_lookup_layer(struct dentry *base, struct ovl_lookup_data *d=
+,
+-=09=09=09    struct dentry **ret)
++=09=09=09    struct dentry **ret, bool drop_negative)
+ {
+ =09/* Counting down from the end, since the prefix can change */
+ =09size_t rem =3D d->name.len - 1;
+@@ -285,7 +315,7 @@ static int ovl_lookup_layer(struct dentry *base, struct=
+ ovl_lookup_data *d,
+=20
+ =09if (d->name.name[0] !=3D '/')
+ =09=09return ovl_lookup_single(base, d, d->name.name, d->name.len,
+-=09=09=09=09=09 0, "", ret);
++=09=09=09=09=09 0, "", ret, drop_negative);
+=20
+ =09while (!IS_ERR_OR_NULL(base) && d_can_lookup(base)) {
+ =09=09const char *s =3D d->name.name + d->name.len - rem;
+@@ -298,7 +328,8 @@ static int ovl_lookup_layer(struct dentry *base, struct=
+ ovl_lookup_data *d,
+ =09=09=09return -EIO;
+=20
+ =09=09err =3D ovl_lookup_single(base, d, s, thislen,
+-=09=09=09=09=09d->name.len - rem, next, &base);
++=09=09=09=09=09d->name.len - rem, next, &base,
++=09=09=09=09=09drop_negative);
+ =09=09dput(dentry);
+ =09=09if (err)
+ =09=09=09return err;
+@@ -830,7 +861,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct den=
+try *dentry,
+ =09old_cred =3D ovl_override_creds(dentry->d_sb);
+ =09upperdir =3D ovl_dentry_upper(dentry->d_parent);
+ =09if (upperdir) {
+-=09=09err =3D ovl_lookup_layer(upperdir, &d, &upperdentry);
++=09=09err =3D ovl_lookup_layer(upperdir, &d, &upperdentry, true);
+ =09=09if (err)
+ =09=09=09goto out;
+=20
+@@ -888,7 +919,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct den=
+try *dentry,
+ =09=09else
+ =09=09=09d.last =3D lower.layer->idx =3D=3D roe->numlower;
+=20
+-=09=09err =3D ovl_lookup_layer(lower.dentry, &d, &this);
++=09=09err =3D ovl_lookup_layer(lower.dentry, &d, &this, false);
+ =09=09if (err)
+ =09=09=09goto out_put;
+=20
+--=20
+2.20.1
 
-We should not be seeing 'compound_order' in any filesystem code.
-Compound pages are an mm concept.  They happen to be how THPs are
-implemented, but it'd be a layering violation to use them directly.
+
