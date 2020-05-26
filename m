@@ -2,266 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 540C91E1C72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 09:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD771E1C86
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 May 2020 09:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731618AbgEZHpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 03:45:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727042AbgEZHpW (ORCPT
+        id S1731525AbgEZHu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 03:50:57 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:42506 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbgEZHu4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 03:45:22 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB2FC061A0E;
-        Tue, 26 May 2020 00:45:22 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id e2so22685016eje.13;
-        Tue, 26 May 2020 00:45:22 -0700 (PDT)
+        Tue, 26 May 2020 03:50:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1590479456; x=1622015456;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
+  b=DA7f7xqw0ozhbM8JzFy9w+amvm1kbRjJS4ESlogxrlZypoUUqPoQN7+S
+   /q988gZ2eXp4EDuKI5iTevlHTlbsWcuQca4VkWsWcQ8RR1VnD0wBkC6z5
+   FwKnsKGznJjBRa+4j/8eULvPASaNQqE+mGhPBO5L0tASlqS8STwhWPb/N
+   yUSfBUx4EGH7GLn4uwkOH8w1OMpoOaK0shqXimN6PWM1xlV3EotrqLdtq
+   Wb91JJeDz5soRdVrfJWRyp4rywMnP1wQY+/0zQf2kQamlmcs9darV4Vzy
+   dcT8J/h2e0bc1zTt/gtJa8edCZVT45W/W5eS0tbAXZHE5qI8F0oDdmYqJ
+   w==;
+IronPort-SDR: bdsl0NR44mvLMzcU0zBHSqLv2iUkms0zQaZ/CsSNXgKWjyFvpJy8duOGdTBrzMgHwRdA7oyMIn
+ /9cq1Yt3GcOazjfeFUW22IsqJgwC+kvd+900gVAOhC1TSKj3y1uTETJwsR+AleZB23TPGefGab
+ 3kL+uuI8B8+FuWy77NOx95EMpGCdWBrDLnwomq6vcNFuIIQTNqWiK6KATjNxjvrjlwSFt7mO+h
+ 4bW7Q71d9OZBs2tObVwcdm97ZiWcYL+HiSwdagJiKpQKUFmeKYrvgOaxx7KJorR9nc2JI2SQEz
+ grk=
+X-IronPort-AV: E=Sophos;i="5.73,436,1583164800"; 
+   d="scan'208";a="138829540"
+Received: from mail-bl2nam02lp2051.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.51])
+  by ob1.hgst.iphmx.com with ESMTP; 26 May 2020 15:50:55 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z4vx1PwP6+KkLyDcL2B7uO5jqK81nRSN7jIgSH443+WFWQrPTCV/k2lPgsQTxLwRhnxdWPRMchOHedvxvTkKognt7Sn5AaLXDBREE+yDb30SFSBV9Bu20xjrAkgvphZbzThO2Ivcz2et53jGcycoK3YhJ9gcBG/zUzstrGEsd6+3JKm5oUNGKLrx3jS8jMaNwD0Bpi0GNRinqs9tvtX0zUpFMlkqEhWvGtfhAbmNSBJaJhz5WaesNGvSHXTRc65OJN2qeJ1V1gusihIr15BaC2nE7jBfjWzFuePCpvRVAA/u7R5U6QmUctI/21rC7scha8gSQ/K0RJPxW7V2tJAGtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
+ b=OnQku7LJ+E2kcO1slnQTEzdH+29euN62g/mH9wBjCAX90vwd5MJPsfSE+bsDcf1kf7hz0j3UjMsuv9h+Rv4+4RzmKouazH4sGvmWsCnA8Mr2DQHOxg/fyg5vYigCm0jbMi2a/DQMWPQzN3YKUMzrpHUTs6PZcRuOUG/eZ/UG2A1loGQgRzUiaMUpWjvUP+CmXJuA5j4IRnB+5r7/7Get9Qwynanwgn0d40mF7i6TxOA82GhjJU6fU8CAwcdco9dK5QAjdNrniFBhb00i9FPagY5owrIhJHmyO/zQVttvcYTPmA3F90/nCprCVOHhZ23ctZD5PqIVrgz/9RN3UjcDag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vDaaH5YD8SOmhn/fSd1uU44U5ZXnS6Yq8bfw6RSLqOM=;
-        b=q69nsgQhasIfsuxrBPxmvt2K1zsLdoR5eFw9trjhssZ+qfTk0mh3cs5MkKFiZm58bR
-         KTzu+0mFHMFx4Rxtgdb7s1yK33G3Uy0He2ZtyhReg6oaeUOccKoIDR/PjG2r2Yk3QTKC
-         qkhflhbf8p8Q/ixx8KKAY+TgeS5h5CfVPle5/Xsl7cmImSjr0vUVpq+IOCnhtKDbqaDE
-         oVylL00ShmOdghhEYFoIbgqZY5/4mSKrLOT5mgsSC0GIx0wexIzM7U6TSrSkaQ+yumKv
-         51oLoxyn7DQAUmnp707/GMJJPGb6KnTFjEE5chzjPSMbgOGgop39CXOW/HumqJAoLXXw
-         1V3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=vDaaH5YD8SOmhn/fSd1uU44U5ZXnS6Yq8bfw6RSLqOM=;
-        b=sMqjd6Jfz6mMLOZXL+4Ii7WZCCAaRHdaiqcJ5CRUFmPgYfgTMkb8xzq0bIoeRlNP1T
-         14GOYuQxOvKFSHnToXooj7PwSvuDGZafMiyCzYiIs1QZKtAViVowJQgL7DfSijfiZp28
-         OHt9shw7NXEhGG0uYnon1X0juA5xv75Oa4/mu2M3cQn1S4dHcVFkHkfufhvKEbsIEbqX
-         +ooKl38mOfhvI45nKTH3EOEmAxOs2kpT841M2ySwi3wFFh1MzO95hezy9+Wxg3ehaBxN
-         xUS/YVgi9Ikl1SbLZLuVkD0QC1p3HUAIxul4lWuyqZjhnVHSyBZTlvYxXQXdvnXK+ko7
-         e67Q==
-X-Gm-Message-State: AOAM533RYk4Yc/prbHWcCMYhtfVPjB+o8GRfBbjdn5Rckl9p3qY4N54y
-        gzcutNDsOxMVARv9fAKTkr2+v+Qr
-X-Google-Smtp-Source: ABdhPJyxBQvVu1HqKfACm4GEdjeg5EWrxcEZwwQ7ecr3IgejneL78XBpCcdO0Bkz5oNWCArH986GyA==
-X-Received: by 2002:a17:906:2dc8:: with SMTP id h8mr48498eji.108.1590479120869;
-        Tue, 26 May 2020 00:45:20 -0700 (PDT)
-Received: from [192.168.43.172] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id w12sm17450222eds.4.2020.05.26.00.45.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2020 00:45:15 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200523185755.8494-1-axboe@kernel.dk>
- <20200523185755.8494-13-axboe@kernel.dk>
- <8d429d6b-81ee-0a28-8533-2e1d4faa6b37@gmail.com>
- <717e474a-5168-8e1e-2e02-c1bdff007bd9@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 12/12] io_uring: support true async buffered reads, if
- file provides it
-Message-ID: <a8212987-bd06-5c67-73d7-e77a654df4ac@gmail.com>
-Date:   Tue, 26 May 2020 10:44:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <717e474a-5168-8e1e-2e02-c1bdff007bd9@kernel.dk>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o8iSm5VPJxoY50hdEj+0t/BaMXOud0i0um9ww33shgg=;
+ b=t5HjKO5G2hoSpsk/6TwPqYRY8VicIU2N/vi0U91mmI4Va8JmrDvfcz5f0/uDvfUO+gpIFSh8058UJ///zlLipFgkfU5PW0MSVeWMn3TnXvX8TSG5AmhpAM4b7/bLbGG9LqhUGBmCokIC+RVznQify7Xi8on9LsqS4ExjMvrRQ0E=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3696.namprd04.prod.outlook.com
+ (2603:10b6:803:48::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3021.27; Tue, 26 May
+ 2020 07:50:53 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2%7]) with mapi id 15.20.3021.029; Tue, 26 May 2020
+ 07:50:53 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        Johannes Thumshirn <jth@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
+Thread-Topic: [PATCH v3 0/3] Add file-system authentication to BTRFS
+Thread-Index: AQHWKdGB/2P28p4DZEOYp4TPCgjJxQ==
+Date:   Tue, 26 May 2020 07:50:53 +0000
+Message-ID: <SN4PR0401MB35986E7B3F88F1EB288051A79BB00@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200514092415.5389-1-jth@kernel.org>
+ <20200525131040.GS18421@twin.jikos.cz>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: suse.cz; dkim=none (message not signed)
+ header.d=none;suse.cz; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [46.244.204.43]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: eb874fea-133e-4fdf-d6ca-08d801498426
+x-ms-traffictypediagnostic: SN4PR0401MB3696:
+x-microsoft-antispam-prvs: <SN4PR0401MB3696C1E180727A1908850A549BB00@SN4PR0401MB3696.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 041517DFAB
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iSQ2Oq/ErtuA1i/19kzCfWnfazoe7VKywsQ4OeFtj1tHo8t917b3SxBLo5oxLUkJsVrbaS68hRV1USU3nZd/zqzA+qTVZ4Johf3c8zQuVrV8ybTlevz7ANlFw2gLb0r2U3TpiqVSS75zYXilLSNzCpwNqNf6TzSE6FDc+F+3xxX3ZB5K+qplLttrwn8d+6tJ7EuUvgTUAGL+u44CV/ZIag8tFDQc+yKS0P4tKN6QZbYqjG2wNSRUP98BlVCPgsi4Y+APqxJ1cT9MnmnFJcJih1a3iZdGIGGF4V3VWm9Bde8O8uLbEBeu2cIRzTagRx86a1/EQEFa3IdiEDcdXv1q7puE3BrOKkw6HSNf2Dyt+5FlR+ShOiGSbievVVWzuscoVM0TMkav17HcYEk95JKraA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(396003)(39860400002)(136003)(346002)(376002)(33656002)(316002)(54906003)(110136005)(71200400001)(8936002)(55016002)(7696005)(66446008)(66476007)(64756008)(66556008)(66946007)(76116006)(478600001)(86362001)(966005)(6506007)(91956017)(5660300002)(52536014)(2906002)(9686003)(4326008)(53546011)(8676002)(26005)(186003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: LwUXsttAvwueNhtt+zUh3KJw27ygEhT9LK9MdA88jASWvLivkJnt5lpqmwku+ODKjRj2Szk2P/yNrc2/YoYo2SRb5FMDPbpnflsp6oGBDlxi+r0us+ER8E6NpeZqyhZDq3uoMO2OL0PQvlcdK4m//spq5jClsjdn1F3ZIVq3D6ZdZaxRMetbpZgsE8DPZYj+TRN2TnNDnHoGPvXhT9GcsWpjkgKF9qTTLlswA/S4KzIWt6BlvloEKp1PzRJlukTgX53wf+8doDo27xkyvR3bBD26xuDll78QqgGE8YDaOw0yH+60qzao5ebUrbWrW0zYCAIkpckwZ4BiLtcWS7P28W2Nrns2w98aMMUF2+ecC/XqrEcV0kduMzdpOyoNYTtGe9J5t8APXb8dC+laWoCTA2Fe26p0hsKhd1ju24IuXu1N+y7SUTHIAdfXCBj1xdw/DJUT5ul8sLhYDQZ764v/nfiETa4lN2rqZpVvKfR0G8k=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb874fea-133e-4fdf-d6ca-08d801498426
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2020 07:50:53.3074
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oXsSwoK/if6CLxvqdHloQqPTkRc/+41jMyHn68H7q9QrOP9gqsLHYEIkojrkitMfkMkkoCDseOoUteYlnwZvCAu4zNJEStYlHtSWoudKvGQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3696
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25/05/2020 22:59, Jens Axboe wrote:
-> On 5/25/20 1:29 AM, Pavel Begunkov wrote:
->> On 23/05/2020 21:57, Jens Axboe wrote:
->>> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
->>> the buffered read to an io-wq worker. Instead we can rely on page
->>> unlocking callbacks to support retry based async IO. This is a lot more
->>> efficient than doing async thread offload.
->>>
->>> The retry is done similarly to how we handle poll based retry. From
->>> the unlock callback, we simply queue the retry to a task_work based
->>> handler.
->>>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>> ---
->>>  fs/io_uring.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 99 insertions(+)
->>>
->> ...
->>> +
->>> +	init_task_work(&rw->task_work, io_async_buf_retry);
->>> +	/* submit ref gets dropped, acquire a new one */
->>> +	refcount_inc(&req->refs);
->>> +	tsk = req->task;
->>> +	ret = task_work_add(tsk, &rw->task_work, true);
->>> +	if (unlikely(ret)) {
->>> +		/* queue just for cancelation */
->>> +		init_task_work(&rw->task_work, io_async_buf_cancel);
->>> +		tsk = io_wq_get_task(req->ctx->io_wq);
->>
->> IIRC, task will be put somewhere around io_free_req(). Then shouldn't here be
->> some juggling with reassigning req->task with task_{get,put}()?
-> 
-> Not sure I follow? Yes, we'll put this task again when the request
-> is freed, but not sure what you mean with juggling?
-
-I meant something like:
-
-...
-/* queue just for cancelation */
-init_task_work(&rw->task_work, io_async_buf_cancel);
-+ put_task_struct(req->task);
-+ req->task = get_task_struct(io_wq_task);
-
-
-but, thinking twice, if I got the whole idea right, it should be ok as is --
-io-wq won't go away before the request anyway, and leaving req->task pinned down
-for a bit is not a problem.
-
->>> +		task_work_add(tsk, &rw->task_work, true);
->>> +	}
->>> +	wake_up_process(tsk);
->>> +	return 1;
->>> +}
->> ...
->>>  static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>  {
->>>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
->>> @@ -2601,6 +2696,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>  	if (!ret) {
->>>  		ssize_t ret2;
->>>  
->>> +retry:
->>>  		if (req->file->f_op->read_iter)
->>>  			ret2 = call_read_iter(req->file, kiocb, &iter);
->>>  		else
->>> @@ -2619,6 +2715,9 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>  			if (!(req->flags & REQ_F_NOWAIT) &&
->>>  			    !file_can_poll(req->file))
->>>  				req->flags |= REQ_F_MUST_PUNT;
->>> +			if (io_rw_should_retry(req))
->>
->> It looks like a state machine with IOCB_WAITQ and gotos. Wouldn't it be cleaner
->> to call call_read_iter()/loop_rw_iter() here directly instead of "goto retry" ?
-> 
-> We could, probably making that part a separate helper then. How about the
-> below incremental?
-
-IMHO, it was easy to get lost with such implicit state switching.
-Looks better now! See a small comment below.
-
-> 
->> BTW, can this async stuff return -EAGAIN ?
-> 
-> Probably? Prefer not to make any definitive calls on that being possible or
-> not, as it's sure to disappoint. If it does and IOCB_WAITQ is already set,
-> then we'll punt to a thread like before.
-
-Sounds reasonable
-
-> 
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a5a4d9602915..669dccd81207 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2677,6 +2677,13 @@ static bool io_rw_should_retry(struct io_kiocb *req)
->  	return false;
->  }
->  
-> +static int __io_read(struct io_kiocb *req, struct iov_iter *iter)
-> +{
-> +	if (req->file->f_op->read_iter)
-> +		return call_read_iter(req->file, &req->rw.kiocb, iter);
-> +	return loop_rw_iter(READ, req->file, &req->rw.kiocb, iter);
-> +}
-> +
->  static int io_read(struct io_kiocb *req, bool force_nonblock)
->  {
->  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
-> @@ -2710,11 +2717,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->  	if (!ret) {
->  		ssize_t ret2;
->  
-> -retry:
-> -		if (req->file->f_op->read_iter)
-> -			ret2 = call_read_iter(req->file, kiocb, &iter);
-> -		else
-> -			ret2 = loop_rw_iter(READ, req->file, kiocb, &iter);
-> +		ret2 = __io_read(req, &iter);
->  
->  		/* Catch -EAGAIN return for forced non-blocking submission */
->  		if (!force_nonblock || ret2 != -EAGAIN) {
-> @@ -2729,8 +2732,11 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->  			if (!(req->flags & REQ_F_NOWAIT) &&
->  			    !file_can_poll(req->file))
->  				req->flags |= REQ_F_MUST_PUNT;
-> -			if (io_rw_should_retry(req))
-> -				goto retry;
-> +			if (io_rw_should_retry(req)) {
-> +				ret2 = __io_read(req, &iter);
-> +				if (ret2 != -EAGAIN)
-> +					goto out_free;
-
-"goto out_free" returns ret=0, so someone should add a cqe
-
-if (ret2 != -EAGAIN) {
-	kiocb_done(kiocb, ret2);
-	goto free_out;
-}
-
-
-> +			}
->  			kiocb->ki_flags &= ~IOCB_WAITQ;
->  			return -EAGAIN;
->  		}
-> 
-
--- 
-Pavel Begunkov
+On 25/05/2020 15:11, David Sterba wrote:=0A=
+> On Thu, May 14, 2020 at 11:24:12AM +0200, Johannes Thumshirn wrote:=0A=
+>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+>>=0A=
+>> This series adds file-system authentication to BTRFS. =0A=
+>>=0A=
+>> Unlike other verified file-system techniques like fs-verity the=0A=
+>> authenticated version of BTRFS does not need extra meta-data on disk.=0A=
+>>=0A=
+>> This works because in BTRFS every on-disk block has a checksum, for meta=
+-data=0A=
+>> the checksum is in the header of each meta-data item. For data blocks, a=
+=0A=
+>> separate checksum tree exists, which holds the checksums for each block.=
+=0A=
+>>=0A=
+>> Currently BRTFS supports CRC32C, XXHASH64, SHA256 and Blake2b for checks=
+umming=0A=
+>> these blocks. This series adds a new checksum algorithm, HMAC(SHA-256), =
+which=0A=
+>> does need an authentication key. When no, or an incoreect authentication=
+ key=0A=
+>> is supplied no valid checksum can be generated and a read, fsck or scrub=
+=0A=
+>> operation would detect invalid or tampered blocks once the file-system i=
+s=0A=
+>> mounted again with the correct key. =0A=
+> =0A=
+> As mentioned in the discussion under LWN article, https://lwn.net/Article=
+s/818842/=0A=
+> ZFS implements split hash where one half is (partial) authenticated hash=
+=0A=
+> and the other half is a checksum. This allows to have at least some sort=
+=0A=
+> of verification when the auth key is not available. This applies to the=
+=0A=
+> fixed size checksum area of metadata blocks, for data we can afford to=0A=
+> store both hashes in full.=0A=
+> =0A=
+> I like this idea, however it brings interesting design decisions, "what=
+=0A=
+> if" and corner cases:=0A=
+> =0A=
+> - what hashes to use for the plain checksum, and thus what's the split=0A=
+> - what if one hash matches and the other not=0A=
+> - increased checksum calculation time due to doubled block read=0A=
+> - whether to store the same parital hash+checksum for data too=0A=
+> =0A=
+> As the authenticated hash is the main usecase, I'd reserve most of the=0A=
+> 32 byte buffer to it and use a weak hash for checksum: 24 bytes for HMAC=
+=0A=
+> and 8 bytes for checksum. As an example: sha256+xxhash or=0A=
+> blake2b+xxhash.=0A=
+> =0A=
+> I'd outright skip crc32c for the checksum so we have only small number=0A=
+> of authenticated checksums and avoid too many options, eg.=0A=
+> hmac-sha256-crc32c etc. The result will be still 2 authenticated hashes=
+=0A=
+> with the added checksum hardcoded to xxhash.=0A=
+> =0A=
+=0A=
+Hmm I'm really not a fan of this. We would have to use something like =0A=
+sha2-224 to get the room for the 2nd checksum. So we're using a weaker=0A=
+hash just so we can add a second checksum. On the other hand you've asked =
+=0A=
+me to add the known pieces of information into the hashes as a salt to=0A=
+"make attacks harder at a small cost".=0A=
