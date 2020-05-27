@@ -2,73 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E45B1E4007
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 13:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49BDE1E400C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 13:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbgE0L2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 07:28:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52592 "EHLO mx2.suse.de"
+        id S1726069AbgE0L25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 07:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728568AbgE0L2Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 07:28:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 78A6EAE17;
-        Wed, 27 May 2020 11:28:26 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id D5E36DA72D; Wed, 27 May 2020 13:27:25 +0200 (CEST)
-Date:   Wed, 27 May 2020 13:27:25 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     Johannes Thumshirn <jth@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Richard Weinberger <richard@nod.at>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
-Message-ID: <20200527112725.GA18421@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Johannes Thumshirn <jth@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Richard Weinberger <richard@nod.at>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20200514092415.5389-1-jth@kernel.org>
- <5663c6ca-87d4-8a98-3338-e9a077f4c82f@gmx.com>
+        id S1725766AbgE0L25 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 May 2020 07:28:57 -0400
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80A27208C3;
+        Wed, 27 May 2020 11:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590578936;
+        bh=9f/lRzafJFrJXPhrHpqb1P487oTDycX7ANTY/3w2low=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ZaN7XVSQ4RPZG0KbPIpeSN7Voo/9jycJMTHX6d9WR/iviuDdPQPGH1OyWXYQT792d
+         7aVYgRM7VtT6CDfUnIiCQDp2pYBrui++m6tCg3gkhfCv5Kv9ddxwYhzxptoWre91tt
+         nAp/cmgfRdHu5B8Azsxql6o3LKJjdnzWKVPT4xqY=
+Received: by mail-oo1-f42.google.com with SMTP id a83so4907403oob.9;
+        Wed, 27 May 2020 04:28:56 -0700 (PDT)
+X-Gm-Message-State: AOAM530dvrMVbD3PViuQ5YOy+8Bb4zvabJV8/NElnX15K7Gfn7bJgP9F
+        g4L5296ySwQER8bb6sGK2mDvb+xIdWfDB2xXibU=
+X-Google-Smtp-Source: ABdhPJxL4QyLSRiXgww4FQ3grAmkFtEQXMWXQUZG/8ZuPKRGO2M5716GycRTSDB51t/qlLqcd0i19z0MUC2gLIEpwQM=
+X-Received: by 2002:a05:6820:28a:: with SMTP id q10mr2723842ood.79.1590578935739;
+ Wed, 27 May 2020 04:28:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5663c6ca-87d4-8a98-3338-e9a077f4c82f@gmx.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Received: by 2002:ac9:1d8:0:0:0:0:0 with HTTP; Wed, 27 May 2020 04:28:54 -0700 (PDT)
+In-Reply-To: <d0d2e4b3-436e-3bad-770c-21c9cbddf80e@gmail.com>
+References: <20200525115052.19243-1-kohada.t2@gmail.com> <CGME20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8@epcas1p2.samsung.com>
+ <20200525115052.19243-4-kohada.t2@gmail.com> <00d301d6332f$d4a52300$7def6900$@samsung.com>
+ <d0d2e4b3-436e-3bad-770c-21c9cbddf80e@gmail.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Wed, 27 May 2020 20:28:54 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9GzYTxjtFuUJe+WjEOHSJnVbOfwn_4ZXZgmiVtjV4z6A@mail.gmail.com>
+Message-ID: <CAKYAXd9GzYTxjtFuUJe+WjEOHSJnVbOfwn_4ZXZgmiVtjV4z6A@mail.gmail.com>
+Subject: Re: [PATCH 4/4] exfat: standardize checksum calculation
+To:     Tetsuhiro Kohada <kohada.t2@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 27, 2020 at 10:08:06AM +0800, Qu Wenruo wrote:
-> > Changes since v2:
-> > - Select CONFIG_CRYPTO_HMAC and CONFIG_KEYS (kbuild robot)
-> > - Fix double free in error path
-> > - Fix memory leak in error path
-> > - Disallow nodatasum and nodatacow when authetication is use (Eric)
-> 
-> Since we're disabling NODATACOW usages, can we also disable the
-> following features?
-> - v1 space cache
->   V1 space cache uses NODATACOW file to store space cache, althouhg it
->   has inline csum, but it's fixed to crc32c. So attacker can easily
->   utilize this hole to mess space cache, and do some DoS attack.
+2020-05-27 16:39 GMT+09:00, Tetsuhiro Kohada <kohada.t2@gmail.com>:
+> Thank you for your comment.
+>
+>> I can not apply this patch to exfat dev tree. Could you please check it ?
+>> patching file fs/exfat/dir.c
+>> Hunk #1 succeeded at 491 (offset -5 lines).
+>> Hunk #2 succeeded at 500 (offset -5 lines).
+>> Hunk #3 succeeded at 508 (offset -5 lines).
+>> Hunk #4 FAILED at 600.
+>> Hunk #5 succeeded at 1000 (offset -47 lines).
+>> 1 out of 5 hunks FAILED -- saving rejects to file fs/exfat/dir.c.rej
+>> patching file fs/exfat/exfat_fs.h
+>> Hunk #1 succeeded at 137 (offset -2 lines).
+>> Hunk #2 succeeded at 512 (offset -3 lines).
+>> patching file fs/exfat/misc.c
+>> patching file fs/exfat/nls.c
+>
+> II tried applying patch to dev-tree (4c4dbb6ad8e8).
+> -The .patch file I sent
+> -mbox file downloaded from archive
+> But I can't reproduce the error. (Both succeed)
+> How do you reproduce the error?
+I tried to appy your patches in the following order.
+1. [PATCH] exfat: optimize dir-cache
+2. [PATCH 1/4] exfat: redefine PBR as boot_sector
+3. [PATCH 2/4] exfat: separate the boot sector analysis
+4. [PATCH 3/4] exfat: add boot region verification
+5. [PATCH 4/4] exfat: standardize checksum calculation
 
-That's a good point.
-
-The v1 space cache will be phased out but it won't be in a timeframe
-we'll get in the authentication. At this point we don't even have a way
-to select v2 at mkfs time (it's work in progress though), so it would be
-required to switch to v2 on the first mount.
-
-> - fallocate
->   I'm not 100% sure about this, but since nodatacow is already a second
->   class citizen in btrfs, maybe not supporting fallocate is not a
->   strange move.
-
-Fallocate is a standard file operation, not supporting would be quite
-strange. What's the problem with fallocate and authentication?
+Thanks!
+>
+> BR
+>
