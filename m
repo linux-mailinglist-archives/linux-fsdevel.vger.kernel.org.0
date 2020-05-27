@@ -2,114 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 128FD1E4FF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 23:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C414E1E507D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 23:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgE0VRi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 17:17:38 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:53148 "EHLO vps0.lunn.ch"
+        id S1728082AbgE0V1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 17:27:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbgE0VRi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 17:17:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=e7tiZMIiYuTbb+03A1KtQnZH+j3s8ttBBXpLw45dAS0=; b=6LlhV+r1K7qAycippK72vCEiPn
-        c0NM4ZjQCpKRVzGcyTa9buhlm2plrnI2+LoPj8rGLnzkAaEhBdDOH6GhSkIyt4RSrRmo2k/KhZwHP
-        m6wfFs/dCwrLP9yBfZx7nVTzQ9gsQi2SPB1cmp4AI3lsnCf4AM+6SZ+A19c0HtPu+LYk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1je3QV-003SEI-M8; Wed, 27 May 2020 23:17:27 +0200
-Date:   Wed, 27 May 2020 23:17:27 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Jonathan Adams <jwadams@google.com>,
+        id S1726114AbgE0V1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 May 2020 17:27:45 -0400
+Received: from kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net (unknown [163.114.132.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BB422078C;
+        Wed, 27 May 2020 21:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590614864;
+        bh=HUaCb3PCCc2Pw/hRjP9hPvQCIfIdC6bqDipqt+IXdOU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e27RQsyjYiPcLJYK/eWYlxTA6Bn/y9CgNn3E+9GG9h7m/a5G1frb/+wAOfPx/3NE5
+         gAW7R0FZcXgWATLm2Kr9E7RUabkNwvrP/VCkwQjepQzJGb/QKMmOyRYKTiSGdUTuRr
+         2S31ZwxZjPaH1lEr34iVlwoqokOeCs+hilL79l5o=
+Date:   Wed, 27 May 2020 14:27:41 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+        kvm@vger.kernel.org,
         Christian Borntraeger <borntraeger@de.ibm.com>,
+        Jim Mattson <jmattson@google.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
         David Rientjes <rientjes@google.com>,
-        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jim Mattson <jmattson@google.com>
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>
 Subject: Re: [PATCH v3 0/7] Statsfs: a new ram-based file system for Linux
  kernel statistics
-Message-ID: <20200527211727.GB818296@lunn.ch>
+Message-ID: <20200527142741.77e7de37@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+In-Reply-To: <af2ba926-73bc-26c3-7ce7-bd45f657fd85@redhat.com>
 References: <20200526110318.69006-1-eesposit@redhat.com>
+        <20200526153128.448bfb43@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+        <6a754b40-b148-867d-071d-8f31c5c0d172@redhat.com>
+        <20200527132321.54bcdf04@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+        <af2ba926-73bc-26c3-7ce7-bd45f657fd85@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200526110318.69006-1-eesposit@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 26, 2020 at 01:03:10PM +0200, Emanuele Giuseppe Esposito wrote:
-> There is currently no common way for Linux kernel subsystems to expose
-> statistics to userspace shared throughout the Linux kernel; subsystems have
-> to take care of gathering and displaying statistics by themselves, for
-> example in the form of files in debugfs. For example KVM has its own code
-> section that takes care of this in virt/kvm/kvm_main.c, where it sets up
-> debugfs handlers for displaying values and aggregating them from various
-> subfolders to obtain information about the system state (i.e. displaying
-> the total number of exits, calculated by summing all exits of all cpus of
-> all running virtual machines).
+On Wed, 27 May 2020 23:07:53 +0200 Paolo Bonzini wrote:
+> > Again, I have little KVM knowledge, but BPF also uses a fd-based API,
+> > and carries stats over the same syscall interface.  
 > 
-> Allowing each section of the kernel to do so has two disadvantages. First,
-> it will introduce redundant code. Second, debugfs is anyway not the right
-> place for statistics (for example it is affected by lockdown)
-> 
-> In this patch series I introduce statsfs, a synthetic ram-based virtual
-> filesystem that takes care of gathering and displaying statistics for the
-> Linux kernel subsystems.
-> 
-> The file system is mounted on /sys/kernel/stats and would be already used
-> by kvm. Statsfs was initially introduced by Paolo Bonzini [1].
-> 
-> Statsfs offers a generic and stable API, allowing any kind of
-> directory/file organization and supporting multiple kind of aggregations
-> (not only sum, but also average, max, min and count_zero) and data types
-> (boolean, unsigned/signed and custom types). The implementation, which is
-> a generalization of KVM’s debugfs statistics code, takes care of gathering
-> and displaying information at run time; users only need to specify the
-> values to be included in each source.
-> 
-> Statsfs would also be a different mountpoint from debugfs, and would not
-> suffer from limited access due to the security lock down patches. Its main
-> function is to display each statistics as a file in the desired folder
-> hierarchy defined through the API. Statsfs files can be read, and possibly
-> cleared if their file mode allows it.
-> 
-> Statsfs has two main components: the public API defined by
-> include/linux/statsfs.h, and the virtual file system which should end up in
-> /sys/kernel/stats.
-> 
+> Can BPF stats (for BPF scripts created by whatever process is running in
+> the system) be collected by an external daemon that does not have access
+> to the file descriptor?  For KVM it's of secondary importance to gather
+> stats in the program; it can be nice to have and we are thinking of a
+> way to export the stats over the fd-based API, but it's less useful than
+> system-wide monitoring.  Perhaps this is a difference between the two.
 
-Hi Emanuele
+Yes, check out bpftool prog list (bpftool code is under tools/bpf/ in
+the kernel tree). BPF statistics are under a static key, so you may not
+see any on your system. My system shows e.g.:
 
-> The API has two main elements, values and sources. Kernel subsystems like
-> KVM can use the API to create a source, add child sources/values/aggregates
-> and register it to the root source (that on the virtual fs would be
-> /sys/kernel/statsfs).
+81: kprobe  name abc  tag cefaa9376bdaae75  gpl run_time_ns 80941 run_cnt 152
+	loaded_at 2020-05-26T13:00:24-0700  uid 0
+	xlated 512B  jited 307B  memlock 4096B  map_ids 66,64
+	btf_id 16
 
-Another issue i see with networking is that statistic counters can be
-dynamic. They can come and go. One of the drivers i work on has extra
-statistics available when a fibre interface is used, compared to a
-copper interface. And this happens at run time. The netlink API has no
-problems with this. It is a snapshot of what counters are currently
-available. There is no state in the API.
+In this example run_time_ns and run_cnt are stats.
 
-In my humble opinion, networking is unlikely to adopt your approach.
-You probably want to look around for other subsystems which have
-statistics, and see if you can cover their requirements, and get them
-on board.
+The first number on the left is the program ID. BPF has an IDA, and
+each object gets an integer id. So admin (or CAP_BPF, I think) can
+iterate over the ids and open fds to objects of interest.
 
-   Andrew
+> Another case where stats and configuration are separate is CPUs, where
+> CPU enumeration is done in sysfs but statistics are exposed in various
+> procfs files such as /proc/interrupts and /proc/stats.
+
+True, but I'm guessing everyone is just okay living with the legacy
+procfs format there. Otherwise I'd guess the stats would had been added
+to sysfs. I'd be curious to hear the full story there.
