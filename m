@@ -2,108 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6E31E3E9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 12:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2B91E3F5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 12:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387414AbgE0KIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 06:08:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55268 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbgE0KIB (ORCPT
+        id S1729107AbgE0KtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 06:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbgE0KtB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 06:08:01 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04RA7bN9029643;
-        Wed, 27 May 2020 10:07:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=corp-2020-01-29;
- bh=Jgk+aa3gaSbaEJGRzqmUB4J/D3RcAW2mzmSgXwtDYpI=;
- b=I++iBdw/d6EbbsVc0QonMYtP9GdH7G9gqk7JTiB94+7WbFWe/ILrE7Z3/1Xou2AA/fj0
- XfiW1ia3B13QNes64K8EvFxGTdek2n1b1W/CZkKh0BNspXqu5WHk3CdXeMTM9mLZJxGW
- HOtff/B6xDcXoVujMkSWvLLR+R8xcPpBHqJLZ0kEdQhnfyRw8J6J6VCNosFSIaEu0thm
- Xz1cn4ch5LgZ1tUZIBA3t8NTvbbgSWEt29tV/Ak2G+yNA1HvzCz/bBs7k698p7fC90vO
- 0n/SEPzLJEx2JmH8cX0h5LZ95k2fkDoJBgdt9g4Ud68tggcn37DEw46UAI4yWToBi71J Lg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 316u8qxjjc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 May 2020 10:07:37 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04R9vY3D160684;
-        Wed, 27 May 2020 10:05:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 317j5rcya4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 May 2020 10:05:35 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04RA5XM3005085;
-        Wed, 27 May 2020 10:05:33 GMT
-Received: from dhcp-10-175-217-36.vpn.oracle.com (/10.175.217.36)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 27 May 2020 03:05:33 -0700
-Date:   Wed, 27 May 2020 11:05:23 +0100 (BST)
-From:   Alan Maguire <alan.maguire@oracle.com>
-X-X-Sender: alan@localhost
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
-cc:     kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        brendanhiggins@google.com, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com
-Subject: Re: [PATCH v3 3/7] kunit: tests for stats_fs API
-In-Reply-To: <20200526110318.69006-4-eesposit@redhat.com>
-Message-ID: <alpine.LRH.2.21.2005271054360.24819@localhost>
-References: <20200526110318.69006-1-eesposit@redhat.com> <20200526110318.69006-4-eesposit@redhat.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 27 May 2020 06:49:01 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB50C061A0F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 03:49:01 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id nu7so1403966pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 03:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=0NWZYU1lxcrwaW23MbfWedBJs/ZrKLhC3NzbNi3U6p0=;
+        b=SeWBxOYv+3g39jn7O9nFSx1aTgIEdN4uciG2Osp99q7bSNFZBv1GRdCzoDgWU1HSm9
+         XK4IBVi5FdqXDx+ZfT8JZ24EuxbPR5ZXw21X5wDAP03eH2CdPemtnHF7x09M1LrfsKgG
+         F3MNvE54gPvrM6jstfVoFuim5XlSYp4m0EtiE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=0NWZYU1lxcrwaW23MbfWedBJs/ZrKLhC3NzbNi3U6p0=;
+        b=X95VmtaONWIX4X990joQikTOkqoqFY8wkpnv+2yco+Wi+oA9B0zgvzoH89WJV3Isgc
+         xTtPF4Rk0EMHH4+I6JYeBvspzxuDOJ/+GNM1N4FLHlwPCfT/lsfeLKN6sNJbbE4z9MSl
+         Vcbqp/178JQCPOITE+8ZpE+Bd6kvKpaIIbrY08IfuzAfPfss52yspFOlIxkVpVCmyjle
+         SDA3PzEVL1SYhExo/Zn9hwh8ba+sUgrUjvKJFmpo4oovNgGNb4bNQUVQMgJlGUR3E40q
+         8uv/UijvJx/d/VAghr7bA5SeBjCFVBgS8HVrIo7yBgKp5SjHYanw1jUpk95jFIUKjKh+
+         UhtQ==
+X-Gm-Message-State: AOAM530TYT6WchXC8Ub5xluGkUXgZuSl/+WY/2hIrxuszKtQkHzJ8RhH
+        vCqh89nreif+jQhOlCaWjkTlcbCuuJ4oZfX6q4dIN27wo1jwiHOKxoPP8lUKbSqca1DMV4AsICn
+        NuJGYopL4X9qeNfxvknNGvG163/SJnJtC/RHtiDwERDw2u0Ipu2RoZnkAj5nSqa05mORdBdsb+r
+        GI4mdks5I01OA=
+X-Google-Smtp-Source: ABdhPJzd36B5M/VwVyPeqIgGVw3cgyrqkYVGRWHYKVAef1hdEnWsqd13DPzk1ONSfQ8/LHwcGb5ldQ==
+X-Received: by 2002:a17:90a:23e7:: with SMTP id g94mr4559859pje.210.1590576540509;
+        Wed, 27 May 2020 03:49:00 -0700 (PDT)
+Received: from nixbox ([192.19.250.250])
+        by smtp.gmail.com with ESMTPSA id u14sm1873017pfc.87.2020.05.27.03.48.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2020 03:48:59 -0700 (PDT)
+Date:   Wed, 27 May 2020 13:48:48 +0300
+From:   Boris Sukholitko <boris.sukholitko@broadcom.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Subject: [PATCH] __register_sysctl_table: do not drop subdir
+Message-ID: <20200527104848.GA7914@nixbox>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=4
- mlxlogscore=999 mlxscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005270072
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- priorityscore=1501 spamscore=0 cotscore=-2147483648 suspectscore=4
- phishscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005270073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 May 2020, Emanuele Giuseppe Esposito wrote:
+Successful get_subdir returns dir with its header.nreg properly
+adjusted. No need to drop the dir in that case.
 
-> Add kunit tests to extensively test the stats_fs API functionality.
->
+Signed-off-by: Boris Sukholitko <boris.sukholitko@broadcom.com>
+Fixes: 7ec66d06362d (sysctl: Stop requiring explicit management of sysctl directories)
+---
+ fs/proc/proc_sysctl.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I've added in the kunit-related folks.
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index b6f5d459b087..6f237f0eb531 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1286,8 +1286,8 @@ struct ctl_table_header *__register_sysctl_table(
+ {
+ 	struct ctl_table_root *root = set->dir.header.root;
+ 	struct ctl_table_header *header;
++	struct ctl_dir *dir, *start_dir;
+ 	const char *name, *nextname;
+-	struct ctl_dir *dir;
+ 	struct ctl_table *entry;
+ 	struct ctl_node *node;
+ 	int nr_entries = 0;
+@@ -1307,6 +1307,7 @@ struct ctl_table_header *__register_sysctl_table(
  
-> In order to run them, the kernel .config must set CONFIG_KUNIT=y
-> and a new .kunitconfig file must be created with CONFIG_STATS_FS=y
-> and CONFIG_STATS_FS_TEST=y
->
+ 	spin_lock(&sysctl_lock);
+ 	dir = &set->dir;
++	start_dir = dir;
+ 	/* Reference moved down the diretory tree get_subdir */
+ 	dir->header.nreg++;
+ 	spin_unlock(&sysctl_lock);
+@@ -1333,7 +1334,8 @@ struct ctl_table_header *__register_sysctl_table(
+ 	if (insert_header(dir, header))
+ 		goto fail_put_dir_locked;
+ 
+-	drop_sysctl_table(&dir->header);
++	if (start_dir == dir)
++		drop_sysctl_table(&dir->header);
+ 	spin_unlock(&sysctl_lock);
+ 
+ 	return header;
+-- 
+2.23.1
 
-It looks like CONFIG_STATS_FS is built-in, but it exports
-much of the functionality you are testing.  However could the
-tests also be built as a module (i.e. make CONFIG_STATS_FS_TEST
-a tristate variable)? To test this you'd need to specify
-CONFIG_KUNIT=m and CONFIG_STATS_FS_TEST=m, and testing would
-simply be a case of "modprobe"ing the stats fs module and collecting
-results in /sys/kernel/debug/kunit/<module_name> (rather 
-than running kunit.py). Are you relying on unexported internals in
-the the tests that would prevent building them as a module?
-
-Thanks!
-
-Alan
