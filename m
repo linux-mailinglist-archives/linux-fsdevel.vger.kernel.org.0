@@ -2,86 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28E2C1E491C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F6F1E4943
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbgE0QDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 12:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389267AbgE0QDY (ORCPT
+        id S2390761AbgE0QGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 12:06:46 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49443 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389579AbgE0QGq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 12:03:24 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312B8C05BD1E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id l3so11382757qvo.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
-        b=FAkcrvKPhwXHPzhdsTR4NIhbFqwfLMvAV5bGTRBFGbczDHZC/aQDPVNA9PY7cGrlvI
-         OAU7sMfEHvFrbqT7CvtkuJGTkLTQG5KPLvLc06tbn9wyvDUbjiyyqowgDNO9WndwvoJj
-         X2dl1qZDNUOZqVESipiKNZd2Z60Nw52ZyxG0kUa5w+Kb9fsoxQn99KBAnvXQXuidqHXF
-         g8B5P2fMOTarggI1cwoQW6OJquoa9Iej9VuFDR2ehmtvCwzE99l5fAoHQpqyCpeiAEEr
-         Af1ivrgSbwVp3LHhcKFdtzo1qHJKVNeAaLsKpBMc9QZNWJkGiTDvSPU22BKqJthweSfF
-         Xblw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
-        b=Efs/8lENdRpmnHYpDRpyuMQAa4dA6Ug1db9rVrTDBqa9if4J0WMEajAve1/Oag3F/h
-         456wtQmezPYO7kYffpO2uWX3lHUQoQ45oGKH0tJtPQM9r+7/q+km88Cy1VNAI/x/IR7j
-         uxB21qnPrbBTKY610k+OY8Mgb1J1JuxJsfKTwIqLCzBuK6V3WZtsjoeI9n7LIQmUNW0R
-         W0wqnj4Y7NuMjD88A5JA1JD0LzoZEq61acInqGOeECtJwmRumg4CyRAspIA4+pWlLEzC
-         vrezlBPCpluGtg6b3fo8uvgWEYFVPXZeTr1uS2TFVW+VGM7wP26iVIX9tjj9DI0mr3J1
-         xUoA==
-X-Gm-Message-State: AOAM530Fi/+62D4e7SKqh654fiZTrOotJ2DuuaclQiArdFB6aBP1OQTa
-        xbHBAY/YHz2mUliNdwIiUgf/sQ==
-X-Google-Smtp-Source: ABdhPJyGGNRt6GbiZDvAAJR7JhnDFJNuzQwWePJEhdbGDeVQFHSsv2y//UkvfCBcqxVwmEGqiS8tHA==
-X-Received: by 2002:a0c:f486:: with SMTP id i6mr24701658qvm.190.1590595402656;
-        Wed, 27 May 2020 09:03:22 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:2535])
-        by smtp.gmail.com with ESMTPSA id g66sm2485148qkb.122.2020.05.27.09.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 09:03:22 -0700 (PDT)
-Date:   Wed, 27 May 2020 12:02:57 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 04/12] mm: add support for async page locking
-Message-ID: <20200527160257.GB42293@cmpxchg.org>
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <20200526195123.29053-5-axboe@kernel.dk>
- <20200526215925.GC6781@cmpxchg.org>
- <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
+        Wed, 27 May 2020 12:06:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590595604;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZkcGB2YfoFRSuQGCtsex+ihKZ7XyPFksfWsRlOfpavw=;
+        b=bVaXIdYBt9tx1AV0ibsOXxcVBxdEPNmPhkEWlWXkudd10l7PECD23Oa5QCNgmIHa9xiF+a
+        hQvfDk06ws6cFFP1pVihS2T6GzunfKIfib2r6bBxcLZePryq8YEXLrAQJnvhC0HfPiIT2a
+        n13U6vsuPLXQbIVv41lUPoZ9HHbunQc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-283-Fai_m2LCN5mVS7dqiSe-kQ-1; Wed, 27 May 2020 12:06:40 -0400
+X-MC-Unique: Fai_m2LCN5mVS7dqiSe-kQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D4548005AA;
+        Wed, 27 May 2020 16:06:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-138.rdu2.redhat.com [10.10.112.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CCBE5C1B0;
+        Wed, 27 May 2020 16:06:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <8c74f334-3711-ea07-9875-22f379a62bb3@yandex-team.ru>
+References: <8c74f334-3711-ea07-9875-22f379a62bb3@yandex-team.ru> <8ac18259-ad47-5617-fa01-fba88349b82d@yandex-team.ru> <195849.1590075556@warthog.procyon.org.uk> <3735168.1590592854@warthog.procyon.org.uk>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     dhowells@redhat.com, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs, afs, ext4: Make the inode hash table RCU searchable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3873242.1590595596.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 27 May 2020 17:06:36 +0100
+Message-ID: <3873243.1590595596@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 26, 2020 at 04:01:07PM -0600, Jens Axboe wrote:
-> On 5/26/20 3:59 PM, Johannes Weiner wrote:
-> > On Tue, May 26, 2020 at 01:51:15PM -0600, Jens Axboe wrote:
-> >> Normally waiting for a page to become unlocked, or locking the page,
-> >> requires waiting for IO to complete. Add support for lock_page_async()
-> >> and wait_on_page_locked_async(), which are callback based instead. This
-> > 
-> > wait_on_page_locked_async() is actually in the next patch, requiring
-> > some back and forth to review. I wonder if this and the next patch
-> > could be merged to have the new API and callers introduced together?
-> 
-> I'm fine with that, if that is preferable. Don't feel strongly about
-> that at all, just tried to do it as piecemeal as possible to make
-> it easier to review.
+Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
 
-Not worth sending a new iteration over, IMO.
+> > Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+> >
+> >>> Is this something that would be of interest to Ext4?
+> >>
+> >> For now, I've plugged this issue with try-lock in ext4 lazy time upda=
+te.
+> >> This solution is much better.
+> >
+> > Would I be able to turn that into some sort of review tag?
+> =
+
+> This version looks more like RFC, so
+> =
+
+> Acked-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> =
+
+> this definitely will fix my problem with ext4 lazytime:
+> https://lore.kernel.org/lkml/158040603451.1879.7954684107752709143.stgit=
+@buzz/
+
+Thanks!
+
+David
+
