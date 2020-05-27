@@ -2,122 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24AAB1E473A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 17:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 058D51E47BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 17:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgE0PXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 11:23:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52936 "EHLO
+        id S1729693AbgE0PlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 11:41:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbgE0PXo (ORCPT
+        with ESMTP id S1726807AbgE0PlN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 11:23:44 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9ECC05BD1E;
-        Wed, 27 May 2020 08:23:44 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id z5so28602936ejb.3;
-        Wed, 27 May 2020 08:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sOraBazhvT2a0mZdINuhAPimqgAtYkj9MdJtgUZJzFA=;
-        b=nXjJXfG5ZIYYXzjKpVe0Ao5guKxaTq6eG1ms+swzDkTfYBMipFk9L6GsrvKFislxJs
-         dBIqxvOTsPbV0TTUjqpMCXCahV2uT2OMBmIjopMyLUpGgnN3dzgrX3K9ruMP7+zvWJHa
-         6Q9ESTx09Ghp2n8X9aWA8f0oq9k4DFfE668nw/6ESO0q1kCNk8QKWAeTx9jkANIQc5h7
-         v/HgPqlVJojQNOhVF4rWPXpYBh7sCOqWckXWaNkz1tRW4OVoMIM6t3KVhwqxSrMWEYuR
-         0Eq7ucpSbnC3F/NLXbJW47KZZ7LuMVM7Y9LqMRBaTegrqbGRgmxu1y7g6FfADkD02yN5
-         jJUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sOraBazhvT2a0mZdINuhAPimqgAtYkj9MdJtgUZJzFA=;
-        b=d26Mnrh13I084PkdvG2a5z6gi5ov5L3LyKsnct5kp54O2et1ugfmx/HHj3npWEA+V9
-         XMzf9a1l2MRbwdUsU8AafXIeeUI3VWB8ZWoocQuFf6OvLuPwO2OA/12HuxwV5GXJPZOR
-         91kdiCm9/7pegrsp3dmAbPbWjPXtzDuW+6tGLvgoekRhViZob0+vlXPxuJDU2fYO8qa4
-         VJXYkkyLorv4MUajlPNWYHMLn1dVIxZEwCxcCY3/yDO2JLEHS734ZD+rsHStKsuEd7Rh
-         6ZleVFrMKe4hnu5nndjR84oAxjsDP4acDDTBvOzBiZNnJxZX+IiW3ctxpuiOxYf8WkdS
-         /cMA==
-X-Gm-Message-State: AOAM5335zXrccktsbH8npKrdeBtR7b6Kl2xEkT6MWy6gsb8kcY2zPVps
-        jHfovtI0pJdbowqXh8T2RA==
-X-Google-Smtp-Source: ABdhPJzI8Z1ajzX61gxQw4uLhe7lK2uddCIzmaZ4nEH9DK6bQgMgfzSTmkBvrii4Sfm5dPEUTs3noA==
-X-Received: by 2002:a17:906:be2:: with SMTP id z2mr6458926ejg.169.1590593022923;
-        Wed, 27 May 2020 08:23:42 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.248.218])
-        by smtp.gmail.com with ESMTPSA id b15sm2436073edk.90.2020.05.27.08.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 08:23:42 -0700 (PDT)
-Date:   Wed, 27 May 2020 18:23:40 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Kaitao Cheng <pilgrimtao@gmail.com>, christian@brauner.io,
-        akpm@linux-foundation.org, gladkov.alexey@gmail.com, guro@fb.com,
-        walken@google.com, avagin@gmail.com, khlebnikov@yandex-team.ru,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc/base: Skip assignment to len when there is no error
- on d_path in do_proc_readlink.
-Message-ID: <20200527152340.GA19985@localhost.localdomain>
-References: <20200527141155.47554-1-pilgrimtao@gmail.com>
- <87k10x5tji.fsf@x220.int.ebiederm.org>
+        Wed, 27 May 2020 11:41:13 -0400
+Received: from forwardcorp1p.mail.yandex.net (forwardcorp1p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b6:217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9B6C05BD1E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 08:41:13 -0700 (PDT)
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 049CD2E15C6;
+        Wed, 27 May 2020 18:41:11 +0300 (MSK)
+Received: from vla5-58875c36c028.qloud-c.yandex.net (vla5-58875c36c028.qloud-c.yandex.net [2a02:6b8:c18:340b:0:640:5887:5c36])
+        by mxbackcorp1o.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id NGexgijeZg-f9xO3Yql;
+        Wed, 27 May 2020 18:41:10 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1590594070; bh=GZ9x2ZWGySF4Uqa2Gprk7wuQyDm6zUMRUd8rMTt/U0M=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=AQjq/e77J+OVLRT4H021tGYF3Ii/ps+KJSby5kWi0IPv+7j8AvpvUslANbYdf7bsY
+         ZbdE+y0nXcKxTXAwWeQCbjz4xwTLAQ/fGhn0yzzBMfp/bddO2Xl6xxI/2+LVWFlYCx
+         HglSOODQqS47DmAukFgT6vUKiQOZifsEAqeTsY18=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:b081:1324::1:4])
+        by vla5-58875c36c028.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id wv4sh5qY4F-f9X85OPB;
+        Wed, 27 May 2020 18:41:09 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] vfs, afs, ext4: Make the inode hash table RCU searchable
+To:     David Howells <dhowells@redhat.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <8ac18259-ad47-5617-fa01-fba88349b82d@yandex-team.ru>
+ <195849.1590075556@warthog.procyon.org.uk>
+ <3735168.1590592854@warthog.procyon.org.uk>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <8c74f334-3711-ea07-9875-22f379a62bb3@yandex-team.ru>
+Date:   Wed, 27 May 2020 18:41:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87k10x5tji.fsf@x220.int.ebiederm.org>
+In-Reply-To: <3735168.1590592854@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 27, 2020 at 09:41:53AM -0500, Eric W. Biederman wrote:
-> Kaitao Cheng <pilgrimtao@gmail.com> writes:
+On 27/05/2020 18.20, David Howells wrote:
+> Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
 > 
-> > we don't need {len = PTR_ERR(pathname)} when IS_ERR(pathname) is false,
-> > it's better to move it into if(IS_ERR(pathname)){}.
+>>> Is this something that would be of interest to Ext4?
+>>
+>> For now, I've plugged this issue with try-lock in ext4 lazy time update.
+>> This solution is much better.
 > 
-> Please look at the generated code.
+> Would I be able to turn that into some sort of review tag?
+
+This version looks more like RFC, so
+
+Acked-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+
+this definitely will fix my problem with ext4 lazytime:
+https://lore.kernel.org/lkml/158040603451.1879.7954684107752709143.stgit@buzz/
+
 > 
-> I believe you will find that your change will generate worse assembly.
-
-I think patch is good.
-
-Super duper CPUs which speculate thousands instructions forward won't
-care but more embedded ones do. Or in other words 1 unnecessary instruction
-on common path is more important for slow CPUs than for fast CPUs.
-
-This style separates common path from error path more cleanly.
-
-And finally "len" here is local, so the issue barely deserves mention
-but if target is in memory code like this happens:
-
-	static struct socket *sockfd_lookup_light(int fd, int *err, int *fput_needed)
-	{
-	        struct fd f = fdget(fd);
-	        struct socket *sock;
-	
-	        *err = -EBADF;
-	        if (f.file) {
-	
-			// unconditionally write to *err as well.
-
-	                sock = sock_from_file(f.file, err);
-	                if (likely(sock)) {
-	                        *fput_needed = f.flags;
-	                        return sock;
-	                }
-	                fdput(f);
-	        }
-	        return NULL;
-	}
-
-so current style promotes more memory dirtying than necessary.
-
-There is another place like this in sk_buff.c (search for ENOBUFS).
-
-> >  	pathname = d_path(path, tmp, PAGE_SIZE);
-> > -	len = PTR_ERR(pathname);
-> > -	if (IS_ERR(pathname))
-> > +	if (IS_ERR(pathname)) {
-> > +		len = PTR_ERR(pathname);
-> >  		goto out;
-> > +	}
+> David
+> 
