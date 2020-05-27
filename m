@@ -2,66 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B90021E43C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 15:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D91071E4423
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 15:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbgE0Ndm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 09:33:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:52000 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387730AbgE0Ndk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 09:33:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=opjoqZxCQdaB3EzLhcpxSqBTfSFuC3UOtI1l3JqnwoU=; b=Kgft5gaHZhY6Kt4LopUAPR1ibt
-        iemlkwvFnSOxJ271VosIgscoX/KwtN7xZ/kuhmVq/CrBp6KE281qC0tv5OMou0Hw+rqgRrij29HCQ
-        DV/oOV3I+Uk2wVTQGSfJ4hCiCskj0zzroOumECHC2x/r/e0C7rvWilX+xSTk/WUs3nc8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jdwBB-003PI5-M7; Wed, 27 May 2020 15:33:09 +0200
-Date:   Wed, 27 May 2020 15:33:09 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>, kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] Statsfs: a new ram-based file system for Linux
- kernel statistics
-Message-ID: <20200527133309.GC793752@lunn.ch>
-References: <20200526110318.69006-1-eesposit@redhat.com>
- <20200526153128.448bfb43@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
- <6a754b40-b148-867d-071d-8f31c5c0d172@redhat.com>
+        id S2388521AbgE0Np3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 09:45:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33650 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387581AbgE0Np2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 May 2020 09:45:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jdwN3-0004d9-Ml; Wed, 27 May 2020 13:45:26 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] statx: remove redundant assignment to variable error
+Date:   Wed, 27 May 2020 14:45:25 +0100
+Message-Id: <20200527134525.175992-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a754b40-b148-867d-071d-8f31c5c0d172@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I don't really know a lot about the networking subsystem, and as it was
-> pointed out in another email on patch 7 by Andrew, networking needs to
-> atomically gather and display statistics in order to make them consistent,
-> and currently this is not supported by stats_fs but could be added in
-> future.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Emanuele
+The variable error is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Do you have any idea how you will support atomic access? It does not
-seem easy to implement in a filesystem based model.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     Andrew
+diff --git a/fs/stat.c b/fs/stat.c
+index 3213d1b2750e..d0d5b8cbe4b2 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -192,7 +192,7 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
+ 	      struct kstat *stat, u32 request_mask)
+ {
+ 	struct path path;
+-	int error = -EINVAL;
++	int error;
+ 	unsigned lookup_flags;
+ 
+ 	if (vfs_stat_set_lookup_flags(&lookup_flags, flags))
+-- 
+2.25.1
+
