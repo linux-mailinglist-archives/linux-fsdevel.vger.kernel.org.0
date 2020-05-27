@@ -2,161 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7021E39C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 09:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 702FC1E3AC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 09:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbgE0HDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 03:03:05 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37083 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbgE0HDE (ORCPT
+        id S2387487AbgE0HjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 03:39:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387444AbgE0HjO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 03:03:04 -0400
-Received: by mail-oi1-f193.google.com with SMTP id m67so10517784oif.4;
-        Wed, 27 May 2020 00:03:03 -0700 (PDT)
+        Wed, 27 May 2020 03:39:14 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3246CC061A0F;
+        Wed, 27 May 2020 00:39:14 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 131so3092746pfv.13;
+        Wed, 27 May 2020 00:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hdoj3JJ/5JLP5p3ePdNfRX52Ttc8j3sVsRMMvrMaTIk=;
+        b=BprYPSq9xmBhWjDRNElxaRFVWEShMqprHmjjyIJrc8N16XlAsGIYyRv1JNKiSJByYu
+         gr8cQIRLs4rPFhAHqM+2yM0XG8L5aBrpralWp8waDBcl2/VPKkjIfH2MmfrJQeKaUsDL
+         RaSaVdNrS6S4X/0LjJ4X7FgFLF+xAl5+kuPgADYYa5hJmX78g0WSKnHFtTZd9UFAl1Ob
+         26zqAe/5MWJZx+do4gXxWW57nucincSqxItcfQHPcRqS9GiWgbcr4D8g1dbkaoj7QEpf
+         2aOmbIxI5545n1M+2iPPP+HwcIpHvU3IpcMFK1mEHq4NlXLj62cmvZRua8ZdBTxaw2vE
+         BDzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UmrgkNrS7YJyoX//CVVX8i/eCGz9CaA9GDfJeRj6hok=;
-        b=rVkoQMULJ+OZ9x5kHBlqLqq5f6KYD2w/b0J2IyVB3B8JqMpW7sk7jWcZvEC5z4I2s5
-         /U9W/KEo/Y0TtJyaeao2lGFjLsMlHwKhCVKd1qhJhCmI2CQIjKHlv8PVmI2lUKM3QZRr
-         2D1V50FJZ4yZ/OeBxvwn0ssUHavgw4LuXbyG6F6NOPolLGAjObfPDMUaHo2Mvo84seuA
-         FsRFyThXciFbJZqkE7uUHt5mAGaemkWh4a679yUz7gAb7MGqkY0h+vTo19twyS+wAfqW
-         Gtn6fZ3nk46IIj9BzuRvbNyEk2QkxkVtDnw7461N395/Y8Ae32oTLe7aCgRAsV7yfGPi
-         8N+g==
-X-Gm-Message-State: AOAM530Bd2DKOIivzsOKO6SM1T90eRAGz073UiEVlgCtGaeKwl3Entoj
-        gTl066CUVLamfgoBh6FVIykXMF9GUG6MNNZcXQ8=
-X-Google-Smtp-Source: ABdhPJyJItgq7CbQXJlF6MFLLk/+bu/fSz/XUZ+gwTEqMYOT9P6OwO82+92+P3alNyNfXtW65E6GNWlSoFsc0hwoXsQ=
-X-Received: by 2002:a05:6808:1:: with SMTP id u1mr1778697oic.54.1590562983010;
- Wed, 27 May 2020 00:03:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hdoj3JJ/5JLP5p3ePdNfRX52Ttc8j3sVsRMMvrMaTIk=;
+        b=q1bcxNlbxpI+6odyyyM4Vdf+yTW9XSeyZqHnK8szQpZQOIZG7uBD+K+ZXhJRLBMQmw
+         r0e6Niva67tmGpwrvsr9gU4mM3OVBO418jwMQ7z5sB79dKKOZQqIeglCjsxYYG+hHCmw
+         PjY2PI5W5H5qIeKwOG3hHfGngY7/knaK0E3RQhasl0rSxBDiYcmWrL+xVinsllogPvvK
+         NeiJVwx08K7z3GjxGNX3X0QjBcko2EJB2CIxu29n4t4yRaWa3iuLJNMbvshacT8mwrbh
+         eKS1WFOdYk3PR16Njh6297Jz3ip5TMLWoxwCyZ5DEE/DFqx/YHKjPl8emXzBVMgR0cTy
+         YuRQ==
+X-Gm-Message-State: AOAM533yvFlCS3JSN/d6fS3jB1mbUcltWEKMBlvZWim5p5Czjub2FPHr
+        SHcUlP0SlaHyoGNLXANPUHw9fCwPDVc=
+X-Google-Smtp-Source: ABdhPJwSOdP6lQD3E0LVW8K1PBoseWJJB+8I8vF1L4waxiipBMMFPGYt2JnXNkOo/mfbVqMNMS/Xsw==
+X-Received: by 2002:a65:49c8:: with SMTP id t8mr2827098pgs.335.1590565153244;
+        Wed, 27 May 2020 00:39:13 -0700 (PDT)
+Received: from ?IPv6:2404:7a87:83e0:f800:286d:5436:cc18:dcda? ([2404:7a87:83e0:f800:286d:5436:cc18:dcda])
+        by smtp.gmail.com with ESMTPSA id o18sm1478897pjp.4.2020.05.27.00.39.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2020 00:39:12 -0700 (PDT)
+Subject: Re: [PATCH 4/4] exfat: standardize checksum calculation
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        'Sungjong Seo' <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200525115052.19243-1-kohada.t2@gmail.com>
+ <CGME20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8@epcas1p2.samsung.com>
+ <20200525115052.19243-4-kohada.t2@gmail.com>
+ <00d301d6332f$d4a52300$7def6900$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <d0d2e4b3-436e-3bad-770c-21c9cbddf80e@gmail.com>
+Date:   Wed, 27 May 2020 16:39:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <20200515143646.3857579-7-hch@lst.de> <20200527043426.3242439-1-natechancellor@gmail.com>
-In-Reply-To: <20200527043426.3242439-1-natechancellor@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 May 2020 09:02:51 +0200
-Message-ID: <CAMuHMdVSduTOi5bUgF9sLQdGADwyL1+qALWsKgin1TeOLGhAKQ@mail.gmail.com>
-Subject: Re: [PATCH] media: omap3isp: Shuffle cacheflush.h and include mm.h
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Roman Zippel <zippel@linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-c6x-dev@linux-c6x.org,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>, Arnd Bergmann <arnd@arndb.de>,
-        alpha <linux-alpha@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00d301d6332f$d4a52300$7def6900$@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nathan,
+Thank you for your comment.
 
-CC Laurent
+> I can not apply this patch to exfat dev tree. Could you please check it ?
+> patching file fs/exfat/dir.c
+> Hunk #1 succeeded at 491 (offset -5 lines).
+> Hunk #2 succeeded at 500 (offset -5 lines).
+> Hunk #3 succeeded at 508 (offset -5 lines).
+> Hunk #4 FAILED at 600.
+> Hunk #5 succeeded at 1000 (offset -47 lines).
+> 1 out of 5 hunks FAILED -- saving rejects to file fs/exfat/dir.c.rej
+> patching file fs/exfat/exfat_fs.h
+> Hunk #1 succeeded at 137 (offset -2 lines).
+> Hunk #2 succeeded at 512 (offset -3 lines).
+> patching file fs/exfat/misc.c
+> patching file fs/exfat/nls.c
 
-On Wed, May 27, 2020 at 6:37 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
-> After mm.h was removed from the asm-generic version of cacheflush.h,
-> s390 allyesconfig shows several warnings of the following nature:
->
-> In file included from ./arch/s390/include/generated/asm/cacheflush.h:1,
->                  from drivers/media/platform/omap3isp/isp.c:42:
-> ./include/asm-generic/cacheflush.h:16:42: warning: 'struct mm_struct'
-> declared inside parameter list will not be visible outside of this
-> definition or declaration
->
-> cacheflush.h does not include mm.h nor does it include any forward
-> declaration of these structures hence the warning. To avoid this,
-> include mm.h explicitly in this file and shuffle cacheflush.h below it.
->
-> Fixes: 19c0054597a0 ("asm-generic: don't include <linux/mm.h> in cacheflush.h")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+II tried applying patch to dev-tree (4c4dbb6ad8e8).
+-The .patch file I sent
+-mbox file downloaded from archive
+But I can't reproduce the error. (Both succeed)
+How do you reproduce the error?
 
-Thanks for your patch!
-
-> I am aware the fixes tag is kind of irrelevant because that SHA will
-> change in the next linux-next revision and this will probably get folded
-> into the original patch anyways but still.
->
-> The other solution would be to add forward declarations of these structs
-> to the top of cacheflush.h, I just chose to do what Christoph did in the
-> original patch. I am happy to do that instead if you all feel that is
-> better.
-
-That actually looks like a better solution to me, as it would address the
-problem for all users.
-
->  drivers/media/platform/omap3isp/isp.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-> index a4ee6b86663e..54106a768e54 100644
-> --- a/drivers/media/platform/omap3isp/isp.c
-> +++ b/drivers/media/platform/omap3isp/isp.c
-> @@ -39,8 +39,6 @@
->   *     Troy Laramy <t-laramy@ti.com>
->   */
->
-> -#include <asm/cacheflush.h>
-> -
->  #include <linux/clk.h>
->  #include <linux/clkdev.h>
->  #include <linux/delay.h>
-> @@ -49,6 +47,7 @@
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/mm.h>
->  #include <linux/module.h>
->  #include <linux/omap-iommu.h>
->  #include <linux/platform_device.h>
-> @@ -58,6 +57,8 @@
->  #include <linux/sched.h>
->  #include <linux/vmalloc.h>
->
-> +#include <asm/cacheflush.h>
-> +
->  #ifdef CONFIG_ARM_DMA_USE_IOMMU
->  #include <asm/dma-iommu.h>
->  #endif
-
-Why does this file need <asm/cacheflush.h> at all?
-It doesn't call any of the flush_*() functions, and seems to compile fine
-without (on arm32).
-
-Perhaps it was included at the top intentionally, to override the definitions
-of copy_{to,from}_user_page()? Fortunately that doesn't seem to be the
-case, from a quick look at the assembler output.
-
-So let's just remove the #include instead?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+BR
