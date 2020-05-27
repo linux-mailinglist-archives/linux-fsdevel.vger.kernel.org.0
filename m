@@ -2,91 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 134881E3BA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 10:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6E31E3E9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 12:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388045AbgE0IOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 04:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42634 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388041AbgE0IOW (ORCPT
+        id S2387414AbgE0KIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 06:08:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55268 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbgE0KIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 04:14:22 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC4AC03E97A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 01:14:21 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id z6so27763492ljm.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 01:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/zzZtT7KW7sYELS+x9P5gFRYxRCfWQakAeOdFpPLtsA=;
-        b=n+U1wbC11tvcVxQlHXWV9nn3KwP1+ePp9m9shXT05yfmWjfN5kBIOqCYsW86q1QDJs
-         TWbnR77mQ7t5eJRdy/82kUGdgY7X9jhWMRWSHOOLt/T0raPsQDVlsThMGleAMh0yWhEr
-         fZj67VmYf5a1Lp0QiHCvybHuR1S3pU51x0pOytBk9Rk3HL48i9fymYRL12nJ6rVw2o5d
-         AAgwJGYPrvVdIvbuX7Z+XmxvChkhRfcaOlzLuOkzJCDh4veOjuxP/2aOOS1QanH8z2Ja
-         CK12D3ZIn8CZlry1JEgxI8a1AAtlgwgy/FQtGwW44wx8VYAJMBlx2zbIIaZN54xiLlwl
-         N0Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/zzZtT7KW7sYELS+x9P5gFRYxRCfWQakAeOdFpPLtsA=;
-        b=fY7HZjB7cRrYSY3CoSQnp3dOnpph6RH8YOrX2PdTFvnGrw91Oo3stY1h5OJ6cArSjr
-         l+3n7Fif8lvCHkDPRtwGQV0egoBYBOzP4R1UciV7jpDq4VPUPil2K854101dtgz8a4YM
-         SJcty1dIR8YsqHd1iFEPTDcKzmef1YwUejNeEJzBMRNBPrKbXqp3/tqV6MumYlyacPts
-         BGNnL68X/7dp+Ntsx+yvNoGJq1H5MEnIbZOR+ulU8Rg3ovLSphtoZSLBhmzi09w9jGR8
-         ygcJd5Ix3nPoWf6SvPaNA/AdPmwZDariw2UU1xsRFD3H50AIb4gtvDbDAPPNKDZ04FYT
-         cLPw==
-X-Gm-Message-State: AOAM533L8EGrzfIrc1Cd35bXQXPnnF0bkLdcP6AhtrL9O8Op+8/zopOn
-        jMrv5zBuyQfBNLxe9rKI/jZC687noT43/2GqkpKojg==
-X-Google-Smtp-Source: ABdhPJzUJ6PUKWE4CS8AO2wzYW1rnO8yE1O6Sl9F6DxNY0ivQj69wqaQu7Xcdvo4njCx9xLdp9661fYvBnTP5lZlUAI=
-X-Received: by 2002:a2e:b178:: with SMTP id a24mr2497864ljm.268.1590567260182;
- Wed, 27 May 2020 01:14:20 -0700 (PDT)
+        Wed, 27 May 2020 06:08:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04RA7bN9029643;
+        Wed, 27 May 2020 10:07:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=Jgk+aa3gaSbaEJGRzqmUB4J/D3RcAW2mzmSgXwtDYpI=;
+ b=I++iBdw/d6EbbsVc0QonMYtP9GdH7G9gqk7JTiB94+7WbFWe/ILrE7Z3/1Xou2AA/fj0
+ XfiW1ia3B13QNes64K8EvFxGTdek2n1b1W/CZkKh0BNspXqu5WHk3CdXeMTM9mLZJxGW
+ HOtff/B6xDcXoVujMkSWvLLR+R8xcPpBHqJLZ0kEdQhnfyRw8J6J6VCNosFSIaEu0thm
+ Xz1cn4ch5LgZ1tUZIBA3t8NTvbbgSWEt29tV/Ak2G+yNA1HvzCz/bBs7k698p7fC90vO
+ 0n/SEPzLJEx2JmH8cX0h5LZ95k2fkDoJBgdt9g4Ud68tggcn37DEw46UAI4yWToBi71J Lg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 316u8qxjjc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 May 2020 10:07:37 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04R9vY3D160684;
+        Wed, 27 May 2020 10:05:35 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 317j5rcya4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 May 2020 10:05:35 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04RA5XM3005085;
+        Wed, 27 May 2020 10:05:33 GMT
+Received: from dhcp-10-175-217-36.vpn.oracle.com (/10.175.217.36)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 May 2020 03:05:33 -0700
+Date:   Wed, 27 May 2020 11:05:23 +0100 (BST)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@localhost
+To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
+cc:     kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        brendanhiggins@google.com, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com
+Subject: Re: [PATCH v3 3/7] kunit: tests for stats_fs API
+In-Reply-To: <20200526110318.69006-4-eesposit@redhat.com>
+Message-ID: <alpine.LRH.2.21.2005271054360.24819@localhost>
+References: <20200526110318.69006-1-eesposit@redhat.com> <20200526110318.69006-4-eesposit@redhat.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
- <20200522144100.GE14199@quack2.suse.cz> <CAB0TPYF+Nqd63Xf_JkuepSJV7CzndBw6_MUqcnjusy4ztX24hQ@mail.gmail.com>
- <20200522153615.GF14199@quack2.suse.cz> <CAB0TPYGJ6WkaKLoqQhsxa2FQ4s-jYKkDe1BDJ89CE_QUM_aBVw@mail.gmail.com>
- <20200525073140.GI14199@quack2.suse.cz>
-In-Reply-To: <20200525073140.GI14199@quack2.suse.cz>
-From:   Martijn Coenen <maco@android.com>
-Date:   Wed, 27 May 2020 10:14:09 +0200
-Message-ID: <CAB0TPYHVfkYyFYqp96-PfcP60PKRX6VqrfMHJPkG=UT2956EqQ@mail.gmail.com>
-Subject: Re: Writeback bug causing writeback stalls
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, miklos@szeredi.hu, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=4
+ mlxlogscore=999 mlxscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005270072
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9633 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 cotscore=-2147483648 suspectscore=4
+ phishscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005270073
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Tue, 26 May 2020, Emanuele Giuseppe Esposito wrote:
 
-On Mon, May 25, 2020 at 9:31 AM Jan Kara <jack@suse.cz> wrote:
-> Well, most importantly filesystems like ext4, xfs, btrfs don't hold i_rwsem
-> when writing back inode and that's deliberate because of performance. We
-> don't want to block writes (or event reads in case of XFS) for the inode
-> during writeback.
-
-Thanks for clarifying, that makes sense. By the way, do you have an
-ETA for your fix? We are under some time pressure to get this fixed in
-our downstream kernels, but I'd much rather take a fix from upstream
-from somebody who knows this code well. Alternatively, I can take a
-stab at the idea you proposed and send a patch to LKML for review this
-week.
-
-Thanks,
-Martijn
-
-
+> Add kunit tests to extensively test the stats_fs API functionality.
 >
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+
+I've added in the kunit-related folks.
+ 
+> In order to run them, the kernel .config must set CONFIG_KUNIT=y
+> and a new .kunitconfig file must be created with CONFIG_STATS_FS=y
+> and CONFIG_STATS_FS_TEST=y
+>
+
+It looks like CONFIG_STATS_FS is built-in, but it exports
+much of the functionality you are testing.  However could the
+tests also be built as a module (i.e. make CONFIG_STATS_FS_TEST
+a tristate variable)? To test this you'd need to specify
+CONFIG_KUNIT=m and CONFIG_STATS_FS_TEST=m, and testing would
+simply be a case of "modprobe"ing the stats fs module and collecting
+results in /sys/kernel/debug/kunit/<module_name> (rather 
+than running kunit.py). Are you relying on unexported internals in
+the the tests that would prevent building them as a module?
+
+Thanks!
+
+Alan
