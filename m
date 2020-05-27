@@ -2,192 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FE11E353E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 04:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F3B1E3638
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 05:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbgE0CLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 May 2020 22:11:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
+        id S2387466AbgE0DHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 May 2020 23:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbgE0CLP (ORCPT
+        with ESMTP id S1725893AbgE0DHm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 May 2020 22:11:15 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6105C03E97B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 19:11:14 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id u188so1524361wmu.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 19:11:14 -0700 (PDT)
+        Tue, 26 May 2020 23:07:42 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A995CC061A0F;
+        Tue, 26 May 2020 20:07:41 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id c20so22643120ilk.6;
+        Tue, 26 May 2020 20:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ipUdTLnpQOIojrMyR3JyiZnfjmcjJ5S3+vvLX0u1WTg=;
-        b=DOuH2kP2aeGP1W4uOzhBKrSoSzufsBnclYFQQFHRS9g2gBz9ORHxXyrcJmDgHCI+nd
-         lKZR3CxT8/SFUPl/0RSlQZoTAvQ2VoBGw5IJ03AscxowpPHOX45qQPtC3m1xh2vs5nBb
-         StR23Z28+tzSznWdX5y5wF+aiDvT1LQNmvQB4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NoLQZ4xLsmiigYDKwkyKj0BqR8pGmA2XjKXfyOFiOGQ=;
+        b=ecfBllBPvCa8XsDJLnfADTkGN6+8/grXE/wm7/P7v6KQSOnpvILfr+A6G3RD8gSt1V
+         bcG0w7NqoMDFPFyROpM8wFf1TYhiaV8A/yQdMf9lkSv2kwCGRV5h7KxRLIdClrUbpvPy
+         Z6M31H9tEWows4qRtj1lW1QCP3kCmsDMg3qLw7KmFS9Pc78lBjjoNaVC2JVWePQNm4ly
+         Tidg8o08isU+NfUD2ZB/3QCYh3eoTB5tJsct5E8/E1FGNgWlwWvgNzZltULIrNilc3rv
+         IGxIk+BMAQxjIZ0ACpSWUyfugyumeGFBCfSjXGxQ2ryIa+/Q00dCx2AwZR+HOHTOxdHK
+         8Teg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ipUdTLnpQOIojrMyR3JyiZnfjmcjJ5S3+vvLX0u1WTg=;
-        b=MonCVDjLe/ECghjBlA4B600c0jkSoO3YwnkJqkz8dMNPnVx7BiJmg16HqVA46wMJc5
-         fbCAgeyaHmG0babBuH7Bpe8xWxWnM5+vZjpr+QWEYyrMmD7wcZxovJN5ZEBN/xjl+YnB
-         HkzCUILvnqLscuS8g4sS0vuBWvMsgzVQ0ow9XdsGjp/CGBL/0dGUKz45iLOOtshKRMog
-         YjRdJECWr2NCXI39enso2oFcKZAM3uf6bmvBmGYFH59yoJggfhGbLoP4kjbvHNrhQ0qu
-         PEfHGxwdjqOpOXMcxdivE/x258ehGOfqwoMjLXm+oUMeUpc6IQs6iKqa7uUFG+45PoBM
-         1Gpg==
-X-Gm-Message-State: AOAM530DAfdY9zgrzXpVZPL0vBdTaovSvVJjIHP15ZFSVBvozZEuFIXd
-        tJUOnUf6ETEksFItlu35/BOJ1w==
-X-Google-Smtp-Source: ABdhPJw2LdNhciHKkSNxeAMGIla1TaBk20r0eRoecZGPQSy8eengZqskOy+JhG0pZfQ9RCfwACNT2w==
-X-Received: by 2002:a1c:117:: with SMTP id 23mr1993725wmb.90.1590545473423;
-        Tue, 26 May 2020 19:11:13 -0700 (PDT)
-Received: from google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id l19sm1259285wmj.14.2020.05.26.19.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 19:11:12 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 27 May 2020 04:11:11 +0200
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
-Message-ID: <20200527021111.GA197666@google.com>
-References: <20200526163336.63653-1-kpsingh@chromium.org>
- <20200526163336.63653-3-kpsingh@chromium.org>
- <20200527004902.lo6c2efv5vix5nqq@ast-mbp.dhcp.thefacebook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NoLQZ4xLsmiigYDKwkyKj0BqR8pGmA2XjKXfyOFiOGQ=;
+        b=IlVUS3JGcm6yv//f30wWqtRqgLJqg0oM/QYlqDL8UQNBnd7paJR8IKrAgTtcgjnzbY
+         a1n+L1jHDRitLBT3YhNbSE6psnlfPgIWDI7d1yqYmVpMARtlDLFtLPtm3UeJJrMpz9dZ
+         h3B3FsbBGu9HfxWCMr/DD1RuQK2d3PWj3zVwz2r83MUpVhKagl7iMCg1GMi/oQkjCneR
+         oTItvoAGeDGximB7EBK3sPR+N68/J8fHaEO/bNaz4rh2E6CkL6cYTBqdSCF57M8sDLU5
+         /t/lVRi3bw96BRABNTbwpFMqDsJ6c3xXi3VV532oYHdVqO75XYW3Z08Gz8aiQesLc4qx
+         wMew==
+X-Gm-Message-State: AOAM530DV6W6SLZlEunsNyi2wiqnupHOfVtXmI6CQHgBUrPmO06n8Rc6
+        ZA4xGqjRAJn9ZoS9B6l2pFzr3kd1RbEjBr1b2yc=
+X-Google-Smtp-Source: ABdhPJxoQlLUksMMTrEeJnBpX7aUmXahzXq+87mU2xG6zjv9GcII3cRppMGcRbjSLU7EEh3E31xctx4o5xAsG0rwNZg=
+X-Received: by 2002:a92:1b86:: with SMTP id f6mr2004630ill.9.1590548860893;
+ Tue, 26 May 2020 20:07:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200527004902.lo6c2efv5vix5nqq@ast-mbp.dhcp.thefacebook.com>
+References: <20200526205322.23465-1-mic@digikod.net> <20200526205322.23465-8-mic@digikod.net>
+In-Reply-To: <20200526205322.23465-8-mic@digikod.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 27 May 2020 06:07:29 +0300
+Message-ID: <CAOQ4uxibpDTyjCJWLGG9jr-Gv9PwO==o50b9O8HGQeUfVMDFag@mail.gmail.com>
+Subject: Re: [PATCH v18 07/12] landlock: Support filesystem access-control
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Richard Weinberger <richard@nod.at>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for taking a look!
+On Wed, May 27, 2020 at 3:36 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+>
+> Thanks to the Landlock objects and ruleset, it is possible to identify
+> inodes according to a process's domain.  To enable an unprivileged
+> process to express a file hierarchy, it first needs to open a directory
+> (or a file) and pass this file descriptor to the kernel through
+> landlock(2).  When checking if a file access request is allowed, we walk
+> from the requested dentry to the real root, following the different
+> mount layers.  The access to each "tagged" inodes are collected
+> according to their rule layer level, and ANDed to create access to the
+> requested file hierarchy.  This makes possible to identify a lot of
+> files without tagging every inodes nor modifying the filesystem, while
+> still following the view and understanding the user has from the
+> filesystem.
+>
 
-On 26-May 17:49, Alexei Starovoitov wrote:
-> On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
-> >  
-> > +static struct bpf_local_storage_data *inode_storage_update(
-> > +	struct inode *inode, struct bpf_map *map, void *value, u64 map_flags)
-> > +{
-> > +	struct bpf_local_storage_data *old_sdata = NULL;
-> > +	struct bpf_local_storage_elem *selem;
-> > +	struct bpf_local_storage *local_storage;
-> > +	struct bpf_local_storage_map *smap;
-> > +	int err;
-> > +
-> > +	err = check_update_flags(map, map_flags);
-> > +	if (err)
-> > +		return ERR_PTR(err);
-> > +
-> > +	smap = (struct bpf_local_storage_map *)map;
-> > +	local_storage = rcu_dereference(inode->inode_bpf_storage);
-> > +
-> > +	if (!local_storage || hlist_empty(&local_storage->list)) {
-> > +		/* Very first elem for this inode */
-> > +		err = check_flags(NULL, map_flags);
-> > +		if (err)
-> > +			return ERR_PTR(err);
-> > +
-> > +		selem = selem_alloc(smap, value);
-> > +		if (!selem)
-> > +			return ERR_PTR(-ENOMEM);
-> > +
-> > +		err = inode_storage_alloc(inode, smap, selem);
-> 
-> inode_storage_update looks like big copy-paste except above one line.
-> pls consolidate.
+Hi Mickael,
 
-Sure.
+Nice work! I am interested in the problem of system wide file access
+rules based on directory hierarchy [1][2]. Not the same problem, but
+with obvious overlaps.
 
-> 
-> > +BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
-> > +	   void *, value, u64, flags)
-> > +{
-> > +	struct bpf_local_storage_data *sdata;
-> > +
-> > +	if (flags > BPF_LOCAL_STORAGE_GET_F_CREATE)
-> > +		return (unsigned long)NULL;
-> > +
-> > +	sdata = inode_storage_lookup(inode, map, true);
-> > +	if (sdata)
-> > +		return (unsigned long)sdata->data;
-> > +
-> > +	if (flags == BPF_LOCAL_STORAGE_GET_F_CREATE &&
-> > +	    atomic_inc_not_zero(&inode->i_count)) {
-> > +		sdata = inode_storage_update(inode, map, value, BPF_NOEXIST);
-> > +		iput(inode);
-> > +		return IS_ERR(sdata) ?
-> > +			(unsigned long)NULL : (unsigned long)sdata->data;
-> > +	}
-> 
-> This is wrong. You cannot just copy paste the refcounting logic
-> from bpf_sk_storage_get(). sk->sk_refcnt is very different from inode->i_count.
-> To start, the inode->i_count cannot be incremented without lock.
+I sketched this untested POC [2] a while ago -
+It introduces the concept of "border control" LSM hooks to avoid the
+need to check which sections in the hierarchy an inode belongs to
+on every syscall.
 
-Good catch! Agreed, Jann pointed out that this can lead to bugs
-similar to https://crbug.com/project-zero/2015.
+With this, you could cache a topology with id's per section and
+cache the section id + topology generation in the inode's security state.
+When inode crosses border control hooks, it's section id is updated.
+When directory hierarchy topology changes, some or all of the cached
+section id's are invalidated and rules <-> sections relations may need
+to be changed.
 
-> If you really need to do it you need igrab().
-> Secondly, the iput() is not possible to call from bpf prog yet, since
+Do you think something like that could be useful for landlock?
 
-> progs are not sleepable and iput() may call iput_final() which may sleep.
+Note that the POC is using d_mountpoint() as the only type of "fence"
+mark. It is sufficient for controlling rename in and out of containers, so
+I just used an already available dentry flag for "fence".
+If the border control hook concept is useful, this could be extended to
+a more generic d_border_passing(), with some internal kernel API
+to manage it and with all the bike shedding that comes with it...
 
-Agreed, I will send a separate patch to add a might_sleep call to
-iput() which currently only has a "Consequently, iput() can sleep."
-warning in the comments so that this can be caught by
-CONFIG_DEBUG_ATOMIC_SLEEP.
+Thanks,
+Amir.
 
-> But considering that only lsm progs from lsm hooks will call bpf_inode_storage_get()
-> the inode is not going to disappear while this function is running.
-
-If the inode pointer is an argument to the LSM hook, it won't
-disappear and yes this does hold generally true for the other
-use-cases as well.
-
-> So why touch i_count ?
-> 
-> > +
-> > +	return (unsigned long)NULL;
-> > +}
-> > +
-> >  BPF_CALL_2(bpf_sk_storage_delete, struct bpf_map *, map, struct sock *, sk)
-> >  {
-> >  	if (refcount_inc_not_zero(&sk->sk_refcnt)) {
-> > @@ -957,6 +1229,20 @@ BPF_CALL_2(bpf_sk_storage_delete, struct bpf_map *, map, struct sock *, sk)
-> >  	return -ENOENT;
-> >  }
-> >  
-> > +BPF_CALL_2(bpf_inode_storage_delete,
-> > +	   struct bpf_map *, map, struct inode *, inode)
-> > +{
-> > +	int err;
-> > +
-> > +	if (atomic_inc_not_zero(&inode->i_count)) {
-> > +		err = inode_storage_delete(inode, map);
-> > +		iput(inode);
-> > +		return err;
-> > +	}
-> 
-> ditto.
-> 
-> > +
-> > +	return inode_storage_delete(inode, map);
-> 
-> bad copy-paste from bpf_sk_storage_delete?
-> or what is this logic suppose to do?
-
-The former :) fixed...
-
-- KP
+[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhBVhyyJv0+xSFQiGQEj60AbD3S=
+ADfKK40uAiC4GF2p9Q@mail.gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgn=3DYNj8cJuccx2KqxEVGZy1z=
+3DBVYXrD=3DMc7Dc=3DJe+-w@mail.gmail.com/
+[3] https://github.com/amir73il/linux/commits/rename_xmnt
