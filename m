@@ -2,108 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A82F31E4295
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 14:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D93F81E42CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 14:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbgE0Mp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 08:45:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19046 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728513AbgE0Mp3 (ORCPT
+        id S1730168AbgE0M6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 08:58:09 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:51774 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730045AbgE0M6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 08:45:29 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04RCWOgG067581;
-        Wed, 27 May 2020 08:45:16 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3170c72v4p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 May 2020 08:45:16 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04RCX31u070298;
-        Wed, 27 May 2020 08:45:16 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3170c72v3f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 May 2020 08:45:16 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 04RCiru1024551;
-        Wed, 27 May 2020 12:45:14 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02dal.us.ibm.com with ESMTP id 316ufake6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 May 2020 12:45:14 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04RCiCXO9372298
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 May 2020 12:44:12 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 256D26A051;
-        Wed, 27 May 2020 12:44:13 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 02E9E6A04D;
-        Wed, 27 May 2020 12:44:10 +0000 (GMT)
-Received: from [9.211.128.7] (unknown [9.211.128.7])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 27 May 2020 12:44:10 +0000 (GMT)
-Subject: Re: [PATCH 0/4] kernfs: proposed locking and concurrency improvement
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
- <20200525061616.GA57080@kroah.com>
-From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
-Message-ID: <1d185eb3-8a85-9138-9277-92400ba03e0a@linux.vnet.ibm.com>
-Date:   Wed, 27 May 2020 05:44:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 27 May 2020 08:58:08 -0400
+Received: by mail-pj1-f68.google.com with SMTP id cx22so1522112pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 05:58:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s1a9q/tUyEJC4vi7UuAcJUjs5V+FO8eu3jIO/70mpPU=;
+        b=ApWNY953h24p+X5gdnuiHkNRt21U01I1YHx2mEWhc9Pa41SHwJVveHlmYvMM6Ts+0+
+         G2Xf3W6tLlrFBmuB8gVAPCtT4d9satO0balZXb/nDlklr+jgc3OXczvT50lXiMJ94UA5
+         x8TJmWSdUKKu3H9NEsXS2QTLgxZyCowWV36bRKPXXtOldFrhyqCYCXiEQTaY6lT16pqr
+         SmCBRf99JMfu3qIoIVgHduaqG7L81iZbih3TSSqWn8GwlLE9RvxKvvQrg6At1lDqTafc
+         wpx5S9rIJ0iCTCZNhdXjsLrV9d2KQYV1DZxEFlWCViO4kc0hDKYmZmAznodhWMlFO13+
+         z8EQ==
+X-Gm-Message-State: AOAM533XAoKeO7hpYTibkk9MD6tPhVZ2ZW3Vwmp2FAvDdBMn1+9BH3+t
+        BhNtsXq+i4KCH9hbLjzbWi8=
+X-Google-Smtp-Source: ABdhPJx1hX7YxfmHw2CQgfaPwXlObO8H2ouRQ7lPjOW6sf/cXg8vawwyKKT+PmfqJjbfTKzAMYAZIQ==
+X-Received: by 2002:a17:902:b904:: with SMTP id bf4mr5759779plb.89.1590584287804;
+        Wed, 27 May 2020 05:58:07 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id i17sm2130357pfq.197.2020.05.27.05.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2020 05:58:06 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id E965F40605; Wed, 27 May 2020 12:58:05 +0000 (UTC)
+Date:   Wed, 27 May 2020 12:58:05 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Boris Sukholitko <boris.sukholitko@broadcom.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, keescook@chromium.org,
+        yzaikin@google.com
+Subject: Re: [PATCH] __register_sysctl_table: do not drop subdir
+Message-ID: <20200527125805.GI11244@42.do-not-panic.com>
+References: <20200527104848.GA7914@nixbox>
 MIME-Version: 1.0
-In-Reply-To: <20200525061616.GA57080@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-05-27_03:2020-05-27,2020-05-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- cotscore=-2147483648 priorityscore=1501 impostorscore=0 clxscore=1011
- suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005270091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200527104848.GA7914@nixbox>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/24/20 11:16 PM, Greg Kroah-Hartman wrote:
+Eric since you authored the code which this code claism to fix, your
+review would be appreciated.
 
-> Independant of your kernfs changes, why do we really need to represent
-> all of this memory with that many different "memory objects"?  What is
-> that providing to userspace?
+On Wed, May 27, 2020 at 01:48:48PM +0300, Boris Sukholitko wrote:
+> Successful get_subdir returns dir with its header.nreg properly
+> adjusted. No need to drop the dir in that case.
+
+This commit log is not that clear to me, can you explain what happens
+without this patch, and how critical it is to fix it. How did you
+notice this issue? If you don't apply this patch what issue do you
+see?
+
+Do we test for it? Can we?
+
+  Luis
+
 > 
-> I remember Ben Herrenschmidt did a lot of work on some of the kernfs and
-> other functions to make large-memory systems boot faster to remove some
-> of the complexity in our functions, but that too did not look into why
-> we needed to create so many objects in the first place.
-
-That was my first choice too.  Unfortunately, I was not consulted on this design decision, however, and now it's out there.  It is, as you guessed, a hardware "feature".  The hw believes there is value in identifying memory in 256MB chunks.  There are, unfortunately, 2^18 or over 250,000 of those on a 64TB system, compared with dozens or maybe even hundreds of other devices.
-
-We considered a revamping of the boot process - delaying some devices, reordering operations and such - but deemed that more dangerous to other architectures.  Although this change is driven by a particular architecture, the changes we've identified are architecture independent.  The risk of breaking something else is much lower than if we start reordering boot steps.
-
-> Also, why do you need to create the devices _when_ you create them?  Can
-> you wait until after init is up and running to start populating the
-> device tree with them?  That way boot can be moving on and disks can be
-> spinning up earlier?
-
-I'm not a systemd expert, unfortunately, so I don't know if it needs to happen *right* then or not.  I do know that upon successful boot, a ps reveals many systemd children still reporting in.  It's not that we're waiting on everybody; the contention is causing a delay in the discovery of key devices like disks, and *that* leads to timeouts firing in systemd rules.  Any workaround bent on dodging the problem tends to get exponentially worse when the numbers change.  We noticed this problem at 32TB, designed some timeout changes and udev options to improve it, only to have both fail at 64TB.  Worse, at 64TB, larger timeouts and udev options failed to work consistently anymore.
-
-There are two times we do coldplugs - once in the initramfs, and then again after we switch over to the actual root.  I did try omitting memory devices after the switchover.  Much faster!  So, why is the second one necessary?  Are there some architectures that need that?  I've not found anyone who can answer that, so going that route presents us with a different big risk.
-
-Rick
-
+> Signed-off-by: Boris Sukholitko <boris.sukholitko@broadcom.com>
+> Fixes: 7ec66d06362d (sysctl: Stop requiring explicit management of sysctl directories)
+> ---
+>  fs/proc/proc_sysctl.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index b6f5d459b087..6f237f0eb531 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -1286,8 +1286,8 @@ struct ctl_table_header *__register_sysctl_table(
+>  {
+>  	struct ctl_table_root *root = set->dir.header.root;
+>  	struct ctl_table_header *header;
+> +	struct ctl_dir *dir, *start_dir;
+>  	const char *name, *nextname;
+> -	struct ctl_dir *dir;
+>  	struct ctl_table *entry;
+>  	struct ctl_node *node;
+>  	int nr_entries = 0;
+> @@ -1307,6 +1307,7 @@ struct ctl_table_header *__register_sysctl_table(
+>  
+>  	spin_lock(&sysctl_lock);
+>  	dir = &set->dir;
+> +	start_dir = dir;
+>  	/* Reference moved down the diretory tree get_subdir */
+>  	dir->header.nreg++;
+>  	spin_unlock(&sysctl_lock);
+> @@ -1333,7 +1334,8 @@ struct ctl_table_header *__register_sysctl_table(
+>  	if (insert_header(dir, header))
+>  		goto fail_put_dir_locked;
+>  
+> -	drop_sysctl_table(&dir->header);
+> +	if (start_dir == dir)
+> +		drop_sysctl_table(&dir->header);
+>  	spin_unlock(&sysctl_lock);
+>  
+>  	return header;
+> -- 
+> 2.23.1
+> 
