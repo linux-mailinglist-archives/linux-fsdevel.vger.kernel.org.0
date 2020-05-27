@@ -2,227 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD9501E48FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 17:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28E2C1E491C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389077AbgE0P6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 11:58:25 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35792 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730443AbgE0P6Z (ORCPT
+        id S2389365AbgE0QDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 12:03:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389267AbgE0QDY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 11:58:25 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 69so19563657otv.2;
-        Wed, 27 May 2020 08:58:24 -0700 (PDT)
+        Wed, 27 May 2020 12:03:24 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312B8C05BD1E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id l3so11382757qvo.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
+        b=FAkcrvKPhwXHPzhdsTR4NIhbFqwfLMvAV5bGTRBFGbczDHZC/aQDPVNA9PY7cGrlvI
+         OAU7sMfEHvFrbqT7CvtkuJGTkLTQG5KPLvLc06tbn9wyvDUbjiyyqowgDNO9WndwvoJj
+         X2dl1qZDNUOZqVESipiKNZd2Z60Nw52ZyxG0kUa5w+Kb9fsoxQn99KBAnvXQXuidqHXF
+         g8B5P2fMOTarggI1cwoQW6OJquoa9Iej9VuFDR2ehmtvCwzE99l5fAoHQpqyCpeiAEEr
+         Af1ivrgSbwVp3LHhcKFdtzo1qHJKVNeAaLsKpBMc9QZNWJkGiTDvSPU22BKqJthweSfF
+         Xblw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AQuabQyL0NgSQawHuCBbM06Uabm6iw+SZxZ1s5FLlmI=;
-        b=ADgKb0M1LMTLd2J7P5FDwQkUC4jZvTZSBEq9vaYT/2NoPMMavFSlnAdSTDX8Z0KpmD
-         UlT28gPqLSx/0HmfsYKL9WUvHngIwzS3EARQyiYrw9Do2BADkUX/5pu0PONh3VEJ+n8i
-         9POT/agPfyqanMg35yrDAfCQrF4UBkaXxJPcwRRcxroeyuY8ftIYsT0DP+GicHabyV/k
-         MF3faPCE86+yQndZTcEXePUCF/mwEd0H7BWBn0IWQFpuKSxv44RMZ8SOMuEvYpSReCum
-         70h20yUCi+unX80ARit3DnZGEV3f33HSDUtwK0phUoTMEYgc2kdJKSmZAuuvo6ynf/Nq
-         JFVw==
-X-Gm-Message-State: AOAM533EJgYwIvbUpuG6rgmIqATM+qGjlMKN2rR/0Bi/DnO638edQl3f
-        aSKISilHIZVCgColULKCiKJsFtUn45zsuqbRrT4=
-X-Google-Smtp-Source: ABdhPJxZVUkNZZJOj47bYNYMRKPYK5sTIzrR5L6ethTLfIfWOYb2kkqtX77sqotxWR7aaeZzl2Agv4JRbcsf2h3jXXw=
-X-Received: by 2002:a9d:3d05:: with SMTP id a5mr5178288otc.262.1590595103734;
- Wed, 27 May 2020 08:58:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
+        b=Efs/8lENdRpmnHYpDRpyuMQAa4dA6Ug1db9rVrTDBqa9if4J0WMEajAve1/Oag3F/h
+         456wtQmezPYO7kYffpO2uWX3lHUQoQ45oGKH0tJtPQM9r+7/q+km88Cy1VNAI/x/IR7j
+         uxB21qnPrbBTKY610k+OY8Mgb1J1JuxJsfKTwIqLCzBuK6V3WZtsjoeI9n7LIQmUNW0R
+         W0wqnj4Y7NuMjD88A5JA1JD0LzoZEq61acInqGOeECtJwmRumg4CyRAspIA4+pWlLEzC
+         vrezlBPCpluGtg6b3fo8uvgWEYFVPXZeTr1uS2TFVW+VGM7wP26iVIX9tjj9DI0mr3J1
+         xUoA==
+X-Gm-Message-State: AOAM530Fi/+62D4e7SKqh654fiZTrOotJ2DuuaclQiArdFB6aBP1OQTa
+        xbHBAY/YHz2mUliNdwIiUgf/sQ==
+X-Google-Smtp-Source: ABdhPJyGGNRt6GbiZDvAAJR7JhnDFJNuzQwWePJEhdbGDeVQFHSsv2y//UkvfCBcqxVwmEGqiS8tHA==
+X-Received: by 2002:a0c:f486:: with SMTP id i6mr24701658qvm.190.1590595402656;
+        Wed, 27 May 2020 09:03:22 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:2535])
+        by smtp.gmail.com with ESMTPSA id g66sm2485148qkb.122.2020.05.27.09.03.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2020 09:03:22 -0700 (PDT)
+Date:   Wed, 27 May 2020 12:02:57 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH 04/12] mm: add support for async page locking
+Message-ID: <20200527160257.GB42293@cmpxchg.org>
+References: <20200526195123.29053-1-axboe@kernel.dk>
+ <20200526195123.29053-5-axboe@kernel.dk>
+ <20200526215925.GC6781@cmpxchg.org>
+ <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
 MIME-Version: 1.0
-References: <20200519181410.GA1963@dumbo> <CAJZ5v0jgA3hh3nB60ANKN1WG9py9BoBqp8N8BuM2W-gpcUaPpg@mail.gmail.com>
- <20200526161932.GD252930@magnolia>
-In-Reply-To: <20200526161932.GD252930@magnolia>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 27 May 2020 17:58:12 +0200
-Message-ID: <CAJZ5v0giCLCqVCTNZW64UYnZvgmOd492YuwUH2KDaWyP4aX+TQ@mail.gmail.com>
-Subject: Re: [PATCH v2] PM: hibernate: restrict writes to the resume device
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Domenico Andreoli <domenico.andreoli@linux.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, "Ted Ts'o" <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 26, 2020 at 6:19 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
->
-> On Mon, May 25, 2020 at 12:52:17PM +0200, Rafael J. Wysocki wrote:
-> > On Tue, May 19, 2020 at 8:14 PM Domenico Andreoli
-> > <domenico.andreoli@linux.com> wrote:
-> > >
-> > > From: Domenico Andreoli <domenico.andreoli@linux.com>
-> > >
-> > > Hibernation via snapshot device requires write permission to the swap
-> > > block device, the one that more often (but not necessarily) is used to
-> > > store the hibernation image.
-> > >
-> > > With this patch, such permissions are granted iff:
-> > >
-> > > 1) snapshot device config option is enabled
-> > > 2) swap partition is used as resume device
-> > >
-> > > In other circumstances the swap device is not writable from userspace.
-> > >
-> > > In order to achieve this, every write attempt to a swap device is
-> > > checked against the device configured as part of the uswsusp API [0]
-> > > using a pointer to the inode struct in memory. If the swap device being
-> > > written was not configured for resuming, the write request is denied.
-> > >
-> > > NOTE: this implementation works only for swap block devices, where the
-> > > inode configured by swapon (which sets S_SWAPFILE) is the same used
-> > > by SNAPSHOT_SET_SWAP_AREA.
-> > >
-> > > In case of swap file, SNAPSHOT_SET_SWAP_AREA indeed receives the inode
-> > > of the block device containing the filesystem where the swap file is
-> > > located (+ offset in it) which is never passed to swapon and then has
-> > > not set S_SWAPFILE.
-> > >
-> > > As result, the swap file itself (as a file) has never an option to be
-> > > written from userspace. Instead it remains writable if accessed directly
-> > > from the containing block device, which is always writeable from root.
-> > >
-> > > [0] Documentation/power/userland-swsusp.rst
-> > >
-> > > v2:
-> > >  - rename is_hibernate_snapshot_dev() to is_hibernate_resume_dev()
-> > >  - fix description so to correctly refer to the resume device
-> > >
-> > > Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
-> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > Cc: Pavel Machek <pavel@ucw.cz>
-> > > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Cc: Christoph Hellwig <hch@lst.de>
-> > > Cc: viro@zeniv.linux.org.uk
-> > > Cc: tytso@mit.edu
-> > > Cc: len.brown@intel.com
-> > > Cc: linux-pm@vger.kernel.org
-> > > Cc: linux-mm@kvack.org
-> > > Cc: linux-xfs@vger.kernel.org
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > >
-> > > ---
-> > >  fs/block_dev.c          |    3 +--
-> > >  include/linux/suspend.h |    6 ++++++
-> > >  kernel/power/user.c     |   14 +++++++++++++-
-> > >  3 files changed, 20 insertions(+), 3 deletions(-)
-> > >
-> > > Index: b/include/linux/suspend.h
-> > > ===================================================================
-> > > --- a/include/linux/suspend.h
-> > > +++ b/include/linux/suspend.h
-> > > @@ -466,6 +466,12 @@ static inline bool system_entering_hiber
-> > >  static inline bool hibernation_available(void) { return false; }
-> > >  #endif /* CONFIG_HIBERNATION */
-> > >
-> > > +#ifdef CONFIG_HIBERNATION_SNAPSHOT_DEV
-> > > +int is_hibernate_resume_dev(const struct inode *);
-> > > +#else
-> > > +static inline int is_hibernate_resume_dev(const struct inode *i) { return 0; }
-> > > +#endif
-> > > +
-> > >  /* Hibernation and suspend events */
-> > >  #define PM_HIBERNATION_PREPARE 0x0001 /* Going to hibernate */
-> > >  #define PM_POST_HIBERNATION    0x0002 /* Hibernation finished */
-> > > Index: b/kernel/power/user.c
-> > > ===================================================================
-> > > --- a/kernel/power/user.c
-> > > +++ b/kernel/power/user.c
-> > > @@ -35,8 +35,14 @@ static struct snapshot_data {
-> > >         bool ready;
-> > >         bool platform_support;
-> > >         bool free_bitmaps;
-> > > +       struct inode *bd_inode;
-> > >  } snapshot_state;
-> > >
-> > > +int is_hibernate_resume_dev(const struct inode *bd_inode)
-> > > +{
-> > > +       return hibernation_available() && snapshot_state.bd_inode == bd_inode;
-> > > +}
-> > > +
-> > >  static int snapshot_open(struct inode *inode, struct file *filp)
-> > >  {
-> > >         struct snapshot_data *data;
-> > > @@ -95,6 +101,7 @@ static int snapshot_open(struct inode *i
-> > >         data->frozen = false;
-> > >         data->ready = false;
-> > >         data->platform_support = false;
-> > > +       data->bd_inode = NULL;
-> > >
-> > >   Unlock:
-> > >         unlock_system_sleep();
-> > > @@ -110,6 +117,7 @@ static int snapshot_release(struct inode
-> > >
-> > >         swsusp_free();
-> > >         data = filp->private_data;
-> > > +       data->bd_inode = NULL;
-> > >         free_all_swap_pages(data->swap);
-> > >         if (data->frozen) {
-> > >                 pm_restore_gfp_mask();
-> > > @@ -202,6 +210,7 @@ struct compat_resume_swap_area {
-> > >  static int snapshot_set_swap_area(struct snapshot_data *data,
-> > >                 void __user *argp)
-> > >  {
-> > > +       struct block_device *bdev;
-> > >         sector_t offset;
-> > >         dev_t swdev;
-> > >
-> > > @@ -232,9 +241,12 @@ static int snapshot_set_swap_area(struct
-> > >                 data->swap = -1;
-> > >                 return -EINVAL;
-> > >         }
-> > > -       data->swap = swap_type_of(swdev, offset, NULL);
-> > > +       data->swap = swap_type_of(swdev, offset, &bdev);
-> > >         if (data->swap < 0)
-> > >                 return -ENODEV;
-> > > +
-> > > +       data->bd_inode = bdev->bd_inode;
-> > > +       bdput(bdev);
-> > >         return 0;
-> > >  }
-> > >
-> > > Index: b/fs/block_dev.c
-> > > ===================================================================
-> > > --- a/fs/block_dev.c
-> > > +++ b/fs/block_dev.c
-> > > @@ -2023,8 +2023,7 @@ ssize_t blkdev_write_iter(struct kiocb *
-> > >         if (bdev_read_only(I_BDEV(bd_inode)))
-> > >                 return -EPERM;
-> > >
-> > > -       /* uswsusp needs write permission to the swap */
-> > > -       if (IS_SWAPFILE(bd_inode) && !hibernation_available())
-> > > +       if (IS_SWAPFILE(bd_inode) && !is_hibernate_resume_dev(bd_inode))
-> > >                 return -ETXTBSY;
-> > >
-> > >         if (!iov_iter_count(from))
-> > >
-> > > --
-> >
-> > The patch looks OK to me.
-> >
-> > Darrick, what do you think?
->
-> Looks fine to me too.
->
-> I kinda wonder how uswsusp prevents the bdev from being swapoff'd (or
-> just plain disappearing) such that bd_inode will never point to a
-> recycled inode, but I guess since we're only comparing pointer values
-> it's not a big deal for this patch...
->
-> Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+On Tue, May 26, 2020 at 04:01:07PM -0600, Jens Axboe wrote:
+> On 5/26/20 3:59 PM, Johannes Weiner wrote:
+> > On Tue, May 26, 2020 at 01:51:15PM -0600, Jens Axboe wrote:
+> >> Normally waiting for a page to become unlocked, or locking the page,
+> >> requires waiting for IO to complete. Add support for lock_page_async()
+> >> and wait_on_page_locked_async(), which are callback based instead. This
+> > 
+> > wait_on_page_locked_async() is actually in the next patch, requiring
+> > some back and forth to review. I wonder if this and the next patch
+> > could be merged to have the new API and callers introduced together?
+> 
+> I'm fine with that, if that is preferable. Don't feel strongly about
+> that at all, just tried to do it as piecemeal as possible to make
+> it easier to review.
 
-Thanks!
-
-So the patch has been applied as 5.8 material.
-
-Cheers!
+Not worth sending a new iteration over, IMO.
