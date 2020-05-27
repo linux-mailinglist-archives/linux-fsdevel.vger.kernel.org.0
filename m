@@ -2,88 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8F6F1E4943
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7341E4A7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390761AbgE0QGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 12:06:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49443 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389579AbgE0QGq (ORCPT
+        id S1728961AbgE0Qkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 12:40:42 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:43368 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbgE0Qkm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 12:06:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590595604;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZkcGB2YfoFRSuQGCtsex+ihKZ7XyPFksfWsRlOfpavw=;
-        b=bVaXIdYBt9tx1AV0ibsOXxcVBxdEPNmPhkEWlWXkudd10l7PECD23Oa5QCNgmIHa9xiF+a
-        hQvfDk06ws6cFFP1pVihS2T6GzunfKIfib2r6bBxcLZePryq8YEXLrAQJnvhC0HfPiIT2a
-        n13U6vsuPLXQbIVv41lUPoZ9HHbunQc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-283-Fai_m2LCN5mVS7dqiSe-kQ-1; Wed, 27 May 2020 12:06:40 -0400
-X-MC-Unique: Fai_m2LCN5mVS7dqiSe-kQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D4548005AA;
-        Wed, 27 May 2020 16:06:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-138.rdu2.redhat.com [10.10.112.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CCBE5C1B0;
-        Wed, 27 May 2020 16:06:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <8c74f334-3711-ea07-9875-22f379a62bb3@yandex-team.ru>
-References: <8c74f334-3711-ea07-9875-22f379a62bb3@yandex-team.ru> <8ac18259-ad47-5617-fa01-fba88349b82d@yandex-team.ru> <195849.1590075556@warthog.procyon.org.uk> <3735168.1590592854@warthog.procyon.org.uk>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     dhowells@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs, afs, ext4: Make the inode hash table RCU searchable
+        Wed, 27 May 2020 12:40:42 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jdz6d-0006w9-OG; Wed, 27 May 2020 10:40:39 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jdz6c-0003Ki-Lj; Wed, 27 May 2020 10:40:39 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Kaitao Cheng <pilgrimtao@gmail.com>, christian@brauner.io,
+        akpm@linux-foundation.org, gladkov.alexey@gmail.com, guro@fb.com,
+        walken@google.com, avagin@gmail.com, khlebnikov@yandex-team.ru,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200527141155.47554-1-pilgrimtao@gmail.com>
+        <87k10x5tji.fsf@x220.int.ebiederm.org>
+        <20200527152340.GA19985@localhost.localdomain>
+Date:   Wed, 27 May 2020 11:36:48 -0500
+In-Reply-To: <20200527152340.GA19985@localhost.localdomain> (Alexey Dobriyan's
+        message of "Wed, 27 May 2020 18:23:40 +0300")
+Message-ID: <87k10x49nj.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3873242.1590595596.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 27 May 2020 17:06:36 +0100
-Message-ID: <3873243.1590595596@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain
+X-XM-SPF: eid=1jdz6c-0003Ki-Lj;;;mid=<87k10x49nj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18BJ/5vPS/5ztRlPMmB8rb39/YlelSsKas=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.3 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1826]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Alexey Dobriyan <adobriyan@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 648 ms - load_scoreonly_sql: 0.11 (0.0%),
+        signal_user_changed: 210 (32.4%), b_tie_ro: 208 (32.2%), parse: 0.96
+        (0.1%), extract_message_metadata: 3.6 (0.6%), get_uri_detail_list:
+        1.27 (0.2%), tests_pri_-1000: 3.8 (0.6%), tests_pri_-950: 1.32 (0.2%),
+        tests_pri_-900: 1.08 (0.2%), tests_pri_-90: 173 (26.7%), check_bayes:
+        171 (26.5%), b_tokenize: 7 (1.1%), b_tok_get_all: 7 (1.1%),
+        b_comp_prob: 2.7 (0.4%), b_tok_touch_all: 150 (23.2%), b_finish: 1.09
+        (0.2%), tests_pri_0: 236 (36.4%), check_dkim_signature: 0.57 (0.1%),
+        check_dkim_adsp: 2.8 (0.4%), poll_dns_idle: 0.69 (0.1%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] proc/base: Skip assignment to len when there is no error on d_path in do_proc_readlink.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+Alexey Dobriyan <adobriyan@gmail.com> writes:
 
-> > Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
-> >
-> >>> Is this something that would be of interest to Ext4?
-> >>
-> >> For now, I've plugged this issue with try-lock in ext4 lazy time upda=
-te.
-> >> This solution is much better.
-> >
-> > Would I be able to turn that into some sort of review tag?
-> =
+> On Wed, May 27, 2020 at 09:41:53AM -0500, Eric W. Biederman wrote:
+>> Kaitao Cheng <pilgrimtao@gmail.com> writes:
+>> 
+>> > we don't need {len = PTR_ERR(pathname)} when IS_ERR(pathname) is false,
+>> > it's better to move it into if(IS_ERR(pathname)){}.
+>> 
+>> Please look at the generated code.
+>> 
+>> I believe you will find that your change will generate worse assembly.
+>
+> I think patch is good.
+>
+> Super duper CPUs which speculate thousands instructions forward won't
+> care but more embedded ones do. Or in other words 1 unnecessary instruction
+> on common path is more important for slow CPUs than for fast CPUs.
 
-> This version looks more like RFC, so
-> =
+No.  This adds an entire extra basic block, with an extra jump.
 
-> Acked-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> =
+A good compiler should not even generate an extra instruction for this
+case.  A good compiler will just let len and pathname share the same
+register.
 
-> this definitely will fix my problem with ext4 lazytime:
-> https://lore.kernel.org/lkml/158040603451.1879.7954684107752709143.stgit=
-@buzz/
+So I think this will hurt your slow cpu case two as it winds up just
+plain being more assembly code, which stress the size of the slow cpus
+caches.
 
-Thanks!
 
-David
 
+I do admit a good compiler should be able to hoist the assignment above
+the branch (as we have today) it gets tricky to tell if hoisting the
+assignment is safe.
+
+> This style separates common path from error path more cleanly.
+
+Very arguable.
+
+[snip a completely different case]
+
+Yes larger cases can have different solutions.
+
+Eric
