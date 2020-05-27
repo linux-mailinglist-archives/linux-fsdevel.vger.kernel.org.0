@@ -2,174 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1561E410C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 13:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9921E4282
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 14:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgE0L7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 07:59:23 -0400
-Received: from mout.gmx.net ([212.227.17.20]:53917 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbgE0L7R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 07:59:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1590580741;
-        bh=/4ZxwbojsP0H8jvnRJLfQPi+JeuPy72LvcnXI0WW84A=;
-        h=X-UI-Sender-Class:Subject:To:References:From:Date:In-Reply-To;
-        b=RsCITmXv1ILnW0AuRCdyGmp/COa+Gu1DtzNhgc2O9Vuyp53o7g8obh3B8BTNaMp3h
-         uq0lj43A9TorKaL1lc5t+Kjoa70MXzhy1gqvd4tT+GYY5axyTXeiU0XU6myOI/C8XW
-         TQ+Q9Zb+rsUvwzXm096XgqgQfTN/KhyyIuEu0H4s=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.com (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MGz1f-1jqr1L3duV-00E7uW; Wed, 27
- May 2020 13:59:01 +0200
-Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
-To:     dsterba@suse.cz, Johannes Thumshirn <jth@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>,
-        Richard Weinberger <richard@nod.at>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20200514092415.5389-1-jth@kernel.org>
- <5663c6ca-87d4-8a98-3338-e9a077f4c82f@gmx.com>
- <20200527112725.GA18421@suse.cz>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
- mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
- PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
- 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
- D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
- efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
- ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
- BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
- 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
- 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
- EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
- 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
- ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
- oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
- fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
- 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
- ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
- oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
-Message-ID: <db7c0e64-66fb-15a8-b976-92423b044ecf@gmx.com>
-Date:   Wed, 27 May 2020 19:58:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1730131AbgE0Mir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 08:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730143AbgE0Mip (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 May 2020 08:38:45 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B2EC08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 05:38:44 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id k26so2411522wmi.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 05:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7YJa5saMRdpmvcQWiah99cBIMoG1Tkr+u26njxMEKnA=;
+        b=k/tiHg8auqdYOndajzxN9gTWTghLMBY1djKWtYEk3Xs2loSyC6tNGpBNzsi1V1e5Q0
+         sXy0IbM/e69LS16IJmi8Ef8kB/l2kNim+cB6791xU3ax7Eiy31LOofzXlMGIwi2jktfo
+         2RxazoKHTEtqEyOaqbjd/lW1f4FMzrKfhxl+I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7YJa5saMRdpmvcQWiah99cBIMoG1Tkr+u26njxMEKnA=;
+        b=W+3HxbYisx46MoNCvMVdutSzkjPDLXLZOuvXuqSiVeMx+j6QvvHjC6K62cmFs6B+V2
+         zM6My7XeztKLDhlVzzc7CKn2U18gunXRJHpxQ2JXukcR65KD7Dn8p8t0TswM1GqEJlui
+         x9U6IGXbzpukLDyqNAI9KD0TOKxDO+z6HbBD+vEr86X0mmlVDRK5GMWUv4wRSHA4jGQk
+         mLbH+mlbMLi3v+MoKzzdfvv7gQZj+romLf2B0eezx8sQsO1c2v9S2dLZqX8Dvl2kFfEy
+         j+jp3tbueWkVIpbiIC5vqFoygwRbrpzLOEs1dvWok8eC4gw3x5QjKufbWbooy5w6r5ko
+         /RIg==
+X-Gm-Message-State: AOAM531EOQYveJjOB5lZsH9FkkmhfF2eI4Wa0Ytb9aeb/qV9en/09fTE
+        p7vXOQ/DJFTOoY/jrfgmIv1gQQ==
+X-Google-Smtp-Source: ABdhPJyZus2cqz3FbuHL3S4pu8h2PwjCMQgsrova7d9Wd6xAkdssWBPq4mBOJe+ZXxfozuXgSPeeYg==
+X-Received: by 2002:a05:600c:2c4e:: with SMTP id r14mr4358980wmg.118.1590583122956;
+        Wed, 27 May 2020 05:38:42 -0700 (PDT)
+Received: from google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id h74sm2831566wrh.76.2020.05.27.05.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2020 05:38:42 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 27 May 2020 14:38:40 +0200
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
+Message-ID: <20200527123840.GA12958@google.com>
+References: <20200526163336.63653-1-kpsingh@chromium.org>
+ <20200526163336.63653-3-kpsingh@chromium.org>
+ <20200527050823.GA31860@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200527112725.GA18421@suse.cz>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN"
-X-Provags-ID: V03:K1:4Ulk2ZUwpFYBxEMgs7b1MlPvqtBqKv2XsNobGAgzL3ztWevmXUL
- E5Phy9Rv7E4FgGiQRT99Lj6vyazmmffQKhZajsOig+QXtyAwEu6vlUvoXgWaErS9BZ+yQFq
- kSXDnKxe+bUWIw1ZcL+MZAkAknn/xcbJIOhuNuuLNeXErBc5ehgcqOPU9XSx/01HwBXZKQD
- sDc6VIPG/Ds3EbhJII1PQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8QbOsWp2X8c=:5SQOKAKaIGrV1hGBm1PMSp
- gVB4qIZaDxfYu1ThcKpnd8PgML4hCjb+V48TuM8aRWMK3tYd66VR7It9oaF8VRSy/910Ce2BJ
- eBGwlllHmZBALC83ZtjWgVzLsqK4T7T62tfyjHPbDV5yiYIQDl44s3c/P123OPpNlaXNKfoTu
- U17TJePZ8OdALgz0OKZKqfk2NpDLOhNZhtjGTxRiIU1eC5VIGojoosQWI/9FALWl131CK7rAx
- UEF8xSNvht4VI7/eiaeaxqFsWdUKQ+hwLZDs4raIrENC6bpNZJxnp0UYXRp5mNoBQO4sM77Rr
- qQAwm229cdnl06fFDVnz1fRKQWmYl6Y3Dz2CnQh8Wr9o+k9e2yEd8S+npQhaLOX3isjs445Tl
- pADndNVSY9YApxjQJXSq/4PObCBlb1cqop3BsFBnyrlrrUc4ZQ1vFRFZQa1KpoJPAr89HN5I+
- a0oMspoEOdH9QG6t9o7DVQ2QduxZbnTGHCcPGfTQ8NX/REnTBAl27OngTXnaYJG8JBagKEuTD
- woQMTU8XDQdDGiD2XihyUbwQty/dzfGmNPWEX8OLwS6B9DnR0+T6g1EWe8RlGZqWHeB9vmNZN
- dfq6ZSboXAn53OssPOA8AZWRuqnQ+BhsJw3Izib7f5seUxAO99PD9wXaAxnmSTeAk+lQGZMkY
- gr1sw1M07dZpYdZzZzqM6J05QCj3WBTxFmq409XfkszpAi5cmVvXK3RR7E77vgzjZLOC33I3x
- FO+8bv2A5qJzbjbMQD+isvLQDqJamgwpBIpKvB79AOlLet7v7OOBF8cxpDdIzlE2Oo9bWkJCl
- pbNTJ1iZfhnP8zzBJOmqJje9+NZo0nXsIVhKPDL8WM/HasUXxiFFtmys0irVqHf5WhzQcjP/f
- 9quJH3tvA+owQij5uAHk79a4qvrTQ6Hf+gNMttZLZ/FVCXZPsaUMvZRkSojfhF4L5MpUnbC4Z
- pS1txrXCMRtFUTouoTIK3exU4A8dmHfewOu8tHV8+vtD/VO38ooh3SKPF+tD+wWAK5rcTAO3L
- 1svGhP4O8xxWZpub2t6K2arIUwq76BKNb+0PyEeeMNZwW78McJREaP+vw+Byp5+rTZvAbXF9y
- QyE1JoyKF8pC96KoYJhpaGfgvW3fBAD5ZA7xZWMfe6qMGdWgMpdIKqlPsyIdKEdOurftcHh75
- AgVgWYR3MNdSmgQZ7Ad9w8R+7ujwmrVb2FOaCCLtLpDjveKWQFnOqSI5a+YjxmAnQDVfSTOaL
- 3iad6JRyx59lewPkk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200527050823.GA31860@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN
-Content-Type: multipart/mixed; boundary="irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN"
+On 26-May 22:08, Christoph Hellwig wrote:
+> On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
+> > 
+> > Similar to bpf_local_storage for sockets, add local storage for inodes.
+> > The life-cycle of storage is managed with the life-cycle of the inode.
+> > i.e. the storage is destroyed along with the owning inode.
+> > 
+> > Since, the intention is to use this in LSM programs, the destruction is
+> > done after security_inode_free in __destroy_inode.
+> 
+> NAK onbloating the inode structure.  Please find an out of line way
+> to store your information.
 
---irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The other alternative is to use lbs_inode (security blobs) and we can
+do this without adding fields to struct inode.
 
+Here is a rough diff (only illustrative, won't apply cleanly) of the
+changes needed to this patch:
 
+ https://gist.github.com/sinkap/1d213d17fb82a5e8ffdc3f320ec37d79
 
-On 2020/5/27 =E4=B8=8B=E5=8D=887:27, David Sterba wrote:
-> On Wed, May 27, 2020 at 10:08:06AM +0800, Qu Wenruo wrote:
->>> Changes since v2:
->>> - Select CONFIG_CRYPTO_HMAC and CONFIG_KEYS (kbuild robot)
->>> - Fix double free in error path
->>> - Fix memory leak in error path
->>> - Disallow nodatasum and nodatacow when authetication is use (Eric)
->>
->> Since we're disabling NODATACOW usages, can we also disable the
->> following features?
->> - v1 space cache
->>   V1 space cache uses NODATACOW file to store space cache, althouhg it=
+Once tracing has gets a whitelist based access to inode storage, I
+guess it, too, can use bpf_local_storage for inodes if CONFIG_BPF_LSM
+is enabled. Does this sound reasonable to the BPF folks?
 
->>   has inline csum, but it's fixed to crc32c. So attacker can easily
->>   utilize this hole to mess space cache, and do some DoS attack.
->=20
-> That's a good point.
->=20
-> The v1 space cache will be phased out but it won't be in a timeframe
-> we'll get in the authentication. At this point we don't even have a way=
-
-> to select v2 at mkfs time (it's work in progress though), so it would b=
-e
-> required to switch to v2 on the first mount.
->=20
->> - fallocate
->>   I'm not 100% sure about this, but since nodatacow is already a secon=
-d
->>   class citizen in btrfs, maybe not supporting fallocate is not a
->>   strange move.
->=20
-> Fallocate is a standard file operation, not supporting would be quite
-> strange. What's the problem with fallocate and authentication?
->=20
-As said, I'm not that sure about preallocate, but that's the remaining
-user of nodatacow.
-Although it's a pretty common interface, but in btrfs it doesn't really
-make much sense.
-In case like fallocate then snapshot use case, there is really no
-benefit from writing into fallocated range.
-
-Not to mention the extra cross-ref check involved when writing into
-possible preallocated range.
-
-Thanks,
-Qu
+- KP
 
 
---irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN--
-
---I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl7OVgAACgkQwj2R86El
-/qi6pQf9GlhhFZR4RYAQi8goFJs2uJRE7ch31FzGoAl+mbEzttKrA0pxBNOBmxcX
-TKbmL8CD6YKcNCODOoSZuD9UEDqLq3p83y6oxkxLep1+JB91evcsIGo6Su+099rj
-xh13C4UbzJm8GBvjpAq5bMoogSwalPwEhMWKdiQDQh8TSwp5j/mPpKN9U6jemAqF
-T3UKah4IZAqfvvHIaN/tPUXzEj5FDKyGeUGcQIZM4MdcznoUJxpdJhiYs4sxraZs
-4C+5a/89t3ee3osYhLEK3JhRnBvDtSVFTlW8G8J6AbSjFVh5WGNw6rO+23c1WJFX
-7rci5Am+FUkwFSIIYTdz8yGicEwm5g==
-=cRGg
------END PGP SIGNATURE-----
-
---I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN--
