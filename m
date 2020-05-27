@@ -2,122 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7341E4A7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F901E4A8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 18:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbgE0Qkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 12:40:42 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:43368 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbgE0Qkm (ORCPT
+        id S2388802AbgE0Qlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 12:41:31 -0400
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:42116
+        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729686AbgE0Qla (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 12:40:42 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdz6d-0006w9-OG; Wed, 27 May 2020 10:40:39 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdz6c-0003Ki-Lj; Wed, 27 May 2020 10:40:39 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Kaitao Cheng <pilgrimtao@gmail.com>, christian@brauner.io,
-        akpm@linux-foundation.org, gladkov.alexey@gmail.com, guro@fb.com,
-        walken@google.com, avagin@gmail.com, khlebnikov@yandex-team.ru,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200527141155.47554-1-pilgrimtao@gmail.com>
-        <87k10x5tji.fsf@x220.int.ebiederm.org>
-        <20200527152340.GA19985@localhost.localdomain>
-Date:   Wed, 27 May 2020 11:36:48 -0500
-In-Reply-To: <20200527152340.GA19985@localhost.localdomain> (Alexey Dobriyan's
-        message of "Wed, 27 May 2020 18:23:40 +0300")
-Message-ID: <87k10x49nj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 27 May 2020 12:41:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1590597689; bh=WFz2psKHCfQhmvtHPrIqBJFxV5x1yMU8wLknvksbfFM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VD4+c/WpVzlruHaW5np7TGoKLUdDWnPfRhfTk0obj3AVdoaEFxtYzwW1fdTmOpqQyYYjep26kiRR7/Xy+BKwSKV7tnMpIkUn/z7Wxsd1yujmf4llsizwQCVVrpxN/tthF6evcubQbN7cI3mJLa87T4OfjDm+GztWTpuMCRVkVuKN85imNynIUk8965dVR+Zc3IofaKhLweUjAlxAowVIYUH9AHKvi+0hgk0NhjE/HjcchzYZa0EXGBTBud/nbap35Ndx97UpRc/4FuP3Pkb9ucW2x7dmAX4VrGF3Bdkd4ZW8bTw3dVa4geKxF1vN31+VBGK4CkVfp6rGF+Z7jcv2Xg==
+X-YMail-OSG: 9u6BTg0VM1lMkijTQSIzP5WDh2TdWCnf_YcdA9GomtFLkBiK2ISamQRwEK8hmLD
+ L4b6dET2gJW98QlYlV.4s.hiy_IO3ctnrXltFOmpCp3QTV1taYlY.UmLOB07DwrBlPPNLRsHBhkz
+ XZzZRL1bWWhTVITf55rODQDT3Wut0Sok6hrLQAbKpwgPDC1K4dbZPv1oa6rdxS4ua8p1V3B3xOw_
+ 8RQr_eFE8N9QjAUPwU6BI4wzV...U.ICd0YL.lxYvnXqFHSKeQW_1LaPV5LiciJm6ghSNSYqsQz5
+ 2kxrL5pQAPeI4Hhzap7MEU9xAY5tOEP07TmKzXYaeFczvHnxXW0r1BpJxK83mpkHsErzlVZ22AKQ
+ O4LTS9THgZsrUPgZGtEXoBkoltkfsDD4jfLyPWk.BypRBFj2VlNB8EVnaVxrwbBUBP7Of_N7QwEz
+ 5ujEwfhvRJ2z8zTlZFZ0yjKx_fF7vL7_ovkKMPmQB87Ty41OmU.ONq9AY7XroRMmnN6j0G3QjxbJ
+ 1a82STOjNVWhQI7aA65R81264GkfHtBvcDOicYXxZhhi78gPkyiKvT4RGmqROJDGIt.58t0ZTUaw
+ KZQpsDkloSRxoZaEHYKBlm5u3A7GPnZIewBxfpIf73LIAGqXarRkwMnrQRNOi.9QQEZb8KS_CTNg
+ bDiWDN3t54Bnjrx6cpQnV9pFNVMdmD3tygPHAP8QJz_mo7_GmWo2HHNFecmsK.qa7jYVTcNU1MwR
+ 3GmJ0AJ4vObe7I0Z0OmpWuk.ujxpzMF_LQuFk.PgRJdFLyuMMK7gbEFLhuBZICB8RxqABpjzSJdK
+ xFwPDyG_Y6srXxLwz1xwAKT2qa867mlMpqBJ7L4ZGXF.ruD2Frxdbs4w0tiDJhnHwLVff4eDAd5Z
+ maLWnWK0avuyGd.He30MyvFSEXTpwIaUDiVVzyAkxAgf1hMBeqjAEuyttBC0HVA37KAWMmewDVJy
+ tXmQu_Bkqqsoc8TFW3arf0bMhItHWEha5M8TzAQGjZXc9rU8WZYMoOwymWwTyGdk6rp0.veWK0gq
+ oWvbqmBh7TBUm7MLCWyBOm8RuDIpRVfdZ8e7clw5ZUr5bPJ3epvBnKns65p6cJ4qZnk64j0X45Z0
+ GKNF6LA.ZGj1nL4DClLXW6f37D93IC8YJ1VdeS_isEl_VXJmxh4j7.fNuiI1QQsqYP9La.91wuGj
+ q265ZqfUGG.N3pa3Nk3CNjuKfzU.fWuw8PRukMWJM5eQvtiCch0rBf5D.CMh5QjnGEM0gPhTMF_y
+ RFs2TGDjnMRsKz1fp0aQNC38Q9MonIzc1XtvDQZ0RywjNgDInTtE7uHPNfs7Sor0k_qeelE24TXe
+ 2Wf6azcstzuMjO2tmwQA44QicJzgYdBPP8O0kni8_qDpFvF81g0HEnmpwGmc_FpomTz2ideLLolk
+ eAjWcQAZ2H.6csdexi912yeuGbD7hpO4su8P_Ij14asc0i6IF6Qcu.57FoedNpQBBLfL8Ot8seFR
+ .OBS0iUE4
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 27 May 2020 16:41:29 +0000
+Received: by smtp426.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 0a021d393f0279ac5d0e653381de71d2;
+          Wed, 27 May 2020 16:41:26 +0000 (UTC)
+Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
+To:     KP Singh <kpsingh@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200526163336.63653-1-kpsingh@chromium.org>
+ <20200526163336.63653-3-kpsingh@chromium.org>
+ <20200527050823.GA31860@infradead.org> <20200527123840.GA12958@google.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <f933521f-6370-c9ba-d662-703c1ebc7c03@schaufler-ca.com>
+Date:   Wed, 27 May 2020 09:41:25 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jdz6c-0003Ki-Lj;;;mid=<87k10x49nj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18BJ/5vPS/5ztRlPMmB8rb39/YlelSsKas=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=8.0 tests=ALL_TRUSTED,BAYES_20,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-        *      [score: 0.1826]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Alexey Dobriyan <adobriyan@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 648 ms - load_scoreonly_sql: 0.11 (0.0%),
-        signal_user_changed: 210 (32.4%), b_tie_ro: 208 (32.2%), parse: 0.96
-        (0.1%), extract_message_metadata: 3.6 (0.6%), get_uri_detail_list:
-        1.27 (0.2%), tests_pri_-1000: 3.8 (0.6%), tests_pri_-950: 1.32 (0.2%),
-        tests_pri_-900: 1.08 (0.2%), tests_pri_-90: 173 (26.7%), check_bayes:
-        171 (26.5%), b_tokenize: 7 (1.1%), b_tok_get_all: 7 (1.1%),
-        b_comp_prob: 2.7 (0.4%), b_tok_touch_all: 150 (23.2%), b_finish: 1.09
-        (0.2%), tests_pri_0: 236 (36.4%), check_dkim_signature: 0.57 (0.1%),
-        check_dkim_adsp: 2.8 (0.4%), poll_dns_idle: 0.69 (0.1%), tests_pri_10:
-        2.3 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] proc/base: Skip assignment to len when there is no error on d_path in do_proc_readlink.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20200527123840.GA12958@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15959 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexey Dobriyan <adobriyan@gmail.com> writes:
+On 5/27/2020 5:38 AM, KP Singh wrote:
+> On 26-May 22:08, Christoph Hellwig wrote:
+>> On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
+>>> From: KP Singh <kpsingh@google.com>
+>>>
+>>> Similar to bpf_local_storage for sockets, add local storage for inode=
+s.
+>>> The life-cycle of storage is managed with the life-cycle of the inode=
+=2E
+>>> i.e. the storage is destroyed along with the owning inode.
+>>>
+>>> Since, the intention is to use this in LSM programs, the destruction =
+is
+>>> done after security_inode_free in __destroy_inode.
+>> NAK onbloating the inode structure.  Please find an out of line way
+>> to store your information.
+> The other alternative is to use lbs_inode (security blobs) and we can
+> do this without adding fields to struct inode.
 
-> On Wed, May 27, 2020 at 09:41:53AM -0500, Eric W. Biederman wrote:
->> Kaitao Cheng <pilgrimtao@gmail.com> writes:
->> 
->> > we don't need {len = PTR_ERR(pathname)} when IS_ERR(pathname) is false,
->> > it's better to move it into if(IS_ERR(pathname)){}.
->> 
->> Please look at the generated code.
->> 
->> I believe you will find that your change will generate worse assembly.
+This is the correct approach, and always has been. This isn't the
+first ( or second :( ) case where the correct behavior for an LSM
+has been pretty darn obvious, but you've taken a different approach
+for no apparent reason.
+
+> Here is a rough diff (only illustrative, won't apply cleanly) of the
+> changes needed to this patch:
 >
-> I think patch is good.
+>  https://gist.github.com/sinkap/1d213d17fb82a5e8ffdc3f320ec37d79
+
+To do just a little nit-picking, please use bpf_inode() instead of
+bpf_inode_storage(). This is in keeping with the convention used by
+the other security modules. Sticking with the existing convention
+makes it easier for people (and tools) that work with multiple
+security modules.
+
+> Once tracing has gets a whitelist based access to inode storage, I
+> guess it, too, can use bpf_local_storage for inodes
+
+Only within the BPF module. Your sentence above is slightly garbled,
+so I'm not really sure what you're saying, but if you're suggesting
+that tracing code outside of the BPF security module can use the
+BPF inode data, the answer is a resounding "no".
+
+>  if CONFIG_BPF_LSM
+> is enabled. Does this sound reasonable to the BPF folks?
 >
-> Super duper CPUs which speculate thousands instructions forward won't
-> care but more embedded ones do. Or in other words 1 unnecessary instruction
-> on common path is more important for slow CPUs than for fast CPUs.
+> - KP
+>
+>
 
-No.  This adds an entire extra basic block, with an extra jump.
-
-A good compiler should not even generate an extra instruction for this
-case.  A good compiler will just let len and pathname share the same
-register.
-
-So I think this will hurt your slow cpu case two as it winds up just
-plain being more assembly code, which stress the size of the slow cpus
-caches.
-
-
-
-I do admit a good compiler should be able to hoist the assignment above
-the branch (as we have today) it gets tricky to tell if hoisting the
-assignment is safe.
-
-> This style separates common path from error path more cleanly.
-
-Very arguable.
-
-[snip a completely different case]
-
-Yes larger cases can have different solutions.
-
-Eric
