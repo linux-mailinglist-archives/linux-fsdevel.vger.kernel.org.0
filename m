@@ -2,111 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE5DE1E4651
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 16:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27D1A1E46AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 17:00:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389153AbgE0Opq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 10:45:46 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:55694 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387942AbgE0Opq (ORCPT
+        id S2389483AbgE0PAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 11:00:51 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:29614 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389399AbgE0PAu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 10:45:46 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdxJQ-0000II-2h; Wed, 27 May 2020 08:45:44 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdxJP-0001YS-1X; Wed, 27 May 2020 08:45:43 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kaitao Cheng <pilgrimtao@gmail.com>
-Cc:     adobriyan@gmail.com, christian@brauner.io,
-        akpm@linux-foundation.org, gladkov.alexey@gmail.com, guro@fb.com,
-        walken@google.com, avagin@gmail.com, khlebnikov@yandex-team.ru,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200527141155.47554-1-pilgrimtao@gmail.com>
-Date:   Wed, 27 May 2020 09:41:53 -0500
-In-Reply-To: <20200527141155.47554-1-pilgrimtao@gmail.com> (Kaitao Cheng's
-        message of "Wed, 27 May 2020 22:11:55 +0800")
-Message-ID: <87k10x5tji.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 27 May 2020 11:00:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590591648;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S79dLGaDC34U88k/muBN2/cWWvIJSeZD2zX/jWO3DQQ=;
+        b=bDDpE2gNlwNf5Z+ph3dXAJ1M+XkBoEdNnF4SLBt0skQq3BWmCnaCmK5xwhQJNTMzG5/5/T
+        QTEu0GOFKTimtY351fvoq8XT4vhcctH64iK7Ucs3HiyADlRUAe8BtE/SKfs0ETv3EQBQFe
+        WhDV7JEibaMfS00t7aTfhUQ/GHBrQVE=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-382-BeUDn6yBNw60xXcKkkBxGg-1; Wed, 27 May 2020 11:00:47 -0400
+X-MC-Unique: BeUDn6yBNw60xXcKkkBxGg-1
+Received: by mail-ed1-f69.google.com with SMTP id w15so9576614edi.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 May 2020 08:00:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S79dLGaDC34U88k/muBN2/cWWvIJSeZD2zX/jWO3DQQ=;
+        b=OoeBUOsBmX4Hzv8APQtDiSgA4IOHdNmyHkWHLxNVj4O50IW/Q/7mkWwOdtdddhuoex
+         H6ApR1CLahgCYk+bzjTgGXhfEJlrNUyru0vFAzCPyegFZmZYp4/BpFDCO66rWV5ftiBJ
+         f7fItZIjoqKMPOVXiTfJgcPuS93vPw0UWhBZltTqw4muD4sCDSXZdy1q6gPTE6cPd7Am
+         3LeQsWR5PDTNOGDXQ6N7EviF8q401xjF8InXJ5kD2SySpQCbngFB4aRcndYz/Cw4xI5r
+         jXGbAlc0zq0nTh2i2Hpjk+CdbHKCrFLb06WjfBRSoXWYUXqyaOl4Q9AJG9RT6xGJAsys
+         zGpQ==
+X-Gm-Message-State: AOAM533NqwoMeKUVD/ixd7x89LRVRv4KnDz9QDBFTf5mlSnzqgHSYzu3
+        fgF8GSee/fn8B4n+08uDxNRI5kx7570CGT+dPAQTQq2AleyYlCLAUDU7Vei0Aj8SELVZ1FzRmI9
+        2bhvKD8kpITXAVJwVSv3gBwaVFA==
+X-Received: by 2002:a17:906:1442:: with SMTP id q2mr3491306ejc.33.1590591646091;
+        Wed, 27 May 2020 08:00:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzxzNY5UhO1mssuYEm2F2UYGESNfuhTc2d/FaV+VoTyW39e+803AKyGa34dCi6Lxc3HyJGruA==
+X-Received: by 2002:a17:906:1442:: with SMTP id q2mr3491234ejc.33.1590591645542;
+        Wed, 27 May 2020 08:00:45 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:3c1c:ffba:c624:29b8? ([2001:b07:6468:f312:3c1c:ffba:c624:29b8])
+        by smtp.gmail.com with ESMTPSA id l1sm3053400ejd.114.2020.05.27.08.00.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2020 08:00:45 -0700 (PDT)
+Subject: Re: [PATCH v3 0/7] Statsfs: a new ram-based file system for Linux
+ kernel statistics
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>, kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
+References: <20200526110318.69006-1-eesposit@redhat.com>
+ <20200526153128.448bfb43@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+ <6a754b40-b148-867d-071d-8f31c5c0d172@redhat.com>
+ <20200527133309.GC793752@lunn.ch>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <b0d11337-3ea4-d874-6013-ff8c3e9d6f26@redhat.com>
+Date:   Wed, 27 May 2020 17:00:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jdxJP-0001YS-1X;;;mid=<87k10x5tji.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19ZJUROciTO0oQgmo8Eq5PTszzMpNU4F40=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4979]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa05 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Kaitao Cheng <pilgrimtao@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 632 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 11 (1.7%), b_tie_ro: 9 (1.4%), parse: 1.33 (0.2%),
-         extract_message_metadata: 4.4 (0.7%), get_uri_detail_list: 1.45
-        (0.2%), tests_pri_-1000: 6 (0.9%), tests_pri_-950: 1.94 (0.3%),
-        tests_pri_-900: 1.50 (0.2%), tests_pri_-90: 90 (14.2%), check_bayes:
-        88 (13.9%), b_tokenize: 8 (1.3%), b_tok_get_all: 6 (1.0%),
-        b_comp_prob: 2.5 (0.4%), b_tok_touch_all: 67 (10.7%), b_finish: 0.92
-        (0.1%), tests_pri_0: 495 (78.3%), check_dkim_signature: 0.52 (0.1%),
-        check_dkim_adsp: 3.0 (0.5%), poll_dns_idle: 0.94 (0.1%), tests_pri_10:
-        2.2 (0.3%), tests_pri_500: 7 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] proc/base: Skip assignment to len when there is no error on d_path in do_proc_readlink.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20200527133309.GC793752@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kaitao Cheng <pilgrimtao@gmail.com> writes:
+On 27/05/20 15:33, Andrew Lunn wrote:
+>> I don't really know a lot about the networking subsystem, and as it was
+>> pointed out in another email on patch 7 by Andrew, networking needs to
+>> atomically gather and display statistics in order to make them consistent,
+>> and currently this is not supported by stats_fs but could be added in
+>> future.
+> 
+> Do you have any idea how you will support atomic access? It does not
+> seem easy to implement in a filesystem based model.
 
-> we don't need {len = PTR_ERR(pathname)} when IS_ERR(pathname) is false,
-> it's better to move it into if(IS_ERR(pathname)){}.
+Hi Andrew,
 
-Please look at the generated code.
+there are plans to support binary access.  Emanuele and I don't really
+have a plan for how to implement it, but there are developers from
+Google that have ideas (because Google has a similar "metricfs" thing
+in-house).
 
-I believe you will find that your change will generate worse assembly.
+I think atomic access would use some kind of "source_ops" struct
+containing create_snapshot and release_snapshot function pointers.
 
-Eric
+Paolo
 
-
-> Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
-> ---
->  fs/proc/base.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index d86c0afc8a85..9509e0d42610 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1753,9 +1753,10 @@ static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
->  		return -ENOMEM;
->  
->  	pathname = d_path(path, tmp, PAGE_SIZE);
-> -	len = PTR_ERR(pathname);
-> -	if (IS_ERR(pathname))
-> +	if (IS_ERR(pathname)) {
-> +		len = PTR_ERR(pathname);
->  		goto out;
-> +	}
->  	len = tmp + PAGE_SIZE - 1 - pathname;
->  
->  	if (len > buflen)
