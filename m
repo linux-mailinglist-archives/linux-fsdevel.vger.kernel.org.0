@@ -2,139 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 064601E376E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 06:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3091E3778
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 06:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725849AbgE0Egz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 00:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbgE0Egy (ORCPT
+        id S1725768AbgE0Ek7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 00:40:59 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29223 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725294AbgE0Ek7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 00:36:54 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF762C061A0F;
-        Tue, 26 May 2020 21:36:54 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 185so2988049pgb.10;
-        Tue, 26 May 2020 21:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lOpmpojWwwDKmdgvBgyDR/91akL7lsEVaaRXHGRRif0=;
-        b=RhgQiHKjSFxt0e4hdk9XFdFmwXlaqqy/oTAekflZtHFdhEKO64qFc1mpKDXZr69CPy
-         jdKKGgMYF3/PwLMQqZRA0p7MJV/Go6tkta/h4swizRoRpVhai4LlQKtDfpzOQXol3xcY
-         3TW/CBGWUO1G35QH1UIuJXs9WTI3G+E29PktRQFzMSdgmMsbx+ViIkPx4XIoQKnwHjtI
-         iuFirKyvXOkp6bKvGs8xYK3w/Dn4sctZ1lOJtxsH8Aa2nP03Bsx7PgwJODEguoGDFtQe
-         EV7yB1UHGazYqjCw0y7SPUOzeb1Rx+s20xn4YP/gkyyGkm4H/LKnhLTIPlstwN50FD9J
-         kU0w==
+        Wed, 27 May 2020 00:40:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590554457;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=62bWFuqjjYRHCtiXetCYD/KJZfcErk/k0VhDChgAXO8=;
+        b=PAzaG6PhZE6MEtY0/PbDDjAVhg2HyRXr24Q5HA7KPmo/f+6ovHTbFDSTLPG0DTLqLpP6z8
+        2arPwzbKyLzY9AYIoN33LnBvzn0q7BMTFtpKzQGqVsV7GvIeHHxt4gERw2TVjtpewU5UPd
+        aL2Yf2+nq+Vl3ugOmpgfVt3uQCk9VAs=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-118-PwsSmW7AP96YBPSI_Dt3Fw-1; Wed, 27 May 2020 00:40:55 -0400
+X-MC-Unique: PwsSmW7AP96YBPSI_Dt3Fw-1
+Received: by mail-pl1-f199.google.com with SMTP id g22so17306656plq.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 21:40:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lOpmpojWwwDKmdgvBgyDR/91akL7lsEVaaRXHGRRif0=;
-        b=D04p47AQjHiFVOLa1Xh9S82T1TQSXfPu4wykqPdRaEnJY3choB7Zy/8EsvzJAaIKgq
-         Rbg6/DEh5iBwjGiA3ps9Ygt67mVmPEUNfb2Yv7Ktb2XxyoDw6EVp03UAvw9fDxBVfo0+
-         8YysgchrbyChFVHXA8wh0ht8hp+uDYVkOV50iyixHGSLe584qU74hnQK8EZyNI65MBFR
-         HKuFkNlwEjxNWIUKgcJ3/q8JXhuSGzcGRLQ2gFZaJBmVRtADBfafD1T6or1QgWLUsusu
-         CKDVZ0NqgIhSMu/JIcHL32GNOG7eqXsVb+f4E4a77Q4ezQOouP6OzeNP4L/+O9looQRt
-         353w==
-X-Gm-Message-State: AOAM532ZbR1SF3hgJuyeojKsQhntXLGLx5PXTeCF5wAgIB2eawYyCiNo
-        oannJ3fyqSMhNoXMHvoFdIA=
-X-Google-Smtp-Source: ABdhPJxaG/pR1wu1n7WufrFJ+x4wcg8X7uq9rcDJKu3YRWfpwt3nhECM4aeG8mrZfzsEkO9ezvPt1w==
-X-Received: by 2002:aa7:9302:: with SMTP id 2mr2035203pfj.164.1590554214171;
-        Tue, 26 May 2020 21:36:54 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id e13sm893604pfm.103.2020.05.26.21.36.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=62bWFuqjjYRHCtiXetCYD/KJZfcErk/k0VhDChgAXO8=;
+        b=s1PPSlNOrK6+JIhsnl6gSDhepWZ0bV0IpyEMIx+IE1UwSOAKiH3IR+gHmSoBginYvk
+         9Ydz3GVw6uV/LiE3cx02/dhuUYYXeHLio8vi6YTPp87/wFK0ej9QcyTlNDyfp+ALwZtH
+         R0OGh96j+gMtgO9XFxu0dxYomEmGVN+HzB+jXpst9hUX6p5EgXcKAzjQVqQUJQjTM0B6
+         1xQrtTwqx3VBKN3C6Qc036NC8xfGvDjvzjQU2+c81Oh7ZRsfFzUDXGUsaMLxeAaQZGE2
+         9iqgPhBhsInk+vJ0Ep6z0FJ45H7KLNu27s146yuXPr46zguVjY+X6NF40tH2hPet6aDv
+         3PXA==
+X-Gm-Message-State: AOAM532awooLYgW3uWOgK6BtJJLEpD/qpKbi4eXCQpRbHO5ePNygZN6k
+        DHrHE64g4tSLid64GsA2p4yMkLOGPyhQ9m0ziH6x19xWfytSsyg0kWZF1gawVYoKGUEs0iFulvw
+        1nxnfPcvLmURbXAnaJs5p/eyXPQ==
+X-Received: by 2002:a17:90a:f0d8:: with SMTP id fa24mr2767948pjb.93.1590554454367;
+        Tue, 26 May 2020 21:40:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz3AhxFWNIq2AkpKBB4NtPMQm+6oHtFAst619gt2ptZM930h8Bs8vT/fc6lIcLSTn64wdYb6w==
+X-Received: by 2002:a17:90a:f0d8:: with SMTP id fa24mr2767930pjb.93.1590554454100;
+        Tue, 26 May 2020 21:40:54 -0700 (PDT)
+Received: from hsiangkao-HP-ZHAN-66-Pro-G1.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id mt3sm926663pjb.23.2020.05.26.21.40.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 21:36:53 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     hch@lst.de
-Cc:     akpm@linux-foundation.org, arnd@arndb.de, jeyu@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-fsdevel@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        monstr@monstr.eu, openrisc@lists.librecores.org,
-        sparclinux@vger.kernel.org, x86@kernel.org, zippel@linux-m68k.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] media: omap3isp: Shuffle cacheflush.h and include mm.h
-Date:   Tue, 26 May 2020 21:34:27 -0700
-Message-Id: <20200527043426.3242439-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.27.0.rc0
-In-Reply-To: <20200515143646.3857579-7-hch@lst.de>
-References: <20200515143646.3857579-7-hch@lst.de>
+        Tue, 26 May 2020 21:40:53 -0700 (PDT)
+From:   Gao Xiang <hsiangkao@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Gao Xiang <hsiangkao@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] xattr: fix EOPNOTSUPP if fs and security xattrs disabled
+Date:   Wed, 27 May 2020 12:40:37 +0800
+Message-Id: <20200527044037.30414-1-hsiangkao@redhat.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After mm.h was removed from the asm-generic version of cacheflush.h,
-s390 allyesconfig shows several warnings of the following nature:
+commit f549d6c18c0e ("[PATCH] Generic VFS fallback for security xattrs")
+introduces a behavior change of listxattr path therefore listxattr(2)
+won't report EOPNOTSUPP correctly if fs and security xattrs disabled.
+However it was clearly recorded in manpage all the time.
 
-In file included from ./arch/s390/include/generated/asm/cacheflush.h:1,
-                 from drivers/media/platform/omap3isp/isp.c:42:
-./include/asm-generic/cacheflush.h:16:42: warning: 'struct mm_struct'
-declared inside parameter list will not be visible outside of this
-definition or declaration
-
-cacheflush.h does not include mm.h nor does it include any forward
-declaration of these structures hence the warning. To avoid this,
-include mm.h explicitly in this file and shuffle cacheflush.h below it.
-
-Fixes: 19c0054597a0 ("asm-generic: don't include <linux/mm.h> in cacheflush.h")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Chengguang Xu <cgxu519@mykernel.net>
+Cc: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <hsiangkao@redhat.com>
 ---
 
-I am aware the fixes tag is kind of irrelevant because that SHA will
-change in the next linux-next revision and this will probably get folded
-into the original patch anyways but still.
+Noticed when reviewing Chengguang's patch for erofs [1] (together
+with ext2, f2fs). I'm not sure if it's the best approach but it
+seems that security_inode_listsecurity() has other users and it
+mainly focus on reporting these security xattrs...
 
-The other solution would be to add forward declarations of these structs
-to the top of cacheflush.h, I just chose to do what Christoph did in the
-original patch. I am happy to do that instead if you all feel that is
-better.
+[1] https://lore.kernel.org/r/20200526090343.22794-1-cgxu519@mykernel.net
 
- drivers/media/platform/omap3isp/isp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks,
+Gao Xiang
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index a4ee6b86663e..54106a768e54 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -39,8 +39,6 @@
-  *	Troy Laramy <t-laramy@ti.com>
-  */
- 
--#include <asm/cacheflush.h>
--
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/delay.h>
-@@ -49,6 +47,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/omap-iommu.h>
- #include <linux/platform_device.h>
-@@ -58,6 +57,8 @@
- #include <linux/sched.h>
- #include <linux/vmalloc.h>
- 
-+#include <asm/cacheflush.h>
+ fs/xattr.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 91608d9bfc6a..f339a67db521 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -352,13 +352,15 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
+ 	error = security_inode_listxattr(dentry);
+ 	if (error)
+ 		return error;
+-	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR)) {
+-		error = inode->i_op->listxattr(dentry, list, size);
+-	} else {
+-		error = security_inode_listsecurity(inode, list, size);
+-		if (size && error > size)
+-			error = -ERANGE;
+-	}
 +
- #ifdef CONFIG_ARM_DMA_USE_IOMMU
- #include <asm/dma-iommu.h>
- #endif
++	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR))
++		return inode->i_op->listxattr(dentry, list, size);
++
++	if (!IS_ENABLED(CONFIG_SECURITY))
++		return -EOPNOTSUPP;
++	error = security_inode_listsecurity(inode, list, size);
++	if (size && error > size)
++		error = -ERANGE;
+ 	return error;
+ }
+ EXPORT_SYMBOL_GPL(vfs_listxattr);
 -- 
-2.27.0.rc0
+2.24.0
 
