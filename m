@@ -2,97 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 055421E4012
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 13:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1561E410C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 13:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbgE0L3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 07:29:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60750 "EHLO mail.kernel.org"
+        id S1726330AbgE0L7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 07:59:23 -0400
+Received: from mout.gmx.net ([212.227.17.20]:53917 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbgE0L3y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 07:29:54 -0400
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B748208C3;
-        Wed, 27 May 2020 11:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590578994;
-        bh=tv2Km+njjIRyeTVL9eEojM928rYv6nfC4WtJm+JtuiI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LH33kOmAF5kk8gmaROPq2T1PO9AWcn0dS6sc9wnkwnvHXR5of1jCcDm2EZrucB1Fw
-         TAriG0VFzKEpMdkkoEnvoWgqj8AoFUiFGS6Wpuowf+LD2BMlaQD4DC0+z7z0yewJ9z
-         5UbkYLC1vs1PK3QH2Areo6ZogOd6XAmJwGOhRo5w=
-Received: by mail-oo1-f50.google.com with SMTP id v3so274532oot.1;
-        Wed, 27 May 2020 04:29:54 -0700 (PDT)
-X-Gm-Message-State: AOAM5333IOkhghmpuI9Qyz22P8XRkjoEEMMrheEIlSLeubvJQXD3FQNG
-        l03qUzVeEX/p8dw/bcsNuclA0NV3gqfLLzyv8Qo=
-X-Google-Smtp-Source: ABdhPJxT/GGyKfZwUSiQU/29oQ2xsMJEn0EZtn3uGx9cTHxQWAcbn/bFOrcrmiEWjddGbsYK3GbAIu+KjlncEncWMYw=
-X-Received: by 2002:a4a:7ac2:: with SMTP id a185mr2726927ooc.84.1590578993346;
- Wed, 27 May 2020 04:29:53 -0700 (PDT)
+        id S1725819AbgE0L7R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 May 2020 07:59:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1590580741;
+        bh=/4ZxwbojsP0H8jvnRJLfQPi+JeuPy72LvcnXI0WW84A=;
+        h=X-UI-Sender-Class:Subject:To:References:From:Date:In-Reply-To;
+        b=RsCITmXv1ILnW0AuRCdyGmp/COa+Gu1DtzNhgc2O9Vuyp53o7g8obh3B8BTNaMp3h
+         uq0lj43A9TorKaL1lc5t+Kjoa70MXzhy1gqvd4tT+GYY5axyTXeiU0XU6myOI/C8XW
+         TQ+Q9Zb+rsUvwzXm096XgqgQfTN/KhyyIuEu0H4s=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.com (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MGz1f-1jqr1L3duV-00E7uW; Wed, 27
+ May 2020 13:59:01 +0200
+Subject: Re: [PATCH v3 0/3] Add file-system authentication to BTRFS
+To:     dsterba@suse.cz, Johannes Thumshirn <jth@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20200514092415.5389-1-jth@kernel.org>
+ <5663c6ca-87d4-8a98-3338-e9a077f4c82f@gmx.com>
+ <20200527112725.GA18421@suse.cz>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
+ PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
+ 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
+ D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
+ efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
+ ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
+ BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
+ 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
+ 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
+ EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
+ 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
+ ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
+ oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
+ fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
+ 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
+ ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
+ oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
+Message-ID: <db7c0e64-66fb-15a8-b976-92423b044ecf@gmx.com>
+Date:   Wed, 27 May 2020 19:58:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Received: by 2002:ac9:1d8:0:0:0:0:0 with HTTP; Wed, 27 May 2020 04:29:52 -0700 (PDT)
-In-Reply-To: <TY1PR01MB15784E70CEACDA05F688AE6790B10@TY1PR01MB1578.jpnprd01.prod.outlook.com>
-References: <CGME20200520075735epcas1p269372d222e25f3fd51b7979f5b7cdc61@epcas1p2.samsung.com>
- <20200520075641.32441-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
- <055a01d63306$82b13440$88139cc0$@samsung.com> <TY1PR01MB15784E70CEACDA05F688AE6790B10@TY1PR01MB1578.jpnprd01.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Wed, 27 May 2020 20:29:52 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_oG6dc7CNiHszKmhabHd2zrN_VOaNYaWRPES=7hRu+pA@mail.gmail.com>
-Message-ID: <CAKYAXd_oG6dc7CNiHszKmhabHd2zrN_VOaNYaWRPES=7hRu+pA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: optimize dir-cache
-To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
-        <Mori.Takahiro@ab.mitsubishielectric.co.jp>,
-        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
-        <Motai.Hirotaka@aj.mitsubishielectric.co.jp>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kohada.t2@gmail.com" <kohada.t2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200527112725.GA18421@suse.cz>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN"
+X-Provags-ID: V03:K1:4Ulk2ZUwpFYBxEMgs7b1MlPvqtBqKv2XsNobGAgzL3ztWevmXUL
+ E5Phy9Rv7E4FgGiQRT99Lj6vyazmmffQKhZajsOig+QXtyAwEu6vlUvoXgWaErS9BZ+yQFq
+ kSXDnKxe+bUWIw1ZcL+MZAkAknn/xcbJIOhuNuuLNeXErBc5ehgcqOPU9XSx/01HwBXZKQD
+ sDc6VIPG/Ds3EbhJII1PQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8QbOsWp2X8c=:5SQOKAKaIGrV1hGBm1PMSp
+ gVB4qIZaDxfYu1ThcKpnd8PgML4hCjb+V48TuM8aRWMK3tYd66VR7It9oaF8VRSy/910Ce2BJ
+ eBGwlllHmZBALC83ZtjWgVzLsqK4T7T62tfyjHPbDV5yiYIQDl44s3c/P123OPpNlaXNKfoTu
+ U17TJePZ8OdALgz0OKZKqfk2NpDLOhNZhtjGTxRiIU1eC5VIGojoosQWI/9FALWl131CK7rAx
+ UEF8xSNvht4VI7/eiaeaxqFsWdUKQ+hwLZDs4raIrENC6bpNZJxnp0UYXRp5mNoBQO4sM77Rr
+ qQAwm229cdnl06fFDVnz1fRKQWmYl6Y3Dz2CnQh8Wr9o+k9e2yEd8S+npQhaLOX3isjs445Tl
+ pADndNVSY9YApxjQJXSq/4PObCBlb1cqop3BsFBnyrlrrUc4ZQ1vFRFZQa1KpoJPAr89HN5I+
+ a0oMspoEOdH9QG6t9o7DVQ2QduxZbnTGHCcPGfTQ8NX/REnTBAl27OngTXnaYJG8JBagKEuTD
+ woQMTU8XDQdDGiD2XihyUbwQty/dzfGmNPWEX8OLwS6B9DnR0+T6g1EWe8RlGZqWHeB9vmNZN
+ dfq6ZSboXAn53OssPOA8AZWRuqnQ+BhsJw3Izib7f5seUxAO99PD9wXaAxnmSTeAk+lQGZMkY
+ gr1sw1M07dZpYdZzZzqM6J05QCj3WBTxFmq409XfkszpAi5cmVvXK3RR7E77vgzjZLOC33I3x
+ FO+8bv2A5qJzbjbMQD+isvLQDqJamgwpBIpKvB79AOlLet7v7OOBF8cxpDdIzlE2Oo9bWkJCl
+ pbNTJ1iZfhnP8zzBJOmqJje9+NZo0nXsIVhKPDL8WM/HasUXxiFFtmys0irVqHf5WhzQcjP/f
+ 9quJH3tvA+owQij5uAHk79a4qvrTQ6Hf+gNMttZLZ/FVCXZPsaUMvZRkSojfhF4L5MpUnbC4Z
+ pS1txrXCMRtFUTouoTIK3exU4A8dmHfewOu8tHV8+vtD/VO38ooh3SKPF+tD+wWAK5rcTAO3L
+ 1svGhP4O8xxWZpub2t6K2arIUwq76BKNb+0PyEeeMNZwW78McJREaP+vw+Byp5+rTZvAbXF9y
+ QyE1JoyKF8pC96KoYJhpaGfgvW3fBAD5ZA7xZWMfe6qMGdWgMpdIKqlPsyIdKEdOurftcHh75
+ AgVgWYR3MNdSmgQZ7Ad9w8R+7ujwmrVb2FOaCCLtLpDjveKWQFnOqSI5a+YjxmAnQDVfSTOaL
+ 3iad6JRyx59lewPkk
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-05-27 17:00 GMT+09:00,
-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-<Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>:
-> Thank you for your comment.
->
->  >> +    for (i = 0; i < es->num_bh; i++) {
->  >> +            if (es->modified)
->  >> +                    exfat_update_bh(es->sb, es->bh[i], sync);
->  >
->  > Overall, it looks good to me.
->  > However, if "sync" is set, it looks better to return the result of
-> exfat_update_bh().
->  > Of course, a tiny modification for exfat_update_bh() is also required.
->
->  I thought the same, while creating this patch.
->  However this patch has changed a lot and I didn't add any new error
-> checking.
->  (So, the same behavior will occur even if an error occurs)
->
->  >> +struct exfat_dentry *exfat_get_dentry_cached(
->  >> +    struct exfat_entry_set_cache *es, int num) {
->  >> +    int off = es->start_off + num * DENTRY_SIZE;
->  >> +    struct buffer_head *bh = es->bh[EXFAT_B_TO_BLK(off, es->sb)];
->  >> +    char *p = bh->b_data + EXFAT_BLK_OFFSET(off, es->sb);
->  >
->  > In order to prevent illegal accesses to bh and dentries, it would be
-> better to check validation for num and bh.
->
->  There is no new error checking for same reason as above.
->
->  I'll try to add error checking to this v2 patch.
->  Or is it better to add error checking in another patch?
-The latter:)
-Thanks!
->
-> BR
-> ---
-> Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN
+Content-Type: multipart/mixed; boundary="irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN"
+
+--irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+
+
+On 2020/5/27 =E4=B8=8B=E5=8D=887:27, David Sterba wrote:
+> On Wed, May 27, 2020 at 10:08:06AM +0800, Qu Wenruo wrote:
+>>> Changes since v2:
+>>> - Select CONFIG_CRYPTO_HMAC and CONFIG_KEYS (kbuild robot)
+>>> - Fix double free in error path
+>>> - Fix memory leak in error path
+>>> - Disallow nodatasum and nodatacow when authetication is use (Eric)
+>>
+>> Since we're disabling NODATACOW usages, can we also disable the
+>> following features?
+>> - v1 space cache
+>>   V1 space cache uses NODATACOW file to store space cache, althouhg it=
+
+>>   has inline csum, but it's fixed to crc32c. So attacker can easily
+>>   utilize this hole to mess space cache, and do some DoS attack.
+>=20
+> That's a good point.
+>=20
+> The v1 space cache will be phased out but it won't be in a timeframe
+> we'll get in the authentication. At this point we don't even have a way=
+
+> to select v2 at mkfs time (it's work in progress though), so it would b=
+e
+> required to switch to v2 on the first mount.
+>=20
+>> - fallocate
+>>   I'm not 100% sure about this, but since nodatacow is already a secon=
+d
+>>   class citizen in btrfs, maybe not supporting fallocate is not a
+>>   strange move.
+>=20
+> Fallocate is a standard file operation, not supporting would be quite
+> strange. What's the problem with fallocate and authentication?
+>=20
+As said, I'm not that sure about preallocate, but that's the remaining
+user of nodatacow.
+Although it's a pretty common interface, but in btrfs it doesn't really
+make much sense.
+In case like fallocate then snapshot use case, there is really no
+benefit from writing into fallocated range.
+
+Not to mention the extra cross-ref check involved when writing into
+possible preallocated range.
+
+Thanks,
+Qu
+
+
+--irJgq6ndamF6Nvqx6F1w4NWkw2cdWTifN--
+
+--I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl7OVgAACgkQwj2R86El
+/qi6pQf9GlhhFZR4RYAQi8goFJs2uJRE7ch31FzGoAl+mbEzttKrA0pxBNOBmxcX
+TKbmL8CD6YKcNCODOoSZuD9UEDqLq3p83y6oxkxLep1+JB91evcsIGo6Su+099rj
+xh13C4UbzJm8GBvjpAq5bMoogSwalPwEhMWKdiQDQh8TSwp5j/mPpKN9U6jemAqF
+T3UKah4IZAqfvvHIaN/tPUXzEj5FDKyGeUGcQIZM4MdcznoUJxpdJhiYs4sxraZs
+4C+5a/89t3ee3osYhLEK3JhRnBvDtSVFTlW8G8J6AbSjFVh5WGNw6rO+23c1WJFX
+7rci5Am+FUkwFSIIYTdz8yGicEwm5g==
+=cRGg
+-----END PGP SIGNATURE-----
+
+--I5jE12PKb4pwHIIDDaXWTzr99utTzjnwN--
