@@ -2,126 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4966E1E5105
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 00:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB311E511E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 00:22:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbgE0WMw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 18:12:52 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:57768 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgE0WMv (ORCPT
+        id S1725930AbgE0WWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 18:22:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33502 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbgE0WWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 18:12:51 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1je4I4-0007b5-Ch; Wed, 27 May 2020 16:12:48 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1je4I3-0001jf-FJ; Wed, 27 May 2020 16:12:48 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200527134911.1024114-1-arnd@arndb.de>
-Date:   Wed, 27 May 2020 17:08:57 -0500
-In-Reply-To: <20200527134911.1024114-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Wed, 27 May 2020 15:49:01 +0200")
-Message-ID: <877dwx3u9y.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 27 May 2020 18:22:00 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E60AC05BD1E;
+        Wed, 27 May 2020 15:21:59 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id g18so3764000qtu.13;
+        Wed, 27 May 2020 15:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O0EZFokD4VETW8hilHGvqiWo+AY18MjoTOCmb0j2QP0=;
+        b=s2T8fMW9uZpIMjWGcD1ZLd6JVhc9lKb0qUFORy1p1/+usP51vVfE7imxKLhJ4zBXJL
+         X0mKKqb2aJCwjf5JmHRE1iXQ5HDbob9tUqqLNARkQ4SclF98OdsiSN0H9L7Jk7a0uncw
+         hkkYgpvz1WcPKKAIE5+ZaRlyLjX6J5dcqyx6Jy/iaBSWUW4u7GmrcX5FGeEQ7HFP7/to
+         Y3/evqAvP8745WekeffD2AUo5xLwINjsmVd9GSXBQoU8+b3mUNz7Y2lZUf15r70X16G7
+         pzzvqB9L/QSRoPPhm2dplOLBsn3NmgGCi0h/ITu1v08iISeTVI8BH0uIZYxV4HlMnPo9
+         yrWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O0EZFokD4VETW8hilHGvqiWo+AY18MjoTOCmb0j2QP0=;
+        b=I0rhIIffJ1k5UhhrCmd00Q8uu+0FFACijdUQHhoFcJW8PXbxq+eYTBNVL7ACu2TKXd
+         DBa67UNzvureLWPODO/tVk/bREAezYpQTi1RR1TBKf3dH9+ucmKzqsi7Pfsc7kXHOsJv
+         8fDAWt7vDBMFHspQh68O5l1XBpS9vKqK0khpffX6Qi6/6HkbsYMXrGdGxVuj18Smrcib
+         uKerlLz94jQDwHrTJdxb/x9uU06HGhO4DplzLGJwqQxXDdsdU7Ibp3Nz0n9YUneCtGzF
+         KvpOG3KdtbcrVwZsRnwxSzp5LLCTpaRU6BJgJB1aHNaXZFkSkN9xoWCDg8Q829D/OgEQ
+         YYKg==
+X-Gm-Message-State: AOAM533pYVEpGrCqnJnCBJMyUL0o16x4B7Zca0faEFl74wTuASQvH+Jw
+        40QO0CqIYyYVmcPqlEWvuL0=
+X-Google-Smtp-Source: ABdhPJyOgdLDKEz0HQkCQmvOCQBIMuQEJnT24eYzL6cb96knhDKVZ2UOmt/SMnmijP1sKg5MpJ9iCQ==
+X-Received: by 2002:ac8:6cf:: with SMTP id j15mr107653qth.143.1590618118847;
+        Wed, 27 May 2020 15:21:58 -0700 (PDT)
+Received: from ?IPv6:2601:282:803:7700:2840:9137:669d:d1e7? ([2601:282:803:7700:2840:9137:669d:d1e7])
+        by smtp.googlemail.com with ESMTPSA id v14sm3909630qtj.31.2020.05.27.15.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2020 15:21:58 -0700 (PDT)
+Subject: Re: [PATCH v3 0/7] Statsfs: a new ram-based file system for Linux
+ kernel statistics
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Cc:     kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>
+References: <20200526110318.69006-1-eesposit@redhat.com>
+ <20200526153128.448bfb43@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+ <6a754b40-b148-867d-071d-8f31c5c0d172@redhat.com>
+ <20200527132321.54bcdf04@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+ <af2ba926-73bc-26c3-7ce7-bd45f657fd85@redhat.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <b6fa4439-c6b8-63a4-84fd-fbac3d4f10fd@gmail.com>
+Date:   Wed, 27 May 2020 16:21:55 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <af2ba926-73bc-26c3-7ce7-bd45f657fd85@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1je4I3-0001jf-FJ;;;mid=<877dwx3u9y.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18PilCsXe1U+52ZzNR11cP33Nif/W5bnxU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_B_Unicode
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4617]
-        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Arnd Bergmann <arnd@arndb.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 472 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 11 (2.4%), b_tie_ro: 10 (2.1%), parse: 1.20
-        (0.3%), extract_message_metadata: 16 (3.3%), get_uri_detail_list: 1.25
-        (0.3%), tests_pri_-1000: 6 (1.3%), tests_pri_-950: 1.34 (0.3%),
-        tests_pri_-900: 1.16 (0.2%), tests_pri_-90: 180 (38.1%), check_bayes:
-        168 (35.5%), b_tokenize: 6 (1.4%), b_tok_get_all: 42 (8.9%),
-        b_comp_prob: 2.5 (0.5%), b_tok_touch_all: 113 (23.9%), b_finish: 1.02
-        (0.2%), tests_pri_0: 242 (51.4%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.9 (0.6%), poll_dns_idle: 0.87 (0.2%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 7 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix execfd build regression
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+On 5/27/20 3:07 PM, Paolo Bonzini wrote:
+> I see what you meant now.  statsfs can also be used to enumerate objects
+> if one is so inclined (with the prototype in patch 7, for example, each
+> network interface becomes a directory).
 
-> The change to bprm->have_execfd was incomplete, leading
-> to a build failure:
->
-> fs/binfmt_elf_fdpic.c: In function 'create_elf_fdpic_tables':
-> fs/binfmt_elf_fdpic.c:591:27: error: 'BINPRM_FLAGS_EXECFD' undeclared
->
-> Change the last user of BINPRM_FLAGS_EXECFD in a corresponding
-> way.
->
-> Reported-by: Valdis Klētnieks <valdis.kletnieks@vt.edu>
-> Fixes: b8a61c9e7b4a ("exec: Generic execfd support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I have no idea whether this is right, I only looked briefly at
-> the commit that introduced the problem.
-
-It is correct and my fault.
-
-Is there an easy to build-test configuration that includes
-binfmt_elf_fdpic?
-
-I have this sense that it might be smart to unify binfmt_elf
-and binftm_elf_fdpic to the extent possible, and that will take build
-tests.
-
-Eric
-
-
-
-> ---
->  fs/binfmt_elf_fdpic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index bba3ad555b94..aaf332d32326 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -588,7 +588,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	nitems = 1 + DLINFO_ITEMS + (k_platform ? 1 : 0) +
->  		(k_base_platform ? 1 : 0) + AT_VECTOR_SIZE_ARCH;
->  
-> -	if (bprm->interp_flags & BINPRM_FLAGS_EXECFD)
-> +	if (bprm->have_execfd)
->  		nitems++;
->  
->  	csp = sp;
+there are many use cases that have 100's to 1000's have network devices.
+Having a sysfs entry per device already bloats memory usage for these
+use cases; another filesystem with an entry per device makes that worse.
+Really the wrong direction for large scale systems.
