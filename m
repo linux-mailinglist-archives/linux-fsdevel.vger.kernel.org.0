@@ -2,74 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9601E4ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 22:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99D31E4EF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 22:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbgE0UFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 16:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40510 "EHLO
+        id S1728724AbgE0ULx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 16:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbgE0UFa (ORCPT
+        with ESMTP id S1728482AbgE0ULw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 16:05:30 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209A6C05BD1E;
-        Wed, 27 May 2020 13:05:30 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1je2Im-00GTzv-F9; Wed, 27 May 2020 20:05:24 +0000
-Date:   Wed, 27 May 2020 21:05:24 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] fs: Add an explicit might_sleep() to iput
-Message-ID: <20200527200524.GG23230@ZenIV.linux.org.uk>
-References: <20200527141753.101163-1-kpsingh@chromium.org>
- <20200527190948.GE23230@ZenIV.linux.org.uk>
- <CACYkzJ5MkWjVPo1JK68+fVyX7p=8bsi9P-C6nR=LYGJw04f9sw@mail.gmail.com>
+        Wed, 27 May 2020 16:11:52 -0400
+Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CFEC03E96E;
+        Wed, 27 May 2020 13:11:52 -0700 (PDT)
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1je2Ob-0005ku-65; Wed, 27 May 2020 22:11:25 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 2/7] radix-tree: Use local_lock for protection
+Date:   Wed, 27 May 2020 22:11:14 +0200
+Message-Id: <20200527201119.1692513-3-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.27.0.rc0
+In-Reply-To: <20200527201119.1692513-1-bigeasy@linutronix.de>
+References: <20200527201119.1692513-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACYkzJ5MkWjVPo1JK68+fVyX7p=8bsi9P-C6nR=LYGJw04f9sw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 27, 2020 at 09:50:46PM +0200, KP Singh wrote:
-> On Wed, May 27, 2020 at 9:09 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Wed, May 27, 2020 at 04:17:53PM +0200, KP Singh wrote:
-> > > From: KP Singh <kpsingh@google.com>
-> > >
-> > > It is currently mentioned in the comments to the function that iput
-> > > might sleep when the inode is destroyed. Have it call might_sleep, as
-> > > dput already does.
-> > >
-> > > Adding an explicity might_sleep() would help in quickly realizing that
-> > > iput is called from a place where sleeping is not allowed when
-> > > CONFIG_DEBUG_ATOMIC_SLEEP is enabled as noticed in the dicussion:
-> >
-> > You do realize that there are some cases where iput() *is* guaranteed
-> > to be non-blocking, right?
-> 
-> Yes, but the same could be said about dput too right?
+The radix-tree and idr preload mechanisms use preempt_disable() to protect
+the complete operation between xxx_preload() and xxx_preload_end().
 
-Theoretically, but note that even there dput(NULL) won't trigger that.
+As the code inside the preempt disabled section acquires regular spinlocks,
+which are converted to 'sleeping' spinlocks on a PREEMPT_RT kernel and
+eventually calls into a memory allocator, this conflicts with the RT
+semantics.
 
-> Are there any callers that rely on these cases? (e.g. when the caller is
-> sure that it's not dropping the last reference to the inode).
+Convert it to a local_lock which allows RT kernels to substitute them with
+a real per CPU lock. On non RT kernels this maps to preempt_disable() as
+before, but provides also lockdep coverage of the critical region.
+No functional change.
 
-Not sure - there might be.  Try and see if it gives false positives,
-but I would rather have it done in -next circa -rc1, so we could see
-what falls out and withdraw that if there turn out to be some.
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/idr.h        |  2 +-
+ include/linux/radix-tree.h | 11 ++++++++++-
+ lib/radix-tree.c           | 20 +++++++++-----------
+ 3 files changed, 20 insertions(+), 13 deletions(-)
 
-One thing I definitely want to avoid is a flow of BS patches of
-"warning is given, therefore we must do something, this is something,
-let's do it" variety.  Right now we have just under 700 callers in
-the tree, most of them in individual filesystems; I'm not up to
-auditing that pile on the moments notice...
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index ac6e946b6767b..3ade03e5c7af3 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -171,7 +171,7 @@ static inline bool idr_is_empty(const struct idr *idr)
+  */
+ static inline void idr_preload_end(void)
+ {
+-	preempt_enable();
++	local_unlock(&radix_tree_preloads.lock);
+ }
+=20
+ /**
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 63e62372443a5..c2a9f7c907273 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -16,11 +16,20 @@
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/xarray.h>
++#include <linux/local_lock.h>
+=20
+ /* Keep unconverted code working */
+ #define radix_tree_root		xarray
+ #define radix_tree_node		xa_node
+=20
++struct radix_tree_preload {
++	local_lock_t lock;
++	unsigned nr;
++	/* nodes->parent points to next preallocated node */
++	struct radix_tree_node *nodes;
++};
++DECLARE_PER_CPU(struct radix_tree_preload, radix_tree_preloads);
++
+ /*
+  * The bottom two bits of the slot determine how the remaining bits in the
+  * slot are interpreted:
+@@ -245,7 +254,7 @@ int radix_tree_tagged(const struct radix_tree_root *, u=
+nsigned int tag);
+=20
+ static inline void radix_tree_preload_end(void)
+ {
+-	preempt_enable();
++	local_unlock(&radix_tree_preloads.lock);
+ }
+=20
+ void __rcu **idr_get_free(struct radix_tree_root *root,
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 2ee6ae3b0ade0..34e406fe561fe 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -20,6 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kmemleak.h>
+ #include <linux/percpu.h>
++#include <linux/local_lock.h>
+ #include <linux/preempt.h>		/* in_interrupt() */
+ #include <linux/radix-tree.h>
+ #include <linux/rcupdate.h>
+@@ -27,7 +28,6 @@
+ #include <linux/string.h>
+ #include <linux/xarray.h>
+=20
+-
+ /*
+  * Radix tree node cache.
+  */
+@@ -58,12 +58,10 @@ struct kmem_cache *radix_tree_node_cachep;
+ /*
+  * Per-cpu pool of preloaded nodes
+  */
+-struct radix_tree_preload {
+-	unsigned nr;
+-	/* nodes->parent points to next preallocated node */
+-	struct radix_tree_node *nodes;
++DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) =3D {
++	.lock =3D INIT_LOCAL_LOCK(lock),
+ };
+-static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) =3D =
+{ 0, };
++EXPORT_PER_CPU_SYMBOL_GPL(radix_tree_preloads);
+=20
+ static inline struct radix_tree_node *entry_to_node(void *ptr)
+ {
+@@ -332,14 +330,14 @@ static __must_check int __radix_tree_preload(gfp_t gf=
+p_mask, unsigned nr)
+ 	 */
+ 	gfp_mask &=3D ~__GFP_ACCOUNT;
+=20
+-	preempt_disable();
++	local_lock(&radix_tree_preloads.lock);
+ 	rtp =3D this_cpu_ptr(&radix_tree_preloads);
+ 	while (rtp->nr < nr) {
+-		preempt_enable();
++		local_unlock(&radix_tree_preloads.lock);
+ 		node =3D kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+ 		if (node =3D=3D NULL)
+ 			goto out;
+-		preempt_disable();
++		local_lock(&radix_tree_preloads.lock);
+ 		rtp =3D this_cpu_ptr(&radix_tree_preloads);
+ 		if (rtp->nr < nr) {
+ 			node->parent =3D rtp->nodes;
+@@ -381,7 +379,7 @@ int radix_tree_maybe_preload(gfp_t gfp_mask)
+ 	if (gfpflags_allow_blocking(gfp_mask))
+ 		return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
+ 	/* Preloading doesn't help anything with this gfp mask, skip it */
+-	preempt_disable();
++	local_lock(&radix_tree_preloads.lock);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(radix_tree_maybe_preload);
+@@ -1470,7 +1468,7 @@ EXPORT_SYMBOL(radix_tree_tagged);
+ void idr_preload(gfp_t gfp_mask)
+ {
+ 	if (__radix_tree_preload(gfp_mask, IDR_PRELOAD_SIZE))
+-		preempt_disable();
++		local_lock(&radix_tree_preloads.lock);
+ }
+ EXPORT_SYMBOL(idr_preload);
+=20
+--=20
+2.27.0.rc0
+
