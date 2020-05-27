@@ -2,124 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3091E3778
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 06:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A05A1E37AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 May 2020 07:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725768AbgE0Ek7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 00:40:59 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29223 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725294AbgE0Ek7 (ORCPT
+        id S1726864AbgE0FIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 01:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbgE0FIa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 00:40:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590554457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=62bWFuqjjYRHCtiXetCYD/KJZfcErk/k0VhDChgAXO8=;
-        b=PAzaG6PhZE6MEtY0/PbDDjAVhg2HyRXr24Q5HA7KPmo/f+6ovHTbFDSTLPG0DTLqLpP6z8
-        2arPwzbKyLzY9AYIoN33LnBvzn0q7BMTFtpKzQGqVsV7GvIeHHxt4gERw2TVjtpewU5UPd
-        aL2Yf2+nq+Vl3ugOmpgfVt3uQCk9VAs=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-118-PwsSmW7AP96YBPSI_Dt3Fw-1; Wed, 27 May 2020 00:40:55 -0400
-X-MC-Unique: PwsSmW7AP96YBPSI_Dt3Fw-1
-Received: by mail-pl1-f199.google.com with SMTP id g22so17306656plq.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 May 2020 21:40:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=62bWFuqjjYRHCtiXetCYD/KJZfcErk/k0VhDChgAXO8=;
-        b=s1PPSlNOrK6+JIhsnl6gSDhepWZ0bV0IpyEMIx+IE1UwSOAKiH3IR+gHmSoBginYvk
-         9Ydz3GVw6uV/LiE3cx02/dhuUYYXeHLio8vi6YTPp87/wFK0ej9QcyTlNDyfp+ALwZtH
-         R0OGh96j+gMtgO9XFxu0dxYomEmGVN+HzB+jXpst9hUX6p5EgXcKAzjQVqQUJQjTM0B6
-         1xQrtTwqx3VBKN3C6Qc036NC8xfGvDjvzjQU2+c81Oh7ZRsfFzUDXGUsaMLxeAaQZGE2
-         9iqgPhBhsInk+vJ0Ep6z0FJ45H7KLNu27s146yuXPr46zguVjY+X6NF40tH2hPet6aDv
-         3PXA==
-X-Gm-Message-State: AOAM532awooLYgW3uWOgK6BtJJLEpD/qpKbi4eXCQpRbHO5ePNygZN6k
-        DHrHE64g4tSLid64GsA2p4yMkLOGPyhQ9m0ziH6x19xWfytSsyg0kWZF1gawVYoKGUEs0iFulvw
-        1nxnfPcvLmURbXAnaJs5p/eyXPQ==
-X-Received: by 2002:a17:90a:f0d8:: with SMTP id fa24mr2767948pjb.93.1590554454367;
-        Tue, 26 May 2020 21:40:54 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz3AhxFWNIq2AkpKBB4NtPMQm+6oHtFAst619gt2ptZM930h8Bs8vT/fc6lIcLSTn64wdYb6w==
-X-Received: by 2002:a17:90a:f0d8:: with SMTP id fa24mr2767930pjb.93.1590554454100;
-        Tue, 26 May 2020 21:40:54 -0700 (PDT)
-Received: from hsiangkao-HP-ZHAN-66-Pro-G1.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id mt3sm926663pjb.23.2020.05.26.21.40.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 21:40:53 -0700 (PDT)
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Gao Xiang <hsiangkao@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] xattr: fix EOPNOTSUPP if fs and security xattrs disabled
-Date:   Wed, 27 May 2020 12:40:37 +0800
-Message-Id: <20200527044037.30414-1-hsiangkao@redhat.com>
-X-Mailer: git-send-email 2.24.0
+        Wed, 27 May 2020 01:08:30 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56DFC061A0F;
+        Tue, 26 May 2020 22:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XC2Shs5lNCGSRyWc4oHtMietNdOJX+rOUehgxOJwmi0=; b=ka1XYDa8ifbdK426quZ1uqtWdj
+        Zi6vV97cDDIL4upmEch9K8LFoJFKV5fINg4EjpgJK0nqDSxSMk1q2rQtAwwC1uQIbiEzqnDI1z9Cn
+        qEFFnSP4My9HuxZ90+W9+Q5V2Ri5QzD6F9qSMSRE/UM5R1zqo4L7vgQvNEHf1XIc6MAcpysCeMmmN
+        agyuFe2MwhAFEbJx8U3BoE95NXZp/zvGVtGl1XPcjTZsfPtghEzMBhWgW+AcUXfATsY8Fu8NKiFh5
+        WU+KGw6JXidH38HMCImS3JbCxELvaKn/gwaFvoUHEs1G6en5TmZBTSHrHa+RPIgF6QgjFyggFuB4g
+        FKtMtTfw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jdoIh-0008P7-UA; Wed, 27 May 2020 05:08:23 +0000
+Date:   Tue, 26 May 2020 22:08:23 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
+Message-ID: <20200527050823.GA31860@infradead.org>
+References: <20200526163336.63653-1-kpsingh@chromium.org>
+ <20200526163336.63653-3-kpsingh@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200526163336.63653-3-kpsingh@chromium.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit f549d6c18c0e ("[PATCH] Generic VFS fallback for security xattrs")
-introduces a behavior change of listxattr path therefore listxattr(2)
-won't report EOPNOTSUPP correctly if fs and security xattrs disabled.
-However it was clearly recorded in manpage all the time.
+On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
+> 
+> Similar to bpf_local_storage for sockets, add local storage for inodes.
+> The life-cycle of storage is managed with the life-cycle of the inode.
+> i.e. the storage is destroyed along with the owning inode.
+> 
+> Since, the intention is to use this in LSM programs, the destruction is
+> done after security_inode_free in __destroy_inode.
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: Chengguang Xu <cgxu519@mykernel.net>
-Cc: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <hsiangkao@redhat.com>
----
-
-Noticed when reviewing Chengguang's patch for erofs [1] (together
-with ext2, f2fs). I'm not sure if it's the best approach but it
-seems that security_inode_listsecurity() has other users and it
-mainly focus on reporting these security xattrs...
-
-[1] https://lore.kernel.org/r/20200526090343.22794-1-cgxu519@mykernel.net
-
-Thanks,
-Gao Xiang
-
- fs/xattr.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 91608d9bfc6a..f339a67db521 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -352,13 +352,15 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
- 	error = security_inode_listxattr(dentry);
- 	if (error)
- 		return error;
--	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR)) {
--		error = inode->i_op->listxattr(dentry, list, size);
--	} else {
--		error = security_inode_listsecurity(inode, list, size);
--		if (size && error > size)
--			error = -ERANGE;
--	}
-+
-+	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR))
-+		return inode->i_op->listxattr(dentry, list, size);
-+
-+	if (!IS_ENABLED(CONFIG_SECURITY))
-+		return -EOPNOTSUPP;
-+	error = security_inode_listsecurity(inode, list, size);
-+	if (size && error > size)
-+		error = -ERANGE;
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_listxattr);
--- 
-2.24.0
-
+NAK onbloating the inode structure.  Please find an out of line way
+to store your information.
