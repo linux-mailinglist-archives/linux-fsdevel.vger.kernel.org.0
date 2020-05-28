@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8481E5BA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 11:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7141E5BA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 11:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbgE1JQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 05:16:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49864 "EHLO
+        id S1728262AbgE1JRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 05:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbgE1JQt (ORCPT
+        with ESMTP id S1728131AbgE1JRH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 05:16:49 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135B5C05BD1E;
-        Thu, 28 May 2020 02:16:49 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id 131so4894638pfv.13;
-        Thu, 28 May 2020 02:16:49 -0700 (PDT)
+        Thu, 28 May 2020 05:17:07 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B330C05BD1E;
+        Thu, 28 May 2020 02:17:07 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id y11so3045184plt.12;
+        Thu, 28 May 2020 02:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yu4RgcWIOOp8McPfFqo6P0ubfGT/mtUPREpMqIZc7D0=;
-        b=s7mwzhwR1bpY5etg88nOLosVGoJJPXPbq63qTDPR4NTZl8IkMR/yV4AE0m809Awqm+
-         FZ/7q3NPiCIurY6SvLSOwO50lhnij1nIDZPrU7dGYQBNWkJoeHT5jEurXeCt7w6tOT1k
-         y7MX9+HvvnMhfy84ybfg2DcGz3p3aQQurqo+9bo5jh9eiiUyGU9Y+BavXloxAn1VtlSA
-         1ud1g2ugsstYpyb7wcpALlQYL7+NfuZJ69UwozJphLMalerYW2GP35lL11+g0+1X0X1V
-         EotyyaCaTThxpgxCcuVqhaFT/0lvLrUw7UzqEu1o+bDIFpjb0yskCSRJDnpSPjJ72Njc
-         fyQQ==
+        bh=o8hs8Gy4+vcTx/6wICvu/N/ImG6vk07R81c1rqTOhmo=;
+        b=l0N71qao1hvbacif3rtUkOSbER25ThW144oVegNpIDXEuGNq2EaylwS+QnYpRKGNPi
+         cutYH25IZCsN7OnStEqnfjRcGgUh0YLyvny4JfmWV9OYgeDyuh6709H0axsi46bL8o6I
+         TJ9IT9hl/LYVVInLZcajUVSNSWj4eMYXP5355oFzUz1Myy36jU+vfDzWQ3u5cD9TVqrn
+         YfBfjqvUVr9GMFSdPpXv8jOeTspLuh+EKITpkoXORG8ZSoyQT7vMgp3TypS0/otClvxD
+         W5OHzfA339GFDwbMRCC+4uxGACXSrZeH59qpVmYM1BfMSDBGMhQyUn/b+KLoH5kZ7nn8
+         NFvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yu4RgcWIOOp8McPfFqo6P0ubfGT/mtUPREpMqIZc7D0=;
-        b=ab1wUb468mpBRJoUe1shWq8YIocU+Tp8LfOppv2DeM1fz1gk3gBGj3V7GOqdKnx/VA
-         oiziEWmUzEbRfkuFzUtTmw8o3nPhx+NnWSL8B5zwf80qHHo/BKm0bjveec9+WozbNJ7G
-         zw+jqeeZwams9vR81ZK/tGO/HkoJo8IwJtGCY/hOJgKQHQS4mx7ObA6Pl5gCpcHWD5ly
-         T+BU50exbYe6rO0wT10c41rNWf+Bkh/ApI8xlMzMu3y70A2yf0rQcSsUW0jg56mV5eP+
-         dIMGTslhlEMZ1jbZTYQGqNo2cwS9nUYnkzd8pD3yN60y3MdjZ8o6z4Va6yxPsuotl4Lu
-         OkjA==
-X-Gm-Message-State: AOAM533HsTCqGLDvClrjlhGbp38nFkI8H0RCL0/AZfFHq/lJ9gHSMGV7
-        lT8QSnd+KWqZVwWStLZnmpY=
-X-Google-Smtp-Source: ABdhPJwN9gmVbQzj+ryKFUUOQkzdNBiHHJ2xWKwbJE5aikshPEjsLjKwTVCg0vsJPW1u6pkHDgt7ow==
-X-Received: by 2002:a63:b606:: with SMTP id j6mr2076035pgf.334.1590657408592;
-        Thu, 28 May 2020 02:16:48 -0700 (PDT)
+        bh=o8hs8Gy4+vcTx/6wICvu/N/ImG6vk07R81c1rqTOhmo=;
+        b=IzR2Ljyi3zJLmdk/lqxDbU2ehoknzXyVQbJPfAKeOFeuZkwPZBM17sIW9iKPIhRJHf
+         pEkMw0s1AgaoILXCij1uB9GpzqGf+zsyyvagr7OPJq4nMpthF4bKqFd8W0evH/H4j3Hz
+         +liERFBMJmH51aZHzN/8edJ4hTFhDhwnBrinnWElXcxieLPyWXJe413uY8HHgszqqSNK
+         D1BA8CyIpRlHYQq8RuyScg0zj8J5iFBRf9j8DM7uqfKS98WI2JENkWAn2eYnvb7XhLdS
+         BRX2U9r6axSC1hwt9JA3CxWr4v71O4x7a/NdQ3WNKDRNaOziwVCjXCUJjoo7Nk8j9gCa
+         JCGA==
+X-Gm-Message-State: AOAM532FTTB/6SuFF9EHut74sVzSzxh9ilB6SgAQmGVcr3bZoDvkp8I/
+        zxcZ23Qmi9ujNspfhXlci9U=
+X-Google-Smtp-Source: ABdhPJwahJ1NP+QNBEmCkE229tlWtT5nT1KzHV6I4UKclk7tpdk6Qk9pj80SLaFPOkSGw+tQe0Ek6w==
+X-Received: by 2002:a17:90a:4495:: with SMTP id t21mr2797725pjg.185.1590657426953;
+        Thu, 28 May 2020 02:17:06 -0700 (PDT)
 Received: from dc803.flets-west.jp ([2404:7a87:83e0:f800:295a:ef64:e071:39ab])
-        by smtp.gmail.com with ESMTPSA id d15sm5856185pjc.0.2020.05.28.02.16.46
+        by smtp.gmail.com with ESMTPSA id d15sm5856185pjc.0.2020.05.28.02.17.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 02:16:48 -0700 (PDT)
+        Thu, 28 May 2020 02:17:06 -0700 (PDT)
 From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
 To:     kohada.t2@gmail.com
 Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
@@ -56,9 +56,9 @@ Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
         Namjae Jeon <namjae.jeon@samsung.com>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4 v2] exfat: separate the boot sector analysis
-Date:   Thu, 28 May 2020 18:16:02 +0900
-Message-Id: <20200528091605.13016-2-kohada.t2@gmail.com>
+Subject: [PATCH 3/4 v2] exfat: add boot region verification
+Date:   Thu, 28 May 2020 18:16:03 +0900
+Message-Id: <20200528091605.13016-3-kohada.t2@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200528091605.13016-1-kohada.t2@gmail.com>
 References: <20200528091605.13016-1-kohada.t2@gmail.com>
@@ -69,199 +69,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Separate the boot sector analysis to read_boot_sector().
-Furthermore, add a strict consistency check, because overlapping areas
-can cause serious corruption.
+Add Boot-Regions verification specified in exFAT specification.
+Note that the checksum type is strongly related to the raw structure,
+so the'u32 'type is used to clarify the number of bits.
 
 Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 ---
 Changes in v2:
  - rebase with patch 'optimize dir-cache' applied
+ - just print a warning when invalid exboot-signature detected
+ - print additional information when invalid boot-checksum detected
 
- fs/exfat/exfat_raw.h |  1 +
- fs/exfat/super.c     | 96 +++++++++++++++++++++++---------------------
- 2 files changed, 52 insertions(+), 45 deletions(-)
+ fs/exfat/exfat_fs.h |  1 +
+ fs/exfat/misc.c     | 14 +++++++++++++
+ fs/exfat/super.c    | 49 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 64 insertions(+)
 
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index b373dc4e099f..65f884785192 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -15,6 +15,7 @@
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 9673e2d31045..eebbe5a84b2b 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -514,6 +514,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
+ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 		unsigned short chksum, int type);
++u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags);
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index ab7f88b1f6d3..b82d2dd5bd7c 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -151,6 +151,20 @@ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 	return chksum;
+ }
  
- #define VOL_CLEAN		0x0000
- #define VOL_DIRTY		0x0002
-+#define ERR_MEDIUM		0x0004
- 
- #define EXFAT_EOF_CLUSTER	0xFFFFFFFFu
- #define EXFAT_BAD_CLUSTER	0xFFFFFFF7u
++u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type)
++{
++	int i;
++	u8 *c = (u8 *)data;
++
++	for (i = 0; i < len; i++, c++) {
++		if (unlikely(type == CS_BOOT_SECTOR &&
++			     (i == 106 || i == 107 || i == 112)))
++			continue;
++		chksum = ((chksum << 31) | (chksum >> 1)) + *c;
++	}
++	return chksum;
++}
++
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync)
+ {
+ 	set_bit(EXFAT_SB_DIRTY, &EXFAT_SB(sb)->s_state);
 diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index e60d28e73ff0..95909b4d5e75 100644
+index 95909b4d5e75..381f4394f976 100644
 --- a/fs/exfat/super.c
 +++ b/fs/exfat/super.c
-@@ -366,25 +366,20 @@ static int exfat_read_root(struct inode *inode)
+@@ -486,6 +486,49 @@ static int exfat_read_boot_sector(struct super_block *sb)
  	return 0;
  }
  
--static struct boot_sector *exfat_read_boot_with_logical_sector(
--		struct super_block *sb)
-+static int exfat_calibrate_blocksize(struct super_block *sb, int logical_sect)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
--	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
--	unsigned short logical_sect = 0;
--
--	logical_sect = 1 << p_boot->sect_size_bits;
- 
- 	if (!is_power_of_2(logical_sect) ||
- 	    logical_sect < 512 || logical_sect > 4096) {
- 		exfat_err(sb, "bogus logical sector size %u", logical_sect);
--		return NULL;
-+		return -EIO;
- 	}
- 
- 	if (logical_sect < sb->s_blocksize) {
- 		exfat_err(sb, "logical sector size too small for device (logical sector size = %u)",
- 			  logical_sect);
--		return NULL;
-+		return -EIO;
- 	}
- 
- 	if (logical_sect > sb->s_blocksize) {
-@@ -394,24 +389,20 @@ static struct boot_sector *exfat_read_boot_with_logical_sector(
- 		if (!sb_set_blocksize(sb, logical_sect)) {
- 			exfat_err(sb, "unable to set blocksize %u",
- 				  logical_sect);
--			return NULL;
++static int exfat_verify_boot_region(struct super_block *sb)
++{
++	struct buffer_head *bh = NULL;
++	u32 chksum = 0, *p_sig, *p_chksum;
++	int sn, i;
++
++	/* read boot sector sub-regions */
++	for (sn = 0; sn < 11; sn++) {
++		bh = sb_bread(sb, sn);
++		if (!bh)
 +			return -EIO;
- 		}
- 		sbi->boot_bh = sb_bread(sb, 0);
- 		if (!sbi->boot_bh) {
- 			exfat_err(sb, "unable to read boot sector (logical sector size = %lu)",
- 				  sb->s_blocksize);
--			return NULL;
-+			return -EIO;
- 		}
--
--		p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
- 	}
--	return p_boot;
-+	return 0;
- }
- 
--/* mount the file system volume */
--static int __exfat_fill_super(struct super_block *sb)
-+static int exfat_read_boot_sector(struct super_block *sb)
- {
--	int ret;
- 	struct boot_sector *p_boot;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 
-@@ -424,51 +415,36 @@ static int __exfat_fill_super(struct super_block *sb)
- 		exfat_err(sb, "unable to read boot sector");
- 		return -EIO;
- 	}
--
--	/* PRB is read */
- 	p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
- 
- 	/* check the validity of BOOT */
- 	if (le16_to_cpu((p_boot->signature)) != BOOT_SIGNATURE) {
- 		exfat_err(sb, "invalid boot record signature");
--		ret = -EINVAL;
--		goto free_bh;
--	}
--
--
--	/* check logical sector size */
--	p_boot = exfat_read_boot_with_logical_sector(sb);
--	if (!p_boot) {
--		ret = -EIO;
--		goto free_bh;
-+		return -EINVAL;
- 	}
- 
- 	/*
--	 * res_zero field must be filled with zero to prevent mounting
-+	 * must_be_zero field must be filled with zero to prevent mounting
- 	 * from FAT volume.
- 	 */
--	if (memchr_inv(p_boot->must_be_zero, 0,
--			sizeof(p_boot->must_be_zero))) {
--		ret = -EINVAL;
--		goto free_bh;
--	}
-+	if (memchr_inv(p_boot->must_be_zero, 0, sizeof(p_boot->must_be_zero)))
-+		return -EINVAL;
- 
--	p_boot = (struct boot_sector *)p_boot;
--	if (!p_boot->num_fats) {
-+	if (p_boot->num_fats != 1 && p_boot->num_fats != 2) {
- 		exfat_err(sb, "bogus number of FAT structure");
--		ret = -EINVAL;
--		goto free_bh;
-+		return -EINVAL;
- 	}
- 
- 	sbi->sect_per_clus = 1 << p_boot->sect_per_clus_bits;
- 	sbi->sect_per_clus_bits = p_boot->sect_per_clus_bits;
--	sbi->cluster_size_bits = sbi->sect_per_clus_bits + sb->s_blocksize_bits;
-+	sbi->cluster_size_bits = p_boot->sect_per_clus_bits +
-+		p_boot->sect_size_bits;
- 	sbi->cluster_size = 1 << sbi->cluster_size_bits;
- 	sbi->num_FAT_sectors = le32_to_cpu(p_boot->fat_length);
- 	sbi->FAT1_start_sector = le32_to_cpu(p_boot->fat_offset);
--	sbi->FAT2_start_sector = p_boot->num_fats == 1 ?
--		sbi->FAT1_start_sector :
--			sbi->FAT1_start_sector + sbi->num_FAT_sectors;
-+	sbi->FAT2_start_sector = le32_to_cpu(p_boot->fat_offset);
-+	if (p_boot->num_fats == 2)
-+		sbi->FAT2_start_sector += sbi->num_FAT_sectors;
- 	sbi->data_start_sector = le32_to_cpu(p_boot->clu_offset);
- 	sbi->num_sectors = le64_to_cpu(p_boot->vol_length);
- 	/* because the cluster index starts with 2 */
-@@ -483,15 +459,45 @@ static int __exfat_fill_super(struct super_block *sb)
- 	sbi->clu_srch_ptr = EXFAT_FIRST_CLUSTER;
- 	sbi->used_clusters = EXFAT_CLUSTERS_UNTRACKED;
- 
--	if (le16_to_cpu(p_boot->vol_flags) & VOL_DIRTY) {
--		sbi->vol_flag |= VOL_DIRTY;
--		exfat_warn(sb, "Volume was not properly unmounted. Some data may be corrupt. Please run fsck.");
-+	/* check consistencies */
-+	if (sbi->num_FAT_sectors << p_boot->sect_size_bits <
-+	    sbi->num_clusters * 4) {
-+		exfat_err(sb, "bogus fat length");
-+		return -EINVAL;
++
++		if (sn != 0 && sn <= 8) {
++			/* extended boot sector sub-regions */
++			p_sig = (u32 *)&bh->b_data[sb->s_blocksize - 4];
++			if (le32_to_cpu(*p_sig) != EXBOOT_SIGNATURE)
++				exfat_warn(sb, "Invalid exboot-signature(sector = %d): 0x%08x",
++					   sn, le32_to_cpu(*p_sig));
++		}
++
++		chksum = exfat_calc_chksum32(bh->b_data, sb->s_blocksize,
++			chksum, sn ? CS_DEFAULT : CS_BOOT_SECTOR);
++		brelse(bh);
 +	}
-+	if (sbi->data_start_sector <
-+	    sbi->FAT1_start_sector + sbi->num_FAT_sectors * p_boot->num_fats) {
-+		exfat_err(sb, "bogus data start sector");
-+		return -EINVAL;
- 	}
-+	if (sbi->vol_flag & VOL_DIRTY)
-+		exfat_warn(sb, "Volume was not properly unmounted. Some data may be corrupt. Please run fsck.");
-+	if (sbi->vol_flag & ERR_MEDIUM)
-+		exfat_warn(sb, "Medium has reported failures. Some data may be lost.");
- 
- 	/* exFAT file size is limited by a disk volume size */
- 	sb->s_maxbytes = (u64)(sbi->num_clusters - EXFAT_RESERVED_CLUSTERS) <<
- 		sbi->cluster_size_bits;
- 
-+	/* check logical sector size */
-+	if (exfat_calibrate_blocksize(sb, 1 << p_boot->sect_size_bits))
++
++	/* boot checksum sub-regions */
++	bh = sb_bread(sb, sn);
++	if (!bh)
 +		return -EIO;
 +
++	for (i = 0; i < sb->s_blocksize; i += sizeof(u32)) {
++		p_chksum = (u32 *)&bh->b_data[i];
++		if (le32_to_cpu(*p_chksum) != chksum) {
++			exfat_err(sb, "Invalid boot checksum (boot checksum : 0x%08x, checksum : 0x%08x)",
++				  le32_to_cpu(*p_chksum), chksum);
++			brelse(bh);
++			return -EINVAL;
++		}
++	}
++	brelse(bh);
 +	return 0;
 +}
 +
-+/* mount the file system volume */
-+static int __exfat_fill_super(struct super_block *sb)
-+{
-+	int ret;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	ret = exfat_read_boot_sector(sb);
+ /* mount the file system volume */
+ static int __exfat_fill_super(struct super_block *sb)
+ {
+@@ -498,6 +541,12 @@ static int __exfat_fill_super(struct super_block *sb)
+ 		goto free_bh;
+ 	}
+ 
++	ret = exfat_verify_boot_region(sb);
 +	if (ret) {
-+		exfat_err(sb, "failed to read boot sector");
++		exfat_err(sb, "invalid boot region");
 +		goto free_bh;
 +	}
 +
