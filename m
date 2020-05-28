@@ -2,105 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6D401E5395
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 04:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB6F1E5528
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 06:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbgE1CBC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 22:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbgE1CBC (ORCPT
+        id S1725764AbgE1EnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 00:43:04 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:26349 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbgE1EnD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 22:01:02 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7E4C05BD1E;
-        Wed, 27 May 2020 19:01:02 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id cx22so2390498pjb.1;
-        Wed, 27 May 2020 19:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=73Q957jCvMVx76gQuPesrGR2ZeyRsCod6wvYAZR40Qo=;
-        b=jeFFIPRWt+lSTBpw9GK1as7Uq+CxQmcZOQSyOWtffiplj1oAt6m5guAdb6n6mVXoSP
-         qQWx9Wg51iu93EsoMhZFtJZnu+nGLmk3ItKOcXwbGx9kmvfVnhKH1khd83YroLH0URcm
-         vF6fl9jVBMlIHGvj65jdTEYS7ZRwar5bXhBi/vJHW7uIcc1+m3cLPQ98RPgSzVT2YJSz
-         85pb3Hqc7w9jssF0GNmjlWzcVRiI44nk5fqdVXe8efJfeCeWfojHAosmPG3KRzVqxf4a
-         d/i7faMtUQHSlPRVoXc0C5CUS1yCXaNsjMadtKy/RdBsvi4Iy+/5gvcPGJNb9TA3uRlQ
-         mXtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=73Q957jCvMVx76gQuPesrGR2ZeyRsCod6wvYAZR40Qo=;
-        b=lpWAwyL63oNYnVRGMybY92+58IRsvhihNuBO5TjzWR3vRZuYQDc7coOtI+7t/LAPiI
-         zqGK6TXs44bacPYRXIUX3Z9B3jbyyneF4+LYzXhvMM0gCRiJoN6hOIId/SvvKS7AU9sX
-         M0OGfUPEn5Phk+cq809WbWr51L8ncTEmeaNyAktSvL6HG3JbeMbWJOnN2qQXzQZgmmGD
-         cEOgCeJt7dFAlDV3QNekDCuCIcdnp5sNTiMM2hqVTd8o2DGTXiryuIVQDXrg7hh2nQHO
-         eyH3cv0VPPDUYJUtko3iRNVi/0wzasgbKrzCdjza2yZcfQ0UmBX3VEdKsrOKLiOddgBM
-         57Xw==
-X-Gm-Message-State: AOAM531n865j4GLR4VIMWYsKg01TEGZgjv9HRHVfzti2OaBnf16wYWzZ
-        gQM3VXX5PfJXidLttAHCUPqDjDI82Oc=
-X-Google-Smtp-Source: ABdhPJxOeEIXemCTlflvLjBv9MZ/YVKIBdd6fGBSwjLPFozl1vdAkanJYJ38DsJtJ6LlNtBgdyXHHQ==
-X-Received: by 2002:a17:902:834b:: with SMTP id z11mr1230315pln.87.1590631261375;
-        Wed, 27 May 2020 19:01:01 -0700 (PDT)
-Received: from ?IPv6:::1? ([2404:7a87:83e0:f800:295a:ef64:e071:39ab])
-        by smtp.gmail.com with ESMTPSA id i197sm3128390pfe.30.2020.05.27.19.00.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 May 2020 19:01:00 -0700 (PDT)
-Subject: Re: [PATCH 4/4] exfat: standardize checksum calculation
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200525115052.19243-1-kohada.t2@gmail.com>
- <CGME20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8@epcas1p2.samsung.com>
- <20200525115052.19243-4-kohada.t2@gmail.com>
- <00d301d6332f$d4a52300$7def6900$@samsung.com>
- <d0d2e4b3-436e-3bad-770c-21c9cbddf80e@gmail.com>
- <CAKYAXd9GzYTxjtFuUJe+WjEOHSJnVbOfwn_4ZXZgmiVtjV4z6A@mail.gmail.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <ccb66f50-b275-4717-f165-98390520077b@gmail.com>
-Date:   Thu, 28 May 2020 11:00:58 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        Thu, 28 May 2020 00:43:03 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200528044301epoutp028c7366e2169c90ec181aa204be8aa35b~TF4twb90Y2562425624epoutp02P
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 04:43:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200528044301epoutp028c7366e2169c90ec181aa204be8aa35b~TF4twb90Y2562425624epoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1590640981;
+        bh=Ifl6upRPYldFInrD+MnQOAMq5IXbw4SSBWckwLPYgA4=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=U3Tsc1uJ34LahG/N9pHCOdVH3/LwudF+QfoqENKsB10fD7MZKP6pneM7LIiZnRNHo
+         m9f6KlXOT0gqvB4AgQUw6MpawX5vADuCM21LkPRkJnteFpVzKWLYJyh10D2An6kMLy
+         FVE2CMPPiP21ewipRkEvJBZYmbP/XpVsj1vCKw70=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200528044300epcas1p22579ec3b77e60304827bf31084b2dfae~TF4tXTpGj1659616596epcas1p2g;
+        Thu, 28 May 2020 04:43:00 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 49XZnb2KvNzMqYkV; Thu, 28 May
+        2020 04:42:59 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A9.38.04392.2514FCE5; Thu, 28 May 2020 13:42:58 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200528044257epcas1p29993d86ddc9e7880fc3e024eb28a818e~TF4qcJmYc0783007830epcas1p2K;
+        Thu, 28 May 2020 04:42:57 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200528044257epsmtrp12933f7bfad9c1eaa8ef1f5ff315f52dd~TF4qbZj6S0434504345epsmtrp10;
+        Thu, 28 May 2020 04:42:57 +0000 (GMT)
+X-AuditID: b6c32a37-cabff70000001128-7e-5ecf4152bdaf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F0.D5.08303.1514FCE5; Thu, 28 May 2020 13:42:57 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200528044257epsmtip1a2c27d2ba70913a4ac42381210a8d27f~TF4qK-x4K1265112651epsmtip1S;
+        Thu, 28 May 2020 04:42:57 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
+Cc:     <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200520075641.32441-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
+Subject: RE: [PATCH] exfat: optimize dir-cache
+Date:   Thu, 28 May 2020 13:42:57 +0900
+Message-ID: <015001d634aa$7588c2b0$609a4810$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKYAXd9GzYTxjtFuUJe+WjEOHSJnVbOfwn_4ZXZgmiVtjV4z6A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 200527-0, 2020/05/27), Outbound message
-X-Antivirus-Status: Clean
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIppg9uhSXp+fpSRiclI8Xh/geTfAMD/7F2p/3na3A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmrm6Q4/k4g97f3BZvTk5lsdiz9ySL
+        xeVdc9gsLv//xGKx7MtkFost/46wOrB5fJlznN2jbfI/do/mYyvZPPq2rGL0+LxJLoA1Kscm
+        IzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+gCJYWyxJxS
+        oFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BoUGBXnFibnFpXrpecn6ulaGBgZEpUGVCTsac
+        Fb/YCp6xVPxdcoa5gbGVpYuRk0NCwETiTNd5ti5GLg4hgR2MEl+vLmOGcD4xSlzvnswC4Xxm
+        lPj9/RMrXEv7QiaIxC5Gied3H7FDOC8ZJeZ8u84IUsUmoCvx789+NhBbRMBdYsfCA2CjmAXO
+        M0os3twAluAUCJJYc2EOWIOwgJ7Ex28vgcZycLAIqErsPFEOEuYVsJS4c/sgM4QtKHFy5hOw
+        w5kF5CW2v53DDHGRgsTPp8tYIXZZSZx6OoERokZEYnZnG9g/EgITOSSWf7wI9bWLxMr1+6Fs
+        YYlXx7ewQ9hSEi/729hBbpAQqJb4uB9qfgejxIvvthC2scTN9RtYQUqYBTQl1u/ShwgrSuz8
+        PRdqLZ/Eu689rBBTeCU62oQgSlQl+i4dZoKwpSW62j+wT2BUmoXksVlIHpuF5IFZCMsWMLKs
+        YhRLLSjOTU8tNiwwRo7sTYzg1KllvoNxwzmfQ4wCHIxKPLwGHufihFgTy4orcw8xSnAwK4nw
+        Op09HSfEm5JYWZValB9fVJqTWnyI0RQY7BOZpUST84FpPa8k3tDUyNjY2MLEzNzM1FhJnHf+
+        jzNxQgLpiSWp2ampBalFMH1MHJxSDYyFwaeywj5FWsb77StiZzEIerw5drPcNe+bfDcrrwfF
+        HgywX/U0ZIIP/60lD/eyPtst8DZ1t+2M+a3rSz/tavzwZrm/Y1H7LM0L38z1//QF5mi/ffOu
+        sc3jk3T9vvUTf+TxzuV586zF9e62r98SdPROVKQzHDDyY78+Vepz58THiQtnt7dPt16lxFKc
+        kWioxVxUnAgAZHUI2LMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSnG6g4/k4g08XRSzenJzKYrFn70kW
+        i8u75rBZXP7/icVi2ZfJLBZb/h1hdWDz+DLnOLtH2+R/7B7Nx1ayefRtWcXo8XmTXABrFJdN
+        SmpOZllqkb5dAlfGnBW/2AqesVT8XXKGuYGxlaWLkZNDQsBE4kz7QqYuRi4OIYEdjBLvplyB
+        SkhLHDtxhrmLkQPIFpY4fLgYouY5o0RP21lmkBo2AV2Jf3/2s4HYIgLuEjsWHmABKWIWuMgo
+        sW3PSnaIjsWMEn+mLgHr4BQIklhzYQ4jiC0soCfx8dtLJpANLAKqEjtPlIOEeQUsJe7cPsgM
+        YQtKnJz5hAWkhBmovG0jWCezgLzE9rdzmCHuVJD4+XQZK8QNVhKnnk6AqhGRmN3ZxjyBUXgW
+        kkmzECbNQjJpFpKOBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgiNIS2sH455V
+        H/QOMTJxMB5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQozQHi5I479dZC+OEBNITS1Kz
+        U1MLUotgskwcnFINTAYGDoqHTwauPrPs35HuRJYmUyfDEPdWub1lLw4d0xORPbvj8qOqeM8/
+        /buNGc7aTVZhtr8clsa0sbt0wYHnnnc1lD9d3n1KWfSOTmPnTyur247v6hQ39P2PTPj0YIao
+        9L6WkqLUX3OEm8rmeNx7qnyjsu6AzzYhSbOZnLF6OqxW8i/bdH+cjvkfxTn9TeoVbv/Kg8wO
+        6t0VB4sdP5SV3GN2e/nmlI+i7kf91XIffNx2+n5lf6PIOt3mtZPclZINz0STA3sKW3mUJMJW
+        NLScN7z8RWV64JWOf5ICpxv2H3d/1rT909QKIev/m//czu9nnRxsu1UgOmbrsU0Hw+qzeYs3
+        uWh725/ep9jQJHhDiaU4I9FQi7moOBEAhLZZTw8DAAA=
+X-CMS-MailID: 20200528044257epcas1p29993d86ddc9e7880fc3e024eb28a818e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200520075735epcas1p482c10e2ea2e5af1af36894677691cbc8
+References: <CGME20200520075735epcas1p482c10e2ea2e5af1af36894677691cbc8@epcas1p4.samsung.com>
+        <20200520075641.32441-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> II tried applying patch to dev-tree (4c4dbb6ad8e8).
->> -The .patch file I sent
->> -mbox file downloaded from archive
->> But I can't reproduce the error. (Both succeed)
->> How do you reproduce the error?
-> I tried to appy your patches in the following order.
-> 1. [PATCH] exfat: optimize dir-cache
-> 2. [PATCH 1/4] exfat: redefine PBR as boot_sector
-> 3. [PATCH 2/4] exfat: separate the boot sector analysis
-> 4. [PATCH 3/4] exfat: add boot region verification
-> 5. [PATCH 4/4] exfat: standardize checksum calculation
+> +struct exfat_dentry *exfat_get_dentry_cached(
+> +	struct exfat_entry_set_cache *es, int num);
+You used a single tab for the continuing line of the prototype here.
+We usually use two tabs for this.
+>  struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+> -		struct exfat_chain *p_dir, int entry, unsigned int type,
+> -		struct exfat_dentry **file_ep);
+> +		struct exfat_chain *p_dir, int entry, unsigned int type); void
+> +exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync);
+>  int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir);
+> 
 
-I was able to reproduce it.
-
-The dir-cache patch was created based on the HEAD of dev-tree.
-The 4 patches for boot_sector were also created based on the HEAD of dev-tree.
-(at physically separated place)
-
-I'm sorry I didn't check any conflicts with these patches.
-
-I'll repost the patch, based on the dir-cache patched dev-tree.
-If dir-cache patch will merge into dev-tree, should I wait until then?
-
-BR
