@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A521A1E66C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 17:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E03E1E66C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 17:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404667AbgE1PxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 11:53:11 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33262 "EHLO
+        id S2404691AbgE1Pxj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 11:53:39 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:33472 "EHLO
         out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404565AbgE1PxJ (ORCPT
+        with ESMTP id S2404511AbgE1Pxh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 11:53:09 -0400
+        Thu, 28 May 2020 11:53:37 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
         by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKqC-0001W7-C9; Thu, 28 May 2020 09:53:08 -0600
+        id 1jeKqe-0001Zi-I4; Thu, 28 May 2020 09:53:36 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKq6-0007zz-5k; Thu, 28 May 2020 09:53:07 -0600
+        id 1jeKqd-00085a-M7; Thu, 28 May 2020 09:53:36 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -43,45 +43,46 @@ References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
         <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
         <877dx822er.fsf_-_@x220.int.ebiederm.org>
         <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
-Date:   Thu, 28 May 2020 10:49:10 -0500
+Date:   Thu, 28 May 2020 10:49:44 -0500
 In-Reply-To: <87k10wysqz.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Thu, 28 May 2020 10:38:28 -0500")
-Message-ID: <874ks0xdop.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87y2pcvz3b.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jeKq6-0007zz-5k;;;mid=<874ks0xdop.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/ELoUISo4voXjVc4cOnoi5+XqInd2HxUI=
+X-XM-SPF: eid=1jeKqd-00085a-M7;;;mid=<87y2pcvz3b.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Uao3hKNmbCnTKyFSqtDONOkhIC5W+4JQ=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: ****
+X-Spam-Status: No, score=4.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels,XMSubLong,
+        XMSubMetaSxObfu_03,XMSubMetaSx_00 autolearn=disabled version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
         *  0.7 XMSubLong Long Subject
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 0; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa01 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;<linux-kernel@vger.kernel.org>
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;<linux-kernel@vger.kernel.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 515 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.5 (0.7%), b_tie_ro: 2.3 (0.4%), parse: 1.20
-        (0.2%), extract_message_metadata: 15 (2.9%), get_uri_detail_list: 1.48
-        (0.3%), tests_pri_-1000: 17 (3.3%), tests_pri_-950: 1.47 (0.3%),
-        tests_pri_-900: 1.21 (0.2%), tests_pri_-90: 134 (26.0%), check_bayes:
-        132 (25.7%), b_tokenize: 10 (1.8%), b_tok_get_all: 7 (1.3%),
-        b_comp_prob: 2.2 (0.4%), b_tok_touch_all: 111 (21.5%), b_finish: 0.71
-        (0.1%), tests_pri_0: 328 (63.6%), check_dkim_signature: 0.40 (0.1%),
-        check_dkim_adsp: 2.5 (0.5%), poll_dns_idle: 0.81 (0.2%), tests_pri_10:
-        2.6 (0.5%), tests_pri_500: 8 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 08/11] exec: In bprm_fill_uid remove unnecessary no new privs check
+X-Spam-Timing: total 385 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 10 (2.6%), b_tie_ro: 9 (2.3%), parse: 1.04 (0.3%),
+         extract_message_metadata: 11 (2.8%), get_uri_detail_list: 1.44 (0.4%),
+         tests_pri_-1000: 13 (3.4%), tests_pri_-950: 1.24 (0.3%),
+        tests_pri_-900: 1.00 (0.3%), tests_pri_-90: 84 (21.9%), check_bayes:
+        83 (21.5%), b_tokenize: 8 (2.1%), b_tok_get_all: 8 (2.1%),
+        b_comp_prob: 2.7 (0.7%), b_tok_touch_all: 60 (15.6%), b_finish: 0.94
+        (0.2%), tests_pri_0: 246 (64.0%), check_dkim_signature: 0.55 (0.1%),
+        check_dkim_adsp: 2.5 (0.6%), poll_dns_idle: 0.48 (0.1%), tests_pri_10:
+        2.3 (0.6%), tests_pri_500: 12 (3.0%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 09/11] exec: In bprm_fill_uid only set per_clear when honoring suid or sgid
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
@@ -91,48 +92,50 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-When the no new privs code was added[1], a test was added to
-cap_bprm_set_creds to ensure that the credential change were always
-reverted if no new privs was set.
+It makes no sense to set active_per_clear when the kernel decides not
+to honor the executables setuid or or setgid bits.  Instead set
+active_per_clear when the kernel actually decides to honor the suid or
+sgid permission bits of an executable.
 
-That test has been refactored into a test to not make the credential
-change in bprm_fill_uid when no new privs is set.  Remove that
-unncessary test as it can now been seen by a quick inspection that
-execution can never make it to the test with no new privs set.
+As far as I can tell this was the intended behavior but with the
+ptrace logic hiding out in security/commcap.c:cap_bprm_apply_creds I
+believe it was just overlooked that the setuid or setgid operation
+could be cancelled.
 
-The same change[1] also added a test that guaranteed the credentials
-would never change when no_new_privs was set, so the test I am removing
-was never necessary but historically that was far from obvious.
-
-[1]: 259e5e6c75a9 ("Add PR_{GET,SET}_NO_NEW_PRIVS to prevent execve from granting privs")
+History Tree: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+Fixes: 1bb0fa189c6a ("[PATCH] NX: clean up legacy binary support")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/exec.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/exec.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 8dd7254931dc..af108ecf9632 100644
+index af108ecf9632..347dade4bc54 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1636,16 +1636,12 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
+@@ -1634,15 +1634,16 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
+ 	need_cap = bprm->unsafe & LSM_UNSAFE_SHARE ||
+ 		!ptracer_capable(current, new->user_ns);
  
- 	if (mode & S_ISUID) {
+-	if (mode & S_ISUID) {
++	if ((mode & S_ISUID) &&
++	    (!need_cap || ns_capable(new->user_ns, CAP_SETUID))) {
  		bprm->per_clear = 1;
--		if (!need_cap ||
--		    (ns_capable(new->user_ns, CAP_SETUID) &&
--		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
-+		if (!need_cap || ns_capable(new->user_ns, CAP_SETUID))
- 			new->suid = new->fsuid = new->euid = uid;
+-		if (!need_cap || ns_capable(new->user_ns, CAP_SETUID))
+-			new->suid = new->fsuid = new->euid = uid;
++		new->suid = new->fsuid = new->euid = uid;
  	}
- 	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
+-	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
++
++	if (((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) &&
++	    (!need_cap || ns_capable(new->user_ns, CAP_SETGID))) {
  		bprm->per_clear = 1;
--		if (!need_cap ||
--		    (ns_capable(new->user_ns, CAP_SETGID) &&
--		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
-+		if (!need_cap || ns_capable(new->user_ns, CAP_SETGID))
- 			new->sgid = new->fsgid = new->egid = gid;
+-		if (!need_cap || ns_capable(new->user_ns, CAP_SETGID))
+-			new->sgid = new->fsgid = new->egid = gid;
++		new->sgid = new->fsgid = new->egid = gid;
  	}
  
+ after_setid:
 -- 
 2.25.0
 
