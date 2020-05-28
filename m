@@ -2,96 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE7E1E6C8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 22:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FFCC1E6D0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 23:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407216AbgE1UaE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 16:30:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407191AbgE1U35 (ORCPT
+        id S2407472AbgE1VB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 17:01:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407471AbgE1VBq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 16:29:57 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2BA7C08C5C6;
-        Thu, 28 May 2020 13:29:54 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id k11so1351089ejr.9;
-        Thu, 28 May 2020 13:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jubbYLeXvUFozWJ2dGJv9BknYxFFydhKvrR5dq59bYc=;
-        b=lEvgWoFZbktWMVKAq2OjNpu1lz4P+/FVRhfbKVnDN42Z4qcQJBgHPikzonc97XyPOb
-         hI6vQxJIfmoQcwlXslbmhgNwhMXV3k6TJd9ytmzYg6kv7uGgWWMGgtCg9CmjToKoXKDf
-         OqgXMZJ1ssR7O4C5rTfnmZUgl2rNmJ6SYStDAd72pGxrg/1pLxVnkP53VdVIovQ2pqZq
-         aorHs+mPxzHeUHZziDmqb9ail4EOQx/Txh5AQX1QhPCg1fAi+IMOTp0RLkHaDWi87Qwg
-         cU22Sanfo7Wa/mm36qpi4cbk4nmS/0CS6Oj920ctvl0TmrH58OfL0MK0qqKc7CHQID5D
-         n4rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jubbYLeXvUFozWJ2dGJv9BknYxFFydhKvrR5dq59bYc=;
-        b=sTa3LdDehcRjOyKUMFPQl1/w98ngv7l826QReU+r5CoDi5zx0Kl50+2t+Zzmf/OmiD
-         InmRDTgZOz8K+pyfm50Q8tPiUtmbA0h8eaEoy4MbebgOr/fCxwjvWg8NBWvKRmFvfmf/
-         MIi6Mny8QKdQPZgQrloIYafCs24cRlpwaQ78aek9hFEWxB6k3yP63uYD8V43trrVMk5m
-         m68H5BwFociF/ZFQbFs5XSxCSxAGpdF/lKsQXL3odWtwqw2uAnfp+qll5ZDRXOZS9SUj
-         lX9KMVMwF8oHOVFM8RHiLYZKpPOOqxxlHxAeAZWUzp9zIgTj3knLcAQif7RFxRwfkW0F
-         +23w==
-X-Gm-Message-State: AOAM531SJYbNLxwJu12ntH/1y7evBj4kOhQEbxkqbJUlUg9o5KrWQorP
-        KZllKpQifyURi0PSam/l7y5vUflCn3zqTR/18K0hcJII
-X-Google-Smtp-Source: ABdhPJwBNoY2pCnaFWbbxsOYLa0Gov4fBr3XnIMoiOKDk6nJlaCbfvysQTfONH9RBPB7UA/a5zYQ94brdDrD2jJgEKU=
-X-Received: by 2002:a17:906:c9d6:: with SMTP id hk22mr4657328ejb.101.1590697793606;
- Thu, 28 May 2020 13:29:53 -0700 (PDT)
+        Thu, 28 May 2020 17:01:46 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04SKBfKY120264;
+        Thu, 28 May 2020 21:01:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=6o6IG4PaUZVYP05KoABvyzMEsMWMZIDBFpnDQktXQQg=;
+ b=Nq8f2RZF+94ho8W4EH/YHSsyAfGdzMRljWNJycQ6LyaIhRsqlCLtPQ+W+ZipiaNwu8lf
+ Kto1R7tGS+X7Rb7nMzY43E8y6Ci2viK0F3NjfWxSi5/rbu8fhGgcjSoDoj7RD8Hitdjm
+ npnhplBqCoC6e/2fauxyzA9kSRIMGwi/ky+mzm9lAJdmeEYXdZb9qJwT89CZ3wlb4Lxs
+ iUlFvJQ/bBmNk7d9MX80KPLi5ufNC05dFho9+jr+KMmfLAKPljRTkmuyt7Y1fg5ylVTK
+ +QWuqMq77gINHfJL70aahnX2RUe1H1OG7dFjC7GKx/rRv16w5Zsqqoht5ns5juh4ASkc TA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 316u8r792v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 May 2020 21:01:31 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04SK8w9n177071;
+        Thu, 28 May 2020 21:01:31 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 317ds38qex-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 May 2020 21:01:30 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04SL1Rwl012580;
+        Thu, 28 May 2020 21:01:28 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 28 May 2020 14:01:27 -0700
+Subject: Re: [PATCH v2] ovl: provide real_file() and overlayfs
+ get_unmapped_area()
+To:     kbuild test robot <lkp@intel.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     kbuild-all@lists.01.org, Colin Walters <walters@verbum.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-unionfs@vger.kernel.org
+References: <4ebd0429-f715-d523-4c09-43fa2c3bc338@oracle.com>
+ <202005281652.QNakLkW3%lkp@intel.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <365d83b8-3af7-2113-3a20-2aed51d9de91@oracle.com>
+Date:   Thu, 28 May 2020 14:01:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <20200528054043.621510-1-hch@lst.de> <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
- <f68b7797aa73452d99508bdaf2801b3d141e7a69.camel@perches.com> <20200528193340.GR23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200528193340.GR23230@ZenIV.linux.org.uk>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 29 May 2020 06:29:42 +1000
-Message-ID: <CAPM=9twsu9bUpaCUVfb2sgHQsvSJiE5qRyiigLBJe5+3WMq8aQ@mail.gmail.com>
-Subject: Re: clean up kernel_{read,write} & friends v2
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <202005281652.QNakLkW3%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9635 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 bulkscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005280132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9635 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 cotscore=-2147483648 suspectscore=0
+ phishscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005280132
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 29 May 2020 at 05:35, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, May 28, 2020 at 12:22:08PM -0700, Joe Perches wrote:
->
-> > Hard limits at 80 really don't work well, especially with
-> > some of the 25+ character length identifiers used today.
->
-> IMO any such identifier is a good reason for a warning.
->
-> The litmus test is actually very simple: how unpleasant would it be
-> to mention the identifiers while discussing the code over the phone?
+On 5/28/20 1:37 AM, kbuild test robot wrote:
+> Hi Mike,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on miklos-vfs/overlayfs-next]
+> [also build test ERROR on linus/master v5.7-rc7]
+> [cannot apply to linux/master next-20200526]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/ovl-provide-real_file-and-overlayfs-get_unmapped_area/20200528-080533
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-next
+> config: h8300-randconfig-r036-20200528 (attached as .config)
+> compiler: h8300-linux-gcc (GCC) 9.3.0
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=h8300 
+> 
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
+> 
+> fs/overlayfs/file.c: In function 'ovl_get_unmapped_area':
+>>> fs/overlayfs/file.c:768:14: error: 'struct mm_struct' has no member named 'get_unmapped_area'
+> 768 |   current->mm->get_unmapped_area)(realfile,
+> |              ^~
+>>> fs/overlayfs/file.c:770:1: warning: control reaches end of non-void function [-Wreturn-type]
+> 770 | }
+> | ^
+> 
+> vim +768 fs/overlayfs/file.c
+> 
+>    760	
+>    761	static unsigned long ovl_get_unmapped_area(struct file *file,
+>    762					unsigned long uaddr, unsigned long len,
+>    763					unsigned long pgoff, unsigned long flags)
+>    764	{
+>    765		struct file *realfile = real_file(file);
+>    766	
+>    767		return (realfile->f_op->get_unmapped_area ?:
+>  > 768			current->mm->get_unmapped_area)(realfile,
+>    769							uaddr, len, pgoff, flags);
+>  > 770	}
+>    771	
+> 
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> 
 
-That doesn't make sense though,
+Well yuck!  get_unmapped_area is not part of mm_struct if !CONFIG_MMU.
 
-if you write the full english words out for something it'll be long
-but easier to say over the phone,
-if you use shortened kernel abbreviations it will be short but you'd
-have to read out every letter.
+Miklos, would adding '#ifdef CONFIG_MMU' around the overlayfs code be too
+ugly for you?  Another option is to use real_file() in the mmap code as
+done in [1].
 
-To take an example:
-this would read pretty well on the phone, maybe params could be parameters
-amdgpu_atombios_get_leakage_vddc_based_on_leakage_params
+Sorry for all the questions.  However, I want to make sure you are happy
+with any overlayfs changes.
 
-vddc would be a stumbler.
-
-try saying O_CREAT over the phone to someone not steeped in UNIX folklore.
-
-Dave.
+[1] https://lore.kernel.org/linux-mm/04a00e3b-539c-236f-e43b-0024ef94b7cb@oracle.com/
+-- 
+Mike Kravetz
