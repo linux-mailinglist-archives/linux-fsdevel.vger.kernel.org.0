@@ -2,123 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C03C21E67D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 18:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB5251E6827
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 19:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405212AbgE1Qvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 12:51:38 -0400
-Received: from foss.arm.com ([217.140.110.172]:55284 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405162AbgE1Qvg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 12:51:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AB8030E;
-        Thu, 28 May 2020 09:51:36 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82DA13F6C4;
-        Thu, 28 May 2020 09:51:33 -0700 (PDT)
-Date:   Thu, 28 May 2020 17:51:31 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200528165130.m5unoewcncuvxynn@e107158-lin.cambridge.arm.com>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
- <20200528132327.GB706460@hirez.programming.kicks-ass.net>
- <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
- <20200528161112.GI2483@worktop.programming.kicks-ass.net>
+        id S2405426AbgE1RFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 13:05:46 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32307 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405421AbgE1RFo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 May 2020 13:05:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590685542;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=02+n8WhlcZn6syAKy48PivTOXkOr7c4aT+4TmC5jGUk=;
+        b=MIkO6Bjs9LMzngDOtpqHiW/GzlGcx8pGV+c9OwF5k9muiT6NE+f0HcEiIylpqR4m/eM4sT
+        enUTAq5e0IGXVx6PRO6xJZRR0bI+hzqY4GzGNfDhKWGCmoXYYIiWYrjybfntYGrYChgi9Z
+        2JOkckjpJ+jrVwbpPeE9FIbXO/uNkgM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-VUcco52XOkOg08iPLKepFQ-1; Thu, 28 May 2020 13:05:26 -0400
+X-MC-Unique: VUcco52XOkOg08iPLKepFQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 615F28904C9;
+        Thu, 28 May 2020 17:04:03 +0000 (UTC)
+Received: from treble (ovpn-117-65.rdu2.redhat.com [10.10.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F2A3410013DB;
+        Thu, 28 May 2020 17:04:01 +0000 (UTC)
+Date:   Thu, 28 May 2020 12:04:00 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: mmotm 2020-05-13-20-30 uploaded (objtool warnings)
+Message-ID: <20200528170400.cvsdws6k724gu6qs@treble>
+References: <20200514033104.kRFL_ctMQ%akpm@linux-foundation.org>
+ <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
+ <20200528155409.vv3zzxov7qn4ohna@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20200528155409.vv3zzxov7qn4ohna@treble>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/28/20 18:11, Peter Zijlstra wrote:
-> On Thu, May 28, 2020 at 04:58:01PM +0100, Qais Yousef wrote:
-> > On 05/28/20 15:23, Peter Zijlstra wrote:
-> 
-> > > So afaict this is directly added to the enqueue/dequeue path, and we've
-> > > recently already had complaints that uclamp is too slow.
+On Thu, May 28, 2020 at 10:54:09AM -0500, Josh Poimboeuf wrote:
+> On Thu, May 14, 2020 at 08:32:22AM -0700, Randy Dunlap wrote:
+> > On 5/13/20 8:31 PM, Andrew Morton wrote:
+> > > The mm-of-the-moment snapshot 2020-05-13-20-30 has been uploaded to
+> > > 
+> > >    http://www.ozlabs.org/~akpm/mmotm/
+> > > 
+> > > mmotm-readme.txt says
+> > > 
+> > > README for mm-of-the-moment:
+> > > 
+> > > http://www.ozlabs.org/~akpm/mmotm/
+> > > 
+> > > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > > more than once a week.
+> > > 
+> > > You will need quilt to apply these patches to the latest Linus release (5.x
+> > > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > > http://ozlabs.org/~akpm/mmotm/series
+> > > 
+> > > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > > followed by the base kernel version against which this patch series is to
+> > > be applied.
 > > 
-> > I wanted to keep this function simpler.
-> 
-> Right; I appreciate that, but as always it's a balance between simple
-> and performance :-)
-
-Sure :-)
-
-In my head, the simpler version of
-
-	if (rt_task(p) && !uc->user_defined)
-		// update_uclamp_min
-
-Is a single branch and write to cache, so should be fast. I'm failing to see
-how this could generate an overhead tbh, but will not argue about it :-)
-
-> 
-> > > Is there really no other way?
 > > 
-> > There is my first attempt which performs the sync @ task_woken_rt().
+> > on x86_64:
 > > 
-> > https://lore.kernel.org/lkml/20191220164838.31619-1-qais.yousef@arm.com/
-> > 
-> > I can revert the sync function to the simpler version defined in that patch
-> > too.
-> > 
-> > I can potentially move this to uclamp_eff_value() too. Will need to think more
-> > if this is enough. If task_woken_rt() is good for you, I'd say that's more
-> > obviously correct and better to go with it.
+> > arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_from_user()+0x2a4: call to memset() with UACCESS enabled
+> > arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_to_user()+0x243: return with UACCESS enabled
 > 
-> task_woken_rt() is better, because that only slows down RT tasks, but
-> I'm thinking we can do even better by simply setting the default such
-> that new tasks pick it up and then (rcu) iterating all existing tasks
-> and modiying them.
+> Randy,
 > 
-> It's more code, but it is all outside of the normal paths where we care
-> about performance.
+> I wasn't able to recreate this one.  If you can still do so, can you
+> share the .o file?
 
-I am happy to take that direction if you think it's worth it. I'm thinking
-task_woken_rt() is good. But again, maybe I am missing something.
+Actually, never mind... user error :-)  Will take a look.
 
-> 
-> > FWIW, I think you're referring to Mel's notice in OSPM regarding the overhead.
-> > Trying to see what goes on in there.
-> 
-> Indeed, that one. The fact that regular distros cannot enable this
-> feature due to performance overhead is unfortunate. It means there is a
-> lot less potential for this stuff.
+-- 
+Josh
 
-I had a humble try to catch the overhead but wasn't successful. The observation
-wasn't missed by us too then.
-
-On my Ubuntu 18.04 machine uclamp is enabled by default by the way. 5.3 kernel
-though, so uclamp task group stuff not there yet. Should check how their server
-distro looks like.
-
-We don't want to lose that potential!
-
-Thanks
-
---
-Qais Yousef
