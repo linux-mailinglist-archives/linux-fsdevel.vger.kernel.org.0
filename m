@@ -2,108 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0612D1E6A48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 21:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 025EA1E6AC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 21:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406297AbgE1TUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 15:20:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:56456 "EHLO foss.arm.com"
+        id S2406531AbgE1TZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 15:25:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41628 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406225AbgE1TUk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 15:20:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AFA955D;
-        Thu, 28 May 2020 12:20:39 -0700 (PDT)
-Received: from [192.168.0.7] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B88C3F6C4;
-        Thu, 28 May 2020 12:20:36 -0700 (PDT)
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200511154053.7822-1-qais.yousef@arm.com>
- <20200528132327.GB706460@hirez.programming.kicks-ass.net>
- <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
- <20200528161112.GI2483@worktop.programming.kicks-ass.net>
- <20200528165130.m5unoewcncuvxynn@e107158-lin.cambridge.arm.com>
- <20200528182913.GQ2483@worktop.programming.kicks-ass.net>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <f3081cf2-24f1-d0f9-e76b-d868538f3245@arm.com>
-Date:   Thu, 28 May 2020 21:20:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S2406316AbgE1TVI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 May 2020 15:21:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 35992AE8C;
+        Thu, 28 May 2020 19:21:06 +0000 (UTC)
+Date:   Thu, 28 May 2020 14:21:03 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, Johannes.Thumshirn@wdc.com,
+        hch@infradead.org, dsterba@suse.cz, darrick.wong@oracle.com,
+        fdmanana@gmail.com
+Subject: [PATCH] iomap: Return zero in case of unsuccessful pagecache
+ invalidation before DIO
+Message-ID: <20200528192103.xm45qoxqmkw7i5yl@fiona>
 MIME-Version: 1.0
-In-Reply-To: <20200528182913.GQ2483@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28/05/2020 20:29, Peter Zijlstra wrote:
-> On Thu, May 28, 2020 at 05:51:31PM +0100, Qais Yousef wrote:
-> 
->> In my head, the simpler version of
->>
->> 	if (rt_task(p) && !uc->user_defined)
->> 		// update_uclamp_min
->>
->> Is a single branch and write to cache, so should be fast. I'm failing to see
->> how this could generate an overhead tbh, but will not argue about it :-)
-> 
-> Mostly true; but you also had a load of that sysctl in there, which is
-> likely to be a miss, and those are expensive.
-> 
-> Also; if we're going to have to optimize this, less logic is in there,
-> the less we need to take out. Esp. for stuff that 'never' changes, like
-> this.
-> 
->>> It's more code, but it is all outside of the normal paths where we care
->>> about performance.
->>
->> I am happy to take that direction if you think it's worth it. I'm thinking
->> task_woken_rt() is good. But again, maybe I am missing something.
-> 
-> Basic rule, if the state 'never' changes, don't touch fast paths.
-> 
-> Such little things can be very difficult to measure, but at some point
-> they cause death-by-a-thousnd-cuts.
-> 
->>> Indeed, that one. The fact that regular distros cannot enable this
->>> feature due to performance overhead is unfortunate. It means there is a
->>> lot less potential for this stuff.
->>
->> I had a humble try to catch the overhead but wasn't successful. The observation
->> wasn't missed by us too then.
-> 
-> Right, I remember us doing benchmarks when we introduced all this and
-> clearly we missed something. I would be good if Mel can share which
-> benchmark hurt most so we can go have a look.
 
-IIRC, it was a local mmtests netperf-udp with various buffer sizes?
+Filesystems such as btrfs are unable to guarantee page invalidation
+because pages could be locked as a part of the extent. Return zero
+in case a page cache invalidation is unsuccessful so filesystems can
+fallback to buffered I/O. This is similar to
+generic_file_direct_write().
 
-At least that's what we're trying to run right now on a '2 Sockets Xeon
-E5 2x10-Cores (40 CPUs)' w/ 3 different kernel ((1) wo_clamp (2)
-tsk_uclamp (3) tskgrp_uclamp).
+This takes care of the following invalidation warning during btrfs
+mixed buffered and direct I/O using iomap_dio_rw():
 
-We have currently Ubuntu Desktop on it. I think that systemd uses
-cgroups (especially cpu controller) differently on a (Ubuntu) Server.
-Maybe this has an influence here as well?
+Page cache invalidation failure on direct I/O.  Possible data
+corruption due to collision with buffered I/O!
+
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index e4addfc58107..215315be6233 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -483,9 +483,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	 */
+ 	ret = invalidate_inode_pages2_range(mapping,
+ 			pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+-	if (ret)
+-		dio_warn_stale_pagecache(iocb->ki_filp);
+-	ret = 0;
++	/*
++	 * If a page can not be invalidated, return 0 to fall back
++	 * to buffered write.
++	 */
++	if (ret) {
++		if (ret == -EBUSY)
++			ret = 0;
++		goto out_free_dio;
++	}
+ 
+ 	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
+ 	    !inode->i_sb->s_dio_done_wq) {
+
+-- 
+Goldwyn
