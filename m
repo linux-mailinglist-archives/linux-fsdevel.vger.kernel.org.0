@@ -2,228 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 826741E6871
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 19:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 159571E688C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 19:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405358AbgE1RO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 13:14:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
+        id S2405505AbgE1RUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 13:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405335AbgE1ROz (ORCPT
+        with ESMTP id S2405353AbgE1RUT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 13:14:55 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECCFC08C5C8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 10:14:55 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id z15so2290979pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 10:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mTrbZNR8Zw2bMCtvn88e5CLJgJyltUs0UJYDwI4z6zA=;
-        b=F7LTjjfAl5IaK7NnHh5FAPCqT2WkR8FlKsddgFAAphw6ED1AseXvigpv8UfgBj1nGj
-         wmoECd117Aw4JMgQMFss2bCtx6Sh0+s9nAF1+6jUy8yIWz+lQNlUwYDPfQ1qPNea0bNh
-         XVoV5cLLeMKyFtyd1byeZ3MuS0ArsPq30ort7StmNreonCY+hwmXZeuRFKTlPpNdZyau
-         Gmnk6093J7O5sX/9x8pb5ARB6Ir1MN9SRWKWK37Xc/TJUJ1+lOwCKtr8ndy6BE6KO/HV
-         q0RvHllZc6kmcA+Q719fGVrp5bwyOVbNSI2PFbC7ZXFfcqdzjKd8L8QggcxTVAj6l9Dx
-         +GFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mTrbZNR8Zw2bMCtvn88e5CLJgJyltUs0UJYDwI4z6zA=;
-        b=Swi5WSWlg/M21G53DFDZFSX9Nj4R6hLozOcUCIHY0sDiRkDwegWSntAn42td3Bfepg
-         H+7Irpm3n2f0d2AQ3UCQ7awcVJxu9FbKmrDgnMVxj3kIZ6xiH5ZZJG/uAxfKx0/W0nf/
-         Ecm69FqY5aAZXXWOcDhdE5HJb6R628dCqdKHfk4R07tl43osvW29R56Gr3ncAee11VnB
-         ofC7KQU30elzciHZZr0cm+tWHpPDv8YkTeF3AgZWydM4ircwGT4ox1iMS1Hn0Y4bGtXP
-         w78RCt2LYGcFda3T9eIaFnZSR3GGb6Kdf5vt6WdafKTaDjnLVSWPK64w3YXtllkFkwWx
-         +2DA==
-X-Gm-Message-State: AOAM533hj9LgYuaNNZj2Oy8UPCaRg3sNozUKo/uqR7WHzXvoptyBXk89
-        zmD2ZSzT22PYRmtsTMgywFOBlQ==
-X-Google-Smtp-Source: ABdhPJyjsxFsx6BuD+kv/XrY3yZGUMEPgE8RKLMKN0gcI9ykVdwgJ97ySsoaV+D9uNKGT3HGHlPjxg==
-X-Received: by 2002:a17:902:6943:: with SMTP id k3mr4525890plt.81.1590686094433;
-        Thu, 28 May 2020 10:14:54 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t201sm2202482pfc.104.2020.05.28.10.14.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 10:14:53 -0700 (PDT)
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     sedat.dilek@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
- <CA+icZUWbGGXRaRt1yyXiFXR5y0NkMxzkWdnVrmADCbAajSdEmw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fd169130-6ac4-f135-d85f-56daa25c8c9f@kernel.dk>
-Date:   Thu, 28 May 2020 11:14:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Thu, 28 May 2020 13:20:19 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33963C08C5C6;
+        Thu, 28 May 2020 10:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=s1IXw8Twd2kdKrDd1HQy17LRiidIo6BNwR5yWekBZs8=; b=gi6/TE78wMNosleSSXyJToQtTf
+        VPE3tMvPQ1EZarGtzAiZQFW2khOCOa5YAYJGn8kyf4yEBtOW1N3V/zWuoe/2pi5W0c83ZKNHvDqSV
+        /XdxPCk0KYP2b3/f2758unr+G76cNAHyuBdOS+tAQ+lEedtN5NvuFkVlcN2rQhbhVWFQ25L9xg4wU
+        MoQzj1e+HJ7beYrcHGZHrZtzhMtQr8Vn7ABE0B9YY5lS/OcRY5FP3gAqIrmX63K0JKrBDW6svmdmy
+        J+oQsjOpUF5aKgMNBr1i7GCOcqOr7/ZD4T1GHA3tMY00meCBwuo0FaqwhUAAtymqmMEpKSHcZTfjQ
+        Bdy1gz8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jeMCO-000547-02; Thu, 28 May 2020 17:20:08 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A856C9836F8; Thu, 28 May 2020 19:20:05 +0200 (CEST)
+Date:   Thu, 28 May 2020 19:20:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        viro@ZenIV.linux.org.uk, hch@lst.de, x86@kernel.org
+Subject: Re: mmotm 2020-05-13-20-30 uploaded (objtool warnings)
+Message-ID: <20200528172005.GP2483@worktop.programming.kicks-ass.net>
+References: <20200514033104.kRFL_ctMQ%akpm@linux-foundation.org>
+ <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CA+icZUWbGGXRaRt1yyXiFXR5y0NkMxzkWdnVrmADCbAajSdEmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/28/20 11:12 AM, Sedat Dilek wrote:
-> On Thu, May 28, 2020 at 7:06 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 5/28/20 11:02 AM, Sedat Dilek wrote:
->>> On Tue, May 26, 2020 at 10:59 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> We technically support this already through io_uring, but it's
->>>> implemented with a thread backend to support cases where we would
->>>> block. This isn't ideal.
->>>>
->>>> After a few prep patches, the core of this patchset is adding support
->>>> for async callbacks on page unlock. With this primitive, we can simply
->>>> retry the IO operation. With io_uring, this works a lot like poll based
->>>> retry for files that support it. If a page is currently locked and
->>>> needed, -EIOCBQUEUED is returned with a callback armed. The callers
->>>> callback is responsible for restarting the operation.
->>>>
->>>> With this callback primitive, we can add support for
->>>> generic_file_buffered_read(), which is what most file systems end up
->>>> using for buffered reads. XFS/ext4/btrfs/bdev is wired up, but probably
->>>> trivial to add more.
->>>>
->>>> The file flags support for this by setting FMODE_BUF_RASYNC, similar
->>>> to what we do for FMODE_NOWAIT. Open to suggestions here if this is
->>>> the preferred method or not.
->>>>
->>>> In terms of results, I wrote a small test app that randomly reads 4G
->>>> of data in 4K chunks from a file hosted by ext4. The app uses a queue
->>>> depth of 32. If you want to test yourself, you can just use buffered=1
->>>> with ioengine=io_uring with fio. No application changes are needed to
->>>> use the more optimized buffered async read.
->>>>
->>>> preadv for comparison:
->>>>         real    1m13.821s
->>>>         user    0m0.558s
->>>>         sys     0m11.125s
->>>>         CPU     ~13%
->>>>
->>>> Mainline:
->>>>         real    0m12.054s
->>>>         user    0m0.111s
->>>>         sys     0m5.659s
->>>>         CPU     ~32% + ~50% == ~82%
->>>>
->>>> This patchset:
->>>>         real    0m9.283s
->>>>         user    0m0.147s
->>>>         sys     0m4.619s
->>>>         CPU     ~52%
->>>>
->>>> The CPU numbers are just a rough estimate. For the mainline io_uring
->>>> run, this includes the app itself and all the threads doing IO on its
->>>> behalf (32% for the app, ~1.6% per worker and 32 of them). Context
->>>> switch rate is much smaller with the patchset, since we only have the
->>>> one task performing IO.
->>>>
->>>> Also ran a simple fio based test case, varying the queue depth from 1
->>>> to 16, doubling every time:
->>>>
->>>> [buf-test]
->>>> filename=/data/file
->>>> direct=0
->>>> ioengine=io_uring
->>>> norandommap
->>>> rw=randread
->>>> bs=4k
->>>> iodepth=${QD}
->>>> randseed=89
->>>> runtime=10s
->>>>
->>>> QD/Test         Patchset IOPS           Mainline IOPS
->>>> 1               9046                    8294
->>>> 2               19.8k                   18.9k
->>>> 4               39.2k                   28.5k
->>>> 8               64.4k                   31.4k
->>>> 16              65.7k                   37.8k
->>>>
->>>> Outside of my usual environment, so this is just running on a virtualized
->>>> NVMe device in qemu, using ext4 as the file system. NVMe isn't very
->>>> efficient virtualized, so we run out of steam at ~65K which is why we
->>>> flatline on the patched side (nvme_submit_cmd() eats ~75% of the test app
->>>> CPU). Before that happens, it's a linear increase. Not shown is context
->>>> switch rate, which is massively lower with the new code. The old thread
->>>> offload adds a blocking thread per pending IO, so context rate quickly
->>>> goes through the roof.
->>>>
->>>> The goal here is efficiency. Async thread offload adds latency, and
->>>> it also adds noticable overhead on items such as adding pages to the
->>>> page cache. By allowing proper async buffered read support, we don't
->>>> have X threads hammering on the same inode page cache, we have just
->>>> the single app actually doing IO.
->>>>
->>>> Been beating on this and it's solid for me, and I'm now pretty happy
->>>> with how it all turned out. Not aware of any missing bits/pieces or
->>>> code cleanups that need doing.
->>>>
->>>> Series can also be found here:
->>>>
->>>> https://git.kernel.dk/cgit/linux-block/log/?h=async-buffered.5
->>>>
->>>> or pull from:
->>>>
->>>> git://git.kernel.dk/linux-block async-buffered.5
->>>>
->>>
->>> Hi Jens,
->>>
->>> I have pulled linux-block.git#async-buffered.5 on top of Linux v5.7-rc7.
->>>
->>> From first feelings:
->>> The booting into the system (until sddm display-login-manager) took a
->>> bit longer.
->>> The same after login and booting into KDE/Plasma.
->>
->> There is no difference for "regular" use cases, only io_uring with
->> buffered reads will behave differently. So I don't think you have longer
->> boot times due to this.
->>
->>> I am building/linking with LLVM/Clang/LLD v10.0.1-rc1 on Debian/testing AMD64.
->>>
->>> Here I have an internal HDD (SATA) and my Debian-system is on an
->>> external HDD connected via USB-3.0.
->>> Primarily, I use Ext4-FS.
->>>
->>> As said above is the "emotional" side, but I need some technical instructions.
->>>
->>> How can I see Async Buffer Reads is active on a Ext4-FS-formatted partition?
->>
->> You can't see that. It'll always be available on ext4 with this series,
->> and you can watch io_uring instances to see if anyone is using it.
->>
+On Thu, May 14, 2020 at 08:32:22AM -0700, Randy Dunlap wrote:
+> On 5/13/20 8:31 PM, Andrew Morton wrote:
+> > The mm-of-the-moment snapshot 2020-05-13-20-30 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is to
+> > be applied.
 > 
-> Thanks for answering my questions.
 > 
-> How can I "watch io_uring instances"?
+> on x86_64:
+> 
+> arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_from_user()+0x2a4: call to memset() with UACCESS enabled
+> arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_to_user()+0x243: return with UACCESS enabled
 
-You can enable io_uring tracing:
+Urgh, that's horrible code. That's got plain stac()/clac() calls on
+instead of the regular uaccess APIs.
 
-# echo 1 > /sys/kernel/debug/tracing/events/io_uring/io_uring_create/enable
-# tail /sys/kernel/debug/tracing/trace
+Anybody any clue about what the best way forward here is?
 
-and see if you get any events for setup. Generally you can also look for
-the existence of io_wq_manager processes, these will exist for an
-io_uring instance.
-
-> FIO?
-> Debian has fio version 3.19-2 in its apt repositories.
-> Version OK?
-
-Yeah that should work.
-
--- 
-Jens Axboe
-
+Also, I wonder how we get at memset() with AC set,..
