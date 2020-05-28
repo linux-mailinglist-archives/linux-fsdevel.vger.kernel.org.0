@@ -2,109 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F76E1E6398
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 16:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2E991E63A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 16:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391084AbgE1OTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 10:19:12 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9442 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390924AbgE1OTI (ORCPT
+        id S2390991AbgE1OUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 10:20:49 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46468 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390924AbgE1OUr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 10:19:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ecfc8010000>; Thu, 28 May 2020 07:17:37 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 28 May 2020 07:19:07 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 28 May 2020 07:19:07 -0700
-Received: from [10.2.171.246] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 28 May
- 2020 14:19:07 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 03/36] mm: Allow hpages to be arbitrary order
-Date:   Thu, 28 May 2020 10:19:04 -0400
-X-Mailer: MailMate (1.13.1r5690)
-Message-ID: <8525A9D1-6551-42C6-BF19-CAC4926FA500@nvidia.com>
-In-Reply-To: <20200515131656.12890-4-willy@infradead.org>
-References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-4-willy@infradead.org>
+        Thu, 28 May 2020 10:20:47 -0400
+Received: by mail-pl1-f195.google.com with SMTP id i17so3107734pli.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 07:20:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ioMBz2HkB++LPoInJNCol20ptpLepBHp/qIksTleTi8=;
+        b=LL2hfGBLgD8NUppR66YMldKso85eFYW9T2DrveaF+FR3jkqWSfOARMblNLZ33KluVJ
+         15395dW83v95BEBsv1Lb4zGH/6e0zgaPIYCbF7Gxv4Vt3OEo0WiRTXgy01Usszd3vpOU
+         3jmhspJFJUt0NflHMPYHJTkKKy6B3lDmhFlWcz+I32piY87Qz10CWlLNJXz5Xiv9zYBm
+         y+H9bkSDJSGt4qcG6f4+bZZsFBYsSTtRo9H+upEPpQ7HtiP0VuZvSixiGJOXKIQhOiB5
+         5GA+1SFeo3vQzm/Z4/JHUnX0zEoERSH/qpb1mFxl1rkwknT/eO3a0hYCwLZNeCtG5Ad/
+         jaGg==
+X-Gm-Message-State: AOAM531Vr2AZpP1pmDJPU0Rft48HABwymqZ6zjPMql7sWtE/8Fr6w7Q8
+        C+/+QWKEOwjV6Tj6zH4eMyY=
+X-Google-Smtp-Source: ABdhPJyrHzw+oAkehx5luhCUgrCWpCV3i+DoNzd43jiNtdIUXziN/7kcwGF0/IiAAa5CfZPrd0TMyw==
+X-Received: by 2002:a17:90a:338b:: with SMTP id n11mr4218072pjb.225.1590675647079;
+        Thu, 28 May 2020 07:20:47 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id l3sm4818428pgm.59.2020.05.28.07.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 May 2020 07:20:46 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 30DE440605; Thu, 28 May 2020 14:20:45 +0000 (UTC)
+Date:   Thu, 28 May 2020 14:20:45 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Boris Sukholitko <boris.sukholitko@broadcom.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, keescook@chromium.org,
+        yzaikin@google.com
+Subject: Re: [PATCH] __register_sysctl_table: do not drop subdir
+Message-ID: <20200528142045.GP11244@42.do-not-panic.com>
+References: <20200527104848.GA7914@nixbox>
+ <20200527125805.GI11244@42.do-not-panic.com>
+ <20200528080812.GA21974@noodle>
+ <874ks02m25.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: multipart/signed;
-        boundary="=_MailMate_FD669B2F-AEAF-47A4-97AA-FCD5FE99CAAC_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1590675457; bh=Wlo8+HURmTm34DNdJz6dWr6yZsksCAAqTCXZJbkhVbE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=Rs9Pjsv/BsgE+4GnQaXYQ2zC00rQvevnynjjFoLpA6dZxvUmsVfllz57KctZN/93p
-         nQWiSglzChbezUyqV3K9OgmVOJMDudQRjTail2WOCFWYCr7YezkPAsSUgv//KNBHDN
-         wiTjymfMy52PDItX8lZgx5Om1dKPliiFcmqIlaOSo7dONIWI0kgzyOAbUgCTognOkq
-         jnS8sPkFlhBX+Z17T8H6IeIXAHa7qAf0TmWtTE3DnwWToBeGuXBK/JpTMqew0cHjQN
-         Pd2Q6tyBDtlk2K6UhIro8blHcsiODEN1/dUWteITriORMrugk8GUOhgpo9Wo39PeDr
-         zgbQcD8ko0y8w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874ks02m25.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_FD669B2F-AEAF-47A4-97AA-FCD5FE99CAAC_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 28, 2020 at 09:04:02AM -0500, Eric W. Biederman wrote:
+> I see some recent (within the last year) fixes to proc_sysctl.c in this
+> area.  Do you have those?  It looks like bridge up and down is stressing
+> this code.  Either those most recent fixes are wrong, your kernel is
+> missing them or this needs some more investigation.
 
-On 15 May 2020, at 9:16, Matthew Wilcox wrote:
+Thanks for the review Eric.
 
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->
-> Remove the assumption in hpage_nr_pages() that compound pages are
-> necessarily PMD sized.  Move the relevant parts of mm.h to before the
-> include of huge_mm.h so we can use an inline function rather than a mac=
-ro.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/huge_mm.h |  5 +--
->  include/linux/mm.h      | 96 ++++++++++++++++++++---------------------=
+Boris, the elaborate deatils you provided would also be what would be
+needed for a commit log, specially since this is fixing a crash. If
+you confirm this is still present upstream by reproducing with a test
+case it would be wonderful.
 
->  2 files changed, 50 insertions(+), 51 deletions(-)
->
-Glad to see this change. Thanks.
+If you are familiar with what might be the issue, you can even construct
+your own kernel-code proof of concept test using lib/test_sysctl.c. We use the
+script tools/testing/selftests/sysctl/sysctl.sh to hammer on that.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-
-=E2=80=94
-Best Regards,
-Yan Zi
-
---=_MailMate_FD669B2F-AEAF-47A4-97AA-FCD5FE99CAAC_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl7PyFgPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKz6oP/iNKzP4qN28njUEd3e1klGCPQ+FIxbVvsd6j
-vnWoNATamPXz7wGWxlpdmZggbEmnsU3NZp55eSWq8N2iD9N6W5D6IqzS/whsuLFB
-hI3Bk7Qin6mXUVMj3NHzdYIGSbnBpayTfslxDG16pHiaRBDShn+Dms8Sq7Jb9b92
-ZuDh+tP1qW3QIREdVkRFfiEwDuN2C8VvHZD63g5bmyNFfA8s+JDyycuUWTyLrsi1
-b8cvb0IbhW8KbR2WsIEO0GtoKToKHLqqWo/BeElZSL+3Q1W/dHZKACEMsY2DpJgX
-ePPw5pYjPtGTY7fjtnK4alaCCZmmRNaJMjaZk44uW54k1S+ScKBs0RJRBC8Lw3CZ
-TrCY8SpDVSZf5Kls7yKl7ekkh7BFMwfe2ks7gvL65PAaGr/+IYy9htE20urLKFiK
-NJMsNnM6unujfQw2AmkOrZUuLvUGsjkIVTkfnpM50E0MR6xaEu60HOcY94ZFLaZB
-qesZi7+5nlw6dKircty9mwDP4mFO4yAWCNhY2/fgiqvs9k0Dnb0G+uO77UcAUtxm
-Hij82oW8pUyNXrxX8cffrPd3VG69e1/3Gz7AStWAvM17QECkksepN5FBtmsgIrmr
-3EH7IZahdA7kRZZz6Nfd1n5bchhPgFTSCoJulz0rR+FtrD+Rz4z2jADCTd6LDatH
-7dWVogzJ
-=Hw9v
------END PGP SIGNATURE-----
-
---=_MailMate_FD669B2F-AEAF-47A4-97AA-FCD5FE99CAAC_=--
+  Luis
