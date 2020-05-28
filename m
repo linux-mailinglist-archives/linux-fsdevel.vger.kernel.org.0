@@ -2,107 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 486961E694E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 20:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 713701E69A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 20:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405784AbgE1S3l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 14:29:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51266 "EHLO
+        id S2391501AbgE1Snf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 14:43:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405744AbgE1S3l (ORCPT
+        with ESMTP id S2391488AbgE1Snd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 14:29:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7CCC08C5C6;
-        Thu, 28 May 2020 11:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rHMEzb11uh2HkVb3MRV65qzSdnkQbtUfzMniKNSh5V4=; b=l6I4q/VNvcMk9WtCZ7L3CtVjsD
-        4RdeCehuLo5Y+5/uJwh7db/V7hlgZ2wuCeIFjt/sepFaXsjq20myaWbxJ+C14e4PKFGuXMNJeG6DC
-        DdnyXJ13RvVu4IsViLZQUgaRNGJhkFexoU6bS1/U5wE2AORU73PIYycA9cBtwGM+aqfOX+tcgbtyV
-        AK6lJiwvF5GXamTSHziGU2E2jaXHBzIMxAvc+5FH3onDIZlmvZxRTzhtxPkOMDaAmcfTP/EvN/g4i
-        INBw4+6Lw3RVFUN+tNNvi2E/yzHJePRXzMTwLF0FZcJ3wBYWAOa5MaUTV9LzkOnH43ManVv/M6LPA
-        KUJsTyQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeNHJ-0001Er-1U; Thu, 28 May 2020 18:29:17 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 116BE9836F8; Thu, 28 May 2020 20:29:14 +0200 (CEST)
-Date:   Thu, 28 May 2020 20:29:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200528182913.GQ2483@worktop.programming.kicks-ass.net>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
- <20200528132327.GB706460@hirez.programming.kicks-ass.net>
- <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
- <20200528161112.GI2483@worktop.programming.kicks-ass.net>
- <20200528165130.m5unoewcncuvxynn@e107158-lin.cambridge.arm.com>
+        Thu, 28 May 2020 14:43:33 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC62C08C5C6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 11:43:32 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id z6so34665443ljm.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 11:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
+        b=P8nw8P71cxagqSPVUA9Kzi2wkC951thaYnOwz/e4kiPGKd2Zew+YultOwwJeyFp5h7
+         zM7l8zOFEFg42p7pHhMVJLHi7CpftdQASS+eM/OM/B4nVtTeHsdqVgzMglyZy3GmUpst
+         EXyW/r86HANnDshbNT+Vi8bmm9fl991ACFIhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
+        b=hHtnvhlBvqv356cQF2qNYluGcckhVlTE8ZVgbQRca4owELbF/5GeNvInyYrrx7Kfse
+         Yr4drCR3NLULBvWTM0xSnz4XSfnLKg0l0iETFiGlHZu4M4nDarFVD4OwpoIT+iSgRTPs
+         GLYQanhGsB+JJJznGqQ1+ZDeV9Y642Uvgw193T7SH5hQQA9ttPVd19flbsND4S9sUFho
+         7FXTrLInCsaNaS915uFm4ji/Kh3xne9FcKoSAU/yuaEBo3hYNM8Ll6YeSeo5pdKElZE/
+         x8ykH2i3nz3TpHEuwwDGEBC6bDZEP7V602wPEzEPRMBnamtNo5/Lh0NNALBW6Ur6GTER
+         eViA==
+X-Gm-Message-State: AOAM531egaI4jeftjuoINhVo5cA2Stu6PQoiwyg5In+r+IzVWA8Gdj+y
+        UaiZzSFq3SGDySmgecKDAge8iaGP128=
+X-Google-Smtp-Source: ABdhPJzs91Kcp+43rrwDSzat63W2iLdyk6mYhybm3osCwSWMN7E0yJQSbVyayYaJRFVhSGnpNSg8Zg==
+X-Received: by 2002:a05:651c:502:: with SMTP id o2mr2108572ljp.434.1590691410657;
+        Thu, 28 May 2020 11:43:30 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id l8sm1581925ljg.93.2020.05.28.11.43.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 May 2020 11:43:29 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id m18so34674646ljo.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 11:43:29 -0700 (PDT)
+X-Received: by 2002:a2e:b16e:: with SMTP id a14mr2040017ljm.70.1590691409213;
+ Thu, 28 May 2020 11:43:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200528165130.m5unoewcncuvxynn@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200528054043.621510-1-hch@lst.de> <20200528054043.621510-10-hch@lst.de>
+In-Reply-To: <20200528054043.621510-10-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 28 May 2020 11:43:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+Subject: Re: [PATCH 09/14] fs: don't change the address limit for ->write_iter
+ in __kernel_write
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 28, 2020 at 05:51:31PM +0100, Qais Yousef wrote:
+On Wed, May 27, 2020 at 10:41 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> -ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+> +ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
+> +               loff_t *pos)
 
-> In my head, the simpler version of
-> 
-> 	if (rt_task(p) && !uc->user_defined)
-> 		// update_uclamp_min
-> 
-> Is a single branch and write to cache, so should be fast. I'm failing to see
-> how this could generate an overhead tbh, but will not argue about it :-)
+Please don't do these kinds of pointless whitespace changes.
 
-Mostly true; but you also had a load of that sysctl in there, which is
-likely to be a miss, and those are expensive.
+If you have an actual 80x25 vt100 sitting in a corner, it's not really
+conducive to kernel development any more.
 
-Also; if we're going to have to optimize this, less logic is in there,
-the less we need to take out. Esp. for stuff that 'never' changes, like
-this.
+Yes, yes, we'd like to have shorter lines for new code, but no, don't
+do silly line breaks that just makes old code look and grep worse.
 
-> > It's more code, but it is all outside of the normal paths where we care
-> > about performance.
-> 
-> I am happy to take that direction if you think it's worth it. I'm thinking
-> task_woken_rt() is good. But again, maybe I am missing something.
-
-Basic rule, if the state 'never' changes, don't touch fast paths.
-
-Such little things can be very difficult to measure, but at some point
-they cause death-by-a-thousnd-cuts.
-
-> > Indeed, that one. The fact that regular distros cannot enable this
-> > feature due to performance overhead is unfortunate. It means there is a
-> > lot less potential for this stuff.
-> 
-> I had a humble try to catch the overhead but wasn't successful. The observation
-> wasn't missed by us too then.
-
-Right, I remember us doing benchmarks when we introduced all this and
-clearly we missed something. I would be good if Mel can share which
-benchmark hurt most so we can go have a look.
+             Linus
