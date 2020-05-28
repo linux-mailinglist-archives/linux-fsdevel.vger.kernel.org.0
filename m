@@ -2,103 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 309AE1E521C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 02:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B52D81E52C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 03:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725819AbgE1AM4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 May 2020 20:12:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbgE1AM4 (ORCPT
+        id S1725959AbgE1BPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 May 2020 21:15:16 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38196 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgE1BPP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 May 2020 20:12:56 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6912EC05BD1E;
-        Wed, 27 May 2020 17:12:56 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id z26so12599173pfk.12;
-        Wed, 27 May 2020 17:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P8ZX6NswqYpmp7AerrBDt1jBaXqAyhSsaEu8p+L3oCE=;
-        b=iKLqcWmV5z5p/JypITIwKEFX2LyCZV9tu37lGMrCJvoOrB+JBVptoFiBh5FgHaUjF0
-         wOqAigXgQ4PhC/G9wWNnNPI4VG1aZsCSJZVY6Fo4s/xWgeXEeJbWGQuOn1XiZSDo2vTt
-         sIVJq4JN0uOo25JAznQVs7c8LVC0xmI++cZK+XSr5f5GeVvIKF+PJRtP1bFAud4HVWQy
-         3CAKwCM//8w28wWFoNKwy+qOQG5rnMDB9cjTm54fLySgkhnBeTGHJqFBHj+0Nd4qLgOe
-         RfWLucbAEZOnfsQRqdxWAUaPLzN5s0ggQNbKaMWdliVyILqQk1ocXrtPe+i86S5gTbF5
-         j7fg==
+        Wed, 27 May 2020 21:15:15 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q8so12670456pfu.5;
+        Wed, 27 May 2020 18:15:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P8ZX6NswqYpmp7AerrBDt1jBaXqAyhSsaEu8p+L3oCE=;
-        b=nfRMEhBtbNZfiRmBIHFN7K/s+X4xdJmFSwqBDdvYa9rQNtMeBF9gDKSYPwkGPzfzAB
-         PIbJqpqeoMn6kdJiQ6cwgfziJ4IU/bXt5inISavF443IiS8YJ5xbOs8FdToH8neMHIZf
-         fXzHSjNQQadepUm7vFVcnG4G3BtQnY7042xAfFD9w+eCr0Yp9oCPU7IGkGWP5xoJ9Y3c
-         MKi6F2g01e6pxdoYcliyB50uEnh2VRDcYXe3d4DuCW7xcuHwNfg8rrtYtV5NZVu2GhxK
-         oKCs78CWFF1cMQb+a2CTKlLydJxdgJpvS+jHwaeyjDp2ZjYI9c5khSyX1fuJUzu245St
-         jl2Q==
-X-Gm-Message-State: AOAM532OViw58fl/o9Q31NKXirZoHz5r1s7dkVmQdToEkJcFP84cf9Xd
-        8AJ4E8cpkJOmtGm6GiWsW1hHUz6VI2E=
-X-Google-Smtp-Source: ABdhPJyybKRjHW/e8Wn8InRXBVk2d8dp4EgOWi6G1U18Odv3v3aOGhPI7vHfAxUxrSGaWJqSIn/WRg==
-X-Received: by 2002:a05:6a00:134c:: with SMTP id k12mr275880pfu.313.1590624775625;
-        Wed, 27 May 2020 17:12:55 -0700 (PDT)
-Received: from ?IPv6:::1? ([2404:7a87:83e0:f800:295a:ef64:e071:39ab])
-        by smtp.gmail.com with ESMTPSA id f136sm2915747pfa.59.2020.05.27.17.12.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 May 2020 17:12:54 -0700 (PDT)
-Subject: Re: [PATCH] exfat: optimize dir-cache
-To:     Sungjong Seo <sj1557.seo@samsung.com>,
-        'Namjae Jeon' <linkinjeon@kernel.org>,
-        "'Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp'" 
-        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
-Cc:     "'Mori.Takahiro@ab.MitsubishiElectric.co.jp'" 
-        <Mori.Takahiro@ab.mitsubishielectric.co.jp>,
-        "'Motai.Hirotaka@aj.MitsubishiElectric.co.jp'" 
-        <Motai.Hirotaka@aj.mitsubishielectric.co.jp>,
-        'Namjae Jeon' <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200520075735epcas1p269372d222e25f3fd51b7979f5b7cdc61@epcas1p2.samsung.com>
- <20200520075641.32441-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
- <055a01d63306$82b13440$88139cc0$@samsung.com>
- <TY1PR01MB15784E70CEACDA05F688AE6790B10@TY1PR01MB1578.jpnprd01.prod.outlook.com>
- <CAKYAXd_oG6dc7CNiHszKmhabHd2zrN_VOaNYaWRPES=7hRu+pA@mail.gmail.com>
- <000701d63432$ace24f10$06a6ed30$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <22dfcd8a-4416-e2a7-b8a7-0375660ba465@gmail.com>
-Date:   Thu, 28 May 2020 09:12:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=zEJC/keMYsw/lXDxPakt60ru3sfh7fcbE4KUupGoOkQ=;
+        b=HCQsNBJSbczI7dNVQIO+QyS3nCwB1T9CPXzoMf1L+x1JO3yH297IkTisg6lOkE9bpM
+         jXbCxHNzsVUglWLtEur5EJt+x4h+4qsegCvlb1JrGxMw4zL7sx2g69vZ/71KgBr8n1kP
+         8b2wlr5GBwyPxfTBsrshDNc/vNGbugfwaDqjKkL7J2np78xV8DbnrxWzJxgfoizeHGAr
+         GEpt46YXqwQXTsSoCLYP1LmEFbOlp1lLkONvz0lLOSQVIPxLrPYSfc+GmtefCPDVn0Vs
+         arOJhogbtEZhEa2uGaX3sVX+6JcIXKNiwisE/jd3/cXReSMwe/JX4KPTJWlpAvx3/0iA
+         uJ7w==
+X-Gm-Message-State: AOAM5334n7Vqxd1j2dGf4WLAHdsv7CFmGiNqUp0Jq+wlzmuowMZXe6a8
+        SAyYrMF+CSoqlf66uWF0vRs=
+X-Google-Smtp-Source: ABdhPJyqPA/THaMvlBvffYtpFjaHUygj7US/vRrk78f1KaFUQY7e03pJm6bTtPjhVfjiDP3EQ1a2FA==
+X-Received: by 2002:a62:1b87:: with SMTP id b129mr520581pfb.162.1590628513969;
+        Wed, 27 May 2020 18:15:13 -0700 (PDT)
+Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
+        by smtp.gmail.com with ESMTPSA id s102sm3295368pjb.57.2020.05.27.18.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2020 18:15:13 -0700 (PDT)
+Subject: Re: [PATCH v5 5/7] blktrace: fix debugfs use after free
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+References: <20200516031956.2605-1-mcgrof@kernel.org>
+ <20200516031956.2605-6-mcgrof@kernel.org>
+ <20200519163713.GA29944@infradead.org>
+ <20200527031202.GT11244@42.do-not-panic.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <3e5e75d4-56ad-19c6-fbc3-b8c78283ec54@acm.org>
+Date:   Wed, 27 May 2020 18:15:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <000701d63432$ace24f10$06a6ed30$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200527031202.GT11244@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 200527-0, 2020/05/27), Outbound message
-X-Antivirus-Status: Clean
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>>   > In order to prevent illegal accesses to bh and dentries, it would
->>> be better to check validation for num and bh.
->>>
->>>   There is no new error checking for same reason as above.
->>>
->>>   I'll try to add error checking to this v2 patch.
->>>   Or is it better to add error checking in another patch?
->> The latter:)
->> Thanks!
-> 
-> Yes, the latter looks better.
+On 2020-05-26 20:12, Luis Chamberlain wrote:
+> +	/*
+> +	 * Blktrace needs a debugsfs name even for queues that don't register
+> +	 * a gendisk, so it lazily registers the debugfs directory.  But that
+> +	 * can get us into a situation where a SCSI device is found, with no
+> +	 * driver for it (yet).  Then blktrace is used on the device, creating
+> +	 * the debugfs directory, and only after that a drivers is loaded. In
+                                                        ^^^^^^^
+                                                        driver?
 
-I will do so.
+> @@ -494,6 +490,38 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+>  	 */
+>  	strreplace(buts->name, '/', '_');
+>  
+> +	/*
+> +	 * We also have to use a partition directory if a partition is
+> +	 * being worked on, even though the same request_queue is shared.
+> +	 */
+> +	if (bdev && bdev != bdev->bd_contains)
+> +		dir = bdev->bd_part->debugfs_dir;
 
-I will post additional patches for error checking, after this patch is merged into tree.
-OK?
+Please balance braces in if-statements as required by the kernel coding style.
 
+> +	else {
+> +		/*
+> +		 * For queues that do not have a gendisk attached to them, the
+> +		 * debugfs directory will not have been created at setup time.
+> +		 * Create it here lazily, it will only be removed when the
+> +		 * queue is torn down.
+> +		 */
 
+Is the above comment perhaps a reference to blk_register_queue()? If so, please
+mention the name of that function explicitly.
 
+> +		if (!q->debugfs_dir) {
+> +			q->debugfs_dir =
+> +				debugfs_create_dir(buts->name,
+> +						   blk_debugfs_root);
+> +		}
+> +		dir = q->debugfs_dir;
+> +	}
+> +
+> +	/*
+> +	 * As blktrace relies on debugfs for its interface the debugfs directory
+> +	 * is required, contrary to the usual mantra of not checking for debugfs
+> +	 * files or directories.
+> +	 */
+> +	if (IS_ERR_OR_NULL(q->debugfs_dir)) {
+> +		pr_warn("debugfs_dir not present for %s so skipping\n",
+> +			buts->name);
+> +		return -ENOENT;
+> +	}
+
+How are do_blk_trace_setup() calls serialized against the debugfs directory
+creation code in blk_register_queue()? Perhaps via q->blk_trace_mutex? Are
+mutex lock and unlock calls for that mutex perhaps missing from
+compat_blk_trace_setup()?
+
+How about adding a lockdep_assert_held(&q->blk_trace_mutex) statement in
+do_blk_trace_setup()?
+
+Thanks,
+
+Bart.
