@@ -2,144 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40CEB1E554B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 07:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F11E1E5552
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 May 2020 07:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbgE1FDO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 01:03:14 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:64716 "EHLO
+        id S1725846AbgE1FF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 01:05:56 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10988 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgE1FDM (ORCPT
+        with ESMTP id S1725308AbgE1FFz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 01:03:12 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200528050308epoutp01424644e631fbc0f9d82c77b52d361d7f~TGKShz3QT0566705667epoutp01J
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 05:03:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200528050308epoutp01424644e631fbc0f9d82c77b52d361d7f~TGKShz3QT0566705667epoutp01J
+        Thu, 28 May 2020 01:05:55 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200528050553epoutp011ad9bbc18aa29803a32d9714db96adc6~TGMsHkVL00856408564epoutp01d
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 05:05:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200528050553epoutp011ad9bbc18aa29803a32d9714db96adc6~TGMsHkVL00856408564epoutp01d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1590642188;
-        bh=xD4XmvUgu/OdTokoZ/Ks5/KdOZvToRWCxhjAPwMBgho=;
+        s=mail20170921; t=1590642353;
+        bh=Xpl4KdtQS6IHn7dUVSCu2aSIRKN5N8K0wozlMY6vGBs=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=cFBPJrVfM4mYzmvNAOAFQ/H02Jh7jPHdwFUOn7ZR+qyaVp6bj2jhPTvyLS++7ouhT
-         2bZlUOwcz43lDYjgB8yfW/IW2RRIfMIDe5Td0xNIjSbToP+kS657vo0jbzvWS48D3i
-         sGirQgpgfNjtEwokXut+EJCQbFEBf7Jva5mX1oTA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200528050308epcas1p3a5db166606dacdaa653023696d638e60~TGKR6ABeM0641606416epcas1p3p;
-        Thu, 28 May 2020 05:03:08 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 49XbDp68t4zMqYkZ; Thu, 28 May
-        2020 05:03:06 +0000 (GMT)
+        b=uANcr4D5qhy6FfjewlbGMD8qSKFAfVua3qPYSPciVCfrQrY17kkwCA+PTc5XynEPE
+         fVQw8IVq4e8QYVPrehAgpGNHJ4wVDKKwzUL5QR1oxuXKkTW8DzBwXmoMi1SycoleAi
+         ZlrAg0mlbfz9Sn2j2KW8Neui7ADu7iADoDLboNas=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200528050552epcas1p47bb06270afdda6394638aee05f7da3bd~TGMrelyg52563325633epcas1p4T;
+        Thu, 28 May 2020 05:05:52 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 49XbJ035ZRzMqYkp; Thu, 28 May
+        2020 05:05:52 +0000 (GMT)
 Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.9D.04392.A064FCE5; Thu, 28 May 2020 14:03:06 +0900 (KST)
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        52.EC.04395.0B64FCE5; Thu, 28 May 2020 14:05:52 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200528050306epcas1p473209d12f3dc8b54b05c08bf6604e79d~TGKQSIvLg3127731277epcas1p4F;
-        Thu, 28 May 2020 05:03:06 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        20200528050551epcas1p434d454bab29e7ff5e4eeb861cc52ad5d~TGMqicsAm1730217302epcas1p48;
+        Thu, 28 May 2020 05:05:51 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200528050306epsmtrp11cc61c035301d1ce57410677cfe85dc9~TGKQRbvJf1473214732epsmtrp12;
-        Thu, 28 May 2020 05:03:06 +0000 (GMT)
-X-AuditID: b6c32a37-cabff70000001128-17-5ecf460ab0e1
+        20200528050551epsmtrp1c14c006826bac76c23935137187058fe~TGMqhud461620716207epsmtrp1O;
+        Thu, 28 May 2020 05:05:51 +0000 (GMT)
+X-AuditID: b6c32a39-f7bff7000000112b-d1-5ecf46b088dc
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9E.E7.08382.A064FCE5; Thu, 28 May 2020 14:03:06 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D7.87.08303.FA64FCE5; Thu, 28 May 2020 14:05:51 +0900 (KST)
 Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200528050306epsmtip1a41794baa008dc834d7c550117599d4a~TGKQI0dLc2192221922epsmtip18;
-        Thu, 28 May 2020 05:03:06 +0000 (GMT)
+        20200528050551epsmtip1a7f86adf4a45751001185e64ed32b0c7~TGMqWxesV2192621926epsmtip1a;
+        Thu, 28 May 2020 05:05:51 +0000 (GMT)
 From:   "Namjae Jeon" <namjae.jeon@samsung.com>
 To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+Cc:     "'Mori.Takahiro@ab.MitsubishiElectric.co.jp'" 
+        <Mori.Takahiro@ab.mitsubishielectric.co.jp>,
+        "'Motai.Hirotaka@aj.MitsubishiElectric.co.jp'" 
+        <Motai.Hirotaka@aj.mitsubishielectric.co.jp>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "'Sungjong Seo'" <sj1557.seo@samsung.com>,
         "'Namjae Jeon'" <linkinjeon@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <ccb66f50-b275-4717-f165-98390520077b@gmail.com>
-Subject: RE: [PATCH 4/4] exfat: standardize checksum calculation
-Date:   Thu, 28 May 2020 14:03:06 +0900
-Message-ID: <015401d634ad$4628e4c0$d27aae40$@samsung.com>
+        "'Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp'" 
+        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
+In-Reply-To: <22dfcd8a-4416-e2a7-b8a7-0375660ba465@gmail.com>
+Subject: RE: [PATCH] exfat: optimize dir-cache
+Date:   Thu, 28 May 2020 14:05:52 +0900
+Message-ID: <015501d634ad$a8dcd680$fa968380$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQEl0VwLAqGTGno4seWfP7lwGg+RAAKJW6foAcSd2fUB9WovMgNdMeCFAbRhwtQCDDf9yamyrSRA
+Thread-Index: AQKbEd8GOCYeHYQBe/Vm0kX/gmqw5wMD/7F2AWi7CpYCLmCEuwJD5ds7AXx55Z4BYsdZNqbVRWFQ
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zk75zhanOaqtwU1DxUlqFtzeioXUVGjC4wUAw314I4X2o2d
-        zW4/spuVRGVR4LLULpqGGmZeShGWJbMsKkEqu9BVpcTMTMm0bcfIf8/7vO/7PN/zfR+FKW4R
-        Kirb5uKdNs7CEDK8/t4yTYRsw5MUTV2bjh29+Apnv/rO4WzB+WsY29ziw9nnd4oI9vnkEM6W
-        DZ/F2bqJNukayjhc1E4a885OkMZDDyoIY5PnNWmsrTxOGE/WVSLjj9oFJjLJEpfFc2beqeZt
-        6XZzti3TwGyOT12Xqo/RaCO0K9hYRm3jrLyBWb/FFLEh2+I/FaPO4SxuP2XiBIGJWh3ntLtd
-        vDrLLrgMDO8wWxxajSNS4KyC25YZmW63rtRqNMv1/sk0S1Z+4SPS0ULtft3RQeaibiIfhVBA
-        R0PP2xEsH8koBd2IoLG8BheLIQRjvWMSsRhBMNng8Xeo4Mq7oWiRb0Hw/s1VqVj0IejpGZcE
-        dAk6AibGW4MeSjoSfL6An4zC6EoJnH95ThpohNAGqL5ynwiohtJr4H7p0gCN04uhvtob1JHT
-        K+Buz2lCxLPAV/gRD2CMXggN34owMYMaxj6VSUWvJBgvb5maUcKF43nBbEBXUdB2pngq9Ho4
-        0OVBIg6F/vY6UsQq6DuVR4op98H31in9Ywh6fxlErIMXNTelgRGMXgY1d6JEOgyafl9Eou1M
-        GPh5QiqqyOFYnkIcWQwnn92TiHg+5B8dJE8jxjMtmGdaMM+0AJ7/ZiUIr0RzeIdgzeQFrUM3
-        /a1rUfDDhsc2opuPt3gRTSFmhlxjfJyikHI5wh6rFwGFMUr52s6HKQq5mduzl3faU51uCy94
-        kd5/7wWYana63f/9ba5UrX65Tqdjo2NiY/Q6Zq68ePRRioLO5Fz8Tp538M5/exIqRJWLIhPN
-        6SMH/iwcIA/7Ek2jtozSVar37pLC1W+ampxfjhTEK3c0xEtaK9BuecKiXZcVn61lCUQiW/jx
-        cvvT8ksDnVXbDGVxpiUbb4cl19+WXb+xruLQh0sxve+KM+RbD6Y19+/vbt/uklUL1cokr2AK
-        6ypIS1bO25jzIW0T3fl1cNLM4EIWpw3HnAL3FzYOC9HGAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSnC6X2/k4g9d/BC1+zL3NYvHm5FQW
-        i4nTljJb7Nl7ksXi8q45bBaX/39isVj2ZTKLxZZ/R1gdODy+zDnO7tE2+R+7R/OxlWweO2fd
-        ZffYtKqTzaNvyypGj8+b5ALYo7hsUlJzMstSi/TtErgyumaeYS/Yy1Fx99Qp9gbG62xdjBwc
-        EgImEg8+mXQxcnEICexmlLjYvpO1i5ETKC4tcezEGWaIGmGJw4eLIWqeM0rsb3/MDFLDJqAr
-        8e/PfjYQW0RAT+LkSZCZXBzMAuuYJD7t28wG0dHDLDFnbQcLSBWngK3EusVHwTYLCzhIHF2o
-        ARJmEVCV2LbuEBOIzStgKbH7zgQ2CFtQ4uTMJ2CtzALaEk9vPoWy5SW2v53DDHGogsTPp8tY
-        IY6IkvizfC9UjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZwMiyilEytaA4Nz232LDAMC+1XK84
-        Mbe4NC9dLzk/dxMjONa0NHcwbl/1Qe8QIxMH4yFGCQ5mJRFep7On44R4UxIrq1KL8uOLSnNS
-        iw8xSnOwKInz3ihcGCckkJ5YkpqdmlqQWgSTZeLglGpg2tocZHqEwU7h4i9lxohd4v9mXwyb
-        9meFmcCnlAXRxQwbe3blMrnXrNugubmg2CpbfkPDz++TK2cGvZFJeq3W6p35ddUeF+vqVQZb
-        ihvFg1M/vf1aqXRM5cPLdPVKK4NpafwJ/DlZ/1NZDyZd7zYLdvlQ36Ba2XUt9qq79/QiX0aN
-        NsXOsg8Z4StZ3l//1crebblohv+lhaweNhqCxg+DG5nCniWJzBDkv9CUNf2q3PXXC/W/hlxI
-        3PVEt/jiTI+8jslXr39467gn8u6S9o11+SXLL65RvzmraXXZ5TfzVilwnf64uLax8thpc43C
-        mQ87NrU/idLnm68+Q1h4378Eu3UnrbzXiJ5q2d3V8DlViaU4I9FQi7moOBEA/bcHWCQDAAA=
-X-CMS-MailID: 20200528050306epcas1p473209d12f3dc8b54b05c08bf6604e79d
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHebx3d3fS6ja1Tga5bvTBSt1aW9dw0YvUhSzEoMAPWxd92MS9
+        sbtJVpRRmFpUGoXOmRVUNLVimZVUkoq23l/Jij4UFWkZWalFttp2jfz2O+f5n3Oe//McmlBd
+        oJLpIocHux2CjaXiybauVE3a+VX3TZrTQ0ncj4aXJPcpdJjkqo+cJLir10Ik97jdT3GP/3wl
+        uVPfD5Fca7hbtozmv/t75Xz5obCc39VzhuKv+F7J+WCgkuL3twYQ/y04K1eeb8uyYqEQu9XY
+        UeAsLHJYjOya9eaVZr1Bo03TZnKLWbVDsGMjm52Tm7aqyBa5FasuEWzeSCpXEEU2Y2mW2+n1
+        YLXVKXqMLHYV2lxajStdFOyi12FJL3Dal2g1moX6iHKTzXq89gPlOklufhJsRGWohqhCChqY
+        RVBZ1xTheFrFXEZw4cRrUgq+Ihgb3hMXVamYbwjeH8VViI5VjOwUJE07goGRnXFS0B8JggOx
+        thSTBuGxDirKiUw6hELPqKiIYK4TECirR9EDBWOEwepwbEJCRDQ00h9jkpkL1xuOkVFWMpng
+        fzlKSTwVQnVvY3mCSYFLg/5xD2r4+e6UTBqWD/6eFrmkSYT6yvKYN2BaaDh8dy8pFWRDX0WN
+        XOIEGOhtHedk6D9QLpdsboWhjvH+FQg+jBol1sHzc+dlUQnBpMK59gwpPRuu/GpA0tjJ8Hl4
+        n0zqooSKcpUkmQv7H3XFSTwTqvZ8kR9ErG+CMd8EY74JBnz/hx1DZABNwy7RbsGi1qWf+NdB
+        FFvYeZmXUc+9nE7E0IidpNTw90wqmVAilto7EdAEm6hccfe2SaUsFEq3YLfT7PbasNiJ9JF3
+        ryaSkwqckfV3eMxa/UKdTsctMiw26HXsdGXjjzsmFWMRPLgYYxd2/6uLoxXJZSipb3W4flLO
+        uub80QU1bbV9luOK9AdbO/Qla4cfFt/MmmPNzvhVd2P5JYO5cv7Grm3dofg1p5s2DM/YqDjb
+        23zVO/i5GxdN4ZcwbWW+kbzdTw07avcJy7ff8d16kZr3+2lCcelqX7CnCV41Qsr0+W9w3tKx
+        gONi7uACWerz/BTbRxNLilZBO49wi8JfOcT0Q8YDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnO56t/NxBnufWlj8mHubxeLNyaks
+        FhOnLWW22LP3JIvF5V1z2Cwu///EYrHsy2QWiy3/jrA6cHh8mXOc3aNt8j92j+ZjK9k8ds66
+        y+6xaVUnm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBlLJzxgq1gKUvFlU3zGRsYJzF3MXJw
+        SAiYSHxrTOxi5OIQEtjBKPG85wpjFyMnUFxa4tiJM1A1whKHDxdD1DxnlJh2Zi0LSA2bgK7E
+        vz/72UBsEQE9iZMnr7OBFDEL7GGW2HnhOiNExzFmiQnXfoBVcQrYSryd+I8JxBYG6vj47SWY
+        zSKgKrFv7gKwqbwClhJzbn9ng7AFJU7OfAIWZxbQlnh68ymULS+x/e0cZohLFSR+Pl3GCnFF
+        lMScY2vZIWpEJGZ3tjFPYBSehWTULCSjZiEZNQtJywJGllWMkqkFxbnpucWGBUZ5qeV6xYm5
+        xaV56XrJ+bmbGMHRpqW1g3HPqg96hxiZOBgPMUpwMCuJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8
+        iFGag0VJnPfrrIVxQgLpiSWp2ampBalFMFkmDk6pBqYSsRABe/Hckztm/hGxvXRgXm/ukY3P
+        vr1dfWLHlyu7poloO7Fx5jy/6HS1UTrT/4zBItG02/uVnA+HaWyduD9pl2KWK6PORy59g49c
+        +x3P8y781JHsm2Gz5vr7Q4mu4pa33/55qDHBcfq9fj0Vw48bHvouUf322s3RfUPDwi8vKoVf
+        e29IabJi6tJw/D9HNakwf3bdfbWdPybvahJLMS9Mna676MKML9Kl56QL3ojfEAnoz5hZ3jhJ
+        9XqwzFLmPUUbakp+7DdYabhs8abkGeIly/9HJSyao1bonSRWdzuywPzFgbf91+5NDN3X9vKO
+        8dFrM3q6bh2sZ3LsYpHf6y4+adaLr5v3M0QkreBJ/V6vxFKckWioxVxUnAgAsAmk8yUDAAA=
+X-CMS-MailID: 20200528050551epcas1p434d454bab29e7ff5e4eeb861cc52ad5d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8
-References: <20200525115052.19243-1-kohada.t2@gmail.com>
-        <CGME20200525115121epcas1p2843be2c4af35d5d7e176c68af95052f8@epcas1p2.samsung.com>
-        <20200525115052.19243-4-kohada.t2@gmail.com>
-        <00d301d6332f$d4a52300$7def6900$@samsung.com>
-        <d0d2e4b3-436e-3bad-770c-21c9cbddf80e@gmail.com>
-        <CAKYAXd9GzYTxjtFuUJe+WjEOHSJnVbOfwn_4ZXZgmiVtjV4z6A@mail.gmail.com>
-        <ccb66f50-b275-4717-f165-98390520077b@gmail.com>
+X-CMS-RootMailID: 20200520075735epcas1p269372d222e25f3fd51b7979f5b7cdc61
+References: <CGME20200520075735epcas1p269372d222e25f3fd51b7979f5b7cdc61@epcas1p2.samsung.com>
+        <20200520075641.32441-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
+        <055a01d63306$82b13440$88139cc0$@samsung.com>
+        <TY1PR01MB15784E70CEACDA05F688AE6790B10@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+        <CAKYAXd_oG6dc7CNiHszKmhabHd2zrN_VOaNYaWRPES=7hRu+pA@mail.gmail.com>
+        <000701d63432$ace24f10$06a6ed30$@samsung.com>
+        <22dfcd8a-4416-e2a7-b8a7-0375660ba465@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> >> II tried applying patch to dev-tree (4c4dbb6ad8e8).
-> >> -The .patch file I sent
-> >> -mbox file downloaded from archive
-> >> But I can't reproduce the error. (Both succeed) How do you reproduce
-> >> the error?
-> > I tried to appy your patches in the following order.
-> > 1. [PATCH] exfat: optimize dir-cache
-> > 2. [PATCH 1/4] exfat: redefine PBR as boot_sector 3. [PATCH 2/4]
-> > exfat: separate the boot sector analysis 4. [PATCH 3/4] exfat: add
-> > boot region verification 5. [PATCH 4/4] exfat: standardize checksum
-> > calculation
+> >>>   > In order to prevent illegal accesses to bh and dentries, it
+> >>> would be better to check validation for num and bh.
+> >>>
+> >>>   There is no new error checking for same reason as above.
+> >>>
+> >>>   I'll try to add error checking to this v2 patch.
+> >>>   Or is it better to add error checking in another patch?
+> >> The latter:)
+> >> Thanks!
+> >
+> > Yes, the latter looks better.
 > 
-> I was able to reproduce it.
+> I will do so.
 > 
-> The dir-cache patch was created based on the HEAD of dev-tree.
-> The 4 patches for boot_sector were also created based on the HEAD of dev-tree.
-> (at physically separated place)
+> I will post additional patches for error checking, after this patch is merged into tree.
+> OK?
+Okay.
 > 
-> I'm sorry I didn't check any conflicts with these patches.
 > 
-> I'll repost the patch, based on the dir-cache patched dev-tree.
-> If dir-cache patch will merge into dev-tree, should I wait until then?
-I will apply them after testing at once if you send updated 5 patches again.
-Thanks!
-> 
-> BR
+
 
