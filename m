@@ -2,61 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 112AB1E7DBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 15:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 105FF1E7E09
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 15:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgE2NAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 09:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgE2NAA (ORCPT
+        id S1726954AbgE2NIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 09:08:44 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:60485 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726518AbgE2NIo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 09:00:00 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F0DEC03E969;
-        Fri, 29 May 2020 06:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l/qkj8tMYwtIaBu15gPjj4VBQ48s7vLokGN1nW8kiMA=; b=kSB6Njf2csdnZ+gPGw+MDMqUsI
-        Yti6WRTTtXYzJyvjMP0j5kFjJQoGMM6pPl5lGbudf/uBJcXd2W7FD8ySnZI0sXHOHeWSiQTYeW/qf
-        34fh3xdw3V1QBK2EYaEB3zkr+pg+zNb3Q9d9mt6w8k3mM14mlBwya7ytCiAKRDCb/wIoZsz9zcg7N
-        7dfjPQJv5G59EeNxJhiW0wsPnlKB0uHl0lueH2M0Ep6ceCNKum4GRqiOeXFqN+5oASydJvKE1fZz2
-        3+lHZjG2IUGkc7HfZEeYda6RKUfH3FUedGMzjALNFHooqg4VKtNVPpyk/nr3QQ5+hDV+EHMT4viJT
-        XxoHbe3g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeecB-0004rz-Pg; Fri, 29 May 2020 12:59:59 +0000
-Date:   Fri, 29 May 2020 05:59:59 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/36] mm: Introduce offset_in_thp
-Message-ID: <20200529125959.GB19604@bombadil.infradead.org>
-References: <20200515131656.12890-1-willy@infradead.org>
- <20200515131656.12890-7-willy@infradead.org>
- <20200522171517.dltsre7vfdvcrd2m@box>
+        Fri, 29 May 2020 09:08:44 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-161-wf7UIPeDN4i-o46VjjC7yA-1; Fri, 29 May 2020 14:08:38 +0100
+X-MC-Unique: wf7UIPeDN4i-o46VjjC7yA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 29 May 2020 14:08:37 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 29 May 2020 14:08:37 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Casey Schaufler' <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Ian Kent" <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Subject: RE: clean up kernel_{read,write} & friends v2
+Thread-Topic: clean up kernel_{read,write} & friends v2
+Thread-Index: AQHWNTXe+VR+bJMIqUC4MAVNRYcECKi/CPyQ
+Date:   Fri, 29 May 2020 13:08:37 +0000
+Message-ID: <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+ <20200528054043.621510-1-hch@lst.de>
+ <22778.1590697055@warthog.procyon.org.uk>
+ <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+In-Reply-To: <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200522171517.dltsre7vfdvcrd2m@box>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 22, 2020 at 08:15:17PM +0300, Kirill A. Shutemov wrote:
-> On Fri, May 15, 2020 at 06:16:26AM -0700, Matthew Wilcox wrote:
-> > +#define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
-> 
-> Looks like thp_mask() would be handy here.
+RnJvbTogQ2FzZXkgU2NoYXVmbGVyDQo+IFNlbnQ6IDI4IE1heSAyMDIwIDIyOjIxDQo+IEl0J3Mg
+dHJ1ZSwgbm9ib2R5IHVzZXMgYSBUVFkzMyBhbnltb3JlLiBUaG9zZSBvZiB1cyB3aG8gaGF2ZSBk
+b25lIHNvDQo+IHVuZGVyc3RhbmQgaG93ICJ7IiBpcyBwcmVmZXJhYmxlIHRvICJCRUdJTiIgYW5k
+IHdoeSB0YWJzIGFyZSBiZXR0ZXIgdGhhbg0KPiBtdWx0aXBsZSBzcGFjZXMuIEEgbmFycm93ICJ0
+ZXJtaW5hbCIgcmVxdWlyZXMgbGVzcyBuZWNrIGFuZCBtb3VzZSBtb3ZlbWVudC4NCj4gQW55IHdp
+ZHRoIGxpbWl0IGlzIGFyYml0cmFyeSwgc28gdG8gdGhlIGV4dGVudCBhbnlvbmUgbWlnaHQgY2Fy
+ZSwgSSBhZHZvY2F0ZQ0KPiA4MCBmb3JldmVyLg0KDQpBIHdpZGUgbW9uaXRvciBpcyBmb3IgbG9v
+a2luZyBhdCBsb3RzIG9mIGZpbGVzLg0KTm90IGRlYWQgc3BhY2UgYmVjYXVzZSBvZiBkZWVwIGlu
+dGVudHMgYW5kIHZlcnkgbG9uZyB2YXJpYWJsZSBuYW1lcy4NCg0KQWx0aG91Z2ggaSBkb24ndCB1
+bmRlcnN0YW5kIHRoZSAnaW5kZW50IGNvbnRpbnVhdGlvbnMgdW5kZXIgIigiJyBydWxlLg0KSXQg
+aGlkZXMgc29tZSBpbmRlbnRzIGFuZCBtYWtlcyBvdGhlciBleGNlc3NpdmUuDQpBIHNpbXBsZSAn
+ZG91YmxlIGluZGVudCcgKG9yIGhhbGYgaW5kZW50KSBtYWtlcyBjb2RlIG1vcmUgcmVhZGFibGUu
+DQoNCkEgZGlmZmVyZW50IHJ1bGUgZm9yIGZ1bmN0aW9uIGRlZmluaXRpb25zIHdvdWxkIG1ha2Ug
+cmVhbCBzZW5zZS4NClRoZXkgb25seSBuZWVkIGEgc2luZ2xlIGluZGVudCAtIHRoZSAneycgbWFy
+a3MgdGhlIGVuZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
+QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
+aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-It's not the only place we could use a thp_mask(), but PAGE_MASK is the
-inverse of what I think it should be:
-
-include/asm-generic/page.h:#define PAGE_MASK    (~(PAGE_SIZE-1))
-
-ie addr & PAGE_MASK returns the address aligned to page size, not the
-offset within the page.  Given this ambiguity, I'm inclined to leave
-it as (thp_size(page) - 1), as it's clear which bits we're masking off.
