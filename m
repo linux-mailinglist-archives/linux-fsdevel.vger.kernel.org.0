@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C631E730A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 05:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C571E7353
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 05:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407452AbgE2C6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 22:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46010 "EHLO
+        id S2389236AbgE2DDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 23:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391613AbgE2C6b (ORCPT
+        with ESMTP id S2391655AbgE2C6g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 22:58:31 -0400
+        Thu, 28 May 2020 22:58:36 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AB0C08C5CA;
-        Thu, 28 May 2020 19:58:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6763C08C5D1;
+        Thu, 28 May 2020 19:58:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=dD9nVOWGwAdtF5Vt0w+D5s2gKPxSD7JmOgMrMrHOmY4=; b=uKVHCVe93flhNmJ1jeLNO9WW/g
-        jCb7bi1PKxpF2/A8nlkCTTz/aK7bO2nxPcpeSkiSQOOW87zwSF6vvRjdsGhrfmJxkiedvTbAGha7W
-        i2uFs60cyVhcmVH2cTEGcrAmCtw8Oc0sQDe/cZjdtaQOaqrl5vHFjDz+cMwVGqaBjefu7XCf6kl9+
-        Ie8YEJCMgfzxayFm3wRKlgcfaAydnuXtBjIAO6LG4MsACWABMHbb5fgRpWNeuw6PNylexjHWhgjTq
-        ivpsiVTm4+Yje2D4ESSuhEbD/bQ49A/wb7ptMH7jBktT3jeQ0BF+TuFPlCQudwol0qi3cp+OfhBxR
-        5e3Bd2kQ==;
+        bh=UiMCPebDLCXMqtOlym1wnistbwlAeXJLnwQjJng5vCw=; b=lGugaJHQ+YV3FPmqtvcjRR94wu
+        FLmhxfY7yeWyvAM/LLhJRGbLFXpjGbBkOy6uVs6oP20tJ0bok7hJXncosBOkC0KCPmMqvkoWxExwt
+        YvfrJt20etGOVznhlys89u1PP17fup5zv8RySURBraAZT0avKx0wZQVRWKv1ybeFd8Rzsz/kjGHUM
+        hpmM5FBR9QhilVgK8eFxYdhlDcg8Tqtk/vCt6umsmYFXzL26S9tUSKGHO+IQWavfyPiAD974v6fgB
+        NdYkObPB2q46c054aS+9dx+N8Z2kwi6Zts9+Bob4Ev3NMO5r8yufVzoAoRHJvbo/rFgelYIzjk19+
+        jHK8ib2Q==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeVE3-0008Qv-28; Fri, 29 May 2020 02:58:27 +0000
+        id 1jeVE3-0008R2-3F; Fri, 29 May 2020 02:58:27 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 13/39] iomap: Support arbitrarily many blocks per page
-Date:   Thu, 28 May 2020 19:57:58 -0700
-Message-Id: <20200529025824.32296-14-willy@infradead.org>
+Subject: [PATCH v5 14/39] iomap: Support large pages in iomap_adjust_read_range
+Date:   Thu, 28 May 2020 19:57:59 -0700
+Message-Id: <20200529025824.32296-15-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200529025824.32296-1-willy@infradead.org>
 References: <20200529025824.32296-1-willy@infradead.org>
@@ -46,80 +46,77 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Size the uptodate array dynamically.  Now that this array is protected
-by a spinlock, we can use bitmap functions to set the bits in this array
-instead of a loop around set_bit().
+Pass the struct page instead of the iomap_page so we can determine the
+size of the page.  Use offset_in_thp() instead of offset_in_page() and use
+thp_size() instead of PAGE_SIZE.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+ fs/iomap/buffered-io.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4bc37bf8d057..4a79061073eb 100644
+index 4a79061073eb..423ffc9d4a97 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -22,14 +22,14 @@
- #include "../internal.h"
- 
- /*
-- * Structure allocated for each page when block size < PAGE_SIZE to track
-+ * Structure allocated for each page when block size < page size to track
-  * sub-page uptodate status and I/O completions.
+@@ -83,15 +83,16 @@ iomap_page_release(struct page *page)
+  * Calculate the range inside the page that we actually need to read.
   */
- struct iomap_page {
- 	atomic_t		read_count;
- 	atomic_t		write_count;
- 	spinlock_t		uptodate_lock;
--	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
-+	unsigned long		uptodate[];
- };
- 
- static inline struct iomap_page *to_iomap_page(struct page *page)
-@@ -45,15 +45,14 @@ static struct iomap_page *
- iomap_page_create(struct inode *inode, struct page *page)
+ static void
+-iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
++iomap_adjust_read_range(struct inode *inode, struct page *page,
+ 		loff_t *pos, loff_t length, unsigned *offp, unsigned *lenp)
  {
- 	struct iomap_page *iop = to_iomap_page(page);
-+	unsigned int nr_blocks = i_blocks_per_page(inode, page);
++	struct iomap_page *iop = to_iomap_page(page);
+ 	loff_t orig_pos = *pos;
+ 	loff_t isize = i_size_read(inode);
+ 	unsigned block_bits = inode->i_blkbits;
+ 	unsigned block_size = (1 << block_bits);
+-	unsigned poff = offset_in_page(*pos);
+-	unsigned plen = min_t(loff_t, PAGE_SIZE - poff, length);
++	unsigned poff = offset_in_thp(page, *pos);
++	unsigned plen = min_t(loff_t, thp_size(page) - poff, length);
+ 	unsigned first = poff >> block_bits;
+ 	unsigned last = (poff + plen - 1) >> block_bits;
  
--	if (iop || i_blocks_per_page(inode, page) <= 1)
-+	if (iop || nr_blocks <= 1)
- 		return iop;
+@@ -129,7 +130,7 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 	 * page cache for blocks that are entirely outside of i_size.
+ 	 */
+ 	if (orig_pos <= isize && orig_pos + length > isize) {
+-		unsigned end = offset_in_page(isize - 1) >> block_bits;
++		unsigned end = offset_in_thp(page, isize - 1) >> block_bits;
  
--	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
--	atomic_set(&iop->read_count, 0);
--	atomic_set(&iop->write_count, 0);
-+	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
-+				GFP_NOFS | __GFP_NOFAIL);
- 	spin_lock_init(&iop->uptodate_lock);
--	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+ 		if (first <= end && last > end)
+ 			plen -= (last - end) * block_size;
+@@ -256,7 +257,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	}
  
- 	/*
- 	 * migrate_page_move_mapping() assumes that pages with private data have
-@@ -146,20 +145,12 @@ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
- 	struct iomap_page *iop = to_iomap_page(page);
- 	struct inode *inode = page->mapping->host;
- 	unsigned first = off >> inode->i_blkbits;
--	unsigned last = (off + len - 1) >> inode->i_blkbits;
--	bool uptodate = true;
-+	unsigned count = len >> inode->i_blkbits;
- 	unsigned long flags;
--	unsigned int i;
+ 	/* zero post-eof blocks as the page may be mapped */
+-	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
++	iomap_adjust_read_range(inode, page, &pos, length, &poff, &plen);
+ 	if (plen == 0)
+ 		goto done;
  
- 	spin_lock_irqsave(&iop->uptodate_lock, flags);
--	for (i = 0; i < i_blocks_per_page(inode, page); i++) {
--		if (i >= first && i <= last)
--			set_bit(i, iop->uptodate);
--		else if (!test_bit(i, iop->uptodate))
--			uptodate = false;
--	}
--
--	if (uptodate)
-+	bitmap_set(iop->uptodate, first, count);
-+	if (bitmap_full(iop->uptodate, i_blocks_per_page(inode, page)))
- 		SetPageUptodate(page);
- 	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
- }
+@@ -571,7 +572,6 @@ static int
+ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 		struct page *page, struct iomap *srcmap)
+ {
+-	struct iomap_page *iop = iomap_page_create(inode, page);
+ 	loff_t block_size = i_blocksize(inode);
+ 	loff_t block_start = pos & ~(block_size - 1);
+ 	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
+@@ -580,9 +580,10 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 
+ 	if (PageUptodate(page))
+ 		return 0;
++	iomap_page_create(inode, page);
+ 
+ 	do {
+-		iomap_adjust_read_range(inode, iop, &block_start,
++		iomap_adjust_read_range(inode, page, &block_start,
+ 				block_end - block_start, &poff, &plen);
+ 		if (plen == 0)
+ 			break;
 -- 
 2.26.2
 
