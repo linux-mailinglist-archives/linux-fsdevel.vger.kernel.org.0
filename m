@@ -2,138 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 670E51E7A03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 12:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3141E7A24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 12:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbgE2KCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 06:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgE2KCh (ORCPT
+        id S1726150AbgE2KLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 06:11:49 -0400
+Received: from smtp101.iad3b.emailsrvr.com ([146.20.161.101]:37466 "EHLO
+        smtp101.iad3b.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbgE2KLt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 06:02:37 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E59C03E969;
-        Fri, 29 May 2020 03:02:37 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id y18so1713726iow.3;
-        Fri, 29 May 2020 03:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
-        b=J7Irtzhfx6yeYMngT0dh1GtsRRS/07J6BytNuUleDqw7uCTPig9ihWSvPweJPmmsy0
-         vn3SBWB0MysOQxyzA/os4hdtN8bWw59kCBuVfmpZb+O9x70WhrrYwSrV4sOf3D7HthZI
-         BqWsBJq4xfQV8f18Ytdzl/gevSCKsa1RsjOkTU7f2S7I/pZxPDGOg1evDHrNc6aWOxnw
-         WG+3cB4U8e/dkENms31Ixe5DVyhiD+I3q5B5YW9LYCGW2d5PO2H14TQQMFb5r2JzfEIp
-         WzMnwMSr1boTYAAvQpjlJWVebRP85UGdtoev9Fl0H6aYtyyUV2u/w0O4tXGkfRTTKKW6
-         JbAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
-        b=pCtC+sL1rsyVZhD38tKxvA0OvwV6210XydbXEMc8mCrHF3ArEcR0rqfRhud8NOQU8S
-         lAPppMy2Ao4Rf9IvCfzRPegiWnXbhKcTY6UJGghhwLJ8HE26pILeIiRxVetuXuNP4b4O
-         E7g+ze8pA+ezEpzHz0UFhXl5rf2ZTYxIETAeTosP3PQzGTJADBp00NTdlQ0C/WupV36G
-         3jAouXehnRYJhfcb1dgQeFGxzPi1RwKTE326hUDNCTPqfJzbjuB+78zblgvFJpiHcPqc
-         2C5r/VL7XsoYHG0VH/IdSMYsQR7SlRGDAD0COpCD+6TsKLwVb5PPu9lspHm8zRScfTX8
-         O9uw==
-X-Gm-Message-State: AOAM5304Sqm0ZfHZjC3T+N6jJR+mBgsNFbiXUL/rUjOnbJzRk+W/r8uN
-        H8z1zNAg0G0FM1YidBxbxfP7ZgwW2MVHt3jOV3k=
-X-Google-Smtp-Source: ABdhPJzqpEoQkAYUOAOHwjoJZZG1uP7pVCnN5FOvfILoxWd1U7BINI6qEZTyxdObt9ncMCTTtfe7+0yqxvPhQUiHOgk=
-X-Received: by 2002:a02:ca18:: with SMTP id i24mr6407331jak.70.1590746556697;
- Fri, 29 May 2020 03:02:36 -0700 (PDT)
+        Fri, 29 May 2020 06:11:49 -0400
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 May 2020 06:11:48 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1590746736;
+        bh=hBdqCLvxz/w+NZrRCtm6eGxIdN9tacjTj2TyQyUDZRw=;
+        h=Subject:To:From:Date:From;
+        b=duLjFscRslJ31A5bIza6CyZz1jNBXs71z9kpXCLjH4YSd1N157fjybsxpOkkvqqLC
+         GXmHYWOoAy3M6F/1Ejnq96q1bX9pK05zdi8PSuOYReIlUNQoYYgSEy2ERUqT8mAmd/
+         K7LovOWNlxuf9n5ES6EaGcTL7jCoc3ywj5cf+YLc=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp13.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id A13F660163;
+        Fri, 29 May 2020 06:05:35 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Fri, 29 May 2020 06:05:36 -0400
+Subject: Re: [PATCH 05/10] comedi: get rid of compat_alloc_user_space() mess
+ in COMEDI_INSN compat
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200529003419.GX23230@ZenIV.linux.org.uk>
+ <20200529003512.4110852-1-viro@ZenIV.linux.org.uk>
+ <20200529003512.4110852-5-viro@ZenIV.linux.org.uk>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <fa6c5bf1-7394-dda6-eb6c-a39ad5de7965@mev.co.uk>
+Date:   Fri, 29 May 2020 11:05:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
-In-Reply-To: <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 29 May 2020 12:02:40 +0200
-Message-ID: <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200529003512.4110852-5-viro@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: dddbe66e-1fc3-48ec-b194-343e829ad997-1-1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ ... ]
+On 29/05/2020 01:35, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Just take copy_from_user() out of do_insn_ioctl() into the caller and
+> have compat_insn() build a native version and pass it to do_insn_ioctl()
+> directly.
+> 
+> One difference from the previous commits is that the helper used to
+> convert 32bit variant to native has two users - compat_insn() and
+> compat_insnlist().  The latter will be converted in next commit;
+> for now we simply split the helper in two variants - "userland 32bit
+> to kernel native" and "userland 32bit to userland native".  The latter
+> is renamed old get_compat_insn(); it will be gone in the next commit.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>   drivers/staging/comedi/comedi_fops.c | 73 +++++++++++++++++++++++-------------
+>   1 file changed, 46 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+> index d96dc85d8a98..ae0067ab5ead 100644
+[snip]
+> @@ -2244,10 +2241,13 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
+>   				       (struct comedi_insnlist __user *)arg,
+>   				       file);
+>   		break;
+> -	case COMEDI_INSN:
+> -		rc = do_insn_ioctl(dev, (struct comedi_insn __user *)arg,
+> -				   file);
+> +	case COMEDI_INSN: {
+> +		struct comedi_insn insn;
+> +		if (copy_from_user(&insn, (void __user *)arg, sizeof(insn)))
+> +			rc = -EFAULT;
 
-> > Hi Jens,
-> >
-> > I have pulled linux-block.git#async-buffered.5 on top of Linux v5.7-rc7.
-> >
-> > From first feelings:
-> > The booting into the system (until sddm display-login-manager) took a
-> > bit longer.
-> > The same after login and booting into KDE/Plasma.
->
-> There is no difference for "regular" use cases, only io_uring with
-> buffered reads will behave differently. So I don't think you have longer
-> boot times due to this.
->
+Missing an 'else' here:
 
-Yupp, you are right.
+> +		rc = do_insn_ioctl(dev, &insn, file);
+>   		break;
+> +	}
+>   	case COMEDI_POLL:
 
-The previous Linux v5.7-rc7 without your patchset shows the same symptoms.
-
-I did some debugging and optimizing with systemd-analyze boot and time.
-
-I optimized systemd-journald.service and systemd-journal-flush.service...
-
-# cat /etc/systemd/journald.conf.d/00-journal-size.conf
-[Journal]
-SystemMaxUse=50M
-
-...and reduced the time spent flushing systemd's journal from ~30s
-down to 1,6s...
-
-# journalctl -b --unit systemd-journald.service
--- Logs begin at Fri 2020-05-29 00:58:37 CEST, end at Fri 2020-05-29
-11:42:18 CEST. --
-Mai 29 11:34:52 iniza systemd-journald[281]: Journal started
-Mai 29 11:34:52 iniza systemd-journald[281]: Runtime Journal
-(/run/log/journal/566abbcb226b405db834b17a26fe4727) is 8.0M, max
-78.5M, 70.5M free.
-Mai 29 11:34:53 iniza systemd-journald[281]: Time spent on flushing to
-/var/log/journal/566abbcb226b405db834b17a26fe4727 is 1.656233s for 765
-entries.
-Mai 29 11:34:53 iniza systemd-journald[281]: System Journal
-(/var/log/journal/566abbcb226b405db834b17a26fe4727) is 56.2M, max
-50.0M, 0B free.
-
-Unfortunately, I upgraded some user-space stuff like udisks2 and
-libblockdev packages.
-Downgrading did not help and disabling the systemd-unit also.
-
-As I saw stallings with e2scrub_reap.service and swap partition
-(partly seen in the boot-process and noted the UUID 3f8e).
-I disabled e2scrub_reap.service and deactivated swap partition in /etc/fstab.
-
-Doing all above together did not help.
-
-Finally, I checked the health of the HDD where my root-fs is.
-smartmontools says everything is OK.
-
-I have not checked the status of the Ext4-FS where my root-fs is.
-Such things I do with a linux-live-system - as a Debianist I admit I
-use an ArchLinux ISO on USB-stick :-).
-
-Unsure, if I will contact the systemd (and mabye udisks) Debian folks
-to hear their opinion.
-
-Thanks Jens and your patchset.
-I don't know when I last run systemd-analyze & stuff and investigated
-so deeply :-).
-
-A lot of Hygge (I love to write wrong Huegge - see English hugs) to you Jens.
-
-- Sedat -
-
-[1] http://ftp.halifax.rwth-aachen.de/archlinux/iso/
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
