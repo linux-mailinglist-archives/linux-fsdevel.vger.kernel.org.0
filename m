@@ -2,162 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 607A51E7BC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 13:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 689521E7BD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 13:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgE2L33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 07:29:29 -0400
-Received: from smtp-42a8.mail.infomaniak.ch ([84.16.66.168]:43951 "EHLO
-        smtp-42a8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726509AbgE2L32 (ORCPT
+        id S1726568AbgE2LbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 07:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41000 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbgE2LbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 07:29:28 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49YMm60yXyzlhZsb;
-        Fri, 29 May 2020 13:29:26 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49YMm15fmSzlhFhw;
-        Fri, 29 May 2020 13:29:21 +0200 (CEST)
-Subject: Re: [PATCH v18 07/12] landlock: Support filesystem access-control
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        Fri, 29 May 2020 07:31:21 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4E0C03E969;
+        Fri, 29 May 2020 04:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=tnwqW11y4jVBf49PnvhY1DXeLkmbR7HR6dDulQvUyRA=; b=HkdQMrjVdH7XpcTqRQ8NMg+fOM
+        0mWgnWkv3I4jR8+cCpt4qT+XfqXGXKjt1PkjVsQVVO9Uhz/B1ZUo7jo/tY9vYr+wihSl7R4LGu+CU
+        pb285F1IL/Cox8ObuhpLmo4G+qM3eS96yKJ6MBS8CstpCXIccpznaNCgUGtZsdtdbyFDJZEgH3LbY
+        Jn7zLOl6Xv6BDdbfGQQkvUbbXMDEufQUMytQjRTx/U/eFTRw1iH/kygSXwXUax7WVVRT9gHK5QA15
+        5GK4vyBna/YchVxNRa+Pjekq/KgET7MEgtNjWSU4uXbf1UVPXUdtGY3axrd2/s4hThYQ8EISqEv6j
+        lGyoLP7Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jedEK-0006cL-Hq; Fri, 29 May 2020 11:31:19 +0000
+Date:   Fri, 29 May 2020 04:31:16 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Filipe Manana <fdmanana@gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        x86@kernel.org
-References: <20200526205322.23465-1-mic@digikod.net>
- <20200526205322.23465-8-mic@digikod.net>
- <CAOQ4uxibpDTyjCJWLGG9jr-Gv9PwO==o50b9O8HGQeUfVMDFag@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <8e76c2ed-1725-f0a5-bcfc-317c4277af3b@digikod.net>
-Date:   Fri, 29 May 2020 13:29:20 +0200
-User-Agent: 
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz
+Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
+ invalidation before DIO
+Message-ID: <20200529113116.GU17206@bombadil.infradead.org>
+References: <20200528192103.xm45qoxqmkw7i5yl@fiona>
+ <20200529002319.GQ252930@magnolia>
+ <CAL3q7H4Mit=P9yHsZXKsVxMN0=7m7gS2ZqiGTbyFz5Aid9t3hQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxibpDTyjCJWLGG9jr-Gv9PwO==o50b9O8HGQeUfVMDFag@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+In-Reply-To: <CAL3q7H4Mit=P9yHsZXKsVxMN0=7m7gS2ZqiGTbyFz5Aid9t3hQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 27/05/2020 05:07, Amir Goldstein wrote:
-> On Wed, May 27, 2020 at 3:36 AM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> Thanks to the Landlock objects and ruleset, it is possible to identify
->> inodes according to a process's domain.  To enable an unprivileged
->> process to express a file hierarchy, it first needs to open a directory
->> (or a file) and pass this file descriptor to the kernel through
->> landlock(2).  When checking if a file access request is allowed, we walk
->> from the requested dentry to the real root, following the different
->> mount layers.  The access to each "tagged" inodes are collected
->> according to their rule layer level, and ANDed to create access to the
->> requested file hierarchy.  This makes possible to identify a lot of
->> files without tagging every inodes nor modifying the filesystem, while
->> still following the view and understanding the user has from the
->> filesystem.
->>
+On Fri, May 29, 2020 at 11:55:33AM +0100, Filipe Manana wrote:
+> On Fri, May 29, 2020 at 1:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> >
+> > On Thu, May 28, 2020 at 02:21:03PM -0500, Goldwyn Rodrigues wrote:
+> > >
+> > > Filesystems such as btrfs are unable to guarantee page invalidation
+> > > because pages could be locked as a part of the extent. Return zero
+> >
+> > Locked for what?  filemap_write_and_wait_range should have just cleaned
+> > them off.
 > 
-> Hi Mickael,
+> Yes, it will be confusing even for someone more familiar with btrfs.
+> The changelog could be more detailed to make it clear what's happening and why.
 > 
-> Nice work! I am interested in the problem of system wide file access
-> rules based on directory hierarchy [1][2]. Not the same problem, but
-> with obvious overlaps.
-
-Interesting. Landlock's goal is to restrict a set of processes, which
-can be a container.
-
+> So what happens:
 > 
-> I sketched this untested POC [2] a while ago -
-> It introduces the concept of "border control" LSM hooks to avoid the
-> need to check which sections in the hierarchy an inode belongs to
-> on every syscall.
+> 1) iomap_dio_rw() calls filemap_write_and_wait_range().
+>     That starts delalloc for all dirty pages in the range and then
+> waits for writeback to complete.
+>     This is enough for most filesystems at least (if not all except btrfs).
 > 
-> With this, you could cache a topology with id's per section and
-> cache the section id + topology generation in the inode's security state.
-> When inode crosses border control hooks, it's section id is updated.
-> When directory hierarchy topology changes, some or all of the cached
-> section id's are invalidated and rules <-> sections relations may need
-> to be changed.
+> 2) However, in btrfs once writeback finishes, a job is queued to run
+> on a dedicated workqueue, to execute the function
+> btrfs_finish_ordered_io().
+>     So that job will be run after filemap_write_and_wait_range() returns.
+>     That function locks the file range (using a btrfs specific data
+> structure), does a bunch of things (updating several btrees), and then
+> unlocks the file range.
 > 
-> Do you think something like that could be useful for landlock?
-
-Because Landlock deals with unprivileged sandboxing, we must manage
-multiple layers. The current implementation in Landlock, according to
-the unprivileged constraints, is explained here:
-https://lore.kernel.org/lkml/e07fe473-1801-01cc-12ae-b3167f95250e@digikod.net/
-
-As briefly explained in this patch [1] [2], in the case of Landlock,
-being able to change the filesystem layout/topology may lead to
-privilege escalation. Currently, Landlock forbids inode reparenting, but
-I plan to implement a multilayer partial ordering mechanism to relax
-this constraint while still enforcing all layered policies. A short-term
-approach could also relaxes the first layer, but we need to think
-carefully about the potential implications (including ABI compatibility).
-
-[1]
-https://github.com/landlock-lsm/linux/commit/b670df6c5add5cf96870327871c35fccb97a0dd8#diff-39adb7412180a73fe7c6b91ae5435a5bR354
-(must clic on "Load diff")
-[2]
-https://github.com/landlock-lsm/linux/commit/b670df6c5add5cf96870327871c35fccb97a0dd8#diff-39adb7412180a73fe7c6b91ae5435a5bR450
-(must clic on "Load diff")
-
-I think Landlock could help in your use case, but could you clarify your
-thread model please?
-
-The main issue right now with Landlock is to deal with overlayfs.
-Indeed, Landlock's check_access_path() does not work with
-orphaned/private mounts like overlayfs layers (cf. ovl_path_real() and
-ovl_path_open()). Do you have an idea how to solve this properly? Could
-we add a "virtual" mount point to these layers to identify dentries they
-are anchored to?
-
+> 3) While iomap calls invalidate_inode_pages2_range(), which ends up
+> calling the btrfs callback btfs_releasepage(),
+>     btrfs_finish_ordered_io() is running and has the file range locked
+> (this is what Goldwyn means by "pages could be locked", which is
+> confusing because it's not about any locked struct page).
 > 
-> Note that the POC is using d_mountpoint() as the only type of "fence"
-> mark. It is sufficient for controlling rename in and out of containers, so
-> I just used an already available dentry flag for "fence".
-> If the border control hook concept is useful, this could be extended to
-> a more generic d_border_passing(), with some internal kernel API
-> to manage it and with all the bike shedding that comes with it...
-
-Why not just compare struct path->mnt using the current hooks?
-
-About performances, I also thought that walking through every path
-directories would be an important issue, but after some quick benchmark
-(with and for Landlock) I'm not sure anymore. A caching mechanism may be
-useful but it should not be needed from the start.
-
+> 4) Because the file range is locked, btrfs_releasepage() returns 0
+> (page can't be released), this happens in the helper function
+> try_release_extent_state().
+>     Any page in that range is not dirty nor under writeback anymore
+> and, in fact, btrfs_finished_ordered_io() doesn't do anything with the
+> pages, it's only updating metadata.
 > 
-> Thanks,
-> Amir.
+>     btrfs_releasepage() in this case could release the pages, but
+> there are other contextes where the file range is locked, the pages
+> are still not dirty and not under writeback, where this would not be
+> safe to do.
 
-I would like to be in Cc in your next "fanotify and LSM path hooks"
-emails. Thanks.
+Isn't this the bug, though?  Rather than returning "page can't be
+released", shouldn't ->releasepage sleep on the extent state, at least
+if the GFP mask indicates you can sleep?
 
+> 5) So because of that invalidate_inode_pages2_range() returns
+> non-zero, the iomap code prints that warning message and then proceeds
+> with doing a direct IO write anyway.
 > 
-> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhBVhyyJv0+xSFQiGQEj60AbD3SADfKK40uAiC4GF2p9Q@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com/
-> [3] https://github.com/amir73il/linux/commits/rename_xmnt
+> What happens currently in btrfs, before Goldwyn's patchset:
 > 
+> 1) generic_file_direct_write() also calls filemap_write_and_wait_range().
+> 2) After that it calls invalidate_inode_pages2_range() too, but if
+> that returns non-zero, it doesn't print any warning and falls back to
+> a buffered write.
+> 
+> So Goldwyn here is effectively adding that behaviour from
+> generic_file_direct_write() to iomap.
+> 
+> Thanks.
+> 
+> >
+> > > in case a page cache invalidation is unsuccessful so filesystems can
+> > > fallback to buffered I/O. This is similar to
+> > > generic_file_direct_write().
+> > >
+> > > This takes care of the following invalidation warning during btrfs
+> > > mixed buffered and direct I/O using iomap_dio_rw():
+> > >
+> > > Page cache invalidation failure on direct I/O.  Possible data
+> > > corruption due to collision with buffered I/O!
+> > >
+> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > >
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index e4addfc58107..215315be6233 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -483,9 +483,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >        */
+> > >       ret = invalidate_inode_pages2_range(mapping,
+> > >                       pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> > > -     if (ret)
+> > > -             dio_warn_stale_pagecache(iocb->ki_filp);
+> > > -     ret = 0;
+> > > +     /*
+> > > +      * If a page can not be invalidated, return 0 to fall back
+> > > +      * to buffered write.
+> > > +      */
+> > > +     if (ret) {
+> > > +             if (ret == -EBUSY)
+> > > +                     ret = 0;
+> > > +             goto out_free_dio;
+> >
+> > XFS doesn't fall back to buffered io when directio fails, which means
+> > this will cause a regression there.
+> >
+> > Granted mixing write types is bogus...
+> >
+> > --D
+> >
+> > > +     }
+> > >
+> > >       if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
+> > >           !inode->i_sb->s_dio_done_wq) {
+> > >
+> > > --
+> > > Goldwyn
+> 
+> 
+> 
+> -- 
+> Filipe David Manana,
+> 
+> “Whether you think you can, or you think you can't — you're right.”
