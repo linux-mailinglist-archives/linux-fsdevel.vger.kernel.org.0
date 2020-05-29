@@ -2,112 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D391E7910
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 11:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 670E51E7A03
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 12:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgE2JLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 05:11:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:33990 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbgE2JLw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 05:11:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 986A61045;
-        Fri, 29 May 2020 02:11:51 -0700 (PDT)
-Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF41E3F52E;
-        Fri, 29 May 2020 02:11:48 -0700 (PDT)
-Date:   Fri, 29 May 2020 10:11:46 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200529091145.irvbvxxvhbetbwvw@e107158-lin>
-References: <20200511154053.7822-1-qais.yousef@arm.com>
- <20200528132327.GB706460@hirez.programming.kicks-ass.net>
- <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
- <20200528161112.GI2483@worktop.programming.kicks-ass.net>
- <20200528165130.m5unoewcncuvxynn@e107158-lin.cambridge.arm.com>
- <20200528182913.GQ2483@worktop.programming.kicks-ass.net>
+        id S1725854AbgE2KCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 06:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbgE2KCh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 May 2020 06:02:37 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E59C03E969;
+        Fri, 29 May 2020 03:02:37 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id y18so1713726iow.3;
+        Fri, 29 May 2020 03:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
+        b=J7Irtzhfx6yeYMngT0dh1GtsRRS/07J6BytNuUleDqw7uCTPig9ihWSvPweJPmmsy0
+         vn3SBWB0MysOQxyzA/os4hdtN8bWw59kCBuVfmpZb+O9x70WhrrYwSrV4sOf3D7HthZI
+         BqWsBJq4xfQV8f18Ytdzl/gevSCKsa1RsjOkTU7f2S7I/pZxPDGOg1evDHrNc6aWOxnw
+         WG+3cB4U8e/dkENms31Ixe5DVyhiD+I3q5B5YW9LYCGW2d5PO2H14TQQMFb5r2JzfEIp
+         WzMnwMSr1boTYAAvQpjlJWVebRP85UGdtoev9Fl0H6aYtyyUV2u/w0O4tXGkfRTTKKW6
+         JbAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
+        b=pCtC+sL1rsyVZhD38tKxvA0OvwV6210XydbXEMc8mCrHF3ArEcR0rqfRhud8NOQU8S
+         lAPppMy2Ao4Rf9IvCfzRPegiWnXbhKcTY6UJGghhwLJ8HE26pILeIiRxVetuXuNP4b4O
+         E7g+ze8pA+ezEpzHz0UFhXl5rf2ZTYxIETAeTosP3PQzGTJADBp00NTdlQ0C/WupV36G
+         3jAouXehnRYJhfcb1dgQeFGxzPi1RwKTE326hUDNCTPqfJzbjuB+78zblgvFJpiHcPqc
+         2C5r/VL7XsoYHG0VH/IdSMYsQR7SlRGDAD0COpCD+6TsKLwVb5PPu9lspHm8zRScfTX8
+         O9uw==
+X-Gm-Message-State: AOAM5304Sqm0ZfHZjC3T+N6jJR+mBgsNFbiXUL/rUjOnbJzRk+W/r8uN
+        H8z1zNAg0G0FM1YidBxbxfP7ZgwW2MVHt3jOV3k=
+X-Google-Smtp-Source: ABdhPJzqpEoQkAYUOAOHwjoJZZG1uP7pVCnN5FOvfILoxWd1U7BINI6qEZTyxdObt9ncMCTTtfe7+0yqxvPhQUiHOgk=
+X-Received: by 2002:a02:ca18:: with SMTP id i24mr6407331jak.70.1590746556697;
+ Fri, 29 May 2020 03:02:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200528182913.GQ2483@worktop.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
+In-Reply-To: <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 29 May 2020 12:02:40 +0200
+Message-ID: <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/28/20 20:29, Peter Zijlstra wrote:
-> On Thu, May 28, 2020 at 05:51:31PM +0100, Qais Yousef wrote:
-> 
-> > In my head, the simpler version of
-> > 
-> > 	if (rt_task(p) && !uc->user_defined)
-> > 		// update_uclamp_min
-> > 
-> > Is a single branch and write to cache, so should be fast. I'm failing to see
-> > how this could generate an overhead tbh, but will not argue about it :-)
-> 
-> Mostly true; but you also had a load of that sysctl in there, which is
-> likely to be a miss, and those are expensive.
+[ ... ]
 
-Hmm yes there's no guarantee the sysctl global variable will be in LLC, though
-I thought that would be the likely case.
+> > Hi Jens,
+> >
+> > I have pulled linux-block.git#async-buffered.5 on top of Linux v5.7-rc7.
+> >
+> > From first feelings:
+> > The booting into the system (until sddm display-login-manager) took a
+> > bit longer.
+> > The same after login and booting into KDE/Plasma.
+>
+> There is no difference for "regular" use cases, only io_uring with
+> buffered reads will behave differently. So I don't think you have longer
+> boot times due to this.
+>
 
-> 
-> Also; if we're going to have to optimize this, less logic is in there,
-> the less we need to take out. Esp. for stuff that 'never' changes, like
-> this.
+Yupp, you are right.
 
-Agreed.
+The previous Linux v5.7-rc7 without your patchset shows the same symptoms.
 
-> 
-> > > It's more code, but it is all outside of the normal paths where we care
-> > > about performance.
-> > 
-> > I am happy to take that direction if you think it's worth it. I'm thinking
-> > task_woken_rt() is good. But again, maybe I am missing something.
-> 
-> Basic rule, if the state 'never' changes, don't touch fast paths.
-> 
-> Such little things can be very difficult to measure, but at some point
-> they cause death-by-a-thousnd-cuts.
+I did some debugging and optimizing with systemd-analyze boot and time.
 
-Yeah we're bound to reach the critical mass at some point if too much bloat
-creeps up on the hot path.
+I optimized systemd-journald.service and systemd-journal-flush.service...
 
-Thanks
+# cat /etc/systemd/journald.conf.d/00-journal-size.conf
+[Journal]
+SystemMaxUse=50M
 
---
-Qais Yousef
+...and reduced the time spent flushing systemd's journal from ~30s
+down to 1,6s...
 
-> 
-> > > Indeed, that one. The fact that regular distros cannot enable this
-> > > feature due to performance overhead is unfortunate. It means there is a
-> > > lot less potential for this stuff.
-> > 
-> > I had a humble try to catch the overhead but wasn't successful. The observation
-> > wasn't missed by us too then.
-> 
-> Right, I remember us doing benchmarks when we introduced all this and
-> clearly we missed something. I would be good if Mel can share which
-> benchmark hurt most so we can go have a look.
+# journalctl -b --unit systemd-journald.service
+-- Logs begin at Fri 2020-05-29 00:58:37 CEST, end at Fri 2020-05-29
+11:42:18 CEST. --
+Mai 29 11:34:52 iniza systemd-journald[281]: Journal started
+Mai 29 11:34:52 iniza systemd-journald[281]: Runtime Journal
+(/run/log/journal/566abbcb226b405db834b17a26fe4727) is 8.0M, max
+78.5M, 70.5M free.
+Mai 29 11:34:53 iniza systemd-journald[281]: Time spent on flushing to
+/var/log/journal/566abbcb226b405db834b17a26fe4727 is 1.656233s for 765
+entries.
+Mai 29 11:34:53 iniza systemd-journald[281]: System Journal
+(/var/log/journal/566abbcb226b405db834b17a26fe4727) is 56.2M, max
+50.0M, 0B free.
+
+Unfortunately, I upgraded some user-space stuff like udisks2 and
+libblockdev packages.
+Downgrading did not help and disabling the systemd-unit also.
+
+As I saw stallings with e2scrub_reap.service and swap partition
+(partly seen in the boot-process and noted the UUID 3f8e).
+I disabled e2scrub_reap.service and deactivated swap partition in /etc/fstab.
+
+Doing all above together did not help.
+
+Finally, I checked the health of the HDD where my root-fs is.
+smartmontools says everything is OK.
+
+I have not checked the status of the Ext4-FS where my root-fs is.
+Such things I do with a linux-live-system - as a Debianist I admit I
+use an ArchLinux ISO on USB-stick :-).
+
+Unsure, if I will contact the systemd (and mabye udisks) Debian folks
+to hear their opinion.
+
+Thanks Jens and your patchset.
+I don't know when I last run systemd-analyze & stuff and investigated
+so deeply :-).
+
+A lot of Hygge (I love to write wrong Huegge - see English hugs) to you Jens.
+
+- Sedat -
+
+[1] http://ftp.halifax.rwth-aachen.de/archlinux/iso/
