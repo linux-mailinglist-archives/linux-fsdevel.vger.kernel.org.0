@@ -2,230 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F8F1E865F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 20:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180BA1E86A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 20:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgE2SMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 14:12:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29640 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbgE2SMn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 14:12:43 -0400
-IronPort-SDR: Bags044BBQ3w3bCvn1yI4j6uu2LWfiHIR1aHi3CtNOTr9MZ/lZFERWKXotZcEHN7Bij48VuUl/
- jEhLjdIlx5fw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 11:12:38 -0700
-IronPort-SDR: PnmldtMOMxWT/M+KWFtaK4CAXs29HAreOz+jvHmvwtAMAQzsBk0LbRrV6lC7KDFGciihdam1/X
- zyMhiofp/rwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,449,1583222400"; 
-   d="scan'208";a="376777761"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga001.fm.intel.com with ESMTP; 29 May 2020 11:12:38 -0700
-Date:   Fri, 29 May 2020 11:12:38 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 0/9] Enable ext4 support for per-file/directory DAX
- operations
-Message-ID: <20200529181237.GA829208@iweiny-DESK2.sc.intel.com>
-References: <20200528150003.828793-1-ira.weiny@intel.com>
- <20200529025441.GI228632@mit.edu>
- <20200529041717.GN228632@mit.edu>
+        id S1727911AbgE2S32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 14:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49844 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgE2S31 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 May 2020 14:29:27 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D210CC03E969;
+        Fri, 29 May 2020 11:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=B5WVANQZx4YCGx97jJ5OLiz8s2lEqqhT42bbB5YnkyM=; b=OktvBRzz6+OuWH5zwNRdS/Angw
+        zaWqzcSHUi7LJ+pozmbCvkcKL+K6eyAYP2YkbChE4QjKJJoauaZqqKzVr23x/72OP04qi/Px9dm6s
+        Ad5YUeDqgMiefrDYSr1sJIne+NX7MNVsNgW6SfFbSopUtDp8HFaGwOX0+lpmvgW8YU8X3dbGNJkYk
+        EddZkfa2GsHiOna7DkMtbEyy/pmRGktK6k3Uwh6qKbIYjAqw9CE57DALW+f4SQE/3pMrZVKQR73V9
+        9ReybVEUI/yS3lRLHckpUw9OaYwfPgffzUCQ179BUWISlzXaZ7fVVOIe03B4JGSebLOWAkUuIPNjU
+        ZEaOh3/w==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jejkq-0006aG-Fy; Fri, 29 May 2020 18:29:16 +0000
+Subject: Re: [PATCH] x86/uaccess: Remove redundant likely/unlikely annotations
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        viro@zeniv.linux.org.uk, x86@kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
+ <20200528172005.GP2483@worktop.programming.kicks-ass.net>
+ <20200529135750.GA1580@lst.de>
+ <20200529143556.GE706478@hirez.programming.kicks-ass.net>
+ <20200529145325.GB706518@hirez.programming.kicks-ass.net>
+ <20200529153336.GC706518@hirez.programming.kicks-ass.net>
+ <20200529160514.cyaytn33thphb3tz@treble>
+ <20200529161253.GD706460@hirez.programming.kicks-ass.net>
+ <20200529165011.o7vvhn4wcj6zjxux@treble>
+ <20200529165419.GF706460@hirez.programming.kicks-ass.net>
+ <20200529172505.fdjppgquujab7ayv@treble>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <77d5741f-4b84-4cb8-1b01-3e411d3b8a70@infradead.org>
+Date:   Fri, 29 May 2020 11:29:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200529041717.GN228632@mit.edu>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20200529172505.fdjppgquujab7ayv@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 29, 2020 at 12:17:17AM -0400, Theodore Y. Ts'o wrote:
-> On Thu, May 28, 2020 at 10:54:41PM -0400, Theodore Y. Ts'o wrote:
-> > 
-> > Thanks, applied to the ext4-dax branch.
-> > 
+On 5/29/20 10:25 AM, Josh Poimboeuf wrote:
+> On Fri, May 29, 2020 at 06:54:19PM +0200, Peter Zijlstra wrote:
+>> On Fri, May 29, 2020 at 11:50:11AM -0500, Josh Poimboeuf wrote:
+>>> The nested likelys seem like overkill anyway -- user_access_begin() is
+>>> __always_inline and it already has unlikely(), which should be
+>>> propagated.
+>>>
+>>> So just remove the outer likelys?
+>>
+>> That fixes it. Ack!
 > 
-> I spoke too soon.  While I tried merging with the ext4.git dev branch,
-> a merge conflict made me look closer and I realize I needed to make
-> the following changes (see diff between your patch set and what is
-> currently in ext4-dax).
+> If there are no objections to the patch, I can add it to my objtool-core
+> branch unless anybody else wants to take it.  It only affects
+> linux-next.
 > 
-> Essentially, I needed to rework the branch to take into account commit
-> e0198aff3ae3 ("ext4: reject mount options not supported when
-> remounting in handle_mount_opt()").
+> ---8<---
 > 
-> The problem is that if you allow handle_mount_opt() to apply the
-> changes to the dax settings, and then later on, ext4_remount() realize
-> that we're remounting, and we need to reject the change, there's a
-> race if we restore the mount options to the original configuration.
-> Specifically, as Syzkaller pointed out, between when we change the dax
-> settings and then reset them, it's possible for some file to be opened
-> with "wrong" dax setting, and then when they are reset, *boom*.
+> From: Josh Poimboeuf <jpoimboe@redhat.com>
+> Subject: [PATCH] x86/uaccess: Remove redundant likely/unlikely annotations
 > 
-> The correct way to deal with this is to reject the mount option change
-> much earlier, in handle_mount_opt(), *before* we mess with the dax
-> settings.
+> Since user_access_begin() already has an unlikely() annotation for its
+> access_ok() check, "if (likely(user_access_begin))" results in nested
+> likely annotations.  When combined with CONFIG_TRACE_BRANCH_PROFILING,
+> GCC converges the error/success paths of the nested ifs, using a
+> register value to distinguish between them.
 > 
-> Please take a look at the ext4-dax for the actual changes which I
-> made.
+> While the code is technically uaccess safe, it complicates the
+> branch-profiling generated code.  It also confuses objtool, because it
+> doesn't do register value tracking, resulting in the following warnings:
 > 
-> Cheers,
+>   arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_from_user()+0x2a4: call to memset() with UACCESS enabled
+>   arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_to_user()+0x243: return with UACCESS enabled
 > 
-> 					- Ted
+> The outer likely annotations aren't actually needed anyway, since the
+> compiler propagates the error path coldness when it inlines
+> user_access_begin().
 > 
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 3658e3016999..9a37d70394b2 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1733,7 +1733,7 @@ static int clear_qf_name(struct super_block *sb, int qtype)
->  #define MOPT_NO_EXT3	0x0200
->  #define MOPT_EXT4_ONLY	(MOPT_NO_EXT2 | MOPT_NO_EXT3)
->  #define MOPT_STRING	0x0400
-> -#define MOPT_SKIP	0x0800
+> Fixes: 18372ef87665 ("x86_64: csum_..._copy_..._user(): switch to unsafe_..._user()")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-I think we still need MOPT_SKIP...
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-This was put in to skip these options when printing to deal with printing only
-dax=inode when it was specified by the user.
+Thanks.
 
-Ah but I see now.  By taking MOPT_SET away you have created the same behavior?
-
-This is  orthogonal to the remount issue right?
-
-> +#define MOPT_NO_REMOUNT	0x0800
+> ---
+>  arch/x86/lib/csum-wrappers_64.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/lib/csum-wrappers_64.c b/arch/x86/lib/csum-wrappers_64.c
+> index a12b8629206d..ee63d7576fd2 100644
+> --- a/arch/x86/lib/csum-wrappers_64.c
+> +++ b/arch/x86/lib/csum-wrappers_64.c
+> @@ -27,7 +27,7 @@ csum_and_copy_from_user(const void __user *src, void *dst,
+>  	might_sleep();
+>  	*errp = 0;
 >  
->  static const struct mount_opts {
->  	int	token;
-> @@ -1783,18 +1783,15 @@ static const struct mount_opts {
->  	{Opt_min_batch_time, 0, MOPT_GTE0},
->  	{Opt_inode_readahead_blks, 0, MOPT_GTE0},
->  	{Opt_init_itable, 0, MOPT_GTE0},
-> -	{Opt_dax, EXT4_MOUNT_DAX_ALWAYS, MOPT_SET | MOPT_SKIP},
-> -	{Opt_dax_always, EXT4_MOUNT_DAX_ALWAYS,
-> -		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
-> -	{Opt_dax_inode, EXT4_MOUNT2_DAX_INODE,
-> -		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
-> -	{Opt_dax_never, EXT4_MOUNT2_DAX_NEVER,
-> -		MOPT_EXT4_ONLY | MOPT_SET | MOPT_SKIP},
-> +	{Opt_dax, 0, MOPT_NO_REMOUNT},
-> +	{Opt_dax_always, 0, MOPT_NO_REMOUNT},
-> +	{Opt_dax_inode, 0, MOPT_NO_REMOUNT},
-> +	{Opt_dax_never, 0, MOPT_NO_REMOUNT},
-
-Even if MOPT_SET is redundant.  Why don't we need still need MOPT_EXT4_ONLY?
-
-And why don't we need to associate the defines; EXT4_MOUNT_DAX_ALWAYS etc?
-
->  	{Opt_stripe, 0, MOPT_GTE0},
->  	{Opt_resuid, 0, MOPT_GTE0},
->  	{Opt_resgid, 0, MOPT_GTE0},
-> -	{Opt_journal_dev, 0, MOPT_NO_EXT2 | MOPT_GTE0},
-> -	{Opt_journal_path, 0, MOPT_NO_EXT2 | MOPT_STRING},
-> +	{Opt_journal_dev, 0, MOPT_NO_EXT2 | MOPT_GTE0 | MOPT_NO_REMOUNT},
-> +	{Opt_journal_path, 0, MOPT_NO_EXT2 | MOPT_STRING | MOPT_NO_REMOUNT},
->  	{Opt_journal_ioprio, 0, MOPT_NO_EXT2 | MOPT_GTE0},
->  	{Opt_data_journal, EXT4_MOUNT_JOURNAL_DATA, MOPT_NO_EXT2 | MOPT_DATAJ},
->  	{Opt_data_ordered, EXT4_MOUNT_ORDERED_DATA, MOPT_NO_EXT2 | MOPT_DATAJ},
-> @@ -1831,7 +1828,7 @@ static const struct mount_opts {
->  	{Opt_jqfmt_vfsv1, QFMT_VFS_V1, MOPT_QFMT},
->  	{Opt_max_dir_size_kb, 0, MOPT_GTE0},
->  	{Opt_test_dummy_encryption, 0, MOPT_GTE0},
-> -	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
-> +	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET | MOPT_NO_REMOUNT},
->  	{Opt_err, 0, 0}
->  };
+> -	if (!likely(user_access_begin(src, len)))
+> +	if (!user_access_begin(src, len))
+>  		goto out_err;
 >  
-> @@ -1929,6 +1926,12 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
->  			 "Mount option \"%s\" incompatible with ext3", opt);
->  		return -1;
+>  	/*
+> @@ -89,7 +89,7 @@ csum_and_copy_to_user(const void *src, void __user *dst,
+>  
+>  	might_sleep();
+>  
+> -	if (unlikely(!user_access_begin(dst, len))) {
+> +	if (!user_access_begin(dst, len)) {
+>  		*errp = -EFAULT;
+>  		return 0;
 >  	}
-> +	if ((m->flags & MOPT_NO_REMOUNT) && is_remount) {
-> +		ext4_msg(sb, KERN_ERR,
-> +			 "Mount option \"%s\" not supported when remounting",
-> +			 opt);
-> +		return -1;
-> +	}
+> 
 
-I think this is cleaner!
 
-Thanks, I did test this but not while trying to manipulate files as the same time
-as a remount.  So a race would not have been caught.
-
-Thanks!
-Ira
-
->  
->  	if (args->from && !(m->flags & MOPT_STRING) && match_int(args, &arg))
->  		return -1;
-> @@ -2008,11 +2011,6 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
->  		}
->  		sbi->s_resgid = gid;
->  	} else if (token == Opt_journal_dev) {
-> -		if (is_remount) {
-> -			ext4_msg(sb, KERN_ERR,
-> -				 "Cannot specify journal on remount");
-> -			return -1;
-> -		}
->  		*journal_devnum = arg;
->  	} else if (token == Opt_journal_path) {
->  		char *journal_path;
-> @@ -2020,11 +2018,6 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
->  		struct path path;
->  		int error;
->  
-> -		if (is_remount) {
-> -			ext4_msg(sb, KERN_ERR,
-> -				 "Cannot specify journal on remount");
-> -			return -1;
-> -		}
->  		journal_path = match_strdup(&args[0]);
->  		if (!journal_path) {
->  			ext4_msg(sb, KERN_ERR, "error: could not dup "
-> @@ -2287,7 +2280,7 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
->  	for (m = ext4_mount_opts; m->token != Opt_err; m++) {
->  		int want_set = m->flags & MOPT_SET;
->  		if (((m->flags & (MOPT_SET|MOPT_CLEAR)) == 0) ||
-> -		    (m->flags & MOPT_CLEAR_ERR) || m->flags & MOPT_SKIP)
-> +		    (m->flags & MOPT_CLEAR_ERR))
->  			continue;
->  		if (!nodefs && !(m->mount_opt & (sbi->s_mount_opt ^ def_mount_opt)))
->  			continue; /* skip if same as the default */
-> @@ -5474,24 +5467,6 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
->  		}
->  	}
->  
-> -	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_NO_MBCACHE) {
-> -		ext4_msg(sb, KERN_ERR, "can't enable nombcache during remount");
-> -		err = -EINVAL;
-> -		goto restore_opts;
-> -	}
-> -
-> -	if ((sbi->s_mount_opt ^ old_opts.s_mount_opt) & EXT4_MOUNT_DAX_ALWAYS ||
-> -	    (sbi->s_mount_opt2 ^ old_opts.s_mount_opt2) & EXT4_MOUNT2_DAX_NEVER ||
-> -	    (sbi->s_mount_opt2 ^ old_opts.s_mount_opt2) & EXT4_MOUNT2_DAX_INODE) {
-> -		ext4_msg(sb, KERN_WARNING, "warning: refusing change of "
-> -			"dax mount option with busy inodes while remounting");
-> -		sbi->s_mount_opt &= ~EXT4_MOUNT_DAX_ALWAYS;
-> -		sbi->s_mount_opt |= old_opts.s_mount_opt & EXT4_MOUNT_DAX_ALWAYS;
-> -		sbi->s_mount_opt2 &= ~(EXT4_MOUNT2_DAX_NEVER | EXT4_MOUNT2_DAX_INODE);
-> -		sbi->s_mount_opt2 |= old_opts.s_mount_opt2 &
-> -				     (EXT4_MOUNT2_DAX_NEVER | EXT4_MOUNT2_DAX_INODE);
-> -	}
-> -
->  	if (sbi->s_mount_flags & EXT4_MF_FS_ABORTED)
->  		ext4_abort(sb, EXT4_ERR_ESHUTDOWN, "Abort forced by user");
->  
+-- 
+~Randy
