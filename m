@@ -2,167 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1541E879C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 21:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E7071E8815
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 21:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgE2TTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 15:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbgE2TTX (ORCPT
+        id S1728074AbgE2TpP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 15:45:15 -0400
+Received: from cirse-smtp-out.extra.cea.fr ([132.167.192.148]:36882 "EHLO
+        cirse-smtp-out.extra.cea.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726751AbgE2TpO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 15:19:23 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C17C03E969
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 12:19:22 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id z13so588057ljn.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 12:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vo9kcqH3+r49rRyfr5F53x5hhASyTdSUh1QFspC2AyA=;
-        b=NLTb+v6BJYCqO+v7twCPV6ZmPrFD83aAxXEWTUdawlUiCz2SyXVz4O/AOpY8YEuVP6
-         9YhQkmR2+9ilOO6XVHF+SolA9uT3QoTV7VuPoTF/1gB1t6wb7vZZm9UpNYYZuiTecknY
-         S3TZuhMi7aCqd/4zIdlB499SzVqQ4Eyuj6l7M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vo9kcqH3+r49rRyfr5F53x5hhASyTdSUh1QFspC2AyA=;
-        b=Z/UPJzjW7L4dPqQlJGbcxAGOjP5sbOour77fwyszl1LM6tAmQOSg2MyZzVAQuScOqf
-         hwztfrVicQjSPSqj5HHT7gPV+VlCYNEXIJsEAfYh2t2klXAjUsIDJ1xaNNMKOHTqF1rN
-         2iCKG1z2kVPEiGRBP2YtiREbIWJvSpPut0yqtvdi6EmX6iCzTnsrHojgTiRcWcwxKqqs
-         T94igNa14v+IUdki3xk+tqGJvm26n2/0KLKt5qTvYsFNT3RsJxoXir85M0FDlumxj47y
-         uYzVPVK/QEj6dxhYVtTJ6UGq5j4MULMXnThkRcZj7xIVa1iNxo+Axn3Nu0aT1lQw5Vj6
-         JSGg==
-X-Gm-Message-State: AOAM53030oPO2jUapCEGy4jI/xVP3SQaN7mUvaGI1yufNF68VDxNOVNj
-        QQp6rYqbMcN6fN4RKr7rvJRe4UGYv5c=
-X-Google-Smtp-Source: ABdhPJxygz4ul05PtwZfPU/BvSkYsUC+7V0P21np8UguyYtr09dZxEbb/veuql122NiC0DWACnChOQ==
-X-Received: by 2002:a2e:980d:: with SMTP id a13mr5117338ljj.277.1590779960868;
-        Fri, 29 May 2020 12:19:20 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id h26sm2524575lja.0.2020.05.29.12.19.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2020 12:19:19 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id q2so568251ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 12:19:19 -0700 (PDT)
-X-Received: by 2002:a2e:b16e:: with SMTP id a14mr4488600ljm.70.1590779959015;
- Fri, 29 May 2020 12:19:19 -0700 (PDT)
+        Fri, 29 May 2020 15:45:14 -0400
+X-Greylist: delayed 3795 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 May 2020 15:45:13 EDT
+Received: from pisaure.intra.cea.fr (pisaure.intra.cea.fr [132.166.88.21])
+        by cirse-sys.extra.cea.fr (8.14.7/8.14.7/CEAnet-Internet-out-4.0) with ESMTP id 04TIfucf043207
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 20:41:56 +0200
+Received: from pisaure.intra.cea.fr (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 04FEC20B2EA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 20:41:56 +0200 (CEST)
+Received: from muguet1-smtp-out.intra.cea.fr (muguet1-smtp-out.intra.cea.fr [132.166.192.12])
+        by pisaure.intra.cea.fr (Postfix) with ESMTP id ED5CC20B2D3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 20:41:55 +0200 (CEST)
+Received: from zia.cdc.esteban.ctsi (out.dam.intra.cea.fr [132.165.76.10])
+        by muguet1-sys.intra.cea.fr (8.14.7/8.14.7/CEAnet-Internet-out-4.0) with SMTP id 04TIftHM016869
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 May 2020 20:41:55 +0200
+Received: (qmail 24940 invoked from network); 29 May 2020 18:41:55 -0000
+From:   "Quentin.BOUGET@cea.fr" <Quentin.BOUGET@cea.fr>
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Amir Goldstein <amir73il@gmail.com>
+CC:     Jan Kara <jack@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "robinhood-devel@lists.sf.net" <robinhood-devel@lists.sf.net>
+Subject: Re: robinhood, fanotify name info events and lustre changelog
+Thread-Topic: robinhood, fanotify name info events and lustre changelog
+Thread-Index: AQHWNQZxmYe+JbkQvEicZE4uJ2wNW6i/TjU5
+Date:   Fri, 29 May 2020 18:41:49 +0000
+Message-ID: <1590777699518.49838@cea.fr>
+References: <20200527172143.GB14550@quack2.suse.cz>
+ <20200527173937.GA17769@nautica>
+ <CAOQ4uxjQXwTo1Ug4jY1X+eBdLj80rEfJ0X3zKRi+L8L_uYSrgQ@mail.gmail.com>,<20200528125651.GA12279@nautica>
+In-Reply-To: <20200528125651.GA12279@nautica>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
- <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk>
- <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
-In-Reply-To: <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 29 May 2020 12:19:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
-Message-ID: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
-Subject: Re: clean up kernel_{read,write} & friends v2
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 29, 2020 at 6:08 AM David Laight <David.Laight@aculab.com> wrote:
->
-> A wide monitor is for looking at lots of files.
+Hi,
 
-Not necessarily.
+Developer of robinhood v4 here,
 
-Excessive line breaks are BAD. They cause real and every-day problems.
+> > > [1] https://github.com/cea-hpc/robinhood/
 
-They cause problems for things like "grep" both in the patterns and in
-the output, since grep (and a lot of other very basic unix utilities)
-is fundamentally line-based.
+The sources for version 4 live in a separate branch:
+https://github.com/cea-hpc/robinhood/tree/v4
 
-So the fact is, many of us have long long since skipped the whole
-"80-column terminal" model, for the same reason that we have many more
-lines than 25 lines visible at a time.
+Any feedback is welcome =)
 
-And honestly, I don't want to see patches that make the kernel reading
-experience worse for me and likely for the vast majority of people,
-based on the argument that some odd people have small terminal
-windows.
+I am guessing the most interesting bits for this discussion should be found
+here:
+https://github.com/cea-hpc/robinhood/blob/v4/include/robinhood/fsevent.h
 
-If you or Christoph have 80 character lines, you'll get possibly ugly
-wrapped output. Tough. That's _your_ choice. Your hardware limitations
-shouldn't be a pain for the rest of us.
+I am not sure it will matter for the rest of the conversation, but just in case:
 
-Longer lines are fundamentally useful. My monitor is not only a lot
-wider than it is tall, my fonts are universally narrower than they are
-tall. Long lines are natural.
+    RobinHood v4 has a notion of a "namespace" xattr (like an xattr, but for
+    a dentry rather than an inode), it is used it to store things that are only
+    really tied to the namespace (like the path of an entry). I don't think this
+    is really relevant here, you can probably ignore it.
 
-When I tile my terminal windows on my display, I can have 6 terminals
-visible at one time, and that's because I have them three wide. And I
-could still fit 80% of a fourth one side-by-side.
+    Also, RobinHood uses file handles to uniquely identify filesystem entries,
+    and this is what is stored in a `struct rbh_id`.
 
-And guess what? That's with my default "100x50" terminal window (go to
-your gnome terminal settings, you'll find that the 80x25 thing is just
-an initial default that you can change), not with some 80x25 one. And
-that's with a font that has anti-aliasing and isn't some pixelated
-mess.
+> > I couldn't find the documentation for Lustre Changelog format, because
+> > the name of the feature is not very Google friendly.
 
-And most of my terminals actually end up being dragged wider and
-taller than that. I checked, and my main one is 142x76 characters
-right now, because it turns out that wider (and taller) terminals are
-useful not just for source code.
+Yes, this is really unfortunate. For the record, user documentation for Lustre
+lives at: http://doc.lustre.org/lustre_manual.xhtml
 
-Have you looked at "ps ax" output lately? Or used "top"? Or done "git
-diff --stat" or any number of things where it turns out that 80x25 is
-really really limiting, and is simply NO LONGER RELEVANT to most of
-us.
+Chapter 12.1 deals with "Lustre Changelogs" (not much more there than
+what Dominique already wrote).
 
-So no. I do not care about somebody with a 80x25 terminal window
-getting line wrapping.
+> > There is one critical difference between a changelog and fanotify events.
+> > fanotify events are delivered a-synchronically and may be delivered out
+> > of order, so application must not rely on path information to update
+> > internal records without using fstatat(2) to check the actual state of the
+> > object in the filesystem.
 
-For exactly the same reason I find it completely irrelevant if
-somebody says that their kernel compile takes 10 hours because they
-are doing kernel development on a Raspberry PI with 4GB of RAM.
+> lustre changelogs are asynchronous but the order is guaranteed so we
+> might rely on that for robinhood v4,
 
-People with restrictive hardware shouldn't make it more inconvenient
-for people who have better resources. Yes, we'll accommodate things to
-within reasonable limits. But no, 80-column terminals in 2020 isn't
-"reasonable" any more as far as I'm concerned. People commonly used
-132-column terminals even back in the 80's, for chrissake, don't try
-to make 80 columns some immovable standard.
+Yes, we do. At least to a certain extent : we at least expect changelog records
+for a single filesystem entry to be emitted in the order they happened on the
+FS. I have not really given much thought to how things would work in general
+if that wasn't true, but I know this is an issue for things that deal with the
+namespace : https://jira.whamcloud.com/browse/LU-12574
 
-If you choose to use a 80-column terminal, you can live with the line
-wrapping. It's just that simple.
+> but full path is not computed from
+> information in the changelogs. Instead the design plan is to have a
+> process scrub the database for files that got updated since the last
+> path update and fix paths with fstatat, so I think it might work ; but
+> that unfortunately hasn't been implemented yet.
 
-And longer lines are simply useful. Part of that is that we aren't
-programming in the 80's any more, and our source code is fundamentally
-wider as a result.
+Not exactly (I am not sure it really matters, so I'll try to be brief).
 
-Yes, local iteration variables are still called 'i', because more
-context just isn't helpful for some anonymous counter. Being concise
-is still a good thing, and overly verbose names are not inherently
-better.
+The idea to keep paths in sync with what's in the filesystem is to "tag"
+entries as we update their name (ie. after a rename). Then a separate
+process comes in, queries for entries that have that "tag", and updates
+their path by concatenating their parent's path (if the parents themselves
+are not "tagged") with the entries' own, up-to-date name. After that, if
+the entry was a directory, its children are "tagged". I simplified a bit, but
+that's the idea.
 
-But still - it's entirely reasonable to have variable names that are
-10-15 characters and it makes the code more legible. Writing things
-out instead of using abbreviations etc.
+So, to be fair, full paths _are_ computed solely from information in the
+changelog records, even though it requires a bit of processing on the side.
+No additional query to the filesystem for that.
 
-And yes, we do use wide tabs, because that makes indentation something
-you can visually see in the structure at a glance and on a
-whole-function basis, rather than something you have to try to
-visually "line up" things for or count spaces.
-
-So we have lots of fairly fundamental issues that fairly easily make
-for longer lines in many circumstances.
-
-And yes, we do line breaks at some point. But there really isn't any
-reason to make that point be 80 columns any more.
-
-                  Linus
+Cheers,
+Quentin
