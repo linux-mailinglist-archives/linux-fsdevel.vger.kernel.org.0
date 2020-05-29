@@ -2,114 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8821E7D77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 14:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 112AB1E7DBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 15:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbgE2MpR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 08:45:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57280 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbgE2MpQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 08:45:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4AD7FAE16;
-        Fri, 29 May 2020 12:45:14 +0000 (UTC)
-Date:   Fri, 29 May 2020 07:45:10 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Filipe Manana <fdmanana@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz
-Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
- invalidation before DIO
-Message-ID: <20200529124510.rqpd5nfivafiswiw@fiona>
-References: <20200528192103.xm45qoxqmkw7i5yl@fiona>
- <20200529002319.GQ252930@magnolia>
- <CAL3q7H4Mit=P9yHsZXKsVxMN0=7m7gS2ZqiGTbyFz5Aid9t3hQ@mail.gmail.com>
- <20200529113116.GU17206@bombadil.infradead.org>
- <CAL3q7H5cp8joqHnS8rtPBBEQyYw9L0KbRNCQwFfKz1pD-tZvwQ@mail.gmail.com>
+        id S1726792AbgE2NAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 09:00:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgE2NAA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 May 2020 09:00:00 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F0DEC03E969;
+        Fri, 29 May 2020 06:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l/qkj8tMYwtIaBu15gPjj4VBQ48s7vLokGN1nW8kiMA=; b=kSB6Njf2csdnZ+gPGw+MDMqUsI
+        Yti6WRTTtXYzJyvjMP0j5kFjJQoGMM6pPl5lGbudf/uBJcXd2W7FD8ySnZI0sXHOHeWSiQTYeW/qf
+        34fh3xdw3V1QBK2EYaEB3zkr+pg+zNb3Q9d9mt6w8k3mM14mlBwya7ytCiAKRDCb/wIoZsz9zcg7N
+        7dfjPQJv5G59EeNxJhiW0wsPnlKB0uHl0lueH2M0Ep6ceCNKum4GRqiOeXFqN+5oASydJvKE1fZz2
+        3+lHZjG2IUGkc7HfZEeYda6RKUfH3FUedGMzjALNFHooqg4VKtNVPpyk/nr3QQ5+hDV+EHMT4viJT
+        XxoHbe3g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jeecB-0004rz-Pg; Fri, 29 May 2020 12:59:59 +0000
+Date:   Fri, 29 May 2020 05:59:59 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/36] mm: Introduce offset_in_thp
+Message-ID: <20200529125959.GB19604@bombadil.infradead.org>
+References: <20200515131656.12890-1-willy@infradead.org>
+ <20200515131656.12890-7-willy@infradead.org>
+ <20200522171517.dltsre7vfdvcrd2m@box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL3q7H5cp8joqHnS8rtPBBEQyYw9L0KbRNCQwFfKz1pD-tZvwQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200522171517.dltsre7vfdvcrd2m@box>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12:50 29/05, Filipe Manana wrote:
-> On Fri, May 29, 2020 at 12:31 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, May 29, 2020 at 11:55:33AM +0100, Filipe Manana wrote:
-> > > On Fri, May 29, 2020 at 1:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > > >
-> > > > On Thu, May 28, 2020 at 02:21:03PM -0500, Goldwyn Rodrigues wrote:
-> > > > >
-> > > > > Filesystems such as btrfs are unable to guarantee page invalidation
-> > > > > because pages could be locked as a part of the extent. Return zero
-> > > >
-> > > > Locked for what?  filemap_write_and_wait_range should have just cleaned
-> > > > them off.
-> > >
-> > > Yes, it will be confusing even for someone more familiar with btrfs.
-> > > The changelog could be more detailed to make it clear what's happening and why.
-> > >
-> > > So what happens:
-> > >
-> > > 1) iomap_dio_rw() calls filemap_write_and_wait_range().
-> > >     That starts delalloc for all dirty pages in the range and then
-> > > waits for writeback to complete.
-> > >     This is enough for most filesystems at least (if not all except btrfs).
-> > >
-> > > 2) However, in btrfs once writeback finishes, a job is queued to run
-> > > on a dedicated workqueue, to execute the function
-> > > btrfs_finish_ordered_io().
-> > >     So that job will be run after filemap_write_and_wait_range() returns.
-> > >     That function locks the file range (using a btrfs specific data
-> > > structure), does a bunch of things (updating several btrees), and then
-> > > unlocks the file range.
-> > >
-> > > 3) While iomap calls invalidate_inode_pages2_range(), which ends up
-> > > calling the btrfs callback btfs_releasepage(),
-> > >     btrfs_finish_ordered_io() is running and has the file range locked
-> > > (this is what Goldwyn means by "pages could be locked", which is
-> > > confusing because it's not about any locked struct page).
-> > >
-> > > 4) Because the file range is locked, btrfs_releasepage() returns 0
-> > > (page can't be released), this happens in the helper function
-> > > try_release_extent_state().
-> > >     Any page in that range is not dirty nor under writeback anymore
-> > > and, in fact, btrfs_finished_ordered_io() doesn't do anything with the
-> > > pages, it's only updating metadata.
-> > >
-> > >     btrfs_releasepage() in this case could release the pages, but
-> > > there are other contextes where the file range is locked, the pages
-> > > are still not dirty and not under writeback, where this would not be
-> > > safe to do.
-> >
-> > Isn't this the bug, though?  Rather than returning "page can't be
-> > released", shouldn't ->releasepage sleep on the extent state, at least
-> > if the GFP mask indicates you can sleep?
+On Fri, May 22, 2020 at 08:15:17PM +0300, Kirill A. Shutemov wrote:
+> On Fri, May 15, 2020 at 06:16:26AM -0700, Matthew Wilcox wrote:
+> > +#define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
 > 
-> Goldwyn mentioned in another thread that he had tried that with the
-> following patch:
-> 
-> https://patchwork.kernel.org/patch/11275063/
-> 
-> But he mentioned it didn't work though, caused some locking problems.
-> I don't know the details and I haven't tried the patchset yet.
-> Goldwyn?
-> 
+> Looks like thp_mask() would be handy here.
 
-Yes, direct I/O would wait for extent bits to be unlocked forever and hang.
-I think it was against an fsync call, but I don't remember. In the light
-of new developments, I would pursue this further. This should be valid
-even in the current (before iomap patches) source.
+It's not the only place we could use a thp_mask(), but PAGE_MASK is the
+inverse of what I think it should be:
 
--- 
-Goldwyn
+include/asm-generic/page.h:#define PAGE_MASK    (~(PAGE_SIZE-1))
+
+ie addr & PAGE_MASK returns the address aligned to page size, not the
+offset within the page.  Given this ambiguity, I'm inclined to leave
+it as (thp_size(page) - 1), as it's clear which bits we're masking off.
