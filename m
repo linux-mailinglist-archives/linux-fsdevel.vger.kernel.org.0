@@ -2,126 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE0B1E7137
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 02:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F37F31E7193
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 02:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438010AbgE2AXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 20:23:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56008 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437753AbgE2AX3 (ORCPT
+        id S1728791AbgE2Ae0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 20:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728679AbgE2AeZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 20:23:29 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04T0HfC6099027;
-        Fri, 29 May 2020 00:23:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=q7Ts2vW9CbyvWnZilonR6KghPQweI+5CHmTJ3scB5sU=;
- b=MV3CjMKVTdIciCt2OyiPVXCUzApRQmF8uGfgUEMI8ym7mPr9YremyWDzxTUPtJsOEuyQ
- YcT6cirqzUdrWuVWiAxt4g0Mazqdpp7xtPK7NzeH6Ul451MGz0V+9uXXuI9Gejywz495
- 38Xr7YDIfVmzaqGDo98ScDKDsx1Nfw4B//YwdjUd+r2rg1pGd+kdq1GHWGBGf47Ck6H/
- //gnBvuh5mn+wKhsJWG/CxmZPBX37q/+FtrcBw3X0L7Kq9zEFK5KY5wGy1rFFkPvDk98
- zlE0UP/DnObNgLpUD74ASli4jMEr2qA0Ftab1NHCf3BLYr/ZbFQnEnRxRdhB/XLbzO5z 8g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 316u8r7tjb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 29 May 2020 00:23:22 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04T0J82I059161;
-        Fri, 29 May 2020 00:23:21 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 317ddtmmfr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 May 2020 00:23:21 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04T0NK3a010650;
-        Fri, 29 May 2020 00:23:20 GMT
-Received: from localhost (/10.159.250.122)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 28 May 2020 17:23:20 -0700
-Date:   Thu, 28 May 2020 17:23:19 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Johannes.Thumshirn@wdc.com, hch@infradead.org, dsterba@suse.cz,
-        fdmanana@gmail.com
-Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
- invalidation before DIO
-Message-ID: <20200529002319.GQ252930@magnolia>
-References: <20200528192103.xm45qoxqmkw7i5yl@fiona>
+        Thu, 28 May 2020 20:34:25 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9424DC08C5C6;
+        Thu, 28 May 2020 17:34:25 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jeSyZ-00HFMm-2w; Fri, 29 May 2020 00:34:19 +0000
+Date:   Fri, 29 May 2020 01:34:19 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCHES] uaccess comedi compat
+Message-ID: <20200529003419.GX23230@ZenIV.linux.org.uk>
+References: <20200528234025.GT23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200528192103.xm45qoxqmkw7i5yl@fiona>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9635 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- phishscore=0 adultscore=0 suspectscore=5 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005290000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9635 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- priorityscore=1501 spamscore=0 cotscore=-2147483648 suspectscore=5
- phishscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005290000
+In-Reply-To: <20200528234025.GT23230@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 28, 2020 at 02:21:03PM -0500, Goldwyn Rodrigues wrote:
-> 
-> Filesystems such as btrfs are unable to guarantee page invalidation
-> because pages could be locked as a part of the extent. Return zero
+	The way comedi compat ioctls are done is wrong.
+Instead of having ->compat_ioctl() copying the 32bit
+stuff in, then passing the kernel copies to helpers shared
+with native ->ioctl() and doing copyout with conversion if
+needed, it's playing silly buggers with creating a 64bit
+copy on user stack, then calling native ioctl (which copies
+that copy into the kernel), then fetching it from user stack,
+converting to 32bit variant and copying that to user.
+	Extra headache for no good reason.  And the single
+largest remaining pile of __put_user()/__get_user() this side
+of arch/*.  IMO compat_alloc_user_space() should die...
 
-Locked for what?  filemap_write_and_wait_range should have just cleaned
-them off.
+	NOTE: this is only compile-tested - I simply don't
+have the hardware in question.
 
-> in case a page cache invalidation is unsuccessful so filesystems can
-> fallback to buffered I/O. This is similar to
-> generic_file_direct_write().
-> 
-> This takes care of the following invalidation warning during btrfs
-> mixed buffered and direct I/O using iomap_dio_rw():
-> 
-> Page cache invalidation failure on direct I/O.  Possible data
-> corruption due to collision with buffered I/O!
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index e4addfc58107..215315be6233 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -483,9 +483,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	 */
->  	ret = invalidate_inode_pages2_range(mapping,
->  			pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-> -	if (ret)
-> -		dio_warn_stale_pagecache(iocb->ki_filp);
-> -	ret = 0;
-> +	/*
-> +	 * If a page can not be invalidated, return 0 to fall back
-> +	 * to buffered write.
-> +	 */
-> +	if (ret) {
-> +		if (ret == -EBUSY)
-> +			ret = 0;
-> +		goto out_free_dio;
+	Anyway, the branch lives in #uaccess.comedi, based
+at v5.7-rc1
+	
+Al Viro (10):
+      comedi: move compat ioctl handling to native fops
+      comedi: get rid of indirection via translated_ioctl()
+      comedi: get rid of compat_alloc_user_space() mess in COMEDI_CHANINFO compat
+      comedi: get rid of compat_alloc_user_space() mess in COMEDI_RANGEINFO compat
+      comedi: get rid of compat_alloc_user_space() mess in COMEDI_INSN compat
+      comedi: get rid of compat_alloc_user_space() mess in COMEDI_INSNLIST compat
+      comedi: lift copy_from_user() into callers of __comedi_get_user_cmd()
+      comedi: do_cmdtest_ioctl(): lift copyin/copyout into the caller
+      comedi: do_cmd_ioctl(): lift copyin/copyout into the caller
+      comedi: get rid of compat_alloc_user_space() mess in COMEDI_CMD{,TEST} compat
 
-XFS doesn't fall back to buffered io when directio fails, which means
-this will cause a regression there.
+ drivers/staging/comedi/Makefile          |   1 -
+ drivers/staging/comedi/comedi_compat32.c | 455 -------------------------
+ drivers/staging/comedi/comedi_compat32.h |  28 --
+ drivers/staging/comedi/comedi_fops.c     | 563 +++++++++++++++++++++++++------
+ drivers/staging/comedi/comedi_internal.h |   2 +-
+ drivers/staging/comedi/range.c           |  17 +-
+ 6 files changed, 466 insertions(+), 600 deletions(-)
+ delete mode 100644 drivers/staging/comedi/comedi_compat32.c
+ delete mode 100644 drivers/staging/comedi/comedi_compat32.h
 
-Granted mixing write types is bogus...
-
---D
-
-> +	}
->  
->  	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
->  	    !inode->i_sb->s_dio_done_wq) {
-> 
-> -- 
-> Goldwyn
