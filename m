@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EDA1E71A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 02:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BABB1E71A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 02:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438155AbgE2Afo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2438159AbgE2Afo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 28 May 2020 20:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728813AbgE2AfQ (ORCPT
+        with ESMTP id S1728814AbgE2AfQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 28 May 2020 20:35:16 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F9EC08C5C7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432E8C08C5C8;
         Thu, 28 May 2020 17:35:16 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jeSzR-00HFQt-7L; Fri, 29 May 2020 00:35:13 +0000
+        id 1jeSzR-00HFR0-Hq; Fri, 29 May 2020 00:35:13 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 03/10] comedi: get rid of compat_alloc_user_space() mess in COMEDI_CHANINFO compat
-Date:   Fri, 29 May 2020 01:35:06 +0100
-Message-Id: <20200529003512.4110852-3-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 04/10] comedi: get rid of compat_alloc_user_space() mess in COMEDI_RANGEINFO compat
+Date:   Fri, 29 May 2020 01:35:07 +0100
+Message-Id: <20200529003512.4110852-4-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200529003512.4110852-1-viro@ZenIV.linux.org.uk>
 References: <20200529003419.GX23230@ZenIV.linux.org.uk>
@@ -37,137 +37,141 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Just take copy_from_user() out of do_chaninfo_ioctl() into the caller and
-have compat_chaninfo() build a native version and pass it to do_chaninfo_ioctl()
+Just take copy_from_user() out of do_rangeing_ioctl() into the caller and
+have compat_rangeinfo() build a native version and pass it to do_rangeinfo_ioctl()
 directly.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/staging/comedi/comedi_fops.c | 68 ++++++++++++++++--------------------
- 1 file changed, 30 insertions(+), 38 deletions(-)
+ drivers/staging/comedi/comedi_fops.c     | 43 ++++++++++++++------------------
+ drivers/staging/comedi/comedi_internal.h |  2 +-
+ drivers/staging/comedi/range.c           | 17 ++++++-------
+ 3 files changed, 27 insertions(+), 35 deletions(-)
 
 diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index ecd29f28673c..ab811735cd1b 100644
+index ab811735cd1b..d96dc85d8a98 100644
 --- a/drivers/staging/comedi/comedi_fops.c
 +++ b/drivers/staging/comedi/comedi_fops.c
-@@ -1049,31 +1049,28 @@ static int do_subdinfo_ioctl(struct comedi_device *dev,
-  *	array of range table lengths to chaninfo->range_table_list if requested
-  */
- static int do_chaninfo_ioctl(struct comedi_device *dev,
--			     struct comedi_chaninfo __user *arg)
-+			     struct comedi_chaninfo *it)
- {
- 	struct comedi_subdevice *s;
--	struct comedi_chaninfo it;
- 
- 	lockdep_assert_held(&dev->mutex);
--	if (copy_from_user(&it, arg, sizeof(it)))
--		return -EFAULT;
- 
--	if (it.subdev >= dev->n_subdevices)
-+	if (it->subdev >= dev->n_subdevices)
- 		return -EINVAL;
--	s = &dev->subdevices[it.subdev];
-+	s = &dev->subdevices[it->subdev];
- 
--	if (it.maxdata_list) {
-+	if (it->maxdata_list) {
- 		if (s->maxdata || !s->maxdata_list)
- 			return -EINVAL;
--		if (copy_to_user(it.maxdata_list, s->maxdata_list,
-+		if (copy_to_user(it->maxdata_list, s->maxdata_list,
- 				 s->n_chan * sizeof(unsigned int)))
- 			return -EFAULT;
- 	}
- 
--	if (it.flaglist)
-+	if (it->flaglist)
- 		return -EINVAL;	/* flaglist not supported */
- 
--	if (it.rangelist) {
-+	if (it->rangelist) {
- 		int i;
- 
- 		if (!s->range_table_list)
-@@ -1081,9 +1078,9 @@ static int do_chaninfo_ioctl(struct comedi_device *dev,
- 		for (i = 0; i < s->n_chan; i++) {
- 			int x;
- 
--			x = (dev->minor << 28) | (it.subdev << 24) | (i << 16) |
-+			x = (dev->minor << 28) | (it->subdev << 24) | (i << 16) |
- 			    (s->range_table_list[i]->length);
--			if (put_user(x, it.rangelist + i))
-+			if (put_user(x, it->rangelist + i))
- 				return -EFAULT;
- 		}
- 	}
-@@ -2205,9 +2202,14 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
- 				       (struct comedi_subdinfo __user *)arg,
- 				       file);
+@@ -2210,9 +2210,14 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
+ 			rc = do_chaninfo_ioctl(dev, &it);
  		break;
--	case COMEDI_CHANINFO:
--		rc = do_chaninfo_ioctl(dev, (void __user *)arg);
-+	case COMEDI_CHANINFO: {
-+		struct comedi_chaninfo it;
+ 	}
+-	case COMEDI_RANGEINFO:
+-		rc = do_rangeinfo_ioctl(dev, (void __user *)arg);
++	case COMEDI_RANGEINFO: {
++		struct comedi_rangeinfo it;
 +		if (copy_from_user(&it, (void __user *)arg, sizeof(it)))
 +			rc = -EFAULT;
 +		else
-+			rc = do_chaninfo_ioctl(dev, &it);
++			rc = do_rangeinfo_ioctl(dev, &it);
  		break;
 +	}
- 	case COMEDI_RANGEINFO:
- 		rc = do_rangeinfo_ioctl(dev, (void __user *)arg);
- 		break;
-@@ -2874,35 +2876,25 @@ struct comedi32_insnlist_struct {
- /* Handle 32-bit COMEDI_CHANINFO ioctl. */
- static int compat_chaninfo(struct file *file, unsigned long arg)
+ 	case COMEDI_BUFINFO:
+ 		rc = do_bufinfo_ioctl(dev,
+ 				      (struct comedi_bufinfo __user *)arg,
+@@ -2900,32 +2905,22 @@ static int compat_chaninfo(struct file *file, unsigned long arg)
+ /* Handle 32-bit COMEDI_RANGEINFO ioctl. */
+ static int compat_rangeinfo(struct file *file, unsigned long arg)
  {
--	struct comedi_chaninfo __user *chaninfo;
--	struct comedi32_chaninfo_struct __user *chaninfo32;
+-	struct comedi_rangeinfo __user *rangeinfo;
+-	struct comedi32_rangeinfo_struct __user *rangeinfo32;
 +	struct comedi_file *cfp = file->private_data;
 +	struct comedi_device *dev = cfp->dev;
-+	struct comedi32_chaninfo_struct chaninfo32;
-+	struct comedi_chaninfo chaninfo;
++	struct comedi32_rangeinfo_struct rangeinfo32;
++	struct comedi_rangeinfo rangeinfo;
  	int err;
 -	union {
 -		unsigned int uint;
 -		compat_uptr_t uptr;
 -	} temp;
- 
--	chaninfo32 = compat_ptr(arg);
--	chaninfo = compat_alloc_user_space(sizeof(*chaninfo));
 -
--	/* Copy chaninfo structure.  Ignore unused members. */
--	if (!access_ok(chaninfo32, sizeof(*chaninfo32)) ||
--	    !access_ok(chaninfo, sizeof(*chaninfo)))
-+	if (copy_from_user(&chaninfo32, compat_ptr(arg), sizeof(chaninfo32)))
+-	rangeinfo32 = compat_ptr(arg);
+-	rangeinfo = compat_alloc_user_space(sizeof(*rangeinfo));
+ 
+-	/* Copy rangeinfo structure. */
+-	if (!access_ok(rangeinfo32, sizeof(*rangeinfo32)) ||
+-	    !access_ok(rangeinfo, sizeof(*rangeinfo)))
++	if (copy_from_user(&rangeinfo32, compat_ptr(arg), sizeof(rangeinfo32)))
  		return -EFAULT;
++	memset(&rangeinfo, 0, sizeof(rangeinfo));
++	rangeinfo.range_type = rangeinfo32.range_type;
++	rangeinfo.range_ptr = compat_ptr(rangeinfo32.range_ptr);
  
 -	err = 0;
--	err |= __get_user(temp.uint, &chaninfo32->subdev);
--	err |= __put_user(temp.uint, &chaninfo->subdev);
--	err |= __get_user(temp.uptr, &chaninfo32->maxdata_list);
--	err |= __put_user(compat_ptr(temp.uptr), &chaninfo->maxdata_list);
--	err |= __get_user(temp.uptr, &chaninfo32->flaglist);
--	err |= __put_user(compat_ptr(temp.uptr), &chaninfo->flaglist);
--	err |= __get_user(temp.uptr, &chaninfo32->rangelist);
--	err |= __put_user(compat_ptr(temp.uptr), &chaninfo->rangelist);
+-	err |= __get_user(temp.uint, &rangeinfo32->range_type);
+-	err |= __put_user(temp.uint, &rangeinfo->range_type);
+-	err |= __get_user(temp.uptr, &rangeinfo32->range_ptr);
+-	err |= __put_user(compat_ptr(temp.uptr), &rangeinfo->range_ptr);
 -	if (err)
 -		return -EFAULT;
-+	memset(&chaninfo, 0, sizeof(chaninfo));
-+	chaninfo.subdev = chaninfo32.subdev;
-+	chaninfo.maxdata_list = compat_ptr(chaninfo32.maxdata_list);
-+	chaninfo.flaglist = compat_ptr(chaninfo32.flaglist);
-+	chaninfo.rangelist = compat_ptr(chaninfo32.rangelist);
- 
--	return comedi_unlocked_ioctl(file, COMEDI_CHANINFO, (unsigned long)chaninfo);
+-
+-	return comedi_unlocked_ioctl(file, COMEDI_RANGEINFO,
+-				(unsigned long)rangeinfo);
 +	mutex_lock(&dev->mutex);
-+	err = do_chaninfo_ioctl(dev, &chaninfo);
++	err = do_rangeinfo_ioctl(dev, &rangeinfo);
 +	mutex_unlock(&dev->mutex);
 +	return err;
  }
  
- /* Handle 32-bit COMEDI_RANGEINFO ioctl. */
+ /* Copy 32-bit cmd structure to native cmd structure. */
+diff --git a/drivers/staging/comedi/comedi_internal.h b/drivers/staging/comedi/comedi_internal.h
+index 515f293a5d26..7c8f18f55122 100644
+--- a/drivers/staging/comedi/comedi_internal.h
++++ b/drivers/staging/comedi/comedi_internal.h
+@@ -18,7 +18,7 @@ struct comedi_subdevice;
+ struct device;
+ 
+ int do_rangeinfo_ioctl(struct comedi_device *dev,
+-		       struct comedi_rangeinfo __user *arg);
++		       struct comedi_rangeinfo *it);
+ struct comedi_device *comedi_alloc_board_minor(struct device *hardware_device);
+ void comedi_release_hardware_device(struct device *hardware_device);
+ int comedi_alloc_subdevice_minor(struct comedi_subdevice *s);
+diff --git a/drivers/staging/comedi/range.c b/drivers/staging/comedi/range.c
+index 89d599877445..a4e6fe0fb729 100644
+--- a/drivers/staging/comedi/range.c
++++ b/drivers/staging/comedi/range.c
+@@ -46,17 +46,14 @@ EXPORT_SYMBOL_GPL(range_unknown);
+  *	array of comedi_krange structures to rangeinfo->range_ptr pointer
+  */
+ int do_rangeinfo_ioctl(struct comedi_device *dev,
+-		       struct comedi_rangeinfo __user *arg)
++		       struct comedi_rangeinfo *it)
+ {
+-	struct comedi_rangeinfo it;
+ 	int subd, chan;
+ 	const struct comedi_lrange *lr;
+ 	struct comedi_subdevice *s;
+ 
+-	if (copy_from_user(&it, arg, sizeof(struct comedi_rangeinfo)))
+-		return -EFAULT;
+-	subd = (it.range_type >> 24) & 0xf;
+-	chan = (it.range_type >> 16) & 0xff;
++	subd = (it->range_type >> 24) & 0xf;
++	chan = (it->range_type >> 16) & 0xff;
+ 
+ 	if (!dev->attached)
+ 		return -EINVAL;
+@@ -73,15 +70,15 @@ int do_rangeinfo_ioctl(struct comedi_device *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (RANGE_LENGTH(it.range_type) != lr->length) {
++	if (RANGE_LENGTH(it->range_type) != lr->length) {
+ 		dev_dbg(dev->class_dev,
+ 			"wrong length %d should be %d (0x%08x)\n",
+-			RANGE_LENGTH(it.range_type),
+-			lr->length, it.range_type);
++			RANGE_LENGTH(it->range_type),
++			lr->length, it->range_type);
+ 		return -EINVAL;
+ 	}
+ 
+-	if (copy_to_user(it.range_ptr, lr->range,
++	if (copy_to_user(it->range_ptr, lr->range,
+ 			 sizeof(struct comedi_krange) * lr->length))
+ 		return -EFAULT;
+ 
 -- 
 2.11.0
 
