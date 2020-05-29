@@ -2,112 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 857AD1E71D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 02:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03DA1E71DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 03:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438224AbgE2A7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 20:59:34 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2823 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438188AbgE2A7d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 20:59:33 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ed05e180000>; Thu, 28 May 2020 17:58:00 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 28 May 2020 17:59:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 28 May 2020 17:59:31 -0700
-Received: from [10.2.62.53] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 29 May
- 2020 00:59:31 +0000
-X-Nvconfidentiality: public
-To:     Jan Kara <jack@suse.cz>, Linux-MM <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     Alex Williamson <alex.williamson@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-Subject: Question: "Bare" set_page_dirty_lock() call in vhost.c
-Message-ID: <3b2db4da-9e4e-05d1-bf89-a261f0eb6de0@nvidia.com>
-Date:   Thu, 28 May 2020 17:59:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S2438205AbgE2BCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 21:02:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45104 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2438203AbgE2BCH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 May 2020 21:02:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 7C7F6AE65;
+        Fri, 29 May 2020 01:02:05 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Date:   Fri, 29 May 2020 11:01:59 +1000
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: The file_lock_operatoins.lock API seems to be a BAD API.
+In-Reply-To: <20200528220112.GD20602@fieldses.org>
+References: <87a71s8u23.fsf@notabene.neil.brown.name> <20200528220112.GD20602@fieldses.org>
+Message-ID: <87y2pb7dvc.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1590713880; bh=UaFydq34A3WyVB6O+aiR/+Gh0JTIRS04gbdko0cn1Pc=;
-        h=X-PGP-Universal:X-Nvconfidentiality:To:CC:From:Subject:Message-ID:
-         Date:User-Agent:MIME-Version:X-Originating-IP:X-ClientProxiedBy:
-         Content-Type:Content-Language:Content-Transfer-Encoding;
-        b=K7jI8KLsHwLvykOP5bSBEs2AsHREIrQ/N7eNctwfF/fhY8MlIwca2IAJ5FR+PI7jX
-         zu3quObFg+MTsO54lBNwOn3n9b7/6NUcKhYk1eoARP9nOTs4T1hl0ANV8efdyINzjF
-         J18WLzhsP0jrrSFDHGKfIy3Jj1pDJqRImnVn+Xl/5nFCrUTUEvXCnWQeDp6WFmYSmi
-         vb0WrLi7HPJcpclB/SS98ddjGqNoy63gquPE/znBXGrCW36n3ev//lPhlMSSkvCIYY
-         5sdRbBs/oBC0UFZSo9XmP/VHS4y8kR5qLyACp9BOFNwPMMqt3946lgGpb2YNTAUa3r
-         1bSEKmCuno/Vw==
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-While trying to figure out which things to convert from
-get_user_pages*() to put_user_pages*(), I came across an interesting use
-of set_page_dirty_lock(), and wanted to ask about it.
+On Thu, May 28 2020, J. Bruce Fields wrote:
 
-Is it safe to call set_page_dirty_lock() like this (for the case
-when this is file-backed memory):
+> On Thu, May 28, 2020 at 04:14:44PM +1000, NeilBrown wrote:
+>> I don't think we should just fix all those bugs in those filesystems.
+>> I think that F_UNLCK should *always* remove the lock/lease.
+>> I imaging this happening by  *always* calling posix_lock_file() (or
+>> similar) in the unlock case - after calling f_op->lock() first if that
+>> is appropriate.
+>>=20
+>> What do people think?  It there on obvious reason that is a non-starter?
+>
+> Isn't NFS unlock like close, in that it may be our only chance to return
+> IO errors?
 
-// drivers/vhost/vhost.c:1757:
-static int set_bit_to_user(int nr, void __user *addr)
-{
-	unsigned long log = (unsigned long)addr;
-	struct page *page;
-	void *base;
-	int bit = nr + (log % PAGE_SIZE) * 8;
-	int r;
+Is it?  fcntl() isn't documented as returning ENOSPC, EDQUOT or EIO.
 
-	r = get_user_pages_fast(log, 1, FOLL_WRITE, &page);
-	if (r < 0)
-		return r;
-	BUG_ON(r != 1);
-	base = kmap_atomic(page);
-	set_bit(bit, base);
-	kunmap_atomic(base);
-	set_page_dirty_lock(page);
-	put_page(page);
-	return 0;
-}
+>
+> But I guess you're not saying that unlock can't return errors, just that
+> it should always remove the lock whether it returns 0 or not.
 
-  ?
+No I wasn't, but I might.
+One approach that I was considering for making the API more robust was
+to propose a separate "unlock" file_operation.  All unlock requests
+would go through this, and it would have a 'void' return type.
+Would that be sufficient to encourage programmers to handle their own
+errors and not think they can punt?
 
-That is, after the page is unmapped, but before unpinning it?
-Specifically, I'd expect that the writeback and reclaim code code can end
-up calling drop_buffers() (because the set_bit() call actually did
-dirty the pte), after the kunmap_atomic() call. So then when
-set_page_dirty_lock() runs, it could bug check on ext4_writepage()'s
-attempt to buffer heads:
+But yes - even if unlock returns an error, it should (locally) remove
+any locks - much as 'close()' will always close the fd (if it was
+actually open) even if it reports an error.
 
-ext4_writepage()
-	page_bufs = page_buffers(page);
-         #define page_buffers(page)					\
-         	({							\
-         		BUG_ON(!PagePrivate(page));			\
-         		((struct buffer_head *)page_private(page));	\
-         	})
+Thanks,
+NeilBrown
 
-...which actually is the the case that pin_user_pages*() is ultimately
-helping to avoid, btw. But in this case, it's all code that runs on a
-CPU, so no DMA or DIO is involved. But still, the "bare" use of
-set_page_dirty_lock() seems like a problem here.
+>
+> Hm.
+>
+> --b.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl7QXwgACgkQOeye3VZi
+gbkNrA//XNPo/2bBaBqvUeK80lQS+apCOkTpR3Fpeu6TuYVYBexdM0YC+WqYPJtr
+5LoI6/2Xdyvdfdvfyp88hrcUuwTsqC5PTt8laU47p0sAMlh52390e3kHYL7uY0qo
+U/I5f6VO8s/Y7NjvL6Op1ZbQF7+Fw4W43f9s6PjUNdw84B5BhJ42/eZ6HO6brEKG
+nEsOAyuKe6Wv7NncgXbdzFxsgc9vJa4APuSbBMRy0tT8FRkQUMUuYjGXwh/xdif8
+Ox9jTdG1p2Boz8xvz++vICtwQjFvJ40qhl8T8Nm6+8teUcs/xqXBd3cbFgXZ2nAe
+2Mw5Cl67AG4iyUf7y+PXNvnMiLUMGYLtMeJiK+h3eBG2wquTFIDk/io9Ens+z7Bd
+tMc2Ws1FFVH5jFSrhbrs8Dk7ufRrOsZnasTz1AYcF2fp0yrQ3hd2tauT2CYF4B5I
+V0QpaYIf5VGsql61ReoqwqNVZ6m8HnXZfBB7Ffg15IVqtebrELQ5DxDkpKg5OW/g
+01if7qG8XkfHX4vomSDdhtPZYJR8Bf3fF76dzZE2goA3yX5yXWuiGCbc4+to2nu3
+xTU4c7owc2/tNx2hWfO7f+ROz0zCPekdYp8CGLwUdxL34fHAlZ3OJDZuydAefHkA
+BgDok4yIO2ZvzKku3VPaKIS4Y1vX3g5UuBU3enNKiPxclkWPEN4=
+=oWcw
+-----END PGP SIGNATURE-----
+--=-=-=--
