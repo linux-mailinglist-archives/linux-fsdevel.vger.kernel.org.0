@@ -2,100 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A3141E7A24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 12:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC321E7A10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 12:08:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbgE2KLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 06:11:49 -0400
-Received: from smtp101.iad3b.emailsrvr.com ([146.20.161.101]:37466 "EHLO
-        smtp101.iad3b.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725601AbgE2KLt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 06:11:49 -0400
-X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 May 2020 06:11:48 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1590746736;
-        bh=hBdqCLvxz/w+NZrRCtm6eGxIdN9tacjTj2TyQyUDZRw=;
-        h=Subject:To:From:Date:From;
-        b=duLjFscRslJ31A5bIza6CyZz1jNBXs71z9kpXCLjH4YSd1N157fjybsxpOkkvqqLC
-         GXmHYWOoAy3M6F/1Ejnq96q1bX9pK05zdi8PSuOYReIlUNQoYYgSEy2ERUqT8mAmd/
-         K7LovOWNlxuf9n5ES6EaGcTL7jCoc3ywj5cf+YLc=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp13.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id A13F660163;
-        Fri, 29 May 2020 06:05:35 -0400 (EDT)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Fri, 29 May 2020 06:05:36 -0400
-Subject: Re: [PATCH 05/10] comedi: get rid of compat_alloc_user_space() mess
- in COMEDI_INSN compat
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200529003419.GX23230@ZenIV.linux.org.uk>
- <20200529003512.4110852-1-viro@ZenIV.linux.org.uk>
- <20200529003512.4110852-5-viro@ZenIV.linux.org.uk>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <fa6c5bf1-7394-dda6-eb6c-a39ad5de7965@mev.co.uk>
-Date:   Fri, 29 May 2020 11:05:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1725821AbgE2KIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 06:08:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38052 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725681AbgE2KIQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 May 2020 06:08:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2A66BAC2D;
+        Fri, 29 May 2020 10:08:13 +0000 (UTC)
+Date:   Fri, 29 May 2020 11:08:06 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200529100806.GA3070@suse.de>
+References: <20200511154053.7822-1-qais.yousef@arm.com>
+ <20200528132327.GB706460@hirez.programming.kicks-ass.net>
+ <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
+ <20200528161112.GI2483@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20200529003512.4110852-5-viro@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: dddbe66e-1fc3-48ec-b194-343e829ad997-1-1
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29/05/2020 01:35, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
+On Thu, May 28, 2020 at 06:11:12PM +0200, Peter Zijlstra wrote:
+> > FWIW, I think you're referring to Mel's notice in OSPM regarding the overhead.
+> > Trying to see what goes on in there.
 > 
-> Just take copy_from_user() out of do_insn_ioctl() into the caller and
-> have compat_insn() build a native version and pass it to do_insn_ioctl()
-> directly.
-> 
-> One difference from the previous commits is that the helper used to
-> convert 32bit variant to native has two users - compat_insn() and
-> compat_insnlist().  The latter will be converted in next commit;
-> for now we simply split the helper in two variants - "userland 32bit
-> to kernel native" and "userland 32bit to userland native".  The latter
-> is renamed old get_compat_insn(); it will be gone in the next commit.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->   drivers/staging/comedi/comedi_fops.c | 73 +++++++++++++++++++++++-------------
->   1 file changed, 46 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-> index d96dc85d8a98..ae0067ab5ead 100644
-[snip]
-> @@ -2244,10 +2241,13 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
->   				       (struct comedi_insnlist __user *)arg,
->   				       file);
->   		break;
-> -	case COMEDI_INSN:
-> -		rc = do_insn_ioctl(dev, (struct comedi_insn __user *)arg,
-> -				   file);
-> +	case COMEDI_INSN: {
-> +		struct comedi_insn insn;
-> +		if (copy_from_user(&insn, (void __user *)arg, sizeof(insn)))
-> +			rc = -EFAULT;
+> Indeed, that one. The fact that regular distros cannot enable this
+> feature due to performance overhead is unfortunate. It means there is a
+> lot less potential for this stuff.
 
-Missing an 'else' here:
+During that talk, I was a vague about the cost, admitted I had not looked
+too closely at mainline performance and had since deleted the data given
+that the problem was first spotted in early April. If I heard someone
+else making statements like I did at the talk, I would consider it a bit
+vague, potentially FUD, possibly wrong and worth rechecking myself. In
+terms of distributions "cannot enable this", we could but I was unwilling
+to pay the cost for a feature no one has asked for yet. If they had, I
+would endevour to put it behind static branches and disable it by default
+(like what happened for PSI). I was contacted offlist about my comments
+at OSPM and gathered new data to respond properly. For the record, here
+is an editted version of my response;
 
-> +		rc = do_insn_ioctl(dev, &insn, file);
->   		break;
-> +	}
->   	case COMEDI_POLL:
+--8<--
+
+(Some context deleted that is not relevant)
+
+> Does it need any special admin configuration for system
+> services, cgroups, scripts, etc?
+
+Nothing special -- out of box configuration. Tests were executed via
+mmtests.
+
+> Which mmtests config file did you use?
+> 
+
+I used network-netperf-unbound and network-netperf-cstate.
+network-netperf-unbound is usually the default but for some issues, I
+use the cstate configuration to limit C-states.
+
+For a perf profile, I used network-netperf-cstate-small and
+network-netperf-unbound-small to limit the amount of profile data that
+was collected. Just collecting data for 64 byte buffers was enough.
+
+> The server that I am going to configure is x86_64 numa, not arm64.
+
+That's fine, I didn't actually test arm64 at all.
+
+> I have a 2 socket 24 CPUs X86 server (4 NUMA nodes, AMD Opteron 6174,
+> L2 512KB/cpu, L3 6MB/node, RAM 40GB/node).
+> Which machine did you run it on?
+> 
+
+It was a 2-socket Haswell machine (E5-2670 v3) with 2 NUMA nodes. I used
+5.7-rc7 with the openSUSE Leap 15.1 kernel configuration as a baseline.
+I compared with and without uclamp enabled.
+
+For network-netperf-unbound I see
+
+netperf-udp
+                                  5.7.0-rc7              5.7.0-rc7
+                                 with-clamp          without-clamp
+Hmean     send-64         238.52 (   0.00%)      257.28 *   7.87%*
+Hmean     send-128        477.10 (   0.00%)      511.57 *   7.23%*
+Hmean     send-256        945.53 (   0.00%)      982.50 *   3.91%*
+Hmean     send-1024      3655.74 (   0.00%)     3846.98 *   5.23%*
+Hmean     send-2048      6926.84 (   0.00%)     7247.04 *   4.62%*
+Hmean     send-3312     10767.47 (   0.00%)    10976.73 (   1.94%)
+Hmean     send-4096     12821.77 (   0.00%)    13506.03 *   5.34%*
+Hmean     send-8192     22037.72 (   0.00%)    22275.29 (   1.08%)
+Hmean     send-16384    35935.31 (   0.00%)    34737.63 *  -3.33%*
+Hmean     recv-64         238.52 (   0.00%)      257.28 *   7.87%*
+Hmean     recv-128        477.10 (   0.00%)      511.57 *   7.23%*
+Hmean     recv-256        945.45 (   0.00%)      982.50 *   3.92%*
+Hmean     recv-1024      3655.74 (   0.00%)     3846.98 *   5.23%*
+Hmean     recv-2048      6926.84 (   0.00%)     7246.51 *   4.62%*
+Hmean     recv-3312     10767.47 (   0.00%)    10975.93 (   1.94%)
+Hmean     recv-4096     12821.76 (   0.00%)    13506.02 *   5.34%*
+Hmean     recv-8192     22037.71 (   0.00%)    22274.55 (   1.07%)
+Hmean     recv-16384    35934.82 (   0.00%)    34737.50 *  -3.33%*
+
+netperf-tcp
+                             5.7.0-rc7              5.7.0-rc7
+                            with-clamp          without-clamp
+Min       64        2004.71 (   0.00%)     2033.23 (   1.42%)
+Min       128       3657.58 (   0.00%)     3733.35 (   2.07%)
+Min       256       6063.25 (   0.00%)     6105.67 (   0.70%)
+Min       1024     18152.50 (   0.00%)    18487.00 (   1.84%)
+Min       2048     28544.54 (   0.00%)    29218.11 (   2.36%)
+Min       3312     33962.06 (   0.00%)    36094.97 (   6.28%)
+Min       4096     36234.82 (   0.00%)    38223.60 (   5.49%)
+Min       8192     42324.06 (   0.00%)    43328.72 (   2.37%)
+Min       16384    44323.33 (   0.00%)    45315.21 (   2.24%)
+Hmean     64        2018.36 (   0.00%)     2038.53 *   1.00%*
+Hmean     128       3700.12 (   0.00%)     3758.20 *   1.57%*
+Hmean     256       6236.14 (   0.00%)     6212.77 (  -0.37%)
+Hmean     1024     18214.97 (   0.00%)    18601.01 *   2.12%*
+Hmean     2048     28749.56 (   0.00%)    29728.26 *   3.40%*
+Hmean     3312     34585.50 (   0.00%)    36345.09 *   5.09%*
+Hmean     4096     36777.62 (   0.00%)    38576.17 *   4.89%*
+Hmean     8192     43149.08 (   0.00%)    43903.77 *   1.75%*
+Hmean     16384    45478.27 (   0.00%)    46372.93 (   1.97%)
+
+The cstate-limited config had similar results for UDP_STREAM but was
+mostly indifferent for TCP_STREAM.
+
+So for UDP_STREAM,. there is a fairly sizable difference for uclamp. There
+are caveats, netperf is not 100% stable from a performance perspective on
+NUMA machines. That's improved quite a bit with 5.7 but it still should
+be treated with care.
+
+When I first saw a problem, I was using ftrace looking for latencies and
+uclamp appeared to crop up. As I didn't actually need uclamp and there was
+no user request to support it, I simply dropped it from the master config
+so it would get propogated to any distro we release with a 5.x kernel.
+
+From a perf profile, it's not particularly obvious that uclamp is
+involved so it could be in error but I doubt it. A diff of without vs
+with looks like
+
+# Event 'cycles:ppp'
+#
+# Baseline  Delta Abs  Shared Object             Symbol
+# ........  .........  ........................  ..............................................
+#
+     9.59%     -2.87%  [kernel.vmlinux]          [k] poll_idle
+     0.19%     +1.85%  [kernel.vmlinux]          [k] activate_task
+               +1.17%  [kernel.vmlinux]          [k] dequeue_task
+               +0.89%  [kernel.vmlinux]          [k] update_rq_clock.part.73
+     3.88%     +0.73%  [kernel.vmlinux]          [k] try_to_wake_up
+     3.17%     +0.68%  [kernel.vmlinux]          [k] __schedule
+     1.16%     -0.60%  [kernel.vmlinux]          [k] __update_load_avg_cfs_rq
+     2.20%     -0.54%  [kernel.vmlinux]          [k] resched_curr
+     2.08%     -0.29%  [kernel.vmlinux]          [k] _raw_spin_lock_irqsave
+     0.44%     -0.29%  [kernel.vmlinux]          [k] cpus_share_cache
+     1.13%     +0.23%  [kernel.vmlinux]          [k] _raw_spin_lock_bh
+
+A lot of the uclamp functions appear to be inlined so it is not be
+particularly obvious from a raw profile but it shows up in the annotated
+profile in activate_task and dequeue_task for example. In the case of
+dequeue_task, uclamp_rq_dec_id() is extremely expensive according to the
+annotated profile.
+
+I'm afraid I did not dig into this deeply once I knew I could just disable
+it even within the distribution.
 
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Mel Gorman
+SUSE Labs
