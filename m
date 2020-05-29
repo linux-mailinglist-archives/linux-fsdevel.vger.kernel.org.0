@@ -2,92 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8050F1E7211
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 03:28:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7141E7231
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 03:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437887AbgE2B15 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 21:27:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
+        id S2390701AbgE2Br5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 21:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437523AbgE2B15 (ORCPT
+        with ESMTP id S2390018AbgE2Brz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 21:27:57 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B7AC08C5C7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 18:27:55 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id b6so581568ljj.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 18:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g9DDH+ka577yWN8I1lwER+N2nfRC2WU0Ckv2Lu1OmbU=;
-        b=c3Co8BnhP/+fpOuPHGIDwU4Zp4Sa2cqOLC6C5vXoWp8xHdS4zCAeFxT3cnyP/W5jRQ
-         9z0IlAP5Pfc8kc9hkuA28qt6ar69ruD08xLRWHn6gdeuFA6y10LClepdBIXBKdhQGHiP
-         yAqpd4zJ1skPKdhgL9YZOnpw20LZMDWu0PnDE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g9DDH+ka577yWN8I1lwER+N2nfRC2WU0Ckv2Lu1OmbU=;
-        b=RfPlrd4hxP6CwYfvnibqHTBhKPZTeAB1kJ5uqLW6dRAYYhGXCctKosT62HKzIX9w6e
-         CGmVMcg3wayxGUF8sxGm1xyN7tVyInqU6nXyI9FeKq07JRqKFF9G7ItRqgDcdSynGEjz
-         SsSgnO2hFtIO9yMQUPPY4c4hckVt/Ig7cFAA9XrTfUiWAat0MwrjgfQ5sL26WmTSOVlz
-         Q7apBfcPfJf0YveYGMStGN22pDlZTO3gXVwJRwBxciRljzCJYVwQqbyVlnYWlQl3+GZ8
-         VlzhvBWyvizwqV9+eDEsScCY9i4Wg8eo5EPW4wJa8J9GRvT/m7XK1P1+wK4yYY3urMQT
-         tFcA==
-X-Gm-Message-State: AOAM530YZyGwqS4TMBKEV/0GeQpPjVnBWdelC1ImJ2ifHddXeu+8vz3F
-        OcIuZ7giPP914NuJUqBqgRzJxKfK37c=
-X-Google-Smtp-Source: ABdhPJwOWxOsckyZ3z99WF9mfJa5NcJ3ZrNDpH6WmdMiA+3q99wpNS6y9ivWqSDGZkoKTW4oSDJJ/w==
-X-Received: by 2002:a2e:9792:: with SMTP id y18mr2916662lji.389.1590715673961;
-        Thu, 28 May 2020 18:27:53 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id a22sm1728186ljm.14.2020.05.28.18.27.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 18:27:52 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id d7so285669lfi.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 May 2020 18:27:52 -0700 (PDT)
-X-Received: by 2002:a05:6512:62:: with SMTP id i2mr3050072lfo.152.1590715672160;
- Thu, 28 May 2020 18:27:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200529000345.GV23230@ZenIV.linux.org.uk> <20200529000419.4106697-1-viro@ZenIV.linux.org.uk>
- <20200529000419.4106697-2-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20200529000419.4106697-2-viro@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 28 May 2020 18:27:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgnxFLm3ZTwx3XYnJL7_zPNSWf1RbMje22joUj9QADnMQ@mail.gmail.com>
-Message-ID: <CAHk-=wgnxFLm3ZTwx3XYnJL7_zPNSWf1RbMje22joUj9QADnMQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dlmfs: convert dlmfs_file_read() to copy_to_user()
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        Thu, 28 May 2020 21:47:55 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75466C08C5C6;
+        Thu, 28 May 2020 18:47:55 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jeU7l-00HHZ1-Ef; Fri, 29 May 2020 01:47:53 +0000
+Date:   Fri, 29 May 2020 02:47:53 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 2/2] dlmfs: convert dlmfs_file_read() to copy_to_user()
+Message-ID: <20200529014753.GZ23230@ZenIV.linux.org.uk>
+References: <20200529000345.GV23230@ZenIV.linux.org.uk>
+ <20200529000419.4106697-1-viro@ZenIV.linux.org.uk>
+ <20200529000419.4106697-2-viro@ZenIV.linux.org.uk>
+ <CAHk-=wgnxFLm3ZTwx3XYnJL7_zPNSWf1RbMje22joUj9QADnMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgnxFLm3ZTwx3XYnJL7_zPNSWf1RbMje22joUj9QADnMQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 28, 2020 at 5:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         if (*ppos >= i_size_read(inode))
->                 return 0;
->
-> +       /* don't read past the lvb */
-> +       if (count > i_size_read(inode) - *ppos)
-> +               count = i_size_read(inode) - *ppos;
+On Thu, May 28, 2020 at 06:27:36PM -0700, Linus Torvalds wrote:
+> On Thu, May 28, 2020 at 5:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >         if (*ppos >= i_size_read(inode))
+> >                 return 0;
+> >
+> > +       /* don't read past the lvb */
+> > +       if (count > i_size_read(inode) - *ppos)
+> > +               count = i_size_read(inode) - *ppos;
+> 
+> This isn't a new problem, since you effectively just moved this code,
+> but it's perhaps more obvious now..
+> 
+> "i_size_read()" is not necessarily stable - we do special things on
+> 32-bit to make sure that we get _a_ stable value for it, but it's not
+> necessarily guaranteed to be the same value when called twice. Think
+> concurrent pread() with a write..
+> 
+> So the inode size could change in between those two accesses, and the
+> subtraction might end up underflowing despite the check just above.
+> 
+> This might not be an issue with ocfs2 (I didn't check locking), but ..
 
-This isn't a new problem, since you effectively just moved this code,
-but it's perhaps more obvious now..
+        case S_IFREG:
+                inode->i_op = &dlmfs_file_inode_operations;
+                inode->i_fop = &dlmfs_file_operations;
 
-"i_size_read()" is not necessarily stable - we do special things on
-32-bit to make sure that we get _a_ stable value for it, but it's not
-necessarily guaranteed to be the same value when called twice. Think
-concurrent pread() with a write..
+                i_size_write(inode,  DLM_LVB_LEN);
+is the only thing that does anything to size of that sucker.  IOW, that
+i_size_read() might as well had been an explicit 64.  Actually,
+looking at that thing I would suggest simply
 
-So the inode size could change in between those two accesses, and the
-subtraction might end up underflowing despite the check just above.
+static ssize_t dlmfs_file_read(struct file *filp,
+                               char __user *buf,
+                               size_t count,
+                               loff_t *ppos)
+{
+        struct inode *inode = file_inode(filp);
+	char lvb_buf[DLM_LVB_LEN];
 
-This might not be an issue with ocfs2 (I didn't check locking), but ..
+	if (!user_dlm_read_lvb(inode, lvb_buf, DLM_LVB_LEN))
+		return 0;
+	return simple_read_from_buffer(buf, count, ppos,
+				       lvb_buf, DLM_LVB_LEN);
+}
 
-                  Linus
+But that's belongs in a followup, IMO.
