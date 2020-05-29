@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8D41E735D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 05:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C631E730A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 05:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391840AbgE2DEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 May 2020 23:04:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46024 "EHLO
+        id S2407452AbgE2C6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 May 2020 22:58:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391624AbgE2C6e (ORCPT
+        with ESMTP id S2391613AbgE2C6b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 May 2020 22:58:34 -0400
+        Thu, 28 May 2020 22:58:31 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4747DC008600;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AB0C08C5CA;
         Thu, 28 May 2020 19:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=432shkXra2Q82xS7AlMDJKErtAEp0TEP0/wbg8xsW6c=; b=OluEwY8nD2Sz1fCPP1NDnLLcB0
-        dFJ0KSRyiNEGNpBDMe8Gq9JnONL0JNWCqyGAuuCS1FOc4azNtaTqh75A2ef8Xp45A41xom4Z3YHvn
-        Wf0Ru2cSwUjg2FCIWdUdhgHanbGsShW+lA8dvnT7jPdkesWDQisov6TEnA2/wiFB1B5FushwnGNK3
-        sTPiaL/wabSOftV1i4Um76Ng71z88ixtLPVRROqicgFQvvJz2YD8AfgcWcVPQ5aMXGBsLoyMGELpA
-        dbPgzVP3byeQwcPImqiebZo5yC56HDv2nchfhTQPeMEhhLz6OG93ZfHr/qDJ8j6iuO+FZl3ppTm4p
-        2IhqJoOQ==;
+        bh=dD9nVOWGwAdtF5Vt0w+D5s2gKPxSD7JmOgMrMrHOmY4=; b=uKVHCVe93flhNmJ1jeLNO9WW/g
+        jCb7bi1PKxpF2/A8nlkCTTz/aK7bO2nxPcpeSkiSQOOW87zwSF6vvRjdsGhrfmJxkiedvTbAGha7W
+        i2uFs60cyVhcmVH2cTEGcrAmCtw8Oc0sQDe/cZjdtaQOaqrl5vHFjDz+cMwVGqaBjefu7XCf6kl9+
+        Ie8YEJCMgfzxayFm3wRKlgcfaAydnuXtBjIAO6LG4MsACWABMHbb5fgRpWNeuw6PNylexjHWhgjTq
+        ivpsiVTm4+Yje2D4ESSuhEbD/bQ49A/wb7ptMH7jBktT3jeQ0BF+TuFPlCQudwol0qi3cp+OfhBxR
+        5e3Bd2kQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeVE3-0008Qn-0w; Fri, 29 May 2020 02:58:27 +0000
+        id 1jeVE3-0008Qv-28; Fri, 29 May 2020 02:58:27 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 12/39] bio: Add bio_for_each_thp_segment_all
-Date:   Thu, 28 May 2020 19:57:57 -0700
-Message-Id: <20200529025824.32296-13-willy@infradead.org>
+Subject: [PATCH v5 13/39] iomap: Support arbitrarily many blocks per page
+Date:   Thu, 28 May 2020 19:57:58 -0700
+Message-Id: <20200529025824.32296-14-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200529025824.32296-1-willy@infradead.org>
 References: <20200529025824.32296-1-willy@infradead.org>
@@ -46,76 +46,80 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Iterate once for each THP page instead of once for each base page.
+Size the uptodate array dynamically.  Now that this array is protected
+by a spinlock, we can use bitmap functions to set the bits in this array
+instead of a loop around set_bit().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/bio.h  | 13 +++++++++++++
- include/linux/bvec.h | 23 +++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ fs/iomap/buffered-io.c | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index c1c0f9ea4e63..4cc883fd8d63 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -131,12 +131,25 @@ static inline bool bio_next_segment(const struct bio *bio,
- 	return true;
- }
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 4bc37bf8d057..4a79061073eb 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -22,14 +22,14 @@
+ #include "../internal.h"
  
-+static inline bool bio_next_thp_segment(const struct bio *bio,
-+				    struct bvec_iter_all *iter)
-+{
-+	if (iter->idx >= bio->bi_vcnt)
-+		return false;
-+
-+	bvec_thp_advance(&bio->bi_io_vec[iter->idx], iter);
-+	return true;
-+}
-+
  /*
-  * drivers should _never_ use the all version - the bio may have been split
-  * before it got to the driver and the driver won't own all of it
+- * Structure allocated for each page when block size < PAGE_SIZE to track
++ * Structure allocated for each page when block size < page size to track
+  * sub-page uptodate status and I/O completions.
   */
- #define bio_for_each_segment_all(bvl, bio, iter) \
- 	for (bvl = bvec_init_iter_all(&iter); bio_next_segment((bio), &iter); )
-+#define bio_for_each_thp_segment_all(bvl, bio, iter) \
-+	for (bvl = bvec_init_iter_all(&iter); \
-+	     bio_next_thp_segment((bio), &iter); )
+ struct iomap_page {
+ 	atomic_t		read_count;
+ 	atomic_t		write_count;
+ 	spinlock_t		uptodate_lock;
+-	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
++	unsigned long		uptodate[];
+ };
  
- static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
- 				    unsigned bytes)
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index a81c13ac1972..e08bd192e0ed 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -153,4 +153,27 @@ static inline void bvec_advance(const struct bio_vec *bvec,
- 	}
+ static inline struct iomap_page *to_iomap_page(struct page *page)
+@@ -45,15 +45,14 @@ static struct iomap_page *
+ iomap_page_create(struct inode *inode, struct page *page)
+ {
+ 	struct iomap_page *iop = to_iomap_page(page);
++	unsigned int nr_blocks = i_blocks_per_page(inode, page);
+ 
+-	if (iop || i_blocks_per_page(inode, page) <= 1)
++	if (iop || nr_blocks <= 1)
+ 		return iop;
+ 
+-	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
+-	atomic_set(&iop->read_count, 0);
+-	atomic_set(&iop->write_count, 0);
++	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
++				GFP_NOFS | __GFP_NOFAIL);
+ 	spin_lock_init(&iop->uptodate_lock);
+-	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+ 
+ 	/*
+ 	 * migrate_page_move_mapping() assumes that pages with private data have
+@@ -146,20 +145,12 @@ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ 	struct iomap_page *iop = to_iomap_page(page);
+ 	struct inode *inode = page->mapping->host;
+ 	unsigned first = off >> inode->i_blkbits;
+-	unsigned last = (off + len - 1) >> inode->i_blkbits;
+-	bool uptodate = true;
++	unsigned count = len >> inode->i_blkbits;
+ 	unsigned long flags;
+-	unsigned int i;
+ 
+ 	spin_lock_irqsave(&iop->uptodate_lock, flags);
+-	for (i = 0; i < i_blocks_per_page(inode, page); i++) {
+-		if (i >= first && i <= last)
+-			set_bit(i, iop->uptodate);
+-		else if (!test_bit(i, iop->uptodate))
+-			uptodate = false;
+-	}
+-
+-	if (uptodate)
++	bitmap_set(iop->uptodate, first, count);
++	if (bitmap_full(iop->uptodate, i_blocks_per_page(inode, page)))
+ 		SetPageUptodate(page);
+ 	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
  }
- 
-+static inline void bvec_thp_advance(const struct bio_vec *bvec,
-+				struct bvec_iter_all *iter_all)
-+{
-+	struct bio_vec *bv = &iter_all->bv;
-+	unsigned int page_size = thp_size(bvec->bv_page);
-+
-+	if (iter_all->done) {
-+		bv->bv_page += hpage_nr_pages(bv->bv_page);
-+		bv->bv_offset = 0;
-+	} else {
-+		BUG_ON(bvec->bv_offset >= page_size);
-+		bv->bv_page = bvec->bv_page;
-+		bv->bv_offset = bvec->bv_offset & (page_size - 1);
-+	}
-+	bv->bv_len = min(page_size - bv->bv_offset,
-+			 bvec->bv_len - iter_all->done);
-+	iter_all->done += bv->bv_len;
-+
-+	if (iter_all->done == bvec->bv_len) {
-+		iter_all->idx++;
-+		iter_all->done = 0;
-+	}
-+}
- #endif /* __LINUX_BVEC_ITER_H */
 -- 
 2.26.2
 
