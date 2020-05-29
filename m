@@ -2,104 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5AE1E75F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 08:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219461E764F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 May 2020 09:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbgE2GcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 May 2020 02:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbgE2GcP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 May 2020 02:32:15 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1100C03E969;
-        Thu, 28 May 2020 23:32:15 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id nu7so763395pjb.0;
-        Thu, 28 May 2020 23:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BNoZ2XYJOD/1c9noJbsTLNaWrtFoh6ZcaGy/LqRk1c4=;
-        b=UE3NugHUUAkfF0oMX8fpEdkZU0HdWYx3tH6rIdaP1toLR56GvsNrdMRjClM5HYX0UQ
-         7JVd1a/KPD3dkhzXGicgwatafJQCvtxhhFrewquf6g+L/EaFJ4s6WjHKxKT3VWDGYfgz
-         au10I6+lXS05BXO2s4M7pGkILcT22CGfrEhK8RLClsOl4z2lzNl2OgXMx0k6uuNraVXN
-         zFuk5Mf0/xXNxp3CYMTA/Tuecz3jkjU1H/qrcPxSNS1uoClRqrCHSioTemWVNrSX/0O+
-         NE6ztpq+r5JxXrMtbTqDYFB42S0Xi3jRpBWug4mAflk3oGaIk54PVblm1DQMp/Wm0jZB
-         quAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BNoZ2XYJOD/1c9noJbsTLNaWrtFoh6ZcaGy/LqRk1c4=;
-        b=dRVvJfOVtS5MpudrzGh1e6BnvI18y0dqQcrSX2eVe30e9GuTMhXvhuu36shIMeWYyk
-         imFW6zwWzjoU2pTHmpe/QUgxBJC7kASYE2Djx/4e0Ooi+3rXNkKHWllQ7uXmGFrZtzQ1
-         ptOylpBaC4wzifOA+e5eFT9gkS6c5Qlrf7f04nPHywiTGC3wIO9djjtRtLGnDIfck4wd
-         ixFYJLfgsPCw4d+t5AIGmc5tUsOlz7NJsqyPzXvdd/ZiV/ovAfQjuWyw1C06L8qNkali
-         qaaLbdvQPwaLYBEd7BXxI4k6P8PAdZnO3KbhOUf7KsEbnvNHIe0e2CE7en9aWC+2srNE
-         L4Cw==
-X-Gm-Message-State: AOAM533qnHyI1ieccId6LI8Z1Y055xy5hGJ3BRM3E7boDce9UGPJUEq4
-        FSkM81S8im5214JPuvK1nG4rDjCsNco=
-X-Google-Smtp-Source: ABdhPJyLbT0KF3Yvwgqg8u78vq3YhM6WjYTUFafCP/kWyeFqv/kMHWq1L8VCAvlSSfN+ElC/P2O0JA==
-X-Received: by 2002:a17:902:c40d:: with SMTP id k13mr6949150plk.342.1590733934955;
-        Thu, 28 May 2020 23:32:14 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:3c0d:7bea:2bcd:e53b? ([2404:7a87:83e0:f800:3c0d:7bea:2bcd:e53b])
-        by smtp.gmail.com with ESMTPSA id 128sm6230844pfd.114.2020.05.28.23.32.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 23:32:14 -0700 (PDT)
-Subject: Re: [PATCH 1/4] exfat: redefine PBR as boot_sector
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Namjae Jeon' <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200525115110epcas1p491bfb477b12825536e81e376f34c7a02@epcas1p4.samsung.com>
- <20200525115052.19243-1-kohada.t2@gmail.com>
- <040701d634b1$375a2a40$a60e7ec0$@samsung.com>
- <48fe0abe-8b1c-bea2-820f-71ca141af072@gmail.com>
- <0bd201d63579$f9b03d00$ed10b700$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <308405a2-429d-b9aa-ca1c-a699570ae112@gmail.com>
-Date:   Fri, 29 May 2020 15:32:11 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1725777AbgE2HDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 May 2020 03:03:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52818 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725308AbgE2HDq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 May 2020 03:03:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2323EB001;
+        Fri, 29 May 2020 07:03:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 796C61E1289; Fri, 29 May 2020 09:03:43 +0200 (CEST)
+Date:   Fri, 29 May 2020 09:03:43 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: Question: "Bare" set_page_dirty_lock() call in vhost.c
+Message-ID: <20200529070343.GL14550@quack2.suse.cz>
+References: <3b2db4da-9e4e-05d1-bf89-a261f0eb6de0@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <0bd201d63579$f9b03d00$ed10b700$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b2db4da-9e4e-05d1-bf89-a261f0eb6de0@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> I'll make another small patch, OK?
+Hi!
+
+On Thu 28-05-20 17:59:30, John Hubbard wrote:
+> While trying to figure out which things to convert from
+> get_user_pages*() to put_user_pages*(), I came across an interesting use
+> of set_page_dirty_lock(), and wanted to ask about it.
 > 
-> No, It make sense to make v3, because you have renamed the variables in
-> boot_sector on this patch.
-
-OK.
-
-
->> BTW
->> I have a concern about fs_name.
->> The exfat specification says that this field is "EXFAT".
->>
->> I think it's a important field for determining the filesystem.
->> However, in this patch, I gave up checking this field.
->> Because there is no similar check in FATFS.
->> Do you know why Linux FATFS does not check this filed?
->> And, what do you think of checking this field?
+> Is it safe to call set_page_dirty_lock() like this (for the case
+> when this is file-backed memory):
 > 
-> FATFS has the same field named "oem_name" and whatever is okay for its value.
-> However, in case of exFAT, it is an important field to determine filesystem.
+> // drivers/vhost/vhost.c:1757:
+> static int set_bit_to_user(int nr, void __user *addr)
+> {
+> 	unsigned long log = (unsigned long)addr;
+> 	struct page *page;
+> 	void *base;
+> 	int bit = nr + (log % PAGE_SIZE) * 8;
+> 	int r;
 > 
-> I think it would be better to check this field for exFAT-fs.
-> Would you like to contribute new patch for checking it?
+> 	r = get_user_pages_fast(log, 1, FOLL_WRITE, &page);
+> 	if (r < 0)
+> 		return r;
+> 	BUG_ON(r != 1);
+> 	base = kmap_atomic(page);
+> 	set_bit(bit, base);
+> 	kunmap_atomic(base);
+> 	set_page_dirty_lock(page);
+> 	put_page(page);
+> 	return 0;
+> }
+> 
+>  ?
+> 
+> That is, after the page is unmapped, but before unpinning it?
+> Specifically, I'd expect that the writeback and reclaim code code can end
+> up calling drop_buffers() (because the set_bit() call actually did
+> dirty the pte), after the kunmap_atomic() call. So then when
+> set_page_dirty_lock() runs, it could bug check on ext4_writepage()'s
+> attempt to buffer heads:
+> 
+> ext4_writepage()
+> 	page_bufs = page_buffers(page);
+>         #define page_buffers(page)					\
+>         	({							\
+>         		BUG_ON(!PagePrivate(page));			\
+>         		((struct buffer_head *)page_private(page));	\
+>         	})
+> 
+> ...which actually is the the case that pin_user_pages*() is ultimately
+> helping to avoid, btw. But in this case, it's all code that runs on a
+> CPU, so no DMA or DIO is involved. But still, the "bare" use of
+> set_page_dirty_lock() seems like a problem here.
 
-I already have the code, so I'll add it to [PATCH 2/4 v3].
+I agree that the site like above needs pin_user_pages(). The problem has
+actually nothing to do with kmap_atomic() - that actually doesn't do
+anything interesting on x86_64. The moment GUP_fast() returns, page can be
+unmapped from page tables and written back so this site has exactly same
+problems as any other using DMA or DIO. As we discussed earlier when
+designing the patch set, the problem is really with GUP reference being
+used to access page data. And the method of access (DMA, CPU access, GPU
+access, ...) doesn't really matter...
 
-BR
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
