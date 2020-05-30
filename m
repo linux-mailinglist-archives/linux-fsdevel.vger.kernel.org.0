@@ -2,76 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1356D1E93A1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 22:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 965E61E93A5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 22:43:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbgE3Ulh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 16:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
+        id S1729313AbgE3UnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 16:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgE3Ulh (ORCPT
+        with ESMTP id S1726898AbgE3UnM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 16:41:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF5BC03E969;
-        Sat, 30 May 2020 13:41:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4OdrZK2pGyMVHZP9dBAVdzAWc40dh9XQscP29VyVrvM=; b=HZvQiU2YlUtBkyi6j0X0sBvcK6
-        YZbb6RElwJlDvQSoI8EnGgMdqBHoihEOfco2ouCjUP4Lrt9K1yHxN8OR5Caaio7SnY2tGtjpu2vng
-        jr1IQnGoevyNcal8I/kgEqEGTu3l+Zwlh5LVZwcZgiHGb4WD6ut/ABzyv8M2MhE68B0QNvidpnC3Q
-        2Lj81yDjMRBVamW438WZSQXqIyI6NJY97hDAeLt7m7VQQfHf4EELlTmQSzzKspRVXWPOK0cCOwljZ
-        sJ9Nep2Dn0XzCi79koJwJFZzSkEGkTSq4HO0sQ6syXZ7aNRGYBeUxnVBXkgbEbKIIudGg/NB/2i+7
-        XqHaEaWg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jf8IO-0000XW-Qx; Sat, 30 May 2020 20:41:32 +0000
-Date:   Sat, 30 May 2020 13:41:32 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Daniel Rosenberg <drosen@google.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Subject: Re: [PATCH] ext4: avoid utf8_strncasecmp() with unstable name
-Message-ID: <20200530204132.GE19604@bombadil.infradead.org>
-References: <20200530060216.221456-1-ebiggers@kernel.org>
- <20200530171814.GD19604@bombadil.infradead.org>
- <20200530173547.GA12299@sol.localdomain>
+        Sat, 30 May 2020 16:43:12 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31C8C03E969;
+        Sat, 30 May 2020 13:43:11 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jf8Ju-000aBK-J6; Sat, 30 May 2020 20:43:06 +0000
+Date:   Sat, 30 May 2020 21:43:06 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>
+Subject: Re: [PATCH 8/9] x86: kvm_hv_set_msr(): use __put_user() instead of
+ 32bit __clear_user()
+Message-ID: <20200530204306.GV23230@ZenIV.linux.org.uk>
+References: <20200529232723.44942-8-viro@ZenIV.linux.org.uk>
+ <CAHk-=wgq2dzOdN4_=eY-XwxmcgyBM_esnPtXCvz1zStZKjiHKA@mail.gmail.com>
+ <20200530143147.GN23230@ZenIV.linux.org.uk>
+ <81563af6-6ea2-3e21-fe53-9955910e303a@redhat.com>
+ <CAHk-=wiW=cKaMyBKgZMOOJQbpAyeRrz--o2H_7CdDpbn+az9vQ@mail.gmail.com>
+ <20200530183853.GQ23230@ZenIV.linux.org.uk>
+ <CAHk-=wjmCBXj0==no0f9Og6NZuAVWPEFXUgRL+fRmJ8PovbdPQ@mail.gmail.com>
+ <20200530191424.GR23230@ZenIV.linux.org.uk>
+ <CAHk-=wg03AwbLH0zLRbOOQR_cZD89dM0KMU-uLMkG2sG9K_yag@mail.gmail.com>
+ <20200530194232.GU23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200530173547.GA12299@sol.localdomain>
+In-Reply-To: <20200530194232.GU23230@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 30, 2020 at 10:35:47AM -0700, Eric Biggers wrote:
-> On Sat, May 30, 2020 at 10:18:14AM -0700, Matthew Wilcox wrote:
-> > On Fri, May 29, 2020 at 11:02:16PM -0700, Eric Biggers wrote:
-> > > +	if (len <= DNAME_INLINE_LEN - 1) {
-> > > +		unsigned int i;
-> > > +
-> > > +		for (i = 0; i < len; i++)
-> > > +			strbuf[i] = READ_ONCE(str[i]);
-> > > +		strbuf[len] = 0;
+On Sat, May 30, 2020 at 08:42:32PM +0100, Al Viro wrote:
+> On Sat, May 30, 2020 at 12:20:54PM -0700, Linus Torvalds wrote:
+> > On Sat, May 30, 2020 at 12:14 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > > And none of that code verifies that the end result is a user address.
+> > >
+> > > kvm_is_error_hva() is
+> > >         return addr >= PAGE_OFFSET;
 > > 
-> > This READ_ONCE is going to force the compiler to use byte accesses.
-> > What's wrong with using a plain memcpy()?
-> > 
+> > Ahh, that's what I missed. It won't work on other architectures, but
+> > within x86 it's fine.
 > 
-> It's undefined behavior when the source can be concurrently modified.
+> FWIW, we use virt/kvm on x86, powerpc, mips, s390 and arm64.
 > 
-> Compilers can assume that it's not, and remove the memcpy() (instead just using
-> the source data directly) if they can prove that the destination array is never
-> modified again before it goes out of scope.
-> 
-> Do you have any suggestions that don't involve undefined behavior?
+> For x86 and powerpc the check is, AFAICS, OK (ppc kernel might start
+> higher than PAGE_OFFSET, but not lower than it).  For arm64... not
+> sure - I'm not familiar with the virtual address space layout we use
+> there.  mips does *NOT* get that protection at all - there kvm_is_error_hva()
+> is IS_ERR_VALUE() (thus the "at least on non-mips" upthread).  And
+> for s390 it's also IS_ERR_VALUE(), but that's an separate can of worms -
+> there access_ok() is constant true; if we ever hit any of that code in
+> virt/kvm while under KERNEL_DS, we are well and truly fucked there.
 
-void *memcpy_unsafe(void *dst, volatile void *src, __kernel_size_t);
+Anyway, I really think it's too big to handle this cycle, what with the
+amount of other stuff already in queue.  If anything, that __put_user()
+is a useful marker of the things that will need attention.  That's arch/x86
+and the test excluding the kernel space is just upstream of that call,
+so IMO that's robust enough for now.  Crossing the limit just into the
+beginning of kernel space is theoretically possible, but that would
+depend upon slot->userspace_addr not being page-aligned (and would attempt
+to zero up to 3 bytes past the PAGE_OFFSET in any case).  If we get
+memory corruption going on, we have much worse problems than that.
+And it would have to be memory corruption - ->userspace_addr is assign-once,
+there's only one place doing the assignments and alignment check is
+shortly upstream of it, so all instances must have that field page-aligned
+all the time.
 
-It can just call memcpy() of course, but the compiler can't reason about
-this function because it's not a stdlib function.
+We'll need to sort the kvm-related issues out, but let's leave it for the
+next cycle.
