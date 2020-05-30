@@ -2,156 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7AD1E90E4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 13:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99FB1E9165
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 15:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgE3LlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 07:41:15 -0400
-Received: from mout.web.de ([212.227.15.14]:57647 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbgE3LlO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 07:41:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1590838856;
-        bh=wx9yY0xCg1I2QE9+DW1tUFqrPBN+57R1T71xo/th0lc=;
-        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
-        b=GOr/8voINzaomvO7hkU1Ayqwsl3BZ860Dx4HOegB8ZiDE8SHKKWKTzFwJedP6RD1a
-         qSfxRr4ODeuJ4CmrYv3u1CoALpuYRql/9bZ14Ro+ypckjgOx4/KDp8UjV54Jr+VRmH
-         OP5JKS12TsQWtE6pZ6tjWwLkHiv22oyDmn3Seh2M=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.149.250]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MHdwC-1jiIi40OJI-003Iwr; Sat, 30
- May 2020 13:40:56 +0200
-To:     Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Ian Kent <raven@themaw.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] checkpatch/coding-style: Allow 100 column lines
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <a45357fe-6570-ef20-ed0e-494cdf7a6f1d@web.de>
-Date:   Sat, 30 May 2020 13:40:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1728966AbgE3NH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 09:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54460 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbgE3NH5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 30 May 2020 09:07:57 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68CD6C03E969;
+        Sat, 30 May 2020 06:07:57 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id q8so2253962iow.7;
+        Sat, 30 May 2020 06:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fa2LnUBoKZEz2hoMaFjlI6+VHn6uuC5kUXlOp9IFUhc=;
+        b=JDRZjD47ko2M+2hb2KkDYhY3R+6etPctuRkGN1VPbhkNrwq2Z8CIcnljdWRqu4RXyv
+         dqMgfhd52++WuDSHzvTo2+WZlXlMJsogItzhGlAm6JCYG/IqU2zS3BKC94MDBTu2iwGF
+         8Q+MMpYST7ULNaFbzhYyjAuzqmNXtEVgmdob8L1shKvvTDRDDZUmgHkIRpi8nqCeNKrW
+         EHpv8AIStrHz35cSrvnUg8VujaPj7WgDM83uzMQVD8lEqPF502FPEseUU8QzN6P4cwAY
+         6spgT96eIlMtbZ2y4WkhWdiNfBLQ5UG6nquBqeHEEhRfUQ1xogm9I0Y/rPxL438DVZOn
+         HDKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fa2LnUBoKZEz2hoMaFjlI6+VHn6uuC5kUXlOp9IFUhc=;
+        b=JwE+tS6CDQ0Zpo4PXydnRJ1S32YLL3ohPYCyL8jZd5xrcqcAM7x5ZK101r6DY8gqQJ
+         mZaItAa2DU9Ss2tbfCx/W82suUiXX12wG0qOtM1aLHYCf0l9OvlHESQhbp3XXDjW0AeA
+         EsPkUXAoJbfrtuzREQfFehCyaTRApdmfo/2/FcDPBe9uql8IKGH21baHb4K8ncZ5Isam
+         wBfVExiELN7tMvROAeLJz3yAsieDEGDqEpU3bbNwVA6CgRXDdo2XVu00qMGnbCQ1z3MK
+         Zpw6jUlnodsZbQKzUmSLAvtsrZ9r/BcZ55gRAgTUdWlVzBeII50HA5vS76q/qOFA9faW
+         6P1A==
+X-Gm-Message-State: AOAM530v8Q+F5U6PhEGemvLo+oHgrNjXMrv+p+lf2CUxTGyfvGk4ICqf
+        dubWD2VhYn32VasW3uuLXtBLtNr/Y02oP+DsgpM=
+X-Google-Smtp-Source: ABdhPJz3St4vLcJaC0pxKPdCS9AhiyWvIPx830oYSH/5Xs7cs8fyCbjG1Cg0mq3NIcFUu4GBmZ9l1+WB/5y2NiPVgHc=
+X-Received: by 2002:a02:5184:: with SMTP id s126mr10706459jaa.30.1590844076614;
+ Sat, 30 May 2020 06:07:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:S+6BfI3Pe/izDw3FK2rwTurnJjSVrwOilQz4gyhLQkseKvWNrYA
- A0PrKZM5t8b49igU9ThGutPSkPpEoo9a7ia4XbWPEscrPkIWSJYG/d2NGvwlK+kK1qavs9x
- OYFQLHxc6+t4pasPs6M4x+vGPVsEvlIkvJ+vkJv/5yPNOnRt5gtduNMimHzcsece/P368et
- nAZSFcMQGcLRcuOt29mdg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:R79Xzg7gD5Q=:G7rsiSe6NXtl+/4O788YH8
- cEf9Y/M4VFipfKhOVh8ySZOQZVZAOrWQJ0all1XuimHtiTYEYprsVRgc3AjraHJj5YfLQy/OE
- KCgOyaCT0qBq4BJ6n0MUjQqYMYAapKKUnAkL95GEk5GDL8L23N9dP6OcoSIhutE/Xck4/7If3
- 5ZPbYC0HpYilR0s+pGmWaghNtvtk6lWlUbHACnyEdwxXWwx4CssEtYqTlwuwpyV5EA2gp7iIW
- ozooQoihKBf13fN4qlpSwIWyDODgve/VRt/E9MriokQS3zqfmfjzXw1s7oyYyfLH3fQqYDRGn
- BpmG7xTG+XMfduvLqyviy+rz0dRq0Q1gLpX6qSoIsX5oJcA0WXCkhdSoVzs1rRh2Oy1jyOrlU
- gmcdzDfH9r0BV+dPI+JC8YGT1Kbc64Hwd1eqkBNj0+MetpsLMizjaQdMwWStRTmyVo2lwFlYR
- kkUScuUvgAmK1i8nyub8LW8PYiUclohwx6yYTA6pdCxopTUuGVsxuvYCFqiFSooqFhonR7uik
- LVW/3Gazve0YgY54+1lOCaZ2VZ6hvGAccxqcLsm67kupy+YlxUukuk/Q2X8365i6EIAxvTGBD
- NbL15ypNzpL5FqTZDz/dq8u6dst1jQMV7CrFzf9s9H4GmRBDfvZ2OUxMQxKxykVUOYfbupR0A
- Z/GcXVx1hm4OSYYrgeyUNUpHpsHkG3E+8CNG8MzXfTg+KSDIQzmMdmiOBdS8vyGCQWBCc5e3Y
- AjA14d1Db9XyXT2v5Ww+OrmLvFEN7EnX9l7SOgt2jXDLXb/oj5m0ErGd1Pxv/IH28zdmewsXW
- GkrpGEXwCzvrd7oWAYjxFOnIMAC4YBIH2m0QIkrzS6nd+geuz/rkLN2HB/CLUqNfz+0BuqyZ8
- QoRnvDA869JwwWMEj1oW8BQFSR4vWf8Lz/DvugC8viIVB7UnRo3mfkkoMFSDN/rEirHz8QWEi
- /f6nGPPvE8wnF5oiUER1b0ybsiljo+/60dVXJr7XQ5/LuAm7VZJx4SoVeHvtbF4AyDCIG5Dqm
- AYqJNajO88xH4y0GpGqWQmvNZE3VFZ8H4Lii9E87kovrKq12cEDDxnkx6VrLM/MuUYu8MTEM2
- KdqXWETqU0+bY599z5qb161f8SEc+Se5k0Mg30oC5HrVXDbLWp4qvcO3vQhrzbos6dw0CzRr2
- 9/TRxEU90rOs59BvE+SQDS3FycaFc06Kz+Vr5E8f+5BNwsGLU8D3ygRbEVqfTp8hda5WC7E4G
- perbZ1v39CpLqKflc
+References: <20200527172143.GB14550@quack2.suse.cz> <20200527173937.GA17769@nautica>
+ <CAOQ4uxjQXwTo1Ug4jY1X+eBdLj80rEfJ0X3zKRi+L8L_uYSrgQ@mail.gmail.com>
+ <20200528125651.GA12279@nautica> <1590777699518.49838@cea.fr>
+In-Reply-To: <1590777699518.49838@cea.fr>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 30 May 2020 16:07:45 +0300
+Message-ID: <CAOQ4uxgpugScXRLT6jJAAZf_ET+DpmEWoqkSdqCAMEwp+Kezhw@mail.gmail.com>
+Subject: Re: robinhood, fanotify name info events and lustre changelog
+To:     "Quentin.BOUGET@cea.fr" <Quentin.BOUGET@cea.fr>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Jan Kara <jack@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "robinhood-devel@lists.sf.net" <robinhood-devel@lists.sf.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Change the maximum allowed line length to 100 from 80.
+On Fri, May 29, 2020 at 9:41 PM Quentin.BOUGET@cea.fr
+<Quentin.BOUGET@cea.fr> wrote:
 >
-> Miscellanea:
+> Hi,
 >
-> o to avoid unnecessary whitespace changes in files,
->   checkpatch will no longer emit a warning about line length
->   when scanning files unless --strict is also used
-> o Add a bit to coding-style about alignment to open parenthesis
+> Developer of robinhood v4 here,
+>
+> > > > [1] https://github.com/cea-hpc/robinhood/
+>
+> The sources for version 4 live in a separate branch:
+> https://github.com/cea-hpc/robinhood/tree/v4
+>
+> Any feedback is welcome =)
+>
+> I am guessing the most interesting bits for this discussion should be found
+> here:
+> https://github.com/cea-hpc/robinhood/blob/v4/include/robinhood/fsevent.h
+>
 
-I suggest to convert this patch into a patch series with three update step=
-s.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?id=3D86852175b016f0c6873dcbc24b=
-93d12b7b246612#n138
+That is a very well documented API and a valuable resource for me.
 
+Notes for API choices that are aligned with current fanotify plans:
+- The combination of parent fid + object fid without name is never expected
 
-=E2=80=A6
-> +++ b/Documentation/process/coding-style.rst
-> @@ -84,15 +84,22 @@ =E2=80=A6
-=E2=80=A6
-> +=E2=80=A6 and are
-> +are placed =E2=80=A6
+Notes for API choices that are NOT aligned with current fanotify plans:
+- LINK/UNLINK events carry the linked/unlinked object fid
+- XATTR events for inode (not namespace) do not carry parent fid/name
 
-Please avoid a word duplication here.
+This doesn't mean that fanotify -> rbh_fsevent translation is not going to
+be possible.
 
+With fanotify FAN_CREATE event, for example, the parent fid + name
+information should be used by the rbh adapter code to call
+name_to_handle_at(2) and get the created object's file handle.
 
-> +=E2=80=A6 to a function open parenthesis.
+The reason we made this API choice is because fanotify events should
+not be perceived as a sequence of changes that can be followed to
+describe the current state of the filesystem.
+fanotify events should be perceived as a "poll" on the namespace.
+Whenever notified of a change, application should read the current state
+for the filesystem. fanotify events provide "just enough" information, so
+reading the current state of the filesystem is not too expensive.
 
-Wording alternatives:
+> I am not sure it will matter for the rest of the conversation, but just in case:
+>
+>     RobinHood v4 has a notion of a "namespace" xattr (like an xattr, but for
+>     a dentry rather than an inode), it is used it to store things that are only
+>     really tied to the namespace (like the path of an entry). I don't think this
+>     is really relevant here, you can probably ignore it.
+>
+>     Also, RobinHood uses file handles to uniquely identify filesystem entries,
+>     and this is what is stored in a `struct rbh_id`.
+>
 
-+is to align descendants to an open parenthesis of a function call.
+Makes sense.
+When fanotify event FAN_MODIFY reports a change of file size,
+along with parent fid + name, that do not match the parent/name robinhood
+knows about (i.e. because the event is received out of order with rename),
+you may use that information to create rbh_fsevent_ns_xattr event to
+update the path or you may wait for the FAN_MOVE_SELF event that
+should arrive later.
+Up to you.
 
+> > > I couldn't find the documentation for Lustre Changelog format, because
+> > > the name of the feature is not very Google friendly.
+>
+> Yes, this is really unfortunate. For the record, user documentation for Lustre
+> lives at: http://doc.lustre.org/lustre_manual.xhtml
+>
+> Chapter 12.1 deals with "Lustre Changelogs" (not much more there than
+> what Dominique already wrote).
+>
 
-> +These same rules are =E2=80=A6
+Thanks for the link.
 
-+The same rules are applied to function headers with a long argument list.
+> > > There is one critical difference between a changelog and fanotify events.
+> > > fanotify events are delivered a-synchronically and may be delivered out
+> > > of order, so application must not rely on path information to update
+> > > internal records without using fstatat(2) to check the actual state of the
+> > > object in the filesystem.
+>
+> > lustre changelogs are asynchronous but the order is guaranteed so we
+> > might rely on that for robinhood v4,
+>
+> Yes, we do. At least to a certain extent : we at least expect changelog records
+> for a single filesystem entry to be emitted in the order they happened on the
+> FS. I have not really given much thought to how things would work in general
+> if that wasn't true, but I know this is an issue for things that deal with the
+> namespace : https://jira.whamcloud.com/browse/LU-12574
+>
 
+I think we may consider in the future, since renaming directories outside
+of their parent is done in the kernel under a filesystem wide lock, to
+provide a new event FAN_DIR_MOVE which is not merged and not
+re-odered with other FAN_DIR_MOVE events. We may even be able to
+go one step further and say that FAN_DIR_MOVE is a barrier with which
+no event inside the moved dir can be re-ordered, but at the moment,
+there is no such guaranty for any type of event.
 
-Regards,
-Markus
+> > but full path is not computed from
+> > information in the changelogs. Instead the design plan is to have a
+> > process scrub the database for files that got updated since the last
+> > path update and fix paths with fstatat, so I think it might work ; but
+> > that unfortunately hasn't been implemented yet.
+>
+> Not exactly (I am not sure it really matters, so I'll try to be brief).
+>
+> The idea to keep paths in sync with what's in the filesystem is to "tag"
+> entries as we update their name (ie. after a rename). Then a separate
+> process comes in, queries for entries that have that "tag", and updates
+> their path by concatenating their parent's path (if the parents themselves
+> are not "tagged") with the entries' own, up-to-date name. After that, if
+> the entry was a directory, its children are "tagged". I simplified a bit, but
+> that's the idea.
+>
+
+Nice. thanks for explaining that.
+I suppose you need to store the calculated path attribute for things like
+index queries on the database?
+
+> So, to be fair, full paths _are_ computed solely from information in the
+> changelog records, even though it requires a bit of processing on the side.
+> No additional query to the filesystem for that.
+>
+
+As I wrote, that fact that robinhood trusts the information in changelog
+records doesn't mean that information needs to arrive from the kernel.
+The adapter code should use information provided by fanotify events
+then use open_by_handle_at(2) for directory fid to finds its current
+path in the filesystem then feed that information to a robinhood change
+record.
+
+I would be happy to work with you on a POC for adapting fanotify
+test code with robinhood v4, but before I invest time on that, I would
+need to know there is a good chance that people are going to test and
+use robinhood with Linux vfs.
+
+May I ask, what is the reason for embarking on the project to decouple
+robinhood v4 API from Lustre changelog API?
+Is it because you had other fsevent producers in mind?
+Do you have actual users requesting to use robinhood with non-Lustre fs?
+
+Thanks,
+Amir.
