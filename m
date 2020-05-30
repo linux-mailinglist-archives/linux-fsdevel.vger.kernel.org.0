@@ -2,37 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C66E71E8E17
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 08:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3120D1E8E1A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 08:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgE3GD5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 02:03:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39532 "EHLO mail.kernel.org"
+        id S1728404AbgE3GEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 02:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725814AbgE3GD5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 02:03:57 -0400
+        id S1725814AbgE3GEk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 30 May 2020 02:04:40 -0400
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 433992074B;
-        Sat, 30 May 2020 06:03:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19B042074B;
+        Sat, 30 May 2020 06:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590818636;
-        bh=ZjvXFGk6rT4s5wC0wE1lNel4D/QY9srvqLSKGJm/CMQ=;
+        s=default; t=1590818680;
+        bh=f42mP4uZFz68CGLoJzgxTIkgVm0ozHVg79XnQ76VYrw=;
         h=From:To:Cc:Subject:Date:From;
-        b=lrrRsyP3m82WxwlvHO9HOUuF4RzTghWlEE3l0OFetv2TQkg7uhz4TVNe0Bk6xs2VI
-         4CMZL/fywTNgYXdJLGngqdLfOz88VTgM3TcUTvC6d2FVhertFysLnyOoMAIan8eqST
-         bmxOUtL38U5flFgxIvL1i8zsdpWJSVBHNcBujMjM=
+        b=hwAUZ/ckiy8+KY/KQA+ZB0NnCd4BzfTTXTIbUq75mFZmHL/ki9nixoGKsmDjoVexY
+         vLa3tIHIldvD1NjDbp0A8tfmInodKPkv53MjuwqJ3MUf7Qrd/u/szji1LMLgqEjWxx
+         wSzw1gkRdsj2itmgCti97l+5gm1703Q0bmgbo5NQ=
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
+To:     linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Daniel Rosenberg <drosen@google.com>,
         Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Subject: [PATCH] ext4: avoid utf8_strncasecmp() with unstable name
-Date:   Fri, 29 May 2020 23:02:16 -0700
-Message-Id: <20200530060216.221456-1-ebiggers@kernel.org>
+Subject: [PATCH] f2fs: avoid utf8_strncasecmp() with unstable name
+Date:   Fri, 29 May 2020 23:04:18 -0700
+Message-Id: <20200530060418.221707-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,29 +51,29 @@ that may be concurrently modified.
 Fix this by first copying the filename to a stack buffer if needed.
 This way we get a stable snapshot of the filename.
 
-Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
-Cc: <stable@vger.kernel.org> # v5.2+
+Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
+Cc: <stable@vger.kernel.org> # v5.4+
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Daniel Rosenberg <drosen@google.com>
 Cc: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/dir.c | 17 +++++++++++++++++
+ fs/f2fs/dir.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index c654205f648dd..19aef8328bb18 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -675,6 +675,7 @@ static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 44bfc464df787..5c179b72eb8a8 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -1083,6 +1083,7 @@ static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
  	struct qstr qstr = {.name = str, .len = len };
  	const struct dentry *parent = READ_ONCE(dentry->d_parent);
  	const struct inode *inode = READ_ONCE(parent->d_inode);
 +	char strbuf[DNAME_INLINE_LEN];
  
- 	if (!inode || !IS_CASEFOLDED(inode) ||
- 	    !EXT4_SB(inode->i_sb)->s_encoding) {
-@@ -683,6 +684,22 @@ static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
+ 	if (!inode || !IS_CASEFOLDED(inode)) {
+ 		if (len != name->len)
+@@ -1090,6 +1091,22 @@ static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
  		return memcmp(str, name->name, len);
  	}
  
@@ -94,7 +93,7 @@ index c654205f648dd..19aef8328bb18 100644
 +		qstr.name = strbuf;
 +	}
 +
- 	return ext4_ci_compare(inode, name, &qstr, false);
+ 	return f2fs_ci_compare(inode, name, &qstr, false);
  }
  
 -- 
