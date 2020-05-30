@@ -2,185 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB04B1E91C2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 15:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DABF1E91C6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 15:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbgE3Ngr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 09:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728844AbgE3Ngq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 09:36:46 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F2CC03E969;
-        Sat, 30 May 2020 06:36:46 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id j8so2264641iog.13;
-        Sat, 30 May 2020 06:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=/NBbRRa5pl9eVO87iKoBTxygo81Ok3+Xzeg/mVPc/EQ=;
-        b=jfzFHsKnSjzi3p7xhDfMHYc1AeSJ/trFRssnkJ8A/gcb+l2DqxP8MxyQWQOfaRHrmP
-         MdZFppK+Zuwvd/EXRkkCJzWLafKqI96JLac48kk5+bokkrhQm+C9ifO50G7dEc0mUbkp
-         y4znc59j6hPCX9V5G1E0++2LIv/Ut1D8yUflQNlmjBDZ9dpXFWXv96spcQL+XJz2hAZf
-         rJDPeAXhUK5tnjffqGh07aYZ5mbD7W7RwjV0nwYjm2hmg1x24kZUwY4c/oNRDXhuKoWe
-         jssMZzeYRPNY21kOEqy70/0Klm+TtizQdUwykNUhHDh81SaZsNh3lvx8zZR1VE7wX95t
-         brvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=/NBbRRa5pl9eVO87iKoBTxygo81Ok3+Xzeg/mVPc/EQ=;
-        b=ugqYqfnRiT9kERwZc0r0/jB6icoh1Hgn5Y1XQaUSIDa48MDdLbl/oWpWIrpQ2j9ISt
-         MEHhtqN1unI0b08tYGq2Y555ut+cJZtdU+EbGNG0YesrkC5PGExMF9MeWd0KG6QbGv8X
-         4vwzulUAF2Bt3H/WtVoHcJcju7LLL10xRkDS3krvcr4TUKHbK+ywlVuMLItRluFTR1Hc
-         cnZKvWfkmRw/wzUSpjSIIhBrtTcFsKnk/q51hNXinNL5uMPtjOpEtyffplJd3N1pH+Za
-         k2lPZ3IYKS3HHGyqmsxkEFUWzAJ9KJZlsYaCrbC5oK7daUK9XNlzXj3izboRU87rAq8y
-         1RNQ==
-X-Gm-Message-State: AOAM532HC+gDRA6CyFnYpgicmUtPpde+USLPjgzJDNszEpPw2uMQJH7Z
-        p1Ad6pnmFm2voIivUK5lMaVFVYZftwchyQhDHcO8Pe6Dt3E=
-X-Google-Smtp-Source: ABdhPJzG40rHq7dlo3ZJjB6ZQt7oeWmTJW4IpXkErnlgoULYIQxKsHlha1AA5a2OR0O9tdBAPKVFwudCxdRYUqdLzII=
-X-Received: by 2002:a6b:750c:: with SMTP id l12mr11356161ioh.66.1590845806016;
- Sat, 30 May 2020 06:36:46 -0700 (PDT)
+        id S1728875AbgE3Njd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 09:39:33 -0400
+Received: from nautica.notk.org ([91.121.71.147]:57667 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727851AbgE3Njc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 30 May 2020 09:39:32 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id BD79DC009; Sat, 30 May 2020 15:39:23 +0200 (CEST)
+Date:   Sat, 30 May 2020 15:39:08 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     "Quentin.BOUGET@cea.fr" <Quentin.BOUGET@cea.fr>,
+        Jan Kara <jack@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "robinhood-devel@lists.sf.net" <robinhood-devel@lists.sf.net>
+Subject: Re: robinhood, fanotify name info events and lustre changelog
+Message-ID: <20200530133908.GA5969@nautica>
+References: <20200527172143.GB14550@quack2.suse.cz>
+ <20200527173937.GA17769@nautica>
+ <CAOQ4uxjQXwTo1Ug4jY1X+eBdLj80rEfJ0X3zKRi+L8L_uYSrgQ@mail.gmail.com>
+ <20200528125651.GA12279@nautica>
+ <1590777699518.49838@cea.fr>
+ <CAOQ4uxgpugScXRLT6jJAAZf_ET+DpmEWoqkSdqCAMEwp+Kezhw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
- <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
-In-Reply-To: <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sat, 30 May 2020 15:36:37 +0200
-Message-ID: <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgpugScXRLT6jJAAZf_ET+DpmEWoqkSdqCAMEwp+Kezhw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Time to experience with ZRAM :-).
+Answering what I can until Quentin chips back in.
 
-I switched over from swap-file to zramswap.
+Amir Goldstein wrote on Sat, May 30, 2020:
+> Nice. thanks for explaining that.
+> I suppose you need to store the calculated path attribute for things like
+> index queries on the database?
 
-And I can definitely say, my last kernel w/o your patchset does not
-show the symptoms.
+Either querying for a subtree or simply printing the path (rbh-find
+would print path by default, like find does)
 
-# cat systemd-analyze-time_5.7.0-rc7-2-amd64-clang_2nd-try.txt
-Startup finished in 6.129s (kernel) + 44.192s (userspace) = 50.322s
-graphical.target reached after 44.168s in userspace
+> > So, to be fair, full paths _are_ computed solely from information in the
+> > changelog records, even though it requires a bit of processing on the side.
+> > No additional query to the filesystem for that.
+> 
+> As I wrote, that fact that robinhood trusts the information in changelog
+> records doesn't mean that information needs to arrive from the kernel.
+> The adapter code should use information provided by fanotify events
+> then use open_by_handle_at(2) for directory fid to finds its current
+> path in the filesystem then feed that information to a robinhood change
+> record.
 
-# cat systemd-analyze-blame_5.7.0-rc7-2-amd64-clang_2nd-try.txt
-24.050s udisks2.service
-23.711s accounts-daemon.service
-18.615s dev-sdc2.device
-17.119s polkit.service
-16.980s avahi-daemon.service
-16.879s NetworkManager.service
-16.112s rtkit-daemon.service
-15.126s switcheroo-control.service
-15.117s wpa_supplicant.service
-15.105s systemd-logind.service
-14.475s NetworkManager-wait-online.service
-14.258s smartmontools.service
-13.161s zramswap.service
- 9.522s rsyslog.service
- 8.337s gpm.service
- 6.026s packagekit.service
- 5.871s ModemManager.service
- 5.746s networking.service
- 5.383s e2scrub_reap.service
- 3.960s systemd-udevd.service
- 3.396s apparmor.service
- 3.231s exim4.service
- 2.795s systemd-journal-flush.service
- 2.359s alsa-restore.service
- 2.186s systemd-rfkill.service
- 1.878s atd.service
- 1.164s keyboard-setup.service
- 1.098s bluetooth.service
- 1.089s systemd-tmpfiles-setup.service
- 1.021s pppd-dns.service
-  968ms systemd-backlight@backlight:intel_backlight.service
-  964ms upower.service
-  937ms binfmt-support.service
-  873ms systemd-modules-load.service
-  849ms systemd-sysusers.service
-  845ms systemd-journald.service
-  683ms systemd-timesyncd.service
-  676ms modprobe@drm.service
-  641ms systemd-udev-trigger.service
-  620ms dev-hugepages.mount
-  618ms dev-mqueue.mount
-  618ms sys-kernel-debug.mount
-  617ms sys-kernel-tracing.mount
-  501ms ifupdown-wait-online.service
-  434ms systemd-sysctl.service
-  419ms systemd-random-seed.service
-  413ms systemd-tmpfiles-setup-dev.service
-  405ms user@1000.service
-  389ms systemd-remount-fs.service
-  383ms console-setup.service
-  301ms kmod-static-nodes.service
-  181ms proc-sys-fs-binfmt_misc.mount
-  174ms systemd-update-utmp.service
-   85ms systemd-user-sessions.service
-   22ms user-runtime-dir@1000.service
-   19ms systemd-update-utmp-runlevel.service
-    5ms ifupdown-pre.service
-    4ms sys-fs-fuse-connections.mount
+I can agree with that - it's not because for lustre we made the decision
+to be able to run without querying the filesystem at all that it has to
+hold true for all type of inputs.
 
-[ /etc/zramswap.conf ]
+> I would be happy to work with you on a POC for adapting fanotify
+> test code with robinhood v4, but before I invest time on that, I would
+> need to know there is a good chance that people are going to test and
+> use robinhood with Linux vfs.
+>
+> Do you have actual users requesting to use robinhood with non-Lustre
+> fs?
 
-ZRAM_SIZE_PERCENT=20
-# ZSTD support for ZRAM and ZSWAP requires Linux >= 5.7-rc+. -dileks
-ZRAM_COMPRESSION_ALGO=zstd
+I would run it at home, but that isn't much :D
+As I wrote previously we have users for large nfs shares out of lustre,
+but I honestly don't think there will be much use for local filesystems
+at least in the short term.
 
-[ /etc/fstab ]
+Filesystem indexers like tracker[1] or similar would definitely get much
+more use for that; from an objective point of view I wouldn't suggest
+you spend time on robinhood for this: local filesytems are rarely large
+enough to warrant using something like robinhood, and without something
+like fanotify we wouldn't be efficient for a local disk with hundreds of
+millions of files anyway because of the prohibitive rescan cost - so
+it's a bit like chicken and egg maybe, I don't know, but if you want
+many users to test different configurations I wouldn't recommend
+robinhood (OTOH, we run CI tests so would be happy to add that to the
+tests once it's available on vanilla kernels; but that's still not real
+users)
 
-# /etc/fstab: static file system information.
-#
-# Use 'blkid' to print the universally unique identifier for a
-# device; this may be used with UUID= as a more robust way to name devices
-# that works even if disks are added and removed. See fstab(5).
-#
-# <file system> || <mount point> || <type> || <options> || <dump> || <pass>
-#
-# Root-FS (here: /dev/sdc2)
-UUID=<myUUID>       /       ext4    errors=remount-ro       0       1
-# SWAP (here: /dev/zram0)
-# Zram-based swap (compressed RAM block devices), for details see
-zramswap.service and zramswap.conf
+[1] https://wiki.gnome.org/Projects/Tracker
 
-# dmesg | egrep 'zram|zswap'
-[    1.041958] zswap: loaded using pool zstd/zbud
-[   29.569355] zram: Added device: zram0
-[   29.581631] zram0: detected capacity change from 0 to 1647824896
-[   30.562279] Adding 1609200k swap on /dev/zram0.  Priority:100
-extents:1 across:1609200k SSFS
 
-# cat /sys/devices/virtual/block/zram0/comp_algorithm
-lzo lzo-rle lz4 lz4hc [zstd]
+> May I ask, what is the reason for embarking on the project to decouple
+> robinhood v4 API from Lustre changelog API?
+> Is it because you had other fsevent producers in mind?
 
-# swapon --show
-NAME       TYPE      SIZE USED PRIO
-/dev/zram0 partition 1,5G   0B  100
+I've been planning to at least add some recursive-inotifywatch a
+subfolder at least (like watchman does) before these new fanotify events
+came up, so I might be partly to blame for that.
 
-# cat /proc/swaps
-Filename                                Type            Size    Used    Priority
-/dev/zram0                              partition       1609200 0       100
+There also are advantages for lustre though; the point is to be able to
+ingest changelogs directly with some daemon (it's only at proof of
+concept level for v4 at this point), but also to split the load by
+involving multiple lustre clients.
+So you would get a pool of lustre clients to read changelogs, a pool of
+lustre clients to stat files as required to enrich the fsevents (file
+size etc), and a pool of servers to read fsevents and commit changes to
+the database (this part is still at the design level afaik)
 
-If you have any ideas let me know.
 
-Ah, I see there is async-buffered.6.
-
-- Sedat -
-
-[1] https://aur.archlinux.org/packages/zramswap/
-[2] https://aur.archlinux.org/cgit/aur.git/tree/zramswap.conf?h=zramswap
-[3] https://aur.archlinux.org/cgit/aur.git/tree/zramswap.service?h=zramswap
+Hope this all makes sense,
+-- 
+Dominique
