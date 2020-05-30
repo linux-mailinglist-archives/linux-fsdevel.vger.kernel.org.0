@@ -2,145 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 300491E8F13
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 09:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D081E9068
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 May 2020 12:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgE3HjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 03:39:23 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3292 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbgE3HjX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 03:39:23 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ed20d9e0000>; Sat, 30 May 2020 00:39:11 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sat, 30 May 2020 00:39:22 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sat, 30 May 2020 00:39:22 -0700
-Received: from [10.2.56.10] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 30 May
- 2020 07:39:22 +0000
-Subject: Re: [PATCH v2] orangefs: convert get_user_pages() -->
- pin_user_pages()
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        <devel@lists.orangefs.org>, <linux-fsdevel@vger.kernel.org>
-References: <20200523035909.418683-1-jhubbard@nvidia.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <89244e74-f619-e515-083a-3bf2586fa5c3@nvidia.com>
-Date:   Sat, 30 May 2020 00:39:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1728071AbgE3KHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 06:07:12 -0400
+Received: from mout.gmx.net ([212.227.17.22]:49985 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725813AbgE3KHM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 30 May 2020 06:07:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1590833230;
+        bh=D2JrPHXwDEJuElh5m0kYfBwMDJGswMtPK54BKXIUpMg=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject;
+        b=hYUQkGmgJ2CXvt/gFj6K1pX3UOHcONB6etBui/SAo/6Vh7Vd91L9rDnlsolTHLJdB
+         0xD4bGmXZTPtnIMTonEmA5z9vZLBAfPgqy6nnYIgltJ+6CgZaprwYJ2Cwvm9jLLp0k
+         V1baakosYHvGj6t/1v74zIueOElTqy6k67X87W4I=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530.fritz.box ([92.116.167.47]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MDQeU-1joIKh3LrK-00AYKx; Sat, 30
+ May 2020 12:07:09 +0200
+Date:   Sat, 30 May 2020 12:07:07 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Laurent Vivier <laurent@vivier.eu>
+Subject: [PATCH v2] fs/signalfd.c: Fix inconsistent return codes for signalfd4
+Message-ID: <20200530100707.GA10159@ls3530.fritz.box>
 MIME-Version: 1.0
-In-Reply-To: <20200523035909.418683-1-jhubbard@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1590824351; bh=wcBfOkMknkl4oXGX1PfJTteciHFn5HKiXybtSk4Mz1c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=cT6rr3oKxlKszzXLfMo4tLjt4eyFyHuy94doVPN3x2vZRpzuNqRwqWwYrjcQPekti
-         ajgZV5hipGC0yaYCGarr2qtD+DvUKAa+HLVvH1oBhyxvvyZKk1FOYyOjCHpnTeLR1Y
-         05P7hUmXT7MjcS8FXC2kU10aaEY0IgKjr+vyuLPRkbyPPNoGw6jhVSe++NtgAE/EuK
-         9DTcelNp+RkTLRs5VS5MCM0JON5CK9OH5UQj+kgSRGJSeiIoNiQFRrqDCHoep8iPek
-         xCAISw30vhYrdE6fV9QXw9eN58+hI0whp1adIANqjdrgXQyBLN3U29HCPhnRvHWS7k
-         SbDtZQrUgeKHQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:8O2glHu0d01VKLhpLooltHX2Ri6pSGmEWHFdSzrSx+4xlXHns7S
+ I0xeRdVUOHNMgoBeAd8BBGIYvDhZU+nXnEcBPKcUKDNsth0QP2T2Do6UztrW0Fj8oyLR+I3
+ 4SCQLmWr1RWwTaE9tpnMLdW4GsxgEifDw9PagCJY1I3sDnKSZWrRvJjqmlYNnWkeQf5uruz
+ cvAFAxZhgSjTD1jlxVZlA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/VMxzfcx4hI=:jDPWzc+4UW73v8w8mAuGLf
+ F2MVWYuRp5MKlqgoFMCpJQMXNzlcooEiyKk0+xyNjD1UjPaoZphNixNUeP5+lgXzP4UVNLTps
+ LZ8IAPXCJSxkUJlNwN7swuHMvcSzMtScKKP9K27IC2sgSJCLqvPCQqsfztMZh1CyG0Ojgb1in
+ Hu4f3Lu8HifWM2v/93zbMZul5t8V8JIejqezkzytWrNEVii+Hn8YGMoRwlLZCIrHKr6pjT2T+
+ UYYVv3B7Afx7N1KBRNOzZAq5Cq43B2WYxOMxD0j8B3Y/OBXb26KTJsvvsvuiiRls68k9JEbVS
+ dzi3Y6aPJwfTKuECCxOrNxtQUOuS5RaRyJP9UDf2pnq8xh94AvxuP+/IXAUXzkh0wbUlC+Eaw
+ QpPTGobDVCfGIcO9+MKwQbTRMl+0qtKmsM0qGoGxrVE0H+JBf2tRjxQxULZfj+AZNurDrZJUX
+ s67pk44/JE7y7NdwlRTopbGIb82vyBluFaNytz2mnNyKWWM8kK101cuyYEzYtGDKobylt6AOz
+ UoxpsQmeeB1R3l3ynLKp1CxmqFGyBNpn27HUSrT/LzyvmrGvWiu/D423bf8nAR/OII6QT7spJ
+ xXPzZNqgSScnjmBJmxQA8wkSjJ9O8gIB0GmYYPxNBbKBIPgExHJPGBmJbpvRxbwPbBmlPipfX
+ 8e4R7pXqbuOSGF6Ovc/GjVOIWpbTvvhJdvQ6qKo02YeEa4Irjp6/gt+v0TiIOXfPO3AwDya1Z
+ /ZOkp3CmmT8IUhU/P3eaVeIX5qvVdyKDOPPVIW6z9uj2eBc6caAhVQa9pPTBY1e1Oxnhm4fSv
+ mao1/rIEdK2gjXWI3IkjX3RyxkBrmHgvHzqDHgmn9jfFMfVTHow9CVcW0wjtm/blRj/JTogeA
+ 6COLW7x2DvtUd5Lk1ScZfBi6/bKmYIaleOHEwfwuhYMlTunMnk1UrzteUC2XanuLnKTJcsxu7
+ muHH6uiNQRTnvEmJttEVKs75AaYllyT8vUfE17k9P+YnqZbMTMS0TkFZL8g4U6jiBrFR/GZs9
+ X6rsWJK4vVYCqcgWdQ8JoYubDZ9esTNJ/pZ88v4Qd6YVwJf2oIib8/9Yn7pr6XAQfVSD9l/rx
+ CJKCci3vSI8t4Qxbha6HZcwaBKc6xbuUA6pP9BEkB4F8LZEpUp0szHH8s2WPU1yLemefyLM9i
+ 2djr5urDrk6zjU6nIjshXTEWK7tA1v9Fn6pttEAVcIYi24jTMWkWYHpwYGNXfBBRtknfwX2j4
+ WAQGZ0jNVkEliDGNU
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-05-22 20:59, John Hubbard wrote:
-> This code was using get_user_pages*(), in a "Case 1" scenario
-> (Direct IO), using the categorization from [1]. That means that it's
-> time to convert the get_user_pages*() + put_page() calls to
-> pin_user_pages*() + unpin_user_pages() calls.
-> 
-> There is some helpful background in [2]: basically, this is a small
-> part of fixing a long-standing disconnect between pinning pages, and
-> file systems' use of those pages.
-> 
-> [1] Documentation/core-api/pin_user_pages.rst
-> 
-> [2] "Explicit pinning of user-space pages":
->      https://lwn.net/Articles/807108/
-> 
-> Cc: Mike Marshall <hubcap@omnibond.com>
-> Cc: Martin Brandenburg <martin@omnibond.com>
-> Cc: devel@lists.orangefs.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Hi,
-> 
-> Note that I have only compile-tested this patch, although that does
-> also include cross-compiling for a few other arches.
+The kernel signalfd4() syscall returns different error codes when called
+either in compat or native mode. This behaviour makes correct emulation in=
+ qemu
+and testing programs like LTP more complicated.
 
-An update on the run-time testing: Just now, I got basic orangefs tests
-running in xfstests, with this patch applied, and it all looks normal.
+Fix the code to always return -in both modes- EFAULT for unaccessible user
+memory, and EINVAL when called with an invalid signal mask.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Signed-off-by: Helge Deller <deller@gmx.de>
 
-> 
-> Changes since v1 [3]: correct the commit description, so that
-> it refers to "Case 1" instead of "Case 2".
-> 
-> 
-> [3] https://lore.kernel.org/r/20200518060139.2828423-1-jhubbard@nvidia.com
-> 
-> thanks,
-> John Hubbard
-> NVIDIA
-> 
->   fs/orangefs/orangefs-bufmap.c | 9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-> index 2bb916d68576..538e839590ef 100644
-> --- a/fs/orangefs/orangefs-bufmap.c
-> +++ b/fs/orangefs/orangefs-bufmap.c
-> @@ -168,10 +168,7 @@ static DEFINE_SPINLOCK(orangefs_bufmap_lock);
->   static void
->   orangefs_bufmap_unmap(struct orangefs_bufmap *bufmap)
->   {
-> -	int i;
-> -
-> -	for (i = 0; i < bufmap->page_count; i++)
-> -		put_page(bufmap->page_array[i]);
-> +	unpin_user_pages(bufmap->page_array, bufmap->page_count);
->   }
->   
->   static void
-> @@ -268,7 +265,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
->   	int offset = 0, ret, i;
->   
->   	/* map the pages */
-> -	ret = get_user_pages_fast((unsigned long)user_desc->ptr,
-> +	ret = pin_user_pages_fast((unsigned long)user_desc->ptr,
->   			     bufmap->page_count, FOLL_WRITE, bufmap->page_array);
->   
->   	if (ret < 0)
-> @@ -280,7 +277,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
->   
->   		for (i = 0; i < ret; i++) {
->   			SetPageError(bufmap->page_array[i]);
-> -			put_page(bufmap->page_array[i]);
-> +			unpin_user_page(bufmap->page_array[i]);
->   		}
->   		return -ENOMEM;
->   	}
-> 
+=2D--
+Changelog v2:
+- Rephrased commit message.
+
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 44b6845b071c..5b78719be445 100644
+=2D-- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -314,9 +314,10 @@ SYSCALL_DEFINE4(signalfd4, int, ufd, sigset_t __user =
+*, user_mask,
+ {
+ 	sigset_t mask;
+
+-	if (sizemask !=3D sizeof(sigset_t) ||
+-	    copy_from_user(&mask, user_mask, sizeof(mask)))
++	if (sizemask !=3D sizeof(sigset_t))
+ 		return -EINVAL;
++	if (copy_from_user(&mask, user_mask, sizeof(mask)))
++		return -EFAULT;
+ 	return do_signalfd4(ufd, &mask, flags);
+ }
+
+@@ -325,9 +326,10 @@ SYSCALL_DEFINE3(signalfd, int, ufd, sigset_t __user *=
+, user_mask,
+ {
+ 	sigset_t mask;
+
+-	if (sizemask !=3D sizeof(sigset_t) ||
+-	    copy_from_user(&mask, user_mask, sizeof(mask)))
++	if (sizemask !=3D sizeof(sigset_t))
+ 		return -EINVAL;
++	if (copy_from_user(&mask, user_mask, sizeof(mask)))
++		return -EFAULT;
+ 	return do_signalfd4(ufd, &mask, 0);
+ }
 
