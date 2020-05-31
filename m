@@ -2,261 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E27FF1E9611
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 09:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 785151E9692
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 11:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbgEaHMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 May 2020 03:12:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52914 "EHLO
+        id S1727862AbgEaJa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 May 2020 05:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728411AbgEaHMx (ORCPT
+        with ESMTP id S1725813AbgEaJa0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 May 2020 03:12:53 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FCDC05BD43;
-        Sun, 31 May 2020 00:12:52 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id y5so3665033iob.12;
-        Sun, 31 May 2020 00:12:52 -0700 (PDT)
+        Sun, 31 May 2020 05:30:26 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10583C061A0E;
+        Sun, 31 May 2020 02:30:26 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id s10so2128545pgm.0;
+        Sun, 31 May 2020 02:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=ey0Mu/77gCM8lwA4qoVtAlYPuEJOvh0eqiebV8Pkns4=;
-        b=DjaUH2Dmc/76nG9XZN6JAFTxvH9L/prwrmYrRQtn2KWA1TALZJe7+T9qMsb7nsJzKN
-         RIu77d5c3Uh9TZL/kljzuI2WZvNort7VSoj4KwZ3TEXSQWvRkg/o07e+V6/xJa0LQ6UI
-         WdunpR+7cMmETgC2gEUgjTh1UemW+/r8t7q3NcwTeEMtjwQXH5DshQtoTCNZ29tIeshO
-         e45pEogvOTCjnuT5ND58BujRDFtufTgFg8RxFKZYy2DDiFbOAVlyqGwMUQhnKM+b6jky
-         IUXVIS8s6Kz9AvivswCAqQNJhwgW1KrsoTahaqwOauP0pUqc/k0ecE1HpOlLBqJyC+m7
-         HRRw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VAG8TaT+2P5xmIws2CpHpkpVUo5ktRCdXi0mFy5w2p0=;
+        b=I/amNDxUiEx15hrLjE/jkQEp4cTYoUQcRshnczYAQ3YcbTg1qVSvSWpczx5zDGXWN0
+         IMfLe8KDoKvT4diDZ7TWFJ5czYX2Z6SctkNDgydq58GLXEv8skcJHUVkcbApMEdvtdhR
+         nF92za3zy5AKTzKq+7Kaj1o2LIzcd/aSRw53y6BbqK83S46/OWYPlgHD3PwvTtH1dqmT
+         FVq7za7ZlauCspMkYulhc5AadzBX6+LLNGRMdlxxFRINwiepodfsViAKAr4ZgKWkQ/el
+         n8WyyFgEcViOqWF5CsziMB05jZ+8S1Th8vKGYTC77SiXSnOHHLWkLV2fEfGiXk18ZPsv
+         RyoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=ey0Mu/77gCM8lwA4qoVtAlYPuEJOvh0eqiebV8Pkns4=;
-        b=CK9+kzSWQlOuspBJACaXyOT7EAbF1JEJm8bxJ4ne8Vty03dmkzfe/8AvaJKxp3GNiq
-         OxggDPsC7Ib4EfYGy8ujX7HSsc0xKeje4oZgmHFM8yFyw24P+02vom/r98UHaIEpFnv/
-         s2Rj1bZWysJxCnEWXf/kksBt/fnL6vwei9JSVJ2vLLXf0BDlU6o/bqfukGrCuXVnq2oG
-         l2At3QOIMoJMBfUuR7qFQO4aIWQsK8llLtS8AARUovNTQhvYPkrLdNtS8cyWi0oyQijk
-         1htZQwvxvWvBoD3FUHDf1UX4GnNXDGT3KhyYu9NBKt+TOVyd5oTFGVxdR0opH3xhMfDT
-         NaWA==
-X-Gm-Message-State: AOAM533kjt02ygjAV0pqm6xWcBHmlbqNV4jWa/+jr2ck6jnMZALzghmu
-        pPi82H8oJOJLQkyo8uCvQ/TzT04rNFaEUEw2JJI=
-X-Google-Smtp-Source: ABdhPJw+o/WIatmw938sM1WRneZ+OsKkPqo/jZchMT6rzOFEikxQv/c1LOPQgn3SrLLRQQd2EF/zpBbFVkuMRjdgOQg=
-X-Received: by 2002:a05:6602:2dca:: with SMTP id l10mr13834604iow.163.1590909172113;
- Sun, 31 May 2020 00:12:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VAG8TaT+2P5xmIws2CpHpkpVUo5ktRCdXi0mFy5w2p0=;
+        b=Vui5hkxxtDZrlO3HcDIg1pAAGy6wyQQCB4ZOW96Yh020wJBa69oio8yWOf+Kwk3Ppp
+         GQ5aAJHnGAw1+BZ7q4mVNxhZYB63Z5nB/HufDYnsbS1Bk1eeno6S5l/2Px3egOJpUTpR
+         p2IooBXL4eiabpyfso4l0R68YIO9Ym5g51NiRmAhkeROiGIxJ84afIBwr+Afa7calexo
+         2YO2lwsoiCsWkXnZELvWmsTFPbv1DASFVwoEna3zqXxXnoZwZ7WvvSMXBoHbIVU+mpjS
+         GAGCiBe7N0fhRdKzGicnYiE8Lstigi/Q+xR5lFVdPDgb8M3N64jGPfSSqKwMJerscp8i
+         Z64Q==
+X-Gm-Message-State: AOAM532F44weKWburVTVujVtRKhXJudr2RjyHFzdpDsae3IzTdjamNcf
+        SUT6cSyFFQUZpAMupyYge8wU/zH4otw=
+X-Google-Smtp-Source: ABdhPJztSP45xopxdIcL3PtHIXXcghobYIDNgGtCH7eaeVXXAyE5/jvuyUHxW5iiIIoRn6pkAOeITg==
+X-Received: by 2002:a62:1c93:: with SMTP id c141mr16209862pfc.289.1590917424454;
+        Sun, 31 May 2020 02:30:24 -0700 (PDT)
+Received: from dc803.flets-west.jp ([2404:7a87:83e0:f800:181d:bb76:cc02:958c])
+        by smtp.gmail.com with ESMTPSA id q44sm4538436pja.29.2020.05.31.02.30.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 May 2020 02:30:23 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4 v4] exfat: add boot region verification
+Date:   Sun, 31 May 2020 18:30:17 +0900
+Message-Id: <20200531093017.12318-1-kohada.t2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
- <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
- <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
- <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
- <230d3380-0269-d113-2c32-6e4fb94b79b8@kernel.dk> <CA+icZUXxmOA-5+dukCgxfSp4eVHB+QaAHO6tsgq0iioQs3Af-w@mail.gmail.com>
-In-Reply-To: <CA+icZUXxmOA-5+dukCgxfSp4eVHB+QaAHO6tsgq0iioQs3Af-w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sun, 31 May 2020 09:12:46 +0200
-Message-ID: <CA+icZUV4iSjL8=wLA3qd1c5OQHX2s1M5VKj2CmJoy2rHmzSVbQ@mail.gmail.com>
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 31, 2020 at 9:04 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
-> On Sun, May 31, 2020 at 3:57 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 5/30/20 12:57 PM, Sedat Dilek wrote:
-> > > Here are the numbers with your patchset:
-> > >
-> > > # cat systemd-analyze-time_5.7.0-rc7-4-amd64-clang_2nd-try.txt
-> > > Startup finished in 7.229s (kernel) + 1min 18.304s (userspace) =3D 1m=
-in 25.534s
-> > > graphical.target reached after 1min 18.286s in userspace
-> >
-> > Can you see if this makes a difference?
-> >
-> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> > index c296463c15eb..ccb895f911b1 100644
-> > --- a/include/linux/blk_types.h
-> > +++ b/include/linux/blk_types.h
-> > @@ -374,8 +374,7 @@ enum req_flag_bits {
-> >  #define REQ_INTEGRITY          (1ULL << __REQ_INTEGRITY)
-> >  #define REQ_FUA                        (1ULL << __REQ_FUA)
-> >  #define REQ_PREFLUSH           (1ULL << __REQ_PREFLUSH)
-> > -#define REQ_RAHEAD             \
-> > -       ((1ULL << __REQ_RAHEAD) | (1ULL << __REQ_NOWAIT))
-> > +#define REQ_RAHEAD             (1ULL << __REQ_RAHEAD)
-> >  #define REQ_BACKGROUND         (1ULL << __REQ_BACKGROUND)
-> >  #define REQ_NOWAIT             (1ULL << __REQ_NOWAIT)
-> >  #define REQ_CGROUP_PUNT                (1ULL << __REQ_CGROUP_PUNT)
-> >
->
-> Looks good!
->
-> With your patch I now get...
->
-> # cat systemd-analyze-time_5.7.0-rc7-6-amd64-clang.txt
-> Startup finished in 6.199s (kernel) + 45.143s (userspace) =3D 51.343s
-> graphical.target reached after 45.123s in userspace
->
-> # cat systemd-analyze-blame_5.7.0-rc7-6-amd64-clang.txt
-> 25.029s udisks2.service
-> 24.582s accounts-daemon.service
-> 19.257s dev-sdc2.device
-> 18.016s polkit.service
-> 17.857s avahi-daemon.service
-> 17.730s NetworkManager.service
-> 17.433s rtkit-daemon.service
-> 16.558s switcheroo-control.service
-> 16.547s wpa_supplicant.service
-> 16.538s systemd-logind.service
-> 16.078s smartmontools.service
-> 14.982s fwupd-refresh.service
-> 14.580s NetworkManager-wait-online.service
-> 13.630s zramswap.service
-> 11.286s fwupd.service
->  8.153s rsyslog.service
->  6.858s gpm.service
->  6.835s e2scrub_reap.service
->  6.449s ModemManager.service
->  6.439s networking.service
->  5.881s packagekit.service
->  3.696s systemd-udevd.service
->  3.322s apparmor.service
->  3.277s exim4.service
->  2.910s alsa-restore.service
->  1.611s systemd-tmpfiles-setup.service
->  1.540s bluetooth.service
->  1.448s systemd-journal-flush.service
->  1.353s keyboard-setup.service
->  1.322s atd.service
->  1.239s systemd-modules-load.service
->  1.216s binfmt-support.service
->  1.060s modprobe@drm.service
->   994ms systemd-journald.service
->   983ms upower.service
->   937ms systemd-sysusers.service
->   914ms ifupdown-wait-online.service
->   904ms pppd-dns.service
->   710ms systemd-udev-trigger.service
->   666ms dev-hugepages.mount
->   650ms dev-mqueue.mount
->   649ms sys-kernel-debug.mount
->   647ms sys-kernel-tracing.mount
->   607ms console-setup.service
->   590ms systemd-tmpfiles-setup-dev.service
->   570ms systemd-timesyncd.service
->   508ms systemd-random-seed.service
->   461ms systemd-backlight@backlight:intel_backlight.service
->   433ms user@1000.service
->   422ms systemd-remount-fs.service
->   365ms systemd-sysctl.service
->   279ms kmod-static-nodes.service
->   246ms proc-sys-fs-binfmt_misc.mount
->   202ms systemd-rfkill.service
->   130ms systemd-user-sessions.service
->   104ms systemd-update-utmp.service
->    25ms user-runtime-dir@1000.service
->    14ms systemd-update-utmp-runlevel.service
->     6ms sys-fs-fuse-connections.mount
->     4ms ifupdown-pre.service
->
-> # cat systemd-analyze-critical-chain_5.7.0-rc7-6-amd64-clang.txt
-> The time when unit became active or started is printed after the "@" char=
-acter.
-> The time the unit took to start is printed after the "+" character.
->
-> graphical.target @45.123s
-> =E2=94=94=E2=94=80multi-user.target @45.122s
->   =E2=94=94=E2=94=80exim4.service @41.842s +3.277s
->     =E2=94=94=E2=94=80network-online.target @41.840s
->       =E2=94=94=E2=94=80NetworkManager-wait-online.service @27.259s +14.5=
-80s
->         =E2=94=94=E2=94=80NetworkManager.service @9.522s +17.730s
->           =E2=94=94=E2=94=80dbus.service @9.514s
->             =E2=94=94=E2=94=80basic.target @9.328s
->               =E2=94=94=E2=94=80sockets.target @9.327s
->                 =E2=94=94=E2=94=80dbus.socket @9.327s
->                   =E2=94=94=E2=94=80sysinit.target @9.202s
->
-> =E2=94=94=E2=94=80systemd-backlight@backlight:intel_backlight.service @21=
-.927s +461ms
->                       =E2=94=94=E2=94=80system-systemd\x2dbacklight.slice=
- @21.925s
->                         =E2=94=94=E2=94=80system.slice @2.529s
->                           =E2=94=94=E2=94=80-.slice @2.529s
->
-> Will you send a separate patch on this?
->
-> Feel free to add:
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->
-> My kernel-config and dmesg-output are attached.
->
-> Thanks Jens!
->
+Add Boot-Regions verification specified in exFAT specification.
+Note that the checksum type is strongly related to the raw structure,
+so the'u32 'type is used to clarify the number of bits.
 
-2nd-try (reboot into system with activated WLAN before startup)...
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+---
+Changes in v2:
+ - rebase with patch 'optimize dir-cache' applied
+ - just print a warning when invalid exboot-signature detected
+ - print additional information when invalid boot-checksum detected
+Changes in v3:
+ - based on '[PATCH 2/4 v3] exfat: separate the boot sector analysis'
+Changes in v4:
+ - fix type of p_sig/p_chksum to __le32
 
-# systemd-analyze --no-pager time
-Startup finished in 6.044s (kernel) + 41.370s (userspace) =3D 47.414s
-graphical.target reached after 40.431s in userspace
+ fs/exfat/exfat_fs.h |  1 +
+ fs/exfat/misc.c     | 14 +++++++++++++
+ fs/exfat/super.c    | 50 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 65 insertions(+)
 
-# systemd-analyze --no-pager blame | head -20
-24.674s udisks2.service
-24.348s accounts-daemon.service
-19.504s dev-sdc2.device
-18.677s polkit.service
-18.283s avahi-daemon.service
-18.231s NetworkManager.service
-17.918s rtkit-daemon.service
-16.948s switcheroo-control.service
-16.932s wpa_supplicant.service
-16.928s systemd-logind.service
-15.335s smartmontools.service
-14.063s zramswap.service
-11.507s NetworkManager-wait-online.service
-11.279s rsyslog.service
- 7.490s gpm.service
- 6.556s packagekit.service
- 6.506s networking.service
- 6.446s e2scrub_reap.service
- 5.404s ModemManager.service
- 3.329s systemd-udevd.service
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 9673e2d31045..eebbe5a84b2b 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -514,6 +514,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ 		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
+ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 		unsigned short chksum, int type);
++u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags);
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index ab7f88b1f6d3..b82d2dd5bd7c 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -151,6 +151,20 @@ unsigned short exfat_calc_chksum_2byte(void *data, int len,
+ 	return chksum;
+ }
+ 
++u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type)
++{
++	int i;
++	u8 *c = (u8 *)data;
++
++	for (i = 0; i < len; i++, c++) {
++		if (unlikely(type == CS_BOOT_SECTOR &&
++			     (i == 106 || i == 107 || i == 112)))
++			continue;
++		chksum = ((chksum << 31) | (chksum >> 1)) + *c;
++	}
++	return chksum;
++}
++
+ void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync)
+ {
+ 	set_bit(EXFAT_SB_DIRTY, &EXFAT_SB(sb)->s_state);
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 6a1330be5a9a..405717e4e3ea 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -491,6 +491,50 @@ static int exfat_read_boot_sector(struct super_block *sb)
+ 	return 0;
+ }
+ 
++static int exfat_verify_boot_region(struct super_block *sb)
++{
++	struct buffer_head *bh = NULL;
++	u32 chksum = 0;
++	__le32 *p_sig, *p_chksum;
++	int sn, i;
++
++	/* read boot sector sub-regions */
++	for (sn = 0; sn < 11; sn++) {
++		bh = sb_bread(sb, sn);
++		if (!bh)
++			return -EIO;
++
++		if (sn != 0 && sn <= 8) {
++			/* extended boot sector sub-regions */
++			p_sig = (__le32 *)&bh->b_data[sb->s_blocksize - 4];
++			if (le32_to_cpu(*p_sig) != EXBOOT_SIGNATURE)
++				exfat_warn(sb, "Invalid exboot-signature(sector = %d): 0x%08x",
++					   sn, le32_to_cpu(*p_sig));
++		}
++
++		chksum = exfat_calc_chksum32(bh->b_data, sb->s_blocksize,
++			chksum, sn ? CS_DEFAULT : CS_BOOT_SECTOR);
++		brelse(bh);
++	}
++
++	/* boot checksum sub-regions */
++	bh = sb_bread(sb, sn);
++	if (!bh)
++		return -EIO;
++
++	for (i = 0; i < sb->s_blocksize; i += sizeof(u32)) {
++		p_chksum = (__le32 *)&bh->b_data[i];
++		if (le32_to_cpu(*p_chksum) != chksum) {
++			exfat_err(sb, "Invalid boot checksum (boot checksum : 0x%08x, checksum : 0x%08x)",
++				  le32_to_cpu(*p_chksum), chksum);
++			brelse(bh);
++			return -EINVAL;
++		}
++	}
++	brelse(bh);
++	return 0;
++}
++
+ /* mount the file system volume */
+ static int __exfat_fill_super(struct super_block *sb)
+ {
+@@ -503,6 +547,12 @@ static int __exfat_fill_super(struct super_block *sb)
+ 		goto free_bh;
+ 	}
+ 
++	ret = exfat_verify_boot_region(sb);
++	if (ret) {
++		exfat_err(sb, "invalid boot region");
++		goto free_bh;
++	}
++
+ 	ret = exfat_create_upcase_table(sb);
+ 	if (ret) {
+ 		exfat_err(sb, "failed to load upcase table");
+-- 
+2.25.1
 
-# systemd-analyze critical-chain
-The time when unit became active or started is printed after the "@" charac=
-ter.
-The time the unit took to start is printed after the "+" character.
-
-graphical.target @40.431s
-=E2=94=94=E2=94=80multi-user.target @40.431s
-  =E2=94=94=E2=94=80exim4.service @38.726s +1.701s
-    =E2=94=94=E2=94=80network-online.target @38.723s
-      =E2=94=94=E2=94=80NetworkManager-wait-online.service @27.215s +11.507=
-s
-        =E2=94=94=E2=94=80NetworkManager.service @8.978s +18.231s
-          =E2=94=94=E2=94=80dbus.service @8.971s
-            =E2=94=94=E2=94=80basic.target @8.862s
-              =E2=94=94=E2=94=80sockets.target @8.861s
-                =E2=94=94=E2=94=80dbus.socket @8.861s
-                  =E2=94=94=E2=94=80sysinit.target @8.723s
-
-=E2=94=94=E2=94=80systemd-backlight@backlight:intel_backlight.service @20.5=
-55s +812ms
-                      =E2=94=94=E2=94=80system-systemd\x2dbacklight.slice @=
-19.665s
-                        =E2=94=94=E2=94=80system.slice @2.473s
-                          =E2=94=94=E2=94=80-.slice @2.473s
-
-Nice!
-
-- Sedat -
