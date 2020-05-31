@@ -2,76 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 186061E946A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 01:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C22561E94F1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 03:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbgE3XQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 May 2020 19:16:02 -0400
-Received: from smtprelay0054.hostedemail.com ([216.40.44.54]:59144 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729314AbgE3XQC (ORCPT
+        id S1729603AbgEaB5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 May 2020 21:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729026AbgEaB5t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 May 2020 19:16:02 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id DCE5F837F24A;
-        Sat, 30 May 2020 23:16:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2561:2564:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6742:8957:8985:9025:10004:10400:10848:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13311:13357:13439:14040:14096:14097:14181:14659:14721:14777:21080:21627:30054:30060:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: baby31_280098b26d70
-X-Filterd-Recvd-Size: 2370
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 30 May 2020 23:15:58 +0000 (UTC)
-Message-ID: <1a655e27fe1ac348ca98dd3f703270741311e458.camel@perches.com>
-Subject: Re: [PATCH] checkpatch/coding-style: Allow 100 column lines
-From:   Joe Perches <joe@perches.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Date:   Sat, 30 May 2020 16:15:57 -0700
-In-Reply-To: <F5AE90A2-1661-4B8E-A884-C3CBAB0F603F@dilger.ca>
-References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
-         <20200528054043.621510-1-hch@lst.de>
-         <22778.1590697055@warthog.procyon.org.uk>
-         <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
-         <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
-         <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
-         <9c360bfa43580ce7726dd3d9d247f1216a690ef0.camel@perches.com>
-         <F5AE90A2-1661-4B8E-A884-C3CBAB0F603F@dilger.ca>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.2-0ubuntu1 
+        Sat, 30 May 2020 21:57:49 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3DCC03E969
+        for <linux-fsdevel@vger.kernel.org>; Sat, 30 May 2020 18:57:48 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id q8so1802503pfu.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 30 May 2020 18:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/WemXoImhsNurvgvrjEvBKKt3N1OcqQaztjA3rpMsOA=;
+        b=ofpa0GRSc19UCmmYAeJ1gtOd8ud77uSLXoC08oedhK8bjrfrzl8EngvyEIrG7O6r8a
+         NTVckZLNnM1BaFZ2pEkdOq4k3dioXPAbN8oKyUcZvCHIfsnlpd+xxEMoFFqTmiP1D4Ba
+         fzj1VEnxhxHiTuHBEmN+aDc9ctAMh2HuAsDSjAYXqgF6WYtQpPcDv6qTsO6dYzk5Ysbj
+         1z+ctmnbNik5+6DsIBoZBLd9dL49RSaIuDUOzb1+jg9/8j8p2ZWmyQvabuIvYkIc6GyU
+         xeJbaKTZUcxCI9a1YTz0RJLt2oO9CQlhUbLHAILywxh1pmFk8vCRsy6VDrE4MBsCMQMj
+         f+Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/WemXoImhsNurvgvrjEvBKKt3N1OcqQaztjA3rpMsOA=;
+        b=kc7Y+CcUkzJnJ8B7bc3sgwn02Q1kvmp6zA5Akmk/A2nV4Nr64lxWuPQIQWqd05bJxx
+         Ih9UK0rpOz+Zp54RoZT8K2KGHk7j/5gGgwjVUff7JMBA3FqZHYATL0CktNs7ck5fDfcM
+         8pOed+ZsqkQiCIM9fGU4gUBA0t2iW5xzoEdSiT2wM2TdS2rBW2KSwArlCaAnSufNGGAq
+         oS1H3WFRy3HEmirNN1hqfFD+9jp2je9QPwgHSyCOEixpdi9m1ffRQrjQVWhrfKNC90AP
+         b+7KJdfOTiIMuHUq4tNdwk7swscYEN3a93Dvf8/c69xCLVQeKrq/Zqsx9hMdxeU/EAgD
+         b9pA==
+X-Gm-Message-State: AOAM533ei9IIRsudbVduqL5lOAxZNufKSjvUgoXadNrNNTnQAmjP7pq3
+        C39lpa5v7pVkLaJ/CjtNwnBCQMne/b1P9A==
+X-Google-Smtp-Source: ABdhPJw6sUzC2QmIdh/46N6SW7kJ6geIM+mogd6Zf0NHPly6gKiWjN/PHRTVUbAl2wQ1IE2MhqWBpA==
+X-Received: by 2002:a63:f854:: with SMTP id v20mr14543363pgj.0.1590890267589;
+        Sat, 30 May 2020 18:57:47 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id k12sm10444543pfg.177.2020.05.30.18.57.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 May 2020 18:57:46 -0700 (PDT)
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+To:     sedat.dilek@gmail.com
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+References: <20200526195123.29053-1-axboe@kernel.dk>
+ <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
+ <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+ <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
+ <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
+ <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <230d3380-0269-d113-2c32-6e4fb94b79b8@kernel.dk>
+Date:   Sat, 30 May 2020 19:57:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2020-05-30 at 16:14 -0600, Andreas Dilger wrote:
-> On May 29, 2020, at 5:12 PM, Joe Perches <joe@perches.com> wrote:
-> > Change the maximum allowed line length to 100 from 80.
+On 5/30/20 12:57 PM, Sedat Dilek wrote:
+> Here are the numbers with your patchset:
 > 
-> What is the benefit/motivation for changing this?  The vast majority
-> of files are wrapped at 80 columns, and if some files start being
-> wrapped at 100 columns they will either display poorly on 80-column
-> terminals, or a lot of dead space will show in 100-column terminals.
+> # cat systemd-analyze-time_5.7.0-rc7-4-amd64-clang_2nd-try.txt
+> Startup finished in 7.229s (kernel) + 1min 18.304s (userspace) = 1min 25.534s
+> graphical.target reached after 1min 18.286s in userspace
 
-YA Linus bleat in this thread.
-I don't much care one way or any other.
+Can you see if this makes a difference?
 
-https://lore.kernel.org/lkml/CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com/
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index c296463c15eb..ccb895f911b1 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -374,8 +374,7 @@ enum req_flag_bits {
+ #define REQ_INTEGRITY		(1ULL << __REQ_INTEGRITY)
+ #define REQ_FUA			(1ULL << __REQ_FUA)
+ #define REQ_PREFLUSH		(1ULL << __REQ_PREFLUSH)
+-#define REQ_RAHEAD		\
+-	((1ULL << __REQ_RAHEAD) | (1ULL << __REQ_NOWAIT))
++#define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+ #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+ #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+ #define REQ_CGROUP_PUNT		(1ULL << __REQ_CGROUP_PUNT)
 
-and
-
-https://lore.kernel.org/lkml/CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com/
-
+-- 
+Jens Axboe
 
