@@ -2,95 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A3D1E9758
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 13:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D581D1E97C8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 May 2020 15:09:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbgEaLoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 May 2020 07:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38232 "EHLO
+        id S1727994AbgEaNJh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 May 2020 09:09:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbgEaLoh (ORCPT
+        with ESMTP id S1726081AbgEaNJf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 May 2020 07:44:37 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D64EC061A0E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 May 2020 04:44:37 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id q11so8675581wrp.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 May 2020 04:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PdySI9HRU59giX2TRuouXda7ucg+/Ke1CbnoMbOGJFM=;
-        b=LuOvEeextkcLDqBQxJB8nGW1fWsQrMiAX09DS4okshWz75BVS8TlXBBbvJvI8NdLyD
-         TWVmyhz/A6xbpskH1Qq9TCxIcjUIooRAunU9Mda0v74PSjT8xwu/ESmGxjW61KwSw0pV
-         bn9QPbXYFP+lX6XmPg1hD12I87ncewBugSFsI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PdySI9HRU59giX2TRuouXda7ucg+/Ke1CbnoMbOGJFM=;
-        b=ppfmidikmXA00Re/e8MmUC3Iay8Vo7Gni4PxvoJst0dgdYAEzGfX+wSgMB1IzW+6ZB
-         cBZ5Fp4CXgO3uMm7wbqSCruyzV4TrxXKBvas1Gx5ckReXXnon6vJlHNVhZ3SpgDXbsDH
-         Q1Kb0NgbzW6vxCKfqZA3CnS4uPgAlnQdlvQJbl9v02P9G8hE87hH/KA+0db6Czjm8cwR
-         2BXoZKRqdCJ29tfbJ3jEHjsrzzyfs9iVpo66Xsbd027HBMn6IuNy7a/lkjR3xxZfsiXF
-         emaV1xDE+xcU1kMfYXTN6sv4dI2e1K9Cn0X33NLpGk3Cp8UZpD+IiatPjjh/K9wTlKmX
-         D3sQ==
-X-Gm-Message-State: AOAM533+HpgmEfoBaubs/LP6Ac1rMFOaZDW2i3onvDu7E4YkZgdxbQW2
-        UBk7R/5lDwuVLi2kh+AHS3cl9Q==
-X-Google-Smtp-Source: ABdhPJzXwAp4Krf0+AsErSZJFxwLPQq4I1P4wrKXweQgRuYhfV18G1aXcLUbN8ZO7e93F9bjJUy6rQ==
-X-Received: by 2002:adf:db47:: with SMTP id f7mr18018839wrj.101.1590925476016;
-        Sun, 31 May 2020 04:44:36 -0700 (PDT)
-Received: from noodle ([192.19.250.250])
-        by smtp.gmail.com with ESMTPSA id k64sm5935156wmf.34.2020.05.31.04.44.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 31 May 2020 04:44:35 -0700 (PDT)
-Date:   Sun, 31 May 2020 14:44:32 +0300
-From:   Boris Sukholitko <boris.sukholitko@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, keescook@chromium.org,
-        yzaikin@google.com
-Subject: Re: [PATCH] __register_sysctl_table: do not drop subdir
-Message-ID: <20200531114432.GB22327@noodle>
-References: <20200527104848.GA7914@nixbox>
- <20200527125805.GI11244@42.do-not-panic.com>
- <20200528080812.GA21974@noodle>
- <874ks02m25.fsf@x220.int.ebiederm.org>
- <20200528142045.GP11244@42.do-not-panic.com>
+        Sun, 31 May 2020 09:09:35 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8EFC061A0E;
+        Sun, 31 May 2020 06:09:34 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jfNiO-000uIq-Qk; Sun, 31 May 2020 13:09:24 +0000
+Date:   Sun, 31 May 2020 14:09:24 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/27] vfs, afs, ext4: Make the inode hash table RCU
+ searchable
+Message-ID: <20200531130924.GY23230@ZenIV.linux.org.uk>
+References: <159078959973.679399.15496997680826127470.stgit@warthog.procyon.org.uk>
+ <159078960778.679399.5682252853189947919.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200528142045.GP11244@42.do-not-panic.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <159078960778.679399.5682252853189947919.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 28, 2020 at 02:20:45PM +0000, Luis Chamberlain wrote:
-> On Thu, May 28, 2020 at 09:04:02AM -0500, Eric W. Biederman wrote:
-> > I see some recent (within the last year) fixes to proc_sysctl.c in this
-> > area.  Do you have those?  It looks like bridge up and down is stressing
-> > this code.  Either those most recent fixes are wrong, your kernel is
-> > missing them or this needs some more investigation.
-> 
-> Thanks for the review Eric.
-> 
+On Fri, May 29, 2020 at 11:00:07PM +0100, David Howells wrote:
 
-Seconded. My first try at fixing it was incorrect, hopefully the new
-attempt ([PATCH] get_subdir: do not drop new subdir if returning it)
-I've just sent will fare better.
+> @@ -1245,15 +1282,9 @@ static int test_inode_iunique(struct super_block *sb, unsigned long ino)
+>  	struct inode *inode;
+>  
+>  	spin_lock(&inode_hash_lock);
+> -	hlist_for_each_entry(inode, b, i_hash) {
+> -		if (inode->i_ino == ino && inode->i_sb == sb) {
+> -			spin_unlock(&inode_hash_lock);
+> -			return 0;
+> -		}
+> -	}
+> +	inode = __find_inode_by_ino_rcu(sb, b, ino);
+>  	spin_unlock(&inode_hash_lock);
+> -
+> -	return 1;
+> +	return inode ? 0 : 1;
+>  }
 
-> Boris, the elaborate deatils you provided would also be what would be
-> needed for a commit log, specially since this is fixing a crash. If
-> you confirm this is still present upstream by reproducing with a test
-> case it would be wonderful.
+Nit: that's really return !inode
 
-Yes. It is present in the upstream kernel. In my patch I've added
-warning to catch this bad condition. The warning fires easily during
-boot.
+> +/**
+> + * find_inode_rcu - find an inode in the inode cache
+> + * @sb:		Super block of file system to search
+> + * @hashval:	Key to hash
+> + * @test:	Function to test match on an inode
+> + * @data:	Data for test function
+> + *
+> + * Search for the inode specified by @hashval and @data in the inode cache,
+> + * where the helper function @test will return 0 if the inode does not match
+> + * and 1 if it does.  The @test function must be responsible for taking the
+> + * i_lock spin_lock and checking i_state for an inode being freed or being
+> + * initialized.
+> + *
+> + * If successful, this will return the inode for which the @test function
+> + * returned 1 and NULL otherwise.
+> + *
+> + * The @test function is not permitted to take a ref on any inode presented
+> + * unless the caller is holding the inode hashtable lock.  It is also not
+> + * permitted to sleep, since it may be called with the RCU read lock held.
+> + *
+> + * The caller must hold either the RCU read lock or the inode hashtable lock.
 
-Thanks,
-Boris.
+Just how could that caller be holding inode_hash_lock?  It's static and IMO
+should remain such - it's too low-level detail of fs/inode.c for having the
+code outside play with it.
+
+Require the caller to hold rcu_read_lock() and make "not permitted to take
+a ref or sleep" unconditional.
+
+> +struct inode *find_inode_rcu(struct super_block *sb, unsigned long hashval,
+> +			     int (*test)(struct inode *, void *), void *data)
+> +{
+> +	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+> +	struct inode *inode;
+> +
+> +	RCU_LOCKDEP_WARN(!lockdep_is_held(&inode_hash_lock) && !rcu_read_lock_held(),
+> +			 "suspicious find_inode_by_ino_rcu() usage");
+
+... and modify that RCU_LOCKDEP_WARN (including the function name, preferably ;-)
+
+> +
+> +	hlist_for_each_entry_rcu(inode, head, i_hash) {
+> +		if (inode->i_sb == sb &&
+> +		    !(READ_ONCE(inode->i_state) & (I_FREEING | I_WILL_FREE)) &&
+> +		    test(inode, data))
+> +			return inode;
+> +	}
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(find_inode_rcu);
+> +
+> +/**
+> + * find_inode_by_rcu - Find an inode in the inode cache
+> + * @sb:		Super block of file system to search
+> + * @ino:	The inode number to match
+> + *
+> + * Search for the inode specified by @hashval and @data in the inode cache,
+> + * where the helper function @test will return 0 if the inode does not match
+> + * and 1 if it does.  The @test function must be responsible for taking the
+> + * i_lock spin_lock and checking i_state for an inode being freed or being
+> + * initialized.
+> + *
+> + * If successful, this will return the inode for which the @test function
+> + * returned 1 and NULL otherwise.
+> + *
+> + * The @test function is not permitted to take a ref on any inode presented
+> + * unless the caller is holding the inode hashtable lock.  It is also not
+> + * permitted to sleep, since it may be called with the RCU read lock held.
+> + *
+> + * The caller must hold either the RCU read lock or the inode hashtable lock.
+> + */
+
+Ditto.
+
+> +struct inode *find_inode_by_ino_rcu(struct super_block *sb,
+> +				    unsigned long ino)
+> +{
+> +	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> +	struct inode *inode;
+> +
+> +	RCU_LOCKDEP_WARN(!lockdep_is_held(&inode_hash_lock) && !rcu_read_lock_held(),
+> +			 "suspicious find_inode_by_ino_rcu() usage");
+> +
+> +	hlist_for_each_entry_rcu(inode, head, i_hash) {
+> +		if (inode->i_ino == ino &&
+> +		    inode->i_sb == sb &&
+> +		    !(READ_ONCE(inode->i_state) & (I_FREEING | I_WILL_FREE)))
+> +		    return inode;
+> +	}
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(find_inode_by_ino_rcu);
+
+> @@ -1540,6 +1652,7 @@ static void iput_final(struct inode *inode)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+>  	const struct super_operations *op = inode->i_sb->s_op;
+> +	unsigned long state;
+>  	int drop;
+>  
+>  	WARN_ON(inode->i_state & I_NEW);
+> @@ -1555,16 +1668,20 @@ static void iput_final(struct inode *inode)
+>  		return;
+>  	}
+>  
+> +	state = READ_ONCE(inode->i_state);
+>  	if (!drop) {
+> -		inode->i_state |= I_WILL_FREE;
+> +		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+>  		spin_unlock(&inode->i_lock);
+> +
+>  		write_inode_now(inode, 1);
+> +
+>  		spin_lock(&inode->i_lock);
+> -		WARN_ON(inode->i_state & I_NEW);
+> -		inode->i_state &= ~I_WILL_FREE;
+> +		state = READ_ONCE(inode->i_state);
+> +		WARN_ON(state & I_NEW);
+> +		state &= ~I_WILL_FREE;
+>  	}
+>  
+> -	inode->i_state |= I_FREEING;
+> +	WRITE_ONCE(inode->i_state, state | I_FREEING);
+>  	if (!list_empty(&inode->i_lru))
+>  		inode_lru_list_del(inode);
+>  	spin_unlock(&inode->i_lock);
+
+Umm..  I see the point of those WRITE_ONCE, but what's READ_ONCE for?
