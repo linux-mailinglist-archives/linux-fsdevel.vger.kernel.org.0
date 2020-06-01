@@ -2,130 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 330691EA293
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 13:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FBD81EA2A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 13:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726110AbgFALSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 07:18:36 -0400
-Received: from mout.web.de ([212.227.15.3]:43747 "EHLO mout.web.de"
+        id S1725972AbgFALaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 07:30:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54268 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbgFALSg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 07:18:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591010299;
-        bh=xt7UBTUtnPCk2kQqG2DBLHWgWmmfl2MNlsqBgwKrxh8=;
-        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
-        b=eTXeSRRqLN+TF9aBzFQPVaQT8hW4jaFoyuy0s1VgM8bch37FK91MKYoAxbkpVKgU5
-         eU+HWjY8h87zQvg4GkKTqJ3Lc2X6pUWdLIM6gUYJ5NGZbrTATJ3DB6uFQxQyrXZmlS
-         qSVaIbGrpsYC5Yqi1jYnBouZEp4KP2HAGz0iuCK0=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.49.133.32]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lm4TR-1j6ecc2oqn-00Zc3C; Mon, 01
- Jun 2020 13:18:19 +0200
-To:     Zhihao Cheng <chengzhihao1@huawei.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Yi Zhang <yi.zhang@huawei.com>
-Subject: Re: [PATCH] afs: Fix memory leak in afs_put_sysnames()
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <d8e5aa79-3f83-a5de-5aa8-7bd4a287646e@web.de>
-Date:   Mon, 1 Jun 2020 13:18:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1725838AbgFALaD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jun 2020 07:30:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id ED343AC7D;
+        Mon,  1 Jun 2020 11:30:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 43BC21E0948; Mon,  1 Jun 2020 13:30:00 +0200 (CEST)
+Date:   Mon, 1 Jun 2020 13:30:00 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] vhost: convert get_user_pages() --> pin_user_pages()
+Message-ID: <20200601113000.GE3960@quack2.suse.cz>
+References: <20200529234309.484480-1-jhubbard@nvidia.com>
+ <20200529234309.484480-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7UZ2ljg9iRO9n5ouO6yzuqJb+diD4FwJh0QhXsS5Q3MxXnZca2E
- umEqRRNgksEDnzkSgOrvaKbW1+P981gQrdeI1KeF2TnupVAfaOQe0o8sxLNbj23SLMLtFXV
- Vr7zEVLCkrzh0dPb0pSbsgaUX6GBlVC5lE0AZ1C2hWZEZ4WCnQ/a2XGnlyXjicnq46Slva8
- zu8emk0Cr2rVbZfcag4oQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:RVoppDxQFcw=:HPz7tNXBPHT+b4PEwZ3E5O
- NsOdDFH06PyRH1gW3FWnUyagMLbZag4K0bi7WZ7Tb2Xw0PyHCui2IH+kiZW3/uDlFfwgZa+Pt
- 7gdTDHqM2+LXkSKfF/FG3My4+tbHh+fuwQXHrlYA7JILSUsYDzhQPsCUdw6TDf+O9SguVdHvz
- 0LNPcz67vCAByAJy6LARBXyXe8QueheTc7yGyuw1baPG+mWn3z912R4mj0F2lUJTXp1NkC8ep
- yVOkfWWfVUwbIqKaF7GUMWkVua7jb6LdpclFRHR/8ZIjyQFMmcZZAmpM5yVyFCsv2OUFR5K+n
- GJD7xE2mlkrUFbZzmbzr4FXOcmT1oYWmoF0LtdSdXDkq7ltmfieA8T/IOQLaEyIbcQY6u8jDm
- YvD00RlfB5/9XLHSvMequK6EY58l8O2+Yv/Gae0Xor7mJDnS9Cwa8ieb2zPr/0RnziURjFADS
- JiTCn1p6GX06L+2hmM4zTWpgEv+aPseAN6ABvcfGmfauGux7mUFrmy5fcpIkmyQZ6WTlUT2F8
- NYCSDcXmL3Vm0d1pa1HlLil9xLBCrP+ooRB5Zn+SdPAfnnOlThbGsaHKEq/DrbH7STAk2pHHk
- ZUCOIxywIBuNP7r1QAfVjim2gAUpC/XWg7whA9HNeChGJYlGWDdIDUDcMBa+LHDaovUqr5IVL
- TYYZFewRM7hZh/cqR3afwm99q8ki9dUyUACIQIbgUSVwDr21fwsjrtYZ+ZF7VS518QN/LxUrQ
- AJT5zvZtTZHhECoynq7Rp4oCum9LAqW2B6VpmQgYBwygFgqQasys9z1VjesDZeR0kGn4PA3AA
- 5Y253R0t2X9ngOC3Z6uff+gCISqq/7RfVdYsNhi4+UusSxIy4YKWLuBMCiTTR98a0t/mdNnYB
- byfayBAewU3L9Yx7ZmrsxobvkYmipTPtokwXHTZ4lYYyMnXOn/acRHSlRaYqxa2Tkfa6cEnc5
- P1YE3FSU/i/q2pEGQJIiOXypQ8Ae81dLkchNY9sxAmk00TuIqdQYcZpwH7C/KlH/BDn53KCtG
- SqWXF/JN9D2D+DipSJANcsbo3RVNUnzQAk7ai4b9J0txpSSIzm3kWFdnAvbEtVhmP7Hjjotxi
- NBwiYJ2QJknxL23/7I8RxFNBXMxjVWtG2DgFUAYKvMSRQ3xWzRRRcH2PpeYeCtjkSSMp1dBPC
- aHpfpT7rxwkZgXUmNaLfVO57Gr13JeUTXTT6MWeQbtmPFuIDmK69foMPY7KqUiX454dVrPnVH
- VPttj0MS9laF0EMfj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200529234309.484480-3-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> sysnames should be freed after refcnt being decreased to zero in
-> afs_put_sysnames().
+On Fri 29-05-20 16:43:09, John Hubbard wrote:
+> This code was using get_user_pages*(), in approximately a "Case 5"
+> scenario (accessing the data within a page), using the categorization
+> from [1]. That means that it's time to convert the get_user_pages*() +
+> put_page() calls to pin_user_pages*() + unpin_user_pages() calls.
+> 
+> There is some helpful background in [2]: basically, this is a small
+> part of fixing a long-standing disconnect between pinning pages, and
+> file systems' use of those pages.
+> 
+> [1] Documentation/core-api/pin_user_pages.rst
+> 
+> [2] "Explicit pinning of user-space pages":
+>     https://lwn.net/Articles/807108/
+> 
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: virtualization@lists.linux-foundation.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-* I suggest to use the wording =E2=80=9Creference counter=E2=80=9D.
+Looks good to me. You can add:
 
-* Where did you notice a =E2=80=9Cmemory leak=E2=80=9D here?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
-> Besides, it would be better set net->sysnames
-> to 'NULL' after net->sysnames being released if afs_put_sysnames()
-> aims on an afs_sysnames object.
-
-* Would you like to consider an adjustment for this information?
-
-* How do you think about to add an imperative wording?
-
-* Will the tag =E2=80=9CFixes=E2=80=9D become relevant for the commit mess=
-age?
-
-Regards,
-Markus
+> ---
+>  drivers/vhost/vhost.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 21a59b598ed8..596132a96cd5 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -1762,15 +1762,14 @@ static int set_bit_to_user(int nr, void __user *addr)
+>  	int bit = nr + (log % PAGE_SIZE) * 8;
+>  	int r;
+>  
+> -	r = get_user_pages_fast(log, 1, FOLL_WRITE, &page);
+> +	r = pin_user_pages_fast(log, 1, FOLL_WRITE, &page);
+>  	if (r < 0)
+>  		return r;
+>  	BUG_ON(r != 1);
+>  	base = kmap_atomic(page);
+>  	set_bit(bit, base);
+>  	kunmap_atomic(base);
+> -	set_page_dirty_lock(page);
+> -	put_page(page);
+> +	unpin_user_pages_dirty_lock(&page, 1, true);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.26.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
