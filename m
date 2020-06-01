@@ -2,190 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DA71EB075
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 22:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD171EB202
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 01:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgFAUt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 16:49:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbgFAUt7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 16:49:59 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA97C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 13:49:57 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id n9so428811plk.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jun 2020 13:49:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=Zsfe/CY3WqqlXja6vLHgdVguHtH9LaqYn6H1ozFlCfw=;
-        b=xEK4RLm1kVQWM2G1DQesS0K1Jdldy89Pmf787MqRCT1k1W25neEsNIbvL+WF/9iaQK
-         6dOlZusQISFuIZIvkqY9zyUzsiJbHez0y0TlR0CIMXdEzKeNInglgBXWxwKd5GmEZrcB
-         lnRmci334m1aC5r9QXhX2isN+Yzlirk+Prf+hD82XqBZBoOV56raIbiecVKLnc1VYYFH
-         vdot39BKY7LClpwzrpMPDWN7MQWyvzz8B0gY5Sq8y6rYMa0wyly8MptrFk3xileKVnJo
-         /wmHTDXkj8Z/m6QfZnCOKqXMykpS5Q0aprSZnw4Q9t3B3lGEry1MujAwSZ3S7NHtri0o
-         1Kzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=Zsfe/CY3WqqlXja6vLHgdVguHtH9LaqYn6H1ozFlCfw=;
-        b=Bf37pGQWQr5FrkjryjrUkNBAxMWpsqJYKGLGsrI0e7HeNTya0HVFfAclDUwDX85nBA
-         E8kdUTQDWpqAFGn4Xiqggzlh4MPg9KkIrP63wa33kANpgph6c9Z4gZS9TILczonC9aJm
-         QvsgZylplzwyhCTM/U3BasA9pFBrVtLnE8u7nIBtdkQCR7qu6d+GQo/FK3AyPq2IZz/2
-         ztDly2mHyFEeI8bfHua8mSFlXB2/UzgJBQOdgOXZOunzv93+KhZ6q+9qIf6RT3WMF0ir
-         SD2yB5JncVB0P+t8QicWRJwIWXLQtR5Yzzoo1aAQ14K/sCrlCTncNHjlmAZv0WYLOKrg
-         fGIw==
-X-Gm-Message-State: AOAM533vX5nG2qDJV8tpFNLw9vc0FqYR2KsSkQLy9hfil/iDLa2S5vmq
-        d7jOHrxbpjPZVDQ6hZF4pVL7jg==
-X-Google-Smtp-Source: ABdhPJythQhc7Usfey0VfyIV23ZnegR0Mv4dJcSKz7nL6FaA5R3MwD0eg+Cxa1MdrSNdyD/naH7Pzg==
-X-Received: by 2002:a17:902:8541:: with SMTP id d1mr792724plo.234.1591044597184;
-        Mon, 01 Jun 2020 13:49:57 -0700 (PDT)
-Received: from [192.168.10.160] (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id u61sm402013pjb.7.2020.06.01.13.49.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jun 2020 13:49:56 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <E876FECB-300E-471B-A790-D44F2F1A3F9A@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_2CC2D8B3-5855-40C9-B329-6585736A68A7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2] ext4: avoid utf8_strncasecmp() with unstable name
-Date:   Mon, 1 Jun 2020 14:49:51 -0600
-In-Reply-To: <20200601200543.59417-1-ebiggers@kernel.org>
-Cc:     linux-ext4@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-To:     Eric Biggers <ebiggers@kernel.org>
-References: <20200601200543.59417-1-ebiggers@kernel.org>
-X-Mailer: Apple Mail (2.3273)
+        id S1726007AbgFAXKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 19:10:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55966 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725800AbgFAXKk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jun 2020 19:10:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DCB3CAE9D;
+        Mon,  1 Jun 2020 23:10:40 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     yangerkun <yangerkun@huawei.com>, viro@zeniv.linux.org.uk,
+        jlayton@kernel.org, neilb@suse.com
+Date:   Tue, 02 Jun 2020 09:10:31 +1000
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] locks: add locks_move_blocks in posix_lock_inode
+In-Reply-To: <20200601091616.34137-1-yangerkun@huawei.com>
+References: <20200601091616.34137-1-yangerkun@huawei.com>
+Message-ID: <877dwq757c.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---Apple-Mail=_2CC2D8B3-5855-40C9-B329-6585736A68A7
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
 
-On Jun 1, 2020, at 2:05 PM, Eric Biggers <ebiggers@kernel.org> wrote:
->=20
-> From: Eric Biggers <ebiggers@google.com>
->=20
-> If the dentry name passed to ->d_compare() fits in dentry::d_iname, =
-then
-> it may be concurrently modified by a rename.  This can cause undefined
-> behavior (possibly out-of-bounds memory accesses or crashes) in
-> utf8_strncasecmp(), since fs/unicode/ isn't written to handle strings
-> that may be concurrently modified.
->=20
-> Fix this by first copying the filename to a stack buffer if needed.
-> This way we get a stable snapshot of the filename.
->=20
-> Fixes: b886ee3e778e ("ext4: Support case-insensitive file name =
-lookups")
-> Cc: <stable@vger.kernel.org> # v5.2+
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Daniel Rosenberg <drosen@google.com>
-> Cc: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Mon, Jun 01 2020, yangerkun wrote:
 
-LGTM.
+> We forget to call locks_move_blocks in posix_lock_inode when try to
+> process same owner and different types.
+>
 
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+This patch is not necessary.
+The caller of posix_lock_inode() must calls locks_delete_block() on
+'request', and that will remove all blocked request and retry them.
 
+So calling locks_move_blocks() here is at most an optimization.  Maybe
+it is a useful one.
+
+What led you to suggesting this patch?  Were you just examining the
+code, or was there some problem that you were trying to solve?
+
+Thanks,
+NeilBrown
+
+
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
 > ---
->=20
-> v2: use memcpy() + barrier() instead of a byte-by-byte copy.
->=20
-> fs/ext4/dir.c | 16 ++++++++++++++++
-> 1 file changed, 16 insertions(+)
->=20
-> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-> index c654205f648dd..1d82336b1cd45 100644
-> --- a/fs/ext4/dir.c
-> +++ b/fs/ext4/dir.c
-> @@ -675,6 +675,7 @@ static int ext4_d_compare(const struct dentry =
-*dentry, unsigned int len,
-> 	struct qstr qstr =3D {.name =3D str, .len =3D len };
-> 	const struct dentry *parent =3D READ_ONCE(dentry->d_parent);
-> 	const struct inode *inode =3D READ_ONCE(parent->d_inode);
-> +	char strbuf[DNAME_INLINE_LEN];
->=20
-> 	if (!inode || !IS_CASEFOLDED(inode) ||
-> 	    !EXT4_SB(inode->i_sb)->s_encoding) {
-> @@ -683,6 +684,21 @@ static int ext4_d_compare(const struct dentry =
-*dentry, unsigned int len,
-> 		return memcmp(str, name->name, len);
-> 	}
->=20
-> +	/*
-> +	 * If the dentry name is stored in-line, then it may be =
-concurrently
-> +	 * modified by a rename.  If this happens, the VFS will =
-eventually retry
-> +	 * the lookup, so it doesn't matter what ->d_compare() returns.
-> +	 * However, it's unsafe to call utf8_strncasecmp() with an =
-unstable
-> +	 * string.  Therefore, we have to copy the name into a temporary =
-buffer.
-> +	 */
-> +	if (len <=3D DNAME_INLINE_LEN - 1) {
-> +		memcpy(strbuf, str, len);
-> +		strbuf[len] =3D 0;
-> +		qstr.name =3D strbuf;
-> +		/* prevent compiler from optimizing out the temporary =
-buffer */
-> +		barrier();
-> +	}
-> +
-> 	return ext4_ci_compare(inode, name, &qstr, false);
-> }
->=20
-> --
-> 2.26.2
->=20
+>  fs/locks.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/locks.c b/fs/locks.c
+> index b8a31c1c4fff..36bd2c221786 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1282,6 +1282,7 @@ static int posix_lock_inode(struct inode *inode, st=
+ruct file_lock *request,
+>  				if (!new_fl)
+>  					goto out;
+>  				locks_copy_lock(new_fl, request);
+> +				locks_move_blocks(new_fl, request);
+>  				request =3D new_fl;
+>  				new_fl =3D NULL;
+>  				locks_insert_lock_ctx(request, &fl->fl_list);
+> --=20
+> 2.21.3
 
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_2CC2D8B3-5855-40C9-B329-6585736A68A7
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl7Vae8ACgkQcqXauRfM
-H+A0SA/+Lqr0KRKEEI89LdIVUAM1EoellMMlQ+pGubMR5C0rPx80xNgbPuivmJYz
-eKxzdkV7t+QTC56lQISbjriAsf9HxILXtWKMRrhlBSqtkFAu28s1W/5he2ooasoe
-Xw8IyMQASbKCZAiP22MZGwT8t7H9xUOS1X4IcATloFUQMZx8/39ihY+5l6j5a5QV
-N4Rv34EyIqGODvQEXz6O9hdVFRdKJrxedCRQ/yY3QcBd6e4qpQKufGYM1U77dF1H
-mUJ+bEPaD+7niHchFcw9E7qsoWjKy8nm6yMxzzHRrx6sW1XIw6tSFR4t6SGHnktp
-84dL5FLtGlQ7jvySZdp4IJXpuJOpUMMQnrcVUhnmvhYrMnfobooueg2eA+2zUBSW
-1+W3HmjMWOE1enjyLXel8HuT5YPrmuNLu8qLn5twQRlsfzauOTlmFyk5Omq7tGt4
-70DWSXUN6AjM7zBO6JP47e5EwK1US6XpFl3QSFgCA32hfoja2q457ngf+XNIAGCr
-At2e1QKuBdcm5H6MxP6ge2K2sSSjA0J9nbubRE0ddWrsVvDsgEjCqfodLPVqxt0R
-Ynq2Zp5PQNanluObBv8XrZkLl9e2zlgG+N65B7hD2HvX1yK+Ld2N0cwdGhnprTBY
-WpFVZ7XfNIGN1mpJKgBRG74vfekTDXcoG3evy4/rwkp/emcVOjM=
-=YlTr
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl7ViucACgkQOeye3VZi
+gbng0g//WtmhUjIdqgrHREgsiy9mjpEvQ1Ua730jTlSnkxNNTUrCmqjgn+JwecEa
+AfW58U5OROu8i2oOA5/cFVfuVr3GgSzM2IWJKT6z7yj4VRJ0PYrNNlxUDQz+ObCg
+8HojpjV7NJ+9KEkwJDZwByAeReS6t4XwnY7lvMYaCYu0Amw2i2+qW4Xpzh5kAshd
+7SRycudZCA9g92dJHWt5oMd0tQmxTFGNBZ13ti4ThTKD3w+AN1t7/uSHmtno7dtf
+ITq931WAu4DqXPJmgIG2p2ZqD4t99TknB9/8053lnTmrIyTCFHfo4dzcQjLjJC3J
+oFW+A7sC+IDm+YbcQL4XbcLvC4DIo5MTLNNxb5+Cz5WnHGLJJVFBWM+f/Z8xXCJa
+qq4I/teAYyzk0y6D6XS/9Zfgc0XtK4s6n6CwkRI3OeBvutmomDUbOiL4my+FmnCR
+KA7Sxyeu4UqUYf6bsTQtgek/s4PQ3mH5fy6da9YCh8R9jrA+YfYJQZx7y61iWqmK
+rfzfaEnvQQXDGGWncxLfNSb2Tr5scSrJE+oyhvhu+l02d2wspg09JMoa0uqd5a15
+Fey1ZVFYsF5YilFrzlptZOxIZ3bGUqiYiRAaKeXoJLzqMHPEfa7gLAd5Z2EcDpcX
+OZGf02rMZUw6ausnBa4O7141WbI2XQ3su+DLfr+cjw9DFi1HYLU=
+=8TRf
 -----END PGP SIGNATURE-----
-
---Apple-Mail=_2CC2D8B3-5855-40C9-B329-6585736A68A7--
+--=-=-=--
