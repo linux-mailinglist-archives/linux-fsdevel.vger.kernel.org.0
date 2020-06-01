@@ -2,148 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6BE1EA0ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 11:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB2D81EA27E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 13:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgFAJWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 05:22:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35100 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725838AbgFAJWW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 05:22:22 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1631E9C89EA068D77DAA;
-        Mon,  1 Jun 2020 17:22:20 +0800 (CST)
-Received: from huawei.com (10.175.104.175) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Mon, 1 Jun 2020
- 17:22:11 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <linux-afs@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <dhowells@redhat.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] afs: Fix memory leak in afs_put_sysnames()
-Date:   Mon, 1 Jun 2020 17:21:50 +0800
-Message-ID: <20200601092150.3798343-1-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.25.4
+        id S1725973AbgFALOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 07:14:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbgFALOF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jun 2020 07:14:05 -0400
+Received: from mail-ua1-x941.google.com (mail-ua1-x941.google.com [IPv6:2607:f8b0:4864:20::941])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60BF3C03E96F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 04:14:05 -0700 (PDT)
+Received: by mail-ua1-x941.google.com with SMTP id v25so91577uau.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jun 2020 04:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WXOAaMoBz4R8U5dwNZ1YfVLsYcbZLZ+dVXxKsEXRwXY=;
+        b=ldYjGDwxIV0HzE2xVPpuBE0NOAVS/wx8H146GJymaAusL8tM4TbALmC5vckRW1Mz2h
+         iYHXRI042v6RPOvV2TxuBXm7yKSuQ7eAGi19pRqoDsXPm3eaQdEDp4agW/pkDWzJvswX
+         lHKPP/PrvdEZKioAgAXdN3Cj9R582GOgxZERyU0rXTDPVUz+dF01KRgtgKNI01FFXGls
+         E+Qd4105igPjLgGxPH/nSEIxB87EZD8JPlhCjxUjxqOxlAp/6OMwg9lcHLUtH6ThPs3f
+         BQyv/5nbSVdTe2MuD3wqDiKM6D164XduVY61OUE0kRFs1W0aTXn5NNNVEWXzqkBI1Y7y
+         8nHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WXOAaMoBz4R8U5dwNZ1YfVLsYcbZLZ+dVXxKsEXRwXY=;
+        b=hnONl66capWaEZZ48zkrU22zSRPwpM+KGd93n+MnppRXlovW8whlwx20Ot1DrYvoME
+         G6OOyvueHOcYMnie1iwLf2vSmNbIKIKggcMFur5WiicErMMqmAUCPTb2Tmbjd9cLOj8i
+         Sl8bcMLFJphMz+HuHYqv5O+YzkvehXyympT38TQXnaGiIh2Nxh1bVpql/6YPEj0/vP3r
+         eSm+aIAZmPlDW+nJA8lkTiwHStgnPzggyVC0GRWaVXdGnkhInEnQMz/220lHp+oz9n1H
+         31msETMCEkjxWn9dBoh2LuE5XCAIYp7u5jDcsYRXGjAmvzisKTuU/GIjzmF9M6AtciN+
+         tbdg==
+X-Gm-Message-State: AOAM533aHBO+ZRGdJz69qz0JETQH14masxNY7SlF+B6wxnkOdSPuCv/h
+        F+v4yjpR24tT4QuuXUwvhYbgfS7FWeyvr0Vd0GOJUw==
+X-Google-Smtp-Source: ABdhPJz8Ar6V60hnAAObpp+yduGb260FWlbMjEdQ4KdG8I/hXKgn7dO8wizKMxc1REqOfKGvnrW5O/i0ftzKsyinRv0=
+X-Received: by 2002:a9f:22e1:: with SMTP id 88mr9356732uan.19.1591010044429;
+ Mon, 01 Jun 2020 04:14:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.175]
-X-CFilter-Loop: Reflected
+References: <20200523035909.418683-1-jhubbard@nvidia.com> <89244e74-f619-e515-083a-3bf2586fa5c3@nvidia.com>
+In-Reply-To: <89244e74-f619-e515-083a-3bf2586fa5c3@nvidia.com>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Mon, 1 Jun 2020 07:13:53 -0400
+Message-ID: <CAOg9mSQYvPcjCOoTj5_zq-62pxe_XCnqxiaiNLefx10M-MSYuw@mail.gmail.com>
+Subject: Re: [PATCH v2] orangefs: convert get_user_pages() --> pin_user_pages()
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Martin Brandenburg <martin@omnibond.com>,
+        devel@lists.orangefs.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-sysnames should be freed after refcnt being decreased to zero in
-afs_put_sysnames(). Besides, it would be better set net->sysnames
-to 'NULL' after net->sysnames being released if afs_put_sysnames()
-aims on an afs_sysnames object.
+Hi John.
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: <Stable@vger.kernel.org> # v4.17+
-Fixes: 6f8880d8e681557 ("afs: Implement @sys substitution handling")
----
- fs/afs/dir.c      |  2 +-
- fs/afs/internal.h |  2 ++
- fs/afs/main.c     |  4 ++--
- fs/afs/proc.c     | 25 ++++++++++++++++++++-----
- 4 files changed, 25 insertions(+), 8 deletions(-)
+Thanks for the patch, and the testing, and the reference to the
+lwn article.
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index d1e1caa23c8b..cb9d8aa91048 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -894,7 +894,7 @@ static struct dentry *afs_lookup_atsys(struct inode *dir, struct dentry *dentry,
- 	 */
- 	ret = NULL;
- out_s:
--	afs_put_sysnames(subs);
-+	afs_put_sysnames_and_null(net);
- 	kfree(buf);
- out_p:
- 	key_put(key);
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 80255513e230..615dd5f9ad6f 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1093,12 +1093,14 @@ extern void __net_exit afs_proc_cleanup(struct afs_net *);
- extern int afs_proc_cell_setup(struct afs_cell *);
- extern void afs_proc_cell_remove(struct afs_cell *);
- extern void afs_put_sysnames(struct afs_sysnames *);
-+extern void afs_put_sysnames_and_null(struct afs_net *);
- #else
- static inline int afs_proc_init(struct afs_net *net) { return 0; }
- static inline void afs_proc_cleanup(struct afs_net *net) {}
- static inline int afs_proc_cell_setup(struct afs_cell *cell) { return 0; }
- static inline void afs_proc_cell_remove(struct afs_cell *cell) {}
- static inline void afs_put_sysnames(struct afs_sysnames *sysnames) {}
-+static inline void afs_put_sysnames_and_null(struct afs_net *net) {}
- #endif
- 
- /*
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index c9c45d7078bd..6bf73fc65fb5 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -132,7 +132,7 @@ static int __net_init afs_net_init(struct net *net_ns)
- 	net->live = false;
- 	afs_proc_cleanup(net);
- error_proc:
--	afs_put_sysnames(net->sysnames);
-+	afs_put_sysnames_and_null(net);
- error_sysnames:
- 	net->live = false;
- 	return ret;
-@@ -150,7 +150,7 @@ static void __net_exit afs_net_exit(struct net *net_ns)
- 	afs_purge_servers(net);
- 	afs_close_socket(net);
- 	afs_proc_cleanup(net);
--	afs_put_sysnames(net->sysnames);
-+	afs_put_sysnames_and_null(net);
- }
- 
- static struct pernet_operations afs_net_ops = {
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 468e1713bce1..26e1e73281a6 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -554,15 +554,30 @@ static int afs_proc_sysname_write(struct file *file, char *buf, size_t size)
- 	goto out;
- }
- 
--void afs_put_sysnames(struct afs_sysnames *sysnames)
-+static void afs_free_sysnames(struct afs_sysnames *sysnames)
- {
- 	int i;
- 
-+	for (i = 0; i < sysnames->nr; i++)
-+		if (sysnames->subs[i] != afs_init_sysname &&
-+		    sysnames->subs[i] != sysnames->blank)
-+			kfree(sysnames->subs[i]);
-+	kfree(sysnames);
-+}
-+
-+void afs_put_sysnames(struct afs_sysnames *sysnames)
-+{
-+	if (sysnames && refcount_dec_and_test(&sysnames->usage))
-+		afs_free_sysnames(sysnames);
-+}
-+
-+void afs_put_sysnames_and_null(struct afs_net *net)
-+{
-+	struct afs_sysnames *sysnames = net->sysnames;
-+
- 	if (sysnames && refcount_dec_and_test(&sysnames->usage)) {
--		for (i = 0; i < sysnames->nr; i++)
--			if (sysnames->subs[i] != afs_init_sysname &&
--			    sysnames->subs[i] != sysnames->blank)
--				kfree(sysnames->subs[i]);
-+		afs_free_sysnames(sysnames);
-+		net->sysnames = NULL;
- 	}
- }
- 
--- 
-2.25.4
+I have also applied your patch to 5.7-rc7 and have run xfstests.
 
+I applied your patch to the orangefs for-next tree.
+
+-Mike
+
+On Sat, May 30, 2020 at 3:39 AM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 2020-05-22 20:59, John Hubbard wrote:
+> > This code was using get_user_pages*(), in a "Case 1" scenario
+> > (Direct IO), using the categorization from [1]. That means that it's
+> > time to convert the get_user_pages*() + put_page() calls to
+> > pin_user_pages*() + unpin_user_pages() calls.
+> >
+> > There is some helpful background in [2]: basically, this is a small
+> > part of fixing a long-standing disconnect between pinning pages, and
+> > file systems' use of those pages.
+> >
+> > [1] Documentation/core-api/pin_user_pages.rst
+> >
+> > [2] "Explicit pinning of user-space pages":
+> >      https://lwn.net/Articles/807108/
+> >
+> > Cc: Mike Marshall <hubcap@omnibond.com>
+> > Cc: Martin Brandenburg <martin@omnibond.com>
+> > Cc: devel@lists.orangefs.org
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> >
+> > Hi,
+> >
+> > Note that I have only compile-tested this patch, although that does
+> > also include cross-compiling for a few other arches.
+>
+> An update on the run-time testing: Just now, I got basic orangefs tests
+> running in xfstests, with this patch applied, and it all looks normal.
+>
+> thanks,
+> --
+> John Hubbard
+> NVIDIA
+>
+> >
+> > Changes since v1 [3]: correct the commit description, so that
+> > it refers to "Case 1" instead of "Case 2".
+> >
+> >
+> > [3] https://lore.kernel.org/r/20200518060139.2828423-1-jhubbard@nvidia.com
+> >
+> > thanks,
+> > John Hubbard
+> > NVIDIA
+> >
+> >   fs/orangefs/orangefs-bufmap.c | 9 +++------
+> >   1 file changed, 3 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
+> > index 2bb916d68576..538e839590ef 100644
+> > --- a/fs/orangefs/orangefs-bufmap.c
+> > +++ b/fs/orangefs/orangefs-bufmap.c
+> > @@ -168,10 +168,7 @@ static DEFINE_SPINLOCK(orangefs_bufmap_lock);
+> >   static void
+> >   orangefs_bufmap_unmap(struct orangefs_bufmap *bufmap)
+> >   {
+> > -     int i;
+> > -
+> > -     for (i = 0; i < bufmap->page_count; i++)
+> > -             put_page(bufmap->page_array[i]);
+> > +     unpin_user_pages(bufmap->page_array, bufmap->page_count);
+> >   }
+> >
+> >   static void
+> > @@ -268,7 +265,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
+> >       int offset = 0, ret, i;
+> >
+> >       /* map the pages */
+> > -     ret = get_user_pages_fast((unsigned long)user_desc->ptr,
+> > +     ret = pin_user_pages_fast((unsigned long)user_desc->ptr,
+> >                            bufmap->page_count, FOLL_WRITE, bufmap->page_array);
+> >
+> >       if (ret < 0)
+> > @@ -280,7 +277,7 @@ orangefs_bufmap_map(struct orangefs_bufmap *bufmap,
+> >
+> >               for (i = 0; i < ret; i++) {
+> >                       SetPageError(bufmap->page_array[i]);
+> > -                     put_page(bufmap->page_array[i]);
+> > +                     unpin_user_page(bufmap->page_array[i]);
+> >               }
+> >               return -ENOMEM;
+> >       }
+> >
+>
