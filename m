@@ -2,115 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A301EA5F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 16:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D9F1EA5FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 16:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgFAOfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 10:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32924 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgFAOfF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 10:35:05 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E67EC03E96F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 07:35:04 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id y18so27900plr.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jun 2020 07:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BYjlMWMX+w4rGY423Gm8SdYzNmV4yO5dT2R9qllwqiQ=;
-        b=Ripf+8nvKMhWWgU1eelOSFnSn1oOvCpOiQNMrOpGsI1bToTYeIhMloQ//T6NA8X2ay
-         o4fOqkTi+3xglQvwgbp5WorSUoWxTQ+8Er2DD8je2Q5JZ8gSV75DJZme2AT7p3ziLVtM
-         E2plWHIo/LNO1XYVnvXk48I+rVAfBUrOP2NfY0bXnkXmdz5SABKusA22WTaV7SMjU6T0
-         2jR1IWk0cNaA7eYbftzfGpWoeRwWgjBWKcKRi3r62riIm4VRNE9K161KnEy2z+Q1KeDa
-         f//bpa1QRa87nNRMbxsf9P/qKjGvkxf5+tnFF0ppFcZf38LR05Zx33krRd5WWr1C320M
-         bHNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BYjlMWMX+w4rGY423Gm8SdYzNmV4yO5dT2R9qllwqiQ=;
-        b=B2FTxAXi5tUXAssA865QETqWBtsaHOH8DXPv1gqyaKKN9tN/aHGnG3Pxakhsu/BMr+
-         zgERxTMici3/zofvUhoJQNrhEUos4AwO8BtfLfqhvqAVhiq9IBXr5qfLH2mksyQsYV8j
-         +QwjeqBLofAll1Lgi5dV5cZNvzIYlyi3HXDbDmnOBFNcDHCnp3NVlvz0XEpF4/dCmBEm
-         yqoinkqToZugcOYLg8/uctIEE1qn4XkWN46rJ0BuzPYIl3IPY6Jnf+PEB44v9VH8eWzv
-         h7Up5EUgdUipH7q3BffpB0GAcIapsXBvMg+01+iRbhy2vLHX85Dmz9+tyzCOqRIbTJvc
-         MMng==
-X-Gm-Message-State: AOAM530s0YUoIbcLNuruxvGKs3moGg7XpyI63HCuZWgtF4gCp1cnIAaW
-        QFX8I49//6EYZmDlEilSHWUA6w==
-X-Google-Smtp-Source: ABdhPJyi6fGAj6YRMVEKQXpjs6sg6hV6icwsH9xAhUOG9BvC/DxGVV6zF173TL65jPi1QGHst/9Uyw==
-X-Received: by 2002:a17:902:a60d:: with SMTP id u13mr5850657plq.46.1591022103704;
-        Mon, 01 Jun 2020 07:35:03 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id t64sm13192087pgd.24.2020.06.01.07.35.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jun 2020 07:35:03 -0700 (PDT)
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-From:   Jens Axboe <axboe@kernel.dk>
-To:     sedat.dilek@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
- <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
- <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
- <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
- <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
- <230d3380-0269-d113-2c32-6e4fb94b79b8@kernel.dk>
- <CA+icZUXxmOA-5+dukCgxfSp4eVHB+QaAHO6tsgq0iioQs3Af-w@mail.gmail.com>
- <CA+icZUV4iSjL8=wLA3qd1c5OQHX2s1M5VKj2CmJoy2rHmzSVbQ@mail.gmail.com>
- <CA+icZUXkWG=08rz9Lp1-ZaRCs+GMTwEiUaFLze9xpL2SpZbdsQ@mail.gmail.com>
- <cdb3ac15-0c41-6147-35f1-41b2a3be1c33@kernel.dk>
- <CA+icZUUfxAc9LaWSzSNV4tidW2KFeVLkDhU30OWbQP-=2bYFHw@mail.gmail.com>
- <b24101f1-c468-8f6b-9dcb-6dc59d0cd4b9@kernel.dk>
-Message-ID: <455dd2c1-7346-2d43-4266-1367c368cee1@kernel.dk>
-Date:   Mon, 1 Jun 2020 08:35:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1727113AbgFAOfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 10:35:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37760 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbgFAOfP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jun 2020 10:35:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 165A5AD5D;
+        Mon,  1 Jun 2020 14:35:15 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id ED0DADA79B; Mon,  1 Jun 2020 16:35:10 +0200 (CEST)
+Date:   Mon, 1 Jun 2020 16:35:10 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH v3 2/3] btrfs: add authentication support
+Message-ID: <20200601143510.GU18421@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+References: <20200514092415.5389-1-jth@kernel.org>
+ <20200514092415.5389-3-jth@kernel.org>
+ <20200527132428.GE18421@twin.jikos.cz>
+ <SN4PR0401MB3598E973D98DB9A0363BD3C29BB10@SN4PR0401MB3598.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <b24101f1-c468-8f6b-9dcb-6dc59d0cd4b9@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN4PR0401MB3598E973D98DB9A0363BD3C29BB10@SN4PR0401MB3598.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/1/20 8:14 AM, Jens Axboe wrote:
-> On 6/1/20 8:13 AM, Sedat Dilek wrote:
->> On Mon, Jun 1, 2020 at 4:04 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 6/1/20 7:35 AM, Sedat Dilek wrote:
->>>> Hi Jens,
->>>>
->>>> with Linux v5.7 final I switched to linux-block.git/for-next and reverted...
->>>>
->>>> "block: read-ahead submission should imply no-wait as well"
->>>>
->>>> ...and see no boot-slowdowns.
->>>
->>> Can you try with these patches applied instead? Or pull my async-readahead
->>> branch from the same location.
->>>
->>
->> Yes, I can do that.
->> I pulled from linux-block.git#async-readahead and will report later.
->>
->> Any specific testing desired by you?
+On Wed, May 27, 2020 at 06:04:57PM +0000, Johannes Thumshirn wrote:
+> On 27/05/2020 15:25, David Sterba wrote:
+> > The key for all userspace commands needs to be specified the same way as
+> > for kernel, ie. "--auth-key btrfs:foo" and use the appropriate ioctls to
+> > read the key bytes.
 > 
-> Just do your boot timing test and see if it works, thanks.
+> Up to now I haven't been able to add a key to the kernel's keyring which 
+> can be read back to user-space.
 
-Actually, can you just re-test with the current async-buffered.6 branch?
-I think the major surgery should wait for 5.9, we can do this a bit
-easier without having to touch everything around us.
-
--- 
-Jens Axboe
-
+I was researching a possibility to use libkcapi, the API to use kernel
+crypto implementaion, in order to avoid passing the raw key to userspace
+completely. Basically, setting up what hash and key to use, pass the
+buffer and get back the hash. API-wise it's just one more line to
+specify the key -- by the numerical id. But no such interface is there,
+only the raw bytes translating the request to the .setkey callback.
