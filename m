@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C44451EA3A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 14:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64AE01EA3A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 14:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbgFAMTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 08:19:53 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:30193 "EHLO
+        id S1726201AbgFAMUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 08:20:32 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:30306 "EHLO
         mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbgFAMTw (ORCPT
+        with ESMTP id S1725935AbgFAMUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 08:19:52 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200601121949epoutp026fd76034b1da979b9e0794ed53101bc4~UasspR7WT0691006910epoutp02Y
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 12:19:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200601121949epoutp026fd76034b1da979b9e0794ed53101bc4~UasspR7WT0691006910epoutp02Y
+        Mon, 1 Jun 2020 08:20:31 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200601122028epoutp024af02ddcf7dcc7b0996d20ea1c0860ad~UatRZq3kK0691006910epoutp02l
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 12:20:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200601122028epoutp024af02ddcf7dcc7b0996d20ea1c0860ad~UatRZq3kK0691006910epoutp02l
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591013989;
-        bh=2isW1mmA+SasxMpG2XdpT1OqpqXgSDxRM1m8fJgKNUM=;
+        s=mail20170921; t=1591014028;
+        bh=dy69MGQgELlHLL4nuipB9eWH9vUU1X+psE1Q1svnC+Q=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=pvIkAPsVUslFT5wZG730BqRHQMyrUxWanP+GUCJoYvx3j6i0tYT45I7orDbUx/3zp
-         Q5iTezEZxFY78E950KZ1AjGJNnQd5x7N//t2fLwcor/8FP3tfs6mL9r841NfefthA5
-         zEjdCWzTl7H/IJp8PjMDqXQRp1yCpi66Dh1TjNYU=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200601121948epcas1p33c8fbe9ddf01209369fc4e084b4c7bce~UassVMNz10148901489epcas1p3N;
-        Mon,  1 Jun 2020 12:19:48 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 49bDkq5k3DzMqYkZ; Mon,  1 Jun
-        2020 12:19:47 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        b=DIR8jNmzag2Gz8ba1mv5pnQv5a/+JiNXxZZGt7ZSef7RxYZ8hV4LNZlkHqm4LHYlW
+         J8x5RY/zbIdfU+jx6PpQ7jE6XZYAoXgLgUnw9h4F5cpHV+d6zcy4UEVwPokkZku+l7
+         PVnMuJJMyhXmUQ1FmPWWR4bvomaEQsX+QCUXFonk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200601122028epcas1p2ff39bf4111e69ee6d9ff974427e1727f~UatQ65CSS2504625046epcas1p2x;
+        Mon,  1 Jun 2020 12:20:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 49bDlb1mvkzMqYkb; Mon,  1 Jun
+        2020 12:20:27 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
         epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.AB.28581.362F4DE5; Mon,  1 Jun 2020 21:19:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200601121947epcas1p1de4d70f6f187d235b65223df7d6527ae~UasrATjTD0408304083epcas1p1S;
-        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200601121947epsmtrp2937af80b3515b66bf17abf40bf1bb024~Uasq-t0HF2229322293epsmtrp2U;
-        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
-X-AuditID: b6c32a38-2cdff70000006fa5-18-5ed4f263ed2f
+        04.CB.28581.B82F4DE5; Mon,  1 Jun 2020 21:20:27 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200601122026epcas1p22567fb0e0b9aeae89556e59a6f50ef67~UatPgBfk92949729497epcas1p2T;
+        Mon,  1 Jun 2020 12:20:26 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200601122026epsmtrp15694e23b5327fe306dd7ddf83f8cf11e~UatPfbEEn1178611786epsmtrp1U;
+        Mon,  1 Jun 2020 12:20:26 +0000 (GMT)
+X-AuditID: b6c32a38-2cdff70000006fa5-94-5ed4f28bff21
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        95.63.08303.362F4DE5; Mon,  1 Jun 2020 21:19:47 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        33.A3.08382.A82F4DE5; Mon,  1 Jun 2020 21:20:26 +0900 (KST)
 Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200601121947epsmtip258f70f63f41fb368d67125fafe60d057~Uasq0tVbC0351103511epsmtip2O;
-        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
+        20200601122026epsmtip21ea8f739fab07ad4f07e5273a9aa9a43~UatPTUecf0351003510epsmtip2W;
+        Mon,  1 Jun 2020 12:20:26 +0000 (GMT)
 From:   "Sungjong Seo" <sj1557.seo@samsung.com>
 To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
 Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
@@ -56,67 +56,67 @@ Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
         <motai.hirotaka@aj.mitsubishielectric.co.jp>,
         "'Namjae Jeon'" <namjae.jeon@samsung.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200529101459.8546-2-kohada.t2@gmail.com>
-Subject: RE: [PATCH 2/4 v3] exfat: separate the boot sector analysis
-Date:   Mon, 1 Jun 2020 21:19:47 +0900
-Message-ID: <1ffe01d6380e$f0a52260$d1ef6720$@samsung.com>
+In-Reply-To: <20200529101459.8546-4-kohada.t2@gmail.com>
+Subject: RE: [PATCH 4/4 v3] exfat: standardize checksum calculation
+Date:   Mon, 1 Jun 2020 21:20:26 +0900
+Message-ID: <1fff01d6380f$07fdd970$17f98c50$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQECpNOBCAKs/TRXObwEq14CKUeHvgG0v48kAkVSecmqSwNY8A==
+Thread-Index: AQECpNOBCAKs/TRXObwEq14CKUeHvgGnqJluAgpaxnmqTUQv4A==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmvm7ypytxBiu7dS1+zL3NYvHm5FQW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmnm73pytxBp8O81j8mHubxeLNyaks
+        Fnv2nmSxuLxrDpvF5f+fWCyWfZnMYvFjer0Du8eXOcfZPdom/2P3aD62ks1j56y77B59W1Yx
+        enzeJBfAFpVjk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuW
+        mQN0ipJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwNCgQK84Mbe4NC9dLzk/18rQ
+        wMDIFKgyISfjT0sXW8Eus4rtnT0sDYy3tLoYOTkkBEwkZpxcyNTFyMUhJLCDUaJ5/kMWCOcT
+        o8Sla//ZIZxvjBLvZ89kg2l5t385G0RiL6PE5FsvWSGcl4wSM84/ZAapYhPQlXhy4yeYLSKg
+        J3Hy5HWwbmaBRiaJEy+zQWxOAQuJTS0NYDXCAs4SByY+ZgKxWQRUJOaf/QcW5xWwlPgz/wmU
+        LShxcuYTFog58hLb385hhrhIQWL3p6OsELucJDq2foWqEZGY3dnGDHKchMBCDonW9m1QL7hI
+        TDu7gwXCFpZ4dXwLO4QtJfGyvw3KbmaU6LvrCdHcwiixakcTVLOxxKfPnxm7GDmANmhKrN+l
+        DxFWlNj5ey4jxGI+iXdfe1hBSiQEeCU62oQgSlQkvn/YyQKz6sqPq0wTGJVmIXltFpLXZiF5
+        YRbCsgWMLKsYxVILinPTU4sNC0yQo3sTIzihalnsYJz79oPeIUYmDsZDjBIczEoivJPVL8UJ
+        8aYkVlalFuXHF5XmpBYfYjQFBvZEZinR5HxgSs8riTc0NTI2NrYwMTM3MzVWEuc9aXUhTkgg
+        PbEkNTs1tSC1CKaPiYNTqoGpSuR8fi/bMn/5qquL3QRU2Ba2cZ1zf/dgzgxLhwmcM4LuGml2
+        eX2yvdbR9lJCpMfEUebuik+P30eZp+2+/oTN5qAE9+09M2Y2dlbrHNtarb3C7NASs6OPbbO+
+        PqwzMJslauiyuyr1ZU/okrxG59MvH93w617DcT/ZLGO50zKp2hamN6YTzNaEbLzZG7foNVul
+        2eSPMZPfOjC9V7TamCWYv37XF3sH2cth5/rFZu9/Ffuu5juv3rFVH/bO47p1SPnoXf6b2ol2
+        n+fxJr//cId5yx17maC1DzX+7+i7vtXfttO9IWqWnAZ75QSlmr68Sxb26VFThHviVe8dTmEU
+        4nRm+HV8r2iq4YLPFunT/HiUWIozEg21mIuKEwFyrTSLMQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXrfr05U4g0MrZS1+zL3NYvHm5FQW
         iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
-        PT5vkgtgi8qxyUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
-        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYGhQoFecmFtcmpeul5yfa2Vo
-        YGBkClSZkJPRuGMra8FJy4pPv9pYGxiP6XYxcnJICJhIzPi6gLGLkYtDSGAHo8SSfdvYIZxP
-        jBLP765mhnA+M0psf/eJHablw455rBCJXYwS049cgKp6ySgxb0sLC0gVm4CuxJMbP5lBbBEB
-        PYmTJ6+zgdjMAo1MEideZncxcnBwClhILO+uAQkLC7hI/OqeC7aARUBFYvqz3WDlvAKWEg9P
-        /WOFsAUlTs58wgIxRl5i+9s5zBAHKUjs/nSUFWKVk8TxZdPZIWpEJGZ3toHdJiEwl0Ni9+dW
-        JogGF4kD/3ZAfSMs8er4FihbSuLzu71sEHYzo0TfXU+I5hZGiVU7mqASxhKfPn9mBHmAWUBT
-        Yv0ufYiwosTO33MZIRbzSbz72sMKUiIhwCvR0SYEUaIi8f3DThaYVVd+XGWawKg0C8lrs5C8
-        NgvJC7MQli1gZFnFKJZaUJybnlpsWGCCHNubGMHpVMtiB+Pctx/0DjEycTAeYpTgYFYS4Z2s
-        filOiDclsbIqtSg/vqg0J7X4EKMpMLAnMkuJJucDE3peSbyhqZGxsbGFiZm5mamxkjjvSasL
-        cUIC6YklqdmpqQWpRTB9TBycUg1MPEbW8n2TDD5VC1ukhMnPYf/Xv+dMpM2xHZwxpyZ+y+tj
-        +LNZ+tDDq2t/bfzdbvrg2IT1mn62c2cIsD24Ej5VNnrb82+b396/o7P0wc/nzlfM5xZpbphv
-        w96gXHuoMs6wfGfFR/kNexLuKx59vZKTJ2W64p7eqaUa37pMT/GoTZ/6zqmcZ1fmC9ejC1s5
-        fmRtvr/nNGNz5gzZ6Vz/zc1FNbTOpU6MOntpR7em0WO9X3237tT9v2rJmPlY6u0fb9YfpRFS
-        Ny6+3SZpXjaN78bWdaf0k8o2/U+6byGQfstvo97HIl0ptlQL45TI9/mcZ1K9WS/+2fRQZYF5
-        ivibqbclMidIuHzJ2y0//9bcTyHSj5RYijMSDbWYi4oTAacAWUcwBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXjf505U4g1/zhC1+zL3NYvHm5FQW
-        iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
-        PT5vkgtgi+KySUnNySxLLdK3S+DKaNyxlbXgpGXFp19trA2Mx3S7GDk5JARMJD7smMfaxcjF
-        ISSwg1Hi4ORGpi5GDqCElMTBfZoQprDE4cPFECXPGSV2L93PDNLLJqAr8eTGTzBbREBP4uTJ
-        62wgRcwCzUwSrV+amSA6tjJK/Lx3D2wop4CFxPLuGpAGYQEXiV/dc9lBbBYBFYnpz3azgdi8
-        ApYSD0/9Y4WwBSVOznzCAtLKDLSgbSMjSJhZQF5i+9s5zBD3K0js/nSUFeIGJ4njy6azQ9SI
-        SMzubGOewCg8C8mkWQiTZiGZNAtJxwJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmb
-        GMERpaW1g3HPqg96hxiZOBgPMUpwMCuJ8E5WvxQnxJuSWFmVWpQfX1Sak1p8iFGag0VJnPfr
-        rIVxQgLpiSWp2ampBalFMFkmDk6pBiZpoVvuC0NP9p96VHP9RWvR5Efqa1XT7D/axVwLvdA/
-        cV/+vO1GE+PmPw9czzdTOmDbDR2Lm/w/uR9vM/619sP90DBFPr58KYGQa4+dOWP+qLodtzG4
-        0PeOP9a1WnhXndiFzZLtus9XebWx3PU9fGDWZVavyD5Pq5Nri+QnyTwrPpqz2WZOo9Mz7Yww
-        h2NtYlt36Snt3Wh76Paa3zW+Nu17zrfXFAifW8f852HCL4mZSR8Mepfp7Cjb3sy2L2bxRtdd
-        00Xe7F7Fe09J2Jv7xqnUDi8hrckdXp7RE5tu5W+oW9TUZ9yfb+z+OFj6zeWIxBXcqfPvz81a
-        KNqsGdmhdDwgyURA+VrUR+mIrQy20kosxRmJhlrMRcWJAK4lC2MXAwAA
-X-CMS-MailID: 20200601121947epcas1p1de4d70f6f187d235b65223df7d6527ae
+        PT5vkgtgi+KySUnNySxLLdK3S+DK+NPSxVawy6xie2cPSwPjLa0uRk4OCQETiXf7l7N1MXJx
+        CAnsZpS4OWMBcxcjB1BCSuLgPk0IU1ji8OFiiJLnjBKbLhxmBullE9CVeHLjJ5gtIqAncfLk
+        dbA5zALNTBKtX5qZQBJCAlsZJT4u4AWxOQUsJDa1NIA1CAs4SxyY+BishkVARWL+2X9gcV4B
+        S4k/859A2YISJ2c+YQE5ghloQdtGRpAws4C8xPa3c5gh7leQ2P3pKCvEDU4SHVu/skDUiEjM
+        7mxjnsAoPAvJpFkIk2YhmTQLSccCRpZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjB
+        EaWluYNx+6oPeocYmTgYDzFKcDArifBOVr8UJ8SbklhZlVqUH19UmpNafIhRmoNFSZz3RuHC
+        OCGB9MSS1OzU1ILUIpgsEwenVAOTUuW8J8yHjh+LYf9duTaUv4w/5UZT9H2Bbq+3S/seWn/J
+        vpN4UuQC44cZPxZxLz+96NQtzlkHZA/cfXlbv2jfIcZAsT9nDNKLZy3WNvaLf83BWTjJ5tGv
+        KX1f+gWF7zE9CnE8vUzss4GYVNrb8EdiFvvqns9h/sXxu/ig1b7E58d3hfd/nRD99JrSgoBu
+        beepq0OKltr46DbzX14w8eqOr8mXV39+XX16c9bxvZtqT5c+fHaEO0xAMX07g6jRhs6zujyF
+        5dtObNTcufrPBIuCgFsv3139G8DI/b/a/NqrSRuZHk5NvRUjcMuz92DZ07CWieJ7vHIrhG59
+        UQ/RnyT54p6D9LOShRZGdTaHww6uDlJiKc5INNRiLipOBABEZTelFwMAAA==
+X-CMS-MailID: 20200601122026epcas1p22567fb0e0b9aeae89556e59a6f50ef67
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200529101551epcas1p2c4b1121befee21519192957a28f468db
+X-CMS-RootMailID: 20200529101637epcas1p24499ced02928374f9140d59dc7c1e99c
 References: <20200529101459.8546-1-kohada.t2@gmail.com>
-        <CGME20200529101551epcas1p2c4b1121befee21519192957a28f468db@epcas1p2.samsung.com>
-        <20200529101459.8546-2-kohada.t2@gmail.com>
+        <CGME20200529101637epcas1p24499ced02928374f9140d59dc7c1e99c@epcas1p2.samsung.com>
+        <20200529101459.8546-4-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Separate the boot sector analysis to read_boot_sector().
-> And add a check for the fs_name field.
-> Furthermore, add a strict consistency check, because overlapping areas can
-> cause serious corruption.
+> To clarify that it is a 16-bit checksum, the parts related to the 16-bit
+> checksum are renamed and change type to u16.
+> Furthermore, replace checksum calculation in exfat_load_upcase_table()
+> with exfat_calc_checksum32().
 > 
 > Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 
@@ -125,222 +125,189 @@ Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
 > ---
 > Changes in v2:
 >  - rebase with patch 'optimize dir-cache' applied Changes in v3:
->  - add a check for the fs_name field
+>  - based on '[PATCH 2/4 v3] exfat: separate the boot sector analysis'
 > 
->  fs/exfat/exfat_raw.h |  2 +
->  fs/exfat/super.c     | 97 ++++++++++++++++++++++++--------------------
->  2 files changed, 56 insertions(+), 43 deletions(-)
+>  fs/exfat/dir.c      | 12 ++++++------
+>  fs/exfat/exfat_fs.h |  5 ++---
+>  fs/exfat/misc.c     | 10 ++++------
+>  fs/exfat/nls.c      | 19 +++++++------------
+>  4 files changed, 19 insertions(+), 27 deletions(-)
 > 
-> diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h index
-> 07f74190df44..350ce59cc324 100644
-> --- a/fs/exfat/exfat_raw.h
-> +++ b/fs/exfat/exfat_raw.h
-> @@ -10,11 +10,13 @@
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
+> 2902d285bf20..de43534aa299 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -491,7 +491,7 @@ int exfat_update_dir_chksum(struct inode *inode,
+> struct exfat_chain *p_dir,
+>  	int ret = 0;
+>  	int i, num_entries;
+>  	sector_t sector;
+> -	unsigned short chksum;
+> +	u16 chksum;
+>  	struct exfat_dentry *ep, *fep;
+>  	struct buffer_head *fbh, *bh;
 > 
->  #define BOOT_SIGNATURE		0xAA55
->  #define EXBOOT_SIGNATURE	0xAA550000
-> +#define STR_EXFAT		"EXFAT   "	/* size should be 8 */
-> 
->  #define EXFAT_MAX_FILE_LEN	255
-> 
->  #define VOL_CLEAN		0x0000
->  #define VOL_DIRTY		0x0002
-> +#define ERR_MEDIUM		0x0004
-> 
->  #define EXFAT_EOF_CLUSTER	0xFFFFFFFFu
->  #define EXFAT_BAD_CLUSTER	0xFFFFFFF7u
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c index
-> e60d28e73ff0..6a1330be5a9a 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -366,25 +366,20 @@ static int exfat_read_root(struct inode *inode)
->  	return 0;
->  }
-> 
-> -static struct boot_sector *exfat_read_boot_with_logical_sector(
-> -		struct super_block *sb)
-> +static int exfat_calibrate_blocksize(struct super_block *sb, int
-> +logical_sect)
->  {
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> -	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh-
-> >b_data;
-> -	unsigned short logical_sect = 0;
-> -
-> -	logical_sect = 1 << p_boot->sect_size_bits;
-> 
->  	if (!is_power_of_2(logical_sect) ||
->  	    logical_sect < 512 || logical_sect > 4096) {
->  		exfat_err(sb, "bogus logical sector size %u", logical_sect);
-> -		return NULL;
-> +		return -EIO;
->  	}
-> 
->  	if (logical_sect < sb->s_blocksize) {
->  		exfat_err(sb, "logical sector size too small for device
-> (logical sector size = %u)",
->  			  logical_sect);
-> -		return NULL;
-> +		return -EIO;
->  	}
-> 
->  	if (logical_sect > sb->s_blocksize) {
-> @@ -394,24 +389,20 @@ static struct boot_sector
-> *exfat_read_boot_with_logical_sector(
->  		if (!sb_set_blocksize(sb, logical_sect)) {
->  			exfat_err(sb, "unable to set blocksize %u",
->  				  logical_sect);
-> -			return NULL;
-> +			return -EIO;
->  		}
->  		sbi->boot_bh = sb_bread(sb, 0);
->  		if (!sbi->boot_bh) {
->  			exfat_err(sb, "unable to read boot sector (logical
-> sector size = %lu)",
->  				  sb->s_blocksize);
-> -			return NULL;
-> +			return -EIO;
->  		}
-> -
-> -		p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
->  	}
-> -	return p_boot;
-> +	return 0;
->  }
-> 
-> -/* mount the file system volume */
-> -static int __exfat_fill_super(struct super_block *sb)
-> +static int exfat_read_boot_sector(struct super_block *sb)
->  {
-> -	int ret;
->  	struct boot_sector *p_boot;
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> 
-> @@ -424,51 +415,41 @@ static int __exfat_fill_super(struct super_block
-*sb)
->  		exfat_err(sb, "unable to read boot sector");
+> @@ -500,7 +500,7 @@ int exfat_update_dir_chksum(struct inode *inode,
+> struct exfat_chain *p_dir,
 >  		return -EIO;
+> 
+>  	num_entries = fep->dentry.file.num_ext + 1;
+> -	chksum = exfat_calc_chksum_2byte(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
+> +	chksum = exfat_calc_chksum16(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
+> 
+>  	for (i = 1; i < num_entries; i++) {
+>  		ep = exfat_get_dentry(sb, p_dir, entry + i, &bh, NULL); @@ -
+> 508,7 +508,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct
+> exfat_chain *p_dir,
+>  			ret = -EIO;
+>  			goto release_fbh;
+>  		}
+> -		chksum = exfat_calc_chksum_2byte(ep, DENTRY_SIZE, chksum,
+> +		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
+>  				CS_DEFAULT);
+>  		brelse(bh);
 >  	}
+> @@ -593,8 +593,8 @@ void exfat_update_dir_chksum_with_entry_set(struct
+> exfat_entry_set_cache *es)
+> 
+>  	for (i = 0; i < es->num_entries; i++) {
+>  		ep = exfat_get_dentry_cached(es, i);
+> -		chksum = exfat_calc_chksum_2byte(ep, DENTRY_SIZE, chksum,
+> -						 chksum_type);
+> +		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
+> +					     chksum_type);
+>  		chksum_type = CS_DEFAULT;
+>  	}
+>  	ep = exfat_get_dentry_cached(es, 0);
+> @@ -1000,7 +1000,7 @@ int exfat_find_dir_entry(struct super_block *sb,
+> struct exfat_inode_info *ei,
+>  			}
+> 
+>  			if (entry_type == TYPE_STREAM) {
+> -				unsigned short name_hash;
+> +				u16 name_hash;
+> 
+>  				if (step != DIRENT_STEP_STRM) {
+>  					step = DIRENT_STEP_FILE;
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index
+> eebbe5a84b2b..9188985694f0 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -137,7 +137,7 @@ struct exfat_dentry_namebuf {  struct exfat_uni_name {
+>  	/* +3 for null and for converting */
+>  	unsigned short name[MAX_NAME_LENGTH + 3];
+> -	unsigned short name_hash;
+> +	u16 name_hash;
+>  	unsigned char name_len;
+>  };
+> 
+> @@ -512,8 +512,7 @@ void exfat_get_entry_time(struct exfat_sb_info *sbi,
+> struct timespec64 *ts,  void exfat_truncate_atime(struct timespec64 *ts);
+> void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64
+*ts,
+>  		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs); -unsigned
+> short exfat_calc_chksum_2byte(void *data, int len,
+> -		unsigned short chksum, int type);
+> +u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
+>  u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);  void
+> exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
+> void exfat_chain_set(struct exfat_chain *ec, unsigned int dir, diff --git
+> a/fs/exfat/misc.c b/fs/exfat/misc.c index b82d2dd5bd7c..17d41f3d3709
+> 100644
+> --- a/fs/exfat/misc.c
+> +++ b/fs/exfat/misc.c
+> @@ -136,17 +136,15 @@ void exfat_truncate_atime(struct timespec64 *ts)
+>  	ts->tv_nsec = 0;
+>  }
+> 
+> -unsigned short exfat_calc_chksum_2byte(void *data, int len,
+> -		unsigned short chksum, int type)
+> +u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type)
+>  {
+>  	int i;
+> -	unsigned char *c = (unsigned char *)data;
+> +	u8 *c = (u8 *)data;
+> 
+>  	for (i = 0; i < len; i++, c++) {
+> -		if (((i == 2) || (i == 3)) && (type == CS_DIR_ENTRY))
+> +		if (unlikely(type == CS_DIR_ENTRY && (i == 2 || i == 3)))
+>  			continue;
+> -		chksum = (((chksum & 1) << 15) | ((chksum & 0xFFFE) >> 1)) +
+> -			(unsigned short)*c;
+> +		chksum = ((chksum << 15) | (chksum >> 1)) + *c;
+>  	}
+>  	return chksum;
+>  }
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c index
+> 1ebda90cbdd7..19321773dd07 100644
+> --- a/fs/exfat/nls.c
+> +++ b/fs/exfat/nls.c
+> @@ -527,7 +527,7 @@ static int exfat_utf8_to_utf16(struct super_block *sb,
+> 
+>  	*uniname = '\0';
+>  	p_uniname->name_len = unilen;
+> -	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1,
+> 0,
+> +	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
+>  			CS_DEFAULT);
+> 
+>  	if (p_lossy)
+> @@ -623,7 +623,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
+> 
+>  	*uniname = '\0';
+>  	p_uniname->name_len = unilen;
+> -	p_uniname->name_hash = exfat_calc_chksum_2byte(upname, unilen << 1,
+> 0,
+> +	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
+>  			CS_DEFAULT);
+> 
+>  	if (p_lossy)
+> @@ -655,7 +655,8 @@ static int exfat_load_upcase_table(struct super_block
+> *sb,  {
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>  	unsigned int sect_size = sb->s_blocksize;
+> -	unsigned int i, index = 0, checksum = 0;
+> +	unsigned int i, index = 0;
+> +	u32 chksum = 0;
+>  	int ret;
+>  	unsigned char skip = false;
+>  	unsigned short *upcase_table;
+> @@ -681,13 +682,6 @@ static int exfat_load_upcase_table(struct super_block
+> *sb,
+>  		for (i = 0; i < sect_size && index <= 0xFFFF; i += 2) {
+>  			unsigned short uni = get_unaligned_le16(bh->b_data +
+> i);
+> 
+> -			checksum = ((checksum & 1) ? 0x80000000 : 0) +
+> -				(checksum >> 1) +
+> -				*(((unsigned char *)bh->b_data) + i);
+> -			checksum = ((checksum & 1) ? 0x80000000 : 0) +
+> -				(checksum >> 1) +
+> -				*(((unsigned char *)bh->b_data) + (i + 1));
 > -
-> -	/* PRB is read */
->  	p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
-> 
->  	/* check the validity of BOOT */
->  	if (le16_to_cpu((p_boot->signature)) != BOOT_SIGNATURE) {
->  		exfat_err(sb, "invalid boot record signature");
-> -		ret = -EINVAL;
-> -		goto free_bh;
-> +		return -EINVAL;
+>  			if (skip) {
+>  				index += uni;
+>  				skip = false;
+> @@ -701,13 +695,14 @@ static int exfat_load_upcase_table(struct
+> super_block *sb,
+>  			}
+>  		}
+>  		brelse(bh);
+> +		chksum = exfat_calc_chksum32(bh->b_data, i, chksum,
+> CS_DEFAULT);
 >  	}
 > 
-> -
-> -	/* check logical sector size */
-> -	p_boot = exfat_read_boot_with_logical_sector(sb);
-> -	if (!p_boot) {
-> -		ret = -EIO;
-> -		goto free_bh;
-> +	if (memcmp(p_boot->fs_name, STR_EXFAT, BOOTSEC_FS_NAME_LEN)) {
-> +		exfat_err(sb, "invalid fs_name"); /* fs_name may unprintable
-> */
-> +		return -EINVAL;
->  	}
+> -	if (index >= 0xFFFF && utbl_checksum == checksum)
+> +	if (index >= 0xFFFF && utbl_checksum == chksum)
+>  		return 0;
 > 
->  	/*
-> -	 * res_zero field must be filled with zero to prevent mounting
-> +	 * must_be_zero field must be filled with zero to prevent mounting
->  	 * from FAT volume.
->  	 */
-> -	if (memchr_inv(p_boot->must_be_zero, 0,
-> -			sizeof(p_boot->must_be_zero))) {
-> -		ret = -EINVAL;
-> -		goto free_bh;
-> -	}
-> +	if (memchr_inv(p_boot->must_be_zero, 0, sizeof(p_boot-
-> >must_be_zero)))
-> +		return -EINVAL;
-> 
-> -	p_boot = (struct boot_sector *)p_boot;
-> -	if (!p_boot->num_fats) {
-> +	if (p_boot->num_fats != 1 && p_boot->num_fats != 2) {
->  		exfat_err(sb, "bogus number of FAT structure");
-> -		ret = -EINVAL;
-> -		goto free_bh;
-> +		return -EINVAL;
->  	}
-> 
->  	sbi->sect_per_clus = 1 << p_boot->sect_per_clus_bits;
->  	sbi->sect_per_clus_bits = p_boot->sect_per_clus_bits;
-> -	sbi->cluster_size_bits = sbi->sect_per_clus_bits + sb-
-> >s_blocksize_bits;
-> +	sbi->cluster_size_bits = p_boot->sect_per_clus_bits +
-> +		p_boot->sect_size_bits;
->  	sbi->cluster_size = 1 << sbi->cluster_size_bits;
->  	sbi->num_FAT_sectors = le32_to_cpu(p_boot->fat_length);
->  	sbi->FAT1_start_sector = le32_to_cpu(p_boot->fat_offset);
-> -	sbi->FAT2_start_sector = p_boot->num_fats == 1 ?
-> -		sbi->FAT1_start_sector :
-> -			sbi->FAT1_start_sector + sbi->num_FAT_sectors;
-> +	sbi->FAT2_start_sector = le32_to_cpu(p_boot->fat_offset);
-> +	if (p_boot->num_fats == 2)
-> +		sbi->FAT2_start_sector += sbi->num_FAT_sectors;
->  	sbi->data_start_sector = le32_to_cpu(p_boot->clu_offset);
->  	sbi->num_sectors = le64_to_cpu(p_boot->vol_length);
->  	/* because the cluster index starts with 2 */ @@ -483,15 +464,45 @@
-> static int __exfat_fill_super(struct super_block *sb)
->  	sbi->clu_srch_ptr = EXFAT_FIRST_CLUSTER;
->  	sbi->used_clusters = EXFAT_CLUSTERS_UNTRACKED;
-> 
-> -	if (le16_to_cpu(p_boot->vol_flags) & VOL_DIRTY) {
-> -		sbi->vol_flag |= VOL_DIRTY;
-> -		exfat_warn(sb, "Volume was not properly unmounted. Some data
-> may be corrupt. Please run fsck.");
-> +	/* check consistencies */
-> +	if (sbi->num_FAT_sectors << p_boot->sect_size_bits <
-> +	    sbi->num_clusters * 4) {
-> +		exfat_err(sb, "bogus fat length");
-> +		return -EINVAL;
-> +	}
-> +	if (sbi->data_start_sector <
-> +	    sbi->FAT1_start_sector + sbi->num_FAT_sectors *
-p_boot->num_fats)
-> {
-> +		exfat_err(sb, "bogus data start sector");
-> +		return -EINVAL;
->  	}
-> +	if (sbi->vol_flag & VOL_DIRTY)
-> +		exfat_warn(sb, "Volume was not properly unmounted. Some data
-> may be corrupt. Please run fsck.");
-> +	if (sbi->vol_flag & ERR_MEDIUM)
-> +		exfat_warn(sb, "Medium has reported failures. Some data may
-> be
-> +lost.");
-> 
->  	/* exFAT file size is limited by a disk volume size */
->  	sb->s_maxbytes = (u64)(sbi->num_clusters - EXFAT_RESERVED_CLUSTERS)
-> <<
->  		sbi->cluster_size_bits;
-> 
-> +	/* check logical sector size */
-> +	if (exfat_calibrate_blocksize(sb, 1 << p_boot->sect_size_bits))
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
-> +/* mount the file system volume */
-> +static int __exfat_fill_super(struct super_block *sb) {
-> +	int ret;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +
-> +	ret = exfat_read_boot_sector(sb);
-> +	if (ret) {
-> +		exfat_err(sb, "failed to read boot sector");
-> +		goto free_bh;
-> +	}
-> +
->  	ret = exfat_create_upcase_table(sb);
->  	if (ret) {
->  		exfat_err(sb, "failed to load upcase table");
+>  	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum :
+> 0x%08x, utbl_chksum : 0x%08x)",
+> -		  index, checksum, utbl_checksum);
+> +		  index, chksum, utbl_checksum);
+>  	ret = -EINVAL;
+>  free_table:
+>  	exfat_free_upcase_table(sbi);
 > --
 > 2.25.1
 
