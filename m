@@ -2,49 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5326C1EB267
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 01:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A231EB270
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 01:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725832AbgFAXzC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 19:55:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42320 "EHLO mail.kernel.org"
+        id S1726019AbgFAXzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 19:55:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgFAXzC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 19:55:02 -0400
-Subject: Re: [git pull] uaccess readdir
+        id S1725446AbgFAXzD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jun 2020 19:55:03 -0400
+Subject: Re: [git pull] vfs patches from Miklos
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591055701;
-        bh=+q+n+z8emUHCucO7YvEiOKwQoUCiAF9waXSkIhHSzgw=;
+        s=default; t=1591055702;
+        bh=MoUu60NYsXeP5Uag9clrWlvwKZqqibA3Qh+X93+U7ac=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Kn9h4H4etM9xV28MEszhjLoV4LcGuUlRI48hQCe+sOXZ1wPdRqLOUHcT+BCoh4eEj
-         3dIcpOTGP6Vtc55tQAQV23W+b5eAq7fAUjM3P4vFi1rl4eMZpJHFayibpd7ajLdchA
-         q+G2Z3hj9N+m+cxOBP/BsPPHeQGM7jyY9nZD+GiU=
+        b=il0HK6KmJ0V9W4qmDDejd5+wkS0sgWiwh5/BjEU1T2V2TwOuN/hTsKYnJmImEhsFp
+         0l8QkKGH85hP/G3JZCWIG74XkihgUoguxS7nCO42XqcF7u/YfS33B3ZVDdTL5P3T7B
+         3uu9rYJNvbkUmaHwm0dY2yWXPs6UWR/1V3d0GzMw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200601182741.GC23230@ZenIV.linux.org.uk>
-References: <20200601182741.GC23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200601184036.GH23230@ZenIV.linux.org.uk>
+References: <20200601184036.GH23230@ZenIV.linux.org.uk>
 X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200601182741.GC23230@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git uaccess.readdir
-X-PR-Tracked-Commit-Id: 5fb1514164de20ddb21886ffceda4cb54d6538f6
+X-PR-Tracked-Message-Id: <20200601184036.GH23230@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git from-miklos
+X-PR-Tracked-Commit-Id: c8ffd8bcdd28296a198f237cc595148a8d4adfbe
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e148a8f948afc0b1eeb5c157b23b3d0a4d4517a5
-Message-Id: <159105570177.29263.15090743496246924081.pr-tracker-bot@kernel.org>
-Date:   Mon, 01 Jun 2020 23:55:01 +0000
+X-PR-Merge-Commit-Id: f359287765c04711ff54fbd11645271d8e5ff763
+Message-Id: <159105570255.29263.11096578901806814897.pr-tracker-bot@kernel.org>
+Date:   Mon, 01 Jun 2020 23:55:02 +0000
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 1 Jun 2020 19:27:41 +0100:
+The pull request you sent on Mon, 1 Jun 2020 19:40:36 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git uaccess.readdir
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git from-miklos
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e148a8f948afc0b1eeb5c157b23b3d0a4d4517a5
+https://git.kernel.org/torvalds/c/f359287765c04711ff54fbd11645271d8e5ff763
 
 Thank you!
 
