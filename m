@@ -2,80 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 464EC1EA82D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 19:09:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE491EA84B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 19:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgFARI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 13:08:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55752 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727932AbgFARIw (ORCPT
+        id S1727803AbgFARP1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 13:15:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728097AbgFARP0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 13:08:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591031330;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aBfVnLq9ec7IA3u5TWoDLJTmL8ZGnJcANeLd1J0lvVs=;
-        b=PSZDMiR1uVVtc3XhbOhUQ4zJD3pxwPbqg7wwH2Chw00qaWTlsuU4h1+q5VduG4BNxJ8thI
-        YUvhwWrqfyP7tY2bn0jWpAzfr8Ae6H1F/ueaqypRI80UKmAps2a8hcUmziZngu02/a9/5L
-        TxNEexpdJkSRRUcUoGM3hJwwBxPlRJc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-i0lRwKS8OGmsfJbPywpuyA-1; Mon, 01 Jun 2020 13:08:46 -0400
-X-MC-Unique: i0lRwKS8OGmsfJbPywpuyA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6856C107ACCD;
-        Mon,  1 Jun 2020 17:08:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-138.rdu2.redhat.com [10.10.112.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C954E7F0A4;
-        Mon,  1 Jun 2020 17:08:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <779b327f-b0fa-e21f-cbf6-5cadeca58581@web.de>
-References: <779b327f-b0fa-e21f-cbf6-5cadeca58581@web.de>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     dhowells@redhat.com, Zhihao Cheng <chengzhihao1@huawei.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yi Zhang <yi.zhang@huawei.com>
-Subject: Re: [PATCH v2] afs: Fix memory leak in afs_put_sysnames()
+        Mon, 1 Jun 2020 13:15:26 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED19EC08C5C9
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 10:15:24 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id d6so113695pjs.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jun 2020 10:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WsYNSM2tJ88YCalPymb6HrMzWTrL06Vmn6FYR6YE7/Y=;
+        b=UgTmTyPNErDWoyfDpvqEdQs/U0cshfD8CeAre29uvZ/dsDLiaKCLIx+B0hmevfnub2
+         0tDRZhun5AbIaUe8SBeRwV24cBYLkx5zGsLhc5btRwWKuuENnv81W1XD4EzHeU2TFL+Y
+         YPXWGNMQB3ZfSNqm0aK6qvPU8H0P/AAcN3ohrkN+vUQc1U37ZPjHjGoxZ9FQoEXx9fFM
+         1wtG0Pg1H2Xqifo4XuQFBFtIU8HsukcHZMHwyTUDR+6WV7LFfjpVnCxNeUYBZQCA+ERb
+         +nkfqnqnfPlKH2LndTUNPgXx9+YkQF0yCX5ZGsn9nw2tkdHaJ11TlFd+n8Tq7PTfxJdJ
+         qQXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WsYNSM2tJ88YCalPymb6HrMzWTrL06Vmn6FYR6YE7/Y=;
+        b=OO282tVsTGnZqiGFoyg7GPO/lChmkHeOJyBZQqCtH77Y7OZxJurmmvYbEzBM4FCnPi
+         wZzn4ti4WSOwk8/Zdn+znPHLiNG9dtbugm+5RlSUdxlTKTC+ZFHtKGTIiNmM6UidJO7/
+         TZQ4qeKhNLzvud5AjRAuMny/0DQpKM8CYo9o3/sL1eiEAyE+CeNco++ySruYnoRplK6j
+         0FsOZvBAd8/jWwy5igkW8pVzf6UdbAe0amli+IElP6aMDL22aUjr0PoWB8pYPAB+W/mX
+         jCzk4NEdPqCNjAsGBkQ3mZY6+26orxx1E2VZ8Y15QuIOd70ACWtMU/ScJu2Ll2Kdjl+w
+         ncaw==
+X-Gm-Message-State: AOAM532GVmgrAlF7eokmqcLQicSvpa2GZfsE9uKEmE2QHD5PexfvZZR5
+        nKCoMi4JlcNO6CG1c+IYLN++Eg==
+X-Google-Smtp-Source: ABdhPJwfvpv+bJ+nV4YfmPVaXfQZIyLbxNwCqF8WqLkarYS7Wisy1DDnTyqP7EEmu/OsOjnF86QdFA==
+X-Received: by 2002:a17:90a:4d4e:: with SMTP id l14mr470026pjh.10.1591031724348;
+        Mon, 01 Jun 2020 10:15:24 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id mg14sm33297pjb.48.2020.06.01.10.15.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jun 2020 10:15:23 -0700 (PDT)
+Subject: Re: [PATCH 04/12] mm: add support for async page locking
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+References: <20200526195123.29053-1-axboe@kernel.dk>
+ <20200526195123.29053-5-axboe@kernel.dk>
+ <20200601142649.GJ19604@bombadil.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2f4dbb05-4874-6386-f9ee-06fdbaf482bf@kernel.dk>
+Date:   Mon, 1 Jun 2020 11:15:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1346216.1591031323.1@warthog.procyon.org.uk>
-Date:   Mon, 01 Jun 2020 18:08:43 +0100
-Message-ID: <1346217.1591031323@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20200601142649.GJ19604@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> wrote:
-
-> > sysnames should be freed after refcnt being decreased to zero in
-> > afs_put_sysnames().
+On 6/1/20 8:26 AM, Matthew Wilcox wrote:
+> On Tue, May 26, 2020 at 01:51:15PM -0600, Jens Axboe wrote:
+>> +static int __wait_on_page_locked_async(struct page *page,
+>> +				       struct wait_page_queue *wait, bool set)
+>> +{
+>> +	struct wait_queue_head *q = page_waitqueue(page);
+>> +	int ret = 0;
+>> +
+>> +	wait->page = page;
+>> +	wait->bit_nr = PG_locked;
+>> +
+>> +	spin_lock_irq(&q->lock);
+>> +	if (set)
+>> +		ret = !trylock_page(page);
+>> +	else
+>> +		ret = PageLocked(page);
+>> +	if (ret) {
+>> +		__add_wait_queue_entry_tail(q, &wait->wait);
+>> +		SetPageWaiters(page);
+>> +		if (set)
+>> +			ret = !trylock_page(page);
+>> +		else
+>> +			ret = PageLocked(page);
 > 
-> How do you think about a wording variant like the following?
-> 
->    Release the sysnames object after its reference counter was decreased
->    to zero.
+> Between the callers and this function, we actually look at PG_lock three
+> times; once in the caller, then after taking the spinlock, then after
+> adding ourselves to the waitqueue.  I understand the first and third, but
+> is it really worth doing the second test?  It feels unlikely to succeed
+> and only saves us setting PageWaiters.
 
-I would say "reference count" not "reference counter" personally.  I would
-also say "afs_sysnames" rather than "sysnames".  Perhaps something like:
+That's probably true, and we can skip the 2nd one. I'll make the change.
 
-	Fix afs_put_sysnames() to actually free the specified afs_sysnames
-	object after its reference count has been decreased to zero and its
-	contents have been released.
-
-> Will it matter to mention the size of the data structure "afs_sysnames"?
-
-Why is it necessary to do so?
-
-David
+-- 
+Jens Axboe
 
