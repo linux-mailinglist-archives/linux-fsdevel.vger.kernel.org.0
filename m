@@ -2,121 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 204121E9CF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 07:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B8B1E9D53
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 07:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgFAFLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 01:11:50 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12104 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbgFAFLu (ORCPT
+        id S1725886AbgFAF0j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 01:26:39 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19602 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgFAF0i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 01:11:50 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ed48dbf0000>; Sun, 31 May 2020 22:10:24 -0700
+        Mon, 1 Jun 2020 01:26:38 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ed491820001>; Sun, 31 May 2020 22:26:26 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 31 May 2020 22:11:50 -0700
+  Sun, 31 May 2020 22:26:38 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 31 May 2020 22:11:50 -0700
-Received: from [10.2.56.10] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate101.nvidia.com on Sun, 31 May 2020 22:26:38 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 1 Jun
- 2020 05:11:49 +0000
+ 2020 05:26:38 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 1 Jun 2020 05:26:37 +0000
+Received: from sandstorm.nvidia.com (Not Verified[10.2.56.10]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5ed4918c0004>; Sun, 31 May 2020 22:26:37 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 1/2] docs: mm/gup: pin_user_pages.rst: add a "case 5"
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "Michael S . Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Vlastimil Babka <vbabka@suse.cz>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <virtualization@lists.linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
         <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <20200529234309.484480-1-jhubbard@nvidia.com>
- <20200529234309.484480-2-jhubbard@nvidia.com>
- <CAFqt6zaCSngh7-N_qZ6-S3Cj8CHF8DTSPv8anP_oJg5E6UWu9g@mail.gmail.com>
-X-Nvconfidentiality: public
-Message-ID: <b8de5a5e-b53a-81e8-9165-405d203deb33@nvidia.com>
-Date:   Sun, 31 May 2020 22:11:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        <linux-mm@kvack.org>, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2 0/2] vhost, docs: convert to pin_user_pages(), new "case 5"
+Date:   Sun, 31 May 2020 22:26:31 -0700
+Message-ID: <20200601052633.853874-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CAFqt6zaCSngh7-N_qZ6-S3Cj8CHF8DTSPv8anP_oJg5E6UWu9g@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1590988224; bh=9bFIJ1fdeUjA5o+dFxctvjpXw8nTkPS99fUnc8XcE0I=;
-        h=X-PGP-Universal:From:Subject:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+        t=1590989186; bh=oWhDekDqxx6fP3u/Pk90DFNTa0Jiv5OSfwybT44Pq1M=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
          Content-Transfer-Encoding;
-        b=QbVXe76ixZyU/4kNOFUP5irHut9M8oYwtRvqVPMBs8MwCPoBca+201MH6KAunI+hC
-         YI80foKFhnvqpOlbkPGohIsaFJrF/KNCZGr+3ThzCd3bCk1avxVy3WXxbF/4r2quEF
-         7yrNewG5QVpWJoVuLj1oHvaRgry+KxpeM1VOIv3nmyznPJUllYlOKwL+c7N4xh6Uz+
-         +qU9FTcgG6RIPcdtoZ+KUxCbcCvD5lTT2AvEWImzE7NSJc+NbL3ZKHm+rp245WmBsC
-         +sdrJvoCqXCZvICidj76kgi5z1yDjAHsgJtBx183NoBxycsge6pMGpAdd0nSqbWfbK
-         z4XykyLCQxZNg==
+        b=njQ2XrKfA5W2d6S2irff3GXFlkhESnmMzdRVd0Q/6B60AxagwtZSbLa4o+uUZPcEC
+         U9b4toQeqtCH2JLxeEdlYli0rRsWaLGGgu7lNzOE4A3V9yIjpiUmL++Z39WzDX8gm2
+         Y+SEzR/8oWDaFDEpzI6OOPvRCeV1MdbdreDatwd//9coer0YaPfJARKz6KpKuJNuki
+         i9df1soJa3Ku0wAC2kh8rE6HVP5UIGoO2FLioKhbkYmm1zpPOCFOrf+L8Fzx/m1u67
+         U87MTtgDiMhF3FWGCf9o8p0f0Fzq6zhQsQoCWpyZ5HjHySh/7RDgDY46C0swvVZLfy
+         +vVIjKS1sWtVQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-05-31 00:11, Souptick Joarder wrote:
-...
->> diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
->> index 4675b04e8829..b9f2688a2c67 100644
->> --- a/Documentation/core-api/pin_user_pages.rst
->> +++ b/Documentation/core-api/pin_user_pages.rst
->> @@ -171,6 +171,26 @@ If only struct page data (as opposed to the actual memory contents that a page
->>   is tracking) is affected, then normal GUP calls are sufficient, and neither flag
->>   needs to be set.
->>
->> +CASE 5: Pinning in order to write to the data within the page
->> +-------------------------------------------------------------
->> +Even though neither DMA nor Direct IO is involved, just a simple case of "pin,
->> +access page's data, unpin" can cause a problem.
-> 
-> Will it be, *"pin, access page's data, set page dirty, unpin" * ?
+This is based on Linux 5.7, plus one prerequisite patch:
+   "mm/gup: update pin_user_pages.rst for "case 3" (mmu notifiers)" [1]
 
-Well...the problem can show up with just accessing (writing) the data.
-But it is true that this statement is a little different from the
-patterns below, which is confusing. I'll delete set_page_dirty() from each
-of them, in order to avoid confusing things. (Although each is correct.)
-And I'll also change the above to "pin, write to a page's data, upin".
+Changes since v1: removed references to set_page_dirty*(), in response to
+Souptick Joarder's review (thanks!).
 
-set_page_dirty() interactions are really just extra credit here. :) And
-fully read-only situations won't cause a problem.
+Cover letter for v1, edited/updated slightly:
 
-> 
-> Case 5 may be considered a
->> +superset of Case 1, plus Case 2, plus anything that invokes that pattern. In
->> +other words, if the code is neither Case 1 nor Case 2, it may still require
->> +FOLL_PIN, for patterns like this:
->> +
->> +Correct (uses FOLL_PIN calls):
->> +    pin_user_pages()
->> +    access the data within the pages
->> +    set_page_dirty_lock()
->> +    unpin_user_pages()
->> +
->> +INCORRECT (uses FOLL_GET calls):
->> +    get_user_pages()
->> +    access the data within the pages
->> +    set_page_dirty_lock()
->> +    put_page()
->> +
+It recently became clear to me that there are some get_user_pages*()
+callers that don't fit neatly into any of the four cases that are so
+far listed in pin_user_pages.rst. vhost.c is one of those.
 
-I'll send a v2 shortly.
+Add a Case 5 to the documentation, and refer to that when converting
+vhost.c.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Thanks to Jan Kara for helping me (again) in understanding the
+interaction between get_user_pages() and page writeback [2].
+
+Note that I have only compile-tested the vhost.c patch, although that
+does also include cross-compiling for a few other arches. Any run-time
+testing would be greatly appreciated.
+
+[1] https://lore.kernel.org/r/20200527194953.11130-1-jhubbard@nvidia.com
+[2] https://lore.kernel.org/r/20200529070343.GL14550@quack2.suse.cz
+
+John Hubbard (2):
+  docs: mm/gup: pin_user_pages.rst: add a "case 5"
+  vhost: convert get_user_pages() --> pin_user_pages()
+
+ Documentation/core-api/pin_user_pages.rst | 18 ++++++++++++++++++
+ drivers/vhost/vhost.c                     |  5 ++---
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+
+base-commit: 3d77e6a8804abcc0504c904bd6e5cdf3a5cf8162
+--=20
+2.26.2
+
