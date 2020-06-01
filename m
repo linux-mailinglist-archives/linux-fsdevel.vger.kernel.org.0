@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B97821EA3A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 14:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C44451EA3A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jun 2020 14:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbgFAMSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jun 2020 08:18:35 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:46708 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbgFAMSe (ORCPT
+        id S1726101AbgFAMTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jun 2020 08:19:53 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:30193 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbgFAMTw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jun 2020 08:18:34 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200601121831epoutp032c5b910becc314fd36eedd185524f3ad~UarkL9az63044830448epoutp03N
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 12:18:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200601121831epoutp032c5b910becc314fd36eedd185524f3ad~UarkL9az63044830448epoutp03N
+        Mon, 1 Jun 2020 08:19:52 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200601121949epoutp026fd76034b1da979b9e0794ed53101bc4~UasspR7WT0691006910epoutp02Y
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jun 2020 12:19:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200601121949epoutp026fd76034b1da979b9e0794ed53101bc4~UasspR7WT0691006910epoutp02Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591013911;
-        bh=FI4hB0IZkiFVBnRVOoJY44uSsBK0SGUyB1rfRSJBeKg=;
+        s=mail20170921; t=1591013989;
+        bh=2isW1mmA+SasxMpG2XdpT1OqpqXgSDxRM1m8fJgKNUM=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=eSfNi7dncQqKSuUoF5dvhycfYRD6NCU4+MJ8OP6o6Uoqz37prUC3BKreTpWHEOepV
-         nW9RLHz825Kz6KyBoOfqfJCHL57JbSiV7/Kb7mpvxu78mZzhIm0w/EHqoSLPMNMC83
-         J7HDDvDDtzDUkhyuXt82nuVG2reSsDB6HNcQJpnw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200601121830epcas1p122a584785445e5366bf1224fcb7287c2~Uari-YcYn1530515305epcas1p1s;
-        Mon,  1 Jun 2020 12:18:30 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 49bDjK1F3tzMqYkc; Mon,  1 Jun
-        2020 12:18:29 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D4.F3.19033.512F4DE5; Mon,  1 Jun 2020 21:18:29 +0900 (KST)
+        b=pvIkAPsVUslFT5wZG730BqRHQMyrUxWanP+GUCJoYvx3j6i0tYT45I7orDbUx/3zp
+         Q5iTezEZxFY78E950KZ1AjGJNnQd5x7N//t2fLwcor/8FP3tfs6mL9r841NfefthA5
+         zEjdCWzTl7H/IJp8PjMDqXQRp1yCpi66Dh1TjNYU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200601121948epcas1p33c8fbe9ddf01209369fc4e084b4c7bce~UassVMNz10148901489epcas1p3N;
+        Mon,  1 Jun 2020 12:19:48 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 49bDkq5k3DzMqYkZ; Mon,  1 Jun
+        2020 12:19:47 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8F.AB.28581.362F4DE5; Mon,  1 Jun 2020 21:19:47 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200601121828epcas1p1b3c5202ffe1596f586bc43a4193763ee~UarhhTzXj1753717537epcas1p1n;
-        Mon,  1 Jun 2020 12:18:28 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        20200601121947epcas1p1de4d70f6f187d235b65223df7d6527ae~UasrATjTD0408304083epcas1p1S;
+        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200601121828epsmtrp2f3fb641f2743d83592bc24ca9c6b1ae0~Uarhgf0Ds2229322293epsmtrp2w;
-        Mon,  1 Jun 2020 12:18:28 +0000 (GMT)
-X-AuditID: b6c32a36-16fff70000004a59-6c-5ed4f2154bf7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.83.08382.412F4DE5; Mon,  1 Jun 2020 21:18:28 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        20200601121947epsmtrp2937af80b3515b66bf17abf40bf1bb024~Uasq-t0HF2229322293epsmtrp2U;
+        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
+X-AuditID: b6c32a38-2cdff70000006fa5-18-5ed4f263ed2f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        95.63.08303.362F4DE5; Mon,  1 Jun 2020 21:19:47 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200601121828epsmtip1990cd3368fe6862a108a6ffe645cf923~UarhOt9he3048030480epsmtip1M;
-        Mon,  1 Jun 2020 12:18:28 +0000 (GMT)
+        20200601121947epsmtip258f70f63f41fb368d67125fafe60d057~Uasq0tVbC0351103511epsmtip2O;
+        Mon,  1 Jun 2020 12:19:47 +0000 (GMT)
 From:   "Sungjong Seo" <sj1557.seo@samsung.com>
 To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
 Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
@@ -56,65 +56,67 @@ Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
         <motai.hirotaka@aj.mitsubishielectric.co.jp>,
         "'Namjae Jeon'" <namjae.jeon@samsung.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200529101459.8546-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH 1/4 v3] exfat: redefine PBR as boot_sector
-Date:   Mon, 1 Jun 2020 21:18:28 +0900
-Message-ID: <1ffd01d6380e$c18bcab0$44a36010$@samsung.com>
+In-Reply-To: <20200529101459.8546-2-kohada.t2@gmail.com>
+Subject: RE: [PATCH 2/4 v3] exfat: separate the boot sector analysis
+Date:   Mon, 1 Jun 2020 21:19:47 +0900
+Message-ID: <1ffe01d6380e$f0a52260$d1ef6720$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQI7k4sUwKqWitwghFE4b9wMMqm66QECpNOBp/DgdxA=
+Thread-Index: AQECpNOBCAKs/TRXObwEq14CKUeHvgG0v48kAkVSecmqSwNY8A==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmga7opytxBpu2sVn8mHubxeLNyaks
-        Fnv2nmSxuLxrDpvF5f+fWCyWfZnMYvFjer0Du8eXOcfZPdom/2P3aD62ks1j56y77B59W1Yx
-        enzeJBfAFpVjk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuW
-        mQN0ipJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwNCgQK84Mbe4NC9dLzk/18rQ
-        wMDIFKgyISfj+45trAWboyuu3t3H2MC4z7OLkZNDQsBE4uPhE8wgtpDADkaJwzOMuxi5gOxP
-        jBJ/tx5jgXC+MUps/7SLEaZj958LzBCJvYwS8w9cZ4RwXjJKTH50jAmkik1AV+LJjZ9gc0UE
-        9CROnrzOBmIzCzQySZx4mQ1icwpYSKy7tYwdxBYWsJM4OKORFcRmEVCRuN80C8zmFbCUuLGz
-        nx3CFpQ4OfMJC8QceYntb+cwQ1ykILH701FWiF1WEu+mHWeEqBGRmN3ZBnaphMBCDok332Yy
-        QTS4SJz+tIsFwhaWeHV8CzuELSXx+d1eNgi7mVGi764nRHMLo8SqHU1QCWOJT58/A23gANqg
-        KbF+lz5EWFFi5++5UIv5JN597WEFKZEQ4JXoaBOCKFGR+P5hJwvMqis/rjJNYFSaheS1WUhe
-        m4XkhVkIyxYwsqxiFEstKM5NTy02LDBCju1NjOB0qmW2g3HS2w96hxiZOBgPMUpwMCuJ8E5W
-        vxQnxJuSWFmVWpQfX1Sak1p8iNEUGNgTmaVEk/OBCT2vJN7Q1MjY2NjCxMzczNRYSZxXTeZC
-        nJBAemJJanZqakFqEUwfEwenVAOTj+nbPwL336088/PbHt7CTwKH9uodU5muqH7UVMHW1nrj
-        N5GFv8wbHUoOl3LGMU4zWyjwmTs4yvLlhtLdCz1XegQ/q+6/+zX+tULM4q++cm7f/tnaas7Z
-        yf/5bs/TE+aZbKk9Zl+KNx+5X2BRc+SC1ar05ENzk/6tXxGxatnx3hNZ26xn3ln50O3anzWn
-        eSfZlt/bPyf0t9nzKzveu23N7Mv/9u54yElx36BvxTPb5C5rXY78H7huefP5y+seH2ReMbnm
-        xce60GDj43U7L5xf5O2jvnJOoezUdL9FeZ85WTIX6D16oK/25KiLT8KvA0E3LOS7bATvzWM4
-        UelXteyJhPNbI3bB5aeuv1Gssd/xvkaJpTgj0VCLuag4EQAWmm1zMAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJTlfk05U4g/bLIhY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
-        Hp83yQWwRXHZpKTmZJalFunbJXBlfN+xjbVgc3TF1bv7GBsY93l2MXJySAiYSOz+c4G5i5GL
-        Q0hgN6PE0x9v2boYOYASUhIH92lCmMIShw8XQ5Q8Z5ToPziXDaSXTUBX4smNn8wgtoiAnsTJ
-        k9fZQIqYBZqZJFq/NDNBdHQySrzeO4cJpIpTwEJi3a1l7CC2sICdxMEZjawgNouAisT9pllg
-        Nq+ApcSNnf3sELagxMmZT1hArmAG2tC2kREkzCwgL7H97RxmiAcUJHZ/OsoKcYSVxLtpx6Fq
-        RCRmd7YxT2AUnoVk0iyESbOQTJqFpGMBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95Pzc
-        TYzgmNLS3MG4fdUHvUOMTByMhxglOJiVRHgnq1+KE+JNSaysSi3Kjy8qzUktPsQozcGiJM57
-        o3BhnJBAemJJanZqakFqEUyWiYNTqoHJ4dM+YRduD7MUXb3fyq2Js/rlXhYss/oSYGi1eNtW
-        yYMOmcoWqpZPWBvfPbdd2ZCwzbHUbXJJld+D7zvvSvZymTj1O53ZYfJ5fn/w1aI0+bipLf4y
-        kl4MZV4JQrtOMF3W/c/5fFbytyX2OgdKH8Xp8YgWGU3Kidt58L2wtnjIgUaPyT2Jzyp9l5T9
-        9WFM3sTy5Wvlmuc56t7XFZZdF08TuN4+OfB2+FGzBJ1S1sbGzV1/E66tWiZ6bu7yh+HLyyc/
-        PCdRYSGc5/puxpvFD7ZIHPoqzeoakc5TbK9YeXqb2XK/Q+u3LJ2z89dSsUN2Ziysi0vLp1/4
-        qJxweMY6i66Zl5o6T1b4WvQZW/yZ8FqJpTgj0VCLuag4EQD5I5JRGAMAAA==
-X-CMS-MailID: 20200601121828epcas1p1b3c5202ffe1596f586bc43a4193763ee
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmvm7ypytxBiu7dS1+zL3NYvHm5FQW
+        iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
+        PT5vkgtgi8qxyUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
+        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYGhQoFecmFtcmpeul5yfa2Vo
+        YGBkClSZkJPRuGMra8FJy4pPv9pYGxiP6XYxcnJICJhIzPi6gLGLkYtDSGAHo8SSfdvYIZxP
+        jBLP765mhnA+M0psf/eJHablw455rBCJXYwS049cgKp6ySgxb0sLC0gVm4CuxJMbP5lBbBEB
+        PYmTJ6+zgdjMAo1MEideZncxcnBwClhILO+uAQkLC7hI/OqeC7aARUBFYvqz3WDlvAKWEg9P
+        /WOFsAUlTs58wgIxRl5i+9s5zBAHKUjs/nSUFWKVk8TxZdPZIWpEJGZ3toHdJiEwl0Ni9+dW
+        JogGF4kD/3ZAfSMs8er4FihbSuLzu71sEHYzo0TfXU+I5hZGiVU7mqASxhKfPn9mBHmAWUBT
+        Yv0ufYiwosTO33MZIRbzSbz72sMKUiIhwCvR0SYEUaIi8f3DThaYVVd+XGWawKg0C8lrs5C8
+        NgvJC7MQli1gZFnFKJZaUJybnlpsWGCCHNubGMHpVMtiB+Pctx/0DjEycTAeYpTgYFYS4Z2s
+        filOiDclsbIqtSg/vqg0J7X4EKMpMLAnMkuJJucDE3peSbyhqZGxsbGFiZm5mamxkjjvSasL
+        cUIC6YklqdmpqQWpRTB9TBycUg1MPEbW8n2TDD5VC1ukhMnPYf/Xv+dMpM2xHZwxpyZ+y+tj
+        +LNZ+tDDq2t/bfzdbvrg2IT1mn62c2cIsD24Ej5VNnrb82+b396/o7P0wc/nzlfM5xZpbphv
+        w96gXHuoMs6wfGfFR/kNexLuKx59vZKTJ2W64p7eqaUa37pMT/GoTZ/6zqmcZ1fmC9ejC1s5
+        fmRtvr/nNGNz5gzZ6Vz/zc1FNbTOpU6MOntpR7em0WO9X3237tT9v2rJmPlY6u0fb9YfpRFS
+        Ny6+3SZpXjaN78bWdaf0k8o2/U+6byGQfstvo97HIl0ptlQL45TI9/mcZ1K9WS/+2fRQZYF5
+        ivibqbclMidIuHzJ2y0//9bcTyHSj5RYijMSDbWYi4oTAacAWUcwBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXjf505U4g1/zhC1+zL3NYvHm5FQW
+        iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
+        PT5vkgtgi+KySUnNySxLLdK3S+DKaNyxlbXgpGXFp19trA2Mx3S7GDk5JARMJD7smMfaxcjF
+        ISSwg1Hi4ORGpi5GDqCElMTBfZoQprDE4cPFECXPGSV2L93PDNLLJqAr8eTGTzBbREBP4uTJ
+        62wgRcwCzUwSrV+amSA6tjJK/Lx3D2wop4CFxPLuGpAGYQEXiV/dc9lBbBYBFYnpz3azgdi8
+        ApYSD0/9Y4WwBSVOznzCAtLKDLSgbSMjSJhZQF5i+9s5zBD3K0js/nSUFeIGJ4njy6azQ9SI
+        SMzubGOewCg8C8mkWQiTZiGZNAtJxwJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmb
+        GMERpaW1g3HPqg96hxiZOBgPMUpwMCuJ8E5WvxQnxJuSWFmVWpQfX1Sak1p8iFGag0VJnPfr
+        rIVxQgLpiSWp2ampBalFMFkmDk6pBiZpoVvuC0NP9p96VHP9RWvR5Efqa1XT7D/axVwLvdA/
+        cV/+vO1GE+PmPw9czzdTOmDbDR2Lm/w/uR9vM/619sP90DBFPr58KYGQa4+dOWP+qLodtzG4
+        0PeOP9a1WnhXndiFzZLtus9XebWx3PU9fGDWZVavyD5Pq5Nri+QnyTwrPpqz2WZOo9Mz7Yww
+        h2NtYlt36Snt3Wh76Paa3zW+Nu17zrfXFAifW8f852HCL4mZSR8Mepfp7Cjb3sy2L2bxRtdd
+        00Xe7F7Fe09J2Jv7xqnUDi8hrckdXp7RE5tu5W+oW9TUZ9yfb+z+OFj6zeWIxBXcqfPvz81a
+        KNqsGdmhdDwgyURA+VrUR+mIrQy20kosxRmJhlrMRcWJAK4lC2MXAwAA
+X-CMS-MailID: 20200601121947epcas1p1de4d70f6f187d235b65223df7d6527ae
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200529101523epcas1p192c6ad12d846dc9119b9a755a3650fd0
-References: <CGME20200529101523epcas1p192c6ad12d846dc9119b9a755a3650fd0@epcas1p1.samsung.com>
-        <20200529101459.8546-1-kohada.t2@gmail.com>
+X-CMS-RootMailID: 20200529101551epcas1p2c4b1121befee21519192957a28f468db
+References: <20200529101459.8546-1-kohada.t2@gmail.com>
+        <CGME20200529101551epcas1p2c4b1121befee21519192957a28f468db@epcas1p2.samsung.com>
+        <20200529101459.8546-2-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Aggregate PBR related definitions and redefine as "boot_sector" to comply
-> with the exFAT specification.
-> And, rename variable names including 'pbr'.
+> Separate the boot sector analysis to read_boot_sector().
+> And add a check for the fs_name field.
+> Furthermore, add a strict consistency check, because overlapping areas can
+> cause serious corruption.
 > 
 > Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 
@@ -123,354 +125,222 @@ Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
 > ---
 > Changes in v2:
 >  - rebase with patch 'optimize dir-cache' applied Changes in v3:
->  - rename BOOTSEC_OEM_NAME_LEN to BOOTSEC_FS_NAME_LEN
->  - rename oem_name to fs_name in struct boot_sector
+>  - add a check for the fs_name field
 > 
->  fs/exfat/exfat_fs.h  |  2 +-
->  fs/exfat/exfat_raw.h | 79 +++++++++++++++--------------------------
->  fs/exfat/super.c     | 84 ++++++++++++++++++++++----------------------
->  3 files changed, 72 insertions(+), 93 deletions(-)
+>  fs/exfat/exfat_raw.h |  2 +
+>  fs/exfat/super.c     | 97 ++++++++++++++++++++++++--------------------
+>  2 files changed, 56 insertions(+), 43 deletions(-)
 > 
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index
-> 5caad1380818..9673e2d31045 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -227,7 +227,7 @@ struct exfat_sb_info {
->  	unsigned int root_dir; /* root dir cluster */
->  	unsigned int dentries_per_clu; /* num of dentries per cluster */
->  	unsigned int vol_flag; /* volume dirty flag */
-> -	struct buffer_head *pbr_bh; /* buffer_head of PBR sector */
-> +	struct buffer_head *boot_bh; /* buffer_head of BOOT sector */
-> 
->  	unsigned int map_clu; /* allocation bitmap start cluster */
->  	unsigned int map_sectors; /* num of allocation bitmap sectors */
 > diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h index
-> 8d6c64a7546d..07f74190df44 100644
+> 07f74190df44..350ce59cc324 100644
 > --- a/fs/exfat/exfat_raw.h
 > +++ b/fs/exfat/exfat_raw.h
-> @@ -8,7 +8,8 @@
+> @@ -10,11 +10,13 @@
 > 
->  #include <linux/types.h>
-> 
-> -#define PBR_SIGNATURE		0xAA55
-> +#define BOOT_SIGNATURE		0xAA55
-> +#define EXBOOT_SIGNATURE	0xAA550000
+>  #define BOOT_SIGNATURE		0xAA55
+>  #define EXBOOT_SIGNATURE	0xAA550000
+> +#define STR_EXFAT		"EXFAT   "	/* size should be 8 */
 > 
 >  #define EXFAT_MAX_FILE_LEN	255
 > 
-> @@ -55,7 +56,7 @@
+>  #define VOL_CLEAN		0x0000
+>  #define VOL_DIRTY		0x0002
+> +#define ERR_MEDIUM		0x0004
 > 
->  /* checksum types */
->  #define CS_DIR_ENTRY		0
-> -#define CS_PBR_SECTOR		1
-> +#define CS_BOOT_SECTOR		1
->  #define CS_DEFAULT		2
-> 
->  /* file attributes */
-> @@ -69,57 +70,35 @@
->  #define ATTR_RWMASK		(ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME
-> | \
->  				 ATTR_SUBDIR | ATTR_ARCHIVE)
-> 
-> -#define PBR64_JUMP_BOOT_LEN		3
-> -#define PBR64_OEM_NAME_LEN		8
-> -#define PBR64_RESERVED_LEN		53
-> +#define BOOTSEC_JUMP_BOOT_LEN		3
-> +#define BOOTSEC_FS_NAME_LEN		8
-> +#define BOOTSEC_OLDBPB_LEN		53
-> 
->  #define EXFAT_FILE_NAME_LEN		15
-> 
-> -/* EXFAT BIOS parameter block (64 bytes) */ -struct bpb64 {
-> -	__u8 jmp_boot[PBR64_JUMP_BOOT_LEN];
-> -	__u8 oem_name[PBR64_OEM_NAME_LEN];
-> -	__u8 res_zero[PBR64_RESERVED_LEN];
-> -} __packed;
-> -
-> -/* EXFAT EXTEND BIOS parameter block (56 bytes) */ -struct bsx64 {
-> -	__le64 vol_offset;
-> -	__le64 vol_length;
-> -	__le32 fat_offset;
-> -	__le32 fat_length;
-> -	__le32 clu_offset;
-> -	__le32 clu_count;
-> -	__le32 root_cluster;
-> -	__le32 vol_serial;
-> -	__u8 fs_version[2];
-> -	__le16 vol_flags;
-> -	__u8 sect_size_bits;
-> -	__u8 sect_per_clus_bits;
-> -	__u8 num_fats;
-> -	__u8 phy_drv_no;
-> -	__u8 perc_in_use;
-> -	__u8 reserved2[7];
-> -} __packed;
-> -
-> -/* EXFAT PBR[BPB+BSX] (120 bytes) */
-> -struct pbr64 {
-> -	struct bpb64 bpb;
-> -	struct bsx64 bsx;
-> -} __packed;
-> -
-> -/* Common PBR[Partition Boot Record] (512 bytes) */ -struct pbr {
-> -	union {
-> -		__u8 raw[64];
-> -		struct bpb64 f64;
-> -	} bpb;
-> -	union {
-> -		__u8 raw[56];
-> -		struct bsx64 f64;
-> -	} bsx;
-> -	__u8 boot_code[390];
-> -	__le16 signature;
-> +/* EXFAT: Main and Backup Boot Sector (512 bytes) */ struct boot_sector
-> +{
-> +	__u8	jmp_boot[BOOTSEC_JUMP_BOOT_LEN];
-> +	__u8	fs_name[BOOTSEC_FS_NAME_LEN];
-> +	__u8	must_be_zero[BOOTSEC_OLDBPB_LEN];
-> +	__le64	partition_offset;
-> +	__le64	vol_length;
-> +	__le32	fat_offset;
-> +	__le32	fat_length;
-> +	__le32	clu_offset;
-> +	__le32	clu_count;
-> +	__le32	root_cluster;
-> +	__le32	vol_serial;
-> +	__u8	fs_revision[2];
-> +	__le16	vol_flags;
-> +	__u8	sect_size_bits;
-> +	__u8	sect_per_clus_bits;
-> +	__u8	num_fats;
-> +	__u8	drv_sel;
-> +	__u8	percent_in_use;
-> +	__u8	reserved[7];
-> +	__u8	boot_code[390];
-> +	__le16	signature;
->  } __packed;
-> 
->  struct exfat_dentry {
+>  #define EXFAT_EOF_CLUSTER	0xFFFFFFFFu
+>  #define EXFAT_BAD_CLUSTER	0xFFFFFFF7u
 > diff --git a/fs/exfat/super.c b/fs/exfat/super.c index
-> c1f47f4071a8..e60d28e73ff0 100644
+> e60d28e73ff0..6a1330be5a9a 100644
 > --- a/fs/exfat/super.c
 > +++ b/fs/exfat/super.c
-> @@ -49,7 +49,7 @@ static void exfat_put_super(struct super_block *sb)
->  		sync_blockdev(sb->s_bdev);
->  	exfat_set_vol_flags(sb, VOL_CLEAN);
->  	exfat_free_bitmap(sbi);
-> -	brelse(sbi->pbr_bh);
-> +	brelse(sbi->boot_bh);
->  	mutex_unlock(&sbi->s_lock);
-> 
->  	call_rcu(&sbi->rcu, exfat_delayed_free); @@ -101,7 +101,7 @@ static
-> int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)  int
-> exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)  {
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> -	struct pbr64 *bpb = (struct pbr64 *)sbi->pbr_bh->b_data;
-> +	struct boot_sector *p_boot = (struct boot_sector
-> +*)sbi->boot_bh->b_data;
->  	bool sync;
-> 
->  	/* flags are not changed */
-> @@ -116,18 +116,18 @@ int exfat_set_vol_flags(struct super_block *sb,
-> unsigned short new_flag)
->  	if (sb_rdonly(sb))
->  		return 0;
-> 
-> -	bpb->bsx.vol_flags = cpu_to_le16(new_flag);
-> +	p_boot->vol_flags = cpu_to_le16(new_flag);
-> 
-> -	if (new_flag == VOL_DIRTY && !buffer_dirty(sbi->pbr_bh))
-> +	if (new_flag == VOL_DIRTY && !buffer_dirty(sbi->boot_bh))
->  		sync = true;
->  	else
->  		sync = false;
-> 
-> -	set_buffer_uptodate(sbi->pbr_bh);
-> -	mark_buffer_dirty(sbi->pbr_bh);
-> +	set_buffer_uptodate(sbi->boot_bh);
-> +	mark_buffer_dirty(sbi->boot_bh);
-> 
->  	if (sync)
-> -		sync_dirty_buffer(sbi->pbr_bh);
-> +		sync_dirty_buffer(sbi->boot_bh);
+> @@ -366,25 +366,20 @@ static int exfat_read_root(struct inode *inode)
 >  	return 0;
 >  }
 > 
-> @@ -366,13 +366,14 @@ static int exfat_read_root(struct inode *inode)
->  	return 0;
->  }
-> 
-> -static struct pbr *exfat_read_pbr_with_logical_sector(struct super_block
-> *sb)
-> +static struct boot_sector *exfat_read_boot_with_logical_sector(
-> +		struct super_block *sb)
+> -static struct boot_sector *exfat_read_boot_with_logical_sector(
+> -		struct super_block *sb)
+> +static int exfat_calibrate_blocksize(struct super_block *sb, int
+> +logical_sect)
 >  {
 >  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> -	struct pbr *p_pbr = (struct pbr *) (sbi->pbr_bh)->b_data;
-> +	struct boot_sector *p_boot = (struct boot_sector
-> +*)sbi->boot_bh->b_data;
->  	unsigned short logical_sect = 0;
-> 
-> -	logical_sect = 1 << p_pbr->bsx.f64.sect_size_bits;
-> +	logical_sect = 1 << p_boot->sect_size_bits;
+> -	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh-
+> >b_data;
+> -	unsigned short logical_sect = 0;
+> -
+> -	logical_sect = 1 << p_boot->sect_size_bits;
 > 
 >  	if (!is_power_of_2(logical_sect) ||
->  	    logical_sect < 512 || logical_sect > 4096) { @@ -387,49 +388,48
-> @@ static struct pbr *exfat_read_pbr_with_logical_sector(struct
-> super_block *sb)
+>  	    logical_sect < 512 || logical_sect > 4096) {
+>  		exfat_err(sb, "bogus logical sector size %u", logical_sect);
+> -		return NULL;
+> +		return -EIO;
+>  	}
+> 
+>  	if (logical_sect < sb->s_blocksize) {
+>  		exfat_err(sb, "logical sector size too small for device
+> (logical sector size = %u)",
+>  			  logical_sect);
+> -		return NULL;
+> +		return -EIO;
 >  	}
 > 
 >  	if (logical_sect > sb->s_blocksize) {
-> -		brelse(sbi->pbr_bh);
-> -		sbi->pbr_bh = NULL;
-> +		brelse(sbi->boot_bh);
-> +		sbi->boot_bh = NULL;
-> 
+> @@ -394,24 +389,20 @@ static struct boot_sector
+> *exfat_read_boot_with_logical_sector(
 >  		if (!sb_set_blocksize(sb, logical_sect)) {
 >  			exfat_err(sb, "unable to set blocksize %u",
 >  				  logical_sect);
->  			return NULL;
+> -			return NULL;
+> +			return -EIO;
 >  		}
-> -		sbi->pbr_bh = sb_bread(sb, 0);
-> -		if (!sbi->pbr_bh) {
-> +		sbi->boot_bh = sb_bread(sb, 0);
-> +		if (!sbi->boot_bh) {
+>  		sbi->boot_bh = sb_bread(sb, 0);
+>  		if (!sbi->boot_bh) {
 >  			exfat_err(sb, "unable to read boot sector (logical
 > sector size = %lu)",
 >  				  sb->s_blocksize);
->  			return NULL;
+> -			return NULL;
+> +			return -EIO;
 >  		}
-> 
-> -		p_pbr = (struct pbr *)sbi->pbr_bh->b_data;
-> +		p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
+> -
+> -		p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
 >  	}
-> -	return p_pbr;
-> +	return p_boot;
+> -	return p_boot;
+> +	return 0;
 >  }
 > 
->  /* mount the file system volume */
->  static int __exfat_fill_super(struct super_block *sb)  {
->  	int ret;
-> -	struct pbr *p_pbr;
-> -	struct pbr64 *p_bpb;
-> +	struct boot_sector *p_boot;
+> -/* mount the file system volume */
+> -static int __exfat_fill_super(struct super_block *sb)
+> +static int exfat_read_boot_sector(struct super_block *sb)
+>  {
+> -	int ret;
+>  	struct boot_sector *p_boot;
 >  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
 > 
->  	/* set block size to read super block */
->  	sb_min_blocksize(sb, 512);
-> 
->  	/* read boot sector */
-> -	sbi->pbr_bh = sb_bread(sb, 0);
-> -	if (!sbi->pbr_bh) {
-> +	sbi->boot_bh = sb_bread(sb, 0);
-> +	if (!sbi->boot_bh) {
+> @@ -424,51 +415,41 @@ static int __exfat_fill_super(struct super_block
+*sb)
 >  		exfat_err(sb, "unable to read boot sector");
 >  		return -EIO;
 >  	}
+> -
+> -	/* PRB is read */
+>  	p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
 > 
->  	/* PRB is read */
-> -	p_pbr = (struct pbr *)sbi->pbr_bh->b_data;
-> +	p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
-> 
-> -	/* check the validity of PBR */
-> -	if (le16_to_cpu((p_pbr->signature)) != PBR_SIGNATURE) {
-> +	/* check the validity of BOOT */
-> +	if (le16_to_cpu((p_boot->signature)) != BOOT_SIGNATURE) {
+>  	/* check the validity of BOOT */
+>  	if (le16_to_cpu((p_boot->signature)) != BOOT_SIGNATURE) {
 >  		exfat_err(sb, "invalid boot record signature");
->  		ret = -EINVAL;
->  		goto free_bh;
-> @@ -437,8 +437,8 @@ static int __exfat_fill_super(struct super_block *sb)
-> 
-> 
->  	/* check logical sector size */
-> -	p_pbr = exfat_read_pbr_with_logical_sector(sb);
-> -	if (!p_pbr) {
-> +	p_boot = exfat_read_boot_with_logical_sector(sb);
-> +	if (!p_boot) {
->  		ret = -EIO;
->  		goto free_bh;
+> -		ret = -EINVAL;
+> -		goto free_bh;
+> +		return -EINVAL;
 >  	}
-> @@ -447,43 +447,43 @@ static int __exfat_fill_super(struct super_block
-*sb)
->  	 * res_zero field must be filled with zero to prevent mounting
+> 
+> -
+> -	/* check logical sector size */
+> -	p_boot = exfat_read_boot_with_logical_sector(sb);
+> -	if (!p_boot) {
+> -		ret = -EIO;
+> -		goto free_bh;
+> +	if (memcmp(p_boot->fs_name, STR_EXFAT, BOOTSEC_FS_NAME_LEN)) {
+> +		exfat_err(sb, "invalid fs_name"); /* fs_name may unprintable
+> */
+> +		return -EINVAL;
+>  	}
+> 
+>  	/*
+> -	 * res_zero field must be filled with zero to prevent mounting
+> +	 * must_be_zero field must be filled with zero to prevent mounting
 >  	 * from FAT volume.
 >  	 */
-> -	if (memchr_inv(p_pbr->bpb.f64.res_zero, 0,
-> -			sizeof(p_pbr->bpb.f64.res_zero))) {
-> +	if (memchr_inv(p_boot->must_be_zero, 0,
-> +			sizeof(p_boot->must_be_zero))) {
->  		ret = -EINVAL;
->  		goto free_bh;
->  	}
+> -	if (memchr_inv(p_boot->must_be_zero, 0,
+> -			sizeof(p_boot->must_be_zero))) {
+> -		ret = -EINVAL;
+> -		goto free_bh;
+> -	}
+> +	if (memchr_inv(p_boot->must_be_zero, 0, sizeof(p_boot-
+> >must_be_zero)))
+> +		return -EINVAL;
 > 
-> -	p_bpb = (struct pbr64 *)p_pbr;
-> -	if (!p_bpb->bsx.num_fats) {
-> +	p_boot = (struct boot_sector *)p_boot;
-> +	if (!p_boot->num_fats) {
+> -	p_boot = (struct boot_sector *)p_boot;
+> -	if (!p_boot->num_fats) {
+> +	if (p_boot->num_fats != 1 && p_boot->num_fats != 2) {
 >  		exfat_err(sb, "bogus number of FAT structure");
->  		ret = -EINVAL;
->  		goto free_bh;
+> -		ret = -EINVAL;
+> -		goto free_bh;
+> +		return -EINVAL;
 >  	}
 > 
-> -	sbi->sect_per_clus = 1 << p_bpb->bsx.sect_per_clus_bits;
-> -	sbi->sect_per_clus_bits = p_bpb->bsx.sect_per_clus_bits;
-> +	sbi->sect_per_clus = 1 << p_boot->sect_per_clus_bits;
-> +	sbi->sect_per_clus_bits = p_boot->sect_per_clus_bits;
->  	sbi->cluster_size_bits = sbi->sect_per_clus_bits + sb-
+>  	sbi->sect_per_clus = 1 << p_boot->sect_per_clus_bits;
+>  	sbi->sect_per_clus_bits = p_boot->sect_per_clus_bits;
+> -	sbi->cluster_size_bits = sbi->sect_per_clus_bits + sb-
 > >s_blocksize_bits;
+> +	sbi->cluster_size_bits = p_boot->sect_per_clus_bits +
+> +		p_boot->sect_size_bits;
 >  	sbi->cluster_size = 1 << sbi->cluster_size_bits;
-> -	sbi->num_FAT_sectors = le32_to_cpu(p_bpb->bsx.fat_length);
-> -	sbi->FAT1_start_sector = le32_to_cpu(p_bpb->bsx.fat_offset);
-> -	sbi->FAT2_start_sector = p_bpb->bsx.num_fats == 1 ?
-> +	sbi->num_FAT_sectors = le32_to_cpu(p_boot->fat_length);
-> +	sbi->FAT1_start_sector = le32_to_cpu(p_boot->fat_offset);
-> +	sbi->FAT2_start_sector = p_boot->num_fats == 1 ?
->  		sbi->FAT1_start_sector :
->  			sbi->FAT1_start_sector + sbi->num_FAT_sectors;
-> -	sbi->data_start_sector = le32_to_cpu(p_bpb->bsx.clu_offset);
-> -	sbi->num_sectors = le64_to_cpu(p_bpb->bsx.vol_length);
-> +	sbi->data_start_sector = le32_to_cpu(p_boot->clu_offset);
-> +	sbi->num_sectors = le64_to_cpu(p_boot->vol_length);
->  	/* because the cluster index starts with 2 */
-> -	sbi->num_clusters = le32_to_cpu(p_bpb->bsx.clu_count) +
-> +	sbi->num_clusters = le32_to_cpu(p_boot->clu_count) +
->  		EXFAT_RESERVED_CLUSTERS;
-> 
-> -	sbi->root_dir = le32_to_cpu(p_bpb->bsx.root_cluster);
-> +	sbi->root_dir = le32_to_cpu(p_boot->root_cluster);
->  	sbi->dentries_per_clu = 1 <<
->  		(sbi->cluster_size_bits - DENTRY_SIZE_BITS);
-> 
-> -	sbi->vol_flag = le16_to_cpu(p_bpb->bsx.vol_flags);
-> +	sbi->vol_flag = le16_to_cpu(p_boot->vol_flags);
+>  	sbi->num_FAT_sectors = le32_to_cpu(p_boot->fat_length);
+>  	sbi->FAT1_start_sector = le32_to_cpu(p_boot->fat_offset);
+> -	sbi->FAT2_start_sector = p_boot->num_fats == 1 ?
+> -		sbi->FAT1_start_sector :
+> -			sbi->FAT1_start_sector + sbi->num_FAT_sectors;
+> +	sbi->FAT2_start_sector = le32_to_cpu(p_boot->fat_offset);
+> +	if (p_boot->num_fats == 2)
+> +		sbi->FAT2_start_sector += sbi->num_FAT_sectors;
+>  	sbi->data_start_sector = le32_to_cpu(p_boot->clu_offset);
+>  	sbi->num_sectors = le64_to_cpu(p_boot->vol_length);
+>  	/* because the cluster index starts with 2 */ @@ -483,15 +464,45 @@
+> static int __exfat_fill_super(struct super_block *sb)
 >  	sbi->clu_srch_ptr = EXFAT_FIRST_CLUSTER;
 >  	sbi->used_clusters = EXFAT_CLUSTERS_UNTRACKED;
 > 
-> -	if (le16_to_cpu(p_bpb->bsx.vol_flags) & VOL_DIRTY) {
-> +	if (le16_to_cpu(p_boot->vol_flags) & VOL_DIRTY) {
->  		sbi->vol_flag |= VOL_DIRTY;
->  		exfat_warn(sb, "Volume was not properly unmounted. Some data
+> -	if (le16_to_cpu(p_boot->vol_flags) & VOL_DIRTY) {
+> -		sbi->vol_flag |= VOL_DIRTY;
+> -		exfat_warn(sb, "Volume was not properly unmounted. Some data
 > may be corrupt. Please run fsck.");
+> +	/* check consistencies */
+> +	if (sbi->num_FAT_sectors << p_boot->sect_size_bits <
+> +	    sbi->num_clusters * 4) {
+> +		exfat_err(sb, "bogus fat length");
+> +		return -EINVAL;
+> +	}
+> +	if (sbi->data_start_sector <
+> +	    sbi->FAT1_start_sector + sbi->num_FAT_sectors *
+p_boot->num_fats)
+> {
+> +		exfat_err(sb, "bogus data start sector");
+> +		return -EINVAL;
 >  	}
-> @@ -517,7 +517,7 @@ static int __exfat_fill_super(struct super_block *sb)
->  free_upcase_table:
->  	exfat_free_upcase_table(sbi);
->  free_bh:
-> -	brelse(sbi->pbr_bh);
-> +	brelse(sbi->boot_bh);
->  	return ret;
->  }
+> +	if (sbi->vol_flag & VOL_DIRTY)
+> +		exfat_warn(sb, "Volume was not properly unmounted. Some data
+> may be corrupt. Please run fsck.");
+> +	if (sbi->vol_flag & ERR_MEDIUM)
+> +		exfat_warn(sb, "Medium has reported failures. Some data may
+> be
+> +lost.");
 > 
-> @@ -608,7 +608,7 @@ static int exfat_fill_super(struct super_block *sb,
-> struct fs_context *fc)
->  free_table:
->  	exfat_free_upcase_table(sbi);
->  	exfat_free_bitmap(sbi);
-> -	brelse(sbi->pbr_bh);
-> +	brelse(sbi->boot_bh);
+>  	/* exFAT file size is limited by a disk volume size */
+>  	sb->s_maxbytes = (u64)(sbi->num_clusters - EXFAT_RESERVED_CLUSTERS)
+> <<
+>  		sbi->cluster_size_bits;
 > 
->  check_nls_io:
->  	unload_nls(sbi->nls_io);
+> +	/* check logical sector size */
+> +	if (exfat_calibrate_blocksize(sb, 1 << p_boot->sect_size_bits))
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +/* mount the file system volume */
+> +static int __exfat_fill_super(struct super_block *sb) {
+> +	int ret;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	ret = exfat_read_boot_sector(sb);
+> +	if (ret) {
+> +		exfat_err(sb, "failed to read boot sector");
+> +		goto free_bh;
+> +	}
+> +
+>  	ret = exfat_create_upcase_table(sb);
+>  	if (ret) {
+>  		exfat_err(sb, "failed to load upcase table");
 > --
 > 2.25.1
 
