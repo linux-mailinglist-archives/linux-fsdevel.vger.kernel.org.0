@@ -2,215 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C0E1EBDC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 16:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B2F1EBF61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 17:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbgFBOOp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 10:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgFBOOo (ORCPT
+        id S1726320AbgFBPwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 11:52:06 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36069 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726000AbgFBPwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 10:14:44 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7D2C08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jun 2020 07:14:43 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id bh7so1382241plb.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jun 2020 07:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H48Dtjb26Y6aJBKqqk8tf63ll6/f3aU/WJ3tDbC6/4U=;
-        b=iNvcnNWRCBNFFRZ5v4a1+M7Tsf2DG06cC77WBS7lgo52gbT3v9aVafGFL5WMlBqUBi
-         AJyAraqd6Ic4JN0NqHkwleDbcjPMaYmfqUwaI8AIGoE6UxhbIngmOFEblVuLqCcdopKJ
-         RUFi+Jm5yxce/TD4d856GOS+oH+ts8Ma3a8O4sudJ/QS4GgBrTdiM3+812CRT9sZyxR/
-         WxJXEvq0Hmc8crMdu+etNfSQy94OImcaHiZ1JRiDdTiYnOhctzSMla3ih9z9R06PfOQ+
-         ErBzeI55nl83R7ZGMfSnV2NDMxKkHWwYUAv1SrZ/YQxgqHxjQfW7VgFQ41TgkyiL14fv
-         c66Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H48Dtjb26Y6aJBKqqk8tf63ll6/f3aU/WJ3tDbC6/4U=;
-        b=Z0duKLRECb2oM+tUrVjvmng1feqGyNVS7+l3eKJXD/8XX4In1Wi1SpSqWMGailhuyt
-         KBy9w92XKJ132ovWQk/OKPSBNLBCnFKUCSBGV6wUdpDvURiKL4/SuTvt6PAjw9Q634SP
-         7qnsoZqBATCPMmiuCiC1mhPwaWvKAAKLdW9ZE+iPla0VdZxkQm0MYq7YxiALxMzAsRvm
-         949ehk4voFYCRP8KMWA9SgORZGmt0Lznpk4Sr9anubUMKAh8/QuGAqG2BsuJlSm/5DgV
-         2DWqT06fNDnvNxjJRoDQm2sDYNGmbM+2pR8dlQ9mdB9mcyr6Uqjrj8f8ROXvoq0UWXE9
-         OUzw==
-X-Gm-Message-State: AOAM530MvnylVoZq1uA+se0SD2WL5s3qNIT9ZU5Wt2bBRdEL8A/jeV5L
-        r31JUwqRs/JlGZEK7Ek19xrk30qpYzcZQeZXlhqcfc93
-X-Google-Smtp-Source: ABdhPJzbP2WVOcVpP2y5PxqDJtQRHydE30I/yUrHaPl/xtbWFAYkICSxh6iI6aichb24biZL5pzUnTXRkxt5XhhuI0g=
-X-Received: by 2002:a17:90a:2a8e:: with SMTP id j14mr5750844pjd.136.1591107282850;
- Tue, 02 Jun 2020 07:14:42 -0700 (PDT)
+        Tue, 2 Jun 2020 11:52:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591113123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=XuSKMkbItueamTokOqRg0AWTflYyn03ssDlVOSWZxOY=;
+        b=ED6Y6fr4A9LdOQkH6QfWRBVgj/gugEM9vz8qjqUpXoL2N64zgG1ltFfg2I6CFobh1POVhM
+        JXe1cXSorusRR0ChiT5ZqqxfWzUiQeCRHjmg+7dLg4+skkXb/f0dZ/TCV8vpkkoEKKZ9Wf
+        o3HG6Ulc59PSgKCQGsTuGrZlb4pTjIc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-412-uIOploahNJm0gymkDBmlAQ-1; Tue, 02 Jun 2020 11:51:49 -0400
+X-MC-Unique: uIOploahNJm0gymkDBmlAQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E20D3107ACCA;
+        Tue,  2 Jun 2020 15:51:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-138.rdu2.redhat.com [10.10.112.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E6CC5C1D6;
+        Tue,  2 Jun 2020 15:51:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, dray@redhat.com,
+        kzak@redhat.com, mszeredi@redhat.com, swhiteho@redhat.com,
+        jlayton@redhat.com, raven@themaw.net, andres@anarazel.de,
+        christian.brauner@ubuntu.com, jarkko.sakkinen@linux.intel.com,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] General notification queue and key notifications
 MIME-Version: 1.0
-References: <0000000000004afcae05a7041e98@google.com>
-In-Reply-To: <0000000000004afcae05a7041e98@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 2 Jun 2020 16:14:31 +0200
-Message-ID: <CAAeHK+ykPQ8Fmit_3cn17YKzrCWtX010HRKmBCJAQ__OMdwCDA@mail.gmail.com>
-Subject: Re: INFO: task hung in corrupted (2)
-To:     syzbot <syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     amir73il@gmail.com, Felipe Balbi <balbi@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, mathew.j.martineau@linux.intel.com,
-        matthieu.baerts@tessares.net, mptcp@lists.01.org,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1503046.1591113104.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 02 Jun 2020 16:51:44 +0100
+Message-ID: <1503047.1591113104@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 1, 2020 at 1:30 PM syzbot
-<syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    b0c3ba31 Merge tag 'fsnotify_for_v5.7-rc8' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14089eee100000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ce116858301bc2ea
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6921abfb75d6fc79c0eb
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14947d26100000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172726d2100000
->
-> The bug was bisected to:
->
-> commit f2c2e717642c66f7fe7e5dd69b2e8ff5849f4d10
-> Author: Andrey Konovalov <andreyknvl@google.com>
-> Date:   Mon Feb 24 16:13:03 2020 +0000
->
->     usb: gadget: add raw-gadget interface
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119e4702100000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=139e4702100000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=159e4702100000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com
-> Fixes: f2c2e717642c ("usb: gadget: add raw-gadget interface")
->
-> INFO: task syz-executor610:7072 blocked for more than 143 seconds.
->       Not tainted 5.7.0-rc7-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syz-executor610 D24336  7072   7071 0x80004002
-> Call Trace:
->  context_switch kernel/sched/core.c:3367 [inline]
->  __schedule+0x805/0xc90 kernel/sched/core.c:4083
->
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/1134:
->  #0: ffffffff892e85d0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30 net/mptcp/pm_netlink.c:860
-> 1 lock held by in:imklog/6715:
->  #0: ffff8880a441e6b0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x25d/0x2f0 fs/file.c:826
-> 6 locks held by kworker/1:0/7064:
-> 1 lock held by syz-executor610/7072:
->  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
->  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x1bd/0x5b0 kernel/rcu/tree_exp.h:856
-> 4 locks held by systemd-udevd/7099:
->  #0: ffff8880a7fdcc70 (&p->lock){+.+.}-{3:3}, at: seq_read+0x60/0xce0 fs/seq_file.c:153
->  #1: ffff888096486888 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x50/0x3b0 fs/kernfs/file.c:111
->  #2: ffff88809fc0d660 (kn->count#78){.+.+}-{0:0}, at: kernfs_seq_start+0x6f/0x3b0 fs/kernfs/file.c:112
->  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: device_lock_interruptible include/linux/device.h:773 [inline]
->  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: serial_show+0x22/0xa0 drivers/usb/core/sysfs.c:142
->
-> =============================================
->
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 1134 Comm: khungtaskd Not tainted 5.7.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
->  nmi_cpu_backtrace+0x9f/0x180 lib/nmi_backtrace.c:101
->  nmi_trigger_cpumask_backtrace+0x16a/0x280 lib/nmi_backtrace.c:62
->  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
->  watchdog+0xd2a/0xd40 kernel/hung_task.c:289
->  kthread+0x353/0x380 kernel/kthread.c:268
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 7064 Comm: kworker/1:0 Not tainted 5.7.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x0/0x90 kernel/kcov.c:275
-> Code: 4c f2 08 48 c1 e0 03 48 83 c8 18 49 89 14 02 4d 89 44 f2 18 49 ff c1 4d 89 0a c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 <4c> 8b 04 24 65 48 8b 04 25 40 1e 02 00 65 8b 0d 78 96 8e 7e f7 c1
-> RSP: 0018:ffffc90001676cf0 EFLAGS: 00000246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88809fb9e240
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffff
-> RBP: ffff888092d24a04 R08: ffffffff86034f3b R09: ffffc900016790cc
-> R10: 0000000000000004 R11: 0000000000000000 R12: ffff888092d24a00
-> R13: 0000000000000000 R14: dffffc0000000000 R15: ffff888092d24a00
-> FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000004c6e68 CR3: 0000000092d41000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  hid_apply_multiplier drivers/hid/hid-core.c:1106 [inline]
+Hi Linus,
 
-Looks like an issue in the HID subsystem, adding HID maintainers.
+Can you pull this, please?  It adds a general notification queue concept
+and adds an event source for keys/keyrings, such as linking and unlinking
+keys and changing their attributes.
 
->  hid_setup_resolution_multiplier+0x2ab/0xbe0 drivers/hid/hid-core.c:1163
->  hid_open_report+0xab2/0xdd0 drivers/hid/hid-core.c:1274
->  hid_parse include/linux/hid.h:1017 [inline]
->  ms_probe+0x12f/0x3f0 drivers/hid/hid-microsoft.c:388
->  hid_device_probe+0x26c/0x410 drivers/hid/hid-core.c:2263
->  really_probe+0x704/0xf60 drivers/base/dd.c:520
->  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
->  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
->  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
->  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
->  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
->  hid_add_device+0xa2a/0xef0 drivers/hid/hid-core.c:2419
->  usbhid_probe+0x9bd/0xd10 drivers/hid/usbhid/hid-core.c:1407
->  usb_probe_interface+0x614/0xac0 drivers/usb/core/driver.c:374
->  really_probe+0x761/0xf60 drivers/base/dd.c:524
->  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
->  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
->  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
->  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
->  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
->  usb_set_configuration+0x19d2/0x1f20 drivers/usb/core/message.c:2032
->  usb_generic_driver_probe+0x82/0x140 drivers/usb/core/generic.c:241
->  usb_probe_device+0x12d/0x1d0 drivers/usb/core/driver.c:272
->  really_probe+0x761/0xf60 drivers/base/dd.c:524
->  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
->  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
->  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
->  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
->  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
->  usb_new_device+0xcc3/0x1650 drivers/usb/core/hub.c:2554
->  hub_port_connect drivers/usb/core/hub.c:5208 [inline]
->  hub_port_connect_change drivers/usb/core/hub.c:5348 [inline]
->  port_event drivers/usb/core/hub.c:5494 [inline]
->  hub_event+0x2823/0x4cb0 drivers/usb/core/hub.c:5576
->  process_one_work+0x76e/0xfd0 kernel/workqueue.c:2268
->  worker_thread+0xa7f/0x1450 kernel/workqueue.c:2414
->  kthread+0x353/0x380 kernel/kthread.c:268
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+Thanks to Debarshi Ray, we do have a pull request to use this to fix a
+problem with gnome-online-accounts - as mentioned last time:
+
+    https://gitlab.gnome.org/GNOME/gnome-online-accounts/merge_requests/47
+
+Without this, g-o-a has to constantly poll a keyring-based kerberos cache
+to find out if kinit has changed anything.
+
+[[ With regard to the mount/sb notifications and fsinfo(), Karel Zak and
+   Ian Kent have been working on making libmount use them, preparatory to
+   working on systemd:
+
+	https://github.com/karelzak/util-linux/commits/topic/fsinfo
+	https://github.com/raven-au/util-linux/commits/topic/fsinfo.public
+
+   Development has stalled briefly due to other commitments, so I'm not
+   sure I can ask you to pull those parts of the series for now.  Christia=
+n
+   Brauner would like to use them in lxc, but hasn't started.
+   ]]
+
+
+LSM hooks are included:
+
+ (1) A set of hooks are provided that allow an LSM to rule on whether or
+     not a watch may be set.  Each of these hooks takes a different
+     "watched object" parameter, so they're not really shareable.  The LSM
+     should use current's credentials.  [Wanted by SELinux & Smack]
+
+ (2) A hook is provided to allow an LSM to rule on whether or not a
+     particular message may be posted to a particular queue.  This is give=
+n
+     the credentials from the event generator (which may be the system) an=
+d
+     the watch setter.  [Wanted by Smack]
+
+I've provided SELinux and Smack with implementations of some of these hook=
+s.
+
+
+WHY
+=3D=3D=3D
+
+Key/keyring notifications are desirable because if you have your kerberos
+tickets in a file/directory, your Gnome desktop will monitor that using
+something like fanotify and tell you if your credentials cache changes.
+
+However, we also have the ability to cache your kerberos tickets in the
+session, user or persistent keyring so that it isn't left around on disk
+across a reboot or logout.  Keyrings, however, cannot currently be
+monitored asynchronously, so the desktop has to poll for it - not so good
+on a laptop.  This facility will allow the desktop to avoid the need to
+poll.
+
+
+DESIGN DECISIONS
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+ (1) The notification queue is built on top of a standard pipe.  Messages
+     are effectively spliced in.  The pipe is opened with a special flag:
+
+	pipe2(fds, O_NOTIFICATION_PIPE);
+
+     The special flag has the same value as O_EXCL (which doesn't seem lik=
+e
+     it will ever be applicable in this context)[?].  It is given up front
+     to make it a lot easier to prohibit splice and co. from accessing the
+     pipe.
+
+     [?] Should this be done some other way?  I'd rather not use up a new
+     	 O_* flag if I can avoid it - should I add a pipe3() system call
+     	 instead?
+
+     The pipe is then configured::
+
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, queue_depth);
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
+
+     Messages are then read out of the pipe using read().
+
+ (2) It should be possible to allow write() to insert data into the
+     notification pipes too, but this is currently disabled as the kernel
+     has to be able to insert messages into the pipe *without* holding
+     pipe->mutex and the code to make this work needs careful auditing.
+
+ (3) sendfile(), splice() and vmsplice() are disabled on notification pipe=
+s
+     because of the pipe->mutex issue and also because they sometimes want
+     to revert what they just did - but one or more notification messages
+     might've been interleaved in the ring.
+
+ (4) The kernel inserts messages with the wait queue spinlock held.  This
+     means that pipe_read() and pipe_write() have to take the spinlock to
+     update the queue pointers.
+
+ (5) Records in the buffer are binary, typed and have a length so that the=
+y
+     can be of varying size.
+
+     This allows multiple heterogeneous sources to share a common buffer;
+     there are 16 million types available, of which I've used just a few,
+     so there is scope for others to be used.  Tags may be specified when =
+a
+     watchpoint is created to help distinguish the sources.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Notification pipes don't interfere with each other; each may be bound
+     to a different set of watches.  Any particular notification will be
+     copied to all the queues that are currently watching for it - and onl=
+y
+     those that are watching for it.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as having lost a message if there's insufficient
+     space.  read() will fabricate a loss notification message at an
+     appropriate point later.
+
+ (9) The notification pipe is created and then watchpoints are attached to
+     it, using one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[1], 0x01);
+	watch_mount(AT_FDCWD, "/", 0, fd, 0x02);
+	watch_sb(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in both cases, fd indicates the queue and the number after is a
+     tag between 0 and 255.
+
+(10) Watches are removed if either the notification pipe is destroyed or
+     the watched object is destroyed.  In the latter case, a message will
+     be generated indicating the enforced watch removal.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+TESTING AND MANPAGES
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+ (*) The keyutils tree has a pipe-watch branch that has keyctl commands fo=
+r
+     making use of notifications.  Proposed manual pages can also be found
+     on this branch, though a couple of them really need to go to the main
+     manpages repository instead.
+
+     If the kernel supports the watching of keys, then running "make test"
+     on that branch will cause the testing infrastructure to spawn a
+     monitoring process on the side that monitors a notifications pipe for
+     all the key/keyring changes induced by the tests and they'll all be
+     checked off to make sure they happened.
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log=
+/?h=3Dpipe-watch
+
+ (*) A test program is provided (samples/watch_queue/watch_test) that can
+     be used to monitor for keyrings, mount and superblock events.
+     Information on the notifications is simply logged to stdout.
+
+Thanks,
+David
+
