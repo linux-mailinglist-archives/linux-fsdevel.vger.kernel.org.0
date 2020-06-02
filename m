@@ -2,91 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D533B1EC530
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 00:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5F51EC58B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbgFBWi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 18:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54080 "EHLO mail.kernel.org"
+        id S1728501AbgFBXPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 19:15:12 -0400
+Received: from mga03.intel.com ([134.134.136.65]:57326 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbgFBWiS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 18:38:18 -0400
-Received: from mail.kernel.org (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA2472072F;
-        Tue,  2 Jun 2020 22:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591137498;
-        bh=tWT+BQ8hTGsDIEbbaTVUnMxlf+2G1IkCj6Z2Rc76cdg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqazz3E5SiXHy0k7vKWwu5UQ+ZoSRW+7TjOhArb1X/18S/zHwDTNeDzl2JfJyNz+z
-         jEKke3clpIiUMEbUXZgeQjjiK75WD6dKkXT7BTJ8acL1nrX9p4ST2Z5OQmJTxjkkDl
-         JBMpWDn1FT000o62+N3Hor0OwDz/RZLl08lqNLZo=
-Received: from mchehab by mail.kernel.org with local (Exim 4.93)
-        (envelope-from <mchehab@kernel.org>)
-        id 1jgFXz-004aXG-KW; Wed, 03 Jun 2020 00:38:15 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luigi Semenzato <semenzato@chromium.org>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        NeilBrown <neilb@suse.de>, Yang Shi <yang.shi@linux.alibaba.com>,
-        Mark Brown <broonie@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Kiss <daniel.kiss@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] docs: fs: proc.rst: fix a warning due to a merge conflict
-Date:   Wed,  3 Jun 2020 00:38:14 +0200
-Message-Id: <28c4f4c5c66c0fd7cbce83fe11963ea6154f1d47.1591137229.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <cover.1591137229.git.mchehab+huawei@kernel.org>
-References: <cover.1591137229.git.mchehab+huawei@kernel.org>
+        id S1726977AbgFBXPL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 19:15:11 -0400
+IronPort-SDR: +yXGausVvQonlRJjYFNgJZe4YKcSALxXM9n3JD5uSKZGsHqntXxNZ8u4EGmsMSxpRtDzEJY4IL
+ avCFhDf1YEKg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2020 16:15:10 -0700
+IronPort-SDR: VFcvTWOtbz3dkiPRuW2/npw0KipzrpAkLGxUts2YewEMQROQ4Rd+aVaZH1ioqP86z6ajt4JZpo
+ vq36BdR9KjCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,466,1583222400"; 
+   d="scan'208";a="312421829"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Jun 2020 16:15:10 -0700
+Date:   Tue, 2 Jun 2020 16:15:10 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH V11 11/11] fs/xfs: Update
+ xfs_ioctl_setattr_dax_invalidate()
+Message-ID: <20200602231510.GH1505637@iweiny-DESK2.sc.intel.com>
+References: <20200428002142.404144-1-ira.weiny@intel.com>
+ <20200428002142.404144-12-ira.weiny@intel.com>
+ <20200428201138.GD6742@magnolia>
+ <20200602172353.GC8230@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200602172353.GC8230@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changeset 424037b77519 ("mm: smaps: Report arm64 guarded pages in smaps")
-added a new parameter to a table. This causes Sphinx warnings,
-because there's now an extra "-" at the wrong place:
+On Tue, Jun 02, 2020 at 10:23:53AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 28, 2020 at 01:11:38PM -0700, Darrick J. Wong wrote:
+> > On Mon, Apr 27, 2020 at 05:21:42PM -0700, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
 
-	/devel/v4l/docs/Documentation/filesystems/proc.rst:548: WARNING: Malformed table.
-	Text in column margin in table line 29.
+...
 
-	==    =======================================
-	rd    readable
-	...
-	bt  - arm64 BTI guarded page
-	==    =======================================
+> > > -out_unlock:
+> > > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
+> > > -	return error;
+> > > +	if ((mp->m_flags & XFS_MOUNT_DAX_ALWAYS) ||
+> > > +	    (mp->m_flags & XFS_MOUNT_DAX_NEVER))
+> > > +		return;
+> > >  
+> > > +	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
+> > > +	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > +	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
+> > > +		d_mark_dontcache(inode);
+> 
+> Now that I think about this further, are we /really/ sure that we want
+> to let unprivileged userspace cause inode evictions?
 
-Fixes: 424037b77519 ("mm: smaps: Report arm64 guarded pages in smaps")
-Fixes: c33e97efa9d9 ("docs: filesystems: convert proc.txt to ReST")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/filesystems/proc.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This code only applies to files they have access to.  And it does not directly
+cause an eviction.  It only hints that those inodes (for which they have access
+to) will not be cached thus causing them to be reloaded sooner than they might
+otherwise be.
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 430963e0e8c3..7359741cf7cf 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -543,7 +543,7 @@ encoded manner. The codes are the following:
-     hg    huge page advise flag
-     nh    no huge page advise flag
-     mg    mergable advise flag
--    bt  - arm64 BTI guarded page
-+    bt    arm64 BTI guarded page
-     ==    =======================================
- 
- Note that there is no guarantee that every flag and associated mnemonic will
--- 
-2.26.2
+So I think we are fine here.
 
+Ira
+
+> 
+> --D
+> 
