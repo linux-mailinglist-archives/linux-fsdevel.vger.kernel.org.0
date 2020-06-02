@@ -2,118 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC11F1EB5A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 08:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B0BE1EB5B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 08:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbgFBGI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 02:08:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgFBGI6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 02:08:58 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D220C061A0E;
-        Mon,  1 Jun 2020 23:08:56 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id f5so1805639wmh.2;
-        Mon, 01 Jun 2020 23:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NDGYSbP7uksg9+a4r1iJamlh67Acsz3aGJVeqfoyDV0=;
-        b=o7YovVxEvNBhAdPPNBFaK+JmkxuBB4/xKKIT1qcpOELnjJ/YTf7DUjI3RFuu+qY2+X
-         NITAv3fgVQXIKRMRHSMVeyO6ajyBkf2OOQLpHCRN9pQGs8X+gqhCjaZSxu29v1Tami3u
-         MM7CY2e2hyRLnvqiV6gBifOfQAhqlSALfor+ITJr3qIPIcAJ7na+qMogYTp3rg4fgxwB
-         lfte6gUwulmhd+4FLeZy0Oj1mKnQK73EdD8hRAsDdjg9EDhwHmAt8CLUoiuJ8XJ3SFQl
-         f9D2jZX7IXB5zKvIj9CViLa3mJt4xvarJOhKrnqWawXJzMKY6rFXl91VnuA7v7ongqf9
-         SYYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NDGYSbP7uksg9+a4r1iJamlh67Acsz3aGJVeqfoyDV0=;
-        b=krwVROoxwCV9DpKHbzpHOGVHULNHRF8xnS7Qp9A4InnAZPYFRABLx2qCCsLwYNgyoc
-         FndfbL1L5IR/0Ruz6WydnG40JoVDE3Rj2IT4SNvq6cOSz4awGA1968bZMDHdO8mZooPR
-         pizBs56aCzfq6CbEOq/K+b0nme4HAqsHGX0KjQcpvYnUmnJlOVnSEObNMF2oJUJZ/oPj
-         9E+5ziNxILhJaCBhqsHE8EpIGO9+ekv10KReCMazfRPC8FaCERbSO4soE43z+h2QrRo0
-         0I9N2J+EtgKNOMGrZf2MJUxrqXtJeFlJFW1qVpQGhgSqEEdOa1UWEaEoQWm02IuWwWgE
-         S9fw==
-X-Gm-Message-State: AOAM533LMwqWBoDWlBLgyAnGKqpDxp8wflOA/zEkGLe5b45ARMoTc54o
-        2s7LtbTK4qK3cNyoSghwnZHUPZV4KODjgc7QAP8=
-X-Google-Smtp-Source: ABdhPJxbMW9gOsV6GMtEx1bIdBTWOTc6p9HlxeOtGMzSdOLfpQydLKKu4tsXYDL8918ULpDLfXZBeSLCzLSyoGzPpk8=
-X-Received: by 2002:a7b:cbd9:: with SMTP id n25mr2533226wmi.30.1591078135229;
- Mon, 01 Jun 2020 23:08:55 -0700 (PDT)
+        id S1726043AbgFBGNJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 02:13:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725616AbgFBGNJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 02:13:09 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A38F5206A2;
+        Tue,  2 Jun 2020 06:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591078388;
+        bh=rRykBBWnGs96WxsrQLDxmACWOa/UFVBVpsVgwWsmVXk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Hjjl6n79wTkMOGwUGwEfwwZ3SrDwiog0vc+onIjwGGuMKSzKjJvPZlMTPoeBSV3T
+         s00gQNv4yH6M7lX9kvpeFeAHUFFI/guixhK0D6JH5aXOm+zA8naHv9mb1MQJ2Wi8AE
+         gcQr/P3/ruI6VfcDbwA53bx45o8NZmrvKj7Cj1H8=
+Date:   Tue, 2 Jun 2020 08:13:05 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Tao pilgrim <pilgrimtao@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        sth@linux.ibm.com, viro@zeniv.linux.org.uk, clm@fb.com,
+        jaegeuk@kernel.org, hch@infradead.org,
+        Mark Fasheh <mark@fasheh.com>, dhowells@redhat.com,
+        balbi@kernel.org, damien.lemoal@wdc.com, bvanassche@acm.org,
+        ming.lei@redhat.com, martin.petersen@oracle.com, satyat@google.com,
+        chaitanya.kulkarni@wdc.com, houtao1@huawei.com,
+        asml.silence@gmail.com, ajay.joshi@wdc.com,
+        linux-kernel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>, hoeppner@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, linux-s390@vger.kernel.org,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-usb@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        dsterba@suse.com, linux-btrfs@vger.kernel.org, chao@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        ocfs2-devel@oss.oracle.com, deepa.kernel@gmail.com
+Subject: Re: [PATCH v2] blkdev: Replace blksize_bits() with ilog2()
+Message-ID: <20200602061305.GA2258861@kroah.com>
+References: <20200529141100.37519-1-pilgrimtao@gmail.com>
+ <c8412d98-0328-0976-e5f9-5beddc148a35@kernel.dk>
+ <CAAWJmAZOQQQeNiTr48OSRRdO2pG+q4c=6gjT55CkWC5FN=HXmA@mail.gmail.com>
+ <20200601084426.GB1667318@kroah.com>
+ <20200602055152.GA11620@lst.de>
 MIME-Version: 1.0
-References: <20200601052633.853874-1-jhubbard@nvidia.com> <20200601052633.853874-3-jhubbard@nvidia.com>
-In-Reply-To: <20200601052633.853874-3-jhubbard@nvidia.com>
-From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date:   Tue, 2 Jun 2020 08:08:44 +0200
-Message-ID: <CAM9Jb+hNSWp-TaQQFg4bs5uR8rYk_POZPT23RYy5V_B9-aOcYg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vhost: convert get_user_pages() --> pin_user_pages()
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200602055152.GA11620@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> This code was using get_user_pages*(), in approximately a "Case 5"
-> scenario (accessing the data within a page), using the categorization
-> from [1]. That means that it's time to convert the get_user_pages*() +
-> put_page() calls to pin_user_pages*() + unpin_user_pages() calls.
->
-> There is some helpful background in [2]: basically, this is a small
-> part of fixing a long-standing disconnect between pinning pages, and
-> file systems' use of those pages.
->
-> [1] Documentation/core-api/pin_user_pages.rst
->
-> [2] "Explicit pinning of user-space pages":
->     https://lwn.net/Articles/807108/
->
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: kvm@vger.kernel.org
-> Cc: virtualization@lists.linux-foundation.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/vhost/vhost.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 21a59b598ed8..596132a96cd5 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -1762,15 +1762,14 @@ static int set_bit_to_user(int nr, void __user *addr)
->         int bit = nr + (log % PAGE_SIZE) * 8;
->         int r;
->
-> -       r = get_user_pages_fast(log, 1, FOLL_WRITE, &page);
-> +       r = pin_user_pages_fast(log, 1, FOLL_WRITE, &page);
->         if (r < 0)
->                 return r;
->         BUG_ON(r != 1);
->         base = kmap_atomic(page);
->         set_bit(bit, base);
->         kunmap_atomic(base);
-> -       set_page_dirty_lock(page);
-> -       put_page(page);
-> +       unpin_user_pages_dirty_lock(&page, 1, true);
->         return 0;
->  }
+On Tue, Jun 02, 2020 at 07:51:52AM +0200, Christoph Hellwig wrote:
+> On Mon, Jun 01, 2020 at 10:44:26AM +0200, Greg KH wrote:
+> > But does this code path actually show up anywhere that is actually
+> > measurable as mattering?
+> > 
+> > If so, please show that benchmark results.
+> 
+> I think the requests are starting to be a bit unreasonable.  Tao is
+> replacing a reimplementation of a standard function with that standard
+> function / compiler builtin.  We don't put such a high burden on that.
 
-Acked-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+That's fine, but to say it is "faster" usually means we want to see it
+actually going faster somehow :)
+
+> And once the proper existing fields are used where possible as shown
+> in my reply just replacing the rest seems totally obvious - quite
+> contrary I think keeping a reimplementation would need a high bar.
+
+Your patch makes sense, I was not objecting to that.
+
+thanks,
+
+greg k-h
