@@ -2,111 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70DA41EB885
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 11:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC821EBB67
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 14:16:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbgFBJ32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 05:29:28 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:20591 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725811AbgFBJ32 (ORCPT
+        id S1726606AbgFBMQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 08:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgFBMQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 05:29:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591090167;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yaAnC1bu8czWhxdtW2udCqceu2QK2ffQrzn9j3bkG8Q=;
-        b=UoHVxX62YWpOrJi6Mh6oaYaxriR+cUgYwgO2ZcgD4fj0quWAoaGnAjOUZzEesFF/UihWvn
-        WxtyX/QVCRyOH1gG2jFRWtCpJGAKQm676fn4Sz+wGw9JuJCIEqQe0nJt2R+4ihB6iYebZM
-        bZTB9pyX292Y3HTuo3KQkWjAeAJsT7U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-94-kN1EWEaFMuaHDH2AGVvYHw-1; Tue, 02 Jun 2020 05:29:25 -0400
-X-MC-Unique: kN1EWEaFMuaHDH2AGVvYHw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DFA64100CCC1;
-        Tue,  2 Jun 2020 09:29:23 +0000 (UTC)
-Received: from localhost (ovpn-115-9.ams2.redhat.com [10.36.115.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E449111A9DC;
-        Tue,  2 Jun 2020 09:29:17 +0000 (UTC)
-Date:   Tue, 2 Jun 2020 10:29:16 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Chirantan Ekbote <chirantan@chromium.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>, slp@redhat.com
-Subject: Re: [PATCH 2/2] fuse: virtiofs: Add basic multiqueue support
-Message-ID: <20200602092916.GC9852@stefanha-x1.localdomain>
-References: <20200424062540.23679-1-chirantan@chromium.org>
- <20200424062540.23679-2-chirantan@chromium.org>
- <20200427151934.GB1042399@stefanha-x1.localdomain>
- <CAJFHJrr2DAgQC9ZWx78OudX1x6A57_vpLf4rJu80ceR6bnpbaQ@mail.gmail.com>
- <20200501154752.GA222606@stefanha-x1.localdomain>
- <CAJFHJrpdbVKWyGuJJCBATVaYZsPLeg6JzpZmGFDsUcF_a4gcMA@mail.gmail.com>
+        Tue, 2 Jun 2020 08:16:17 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A93C08C5C0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jun 2020 05:16:16 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id s1so12309426ljo.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jun 2020 05:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n4Qy4wUhDH5Xhze+eb6ArM9+MXeHPXd6rx4E89Zh3o0=;
+        b=Mf9BRQkSo6RI1cW7TTfXRtxfIGGr+OWwuRTQSEFJkxZdq4Vi6AF1nkBBgQ8oP/YhrF
+         H0/nXoSFjW4KPwsL1kA2fb2AgZ89LpPodg7HdbKKDWIIsD3IvuEr+a0mtdy7kHzHROb0
+         zm8QfBjLJ0rXB+3IaCAfH0tBnl4EatcsS1dapBK9iHchRPo70+L8M/VYAxHtQ1T6C/QR
+         o0eOhLwXjLjdvhO0/2UDM1ZyLP59t9nLiZW//MtL2l2wIkRmM7+NuJ7ukJLTpvO64lhA
+         2tSBsRSl57M8UnyJXUK7OBhuD09MGnodJIGo/dclKNC1CXJpmYRXCrC4M2K5J5O1lCT/
+         C33A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n4Qy4wUhDH5Xhze+eb6ArM9+MXeHPXd6rx4E89Zh3o0=;
+        b=VoJ+AIpzdXO1JKb1sGkxnDYZdpt6xLxURZp8eQgKogoU2w6yRNNI/vrGfoU1RE3bIm
+         uwIwX9+N64bAyCB83S2ejkZd2HTaIjEzEbxlrpN/NpBcmJD3dQmbrMu1CTadMgPP4wcC
+         m9uvrJZ96cOXVrcfGHzuyN8AS5CZi8eM1JHT27lY4lrd/pDoDIqDFHO/q52M3/v4Jyah
+         XkkFZN5zitxInClEta9qtKLwUF4sdDnDQU2lpBkDNf0D/g/1WeGnf8cOJiGhIouHCmbj
+         vHw2ombUdK06bkZJDlHKxlIn+hKlMXdtHIWk6BzoMWCgd5wpr9FYqYhUYuyp7C5dQk4f
+         USCQ==
+X-Gm-Message-State: AOAM531vfD9zlGOiednph4FewfkSyLMzqPJKFKsMCtZZC1rwaCSDWzIz
+        Sns4Oxucso7vDCwhSCCNsvYXD4QBC03xOE59CYjX/Q==
+X-Google-Smtp-Source: ABdhPJz/MQmaRwMBlZrBRQBj7nKunvfyDrbTxaAL2zsuQ89V/bYCS1lJwB4Isa1BAtyheXxEJF+wb59TAr/aT2U3gB0=
+X-Received: by 2002:a2e:85c4:: with SMTP id h4mr12906405ljj.43.1591100174869;
+ Tue, 02 Jun 2020 05:16:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJFHJrpdbVKWyGuJJCBATVaYZsPLeg6JzpZmGFDsUcF_a4gcMA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
-Content-Disposition: inline
+References: <CAB0TPYGCOZmixbzrV80132X=V5TcyQwD6V7x-8PKg_BqCva8Og@mail.gmail.com>
+ <20200522144100.GE14199@quack2.suse.cz> <CAB0TPYF+Nqd63Xf_JkuepSJV7CzndBw6_MUqcnjusy4ztX24hQ@mail.gmail.com>
+ <20200522153615.GF14199@quack2.suse.cz> <CAB0TPYGJ6WkaKLoqQhsxa2FQ4s-jYKkDe1BDJ89CE_QUM_aBVw@mail.gmail.com>
+ <20200525073140.GI14199@quack2.suse.cz> <CAB0TPYHVfkYyFYqp96-PfcP60PKRX6VqrfMHJPkG=UT2956EqQ@mail.gmail.com>
+ <20200529152036.GA22885@quack2.suse.cz> <CAB0TPYFuT7Gp=8qBCGBKa3O0=hkUMTZsmhn3VqZuoKYM4bZOSw@mail.gmail.com>
+ <20200601090931.GA3960@quack2.suse.cz>
+In-Reply-To: <20200601090931.GA3960@quack2.suse.cz>
+From:   Martijn Coenen <maco@android.com>
+Date:   Tue, 2 Jun 2020 14:16:03 +0200
+Message-ID: <CAB0TPYGCB+EUPOz61Hc6XpozN04N4Jro2FbkcTTYOOmDr-bUuA@mail.gmail.com>
+Subject: Re: Writeback bug causing writeback stalls
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, miklos@szeredi.hu, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 1, 2020 at 11:09 AM Jan Kara <jack@suse.cz> wrote:
+> Thanks for testing! My test run has completed fine so I'll submit patches
+> for review. But I'm curious what's causing the dips in throughput in your
+> test...
 
-On Thu, May 07, 2020 at 05:10:15PM +0900, Chirantan Ekbote wrote:
-> On Sat, May 2, 2020 at 12:48 AM Stefan Hajnoczi <stefanha@redhat.com> wro=
-te:
-> > On Fri, May 01, 2020 at 04:14:38PM +0900, Chirantan Ekbote wrote:
-> > > On Tue, Apr 28, 2020 at 12:20 AM Stefan Hajnoczi <stefanha@redhat.com=
-> wrote:
-> > io_uring's vocabulary is expanding.  It can now do openat2(2), close(2)=
-,
-> > statx(2), but not mkdir(2), unlink(2), rename(2), etc.
-> >
-> > I guess there are two options:
-> > 1. Fall back to threads for FUSE operations that cannot yet be done via
-> >    io_uring.
-> > 2. Process FUSE operations that cannot be done via io_uring
-> >    synchronously.
-> >
->=20
-> I'm hoping that using io_uring for just the reads and writes should
-> give us a big enough improvement that we can do the rest of the
-> operations synchronously.
+It turned out to be unrelated to your patch. Sorry for the noise! We
+have the patch in dogfood on some of our devices, and I will let you
+know if we run into any issues. I'll also spend some more time
+reviewing your patches and will respond to them later.
 
-Sounds like a good idea.
-
-Stefan
-
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl7WG+wACgkQnKSrs4Gr
-c8itMggArze0SlGMV0FObjiOGh2x91wC4w83cdukHjDRXnx8LUROTBFIWVUDTxYz
-YRq46Fr1LAx38jacfEQVrTbBVDgK5FQzobPKrJycw4X2z5b3OvfH3iO+Xx9KcL4M
-4MXBvL+Z4EBpXQmdWeR25jAztg75rqapof0x4o+ZESbu7h4oItjYjmBHszbx+t+s
-63anVjgk/0zoi66ifHzupCJSuxfAVuyFMUU6zNQBWPtWPzhjE87rPH/ZKDtQAylB
-H5UxNF5nidSN7qTPm9sFxEa7SPuXUw+tdfKXZZVN3PbOBITQSgE7NHdAjEpDzgRs
-MOS5GYYlk740tAAMpTFDFydpJuGQdQ==
-=FKk/
------END PGP SIGNATURE-----
-
---jy6Sn24JjFx/iggw--
-
+Thanks,
+Martijn
+>
+>                                                                 Honza
+>
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
