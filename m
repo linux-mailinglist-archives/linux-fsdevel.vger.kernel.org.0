@@ -2,85 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F5A1EC5D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8CB11EC5F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgFBXhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 19:37:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54659 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbgFBXhx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 19:37:53 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jgGTe-000281-Ps; Tue, 02 Jun 2020 23:37:50 +0000
-Date:   Wed, 3 Jun 2020 01:37:49 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        Kyle Evans <self@kyle-evans.net>,
-        Victor Stinner <victor.stinner@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
-        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, ldv@altlinux.org
-Subject: Re: [PATCH v5 1/3] open: add close_range()
-Message-ID: <20200602233749.mo65o2enokiypwiz@wittgenstein>
-References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
- <20200602204219.186620-2-christian.brauner@ubuntu.com>
- <87d06hdozy.fsf@mid.deneb.enyo.de>
+        id S1728390AbgFBXxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 19:53:07 -0400
+Received: from mga06.intel.com ([134.134.136.31]:39746 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726267AbgFBXxG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 19:53:06 -0400
+IronPort-SDR: 7pjoj0cj35/NaofwcrKVBE2fBmelzHAFVEgDiJ8cl6I5MsEB2nyJmoukJZqm9j3kZHlA9MHEzi
+ nV/4PWozqlHw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2020 16:53:05 -0700
+IronPort-SDR: Fjosrr6vpGK5zwtIgnd84lq7g7jGjKCKBVDcWW2Xd9/i/a+bCVJiomnAZSEIQRGn0f9UiyeC0t
+ kX8qGrZdgA4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,466,1583222400"; 
+   d="scan'208";a="470925223"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Jun 2020 16:53:05 -0700
+Date:   Tue, 2 Jun 2020 16:53:05 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [GIT PULL] vfs: improve DAX behavior for 5.8, part 1
+Message-ID: <20200602235305.GI1505637@iweiny-DESK2.sc.intel.com>
+References: <20200602165852.GB8230@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87d06hdozy.fsf@mid.deneb.enyo.de>
+In-Reply-To: <20200602165852.GB8230@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 01:30:57AM +0200, Florian Weimer wrote:
-> * Christian Brauner:
+On Tue, Jun 02, 2020 at 09:58:52AM -0700, Darrick J. Wong wrote:
+> Hi Linus,
 > 
-> > The performance is striking. For good measure, comparing the following
-> > simple close_all_fds() userspace implementation that is essentially just
-> > glibc's version in [6]:
-> >
-> > static int close_all_fds(void)
-> > {
-> >         int dir_fd;
-> >         DIR *dir;
-> >         struct dirent *direntp;
-> >
-> >         dir = opendir("/proc/self/fd");
-> >         if (!dir)
-> >                 return -1;
-> >         dir_fd = dirfd(dir);
-> >         while ((direntp = readdir(dir))) {
-> >                 int fd;
-> >                 if (strcmp(direntp->d_name, ".") == 0)
-> >                         continue;
-> >                 if (strcmp(direntp->d_name, "..") == 0)
-> >                         continue;
-> >                 fd = atoi(direntp->d_name);
-> >                 if (fd == dir_fd || fd == 0 || fd == 1 || fd == 2)
-> >                         continue;
-> >                 close(fd);
-> >         }
-> >         closedir(dir);
-> >         return 0;
-> > }
-> >
-> 
-> > [6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
-> >      Note that this is an internal implementation that is not exported.
-> >      Currently, libc seems to not provide an exported version of this
-> >      because of missing kernel support to do this.
-> 
-> Just to be clear, this code is not compiled into glibc anymore in
-> typical configurations.  I have posted a patch to turn grantpt into a
-> no-op: <https://sourceware.org/pipermail/libc-alpha/2020-May/114379.html>
+> After many years of LKML-wrangling about how to enable programs to query
+> and influence the file data access mode (DAX) when a filesystem resides
+> on storage devices such as persistent memory, Ira Weiny has emerged with
+> a proposed set of standard behaviors that has not been shot down by
+> anyone!  We're more or less standardizing on the current XFS behavior
+> and adapting ext4 to do the same.
 
-That's great! (I remember commenting on that thread.)
+Also, for those interested: The corresponding man page change mentioned in the
+commit has been submitted here:
+
+https://lore.kernel.org/lkml/20200505002016.1085071-1-ira.weiny@intel.com/
+
+Ira
+
+> 
+> This pull request is the first of a handful that will make ext4 and XFS
+> present a consistent interface for user programs that care about DAX.
+> We add a statx attribute that programs can check to see if DAX is
+> enabled on a particular file.  Then, we update the DAX documentation to
+> spell out the user-visible behaviors that filesystems will guarantee
+> (until the next storage industry shakeup).  The on-disk inode flag has
+> been in XFS for a few years now.
+> 
+> Note that Stephen Rothwell reported a minor merge conflict[1] between
+> the first cleanup patch and a different change in the block layer.  The
+> resolution looks pretty straightforward, but let me know if you
+> encounter problems.
+> 
+> --D
+> 
+> [1] https://lore.kernel.org/linux-next/20200522145848.38cdcf54@canb.auug.org.au/
+> 
+> The following changes since commit 0e698dfa282211e414076f9dc7e83c1c288314fd:
+> 
+>   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.8-merge-1
+> 
+> for you to fetch changes up to 83d9088659e8f113741bb197324bd9554d159657:
+> 
+>   Documentation/dax: Update Usage section (2020-05-04 08:49:39 -0700)
+> 
+> ----------------------------------------------------------------
+> New code for 5.8:
+> - Clean up io_is_direct.
+> - Add a new statx flag to indicate when file data access is being done
+>   via DAX (as opposed to the page cache).
+> - Update the documentation for how system administrators and application
+>   programmers can take advantage of the (still experimental DAX) feature.
+> 
+> ----------------------------------------------------------------
+> Ira Weiny (3):
+>       fs: Remove unneeded IS_DAX() check in io_is_direct()
+>       fs/stat: Define DAX statx attribute
+>       Documentation/dax: Update Usage section
+> 
+>  Documentation/filesystems/dax.txt | 142 +++++++++++++++++++++++++++++++++++++-
+>  drivers/block/loop.c              |   6 +-
+>  fs/stat.c                         |   3 +
+>  include/linux/fs.h                |   7 +-
+>  include/uapi/linux/stat.h         |   1 +
+>  5 files changed, 147 insertions(+), 12 deletions(-)
