@@ -2,116 +2,287 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D7E1EC1B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 20:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE741EC1BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 20:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbgFBSRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 14:17:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59046 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgFBSRR (ORCPT
+        id S1726267AbgFBSXh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 14:23:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59903 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726130AbgFBSXg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 14:17:17 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 052I7t1h177905;
-        Tue, 2 Jun 2020 18:17:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : references : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=X49wKSnu9fOxTqf6/taZw+DmoyGY5qqdKkF7CwXyyhU=;
- b=Lv5g79NM3PnfnYv8QvcLbn0XfFCOXjNP4txvAUlj2UekN+oloAsfr/MoevQSCgU/YA2F
- 1L1Q6Lr1MVk2lkLoAXh0cbPvlZxcuOxAvDVmjlzK2GzST09NxCZKl5hgP2GogLZ3yN5W
- Zg0dczpNpX8oennm5UYn+xxRXbjn3OLezuCqEeihy0kzDwM0NnzihsUAWOUHARtwqg/G
- hezD+fKVptJ7hDiIXu5fopCOlicWKD+EpjVT8lx64+9b8XcDMunTNXPwjS+hKhZ68fwO
- 88N7SedbcMhA0G5XuF2VmpkhtqvfENgk09P+t6SOE/Vk/XCw14ZV1Sn3WST0MA8+39aE Rw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 31bewqwhdb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 02 Jun 2020 18:17:00 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 052I80jG005905;
-        Tue, 2 Jun 2020 18:15:00 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 31dju1wkvj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jun 2020 18:15:00 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 052IEvIo025425;
-        Tue, 2 Jun 2020 18:14:57 GMT
-Received: from localhost (/67.169.218.210) by default (Oracle Beehive Gateway
- v4.0) with ESMTP ; Tue, 02 Jun 2020 11:14:46 -0700
+        Tue, 2 Jun 2020 14:23:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591122214;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lOvpp8HavyMvDKXBw4DtcY4YYwTEawy7nOUgn2Fj8ro=;
+        b=MOYDJfHLuinnPbFPUzvqxIB+6Z6CTDUx1aGp/FPlryqU5ooLxKnSShyRYu80HOKT4KoUUl
+        grUVm/+NomapF6aqxp8/xUI5woRxKmKKVnpJF+x/FDkfAv5kg7zKsIjOL1rnUKIy40XyJD
+        NZb+0XBXeOxPqlhkpWBpZDb4GxTV0Gc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-13-njNCVsfyOYGAQZNfw0UZtg-1; Tue, 02 Jun 2020 14:23:29 -0400
+X-MC-Unique: njNCVsfyOYGAQZNfw0UZtg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC710107B7C3;
+        Tue,  2 Jun 2020 18:23:27 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-130.rdu2.redhat.com [10.10.116.130])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F5F15D9D3;
+        Tue,  2 Jun 2020 18:23:22 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 89DDB22063B; Tue,  2 Jun 2020 14:23:21 -0400 (EDT)
+Date:   Tue, 2 Jun 2020 14:23:21 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] RFC: fuse: virtiofs: Call security hooks on new inodes
+Message-ID: <20200602182321.GA21237@redhat.com>
+References: <20200601053214.201723-1-chirantan@chromium.org>
 MIME-Version: 1.0
-Message-ID: <20200602181444.GD8230@magnolia>
-Date:   Tue, 2 Jun 2020 11:14:44 -0700 (PDT)
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Xiao Yang <yangx.jy@cn.fujitsu.com>
-Cc:     ira.weiny@intel.com, fstests@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] xfs/XXX: Add xfs/XXX
-References: <20200413054419.1560503-1-ira.weiny@intel.com>
- <20200413163025.GB6742@magnolia> <5ED61324.6010300@cn.fujitsu.com>
-In-Reply-To: <5ED61324.6010300@cn.fujitsu.com>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9640 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- phishscore=0 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
- suspectscore=1 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006020132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9640 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 bulkscore=0
- phishscore=0 suspectscore=1 impostorscore=0 cotscore=-2147483648
- lowpriorityscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006020132
+Content-Disposition: inline
+In-Reply-To: <20200601053214.201723-1-chirantan@chromium.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 02, 2020 at 04:51:48PM +0800, Xiao Yang wrote:
-> On 2020/4/14 0:30, Darrick J. Wong wrote:
-> > This might be a good time to introduce a few new helpers:
-> > 
-> > _require_scratch_dax ("Does $SCRATCH_DEV support DAX?")
-> > _require_scratch_dax_mountopt ("Does the fs support the DAX mount options?")
-> > _require_scratch_daX_iflag ("Does the fs support FS_XFLAG_DAX?")
-> Hi Darrick,
+On Mon, Jun 01, 2020 at 02:32:14PM +0900, Chirantan Ekbote wrote:
+> Add a new `init_security` field to `fuse_conn` that controls whether we
+> initialize security when a new inode is created.  Set this to true for
+> virtiofs but false for regular fuse file systems.
 > 
-> Now, I am trying to introduce these new helpers and have some questions:
-> 1) There are five testcases related to old dax implementation, should we
-> only convert them to new dax implementation or make them compatible with old
-> and new dax implementation?
-
-What is the 'old' DAX implementation?  ext2 XIP?
-
-> 2) I think _require_xfs_io_command "chattr" "x" is enough to check if fs
-> supports FS_XFLAG_DAX.  Is it necessary to add _require_scratch_dax_iflag()?
-> like this:
-> _require_scratch_dax_iflag()
-> {
-> 	_require_xfs_io_command "chattr" "x"
-> }
-
-I suggested that list based on the major control knobs that will be
-visible to userspace programs.  Even if this is just a one-line helper,
-its name is useful for recognizing which of those knobs we're looking
-for.
-
-Yes, you could probably save a trivial amount of time by skipping one
-iteration of bash function calling, but now everyone has to remember
-that the xfs_io chattr "x" flag means the dax inode flag, and not
-confuse it for chmod +x or something else.
-
---D
-
-> Best Regards,
-> Xiao Yang
+> Calling security hooks is needed for `setfscreatecon` to work since it
+> is applied as part of the selinux security hook.
 > 
+> Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+> ---
+>  fs/fuse/dir.c       | 74 ++++++++++++++++++++++++++++++++++++++++++---
+>  fs/fuse/fuse_i.h    |  4 +++
+>  fs/fuse/inode.c     |  1 +
+>  fs/fuse/virtio_fs.c |  1 +
+>  4 files changed, 75 insertions(+), 5 deletions(-)
 > 
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index de1e2fde60bd4..b18c92a8a4c11 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -16,6 +16,9 @@
+>  #include <linux/xattr.h>
+>  #include <linux/iversion.h>
+>  #include <linux/posix_acl.h>
+> +#include <linux/security.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+>  
+>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>  {
+> @@ -135,6 +138,50 @@ static void fuse_dir_changed(struct inode *dir)
+>  	inode_maybe_inc_iversion(dir, false);
+>  }
+>  
+> +static int fuse_initxattrs(struct inode *inode, const struct xattr *xattrs,
+> +			   void *fs_info)
+> +{
+> +	const struct xattr *xattr;
+> +	int err = 0;
+> +	int len;
+> +	char *name;
+> +
+> +	for (xattr = xattrs; xattr->name != NULL; ++xattr) {
+> +		len = XATTR_SECURITY_PREFIX_LEN + strlen(xattr->name) + 1;
+> +		name = kmalloc(len, GFP_KERNEL);
+> +		if (!name) {
+> +			err = -ENOMEM;
+> +			break;
+> +		}
+> +
+> +		scnprintf(name, len, XATTR_SECURITY_PREFIX "%s", xattr->name);
+> +		err = fuse_setxattr(inode, name, xattr->value, xattr->value_len,
+> +				    0);
+> +		kfree(name);
+> +		if (err < 0)
+> +			break;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * Initialize security on newly created inodes if supported by the filesystem.
+> + */
+> +static int fuse_init_security(struct inode *inode, struct inode *dir,
+> +			      const struct qstr *qstr)
+> +{
+> +	struct fuse_conn *conn = get_fuse_conn(dir);
+> +	int err = 0;
+> +
+> +	if (conn->init_security) {
+> +		err = security_inode_init_security(inode, dir, qstr,
+> +						   fuse_initxattrs, NULL);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  /**
+>   * Mark the attributes as stale due to an atime change.  Avoid the invalidate if
+>   * atime is not used.
+> @@ -498,7 +545,17 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  		err = -ENOMEM;
+>  		goto out_err;
+>  	}
+> +
+> +	err = fuse_init_security(inode, dir, &entry->d_name);
+> +	if (err) {
+> +		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+> +		fi = get_fuse_inode(inode);
+> +		fuse_sync_release(fi, ff, flags);
+> +		fuse_queue_forget(fc, forget, outentry.nodeid, 1);
+> +		goto out_err;
+> +	}
+>  	kfree(forget);
+> +
+
+[ cc lsm and selinux list ]
+
+So this sets xattr after file creation. But this is not atomic w.r.t
+file creation. I think keeping file creation and selinux context setting 
+to be atomic was one of the requirements.
+
+Can we first retrieve the label which will be created for inode
+(using dentry perhaps) and then pass that label as part of CREATE/MKNOD
+request and then server can set fscreate (per thread) before file
+creation. I hope /proc/[pid]/attr/fscreate work for per thread too.
+
+Stephen had mentioned dentry_init_security() for this. Overlayfs uses
+a variant of the same hook dentry_create_files_as().
+
+>  	d_instantiate(entry, inode);
+>  	fuse_change_entry_timeout(entry, &outentry);
+>  	fuse_dir_changed(dir);
+> @@ -569,7 +626,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>   */
+>  static int create_new_entry(struct fuse_conn *fc, struct fuse_args *args,
+>  			    struct inode *dir, struct dentry *entry,
+> -			    umode_t mode)
+> +			    umode_t mode, bool init_security)
+>  {
+>  	struct fuse_entry_out outarg;
+>  	struct inode *inode;
+> @@ -603,6 +660,13 @@ static int create_new_entry(struct fuse_conn *fc, struct fuse_args *args,
+>  		fuse_queue_forget(fc, forget, outarg.nodeid, 1);
+>  		return -ENOMEM;
+>  	}
+> +	if (init_security) {
+> +		err = fuse_init_security(inode, dir, &entry->d_name);
+> +		if (err) {
+> +			fuse_queue_forget(fc, forget, outarg.nodeid, 1);
+> +			return err;
+> +		}
+> +	}
+>  	kfree(forget);
+>  
+>  	d_drop(entry);
+> @@ -644,7 +708,7 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
+>  	args.in_args[0].value = &inarg;
+>  	args.in_args[1].size = entry->d_name.len + 1;
+>  	args.in_args[1].value = entry->d_name.name;
+> -	return create_new_entry(fc, &args, dir, entry, mode);
+> +	return create_new_entry(fc, &args, dir, entry, mode, true);
+>  }
+>  
+>  static int fuse_create(struct inode *dir, struct dentry *entry, umode_t mode,
+> @@ -671,7 +735,7 @@ static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
+>  	args.in_args[0].value = &inarg;
+>  	args.in_args[1].size = entry->d_name.len + 1;
+>  	args.in_args[1].value = entry->d_name.name;
+> -	return create_new_entry(fc, &args, dir, entry, S_IFDIR);
+> +	return create_new_entry(fc, &args, dir, entry, S_IFDIR, true);
+>  }
+>  
+>  static int fuse_symlink(struct inode *dir, struct dentry *entry,
+> @@ -687,7 +751,7 @@ static int fuse_symlink(struct inode *dir, struct dentry *entry,
+>  	args.in_args[0].value = entry->d_name.name;
+>  	args.in_args[1].size = len;
+>  	args.in_args[1].value = link;
+> -	return create_new_entry(fc, &args, dir, entry, S_IFLNK);
+> +	return create_new_entry(fc, &args, dir, entry, S_IFLNK, true);
+>  }
+>  
+>  void fuse_update_ctime(struct inode *inode)
+> @@ -858,7 +922,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+>  	args.in_args[0].value = &inarg;
+>  	args.in_args[1].size = newent->d_name.len + 1;
+>  	args.in_args[1].value = newent->d_name.name;
+> -	err = create_new_entry(fc, &args, newdir, newent, inode->i_mode);
+> +	err = create_new_entry(fc, &args, newdir, newent, inode->i_mode, false);
+>  	/* Contrary to "normal" filesystems it can happen that link
+>  	   makes two "logical" inodes point to the same "physical"
+>  	   inode.  We invalidate the attributes of the old one, so it
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index ca344bf714045..ed871742db584 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -482,6 +482,7 @@ struct fuse_fs_context {
+>  	bool no_control:1;
+>  	bool no_force_umount:1;
+>  	bool no_mount_options:1;
+> +	bool init_security:1;
+>  	unsigned int max_read;
+>  	unsigned int blksize;
+>  	const char *subtype;
+> @@ -719,6 +720,9 @@ struct fuse_conn {
+>  	/* Do not show mount options */
+>  	unsigned int no_mount_options:1;
+>  
+> +	/* Initialize security xattrs when creating a new inode */
+> +	unsigned int init_security : 1;
+> +
+>  	/** The number of requests waiting for completion */
+>  	atomic_t num_waiting;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 95d712d44ca13..ab47e73566864 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1179,6 +1179,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  	fc->no_control = ctx->no_control;
+>  	fc->no_force_umount = ctx->no_force_umount;
+>  	fc->no_mount_options = ctx->no_mount_options;
+> +	fc->init_security = ctx->init_security;
+>  
+>  	err = -ENOMEM;
+>  	root = fuse_get_root_inode(sb, ctx->rootmode);
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index bade747689033..ee22e9a8309df 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1051,6 +1051,7 @@ static int virtio_fs_fill_super(struct super_block *sb)
+>  		.no_control = true,
+>  		.no_force_umount = true,
+>  		.no_mount_options = true,
+> +		.init_security = true,
+>  	};
+
+Should this is enabled from server instead (and not client). IIUC, one
+of the deadlock examples stephen smalley gave was that client was waiting
+for mount to finish and another getxattr() call went out. This will
+succeed only if server is multi threaded and can handle both requests
+in parallel. If that's the case should it be server which tells client
+whether it can handle multiple parallel requests or not. If it can,
+then client enables it.
+
+Thanks
+Vivek
+
