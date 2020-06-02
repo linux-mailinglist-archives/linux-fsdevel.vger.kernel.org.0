@@ -2,89 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5F51EC58B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA1F1EC5C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbgFBXPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 19:15:12 -0400
-Received: from mga03.intel.com ([134.134.136.65]:57326 "EHLO mga03.intel.com"
+        id S1728187AbgFBXbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 19:31:02 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:55286 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbgFBXPL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 19:15:11 -0400
-IronPort-SDR: +yXGausVvQonlRJjYFNgJZe4YKcSALxXM9n3JD5uSKZGsHqntXxNZ8u4EGmsMSxpRtDzEJY4IL
- avCFhDf1YEKg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2020 16:15:10 -0700
-IronPort-SDR: VFcvTWOtbz3dkiPRuW2/npw0KipzrpAkLGxUts2YewEMQROQ4Rd+aVaZH1ioqP86z6ajt4JZpo
- vq36BdR9KjCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,466,1583222400"; 
-   d="scan'208";a="312421829"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Jun 2020 16:15:10 -0700
-Date:   Tue, 2 Jun 2020 16:15:10 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH V11 11/11] fs/xfs: Update
- xfs_ioctl_setattr_dax_invalidate()
-Message-ID: <20200602231510.GH1505637@iweiny-DESK2.sc.intel.com>
-References: <20200428002142.404144-1-ira.weiny@intel.com>
- <20200428002142.404144-12-ira.weiny@intel.com>
- <20200428201138.GD6742@magnolia>
- <20200602172353.GC8230@magnolia>
+        id S1726809AbgFBXbC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 19:31:02 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jgGN0-0005GC-1l; Tue, 02 Jun 2020 23:30:58 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jgGMz-0001Se-VB; Wed, 03 Jun 2020 01:30:57 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Kyle Evans <self@kyle-evans.net>,
+        Victor Stinner <victor.stinner@gmail.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
+        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
+        dhowells@redhat.com, ldv@altlinux.org
+Subject: Re: [PATCH v5 1/3] open: add close_range()
+References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
+        <20200602204219.186620-2-christian.brauner@ubuntu.com>
+Date:   Wed, 03 Jun 2020 01:30:57 +0200
+In-Reply-To: <20200602204219.186620-2-christian.brauner@ubuntu.com> (Christian
+        Brauner's message of "Tue, 2 Jun 2020 22:42:17 +0200")
+Message-ID: <87d06hdozy.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200602172353.GC8230@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 02, 2020 at 10:23:53AM -0700, Darrick J. Wong wrote:
-> On Tue, Apr 28, 2020 at 01:11:38PM -0700, Darrick J. Wong wrote:
-> > On Mon, Apr 27, 2020 at 05:21:42PM -0700, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
+* Christian Brauner:
 
-...
+> The performance is striking. For good measure, comparing the following
+> simple close_all_fds() userspace implementation that is essentially just
+> glibc's version in [6]:
+>
+> static int close_all_fds(void)
+> {
+>         int dir_fd;
+>         DIR *dir;
+>         struct dirent *direntp;
+>
+>         dir = opendir("/proc/self/fd");
+>         if (!dir)
+>                 return -1;
+>         dir_fd = dirfd(dir);
+>         while ((direntp = readdir(dir))) {
+>                 int fd;
+>                 if (strcmp(direntp->d_name, ".") == 0)
+>                         continue;
+>                 if (strcmp(direntp->d_name, "..") == 0)
+>                         continue;
+>                 fd = atoi(direntp->d_name);
+>                 if (fd == dir_fd || fd == 0 || fd == 1 || fd == 2)
+>                         continue;
+>                 close(fd);
+>         }
+>         closedir(dir);
+>         return 0;
+> }
+>
 
-> > > -out_unlock:
-> > > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
-> > > -	return error;
-> > > +	if ((mp->m_flags & XFS_MOUNT_DAX_ALWAYS) ||
-> > > +	    (mp->m_flags & XFS_MOUNT_DAX_NEVER))
-> > > +		return;
-> > >  
-> > > +	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
-> > > +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
-> > > +	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
-> > > +	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
-> > > +		d_mark_dontcache(inode);
-> 
-> Now that I think about this further, are we /really/ sure that we want
-> to let unprivileged userspace cause inode evictions?
+> [6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
+>      Note that this is an internal implementation that is not exported.
+>      Currently, libc seems to not provide an exported version of this
+>      because of missing kernel support to do this.
 
-This code only applies to files they have access to.  And it does not directly
-cause an eviction.  It only hints that those inodes (for which they have access
-to) will not be cached thus causing them to be reloaded sooner than they might
-otherwise be.
+Just to be clear, this code is not compiled into glibc anymore in
+typical configurations.  I have posted a patch to turn grantpt into a
+no-op: <https://sourceware.org/pipermail/libc-alpha/2020-May/114379.html>
 
-So I think we are fine here.
-
-Ira
-
-> 
-> --D
-> 
+I'm not entirely convinced that it's safe to keep iterating over
+/proc/self/fd while also closing descriptors.  Ideally, I think an
+application should call getdents64, process the file names for
+descriptors in the buffer, and if any have been closed, seek to zero
+before the next getdents64 call.  Maybe procfs is different, but with
+other file systems, unlinking files can trigger directory reordering,
+and then you get strange effects.  The d_ino behavior for
+/proc/self/fd is a bit strange as well (it's not consistently
+descriptor plus 3).
