@@ -2,91 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA1F1EC5C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F8971EC5CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:34:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgFBXbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 19:31:02 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:55286 "EHLO albireo.enyo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbgFBXbC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 19:31:02 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1jgGN0-0005GC-1l; Tue, 02 Jun 2020 23:30:58 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1jgGMz-0001Se-VB; Wed, 03 Jun 2020 01:30:57 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        id S1728234AbgFBXd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 19:33:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54611 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbgFBXd6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 19:33:58 -0400
+Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jgGPs-0001xM-5J; Tue, 02 Jun 2020 23:33:56 +0000
+Date:   Wed, 3 Jun 2020 01:33:55 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kyle Evans <self@kyle-evans.net>,
         Victor Stinner <victor.stinner@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
-        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, ldv@altlinux.org
-Subject: Re: [PATCH v5 1/3] open: add close_range()
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: [PATCH v5 0/3] close_range()
+Message-ID: <20200602233355.zdwcfow3ff4o2dol@wittgenstein>
 References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
-        <20200602204219.186620-2-christian.brauner@ubuntu.com>
-Date:   Wed, 03 Jun 2020 01:30:57 +0200
-In-Reply-To: <20200602204219.186620-2-christian.brauner@ubuntu.com> (Christian
-        Brauner's message of "Tue, 2 Jun 2020 22:42:17 +0200")
-Message-ID: <87d06hdozy.fsf@mid.deneb.enyo.de>
+ <CAHk-=wjy234P7tvpQb6bnd1rhO78Uc+B0g1CPg9VOhJNTxmtWw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjy234P7tvpQb6bnd1rhO78Uc+B0g1CPg9VOhJNTxmtWw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Christian Brauner:
+On Tue, Jun 02, 2020 at 02:03:09PM -0700, Linus Torvalds wrote:
+> On Tue, Jun 2, 2020 at 1:42 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > This is a resend of the close_range() syscall, as discussed in [1]. There weren't any outstanding
+> > discussions anymore and this was in mergeable shape. I simply hadn't gotten around to moving this
+> > into my for-next the last few cycles and then forgot about it. Thanks to Kyle and the Python people,
+> > and others for consistenly reminding me before every merge window and mea culpa for not moving on
+> > this sooner. I plan on moving this into for-next after v5.8-rc1 has been released and targeting the
+> > v5.9 merge window.
+> 
+> Btw, I did have one reaction that I can't find in the original thread,
+> which probably means that it got lost.
+> 
+> If one of the designed uses for this is for dropping file descriptors
+> just before execve(), it's possible that we'd want to have the option
+> to say "unshare my fd array" as part of close_range().
+> 
+> Yes, yes, you can do
+> 
+>         unshare(CLONE_FILES);
+>         close_range(3,~0u);
+> 
+> to do it as two operations (and you had that as the example typical
+> use), but it would actually be better to be able to do
+> 
+>         close_range(3, ~0ul, CLOSE_RANGE_UNSHARE);
+> 
+> instead. Because otherwise we just waste time copying the file
+> descriptors first in the unshare, and then closing them after.. Double
+> the work..
+> 
+> And maybe this _did_ get mentioned last time, and I just don't find
+> it. I also don't see anything like that in the patches, although the
+> flags argument is there.
 
-> The performance is striking. For good measure, comparing the following
-> simple close_all_fds() userspace implementation that is essentially just
-> glibc's version in [6]:
->
-> static int close_all_fds(void)
-> {
->         int dir_fd;
->         DIR *dir;
->         struct dirent *direntp;
->
->         dir = opendir("/proc/self/fd");
->         if (!dir)
->                 return -1;
->         dir_fd = dirfd(dir);
->         while ((direntp = readdir(dir))) {
->                 int fd;
->                 if (strcmp(direntp->d_name, ".") == 0)
->                         continue;
->                 if (strcmp(direntp->d_name, "..") == 0)
->                         continue;
->                 fd = atoi(direntp->d_name);
->                 if (fd == dir_fd || fd == 0 || fd == 1 || fd == 2)
->                         continue;
->                 close(fd);
->         }
->         closedir(dir);
->         return 0;
-> }
->
+I spent some good time digging and I couldn't find this mentioned
+anywhere so maybe it just never got sent to the list?
+It sounds pretty useful, so yeah let me add a patch for this tomorrow.
 
-> [6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
->      Note that this is an internal implementation that is not exported.
->      Currently, libc seems to not provide an exported version of this
->      because of missing kernel support to do this.
-
-Just to be clear, this code is not compiled into glibc anymore in
-typical configurations.  I have posted a patch to turn grantpt into a
-no-op: <https://sourceware.org/pipermail/libc-alpha/2020-May/114379.html>
-
-I'm not entirely convinced that it's safe to keep iterating over
-/proc/self/fd while also closing descriptors.  Ideally, I think an
-application should call getdents64, process the file names for
-descriptors in the buffer, and if any have been closed, seek to zero
-before the next getdents64 call.  Maybe procfs is different, but with
-other file systems, unlinking files can trigger directory reordering,
-and then you get strange effects.  The d_ino behavior for
-/proc/self/fd is a bit strange as well (it's not consistently
-descriptor plus 3).
+Christian
