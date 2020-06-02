@@ -2,36 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 971691EBFA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 18:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D5F1EBFF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jun 2020 18:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbgFBQJK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 12:09:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53892 "EHLO mail.kernel.org"
+        id S1726875AbgFBQ0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 12:26:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbgFBQJK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 12:09:10 -0400
+        id S1726894AbgFBQ0q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 12:26:46 -0400
 Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 661EA206E2;
-        Tue,  2 Jun 2020 16:09:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0694206C3;
+        Tue,  2 Jun 2020 16:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591114149;
-        bh=rTJPZCvA0p/88wMBOtqJyn8UePWXK3p2ytaSMTjexd4=;
+        s=default; t=1591115204;
+        bh=3/le4j93lulevphUTItA/BquMCkwRnK3iz2LOiB4lSk=;
         h=Date:From:To:Cc:Subject:From;
-        b=sO7YA4jEcsaAyLUe3cMa/4udrahF+LDXD8lXko1pzr4OsgigcuYJ2/AqGVW/tP+0I
-         HJO0fHEnsEliyq4S6hxsgxgobIh67ydwYieTLBs4E4ANJ9NjPl1d9J3R5ikwZU6N6A
-         m3wGo5WcUS5Ge2Uj8zLoljDlYc5ib5r/RJHiuYDU=
-Date:   Tue, 2 Jun 2020 09:09:08 -0700
+        b=OuiMzPBh5bC+wyJc16TyZAifpzqZXpXnalT4hsHqbi+90nhlDTrRcZUsklGE8CYTr
+         6bTIPo+S+UeMhUWjFwgLsST6rUXIB4uv472DKuRlU2hXzNvZBYDRxyOkwEtDl/vz/l
+         FHgt79ndrZC1ud95tmHOtXL5V3whU48h1geh+UjM=
+Date:   Tue, 2 Jun 2020 09:26:44 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         david@fromorbit.com, linux-kernel@vger.kernel.org,
         sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: new code for 5.8
-Message-ID: <20200602160908.GA8230@magnolia>
+Subject: [GIT PULL] xfs: new code for 5.8 (now with fixed To line)
+Message-ID: <20200602162644.GE8204@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -39,6 +38,14 @@ Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
+
+Sorry Linus, I totally FUBARed the addressing on the pull request.
+Resending directly to you so that it doesn't get lost in the spam
+folder.
+
+--D
+
+---
 
 Hi Linus,
 
@@ -381,3 +388,5 @@ Zheng Bin (1):
  create mode 100644 fs/xfs/xfs_buf_item_recover.c
  create mode 100644 fs/xfs/xfs_dquot_item_recover.c
  create mode 100644 fs/xfs/xfs_inode_item_recover.c
+
+----- End forwarded message -----
