@@ -2,95 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF451EC8F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 07:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5ADB1EC98B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 08:31:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbgFCFwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 01:52:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60740 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbgFCFww (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 01:52:52 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF30C05BD43;
-        Tue,  2 Jun 2020 22:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=QN7oI7JO3aC05O3t9oy8oBvuvZKExBcNr+amt4s0nQk=; b=uMvIOi8ieP0EvZtaJSUdZoPpIZ
-        SxrxdLMf/Y7nbP6vTq9eyjskD9kCNrajX6mjMa22Xap973Ax/v77D45XQ4pzSSTV60XrYFtvG+XKI
-        7SClKN0YP6cRH6RQh5FgU4zf8q7AXvKZnYOoxmNPamDyV+GrDW+eLtfGbjuAxGiPEO4KgJNbYe+SD
-        q4biRsgdr8XscXExlfyl514kQDWKX4QekFEQPHZNQ6ld7B88OA4EStVxpDp0MgY/lbnmwIJTDJNc/
-        ZIaw5eIIMHKsKxJYzlFNlTb74nPJU2H//Pk+NI5pFEEFKuBJ17FQoMgUO/s5ApRzZPquujJgA8qC4
-        LBQLGMkw==;
-Received: from p4fdb1ad2.dip0.t-ipconnect.de ([79.219.26.210] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jgMKY-0003rC-M1; Wed, 03 Jun 2020 05:52:51 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        build test robot <lkp@intel.com>
-Subject: [PATCH 4/4] trace: fix an incorrect __user annotation on stack_trace_sysctl
-Date:   Wed,  3 Jun 2020 07:52:37 +0200
-Message-Id: <20200603055237.677416-5-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200603055237.677416-1-hch@lst.de>
-References: <20200603055237.677416-1-hch@lst.de>
+        id S1726013AbgFCGa5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 02:30:57 -0400
+Received: from mout.web.de ([212.227.15.3]:58611 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725810AbgFCGa5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jun 2020 02:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1591165849;
+        bh=cTgwzYgW6iZx0BywIpBGa55ko5vfSGTY0u8M5uDF5sg=;
+        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
+        b=KjPJpsiycKjjP0dbXGHQrc4KcsgYfpmlHId7uaaQI99afb5r6KPTr/C2KRGs+32IZ
+         SuO9mgEg43j71XzyPDmPc3GlYyPyXhkiRViHYxp/dtJrO2ooSqYWqXh32VA09FH94d
+         MzEx6ipzJXCiCeVjj4m7L7ZzMQOeZaZmmwW62UAk=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.82.231]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LeLWP-1jCb121cXl-00qExW; Wed, 03
+ Jun 2020 08:30:49 +0200
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        stable@vger.kernel.org, syzkaller@googlegroups.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Xiaolong Huang <butterflyhuangxx@gmail.com>
+Subject: Re: [PATCH v2] exfat: fix memory leak in exfat_parse_param()
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <d0ba7af9-acd4-b5f5-8e34-9ef4af83f458@web.de>
+Date:   Wed, 3 Jun 2020 08:30:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mIHKvtfLhuIOyoNGc4V7Mx3NGtic38gULadTLZqbsEfB1hSbn23
+ 6mi/jF5bm6GFwfF4rtT8exSljVQ6h0rg+oUnCIq0i9xBUmb2kv6SG84JbtSIM412rB+4TpX
+ wTW++4+TfhBpmAZUFRVKVXpM1j8vM6bnJ/WJQcklePxl3Cq8dhNLTFR5IKsLyjYEqrXDpoI
+ wyRPnE82RJa7SgvxObDIA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:o3o83DNXZkY=:UxQAMDqqSmr8KQCip4obXo
+ LFfW38PTtCtm8b2qHneqtkX8u3TFKNw186zL8HVDaJoU6kmD64MmWv6NXtRa2prnC5f9pD5Jx
+ Ec4SViohqTljv3wRPhThQtFPV/+Hw9z4yW1KqDoM047U6P9/qW3D20Q6opmL075betcmLb4eI
+ DgUO4Ip7166oJMYDZ8s/Oq9JyTc0pwY7PKax2ELH8ouPirUKZ969j3bYt4mbvT4oG3p5LcoYL
+ we1/nbN0ny41HqUOdEGye4KDnSLlu03LWCuaEHf4zQlAD3Z+Sxsxva7W+aKwvW4Avzvvx2KFN
+ lk6JKvS7cp4NpHXFN01RrQ+kznSekDEyThgU7TR6J4Sf64PqJBUp5aI87OmS3T0BGyKzpwhKA
+ d1Bo2tKrGUBVycKW6GX2Jz9v5aeMJ0wtOZCLKtg0f0EwTVqX13LwciOrtO1EF7PrC9oNfTzjv
+ B8RuIVWB2a4pO+imfMiX4A56vjxwJY6eF3A5EIH5nYniISWv5MKKEhfybkd7ZXqmUgv8lIJC0
+ IHyGdfoaUxbtWCzxxOSd8k3Y/9WVRW8SkO5f980dDjUiYf0MYI2Ph03HzJPDxf8wjJ4zYXUJj
+ tdiy/HaMfLi/s+0cQy/YXyS2EkvZGi+8xDQe3dR+uj7Cl+2BrjFfb37Xiu0y+ak2Sb7qVnyT2
+ Jr/q0qQKHy8xfh65dcbNMhqWUTu6kC0IW/Fc0lbd3jpgor8Ei0cMV2KWkiQmJQgS7Y7AM6sxn
+ nROhOLNAXJ9UT/zNDsijKFPOt/lKwjkPDDXPvvDQVtgQsx4OFPSi6FoSh8o6g0mrMt4tZAV5Z
+ 3+Gs4Obgnkn0+izD/z5vptvViTKUSVnAGlnN+Ko1+4eShPHu7YSPrqr/SJzh0l+bnSyNwckiX
+ bvuCgA/2JXFabeQAaPKYfEZ3p6Hzoz70d6CVou7bzCQtTrpNPiWahNwJOH8UKTDmt4n9BnZK9
+ TZ4GlLqKoH9cBsCQclx138XqFAo7SCpcAw0hup8NqOjVNW9N2FIZidso/dkQ9cgcdfcKkHDTi
+ vE/JKuOtgPMGGoK0rwO6hbYMxiXkUeMRiQpGPKQ3UQNdYrvQkmBt8hdIoFprmCvnlc2SNuQXf
+ 6g9rPkcetg0MkZ9a3mmEBAaaaGJCUOgvYqe90dmJUNkjyZGzlMqoYh/Ed5YUtq96PLW8YiUsd
+ 68ZuEufsWY8wzByHLaKpFURi1aILoNik6qNtUuGa6wvinOJsH9wajEgSWLpxo/ab87JEgX+KK
+ J0YYo7qt4xIRvWw6g
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No user pointers for sysctls anymore.
+> Additionally, there's no point copying param->string in
+> exfat_parse_param() - just steal it, leaving NULL in param->string.
+> That's independent from the leak or fix thereof - it's simply
+> avoiding an extra copy.
 
-Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
-Reported-by: build test robot <lkp@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/ftrace.h     | 5 ++---
- kernel/trace/trace_stack.c | 5 ++---
- 2 files changed, 4 insertions(+), 6 deletions(-)
+I find it clearer to provide such a source code adjustment
+by a separate update step.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?id=3Dd6f9469a03d832dcd17041ed67=
+774ffb5f3e73b3#n138
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index ddfc377de0d2c..fce81238f304d 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -319,9 +319,8 @@ static inline void arch_ftrace_set_direct_caller(struct pt_regs *regs,
- 
- extern int stack_tracer_enabled;
- 
--int stack_trace_sysctl(struct ctl_table *table, int write,
--		       void __user *buffer, size_t *lenp,
--		       loff_t *ppos);
-+int stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
-+		       size_t *lenp, loff_t *ppos);
- 
- /* DO NOT MODIFY THIS VARIABLE DIRECTLY! */
- DECLARE_PER_CPU(int, disable_stack_tracer);
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index c557f42a93971..98bba4764c527 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -515,9 +515,8 @@ static const struct file_operations stack_trace_filter_fops = {
- #endif /* CONFIG_DYNAMIC_FTRACE */
- 
- int
--stack_trace_sysctl(struct ctl_table *table, int write,
--		   void __user *buffer, size_t *lenp,
--		   loff_t *ppos)
-+stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
-+		   size_t *lenp, loff_t *ppos)
- {
- 	int was_enabled;
- 	int ret;
--- 
-2.26.2
+Please move it into another patch.
 
+
+=E2=80=A6
+> +++ b/fs/exfat/super.c
+=E2=80=A6
+> @@ -686,7 +685,12 @@  static int exfat_get_tree(struct fs_context *fc)
+>
+>  static void exfat_free(struct fs_context *fc)
+>  {
+> -	kfree(fc->s_fs_info);
+> +	struct exfat_sb_info *sbi =3D fc->s_fs_info;
+> +
+> +	if (sbi) {
+> +		exfat_free_iocharset(sbi);
+> +		kfree(sbi);
+> +	}
+>  }
+=E2=80=A6
+
+Can it be helpful to annotate the added check according to branch predicti=
+on?
+Are valid pointers likely at this place?
+
+Regards,
+Markus
