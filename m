@@ -2,58 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B601EC803
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 05:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D640E1EC8F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 07:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgFCDuk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 23:50:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgFCDuF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 23:50:05 -0400
-Subject: Re: [GIT PULL] vfs: improve DAX behavior for 5.8, part 2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591156204;
-        bh=4tH55mVl+et4vYGo20G5wKfRLoAuoi+9oKOHSEGHMXE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=V0IF9AN7bXf5uDc6cvMZVF2KgJwNSKMRClU88/4DZNCkEnR3K5VDgcV7MkLc2zfnH
-         8PWyPv2CYgcX2tsfk/HoPN8dzwu2YlYxKVL0QuZ+b3bahIpvn7vTOI40ST1VSaUaj0
-         9XM+W1k811ZD4ndV7BxT4EynzWUf3YVttr9tiO+U=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200602172550.GF8204@magnolia>
-References: <20200602172550.GF8204@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200602172550.GF8204@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/vfs-5.8-merge-2
-X-PR-Tracked-Commit-Id: 2c567af418e3f9380c2051aada58b4e5a4b5c2ad
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8eeae5bae1239c030ba0b34cac97ebd5e7ec1886
-Message-Id: <159115620468.30123.15334674165284603589.pr-tracker-bot@kernel.org>
-Date:   Wed, 03 Jun 2020 03:50:04 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, ira.weiny@intel.com
+        id S1725853AbgFCFwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 01:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbgFCFwp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jun 2020 01:52:45 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A79C05BD43;
+        Tue,  2 Jun 2020 22:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=G0RtHqaz3jwThDFK2q4jT4y1WFdSD5chLgza8Ln0Tns=; b=S54r37A102cVdIiLR9ikrZln+h
+        +WqkJz/J5GgpgnRWePR/j3D3ICzQYNOhdFacEEI4MY8pPDhJJY228uyWTz8F5Y+G0Gu81WPOxamKA
+        kYLxWLR6zjD92z5Dli8NtLJltTsb2BIt2F+UqZfm7mmYDY0S9bVwZM+C4GZNzjjihlb+LmWfXDbVe
+        IOnxQkTE170brxgMnSqLDLFx2fzFvAQvKwVXdsf0LQBjkmQoWgQjGQJwUEz1pAzamr3sZwy9SmKIL
+        dUON6sQqXrYHJYlopE73pRFYZtp9uYc+njHHcrLH2BwAfoEFF+NAeUWhyCn/spYcXxLV28imW6jbN
+        v/t82Ing==;
+Received: from p4fdb1ad2.dip0.t-ipconnect.de ([79.219.26.210] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jgMKN-0003nL-NK; Wed, 03 Jun 2020 05:52:40 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: fixes for work.sysctl
+Date:   Wed,  3 Jun 2020 07:52:33 +0200
+Message-Id: <20200603055237.677416-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 2 Jun 2020 10:25:50 -0700:
+Hi Al,
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.8-merge-2
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8eeae5bae1239c030ba0b34cac97ebd5e7ec1886
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+a bunch of fixes for the sysctl kernel pointer conversion against your
+work.sysctl branch.  Only the first one is a real behavior fix, the rest
+just removes left over __user annotations.
