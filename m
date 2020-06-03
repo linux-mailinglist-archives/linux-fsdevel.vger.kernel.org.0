@@ -2,87 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B29CB1ED6A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 21:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572091ED6DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 21:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgFCTTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 15:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
+        id S1726123AbgFCT0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 15:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgFCTS7 (ORCPT
+        with ESMTP id S1725821AbgFCT0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 15:18:59 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A531AC08C5C0;
-        Wed,  3 Jun 2020 12:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Lrwx+3uqHzFddqxqcgr/zdMCuwvQi6n3hRWXrYFebv8=; b=uCuzDMXK9d3RRGVOEhuwsXMgGZ
-        SOXOAc99JfOo6LdQfoGhu177kZVdOf7GClJeB2bUygphtFUu0cv94kkk6d1pTK1r/OsG/5P88QKHB
-        UVwk4moBPK8jB/XjVVDttwFaDRfXouHIwR1Ctf/UsViQoCmeDDEHKeU29pPqKw/MkD6Rf/5SU8Ok+
-        EtOGlpBee2+0JzZAAXWzsfOOY99HDP5Yrcf9I4AzWvWqcdSyHB37ykcKori8fuMVMxp48Ca8OUpiy
-        J+OdKRKZmd8mEu064cyjIUOIijFPkbhnfwvAzGw5tHYKdmI/kzEaESaoLSPCM9UPMIX5cs+8CN+UC
-        8H0rAM7A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jgYub-0004tx-21; Wed, 03 Jun 2020 19:18:53 +0000
-Date:   Wed, 3 Jun 2020 12:18:52 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Filipe Manana <fdmanana@gmail.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz
-Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
- invalidation before DIO
-Message-ID: <20200603191852.GQ19604@bombadil.infradead.org>
-References: <20200528192103.xm45qoxqmkw7i5yl@fiona>
- <20200529002319.GQ252930@magnolia>
- <20200601151614.pxy7in4jrvuuy7nx@fiona>
- <CAL3q7H60xa0qW4XdneDdeQyNcJZx7DxtwDiYkuWB5NoUVPYdwQ@mail.gmail.com>
- <CAL3q7H4=N2pfnBSiJ+TApy9kwvcPE5sB92sxcVZN10bxZqQpaA@mail.gmail.com>
- <20200603190252.GG8204@magnolia>
- <CAL3q7H4gHHHKMNifbTthvT3y3KaTZDSX+L0z7f1uXz7rzDe8BA@mail.gmail.com>
+        Wed, 3 Jun 2020 15:26:20 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00EA9C08C5C0;
+        Wed,  3 Jun 2020 12:26:19 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jgZ1j-002dJy-FL; Wed, 03 Jun 2020 19:26:15 +0000
+Date:   Wed, 3 Jun 2020 20:26:15 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [git pull] vfs.git work.splice
+Message-ID: <20200603192615.GY23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL3q7H4gHHHKMNifbTthvT3y3KaTZDSX+L0z7f1uXz7rzDe8BA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 08:10:50PM +0100, Filipe Manana wrote:
-> On Wed, Jun 3, 2020 at 8:02 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > On Wed, Jun 03, 2020 at 12:32:15PM +0100, Filipe Manana wrote:
-> > > On Wed, Jun 3, 2020 at 12:23 PM Filipe Manana <fdmanana@gmail.com> wrote:
-> > > > Btw, this is causing a regression in Btrfs now. The problem is that
-> > > > dio_warn_stale_pagecache() sets an EIO error in the inode's mapping:
-> > > >
-> > > > errseq_set(&inode->i_mapping->wb_err, -EIO);
-> > > >
-> > > > So the next fsync on the file will return that error, despite the
-> > > > fsync having completed successfully with any errors.
-> > > >
-> > > > Since patchset to make btrfs direct IO use iomap is already in Linus'
-> > > > tree, we need to fix this somehow.
-> >
-> > Y'all /just/ sent the pull request containing that conversion 2 days
-> > ago.  Why did you move forward with that when you knew there were
-> > unresolved fstests failures?
-> >
-> > Now I'm annoyed because I feel like you're trying to strong-arm me into
-> > making last minute changes to iomap when you could have held off for
-> > another cycle.
-> 
-> If you are talking to me, I'm not trying to strong-arm anyone nor
-> point a fingers.
-> I'm just reporting a problem that I found earlier today while testing
-> some work I was doing.
+	Christoph's assorted splice cleanups.
 
-I think the correct response to having just found the bug is to back the
-btrfs-to-iomap conversion out of Linus' tree.  I don't think changing
-the iomap code at this time is the right approach.
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.splice
+
+for you to fetch changes up to c928f642c29a5ffb02e16f2430b42b876dde69de:
+
+  fs: rename pipe_buf ->steal to ->try_steal (2020-05-20 12:14:10 -0400)
+
+----------------------------------------------------------------
+Christoph Hellwig (7):
+      fs: simplify do_splice_to
+      fs: simplify do_splice_from
+      pipe: merge anon_pipe_buf*_ops
+      trace: remove tracing_pipe_buf_ops
+      fs: make the pipe_buf_operations ->steal operation optional
+      fs: make the pipe_buf_operations ->confirm operation optional
+      fs: rename pipe_buf ->steal to ->try_steal
+
+ drivers/char/virtio_console.c |  2 +-
+ fs/fuse/dev.c                 |  2 +-
+ fs/pipe.c                     | 96 ++++++++++---------------------------------
+ fs/splice.c                   | 81 +++++++++++++-----------------------
+ include/linux/pipe_fs_i.h     | 40 +++++++++---------
+ kernel/relay.c                |  7 ++--
+ kernel/trace/trace.c          | 11 +----
+ net/smc/smc_rx.c              |  8 ----
+ 8 files changed, 77 insertions(+), 170 deletions(-)
