@@ -2,179 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 502ED1ECE6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 13:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E051ECFFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 14:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbgFCLc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 07:32:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbgFCLc1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 07:32:27 -0400
-Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8FB6C08C5C0;
-        Wed,  3 Jun 2020 04:32:26 -0700 (PDT)
-Received: by mail-ua1-x944.google.com with SMTP id v25so725711uau.4;
-        Wed, 03 Jun 2020 04:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=PI1rnt1hDqTjvBE8Gu3X6DiYZAINHe9ky3fEiJXjP3o=;
-        b=Y5pGVwKaLqMd941pWTk4HUbLJ+9jFnYJii5c7cMAqnrU7TLk56w5rroWiHm3sgAOJi
-         BocqD9R21RA18b9DnYiKYYNY6tuj3uV1iOFU/QF//4JNuRHN6Zr+l+A2XRqXIYuJBMkF
-         VtsM/KoooL8AyHiDYj8NDfKRmmhxul+XLDpu1NuDGDqEd43IWbsC1wcBpg95tnWh9ucb
-         eHqmaCH2r34rnDyRn3kare7oshChtowjSbR7GFjJiL5sCue1agtSGmR8dSsQQ3XgW8dD
-         TCJCLmvzCEz3weWzsZYBPhxu+zREyo5F3KPq6pQ8rBMZINel2PogO5G3HAJxmO3ali1F
-         gF+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=PI1rnt1hDqTjvBE8Gu3X6DiYZAINHe9ky3fEiJXjP3o=;
-        b=ODwYAjKFDpassPQrZUKe28cyVTRN9FFzmyqGlwaFCL/kHEWVTLghv/HnAiQgpAQBQ6
-         jTZahw3QK7JRbn5lUXb7nDPs84qD1jJvrsgFjyLtrB4N9hEoQorGMvcYKUIyJmOoeBvH
-         kX4+VcoIigY/ckLin/MoZx2U9KKCYsB5ULYGsx4SqPbW8/uWgp/NHoRHHNtErZG/9N9h
-         gjuRf4GcQ3RqNmHt1HEvq/Gp+xCNq9jfTrARPgMblUJnqyKdMJ5du4VyHedNTlWxQMiV
-         zIBHGBedQbtI191p33tjTklBsvMxkT4AJ6PWdAJUMqa0Wj9a3CzygcR7I6xdY7g5WEZ1
-         PWxA==
-X-Gm-Message-State: AOAM532BAba4IBU4eZb1xulfOIBChFW712qy8ra78C0J2uyzKEJQAINX
-        aPSoPsYDXzLSN8DVkeLUnEvfIKWpC9NLro4DcVU=
-X-Google-Smtp-Source: ABdhPJxspY1/Nm5NTobJIX9UN7DynDdyX82bJg7w/I2unETZkrCI7+Oak9obEEYiJeB+fT3OS+0TffGtuODZDB1CkCQ=
-X-Received: by 2002:ab0:5498:: with SMTP id p24mr5733513uaa.123.1591183946056;
- Wed, 03 Jun 2020 04:32:26 -0700 (PDT)
+        id S1725993AbgFCMlT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 08:41:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:32924 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725881AbgFCMlT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jun 2020 08:41:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2877B31B;
+        Wed,  3 Jun 2020 05:41:18 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 719823F305;
+        Wed,  3 Jun 2020 05:41:15 -0700 (PDT)
+Date:   Wed, 3 Jun 2020 13:41:13 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200603124112.w5stb7v2z3kzcze3@e107158-lin.cambridge.arm.com>
+References: <20200511154053.7822-1-qais.yousef@arm.com>
+ <20200528132327.GB706460@hirez.programming.kicks-ass.net>
+ <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
+ <20200528161112.GI2483@worktop.programming.kicks-ass.net>
+ <20200529100806.GA3070@suse.de>
+ <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
+ <20200603094036.GF3070@suse.de>
 MIME-Version: 1.0
-References: <20200528192103.xm45qoxqmkw7i5yl@fiona> <20200529002319.GQ252930@magnolia>
- <20200601151614.pxy7in4jrvuuy7nx@fiona> <CAL3q7H60xa0qW4XdneDdeQyNcJZx7DxtwDiYkuWB5NoUVPYdwQ@mail.gmail.com>
-In-Reply-To: <CAL3q7H60xa0qW4XdneDdeQyNcJZx7DxtwDiYkuWB5NoUVPYdwQ@mail.gmail.com>
-Reply-To: fdmanana@gmail.com
-From:   Filipe Manana <fdmanana@gmail.com>
-Date:   Wed, 3 Jun 2020 12:32:15 +0100
-Message-ID: <CAL3q7H4=N2pfnBSiJ+TApy9kwvcPE5sB92sxcVZN10bxZqQpaA@mail.gmail.com>
-Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
- invalidation before DIO
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200603094036.GF3070@suse.de>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 3, 2020 at 12:23 PM Filipe Manana <fdmanana@gmail.com> wrote:
->
-> On Mon, Jun 1, 2020 at 4:16 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote=
-:
-> >
-> > On 17:23 28/05, Darrick J. Wong wrote:
-> > > On Thu, May 28, 2020 at 02:21:03PM -0500, Goldwyn Rodrigues wrote:
-> > > >
-> > > > Filesystems such as btrfs are unable to guarantee page invalidation
-> > > > because pages could be locked as a part of the extent. Return zero
-> > >
-> > > Locked for what?  filemap_write_and_wait_range should have just clean=
-ed
-> > > them off.
-> > >
-> > > > in case a page cache invalidation is unsuccessful so filesystems ca=
-n
-> > > > fallback to buffered I/O. This is similar to
-> > > > generic_file_direct_write().
-> > > >
-> > > > This takes care of the following invalidation warning during btrfs
-> > > > mixed buffered and direct I/O using iomap_dio_rw():
-> > > >
-> > > > Page cache invalidation failure on direct I/O.  Possible data
-> > > > corruption due to collision with buffered I/O!
-> > > >
-> > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > >
-> > > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > > index e4addfc58107..215315be6233 100644
-> > > > --- a/fs/iomap/direct-io.c
-> > > > +++ b/fs/iomap/direct-io.c
-> > > > @@ -483,9 +483,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_it=
-er *iter,
-> > > >      */
-> > > >     ret =3D invalidate_inode_pages2_range(mapping,
-> > > >                     pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-> > > > -   if (ret)
-> > > > -           dio_warn_stale_pagecache(iocb->ki_filp);
-> > > > -   ret =3D 0;
-> > > > +   /*
-> > > > +    * If a page can not be invalidated, return 0 to fall back
-> > > > +    * to buffered write.
-> > > > +    */
-> > > > +   if (ret) {
-> > > > +           if (ret =3D=3D -EBUSY)
-> > > > +                   ret =3D 0;
-> > > > +           goto out_free_dio;
-> > >
-> > > XFS doesn't fall back to buffered io when directio fails, which means
-> > > this will cause a regression there.
-> > >
-> > > Granted mixing write types is bogus...
-> > >
-> >
-> > I have not seen page invalidation failure errors on XFS, but what shoul=
-d
-> > happen hypothetically if they do occur? Carry on with the direct I/O?
-> > Would an error return like -ENOTBLK be better?
->
-> It doesn't make much to me to emit the warning and then proceed to the
-> direct IO write path anyway, as if nothing happened.
-> If we are concerned about possible corruption, we should either return
-> an error or fallback to buffered IO just like
-> generic_file_direct_write() did, and not allow the possibility for
-> corruptions.
->
-> Btw, this is causing a regression in Btrfs now. The problem is that
-> dio_warn_stale_pagecache() sets an EIO error in the inode's mapping:
->
-> errseq_set(&inode->i_mapping->wb_err, -EIO);
->
-> So the next fsync on the file will return that error, despite the
-> fsync having completed successfully with any errors.
->
-> Since patchset to make btrfs direct IO use iomap is already in Linus'
-> tree, we need to fix this somehow.
-> This makes generic/547 fail often for example - buffered write against
-> file + direct IO write + fsync - the later returns -EIO.
+On 06/03/20 10:40, Mel Gorman wrote:
+> On Tue, Jun 02, 2020 at 06:46:00PM +0200, Dietmar Eggemann wrote:
+> > On 29.05.20 12:08, Mel Gorman wrote:
+> > > On Thu, May 28, 2020 at 06:11:12PM +0200, Peter Zijlstra wrote:
+> > >>> FWIW, I think you're referring to Mel's notice in OSPM regarding the overhead.
+> > >>> Trying to see what goes on in there.
+> > >>
+> > >> Indeed, that one. The fact that regular distros cannot enable this
+> > >> feature due to performance overhead is unfortunate. It means there is a
+> > >> lot less potential for this stuff.
+> > > 
+> > > During that talk, I was a vague about the cost, admitted I had not looked
+> > > too closely at mainline performance and had since deleted the data given
+> > > that the problem was first spotted in early April. If I heard someone
+> > > else making statements like I did at the talk, I would consider it a bit
+> > > vague, potentially FUD, possibly wrong and worth rechecking myself. In
+> > > terms of distributions "cannot enable this", we could but I was unwilling
+> > > to pay the cost for a feature no one has asked for yet. If they had, I
+> > > would endevour to put it behind static branches and disable it by default
+> > > (like what happened for PSI). I was contacted offlist about my comments
+> > > at OSPM and gathered new data to respond properly. For the record, here
+> > > is an editted version of my response;
+> > 
+> > [...]
+> > 
+> > I ran these tests on 'Ubuntu 18.04 Desktop' on Intel E5-2690 v2
+> > (2 sockets * 10 cores * 2 threads) with powersave governor as:
+> > 
+> > $ numactl -N 0 ./run-mmtests.sh XXX
+> > 
+> > w/ config-network-netperf-unbound.
+> > 
+> > Running w/o 'numactl -N 0' gives slightly worse results.
+> > 
+> > without-clamp      : CONFIG_UCLAMP_TASK is not set
+> > with-clamp         : CONFIG_UCLAMP_TASK=y,
+> >                      CONFIG_UCLAMP_TASK_GROUP is not set
+> > with-clamp-tskgrp  : CONFIG_UCLAMP_TASK=y,
+> >                      CONFIG_UCLAMP_TASK_GROUP=y
+> > 
+> > 
+> > netperf-udp
+> >                                 ./5.7.0-rc7            ./5.7.0-rc7            ./5.7.0-rc7
+> >                               without-clamp             with-clamp      with-clamp-tskgrp
+> > 
+> > Hmean     send-64         153.62 (   0.00%)      151.80 *  -1.19%*      155.60 *   1.28%*
+> > Hmean     send-128        306.77 (   0.00%)      306.27 *  -0.16%*      309.39 *   0.85%*
+> > Hmean     send-256        608.54 (   0.00%)      604.28 *  -0.70%*      613.42 *   0.80%*
+> > Hmean     send-1024      2395.80 (   0.00%)     2365.67 *  -1.26%*     2409.50 *   0.57%*
+> > Hmean     send-2048      4608.70 (   0.00%)     4544.02 *  -1.40%*     4665.96 *   1.24%*
+> > Hmean     send-3312      7223.97 (   0.00%)     7158.88 *  -0.90%*     7331.23 *   1.48%*
+> > Hmean     send-4096      8729.53 (   0.00%)     8598.78 *  -1.50%*     8860.47 *   1.50%*
+> > Hmean     send-8192     14961.77 (   0.00%)    14418.92 *  -3.63%*    14908.36 *  -0.36%*
+> > Hmean     send-16384    25799.50 (   0.00%)    25025.64 *  -3.00%*    25831.20 *   0.12%*
+> > Hmean     recv-64         153.62 (   0.00%)      151.80 *  -1.19%*      155.60 *   1.28%*
+> > Hmean     recv-128        306.77 (   0.00%)      306.27 *  -0.16%*      309.39 *   0.85%*
+> > Hmean     recv-256        608.54 (   0.00%)      604.28 *  -0.70%*      613.42 *   0.80%*
+> > Hmean     recv-1024      2395.80 (   0.00%)     2365.67 *  -1.26%*     2409.50 *   0.57%*
+> > Hmean     recv-2048      4608.70 (   0.00%)     4544.02 *  -1.40%*     4665.95 *   1.24%*
+> > Hmean     recv-3312      7223.97 (   0.00%)     7158.88 *  -0.90%*     7331.23 *   1.48%*
+> > Hmean     recv-4096      8729.53 (   0.00%)     8598.78 *  -1.50%*     8860.47 *   1.50%*
+> > Hmean     recv-8192     14961.61 (   0.00%)    14418.88 *  -3.63%*    14908.30 *  -0.36%*
+> > Hmean     recv-16384    25799.39 (   0.00%)    25025.49 *  -3.00%*    25831.00 *   0.12%*
+> > 
+> > netperf-tcp
+> >  
+> > Hmean     64              818.65 (   0.00%)      812.98 *  -0.69%*      826.17 *   0.92%*
+> > Hmean     128            1569.55 (   0.00%)     1555.79 *  -0.88%*     1586.94 *   1.11%*
+> > Hmean     256            2952.86 (   0.00%)     2915.07 *  -1.28%*     2968.15 *   0.52%*
+> > Hmean     1024          10425.91 (   0.00%)    10296.68 *  -1.24%*    10418.38 *  -0.07%*
+> > Hmean     2048          17454.51 (   0.00%)    17369.57 *  -0.49%*    17419.24 *  -0.20%*
+> > Hmean     3312          22509.95 (   0.00%)    22229.69 *  -1.25%*    22373.32 *  -0.61%*
+> > Hmean     4096          25033.23 (   0.00%)    24859.59 *  -0.69%*    24912.50 *  -0.48%*
+> > Hmean     8192          32080.51 (   0.00%)    31744.51 *  -1.05%*    31800.45 *  -0.87%*
+> > Hmean     16384         36531.86 (   0.00%)    37064.68 *   1.46%*    37397.71 *   2.37%*
+> > 
+> > The diffs are smaller than on openSUSE Leap 15.1 and some of the
+> > uclamp taskgroup results are better?
+> > 
+> 
+> I don't see the stddev and coeff but these look close to borderline.
+> Sure, they are marked with a * so it passed a significant test but it's
+> still a very marginal difference for netperf. It's possible that the
+> systemd configurations differ in some way that is significant for uclamp
+> but I don't know what that is.
 
-Just to make it clear, despite the -EIO error, there was actually no
-data loss or corruption (generic/547 checks that),
-since the direct IO write path in btrfs figures out there's a buffered
-write still ongoing and waits for it to complete before proceeding
-with the dio write.
+Hmm so what you're saying is that Dietmar didn't reproduce the same problem
+you're observing? I was hoping to use that to dig more into it.
 
-Nevertheless, it's still a regression, -EIO shouldn't be returned as
-everything went fine.
+> 
+> > With this test setup we now can play with the uclamp code in
+> > enqueue_task() and dequeue_task().
+> > 
+> 
+> That is still true. An annotated perf profile should tell you if the
+> uclamp code is being heavily used or if it's bailing early but it's also
+> possible that uclamp overhead is not a big deal on your particular
+> machine.
+> 
+> The possibility that either the distribution, the machine or both are
+> critical for detecting a problem with uclamp may explain why any overhead
+> was missed. Even if it is marginal, it still makes sense to minimise the
+> amount of uclamp code that is executed if no limit is specified for tasks.
 
->
-> Thanks.
->
-> >
-> > --
-> > Goldwyn
->
->
->
-> --
-> Filipe David Manana,
->
-> =E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you'=
-re right.=E2=80=9D
+So one speculation I have that might be causing the problem is that the
+accesses of struct uclamp_rq are causing bad cache behavior in your case. Your
+mmtest description of the netperf says that it is sensitive to cacheline
+bouncing.
 
+Looking at struct rq, the uclamp_rq is spanning 2 cachelines
 
+ 29954         /* --- cacheline 1 boundary (64 bytes) --- */
+ 29955         struct uclamp_rq           uclamp[2];            /*    64    96 */
+ 29956         /* --- cacheline 2 boundary (128 bytes) was 32 bytes ago --- */
+ 29957         unsigned int               uclamp_flags;         /*   160     4 */
+ 29958
+ 29959         /* XXX 28 bytes hole, try to pack */
+ 29960
 
---=20
-Filipe David Manana,
+Reducing sturct uclamp_bucket to use unsigned int instead of unsigned long
+helps putting it all in a single cacheline
 
-=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
- right.=E2=80=9D
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index db3a57675ccf..63b5397a1708 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -833,8 +833,8 @@ extern void rto_push_irq_work_func(struct irq_work *work);
+  * clamp value.
+  */
+ struct uclamp_bucket {
+-       unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+-       unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
++       unsigned int value : bits_per(SCHED_CAPACITY_SCALE);
++       unsigned int tasks : 32 - bits_per(SCHED_CAPACITY_SCALE);
+ };
+
+ /*
+
+ 29954         /* --- cacheline 1 boundary (64 bytes) --- */
+ 29955         struct uclamp_rq           uclamp[2];            /*    64    48 */
+ 29956         unsigned int               uclamp_flags;         /*   112     4 */
+ 29957
+
+Is it something worth experimenting with?
+
+Thanks
+
+--
+Qais Yousef
