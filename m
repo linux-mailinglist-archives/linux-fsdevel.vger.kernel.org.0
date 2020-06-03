@@ -2,216 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3321EC9B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 08:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F21081ECB7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 10:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbgFCGsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 02:48:55 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55872 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbgFCGsz (ORCPT
+        id S1726135AbgFCI33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 04:29:29 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35495 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725275AbgFCI33 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 02:48:55 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200603064852euoutp029e47512c42a6cfce866b5388f1a6fdea~U9eUWQ10V1614116141euoutp020
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 06:48:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200603064852euoutp029e47512c42a6cfce866b5388f1a6fdea~U9eUWQ10V1614116141euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591166932;
-        bh=FP+oHu1ZKPLgzkpn+WtVvYWahse9lDSc5c8CXSXoDuw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=S9m8oly8sddS6EL39ylPOAAFBMBUeOfjtsBwFUT5jFOX9bda35LST2qRRsYbydW61
-         pB6aQQY0akz9+DlEZTF6yTtcytgre3kFerWzsxLcMYta/kfoERGYXeX9tkjhRFsWE2
-         goZ6uCQpThD71RZ1jDXUMqGXjeCqjVXnvrFmcfoQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200603064852eucas1p1bd0bcfd345341dce68a296375fb0a791~U9eUHWNvv2442224422eucas1p1u;
-        Wed,  3 Jun 2020 06:48:52 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B0.F8.60679.4D747DE5; Wed,  3
-        Jun 2020 07:48:52 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b~U9eTepbYJ0363103631eucas1p2T;
-        Wed,  3 Jun 2020 06:48:51 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200603064851eusmtrp2e11aa2f6a4bf3a04b87301913d7ca40f~U9eTd6Xir1776517765eusmtrp2U;
-        Wed,  3 Jun 2020 06:48:51 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-b8-5ed747d48e40
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 23.F1.08375.3D747DE5; Wed,  3
-        Jun 2020 07:48:51 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603064851eusmtip24519b279e7936764c77c01632cbc1b25~U9eTCtPhA0725207252eusmtip2j;
-        Wed,  3 Jun 2020 06:48:51 +0000 (GMT)
-Subject: Re: [PATCHv5 3/5] ext4: mballoc: Introduce pcpu seqcnt for freeing
- PA to improve ENOSPC handling
-To:     Ritesh Harjani <riteshh@linux.ibm.com>, linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <aa4f7629-02ff-e49b-e9c0-5ef4a1deee90@samsung.com>
-Date:   Wed, 3 Jun 2020 08:48:51 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.1
+        Wed, 3 Jun 2020 04:29:29 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q25so1066810wmj.0;
+        Wed, 03 Jun 2020 01:29:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=I+vhTKpYAPlshcNSeSPucXhRElY2YCUAChm3OCWyRiQ=;
+        b=rpjBWmAlBvCFYGKH5AsQilvWZNyFKEdLc7wQbcBPl331vqpibvq9GxFiKpkE3CQIIB
+         g7DyqJqGlcxXCNtEKNhYY66RavFAiWTyh7h2vfvQCr6IDqrgwgshENI1cPxIJvsTcSGT
+         04HUAoR1aRSKC7Mi3LKaFEq2I3GvU6Sj4e2zNRxzEjX6yYxNyda2TEjwu9cdT3EOxeMM
+         +yX2M6gOhkllexmlH0ThfocKAGOj7aRuJT+1+8aRXa1XZp8H6+tnnPPiEEpgaI1YmtWy
+         XJnV5c1dYGEglgyPqCQIBUuv6KTdhUikvo22FxgH2rJHYf7yAkrYMaFROwk0PCFZfeNR
+         5wNQ==
+X-Gm-Message-State: AOAM531CAyY8Uz83NutxUygh7NxTU+OM/zvqUyai6n8Dp+/LbkGCPXVz
+        U8IwXGUIp8c3Ei9aF/KOCbpXO9pN
+X-Google-Smtp-Source: ABdhPJzvMh3euRizCMKz1isadTXsib5ORujZ3ARoD3BHZQ9tmzIz15FMc5DBwKbrMSSuA7MNqF3Q2A==
+X-Received: by 2002:a1c:7f44:: with SMTP id a65mr8089383wmd.53.1591172965400;
+        Wed, 03 Jun 2020 01:29:25 -0700 (PDT)
+Received: from darkstar ([51.154.17.58])
+        by smtp.gmail.com with ESMTPSA id l204sm1919788wmf.19.2020.06.03.01.29.22
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Jun 2020 01:29:23 -0700 (PDT)
+References: <20200511154053.7822-1-qais.yousef@arm.com> <20200528132327.GB706460@hirez.programming.kicks-ass.net> <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com> <20200528161112.GI2483@worktop.programming.kicks-ass.net> <20200529100806.GA3070@suse.de> <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
+User-agent: mu4e 1.4.3; emacs 26.3
+From:   Patrick Bellasi <patrick.bellasi@matbug.net>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+In-reply-to: <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
+Message-ID: <87v9k84knx.derkling@matbug.net>
+Date:   Wed, 03 Jun 2020 10:29:22 +0200
 MIME-Version: 1.0
-In-Reply-To: <7f254686903b87c419d798742fd9a1be34f0657b.1589955723.git.riteshh@linux.ibm.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djPc7pX3K/HGZz5zmFx8aC/xfPlixkt
-        Zs67w2axZ+9JFovLu+awWbx6fIvdorXnJ7sDu8eERQcYPZrOHGX2WL/lKovH501yASxRXDYp
-        qTmZZalF+nYJXBk/vz5lLDinXfF78RzmBsbNKl2MnBwSAiYSF6/dY+9i5OIQEljBKHHocDsz
-        hPOFUWLxyXNsEM5nRommvzMZYVpWd+9nhUgsZ5S4vOEsVMt7Rokvd04yg1QJC2RLrNi6kwnE
-        FhFwk1iz9wwTSBGzwHpGiSd314ONYhMwlOh628UGYvMK2En8P/kQrJlFQEVi+cPDLCC2qECs
-        RM/9V8wQNYISJ2c+AYtzCsRITPzSCdbLLCAv0bx1NjOELS5x68l8JohT17FLPOiIg7BdJB7t
-        m80OYQtLvDq+BcqWkfi/cz7YcRICzYwSD8+tZYdweoB+a5oB9bS1xJ1zv4C2cQBt0JRYv0sf
-        Iuwo8W3pNrCwhACfxI23ghA38ElM2jadGSLMK9HRJgRRrSYx6/g6uLUHL1xinsCoNAvJZ7OQ
-        fDMLyTezEPYuYGRZxSieWlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZh6Tv87/mUH464/SYcY
-        BTgYlXh4DQyvxQmxJpYVV+YeYpTgYFYS4XU6ezpOiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/x
-        opexQgLpiSWp2ampBalFMFkmDk6pBkbOzHNlatlqUyo3tzBeMd9rzL2R32XPso88FlV7ZnU8
-        YZ8gbdIb0bx4zs3C0yfXL2ubmNU1O/qRzGW3T74TnlQt/eWQua0z9kxK2xeb5rPPUn7LKJY7
-        cKc7y+gxvuhyvr/CXdciTfTk3Fm2sbMPnhAX558c0GXblvwwdEnAgVVJE5u3aUiZKSmxFGck
-        GmoxFxUnAgBNLVKtOQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7qX3a/HGcx7qW5x8aC/xfPlixkt
-        Zs67w2axZ+9JFovLu+awWbx6fIvdorXnJ7sDu8eERQcYPZrOHGX2WL/lKovH501yASxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehk/vz5lLDin
-        XfF78RzmBsbNKl2MnBwSAiYSq7v3s3YxcnEICSxllFgy6zwzREJG4uS0BlYIW1jiz7UuNoii
-        t4wSE1afZwdJCAtkS8zaegesSETATWLN3jNMIEXMAhsZJQ7MuMgM0dHFKHFv8lFGkCo2AUOJ
-        rrcgozg5eAXsJP6ffAi2jkVARWL5w8MsILaoQKxE9+If7BA1ghInZz4Bi3MKxEhM/NIJ1sss
-        YCYxbzNEL7OAvETz1tlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKhX
-        nJhbXJqXrpecn7uJERht24793LyD8dLG4EOMAhyMSjy8BobX4oRYE8uKK3MPMUpwMCuJ8Dqd
-        PR0nxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnARJBXEm9oamhuYWlobmxubGahJM7bIXAw
-        RkggPbEkNTs1tSC1CKaPiYNTqoGxPGEmS866/GufAqpuXDl32sE0IKRJZVKt4KGFR/7PCppo
-        VSotzMRVEzK5N4uZNaqe95yWxv5ZL0Tznq3ludPEccnXofHJY07bz6XS3wpnzVNb2N64SjSJ
-        bfHM+Dn/9k2/0G3EuT/zdJXpu7CjD4PuFrs1lj8tvs17i3t35beJWZv/n6uPXvFMiaU4I9FQ
-        i7moOBEA4qcxKMwCAAA=
-X-CMS-MailID: 20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b
-References: <cover.1589955723.git.riteshh@linux.ibm.com>
-        <7f254686903b87c419d798742fd9a1be34f0657b.1589955723.git.riteshh@linux.ibm.com>
-        <CGME20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b@eucas1p2.samsung.com>
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ritesh,
 
-On 20.05.2020 08:40, Ritesh Harjani wrote:
-> There could be a race in function ext4_mb_discard_group_preallocations()
-> where the 1st thread may iterate through group's bb_prealloc_list and
-> remove all the PAs and add to function's local list head.
-> Now if the 2nd thread comes in to discard the group preallocations,
-> it will see that the group->bb_prealloc_list is empty and will return 0.
->
-> Consider for a case where we have less number of groups
-> (for e.g. just group 0),
-> this may even return an -ENOSPC error from ext4_mb_new_blocks()
-> (where we call for ext4_mb_discard_group_preallocations()).
-> But that is wrong, since 2nd thread should have waited for 1st thread
-> to release all the PAs and should have retried for allocation.
-> Since 1st thread was anyway going to discard the PAs.
->
-> The algorithm using this percpu seq counter goes below:
-> 1. We sample the percpu discard_pa_seq counter before trying for block
->     allocation in ext4_mb_new_blocks().
-> 2. We increment this percpu discard_pa_seq counter when we either allocate
->     or free these blocks i.e. while marking those blocks as used/free in
->     mb_mark_used()/mb_free_blocks().
-> 3. We also increment this percpu seq counter when we successfully identify
->     that the bb_prealloc_list is not empty and hence proceed for discarding
->     of those PAs inside ext4_mb_discard_group_preallocations().
->
-> Now to make sure that the regular fast path of block allocation is not
-> affected, as a small optimization we only sample the percpu seq counter
-> on that cpu. Only when the block allocation fails and when freed blocks
-> found were 0, that is when we sample percpu seq counter for all cpus using
-> below function ext4_get_discard_pa_seq_sum(). This happens after making
-> sure that all the PAs on grp->bb_prealloc_list got freed or if it's empty.
->
-> It can be well argued that why don't just check for grp->bb_free to
-> see if there are any free blocks to be allocated. So here are the two
-> concerns which were discussed:-
->
-> 1. If for some reason the blocks available in the group are not
->     appropriate for allocation logic (say for e.g.
->     EXT4_MB_HINT_GOAL_ONLY, although this is not yet implemented), then
->     the retry logic may result into infinte looping since grp->bb_free is
->     non-zero.
->
-> 2. Also before preallocation was clubbed with block allocation with the
->     same ext4_lock_group() held, there were lot of races where grp->bb_free
->     could not be reliably relied upon.
-> Due to above, this patch considers discard_pa_seq logic to determine if
-> we should retry for block allocation. Say if there are are n threads
-> trying for block allocation and none of those could allocate or discard
-> any of the blocks, then all of those n threads will fail the block
-> allocation and return -ENOSPC error. (Since the seq counter for all of
-> those will match as no block allocation/discard was done during that
-> duration).
->
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Hi Dietmar,
+thanks for sharing these numbers.
 
-This patch landed in yesterday's linux-next and causes following 
-WARNING/BUG on various Samsung Exynos-based boards:
+On Tue, Jun 02, 2020 at 18:46:00 +0200, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote...
 
-  BUG: using smp_processor_id() in preemptible [00000000] code: logsave/552
-  caller is ext4_mb_new_blocks+0x404/0x1300
-  CPU: 3 PID: 552 Comm: logsave Tainted: G        W 5.7.0-next-20200602 #4
-  Hardware name: Samsung Exynos (Flattened Device Tree)
-  [<c011184c>] (unwind_backtrace) from [<c010d250>] (show_stack+0x10/0x14)
-  [<c010d250>] (show_stack) from [<c05185fc>] (dump_stack+0xbc/0xe8)
-  [<c05185fc>] (dump_stack) from [<c0ab689c>] 
-(check_preemption_disabled+0xec/0xf0)
-  [<c0ab689c>] (check_preemption_disabled) from [<c03a7b38>] 
-(ext4_mb_new_blocks+0x404/0x1300)
-  [<c03a7b38>] (ext4_mb_new_blocks) from [<c03780f4>] 
-(ext4_ext_map_blocks+0xc7c/0x10f4)
-  [<c03780f4>] (ext4_ext_map_blocks) from [<c03902b4>] 
-(ext4_map_blocks+0x118/0x5a0)
-  [<c03902b4>] (ext4_map_blocks) from [<c0394524>] 
-(mpage_map_and_submit_extent+0x134/0x9c0)
-  [<c0394524>] (mpage_map_and_submit_extent) from [<c03958c8>] 
-(ext4_writepages+0xb18/0xcb0)
-  [<c03958c8>] (ext4_writepages) from [<c02588ec>] (do_writepages+0x20/0x94)
-  [<c02588ec>] (do_writepages) from [<c024c688>] 
-(__filemap_fdatawrite_range+0xac/0xcc)
-  [<c024c688>] (__filemap_fdatawrite_range) from [<c024c700>] 
-(filemap_flush+0x28/0x30)
-  [<c024c700>] (filemap_flush) from [<c037eedc>] 
-(ext4_release_file+0x70/0xac)
-  [<c037eedc>] (ext4_release_file) from [<c02c3310>] (__fput+0xc4/0x234)
-  [<c02c3310>] (__fput) from [<c014eb74>] (task_work_run+0x88/0xcc)
-  [<c014eb74>] (task_work_run) from [<c010ca40>] 
-(do_work_pending+0x52c/0x5cc)
-  [<c010ca40>] (do_work_pending) from [<c0100094>] 
-(slow_work_pending+0xc/0x20)
-  Exception stack(0xec9c1fb0 to 0xec9c1ff8)
-  1fa0:                                     00000000 0044969c 0000006c 
-00000000
-  1fc0: 00000001 0045a014 00000241 00000006 00000000 be91abb4 be91abb0 
-0000000c
-  1fe0: 00459fd4 be91ab90 00448ed4 b6e43444 60000050 00000003
+[...]
 
-Please let me know how I can help debugging this issue. The above log is 
-from linux-next 20200602 compiled from exynos_defconfig running on ARM 
-32bit Samsung Exynos4412-based Odroid U3 board, however I don't think 
-this is Exynos specific issue. Probably I've observed it, because 
-exynos_defconfig has most of the debugging options enabled.
+> I ran these tests on 'Ubuntu 18.04 Desktop' on Intel E5-2690 v2
+> (2 sockets * 10 cores * 2 threads) with powersave governor as:
+>
+> $ numactl -N 0 ./run-mmtests.sh XXX
 
- > ...
+Great setup, it's worth to rule out all possible noise source (freq
+scaling, thermal throttling, NUMA scheduler, etc.).
+Wondering if disabling HT can also help here in reducing results "noise"?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> w/ config-network-netperf-unbound.
+>
+> Running w/o 'numactl -N 0' gives slightly worse results.
+>
+> without-clamp      : CONFIG_UCLAMP_TASK is not set
+> with-clamp         : CONFIG_UCLAMP_TASK=y,
+>                      CONFIG_UCLAMP_TASK_GROUP is not set
+> with-clamp-tskgrp  : CONFIG_UCLAMP_TASK=y,
+>                      CONFIG_UCLAMP_TASK_GROUP=y
+>
+>
+> netperf-udp
+>                                 ./5.7.0-rc7            ./5.7.0-rc7            ./5.7.0-rc7
+>                               without-clamp             with-clamp      with-clamp-tskgrp
+
+Can you please specify how to read the following scores? I give it a run
+to my local netperf and it reports Throughput, thous I would expect the
+higher the better... but... this seems something different.
+
+> Hmean     send-64         153.62 (   0.00%)      151.80 *  -1.19%*      155.60 *   1.28%*
+> Hmean     send-128        306.77 (   0.00%)      306.27 *  -0.16%*      309.39 *   0.85%*
+> Hmean     send-256        608.54 (   0.00%)      604.28 *  -0.70%*      613.42 *   0.80%*
+> Hmean     send-1024      2395.80 (   0.00%)     2365.67 *  -1.26%*     2409.50 *   0.57%*
+> Hmean     send-2048      4608.70 (   0.00%)     4544.02 *  -1.40%*     4665.96 *   1.24%*
+> Hmean     send-3312      7223.97 (   0.00%)     7158.88 *  -0.90%*     7331.23 *   1.48%*
+> Hmean     send-4096      8729.53 (   0.00%)     8598.78 *  -1.50%*     8860.47 *   1.50%*
+> Hmean     send-8192     14961.77 (   0.00%)    14418.92 *  -3.63%*    14908.36 *  -0.36%*
+> Hmean     send-16384    25799.50 (   0.00%)    25025.64 *  -3.00%*    25831.20 *   0.12%*
+
+If I read it as the lower the score the better, all the above results
+tell us that with-clamp is even better, while with-clamp-tskgrp
+is not that much worst.
+
+The other way around (the higher the score the better) would look odd
+since we definitively add in more code and complexity when uclamp has
+the TG support enabled we would not expect better scores.
+
+> Hmean     recv-64         153.62 (   0.00%)      151.80 *  -1.19%*      155.60 *   1.28%*
+> Hmean     recv-128        306.77 (   0.00%)      306.27 *  -0.16%*      309.39 *   0.85%*
+> Hmean     recv-256        608.54 (   0.00%)      604.28 *  -0.70%*      613.42 *   0.80%*
+> Hmean     recv-1024      2395.80 (   0.00%)     2365.67 *  -1.26%*     2409.50 *   0.57%*
+> Hmean     recv-2048      4608.70 (   0.00%)     4544.02 *  -1.40%*     4665.95 *   1.24%*
+> Hmean     recv-3312      7223.97 (   0.00%)     7158.88 *  -0.90%*     7331.23 *   1.48%*
+> Hmean     recv-4096      8729.53 (   0.00%)     8598.78 *  -1.50%*     8860.47 *   1.50%*
+> Hmean     recv-8192     14961.61 (   0.00%)    14418.88 *  -3.63%*    14908.30 *  -0.36%*
+> Hmean     recv-16384    25799.39 (   0.00%)    25025.49 *  -3.00%*    25831.00 *   0.12%*
+>
+> netperf-tcp
+>  
+> Hmean     64              818.65 (   0.00%)      812.98 *  -0.69%*      826.17 *   0.92%*
+> Hmean     128            1569.55 (   0.00%)     1555.79 *  -0.88%*     1586.94 *   1.11%*
+> Hmean     256            2952.86 (   0.00%)     2915.07 *  -1.28%*     2968.15 *   0.52%*
+> Hmean     1024          10425.91 (   0.00%)    10296.68 *  -1.24%*    10418.38 *  -0.07%*
+> Hmean     2048          17454.51 (   0.00%)    17369.57 *  -0.49%*    17419.24 *  -0.20%*
+> Hmean     3312          22509.95 (   0.00%)    22229.69 *  -1.25%*    22373.32 *  -0.61%*
+> Hmean     4096          25033.23 (   0.00%)    24859.59 *  -0.69%*    24912.50 *  -0.48%*
+> Hmean     8192          32080.51 (   0.00%)    31744.51 *  -1.05%*    31800.45 *  -0.87%*
+> Hmean     16384         36531.86 (   0.00%)    37064.68 *   1.46%*    37397.71 *   2.37%*
+>
+> The diffs are smaller than on openSUSE Leap 15.1 and some of the
+> uclamp taskgroup results are better?
+>
+> With this test setup we now can play with the uclamp code in
+> enqueue_task() and dequeue_task().
+>
+> ---
+>
+> W/ config-network-netperf-unbound (only netperf-udp and buffer size 64):
+>
+> $ perf diff 5.7.0-rc7_without-clamp/perf.data 5.7.0-rc7_with-clamp/perf.data | grep activate_task
+>
+> # Event 'cycles:ppp'
+> #
+> # Baseline  Delta Abs  Shared Object            Symbol
+>
+>      0.02%     +0.54%  [kernel.vmlinux]         [k] activate_task
+>      0.02%     +0.38%  [kernel.vmlinux]         [k] deactivate_task
+>
+> $ perf diff 5.7.0-rc7_without-clamp/perf.data 5.7.0-rc7_with-clamp-tskgrp/perf.data | grep activate_task
+>
+>      0.02%     +0.35%  [kernel.vmlinux]         [k] activate_task
+>      0.02%     +0.34%  [kernel.vmlinux]         [k] deactivate_task
+
+These data makes more sense to me, AFAIR we measured <1% impact in the
+wakeup path using cycletest.
+
+I would also suggest to always report the overheads for 
+  __update_load_avg_cfs_rq()
+as a reference point. We use that code quite a lot in the wakeup path
+and it's a good proxy for relative comparisons.
+
+
+> I still see 20 out of 90 tests with the warning message that the
+> desired confidence was not achieved though.
+
+Where the 90 comes from? From the above table we run 9 sizes for
+{udp-send, udp-recv, tcp} and 3 kernels. Should not give us 81 results?
+
+Maybe the Warning are generated only when a test has to be repeated?
+Thus, all the numbers above are granted to be within the specific CI?
+
+> "
+> !!! WARNING
+> !!! Desired confidence was not achieved within the specified iterations.
+> !!! This implies that there was variability in the test environment that
+> !!! must be investigated before going further.
+> !!! Confidence intervals: Throughput      : 6.727% <-- more than 5% !!!
+> !!!                       Local CPU util  : 0.000%
+> !!!                       Remote CPU util : 0.000%
+> "
+>
+> mmtests seems to run netperf with the following '-I' and 'i' parameter
+> hardcoded: 'netperf -t UDP_STREAM -i 3,3 -I 95,5' 
+
+This means that we compute a score's (average +-2.5%) with a 95% confidence.
+
+Does not that means that every +-2.5% difference in the results
+above should be considered in the noise?
+
+I would say that it could be useful to run with more iterations
+and, given the small numbers we are looking at (apparently we are
+scared by a 1% overhead), we should better use a more aggressive CI.
+
+What about something like:
+
+   netperf -t UDP_STREAM -i 3,30 -I 99,1
+
+?
 
