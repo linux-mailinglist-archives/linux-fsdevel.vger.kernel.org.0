@@ -2,179 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 966FC1EC6C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 03:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29AC91EC6BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 03:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgFCBez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 21:34:55 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:25493 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727860AbgFCBey (ORCPT
+        id S1728347AbgFCBcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 21:32:47 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:26946 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbgFCBcq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 21:34:54 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200603013449epoutp04ccca305d4306a7326dd4793dcf2992fc~U5MHZzxRl2047420474epoutp04y
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 01:34:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200603013449epoutp04ccca305d4306a7326dd4793dcf2992fc~U5MHZzxRl2047420474epoutp04y
+        Tue, 2 Jun 2020 21:32:46 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200603013243epoutp02905275ecab5029736e444fd4307c09e9~U5KRpJ0HX2767627676epoutp02Y
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 01:32:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200603013243epoutp02905275ecab5029736e444fd4307c09e9~U5KRpJ0HX2767627676epoutp02Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591148089;
-        bh=pVH5ouesIXx/FtDlG2ZC2wq8Kia7pcDu8KnfMkKe8g8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=S2Z67GsgVgCYMaABz5QJfj0H+/So0KSS9vP5W9Esiuw/eDXVodKeJFUPfUDKmXwpU
-         87zg8782Smvue6vdk0mnnjQfAVEpZrV8F7iICTxg56Cshs6eyyB4tFfk2po0+qGaG4
-         /QnLvXWuZDFtYlXsDzIWNqMiwcaTRsKncfJIipYk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200603013449epcas1p16b4671a7a61179018f263aae9b02fc38~U5MHH7h7r0686706867epcas1p1k;
-        Wed,  3 Jun 2020 01:34:49 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 49cBKh0S9qzMqYm9; Wed,  3 Jun
-        2020 01:34:48 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AD.16.28581.73EF6DE5; Wed,  3 Jun 2020 10:34:47 +0900 (KST)
+        s=mail20170921; t=1591147963;
+        bh=nxeJZfGa9r2cyIZWQE2vqh/T28fViow0gBdv2f0AluQ=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=skzfgfN5pTS1GssmYuluAoSaXA8Wmgnv6EjR1BudD+722cjojTJOwt8fkuEQWj/km
+         l63w3JKeOrgtNqSsFUZsPMlFo5bh3ZAQHj6DEa1UVsN4kJaK1m9P8KGUYSwLW7EFqy
+         ldCRPaibLJ9iT0j4Kny4usvJ6OetvMCMfn2WQeks=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200603013242epcas1p2043435034759a56915cab70407f5ace0~U5KRZCU512931229312epcas1p2y;
+        Wed,  3 Jun 2020 01:32:42 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.163]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 49cBHF483bzMqYkj; Wed,  3 Jun
+        2020 01:32:41 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        70.17.28578.9BDF6DE5; Wed,  3 Jun 2020 10:32:41 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200603013447epcas1p45c6537dab8fee50f1f5b8fe7fd21da2b~U5MFNw9u00064800648epcas1p4U;
-        Wed,  3 Jun 2020 01:34:47 +0000 (GMT)
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200603013241epcas1p103bf8ec353b94b9f2c1b395a5f96fe7b~U5KP3IDWX2191721917epcas1p1V;
+        Wed,  3 Jun 2020 01:32:41 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200603013447epsmtrp2a08ee182682a04e5139e48dcd0bab616~U5MFM2hdl2533625336epsmtrp21;
-        Wed,  3 Jun 2020 01:34:47 +0000 (GMT)
-X-AuditID: b6c32a38-2cdff70000006fa5-a9-5ed6fe370b1d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20200603013241epsmtrp253f1a1e8393dc54be1f2640a83e483f1~U5KP2awLU2386823868epsmtrp2j;
+        Wed,  3 Jun 2020 01:32:41 +0000 (GMT)
+X-AuditID: b6c32a39-8c9ff70000006fa2-a7-5ed6fdb9b9fc
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E6.D5.08382.73EF6DE5; Wed,  3 Jun 2020 10:34:47 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200603013447epsmtip18e07498feb1e16070c3f00fb6279e0f4~U5MFApNv71385013850epsmtip1g;
-        Wed,  3 Jun 2020 01:34:47 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        viro@zeniv.linux.org.uk, butterflyhuangxx@gmail.com,
-        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] exfat: fix memory leak in exfat_parse_param()
-Date:   Wed,  3 Jun 2020 10:29:57 +0900
-Message-Id: <20200603012957.9200-1-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsWy7bCmga75v2txBquXK1rMWTWFzWLP3pMs
-        Fpd3zWGz+DG93mLLvyOsFgs2PmK0OPKmm9ni/N/jrA4cHjtn3WX32DPxJJtH35ZVjB6fN8l5
-        bHrylimANSrHJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNct
-        MwfoFCWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgaFBgV5xYm5xaV66XnJ+rpWh
-        gYGRKVBlQk7GkTMLmQqmiFTs7t/L1sD4RqCLkYNDQsBEYt3v2i5GLg4hgR2MEstvbWGGcD4x
-        Stzad4Oti5ETyPnGKDF7MxeIDdLw5sY8VoiivYwSu3YvZIXrWPVvJSvIWDYBbYk/W0RBTBEB
-        RYnL751ASpgFzjBK7DxwkwVkkLCAncTTU3vBbBYBVYmFU7vBlvEKWEtMfHaSDWKZvMTqDQeY
-        Iexd7BKT/mdB2C4Srb/7oWqEJV4d38IOYUtJfH63lw3is2qJj/uhWjsYJV58t4WwjSVurt8A
-        diWzgKbE+l36EGFFiZ2/5zKC2MwCfBLvvvawQkzhlehoE4IoUZXou3SYCcKWluhq/wC11EPi
-        yOuzzJCQipX4P+cN2wRG2VkICxYwMq5iFEstKM5NTy02LDBBjqBNjOCkpWWxg3Hu2w96hxiZ
-        OBgPMUpwMCuJ8FrJXosT4k1JrKxKLcqPLyrNSS0+xGgKDK2JzFKiyfnAtJlXEm9oamRsbGxh
-        YmZuZmqsJM570upCnJBAemJJanZqakFqEUwfEwenVAPT9L/vQvOPn/FctZtpW+nC6iW7GWdL
-        Re149jfnpd7X+ltqt4ML9pVNWHmnmIdd/QXn30c3JCbpnt6y5PLDrGbGW51ve+6Kxrdwsuip
-        SkhN+/hn/dt1i3X4ItdbOV84mHmx4Iy/WraY2gvHn/+nTT670Mo6NGDz4aCYj4cDKn5/WuXB
-        xHxXz5dF/NbxKR/S5SfP5qjn/Z92aJJnTtCkrMN9jovM8hcw+hq/fpyxc7dEynyVAJ3C5sk9
-        BSvbNTtV3mRO+tpRVxHffrzQ5vDPTxtkwi8VTtxx8pzQuf18WlK37/tx2AbNmrjXILs/07Ax
-        rreK4e293SzJQR8N8hUbmvmfCzttk7PmLzj8SjFqdY+lEktxRqKhFnNRcSIANSmD+OMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkluLIzCtJLcpLzFFi42LZdlhJTtf837U4g1+f2C3mrJrCZrFn70kW
-        i8u75rBZ/Jheb7Hl3xFWiwUbHzFaHHnTzWxx/u9xVgcOj52z7rJ77Jl4ks2jb8sqRo/Pm+Q8
-        Nj15yxTAGsVlk5Kak1mWWqRvl8CVceTMQqaCKSIVu/v3sjUwvhHoYuTkkBAwkXhzYx5rFyMX
-        h5DAbkaJkz0PmCAS0hLHTpxh7mLkALKFJQ4fLoao+cAosXHibiaQOJuAtsSfLaIgpoiAosTl
-        904gJcwCVxglvr28wwwyRljATuLpqb0sIDaLgKrEwqndbCA2r4C1xMRnJ9kgVslLrN5wgHkC
-        I88CRoZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjBoaSluYNx+6oPeocYmTgYDzFK
-        cDArifBayV6LE+JNSaysSi3Kjy8qzUktPsQozcGiJM57o3BhnJBAemJJanZqakFqEUyWiYNT
-        qoFpJbsDz+mtm1nOnP7xue9MOuNExoRNlXyrZjnebb/UMiNJbgbvt4y/Secveyhvm2flEZFu
-        luXxe3ln/tupK89dZDvtLHuY0cE17h/zGY+nvZY52fsniP+/qWvEY5b9su8qx89WIw2dqSk+
-        1c186fbaex9ydPq+3CLiU6X242T0rxg95bMf9BouM7DqLM9aFL7kzQ4XwbOLlNZtVZ/BpScW
-        efGt9/dqj+/rN8v6tduuuHXuku+ZtykqbzjnP8lIUHnOMWnG82tXNrcbrFzvaazTpXwiqdH5
-        bO6BnhefjUq95ugeOGQll/F1korx560f7kjKPFmTMvm7aWnD0d5d1SsKC16HfU/sbvpksqcm
-        b6eIEktxRqKhFnNRcSIAg8kwp5QCAAA=
-X-CMS-MailID: 20200603013447epcas1p45c6537dab8fee50f1f5b8fe7fd21da2b
+        D5.A5.08382.9BDF6DE5; Wed,  3 Jun 2020 10:32:41 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200603013240epsmtip20cb536b99c8847434a7ab75c5f293900~U5KPn4Pkw1845218452epsmtip2K;
+        Wed,  3 Jun 2020 01:32:40 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Al Viro'" <viro@zeniv.linux.org.uk>
+Cc:     <sj1557.seo@samsung.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "'syzkaller'" <syzkaller@googlegroups.com>,
+        "'butt3rflyh4ck'" <butterflyhuangxx@gmail.com>
+In-Reply-To: <20200602162808.GK23230@ZenIV.linux.org.uk>
+Subject: RE: memory leak in exfat_parse_param
+Date:   Wed, 3 Jun 2020 10:32:41 +0900
+Message-ID: <014501d63946$df61a260$9e24e720$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKSa5uL/3zbJoN7v+1iAtBKiDoxiAJWHDiqAihSHFqnKbrZcA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmvu7Ov9fiDJo/yFnMWTWFzWLP3pMs
+        Fpd3zWGz2PLvCKvFkTfdzBbn/x5ndWDz2DnrLrvHnokn2Tz6tqxi9Pi8Sc5j05O3TAGsUTk2
+        GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUAXKCmUJeaU
+        AoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKDA0K9IoTc4tL89L1kvNzrQwNDIxMgSoTcjI+
+        LjnLVPCPp+J481zWBsYrXF2MnBwSAiYSG95+Yeti5OIQEtjBKPHj9Ro2kISQwCdGif6TrhCJ
+        b4wS5/fNZ4HpmLZsITNEYi+jxMXGXlYI5yWjxI0tx1hBqtgEdCX+/dkPNkpEQFPi/9wJYB3M
+        IB0rFxwAG8UpYCFxbtEVdhBbGKih9fVaZhCbRUBF4nvbIjCbV8BSYuKa94wQtqDEyZlPwHqZ
+        BeQltr+dwwxxkoLEz6fLWCGWOUlMP3aCHaJGRGJ2ZxvYYgmBiRwSl/qfskM0uEjs725ghbCF
+        JV4d3wIVl5L4/G4v0NUcQHa1xMf9UPM7GCVefLeFsI0lbq7fwApSwgz02Ppd+hBhRYmdv+cy
+        Qqzlk3j3tYcVYgqvREebEESJqkTfpcNMELa0RFf7B/YJjEqzkDw2C8ljs5A8MAth2QJGllWM
+        YqkFxbnpqcWGBabIkb2JEZw6tSx3ME5/+0HvECMTB+MhRgkOZiURXivZa3FCvCmJlVWpRfnx
+        RaU5qcWHGE2BQT2RWUo0OR+YvPNK4g1NjYyNjS1MzMzNTI2VxHmdrC/ECQmkJ5akZqemFqQW
+        wfQxcXBKNTAd5Ty763v6Ca1fecbpXAfDTjFI3m1kWdsas+iasMCR9p9tGWe9598J2Bz6yCTr
+        RdK8n2ezPi0+25x9ROMVQz/vrzM3Js0vP8HS/9uxo6KCb0HG88f9DRen+289+MHPzM3sYIPH
+        LPZXmUoz/Rs/1z77liEU/M1i/wmLFekLTvHuFPxbNP+LdPH0LzvUs8KuL2LsDilQPMExWSMy
+        fzY7t3bB0oj77VOY2L2qGapUNPpk1kk6XrfvdP18tqJBVGH5ia8FCc761wpfSbD2ZEh+Mtgj
+        k3j3wLT9MmxFbKveZm0MnpA0Y53V/A3mWeXZ6g+ZuM+ZPig5+zE+0ckuchpP1jNdlfam+nIv
+        tuNSnwumZiixFGckGmoxFxUnAgCRgGt0JgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSvO7Ov9fiDJ5eYbWYs2oKm8WevSdZ
+        LC7vmsNmseXfEVaLI2+6mS3O/z3O6sDmsXPWXXaPPRNPsnn0bVnF6PF5k5zHpidvmQJYo7hs
+        UlJzMstSi/TtErgyPi45y1Twj6fiePNc1gbGK1xdjJwcEgImEtOWLWTuYuTiEBLYzSgx8+Mj
+        doiEtMSxE2eAEhxAtrDE4cPFEDXPGSXa53xlBqlhE9CV+PdnPxuILSKgKfF/7gSwQcwCBxkl
+        rlx6zwjRcY5RYu3piWBTOQUsJM4tugJmCwN1t75eCzaJRUBF4nvbIjCbV8BSYuIakGYQW1Di
+        5MwnLCBXMAvoSbRtBAszC8hLbH87hxniUAWJn0+XsUIc4SQx/dgJdogaEYnZnW3MExiFZyGZ
+        NAth0iwkk2Yh6VjAyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4hrQ0dzBuX/VB
+        7xAjEwfjIUYJDmYlEV4r2WtxQrwpiZVVqUX58UWlOanFhxilOViUxHlvFC6MExJITyxJzU5N
+        LUgtgskycXBKNTC5vHks+OHL382RX8yubZ82ayX3RI+Z/sc9XfTsDXXWzsia2mjxT36RXf6t
+        RbLfTH5umDv7iPsbEffYFccEYsz2ha9TE1900ETqzpLplwP77eI/ezw32cHq8M1BTourrqL5
+        /bp/rDnbiw6yO/xw8SteKjer7P2x14eWb5dVdjPZPn3C7F4ZH9VaNZ1StcO7hSRvfDJtW69U
+        9XYVO/+L6f5vdT88M0sOc7q5RDdnd71A8yITX+6J11bbuEUmzDzSum754oRKm8QIzxyvxIO1
+        c2Xivgp8+3tbUDBiSeAh69p/y/N/7FN8OsFo/qp7vxfy5MubXLSQ+B137GfXZkGJioy0r8wp
+        kYb5Ba9uXzrQ+l5HiaU4I9FQi7moOBEAJCXuehADAAA=
+X-CMS-MailID: 20200603013241epcas1p103bf8ec353b94b9f2c1b395a5f96fe7b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200603013447epcas1p45c6537dab8fee50f1f5b8fe7fd21da2b
-References: <CGME20200603013447epcas1p45c6537dab8fee50f1f5b8fe7fd21da2b@epcas1p4.samsung.com>
+X-CMS-RootMailID: 20200602162821epcas1p218a2f86ae11943f11ea728d6b0dbdfb6
+References: <CAFcO6XPVo-u0CkBxy0Ox+FPfqgPUwmo0pnVYrLCP6EM05Sd6-A@mail.gmail.com>
+        <CGME20200602162821epcas1p218a2f86ae11943f11ea728d6b0dbdfb6@epcas1p2.samsung.com>
+        <20200602162808.GK23230@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
-
-butt3rflyh4ck reported memory leak found by syzkaller.
-
-A param->string held by exfat_mount_options.
-
-BUG: memory leak
-
-unreferenced object 0xffff88801972e090 (size 8):
-  comm "syz-executor.2", pid 16298, jiffies 4295172466 (age 14.060s)
-  hex dump (first 8 bytes):
-    6b 6f 69 38 2d 75 00 00                          koi8-u..
-  backtrace:
-    [<000000005bfe35d6>] kstrdup+0x36/0x70 mm/util.c:60
-    [<0000000018ed3277>] exfat_parse_param+0x160/0x5e0
-fs/exfat/super.c:276
-    [<000000007680462b>] vfs_parse_fs_param+0x2b4/0x610
-fs/fs_context.c:147
-    [<0000000097c027f2>] vfs_parse_fs_string+0xe6/0x150
-fs/fs_context.c:191
-    [<00000000371bf78f>] generic_parse_monolithic+0x16f/0x1f0
-fs/fs_context.c:231
-    [<000000005ce5eb1b>] do_new_mount fs/namespace.c:2812 [inline]
-    [<000000005ce5eb1b>] do_mount+0x12bb/0x1b30 fs/namespace.c:3141
-    [<00000000b642040c>] __do_sys_mount fs/namespace.c:3350 [inline]
-    [<00000000b642040c>] __se_sys_mount fs/namespace.c:3327 [inline]
-    [<00000000b642040c>] __x64_sys_mount+0x18f/0x230 fs/namespace.c:3327
-    [<000000003b024e98>] do_syscall_64+0xf6/0x7d0
-arch/x86/entry/common.c:295
-    [<00000000ce2b698c>] entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
-exfat_free() should call exfat_free_iocharset() after stealing
-param->string instead of kstrdup in exfat_parse_param().
-
-Fixes: 719c1e182916 ("exfat: add super block operations")
-Cc: stable@vger.kernel.org # v5.7
-Reported-by: butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/exfat/super.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 405717e4e3ea..e650e65536f8 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -273,9 +273,8 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_charset:
- 		exfat_free_iocharset(sbi);
--		opts->iocharset = kstrdup(param->string, GFP_KERNEL);
--		if (!opts->iocharset)
--			return -ENOMEM;
-+		opts->iocharset = param->string;
-+		param->string = NULL;
- 		break;
- 	case Opt_errors:
- 		opts->errors = result.uint_32;
-@@ -686,7 +685,12 @@ static int exfat_get_tree(struct fs_context *fc)
- 
- static void exfat_free(struct fs_context *fc)
- {
--	kfree(fc->s_fs_info);
-+	struct exfat_sb_info *sbi = fc->s_fs_info;
-+
-+	if (sbi) {
-+		exfat_free_iocharset(sbi);
-+		kfree(sbi);
-+	}
- }
- 
- static const struct fs_context_operations exfat_context_ops = {
--- 
-2.17.1
+> On Tue, Jun 02, 2020 at 01:03:05PM +0800, butt3rflyh4ck wrote:
+> > I report a bug (in linux-5.7.0-rc7) found by syzkaller.
+> >
+> > kernel config:
+> > https://protect2.fireeye.com/url?k=f3a88a7d-ae6446d8-f3a90132-0cc47a30
+> > d446-6021a2fbdd1681a8&q=1&u=https%3A%2F%2Fgithub.com%2Fbutterflyhack%2
+> > Fsyzkaller-fuzz%2Fblob%2Fmaster%2Fconfig-v5.7.0-rc7
+> >
+> > and can reproduce.
+> >
+> > A param->string held by exfat_mount_options.
+> 
+> Humm...
+> 
+> 	First of all, exfat_free() ought to call exfat_free_upcase_table().
+> What's more, WTF bother with that kstrdup(), anyway?  Just steal the string and be done with that...
+Thanks for your patch. I will push it to exfat tree.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c index 0565d5539d57..01cd7ed1614d 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -259,9 +259,8 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  	case Opt_charset:
+>  		exfat_free_iocharset(sbi);
+> -		opts->iocharset = kstrdup(param->string, GFP_KERNEL);
+> -		if (!opts->iocharset)
+> -			return -ENOMEM;
+> +		opts->iocharset = param->string;
+> +		param->string = NULL;
+>  		break;
+>  	case Opt_errors:
+>  		opts->errors = result.uint_32;
+> @@ -611,7 +610,10 @@ static int exfat_get_tree(struct fs_context *fc)
+> 
+>  static void exfat_free(struct fs_context *fc)  {
+> -	kfree(fc->s_fs_info);
+> +	struct exfat_sb_info *sbi = fc->s_fs_info;
+> +
+> +	exfat_free_iocharset(sbi);
+> +	kfree(sbi);
+>  }
+> 
+>  static const struct fs_context_operations exfat_context_ops = {
 
