@@ -2,112 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F32EA1ECDA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 12:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7FD1ECE38
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 13:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbgFCKeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 06:34:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbgFCKeq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 06:34:46 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B43A20679;
-        Wed,  3 Jun 2020 10:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591180485;
-        bh=WMmwj0VIIImcPHZGDgST2G1TUJN7WiQ+KazeKACbiXQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Qeb9XkKnyJ+1XrYFBmR2vKUe7PLJOfDcSqaKf/wYjpZX+wn20mhBto0m94rrlKzVg
-         TDVrRqjbelVVpdvrYY16UWiPU7jAzCZALZg36TUvo0x11oiC16F1gPSjq8IG4Lfrb0
-         lP7szeEK/Ym8YEnlMmS3xDfxTufUMrao/N+NfYA0=
-Message-ID: <5851b20332557bfae4d8dcef21ea827759ce4318.camel@kernel.org>
-Subject: Re: [PATCH] locks: add locks_move_blocks in posix_lock_inode
-From:   Jeff Layton <jlayton@kernel.org>
-To:     yangerkun <yangerkun@huawei.com>, NeilBrown <neilb@suse.de>,
-        viro@zeniv.linux.org.uk, neilb@suse.com
-Cc:     linux-fsdevel@vger.kernel.org,
-        "bfields@vger.kernel.org" <bfields@vger.kernel.org>
-Date:   Wed, 03 Jun 2020 06:34:43 -0400
-In-Reply-To: <e4a8cdbc-dfe6-4630-ce5e-49958f5f0813@huawei.com>
-References: <20200601091616.34137-1-yangerkun@huawei.com>
-         <877dwq757c.fsf@notabene.neil.brown.name>
-         <eaf471c1-ef00-beb5-3143-fdcc62a7058a@huawei.com>
-         <63020790a240cfcd1d798147edebbc231b1ff32b.camel@kernel.org>
-         <e4a8cdbc-dfe6-4630-ce5e-49958f5f0813@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        id S1726021AbgFCLXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 07:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgFCLXr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jun 2020 07:23:47 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E9BC08C5C0;
+        Wed,  3 Jun 2020 04:23:47 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id g129so1165221vsc.4;
+        Wed, 03 Jun 2020 04:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=y7FWwoobcsPP40OyH4Tz598jhyv/yE2NYqyLFTHYbPU=;
+        b=l32gLM5O/VFeAbmyOdI+3AcrKyJ2IhpsExXh+PPZWmbWr9D8sdKab8u2DQ4FCwvcg4
+         rToDfKviksIE6fn09zE+1q7Ue+FejLqwW7RqzZ4/nY25o66fzZI3fgVTOJ/TiPdV8ywf
+         HIUZwdcgIQE/ZUIogkcjMIm/BLg1wV3Fly7smRDT1xU86LoLe1wPWLll+Fr4VzAO59aY
+         jY16CgjDm8gU1yqDmp78UuBMzdZHHR+ObZC7nlaV5g7C0Xln5wmKPKtwv+z8O5y+gm8y
+         swVKlkmsJMAk3evW9ExqBdbjAJXdhMANZiGm9FqgGyriVSd8ZGp6A1QX1fCoKxb060is
+         a46Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=y7FWwoobcsPP40OyH4Tz598jhyv/yE2NYqyLFTHYbPU=;
+        b=B1uS+/LsVlOK4h6E292mnMilDx1jXkQbrxOcjLaoDUPggdI+VR1dN/RMt2k1T9vY6L
+         c89UShnslM+oLt1y8ExsJUz537ODQBgzuCeMFAU4AOlqtkasNGmL87SAQVB7tobENiDk
+         293LXsR+a+tHrR7fsV12HTx3cLrh/3XgMctYNNeImYToQ0mygn13+XHQoxiloblkJ1qP
+         WTshmsGeLxa7vn/ZjP1Mq/4zKyKekj3JwfGPS0v2GHy12qhhtD3whSCmaprCBWiux9wX
+         2OsG0hac3/mlhUCxjI9cNYU3m977Z2J51VH6hJA+q7Q7yC8nOgtq7jCUn2Gfo0c4im3y
+         9kiQ==
+X-Gm-Message-State: AOAM533nzqBsPzqaQ7OHCJ/BYKVLx0iJeNOBD2pxJOX692to7PtWLuuw
+        yD3S9RDDECaaZRJjotZBf/eqDsx8OX45gC8FG07qRN5+
+X-Google-Smtp-Source: ABdhPJwrNnJZ94w+B5cDRzvjU3lCmTBgfzEKsESn6bNw9P5dGOznjkl/I5LuXuoRkLCwpj2+tLFsxJbcqh1Lkz16QXA=
+X-Received: by 2002:a67:f9d6:: with SMTP id c22mr12179521vsq.14.1591183426522;
+ Wed, 03 Jun 2020 04:23:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200528192103.xm45qoxqmkw7i5yl@fiona> <20200529002319.GQ252930@magnolia>
+ <20200601151614.pxy7in4jrvuuy7nx@fiona>
+In-Reply-To: <20200601151614.pxy7in4jrvuuy7nx@fiona>
+Reply-To: fdmanana@gmail.com
+From:   Filipe Manana <fdmanana@gmail.com>
+Date:   Wed, 3 Jun 2020 12:23:35 +0100
+Message-ID: <CAL3q7H60xa0qW4XdneDdeQyNcJZx7DxtwDiYkuWB5NoUVPYdwQ@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
+ invalidation before DIO
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-06-03 at 09:22 +0800, yangerkun wrote:
-> 
-> 在 2020/6/2 23:56, Jeff Layton 写道:
-> > On Tue, 2020-06-02 at 21:49 +0800, yangerkun wrote:
-> > > 在 2020/6/2 7:10, NeilBrown 写道:
-> > > > On Mon, Jun 01 2020, yangerkun wrote:
-> > > > 
-> > > > > We forget to call locks_move_blocks in posix_lock_inode when try to
-> > > > > process same owner and different types.
-> > > > > 
-> > > > 
-> > > > This patch is not necessary.
-> > > > The caller of posix_lock_inode() must calls locks_delete_block() on
-> > > > 'request', and that will remove all blocked request and retry them.
-> > > > 
-> > > > So calling locks_move_blocks() here is at most an optimization.  Maybe
-> > > > it is a useful one.
-> > > > 
-> > > > What led you to suggesting this patch?  Were you just examining the
-> > > > code, or was there some problem that you were trying to solve?
-> > > 
-> > > Actually, case of this means just replace a exists file_lock. And once
-> > > we forget to call locks_move_blocks, the function call of
-> > > posix_lock_inode will also call locks_delete_block, and will wakeup all
-> > > blocked requests and retry them. But we should do this until we UNLOCK
-> > > the file_lock! So, it's really a bug here.
-> > > 
-> > 
-> > Waking up waiters to re-poll a lock that's still blocked seems wrong. I
-> > agree with Neil that this is mainly an optimization, but it does look
-> > useful.
-> 
-> Agree. Logic of this seems wrong, but it won't trigger any problem since
-> the waiters will conflict and try wait again.
-> 
-> > Unfortunately this is the type of thing that's quite difficult to test
-> > for in a userland testcase. Is this something you noticed due to the
-> > extra wakeups or did you find it by inspection? It'd be great to have a
-> > better way to test for this in xfstests or something.
-> 
-> Notice this after reading the patch 5946c4319ebb ("fs/locks: allow a
-> lock request to block other requests."), and find that we have do the
-> same thing exist in flock_lock_inode and another place exists in
-> posix_lock_inode.
-> 
-> > I'll plan to add this to linux-next. It should make v5.9, but let me
-> > know if this is causing real-world problems and maybe we can make a case
-> > for v5.8.
-> 
-> Actually, I have not try to find will this lead to some real-world
-> problems... Sorry for this.:(
-> 
-> 
-> Thanks,
-> Kun.
-> 
+On Mon, Jun 1, 2020 at 4:16 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
+>
+> On 17:23 28/05, Darrick J. Wong wrote:
+> > On Thu, May 28, 2020 at 02:21:03PM -0500, Goldwyn Rodrigues wrote:
+> > >
+> > > Filesystems such as btrfs are unable to guarantee page invalidation
+> > > because pages could be locked as a part of the extent. Return zero
+> >
+> > Locked for what?  filemap_write_and_wait_range should have just cleaned
+> > them off.
+> >
+> > > in case a page cache invalidation is unsuccessful so filesystems can
+> > > fallback to buffered I/O. This is similar to
+> > > generic_file_direct_write().
+> > >
+> > > This takes care of the following invalidation warning during btrfs
+> > > mixed buffered and direct I/O using iomap_dio_rw():
+> > >
+> > > Page cache invalidation failure on direct I/O.  Possible data
+> > > corruption due to collision with buffered I/O!
+> > >
+> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > >
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index e4addfc58107..215315be6233 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -483,9 +483,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter=
+ *iter,
+> > >      */
+> > >     ret =3D invalidate_inode_pages2_range(mapping,
+> > >                     pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> > > -   if (ret)
+> > > -           dio_warn_stale_pagecache(iocb->ki_filp);
+> > > -   ret =3D 0;
+> > > +   /*
+> > > +    * If a page can not be invalidated, return 0 to fall back
+> > > +    * to buffered write.
+> > > +    */
+> > > +   if (ret) {
+> > > +           if (ret =3D=3D -EBUSY)
+> > > +                   ret =3D 0;
+> > > +           goto out_free_dio;
+> >
+> > XFS doesn't fall back to buffered io when directio fails, which means
+> > this will cause a regression there.
+> >
+> > Granted mixing write types is bogus...
+> >
+>
+> I have not seen page invalidation failure errors on XFS, but what should
+> happen hypothetically if they do occur? Carry on with the direct I/O?
+> Would an error return like -ENOTBLK be better?
 
-No problem. I doubt this would be easily noticeable in testing. Given
-that it's not causing immediate issues, we'll let it sit in linux-next
-for a cycle and plan to merge this for v5.9.
+It doesn't make much to me to emit the warning and then proceed to the
+direct IO write path anyway, as if nothing happened.
+If we are concerned about possible corruption, we should either return
+an error or fallback to buffered IO just like
+generic_file_direct_write() did, and not allow the possibility for
+corruptions.
 
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
+Btw, this is causing a regression in Btrfs now. The problem is that
+dio_warn_stale_pagecache() sets an EIO error in the inode's mapping:
 
+errseq_set(&inode->i_mapping->wb_err, -EIO);
+
+So the next fsync on the file will return that error, despite the
+fsync having completed successfully with any errors.
+
+Since patchset to make btrfs direct IO use iomap is already in Linus'
+tree, we need to fix this somehow.
+This makes generic/547 fail often for example - buffered write against
+file + direct IO write + fsync - the later returns -EIO.
+
+Thanks.
+
+>
+> --
+> Goldwyn
+
+
+
+--=20
+Filipe David Manana,
+
+=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
+ right.=E2=80=9D
