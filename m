@@ -2,420 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 470531ECD74
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 12:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B36E1ECDA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 12:35:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgFCKYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 06:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46512 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbgFCKYf (ORCPT
+        id S1725983AbgFCKfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 06:35:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24526 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725854AbgFCKfH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 06:24:35 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20CDBC08C5C0;
-        Wed,  3 Jun 2020 03:24:35 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id l27so1606440ejc.1;
-        Wed, 03 Jun 2020 03:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=ijpgz/H39QX77UCIJyYAxLfDtqADya0tOsEpKq3wQ6I=;
-        b=JYh8geY1wQ0ZgJDu4N9TkLlJALYHfZIdjZLmNB7QaxY0k/oIh4MiSgR4mNToFAn/8i
-         +PZsJXLzCOz2aeo0p4OXbPwsHCi6Uh3/a8JIorLa/luW8B3yVaxLWi/89KB8RcsZJaZK
-         4F4KV4b7mwfvONiMK5RVlYeoFODIUGIPbM/63LsKF/V4c4wnwLqNK6xw0HIUbThP7ZIl
-         xlbcsjrId0JqWZ7PkbRdpiMjF8lEWlzfkJmlndloIW0LZwz754FpqRlXyKykB8EnFM4c
-         7X0A0qe7RHITIIMOJkHWvxT7wtMt+3I+MABcukqQvBeEyY/kLdgdmU20TEGaMq1tRN7j
-         K2+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=ijpgz/H39QX77UCIJyYAxLfDtqADya0tOsEpKq3wQ6I=;
-        b=fTzBjWG3c5JoZxAqGAhcDeWl3tLXThJiksiBG8/mAQ8WtCowNIXdqX9kthJ5qPLOi5
-         45U1HhhNP1hhc/oxnCqIF90fz2a4REaPxv4rEAkrI9YMPN6JKCL8IWCQFbD3LWhc+92u
-         uKYIhddWaFLFRwaQBr8OMUOUzpX0q4N1WdhD40Uys9ARLCqZ2GVcU7RATlVgDT0gMHR9
-         MKmXfal5mP/M8/k8jOkB2kZwyftJo6dtivXW4etBN7xTmsqMm/R/PIDiPRLBWvkdLDii
-         /ecbKLfrvxmdjZuB1ZC5vmHok0bL/ySfGk1c0u5Xt2dFfbyAnPM1NYvaPK+/9bY1vKVz
-         rE3g==
-X-Gm-Message-State: AOAM533aDQ7JM+XdErTV5IPNjwKnC1XLxF+v6z08vtRtOT0C59j6iVCX
-        uzusAWHYcZkGmnSI0FpesM0kOIqYM66/5DCviGc=
-X-Google-Smtp-Source: ABdhPJyI2JagoGjNsl+fP1yfKx6yMIk9qDdtfqmxH9Fc3w3zOU7sysFdqsJkz4rzBeaFzAbfTJf0H6e/InhwmXhUE4g=
-X-Received: by 2002:a17:906:6d4b:: with SMTP id a11mr19511522ejt.108.1591179873683;
- Wed, 03 Jun 2020 03:24:33 -0700 (PDT)
+        Wed, 3 Jun 2020 06:35:07 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 053AYp5V075359;
+        Wed, 3 Jun 2020 06:34:53 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31dp431mau-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jun 2020 06:34:52 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 053AUan1008800;
+        Wed, 3 Jun 2020 10:31:52 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma02fra.de.ibm.com with ESMTP id 31bf47u6x3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Jun 2020 10:31:52 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 053AVnsT25165956
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 3 Jun 2020 10:31:49 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C96F852050;
+        Wed,  3 Jun 2020 10:31:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.36.151])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C42D65204F;
+        Wed,  3 Jun 2020 10:31:46 +0000 (GMT)
+Subject: Re: [PATCHv5 1/1] ext4: mballoc: Use raw_cpu_ptr instead of
+ this_cpu_ptr
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-ext4@vger.kernel.org, tytso@mit.edu
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
+References: <20200602134721.18211-1-riteshh@linux.ibm.com>
+ <CGME20200603102422eucas1p109e0d0140e8fc61dc3e57957f2ccf700@eucas1p1.samsung.com>
+ <ca794804-7d99-9837-2490-366a2eb97a94@samsung.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 3 Jun 2020 16:01:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200602204219.186620-1-christian.brauner@ubuntu.com> <20200602204219.186620-2-christian.brauner@ubuntu.com>
-In-Reply-To: <20200602204219.186620-2-christian.brauner@ubuntu.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Wed, 3 Jun 2020 12:24:22 +0200
-Message-ID: <CAKgNAkiHYer_d+AvRUDPgS3WfCQXKrrCuXFV1g9t2zim7QBpXw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] open: add close_range()
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kyle Evans <self@kyle-evans.net>,
-        Victor Stinner <victor.stinner@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ca794804-7d99-9837-2490-366a2eb97a94@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Message-Id: <20200603103146.C42D65204F@d06av21.portsmouth.uk.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-03_11:2020-06-02,2020-06-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 clxscore=1011 cotscore=-2147483648
+ adultscore=0 suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ mlxscore=0 mlxlogscore=799 priorityscore=1501 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006030083
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christian,
+> This fixes the warning observed on various Samsung Exynos SoC based
+> boards with linux-next 20200602.
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
 
-Could we have a manual page for this API (best before it's merged)?
+Thanks Marek,
 
-Thanks,
+Hello Ted,
 
-Michael
+Please pick up below change which I just sent with an added "Fixes" by
+tag. Changes wise it is the same which Marek tested.
 
-On Tue, 2 Jun 2020 at 22:44, Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> This adds the close_range() syscall. It allows to efficiently close a range
-> of file descriptors up to all file descriptors of a calling task.
->
-> I've also coordinated with some FreeBSD developers who got in touch with
-> me (Cced below). FreeBSD intends to add the same syscall once we merged it.
-> Quite a bunch of projects in userspace are waiting on this syscall
-> including Python and systemd.
->
-> The syscall came up in a recent discussion around the new mount API and
-> making new file descriptor types cloexec by default. During this
-> discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
-> syscall in this manner has been requested by various people over time.
->
-> First, it helps to close all file descriptors of an exec()ing task. This
-> can be done safely via (quoting Al's example from [1] verbatim):
->
->         /* that exec is sensitive */
->         unshare(CLONE_FILES);
->         /* we don't want anything past stderr here */
->         close_range(3, ~0U);
->         execve(....);
->
-> The code snippet above is one way of working around the problem that file
-> descriptors are not cloexec by default. This is aggravated by the fact that
-> we can't just switch them over without massively regressing userspace. For
-> a whole class of programs having an in-kernel method of closing all file
-> descriptors is very helpful (e.g. demons, service managers, programming
-> language standard libraries, container managers etc.).
-> (Please note, unshare(CLONE_FILES) should only be needed if the calling
-> task is multi-threaded and shares the file descriptor table with another
-> thread in which case two threads could race with one thread allocating file
-> descriptors and the other one closing them via close_range(). For the
-> general case close_range() before the execve() is sufficient.)
->
-> Second, it allows userspace to avoid implementing closing all file
-> descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
-> file descriptor. From looking at various large(ish) userspace code bases
-> this or similar patterns are very common in:
-> - service managers (cf. [4])
-> - libcs (cf. [6])
-> - container runtimes (cf. [5])
-> - programming language runtimes/standard libraries
->   - Python (cf. [2])
->   - Rust (cf. [7], [8])
-> As Dmitry pointed out there's even a long-standing glibc bug about missing
-> kernel support for this task (cf. [3]).
-> In addition, the syscall will also work for tasks that do not have procfs
-> mounted and on kernels that do not have procfs support compiled in. In such
-> situations the only way to make sure that all file descriptors are closed
-> is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
-> OPEN_MAX trickery (cf. comment [8] on Rust).
->
-> The performance is striking. For good measure, comparing the following
-> simple close_all_fds() userspace implementation that is essentially just
-> glibc's version in [6]:
->
-> static int close_all_fds(void)
-> {
->         int dir_fd;
->         DIR *dir;
->         struct dirent *direntp;
->
->         dir = opendir("/proc/self/fd");
->         if (!dir)
->                 return -1;
->         dir_fd = dirfd(dir);
->         while ((direntp = readdir(dir))) {
->                 int fd;
->                 if (strcmp(direntp->d_name, ".") == 0)
->                         continue;
->                 if (strcmp(direntp->d_name, "..") == 0)
->                         continue;
->                 fd = atoi(direntp->d_name);
->                 if (fd == dir_fd || fd == 0 || fd == 1 || fd == 2)
->                         continue;
->                 close(fd);
->         }
->         closedir(dir);
->         return 0;
-> }
->
-> to close_range() yields:
-> 1. closing 4 open files:
->    - close_all_fds(): ~280 us
->    - close_range():    ~24 us
->
-> 2. closing 1000 open files:
->    - close_all_fds(): ~5000 us
->    - close_range():   ~800 us
->
-> close_range() is designed to allow for some flexibility. Specifically, it
-> does not simply always close all open file descriptors of a task. Instead,
-> callers can specify an upper bound.
-> This is e.g. useful for scenarios where specific file descriptors are
-> created with well-known numbers that are supposed to be excluded from
-> getting closed.
-> For extra paranoia close_range() comes with a flags argument. This can e.g.
-> be used to implement extension. Once can imagine userspace wanting to stop
-> at the first error instead of ignoring errors under certain circumstances.
-> There might be other valid ideas in the future. In any case, a flag
-> argument doesn't hurt and keeps us on the safe side.
->
-> From an implementation side this is kept rather dumb. It saw some input
-> from David and Jann but all nonsense is obviously my own!
-> - Errors to close file descriptors are currently ignored. (Could be changed
->   by setting a flag in the future if needed.)
-> - __close_range() is a rather simplistic wrapper around __close_fd().
->   My reasoning behind this is based on the nature of how __close_fd() needs
->   to release an fd. But maybe I misunderstood specifics:
->   We take the files_lock and rcu-dereference the fdtable of the calling
->   task, we find the entry in the fdtable, get the file and need to release
->   files_lock before calling filp_close().
->   In the meantime the fdtable might have been altered so we can't just
->   retake the spinlock and keep the old rcu-reference of the fdtable
->   around. Instead we need to grab a fresh reference to the fdtable.
->   If my reasoning is correct then there's really no point in fancyfying
->   __close_range(): We just need to rcu-dereference the fdtable of the
->   calling task once to cap the max_fd value correctly and then go on
->   calling __close_fd() in a loop.
->
-> /* References */
-> [1]: https://lore.kernel.org/lkml/20190516165021.GD17978@ZenIV.linux.org.uk/
-> [2]: https://github.com/python/cpython/blob/9e4f2f3a6b8ee995c365e86d976937c141d867f8/Modules/_posixsubprocess.c#L220
-> [3]: https://sourceware.org/bugzilla/show_bug.cgi?id=10353#c7
-> [4]: https://github.com/systemd/systemd/blob/5238e9575906297608ff802a27e2ff9effa3b338/src/basic/fd-util.c#L217
-> [5]: https://github.com/lxc/lxc/blob/ddf4b77e11a4d08f09b7b9cd13e593f8c047edc5/src/lxc/start.c#L236
-> [6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
->      Note that this is an internal implementation that is not exported.
->      Currently, libc seems to not provide an exported version of this
->      because of missing kernel support to do this.
-> [7]: https://github.com/rust-lang/rust/issues/12148
-> [8]: https://github.com/rust-lang/rust/blob/5f47c0613ed4eb46fca3633c1297364c09e5e451/src/libstd/sys/unix/process2.rs#L303-L308
->      Rust's solution is slightly different but is equally unperformant.
->      Rust calls getdtablesize() which is a glibc library function that
->      simply returns the current RLIMIT_NOFILE or OPEN_MAX values. Rust then
->      goes on to call close() on each fd. That's obviously overkill for most
->      tasks. Rarely, tasks - especially non-demons - hit RLIMIT_NOFILE or
->      OPEN_MAX.
->      Let's be nice and assume an unprivileged user with RLIMIT_NOFILE set
->      to 1024. Even in this case, there's a very high chance that in the
->      common case Rust is calling the close() syscall 1021 times pointlessly
->      if the task just has 0, 1, and 2 open.
->
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Kyle Evans <self@kyle-evans.net>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Dmitry V. Levin <ldv@altlinux.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Florian Weimer <fweimer@redhat.com>
-> Cc: linux-api@vger.kernel.org
-> ---
-> /* v2 */
-> - Linus Torvalds <torvalds@linux-foundation.org>:
->   - add cond_resched() to yield cpu when closing a lot of file descriptors
-> - Al Viro <viro@zeniv.linux.org.uk>:
->   - add cond_resched() to yield cpu when closing a lot of file descriptors
->
-> /* v3 */
-> unchanged
->
-> /* v4 */
-> - Oleg Nesterov <oleg@redhat.com>:
->   - fix braino: s/max()/min()/
->
-> /* v5 */
-> unchanged
-> ---
->  fs/file.c                | 62 ++++++++++++++++++++++++++++++++++------
->  fs/open.c                | 20 +++++++++++++
->  include/linux/fdtable.h  |  2 ++
->  include/linux/syscalls.h |  2 ++
->  4 files changed, 78 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/file.c b/fs/file.c
-> index abb8b7081d7a..e260bfe687d1 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -10,6 +10,7 @@
->  #include <linux/syscalls.h>
->  #include <linux/export.h>
->  #include <linux/fs.h>
-> +#include <linux/kernel.h>
->  #include <linux/mm.h>
->  #include <linux/sched/signal.h>
->  #include <linux/slab.h>
-> @@ -620,12 +621,9 @@ void fd_install(unsigned int fd, struct file *file)
->
->  EXPORT_SYMBOL(fd_install);
->
-> -/*
-> - * The same warnings as for __alloc_fd()/__fd_install() apply here...
-> - */
-> -int __close_fd(struct files_struct *files, unsigned fd)
-> +static struct file *pick_file(struct files_struct *files, unsigned fd)
->  {
-> -       struct file *file;
-> +       struct file *file = NULL;
->         struct fdtable *fdt;
->
->         spin_lock(&files->file_lock);
-> @@ -637,15 +635,63 @@ int __close_fd(struct files_struct *files, unsigned fd)
->                 goto out_unlock;
->         rcu_assign_pointer(fdt->fd[fd], NULL);
->         __put_unused_fd(files, fd);
-> -       spin_unlock(&files->file_lock);
-> -       return filp_close(file, files);
->
->  out_unlock:
->         spin_unlock(&files->file_lock);
-> -       return -EBADF;
-> +       return file;
-> +}
-> +
-> +/*
-> + * The same warnings as for __alloc_fd()/__fd_install() apply here...
-> + */
-> +int __close_fd(struct files_struct *files, unsigned fd)
-> +{
-> +       struct file *file;
-> +
-> +       file = pick_file(files, fd);
-> +       if (!file)
-> +               return -EBADF;
-> +
-> +       return filp_close(file, files);
->  }
->  EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
->
-> +/**
-> + * __close_range() - Close all file descriptors in a given range.
-> + *
-> + * @fd:     starting file descriptor to close
-> + * @max_fd: last file descriptor to close
-> + *
-> + * This closes a range of file descriptors. All file descriptors
-> + * from @fd up to and including @max_fd are closed.
-> + */
-> +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
-> +{
-> +       unsigned int cur_max;
-> +
-> +       if (fd > max_fd)
-> +               return -EINVAL;
-> +
-> +       rcu_read_lock();
-> +       cur_max = files_fdtable(files)->max_fds;
-> +       rcu_read_unlock();
-> +
-> +       /* cap to last valid index into fdtable */
-> +       max_fd = min(max_fd, (cur_max - 1));
-> +       while (fd <= max_fd) {
-> +               struct file *file;
-> +
-> +               file = pick_file(files, fd++);
-> +               if (!file)
-> +                       continue;
-> +
-> +               filp_close(file, files);
-> +               cond_resched();
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   * variant of __close_fd that gets a ref on the file for later fput.
->   * The caller must ensure that filp_close() called on the file, and then
-> diff --git a/fs/open.c b/fs/open.c
-> index 719b320ede52..87e076e9e127 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1279,6 +1279,26 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
->         return retval;
->  }
->
-> +/**
-> + * close_range() - Close all file descriptors in a given range.
-> + *
-> + * @fd:     starting file descriptor to close
-> + * @max_fd: last file descriptor to close
-> + * @flags:  reserved for future extensions
-> + *
-> + * This closes a range of file descriptors. All file descriptors
-> + * from @fd up to and including @max_fd are closed.
-> + * Currently, errors to close a given file descriptor are ignored.
-> + */
-> +SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
-> +               unsigned int, flags)
-> +{
-> +       if (flags)
-> +               return -EINVAL;
-> +
-> +       return __close_range(current->files, fd, max_fd);
-> +}
-> +
->  /*
->   * This routine simulates a hangup on the tty, to arrange that users
->   * are given clean terminals at login time.
-> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-> index f07c55ea0c22..fcd07181a365 100644
-> --- a/include/linux/fdtable.h
-> +++ b/include/linux/fdtable.h
-> @@ -121,6 +121,8 @@ extern void __fd_install(struct files_struct *files,
->                       unsigned int fd, struct file *file);
->  extern int __close_fd(struct files_struct *files,
->                       unsigned int fd);
-> +extern int __close_range(struct files_struct *files, unsigned int fd,
-> +                        unsigned int max_fd);
->  extern int __close_fd_get_file(unsigned int fd, struct file **res);
->
->  extern struct kmem_cache *files_cachep;
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 1815065d52f3..18fea399329b 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -442,6 +442,8 @@ asmlinkage long sys_openat(int dfd, const char __user *filename, int flags,
->  asmlinkage long sys_openat2(int dfd, const char __user *filename,
->                             struct open_how *how, size_t size);
->  asmlinkage long sys_close(unsigned int fd);
-> +asmlinkage long sys_close_range(unsigned int fd, unsigned int max_fd,
-> +                               unsigned int flags);
->  asmlinkage long sys_vhangup(void);
->
->  /* fs/pipe.c */
-> --
-> 2.26.2
->
+https://patchwork.ozlabs.org/project/linux-ext4/patch/20200603101827.2824-1-riteshh@linux.ibm.com/
 
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+-ritesh
