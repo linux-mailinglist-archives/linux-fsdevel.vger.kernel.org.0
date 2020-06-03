@@ -2,114 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CB11EC5F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 01:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183451EC617
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 02:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbgFBXxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 19:53:07 -0400
-Received: from mga06.intel.com ([134.134.136.31]:39746 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbgFBXxG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 19:53:06 -0400
-IronPort-SDR: 7pjoj0cj35/NaofwcrKVBE2fBmelzHAFVEgDiJ8cl6I5MsEB2nyJmoukJZqm9j3kZHlA9MHEzi
- nV/4PWozqlHw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2020 16:53:05 -0700
-IronPort-SDR: Fjosrr6vpGK5zwtIgnd84lq7g7jGjKCKBVDcWW2Xd9/i/a+bCVJiomnAZSEIQRGn0f9UiyeC0t
- kX8qGrZdgA4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,466,1583222400"; 
-   d="scan'208";a="470925223"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Jun 2020 16:53:05 -0700
-Date:   Tue, 2 Jun 2020 16:53:05 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [GIT PULL] vfs: improve DAX behavior for 5.8, part 1
-Message-ID: <20200602235305.GI1505637@iweiny-DESK2.sc.intel.com>
-References: <20200602165852.GB8230@magnolia>
+        id S1728387AbgFCAIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 20:08:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbgFCAIo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jun 2020 20:08:44 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643D2C08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jun 2020 17:08:43 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id c11so481316ljn.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jun 2020 17:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PazKvjjbmAQeUYiZad4yyf2QZKpFBXiEaJOc1KsToFM=;
+        b=cxQ3fmuQWsQSr6abyNc9/tsWVhRgX+CIskaA0+9tWleBkBxH+nD83NbhOrLA4+l62q
+         IHd7DWRbt8QX/EQhJmNdBB/KVbcm3z19PVF4njNDsJ2EVCzILIGOTxNV+HKYvlu2vYC2
+         U0ZUjz234y+0uLMwggsMalqWy5B+hZTC5aMVY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PazKvjjbmAQeUYiZad4yyf2QZKpFBXiEaJOc1KsToFM=;
+        b=uNxf105dyqXu7/R8j9hmy0ruACem7qjeQjyQCcXhulGMr1I/nDibOUoMONNtc02+hH
+         1QJjy8rKyNQBxIksUDBOyy0uEcCy4ohgyRjjWcJ0saJ6eprkNiQDzW3pIoZCtKOE5sPj
+         7cV1/8+cYKn9BpP77sawdCHTKKERY+xttA+rRsuD/ZRK3DAYjSu6+cKHvSR3VALHMMaf
+         Hamisw+4cheC2ChYmMA0xJfhtRlX0bR4/40bYLzpMT52ONpB6YeBoNhRjh30fc0tUugw
+         4FG0jun0m9BGkR7If1EZTMdHJGsRpo7RIS+iU2OlpB8hpdGXcSbRpokX5YglkTDTwVfM
+         Tk/Q==
+X-Gm-Message-State: AOAM530XkFJuDaKCRiedhocG9PAHCQwmf43mcBR67EdRGGdPswwkzk1M
+        oIQTk9CVImc+6aO1Fkgw2/0bGBCZ1ws=
+X-Google-Smtp-Source: ABdhPJwOfgJ25IDkZSUOqdNRK/fX3TjiZetMtX/tuFqqxIUWDZQZD27PmAvDHnwcUiR0UyjBXOG4tw==
+X-Received: by 2002:a2e:8e25:: with SMTP id r5mr666127ljk.455.1591142920981;
+        Tue, 02 Jun 2020 17:08:40 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id i24sm83627ljg.82.2020.06.02.17.08.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jun 2020 17:08:40 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id x27so150124lfg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jun 2020 17:08:39 -0700 (PDT)
+X-Received: by 2002:ac2:5a4c:: with SMTP id r12mr947879lfn.10.1591142919097;
+ Tue, 02 Jun 2020 17:08:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200602165852.GB8230@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
+ <CAHk-=wjy234P7tvpQb6bnd1rhO78Uc+B0g1CPg9VOhJNTxmtWw@mail.gmail.com> <20200602233355.zdwcfow3ff4o2dol@wittgenstein>
+In-Reply-To: <20200602233355.zdwcfow3ff4o2dol@wittgenstein>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 2 Jun 2020 17:08:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wimp3tNuMcix2Z3uCF0sFfQt5GhVku=yhJAmSALucYGjg@mail.gmail.com>
+Message-ID: <CAHk-=wimp3tNuMcix2Z3uCF0sFfQt5GhVku=yhJAmSALucYGjg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] close_range()
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kyle Evans <self@kyle-evans.net>,
+        Victor Stinner <victor.stinner@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 02, 2020 at 09:58:52AM -0700, Darrick J. Wong wrote:
-> Hi Linus,
-> 
-> After many years of LKML-wrangling about how to enable programs to query
-> and influence the file data access mode (DAX) when a filesystem resides
-> on storage devices such as persistent memory, Ira Weiny has emerged with
-> a proposed set of standard behaviors that has not been shot down by
-> anyone!  We're more or less standardizing on the current XFS behavior
-> and adapting ext4 to do the same.
+On Tue, Jun 2, 2020 at 4:33 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> >
+> > And maybe this _did_ get mentioned last time, and I just don't find
+> > it. I also don't see anything like that in the patches, although the
+> > flags argument is there.
+>
+> I spent some good time digging and I couldn't find this mentioned
+> anywhere so maybe it just never got sent to the list?
 
-Also, for those interested: The corresponding man page change mentioned in the
-commit has been submitted here:
+It's entirely possible that it was just a private musing, and you
+re-opening this issue just resurrected the thought.
 
-https://lore.kernel.org/lkml/20200505002016.1085071-1-ira.weiny@intel.com/
+I'm not sure how simple it would be to implement, but looking at it it
+shouldn't be problematic to add a "max_fd" argument to unshare_fd()
+and dup_fd().
 
-Ira
+Although the range for unsharing is obviously reversed, so I'd suggest
+not trying to make "dup_fd()" take the exact range into account.
 
-> 
-> This pull request is the first of a handful that will make ext4 and XFS
-> present a consistent interface for user programs that care about DAX.
-> We add a statx attribute that programs can check to see if DAX is
-> enabled on a particular file.  Then, we update the DAX documentation to
-> spell out the user-visible behaviors that filesystems will guarantee
-> (until the next storage industry shakeup).  The on-disk inode flag has
-> been in XFS for a few years now.
-> 
-> Note that Stephen Rothwell reported a minor merge conflict[1] between
-> the first cleanup patch and a different change in the block layer.  The
-> resolution looks pretty straightforward, but let me know if you
-> encounter problems.
-> 
-> --D
-> 
-> [1] https://lore.kernel.org/linux-next/20200522145848.38cdcf54@canb.auug.org.au/
-> 
-> The following changes since commit 0e698dfa282211e414076f9dc7e83c1c288314fd:
-> 
->   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.8-merge-1
-> 
-> for you to fetch changes up to 83d9088659e8f113741bb197324bd9554d159657:
-> 
->   Documentation/dax: Update Usage section (2020-05-04 08:49:39 -0700)
-> 
-> ----------------------------------------------------------------
-> New code for 5.8:
-> - Clean up io_is_direct.
-> - Add a new statx flag to indicate when file data access is being done
->   via DAX (as opposed to the page cache).
-> - Update the documentation for how system administrators and application
->   programmers can take advantage of the (still experimental DAX) feature.
-> 
-> ----------------------------------------------------------------
-> Ira Weiny (3):
->       fs: Remove unneeded IS_DAX() check in io_is_direct()
->       fs/stat: Define DAX statx attribute
->       Documentation/dax: Update Usage section
-> 
->  Documentation/filesystems/dax.txt | 142 +++++++++++++++++++++++++++++++++++++-
->  drivers/block/loop.c              |   6 +-
->  fs/stat.c                         |   3 +
->  include/linux/fs.h                |   7 +-
->  include/uapi/linux/stat.h         |   1 +
->  5 files changed, 147 insertions(+), 12 deletions(-)
+More like just making __close_range() do basically something like
+
+        rcu_read_lock();
+        cur_max = files_fdtable(files)->max_fds;
+        rcu_read_unlock();
+
+        if (flags & CLOSE_RANGE_UNSHARE) {
+                unsigned int max_unshare_fd = ~0u;
+                if (cur_max >= max_fd)
+                        max_unshare_fd = fd;
+                unshare_fd(max_unsgare_fd);
+        }
+
+        .. do the rest of __close_range() here ..
+
+and all that "max_unsgare_fd" would do would be to limit the top end
+of the file descriptor table unsharing: we'd still do the exact range
+handling in __close_range() itself.
+
+Because teaching unshare_fd() and dup_fd() about anything more complex
+than the above doesn't sound worth it, but adding a way to just avoid
+the unnecessary copy of any high file descriptors sounds simple
+enough.
+
+But I haven't thought deeply about this. I might have missed something.
+
+            Linus
