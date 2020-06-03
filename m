@@ -2,119 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E471ED4A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 19:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25CA81ED4AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 19:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbgFCRBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 13:01:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgFCRBj (ORCPT
+        id S1726151AbgFCREM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 13:04:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49246 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbgFCREK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 13:01:39 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E06C08C5C0;
-        Wed,  3 Jun 2020 10:01:39 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id a25so3680186ljp.3;
-        Wed, 03 Jun 2020 10:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2iLycb4I4u+ClXUUA0CCDPb6E6bGBrDChBPF7DQKh5s=;
-        b=aTM3zxQdEXzyvTbG2wnsmyG5Ljh4kC5rX2FcLRM6yHZ9CsgexrRB/bG1xtfJfa65A9
-         tsuDK3j0xyJTbGyH04PSRBc940UT0MSX3j3Xe+ctCJQMgKojjCOxd1XLmqH5ScZEks84
-         m4YCGcEeD9yUDlJ47GdTrkDrj2a8lmTVqNf9eP4QeJb6pOjR64QQILWyFFVmk3gNQgik
-         qCJJ0inXRDzPrrokm1ZjCjdg/Ve/bUmhUKBdeHV60tsuFclZjzehk+uWop6vHPnRhhLT
-         hpu4HnylpXg3otqK3GBX0ovRt295MjpmsFRrfrwoX3e67peU3xc+oCRxmQ83jwZ1y6EB
-         4Q+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2iLycb4I4u+ClXUUA0CCDPb6E6bGBrDChBPF7DQKh5s=;
-        b=mA0SNDny3lSdU5ZshxMmdcKkI7XRczGS87YqrgZHa8CbQJd5AI3l20UO1URCN6DX+n
-         3lHoGoEDT6bUusbF72AsiDww9LcE9xkeDX0AZlrWrJBNdaujiknZRuUGPAIKVhFqsIel
-         mvSWD337IaL2uDqyPvlFnYFIKLMJmOp0b8VDxVc6QnHtwwdrFIFAUUHfSmIn+ZnSpS/A
-         ofkyWOhq+f2xiBpJ/LwYHBNGE2/m4kkpBq5savpNiM6irp3xbRCMFjxmObwV3EJxrKxg
-         69nDbZjEpfkZ/Ph+RwCZ8yx12DLrTy+Vj29ujmXtxA7BSgcZ7gjLsICx38r41y2axcai
-         JRyQ==
-X-Gm-Message-State: AOAM532D29PgTYaRQMv8BYcWVDd2evlAyUawt29V7eTBNukn9RJxB1kf
-        JEgcPLPMFHDoVAyDgy+5B7g=
-X-Google-Smtp-Source: ABdhPJz9gyMboago8Er/iKySN0pf2TCLhXajvZU/DCrvcaHiJNcLnfsThNWvM3P5mHq0O1RvGu2jcg==
-X-Received: by 2002:a2e:9816:: with SMTP id a22mr87688ljj.129.1591203697862;
-        Wed, 03 Jun 2020 10:01:37 -0700 (PDT)
-Received: from grain.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id b15sm784577lfa.74.2020.06.03.10.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2020 10:01:36 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-        id F2B391A0089; Wed,  3 Jun 2020 20:01:35 +0300 (MSK)
-Date:   Wed, 3 Jun 2020 20:01:35 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200603170135.GD568636@grain>
-References: <20200603162328.854164-1-areber@redhat.com>
- <20200603162328.854164-2-areber@redhat.com>
+        Wed, 3 Jun 2020 13:04:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 053GuURH084285;
+        Wed, 3 Jun 2020 17:03:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=JE+WMAzYhB9I63Z7mLN3ij+Wo6tJjTmohhHE6mf0Dik=;
+ b=UvDUuojTTQy9ZVgoum0ooM+DA1vodbZ1rLxZ8kLb0V/FDnz9VFoopV2r+ZgrC9aArifB
+ EcnzCqD/N44bU2SOUGxeSlYeBdkl9LCSlmfqyLPrsb3Cmmypn2nMZOXt4kjWEZsdiDLH
+ k9XHgRSQPBjFIlqBvHP8YhaS/XTw1tdDt5iRM+AaLzk3le1uIFPOUGEKeFs09OCEaTmc
+ TZNDjpfhqdAZHhoT9i1zzP+iZ78irasfD4fy2khX49ETuwfmfUjOsf9gDn6mw+6t4fSA
+ j3TtQ9UIR4Fs65FzN5ddA2Y62radlWBGQ3npodurSC/8+EIKltiJOuP2B++6UhutLWVn NQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 31bfemacc6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 03 Jun 2020 17:03:49 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 053GvXW5135784;
+        Wed, 3 Jun 2020 17:03:49 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 31c12r602b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 03 Jun 2020 17:03:48 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 053H3kbd018195;
+        Wed, 3 Jun 2020 17:03:46 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 03 Jun 2020 10:03:45 -0700
+Date:   Wed, 3 Jun 2020 10:03:44 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH V11 11/11] fs/xfs: Update
+ xfs_ioctl_setattr_dax_invalidate()
+Message-ID: <20200603170344.GO2162697@magnolia>
+References: <20200428002142.404144-1-ira.weiny@intel.com>
+ <20200428002142.404144-12-ira.weiny@intel.com>
+ <20200428201138.GD6742@magnolia>
+ <20200602172353.GC8230@magnolia>
+ <20200603101024.GG19165@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200603162328.854164-2-areber@redhat.com>
-User-Agent: Mutt/1.13.4 (2020-02-15)
+In-Reply-To: <20200603101024.GG19165@quack2.suse.cz>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9641 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 suspectscore=1 spamscore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006030133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9641 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=1
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006030133
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
-...
->  
->  /*
-> - * Only allow CAP_SYS_ADMIN to follow the links, due to concerns about how the
-> - * symlinks may be used to bypass permissions on ancestor directories in the
-> - * path to the file in question.
-> + * Only allow CAP_SYS_ADMIN and CAP_CHECKPOINT_RESTORE to follow the links, due
-> + * to concerns about how the symlinks may be used to bypass permissions on
-> + * ancestor directories in the path to the file in question.
->   */
->  static const char *
->  proc_map_files_get_link(struct dentry *dentry,
->  			struct inode *inode,
->  		        struct delayed_call *done)
->  {
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!(capable(CAP_SYS_ADMIN) || capable(CAP_CHECKPOINT_RESTORE)))
->  		return ERR_PTR(-EPERM);
+On Wed, Jun 03, 2020 at 12:10:24PM +0200, Jan Kara wrote:
+> On Tue 02-06-20 10:23:53, Darrick J. Wong wrote:
+> > On Tue, Apr 28, 2020 at 01:11:38PM -0700, Darrick J. Wong wrote:
+> > > > -out_unlock:
+> > > > -	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
+> > > > -	return error;
+> > > > +	if ((mp->m_flags & XFS_MOUNT_DAX_ALWAYS) ||
+> > > > +	    (mp->m_flags & XFS_MOUNT_DAX_NEVER))
+> > > > +		return;
+> > > >  
+> > > > +	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > > +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
+> > > > +	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
+> > > > +	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
+> > > > +		d_mark_dontcache(inode);
+> > 
+> > Now that I think about this further, are we /really/ sure that we want
+> > to let unprivileged userspace cause inode evictions?
+> 
+> You have to have an equivalent of write access to the file to be able to
+> trigger d_mark_dontcache(). So you can e.g. delete it.  Or you could
+> fadvise / madvise regarding its page cache. I don't see the ability to push
+> inode out of cache as stronger than the abilities you already have...
 
-You know, I'm still not sure if we need this capable() check at all since
-we have proc_fd_access_allowed() called but anyway can we please make this
-if() condition more explicit
+<nod> Ok.  I just had one last bout of paranoia, but I think it'll be
+fine. :)
 
-	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
-		return ERR_PTR(-EPERM);
+--D
 
-though I won't insist. And I'll reread the series a bit later once I've
-some spare time to.
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
