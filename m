@@ -2,188 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91CBE1EC734
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 04:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A10B11EC736
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 04:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbgFCCOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jun 2020 22:14:42 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:13871 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgFCCOm (ORCPT
+        id S1725906AbgFCCPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jun 2020 22:15:45 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:46947 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725780AbgFCCPp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jun 2020 22:14:42 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200603021439epoutp03c9faa56ed85de5e94a6d0754298267f4~U5u4vh8uZ3247732477epoutp03a
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 02:14:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200603021439epoutp03c9faa56ed85de5e94a6d0754298267f4~U5u4vh8uZ3247732477epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591150479;
-        bh=WjEPFCMSo9Tv/PyUNW7xSqxkVRWzm8ZAFe/hH3dlsSQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=KpbBlyq41bI873hjVaMA9KpcQY/gJJq9kBeGubeZ0dpKE5bm7hMvnYR0YybMv8IiU
-         z52ieKRnXVMtDUZ/K7IYEXCV2UZoBNQbXnQboivwpzDOh/YdqcCzgT7/Tw/3sfGGFs
-         pw6lcPLvuzFVtftUm66ODHYpgAsyiV68DIwmBZDk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200603021438epcas1p2f218b3dd05be7f931e7d990765d31a5e~U5u4D2mq-0533205332epcas1p2Y;
-        Wed,  3 Jun 2020 02:14:38 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 49cCCd2pkvzMqYm1; Wed,  3 Jun
-        2020 02:14:37 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.04.28578.D8707DE5; Wed,  3 Jun 2020 11:14:37 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603021436epcas1p28e26eaba7140c222c9ed09b86a489b58~U5u2yfV1n2121821218epcas1p2_;
-        Wed,  3 Jun 2020 02:14:36 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200603021436epsmtrp23f31a2f80bfa61b83e88980cbf3a8074~U5u2xu0sG1182411824epsmtrp2B;
-        Wed,  3 Jun 2020 02:14:36 +0000 (GMT)
-X-AuditID: b6c32a39-8c9ff70000006fa2-ca-5ed7078db861
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B0.79.08382.C8707DE5; Wed,  3 Jun 2020 11:14:36 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603021436epsmtip29fd33716b1a30f94d67c0de8bb5c0a5c~U5u2lQfUI1151311513epsmtip2E;
-        Wed,  3 Jun 2020 02:14:36 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        viro@zeniv.linux.org.uk, butterflyhuangxx@gmail.com,
-        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] exfat: fix memory leak in exfat_parse_param()
-Date:   Wed,  3 Jun 2020 11:09:39 +0900
-Message-Id: <20200603020939.9462-1-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7bCmnm4v+/U4g/V9ohZzVk1hs9iz9ySL
-        xeVdc9gsfkyvt9jy7wirxYKNjxgtjrzpZrY4//c4qwOHx85Zd9k99kw8yebRt2UVo8fnTXIe
-        m568ZQpgjcqxyUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
-        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYGhQoFecmFtcmpeul5yfa2Vo
-        YGBkClSZkJPxbU83W8EesYrpj/YyNTBeF+pi5OSQEDCRWH/xOWMXIxeHkMAORomJz/YxQzif
-        GCUebZsLlfnGKPH3/gZmmJZpO+dAJfYySszc1cgG1zJn3TSgKg4ONgFtiT9bREFMEQFFicvv
-        nUBKmAXOMErsPHCTBWSQsICjxNIX99hBbBYBVYkru3aDtfIKWEv8PmkMsUteYvWGA2AXSQhs
-        Ypdou36XFSLhItF3dSsbhC0s8er4FnYIW0ri87u9bCBzJASqJT7uh7q5g1HixXdbCNtY4ub6
-        DawgJcwCmhLrd+lDhBUldv4G+ZcTKMwn8e5rDyvEFF6JjjZoYKlK9F06zARhS0t0tX+AWuoh
-        8WHLJbBNQgKxEhOOPmGZwCg7C2HBAkbGVYxiqQXFuempxYYFpshRtIkRnLi0LHcwTn/7Qe8Q
-        IxMH4yFGCQ5mJRFeK9lrcUK8KYmVValF+fFFpTmpxYcYTYGhNZFZSjQ5H5g680riDU2NjI2N
-        LUzMzM1MjZXEeZ2sL8QJCaQnlqRmp6YWpBbB9DFxcEo1MGln5+hXT3BMLo3/5l+SNuXG0nzx
-        Ny+/OMze5iWlLG1ip9G34hyLq+yNv0ffbQo5LbDig9cBW45Xb6a8tHRS2dl4PMd/40k2cc2G
-        4leOPBUlRz5LP3F+ulBjRrD88b3xitMc57i9ZzCYO980gtletu96T4CuY52siF/CAznlCfz+
-        6xbHBfhsbhBP4fj09Ydypuyv5zWJL/msnrHc1Xk+6eRTr5kr9z03vRBw+GOOQ94t23dXX4Ud
-        +D9F4vv/bTFnC1PjtYvXp/o12gYlT9DeWLfg2Rn3Q27Nemx9E7p/t3QlzQ0t+LU9YtGtS3eM
-        Lyze8PH696wc4e91fNrfUtiidXNswhMM1qR/8s8NPLO0UImlOCPRUIu5qDgRANqbjbflAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgluLIzCtJLcpLzFFi42LZdlhJXreH/XqcwdvZRhZzVk1hs9iz9ySL
-        xeVdc9gsfkyvt9jy7wirxYKNjxgtjrzpZrY4//c4qwOHx85Zd9k99kw8yebRt2UVo8fnTXIe
-        m568ZQpgjeKySUnNySxLLdK3S+DK+Lanm61gj1jF9Ed7mRoYrwt1MXJySAiYSEzbOYexi5GL
-        Q0hgN6NE74NvzBAJaYljJ84A2RxAtrDE4cPFEDUfGCUmHfzLCBJnE9CW+LNFFMQUEVCUuPze
-        CaSEWeAKo8S3l3fAxggLOEosfXGPHcRmEVCVuLJrN9hIXgFrid8njSE2yUus3nCAeQIjzwJG
-        hlWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMGBpKW5g3H7qg96hxiZOBgPMUpwMCuJ
-        8FrJXosT4k1JrKxKLcqPLyrNSS0+xCjNwaIkznujcGGckEB6YklqdmpqQWoRTJaJg1OqgYl3
-        qmAb64OJ/8SmXw/LDjn6/pYzg5+ejObcXfe85qTeZbhQtS2hlv3ivlVdhydXJ80JWLrj3v/3
-        N1TW6364eHFGpdG+BdVtR97HpyfVPBJPWxld/pTDqGTO4qNvn+6wEY5X/DYjIvOS4qL/rWeF
-        en23O/bN7hWNlFvDIP+9P6X9eUD3TFuLrONREwzDY44s/+j8wJ/NO/lJ979PvTtzFMontLAz
-        Bb5ub2HpVWG+6feiZ43pIqaamqmJoWnVc4ujl8b9+Oj5TPyzQl6GgpWBLftKF5fbqlkFN/LT
-        r5csm+Qo2LL2fvkpziKOBM7g3vtW+U8O+klNMjdvm/nj2OMNN+6c2x7xyb+Ku/lqt5ZqoRJL
-        cUaioRZzUXEiAE1M/fiTAgAA
-X-CMS-MailID: 20200603021436epcas1p28e26eaba7140c222c9ed09b86a489b58
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200603021436epcas1p28e26eaba7140c222c9ed09b86a489b58
-References: <CGME20200603021436epcas1p28e26eaba7140c222c9ed09b86a489b58@epcas1p2.samsung.com>
+        Tue, 2 Jun 2020 22:15:45 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 031EC5802D6;
+        Tue,  2 Jun 2020 22:15:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 02 Jun 2020 22:15:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        6pUUgnZdVRfgssHG6PiGy/ksy5g4aXP+llHJT50Buho=; b=CL9HkFj4APm/nhtS
+        xi/AVwtjfIwDza3rkh82FsGQ1VLBMVewwTrGnJPusgNFjf0sVpPobl8VNmmiHQXT
+        7o9fboO1Z7qsMqJdaxSChgJdc/Trqt8kM/1zgRWDCiWzBE1tDUZ3KMErVVPMfexl
+        EJov2FGhME06VLfEtZBecgGnE3QTgUn35RFvs9w+wOR5Jro37nmwthjugeiMzJnb
+        Y9fqHN1BkObepELPB2rdlyX9lS+4gqpPyBFfwFD3kvbKtEqb6v+jZN3KjhqeUgLW
+        6GHn46/MSWigx12U8cNsMMLuoCdhBXpd/ArE9jVueyyCZLTWm/FrzyjTYhcuhUgS
+        a7h3hQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=6pUUgnZdVRfgssHG6PiGy/ksy5g4aXP+llHJT50Bu
+        ho=; b=gj+4db0wdCSTFiluY15U1lPN7KQoRKcTNe9Lx4BBRoZbSaVR7UsSneZ7N
+        I2vgKIwpKWqe8n39Jd86xhp8PttxF9+y5j4Lps8YmUSp+E4S6LtAHvc3U95p63Ug
+        YM6DTdpDTgFL4cBnKJXcQ7PHaoJFdJdpsJcFbHsHoewaf8GV9pvvB3u8fANfFI+s
+        BkdzWGECZqv/mKV/F0UUykdQN71DI+hazhyOykFsZ71ScLM6yA0s0853Lv9VS5uO
+        EEDLFnf2+No7AouUzhgReYfxJufMZ8u6d4/GipyNUshXCPybOMITnSsY9gpqGy68
+        vjy6Vivf3wCrZ/R7Z+MjlmNS2Iy+Q==
+X-ME-Sender: <xms:zwfXXsjTR8MMxv6E4ZilxF-v9os9_9fZMk-mcLXo-csWfoiHsxnSUQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudefkedghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    ekkeejieeiieegvedvvdejjeegfeffleekudekgedvudeggeevgfekvdfhvdelfeenucff
+    ohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeehkedrjedrvdehgedrleehnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhes
+    thhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:zwfXXlD4MKIQOUEnl8hEoCToW96ihLrAT8n9zR3sc9wcR9GK2mUwSQ>
+    <xmx:zwfXXkHyEU8LJ52_-ijOOtBEEUxqGhdvzvd1Jz1xoawMWjRS-iv7Bg>
+    <xmx:zwfXXtT3GcFiCF1xd13SLQP_qq0FVKKXQXiK0FNVtpJuU0BfmG7LNg>
+    <xmx:zwfXXpe1rCTlOYNdnGwK1fvTLF6SwbEP-vxQwEmPuVLwUeo9CH856w>
+Received: from mickey.themaw.net (58-7-254-95.dyn.iinet.net.au [58.7.254.95])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6D1D830618C1;
+        Tue,  2 Jun 2020 22:15:38 -0400 (EDT)
+Message-ID: <639a79d90f51da0b53a0ba45ec28d5b0dd9fee7b.camel@themaw.net>
+Subject: Re: [GIT PULL] General notification queue and key notifications
+From:   Ian Kent <raven@themaw.net>
+To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
+Cc:     viro@zeniv.linux.org.uk, dray@redhat.com, kzak@redhat.com,
+        mszeredi@redhat.com, swhiteho@redhat.com, jlayton@redhat.com,
+        andres@anarazel.de, christian.brauner@ubuntu.com,
+        jarkko.sakkinen@linux.intel.com, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 03 Jun 2020 10:15:34 +0800
+In-Reply-To: <1503686.1591113304@warthog.procyon.org.uk>
+References: <1503686.1591113304@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Tue, 2020-06-02 at 16:55 +0100, David Howells wrote:
+> 
+> [[ With regard to the mount/sb notifications and fsinfo(), Karel Zak
+> and
+>    Ian Kent have been working on making libmount use them,
+> preparatory to
+>    working on systemd:
+> 
+> 	https://github.com/karelzak/util-linux/commits/topic/fsinfo
+> 	
+> https://github.com/raven-au/util-linux/commits/topic/fsinfo.public
+> 
+>    Development has stalled briefly due to other commitments, so I'm
+> not
+>    sure I can ask you to pull those parts of the series for
+> now.  Christian
+>    Brauner would like to use them in lxc, but hasn't started.
+>    ]]
 
-butt3rflyh4ck reported memory leak found by syzkaller.
+Linus,
 
-A param->string held by exfat_mount_options.
+Just so your aware of what has been done and where we are at here's
+a summary.
 
-BUG: memory leak
+Karel has done quite a bit of work on libmount (at this stage it's
+getting hold of the mount information, aka. fsinfo()) and most of
+what I have done is included in that too which you can see in Karel's
+repo above). You can see a couple of bug fixes and a little bit of
+new code present in my repo which hasn't been sent over to Karel
+yet.
 
-unreferenced object 0xffff88801972e090 (size 8):
-  comm "syz-executor.2", pid 16298, jiffies 4295172466 (age 14.060s)
-  hex dump (first 8 bytes):
-    6b 6f 69 38 2d 75 00 00                          koi8-u..
-  backtrace:
-    [<000000005bfe35d6>] kstrdup+0x36/0x70 mm/util.c:60
-    [<0000000018ed3277>] exfat_parse_param+0x160/0x5e0
-fs/exfat/super.c:276
-    [<000000007680462b>] vfs_parse_fs_param+0x2b4/0x610
-fs/fs_context.c:147
-    [<0000000097c027f2>] vfs_parse_fs_string+0xe6/0x150
-fs/fs_context.c:191
-    [<00000000371bf78f>] generic_parse_monolithic+0x16f/0x1f0
-fs/fs_context.c:231
-    [<000000005ce5eb1b>] do_new_mount fs/namespace.c:2812 [inline]
-    [<000000005ce5eb1b>] do_mount+0x12bb/0x1b30 fs/namespace.c:3141
-    [<00000000b642040c>] __do_sys_mount fs/namespace.c:3350 [inline]
-    [<00000000b642040c>] __se_sys_mount fs/namespace.c:3327 [inline]
-    [<00000000b642040c>] __x64_sys_mount+0x18f/0x230 fs/namespace.c:3327
-    [<000000003b024e98>] do_syscall_64+0xf6/0x7d0
-arch/x86/entry/common.c:295
-    [<00000000ce2b698c>] entry_SYSCALL_64_after_hwframe+0x49/0xb3
+This infrastructure is essential before notifications work is started
+which is where we will see the most improvement.
 
-exfat_free() should call exfat_free_iocharset(), to prevent a leak
-in case we fail after parsing iocharset= but before calling
-get_tree_bdev().
+It turns out that while systemd uses libmount it has it's own
+notifications handling sub-system as it deals with several event
+types, not just mount information, in the same area. So, unfortunately,
+changes will need to be made there as well as in libmount, more so
+than the trivial changes to use fsinfo() via libmount.
 
-Additionally, there's no point copying param->string in
-exfat_parse_param() - just steal it, leaving NULL in param->string.
-That's independent from the leak or fix thereof - it's simply
-avoiding an extra copy.
+That's where we are at the moment and I will get back to it once
+I've dealt with a few things I postponed to work on libmount.
 
-Fixes: 719c1e182916 ("exfat: add super block operations")
-Cc: stable@vger.kernel.org # v5.7
-Reported-by: butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- v2:
-   - update patch description in more detail.
+If you would like a more detailed account of what we have found I
+can provide that too.
 
- fs/exfat/super.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Is there anything else you would like from me or Karel?
 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 405717e4e3ea..e650e65536f8 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -273,9 +273,8 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_charset:
- 		exfat_free_iocharset(sbi);
--		opts->iocharset = kstrdup(param->string, GFP_KERNEL);
--		if (!opts->iocharset)
--			return -ENOMEM;
-+		opts->iocharset = param->string;
-+		param->string = NULL;
- 		break;
- 	case Opt_errors:
- 		opts->errors = result.uint_32;
-@@ -686,7 +685,12 @@ static int exfat_get_tree(struct fs_context *fc)
- 
- static void exfat_free(struct fs_context *fc)
- {
--	kfree(fc->s_fs_info);
-+	struct exfat_sb_info *sbi = fc->s_fs_info;
-+
-+	if (sbi) {
-+		exfat_free_iocharset(sbi);
-+		kfree(sbi);
-+	}
- }
- 
- static const struct fs_context_operations exfat_context_ops = {
--- 
-2.17.1
+Ian
 
