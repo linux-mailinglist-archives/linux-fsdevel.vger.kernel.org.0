@@ -2,90 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B36E1ECDA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 12:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F32EA1ECDA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jun 2020 12:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725983AbgFCKfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 06:35:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725854AbgFCKfH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 06:35:07 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 053AYp5V075359;
-        Wed, 3 Jun 2020 06:34:53 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31dp431mau-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 Jun 2020 06:34:52 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 053AUan1008800;
-        Wed, 3 Jun 2020 10:31:52 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma02fra.de.ibm.com with ESMTP id 31bf47u6x3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 Jun 2020 10:31:52 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 053AVnsT25165956
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Jun 2020 10:31:49 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C96F852050;
-        Wed,  3 Jun 2020 10:31:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.36.151])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C42D65204F;
-        Wed,  3 Jun 2020 10:31:46 +0000 (GMT)
-Subject: Re: [PATCHv5 1/1] ext4: mballoc: Use raw_cpu_ptr instead of
- this_cpu_ptr
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-ext4@vger.kernel.org, tytso@mit.edu
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
-References: <20200602134721.18211-1-riteshh@linux.ibm.com>
- <CGME20200603102422eucas1p109e0d0140e8fc61dc3e57957f2ccf700@eucas1p1.samsung.com>
- <ca794804-7d99-9837-2490-366a2eb97a94@samsung.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 3 Jun 2020 16:01:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1725973AbgFCKeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 06:34:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbgFCKeq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jun 2020 06:34:46 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B43A20679;
+        Wed,  3 Jun 2020 10:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591180485;
+        bh=WMmwj0VIIImcPHZGDgST2G1TUJN7WiQ+KazeKACbiXQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Qeb9XkKnyJ+1XrYFBmR2vKUe7PLJOfDcSqaKf/wYjpZX+wn20mhBto0m94rrlKzVg
+         TDVrRqjbelVVpdvrYY16UWiPU7jAzCZALZg36TUvo0x11oiC16F1gPSjq8IG4Lfrb0
+         lP7szeEK/Ym8YEnlMmS3xDfxTufUMrao/N+NfYA0=
+Message-ID: <5851b20332557bfae4d8dcef21ea827759ce4318.camel@kernel.org>
+Subject: Re: [PATCH] locks: add locks_move_blocks in posix_lock_inode
+From:   Jeff Layton <jlayton@kernel.org>
+To:     yangerkun <yangerkun@huawei.com>, NeilBrown <neilb@suse.de>,
+        viro@zeniv.linux.org.uk, neilb@suse.com
+Cc:     linux-fsdevel@vger.kernel.org,
+        "bfields@vger.kernel.org" <bfields@vger.kernel.org>
+Date:   Wed, 03 Jun 2020 06:34:43 -0400
+In-Reply-To: <e4a8cdbc-dfe6-4630-ce5e-49958f5f0813@huawei.com>
+References: <20200601091616.34137-1-yangerkun@huawei.com>
+         <877dwq757c.fsf@notabene.neil.brown.name>
+         <eaf471c1-ef00-beb5-3143-fdcc62a7058a@huawei.com>
+         <63020790a240cfcd1d798147edebbc231b1ff32b.camel@kernel.org>
+         <e4a8cdbc-dfe6-4630-ce5e-49958f5f0813@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <ca794804-7d99-9837-2490-366a2eb97a94@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200603103146.C42D65204F@d06av21.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-03_11:2020-06-02,2020-06-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 clxscore=1011 cotscore=-2147483648
- adultscore=0 suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=799 priorityscore=1501 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006030083
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> This fixes the warning observed on various Samsung Exynos SoC based
-> boards with linux-next 20200602.
+On Wed, 2020-06-03 at 09:22 +0800, yangerkun wrote:
 > 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 在 2020/6/2 23:56, Jeff Layton 写道:
+> > On Tue, 2020-06-02 at 21:49 +0800, yangerkun wrote:
+> > > 在 2020/6/2 7:10, NeilBrown 写道:
+> > > > On Mon, Jun 01 2020, yangerkun wrote:
+> > > > 
+> > > > > We forget to call locks_move_blocks in posix_lock_inode when try to
+> > > > > process same owner and different types.
+> > > > > 
+> > > > 
+> > > > This patch is not necessary.
+> > > > The caller of posix_lock_inode() must calls locks_delete_block() on
+> > > > 'request', and that will remove all blocked request and retry them.
+> > > > 
+> > > > So calling locks_move_blocks() here is at most an optimization.  Maybe
+> > > > it is a useful one.
+> > > > 
+> > > > What led you to suggesting this patch?  Were you just examining the
+> > > > code, or was there some problem that you were trying to solve?
+> > > 
+> > > Actually, case of this means just replace a exists file_lock. And once
+> > > we forget to call locks_move_blocks, the function call of
+> > > posix_lock_inode will also call locks_delete_block, and will wakeup all
+> > > blocked requests and retry them. But we should do this until we UNLOCK
+> > > the file_lock! So, it's really a bug here.
+> > > 
+> > 
+> > Waking up waiters to re-poll a lock that's still blocked seems wrong. I
+> > agree with Neil that this is mainly an optimization, but it does look
+> > useful.
+> 
+> Agree. Logic of this seems wrong, but it won't trigger any problem since
+> the waiters will conflict and try wait again.
+> 
+> > Unfortunately this is the type of thing that's quite difficult to test
+> > for in a userland testcase. Is this something you noticed due to the
+> > extra wakeups or did you find it by inspection? It'd be great to have a
+> > better way to test for this in xfstests or something.
+> 
+> Notice this after reading the patch 5946c4319ebb ("fs/locks: allow a
+> lock request to block other requests."), and find that we have do the
+> same thing exist in flock_lock_inode and another place exists in
+> posix_lock_inode.
+> 
+> > I'll plan to add this to linux-next. It should make v5.9, but let me
+> > know if this is causing real-world problems and maybe we can make a case
+> > for v5.8.
+> 
+> Actually, I have not try to find will this lead to some real-world
+> problems... Sorry for this.:(
+> 
+> 
+> Thanks,
+> Kun.
 > 
 
-Thanks Marek,
+No problem. I doubt this would be easily noticeable in testing. Given
+that it's not causing immediate issues, we'll let it sit in linux-next
+for a cycle and plan to merge this for v5.9.
 
-Hello Ted,
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-Please pick up below change which I just sent with an added "Fixes" by
-tag. Changes wise it is the same which Marek tested.
-
-https://patchwork.ozlabs.org/project/linux-ext4/patch/20200603101827.2824-1-riteshh@linux.ibm.com/
-
-
--ritesh
