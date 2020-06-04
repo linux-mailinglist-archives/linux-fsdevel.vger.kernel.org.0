@@ -2,208 +2,290 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F84B1EE390
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 13:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF551EE3D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 14:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbgFDLlQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 07:41:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgFDLlP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 07:41:15 -0400
-Received: from pobox.suse.cz (nat1.prg.suse.com [195.250.132.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33E47206C3;
-        Thu,  4 Jun 2020 11:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591270873;
-        bh=+35wpkEKCbrjfj/VxkhxyYlwsWxHPOF8TbmW8lRfOkI=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=A/m7+vXA79k/9DGegQi44ess48zcLnHLrANIX5KKrxfWtWnWU7aQePeK7wBCjoBCu
-         1j/UltaDwbnwsMoDZBkCFqB3wEF7w1HZbqpZFdWVXzAZGSaCxfeCwtXEF3o/uXsLRe
-         wavWgC+zlX7BXH93OUPgnUzdsmsnpDcJU1RiDzoY=
-Date:   Thu, 4 Jun 2020 13:41:07 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-cc:     syzbot <syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        amir73il@gmail.com, Felipe Balbi <balbi@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, mathew.j.martineau@linux.intel.com,
-        matthieu.baerts@tessares.net, mptcp@lists.01.org,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>
-Subject: Re: INFO: task hung in corrupted (2)
-In-Reply-To: <CAAeHK+ykPQ8Fmit_3cn17YKzrCWtX010HRKmBCJAQ__OMdwCDA@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2006041339220.13242@cbobk.fhfr.pm>
-References: <0000000000004afcae05a7041e98@google.com> <CAAeHK+ykPQ8Fmit_3cn17YKzrCWtX010HRKmBCJAQ__OMdwCDA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1728114AbgFDMAE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 08:00:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbgFDMAC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jun 2020 08:00:02 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7734FC08C5C0
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jun 2020 05:00:00 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id a68so3342368vsd.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jun 2020 05:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DMjslBjEBERxtatQhlSIiUhzA2KXK0/Y8TnVtILLkmY=;
+        b=adnHoZp39ynF5T96eE3g+mFFfIxDxnxEmBjFoHuIXaeW/FzCb0vSP/xWr/de6QsCqA
+         FwI3RGJvzZfMMLw8+nBdoswtmMAtvqAQDeOTBVSzpxqUcfnp+hj8gzOWJEqTJ7WcnHXh
+         5sVxtyBUgUx9uesTVCtK7b/LYYM8o3FwVt6opTw0yVRj9U2o7TqXpBd09ZMKbfwDYUCo
+         TuD+sMROMxlc1XhCMBfZJu2fvtqPfzLk7Kog/1soFsC9TN1fOFX3mj34hfacKq1eMmYi
+         KheCpa4afVK2CQGwGHS60azeW/SZlRYcO3drndif3isSIOySjpBNeCH2HU6/XNtKx4yK
+         sgNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DMjslBjEBERxtatQhlSIiUhzA2KXK0/Y8TnVtILLkmY=;
+        b=pWANsTJmirsUxAESMSuegOMKG5ZPtCIyiddwT64vqVkowaJSU9twVjss6Q8tHmgzTH
+         jmirPJ4L1rhsYIkYKqnPe1G2n/NxoT96GRnUMmt02oXHolBL5Q/RBNt1yqMs84TINFkN
+         nH5G0NzSN6ty2EX2KY1IMm/wnE25o8J3eoc/WJdqizP+lSxwCb3tMiP95UHsjwHst6ls
+         Y9tcQ2hdrQ5s09nPndMpf3d756s7gkLBt/KHRV3fHD7dhvHxSXvII+kIbXm7KyJ1ObOn
+         aPVw68Hgg7/Ecn/I8SiIy8n5pkPWqk9MbH0s/Hj2x0oCDPSP3S2iaL31oI+Yd6qSFGX9
+         JQkA==
+X-Gm-Message-State: AOAM533NEQD4kJSid7s/Y78d3HwoBScQimVyJODflGAcyfzc7mF1HBHW
+        B0MeWnJ1i7mOFTWA39zq1mlVSY/aEeMtQBLAGHGna1aC
+X-Google-Smtp-Source: ABdhPJy53yij9hLVZQInjDMggnHCY+ZoIl+RK9fVuU0aDUMo54S9IKMKjuYwTe3P4sismwEwI7SXg2hZFH7caykkc+Q=
+X-Received: by 2002:a67:b42:: with SMTP id 63mr2998773vsl.182.1591271999245;
+ Thu, 04 Jun 2020 04:59:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20200504110344.17560-1-eesposit@redhat.com> <alpine.DEB.2.22.394.2005041429210.224786@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.22.394.2005041429210.224786@chino.kir.corp.google.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 4 Jun 2020 17:29:36 +0530
+Message-ID: <CAHLCerM5Fcyyo2p-3_4X=4EYZmjsWxfbD64Pu+1GcsKmaa+nKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Statsfs: a new ram-based file sytem for Linux
+ kernel statistics
+To:     David Rientjes <rientjes@google.com>
+Cc:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+        Jonathan Adams <jwadams@google.com>, kvm@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Emanuele Giuseppe Esposito <e.emanuelegiuseppe@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2 Jun 2020, Andrey Konovalov wrote:
+On Tue, May 5, 2020 at 3:07 AM David Rientjes <rientjes@google.com> wrote:
+>
+> On Mon, 4 May 2020, Emanuele Giuseppe Esposito wrote:
+>
+> > There is currently no common way for Linux kernel subsystems to expose
+> > statistics to userspace shared throughout the Linux kernel; subsystems
+> > have to take care of gathering and displaying statistics by themselves,
+> > for example in the form of files in debugfs. For example KVM has its ow=
+n
+> > code section that takes care of this in virt/kvm/kvm_main.c, where it s=
+ets
+> > up debugfs handlers for displaying values and aggregating them from
+> > various subfolders to obtain information about the system state (i.e.
+> > displaying the total number of exits, calculated by summing all exits o=
+f
+> > all cpus of all running virtual machines).
+> >
+> > Allowing each section of the kernel to do so has two disadvantages. Fir=
+st,
+> > it will introduce redundant code. Second, debugfs is anyway not the rig=
+ht
+> > place for statistics (for example it is affected by lockdown)
+> >
+> > In this patch series I introduce statsfs, a synthetic ram-based virtual
+> > filesystem that takes care of gathering and displaying statistics for t=
+he
+> > Linux kernel subsystems.
+> >
+>
+> This is exciting, we have been looking in the same area recently.  Adding
+> Jonathan Adams <jwadams@google.com>.
+>
+> In your diffstat, one thing I notice that is omitted: an update to
+> Documentation/* :)  Any chance of getting some proposed Documentation/
+> updates with structure of the fs, the per subsystem breakdown, and best
+> practices for managing the stats from the kernel level?
+>
+> > The file system is mounted on /sys/kernel/stats and would be already us=
+ed
+> > by kvm. Statsfs was initially introduced by Paolo Bonzini [1].
+> >
+> > Statsfs offers a generic and stable API, allowing any kind of
+> > directory/file organization and supporting multiple kind of aggregation=
+s
+> > (not only sum, but also average, max, min and count_zero) and data type=
+s
+> > (all unsigned and signed types plus boolean). The implementation, which=
+ is
+> > a generalization of KVM=E2=80=99s debugfs statistics code, takes care o=
+f gathering
+> > and displaying information at run time; users only need to specify the
+> > values to be included in each source.
+> >
+> > Statsfs would also be a different mountpoint from debugfs, and would no=
+t
+> > suffer from limited access due to the security lock down patches. Its m=
+ain
+> > function is to display each statistics as a file in the desired folder
+> > hierarchy defined through the API. Statsfs files can be read, and possi=
+bly
+> > cleared if their file mode allows it.
+> >
+> > Statsfs has two main components: the public API defined by
+> > include/linux/statsfs.h, and the virtual file system which should end u=
+p
+> > in /sys/kernel/stats.
+> >
+> > The API has two main elements, values and sources. Kernel subsystems li=
+ke
+> > KVM can use the API to create a source, add child
+> > sources/values/aggregates and register it to the root source (that on t=
+he
+> > virtual fs would be /sys/kernel/statsfs).
+> >
+> > Sources are created via statsfs_source_create(), and each source become=
+s a
+> > directory in the file system. Sources form a parent-child relationship;
+> > root sources are added to the file system via statsfs_source_register()=
+.
+> > Every other source is added to or removed from a parent through the
+> > statsfs_source_add_subordinate and statsfs_source_remote_subordinate AP=
+Is.
+> > Once a source is created and added to the tree (via add_subordinate), i=
+t
+> > will be used to compute aggregate values in the parent source.
+> >
+> > Values represent quantites that are gathered by the statsfs user. Examp=
+les
+> > of values include the number of vm exits of a given kind, the amount of
+> > memory used by some data structure, the length of the longest hash tabl=
+e
+> > chain, or anything like that. Values are defined with the
+> > statsfs_source_add_values function. Each value is defined by a struct
+> > statsfs_value; the same statsfs_value can be added to many different
+> > sources. A value can be considered "simple" if it fetches data from a
+> > user-provided location, or "aggregate" if it groups all values in the
+> > subordinates sources that include the same statsfs_value.
+> >
+>
+> This seems like it could have a lot of overhead if we wanted to
+> periodically track the totality of subsystem stats as a form of telemetry
+> gathering from userspace.  To collect telemetry for 1,000 different stats=
+,
+> do we need to issue lseek()+read() syscalls for each of them individually
+> (or, worse, open()+read()+close())?
+>
+> Any thoughts on how that can be optimized?  A couple of ideas:
+>
+>  - an interface that allows gathering of all stats for a particular
+>    interface through a single file that would likely be encoded in binary
+>    and the responsibility of userspace to disseminate, or
+>
+>  - an interface that extends beyond this proposal and allows the reader t=
+o
+>    specify which stats they are interested in collecting and then the
+>    kernel will only provide these stats in a well formed structure and
+>    also be binary encoded.
 
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    b0c3ba31 Merge tag 'fsnotify_for_v5.7-rc8' of git://git.ke..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14089eee100000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=ce116858301bc2ea
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=6921abfb75d6fc79c0eb
-> > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14947d26100000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172726d2100000
-> >
-> > The bug was bisected to:
-> >
-> > commit f2c2e717642c66f7fe7e5dd69b2e8ff5849f4d10
-> > Author: Andrey Konovalov <andreyknvl@google.com>
-> > Date:   Mon Feb 24 16:13:03 2020 +0000
-> >
-> >     usb: gadget: add raw-gadget interface
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119e4702100000
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=139e4702100000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=159e4702100000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com
-> > Fixes: f2c2e717642c ("usb: gadget: add raw-gadget interface")
-> >
-> > INFO: task syz-executor610:7072 blocked for more than 143 seconds.
-> >       Not tainted 5.7.0-rc7-syzkaller #0
-> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > syz-executor610 D24336  7072   7071 0x80004002
-> > Call Trace:
-> >  context_switch kernel/sched/core.c:3367 [inline]
-> >  __schedule+0x805/0xc90 kernel/sched/core.c:4083
-> >
-> > Showing all locks held in the system:
-> > 1 lock held by khungtaskd/1134:
-> >  #0: ffffffff892e85d0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30 net/mptcp/pm_netlink.c:860
-> > 1 lock held by in:imklog/6715:
-> >  #0: ffff8880a441e6b0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x25d/0x2f0 fs/file.c:826
-> > 6 locks held by kworker/1:0/7064:
-> > 1 lock held by syz-executor610/7072:
-> >  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
-> >  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x1bd/0x5b0 kernel/rcu/tree_exp.h:856
-> > 4 locks held by systemd-udevd/7099:
-> >  #0: ffff8880a7fdcc70 (&p->lock){+.+.}-{3:3}, at: seq_read+0x60/0xce0 fs/seq_file.c:153
-> >  #1: ffff888096486888 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x50/0x3b0 fs/kernfs/file.c:111
-> >  #2: ffff88809fc0d660 (kn->count#78){.+.+}-{0:0}, at: kernfs_seq_start+0x6f/0x3b0 fs/kernfs/file.c:112
-> >  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: device_lock_interruptible include/linux/device.h:773 [inline]
-> >  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: serial_show+0x22/0xa0 drivers/usb/core/sysfs.c:142
-> >
-> > =============================================
-> >
-> > NMI backtrace for cpu 0
-> > CPU: 0 PID: 1134 Comm: khungtaskd Not tainted 5.7.0-rc7-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
-> >  nmi_cpu_backtrace+0x9f/0x180 lib/nmi_backtrace.c:101
-> >  nmi_trigger_cpumask_backtrace+0x16a/0x280 lib/nmi_backtrace.c:62
-> >  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-> >  watchdog+0xd2a/0xd40 kernel/hung_task.c:289
-> >  kthread+0x353/0x380 kernel/kthread.c:268
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
-> > Sending NMI from CPU 0 to CPUs 1:
-> > NMI backtrace for cpu 1
-> > CPU: 1 PID: 7064 Comm: kworker/1:0 Not tainted 5.7.0-rc7-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Workqueue: usb_hub_wq hub_event
-> > RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x0/0x90 kernel/kcov.c:275
-> > Code: 4c f2 08 48 c1 e0 03 48 83 c8 18 49 89 14 02 4d 89 44 f2 18 49 ff c1 4d 89 0a c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 <4c> 8b 04 24 65 48 8b 04 25 40 1e 02 00 65 8b 0d 78 96 8e 7e f7 c1
-> > RSP: 0018:ffffc90001676cf0 EFLAGS: 00000246
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88809fb9e240
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffff
-> > RBP: ffff888092d24a04 R08: ffffffff86034f3b R09: ffffc900016790cc
-> > R10: 0000000000000004 R11: 0000000000000000 R12: ffff888092d24a00
-> > R13: 0000000000000000 R14: dffffc0000000000 R15: ffff888092d24a00
-> > FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00000000004c6e68 CR3: 0000000092d41000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  hid_apply_multiplier drivers/hid/hid-core.c:1106 [inline]
-> 
-> Looks like an issue in the HID subsystem, adding HID maintainers.
+Something akin to how ftrace allows you specify the list of functions
+in /sys/kernel/debug/tracing/set_ftrace_filter would make this a lot
+easier to use than the one-file-per-stat interface.
 
-So this is hanging indefinitely in either of the loops in 
-hid_apply_multiplier(). We'll have to decipher the reproducer to 
-understand what made the loop (and which one) unbounded.
+That would be useful, e.g. in capturing correlated stats periodically
+e.g. scheduler, power and thermal stats
 
-In parallel, CCing Peter, who wrote that code in the first place.
-
-> 
-> >  hid_setup_resolution_multiplier+0x2ab/0xbe0 drivers/hid/hid-core.c:1163
-> >  hid_open_report+0xab2/0xdd0 drivers/hid/hid-core.c:1274
-> >  hid_parse include/linux/hid.h:1017 [inline]
-> >  ms_probe+0x12f/0x3f0 drivers/hid/hid-microsoft.c:388
-> >  hid_device_probe+0x26c/0x410 drivers/hid/hid-core.c:2263
-> >  really_probe+0x704/0xf60 drivers/base/dd.c:520
-> >  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
-> >  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
-> >  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
-> >  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
-> >  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
-> >  hid_add_device+0xa2a/0xef0 drivers/hid/hid-core.c:2419
-> >  usbhid_probe+0x9bd/0xd10 drivers/hid/usbhid/hid-core.c:1407
-> >  usb_probe_interface+0x614/0xac0 drivers/usb/core/driver.c:374
-> >  really_probe+0x761/0xf60 drivers/base/dd.c:524
-> >  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
-> >  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
-> >  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
-> >  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
-> >  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
-> >  usb_set_configuration+0x19d2/0x1f20 drivers/usb/core/message.c:2032
-> >  usb_generic_driver_probe+0x82/0x140 drivers/usb/core/generic.c:241
-> >  usb_probe_device+0x12d/0x1d0 drivers/usb/core/driver.c:272
-> >  really_probe+0x761/0xf60 drivers/base/dd.c:524
-> >  driver_probe_device+0xe6/0x230 drivers/base/dd.c:697
-> >  bus_for_each_drv+0x108/0x170 drivers/base/bus.c:431
-> >  __device_attach+0x20c/0x3a0 drivers/base/dd.c:870
-> >  bus_probe_device+0xb8/0x1f0 drivers/base/bus.c:491
-> >  device_add+0x1828/0x1ba0 drivers/base/core.c:2557
-> >  usb_new_device+0xcc3/0x1650 drivers/usb/core/hub.c:2554
-> >  hub_port_connect drivers/usb/core/hub.c:5208 [inline]
-> >  hub_port_connect_change drivers/usb/core/hub.c:5348 [inline]
-> >  port_event drivers/usb/core/hub.c:5494 [inline]
-> >  hub_event+0x2823/0x4cb0 drivers/usb/core/hub.c:5576
-> >  process_one_work+0x76e/0xfd0 kernel/workqueue.c:2268
-> >  worker_thread+0xa7f/0x1450 kernel/workqueue.c:2414
-> >  kthread+0x353/0x380 kernel/kthread.c:268
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
+> We've found that the one-file-per-stat method is pretty much a show
+> stopper from the performance view and we always must execute at least two
+> syscalls to obtain a single stat.
+>
+> Since this is becoming a generic API (good!!), maybe we can discuss
+> possible ways to optimize gathering of stats in mass?
+>
+> > For more information, please consult the kerneldoc documentation in pat=
+ch
+> > 2 and the sample uses in the kunit tests and in KVM.
+> >
+> > This series of patches is based on my previous series "libfs: group and
+> > simplify linux fs code" and the single patch sent to kvm "kvm_host: uni=
+fy
+> > VM_STAT and VCPU_STAT definitions in a single place". The former
+> > simplifies code duplicated in debugfs and tracefs (from which statsfs i=
+s
+> > based on), the latter groups all macros definition for statistics in kv=
+m
+> > in a single common file shared by all architectures.
+> >
+> > Patch 1 adds a new refcount and kref destructor wrappers that take a
+> > semaphore, as those are used later by statsfs. Patch 2 introduces the
+> > statsfs API, patch 3 provides extensive tests that can also be used as
+> > example on how to use the API and patch 4 adds the file system support.
+> > Finally, patch 5 provides a real-life example of statsfs usage in KVM.
+> >
+> > [1] https://lore.kernel.org/kvm/5d6cdcb1-d8ad-7ae6-7351-3544e2fa366d@re=
+dhat.com/?fbclid=3DIwAR18LHJ0PBcXcDaLzILFhHsl3qpT3z2vlG60RnqgbpGYhDv7L43n0Z=
+XJY8M
+> >
+> > Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+> >
+> > v1->v2 remove unnecessary list_foreach_safe loops, fix wrong indentatio=
+n,
+> > change statsfs in stats_fs
+> >
+> > Emanuele Giuseppe Esposito (5):
+> >   refcount, kref: add dec-and-test wrappers for rw_semaphores
+> >   stats_fs API: create, add and remove stats_fs sources and values
+> >   kunit: tests for stats_fs API
+> >   stats_fs fs: virtual fs to show stats to the end-user
+> >   kvm_main: replace debugfs with stats_fs
+> >
+> >  MAINTAINERS                     |    7 +
+> >  arch/arm64/kvm/Kconfig          |    1 +
+> >  arch/arm64/kvm/guest.c          |    2 +-
+> >  arch/mips/kvm/Kconfig           |    1 +
+> >  arch/mips/kvm/mips.c            |    2 +-
+> >  arch/powerpc/kvm/Kconfig        |    1 +
+> >  arch/powerpc/kvm/book3s.c       |    6 +-
+> >  arch/powerpc/kvm/booke.c        |    8 +-
+> >  arch/s390/kvm/Kconfig           |    1 +
+> >  arch/s390/kvm/kvm-s390.c        |   16 +-
+> >  arch/x86/include/asm/kvm_host.h |    2 +-
+> >  arch/x86/kvm/Kconfig            |    1 +
+> >  arch/x86/kvm/Makefile           |    2 +-
+> >  arch/x86/kvm/debugfs.c          |   64 --
+> >  arch/x86/kvm/stats_fs.c         |   56 ++
+> >  arch/x86/kvm/x86.c              |    6 +-
+> >  fs/Kconfig                      |   12 +
+> >  fs/Makefile                     |    1 +
+> >  fs/stats_fs/Makefile            |    6 +
+> >  fs/stats_fs/inode.c             |  337 ++++++++++
+> >  fs/stats_fs/internal.h          |   35 +
+> >  fs/stats_fs/stats_fs-tests.c    | 1088 +++++++++++++++++++++++++++++++
+> >  fs/stats_fs/stats_fs.c          |  773 ++++++++++++++++++++++
+> >  include/linux/kref.h            |   11 +
+> >  include/linux/kvm_host.h        |   39 +-
+> >  include/linux/refcount.h        |    2 +
+> >  include/linux/stats_fs.h        |  304 +++++++++
+> >  include/uapi/linux/magic.h      |    1 +
+> >  lib/refcount.c                  |   32 +
+> >  tools/lib/api/fs/fs.c           |   21 +
+> >  virt/kvm/arm/arm.c              |    2 +-
+> >  virt/kvm/kvm_main.c             |  314 ++-------
+> >  32 files changed, 2772 insertions(+), 382 deletions(-)
+> >  delete mode 100644 arch/x86/kvm/debugfs.c
+> >  create mode 100644 arch/x86/kvm/stats_fs.c
+> >  create mode 100644 fs/stats_fs/Makefile
+> >  create mode 100644 fs/stats_fs/inode.c
+> >  create mode 100644 fs/stats_fs/internal.h
+> >  create mode 100644 fs/stats_fs/stats_fs-tests.c
+> >  create mode 100644 fs/stats_fs/stats_fs.c
+> >  create mode 100644 include/linux/stats_fs.h
+> >
+> > --
+> > 2.25.2
 > >
 > >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> 
-
--- 
-Jiri Kosina
-SUSE Labs
-
