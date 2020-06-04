@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 843771EE48F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 14:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAEB41EE4AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 14:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbgFDMkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 08:40:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55236 "EHLO mx2.suse.de"
+        id S1727799AbgFDMnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 08:43:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56720 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgFDMkK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 08:40:10 -0400
+        id S1726533AbgFDMnj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jun 2020 08:43:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4A301AF7A;
-        Thu,  4 Jun 2020 12:40:12 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id CB2F3ADFE;
+        Thu,  4 Jun 2020 12:43:41 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4F7A11E1281; Thu,  4 Jun 2020 14:40:08 +0200 (CEST)
-Date:   Thu, 4 Jun 2020 14:40:08 +0200
+        id 289661E1281; Thu,  4 Jun 2020 14:43:38 +0200 (CEST)
+Date:   Thu, 4 Jun 2020 14:43:38 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] Fsnotify changes for 5.8-rc1
-Message-ID: <20200604124008.GA2225@quack2.suse.cz>
+Subject: [GIT PULL] ext2 and reiserfs cleanups for 5.8-rc2
+Message-ID: <20200604124338.GB2225@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -36,41 +36,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
   could you please pull from
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.8-rc1
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v5.8-rc1
 
-To get several smaller fixes and cleanups for fsnotify subsystem.
+to get two smaller cleanups for ext2 and one for reiserfs.
 
-Top of the tree is 2f02fd3fa13e. The full shortlog is:
+Top of the tree is 5626de1e96f7. The full shortlog is:
 
-Amir Goldstein (1):
-      fanotify: fix ignore mask logic for events on child and on dir
+Chengguang Xu (2):
+      ext2: Fix i_op setting for special inode
+      ext2: code cleanup by removing ifdef macro surrounding
 
-Fabian Frederick (5):
-      fanotify: prefix should_merge()
-      fsnotify: add mutex destroy
-      fanotify: remove reference to fill_event_metadata()
-      fsnotify: Remove proc_fs.h include
-      fanotify: don't write with size under sizeof(response)
-
-Gustavo A. R. Silva (1):
-      fanotify: Replace zero-length array with flexible-array
-
-Jules Irenge (1):
-      fsnotify: Add missing annotation for fsnotify_finish_user_wait() and for fsnotify_prepare_user_wait()
-
-youngjun (1):
-      inotify: Fix error return code assignment flow.
+Liao Pingfang (1):
+      reiserfs: Replace kmalloc with kcalloc in the comment
 
 The diffstat is
 
- fs/notify/fanotify/fanotify.c      | 9 ++++++---
- fs/notify/fanotify/fanotify.h      | 2 +-
- fs/notify/fanotify/fanotify_user.c | 8 +++++---
- fs/notify/fdinfo.c                 | 1 -
- fs/notify/group.c                  | 1 +
- fs/notify/inotify/inotify_user.c   | 4 +---
- fs/notify/mark.c                   | 6 +++++-
- 7 files changed, 19 insertions(+), 12 deletions(-)
+ fs/ext2/file.c      | 2 --
+ fs/ext2/namei.c     | 6 ------
+ fs/ext2/symlink.c   | 4 ----
+ fs/ext2/xattr.h     | 1 +
+ fs/reiserfs/inode.c | 2 +-
+ 5 files changed, 2 insertions(+), 13 deletions(-)
 
 							Thanks
 								Honza
