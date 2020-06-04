@@ -2,116 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4241EE617
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 15:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3551EE679
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 16:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbgFDNzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 09:55:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57296 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbgFDNzl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 09:55:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A9129ACCC;
-        Thu,  4 Jun 2020 13:55:42 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id B47ECDA818; Thu,  4 Jun 2020 15:55:35 +0200 (CEST)
-Date:   Thu, 4 Jun 2020 15:55:35 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Filipe Manana <fdmanana@gmail.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] iomap: Return zero in case of unsuccessful pagecache
- invalidation before DIO
-Message-ID: <20200604135535.GD27034@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Filipe Manana <fdmanana@gmail.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20200528192103.xm45qoxqmkw7i5yl@fiona>
- <20200529002319.GQ252930@magnolia>
- <20200601151614.pxy7in4jrvuuy7nx@fiona>
- <CAL3q7H60xa0qW4XdneDdeQyNcJZx7DxtwDiYkuWB5NoUVPYdwQ@mail.gmail.com>
- <CAL3q7H4=N2pfnBSiJ+TApy9kwvcPE5sB92sxcVZN10bxZqQpaA@mail.gmail.com>
- <20200603190252.GG8204@magnolia>
+        id S1728959AbgFDOSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 10:18:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48028 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728496AbgFDOSb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jun 2020 10:18:31 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 054EIRhq153739;
+        Thu, 4 Jun 2020 14:18:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=DiGnbIQl397ymT29A/hjjydb/5kljTpmcoBrb79daus=;
+ b=uMhvVkOwavGx/ZRY+B3xe7qj/yGzFPw57Mk+UWfkjt3L93NOtWG3w30oylnSE9ohQoai
+ mkdxKj8XnTncg3NC6Rj86Lv/1CE8c8+AJlrQy3J/eVsl5TI/pkLwKhVB2WhhKuEIZG2C
+ brkSQeBunuee73ilk8iE/Wo8Om+e+7jBaRU8yB6/EhuJr8KKRUN1Re2iVkvaBuZQqdNP
+ dbn5UxrAM6bCRAwmF5OK6jenhFLQtEp+VdmFQC7TWLf1G17kC3mE7wSQnWzGRTBHM5bl
+ oDFjvffJAUUCV8WKad7MKCC+bmrMej8LJxy3qp8NQgto2WK7z0nzlPltOv0SoxpEpgzr 4A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 31ev96t039-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 04 Jun 2020 14:18:26 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 054EI53k141605;
+        Thu, 4 Jun 2020 14:18:25 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 31c25vctjr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Jun 2020 14:18:25 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 054EIOHL013944;
+        Thu, 4 Jun 2020 14:18:24 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 04 Jun 2020 07:18:24 -0700
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Don.Brace@microchip.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        don.brace@microsemi.com, linux-scsi@vger.kernel.org
+Subject: Re: [PATCHES] uaccess hpsa
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1wo4m7w6r.fsf@ca-mkp.ca.oracle.com>
+References: <20200528234025.GT23230@ZenIV.linux.org.uk>
+        <20200529233923.GL23230@ZenIV.linux.org.uk>
+        <SN6PR11MB2848F6299FBA22C75DF05218E1880@SN6PR11MB2848.namprd11.prod.outlook.com>
+        <20200603191742.GW23230@ZenIV.linux.org.uk>
+        <yq18sh398t7.fsf@ca-mkp.ca.oracle.com>
+        <20200603205450.GD23230@ZenIV.linux.org.uk>
+Date:   Thu, 04 Jun 2020 10:18:21 -0400
+In-Reply-To: <20200603205450.GD23230@ZenIV.linux.org.uk> (Al Viro's message of
+        "Wed, 3 Jun 2020 21:54:50 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200603190252.GG8204@magnolia>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9641 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=1 spamscore=0
+ malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0 mlxlogscore=780
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006040098
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9641 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0
+ malwarescore=0 priorityscore=1501 cotscore=-2147483648 impostorscore=0
+ spamscore=0 phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ mlxlogscore=822 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006040098
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 12:02:52PM -0700, Darrick J. Wong wrote:
-> > > So the next fsync on the file will return that error, despite the
-> > > fsync having completed successfully with any errors.
-> > >
-> > > Since patchset to make btrfs direct IO use iomap is already in Linus'
-> > > tree, we need to fix this somehow.
-> 
-> Y'all /just/ sent the pull request containing that conversion 2 days
-> ago.  Why did you move forward with that when you knew there were
-> unresolved fstests failures?
 
-Because we didn't know that. And the whole mixed buffered io and dio is
-considered obscure, documented as 'do not do that', that tests that
-report the warning are more of an annyonance (btrfs/004).
+Al,
 
-That the test generic/547 sometimes returns EIO on fsync is a
-regression, reported after the pull request had been merged, but with a
-proposed fix that is not that intrusive, so this all counts as a normal
-development.
+>> I don't have anything queued for 5.8 for hpsa so there shouldn't be any
+>> conflicts if it goes through vfs.git. But I'm perfectly happy to take
+>> the changes through SCSI if that's your preference.
+>
+> Up to you; if you need a pull request, just say so.
 
-There is always some risk merging code the like dio-iomap and it was
-known but with an ultimate fallback plan to revert it in case we
-encounter problems that are not solvable before release. But we're not
-there yet.
+OK, I queued these up for 5.8.
 
-> > > This makes generic/547 fail often for example - buffered write against
-> > > file + direct IO write + fsync - the later returns -EIO.
-> > 
-> > Just to make it clear, despite the -EIO error, there was actually no
-> > data loss or corruption (generic/547 checks that),
-> > since the direct IO write path in btrfs figures out there's a buffered
-> > write still ongoing and waits for it to complete before proceeding
-> > with the dio write.
-> > 
-> > Nevertheless, it's still a regression, -EIO shouldn't be returned as
-> > everything went fine.
-> 
-> Now I'm annoyed because I feel like you're trying to strong-arm me into
-> making last minute changes to iomap when you could have held off for
-> another cycle.
+Thanks!
 
-The patchset was held off for several releases, gradually making into
-state where it can be merged, assuming we will be able to fix potential
-regressions. Besides SUSE people involved in the patchset, Christoph
-asked why it's not merged and how can he help to move it forward. He's
-listed as iomap maintainer so it's not like we were pushing code without
-maintainers' involved.
-
-Regarding the last minute change, that's not something we'd ask you to
-do without testing first. There are 4 filesystems using iomap for
-direct io, making sure it does not regress on them is something I'd
-consider necessary before asking you to merge it.
-
-This patchset is lacking that but it started a discussion to understand
-the full extent of the bug. We're not in rc5 where calling it 'last
-minute' would be appropriate.
-
-The big-hammer option to revert 4 patches is still there. If the fix
-turns out to require changes beyond iomap and btrfs code, I'd consider
-that as a good reason and I'm ready to do the revert (say rc2 at the
-latest).
+-- 
+Martin K. Petersen	Oracle Linux Engineering
