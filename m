@@ -2,86 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 535551ED9A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 01:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011571ED9E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 02:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbgFCXyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 19:54:52 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:59964 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgFCXyv (ORCPT
+        id S1726363AbgFDAN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 20:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbgFDAN7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 19:54:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1591228491; x=1622764491;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=j/voAKbPJfRyko279AV3pA0ysaiEHLivEtmD58nV3uM=;
-  b=MF20dZj1ZY4Plwd0wcpcZX1OK9L2WxvZaG3nYJ4azryd8rHISi1SXsOX
-   8jjwZKjS7crkZ9MtVoR0L9GUff4xTHJ8abZhYBCYTLm0UWnf5sQneZn80
-   wNtU+/FIAET9dQBu9wyUQ7QQju3gbBGdE8m+GekRKXUCuT2w86eHETWuq
-   PLoC6EQWiGEI9Ux3pWIPI5rBlNSF9Bmyyy1bQxP7nh0zDgYiRhoWjkfjm
-   V/iePPlGxpfCMlqYbz8dgZkYcnXvDBebL8nKGdAnoM+U8WVcDB32NSGHZ
-   jCh8pCY+smzdRRRvDmAeTU4MWuDJF6mRVzjqrO631aA+E9PsX/o+H3Rgs
-   Q==;
-IronPort-SDR: NgsEFNldSqwkbzVsFIS4BxAyMhWEO3B7jXN6nBQ2y+77eIItiE4a445afDUtzIqxFhuaR3orsj
- d3MCGNEBjvgMXVQu5Ay44hfKdd8oHf2tdTVL/tc87jNvX29s2KpuJIuWI5w9mPFnjnFcERBlhH
- GzVMqIegZZ47fZo4MaL96oQGdwR+pN3wADqJev/sqGPWffYMf9Ae0YMhMOV8P6lIQfPnSEseuX
- GGolwLIA2dB3xsffqlrNK8mmzKPzwtHuvcFxsfu4K/HmoM/NaORGNWHHA1DyA8+lpdTW29Dzvk
- Rdg=
-X-IronPort-AV: E=Sophos;i="5.73,470,1583164800"; 
-   d="scan'208";a="139147151"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Jun 2020 07:54:50 +0800
-IronPort-SDR: GNEv0JNha1tSlAKzbHsJkLUJWzDT+0fZXcFMrd1PGLoU7p6zHFBiF0OU554563Byfx7Vzaz9um
- 4d8loLTOMm7mms+YxP+79sTHNe9RyEtcI=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2020 16:43:55 -0700
-IronPort-SDR: FKg8mvbrKUh+OQxdsUsrJ3TmS5+VY3gd0JDbetUb4BApuaWpJlkS5Pun3tNEr0Z2J2oAj7p5Xr
- T2cDMSCQY6Uw==
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip01.wdc.com with ESMTP; 03 Jun 2020 16:54:50 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] zonefs changes for 5.8
-Date:   Thu,  4 Jun 2020 08:54:49 +0900
-Message-Id: <20200603235449.26207-1-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.26.2
+        Wed, 3 Jun 2020 20:13:59 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704EDC08C5C0
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 17:13:57 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id 9so5014787ljc.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jun 2020 17:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rWe2Q0RVzrp4gR0EET85HSpI5Y5evJHsyhPkQ14mL0k=;
+        b=bt0TGPg3m1SCTLBdHymXFLfl3E3L3r+udH7rn8D+EBhHjSsJezRKQc5I44quK2Ep95
+         n7O9rGE+x0OuzzxK9JDFKVEZNlNil/zWzB2OtsPvSkq3h3Byx+1A/PbyAJD8T+ACtvtF
+         KVePdWwwaM3XuFRkXqkGtRQjsVdhDo42Nx8Z8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rWe2Q0RVzrp4gR0EET85HSpI5Y5evJHsyhPkQ14mL0k=;
+        b=dpYFUvVOZ6i6sormjEfGyMub2aFCncsxBanIsQV7gdGgpcUpGjgC+IVwhkdcw0aXS6
+         Ra2G7HjdMgMUbsDN3lu6GWb4kZszWDzCqgN+mSzBKHZy2CjWYztxfFZEo0dVchH2rCDb
+         8YXf8s8oyrocFtI0CribaUbh3Hljw2r1GnkfQtVDl7SA2HK7t8fNlTnuG2z8OJXLFjDr
+         y1pzTuf+ummKPT+htqOHE3O4IXIaQGn0Sr2tRourFoVczsOaBQcYtBDxbdHQpo6gYOe4
+         PCU31FHd0n7z1C6h9wRovsHM77zHBndIaUgd7Qu9EVpZk3k/WvZShN1Vl9g1EwGPuriF
+         eFWQ==
+X-Gm-Message-State: AOAM532EX6RV7rey9Pqt1DRmKvpE6v4yvmkGjCqBkJwJuMT7+aaQW9Vk
+        Oy2cKrggXboE1HJqB1LD20+6QDMHvUw=
+X-Google-Smtp-Source: ABdhPJxXa9Qk7TRUxTwZ/s38UMCBnlHvqdVeoS9h2NQwuGoobBvFH051QJZzr54DUD4orE7szbKJbA==
+X-Received: by 2002:a2e:a17a:: with SMTP id u26mr742539ljl.235.1591229635022;
+        Wed, 03 Jun 2020 17:13:55 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id v23sm210583ljg.122.2020.06.03.17.13.52
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2020 17:13:52 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id z9so5000213ljh.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jun 2020 17:13:52 -0700 (PDT)
+X-Received: by 2002:a2e:7e0a:: with SMTP id z10mr790807ljc.314.1591229631853;
+ Wed, 03 Jun 2020 17:13:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
+ <CAHk-=wjy234P7tvpQb6bnd1rhO78Uc+B0g1CPg9VOhJNTxmtWw@mail.gmail.com>
+ <20200602233355.zdwcfow3ff4o2dol@wittgenstein> <CAHk-=wimp3tNuMcix2Z3uCF0sFfQt5GhVku=yhJAmSALucYGjg@mail.gmail.com>
+ <20200603232410.i3opsbmepv5ktsjq@wittgenstein>
+In-Reply-To: <20200603232410.i3opsbmepv5ktsjq@wittgenstein>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 3 Jun 2020 17:13:36 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgTpLOeMjpLOc8hY7KC6Qv+jR-hBacyBSajJ6iUKasmKA@mail.gmail.com>
+Message-ID: <CAHk-=wgTpLOeMjpLOc8hY7KC6Qv+jR-hBacyBSajJ6iUKasmKA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] close_range()
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kyle Evans <self@kyle-evans.net>,
+        Victor Stinner <victor.stinner@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus,
+On Wed, Jun 3, 2020 at 4:24 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> Ok, here's what I have. Does the below look somewhat sane?
 
-The following changes since commit 6a8b55ed4056ea5559ebe4f6a4b247f627870d4c:
+Probably. Needs lots of testing. But this one looks wrong:
 
-  Linux 5.7-rc3 (2020-04-26 13:51:02 -0700)
+> +int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+>  {
+> +               if ((max_fd + 1) >= cur_max)
+> +                       max_unshare_fds = fd;
 
-are available in the Git repository at:
+A normal value for "close everything starting at X" would have a
+max_fd value of ~0.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.8-rc1
+So "max_fd+1" would overflow to 0, and then this would never trigger.
 
-for you to fetch changes up to 568776f992c4cb5e1b5715dc4ab62e6ae906b80d:
+Other than that it looks what what I imagine my feverdreams were about.
 
-  zonefs: Replace uuid_copy() with import_uuid() (2020-04-27 08:51:39 +0900)
-
-----------------------------------------------------------------
-zonefs changes for 5.8
-
-Only one patch in this pull request to cleanup handling of uuid using
-the import_uuid() helper, from Andy.
-
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      zonefs: Replace uuid_copy() with import_uuid()
-
- fs/zonefs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+              Linus
