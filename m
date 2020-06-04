@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3511EDB25
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 04:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B0E1EDBC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 05:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgFDCXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jun 2020 22:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53750 "EHLO
+        id S1726704AbgFDDjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jun 2020 23:39:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbgFDCXA (ORCPT
+        with ESMTP id S1726047AbgFDDjL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jun 2020 22:23:00 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9B8C08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 19:22:59 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id q24so426925pjd.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jun 2020 19:22:59 -0700 (PDT)
+        Wed, 3 Jun 2020 23:39:11 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB3FC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jun 2020 20:39:11 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t8so4693667ilm.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jun 2020 20:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=sargun.me; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Yipjb/nJ+PoPYGY3bQlr0vEC5GDtsZwp9TVgxD0rnGk=;
-        b=Qn2BQw97F7bIZrtjDlecVedaFxpvLQXfHqx5ZIkhrdMftq1Uzxuvb3gxbs04al8f6z
-         dUNJTwOCuq0f5AzUIWaq/boxSUbsE7CQq5poZsErcM9jbnlKvwg3ugwzZmw6UY051thR
-         aeypVbCcCPa33vgHBqM+4kc/3K8/7P1pLFmH0=
+         :content-disposition:in-reply-to:user-agent;
+        bh=JL8KAHI97qtguZ9Tb2fscmILbngbHV5HZl94fH1QWiU=;
+        b=BkAIZS5UfiiyWUPoA8i0jqjgQC/WADaVCEyErmWLwK8t3GHDHFMmZ0cWMKoqVrqQqf
+         GO+t+UGX7bnWxdI5DqxuR9Q92NU7fHo24UZMJGMnMMJRKYKo4x/F7pwAsbhyN7Gn60ju
+         n7q3PRtkSlmouoqf/iL9VnER2wtgOLpNaqOco=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Yipjb/nJ+PoPYGY3bQlr0vEC5GDtsZwp9TVgxD0rnGk=;
-        b=Y5Na+ZSPg+nVayvw4ZjGD9Y+T6wQE+zZYX74UU1WKFCYOgUxcaPCES0bsXhQ+mZoMK
-         1I8wVJoM757g+BScSqBRGjM13ZtSA14mArwXPNi02sa0S5dvXJ+/+WnauhIBye+YmMyT
-         IAG1OXn5IerGPDTz+bREnvjEsDdoDJXOLjVAmPhsVhe6gTHgSgDOKRvYy1ODWieEL/+E
-         CbgVKcH2BPgPUeED3SDHPv3j7Jox08FzI5ni1uByeLd8Xn3MxP/Yu3NuW+cX3I0czfhu
-         JFs7ROqUv38iLnCRUj3FxUkdBwVV6DmxoqmQTJJlePNL9HXTq8TkNp2atHgeqlOsykNh
-         oB1A==
-X-Gm-Message-State: AOAM533A+UzxjC+ZnDKfiMzbwmsyNXg1BzBeJ8dWq59uE/SDIkXWPAfl
-        gIY1dt0HDoGCjuIJE2JJC4Ts3w==
-X-Google-Smtp-Source: ABdhPJyecMU8uoaQFlZIapME+iRHy6MQjiZHyGdWTsN1FsR15QCal3RaNi3fnZYfnzICd0tiI8+uGQ==
-X-Received: by 2002:a17:90a:4d4e:: with SMTP id l14mr3326764pjh.10.1591237379271;
-        Wed, 03 Jun 2020 19:22:59 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y6sm3106283pfp.144.2020.06.03.19.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2020 19:22:58 -0700 (PDT)
-Date:   Wed, 3 Jun 2020 19:22:57 -0700
-From:   Kees Cook <keescook@chromium.org>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JL8KAHI97qtguZ9Tb2fscmILbngbHV5HZl94fH1QWiU=;
+        b=Ya0tTFcVojfcOsNeuDXnfTO3+uoRMsHXHATUfgJ7OjqIdDvbO58kMkmXK0ISDp3wVe
+         dLkYzOw1Ii4WbhGzFg2zPv7m4hINpvKT/NSV28BTKPrq2sNOfCkAoumAH/ku9aAThMyy
+         NgqeXlQTdwVFT1XGaqIqb75WL+Z5y4fiYDO/M66PIC/YdLRNfX8+V4onh/PMQYBwNr3V
+         MUm9e8sHHtKX2hZ0/x4OTOu7Ic9XllcVxboSXfHRB1yzIIXITa4dUd9mR1Cz9ZLJdW1D
+         gnt+Wg5GpcpjHewl0y0eLSAbw0OFDnUnzps0sboMBoVdxqjmMf2mrzsAhfGhBg/qfM0w
+         Ik5A==
+X-Gm-Message-State: AOAM533zKgVoQ1y1lWaV/CQR+QLrGVstqMer2IrF4yLa7r36bmLwftbE
+        68Gn2dfe5FFNYscrprbdR7LEYA==
+X-Google-Smtp-Source: ABdhPJzpJ/gMzj+cF7tx0wsNnght7qYo/ErxsBP4IEom49PMUnSj0R69oQgNuqTUaWsGxM0Rfd7pDA==
+X-Received: by 2002:a92:c812:: with SMTP id v18mr2474993iln.178.1591241949645;
+        Wed, 03 Jun 2020 20:39:09 -0700 (PDT)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id v20sm828328ilc.1.2020.06.03.20.39.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Jun 2020 20:39:09 -0700 (PDT)
+Date:   Thu, 4 Jun 2020 03:39:07 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>, linux-kernel@vger.kernel.org,
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
         Tycho Andersen <tycho@tycho.ws>,
         Matt Denton <mpdenton@google.com>,
         Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
@@ -65,7 +65,7 @@ Cc:     Sargun Dhillon <sargun@sargun.me>, linux-kernel@vger.kernel.org,
         cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
  move fds across processes
-Message-ID: <202006031845.F587F85A@keescook>
+Message-ID: <20200604033907.GA16025@ircssh-2.c.rugged-nimbus-611.internal>
 References: <20200603011044.7972-1-sargun@sargun.me>
  <20200603011044.7972-2-sargun@sargun.me>
  <20200604012452.vh33nufblowuxfed@wittgenstein>
@@ -73,6 +73,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200604012452.vh33nufblowuxfed@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -164,62 +165,17 @@ On Thu, Jun 04, 2020 at 03:24:52AM +0200, Christian Brauner wrote:
 > version of this that is basically the same thing but doesn't consume a
 > reference because it takes its own. Seems an invitation for confusion.
 > Does that make sense?
+> 
+You're right. The reason for the difference in my mind is that fd_install
+always succeeds, whereas file_receive can fail. It's easier to do something
+like:
+fd_install(fd, get_file(f))
+vs.
+if (file_receive(fd, get_file(f))
+	fput(f);
 
-We have some competing opinions on this, I guess. What I really don't
-like is the copy/pasting of the get_unused_fd_flags() and
-put_unused_fd() needed by (nearly) all the callers. If it's a helper, it
-should help. Specifically, I'd like to see this:
+Alternatively, if the reference was always consumed, it is somewhat
+easier.
 
-int file_receive(int fd, unsigned long flags, struct file *file,
-		 int __user *fdptr)
-{
-	struct socket *sock;
-	int err;
-
-	err = security_file_receive(file);
-	if (err)
-		return err;
-
-	if (fd < 0) {
-		/* Install new fd. */
-		int new_fd;
-
-		err = get_unused_fd_flags(flags);
-		if (err < 0)
-			return err;
-		new_fd = err;
-
-		/* Copy fd to any waiting user memory. */
-		if (fdptr) {
-			err = put_user(new_fd, fdptr);
-			if (err < 0) {
-				put_unused_fd(new_fd);
-				return err;
-			}
-		}
-		fd_install(new_fd, get_file(file));
-		fd = new_fd;
-	} else {
-		/* Replace existing fd. */
-		err = replace_fd(fd, file, flags);
-		if (err)
-			return err;
-	}
-
-	/* Bump the cgroup usage counts. */
-	sock = sock_from_file(fd, &err);
-	if (sock) {
-		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-		sock_update_classid(&sock->sk->sk_cgrp_data);
-	}
-
-	return fd;
-}
-
-If everyone else *really* prefers keeping the get_unused_fd_flags() /
-put_unused_fd() stuff outside the helper, then I guess I'll give up,
-but I think it is MUCH cleaner this way -- all 4 users trim down lots
-of code duplication.
-
--- 
-Kees Cook
+I'm fine either way, but just explaining my reasoning for the difference
+in behaviour.
