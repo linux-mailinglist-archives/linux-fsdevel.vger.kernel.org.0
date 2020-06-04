@@ -2,332 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B42E1EE000
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 10:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8901EE026
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 10:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbgFDIpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 04:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728021AbgFDIpb (ORCPT
+        id S1728380AbgFDIvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 04:51:01 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:25795 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728364AbgFDIvA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 04:45:31 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CBDC05BD1E;
-        Thu,  4 Jun 2020 01:45:31 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id s88so900481pjb.5;
-        Thu, 04 Jun 2020 01:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=th3lrI0sLiSoK9l/XiRMXKL/UveXR8EGX2Fm9rxXtcA=;
-        b=BoZPVpuSH6UxlYttHjg65eQAttQep6nSy+nolQNS3E5GE3cozzs8vMvAKKfB7m7jrk
-         6XtKxx2mJ4OMEHyo81bG9A2AKWXfF2gGWxTTjPbQE631kpJQGuoD+9qb5KgYJqXw5mJL
-         WH6ieEajm5azYKHYk3RWQ/Qr7P716C/0svgZuoCtukcES/3AXnO5B4Gvw5cnXV3uz5ej
-         Yb8bvl0GsTma5uWF8sVViUIJoBNQhAkbpgP4IBFZie9CSEuOXh8nj9ZDVRDHcLWWv8K+
-         kbIMI4uuurKMHXZsWi5uMgNaG/TWBgUuU9zbroy7qSbhWruVOpeALVzb/ZxuBx+1G/m5
-         2KlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=th3lrI0sLiSoK9l/XiRMXKL/UveXR8EGX2Fm9rxXtcA=;
-        b=mduKEz3kvcnVw41uXwaf8e6gM1JTTB+bpdRIKvocDVehswSqgkwq0XNdPYGd53CNTd
-         q74PgKiJvqfEYuds+iye+/K17qwfP1q+Y39ruWaFRgS5IEnJuvO2eVrq3UXfN/rVRhbP
-         6P1DSetzFi9/VQD1x/jQslmvA3TOB4Vu9HLKua5ZbaJoTfVogo9yRzKakbflGNd6rRt2
-         2zxqSrwvD5hCz5DdPB4GIco1SJWkb4rdLT+nPfvYLGSZeRIcNnVq9yzKx+dlrI5H7OV9
-         cXcOltAwJU7351/Z5IbVG/UnNwBsN6SmCyNq9BC7kOhpnpKDFcU2dCvtD2aHBmOcj1S6
-         Sgug==
-X-Gm-Message-State: AOAM533ZPwOaqbAcU/vKl0Fik+8I+FwBfbFPjS5TVXnWAMKQzG3pgtgQ
-        dNan8yap4m2L9SGKC9ppZZ8=
-X-Google-Smtp-Source: ABdhPJzG/jDtXaLQssiN0HLHLtqbOtMn6gWPGCP8YC1Jt13l4lNL+lpAwSckM6Wd6Y/sZL5U9ofeQQ==
-X-Received: by 2002:a17:902:ff03:: with SMTP id f3mr3810564plj.287.1591260330456;
-        Thu, 04 Jun 2020 01:45:30 -0700 (PDT)
-Received: from dc803.flets-west.jp ([2404:7a87:83e0:f800:39b2:3392:bee8:f3be])
-        by smtp.gmail.com with ESMTPSA id y6sm4770565pjw.15.2020.06.04.01.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2020 01:45:29 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] exfat: set EXFAT_SB_DIRTY and VOL_DIRTY at the same timing
-Date:   Thu,  4 Jun 2020 17:44:44 +0900
-Message-Id: <20200604084445.19205-3-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200604084445.19205-1-kohada.t2@gmail.com>
-References: <20200604084445.19205-1-kohada.t2@gmail.com>
+        Thu, 4 Jun 2020 04:51:00 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200604085057epoutp02bb09ecf445e46a220be1d334af6a0a79~VSyM3Ruyx2523125231epoutp028
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jun 2020 08:50:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200604085057epoutp02bb09ecf445e46a220be1d334af6a0a79~VSyM3Ruyx2523125231epoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591260658;
+        bh=eiT4zE4N6qghyI855X8EhhmPspbo3UGb2HMr2ZZW5wo=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=unLw/TYYkAYPRzdoq2DI4zzo2Qv3GjnWE6W2VsLDS+2KVoGIa2kd3h3hL7rzylNFd
+         7eiQxTfLLd0mMmIV6zErIC2C/fRncN3IchzsL8mhWoQuVO1qRDA4HT1jCz84BBMw5P
+         rqY0wFlMwvPbNsBZsow4zkHqc3HDIg4aMfZTMQRo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200604085057epcas1p181942811ffecaa1d9a279d924f3259f3~VSyMf6_Wl3236232362epcas1p1R;
+        Thu,  4 Jun 2020 08:50:57 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 49czyS5RrDzMqYls; Thu,  4 Jun
+        2020 08:50:56 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E6.0B.18978.FE5B8DE5; Thu,  4 Jun 2020 17:50:55 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200604085055epcas1p13ad755de0025882cf5b02a5d692d1bf2~VSyKO218x3236232362epcas1p1M;
+        Thu,  4 Jun 2020 08:50:55 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200604085055epsmtrp21974bb76d2aecfaba2d600fb12313d92~VSyKOTBLK1455114551epsmtrp2k;
+        Thu,  4 Jun 2020 08:50:55 +0000 (GMT)
+X-AuditID: b6c32a35-5edff70000004a22-1a-5ed8b5ef36d6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D8.B2.08303.FE5B8DE5; Thu,  4 Jun 2020 17:50:55 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200604085054epsmtip16bd26357139f7c7bd9e1a34863f448de~VSyKFD-rn2388823888epsmtip1B;
+        Thu,  4 Jun 2020 08:50:54 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'hyeongseok.kim'" <hyeongseok@gmail.com>,
+        <namjae.jeon@samsung.com>
+Cc:     <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <1591246468-32426-1-git-send-email-hyeongseok@gmail.com>
+Subject: RE: [PATCH] exfat: fix range validation error in alloc and free
+ cluster
+Date:   Thu, 4 Jun 2020 17:50:54 +0900
+Message-ID: <3b5501d63a4d$4213b950$c63b2bf0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHxYN2oYYNEwgPUPKVHj0TzywX0XwKkTEp7qHy0/4A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7bCmvu77rTfiDD68ULD4O/ETk8WevSdZ
+        LH5Mr3dg9tg56y67R9+WVYwenzfJBTBH5dhkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoa
+        WlqYKynkJeam2iq5+AToumXmAO1RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BQY
+        GhToFSfmFpfmpesl5+daGRoYGJkCVSbkZLyZcpS9YCJXxbaPp9gbGHs4uhg5OSQETCSurZ3G
+        3sXIxSEksINRYv29jWwQzidGiWMTn7BAOJ8ZJa7u388O03Ll43RmiMQuoMTGB1D9LxklJn6Z
+        xQxSxSagK/Hkxk8wW0TAQ2Lrs/9Aozg4mAWUJVZ+CQYxOQVcJf7PNgOpEBYIkujc3wxWzSKg
+        InH0zW8wm1fAUuLTr/csELagxMmZT8BsZgF5ie1v5zBD3KMgsfvTUVaITVYSf/r7mSFqRCRm
+        d7aB3Skh8JJd4t6qc+wgeyUEXCSap3JC9ApLvDq+BeovKYnP7/ayQdj1ErtXnWKB6G1glDjy
+        aCELRMJYYn7LQmaIVzQl1u/ShwgrSuz8PZcRYi+fxLuvPawQq3glOtqEIEpUJL5/2MkCs+rK
+        j6tMExiVZiH5bBaSz2Yh+WAWwrIFjCyrGMVSC4pz01OLDQsMkeN6EyM4CWqZ7mCc+PaD3iFG
+        Jg7GQ4wSHMxKIrxWstfihHhTEiurUovy44tKc1KLDzGaAsN6IrOUaHI+MA3nlcQbmhoZGxtb
+        mJiZm5kaK4nzistciBMSSE8sSc1OTS1ILYLpY+LglGpgyjPMr/pt8YxjktR51i0HJuaYB3vK
+        mk3wl1iz8MopZ/Hepbsmp5y9eGByiorR46ebO858PbxixeqMkrcrFkt6bPTO7Jv12GTqO/s9
+        Ai+Fwp501F+fM73pnPg9lX3Mc+RY30YsVxZmVTQLnrqP65u8tGVXqPEV/kna4Q7qcXsbvd8n
+        2DRu1eAQTd0XwNq44fIJgbB9upPWhRZJi/Wwrlp7ktXOJX7j/LcOtn/Fe1TLBWyEW/8laf5/
+        t97+nq+Cc0MPU9GziAld536/U+76pRJin2ym2DBB1mHK5Jwqez5fh49735Zd0Vhy5dxGQa3W
+        7u5f+5VN7brsdKO3TjwvKPtji9qPrZ9P3ox99TdnQ2qEEktxRqKhFnNRcSIAowlyQAsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnO77rTfiDHrOMlv8nfiJyWLP3pMs
+        Fj+m1zswe+ycdZfdo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDLeTDnKXjCRq2Lbx1PsDYw9
+        HF2MnBwSAiYSVz5OZ+5i5OIQEtjBKHG5FcThAEpISRzcpwlhCkscPlwMUfKcUWJbw3oWkF42
+        AV2JJzd+MoPYIgJeEks7ToO1MgsoS6z8EgxRP41R4u/RJjaQOKeAq8T/2WYg5cICARI/T2xn
+        BbFZBFQkjr75DTaGV8BS4tOv9ywQtqDEyZlPWCBG6km0bWQECTMLyEtsfzuHGeJ6BYndn46y
+        QlxgJfGnv58ZokZEYnZnG/MERuFZSCbNQpg0C8mkWUg6FjCyrGKUTC0ozk3PLTYsMMpLLdcr
+        TswtLs1L10vOz93ECI4DLa0djHtWfdA7xMjEwXiIUYKDWUmE10r2WpwQb0piZVVqUX58UWlO
+        avEhRmkOFiVx3q+zFsYJCaQnlqRmp6YWpBbBZJk4OKUamKyyO1g/Hg2akX3jRPy5o8vqNUOD
+        s0q6VA3mveyrl5h8fdEa3s462Z1vmeJv/H270/NsjVXWz5l2Nyzefaly96tIvDm3JXBt9LPZ
+        Onsle7tPdMiw2e1YeGfl0n1Rl3+tufI/9Or1m1uCTi69+mN1OFdz/dXJy69smHrfojTCs3Sp
+        nUuf6pF/yo1nZ0feVFLPqgtu+30mv8Bh600zqU93i+1f/Xjh4sIt/YffhV3o27FXzubxHEbW
+        d22Paee+i7rmXSCguNPNYrbX4sjLFyatD0mpuNbB3ht4M2if/K7J7x7vbV+VVRDa2Hlr9e4F
+        fx2Zuf+tqa8JOHC34pV9/zm/9SsXO2Xzupw4XdawztZS+oYSS3FGoqEWc1FxIgDNsMdG8gIA
+        AA==
+X-CMS-MailID: 20200604085055epcas1p13ad755de0025882cf5b02a5d692d1bf2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200604045437epcas1p17180ef9b61d8ff1d4877c49755e766a2
+References: <CGME20200604045437epcas1p17180ef9b61d8ff1d4877c49755e766a2@epcas1p1.samsung.com>
+        <1591246468-32426-1-git-send-email-hyeongseok@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Set EXFAT_SB_DIRTY flag in exfat_put_super().
+> There is check error in range condition that can never be entered even
+> with invalid input.
+> Replace incorrent checking code with already existing valid checker.
+> 
+> Signed-off-by: hyeongseok.kim <hyeongseok@gmail.com>
 
-In some cases, can't clear VOL_DIRTY with 'sync'.
-ex:
+Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
-return error without setting EXFAT_SB_DIRTY.
-If performe 'sync' in this state, VOL_DIRTY will not be cleared.
+Looks good. Thank you!
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
----
- fs/exfat/balloc.c   |  4 ++--
- fs/exfat/dir.c      | 18 ++++++++----------
- fs/exfat/exfat_fs.h |  2 +-
- fs/exfat/fatent.c   |  6 +-----
- fs/exfat/misc.c     |  3 +--
- fs/exfat/namei.c    | 12 ++++++------
- fs/exfat/super.c    |  3 +++
- 7 files changed, 22 insertions(+), 26 deletions(-)
+> ---
+>  fs/exfat/fatent.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c index 267e5e0..4e5c5c9
+> 100644
+> --- a/fs/exfat/fatent.c
+> +++ b/fs/exfat/fatent.c
+> @@ -169,7 +169,7 @@ int exfat_free_cluster(struct inode *inode, struct
+> exfat_chain *p_chain)
+>  		return 0;
+> 
+>  	/* check cluster validation */
+> -	if (p_chain->dir < 2 && p_chain->dir >= sbi->num_clusters) {
+> +	if (!is_valid_cluster(sbi, p_chain->dir)) {
+>  		exfat_err(sb, "invalid start cluster (%u)", p_chain->dir);
+>  		return -EIO;
+>  	}
+> @@ -346,7 +346,7 @@ int exfat_alloc_cluster(struct inode *inode, unsigned
+> int num_alloc,
+>  	}
+> 
+>  	/* check cluster validation */
+> -	if (hint_clu < EXFAT_FIRST_CLUSTER && hint_clu >= sbi->num_clusters)
+> {
+> +	if (!is_valid_cluster(sbi, hint_clu)) {
+>  		exfat_err(sb, "hint_cluster is invalid (%u)",
+>  			hint_clu);
+>  		hint_clu = EXFAT_FIRST_CLUSTER;
+> --
+> 2.7.4
 
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index 4055eb00ea9b..a987919686c0 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -158,7 +158,7 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu)
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
- 
- 	set_bit_le(b, sbi->vol_amap[i]->b_data);
--	exfat_update_bh(sb, sbi->vol_amap[i], IS_DIRSYNC(inode));
-+	exfat_update_bh(sbi->vol_amap[i], IS_DIRSYNC(inode));
- 	return 0;
- }
- 
-@@ -180,7 +180,7 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu)
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
- 
- 	clear_bit_le(b, sbi->vol_amap[i]->b_data);
--	exfat_update_bh(sb, sbi->vol_amap[i], IS_DIRSYNC(inode));
-+	exfat_update_bh(sbi->vol_amap[i], IS_DIRSYNC(inode));
- 
- 	if (opts->discard) {
- 		int ret_discard;
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 3eb8386fb5f2..96c9a817d928 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -468,7 +468,7 @@ int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
- 			&ep->dentry.file.access_date,
- 			NULL);
- 
--	exfat_update_bh(sb, bh, IS_DIRSYNC(inode));
-+	exfat_update_bh(bh, IS_DIRSYNC(inode));
- 	brelse(bh);
- 
- 	ep = exfat_get_dentry(sb, p_dir, entry + 1, &bh, &sector);
-@@ -478,7 +478,7 @@ int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
- 	exfat_init_stream_entry(ep,
- 		(type == TYPE_FILE) ? ALLOC_FAT_CHAIN : ALLOC_NO_FAT_CHAIN,
- 		start_clu, size);
--	exfat_update_bh(sb, bh, IS_DIRSYNC(inode));
-+	exfat_update_bh(bh, IS_DIRSYNC(inode));
- 	brelse(bh);
- 
- 	return 0;
-@@ -514,7 +514,7 @@ int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
- 	}
- 
- 	fep->dentry.file.checksum = cpu_to_le16(chksum);
--	exfat_update_bh(sb, fbh, IS_DIRSYNC(inode));
-+	exfat_update_bh(fbh, IS_DIRSYNC(inode));
- release_fbh:
- 	brelse(fbh);
- 	return ret;
-@@ -536,7 +536,7 @@ int exfat_init_ext_entry(struct inode *inode, struct exfat_chain *p_dir,
- 		return -EIO;
- 
- 	ep->dentry.file.num_ext = (unsigned char)(num_entries - 1);
--	exfat_update_bh(sb, bh, sync);
-+	exfat_update_bh(bh, sync);
- 	brelse(bh);
- 
- 	ep = exfat_get_dentry(sb, p_dir, entry + 1, &bh, &sector);
-@@ -545,7 +545,7 @@ int exfat_init_ext_entry(struct inode *inode, struct exfat_chain *p_dir,
- 
- 	ep->dentry.stream.name_len = p_uniname->name_len;
- 	ep->dentry.stream.name_hash = cpu_to_le16(p_uniname->name_hash);
--	exfat_update_bh(sb, bh, sync);
-+	exfat_update_bh(bh, sync);
- 	brelse(bh);
- 
- 	for (i = EXFAT_FIRST_CLUSTER; i < num_entries; i++) {
-@@ -554,7 +554,7 @@ int exfat_init_ext_entry(struct inode *inode, struct exfat_chain *p_dir,
- 			return -EIO;
- 
- 		exfat_init_name_entry(ep, uniname);
--		exfat_update_bh(sb, bh, sync);
-+		exfat_update_bh(bh, sync);
- 		brelse(bh);
- 		uniname += EXFAT_FILE_NAME_LEN;
- 	}
-@@ -578,7 +578,7 @@ int exfat_remove_entries(struct inode *inode, struct exfat_chain *p_dir,
- 			return -EIO;
- 
- 		exfat_set_entry_type(ep, TYPE_DELETED);
--		exfat_update_bh(sb, bh, IS_DIRSYNC(inode));
-+		exfat_update_bh(bh, IS_DIRSYNC(inode));
- 		brelse(bh);
- 	}
- 
-@@ -606,10 +606,8 @@ int exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync)
- {
- 	int i, err = 0;
- 
--	if (es->modified) {
--		set_bit(EXFAT_SB_DIRTY, &EXFAT_SB(es->sb)->s_state);
-+	if (es->modified)
- 		err = exfat_update_bhs(es->bh, es->num_bh, sync);
--	}
- 
- 	for (i = 0; i < es->num_bh; i++)
- 		err ? bforget(es->bh[i]):brelse(es->bh[i]);
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f4fa0e833486..0e094d186612 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -514,7 +514,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- 		u8 *tz, __le16 *time, __le16 *date, u8 *time_cs);
- u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
- u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
--void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
-+void exfat_update_bh(struct buffer_head *bh, int sync);
- int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync);
- void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
- 		unsigned int size, unsigned char flags);
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 5d11bc2f1b68..f8171183b4c1 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -75,7 +75,7 @@ int exfat_ent_set(struct super_block *sb, unsigned int loc,
- 
- 	fat_entry = (__le32 *)&(bh->b_data[off]);
- 	*fat_entry = cpu_to_le32(content);
--	exfat_update_bh(sb, bh, sb->s_flags & SB_SYNCHRONOUS);
-+	exfat_update_bh(bh, sb->s_flags & SB_SYNCHRONOUS);
- 	exfat_mirror_bh(sb, sec, bh);
- 	brelse(bh);
- 	return 0;
-@@ -174,7 +174,6 @@ int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain)
- 		return -EIO;
- 	}
- 
--	set_bit(EXFAT_SB_DIRTY, &sbi->s_state);
- 	clu = p_chain->dir;
- 
- 	if (p_chain->flags == ALLOC_NO_FAT_CHAIN) {
-@@ -261,7 +260,6 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
- 			memset(bhs[n]->b_data, 0, sb->s_blocksize);
- 		}
- 
--		set_bit(EXFAT_SB_DIRTY, &sbi->s_state);
- 		err = exfat_update_bhs(bhs, n, IS_DIRSYNC(dir));
- 		if (err)
- 			goto release_bhs;
-@@ -326,8 +324,6 @@ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
- 		}
- 	}
- 
--	set_bit(EXFAT_SB_DIRTY, &sbi->s_state);
--
- 	p_chain->dir = EXFAT_EOF_CLUSTER;
- 
- 	while ((new_clu = exfat_find_free_bitmap(sb, hint_clu)) !=
-diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-index dc34968e99d3..564718747fb2 100644
---- a/fs/exfat/misc.c
-+++ b/fs/exfat/misc.c
-@@ -163,9 +163,8 @@ u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type)
- 	return chksum;
- }
- 
--void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync)
-+void exfat_update_bh(struct buffer_head *bh, int sync)
- {
--	set_bit(EXFAT_SB_DIRTY, &EXFAT_SB(sb)->s_state);
- 	set_buffer_uptodate(bh);
- 	mark_buffer_dirty(bh);
- 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 5b0f35329d63..e36c9fc4a5d6 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -387,7 +387,7 @@ static int exfat_find_empty_entry(struct inode *inode,
- 			ep->dentry.stream.valid_size = cpu_to_le64(size);
- 			ep->dentry.stream.size = ep->dentry.stream.valid_size;
- 			ep->dentry.stream.flags = p_dir->flags;
--			exfat_update_bh(sb, bh, IS_DIRSYNC(inode));
-+			exfat_update_bh(bh, IS_DIRSYNC(inode));
- 			brelse(bh);
- 			if (exfat_update_dir_chksum(inode, &(ei->dir),
- 			    ei->entry))
-@@ -1071,7 +1071,7 @@ static int exfat_rename_file(struct inode *inode, struct exfat_chain *p_dir,
- 			epnew->dentry.file.attr |= cpu_to_le16(ATTR_ARCHIVE);
- 			ei->attr |= ATTR_ARCHIVE;
- 		}
--		exfat_update_bh(sb, new_bh, sync);
-+		exfat_update_bh(new_bh, sync);
- 		brelse(old_bh);
- 		brelse(new_bh);
- 
-@@ -1083,7 +1083,7 @@ static int exfat_rename_file(struct inode *inode, struct exfat_chain *p_dir,
- 			return -EIO;
- 
- 		memcpy(epnew, epold, DENTRY_SIZE);
--		exfat_update_bh(sb, new_bh, sync);
-+		exfat_update_bh(new_bh, sync);
- 		brelse(old_bh);
- 		brelse(new_bh);
- 
-@@ -1100,7 +1100,7 @@ static int exfat_rename_file(struct inode *inode, struct exfat_chain *p_dir,
- 			epold->dentry.file.attr |= cpu_to_le16(ATTR_ARCHIVE);
- 			ei->attr |= ATTR_ARCHIVE;
- 		}
--		exfat_update_bh(sb, old_bh, sync);
-+		exfat_update_bh(old_bh, sync);
- 		brelse(old_bh);
- 		ret = exfat_init_ext_entry(inode, p_dir, oldentry,
- 			num_new_entries, p_uniname);
-@@ -1155,7 +1155,7 @@ static int exfat_move_file(struct inode *inode, struct exfat_chain *p_olddir,
- 		epnew->dentry.file.attr |= cpu_to_le16(ATTR_ARCHIVE);
- 		ei->attr |= ATTR_ARCHIVE;
- 	}
--	exfat_update_bh(sb, new_bh, IS_DIRSYNC(inode));
-+	exfat_update_bh(new_bh, IS_DIRSYNC(inode));
- 	brelse(mov_bh);
- 	brelse(new_bh);
- 
-@@ -1167,7 +1167,7 @@ static int exfat_move_file(struct inode *inode, struct exfat_chain *p_olddir,
- 		return -EIO;
- 
- 	memcpy(epnew, epmov, DENTRY_SIZE);
--	exfat_update_bh(sb, new_bh, IS_DIRSYNC(inode));
-+	exfat_update_bh(new_bh, IS_DIRSYNC(inode));
- 	brelse(mov_bh);
- 	brelse(new_bh);
- 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index e650e65536f8..199a1e78f9e5 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -104,6 +104,9 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
- 	bool sync;
- 
-+	if (new_flag == VOL_DIRTY)
-+		set_bit(EXFAT_SB_DIRTY, &sbi->s_state);
-+
- 	/* flags are not changed */
- 	if (sbi->vol_flag == new_flag)
- 		return 0;
--- 
-2.25.1
 
