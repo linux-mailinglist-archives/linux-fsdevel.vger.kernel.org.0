@@ -2,182 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD481EDD9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 09:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F671EDE9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 09:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgFDHGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 03:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgFDHGP (ORCPT
+        id S1727990AbgFDHiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 03:38:03 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:12570 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726422AbgFDHiD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 03:06:15 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CE2C05BD1E;
-        Thu,  4 Jun 2020 00:06:14 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id n2so1825404pld.13;
-        Thu, 04 Jun 2020 00:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hRfAH9I7r5GGiDIsk2j1pc8kZEvNX6DxuTqkDtLJHUQ=;
-        b=RB3wk3qwfN1sWMD6TrolGCMoPwl22jjKGDQQ8SYmF9AEIAZ6aozPmg3q41If0I1Gy1
-         BeVBuNLIhYprnQhh1aV6miwBIzwbMylPgVna8qUReXS5pe4mRVUR4qXwxcsFkJDkmSYS
-         /rArynJDUnWgP+cjvDKN7z+O3Jbm3CgmH95UuxWmBoyeZb5nFAInQBzuEOyCx7MQqMUK
-         Wa0JOki9L4xZmZwxofC/cqOuGBa9yYP9OY+a2oZssucTtgDqX1qokCKNjXXwPvC7uECS
-         sYYak4yV/R4D9DeMpsbjXS1x2RtCD4oDqp7zlTk6THsglD2QdOoEuFu420m+09U/xCR2
-         qmgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hRfAH9I7r5GGiDIsk2j1pc8kZEvNX6DxuTqkDtLJHUQ=;
-        b=c0Z56ZbTb/srdXyReToXwZE0CTKtA7zW9O2yMd4FdIWTYr6+nhfW1vzTGhnFS/9tvK
-         pcfhdFVLQzSi7MEDvElu2Df+hAdVkfxvpZh50dzSqtm/V3lExfBRNgFuLjjmQl9GZLGM
-         NPMkko/t4opkG6YYVVi7MLnw55OmmImk+5VG2SiFZUuc6OckpXWvOAxl9LIdIx8sAwml
-         0jvKMm30Lotc0XzuQVv1jhF/58Skdt1heuSQNNzNYtg7U/hz8IR3tRR7pEr/6nyZ02+G
-         d1hvIc79qDjPw2ci07E/hli3YccWX0rEcJHSKHMIEBFebNiy5LfMPvRGeJ8HC1lBZCMs
-         40nA==
-X-Gm-Message-State: AOAM5333q2sW3cLjMa/S1RdkblsMLqe77EDowb7LqmIRwCe1+21X2kYe
-        2H/sfMJn6wbVGfyKsDRk5to=
-X-Google-Smtp-Source: ABdhPJzdQKyOWJFRktAaAMz26KtwsYqahRCROmSHe/mzPExXA1Sfdu5zuWZM+qXSxRIBtIUM/mJgSQ==
-X-Received: by 2002:a17:90a:22ad:: with SMTP id s42mr4150574pjc.200.1591254374368;
-        Thu, 04 Jun 2020 00:06:14 -0700 (PDT)
-Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id fv7sm3350325pjb.41.2020.06.04.00.06.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jun 2020 00:06:13 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     darrick.wong@oracle.com, david@fromorbit.com, hch@infradead.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2] iomap: avoid deadlock if memory reclaim is triggered in writepage path
-Date:   Thu,  4 Jun 2020 03:05:47 -0400
-Message-Id: <1591254347-15912-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 4 Jun 2020 03:38:03 -0400
+X-IronPort-AV: E=Sophos;i="5.73,471,1583164800"; 
+   d="scan'208";a="93814171"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 04 Jun 2020 15:37:58 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 4E00950A9975;
+        Thu,  4 Jun 2020 15:37:58 +0800 (CST)
+Received: from [10.167.225.141] (10.167.225.141) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 4 Jun 2020 15:37:58 +0800
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogUmU6IFtSRkMgUEFUQ0ggMC84XSBkYXg6IEFkZCBh?=
+ =?UTF-8?Q?_dax-rmap_tree_to_support_reflink?=
+To:     Dave Chinner <david@fromorbit.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "Qi, Fuli" <qi.fuli@fujitsu.com>,
+        "Gotou, Yasunori" <y-goto@fujitsu.com>
+References: <20200427084750.136031-1-ruansy.fnst@cn.fujitsu.com>
+ <20200427122836.GD29705@bombadil.infradead.org>
+ <em33c55fa5-15ca-4c46-8c27-6b0300fa4e51@g08fnstd180058>
+ <20200428064318.GG2040@dread.disaster.area>
+From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <153e13e6-8685-fb0d-6bd3-bb553c06bf51@cn.fujitsu.com>
+Date:   Thu, 4 Jun 2020 15:37:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200428064318.GG2040@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) To
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
+X-yoursite-MailScanner-ID: 4E00950A9975.AB7F6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Recently there is a XFS deadlock on our server with an old kernel.
-This deadlock is caused by allocating memory in xfs_map_blocks() while
-doing writeback on behalf of memroy reclaim. Although this deadlock happens
-on an old kernel, I think it could happen on the upstream as well. This
-issue only happens once and can't be reproduced, so I haven't tried to
-reproduce it on upsteam kernel.
 
-Bellow is the call trace of this deadlock.
-[480594.790087] INFO: task redis-server:16212 blocked for more than 120 seconds.
-[480594.790087] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[480594.790088] redis-server    D ffffffff8168bd60     0 16212  14347 0x00000004
-[480594.790090]  ffff880da128f070 0000000000000082 ffff880f94a2eeb0 ffff880da128ffd8
-[480594.790092]  ffff880da128ffd8 ffff880da128ffd8 ffff880f94a2eeb0 ffff88103f9d6c40
-[480594.790094]  0000000000000000 7fffffffffffffff ffff88207ffc0ee8 ffffffff8168bd60
-[480594.790096] Call Trace:
-[480594.790101]  [<ffffffff8168dce9>] schedule+0x29/0x70
-[480594.790103]  [<ffffffff8168b749>] schedule_timeout+0x239/0x2c0
-[480594.790111]  [<ffffffff8168d28e>] io_schedule_timeout+0xae/0x130
-[480594.790114]  [<ffffffff8168d328>] io_schedule+0x18/0x20
-[480594.790116]  [<ffffffff8168bd71>] bit_wait_io+0x11/0x50
-[480594.790118]  [<ffffffff8168b895>] __wait_on_bit+0x65/0x90
-[480594.790121]  [<ffffffff811814e1>] wait_on_page_bit+0x81/0xa0
-[480594.790125]  [<ffffffff81196ad2>] shrink_page_list+0x6d2/0xaf0
-[480594.790130]  [<ffffffff811975a3>] shrink_inactive_list+0x223/0x710
-[480594.790135]  [<ffffffff81198225>] shrink_lruvec+0x3b5/0x810
-[480594.790139]  [<ffffffff8119873a>] shrink_zone+0xba/0x1e0
-[480594.790141]  [<ffffffff81198c20>] do_try_to_free_pages+0x100/0x510
-[480594.790143]  [<ffffffff8119928d>] try_to_free_mem_cgroup_pages+0xdd/0x170
-[480594.790145]  [<ffffffff811f32de>] mem_cgroup_reclaim+0x4e/0x120
-[480594.790147]  [<ffffffff811f37cc>] __mem_cgroup_try_charge+0x41c/0x670
-[480594.790153]  [<ffffffff811f5cb6>] __memcg_kmem_newpage_charge+0xf6/0x180
-[480594.790157]  [<ffffffff8118c72d>] __alloc_pages_nodemask+0x22d/0x420
-[480594.790162]  [<ffffffff811d0c7a>] alloc_pages_current+0xaa/0x170
-[480594.790165]  [<ffffffff811db8fc>] new_slab+0x30c/0x320
-[480594.790168]  [<ffffffff811dd17c>] ___slab_alloc+0x3ac/0x4f0
-[480594.790204]  [<ffffffff81685656>] __slab_alloc+0x40/0x5c
-[480594.790206]  [<ffffffff811dfc43>] kmem_cache_alloc+0x193/0x1e0
-[480594.790233]  [<ffffffffa04fab67>] kmem_zone_alloc+0x97/0x130 [xfs]
-[480594.790247]  [<ffffffffa04f90ba>] _xfs_trans_alloc+0x3a/0xa0 [xfs]
-[480594.790261]  [<ffffffffa04f915c>] xfs_trans_alloc+0x3c/0x50 [xfs]
-[480594.790276]  [<ffffffffa04e958b>] xfs_iomap_write_allocate+0x1cb/0x390 [xfs]
-[480594.790299]  [<ffffffffa04d3616>] xfs_map_blocks+0x1a6/0x210 [xfs]
-[480594.790312]  [<ffffffffa04d416b>] xfs_do_writepage+0x17b/0x550 [xfs]
-[480594.790314]  [<ffffffff8118d881>] write_cache_pages+0x251/0x4d0 [xfs]
-[480594.790338]  [<ffffffffa04d3e05>] xfs_vm_writepages+0xc5/0xe0 [xfs]
-[480594.790341]  [<ffffffff8118ebfe>] do_writepages+0x1e/0x40
-[480594.790343]  [<ffffffff811837b5>] __filemap_fdatawrite_range+0x65/0x80
-[480594.790346]  [<ffffffff81183901>] filemap_write_and_wait_range+0x41/0x90
-[480594.790360]  [<ffffffffa04df2c6>] xfs_file_fsync+0x66/0x1e0 [xfs]
-[480594.790363]  [<ffffffff81231cf5>] do_fsync+0x65/0xa0
-[480594.790365]  [<ffffffff81231fe3>] SyS_fdatasync+0x13/0x20
-[480594.790367]  [<ffffffff81698d09>] system_call_fastpath+0x16/0x1b
 
-Note that xfs_iomap_write_allocate() is replaced by xfs_convert_blocks() in
-commit 4ad765edb02a ("xfs: move xfs_iomap_write_allocate to xfs_aops.c")
-and write_cache_pages() is replaced by iomap_writepages() in
-commit 598ecfbaa742 ("iomap: lift the xfs writeback code to iomap").
-So for upsteam, the call trace should be,
-xfs_vm_writepages
-  -> iomap_writepages
-     -> write_cache_pages
-        -> iomap_do_writepage
-           -> xfs_map_blocks
-              -> xfs_convert_blocks
-                 -> xfs_bmapi_convert_delalloc
-                    -> xfs_trans_alloc //It should alloc page with GFP_NOFS
+On 2020/4/28 下午2:43, Dave Chinner wrote:
+> On Tue, Apr 28, 2020 at 06:09:47AM +0000, Ruan, Shiyang wrote:
+>>
+>> 在 2020/4/27 20:28:36, "Matthew Wilcox" <willy@infradead.org> 写道:
+>>
+>>> On Mon, Apr 27, 2020 at 04:47:42PM +0800, Shiyang Ruan wrote:
+>>>>   This patchset is a try to resolve the shared 'page cache' problem for
+>>>>   fsdax.
+>>>>
+>>>>   In order to track multiple mappings and indexes on one page, I
+>>>>   introduced a dax-rmap rb-tree to manage the relationship.  A dax entry
+>>>>   will be associated more than once if is shared.  At the second time we
+>>>>   associate this entry, we create this rb-tree and store its root in
+>>>>   page->private(not used in fsdax).  Insert (->mapping, ->index) when
+>>>>   dax_associate_entry() and delete it when dax_disassociate_entry().
+>>>
+>>> Do we really want to track all of this on a per-page basis?  I would
+>>> have thought a per-extent basis was more useful.  Essentially, create
+>>> a new address_space for each shared extent.  Per page just seems like
+>>> a huge overhead.
+>>>
+>> Per-extent tracking is a nice idea for me.  I haven't thought of it
+>> yet...
+>>
+>> But the extent info is maintained by filesystem.  I think we need a way
+>> to obtain this info from FS when associating a page.  May be a bit
+>> complicated.  Let me think about it...
+> 
+> That's why I want the -user of this association- to do a filesystem
+> callout instead of keeping it's own naive tracking infrastructure.
+> The filesystem can do an efficient, on-demand reverse mapping lookup
+> from it's own extent tracking infrastructure, and there's zero
+> runtime overhead when there are no errors present.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Hi Dave,
 
----
-v1 - >v2:
-- retile the subject from "xfs: avoid deadlock when tigger memory reclam in xfs_map_blocks()"
-- set GFP_NOFS in iomap_do_writepage(), per Dave.
----
- fs/iomap/buffered-io.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+I ran into some difficulties when trying to implement the per-extent 
+rmap tracking.  So, I re-read your comments and found that I was 
+misunderstanding what you described here.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index a1ed762..f5176e3 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -17,6 +17,7 @@
- #include <linux/bio.h>
- #include <linux/sched/signal.h>
- #include <linux/migrate.h>
-+#include <linux/sched/mm.h>
- #include "trace.h"
- 
- #include "../internal.h"
-@@ -1478,9 +1479,11 @@ static void iomap_writepage_end_bio(struct bio *bio)
- {
- 	struct iomap_writepage_ctx *wpc = data;
- 	struct inode *inode = page->mapping->host;
-+	unsigned int nofs_flag;
- 	pgoff_t end_index;
- 	u64 end_offset;
- 	loff_t offset;
-+	int ret;
- 
- 	trace_iomap_writepage(inode, page_offset(page), PAGE_SIZE);
- 
-@@ -1571,7 +1574,16 @@ static void iomap_writepage_end_bio(struct bio *bio)
- 		end_offset = offset;
- 	}
- 
--	return iomap_writepage_map(wpc, wbc, inode, page, end_offset);
-+	/*
-+	 * We can allocate memory here while doing writeback on behalf of
-+	 * memory reclaim.  To avoid memory allocation deadlocks set the
-+	 * task-wide nofs context for the following operations.
-+	 */
-+	nofs_flag = memalloc_nofs_save();
-+	ret = iomap_writepage_map(wpc, wbc, inode, page, end_offset);
-+	memalloc_nofs_restore(nofs_flag);
-+
-+	return ret;
- 
- redirty:
- 	redirty_page_for_writepage(wbc, page);
--- 
-1.8.3.1
+I think what you mean is: we don't need the in-memory dax-rmap tracking 
+now.  Just ask the FS for the owner's information that associate with 
+one page when memory-failure.  So, the per-page (even per-extent) 
+dax-rmap is needless in this case.  Is this right?
+
+Based on this, we only need to store the extent information of a fsdax 
+page in its ->mapping (by searching from FS).  Then obtain the owners of 
+this page (also by searching from FS) when memory-failure or other rmap 
+case occurs.
+
+So, a fsdax page is no longer associated with a specific file, but with 
+a FS(or the pmem device).  I think it's easier to understand and implement.
+
+
+--
+Thanks,
+Ruan Shiyang.
+> 
+> At the moment, this "dax association" is used to "report" a storage
+> media error directly to userspace. I say "report" because what it
+> does is kill userspace processes dead. The storage media error
+> actually needs to be reported to the owner of the storage media,
+> which in the case of FS-DAX is the filesytem.
+> 
+> That way the filesystem can then look up all the owners of that bad
+> media range (i.e. the filesystem block it corresponds to) and take
+> appropriate action. e.g.
+> 
+> - if it falls in filesytem metadata, shutdown the filesystem
+> - if it falls in user data, call the "kill userspace dead" routines
+>    for each mapping/index tuple the filesystem finds for the given
+>    LBA address that the media error occurred.
+> 
+> Right now if the media error is in filesystem metadata, the
+> filesystem isn't even told about it. The filesystem can't even shut
+> down - the error is just dropped on the floor and it won't be until
+> the filesystem next tries to reference that metadata that we notice
+> there is an issue.
+> 
+> Cheers,
+> 
+> Dave.
+> 
+
 
