@@ -2,133 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E081EED54
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jun 2020 23:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB82A1EEDA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 00:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgFDVcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 17:32:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52050 "EHLO
+        id S1726332AbgFDWGn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 4 Jun 2020 18:06:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52495 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbgFDVcc (ORCPT
+        with ESMTP id S1726146AbgFDWGn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 17:32:32 -0400
+        Thu, 4 Jun 2020 18:06:43 -0400
 Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jgxTJ-00081i-4f; Thu, 04 Jun 2020 21:32:21 +0000
-Date:   Thu, 4 Jun 2020 23:32:20 +0200
+        id 1jgy0U-0001Oq-MK; Thu, 04 Jun 2020 22:06:38 +0000
+Date:   Fri, 5 Jun 2020 00:06:37 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
+To:     Linux Containers <containers@lists.linux-foundation.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexey Gladkov <legion@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>
-Subject: Re: [PATCH 0/2] proc: use subset option to hide some top-level
- procfs entries
-Message-ID: <20200604213220.grcaldlxz54jyd3o@wittgenstein>
-References: <20200604200413.587896-1-gladkov.alexey@gmail.com>
- <87ftbah8q2.fsf@x220.int.ebiederm.org>
+        criu@openvz.org, lxc-devel@lists.linuxcontainers.org,
+        cgroups@vger.kernel.org
+Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Virtual Linux Plumbers 2020: Containers and Checkpoint/Restore
+ microconference CFP Open until 20 July
+Message-ID: <20200604220637.d4ccmcsswi2ppniw@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87ftbah8q2.fsf@x220.int.ebiederm.org>
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 03:33:25PM -0500, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > Greetings!
-> >
-> > Preface
-> > -------
-> > This patch set can be applied over:
-> >
-> > git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git d35bec8a5788
-> 
-> I am not going to seriously look at this for merging until after the
-> merge window closes. 
-> 
-> Have you thought about the possibility of relaxing the permission checks
-> to mount proc such that we don't need to verify there is an existing
-> mount of proc?  With just the subset pids I think this is feasible.  It
-> might not be worth it at this point, but it is definitely worth asking
-> the question.  As one of the benefits early propopents of the idea of a
-> subset of proc touted was that they would not be as restricted as they
-> are with today's proc.
-> 
-> I ask because this has a bearing on the other options you are playing
-> with.
-> 
-> Do we want to find a way to have the benefit of relaxed permission
-> checks while still including a few more files.
-> 
-> > Overview
-> > --------
-> > Directories and files can be created and deleted by dynamically loaded modules.
-> > Not all of these files are virtualized and safe inside the container.
-> >
-> > However, subset=pid is not enough because many containers wants to have
-> > /proc/meminfo, /proc/cpuinfo, etc. We need a way to limit the visibility of
-> > files per procfs mountpoint.
-> 
-> Is it desirable to have meminfo and cpuinfo as they are today or do
-> people want them to reflect the ``container'' context.   So that
-> applications like the JVM don't allocation too many cpus or don't try
-> and consume too much memory, or run on nodes that cgroups current make
-> unavailable.
-> 
-> Are there any users or planned users of this functionality yet?
-> 
-> I am concerned that you might be adding functionality that no one will
-> ever use that will just add code to the kernel that no one cares about,
-> that will then accumulate bugs.  Having had to work through a few of
-> those cases to make each mount of proc have it's own super block I am
-> not a great fan of adding another one.
-> 
-> If the runc, lxc and other container runtime folks can productively use
-> such and option to do useful things and they are sensible things to do I
-> don't have any fundamental objection.  But I do want to be certain this
-> is a feature that is going to be used.
+Hey everyone,
 
-I'm not sure Alexey is introducing virtualized meminfo and cpuinfo (but
-I haven't had time to look at this patchset).
-In any case, we are currently virtualizing:
-/proc/cpuinfo
-/proc/diskstats
-/proc/loadavg
-/proc/meminfo
-/proc/stat
-/proc/swaps
-/proc/uptime
-for each container with a tiny in-userspace filesystem LXCFS
-( https://github.com/lxc/lxcfs )
-and have been doing that for years.
-Having meminfo and cpuinfo virtualized in procfs was something we have
-been wanting for a long time and there have been patches by other people
-(from Siteground, I believe) to achieve this a few years back but were
-disregarded.
+We're happy to announce that the Container and Checkpoint/Restore
+microconference (MC) has been accepted as part of Linux Plumber's again!
+The Containers and Checkpoint/Restore MC at Linux Plumbers is the opportunity
+for kernel developers, runtime maintainers, and generally everyone working on
+containers and related technologies to talk about what they are up to and agree
+on the next major changes to kernel and userspace.
 
-I think meminfo and cpuinfo would already be great. And if we're
-virtualizing cpuinfo we also need to virtualize the cpu bits exposed in
-/proc/stat. It would also be great to virtualize /proc/uptime. Right now
-we're achieving this essentially by substracting the time the init
-process of the pid namespace has started since system boot time, minus
-the time when the system started to get the actual reaper age (It's a
-bit more involved but that's the gist.).
+As we have already done the last years, the micro-conference also covers topic
+of the Checkpoint-Restore micro-conference.
 
-This is all on the topic list for this year's virtual container's
-microconference at Plumber's and I would suggest we try to discuss the
-various requirements for something like this there. (I'm about to send
-the CFP out.)
+Please note that LPC 2020 was originally set to be held in Halifax, Nova
+Scotia, Canada but has been moved to a virtual event in light of recent events.
+Please see our organizing comittee's blog on the Plumber's website [1]
+for more information.
 
-Christian
+We expect to time limit presentations/demos to 15 minutes including questions.
+More open ended discussion topics will get up to 30 minutes allocated.
+
+In the spirit of a Plumber's microconference we especially appreciate topics
+pitching new ideas and features people have been thinking about. This is also
+the time to talk about your favorite kernel- or userspace problems. If you have
+a proposal how to solve them or if you just want to gather input and ideas from
+other developers this is the right place.
+
+Here are some ideas for topics:
+
+System call filtering and interception
+Hardware enforced container isolation
+New seccomp features
+New cgroup features
+Handling cgroup v1 on cgroup v2 only hosts and vica versa
+Performance improvement for containers (following Spectre/Meltdown mitigation)
+Time namespacing
+CGroupV2 developments
+LSM, IMA, EVM, keyrings inside containers
+UID shifting filesystem (shiftfs)
+New mount API
+New pidfd API
+New clone3 syscall
+CRIU integration with container engines and orchestration frameworks
+(In)stability of less commonly used kernel ABIs
+Checkpoint/Restore performance improvements
+Improving the state of userfaultfd and its adoption in container runtimes
+Speeding up container live migration
+Extending and virtualizing procfs
+Restricting path resolution
+Android containers and containers on Android
+Container Auditing and Monitoring
+Cgroups and Containers with Real-Time Scheduling
+
+Some of those are ideas in search of an acceptable solution, some are problems
+likely to affect all container runtimes some are coverage of very recent
+kernel work and how that can be used by userspace, and some are proposed kernel
+patches that need in-person discussion. This list is not meant to be
+exhaustive. If you have other ideas or work to discuss, please apply! Keep in
+mind both kernel- and userspace topics are acceptable!
+
+Please make your proposals on the Linux Plumber's website selecting the
+Containers and Checkpoint/Restore MC as the Track you're submitting at:
+
+https://linuxplumbersconf.org/event/7/abstracts/
+
+We’ll accept proposals for this micro-conference until the 20 of July 2020.
+
+This year’s edition of the micro-conference is organized and run by:
+
+Christian Brauner (Canonical Ltd.)
+Stéphane Graber (Canonical Ltd.)
+Mike Rapoport (IBM)
+
+[1]: https://www.linuxplumbersconf.org/blog/2020/linux-plumbers-conference-2020-goes-virtual/
+
