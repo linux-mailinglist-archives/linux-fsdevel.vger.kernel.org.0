@@ -2,99 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBC21F02E6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 00:30:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2791F02EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 00:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbgFEWas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 18:30:48 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60427 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728157AbgFEWar (ORCPT
+        id S1728275AbgFEWdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 18:33:23 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53539 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbgFEWdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 18:30:47 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8DEA85C01DF;
-        Fri,  5 Jun 2020 18:30:46 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 05 Jun 2020 18:30:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=JQ0T9QXE+j7q+0Zzk3VcIyBO3AA
-        dNqka5dcc5FHLBIU=; b=IptiNzzTDPqny+GbPDBRgd/1jA9JZWGKkwYtx5wDGF6
-        n6URXZXMO+AwI9yCCdg1BAb0Fm9RP2XMt6Re0Ang4XKlX5t/OW3u74KyEhvAx1A1
-        hVRJ8Oct8yUFAl8ikcZrSmmdIKRDbw056NyLa3seSIlS+cx7SJzLt9orUweLN8Ut
-        +RH/wHZtS2MdEXkrF+4R184RxIaxICyc3HtgB8ceOUeWljsbdiJycOUd5Ubqluyq
-        ODqkYEDhuxDMjDOW86/U2TM0dXFKOkFkMmshJiHcH39Th8PHgtaPtmKEpp+XxI2k
-        nvRre4SkyYYaD68T4XxARuy4PMEEqvVz8p2BG1VSgCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=JQ0T9Q
-        XE+j7q+0Zzk3VcIyBO3AAdNqka5dcc5FHLBIU=; b=a8TzSgmfGjfQh4dnwzYtGL
-        ULR/mfNggLyqYomsibxWX7Pids+azAeMGdLg0wRt5eskYpATWNNjF8CXtnehJWzP
-        MlPkX9QWsOpVAEAq6PIjx4QQdytD8BG/03pfn1mrO5r0XM6crbzNiistvw0+TrQ2
-        j+LopnkZvoTCxBeekdcdKrzGZsPoarb3BTswobgNdeAcZF1ng0q+QOuPCkZ7na5y
-        1ZbuIEF3/70Ahs68+E+WIb8nzyrruwRVSfy+5jlHK1nYkgpOdiLjqnUFBOjF8ZnZ
-        1l5etx3lWMz4WO96hdMA+S6k6FlXZ+3QJyMXDYt60H1ptqpDFan4z1/iU+G+IaLg
-        ==
-X-ME-Sender: <xms:lcfaXj-4x3xmVznYF2BeCZ2-Qj3YeSbgpzQpApvRlXRoDoO75e7U5Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeggedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedukefhkeelueegveetheelffffjeegleeuudelfeefuedtleffueejfffh
-    ueffudenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdr
-    uggv
-X-ME-Proxy: <xmx:lcfaXvsonFRgPaIjZwHYvMzyctjo5lmuTetDNZCxw15A8-a7Kdsmzg>
-    <xmx:lcfaXhBNE7yichwRk_S4Wq9NjIjN1Tpxpo4LbAsTHv0su4oLrBHjDw>
-    <xmx:lcfaXvebF5sD4wuTsCXkAlcS_IJRho_KCiHqw0HmpGsCWM1IpnxyDA>
-    <xmx:lsfaXhZRfX1AN4jJp9iyqlfrEJneTthXz3Y77ndGHLGBiQKFQ6sIWw>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C202D3060F09;
-        Fri,  5 Jun 2020 18:30:45 -0400 (EDT)
-Date:   Fri, 5 Jun 2020 15:30:44 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-Message-ID: <20200605223044.tnh7qsox7zg5uk53@alap3.anarazel.de>
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <20200604005916.niy2mejjcsx4sv6t@alap3.anarazel.de>
- <e3072371-1d6b-8ae5-d946-d83e60427cb0@kernel.dk>
- <6eeff14f-befc-a5cc-08da-cb77f811fbdf@kernel.dk>
- <20200605202028.d57nklzpeolukni7@alap3.anarazel.de>
- <20200605203613.ogfilu2edcsfpme4@alap3.anarazel.de>
- <75bfe993-008d-71ce-7637-369f130bd984@kernel.dk>
- <3539a454-5321-0bdc-b59c-06f60cc64b56@kernel.dk>
- <34aadc75-5b8a-331e-e149-45e1547b543e@kernel.dk>
+        Fri, 5 Jun 2020 18:33:23 -0400
+Received: by mail-pj1-f65.google.com with SMTP id i12so3226555pju.3;
+        Fri, 05 Jun 2020 15:33:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vS5y2cwTZmplrWxSMeAOvchEwRxJxoFyQaaO7U/jQTc=;
+        b=APz7A3hHruHCdS2eSmB7nHEP33bYuNEdzA2Pq4h5F+mg3JmaGPtq7zeIrlHLlRyG8y
+         kpLL/JnHAvmJHKfG8c1/QbdtPIgzGczSGXS3DdnyggiXEm0jYK9S4tMUrJZaT7AQJo6t
+         u8LxagURiCOPMX2Lny8pNf5g23fgssAhQdxtyJGtKVa+K2YMtG+6YGwklgoBNL0pN9cA
+         Ah9qLakvGGRbwpbDg3LspkIxaScYnJ164GzRYLMA6zOcxYHRhD0m8qRnIui3vIOqlxJe
+         IGy+GrJrkmQdbTQCUXkl3SMn6BINMHSUhyPZ5NBhqFD9slkwImclp8yvi4tLcphJ5PqC
+         YAPg==
+X-Gm-Message-State: AOAM530u/tclCEXyv5tPzOHow2UVqV+zNalHmEwdVHsPBM3GkoawTeT8
+        E4Yq5HnaZB6iU4A39/G1NXo=
+X-Google-Smtp-Source: ABdhPJyajZB2ekSKunHZEPzroRX0GQ5Qx0oFeO/rItogtY+TqeixJGMKJYPif86T+TAP5R3klqe8dA==
+X-Received: by 2002:a17:90a:6f04:: with SMTP id d4mr4924167pjk.134.1591396402606;
+        Fri, 05 Jun 2020 15:33:22 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id c1sm539415pfo.197.2020.06.05.15.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2020 15:33:21 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8E4B8403AB; Fri,  5 Jun 2020 22:33:20 +0000 (UTC)
+Date:   Fri, 5 Jun 2020 22:33:20 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v5 5/7] blktrace: fix debugfs use after free
+Message-ID: <20200605223320.GN11244@42.do-not-panic.com>
+References: <20200516031956.2605-1-mcgrof@kernel.org>
+ <20200516031956.2605-6-mcgrof@kernel.org>
+ <20200519163713.GA29944@infradead.org>
+ <20200527031202.GT11244@42.do-not-panic.com>
+ <20200601170500.GF13911@42.do-not-panic.com>
+ <d4ef5da1-7d11-657c-f864-8b2ca6ea082c@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34aadc75-5b8a-331e-e149-45e1547b543e@kernel.dk>
+In-Reply-To: <d4ef5da1-7d11-657c-f864-8b2ca6ea082c@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On 2020-06-05 15:21:34 -0600, Jens Axboe wrote:
-> >> I can reproduce this, and I see what it is. I'll send out a patch soonish.
+On Thu, Jun 04, 2020 at 09:48:43PM -0700, Bart Van Assche wrote:
+> On 2020-06-01 10:05, Luis Chamberlain wrote:
+> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> > index a55cbfd060f5..5b0310f38e11 100644
+> > --- a/kernel/trace/blktrace.c
+> > +++ b/kernel/trace/blktrace.c
+> > @@ -511,6 +511,11 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+> >  	 */
+> >  	if (bdev && bdev != bdev->bd_contains) {
+> >  		dir = bdev->bd_part->debugfs_dir;
+> > +	} else if (q->sg_debugfs_dir &&
+> > +		   strlen(buts->name) == strlen(q->sg_debugfs_dir->d_name.name)
+> > +		   && strcmp(buts->name, q->sg_debugfs_dir->d_name.name) == 0) {
+> > +		/* scsi-generic requires use of its own directory */
+> > +		dir = q->sg_debugfs_dir;
+> >  	} else {
+> >  		/*
+> >  		 * For queues that do not have a gendisk attached to them, that
 > > 
-> > Thinko, can you try with this on top?
 > 
-> Sorry that was incomplete, please use this one!
+> Please Cc Martin Petersen for patches that modify SCSI code.
 
-That seems to fix it! Yay.
+Sure thing.
+> The string comparison check looks fragile to me. Is the purpose of that
 
+> check perhaps to verify whether tracing is being activated through the
+> SCSI generic interface?
 
-Bulk buffered reads somehow don't quite seem to be performing that well
-though, looking into it. Could be on the pg side too.
+Yes.
 
-Greetings,
+> If so, how about changing that test into
+> something like the following?
+> 
+> 	MAJOR(dev) == SCSI_GENERIC_MAJOR
 
-Andres Freund
+Sure.
+
+  Luis
