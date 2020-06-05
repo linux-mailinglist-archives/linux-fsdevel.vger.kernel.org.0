@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 992B71EFD25
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFBB1EFD24
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgFEQAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 12:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36716 "EHLO
+        id S1727780AbgFEQAU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 12:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbgFEQAU (ORCPT
+        with ESMTP id S1727024AbgFEQAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 5 Jun 2020 12:00:20 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F83C08C5C3
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 09:00:19 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id t7so3800163plr.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 09:00:19 -0700 (PDT)
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E02C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 09:00:20 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id u5so5318111pgn.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 09:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/0tj7ZRQcqs9EAMR7yZ0YohYSJEyPMdy0UQUKUwvaMk=;
-        b=etJv22UiizXcOPPR3QeA8jUp00pOEYSdiCq8cCt5HTmL1jQ4/toR6XXIwLOa79kL3X
-         ICYfwWpUBHiMGKWBUKSWBezDpOO4mZgjtt+2LNCWQVvfWZzVGgRi7Rqn16a04nTuBkAI
-         o/xXMJAQurA2tye7S7Hf4piSybDvjCjQxO2l4=
+        bh=yOHx3JtZHl4XxOR183MPHxc1YyQEXr9//zjD6wPWK5c=;
+        b=AYM1SME2Yfp8Xp3XxiCuKbsb/mxLno+9x6Tvnx0AKRTBFR+Vyg+D0jJsDdO6B008gJ
+         j5cR/0Kki2xB3IEr7YyNhWdFsN1hYKuv0eVUgkVN7P1iFoWJU4m2y+AVWl/YWwRjCuX0
+         L63p9QE40scOglygoynUT1EFudt2cy5+UMbec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/0tj7ZRQcqs9EAMR7yZ0YohYSJEyPMdy0UQUKUwvaMk=;
-        b=rZ5SAa1F7E8aVibJ1xr9FkSYkacE47ZUH7ihUPFDjnH7lb8IPM6OL7NrlXx6c2TeZO
-         RW3OVtKWfGKRMVi075e2rRifCIJAJw7dQeHtEK8G7WLkxOe1NkvB8VAxU170x6oPgbvm
-         qhTJ2F0ssaK9lmJj45CDn/OhnBMhOQnU+kVjwivnkmguei4im8fVqUpnf6gtM+FI4d8Q
-         tyz4x4Ukic+9KxeOJJxjyUVtB+lvVOz8ybEdGjKmOpvq6fIqL7PS5stz/45adkLApcwU
-         xgFO014R/7Mtmq4/HFKRlx0t2XKbemYUSXTZfavhBqzW3i/cMutX0rP2Zb0Yg+muI9bi
-         IwJQ==
-X-Gm-Message-State: AOAM530lwUvXckv57Pj8e4wdaGoPNCrAKZVhSXH6m5OrPASxIgmHF2HV
-        wCNlKgtV6/J/vysQnR1LIa/oCQ==
-X-Google-Smtp-Source: ABdhPJw47pfX2wU4KqgnZEv6dlZXrppX08ucCGrHpYKRci0esfbebI7oZ/Y+rv79S512gq1xF0XpNg==
-X-Received: by 2002:a17:90a:a405:: with SMTP id y5mr3778701pjp.15.1591372818957;
-        Fri, 05 Jun 2020 09:00:18 -0700 (PDT)
+        bh=yOHx3JtZHl4XxOR183MPHxc1YyQEXr9//zjD6wPWK5c=;
+        b=d+vyJE6QQeKzjwcFSqaQ3fyjq042XsQqhrPDlQwagNTSz6mv+/cePt/x6RcAiEeXJd
+         8iBOKlNZbozw5kdMUtvV4nAjpQFR0gpVtbx+c1NJg7kSRxuazz8dzZPF+EM1T3SaX94E
+         /1SrenDK7z5qqRP3A5XZKvKxRRvp7yP6TfcA3Z1GlbWms/VCyyniZrejCWyP5ekck6CP
+         v/XgTSUFuLm/jwVp3uX8psOO4aakfPJZneMFvu3GaXLModQR0NlFpvfPptLpJxSH8a4F
+         53jGWfG310fWy6oOxs/QJYTdxDKxAFvH1P1cqA1mKKlW8hEBbgyiT2vEgJxoSh0QIJsJ
+         qVyg==
+X-Gm-Message-State: AOAM532EdgWJ8EouM4RE4NT0lCcCXX+4bghtDzdGc7ryUb2f5EL1sS8K
+        7dW5XI5PLu1cknlNad1F0MTPQQ==
+X-Google-Smtp-Source: ABdhPJyVjuUcteaqY/mcT8ScT3S6QTSiJYt9wnTPuDWOo6anaUmiM00CCJIUs5IvLlBc1Bo5bes43g==
+X-Received: by 2002:a63:f14a:: with SMTP id o10mr10411918pgk.216.1591372819568;
+        Fri, 05 Jun 2020 09:00:19 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h15sm56993pgl.12.2020.06.05.09.00.17
+        by smtp.gmail.com with ESMTPSA id 10sm68354pfn.6.2020.06.05.09.00.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 05 Jun 2020 09:00:18 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -55,9 +55,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Eric Biggers <ebiggers3@gmail.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] exec: Move S_ISREG() check earlier
-Date:   Fri,  5 Jun 2020 09:00:12 -0700
-Message-Id: <20200605160013.3954297-3-keescook@chromium.org>
+Subject: [PATCH v2 3/3] exec: Move path_noexec() check earlier
+Date:   Fri,  5 Jun 2020 09:00:13 -0700
+Message-Id: <20200605160013.3954297-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200605160013.3954297-1-keescook@chromium.org>
 References: <20200605160013.3954297-1-keescook@chromium.org>
@@ -68,21 +68,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The execve(2)/uselib(2) syscalls have always rejected non-regular
-files. Recently, it was noticed that a deadlock was introduced when trying
-to execute pipes, as the S_ISREG() test was happening too late. This was
-fixed in commit 73601ea5b7b1 ("fs/open.c: allow opening only regular files
-during execve()"), but it was added after inode_permission() had already
-run, which meant LSMs could see bogus attempts to execute non-regular
-files.
-
-Move the test into the other inode type checks (which already look
-for other pathological conditions[1]). Since there is no need to use
-FMODE_EXEC while we still have access to "acc_mode", also switch the
-test to MAY_EXEC.
-
-Also include a comment with the redundant S_ISREG() checks at the end of
-execve(2)/uselib(2) to note that they are present to avoid any mistakes.
+The path_noexec() check, like the regular file check, was happening too
+late, letting LSMs see impossible execve()s. Check it earlier as well
+in may_open() and collect the redundant fs/exec.c path_noexec() test
+under the same robustness comment as the S_ISREG() check.
 
 My notes on the call path, and related arguments, checks, etc:
 
@@ -96,100 +85,66 @@ do_open_execat()
             file = alloc_empty_file(open_flags, current_cred());
             do_open(nameidata, file, open_flags)
                 may_open(path, acc_mode, open_flag)
-		    /* new location of MAY_EXEC vs S_ISREG() test */
+                    /* new location of MAY_EXEC vs path_noexec() test */
                     inode_permission(inode, MAY_OPEN | acc_mode)
                         security_inode_permission(inode, acc_mode)
                 vfs_open(path, file)
                     do_dentry_open(file, path->dentry->d_inode, open)
-                        /* old location of FMODE_EXEC vs S_ISREG() test */
                         security_file_open(f)
                         open()
-
-[1] https://lore.kernel.org/lkml/202006041910.9EF0C602@keescook/
+    /* old location of path_noexec() test */
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/exec.c  | 14 ++++++++++++--
- fs/namei.c |  6 ++++--
- fs/open.c  |  6 ------
- 3 files changed, 16 insertions(+), 10 deletions(-)
+ fs/exec.c  | 12 ++++--------
+ fs/namei.c |  4 ++++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 30735ce1dc0e..2b708629dcd6 100644
+index 2b708629dcd6..7ac50a260df3 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -139,8 +139,13 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
- 	if (IS_ERR(file))
- 		goto out;
- 
-+	/*
-+	 * may_open() has already checked for this, so it should be
-+	 * impossible to trip now. But we need to be extra cautious
-+	 * and check again at the very end too.
-+	 */
+@@ -145,10 +145,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+ 	 * and check again at the very end too.
+ 	 */
  	error = -EACCES;
--	if (!S_ISREG(file_inode(file)->i_mode))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+-		goto exit;
+-
+-	if (path_noexec(&file->f_path))
++	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
++			 path_noexec(&file->f_path)))
  		goto exit;
  
- 	if (path_noexec(&file->f_path))
-@@ -860,8 +865,13 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 	if (IS_ERR(file))
- 		goto out;
- 
-+	/*
-+	 * may_open() has already checked for this, so it should be
-+	 * impossible to trip now. But we need to be extra cautious
-+	 * and check again at the very end too.
-+	 */
+ 	fsnotify_open(file);
+@@ -871,10 +869,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ 	 * and check again at the very end too.
+ 	 */
  	err = -EACCES;
--	if (!S_ISREG(file_inode(file)->i_mode))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+-	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+-		goto exit;
+-
+-	if (path_noexec(&file->f_path))
++	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
++			 path_noexec(&file->f_path)))
  		goto exit;
  
- 	if (path_noexec(&file->f_path))
+ 	err = deny_write_access(file);
 diff --git a/fs/namei.c b/fs/namei.c
-index a320371899cf..0a759b68d66e 100644
+index 0a759b68d66e..41e6fed8ce69 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -2835,16 +2835,18 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 	case S_IFLNK:
- 		return -ELOOP;
- 	case S_IFDIR:
--		if (acc_mode & MAY_WRITE)
-+		if (acc_mode & (MAY_WRITE | MAY_EXEC))
- 			return -EISDIR;
- 		break;
- 	case S_IFBLK:
- 	case S_IFCHR:
- 		if (!may_open_dev(path))
+@@ -2849,6 +2849,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
  			return -EACCES;
--		/*FALLTHRU*/
-+		fallthrough;
- 	case S_IFIFO:
- 	case S_IFSOCK:
-+		if (acc_mode & MAY_EXEC)
-+			return -EACCES;
  		flag &= ~O_TRUNC;
  		break;
- 	}
-diff --git a/fs/open.c b/fs/open.c
-index 719b320ede52..bb16e4e3cd57 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -753,12 +753,6 @@ static int do_dentry_open(struct file *f,
- 		return 0;
++	case S_IFREG:
++		if ((acc_mode & MAY_EXEC) && path_noexec(path))
++			return -EACCES;
++		break;
  	}
  
--	/* Any file opened for execve()/uselib() has to be a regular file. */
--	if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) {
--		error = -EACCES;
--		goto cleanup_file;
--	}
--
- 	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
- 		error = get_write_access(inode);
- 		if (unlikely(error))
+ 	error = inode_permission(inode, MAY_OPEN | acc_mode);
 -- 
 2.25.1
 
