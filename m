@@ -2,114 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0871EEE80
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 01:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A27661EEEA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 02:08:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbgFDXuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 19:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbgFDXuv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 19:50:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50ABFC08C5C0;
-        Thu,  4 Jun 2020 16:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zd4mes2BosmuFtfxX993NYsNl3JofXApEXaS2L2Ahxo=; b=oZKNYYSdr+hQlwG33pEv98hFFt
-        xKb+ex6ntArPYooazlnjnglvCWH60//QaGdgMpdLZqxxQzSV5+wtnBxJTA4qidME6oTOXT087jtkT
-        ZRogGDJAhYiUY40e+NMTbxpLiU8lKVM2m/arjiaYuKUWo+PqodhzOn8Ws87yUhUb2xt2TauhtV2ty
-        p6cw9t+luO4t1VXTMyew+jpImhI6hDJWVLbqlJ5NobIkV7SYl1BGH0dTLU51i9vWK47MlZJw3Qn7g
-        pHZj2mstwkP3dplf9FnNJ7RZ1cFRJOAGsnth2NCphWWWDYquZH4w8kc3+nJmXY6ZiA00C28O3WPCN
-        FU24Ks1w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jgzdK-0000wH-IF; Thu, 04 Jun 2020 23:50:50 +0000
-Date:   Thu, 4 Jun 2020 16:50:50 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Handle I/O errors gracefully in page_mkwrite
-Message-ID: <20200604235050.GX19604@bombadil.infradead.org>
-References: <20200604202340.29170-1-willy@infradead.org>
- <20200604225726.GU2040@dread.disaster.area>
- <20200604230519.GW19604@bombadil.infradead.org>
- <20200604233053.GW2040@dread.disaster.area>
+        id S1726093AbgFEAIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 20:08:47 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:59580 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725986AbgFEAIr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jun 2020 20:08:47 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 55607209AF;
+        Fri,  5 Jun 2020 00:08:42 +0000 (UTC)
+Date:   Fri, 5 Jun 2020 02:08:38 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: Re: [PATCH 0/2] proc: use subset option to hide some top-level
+ procfs entries
+Message-ID: <20200605000838.huaeqvgpvqkyg3wh@comp-core-i7-2640m-0182e6>
+References: <20200604200413.587896-1-gladkov.alexey@gmail.com>
+ <87ftbah8q2.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200604233053.GW2040@dread.disaster.area>
+In-Reply-To: <87ftbah8q2.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 05 Jun 2020 00:08:43 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 09:30:53AM +1000, Dave Chinner wrote:
-> On Thu, Jun 04, 2020 at 04:05:19PM -0700, Matthew Wilcox wrote:
-> > On Fri, Jun 05, 2020 at 08:57:26AM +1000, Dave Chinner wrote:
-> > > On Thu, Jun 04, 2020 at 01:23:40PM -0700, Matthew Wilcox wrote:
-> > > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > > 
-> > > > Test generic/019 often results in:
-> > > > 
-> > > > WARNING: at fs/iomap/buffered-io.c:1069 iomap_page_mkwrite_actor+0x57/0x70
-> > > > 
-> > > > Since this can happen due to a storage error, we should not WARN for it.
-> > > > Just return -EIO, which will be converted to a SIGBUS for the hapless
-> > > > task attempting to write to the page that we can't read.
-> > > 
-> > > Why didn't the "read" part of the fault which had the EIO error fail
-> > > the page fault? i.e. why are we waiting until deep inside the write
-> > > fault path to error out on a failed page read?
-> > 
-> > I have a hypothesis that I don't know how to verify.
-> > 
-> > First the task does a load from the page and we put a read-only PTE in
-> > the page tables.  Then it writes to the page using write().  The page
-> > gets written back, but hits an error in iomap_writepage_map()
-> > which calls ClearPageUptodate().  Then the task with it mapped attempts
-> > to store to it.
+On Thu, Jun 04, 2020 at 03:33:25PM -0500, Eric W. Biederman wrote:
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
 > 
-> Sure, but that's not really what I was asking: why isn't this
-> !uptodate state caught before the page fault code calls
-> ->page_mkwrite? The page fault code has a reference to the page,
-> after all, and in a couple of paths it even has the page locked.
-
-If there's already a PTE present, then the page fault code doesn't
-check the uptodate bit.  Here's the path I'm looking at:
-
-do_wp_page()
- -> vm_normal_page()
- -> wp_page_shared()
-     -> do_page_mkwrite()
-
-I don't see anything in there that checked Uptodate.
-
-> What I'm trying to understand is why this needs to be fixed inside
-> ->page_mkwrite, because AFAICT if we have to fix this in the iomap
-> code, we have the same "we got handed a bad page by the page fault"
-> problem in every single ->page_mkwrite implementation....
-
-I think the iomap code is the only filesystem which clears PageUptodate
-on errors.  I know we've argued about whether that's appropriate or not
-in the past.
-
-> > I haven't dug through what generic/019 does, so I don't know how plausible
-> > this is.
+> > Greetings!
+> >
+> > Preface
+> > -------
+> > This patch set can be applied over:
+> >
+> > git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git d35bec8a5788
 > 
-> # Run fsstress and fio(dio/aio and mmap) and simulate disk failure
-> # check filesystem consistency at the end.
-> 
-> I don't think it is mixing buffered writes and mmap writes on the
-> same file via fio. Maybe fsstress is triggering that, but the
-> fsstress workload is single threaded so, again, I'm not sure it will
-> do this.
+> I am not going to seriously look at this for merging until after the
+> merge window closes. 
 
-Maybe that's not how we end up with a read-only PTE in the process's
-page tables.  Perhaps it starts out with a store, then on an fsync()
-we mark it read-only, then try to do another store.
+OK. I'll wait.
+
+> Have you thought about the possibility of relaxing the permission checks
+> to mount proc such that we don't need to verify there is an existing
+> mount of proc?  With just the subset pids I think this is feasible.  It
+> might not be worth it at this point, but it is definitely worth asking
+> the question.  As one of the benefits early propopents of the idea of a
+> subset of proc touted was that they would not be as restricted as they
+> are with today's proc.
+
+I'm not sure I follow.
+
+What do you mean by the possibility of relaxing the permission checks to
+mount proc?
+
+Do you suggest to allow a user to mount procfs with hidepid=2,subset=pid
+options? If so then this is an interesting idea.
+
+> I ask because this has a bearing on the other options you are playing
+> with.
+
+I can not agree with this because I do not touch on other options.
+The hidepid and subset=pid has no relation to the visibility of regular
+files. On the other hand, in procfs there is absolutely no way to restrict
+access other than selinux.
+
+> Do we want to find a way to have the benefit of relaxed permission
+> checks while still including a few more files.
+
+In fact, I see no problem allowing the user to mount procfs with the
+hidepid=2,subset=pid options.
+
+We can make subset=self, which would allow not only pids subset but also
+other symlinks that lead to self (/proc/net, /proc/mounts) and if we ever
+add virtualization to meminfo, cpuinfo etc.
+
+> > Overview
+> > --------
+> > Directories and files can be created and deleted by dynamically loaded modules.
+> > Not all of these files are virtualized and safe inside the container.
+> >
+> > However, subset=pid is not enough because many containers wants to have
+> > /proc/meminfo, /proc/cpuinfo, etc. We need a way to limit the visibility of
+> > files per procfs mountpoint.
+> 
+> Is it desirable to have meminfo and cpuinfo as they are today or do
+> people want them to reflect the ``container'' context.   So that
+> applications like the JVM don't allocation too many cpus or don't try
+> and consume too much memory, or run on nodes that cgroups current make
+> unavailable.
+
+Of course, it would be better if these files took into account the
+limitations of cgroups or some kind of ``containerized'' context.
+
+> Are there any users or planned users of this functionality yet?
+
+I know that java uses meminfo for sure.
+
+The purpose of this patch is to isolate the container from unwanted files
+in procfs.
+
+> I am concerned that you might be adding functionality that no one will
+> ever use that will just add code to the kernel that no one cares about,
+> that will then accumulate bugs.  Having had to work through a few of
+> those cases to make each mount of proc have it's own super block I am
+> not a great fan of adding another one.
+>
+> If the runc, lxc and other container runtime folks can productively use
+> such and option to do useful things and they are sensible things to do I
+> don't have any fundamental objection.  But I do want to be certain this
+> is a feature that is going to be used.
+
+Ok, just an example how docker or runc (actually almost all golang-based
+container systems) is trying to block access to something in procfs:
+
+$ docker run -it --rm busybox
+# mount |grep /proc
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+proc on /proc/bus type proc (ro,relatime)
+proc on /proc/fs type proc (ro,relatime)
+proc on /proc/irq type proc (ro,relatime)
+proc on /proc/sys type proc (ro,relatime)
+proc on /proc/sysrq-trigger type proc (ro,relatime)
+tmpfs on /proc/asound type tmpfs (ro,seclabel,relatime)
+tmpfs on /proc/acpi type tmpfs (ro,seclabel,relatime)
+tmpfs on /proc/kcore type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+tmpfs on /proc/keys type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+tmpfs on /proc/latency_stats type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+tmpfs on /proc/timer_list type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+tmpfs on /proc/sched_debug type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+tmpfs on /proc/scsi type tmpfs (ro,seclabel,relatime)
+
+For now I'm just trying ti create a better way to restrict access in
+the procfs than this since procfs is used in containers.
+
+-- 
+Rgrds, legion
+
