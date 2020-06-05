@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 074CF1EF883
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 15:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD471EF882
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 15:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgFENCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 09:02:17 -0400
-Received: from mout.web.de ([212.227.15.3]:50583 "EHLO mout.web.de"
+        id S1726980AbgFENCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 09:02:13 -0400
+Received: from mout.web.de ([212.227.15.14]:49079 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbgFENCO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 09:02:14 -0400
+        id S1726735AbgFENCM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 09:02:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591362105;
+        s=dbaedf251592; t=1591362106;
         bh=O+67Zqc7BNPiu0Riju17L/rB8Wen0+rCWIN/C3IARsI=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=dZrynhEH/Nx8o5dHlZU66Fg33ZPH4WJPbG3SxalHBlbIZM6ivHis49E1N5x/2dS8g
-         JKyQOPzzIbYihRtMBc/cclsJOQTMxP3/nxk+8KGbBYJNTZqZbnHMLTSeRFwZ2j481M
-         84Oo1la85K/2q9s+Vu5Kku+W7Maypf6IDKJeSUlo=
+        b=bpRq8asb7ONNLj9JMLNnm1sqWwvuzAjoCclzRrLLSFj7GK3yf0zTmuH4IWYUcbt6s
+         /TxCET2YfXFrR5ZqyXB05Ax5eQ0H7bnI4uA8IKA4BozbPX1t/NIfbbFyOrcHxb0MvK
+         TGyKS3+sBUV+6PWSO4uy3GyY4C01A0tqCDmjAzR8=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.102.114]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MIvFp-1jfHEW2cQr-002Xm8; Fri, 05
- Jun 2020 15:01:45 +0200
+Received: from [192.168.1.2] ([93.131.102.114]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MXpqx-1jUnuv0A1H-00WqRL; Fri, 05
+ Jun 2020 15:01:46 +0200
 Subject: Re: block: Fix use-after-free in blkdev_get()
 To:     Matthew Wilcox <willy@infradead.org>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
@@ -81,7 +81,7 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <453060f2-80af-86a4-7e33-78d4cc87503f@web.de>
+Message-ID: <83062e23-cfcc-13c9-62f3-cdb474de4a8d@web.de>
 Date:   Fri, 5 Jun 2020 15:01:44 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.1
@@ -90,30 +90,30 @@ In-Reply-To: <20200605115158.GD19604@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YKXlcLZKgmIulc8SYpt1u3oN8t78sRzUmxkIXEg6d2D2vNd+W0N
- 0b9nLwnyqZuUp5eqjiJJvj8MuIE5SdZjuDQcG3DIB9cZBqQGXvqIW+dHIWry3R68CklJ78E
- sokHRR4KkSba98h78cnA+/FT3kdEkjWNrad15TbU6XXXUCSyyiYtXT+c40sAAAzR4Lmx6tG
- aqPmnLG+tHmHGUN1wKQhw==
+X-Provags-ID: V03:K1:0KBUHlg/cfGbADFqdBGcQEuSDYrIMb+iJJX4tEwEXP8qw+lYyPk
+ uEatsxaGATdDocmBSffHLl/qH91Vdd2Q0uIoU4oU7hk/YdH3VjfLUqlmDlJQ9N+DnUBbxem
+ 0DD5YksNgIvDK2IichGwY4+pSMIB98dMQlOqdHahsgQiN010ksZBXRDLQCxDEPOgXyjJpS0
+ c5Ta5V1D9uJ6GZ9p0gsuQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wxN1oTDv5mw=:BTcJBkwLg9kmS63/COWQcV
- YUiqjujxYt+urC1wylQFbiOD7byvROkQSh8PAlMdzfc8iByBJ91E2cQ9NWCndkMtjlqJc2hcn
- 7W4knYbq4LBvD88CgNeELY9o3ViM/QFZw2nh/R05ik8G5j+ommZiuw+CM/sHO9GG02oxWixcj
- zQlLiveauyqbRtjvZ9VtKgddWbuLh7hxvO4ds4gQleo7CTZOgFqdgmLnwxHkQzASjUYdnr9FP
- StgRsvxVNDRWo1bKhRwGqzBPlCJAapPsK0XwKs1QCeDsAY0UzVos8+JrNW3iVEEZO41brnWWV
- UjBBB4406xIyo6ME4Gczd3rVP4cv2hsYnzxRwGIfJjkZDKjJ5HZRntdabIPpx/s6iqr0Fx15c
- c5m3NUjEZF7ZnCAP1f0pWiXqGT/WowQVVJXDInUA6bCqj3pCucgyKvBKKYJNJ1UyzzmdFUCTG
- qFXathf9WSZKedx1V3klT1bRgTBsARIj94WsBPSJSDXilhL7RuP54ns3MiIPb0m+Jux353TaE
- 2PveNrZe7Xh51Dp5D/dCNu/6OT/AcR5GT1W4PCA/3wppSR1BJxmdTPql+hTsgAnJisiVx7fQH
- 2TFeupyUyGMJ+GJrrdQV2J358AfkRtshh2RoFAysMyQhivXkqsRjklKX+pVRhtbSjeQ4O/Ewd
- 3l8SLRnPB1kGFIR6M9mNAJSgCQwGIFPDbCz2iskTVhNzNr43deU8orJFvT4bwXuX+FnEC06cX
- IDlYdLSpEL2+ytgshcKh7RQS9/QBoJ93SZVewpGkWkmrYbV5oSdkRr7EXpYyqEt7pfr4JuYe5
- M6cmrrjmjKarITwhKbbyUveAuF7AyLM6j9qLwOyfXtCLKMcMfhR+Ana/JfeAa5wmDrZfhEZem
- RXEtoRPcA4HDbCDLCukjQB0lb58hvB3Wd/bPwn0gF/aB8Cxx4c3xSMi1ZudSTN0e2xKv7PFFS
- lYlJwsUDulJdzydK84bobLvGsWvLJijAr7bbErJcDqts4oL7mPmvBVb4RAJkQtXQtX45zUjsv
- 2J3SBKQlewi0YV3FQp9w+TyvnELmdinZJle+HPNSzEAD/hLzfCUWFbP/62mw9f5VPK4FBg0l6
- y6nSBt3FYGzo3n9JVsfTZu1upfil8iOsAfkkRlFRtDEvg/MLTl8k0skTz7iYhtenBdwQBHNRa
- GqFvic70rD7XDgJcAgxrwwOHqVHgg53btm3CXTKa/rC/BWUvdpx4ZM/Eile+cdITWa7436WkI
- ikWQ7efkfIYC7OOz8
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZH2Xx6ovcdk=:B1r/fcyTw+fFlcwoKu4tG/
+ YgxONeycCyHlA8Sv7VWAPg64WwQR02SacmfwWuVfIIwHcFiuWuglHdE6YtWm1JKkZh4OgwNrn
+ c39hg3zVKdqGHFECCV27W5HYEQ7K5W/qhZFOzZk4xTuxXQbbylZoxZzrIRzwFdvagoV0kCddN
+ hL6RusODbSJ91PZW41TriqOCkNptY1B4Yax86e76jsAVnT4fLrbQZGZH01j+VA1CQt1Jvgjkq
+ XuWPZtmki/z4Zn735KVuW18t7O8CeRccq4YfDz7RsuylT/xL3TnWi0U34hPzqX41+oadKYlG9
+ rXcfWe1fxrsxZuPvGIiOa3zqGbyFL0NjKQPBpKECvljfy5PA4CZ20SnO6nYQJr3BFSVryZ/XS
+ DGOGsij/y/4+rAWkK++GRqq5kRT4FEC9JF4x4sCSOZfdFb3sDK0NjRhPAum7bO+NR8STtC9us
+ R9xfWc7oh2OI4V9YHNmxpoUgSoLwbkJk/7H2bRqq1d6vRu/PoqWpvXGhCybltonppyhSigMZD
+ ohY/hYIIGq5z6tuIyqXZ7cdW08VSMC84f79ymFs0inq+mqfvXLID/YA6kmpNUMNiGXYJaYyrG
+ jqHajXQyZHbMLBp2WtrvaFGAAPkySHuKIhXgKDex0COzMd8y5dQuVL2VFTW9UDoSnNUBe1GdY
+ SPzsBoDqLKQKrAQt8prpLD9dYMhPqPQiOoLNuwQlziZzSTuAyKxEBg5CLCQLbSt8q7ifVwbZ9
+ SgR6M6bT2cuQzpsjlf0+Jx+kBxN3g5lKELT1//vSw99k2VULmUaLB8J1qqYpZxenYSa1YXfZs
+ pUTuHAEjI1kDZU5xyapGIX5q2B2vtmG+ia2twmPShsq8Y+yoYYV2xjadtKEaSkFMOR3VEAHBc
+ JkmWcRObF5UTzHsr9KD4jxVcozyORMiFt3wbKSBGTtmZSb2dQsdV10XAkRkO7SDnWjev0+8Vt
+ trnhC1qSDZdweCwd4gCktKzzJbNXF1MWU7wcmBNGseWIbcq1NjlTsKm19d8nNnKgiS4OEN7iJ
+ HHuPwl9r0tGnguVdn4aRzq9quW76sn4HzW4Ax0fCnxj8a5MkmzkO9ddOjw6S3gKLFg8My/jxY
+ g97kiDZ4Xc6H3YUq1ibCDyghEyNReedRx+3CbBxnGC/OkVPOI9pwFpEIvJpSm6XtDuut+MlXZ
+ jyY4/keFbXU3SwAVwXRhFrvk3VoAmTC8SyWQHhZGACRkMxJTw3G/HSOMtebNs7VDGoggFWObW
+ bQ/HXaGYkcdqeYZzx
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
