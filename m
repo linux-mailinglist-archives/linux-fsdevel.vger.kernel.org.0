@@ -2,167 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69BCF1EFD6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DF11EFD71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbgFEQTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 12:19:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49896 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbgFEQTJ (ORCPT
+        id S1726324AbgFEQVJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 12:21:09 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:33235 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbgFEQVI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 12:19:09 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055GCsgS156348;
-        Fri, 5 Jun 2020 16:18:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=aBdfKaTXhF7hzd2MYEhJyVNS1XcyS/zHMmaC1In3i5M=;
- b=dDH8AMjV0lZlpRusueChse3h0K6XZJXeIxKPgKy0najDU5cVeqrhpFVsGJ056rIrmC5M
- GUra11wjaSkG960uTWxxVHX74fZt2VOqHr4vr7JnF39jPkX5Y31UgfaZHLgC/EFaxvwx
- vPrsmIKNfuZkUGPU+9wItzoiI/RCCKHmQ7+h32P5UywNTVPMrAgmGPmoLEOJ5QTLvJse
- fAvsoMRQ+0T1D+cc4FukAcWBbV6NjDLwDnJX/kMvhS/1oYJxTMXNMzZFtNyn5LJHy/cj
- W5mCQBAtD8PlzNu36Eh0brFB6EfYbuuBE0EzZHdiBKhqJrubCkGCUIwMVrs6a6RqEqtL kw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 31f91dupq7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 05 Jun 2020 16:18:55 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055GIALp092154;
-        Fri, 5 Jun 2020 16:18:54 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 31f927euas-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Jun 2020 16:18:54 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 055GIru0000523;
-        Fri, 5 Jun 2020 16:18:53 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 05 Jun 2020 09:18:53 -0700
-Date:   Fri, 5 Jun 2020 09:18:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Handle I/O errors gracefully in page_mkwrite
-Message-ID: <20200605161852.GB1334206@magnolia>
-References: <20200604202340.29170-1-willy@infradead.org>
- <20200604225726.GU2040@dread.disaster.area>
- <20200604230519.GW19604@bombadil.infradead.org>
- <20200604233053.GW2040@dread.disaster.area>
- <20200604235050.GX19604@bombadil.infradead.org>
- <20200605003159.GX2040@dread.disaster.area>
- <20200605022451.GZ19604@bombadil.infradead.org>
- <20200605030758.GB2040@dread.disaster.area>
- <20200605124826.GF19604@bombadil.infradead.org>
+        Fri, 5 Jun 2020 12:21:08 -0400
+Received: from [192.168.100.1] ([82.252.135.106]) by mrelayeu.kundenserver.de
+ (mreue107 [213.165.67.119]) with ESMTPSA (Nemesis) id
+ 1MD9CZ-1jqHcy3E8H-00977A; Fri, 05 Jun 2020 18:20:54 +0200
+Subject: Re: [PATCH v3] binfmt_misc: pass binfmt_misc flags to the interpreter
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
+        YunQiang Su <syq@debian.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+References: <20200128132539.782286-1-laurent@vivier.eu>
+From:   Laurent Vivier <laurent@vivier.eu>
+Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <348e8e7a-3a2c-23b7-4a2e-d3f5e8a62173@vivier.eu>
+Date:   Fri, 5 Jun 2020 18:20:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200605124826.GF19604@bombadil.infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=5 adultscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006050122
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 cotscore=-2147483648 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=5 phishscore=0 spamscore=0 mlxscore=0
- impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006050121
+In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:CJWnNS6t81j4qzw3g9XQQQW/Krz79nyKBQKdvfN6saD7FitXX9b
+ 2G6HkpgZuWObozbs2/Ob6IN4lAZJijGyWrceUxPADueFeCQ0WC5brR+O6eKuRzDdh76krEa
+ UmM2XvZIg+PMRHhuB9QoGt867etu3+R4nddb0BVYGT2HGIruzK0KHX3h32Jyd7lzeAn9WuA
+ QrIf+X+SzEIBcj5Xox7TQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wTOXGu8jl64=:cR1ZJv0JIVxdlx/KmO2ALK
+ X9hI6f8SZ58pdTz6cj8A7GWAAtHvbiAEpPP5oalNeajGFD3detXNBmarJJ4pilOeBsVC9opIx
+ Oeb96D36r50s3aNXKdvcEFkvEdR7OEAY3p8ILtt4Lv7JMWIQsCSm7/zB2UhR4NXGsNgKn+xNr
+ kDt1FBokoBQDn64MvA3wgpXsMtxlPfrvku6ShmnLKUa2MdUcF6FRvnYRiRyHs1tkW6sxNOfg9
+ 9anY9sgbqPjxfpo3BdjWX5WIS2UbXsGAA0wJhtocF1BazdxpkGtjEAge8HNVgZf+61XieYXnY
+ dh/sBoWHpNN7E4Hq5rQJcjdn4bWjAIDNLEK2axpoGgUwKpVKdS1/IfhYQ6JPzx94/PeO3uoQ8
+ akOPYo0ZsvTNqiit+/niNBfFFzsp/NP+tCJo9HOHsHECRZDaGLgGYDYfx6AFr/hKhEmdpZSA4
+ A7Y4LF807erHNZKILvspy2mzAsj3fivbeInVSxmvLAhTztwl8MtJAysdiCg492QUZGhV8d1Jx
+ Nl8afVoqLMYdJeAHL560oVPC8nmoQWabftnDyZThq7NX0BkqsB2EuIdkXcvR1V298U0w/TJfH
+ +qek6zt7ed2ZYiDLoy+R2IZ0p3gKGKNPkUWXNCJUuQn8+71ooIOP33X9Km5JjcpAdIkCifK/V
+ ISdaRB53bXQYWSTk7ry6upVVLRxVPNAxicXA3W8EmXL/TcUpa1d4GjBfCQYm80H9NFdgqYC1f
+ 72iYNZJ0EWqAui5thFvuKV636ysMtp9tlErCjcc293Nw44n4M4fMy/Ls1Opj3IV1HQBK3xQok
+ GJOm5G7uCqMVP1VXEIH1yzF+ZfCu1A5R6IdfVZ67Bj549HPV0cRJiH2/2VcYPgR4GPQ62ZL
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 05:48:26AM -0700, Matthew Wilcox wrote:
-> On Fri, Jun 05, 2020 at 01:07:58PM +1000, Dave Chinner wrote:
-> > On Thu, Jun 04, 2020 at 07:24:51PM -0700, Matthew Wilcox wrote:
-> > > On Fri, Jun 05, 2020 at 10:31:59AM +1000, Dave Chinner wrote:
-> > > > On Thu, Jun 04, 2020 at 04:50:50PM -0700, Matthew Wilcox wrote:
-> > > > > > Sure, but that's not really what I was asking: why isn't this
-> > > > > > !uptodate state caught before the page fault code calls
-> > > > > > ->page_mkwrite? The page fault code has a reference to the page,
-> > > > > > after all, and in a couple of paths it even has the page locked.
-> > > > > 
-> > > > > If there's already a PTE present, then the page fault code doesn't
-> > > > > check the uptodate bit.  Here's the path I'm looking at:
-> > > > > 
-> > > > > do_wp_page()
-> > > > >  -> vm_normal_page()
-> > > > >  -> wp_page_shared()
-> > > > >      -> do_page_mkwrite()
-> > > > > 
-> > > > > I don't see anything in there that checked Uptodate.
-> > > > 
-> > > > Yup, exactly the code I was looking at when I asked this question.
-> > > > The kernel has invalidated the contents of a page, yet we still have
-> > > > it mapped into userspace as containing valid contents, and we don't
-> > > > check it at all when userspace generates a protection fault on the
-> > > > page?
-> > > 
-> > > Right.  The iomap error path only clears PageUptodate.  It doesn't go
-> > > to the effort of unmapping the page from userspace, so userspace has a
-> > > read-only view of a !Uptodate page.
-> > 
-> > Hmmm - did you miss the ->discard_page() callout just before we call
-> > ClearPageUptodate() on error in iomap_writepage_map()? That results
-> > in XFS calling iomap_invalidatepage() on the page, which ....
+Ping?
+
+Thanks,
+Laurent
+
+Le 28/01/2020 à 14:25, Laurent Vivier a écrit :
+> It can be useful to the interpreter to know which flags are in use.
 > 
-> ... I don't think that's the interesting path.  I mean, that's
-> the submission path, and usually we discover errors in the completion
-> path, not the submission path.
+> For instance, knowing if the preserve-argv[0] is in use would
+> allow to skip the pathname argument.
 > 
-> > /me sighs as he realises that ->invalidatepage doesn't actually
-> > invalidate page mappings but only clears the page dirty state and
-> > releases filesystem references to the page.
-
-<nod> Yes, we have preserved the old feebleness.
-
-I've long felt that we should leave the page dirty and retry the write,
-but that was objectionable because we could run out of memory and
-reclaim will stall and OOM on pages it can't clean if IO is still
-broken.
-
-I can't remember the exact reasons for leaving a /clean/ page in memory,
-but I think it had to do with preserving mmap'd page contents long
-enough that a program could redirty the mapping <bluh bluh race
-conditions><this is glitchy><blarghallthisisstupid>.
-
-> > Yay. We leave -invalidated page cache pages- mapped into userspace,
-> > and page faults on those pages don't catch access to invalidated
-> > pages.
+> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
+> flag to inform interpreter if the preserve-argv[0] is enabled.
 > 
-> More than that ... by clearing Uptodate, you're trying to prevent
-> future reads to this page from succeeding without verifying the data
-> is still on storage, but a task that had it mapped before can still
-> load the data that was written but never made it to storage.
-> So at some point it'll teleport backwards when another task has a
-> successful read().  Funfunfun.
-
-Let's just invalidate the mapping and see if anyone complains. :D
-
-> > Geez, we really suck at this whole software thing, don't we?
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> ---
 > 
-> Certainly at handling errors ...
+> Notes:
+>     This can be tested with QEMU from my branch:
+>     
+>       https://github.com/vivier/qemu/commits/binfmt-argv0
+>     
+>     With something like:
+>     
+>       # cp ..../qemu-ppc /chroot/powerpc/jessie
+>     
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
+>                             --persistent no --preserve-argv0 yes
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: POC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       sh
+>     
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
+>                             --persistent no --preserve-argv0 no
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: OC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       /bin/sh
+>     
+>     v3: mix my patch with one from YunQiang Su and my comments on it
+>         introduce a new flag in the uabi for the AT_FLAGS
+>     v2: only pass special flags (remove Magic and Enabled flags)
 > 
-> > It's not clear to me that we can actually unmap those pages safely
-> > in a race free manner from this code - can we actually do that from
-> > the page writeback path?
+>  fs/binfmt_elf.c              | 5 ++++-
+>  fs/binfmt_elf_fdpic.c        | 5 ++++-
+>  fs/binfmt_misc.c             | 4 +++-
+>  include/linux/binfmts.h      | 4 ++++
+>  include/uapi/linux/binfmts.h | 4 ++++
+>  5 files changed, 19 insertions(+), 3 deletions(-)
 > 
-> I don't see why it can't be done from the submission path.
-> unmap_mapping_range() calls i_mmap_lock_write(), which is
-> down_write(i_mmap_rwsem) in drag.  There might be a lock ordering
-> issue there, although lockdep should find it pretty quickly.
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index ecd8d2698515..ff918042ceed 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>  	unsigned char k_rand_bytes[16];
+>  	int items;
+>  	elf_addr_t *elf_info;
+> +	elf_addr_t flags = 0;
+>  	int ei_index = 0;
+>  	const struct cred *cred = current_cred();
+>  	struct vm_area_struct *vma;
+> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+>  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+> -	NEW_AUX_ENT(AT_FLAGS, 0);
+> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +	NEW_AUX_ENT(AT_FLAGS, flags);
+>  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
+>  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
+>  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index 240f66663543..abb90d82aa58 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+>  	char __user *u_platform, *u_base_platform, *p;
+>  	int loop;
+>  	int nr;	/* reset for each csp adjustment */
+> +	unsigned long flags = 0;
+>  
+>  #ifdef CONFIG_MMU
+>  	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
+> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+>  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
+>  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
+> -	NEW_AUX_ENT(AT_FLAGS,	0);
+> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +	NEW_AUX_ENT(AT_FLAGS,	flags);
+>  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
+>  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
+>  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..b9acdd26a654 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+>  		goto ret;
+>  
+> -	if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
+> +	if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
+> +		bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
+> +	} else {
+>  		retval = remove_arg_zero(bprm);
+>  		if (retval)
+>  			goto ret;
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc633f3be..265b80d5fd6f 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -78,6 +78,10 @@ struct linux_binprm {
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
+>  
+> +/* if preserve the argv0 for the interpreter  */
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 << BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  /* Function parameter for binfmt->coredump */
+>  struct coredump_params {
+>  	const kernel_siginfo_t *siginfo;
+> diff --git a/include/uapi/linux/binfmts.h b/include/uapi/linux/binfmts.h
+> index 689025d9c185..a70747416130 100644
+> --- a/include/uapi/linux/binfmts.h
+> +++ b/include/uapi/linux/binfmts.h
+> @@ -18,4 +18,8 @@ struct pt_regs;
+>  /* sizeof(linux_binprm->buf) */
+>  #define BINPRM_BUF_SIZE 256
+>  
+> +/* if preserve the argv0 for the interpreter  */
+> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
+> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  #endif /* _UAPI_LINUX_BINFMTS_H */
 > 
-> The bigger problem is the completion path.  We're in softirq context,
-> so that will have to punt to a thread that can take mutexes.
 
-<nod> It's more workqueue punting, but I guess at least errors ought to
-be infrequent.
-
---D
