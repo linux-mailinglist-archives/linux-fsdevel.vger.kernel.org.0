@@ -2,149 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFBB1EFD24
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BCF1EFD6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgFEQAU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 12:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbgFEQAU (ORCPT
+        id S1726274AbgFEQTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 12:19:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49896 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgFEQTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 12:00:20 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E02C08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 09:00:20 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id u5so5318111pgn.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 09:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yOHx3JtZHl4XxOR183MPHxc1YyQEXr9//zjD6wPWK5c=;
-        b=AYM1SME2Yfp8Xp3XxiCuKbsb/mxLno+9x6Tvnx0AKRTBFR+Vyg+D0jJsDdO6B008gJ
-         j5cR/0Kki2xB3IEr7YyNhWdFsN1hYKuv0eVUgkVN7P1iFoWJU4m2y+AVWl/YWwRjCuX0
-         L63p9QE40scOglygoynUT1EFudt2cy5+UMbec=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yOHx3JtZHl4XxOR183MPHxc1YyQEXr9//zjD6wPWK5c=;
-        b=d+vyJE6QQeKzjwcFSqaQ3fyjq042XsQqhrPDlQwagNTSz6mv+/cePt/x6RcAiEeXJd
-         8iBOKlNZbozw5kdMUtvV4nAjpQFR0gpVtbx+c1NJg7kSRxuazz8dzZPF+EM1T3SaX94E
-         /1SrenDK7z5qqRP3A5XZKvKxRRvp7yP6TfcA3Z1GlbWms/VCyyniZrejCWyP5ekck6CP
-         v/XgTSUFuLm/jwVp3uX8psOO4aakfPJZneMFvu3GaXLModQR0NlFpvfPptLpJxSH8a4F
-         53jGWfG310fWy6oOxs/QJYTdxDKxAFvH1P1cqA1mKKlW8hEBbgyiT2vEgJxoSh0QIJsJ
-         qVyg==
-X-Gm-Message-State: AOAM532EdgWJ8EouM4RE4NT0lCcCXX+4bghtDzdGc7ryUb2f5EL1sS8K
-        7dW5XI5PLu1cknlNad1F0MTPQQ==
-X-Google-Smtp-Source: ABdhPJyVjuUcteaqY/mcT8ScT3S6QTSiJYt9wnTPuDWOo6anaUmiM00CCJIUs5IvLlBc1Bo5bes43g==
-X-Received: by 2002:a63:f14a:: with SMTP id o10mr10411918pgk.216.1591372819568;
-        Fri, 05 Jun 2020 09:00:19 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 10sm68354pfn.6.2020.06.05.09.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 09:00:18 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] exec: Move path_noexec() check earlier
-Date:   Fri,  5 Jun 2020 09:00:13 -0700
-Message-Id: <20200605160013.3954297-4-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200605160013.3954297-1-keescook@chromium.org>
-References: <20200605160013.3954297-1-keescook@chromium.org>
+        Fri, 5 Jun 2020 12:19:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055GCsgS156348;
+        Fri, 5 Jun 2020 16:18:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=aBdfKaTXhF7hzd2MYEhJyVNS1XcyS/zHMmaC1In3i5M=;
+ b=dDH8AMjV0lZlpRusueChse3h0K6XZJXeIxKPgKy0najDU5cVeqrhpFVsGJ056rIrmC5M
+ GUra11wjaSkG960uTWxxVHX74fZt2VOqHr4vr7JnF39jPkX5Y31UgfaZHLgC/EFaxvwx
+ vPrsmIKNfuZkUGPU+9wItzoiI/RCCKHmQ7+h32P5UywNTVPMrAgmGPmoLEOJ5QTLvJse
+ fAvsoMRQ+0T1D+cc4FukAcWBbV6NjDLwDnJX/kMvhS/1oYJxTMXNMzZFtNyn5LJHy/cj
+ W5mCQBAtD8PlzNu36Eh0brFB6EfYbuuBE0EzZHdiBKhqJrubCkGCUIwMVrs6a6RqEqtL kw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 31f91dupq7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 05 Jun 2020 16:18:55 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055GIALp092154;
+        Fri, 5 Jun 2020 16:18:54 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 31f927euas-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 Jun 2020 16:18:54 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 055GIru0000523;
+        Fri, 5 Jun 2020 16:18:53 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 05 Jun 2020 09:18:53 -0700
+Date:   Fri, 5 Jun 2020 09:18:52 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iomap: Handle I/O errors gracefully in page_mkwrite
+Message-ID: <20200605161852.GB1334206@magnolia>
+References: <20200604202340.29170-1-willy@infradead.org>
+ <20200604225726.GU2040@dread.disaster.area>
+ <20200604230519.GW19604@bombadil.infradead.org>
+ <20200604233053.GW2040@dread.disaster.area>
+ <20200604235050.GX19604@bombadil.infradead.org>
+ <20200605003159.GX2040@dread.disaster.area>
+ <20200605022451.GZ19604@bombadil.infradead.org>
+ <20200605030758.GB2040@dread.disaster.area>
+ <20200605124826.GF19604@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200605124826.GF19604@bombadil.infradead.org>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=5 adultscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006050122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 cotscore=-2147483648 malwarescore=0 adultscore=0
+ priorityscore=1501 suspectscore=5 phishscore=0 spamscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006050121
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The path_noexec() check, like the regular file check, was happening too
-late, letting LSMs see impossible execve()s. Check it earlier as well
-in may_open() and collect the redundant fs/exec.c path_noexec() test
-under the same robustness comment as the S_ISREG() check.
+On Fri, Jun 05, 2020 at 05:48:26AM -0700, Matthew Wilcox wrote:
+> On Fri, Jun 05, 2020 at 01:07:58PM +1000, Dave Chinner wrote:
+> > On Thu, Jun 04, 2020 at 07:24:51PM -0700, Matthew Wilcox wrote:
+> > > On Fri, Jun 05, 2020 at 10:31:59AM +1000, Dave Chinner wrote:
+> > > > On Thu, Jun 04, 2020 at 04:50:50PM -0700, Matthew Wilcox wrote:
+> > > > > > Sure, but that's not really what I was asking: why isn't this
+> > > > > > !uptodate state caught before the page fault code calls
+> > > > > > ->page_mkwrite? The page fault code has a reference to the page,
+> > > > > > after all, and in a couple of paths it even has the page locked.
+> > > > > 
+> > > > > If there's already a PTE present, then the page fault code doesn't
+> > > > > check the uptodate bit.  Here's the path I'm looking at:
+> > > > > 
+> > > > > do_wp_page()
+> > > > >  -> vm_normal_page()
+> > > > >  -> wp_page_shared()
+> > > > >      -> do_page_mkwrite()
+> > > > > 
+> > > > > I don't see anything in there that checked Uptodate.
+> > > > 
+> > > > Yup, exactly the code I was looking at when I asked this question.
+> > > > The kernel has invalidated the contents of a page, yet we still have
+> > > > it mapped into userspace as containing valid contents, and we don't
+> > > > check it at all when userspace generates a protection fault on the
+> > > > page?
+> > > 
+> > > Right.  The iomap error path only clears PageUptodate.  It doesn't go
+> > > to the effort of unmapping the page from userspace, so userspace has a
+> > > read-only view of a !Uptodate page.
+> > 
+> > Hmmm - did you miss the ->discard_page() callout just before we call
+> > ClearPageUptodate() on error in iomap_writepage_map()? That results
+> > in XFS calling iomap_invalidatepage() on the page, which ....
+> 
+> ... I don't think that's the interesting path.  I mean, that's
+> the submission path, and usually we discover errors in the completion
+> path, not the submission path.
+> 
+> > /me sighs as he realises that ->invalidatepage doesn't actually
+> > invalidate page mappings but only clears the page dirty state and
+> > releases filesystem references to the page.
 
-My notes on the call path, and related arguments, checks, etc:
+<nod> Yes, we have preserved the old feebleness.
 
-do_open_execat()
-    struct open_flags open_exec_flags = {
-        .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-        .acc_mode = MAY_EXEC,
-        ...
-    do_filp_open(dfd, filename, open_flags)
-        path_openat(nameidata, open_flags, flags)
-            file = alloc_empty_file(open_flags, current_cred());
-            do_open(nameidata, file, open_flags)
-                may_open(path, acc_mode, open_flag)
-                    /* new location of MAY_EXEC vs path_noexec() test */
-                    inode_permission(inode, MAY_OPEN | acc_mode)
-                        security_inode_permission(inode, acc_mode)
-                vfs_open(path, file)
-                    do_dentry_open(file, path->dentry->d_inode, open)
-                        security_file_open(f)
-                        open()
-    /* old location of path_noexec() test */
+I've long felt that we should leave the page dirty and retry the write,
+but that was objectionable because we could run out of memory and
+reclaim will stall and OOM on pages it can't clean if IO is still
+broken.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/exec.c  | 12 ++++--------
- fs/namei.c |  4 ++++
- 2 files changed, 8 insertions(+), 8 deletions(-)
+I can't remember the exact reasons for leaving a /clean/ page in memory,
+but I think it had to do with preserving mmap'd page contents long
+enough that a program could redirty the mapping <bluh bluh race
+conditions><this is glitchy><blarghallthisisstupid>.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 2b708629dcd6..7ac50a260df3 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -145,10 +145,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
- 	 * and check again at the very end too.
- 	 */
- 	error = -EACCES;
--	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
--		goto exit;
--
--	if (path_noexec(&file->f_path))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-+			 path_noexec(&file->f_path)))
- 		goto exit;
- 
- 	fsnotify_open(file);
-@@ -871,10 +869,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 	 * and check again at the very end too.
- 	 */
- 	err = -EACCES;
--	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
--		goto exit;
--
--	if (path_noexec(&file->f_path))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-+			 path_noexec(&file->f_path)))
- 		goto exit;
- 
- 	err = deny_write_access(file);
-diff --git a/fs/namei.c b/fs/namei.c
-index 0a759b68d66e..41e6fed8ce69 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2849,6 +2849,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 			return -EACCES;
- 		flag &= ~O_TRUNC;
- 		break;
-+	case S_IFREG:
-+		if ((acc_mode & MAY_EXEC) && path_noexec(path))
-+			return -EACCES;
-+		break;
- 	}
- 
- 	error = inode_permission(inode, MAY_OPEN | acc_mode);
--- 
-2.25.1
+> > Yay. We leave -invalidated page cache pages- mapped into userspace,
+> > and page faults on those pages don't catch access to invalidated
+> > pages.
+> 
+> More than that ... by clearing Uptodate, you're trying to prevent
+> future reads to this page from succeeding without verifying the data
+> is still on storage, but a task that had it mapped before can still
+> load the data that was written but never made it to storage.
+> So at some point it'll teleport backwards when another task has a
+> successful read().  Funfunfun.
 
+Let's just invalidate the mapping and see if anyone complains. :D
+
+> > Geez, we really suck at this whole software thing, don't we?
+> 
+> Certainly at handling errors ...
+> 
+> > It's not clear to me that we can actually unmap those pages safely
+> > in a race free manner from this code - can we actually do that from
+> > the page writeback path?
+> 
+> I don't see why it can't be done from the submission path.
+> unmap_mapping_range() calls i_mmap_lock_write(), which is
+> down_write(i_mmap_rwsem) in drag.  There might be a lock ordering
+> issue there, although lockdep should find it pretty quickly.
+> 
+> The bigger problem is the completion path.  We're in softirq context,
+> so that will have to punt to a thread that can take mutexes.
+
+<nod> It's more workqueue punting, but I guess at least errors ought to
+be infrequent.
+
+--D
