@@ -2,109 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C2E1EFB1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 16:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 069301EFB87
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 16:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbgFEOXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 10:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49534 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbgFEOXe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 10:23:34 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B917C08C5C5
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 07:23:32 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id y13so10330341eju.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 07:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XgY4I2DT6NHuEBJVBWH5xaWHKtAb7Acjuq8xM3DNBZs=;
-        b=QTElvvtJbPz7O4l0N2vXVv9mj1TLExtC0raNDMa24L8UfKR1yYUuYHL9CxjaruDrjh
-         aefJM28+QoU0J+hH7LcJY9hLj2TeIZpO1d1afTdHbgITtKVt276YnRSIFQtqPC3dyyfI
-         ovRyDY8g9W4NZLaLUUq/4fqdIhDWT8EwOvTWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XgY4I2DT6NHuEBJVBWH5xaWHKtAb7Acjuq8xM3DNBZs=;
-        b=pPyJwMXKlsg5dkJoUzz1R1QmsCa1BdRI2BLP6Ow9pY8zDBGpQTaIkMiHLvKtxl30c8
-         B5aOsrmjjCz2Y8kHS7JjusRD1hFNbgXiBrkLl7ZqWe732iG5qvLeFvlspwN6BQ0Z+kad
-         /HWCd+uJcLPMu56hcY6Kv9RdRRFGQbGQZ5bjK9e4VPsLWGSYBfjqlSiPs6mctOdLYyrw
-         syZ5IcbLtHhI/SClsdb6gKKPIrSa1OkUQiBjA2A0uMbsxaoFeTmIBnA2ZtzZrAJ5KMdS
-         hNKMcJ/pV+d1uSIoMlS17hWWAgUqU+8GzoN4FFvnOubW/UbuLVTciYo5FRw+OmxXV4vG
-         8zEQ==
-X-Gm-Message-State: AOAM530XghhBNW6C6CkTG0Qm6WLGl9FNnfJN7pMflD0qWMCNJJg8yB6l
-        ayvE0T6fPPnbMkCU2LdycqGKa6Vy64g=
-X-Google-Smtp-Source: ABdhPJx6dbhFdXcLh9Fw1Irene3+drPlsNF3oWeBEhsMBqDdvPnhWWVIhBS0bvJAttcjyHDwhAkrGQ==
-X-Received: by 2002:a17:906:cb97:: with SMTP id mf23mr4356134ejb.468.1591367011198;
-        Fri, 05 Jun 2020 07:23:31 -0700 (PDT)
-Received: from prevas-ravi.prevas.se (ip-5-186-116-45.cgn.fibianet.dk. [5.186.116.45])
-        by smtp.gmail.com with ESMTPSA id qp16sm4421833ejb.64.2020.06.05.07.23.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 07:23:30 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH resend] fs/namei.c: micro-optimize acl_permission_check
-Date:   Fri,  5 Jun 2020 16:23:00 +0200
-Message-Id: <20200605142300.14591-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.23.0
+        id S1728255AbgFEOhO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 10:37:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55328 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727113AbgFEOhN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 10:37:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 794F2AFDB;
+        Fri,  5 Jun 2020 14:37:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8AD4D1E1281; Fri,  5 Jun 2020 16:37:10 +0200 (CEST)
+Date:   Fri, 5 Jun 2020 16:37:10 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jason Yan <yanaijie@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH v3] block: Fix use-after-free in blkdev_get()
+Message-ID: <20200605143710.GA13248@quack2.suse.cz>
+References: <20200605104558.16686-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200605104558.16686-1-yanaijie@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just something like open(/usr/include/sys/stat.h) causes five calls of
-generic_permission -> acl_permission_check -> in_group_p; if the
-compiler first tried /usr/local/include/..., that would be a few
-more.
+On Fri 05-06-20 18:45:58, Jason Yan wrote:
+> In blkdev_get() we call __blkdev_get() to do some internal jobs and if
+> there is some errors in __blkdev_get(), the bdput() is called which
+> means we have released the refcount of the bdev (actually the refcount of
+> the bdev inode). This means we cannot access bdev after that point. But
+> accually bdev is still accessed in blkdev_get() after calling
+> __blkdev_get(). This may leads to use-after-free if the refcount is the
+> last one we released in __blkdev_get(). Let's take a look at the
+> following scenerio:
+> 
+>   CPU0            CPU1                    CPU2
+> blkdev_open     blkdev_open           Remove disk
+>                   bd_acquire
+> 		  blkdev_get
+> 		    __blkdev_get      del_gendisk
+> 					bdev_unhash_inode
+>   bd_acquire          bdev_get_gendisk
+>     bd_forget           failed because of unhashed
+> 	  bdput
+> 	              bdput (the last one)
+> 		        bdev_evict_inode
+> 
+> 	  	    access bdev => use after free
+> 
+> [  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
+> [  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
+> [  459.352347]
+> [  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
+> [  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+> [  459.354947] Call Trace:
+> [  459.355337]  dump_stack+0x111/0x19e
+> [  459.355879]  ? __lock_acquire+0x24c1/0x31b0
+> [  459.356523]  print_address_description+0x60/0x223
+> [  459.357248]  ? __lock_acquire+0x24c1/0x31b0
+> [  459.357887]  kasan_report.cold+0xae/0x2d8
+> [  459.358503]  __lock_acquire+0x24c1/0x31b0
+> [  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
+> [  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
+> [  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
+> [  459.361123]  ? finish_task_switch+0x125/0x600
+> [  459.361812]  ? finish_task_switch+0xee/0x600
+> [  459.362471]  ? mark_held_locks+0xf0/0xf0
+> [  459.363108]  ? __schedule+0x96f/0x21d0
+> [  459.363716]  lock_acquire+0x111/0x320
+> [  459.364285]  ? blkdev_get+0xce/0xbe0
+> [  459.364846]  ? blkdev_get+0xce/0xbe0
+> [  459.365390]  __mutex_lock+0xf9/0x12a0
+> [  459.365948]  ? blkdev_get+0xce/0xbe0
+> [  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
+> [  459.367130]  ? blkdev_get+0xce/0xbe0
+> [  459.367678]  ? destroy_inode+0xbc/0x110
+> [  459.368261]  ? mutex_trylock+0x1a0/0x1a0
+> [  459.368867]  ? __blkdev_get+0x3e6/0x1280
+> [  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
+> [  459.370114]  ? blkdev_get+0xce/0xbe0
+> [  459.370656]  blkdev_get+0xce/0xbe0
+> [  459.371178]  ? find_held_lock+0x2c/0x110
+> [  459.371774]  ? __blkdev_get+0x1280/0x1280
+> [  459.372383]  ? lock_downgrade+0x680/0x680
+> [  459.373002]  ? lock_acquire+0x111/0x320
+> [  459.373587]  ? bd_acquire+0x21/0x2c0
+> [  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
+> [  459.374780]  blkdev_open+0x202/0x290
+> [  459.375325]  do_dentry_open+0x49e/0x1050
+> [  459.375924]  ? blkdev_get_by_dev+0x70/0x70
+> [  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
+> [  459.377192]  ? inode_permission+0xbe/0x3a0
+> [  459.377818]  path_openat+0x148c/0x3f50
+> [  459.378392]  ? kmem_cache_alloc+0xd5/0x280
+> [  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  459.379802]  ? path_lookupat.isra.0+0x900/0x900
+> [  459.380489]  ? __lock_is_held+0xad/0x140
+> [  459.381093]  do_filp_open+0x1a1/0x280
+> [  459.381654]  ? may_open_dev+0xf0/0xf0
+> [  459.382214]  ? find_held_lock+0x2c/0x110
+> [  459.382816]  ? lock_downgrade+0x680/0x680
+> [  459.383425]  ? __lock_is_held+0xad/0x140
+> [  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
+> [  459.384668]  ? _raw_spin_unlock+0x1f/0x30
+> [  459.385280]  ? __alloc_fd+0x448/0x560
+> [  459.385841]  do_sys_open+0x3c3/0x500
+> [  459.386386]  ? filp_open+0x70/0x70
+> [  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+> [  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
+> [  459.388342]  ? do_syscall_64+0x1a/0x520
+> [  459.388930]  do_syscall_64+0xc3/0x520
+> [  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  459.390248] RIP: 0033:0x416211
+> [  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
+> 04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
+>    05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
+>       01
+> [  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+> [  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
+> [  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
+> [  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
+> [  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
+> [  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
+> [  459.400168]
+> [  459.400430] Allocated by task 20132:
+> [  459.401038]  kasan_kmalloc+0xbf/0xe0
+> [  459.401652]  kmem_cache_alloc+0xd5/0x280
+> [  459.402330]  bdev_alloc_inode+0x18/0x40
+> [  459.402970]  alloc_inode+0x5f/0x180
+> [  459.403510]  iget5_locked+0x57/0xd0
+> [  459.404095]  bdget+0x94/0x4e0
+> [  459.404607]  bd_acquire+0xfa/0x2c0
+> [  459.405113]  blkdev_open+0x110/0x290
+> [  459.405702]  do_dentry_open+0x49e/0x1050
+> [  459.406340]  path_openat+0x148c/0x3f50
+> [  459.406926]  do_filp_open+0x1a1/0x280
+> [  459.407471]  do_sys_open+0x3c3/0x500
+> [  459.408010]  do_syscall_64+0xc3/0x520
+> [  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  459.409415]
+> [  459.409679] Freed by task 1262:
+> [  459.410212]  __kasan_slab_free+0x129/0x170
+> [  459.410919]  kmem_cache_free+0xb2/0x2a0
+> [  459.411564]  rcu_process_callbacks+0xbb2/0x2320
+> [  459.412318]  __do_softirq+0x225/0x8ac
+> 
+> Fix this by delaying bdput() to the end of blkdev_get() which means we
+> have finished accessing bdev.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Ming Lei <ming.lei@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
 
-Altogether, on a bog-standard Ubuntu 20.04 install, a workload
-consisting of compiling lots of userspace programs (i.e., calling lots
-of short-lived programs that all need to get their shared libs mapped
-in, and the compilers poking around looking for system headers - lots
-of /usr/lib, /usr/bin, /usr/include/ accesses) puts in_group_p around
-0.1% according to perf top. With an artificial load such as
+Thanks for the patch! It looks good to me. Just one nit below:
 
-  while true ; do find /usr/ -print0 | xargs -0 stat > /dev/null ; done
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 47860e589388..d7b74e44ad5a 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1566,7 +1566,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+>  	if (!for_part) {
+>  		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
+>  		if (ret != 0) {
+> -			bdput(bdev);
+>  			return ret;
+>  		}
 
-that jumps to over 0.4%.
+No need for braces here after you remove bdput(). With this fixed, feel
+free to add:
 
-System-installed files are almost always 0755 (directories and
-binaries) or 0644, so in most cases, we can avoid the binary search
-and the cost of pulling the cred->groups array and in_group_p() .text
-into the cpu cache.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- fs/namei.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+								Honza
 
-diff --git a/fs/namei.c b/fs/namei.c
-index d81f73ff1a8b..c6f0c6643db5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -303,7 +303,12 @@ static int acl_permission_check(struct inode *inode, int mask)
- 				return error;
- 		}
- 
--		if (in_group_p(inode->i_gid))
-+		/*
-+		 * If the "group" and "other" permissions are the same,
-+		 * there's no point calling in_group_p() to decide which
-+		 * set to use.
-+		 */
-+		if ((((mode >> 3) ^ mode) & 7) && in_group_p(inode->i_gid))
- 			mode >>= 3;
- 	}
- 
 -- 
-2.23.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
