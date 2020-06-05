@@ -2,42 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 123FD1EF8B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 15:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBD71EF8E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 15:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgFENMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 09:12:37 -0400
-Received: from mout.web.de ([212.227.15.4]:53989 "EHLO mout.web.de"
+        id S1726957AbgFENYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 09:24:05 -0400
+Received: from mout.web.de ([212.227.15.3]:41993 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbgFENMg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 09:12:36 -0400
+        id S1726894AbgFENYE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 09:24:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591362731;
-        bh=PMB/OrSW18U24vHIMH+Et3METPkSOFj+9A70a8Ux4Zs=;
+        s=dbaedf251592; t=1591363423;
+        bh=tuG0dZ1YiipXhKqpByGWLeDV+TUK9ozfY2PMN7JgfY0=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=gT+ZAtXvl7YqsicF708eVbWyj2AYfyesh172wH7txakNZ4b5rdqLsGRvYMb+G40iW
-         hbTeEc6BIN+VybAcT/owMFcNxLqF1z24zS/uY/4j6lX2YynjZ9fNceGk18GJS6j+Ni
-         fLSLHN51PbJAdHR4F7P82M/hhMtIJ1TROqVYhdd4=
+        b=ZSlKtdDTbAsej8vgSsmeCzAeOeXKqASnz5uXWtDauAIQXvRrAezErr7Nolyyzqk1P
+         X2gWxm4lf8y6K/EjyHHItJIyB0J09N/8tHUWDW2NK7vWpmQw5BNYp1ojQjdffN2aIc
+         +PsIrDZ7Sky3kOs7wIa8PTQKaEUpvN+aW70Tv/Mk=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.102.114]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MCqWJ-1jpkym0ZN5-009euU; Fri, 05
- Jun 2020 15:12:11 +0200
+Received: from [192.168.1.2] ([93.131.102.114]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MX0q4-1jV4p91lW0-00VxiJ; Fri, 05
+ Jun 2020 15:23:43 +0200
 Subject: Re: block: Fix use-after-free in blkdev_get()
-To:     Matthew Wilcox <willy@infradead.org>, linux-block@vger.kernel.org,
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Jason Yan <yanaijie@huawei.com>, hulkci@huawei.com,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
+        Ming Lei <ming.lei@redhat.com>
 References: <88676ff2-cb7e-70ec-4421-ecf8318990b1@web.de>
  <5fa658bf-3028-9b5c-30cc-dbdef6bf8f7a@huawei.com>
  <20200605094353.GS30374@kadam> <2ee6f2f7-eaec-e748-bead-0ad59f4c378b@web.de>
- <20200605111039.GL22511@kadam> <63e57552-ab95-7bb4-b4f1-70a307b6381d@web.de>
- <20200605114208.GC19604@bombadil.infradead.org>
- <a050788f-5875-0115-af31-692fd6bf3a88@web.de>
- <20200605125209.GG19604@bombadil.infradead.org>
+ <20200605111049.GA19604@bombadil.infradead.org>
+ <b6c8ebd7-ccd3-2a94-05b2-7b92a30ec8a9@web.de>
+ <20200605115158.GD19604@bombadil.infradead.org>
+ <453060f2-80af-86a4-7e33-78d4cc87503f@web.de>
+ <1d95e2f6-7cf8-f0d3-bf8a-54d0a99c9ba1@kernel.dk>
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -82,53 +84,48 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <366e055b-6a00-662e-2e03-f72053f67ae6@web.de>
-Date:   Fri, 5 Jun 2020 15:12:08 +0200
+Message-ID: <b642a81c-84cd-ca05-5708-c109dc2e5ea8@web.de>
+Date:   Fri, 5 Jun 2020 15:23:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.1
 MIME-Version: 1.0
-In-Reply-To: <20200605125209.GG19604@bombadil.infradead.org>
+In-Reply-To: <1d95e2f6-7cf8-f0d3-bf8a-54d0a99c9ba1@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-X-Provags-ID: V03:K1:2BABuD30xVncECsA5KfvlPXoW/9y3FaEMMbgzZ66iyv6ud6cILX
- Ix1T7DmnnLSNQoemrBZlg7u0D2wvAmeiYQ2P6eD+9tHSPIk9BZ8dn+7Ym/olqhMyZj6lYAY
- JGxBeljS2S5V/5VjyAsFNd722rvC7lRJd3uXBJfSlZx99+PKN96ZgGYf/vROwu0VX8fpQn2
- t4FK5QTcYTPLJYMtiQVyg==
+X-Provags-ID: V03:K1:BwE1qV5V3yoaN8alh2loRJYQ/SNkXOJw/is3lGQ+r33syBYM4rc
+ 7tZT4t8XdjBmX/Pko0yuAeYfpre4BQVQOX6GukHH8Ozp3tQd/PqNbT/VNYj1IE4B5jHyFPr
+ FGDcqZHx1bq2oxmylMjbydGs2kt44oZEEcwsE5RZygiiElElHKZFJdhyo+Sq1572LbVSsPz
+ 4SjcToTf3mJGRwmRKbopA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Lq+UbXDLN+8=:dt4wju2mSFKltJy6+E5FjS
- nHC6XdSWk0DLb5q6N+KhtGzhNpGDsraZrHjytsP1WKkDE7NBpbFf0n7obITWk3p//U5FQJVki
- Bg57rWVjPrX6TPATZubDqHokaFDL0dkBfKwFUELnadMtG/z8HIKHI72kdgMYXuLNjluumyYdR
- J8EDLzb0hdCM+IoH7we6aH2RqeM6wkBRMlLH8IvhSMt4D2t/tNJ8+2JVHQ22VhljO/bItlI+K
- Vb+950OBF4H3EkO8pMXCt3OdFqO27p3mDNHSbCHqoqEsET4fVOlb4OySTfReg8hWGnNvZCIns
- 0rj9uljrqvihsDiGtoCQMfmdcOkbV7OBZ8yilSW9R12Se2GJdiLOLLeVGDEzICjhcW5gnb6xI
- S1dafuuAJehUL0/eodAzzWVndVaqvbOITKGC/eS6TqM66CtmTXmNL1H0N3fXdUX4hGNC0bUEx
- ZxgreOxLU0Aee6SH8+HdEvKiXCpn6rQyu3228Sy3JAwyQhtytVTNav5bWICG+/N6AL/c/waG6
- Hm2OyX2Nh55TOi7+lxXRuJuFdr79hCLL/QdyO8JA7+ker/NTcN7Our6pczYSt9I23m3pnskNJ
- 3Qcab5bjVbxoJw7ZpeFJ/9LXQJn35KPmaGBh+ujU8/cl80RNVUC4whrManCA5OpNFVOTR2sX3
- t5G8KaYlmwXRg28GcghLUtrorSaPyxnlmezAim4wtJVNXIBbMK9T3EPeS2EtvqnYmhAaLpBIp
- 1K1meKk1tcUp5WQNdcS/8talNZ4+FrOdRTTLh1+3Hd8F+xyKD7CmbT+nPuLX+NYvrekyVR/kL
- 2+0a3CM7EwjBcorEZd2wkroWS687cjQUgkd7T4/jFGNZuHDdZOV/CL/35fEa/cEE9RtnwJ02g
- hDA+gqKTFKi9QMxxdMrlcPk0KSy4OEJ5SgAfadSMbS/zcxLxNRu9dGeky6BDg4hp6iRedx/8L
- A2UOuLR0ZagpTbrovGHCZ5kcydGZBBoP4MXO1pHC/TQfcZBQPIwTWU6RqN0gYbLBX2aFi6Nsy
- 8OFyoHPl31352H9XdmqfD6cPYrsT2zly7vYd0JtSWwScxvaBqmXe8GKvl/DOSqbJvTF5oFdeI
- C5kVBIYQ08BHTFo1jPt1DtYUt6ymQTo3LZcAyU11Y58ZAiIGLpkiSi5d/Lmy9zqoW88Df/LSz
- TmxAlXWgu3LuvlUxUfdmzwzMoYmkw2CkKRbEKw72eN2bSvTbg8Cu3vCjU+waFqbhAf+DWHgpJ
- 5vkqg2iiEPjL8fyXk
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iozseHijVFE=:ffGMyIeUiaLTrjIaP9Ukdo
+ BHUF88Mw2P6UnEgz9e9WavSgrUb+6Ucv5WY5HS7Mjjt8oucC36Q26jMwzsh2sD6QZ3K+ytfWQ
+ bbn1h9w8M0B0N2eCXmDVYuWffyoprKsCQRkPegyFazaX2Xr/HqpmqhQYb8DGguBc+ycGeuRtX
+ AgAEvsccSX5SzCwrV3f9f53N0IYJ1t54FAw+XOl3HV2TrLZnQDGVAC518VWc1WI4wHx+nURT8
+ 4N3zsPYnywl54C/+o5M09fdaIYibYxeh7fTMDVdUIzVR4jMaPCWO2Dod8Aaqs7OlCIAh6hMVl
+ mKKo1HzBixSQ7mch9gRRZ8TbFLaOtwA5u3/ACRGkDCwl7HY8OEsSkDPasxx9nUop5kRCDzAvR
+ L72lPfBQewEEFbcwQxdpb7rG0v3K11jCZUWrJOIaE2SD1reqQagggqgMe07h9Jz9R4eBpXfny
+ Xvacb974arGEmsDS02fx8GEGb1nwB6COrW50QAt8Cug2Lp0c/u6dqb5YO8rzxN2bmiuTbyGxd
+ 7fP0+m+q6vZtqoiYP942FaoA9eIL+JZ4A9rG7YZt/8anX4V5sgOA1EwNY/nC+jSYshE4ZURAy
+ 0yqvZ+I/G/gOwnskwapZk0Y6OkrxwysFJrcoCyr8EpbNTLuzTuXcupci7qDhrgTwddDSx5Acm
+ DYcF3/PY79kpzmNlr7rQweuRUrulWXQnfPYfOWQg99g+bLOCxDZ3WdeAzzWl/KUkurWBvaZmJ
+ DiBOyoBSouG9+lVLm0fdaANcBNn7mwJuJqem5rE3NSbFha1+56ZzUbjsp7XTVPjAbTRcjEFLl
+ 2wPK0ECkhoFjq2HOxkxptY8w++OpfF7hfu2lK3IMHSOi6Xa+WMcfIsnbCzgSS0R+WlTB+wEat
+ dPpy4M1sjrykyVrMMgkVnuQMQnyKlwvye3PHVDBLEqbmJr43Dif25WNDnpXOFPL1XXQynNIU3
+ mEEb1dBHZPVfEHkdi/2R8U9lZy1/F6uBT0YTXqMBBVk3hx7siDZkkG3wUuV0cwk1hIG9AUK2i
+ Xxbo+Ct4vpHYJ3rChyJpXOAi0CQ39H7imbTx9olDZ7UvMaSPj9g2bQ5KYslSlE0LNgWcfFfyG
+ MPtGFzgFKjMiBnh+ZJwB/JtVXiVaBEJBjdT7/f1BAiv2O9RTBIKORqlw4yPvcQBGS+kBcIlKB
+ 1fOGn+1Ix/KxDoyxlmOKKRonT6AbpCkNlKUUu7rYMcOeeMuBtDVTJXdLVxlJMMNF5jDtYEBNk
+ 0Ym1+aXaS64XShxPR
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Your feedback is unhelpful
+> Maintainers generally do change commit messages to improve them,
+> if needed.
 
-Do you find proposed spelling corrections useful?
-
-
-> and you show no signs of changing it in response to the people
-> who are telling you that it's unhelpful.
-
-Other adjustments can occasionally be more challenging
-besides the usual communication challenges.
+You have got a documented choice here.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=435faf5c218a47fd6258187f62d9bb1009717896#n468
 
 Regards,
 Markus
