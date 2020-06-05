@@ -2,127 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 437FB1EFC11
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 17:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54B21EFC0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 17:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbgFEPBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 11:01:33 -0400
-Received: from port70.net ([81.7.13.123]:60728 "EHLO port70.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbgFEPBc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 11:01:32 -0400
-X-Greylist: delayed 340 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Jun 2020 11:01:31 EDT
-Received: by port70.net (Postfix, from userid 1002)
-        id 66D71ABEC0C2; Fri,  5 Jun 2020 16:55:50 +0200 (CEST)
-Date:   Fri, 5 Jun 2020 16:55:49 +0200
-From:   Szabolcs Nagy <nsz@port70.net>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        Kyle Evans <self@kyle-evans.net>,
-        Victor Stinner <victor.stinner@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
-        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, ldv@altlinux.org
-Subject: Re: [PATCH v5 1/3] open: add close_range()
-Message-ID: <20200605145549.GC673948@port70.net>
-References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
- <20200602204219.186620-2-christian.brauner@ubuntu.com>
+        id S1728118AbgFEPBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 11:01:09 -0400
+Received: from pb-smtp20.pobox.com ([173.228.157.52]:55500 "EHLO
+        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgFEPBH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 11:01:07 -0400
+Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
+        by pb-smtp20.pobox.com (Postfix) with ESMTP id 6AE7ED27C6;
+        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:in-reply-to:message-id:references:mime-version
+        :content-type; s=sasl; bh=RQ5UuhFDdm6pYUURqgzo84j9G7A=; b=Sxoay7
+        F4gA4GZdu5Zg9uUlmAkW1Zt5FcDuXuyxgJg0J1/2YOTh+oGVFPS2XCXNhnKxruau
+        MDtfSlY0eXyRJHtGFbaGy1GRIGwT91daJ30IGzYPPomdVWXXQA2tHr5SlWDA734m
+        bZRjhWd3q6ijPU6K2wBSKxViPDDqydIEEmReM=
+Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp20.pobox.com (Postfix) with ESMTP id 61111D27C5;
+        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=kGSNSFs79QpTCdEy/syIPtk8e7qpRSOVx3t4YYHSTPo=; b=Zz/eImY/hca3rOTLiCqOYWoaV6plgEo+kdFnlRPQFzRcUQoLXjJn0FtfTD7ckQtTqowgcbv/qHCqzK+ScMEpsSblxLiajcMT9GhFudy2osyOw0c/0yOkmdHSrAU5J6sKLf0oVK0xHwQO8Q2r0bmcLvvl02K0jlrhpKiphQGd6bE=
+Received: from yoda.home (unknown [24.203.50.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 263D0D27C0;
+        Fri,  5 Jun 2020 11:01:01 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTPSA id 25E392DA01E9;
+        Fri,  5 Jun 2020 11:00:59 -0400 (EDT)
+Date:   Fri, 5 Jun 2020 11:00:59 -0400 (EDT)
+From:   Nicolas Pitre <nico@fluxnic.net>
+To:     =?ISO-8859-15?Q?Philippe_Mathieu-Daud=E9?= <f4bug@amsat.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+Subject: Re: clean up kernel_{read,write} & friends v2
+In-Reply-To: <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
+Message-ID: <nycvar.YSQ.7.77.849.2006051039350.1353413@knanqh.ubzr>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com> <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk> <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+ <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com> <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200602204219.186620-2-christian.brauner@ubuntu.com>
+Content-Type: multipart/mixed; boundary="8323328-1427214125-1591369259=:1353413"
+X-Pobox-Relay-ID: 5EB18F9E-A73D-11EA-B614-B0405B776F7B-78420484!pb-smtp20.pobox.com
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Christian Brauner <christian.brauner@ubuntu.com> [2020-06-02 22:42:17 +0200]:
-> This adds the close_range() syscall. It allows to efficiently close a range
-> of file descriptors up to all file descriptors of a calling task.
-> 
-> I've also coordinated with some FreeBSD developers who got in touch with
-> me (Cced below). FreeBSD intends to add the same syscall once we merged it.
-> Quite a bunch of projects in userspace are waiting on this syscall
-> including Python and systemd.
-> 
-> The syscall came up in a recent discussion around the new mount API and
-> making new file descriptor types cloexec by default. During this
-> discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
-> syscall in this manner has been requested by various people over time.
-> 
-> First, it helps to close all file descriptors of an exec()ing task. This
-> can be done safely via (quoting Al's example from [1] verbatim):
-> 
->         /* that exec is sensitive */
->         unshare(CLONE_FILES);
->         /* we don't want anything past stderr here */
->         close_range(3, ~0U);
->         execve(....);
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-this api needs a documentation patch if there isn't yet.
+--8323328-1427214125-1591369259=:1353413
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-currently there is no libc interface contract in place that
-says which calls may use libc internal fds e.g. i've seen
+On Fri, 5 Jun 2020, Philippe Mathieu-Daud=C3=A9 wrote:
 
-  openlog(...) // opens libc internal syslog fd
-  ...
-  fork()
-  closefrom(...) // close syslog fd
-  open(...) // something that reuses the closed fd
-  syslog(...) // unsafe: uses the wrong fd
-  execve(...)
+> Unfortunately refreshable braille displays have that "hardware
+> limitations". 80 cells displays are very expensive.
+> Visual impairments is rarely a "choice".
+> Relaxing the 80-char limit make it harder for blind developers
+> to contribute.
 
-syslog uses a libc internal fd that the user trampled on and
-this can go bad in many ways depending on what libc apis are
-used between closefrom (or equivalent) and exec.
+Well, not really.
 
-> The code snippet above is one way of working around the problem that file
-> descriptors are not cloexec by default. This is aggravated by the fact that
-> we can't just switch them over without massively regressing userspace. For
+It is true that 80-cells displays are awfully expensive. IMHO they are=20
+also unwieldy due to their size: they are hardly portable, and they=20
+require your hands to move twice as far which may sometimes impair=20
+reading efficiency. So I never liked them.
 
-why is a switch_to_cloexec_range worse than close_range?
-the former seems safer to me. (and allows libc calls
-to be made between such switch and exec: libc internal
-fds have to be cloexec anyway)
+My braille display has 40 cells only. So even with a 80-cells limit I=20
+always had to pan the display to see the whole line anyway.
 
-> a whole class of programs having an in-kernel method of closing all file
-> descriptors is very helpful (e.g. demons, service managers, programming
-> language standard libraries, container managers etc.).
-> (Please note, unshare(CLONE_FILES) should only be needed if the calling
-> task is multi-threaded and shares the file descriptor table with another
-> thread in which case two threads could race with one thread allocating file
-> descriptors and the other one closing them via close_range(). For the
-> general case close_range() before the execve() is sufficient.)
-> 
-> Second, it allows userspace to avoid implementing closing all file
-> descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
-> file descriptor. From looking at various large(ish) userspace code bases
-> this or similar patterns are very common in:
-> - service managers (cf. [4])
-> - libcs (cf. [6])
-> - container runtimes (cf. [5])
-> - programming language runtimes/standard libraries
->   - Python (cf. [2])
->   - Rust (cf. [7], [8])
-> As Dmitry pointed out there's even a long-standing glibc bug about missing
-> kernel support for this task (cf. [3]).
-> In addition, the syscall will also work for tasks that do not have procfs
-> mounted and on kernels that do not have procfs support compiled in. In such
-> situations the only way to make sure that all file descriptors are closed
-> is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
-> OPEN_MAX trickery (cf. comment [8] on Rust).
+My text console is set to 160x128. The trick here is to have the number=20
+of columns be a multiple of the braille display's width to avoid dead=20
+areas when panning to the right.
 
-close_range still seems like a bad operation to expose.
+So if you ask me, I'm not against relaxing the 80 columns limit for=20
+code. What really matters to me is that I can stay clear of any GUI.
 
-if users really want closing behaviour (instead of marking
-fds cloexec) then they likely need coordination with libc
-and other libraries.
 
-e.g. this usage does not work:
-
-  maxfd = findmaxfd();
-  call_that_may_leak_fds();
-  close_range(maxfd,~0U);
-
-as far as i can tell only the close right before exec works.
+Nicolas
+--8323328-1427214125-1591369259=:1353413--
