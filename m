@@ -2,136 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C661EFBC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 16:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 437FB1EFC11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 17:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgFEOrX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 10:47:23 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:53116 "EHLO raptor.unsafe.ru"
+        id S1728151AbgFEPBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 11:01:33 -0400
+Received: from port70.net ([81.7.13.123]:60728 "EHLO port70.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbgFEOrX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 10:47:23 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 29B20209AF;
-        Fri,  5 Jun 2020 14:47:19 +0000 (UTC)
-Date:   Fri, 5 Jun 2020 16:47:14 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Containers <containers@lists.linux-foundation.org>
-Subject: Re: [PATCH 0/2] proc: use subset option to hide some top-level
- procfs entries
-Message-ID: <20200605144714.7voi2hgtg5r2oiql@comp-core-i7-2640m-0182e6>
-References: <20200604200413.587896-1-gladkov.alexey@gmail.com>
- <87ftbah8q2.fsf@x220.int.ebiederm.org>
- <20200605000838.huaeqvgpvqkyg3wh@comp-core-i7-2640m-0182e6>
- <87zh9idu3h.fsf@x220.int.ebiederm.org>
+        id S1726911AbgFEPBc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 11:01:32 -0400
+X-Greylist: delayed 340 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Jun 2020 11:01:31 EDT
+Received: by port70.net (Postfix, from userid 1002)
+        id 66D71ABEC0C2; Fri,  5 Jun 2020 16:55:50 +0200 (CEST)
+Date:   Fri, 5 Jun 2020 16:55:49 +0200
+From:   Szabolcs Nagy <nsz@port70.net>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Kyle Evans <self@kyle-evans.net>,
+        Victor Stinner <victor.stinner@gmail.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
+        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
+        dhowells@redhat.com, ldv@altlinux.org
+Subject: Re: [PATCH v5 1/3] open: add close_range()
+Message-ID: <20200605145549.GC673948@port70.net>
+References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
+ <20200602204219.186620-2-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87zh9idu3h.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 05 Jun 2020 14:47:20 +0000 (UTC)
+In-Reply-To: <20200602204219.186620-2-christian.brauner@ubuntu.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 11:17:38PM -0500, Eric W. Biederman wrote:
-> >> I am not going to seriously look at this for merging until after the
-> >> merge window closes. 
-> >
-> > OK. I'll wait.
+* Christian Brauner <christian.brauner@ubuntu.com> [2020-06-02 22:42:17 +0200]:
+> This adds the close_range() syscall. It allows to efficiently close a range
+> of file descriptors up to all file descriptors of a calling task.
 > 
-> That will mean your patches can be based on -rc1.
-
-OK.
-
-> > Do you suggest to allow a user to mount procfs with hidepid=2,subset=pid
-> > options? If so then this is an interesting idea.
+> I've also coordinated with some FreeBSD developers who got in touch with
+> me (Cced below). FreeBSD intends to add the same syscall once we merged it.
+> Quite a bunch of projects in userspace are waiting on this syscall
+> including Python and systemd.
 > 
-> The key part would be subset=pid.  You would still need to be root in
-> your user namespace, and mount namespace.  You would not need to have a
-> separate copy of proc with nothing hidden already mounted.
-
-Can you tell me more about your idea ? I thought I understood it, but it
-seems my understanding is different.
-
-I thought that you are suggesting that you move in the direction of
-allowing procfs to mount an unprivileged user.
-
-> > I can not agree with this because I do not touch on other options.
-> > The hidepid and subset=pid has no relation to the visibility of regular
-> > files. On the other hand, in procfs there is absolutely no way to restrict
-> > access other than selinux.
+> The syscall came up in a recent discussion around the new mount API and
+> making new file descriptor types cloexec by default. During this
+> discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
+> syscall in this manner has been requested by various people over time.
 > 
-> Untrue.  At a practical level the user namespace greatly restricts
-> access to proc because many of the non-process files are limited to
-> global root only.
-
-I am not worried about the files created in procfs by the kernel itself
-because the permissions are set correctly and are checked correctly.
-
-I worry about kernel modules, especially about modules out of tree.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/gadget/function/rndis.c#n904
-
-I certainly understand that 0660 is not 0666, but still.
-
-> > I know that java uses meminfo for sure.
-> >
-> > The purpose of this patch is to isolate the container from unwanted files
-> > in procfs.
+> First, it helps to close all file descriptors of an exec()ing task. This
+> can be done safely via (quoting Al's example from [1] verbatim):
 > 
-> If what we want is the ability not to use the original but to have
-> a modified version of these files.  We probably want empty files that
-> serve as mount points.
+>         /* that exec is sensitive */
+>         unshare(CLONE_FILES);
+>         /* we don't want anything past stderr here */
+>         close_range(3, ~0U);
+>         execve(....);
+
+this api needs a documentation patch if there isn't yet.
+
+currently there is no libc interface contract in place that
+says which calls may use libc internal fds e.g. i've seen
+
+  openlog(...) // opens libc internal syslog fd
+  ...
+  fork()
+  closefrom(...) // close syslog fd
+  open(...) // something that reuses the closed fd
+  syslog(...) // unsafe: uses the wrong fd
+  execve(...)
+
+syslog uses a libc internal fd that the user trampled on and
+this can go bad in many ways depending on what libc apis are
+used between closefrom (or equivalent) and exec.
+
+> The code snippet above is one way of working around the problem that file
+> descriptors are not cloexec by default. This is aggravated by the fact that
+> we can't just switch them over without massively regressing userspace. For
+
+why is a switch_to_cloexec_range worse than close_range?
+the former seems safer to me. (and allows libc calls
+to be made between such switch and exec: libc internal
+fds have to be cloexec anyway)
+
+> a whole class of programs having an in-kernel method of closing all file
+> descriptors is very helpful (e.g. demons, service managers, programming
+> language standard libraries, container managers etc.).
+> (Please note, unshare(CLONE_FILES) should only be needed if the calling
+> task is multi-threaded and shares the file descriptor table with another
+> thread in which case two threads could race with one thread allocating file
+> descriptors and the other one closing them via close_range(). For the
+> general case close_range() before the execve() is sufficient.)
 > 
-> Or possibly a version of these files that takes into account
-> restrictions.  In either even we need to do the research through real
-> programs and real kernel options to see what is our best option for
-> exporting the limitations that programs have and deciding on the long
-> term API for that.
+> Second, it allows userspace to avoid implementing closing all file
+> descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
+> file descriptor. From looking at various large(ish) userspace code bases
+> this or similar patterns are very common in:
+> - service managers (cf. [4])
+> - libcs (cf. [6])
+> - container runtimes (cf. [5])
+> - programming language runtimes/standard libraries
+>   - Python (cf. [2])
+>   - Rust (cf. [7], [8])
+> As Dmitry pointed out there's even a long-standing glibc bug about missing
+> kernel support for this task (cf. [3]).
+> In addition, the syscall will also work for tasks that do not have procfs
+> mounted and on kernels that do not have procfs support compiled in. In such
+> situations the only way to make sure that all file descriptors are closed
+> is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
+> OPEN_MAX trickery (cf. comment [8] on Rust).
 
-Yes, but that's a slightly different story. It would be great if all of
-these files provide modified information.
+close_range still seems like a bad operation to expose.
 
-My patch is about those files that we don’t know about and which we don’t
-want.
+if users really want closing behaviour (instead of marking
+fds cloexec) then they likely need coordination with libc
+and other libraries.
 
-> If we research things and we decide the best way to let java know of
-> it's limitations is to change /proc/meminfo.  That needs to be a change
-> that always applies to meminfo and is not controlled by options.
-> 
-> > For now I'm just trying ti create a better way to restrict access in
-> > the procfs than this since procfs is used in containers.
-> 
-> Docker historically has been crap about having a sensible policy.  The
-> problem is that Docker wanted to allow real root in a container and
-> somehow make it safe by blocking access to proc files and by dropping
-> capabilities.
-> 
-> Practically everything that Docker has done is much better and simpler by
-> restricting the processes to a user namespace, with a root user whose
-> uid is not the global root user.
-> 
-> Which is why I want us to make certain we are doing something that makes
-> sense, and is architecturally sound.
+e.g. this usage does not work:
 
-Ok. Then ignore this patchset.
+  maxfd = findmaxfd();
+  call_that_may_leak_fds();
+  close_range(maxfd,~0U);
 
-> You have cleared the big hurdle and proc now has options that are
-> usable.   I really appreciate that.  I am not opposed to the general
-> direction you are going to find a way to make proc more usable.  I just
-> want our next step to be solid.
-
--- 
-Rgrds, legion
-
+as far as i can tell only the close right before exec works.
