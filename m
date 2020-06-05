@@ -2,207 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E351EF14A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 08:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C38E1EF164
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 08:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbgFEGQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 02:16:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35754 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725280AbgFEGQH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 02:16:07 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 28EC161D4D7855C450F5;
-        Fri,  5 Jun 2020 14:16:00 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Fri, 5 Jun 2020
- 14:15:52 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH v2] block: Fix use-after-free in blkdev_get()
-Date:   Fri, 5 Jun 2020 14:43:24 +0800
-Message-ID: <20200605064324.44188-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.21.3
+        id S1726148AbgFEGgX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 02:36:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbgFEGgW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 02:36:22 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9682FC08C5C2;
+        Thu,  4 Jun 2020 23:36:22 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id u13so7350418wml.1;
+        Thu, 04 Jun 2020 23:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6A+Yc/NcIwBkdU7I3CB2KCsuXoL3rpyUZTqoR0EzSg8=;
+        b=N3dlX4HRWIqNWFCX93secDfZiwMU1Ju9hkUtdPWp8v5KS524hXTrfhbdvCewJRi7Wg
+         hHhj5NeDmzbRinC07HMvOzkv9r5uFM/bCMB2cN36voTuE0z3aWbGA7md0doqRd+sKzWu
+         QhvybNNLUyPClnlia9IJpWa9OdglaDsB1RWx8KSoIsBPBy1KqtDBez+aERH024UzAHlv
+         KtkKZb7WpgDz9TKy10oNAcqtLsYjf1zPHmo6gQ/hb5KNGKqsSr7xIvfJZE+RdKeJNDBp
+         HBBSIXYYYOAGh7qtExGVlET2EFuohIi75h5/HbiBJfa2KkwjAillg2/6rvBRxrUoYX4w
+         SmQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6A+Yc/NcIwBkdU7I3CB2KCsuXoL3rpyUZTqoR0EzSg8=;
+        b=ZW++Js6HbeRGftSOYywkXyT0k0matJNPSjnzKS+qrTpxxvu2aLyTGXcrUdaoWu2/gM
+         Kd10F9+q3wSVGWH7XE7jc7PJQqQFfzAnqRf5iD+QLPTLvRFDtJRPQNVEgHZo7zmNZTR0
+         UF3RGkEHB5T6QAj8lD8S8ZezebcZl2Bd+pWX4vGe3gbvaULd1rFwV6B7qPNtFO/RNfbn
+         rs2AsdGScmMpptnQaCa06l57BWQxFpu+7u5FTCJQUKZ+5xIjcJ2hAmDM8YFctWKO8s1R
+         H8Ss5jdy2Z9KaIetYpKWJVEdIimQnGp2MpN6LFHSU5OPr2//V80bGw7eFNelKXg8XE+/
+         yXoA==
+X-Gm-Message-State: AOAM533HMZOsQCNVNLjQ1Ef0MqKCJg8Gb5BDB14KyP9E/1dZGquEj2bg
+        EHYeWUT/bkcFFieV9+Exn8LPSIdA
+X-Google-Smtp-Source: ABdhPJw8f8JI3DbnRJc4v0j6Y8s5RDEkjiIgirZ9MRvFQtf4pVBBGZGGOamsht6XhfANeF6ah9rYxw==
+X-Received: by 2002:a1c:5987:: with SMTP id n129mr1093340wmb.60.1591338981121;
+        Thu, 04 Jun 2020 23:36:21 -0700 (PDT)
+Received: from [192.168.1.43] (181.red-88-10-103.dynamicip.rima-tde.net. [88.10.103.181])
+        by smtp.gmail.com with ESMTPSA id n7sm10832794wrx.82.2020.06.04.23.36.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jun 2020 23:36:20 -0700 (PDT)
+Subject: Re: clean up kernel_{read,write} & friends v2
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>, Joe Perches <joe@perches.com>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+ <20200528054043.621510-1-hch@lst.de>
+ <22778.1590697055@warthog.procyon.org.uk>
+ <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+ <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+ <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
+From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+Message-ID: <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
+Date:   Fri, 5 Jun 2020 08:36:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In blkdev_get() we call __blkdev_get() to do some internal jobs and if
-there is some errors in __blkdev_get(), the bdput() is called which
-means we have released the refcount of the bdev (actually the refcount of
-the bdev inode). This means we cannot access bdev after that point. But
-accually bdev is still accessed in blkdev_get() after calling
-__blkdev_get(). This may leads to use-after-free if the refcount is the
-last one we released in __blkdev_get(). Let's take a look at the
-following scenerio:
+Hi Linus,
 
-  CPU0            CPU1                    CPU2
-blkdev_open     blkdev_open           Remove disk
-                  bd_acquire
-		  blkdev_get
-		    __blkdev_get      del_gendisk
-					bdev_unhash_inode
-  bd_acquire          bdev_get_gendisk
-    bd_forget           failed because of unhashed
-	  bdput
-	              bdput (the last one)
-		        bdev_evict_inode
+On 5/29/20 9:19 PM, Linus Torvalds wrote:
+> On Fri, May 29, 2020 at 6:08 AM David Laight <David.Laight@aculab.com> wrote:
+>>
+>> A wide monitor is for looking at lots of files.
+> 
+> Not necessarily.
+> 
+> Excessive line breaks are BAD. They cause real and every-day problems.
+> 
+> They cause problems for things like "grep" both in the patterns and in
+> the output, since grep (and a lot of other very basic unix utilities)
+> is fundamentally line-based.
+> 
+> So the fact is, many of us have long long since skipped the whole
+> "80-column terminal" model, for the same reason that we have many more
+> lines than 25 lines visible at a time.
+> 
+> And honestly, I don't want to see patches that make the kernel reading
+> experience worse for me and likely for the vast majority of people,
+> based on the argument that some odd people have small terminal
+> windows.
+> 
+> If you or Christoph have 80 character lines, you'll get possibly ugly
+> wrapped output. Tough. That's _your_ choice. Your hardware limitations
+> shouldn't be a pain for the rest of us.
 
-	  	    access bdev => use after free
+Unfortunately refreshable braille displays have that "hardware
+limitations". 80 cells displays are very expensive.
+Visual impairments is rarely a "choice".
+Relaxing the 80-char limit make it harder for blind developers
+to contribute.
 
-[  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
-[  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
-[  459.352347]
-[  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
-[  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  459.354947] Call Trace:
-[  459.355337]  dump_stack+0x111/0x19e
-[  459.355879]  ? __lock_acquire+0x24c1/0x31b0
-[  459.356523]  print_address_description+0x60/0x223
-[  459.357248]  ? __lock_acquire+0x24c1/0x31b0
-[  459.357887]  kasan_report.cold+0xae/0x2d8
-[  459.358503]  __lock_acquire+0x24c1/0x31b0
-[  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
-[  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.361123]  ? finish_task_switch+0x125/0x600
-[  459.361812]  ? finish_task_switch+0xee/0x600
-[  459.362471]  ? mark_held_locks+0xf0/0xf0
-[  459.363108]  ? __schedule+0x96f/0x21d0
-[  459.363716]  lock_acquire+0x111/0x320
-[  459.364285]  ? blkdev_get+0xce/0xbe0
-[  459.364846]  ? blkdev_get+0xce/0xbe0
-[  459.365390]  __mutex_lock+0xf9/0x12a0
-[  459.365948]  ? blkdev_get+0xce/0xbe0
-[  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
-[  459.367130]  ? blkdev_get+0xce/0xbe0
-[  459.367678]  ? destroy_inode+0xbc/0x110
-[  459.368261]  ? mutex_trylock+0x1a0/0x1a0
-[  459.368867]  ? __blkdev_get+0x3e6/0x1280
-[  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
-[  459.370114]  ? blkdev_get+0xce/0xbe0
-[  459.370656]  blkdev_get+0xce/0xbe0
-[  459.371178]  ? find_held_lock+0x2c/0x110
-[  459.371774]  ? __blkdev_get+0x1280/0x1280
-[  459.372383]  ? lock_downgrade+0x680/0x680
-[  459.373002]  ? lock_acquire+0x111/0x320
-[  459.373587]  ? bd_acquire+0x21/0x2c0
-[  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.374780]  blkdev_open+0x202/0x290
-[  459.375325]  do_dentry_open+0x49e/0x1050
-[  459.375924]  ? blkdev_get_by_dev+0x70/0x70
-[  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
-[  459.377192]  ? inode_permission+0xbe/0x3a0
-[  459.377818]  path_openat+0x148c/0x3f50
-[  459.378392]  ? kmem_cache_alloc+0xd5/0x280
-[  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.379802]  ? path_lookupat.isra.0+0x900/0x900
-[  459.380489]  ? __lock_is_held+0xad/0x140
-[  459.381093]  do_filp_open+0x1a1/0x280
-[  459.381654]  ? may_open_dev+0xf0/0xf0
-[  459.382214]  ? find_held_lock+0x2c/0x110
-[  459.382816]  ? lock_downgrade+0x680/0x680
-[  459.383425]  ? __lock_is_held+0xad/0x140
-[  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.384668]  ? _raw_spin_unlock+0x1f/0x30
-[  459.385280]  ? __alloc_fd+0x448/0x560
-[  459.385841]  do_sys_open+0x3c3/0x500
-[  459.386386]  ? filp_open+0x70/0x70
-[  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
-[  459.388342]  ? do_syscall_64+0x1a/0x520
-[  459.388930]  do_syscall_64+0xc3/0x520
-[  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.390248] RIP: 0033:0x416211
-[  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
-04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
-   05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
-      01
-[  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-[  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
-[  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
-[  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
-[  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
-[  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
-[  459.400168]
-[  459.400430] Allocated by task 20132:
-[  459.401038]  kasan_kmalloc+0xbf/0xe0
-[  459.401652]  kmem_cache_alloc+0xd5/0x280
-[  459.402330]  bdev_alloc_inode+0x18/0x40
-[  459.402970]  alloc_inode+0x5f/0x180
-[  459.403510]  iget5_locked+0x57/0xd0
-[  459.404095]  bdget+0x94/0x4e0
-[  459.404607]  bd_acquire+0xfa/0x2c0
-[  459.405113]  blkdev_open+0x110/0x290
-[  459.405702]  do_dentry_open+0x49e/0x1050
-[  459.406340]  path_openat+0x148c/0x3f50
-[  459.406926]  do_filp_open+0x1a1/0x280
-[  459.407471]  do_sys_open+0x3c3/0x500
-[  459.408010]  do_syscall_64+0xc3/0x520
-[  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.409415]
-[  459.409679] Freed by task 1262:
-[  459.410212]  __kasan_slab_free+0x129/0x170
-[  459.410919]  kmem_cache_free+0xb2/0x2a0
-[  459.411564]  rcu_process_callbacks+0xbb2/0x2320
-[  459.412318]  __do_softirq+0x225/0x8ac
+> Longer lines are fundamentally useful. My monitor is not only a lot
+> wider than it is tall, my fonts are universally narrower than they are
+> tall. Long lines are natural.
+> 
+> When I tile my terminal windows on my display, I can have 6 terminals
+> visible at one time, and that's because I have them three wide. And I
+> could still fit 80% of a fourth one side-by-side.
+> 
+> And guess what? That's with my default "100x50" terminal window (go to
+> your gnome terminal settings, you'll find that the 80x25 thing is just
+> an initial default that you can change), not with some 80x25 one. And
+> that's with a font that has anti-aliasing and isn't some pixelated
+> mess.
+> 
+> And most of my terminals actually end up being dragged wider and
+> taller than that. I checked, and my main one is 142x76 characters
+> right now, because it turns out that wider (and taller) terminals are
+> useful not just for source code.
+> 
+> Have you looked at "ps ax" output lately? Or used "top"? Or done "git
+> diff --stat" or any number of things where it turns out that 80x25 is
+> really really limiting, and is simply NO LONGER RELEVANT to most of
+> us.
+> 
+> So no. I do not care about somebody with a 80x25 terminal window
+> getting line wrapping.
+> 
+> For exactly the same reason I find it completely irrelevant if
+> somebody says that their kernel compile takes 10 hours because they
+> are doing kernel development on a Raspberry PI with 4GB of RAM.
+> 
+> People with restrictive hardware shouldn't make it more inconvenient
+> for people who have better resources. Yes, we'll accommodate things to
+> within reasonable limits. But no, 80-column terminals in 2020 isn't
+> "reasonable" any more as far as I'm concerned. People commonly used
+> 132-column terminals even back in the 80's, for chrissake, don't try
+> to make 80 columns some immovable standard.
+> 
+> If you choose to use a 80-column terminal, you can live with the line
+> wrapping. It's just that simple.
+> 
+> And longer lines are simply useful. Part of that is that we aren't
+> programming in the 80's any more, and our source code is fundamentally
+> wider as a result.
+> 
+> Yes, local iteration variables are still called 'i', because more
+> context just isn't helpful for some anonymous counter. Being concise
+> is still a good thing, and overly verbose names are not inherently
+> better.
+> 
+> But still - it's entirely reasonable to have variable names that are
+> 10-15 characters and it makes the code more legible. Writing things
+> out instead of using abbreviations etc.
+> 
+> And yes, we do use wide tabs, because that makes indentation something
+> you can visually see in the structure at a glance and on a
+> whole-function basis, rather than something you have to try to
+> visually "line up" things for or count spaces.
+> 
+> So we have lots of fairly fundamental issues that fairly easily make
+> for longer lines in many circumstances.
+> 
+> And yes, we do line breaks at some point. But there really isn't any
+> reason to make that point be 80 columns any more.
+> 
+>                   Linus
 
-Fix this by delaying bdput() to the end of blkdev_get() which means we
-have finished accessing bdev.
+Regards,
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- v2: Add Reported-by tag and cc linux-block mailing list
-
- fs/block_dev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 47860e589388..8faec9fb47b6 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1566,7 +1566,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	if (!for_part) {
- 		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
- 		if (ret != 0) {
--			bdput(bdev);
- 			return ret;
- 		}
- 	}
-@@ -1688,7 +1687,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	disk_unblock_events(disk);
- 	put_disk_and_module(disk);
-  out:
--	bdput(bdev);
- 
- 	return ret;
- }
-@@ -1755,6 +1753,9 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- 		bdput(whole);
- 	}
- 
-+	if (res)
-+		bdput(bdev);
-+
- 	return res;
- }
- EXPORT_SYMBOL(blkdev_get);
--- 
-2.21.3
-
+Phil.
