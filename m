@@ -2,111 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4F71F035B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 01:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0A91F0378
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 01:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbgFEXCr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 19:02:47 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:52903 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728330AbgFEXCr (ORCPT
+        id S1728477AbgFEXTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 19:19:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728290AbgFEXTv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 19:02:47 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id ED1B85C00E4;
-        Fri,  5 Jun 2020 19:02:45 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 05 Jun 2020 19:02:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=JiEpPiAsCPxIyZsOENHAmfLvx6y
-        ie2EoZciHMl9V7vc=; b=LbOQNyVNaZtUEVjH1wXrylZgzL2n3UOPF2YZBsesIYL
-        fF85YVX2GBJHG/j234vSWyWqFYTuNdqLyFdoAEoIayEXLGgO6y460BBGrTuMLv1c
-        2GbhAko23Tq+U9Np9yge8SrKBNLn0/irhFumy3Pe3Pwj0CGpnGPfd1dDcuGjJm6P
-        iuICE9GLgfc7+NGq2Tx0BW5fVIQy9lh2r36ylWohfNPmdnJHbMxmzAFWgI4TkrU4
-        kY6ASHJTtvf8wMopL3KSFjLkVAKmuCjNCEsfwohXoEdJHGU6D4HirZtuUKqSBVyW
-        meB8ZLdiMTi/RD3r/QCxcLBl5irAyw+XTJ1VkkNLeEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=JiEpPi
-        AsCPxIyZsOENHAmfLvx6yie2EoZciHMl9V7vc=; b=QQ1E1eUVDxGvShEzglY7VT
-        QJBJ5/rMl3+wdSunPeupIU1JGMXJ/L8kk+jX9foo76z5dVyEGlQY22ha0wmlMeUw
-        PaDlI669ySojc3FtgbSeRe60eH6y2Db+M1bsinZ8feCv4Nfmn7MpBUODSofNXR8c
-        QE3ita2S2kBlVKjFciwegMworpT//wI8e3ekxLg3B9E4d5hvK7xEF1AxhAAZZAk1
-        tlpfqseMJYJRZBEMIIuiHq2k3YItsQWesKrDuVKWzvyueT1FpAWprj2uCtd0ZWch
-        SASTFIZaa94zIudxu2Wk6QkJuBWeTJw550dVi0qq8v7ozgL5lJnWy+TUYchiF3Mw
-        ==
-X-ME-Sender: <xms:Fc_aXuta6gZZsoOV6PvQHFwvcbB17touCjvfW93dQYCy1qNO4ZZP1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeggedgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedukefhkeelueegveetheelffffjeegleeuudelfeefuedtleffueejfffh
-    ueffudenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdr
-    uggv
-X-ME-Proxy: <xmx:Fc_aXjf0EWJ2X0ywuxEPnZzggPvzr_2q-dAJ2lyG9EGz-a1jbFyN7Q>
-    <xmx:Fc_aXpy9Iq9drfpxI6F7Lbb4GmNB6tLX_lN6FId_V_lm4w1XLr8PTw>
-    <xmx:Fc_aXpNP2CDpFEYTzwzO1MayvKcpWEZ51R1cvBqIU_qL0G8is8tlFQ>
-    <xmx:Fc_aXgI06kf4LsFR0I8aLn6fghj7XXisPm6iNwLzob02oSlPOJf_yQ>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4EE1B3060F09;
-        Fri,  5 Jun 2020 19:02:45 -0400 (EDT)
-Date:   Fri, 5 Jun 2020 16:02:44 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-Message-ID: <20200605230244.u342xw4negic2nmr@alap3.anarazel.de>
-References: <20200605202028.d57nklzpeolukni7@alap3.anarazel.de>
- <20200605203613.ogfilu2edcsfpme4@alap3.anarazel.de>
- <75bfe993-008d-71ce-7637-369f130bd984@kernel.dk>
- <3539a454-5321-0bdc-b59c-06f60cc64b56@kernel.dk>
- <34aadc75-5b8a-331e-e149-45e1547b543e@kernel.dk>
- <20200605223044.tnh7qsox7zg5uk53@alap3.anarazel.de>
- <20200605223635.6xesl7u4lxszvico@alap3.anarazel.de>
- <0e5b7a2d-eb0e-16e6-cc9f-c2ca5fe8cb92@kernel.dk>
- <20200605225429.s424lrrqhaseoa2h@alap3.anarazel.de>
- <0179d0bf-0b01-3f05-9221-654a00f0452d@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0179d0bf-0b01-3f05-9221-654a00f0452d@kernel.dk>
+        Fri, 5 Jun 2020 19:19:51 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 055N3J5A157074;
+        Fri, 5 Jun 2020 19:19:35 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31fgkmkmgs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 19:19:34 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 055NBBuw014932;
+        Fri, 5 Jun 2020 23:19:32 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 31bf4852fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 23:19:32 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 055NJUeN51970228
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 5 Jun 2020 23:19:30 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E6E44C046;
+        Fri,  5 Jun 2020 23:19:30 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52A8A4C050;
+        Fri,  5 Jun 2020 23:19:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.234.64])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Jun 2020 23:19:27 +0000 (GMT)
+Message-ID: <1591399166.4615.37.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 8/8] ima: add FIRMWARE_PARTIAL_READ support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Fri, 05 Jun 2020 19:19:26 -0400
+In-Reply-To: <20200605225959.12424-9-scott.branden@broadcom.com>
+References: <20200605225959.12424-1-scott.branden@broadcom.com>
+         <20200605225959.12424-9-scott.branden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-05_07:2020-06-04,2020-06-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 cotscore=-2147483648
+ malwarescore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006050170
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi Scott,
 
-On 2020-06-05 16:56:44 -0600, Jens Axboe wrote:
-> On 6/5/20 4:54 PM, Andres Freund wrote:
-> > On 2020-06-05 16:49:24 -0600, Jens Axboe wrote:
-> >> Yes that's expected, if we have to fallback to ->readpage(), then it'll
-> >> go to a worker. read-ahead is what drives the async nature of it, as we
-> >> issue the range (plus more, depending on RA window) as read-ahead for
-> >> the normal read, then wait for it.
-> > 
-> > But I assume async would still work for files with POSIX_FADV_RANDOM
-> > set, or not? Assuming the system wide setting isn't zero, of course.
+On Fri, 2020-06-05 at 15:59 -0700, Scott Branden wrote:
 > 
-> Yes it'll work if FADV_RANDOM is set.
+> @@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+>  	enum ima_hooks func;
+>  	u32 secid;
+>  
+> +	if (!file && read_id == READING_FIRMWARE_PARTIAL_READ)
+> +		return 0;
 
-Cool.
+The file should be measured on the pre security hook, not here on the
+post security hook.  Here, whether "file" is defined or not, is
+irrelevant.  The test should just check "read_id".
 
+Have you tested measuring the firmware by booting a system with
+"ima_policy=tcb" specified on the boot command line and compared the
+measurement entry in the IMA measurement list with the file hash (eg.
+sha1sum, sha256sum)?
 
-> But just not if read-ahead is totally disabled. I guess we could make
-> that work too, though not sure that it's super important.
+Mimi
 
-It's not from my end. I was just trying to check if the reduced
-performance I saw was related to interactions between PG prefetching and
-kernel level prefetching. And changing the /sys entry seemed easier than
-making postgres set POSIX_FADV_RANDOM...
+> +
+>  	if (!file && read_id == READING_FIRMWARE) {
+>  		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+>  		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
 
-Greetings,
-
-Andres Freund
