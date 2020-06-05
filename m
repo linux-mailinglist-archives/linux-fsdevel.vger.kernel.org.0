@@ -2,96 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5BD1F00E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 22:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A1F1F0106
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 22:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbgFEUVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 16:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49530 "EHLO
+        id S1728215AbgFEUfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 16:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728070AbgFEUVs (ORCPT
+        with ESMTP id S1726664AbgFEUfT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 16:21:48 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B8E1C08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 13:21:48 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id nm22so3121196pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 13:21:48 -0700 (PDT)
+        Fri, 5 Jun 2020 16:35:19 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B915C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 13:35:19 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id m18so2536567vkk.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 13:35:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lsaNY1znMuhWXaMnc/rolmE1oxcFFUp17hGPr1rY97U=;
-        b=sQRRF+6FJFYJrF+tlMtHHxvSYj85wVQllZj5/u0RK1uLZ2l9Eg34mVsYN5NXfe6wsw
-         tc0XDG8jEIcIA0kcP0QL5agDaoTKwx+hIxp4mIsHfWLT/txu7EwaZ4anSq9oXUGzC4hC
-         oCO0uP1Hxgwo3ic303jU02yWfqbiUS1iH8FgpMi+P3iJEZoyBE7rdNJl1wV/n7cGxipX
-         hQh1JgOyOAnn/Z8pEf1/Cn37AOThgHiE8/XVkOKXpuswEwr992L88cHF0y8qgi+xtfuc
-         AtOMibKECuD1j/RKQUcy/AfnwvlNJ5byB5NT6GMEdwFMItTaDO4V+7VNxNvNHQHLMtQP
-         KnOA==
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=dI/o3zqoFJTQTyPwk8zjbJe5AJzBQrv4EHuQ9RGAI9Q=;
+        b=wHT2TXbwShbPj2HTSEqMKrrq8Y+m9MsG5pbNo2KaIP1s1qFsbCiGPSmDc0OLNVoDDP
+         4RX/OBu288piUQFNRoeuQ8vmj1O7CBW7LM92Ong3x1Dd4pXvcNsQRChs/Ri6eV9SSTxR
+         ME6bk3xf8pMt0FKkJzVAoCGhbpoY3mnd5x0o82m7wjfxkD3OnlBlAzuPjtBTmeQBwFuo
+         0i/aMEvy3NPUQ+OO10bdcFRhkxHvYJf9hEUiztVM8dP++itpSgO6cEESzAEudy2ShCgr
+         eOkVF+1Py01DS9OBurJlTxEwyuc7NcZ7HNdtIxzv3ePL85wLpd3iCV1ErNskp9PKWXG3
+         gf7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lsaNY1znMuhWXaMnc/rolmE1oxcFFUp17hGPr1rY97U=;
-        b=KLiRVbzmP3LYobGt+h9lGxJRgiRal8l05Zu1jMWCzTpTn/nYjkSYqZLJl4kv2sK29t
-         UNa+R8KQd9DtD0zRuC1GNrA+/sYmsuvRlv6AywSSOFnzxXMWsvHIpjBvcBbYKqr01X6T
-         4bJe69rbZHLY0VqRgDLsv45QkdQabX3hP3MhthKs0G9Y8Krhc8PftkYEDCFNQqtIcoFk
-         6qyafsp9pc3ZoLo9crY5d96lUhTHdreNP+3iYcbT5TNutxtW6VnXkP0ZKp0RSPrG+M4e
-         CXo8Wl9yNMHgi+Vou1iu+ULaPP3cUWyvPREaOiaoZ/bk8A0YTDUV2UW9K3v9GFwBr9Lz
-         6aKg==
-X-Gm-Message-State: AOAM533BQQ4zDiABI7zpHi+pxeMNLcWNqpniXLHA10keFV/CK5s+y4nN
-        dbeuAyvEOwk165loCsVjSFEqPQ==
-X-Google-Smtp-Source: ABdhPJxUYCcV6eTrwlSeDC7QQ+JpnPnlJQKUBydTzbvgKQGAeXuZ+SEtrB0EwChX4HH45w4rFeTHQg==
-X-Received: by 2002:a17:90b:1108:: with SMTP id gi8mr4824068pjb.144.1591388507489;
-        Fri, 05 Jun 2020 13:21:47 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id nl8sm9810832pjb.13.2020.06.05.13.21.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2020 13:21:46 -0700 (PDT)
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     Andres Freund <andres@anarazel.de>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <20200604005916.niy2mejjcsx4sv6t@alap3.anarazel.de>
- <e3072371-1d6b-8ae5-d946-d83e60427cb0@kernel.dk>
- <6eeff14f-befc-a5cc-08da-cb77f811fbdf@kernel.dk>
- <20200605202028.d57nklzpeolukni7@alap3.anarazel.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <34b47fac-c162-1a81-2829-965189fa5d3d@kernel.dk>
-Date:   Fri, 5 Jun 2020 14:21:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dI/o3zqoFJTQTyPwk8zjbJe5AJzBQrv4EHuQ9RGAI9Q=;
+        b=OEfI0K9Xj/X1aJJtNyohrnfGKoJpR30rvovfcCBMws9Bk3zIjzhBsXG8qJ0RcoM7XB
+         oIWWD6HGFrfV6RyrQwjWIKEuvcyiGSbOTp553K+YJGqHmTf2J0k8MrxZlQ4i+k13LNO+
+         0Y+m/ydC84tx+Is1SREIqkMDHGQ4Jex23SEVTy+BbVULqHYX6cEqH7fSn6OTodzz/7s6
+         J0Tfivpr2T4aGmE5jvJPBEeELS7A3YLJbA8cdMP3kT6hbShI+DW1MzQ+8wBko8Dmfgmb
+         dCWE6t4r+RZ7TVK4PcWKJaXoIxv2bkKsE61cFBowC+P1U9Y4R+7N+qsrgMmc/IsJwwBU
+         4RPQ==
+X-Gm-Message-State: AOAM5321lD81qq9oD6syUuqnmkaIKr2kyvo/iwGu9bGF2m4n0TR3HowC
+        /frASUqOs/XWo60whVTAzwt7S3wOVsFP2arptAVAWf+4Ey+vfg==
+X-Google-Smtp-Source: ABdhPJzCNhbJo0wKj27waEK1Z6VBp0kemK75SzAV3GHESE2Bwu/Zs3OIbO8Ahu3aQO/Miii5ue171r09gOO0sbNL/90=
+X-Received: by 2002:a05:6122:302:: with SMTP id c2mr8679014vko.42.1591389318823;
+ Fri, 05 Jun 2020 13:35:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200605202028.d57nklzpeolukni7@alap3.anarazel.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Fri, 5 Jun 2020 16:35:07 -0400
+Message-ID: <CAOg9mSSXvhmuDci_Tiu4gGEWc4oF4JXAZFUJ9Zh6VyDiTf0iZw@mail.gmail.com>
+Subject: [GIT PULL] orangefs pull request for 5.8
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/5/20 2:20 PM, Andres Freund wrote:
-> Hi,
-> 
-> On 2020-06-05 08:42:28 -0600, Jens Axboe wrote:
->> Can you try with async-buffered.7? I've rebased it on a new mechanism,
->> and doing something like what you describe above I haven't been able
->> to trigger anything bad. I'd try your test case specifically, so do let
->> know if it's something I can run.
-> 
-> I tried my test on async-buffered.7?, and I get hangs very quickly after
-> starting. Unfortunately, I don't seem to get an OOPSs, not sure yet why.
-> 
-> Let me know if my test triggers for you.
-> 
-> I'll go and try to figure out why I don't see an oops...
+The following changes since commit 9cb1fd0efd195590b828b9b865421ad345a4a145:
 
-I'll try the reproducer! Thanks for testing.
+  Linux 5.7-rc7 (2020-05-24 15:32:54 -0700)
 
--- 
-Jens Axboe
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+tags/for-linus-5.8-ofs1
+
+for you to fetch changes up to 0df556457748d160013e88202c11712c16a83b0c:
+
+  orangefs: convert get_user_pages() --> pin_user_pages() (2020-05-29
+16:25:04 -0400)
+
+----------------------------------------------------------------
+orangefs: a conversion and a cleanup...
+
+Conversion: John Hubbard's conversion from get_user_pages() to pin_user_pages()
+
+cleanup: Colin Ian King's removal of an unneeded variable initialization.
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      orangefs: remove redundant assignment to variable ret
+
+John Hubbard (1):
+      orangefs: convert get_user_pages() --> pin_user_pages()
+
+ fs/orangefs/orangefs-bufmap.c | 9 +++------
+ fs/orangefs/orangefs-mod.c    | 2 +-
+ 2 files changed, 4 insertions(+), 7 deletions(-)
