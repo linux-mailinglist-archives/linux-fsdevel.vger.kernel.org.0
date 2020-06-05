@@ -2,107 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8991EFA21
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 16:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C2E1EFB1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 16:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbgFEOLG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 10:11:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbgFEOLC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 10:11:02 -0400
-Received: from localhost (unknown [137.135.114.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF8EC20820;
-        Fri,  5 Jun 2020 14:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591366261;
-        bh=YKJVHzXXq2VAMYT4rnlQ6FLHVU/ktgvPpJGIFjY1AFQ=;
-        h=Date:From:To:To:To:Cc:CC:Cc:Subject:In-Reply-To:References:From;
-        b=ULHedspxsrNLQVLlyMQbEIG16ueMTt+Rb8074CgT6b1hsCX89TfGllQZpP3PzaYlL
-         rX3lQDDiy5W1CJRwGAg8IZage8oEDZJz0ZXL60l/QYT11iDXsDm5KRISmLGQoQbCLy
-         fmk/b2b5+C+rlc9SHLebfqkAaOk4rRFt2Qs02x58=
-Date:   Fri, 05 Jun 2020 14:11:00 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Ted Tso <tytso@mit.edu>, Martijn Coenen <maco@android.com>
-CC:     stable@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] writeback: Avoid skipping inode writeback
-In-Reply-To: <20200601091904.4786-1-jack@suse.cz>
-References: <20200601091904.4786-1-jack@suse.cz>
-Message-Id: <20200605141100.EF8EC20820@mail.kernel.org>
+        id S1728850AbgFEOXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 10:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49534 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728654AbgFEOXe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 10:23:34 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B917C08C5C5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 07:23:32 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id y13so10330341eju.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 07:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XgY4I2DT6NHuEBJVBWH5xaWHKtAb7Acjuq8xM3DNBZs=;
+        b=QTElvvtJbPz7O4l0N2vXVv9mj1TLExtC0raNDMa24L8UfKR1yYUuYHL9CxjaruDrjh
+         aefJM28+QoU0J+hH7LcJY9hLj2TeIZpO1d1afTdHbgITtKVt276YnRSIFQtqPC3dyyfI
+         ovRyDY8g9W4NZLaLUUq/4fqdIhDWT8EwOvTWA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XgY4I2DT6NHuEBJVBWH5xaWHKtAb7Acjuq8xM3DNBZs=;
+        b=pPyJwMXKlsg5dkJoUzz1R1QmsCa1BdRI2BLP6Ow9pY8zDBGpQTaIkMiHLvKtxl30c8
+         B5aOsrmjjCz2Y8kHS7JjusRD1hFNbgXiBrkLl7ZqWe732iG5qvLeFvlspwN6BQ0Z+kad
+         /HWCd+uJcLPMu56hcY6Kv9RdRRFGQbGQZ5bjK9e4VPsLWGSYBfjqlSiPs6mctOdLYyrw
+         syZ5IcbLtHhI/SClsdb6gKKPIrSa1OkUQiBjA2A0uMbsxaoFeTmIBnA2ZtzZrAJ5KMdS
+         hNKMcJ/pV+d1uSIoMlS17hWWAgUqU+8GzoN4FFvnOubW/UbuLVTciYo5FRw+OmxXV4vG
+         8zEQ==
+X-Gm-Message-State: AOAM530XghhBNW6C6CkTG0Qm6WLGl9FNnfJN7pMflD0qWMCNJJg8yB6l
+        ayvE0T6fPPnbMkCU2LdycqGKa6Vy64g=
+X-Google-Smtp-Source: ABdhPJx6dbhFdXcLh9Fw1Irene3+drPlsNF3oWeBEhsMBqDdvPnhWWVIhBS0bvJAttcjyHDwhAkrGQ==
+X-Received: by 2002:a17:906:cb97:: with SMTP id mf23mr4356134ejb.468.1591367011198;
+        Fri, 05 Jun 2020 07:23:31 -0700 (PDT)
+Received: from prevas-ravi.prevas.se (ip-5-186-116-45.cgn.fibianet.dk. [5.186.116.45])
+        by smtp.gmail.com with ESMTPSA id qp16sm4421833ejb.64.2020.06.05.07.23.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2020 07:23:30 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH resend] fs/namei.c: micro-optimize acl_permission_check
+Date:   Fri,  5 Jun 2020 16:23:00 +0200
+Message-Id: <20200605142300.14591-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi
+Just something like open(/usr/include/sys/stat.h) causes five calls of
+generic_permission -> acl_permission_check -> in_group_p; if the
+compiler first tried /usr/local/include/..., that would be a few
+more.
 
-[This is an automated email]
+Altogether, on a bog-standard Ubuntu 20.04 install, a workload
+consisting of compiling lots of userspace programs (i.e., calling lots
+of short-lived programs that all need to get their shared libs mapped
+in, and the compilers poking around looking for system headers - lots
+of /usr/lib, /usr/bin, /usr/include/ accesses) puts in_group_p around
+0.1% according to perf top. With an artificial load such as
 
-This commit has been processed because it contains a "Fixes:" tag
-fixing commit: 0ae45f63d4ef ("vfs: add support for a lazytime mount option").
+  while true ; do find /usr/ -print0 | xargs -0 stat > /dev/null ; done
 
-The bot has tested the following trees: v5.6.15, v5.4.43, v4.19.125, v4.14.182, v4.9.225, v4.4.225.
+that jumps to over 0.4%.
 
-v5.6.15: Build OK!
-v5.4.43: Build OK!
-v4.19.125: Build OK!
-v4.14.182: Failed to apply! Possible dependencies:
-    80ea09a002bf ("vfs: factor out inode_insert5()")
-    c2b6d621c4ff ("new primitive: discard_new_inode()")
+System-installed files are almost always 0755 (directories and
+binaries) or 0644, so in most cases, we can avoid the binary search
+and the cost of pulling the cred->groups array and in_group_p() .text
+into the cpu cache.
 
-v4.9.225: Failed to apply! Possible dependencies:
-    09d8b586731b ("ovl: move __upperdentry to ovl_inode")
-    13c72075ac9f ("ovl: move impure to ovl_inode")
-    2aff4534b6c4 ("ovl: check lower existence when removing")
-    2b8c30e9ef14 ("ovl: use d_is_dir()")
-    32a3d848eb91 ("ovl: clean up kstat usage")
-    370e55ace59c ("ovl: rename: simplify handling of lower/merged directory")
-    38e813db61c3 ("ovl: get rid of PURE type")
-    3ee23ff1025a ("ovl: check lower existence of rename target")
-    42f269b92540 ("ovl: rearrange code in ovl_copy_up_locked()")
-    5cf5b477f0ca ("ovl: opaque cleanup")
-    6c02cb59e6fe ("ovl: rename ovl_rename2() to ovl_rename()")
-    804032fabb3b ("ovl: don't check rename to self")
-    80ea09a002bf ("vfs: factor out inode_insert5()")
-    8ee6059c58ea ("ovl: simplify lookup")
-    a6c606551141 ("ovl: redirect on rename-dir")
-    ad0af7104dad ("vfs: introduce inode 'inuse' lock")
-    bbb1e54dd53c ("ovl: split super.c")
-    c2b6d621c4ff ("new primitive: discard_new_inode()")
-    c412ce498396 ("ovl: add ovl_dentry_is_whiteout()")
-    ca4c8a3a8000 ("ovl: treat special files like a regular fs")
-    d8514d8edb5b ("ovl: copy up regular file using O_TMPFILE")
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ fs/namei.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-v4.4.225: Failed to apply! Possible dependencies:
-    09d8b586731b ("ovl: move __upperdentry to ovl_inode")
-    1175b6b8d963 ("ovl: do operations on underlying file system in mounter's context")
-    13c72075ac9f ("ovl: move impure to ovl_inode")
-    2864f3014242 ("iget_locked et.al.: make sure we don't return bad inodes")
-    32a3d848eb91 ("ovl: clean up kstat usage")
-    38b256973ea9 ("ovl: handle umask and posix_acl_default correctly on creation")
-    42f269b92540 ("ovl: rearrange code in ovl_copy_up_locked()")
-    6b2553918d8b ("replace ->follow_link() with new method that could stay in RCU mode")
-    80ea09a002bf ("vfs: factor out inode_insert5()")
-    aa80deab33a8 ("namei: page_getlink() and page_follow_link_light() are the same thing")
-    ad0af7104dad ("vfs: introduce inode 'inuse' lock")
-    bb0d2b8ad296 ("ovl: fix sgid on directory")
-    c2b6d621c4ff ("new primitive: discard_new_inode()")
-    d6335d77a762 ("security: Make inode argument of inode_getsecid non-const")
-    d8514d8edb5b ("ovl: copy up regular file using O_TMPFILE")
-    d8ad8b496184 ("security, overlayfs: provide copy up security hook for unioned files")
-    fceef393a538 ("switch ->get_link() to delayed_call, kill ->put_link()")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
+diff --git a/fs/namei.c b/fs/namei.c
+index d81f73ff1a8b..c6f0c6643db5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -303,7 +303,12 @@ static int acl_permission_check(struct inode *inode, int mask)
+ 				return error;
+ 		}
+ 
+-		if (in_group_p(inode->i_gid))
++		/*
++		 * If the "group" and "other" permissions are the same,
++		 * there's no point calling in_group_p() to decide which
++		 * set to use.
++		 */
++		if ((((mode >> 3) ^ mode) & 7) && in_group_p(inode->i_gid))
+ 			mode >>= 3;
+ 	}
+ 
 -- 
-Thanks
-Sasha
+2.23.0
+
