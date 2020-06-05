@@ -2,202 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09BF81EEFD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 05:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF2351EF053
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 06:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgFEDSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 23:18:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38362 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725883AbgFEDSg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 23:18:36 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 985F6376BDA400174E02;
-        Fri,  5 Jun 2020 11:18:33 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Fri, 5 Jun 2020
- 11:18:27 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>
-Subject: [PATCH] block: Fix use-after-free in blkdev_get()
-Date:   Fri, 5 Jun 2020 11:45:42 +0800
-Message-ID: <20200605034542.20212-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.21.3
+        id S1726216AbgFEEVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 00:21:43 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:51542 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbgFEEVm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jun 2020 00:21:42 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jh3rQ-0008Og-16; Thu, 04 Jun 2020 22:21:40 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jh3rO-0000N9-Em; Thu, 04 Jun 2020 22:21:39 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <20200604200413.587896-1-gladkov.alexey@gmail.com>
+        <87ftbah8q2.fsf@x220.int.ebiederm.org>
+        <20200605000838.huaeqvgpvqkyg3wh@comp-core-i7-2640m-0182e6>
+Date:   Thu, 04 Jun 2020 23:17:38 -0500
+In-Reply-To: <20200605000838.huaeqvgpvqkyg3wh@comp-core-i7-2640m-0182e6>
+        (Alexey Gladkov's message of "Fri, 5 Jun 2020 02:08:38 +0200")
+Message-ID: <87zh9idu3h.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-XM-SPF: eid=1jh3rO-0000N9-Em;;;mid=<87zh9idu3h.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+7Jf9GLHKnziYGhzfXd2JkxjWEWXRDCRc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.2 required=8.0 tests=ALL_TRUSTED,BAYES_40,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+        *      [score: 0.3013]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Alexey Gladkov <gladkov.alexey@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 653 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 12 (1.9%), b_tie_ro: 11 (1.6%), parse: 1.50
+        (0.2%), extract_message_metadata: 21 (3.1%), get_uri_detail_list: 5
+        (0.8%), tests_pri_-1000: 5 (0.8%), tests_pri_-950: 1.67 (0.3%),
+        tests_pri_-900: 1.21 (0.2%), tests_pri_-90: 83 (12.7%), check_bayes:
+        81 (12.5%), b_tokenize: 19 (2.8%), b_tok_get_all: 14 (2.1%),
+        b_comp_prob: 4.9 (0.8%), b_tok_touch_all: 39 (6.0%), b_finish: 1.29
+        (0.2%), tests_pri_0: 501 (76.8%), check_dkim_signature: 0.79 (0.1%),
+        check_dkim_adsp: 2.6 (0.4%), poll_dns_idle: 0.73 (0.1%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 12 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/2] proc: use subset option to hide some top-level procfs entries
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In blkdev_get() we call __blkdev_get() to do some internal jobs and if
-there is some errors in __blkdev_get(), the bdput() is called which
-means we have released the refcount of the bdev (actually the refcount of
-the bdev inode). This means we cannot access bdev after that point. But
-accually bdev is still accessed in blkdev_get() after calling
-__blkdev_get(). This may leads to use-after-free if the refcount is the
-last one we released in __blkdev_get(). Let's take a look at the
-following scenerio:
+Alexey Gladkov <gladkov.alexey@gmail.com> writes:
 
-  CPU0            CPU1                    CPU2
-blkdev_open     blkdev_open           Remove disk
-                  bd_acquire
-		  blkdev_get
-		    __blkdev_get      del_gendisk
-					bdev_unhash_inode
-  bd_acquire          bdev_get_gendisk
-    bd_forget           failed because of unhashed
-	  bdput
-	              bdput (the last one)
-		        bdev_evict_inode
+> On Thu, Jun 04, 2020 at 03:33:25PM -0500, Eric W. Biederman wrote:
+>> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+>> 
+>> > Greetings!
+>> >
+>> > Preface
+>> > -------
+>> > This patch set can be applied over:
+>> >
+>> > git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git d35bec8a5788
+>> 
+>> I am not going to seriously look at this for merging until after the
+>> merge window closes. 
+>
+> OK. I'll wait.
 
-	  	    access bdev => use after free
+That will mean your patches can be based on -rc1.
 
-[  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
-[  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
-[  459.352347]
-[  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
-[  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  459.354947] Call Trace:
-[  459.355337]  dump_stack+0x111/0x19e
-[  459.355879]  ? __lock_acquire+0x24c1/0x31b0
-[  459.356523]  print_address_description+0x60/0x223
-[  459.357248]  ? __lock_acquire+0x24c1/0x31b0
-[  459.357887]  kasan_report.cold+0xae/0x2d8
-[  459.358503]  __lock_acquire+0x24c1/0x31b0
-[  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
-[  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.361123]  ? finish_task_switch+0x125/0x600
-[  459.361812]  ? finish_task_switch+0xee/0x600
-[  459.362471]  ? mark_held_locks+0xf0/0xf0
-[  459.363108]  ? __schedule+0x96f/0x21d0
-[  459.363716]  lock_acquire+0x111/0x320
-[  459.364285]  ? blkdev_get+0xce/0xbe0
-[  459.364846]  ? blkdev_get+0xce/0xbe0
-[  459.365390]  __mutex_lock+0xf9/0x12a0
-[  459.365948]  ? blkdev_get+0xce/0xbe0
-[  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
-[  459.367130]  ? blkdev_get+0xce/0xbe0
-[  459.367678]  ? destroy_inode+0xbc/0x110
-[  459.368261]  ? mutex_trylock+0x1a0/0x1a0
-[  459.368867]  ? __blkdev_get+0x3e6/0x1280
-[  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
-[  459.370114]  ? blkdev_get+0xce/0xbe0
-[  459.370656]  blkdev_get+0xce/0xbe0
-[  459.371178]  ? find_held_lock+0x2c/0x110
-[  459.371774]  ? __blkdev_get+0x1280/0x1280
-[  459.372383]  ? lock_downgrade+0x680/0x680
-[  459.373002]  ? lock_acquire+0x111/0x320
-[  459.373587]  ? bd_acquire+0x21/0x2c0
-[  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.374780]  blkdev_open+0x202/0x290
-[  459.375325]  do_dentry_open+0x49e/0x1050
-[  459.375924]  ? blkdev_get_by_dev+0x70/0x70
-[  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
-[  459.377192]  ? inode_permission+0xbe/0x3a0
-[  459.377818]  path_openat+0x148c/0x3f50
-[  459.378392]  ? kmem_cache_alloc+0xd5/0x280
-[  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.379802]  ? path_lookupat.isra.0+0x900/0x900
-[  459.380489]  ? __lock_is_held+0xad/0x140
-[  459.381093]  do_filp_open+0x1a1/0x280
-[  459.381654]  ? may_open_dev+0xf0/0xf0
-[  459.382214]  ? find_held_lock+0x2c/0x110
-[  459.382816]  ? lock_downgrade+0x680/0x680
-[  459.383425]  ? __lock_is_held+0xad/0x140
-[  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.384668]  ? _raw_spin_unlock+0x1f/0x30
-[  459.385280]  ? __alloc_fd+0x448/0x560
-[  459.385841]  do_sys_open+0x3c3/0x500
-[  459.386386]  ? filp_open+0x70/0x70
-[  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
-[  459.388342]  ? do_syscall_64+0x1a/0x520
-[  459.388930]  do_syscall_64+0xc3/0x520
-[  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.390248] RIP: 0033:0x416211
-[  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
-04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
-   05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
-      01
-[  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-[  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
-[  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
-[  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
-[  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
-[  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
-[  459.400168]
-[  459.400430] Allocated by task 20132:
-[  459.401038]  kasan_kmalloc+0xbf/0xe0
-[  459.401652]  kmem_cache_alloc+0xd5/0x280
-[  459.402330]  bdev_alloc_inode+0x18/0x40
-[  459.402970]  alloc_inode+0x5f/0x180
-[  459.403510]  iget5_locked+0x57/0xd0
-[  459.404095]  bdget+0x94/0x4e0
-[  459.404607]  bd_acquire+0xfa/0x2c0
-[  459.405113]  blkdev_open+0x110/0x290
-[  459.405702]  do_dentry_open+0x49e/0x1050
-[  459.406340]  path_openat+0x148c/0x3f50
-[  459.406926]  do_filp_open+0x1a1/0x280
-[  459.407471]  do_sys_open+0x3c3/0x500
-[  459.408010]  do_syscall_64+0xc3/0x520
-[  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.409415]
-[  459.409679] Freed by task 1262:
-[  459.410212]  __kasan_slab_free+0x129/0x170
-[  459.410919]  kmem_cache_free+0xb2/0x2a0
-[  459.411564]  rcu_process_callbacks+0xbb2/0x2320
-[  459.412318]  __do_softirq+0x225/0x8ac
+>> Have you thought about the possibility of relaxing the permission checks
+>> to mount proc such that we don't need to verify there is an existing
+>> mount of proc?  With just the subset pids I think this is feasible.  It
+>> might not be worth it at this point, but it is definitely worth asking
+>> the question.  As one of the benefits early propopents of the idea of a
+>> subset of proc touted was that they would not be as restricted as they
+>> are with today's proc.
+>
+> I'm not sure I follow.
+>
+> What do you mean by the possibility of relaxing the permission checks to
+> mount proc?
+>
+> Do you suggest to allow a user to mount procfs with hidepid=2,subset=pid
+> options? If so then this is an interesting idea.
 
-Fix this by delaying bdput() to the end of blkdev_get() which means we
-have finished accessing bdev.
+The key part would be subset=pid.  You would still need to be root in
+your user namespace, and mount namespace.  You would not need to have a
+separate copy of proc with nothing hidden already mounted.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- fs/block_dev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+>> I ask because this has a bearing on the other options you are playing
+>> with.
+>
+> I can not agree with this because I do not touch on other options.
+> The hidepid and subset=pid has no relation to the visibility of regular
+> files. On the other hand, in procfs there is absolutely no way to restrict
+> access other than selinux.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 47860e589388..8faec9fb47b6 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1566,7 +1566,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	if (!for_part) {
- 		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
- 		if (ret != 0) {
--			bdput(bdev);
- 			return ret;
- 		}
- 	}
-@@ -1688,7 +1687,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	disk_unblock_events(disk);
- 	put_disk_and_module(disk);
-  out:
--	bdput(bdev);
- 
- 	return ret;
- }
-@@ -1755,6 +1753,9 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- 		bdput(whole);
- 	}
- 
-+	if (res)
-+		bdput(bdev);
-+
- 	return res;
- }
- EXPORT_SYMBOL(blkdev_get);
--- 
-2.21.3
+Untrue.  At a practical level the user namespace greatly restricts
+access to proc because many of the non-process files are limited to
+global root only.
 
+>> Do we want to find a way to have the benefit of relaxed permission
+>> checks while still including a few more files.
+>
+> In fact, I see no problem allowing the user to mount procfs with the
+> hidepid=2,subset=pid options.
+>
+> We can make subset=self, which would allow not only pids subset but also
+> other symlinks that lead to self (/proc/net, /proc/mounts) and if we ever
+> add virtualization to meminfo, cpuinfo etc.
+>
+>> > Overview
+>> > --------
+>> > Directories and files can be created and deleted by dynamically loaded modules.
+>> > Not all of these files are virtualized and safe inside the container.
+>> >
+>> > However, subset=pid is not enough because many containers wants to have
+>> > /proc/meminfo, /proc/cpuinfo, etc. We need a way to limit the visibility of
+>> > files per procfs mountpoint.
+>> 
+>> Is it desirable to have meminfo and cpuinfo as they are today or do
+>> people want them to reflect the ``container'' context.   So that
+>> applications like the JVM don't allocation too many cpus or don't try
+>> and consume too much memory, or run on nodes that cgroups current make
+>> unavailable.
+>
+> Of course, it would be better if these files took into account the
+> limitations of cgroups or some kind of ``containerized'' context.
+>
+>> Are there any users or planned users of this functionality yet?
+>
+> I know that java uses meminfo for sure.
+>
+> The purpose of this patch is to isolate the container from unwanted files
+> in procfs.
+
+If what we want is the ability not to use the original but to have
+a modified version of these files.  We probably want empty files that
+serve as mount points.
+
+Or possibly a version of these files that takes into account
+restrictions.  In either even we need to do the research through real
+programs and real kernel options to see what is our best option for
+exporting the limitations that programs have and deciding on the long
+term API for that.
+
+If we research things and we decide the best way to let java know of
+it's limitations is to change /proc/meminfo.  That needs to be a change
+that always applies to meminfo and is not controlled by options.
+
+>> I am concerned that you might be adding functionality that no one will
+>> ever use that will just add code to the kernel that no one cares about,
+>> that will then accumulate bugs.  Having had to work through a few of
+>> those cases to make each mount of proc have it's own super block I am
+>> not a great fan of adding another one.
+>>
+>> If the runc, lxc and other container runtime folks can productively use
+>> such and option to do useful things and they are sensible things to do I
+>> don't have any fundamental objection.  But I do want to be certain this
+>> is a feature that is going to be used.
+>
+> Ok, just an example how docker or runc (actually almost all golang-based
+> container systems) is trying to block access to something in procfs:
+>
+> $ docker run -it --rm busybox
+> # mount |grep /proc
+> proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+> proc on /proc/bus type proc (ro,relatime)
+> proc on /proc/fs type proc (ro,relatime)
+> proc on /proc/irq type proc (ro,relatime)
+> proc on /proc/sys type proc (ro,relatime)
+> proc on /proc/sysrq-trigger type proc (ro,relatime)
+> tmpfs on /proc/asound type tmpfs (ro,seclabel,relatime)
+> tmpfs on /proc/acpi type tmpfs (ro,seclabel,relatime)
+> tmpfs on /proc/kcore type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+> tmpfs on /proc/keys type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+> tmpfs on /proc/latency_stats type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+> tmpfs on /proc/timer_list type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+> tmpfs on /proc/sched_debug type tmpfs (rw,seclabel,nosuid,size=65536k,mode=755)
+> tmpfs on /proc/scsi type tmpfs (ro,seclabel,relatime)
+>
+> For now I'm just trying ti create a better way to restrict access in
+> the procfs than this since procfs is used in containers.
+
+Docker historically has been crap about having a sensible policy.  The
+problem is that Docker wanted to allow real root in a container and
+somehow make it safe by blocking access to proc files and by dropping
+capabilities.
+
+Practically everything that Docker has done is much better and simpler by
+restricting the processes to a user namespace, with a root user whose
+uid is not the global root user.
+
+Which is why I want us to make certain we are doing something that makes
+sense, and is architecturally sound.
+
+You have cleared the big hurdle and proc now has options that are
+usable.   I really appreciate that.  I am not opposed to the general
+direction you are going to find a way to make proc more usable.  I just
+want our next step to be solid.
+
+Eric
