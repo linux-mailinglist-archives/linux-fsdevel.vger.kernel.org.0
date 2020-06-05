@@ -2,354 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1CC1EF281
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 09:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484F41EF28A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 09:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbgFEHyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 03:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45180 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbgFEHyk (ORCPT
+        id S1726163AbgFEHzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 03:55:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36295 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgFEHzt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 03:54:40 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03050C08C5C4
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 00:54:39 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id z2so8690383ilq.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 00:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=n3CbR66nPfpD0gS2lRT/W4hlXwXHn+0jPaByp2D7Ys4=;
-        b=t1xgUo7nYwNixWnmxgLBT7oUcykY44kUV/1DJgvAmFZE8wKYdPDHRItAsebPxPwlpG
-         9qGmmWtC3P6l8aKd6lz5Ufj75qysHw3dOkMIY69vD1fn+x1acWlT0fCL2Kw5df76B/RX
-         lgXHJSzCvbXxPeInThtUHKbu1aZndwqLkRT58=
+        Fri, 5 Jun 2020 03:55:49 -0400
+Received: by mail-ed1-f65.google.com with SMTP id q13so6724741edi.3;
+        Fri, 05 Jun 2020 00:55:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n3CbR66nPfpD0gS2lRT/W4hlXwXHn+0jPaByp2D7Ys4=;
-        b=fzgHCqjutsJ6hhshUBwDgTZ5o/9dMlklurhdgXjHVfyt/ifh+ORTr3P5RQ4mTs02Lx
-         RqfbovKryDs6vWZ5rejoa5r24/xDT8TXKlN5ip4E2srUjnecF0eARH7C+gutak9GY7J9
-         AAgez/JDMbY0kVSvIFocheFRa+Wos/97SswOos6f3LVH/RTHxjccRi6uJyjGdOVl5ioV
-         w1CKUKCjKhRj6VkLsJnaHIj1i+G+ljnqCNqXmNTkGIwEJ8e/HH8nzhN+HXKYAuSrjdkv
-         6j/bVWyp9q9Ssa88DmYfSZWWnoh5mKuN6k3GNRr19XxxP2/pKOaEr0zx3s3U8gQfhptO
-         zudw==
-X-Gm-Message-State: AOAM531lJsIlwy2af5V7fdgENQaqtHePCC3qN/JQ9v14PRpYcCYwVM6o
-        Cj/RJIgubXoEo2AbTXyyF9YcSw==
-X-Google-Smtp-Source: ABdhPJzyjMg39sQ2akfrcESO0H4RodytAdFsFB/8SayPct+ohuphz9c67lrhN/VL/Cw2tpn4nAZ7yQ==
-X-Received: by 2002:a92:7f03:: with SMTP id a3mr7379149ild.269.1591343678764;
-        Fri, 05 Jun 2020 00:54:38 -0700 (PDT)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id p22sm2732408ill.52.2020.06.05.00.54.37
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=eTH1N7IkZRLD3Bqd3SU/Y/GzgXBHOouBSsmg2M4E14k=;
+        b=cVYjliO1PEz3vD/xjOII6DkG5XejgGkk17NgO4OakvIKZRxc2+sHF637PkCrXYz7ri
+         9ss8qGqg1PQn7Ej9MUrxnWUGqduI6TNS4TrAoJ8mgEPdKnGJQ5v1qezJePDDe4collKv
+         c7RukORKqLHfgNZon+VhK2PD0YygZpV6dtE/3MRyJoqh17s+6WqiUD8p6SIQ62KH2doE
+         Q17nny8g/xixwf9o59fONmHADLpTVS+B7+jOy+/9i5cUhNm0k2br+eRQtDZz7uONXRh9
+         yzzjZ18PHw6jYyVSPFSHhz1iCuZWP5azWqjhFft1r9Y31JoDHUI7+xi4JC00G7S8TmCJ
+         D9pw==
+X-Gm-Message-State: AOAM530ahXTCWq9r1+Hj4Hswg3P50XV/Vhg9L2nJ2b4uMbWd2jDpz+G0
+        3P0bBiA3ToABDOc9AIbd12hteAXdOkQ=
+X-Google-Smtp-Source: ABdhPJxL/AmKiDUSdx1nEvMhreC0ntJaev0XcTQZyJQ2wc0NY9Va3KeHu0Dts89OqK8Sc6iuhNnghg==
+X-Received: by 2002:a05:6402:1434:: with SMTP id c20mr7787100edx.27.1591343745210;
+        Fri, 05 Jun 2020 00:55:45 -0700 (PDT)
+Received: from darkstar ([2a04:ee41:4:5025:6574:5ece:b8f6:310e])
+        by smtp.gmail.com with ESMTPSA id x7sm3692196ejc.58.2020.06.05.00.55.42
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Jun 2020 00:54:38 -0700 (PDT)
-Date:   Fri, 5 Jun 2020 07:54:36 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Robert Sesek <rsesek@google.com>,
-        containers@lists.linux-foundation.org,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        Tejun Heo <tj@kernel.org>, stable@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Message-ID: <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20200603011044.7972-1-sargun@sargun.me>
- <20200603011044.7972-2-sargun@sargun.me>
- <20200604012452.vh33nufblowuxfed@wittgenstein>
- <202006031845.F587F85A@keescook>
- <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
+        Fri, 05 Jun 2020 00:55:43 -0700 (PDT)
+References: <20200511154053.7822-1-qais.yousef@arm.com> <20200528132327.GB706460@hirez.programming.kicks-ass.net> <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com> <20200528161112.GI2483@worktop.programming.kicks-ass.net> <20200529100806.GA3070@suse.de> <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com> <87v9k84knx.derkling@matbug.net> <20200603101022.GG3070@suse.de> <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com> <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+User-agent: mu4e 1.4.3; emacs 26.3
+From:   Patrick Bellasi <patrick.bellasi@matbug.net>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+In-reply-to: <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+Message-ID: <875zc60ww2.derkling@matbug.net>
+Date:   Fri, 05 Jun 2020 09:55:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 02:52:26PM +0200, Christian Brauner wrote:
-> On Wed, Jun 03, 2020 at 07:22:57PM -0700, Kees Cook wrote:
-> > On Thu, Jun 04, 2020 at 03:24:52AM +0200, Christian Brauner wrote:
-> > > On Tue, Jun 02, 2020 at 06:10:41PM -0700, Sargun Dhillon wrote:
-> > > > Previously there were two chunks of code where the logic to receive file
-> > > > descriptors was duplicated in net. The compat version of copying
-> > > > file descriptors via SCM_RIGHTS did not have logic to update cgroups.
-> > > > Logic to change the cgroup data was added in:
-> > > > commit 48a87cc26c13 ("net: netprio: fd passed in SCM_RIGHTS datagram not set correctly")
-> > > > commit d84295067fc7 ("net: net_cls: fd passed in SCM_RIGHTS datagram not set correctly")
-> > > > 
-> > > > This was not copied to the compat path. This commit fixes that, and thus
-> > > > should be cherry-picked into stable.
-> > > > 
-> > > > This introduces a helper (file_receive) which encapsulates the logic for
-> > > > handling calling security hooks as well as manipulating cgroup information.
-> > > > This helper can then be used other places in the kernel where file
-> > > > descriptors are copied between processes
-> > > > 
-> > > > I tested cgroup classid setting on both the compat (x32) path, and the
-> > > > native path to ensure that when moving the file descriptor the classid
-> > > > is set.
-> > > > 
-> > > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > > > Suggested-by: Kees Cook <keescook@chromium.org>
-> > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>
-> > > > Cc: David S. Miller <davem@davemloft.net>
-> > > > Cc: Jann Horn <jannh@google.com>,
-> > > > Cc: John Fastabend <john.r.fastabend@intel.com>
-> > > > Cc: Tejun Heo <tj@kernel.org>
-> > > > Cc: Tycho Andersen <tycho@tycho.ws>
-> > > > Cc: stable@vger.kernel.org
-> > > > Cc: cgroups@vger.kernel.org
-> > > > Cc: linux-fsdevel@vger.kernel.org
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > ---
-> > > >  fs/file.c            | 35 +++++++++++++++++++++++++++++++++++
-> > > >  include/linux/file.h |  1 +
-> > > >  net/compat.c         | 10 +++++-----
-> > > >  net/core/scm.c       | 14 ++++----------
-> > > >  4 files changed, 45 insertions(+), 15 deletions(-)
-> > > > 
-> > > 
-> > > This is all just a remote version of fd_install(), yet it deviates from
-> > > fd_install()'s semantics and naming. That's not great imho. What about
-> > > naming this something like:
-> > > 
-> > > fd_install_received()
-> > > 
-> > > and move the get_file() out of there so it has the same semantics as
-> > > fd_install(). It seems rather dangerous to have a function like
-> > > fd_install() that consumes a reference once it returned and another
-> > > version of this that is basically the same thing but doesn't consume a
-> > > reference because it takes its own. Seems an invitation for confusion.
-> > > Does that make sense?
-> > 
-> > We have some competing opinions on this, I guess. What I really don't
-> > like is the copy/pasting of the get_unused_fd_flags() and
-> > put_unused_fd() needed by (nearly) all the callers. If it's a helper, it
-> > should help. Specifically, I'd like to see this:
-> > 
-> > int file_receive(int fd, unsigned long flags, struct file *file,
-> > 		 int __user *fdptr)
-> 
-> I still fail to see what this whole put_user() handling buys us at all
-> and why this function needs to be anymore complicated then simply:
-> 
-> fd_install_received(int fd, struct file *file)
-> {
-> 	security_file_receive(file);
->  
->  	sock = sock_from_file(fd, &err);
->  	if (sock) {
->  		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
->  		sock_update_classid(&sock->sk->sk_cgrp_data);
->  	}
-> 
-> 	fd_install();
-> 	return;
-> }
-> 
-> exactly like fd_install() but for received files.
-> 
-> For scm you can fail somewhere in the middle of putting any number of
-> file descriptors so you're left in a state with only a subset of
-> requested file descriptors installed so it's not really useful there.
-> And if you manage to install an fd but then fail to put_user() it
-> userspace can simply check it's fds via proc and has to anyway on any
-> scm message error. If you fail an scm message userspace better check
-> their fds.
-> For seccomp maybe but even there I doubt it and I still maintain that
-> userspace screwing this up is on them which is how we do this most of
-> the time. And for pidfd_getfd() this whole put_user() thing doesn't
-> matter at all.
-> 
-> It's much easier and clearer if we simply have a fd_install() -
-> fd_install_received() parallelism where we follow an established
-> convention. _But_ if that blocks you from making this generic enough
-> then at least the replace_fd() vs fd_install() logic seems it shouldn't
-> be in there. 
-> 
-> And the function name really needs to drive home the point that it
-> installs an fd into the tasks fdtable no matter what version you go
-> with. file_receive() is really not accurate enough for this at all.
-> 
-> > {
-> > 	struct socket *sock;
-> > 	int err;
-> > 
-> > 	err = security_file_receive(file);
-> > 	if (err)
-> > 		return err;
-> > 
-> > 	if (fd < 0) {
-> > 		/* Install new fd. */
-> > 		int new_fd;
-> > 
-> > 		err = get_unused_fd_flags(flags);
-> > 		if (err < 0)
-> > 			return err;
-> > 		new_fd = err;
-> > 
-> > 		/* Copy fd to any waiting user memory. */
-> > 		if (fdptr) {
-> > 			err = put_user(new_fd, fdptr);
-> > 			if (err < 0) {
-> > 				put_unused_fd(new_fd);
-> > 				return err;
-> > 			}
-> > 		}
-> > 		fd_install(new_fd, get_file(file));
-> > 		fd = new_fd;
-> > 	} else {
-> > 		/* Replace existing fd. */
-> > 		err = replace_fd(fd, file, flags);
-> > 		if (err)
-> > 			return err;
-> > 	}
-> > 
-> > 	/* Bump the cgroup usage counts. */
-> > 	sock = sock_from_file(fd, &err);
-> > 	if (sock) {
-> > 		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-> > 		sock_update_classid(&sock->sk->sk_cgrp_data);
-> > 	}
-> > 
-> > 	return fd;
-> > }
-> > 
-> > If everyone else *really* prefers keeping the get_unused_fd_flags() /
-> > put_unused_fd() stuff outside the helper, then I guess I'll give up,
-> > but I think it is MUCH cleaner this way -- all 4 users trim down lots
-> > of code duplication.
-> > 
-> > -- 
-> > Kees Cook
-How about this:
 
+Hi Qais,
 
-static int do_dup2(struct files_struct *files,
-	struct file *file, unsigned fd, unsigned flags)
-__releases(&files->file_lock)
-{
-	struct file *tofree;
-	struct fdtable *fdt;
+On Wed, Jun 03, 2020 at 18:52:00 +0200, Qais Yousef <qais.yousef@arm.com> wrote...
 
-	...
+> On 06/03/20 16:59, Vincent Guittot wrote:
+>> When I want to stress the fast path i usually use "perf bench sched pipe -T "
+>> The tip/sched/core on my arm octo core gives the following results for
+>> 20 iterations of perf bench sched pipe -T -l 50000
+>> 
+>> all uclamp config disabled  50035.4(+/- 0.334%)
+>> all uclamp config enabled  48749.8(+/- 0.339%)   -2.64%
 
-	/*
-	 * New bit, allowing the file to be null. Doesn't have the same
-	 * "sanity check" bits from __alloc_fd
-	 */
-	if (likely(file))
-		get_file(file);
-	rcu_assign_pointer(fdt->fd[fd], file);
+I use to run the same test but I don't remember such big numbers :/
 
-	__set_open_fd(fd, fdt);
+>> It's quite easy to reproduce and probably easier to study the impact
+>
+> Thanks Vincent. This is very useful!
+>
+> I could reproduce that on my Juno.
+>
+> One of the codepath I was suspecting seems to affect it.
+>
+>
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0464569f26a7..9f48090eb926 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1063,10 +1063,12 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+>          * e.g. due to future modification, warn and fixup the expected value.
+>          */
+>         SCHED_WARN_ON(bucket->value > rq_clamp);
+> +#if 0
+>         if (bucket->value >= rq_clamp) {
+>                 bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
+>                 WRITE_ONCE(uc_rq->value, bkt_clamp);
+>         }
+> +#endif
 
-	...
-}
+Yep, that's likely where we have most of the overhead at dequeue time,
+sine _sometimes_ we need to update the cpu's clamp value.
 
-/*
- * File Receive - Receive a file from another process
- *
- * Encapsulates the logic to handle receiving a file from another task. It
- * does not install the file descriptor. That is delegated to the user. If
- * an error occurs that results in the file descriptor not being installed,
- * they must put_unused_fd.
- *
- * fd should be >= 0 if you intend on replacing a file descriptor, or
- * alternatively -1 if you want file_receive to allocate an FD for you
- *
- * Returns the fd number on success.
- * Returns negative error code on failure.
- *
- */
-int file_receive(int fd, unsigned int flags, struct file *file)
-{
-	int err;
-	struct socket *sock;
-	struct files_struct *files = current->files;
+However, while running perf sched pipe, I expect:
+ - all tasks to have the same clamp value
+ - all CPUs to have _always_ at least one RUNNABLE task
 
-	err = security_file_receive(file);
-	if (err)
-		return err;
+Given these two conditions above, if the CPU is never "CFS idle" (i.e.
+without RUNNABLE CFS tasks), the code above should never be triggered.
+More on that later...
 
-	if (fd >= 0) {
-		if (fd >= rlimit(RLIMIT_NOFILE))
-			return -EBADF;
+>  }
+>
+>  static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>
+>
+>
+> uclamp_rq_max_value() could be expensive as it loops over all buckets.
 
-		spin_lock(&files->file_lock);
-		err = expand_files(files, fd);
-		if (err < 0) {
-			goto out_unlock;
-		}
+It loops over UCLAMP_CNT values which are defined to fit into a single
+$L. That was the optimal space/time complexity compromise we found to
+get the MAX of a set of values.
 
-		err = do_dup2(files, NULL, fd, flags);
-		if (err)
-			return err;
-	} else {
-		fd = get_unused_fd_flags(flags);
-		if (fd < 0)
-			return fd;
-	}
+> Commenting this whole path out strangely doesn't just 'fix' it,
+> but produces  better results to no-uclamp kernel :-/
+>
+> # ./perf bench -r 20 sched pipe -T -l 50000
+> Without uclamp:		5039
+> With uclamp:		4832
+> With uclamp+patch:	5729
 
-	sock = sock_from_file(file, &err);
-	if (sock) {
-		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-		sock_update_classid(&sock->sk->sk_cgrp_data);
-	}
+I explain it below: with that code removed you never decrease the CPU's
+uclamp value. Thus, the first time you schedule an RT task you go to MAX
+OPP and stay there forever.
 
-	return fd;
+> It might be because schedutil gets biased differently by uclamp..? If I move to
+> performance governor these numbers almost double.
+>
+> I don't know. But this promoted me to look closer and
 
-out_unlock:
-	spin_unlock(&files->file_lock);
-	return err;
-}
+Just to resume, when a task is dequeued we can have only these cases:
 
----
+- uclamp(task) < uclamp(cpu):
+  this happens when the task was co-scheduled with other tasks with
+  higher clamp values which are still RUNNABLE.
+  In this case there are no uclamp(cpu) updates.
 
-then the code in scm.c:
-err = file_receive(-1, flags, fp[i]);
-if (err < 0)
-	break;
+- uclamp(task) == uclamp(cpu):
+  this happens when the task was one of the tasks defining the current
+  uclamp(cpu) value, which is defined to track the MAX of the RUNNABLE
+  tasks clamp values.
 
-new_fd = err;
-err = put_user(new_fd, cmfptr);
-if (err) {
-	put_unused_fd(new_fd);
-	break;
-}
+In this last case we _not_ always need to do a uclamp(cpu) update.
+Indeed the update is required _only_ when that task was _the last_ task
+defining the current uclamp(cpu) value.
 
-/* Bump the usage count and install the file. */
-fd_install(new_fd, get_file(fp[i]));
+In this case we use uclamp_rq_max_value() to do a linear scan of
+UCLAMP_CNT values which fits into a single cache line.
 
-And addfd:
-ret = file_receive(addfd->fd, addfd->flags, addfd->file);
-if (ret >= 0)
-	fd_install(ret, get_file(addfd->file));
-addfd->ret = ret;
+> I think I spotted a bug where in the if condition we check for '>='
+> instead of '>', causing us to take the supposedly impossible fail safe
+> path.
 
-----
+The fail safe path is when the '>' condition matches, which is what the
+SCHED_WARN_ON tell us. Indeed, we never expect uclamp(cpu) to be bigger
+than one of its RUNNABLE tasks. If that should happen we WARN and fix
+the cpu clamp value for the best.
 
-This way there is:
-1. No "put_user" logic in file_receive
-2. Minimal (single) branching logic, unless there's something in between
-   the file_receive and installing the FD, such as put_user.
-3. Doesn't implement fd_install, so there's no ambiguity about it being
-   file_install_received vs. just the receive logic.
+The normal path is instead '=' and, according to by previous resume,
+it's expected to be executed _only_ when we dequeue the last task of the
+clamp group defining the current uclamp(cpu) value.
+
+> Mind trying with the below patch please?
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0464569f26a7..50d66d4016ff 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1063,7 +1063,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+>          * e.g. due to future modification, warn and fixup the expected value.
+>          */
+>         SCHED_WARN_ON(bucket->value > rq_clamp);
+> -       if (bucket->value >= rq_clamp) {
+> +       if (bucket->value > rq_clamp) {
+>                 bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
+>                 WRITE_ONCE(uc_rq->value, bkt_clamp);
+>         }
+
+This patch is thus bogus, since we never expect to have uclamp(cpu)
+bigger than uclamp(task) and thus we will never reset the clamp value of
+a cpu.
 
