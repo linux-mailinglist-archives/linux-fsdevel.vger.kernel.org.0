@@ -2,252 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DF11EFD71
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B84B31EFDF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbgFEQVJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 12:21:09 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:33235 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgFEQVI (ORCPT
+        id S1726236AbgFEQZ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 12:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40704 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbgFEQZ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 12:21:08 -0400
-Received: from [192.168.100.1] ([82.252.135.106]) by mrelayeu.kundenserver.de
- (mreue107 [213.165.67.119]) with ESMTPSA (Nemesis) id
- 1MD9CZ-1jqHcy3E8H-00977A; Fri, 05 Jun 2020 18:20:54 +0200
-Subject: Re: [PATCH v3] binfmt_misc: pass binfmt_misc flags to the interpreter
+        Fri, 5 Jun 2020 12:25:57 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A08DC08C5C2;
+        Fri,  5 Jun 2020 09:25:57 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id q16so3831260plr.2;
+        Fri, 05 Jun 2020 09:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NmjJTQt+IYO8O2qNw9u4ijfCErC5N7IeIeNyGgIbvio=;
+        b=mPr9+gTWNwpKDsKOJGXUCBCs6GLgzT1t4M83KwCqmr/HsvIbBW/n2qeroOgyD98R6Z
+         BC+D75K4uc8/eeWfuLhSALEX9dkCM3hVPiwIQ9XLfNdPvZl/+1DogxkGfjg6toeXhG6+
+         1Alyg0VAtCIUkzVf3hLvW+1rVyUN/+cRgky20Q0toXOK4tvV1+Nor4QYqV1rk4ho/NRz
+         oeE1h6z/SJacetRElo5Z+obsMwTLvayvvv1kQklCQkKfkapXbRJ2ygj0YIC00un1Crv/
+         zNlcapqzRA7maZ64zUDSAcH9GqZAa8JHVwA8nSgQtwYirbrMTLSy4SILBGLvhLtF9SmW
+         u6mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NmjJTQt+IYO8O2qNw9u4ijfCErC5N7IeIeNyGgIbvio=;
+        b=k9kQdE6q9aOYYgo5ohKMMRm+UV2vfha289MV9qqDsPpCJt/ClJJsJk2LVhqkpdTTMP
+         FIYoKLuyszFuQevCjAGDY3klBz5o85AkR1CFb/IMLtrVhE46CtmQJM6l4APoFwqT79CW
+         /zj0M31g7SZRd8mgsleIaKBEvl6WnA3coxdnRcIw6mHWJuBNlhVOlH1FcQC2tkM1BvoD
+         SRXfDoJMahK4v1uWVJsEJrcoUKiW9wTnDS7sskMQkFuGX/kpD0Edc7CDCBdYAoFk/+aP
+         u405ztoiL/xgYJgFk/ykyj4ylCewMwoEVeX5uhnID5IEKYMpT1WMj4wKYOla+IQybMzB
+         bgLA==
+X-Gm-Message-State: AOAM531SR7EFRux+wNv/rJmLBH8bhARYWb3eJwhJci9qIz6Yv9T6EEFZ
+        Z6zjkKAA+MTVkX1jRcB5mhMaakw2
+X-Google-Smtp-Source: ABdhPJzY/o/kBe/m0Q1OcLEXBvHQsXZ1pxuuE+S08cN5pisOWBUb/sNIFZDsOJIS8dbxTeLacLU9fg==
+X-Received: by 2002:a17:90b:f0e:: with SMTP id br14mr3833000pjb.78.1591374356024;
+        Fri, 05 Jun 2020 09:25:56 -0700 (PDT)
+Received: from localhost.localdomain ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id b29sm86205pff.176.2020.06.05.09.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2020 09:25:55 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+X-Google-Original-From: Florian Fainelli <florian.fainelli@broadcom.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
-        YunQiang Su <syq@debian.org>,
+Cc:     stable@vger.kernel.org,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-References: <20200128132539.782286-1-laurent@vivier.eu>
-From:   Laurent Vivier <laurent@vivier.eu>
-Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <348e8e7a-3a2c-23b7-4a2e-d3f5e8a62173@vivier.eu>
-Date:   Fri, 5 Jun 2020 18:20:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:CJWnNS6t81j4qzw3g9XQQQW/Krz79nyKBQKdvfN6saD7FitXX9b
- 2G6HkpgZuWObozbs2/Ob6IN4lAZJijGyWrceUxPADueFeCQ0WC5brR+O6eKuRzDdh76krEa
- UmM2XvZIg+PMRHhuB9QoGt867etu3+R4nddb0BVYGT2HGIruzK0KHX3h32Jyd7lzeAn9WuA
- QrIf+X+SzEIBcj5Xox7TQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wTOXGu8jl64=:cR1ZJv0JIVxdlx/KmO2ALK
- X9hI6f8SZ58pdTz6cj8A7GWAAtHvbiAEpPP5oalNeajGFD3detXNBmarJJ4pilOeBsVC9opIx
- Oeb96D36r50s3aNXKdvcEFkvEdR7OEAY3p8ILtt4Lv7JMWIQsCSm7/zB2UhR4NXGsNgKn+xNr
- kDt1FBokoBQDn64MvA3wgpXsMtxlPfrvku6ShmnLKUa2MdUcF6FRvnYRiRyHs1tkW6sxNOfg9
- 9anY9sgbqPjxfpo3BdjWX5WIS2UbXsGAA0wJhtocF1BazdxpkGtjEAge8HNVgZf+61XieYXnY
- dh/sBoWHpNN7E4Hq5rQJcjdn4bWjAIDNLEK2axpoGgUwKpVKdS1/IfhYQ6JPzx94/PeO3uoQ8
- akOPYo0ZsvTNqiit+/niNBfFFzsp/NP+tCJo9HOHsHECRZDaGLgGYDYfx6AFr/hKhEmdpZSA4
- A7Y4LF807erHNZKILvspy2mzAsj3fivbeInVSxmvLAhTztwl8MtJAysdiCg492QUZGhV8d1Jx
- Nl8afVoqLMYdJeAHL560oVPC8nmoQWabftnDyZThq7NX0BkqsB2EuIdkXcvR1V298U0w/TJfH
- +qek6zt7ed2ZYiDLoy+R2IZ0p3gKGKNPkUWXNCJUuQn8+71ooIOP33X9Km5JjcpAdIkCifK/V
- ISdaRB53bXQYWSTk7ry6upVVLRxVPNAxicXA3W8EmXL/TcUpa1d4GjBfCQYm80H9NFdgqYC1f
- 72iYNZJ0EWqAui5thFvuKV636ysMtp9tlErCjcc293Nw44n4M4fMy/Ls1Opj3IV1HQBK3xQok
- GJOm5G7uCqMVP1VXEIH1yzF+ZfCu1A5R6IdfVZ67Bj549HPV0cRJiH2/2VcYPgR4GPQ62ZL
+        Shuah Khan <shuah@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
+        (V4L/DVB)),
+        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
+        infrastructure))
+Subject: [PATCH stable 4.9 00/21] Unbreak 32-bit DVB applications on 64-bit kernels
+Date:   Fri,  5 Jun 2020 09:24:57 -0700
+Message-Id: <20200605162518.28099-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping?
+Hi all,
 
-Thanks,
-Laurent
+This long patch series was motivated by backporting Jaedon's changes
+which add a proper ioctl compatibility layer for 32-bit applications
+running on 64-bit kernels. We have a number of Android TV-based products
+currently running on the 4.9 kernel and this was broken for them.
 
-Le 28/01/2020 à 14:25, Laurent Vivier a écrit :
-> It can be useful to the interpreter to know which flags are in use.
-> 
-> For instance, knowing if the preserve-argv[0] is in use would
-> allow to skip the pathname argument.
-> 
-> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
-> flag to inform interpreter if the preserve-argv[0] is enabled.
-> 
-> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
-> ---
-> 
-> Notes:
->     This can be tested with QEMU from my branch:
->     
->       https://github.com/vivier/qemu/commits/binfmt-argv0
->     
->     With something like:
->     
->       # cp ..../qemu-ppc /chroot/powerpc/jessie
->     
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
->                             --persistent no --preserve-argv0 yes
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: POC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       sh
->     
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
->                             --persistent no --preserve-argv0 no
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: OC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       /bin/sh
->     
->     v3: mix my patch with one from YunQiang Su and my comments on it
->         introduce a new flag in the uabi for the AT_FLAGS
->     v2: only pass special flags (remove Magic and Enabled flags)
-> 
->  fs/binfmt_elf.c              | 5 ++++-
->  fs/binfmt_elf_fdpic.c        | 5 ++++-
->  fs/binfmt_misc.c             | 4 +++-
->  include/linux/binfmts.h      | 4 ++++
->  include/uapi/linux/binfmts.h | 4 ++++
->  5 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index ecd8d2698515..ff918042ceed 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
->  	unsigned char k_rand_bytes[16];
->  	int items;
->  	elf_addr_t *elf_info;
-> +	elf_addr_t flags = 0;
->  	int ei_index = 0;
->  	const struct cred *cred = current_cred();
->  	struct vm_area_struct *vma;
-> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
->  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-> -	NEW_AUX_ENT(AT_FLAGS, 0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS, flags);
->  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
->  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
->  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index 240f66663543..abb90d82aa58 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	char __user *u_platform, *u_base_platform, *p;
->  	int loop;
->  	int nr;	/* reset for each csp adjustment */
-> +	unsigned long flags = 0;
->  
->  #ifdef CONFIG_MMU
->  	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
-> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
->  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
-> -	NEW_AUX_ENT(AT_FLAGS,	0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS,	flags);
->  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
->  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
->  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index cdb45829354d..b9acdd26a654 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
->  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
->  		goto ret;
->  
-> -	if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
-> +	if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
-> +		bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
-> +	} else {
->  		retval = remove_arg_zero(bprm);
->  		if (retval)
->  			goto ret;
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index b40fc633f3be..265b80d5fd6f 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -78,6 +78,10 @@ struct linux_binprm {
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
->  
-> +/* if preserve the argv0 for the interpreter  */
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 << BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  /* Function parameter for binfmt->coredump */
->  struct coredump_params {
->  	const kernel_siginfo_t *siginfo;
-> diff --git a/include/uapi/linux/binfmts.h b/include/uapi/linux/binfmts.h
-> index 689025d9c185..a70747416130 100644
-> --- a/include/uapi/linux/binfmts.h
-> +++ b/include/uapi/linux/binfmts.h
-> @@ -18,4 +18,8 @@ struct pt_regs;
->  /* sizeof(linux_binprm->buf) */
->  #define BINPRM_BUF_SIZE 256
->  
-> +/* if preserve the argv0 for the interpreter  */
-> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
-> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  #endif /* _UAPI_LINUX_BINFMTS_H */
-> 
+Thanks to Robert McConnell for identifying and providing the patches in
+their initial format.
+
+In order for Jaedon's patches to apply cleanly a number of changes were
+applied to support those changes. If you deem the patch series too big
+please let me know.
+
+Thanks
+
+Colin Ian King (2):
+  media: dvb_frontend: ensure that inital front end status initialized
+  media: dvb_frontend: initialize variable s with FE_NONE instead of 0
+
+Jaedon Shin (3):
+  media: dvb_frontend: Add unlocked_ioctl in dvb_frontend.c
+  media: dvb_frontend: Add compat_ioctl callback
+  media: dvb_frontend: Add commands implementation for compat ioct
+
+Katsuhiro Suzuki (1):
+  media: dvb_frontend: fix wrong cast in compat_ioctl
+
+Mauro Carvalho Chehab (14):
+  media: dvb/frontend.h: move out a private internal structure
+  media: dvb/frontend.h: document the uAPI file
+  media: dvb_frontend: get rid of get_property() callback
+  media: stv0288: get rid of set_property boilerplate
+  media: stv6110: get rid of a srate dead code
+  media: friio-fe: get rid of set_property()
+  media: dvb_frontend: get rid of set_property() callback
+  media: dvb_frontend: cleanup dvb_frontend_ioctl_properties()
+  media: dvb_frontend: cleanup ioctl handling logic
+  media: dvb_frontend: get rid of property cache's state
+  media: dvb_frontend: better document the -EPERM condition
+  media: dvb_frontend: fix return values for FE_SET_PROPERTY
+  media: dvb_frontend: be sure to init dvb_frontend_handle_ioctl()
+    return code
+  media: dvb_frontend: fix return error code
+
+Satendra Singh Thakur (1):
+  media: dvb_frontend: dtv_property_process_set() cleanups
+
+ .../media/uapi/dvb/fe-get-property.rst        |   7 +-
+ drivers/media/dvb-core/dvb_frontend.c         | 571 +++++++++++------
+ drivers/media/dvb-core/dvb_frontend.h         |  13 -
+ drivers/media/dvb-frontends/lg2160.c          |  14 -
+ drivers/media/dvb-frontends/stv0288.c         |   7 -
+ drivers/media/dvb-frontends/stv6110.c         |   9 -
+ drivers/media/usb/dvb-usb/friio-fe.c          |  24 -
+ fs/compat_ioctl.c                             |  17 -
+ include/uapi/linux/dvb/frontend.h             | 592 +++++++++++++++---
+ 9 files changed, 881 insertions(+), 373 deletions(-)
+
+-- 
+2.17.1
 
