@@ -2,113 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 509971EEFBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 05:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BF81EEFD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 05:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbgFEDIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jun 2020 23:08:09 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:46107 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725883AbgFEDIJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jun 2020 23:08:09 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 0B30BD588CC;
-        Fri,  5 Jun 2020 13:08:04 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jh2i6-0002cj-5n; Fri, 05 Jun 2020 13:07:58 +1000
-Date:   Fri, 5 Jun 2020 13:07:58 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Handle I/O errors gracefully in page_mkwrite
-Message-ID: <20200605030758.GB2040@dread.disaster.area>
-References: <20200604202340.29170-1-willy@infradead.org>
- <20200604225726.GU2040@dread.disaster.area>
- <20200604230519.GW19604@bombadil.infradead.org>
- <20200604233053.GW2040@dread.disaster.area>
- <20200604235050.GX19604@bombadil.infradead.org>
- <20200605003159.GX2040@dread.disaster.area>
- <20200605022451.GZ19604@bombadil.infradead.org>
+        id S1725995AbgFEDSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jun 2020 23:18:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38362 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725883AbgFEDSg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jun 2020 23:18:36 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 985F6376BDA400174E02;
+        Fri,  5 Jun 2020 11:18:33 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Fri, 5 Jun 2020
+ 11:18:27 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Jason Yan <yanaijie@huawei.com>, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH] block: Fix use-after-free in blkdev_get()
+Date:   Fri, 5 Jun 2020 11:45:42 +0800
+Message-ID: <20200605034542.20212-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200605022451.GZ19604@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
-        a=ruQhQeNdVRnZAG6APzsA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 07:24:51PM -0700, Matthew Wilcox wrote:
-> On Fri, Jun 05, 2020 at 10:31:59AM +1000, Dave Chinner wrote:
-> > On Thu, Jun 04, 2020 at 04:50:50PM -0700, Matthew Wilcox wrote:
-> > > > Sure, but that's not really what I was asking: why isn't this
-> > > > !uptodate state caught before the page fault code calls
-> > > > ->page_mkwrite? The page fault code has a reference to the page,
-> > > > after all, and in a couple of paths it even has the page locked.
-> > > 
-> > > If there's already a PTE present, then the page fault code doesn't
-> > > check the uptodate bit.  Here's the path I'm looking at:
-> > > 
-> > > do_wp_page()
-> > >  -> vm_normal_page()
-> > >  -> wp_page_shared()
-> > >      -> do_page_mkwrite()
-> > > 
-> > > I don't see anything in there that checked Uptodate.
-> > 
-> > Yup, exactly the code I was looking at when I asked this question.
-> > The kernel has invalidated the contents of a page, yet we still have
-> > it mapped into userspace as containing valid contents, and we don't
-> > check it at all when userspace generates a protection fault on the
-> > page?
-> 
-> Right.  The iomap error path only clears PageUptodate.  It doesn't go
-> to the effort of unmapping the page from userspace, so userspace has a
-> read-only view of a !Uptodate page.
+In blkdev_get() we call __blkdev_get() to do some internal jobs and if
+there is some errors in __blkdev_get(), the bdput() is called which
+means we have released the refcount of the bdev (actually the refcount of
+the bdev inode). This means we cannot access bdev after that point. But
+accually bdev is still accessed in blkdev_get() after calling
+__blkdev_get(). This may leads to use-after-free if the refcount is the
+last one we released in __blkdev_get(). Let's take a look at the
+following scenerio:
 
-Hmmm - did you miss the ->discard_page() callout just before we call
-ClearPageUptodate() on error in iomap_writepage_map()? That results
-in XFS calling iomap_invalidatepage() on the page, which ....
+  CPU0            CPU1                    CPU2
+blkdev_open     blkdev_open           Remove disk
+                  bd_acquire
+		  blkdev_get
+		    __blkdev_get      del_gendisk
+					bdev_unhash_inode
+  bd_acquire          bdev_get_gendisk
+    bd_forget           failed because of unhashed
+	  bdput
+	              bdput (the last one)
+		        bdev_evict_inode
 
-/me sighs as he realises that ->invalidatepage doesn't actually
-invalidate page mappings but only clears the page dirty state and
-releases filesystem references to the page.
+	  	    access bdev => use after free
 
-Yay. We leave -invalidated page cache pages- mapped into userspace,
-and page faults on those pages don't catch access to invalidated
-pages.
+[  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
+[  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
+[  459.352347]
+[  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
+[  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  459.354947] Call Trace:
+[  459.355337]  dump_stack+0x111/0x19e
+[  459.355879]  ? __lock_acquire+0x24c1/0x31b0
+[  459.356523]  print_address_description+0x60/0x223
+[  459.357248]  ? __lock_acquire+0x24c1/0x31b0
+[  459.357887]  kasan_report.cold+0xae/0x2d8
+[  459.358503]  __lock_acquire+0x24c1/0x31b0
+[  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
+[  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
+[  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
+[  459.361123]  ? finish_task_switch+0x125/0x600
+[  459.361812]  ? finish_task_switch+0xee/0x600
+[  459.362471]  ? mark_held_locks+0xf0/0xf0
+[  459.363108]  ? __schedule+0x96f/0x21d0
+[  459.363716]  lock_acquire+0x111/0x320
+[  459.364285]  ? blkdev_get+0xce/0xbe0
+[  459.364846]  ? blkdev_get+0xce/0xbe0
+[  459.365390]  __mutex_lock+0xf9/0x12a0
+[  459.365948]  ? blkdev_get+0xce/0xbe0
+[  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
+[  459.367130]  ? blkdev_get+0xce/0xbe0
+[  459.367678]  ? destroy_inode+0xbc/0x110
+[  459.368261]  ? mutex_trylock+0x1a0/0x1a0
+[  459.368867]  ? __blkdev_get+0x3e6/0x1280
+[  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
+[  459.370114]  ? blkdev_get+0xce/0xbe0
+[  459.370656]  blkdev_get+0xce/0xbe0
+[  459.371178]  ? find_held_lock+0x2c/0x110
+[  459.371774]  ? __blkdev_get+0x1280/0x1280
+[  459.372383]  ? lock_downgrade+0x680/0x680
+[  459.373002]  ? lock_acquire+0x111/0x320
+[  459.373587]  ? bd_acquire+0x21/0x2c0
+[  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
+[  459.374780]  blkdev_open+0x202/0x290
+[  459.375325]  do_dentry_open+0x49e/0x1050
+[  459.375924]  ? blkdev_get_by_dev+0x70/0x70
+[  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
+[  459.377192]  ? inode_permission+0xbe/0x3a0
+[  459.377818]  path_openat+0x148c/0x3f50
+[  459.378392]  ? kmem_cache_alloc+0xd5/0x280
+[  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  459.379802]  ? path_lookupat.isra.0+0x900/0x900
+[  459.380489]  ? __lock_is_held+0xad/0x140
+[  459.381093]  do_filp_open+0x1a1/0x280
+[  459.381654]  ? may_open_dev+0xf0/0xf0
+[  459.382214]  ? find_held_lock+0x2c/0x110
+[  459.382816]  ? lock_downgrade+0x680/0x680
+[  459.383425]  ? __lock_is_held+0xad/0x140
+[  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
+[  459.384668]  ? _raw_spin_unlock+0x1f/0x30
+[  459.385280]  ? __alloc_fd+0x448/0x560
+[  459.385841]  do_sys_open+0x3c3/0x500
+[  459.386386]  ? filp_open+0x70/0x70
+[  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+[  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
+[  459.388342]  ? do_syscall_64+0x1a/0x520
+[  459.388930]  do_syscall_64+0xc3/0x520
+[  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  459.390248] RIP: 0033:0x416211
+[  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
+04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
+   05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
+      01
+[  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+[  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
+[  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
+[  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
+[  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
+[  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
+[  459.400168]
+[  459.400430] Allocated by task 20132:
+[  459.401038]  kasan_kmalloc+0xbf/0xe0
+[  459.401652]  kmem_cache_alloc+0xd5/0x280
+[  459.402330]  bdev_alloc_inode+0x18/0x40
+[  459.402970]  alloc_inode+0x5f/0x180
+[  459.403510]  iget5_locked+0x57/0xd0
+[  459.404095]  bdget+0x94/0x4e0
+[  459.404607]  bd_acquire+0xfa/0x2c0
+[  459.405113]  blkdev_open+0x110/0x290
+[  459.405702]  do_dentry_open+0x49e/0x1050
+[  459.406340]  path_openat+0x148c/0x3f50
+[  459.406926]  do_filp_open+0x1a1/0x280
+[  459.407471]  do_sys_open+0x3c3/0x500
+[  459.408010]  do_syscall_64+0xc3/0x520
+[  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  459.409415]
+[  459.409679] Freed by task 1262:
+[  459.410212]  __kasan_slab_free+0x129/0x170
+[  459.410919]  kmem_cache_free+0xb2/0x2a0
+[  459.411564]  rcu_process_callbacks+0xbb2/0x2320
+[  459.412318]  __do_softirq+0x225/0x8ac
 
-Geez, we really suck at this whole software thing, don't we?
+Fix this by delaying bdput() to the end of blkdev_get() which means we
+have finished accessing bdev.
 
-It's not clear to me that we can actually unmap those pages safely
-in a race free manner from this code - can we actually do that from
-the page writeback path?
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+---
+ fs/block_dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> > > I think the iomap code is the only filesystem which clears PageUptodate
-> > > on errors. 
-> > 
-> > I don't think you looked very hard. A quick scan shows at least
-> > btrfs, f2fs, hostfs, jffs2, reiserfs, vboxfs and anything using the
-> > iomap path will call ClearPageUptodate() on a write IO error.
-> 
-> I'll give you btrfs and jffs2, but I don't think it's true for f2fs.
-> The only other filesystem using the iomap bufferd IO paths today
-> is zonefs, afaik.
-
-gfs2 as well.
-
--Dave.
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 47860e589388..8faec9fb47b6 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1566,7 +1566,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+ 	if (!for_part) {
+ 		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
+ 		if (ret != 0) {
+-			bdput(bdev);
+ 			return ret;
+ 		}
+ 	}
+@@ -1688,7 +1687,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+ 	disk_unblock_events(disk);
+ 	put_disk_and_module(disk);
+  out:
+-	bdput(bdev);
+ 
+ 	return ret;
+ }
+@@ -1755,6 +1753,9 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
+ 		bdput(whole);
+ 	}
+ 
++	if (res)
++		bdput(bdev);
++
+ 	return res;
+ }
+ EXPORT_SYMBOL(blkdev_get);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.21.3
+
