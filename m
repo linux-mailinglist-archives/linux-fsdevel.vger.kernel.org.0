@@ -2,113 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 512191EFDB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 18:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7651EFFB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 20:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbgFEQ0z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 12:26:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbgFEQ0o (ORCPT
+        id S1728146AbgFESLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 14:11:15 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52808 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbgFESLO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 12:26:44 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D001C08C5C2;
-        Fri,  5 Jun 2020 09:26:43 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id v24so3825970plo.6;
-        Fri, 05 Jun 2020 09:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=s6oLxuZtz92MCMs+Rc0jAsvvKy4fsrw+h3fzX94hKHI=;
-        b=LC9xGG5Mpl7l9RocA+JmkF3GXVhNsllocgKi08w3I/rV5Pvheph3idCf9rJfkJF8gy
-         c7m05ERn1FldKvEFXHMxvLJl8BT/nIyf+QIMw6iNMcdl55IbZR8msVD2gZOxoIIiTl5c
-         +TNOJa8uLfw6SVEhHf23IWYJQZ7PNisgeQFKyQ6AHCEdkqddGzlViSu1PJeadPTxc1SB
-         k7bUzlJLicjyQlwYVVI88Sz+NXj2YxLFUY+5fxEyCjOjRUJJ5k44nhdLmifKv51p0FZH
-         pROVUBhPNRg5GClRhqXYL0L29RXYn761O+su/eqXL40VciugEtlWAz+quQv7sSI10Rtq
-         ItMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=s6oLxuZtz92MCMs+Rc0jAsvvKy4fsrw+h3fzX94hKHI=;
-        b=PQ9f9Ade/gUzyZy5S9Vo6KGNqSRI3aLOEzYtuUDr54I0cG8JkE9QgZl57A01/tDrYn
-         +HLGOlEpaGzJ2uS/jh474dYOf2ipJpqRGjB8ogX+Kt7tA6QZfI1H8me3c+ekbqQHFENL
-         CYWfAct77rlVM4t3QnpTJ/TpyHdo/Q502xotZ5k+1jrRvF2UeuFcr+KWPqoQOvR2g9zn
-         o/vUZrPFTxEdl11j8l3GgY2FtIYcBbKWJRDdHEd5+BR3AovQupx1yH0O1WRvZyMEFOlX
-         WtjJLocZ2yyz5us39xEyAzYAmrTrC1FYz4XNIO1wCNOOgL5KpgyM9GB/2X+CDy6/OZXc
-         KKSA==
-X-Gm-Message-State: AOAM530F358/FxuRXdvSKQmnWEB5nkTF5QMGR6f4CjkV3YwdvnqRQ+nN
-        czKPO8nTnLe5sHrYQI1Pb7yoFrz+
-X-Google-Smtp-Source: ABdhPJzGvAyLDr9UoI4bW8o5yZzXk+PoTpDmgdFNhxX7kuEbHzhX2mG+MBfWxqp5UKeyXBsErABbZw==
-X-Received: by 2002:a17:90a:d487:: with SMTP id s7mr3858502pju.37.1591374402616;
-        Fri, 05 Jun 2020 09:26:42 -0700 (PDT)
-Received: from localhost.localdomain ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id b29sm86205pff.176.2020.06.05.09.26.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 09:26:41 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-X-Google-Original-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
-        (V4L/DVB)),
-        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
-        infrastructure))
-Subject: [PATCH stable 4.9 21/21] media: dvb_frontend: fix return error code
-Date:   Fri,  5 Jun 2020 09:25:18 -0700
-Message-Id: <20200605162518.28099-22-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200605162518.28099-1-florian.fainelli@broadcom.com>
-References: <20200605162518.28099-1-florian.fainelli@broadcom.com>
+        Fri, 5 Jun 2020 14:11:14 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055I8CQ5102490;
+        Fri, 5 Jun 2020 18:10:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=a4XaveQpAaQa2mw3il6Qi66Kdmgjqk/04IfyDbfuZOQ=;
+ b=TOJoy37INOWoUNxh4EAkC3tJJh/ECSCuvtOhWAS4NSeZyCjRrCsD3Z6EetUvUSKmEpeZ
+ E3ytfPKjbZvHXMkE1Swau4LvjbD5QlmLYz+FR3/6i34071X0mYTEReOpYGAdX4KGVbCp
+ myCums3m3orFSmWW+bojM2PR10BZE0EX8efh9tHMtZg2v1HwZ+JhXz3bXXzUhdErnbFe
+ IK3q+Ui7W47bNb+YTwqM4kpK2eT9tP5bLdgaroFCzxRztvvp+RtWr5v7XJhA2Mxft5F2
+ ozk92BhoV8J20fNyWVJGvnWMPaD/Qq3hMbyn5ImjbQFbYgh9MDypv9SYYQkDz196ksQX OA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 31f926445u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 05 Jun 2020 18:10:59 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055I88MV181261;
+        Fri, 5 Jun 2020 18:08:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 31f928aagq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 Jun 2020 18:08:58 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 055I8tPQ026391;
+        Fri, 5 Jun 2020 18:08:56 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 05 Jun 2020 11:08:54 -0700
+Date:   Fri, 5 Jun 2020 21:08:45 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jason Yan <yanaijie@huawei.com>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hulkci@huawei.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH v2] block: Fix use-after-free in blkdev_get()
+Message-ID: <20200605180845.GU30374@kadam>
+References: <88676ff2-cb7e-70ec-4421-ecf8318990b1@web.de>
+ <5fa658bf-3028-9b5c-30cc-dbdef6bf8f7a@huawei.com>
+ <20200605094353.GS30374@kadam>
+ <20200605144236.GB13248@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200605144236.GB13248@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006050134
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 cotscore=-2147483648 bulkscore=0 clxscore=1015
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006050134
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+On Fri, Jun 05, 2020 at 04:42:36PM +0200, Jan Kara wrote:
+> On Fri 05-06-20 12:43:54, Dan Carpenter wrote:
+> > I wonder if maybe the best fix is to re-add the "if (!res) " check back
+> > to blkdev_get().
+> 
+> Well, it won't be that simple since we need to call bd_abort_claiming()
+> under bdev->bd_mutex. And the fact that __blkdev_get() frees the reference
+> you pass to it is somewhat subtle and surprising so I think we are better
+> off getting rid of that.
 
-commit 330dada5957e3ca0c8811b14c45e3ac42c694651 upstream
+Fair enough.
 
-The correct error code when a function is not defined is
--ENOTSUPP. It was typoed wrong as -EOPNOTSUPP, with,
-unfortunately, exists, but it is not used by the DVB core.
+Jason Yan sent a v3 of this patch that frees "whole".  I've looked it
+over pretty close and I think it's probably correct.
 
-Thanks-to: Geert Uytterhoeven <geert@linux-m68k.org>
-Thanks-to: Arnd Bergmann <arnd@arndb.de>
+(not that my opinion should count for much because I don't know this
+code very well at all).
 
-To make me revisit this code.
-
-Fixes: a9cb97c3e628 ("media: dvb_frontend: be sure to init dvb_frontend_handle_ioctl() return code")
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/media/dvb-core/dvb_frontend.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 740dedf03361..cd45b3894661 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -2265,7 +2265,7 @@ static int dvb_frontend_handle_ioctl(struct file *file,
- 	struct dvb_frontend *fe = dvbdev->priv;
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
- 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
--	int i, err = -EOPNOTSUPP;
-+	int i, err = -ENOTSUPP;
- 
- 	dev_dbg(fe->dvb->device, "%s:\n", __func__);
- 
--- 
-2.17.1
+regards,
+dan carpenter
 
