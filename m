@@ -2,100 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E54B21EFC0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 17:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C2A1EFC50
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jun 2020 17:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbgFEPBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 11:01:09 -0400
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:55500 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbgFEPBH (ORCPT
+        id S1728199AbgFEPPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 11:15:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbgFEPPh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 11:01:07 -0400
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 6AE7ED27C6;
-        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=RQ5UuhFDdm6pYUURqgzo84j9G7A=; b=Sxoay7
-        F4gA4GZdu5Zg9uUlmAkW1Zt5FcDuXuyxgJg0J1/2YOTh+oGVFPS2XCXNhnKxruau
-        MDtfSlY0eXyRJHtGFbaGy1GRIGwT91daJ30IGzYPPomdVWXXQA2tHr5SlWDA734m
-        bZRjhWd3q6ijPU6K2wBSKxViPDDqydIEEmReM=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 61111D27C5;
-        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=kGSNSFs79QpTCdEy/syIPtk8e7qpRSOVx3t4YYHSTPo=; b=Zz/eImY/hca3rOTLiCqOYWoaV6plgEo+kdFnlRPQFzRcUQoLXjJn0FtfTD7ckQtTqowgcbv/qHCqzK+ScMEpsSblxLiajcMT9GhFudy2osyOw0c/0yOkmdHSrAU5J6sKLf0oVK0xHwQO8Q2r0bmcLvvl02K0jlrhpKiphQGd6bE=
-Received: from yoda.home (unknown [24.203.50.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 263D0D27C0;
-        Fri,  5 Jun 2020 11:01:01 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 25E392DA01E9;
-        Fri,  5 Jun 2020 11:00:59 -0400 (EDT)
-Date:   Fri, 5 Jun 2020 11:00:59 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     =?ISO-8859-15?Q?Philippe_Mathieu-Daud=E9?= <f4bug@amsat.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: clean up kernel_{read,write} & friends v2
-In-Reply-To: <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
-Message-ID: <nycvar.YSQ.7.77.849.2006051039350.1353413@knanqh.ubzr>
-References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com> <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk> <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
- <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com> <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
+        Fri, 5 Jun 2020 11:15:37 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75891C08C5C2;
+        Fri,  5 Jun 2020 08:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Jl1Kn7GkJvC8qt6XzZZc68xpV5QCZpDybEJ2sphFKBM=; b=idI/RYE7F0Cba2L9/XA4faqob+
+        wIRJs6yt+SJSWP11K+dKzwOS2Rwzwp4QmJflsOmGx77PK4fdW65gCHngH69/bhszljtKbQjpe1MqN
+        0OuA+cRlqw9r+fTTxlP1Q4rrjbaFWfTUqIXFU4yrMX6z1APoGNm3VE0OTW+bVKs3xX9YrmgIoqn+d
+        f7BNlJvnVlpb56aeD9zvOtFdM72pQBe9dj/8SBO9wjWm1v5XnR4HoRNwb9xK8NsS60XJafdvrUxwW
+        8Dp99igLo6CTucwzu5e2e9i+WGhJUEc4LGzdET9kVdL3xh6vIC55BCUqmBmniZVbXMWvXE1lLDv9Q
+        FXnY8wTw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jhE4H-00024h-BF; Fri, 05 Jun 2020 15:15:37 +0000
+Date:   Fri, 5 Jun 2020 08:15:37 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Yan <yanaijie@huawei.com>, hulkci@huawei.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
+Subject: Re: block: Fix use-after-free in blkdev_get()
+Message-ID: <20200605151537.GH19604@bombadil.infradead.org>
+References: <88676ff2-cb7e-70ec-4421-ecf8318990b1@web.de>
+ <5fa658bf-3028-9b5c-30cc-dbdef6bf8f7a@huawei.com>
+ <20200605094353.GS30374@kadam>
+ <2ee6f2f7-eaec-e748-bead-0ad59f4c378b@web.de>
+ <20200605111039.GL22511@kadam>
+ <63e57552-ab95-7bb4-b4f1-70a307b6381d@web.de>
+ <20200605114208.GC19604@bombadil.infradead.org>
+ <a050788f-5875-0115-af31-692fd6bf3a88@web.de>
+ <20200605125209.GG19604@bombadil.infradead.org>
+ <366e055b-6a00-662e-2e03-f72053f67ae6@web.de>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1427214125-1591369259=:1353413"
-X-Pobox-Relay-ID: 5EB18F9E-A73D-11EA-B614-B0405B776F7B-78420484!pb-smtp20.pobox.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <366e055b-6a00-662e-2e03-f72053f67ae6@web.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Jun 05, 2020 at 03:12:08PM +0200, Markus Elfring wrote:
+> > Your feedback is unhelpful
+> 
+> Do you find proposed spelling corrections useful?
 
---8323328-1427214125-1591369259=:1353413
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+To commit messages?  No.
 
-On Fri, 5 Jun 2020, Philippe Mathieu-Daud=C3=A9 wrote:
+> > and you show no signs of changing it in response to the people
+> > who are telling you that it's unhelpful.
+> 
+> Other adjustments can occasionally be more challenging
+> besides the usual communication challenges.
 
-> Unfortunately refreshable braille displays have that "hardware
-> limitations". 80 cells displays are very expensive.
-> Visual impairments is rarely a "choice".
-> Relaxing the 80-char limit make it harder for blind developers
-> to contribute.
+I think I'm going to ask Greg if I can borrow his bot.
 
-Well, not really.
-
-It is true that 80-cells displays are awfully expensive. IMHO they are=20
-also unwieldy due to their size: they are hardly portable, and they=20
-require your hands to move twice as far which may sometimes impair=20
-reading efficiency. So I never liked them.
-
-My braille display has 40 cells only. So even with a 80-cells limit I=20
-always had to pan the display to see the whole line anyway.
-
-My text console is set to 160x128. The trick here is to have the number=20
-of columns be a multiple of the braille display's width to avoid dead=20
-areas when panning to the right.
-
-So if you ask me, I'm not against relaxing the 80 columns limit for=20
-code. What really matters to me is that I can stay clear of any GUI.
-
-
-Nicolas
---8323328-1427214125-1591369259=:1353413--
+Many hackers start out by just making spelling fixes to code.  And that's
+fine, often they progress to more substantial contributions.  You do not
+seem to progress, and making spelling corrections to changelog messages
+is a level of nitpicking that just isn't helpful.
