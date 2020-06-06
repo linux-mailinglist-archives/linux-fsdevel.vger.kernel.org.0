@@ -2,122 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2F11F0663
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 13:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E271F06EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 16:14:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbgFFLzn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Jun 2020 07:55:43 -0400
-Received: from port70.net ([81.7.13.123]:59992 "EHLO port70.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbgFFLzm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Jun 2020 07:55:42 -0400
-Received: by port70.net (Postfix, from userid 1002)
-        id 3A428ABEC0C2; Sat,  6 Jun 2020 13:55:37 +0200 (CEST)
-Date:   Sat, 6 Jun 2020 13:55:37 +0200
-From:   Szabolcs Nagy <nsz@port70.net>
-To:     Kyle Evans <kevans@freebsd.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        torvalds@linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Victor Stinner <victor.stinner@gmail.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, fweimer@redhat.com, jannh@google.com,
-        oleg@redhat.com, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, ldv@altlinux.org
-Subject: Re: [PATCH v5 1/3] open: add close_range()
-Message-ID: <20200606115537.GB871552@port70.net>
-References: <20200602204219.186620-1-christian.brauner@ubuntu.com>
- <20200602204219.186620-2-christian.brauner@ubuntu.com>
- <20200605145549.GC673948@port70.net>
- <CACNAnaEjjQBB8ieZH+td8jk-Aitg3CjGB1WwGQwEv-STg5Do+g@mail.gmail.com>
+        id S1726352AbgFFOOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Jun 2020 10:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbgFFON7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 6 Jun 2020 10:13:59 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E68C03E96A;
+        Sat,  6 Jun 2020 07:13:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kZFFIQSCr7yyXptlP99I5MEUyyxcK9BDprGW6uwLGyw=; b=LnpXu7kZgPy1Zjdlo2ayq4t9Ol
+        e+MYIvXoXhoLfaDGnk3sKqYrWgoWGm0Zv9AfLuPVPd1njCjG463JPLPRBBL5ySvi8tekidrh899fO
+        OYZonwTuV9eWc16sQKjfj2VzXwnXugbaL8GDF7pLFz4EVCoBJwTKTe6pNJjxxWAXQ1DRREWtH6MF5
+        lXSJ10WjqEgRyB9Xcd3inoRdQxxik03DOZDKZ70zrEjHkFg0SPcsT91F0tV6S15marSUJ1sSPviFd
+        NQ2mNHYD3jPZeCcMsQkPlrEqXrhgyD5JpmQHcvQK5/4J9UR0qzVX2HU4sg+mtTm6wGQWLrwLEtSMB
+        zsgWWMHg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jhZZy-0002Nq-2W; Sat, 06 Jun 2020 14:13:46 +0000
+Date:   Sat, 6 Jun 2020 07:13:45 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>
+Subject: Re: [PATCH 2/3] fs: Introduce cmdline argument exceed_file_max_panic
+Message-ID: <20200606141345.GN19604@bombadil.infradead.org>
+References: <1591425140-20613-1-git-send-email-yangtiezhu@loongson.cn>
+ <1591425140-20613-2-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACNAnaEjjQBB8ieZH+td8jk-Aitg3CjGB1WwGQwEv-STg5Do+g@mail.gmail.com>
+In-Reply-To: <1591425140-20613-2-git-send-email-yangtiezhu@loongson.cn>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Kyle Evans <kevans@freebsd.org> [2020-06-05 21:54:56 -0500]:
-> On Fri, Jun 5, 2020 at 9:55 AM Szabolcs Nagy <nsz@port70.net> wrote:
-> > this api needs a documentation patch if there isn't yet.
-> >
-> > currently there is no libc interface contract in place that
-> > says which calls may use libc internal fds e.g. i've seen
-> >
-> >   openlog(...) // opens libc internal syslog fd
-> >   ...
-> >   fork()
-> >   closefrom(...) // close syslog fd
-> >   open(...) // something that reuses the closed fd
-> >   syslog(...) // unsafe: uses the wrong fd
-> >   execve(...)
-> >
-> > syslog uses a libc internal fd that the user trampled on and
-> > this can go bad in many ways depending on what libc apis are
-> > used between closefrom (or equivalent) and exec.
-> >
+On Sat, Jun 06, 2020 at 02:32:19PM +0800, Tiezhu Yang wrote:
+> It is important to ensure that files that are opened always get closed.
+> Failing to close files can result in file descriptor leaks. One common
+> answer to this problem is to just raise the limit of open file handles
+> and then restart the server every day or every few hours, this is not
+> a good idea for long-lived servers if there is no leaks.
 > 
-> Documentation is good. :-) I think you'll find that while this example
-> seems to be innocuous on FreeBSD (and likely other *BSD), this is an
-> atypical scenario and generally not advised.  You would usually not
-> start closing until you're actually ready to exec/fail.
+> If there exists file descriptor leaks, when file-max limit reached, we
+> can see that the system can not work well and at worst the user can do
+> nothing, it is even impossible to execute reboot command due to too many
+> open files in system. In order to reboot automatically to recover to the
+> normal status, introduce a new cmdline argument exceed_file_max_panic for
+> user to control whether to call panic in this case.
 
-it's a recent bug https://bugs.kde.org/show_bug.cgi?id=420921
-
-but not the first closefrom bug i saw: it is a fundamentally
-unsafe operation that frees resources owned by others.
-
-> > > The code snippet above is one way of working around the problem that file
-> > > descriptors are not cloexec by default. This is aggravated by the fact that
-> > > we can't just switch them over without massively regressing userspace. For
-> >
-> > why is a switch_to_cloexec_range worse than close_range?
-> > the former seems safer to me. (and allows libc calls
-> > to be made between such switch and exec: libc internal
-> > fds have to be cloexec anyway)
-> >
-> 
-> I wouldn't say it's worse, but it only solves half the problem. While
-> closefrom -> exec is the most common usage by a long shot, there are
-> also times (e.g. post-fork without intent to exec for a daemon/service
-> type) that you want to go ahead and close everything except maybe a
-> pipe fd that you've opened for IPC. While uncommon, there's no reason
-> this needs to devolve into a loop to close 'all the fds' when you can
-> instead introduce close_range to solve both the exec case and other
-> less common scenarios.
-
-the syslog example shows why post-fork closefrom without
-intent to exec does not work: there is no contract about
-which api calls behave like syslog, so calling anything
-after closefrom can be broken.
-
-libc can introduce new api contracts e.g. that some apis
-don't use fds internally or after a closefrom call some
-apis behave differently, if this is the expected direction
-then it would be nice to propose that on the libc-coord
-at openwall.com list.
-
-> Coordination with libc is generally not much of an issue, because this
-> is really one of the last things you do before exec() or swiftly
-> failing miserably. Applications that currently loop over all fd <=
-> maxfd and close(fd) right now are subject to the very same
-> constraints, this is just a much more efficient way and
-> debugger-friendly way to accomplish it. You've absolutely not lived
-> life until you've had to watch thousands of close() calls painfully
-> scroll by in truss/strace.
-
-applications do a 'close all fds' operation because there
-is no alternative. (i think there are better ways to do
-this than looping: you can poll on the fds and only close
-the ones that didnt POLLNVAL, this should be more portable
-than /proc, but it's besides my point) optimizing this
-operation may not be the only way to achive whatever those
-applications are trying to do.
-
-if closefrom only works before exec then that should be
-documented and callers that do otherwise fixed, if
-important users do things between closefrom and exec then
-i think a different design is needed with libc maintainers
-involved.
+ulimit -n is your friend.
