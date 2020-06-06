@@ -2,40 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E271F06EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 16:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4551F06F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 16:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgFFOOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Jun 2020 10:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
+        id S1728660AbgFFO27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Jun 2020 10:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbgFFON7 (ORCPT
+        with ESMTP id S1726133AbgFFO27 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Jun 2020 10:13:59 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E68C03E96A;
-        Sat,  6 Jun 2020 07:13:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kZFFIQSCr7yyXptlP99I5MEUyyxcK9BDprGW6uwLGyw=; b=LnpXu7kZgPy1Zjdlo2ayq4t9Ol
-        e+MYIvXoXhoLfaDGnk3sKqYrWgoWGm0Zv9AfLuPVPd1njCjG463JPLPRBBL5ySvi8tekidrh899fO
-        OYZonwTuV9eWc16sQKjfj2VzXwnXugbaL8GDF7pLFz4EVCoBJwTKTe6pNJjxxWAXQ1DRREWtH6MF5
-        lXSJ10WjqEgRyB9Xcd3inoRdQxxik03DOZDKZ70zrEjHkFg0SPcsT91F0tV6S15marSUJ1sSPviFd
-        NQ2mNHYD3jPZeCcMsQkPlrEqXrhgyD5JpmQHcvQK5/4J9UR0qzVX2HU4sg+mtTm6wGQWLrwLEtSMB
-        zsgWWMHg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jhZZy-0002Nq-2W; Sat, 06 Jun 2020 14:13:46 +0000
-Date:   Sat, 6 Jun 2020 07:13:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
+        Sat, 6 Jun 2020 10:28:59 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46EE6C03E96A;
+        Sat,  6 Jun 2020 07:28:59 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jhZoY-00494P-BZ; Sat, 06 Jun 2020 14:28:50 +0000
+Date:   Sat, 6 Jun 2020 15:28:50 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
 Subject: Re: [PATCH 2/3] fs: Introduce cmdline argument exceed_file_max_panic
-Message-ID: <20200606141345.GN19604@bombadil.infradead.org>
+Message-ID: <20200606142850.GK23230@ZenIV.linux.org.uk>
 References: <1591425140-20613-1-git-send-email-yangtiezhu@loongson.cn>
  <1591425140-20613-2-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
@@ -61,4 +50,15 @@ On Sat, Jun 06, 2020 at 02:32:19PM +0800, Tiezhu Yang wrote:
 > normal status, introduce a new cmdline argument exceed_file_max_panic for
 > user to control whether to call panic in this case.
 
-ulimit -n is your friend.
+What the hell?  You are modifying the path for !CAP_SYS_ADMIN.  IOW,
+you've just handed an ability to panic the box to any non-priveleged
+process.
+
+NAK.  That makes no sense whatsoever.  Note that root is *NOT* affected
+by any of that, so you can bloody well have a userland process running
+as root and checking the number of files once in a while.  And doing
+whatever it wants to do, up to and including reboot/writing to
+/proc/sys/sysrq-trigger, etc.  Or just looking at the leaky processes
+and killing them, with a nastygram along the lines of "$program appears
+to be leaking descriptors; LART the authors of that FPOS if they can
+be located" sent into log/over mail/etc.
