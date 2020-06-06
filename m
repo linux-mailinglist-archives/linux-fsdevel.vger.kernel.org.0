@@ -2,97 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D87001F0430
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 03:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 222A51F0435
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jun 2020 03:59:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbgFFBpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jun 2020 21:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43646 "EHLO
+        id S1728550AbgFFB6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jun 2020 21:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728426AbgFFBpl (ORCPT
+        with ESMTP id S1728539AbgFFB6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jun 2020 21:45:41 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A2F9C08C5C3
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 18:45:40 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id d66so5774246pfd.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 18:45:40 -0700 (PDT)
+        Fri, 5 Jun 2020 21:58:55 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA49DC08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jun 2020 18:58:53 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id d66so5784435pfd.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jun 2020 18:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=EYATkoDd/DlTVvMSnKtKT7ZrCQbghipgNSfif3PPTdQ=;
-        b=hZPAno3Zqe8dlYsL2LzWn8Cqbw5Cy5a1a5fGUH7kjV6Aa8+ckDOu3YxIijiEO9YlRg
-         pTgQlBFXKXs/hWsbaLmVRsuzPAujEobi8t/Y9ydG3Jz0HbuKrJinEMzu4mf2CsSC2QY2
-         8KgrfNit1c2PnHzP9N69IE2PvHFFPWPNxYRfA=
+        bh=ubiyZ733CfEJjdLHhaoOsVA1qzS8di3dJmbcr/gH2uM=;
+        b=cAQW8ecDYpX05sVWOHMBk1sbV5DXDbFHVqcQUUOEWATk8Z077CtX6sGKmDYPmCQo0j
+         cWwStNFFXcL5bGQ5XRO2g4V/CRmVQxBRaFMK96+FjTNOA4HtICtpU1S+KzQYWjz+6hS/
+         l+X7QQX1smTeSTPqjUrYKWb3GMIRmesyECBZY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=EYATkoDd/DlTVvMSnKtKT7ZrCQbghipgNSfif3PPTdQ=;
-        b=sRaStwMcgaUPueuKXDlktDhm77/wlEZooTwfOgL0t0Ks1cO1UHXBgxStJRcddMliuN
-         DbpkBAjft0dj23y/YLI/CSRSZoYJZTOLaJbOlohqx2G1bkKMf5/0ZV6aI5dKMjj3aODH
-         43MRoOeuU2LY3cfSiJ7C9ZzAdZ3535uwPGBglb/XEmV3ZxQhpNR5JnSFgf8M8cGGqVO+
-         4upfh5JaL5p86htFIa0e75ZmJtdR7Mfci+a/p58ImGSa3dvTNhRUI160Yc/Q6dYuDtTP
-         zB5b1hkvk2+t06Q8NZC/O6N8M+c/80gGhxuR1faaqq/FKYyqqPK1PlqPnaca+j+po0HA
-         xuuA==
-X-Gm-Message-State: AOAM5335UKfijT22EPErk2l6BOE49MflscjAx8N0eS8/mtZys0XnIUwA
-        J0uK3u96YthTrSphZAUBjmUDrA==
-X-Google-Smtp-Source: ABdhPJxjBK6bdJJIde1SuASUwSUrqHloLqXlowG4H6YmCkN1UfVnFk8Oo7dg72GZPLT/Vb2F4UEmuw==
-X-Received: by 2002:a62:c185:: with SMTP id i127mr12889207pfg.132.1591407939582;
-        Fri, 05 Jun 2020 18:45:39 -0700 (PDT)
+        bh=ubiyZ733CfEJjdLHhaoOsVA1qzS8di3dJmbcr/gH2uM=;
+        b=DafpMoWCTPGV3naUwAIAozSzIvrpUfNnJwp1E2sQ+i6skn0WnMjC+wgBzjM57nuxg1
+         rHSdMV89WghHadMitcFw9Zg/RWhAJrQ+qd9RF7xvjFOk3B+iVylZckdn3iDmX580OK7z
+         j7NfdJdyVg+DJDCnJT2zJu5XeYrRyiCcH9aE+2aJu2PLQvzY3xAhlQWkbD24IJiHeh/o
+         WTh7z9KrpR4gyay7uKQ6KZfl/hw5VlXq+p8ml87uqgi2GDexctjJffayvZF7q2ETe/45
+         807C1TmzqDRIrT6EKfn07l1Ld1+wetP/C4DxDzPQx44aTIVauQvH4GtaaUlgXYCBV+RL
+         bG6w==
+X-Gm-Message-State: AOAM5316sE8RhbuwC0peM9z25I4U6ydkZCZ+7GKywr76wCrdeo81Ty5z
+        dVVLPvwtMjkWbQWfY3ZcU8KYFg==
+X-Google-Smtp-Source: ABdhPJyeGr9iCUKxjFBLcQwcqAStcKGLhCd1nJ9DaQgFhqK2lIGzXeCTkSGZWy0vIFqUT4/Fcwv0Dw==
+X-Received: by 2002:aa7:8bd0:: with SMTP id s16mr12878768pfd.80.1591408733436;
+        Fri, 05 Jun 2020 18:58:53 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m4sm531153pgp.32.2020.06.05.18.45.38
+        by smtp.gmail.com with ESMTPSA id y136sm787864pfg.55.2020.06.05.18.58.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 18:45:38 -0700 (PDT)
-Date:   Fri, 5 Jun 2020 18:45:37 -0700
+        Fri, 05 Jun 2020 18:58:52 -0700 (PDT)
+Date:   Fri, 5 Jun 2020 18:58:51 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+To:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-afs@lists.infradead.org,
+        Jeffrey Altman <jaltman@auristor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Relocate execve() sanity checks
-Message-ID: <202006051844.2EBA35A7@keescook>
-References: <20200605160013.3954297-1-keescook@chromium.org>
- <20200605174053.eea9557878d81024d2519e47@linux-foundation.org>
+Subject: Re: [PATCH 18/27] afs: Detect cell aliases 1 - Cells with root
+ volumes
+Message-ID: <202006051849.746915FD@keescook>
+References: <159078959973.679399.15496997680826127470.stgit@warthog.procyon.org.uk>
+ <159078973503.679399.3701716594246594498.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200605174053.eea9557878d81024d2519e47@linux-foundation.org>
+In-Reply-To: <159078973503.679399.3701716594246594498.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 05:40:53PM -0700, Andrew Morton wrote:
-> On Fri,  5 Jun 2020 09:00:10 -0700 Kees Cook <keescook@chromium.org> wrote:
-> 
-> > While looking at the code paths for the proposed O_MAYEXEC flag, I saw
-> > some things that looked like they should be fixed up.
-> > 
-> >   exec: Change uselib(2) IS_SREG() failure to EACCES
-> > 	This just regularizes the return code on uselib(2).
-> > 
-> >   exec: Move S_ISREG() check earlier
-> > 	This moves the S_ISREG() check even earlier than it was already.
-> > 
-> >   exec: Move path_noexec() check earlier
-> > 	This adds the path_noexec() check to the same place as the
-> > 	S_ISREG() check.
-> 
-> Thanks.
-> 
-> These don't seem super-urgent and they aren't super-reviewed, so I
-> suggest we hold them off until the next cycle?
+On Fri, May 29, 2020 at 11:02:15PM +0100, David Howells wrote:
+> +static struct afs_volume *afs_sample_volume(struct afs_cell *cell, struct key *key,
+> +					    const char *name, unsigned int namelen)
+> +{
+> +	struct afs_volume *volume;
+> +	struct afs_fs_context fc = {
+> +		.type		= 0, /* Explicitly leave it to the VLDB */
+> +		.volnamesz	= namelen,
+> +		.volname	= name,
+> +		.net		= cell->net,
+> +		.cell		= cell,
+> +		.key		= key, /* This might need to be something */
+> +	};
+> +
+> +	volume = afs_create_volume(&fc);
+> +	_leave(" = %px", volume);
+> +	return volume;
+> +}
 
-Agreed; that's fine by me. It's mostly clean up and preparation for
-performing future checking through the MAY_EXEC path.
+This really doesn't seem like a justified[1] place for %px. (Even if
+_leavel() is debug-only, all the rest of _leave() uses are %p.)
 
-And I'd love to get an Ack from Al or Aleksa, nudge nudge. :)
+> +	default:
+> +		BUG();
+
+And nothing should add BUG() to new code[2].
+
+-Kees
+
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#p-format-specifier
+[2] https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bug-on
 
 -- 
 Kees Cook
