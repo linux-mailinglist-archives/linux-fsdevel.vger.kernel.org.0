@@ -2,112 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 349621F0A53
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jun 2020 09:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 386691F0A8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jun 2020 10:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbgFGHKd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jun 2020 03:10:33 -0400
-Received: from mail-eopbgr80112.outbound.protection.outlook.com ([40.107.8.112]:31244
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726192AbgFGHKc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jun 2020 03:10:32 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kvrv7u7FEvn4h95qMmhuy4+sPAlS0juXSQVmyC/mltiEQGj8hqiY+HlfraGLhs6noE88dlbVCC7xi9oALJZSqDlXO6d9gCetBe2KaE/fzF08kxC8Txb9wVh7KzSOGFdsEsZY9jKE0Dby57u/ebikwL/WLVXA4wrwBQRb3l2Iey5raA8j8oQgZQoO8V2vSM3MS7uWVX7pJtE8//Z8CMiZdBJ/uVtxEx3DzH2jKF6SxzAQLhg+ZLowNpS/FIB6xb6rS0rn0zKX9oc2NyoYNprvMRAvm2b/EemCWh3K9H+DujKIy+wW5qD0QwYytttkGGSI76SfLBWGvj0Tr+ElKS01pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bIBW/a8SxWfuwJ8Ro0QGc6U9LRL50kaXru35dfnw2qM=;
- b=HWlU+ZJ1uEUfOavAPJJTUmnyUYnoNM8TwLJPf98Ol3Dl2n9rXUPkehcs/cPIyOFZg91bnIAJk2w4bdbu9/lxsRN3PBQ62GQOAWdgoC5WtMgngeDnGYLMby5oKL6pMu44q8imoE9NxplCSa/bZTpAUaZgu2MgFWJS1VYMN5dtweG7nUgcmELh1zeUkbykp3VjynTZaFbIJZDQxOHslFQV9atYjKfC3bD2kW7Hevlmx3nxxP9zhJBVXNrxr2hGWZUqbrkMzrc6Hx5Nkn4Ms8BlaVt74iLdqvT7d705MNX5YKW/0Aq+qQk4VFds9X8QzzybPVQ9MROe+MVsX+9LQ8nUJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bIBW/a8SxWfuwJ8Ro0QGc6U9LRL50kaXru35dfnw2qM=;
- b=kQiDot+sBszgr/4Ji25/LaT3Nph/3DHlHDOdWQb3/bySLf9Cc6lBUbtHQedJWbBxjmivfReuo035Qgl6W91HDvDqfZRZ2hjBcATRksqubbadzdR52+47A+1XRyrAhFlFtON//zv1v1g2UlKU5a03rM3I2lD9dMxvWlIvJMDsyP0=
-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
- header.d=none;zeniv.linux.org.uk; dmarc=none action=none
- header.from=virtuozzo.com;
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com (2603:10a6:208:162::17)
- by AM0PR08MB4132.eurprd08.prod.outlook.com (2603:10a6:208:127::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18; Sun, 7 Jun
- 2020 07:10:28 +0000
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::b8a9:edfd:bfd6:a1a2]) by AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::b8a9:edfd:bfd6:a1a2%6]) with mapi id 15.20.3066.023; Sun, 7 Jun 2020
- 07:10:28 +0000
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH] epoll: extra check in ep_item_poll()
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
-Message-ID: <f56c28cb-565c-6cc0-8ed6-34492cacc300@virtuozzo.com>
-Date:   Sun, 7 Jun 2020 10:10:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM4PR0302CA0001.eurprd03.prod.outlook.com
- (2603:10a6:205:2::14) To AM0PR08MB5140.eurprd08.prod.outlook.com
- (2603:10a6:208:162::17)
+        id S1726427AbgFGIko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jun 2020 04:40:44 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56273 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726396AbgFGIko (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 7 Jun 2020 04:40:44 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 460045C00A9;
+        Sun,  7 Jun 2020 04:40:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 07 Jun 2020 04:40:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        LEdB9Bo5hxAS0lxQEDRgkwN6u4BWFSF7qj8zTu/DWjs=; b=0CJQJp/F9XO0FSzM
+        HoEgDzmwDAlTDgJCypTbAfBykPi7NCxAIK7l9rC3C9o3hAh02uZlQsce0Nw3+sqX
+        IjqlDEXwBT2lm4hhhW5D89ZEoMXXkvxrLAI19jcUpFLbLQNyGm8CuCTl2h2raEBq
+        s3oebkhq2YuiafZXyS4hPDz9F/K2vLODhngsh89nGn1W5TXS5jNu8VwIDugCKeBa
+        FPvxoigJNs8XiWDOhU2tW/HvBFa7GxBkbwlgUhGGITMbuMaguzfDGFdbpJVeGUV7
+        cjLN2fCvKDsY84bjNh9bCBTvv0UuK1uPeEHsDoVg3I76RPHml8d0VU6Bz+xMiKES
+        YEiNiA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=LEdB9Bo5hxAS0lxQEDRgkwN6u4BWFSF7qj8zTu/DW
+        js=; b=CK//fHRnUtyzutf/dnr25BBM7kKSuEX3QTp3YsfcPDR3a13xwQaCceD0w
+        dHahxYVa1uaZdVpM81J+XgNmpd1ZRHerq4rnFmQDfvZil3/60xgMChltn6p0BRKP
+        S7swEmiAX+FKk1uv9FLRm2CyESB517nfNo1gIIYvS4vTLGuvm0sVdjLPu5n7dUqu
+        Ec5ipRM0lH8NnjnNyciErH+F06pXLioe9xlnUA+/CeHAQxefG/dBhG8Y8jqriT31
+        cCSxM1SNK8m7HRruNYuW7AE5OgBqeUks4Xqq9KCCB7YCXgYBCrUzg+GbCm5bAn/s
+        UtvuDlrngulIkN4oEWRL6gj/6VKdA==
+X-ME-Sender: <xms:CajcXhsyxS7y1RMPqi1Y2U2HU3PBnkGMaNe5XTWqeZ88o-6PWhDOQw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudegledgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
+    phepheekrdejrddvvddtrdegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:CajcXqez1PdZemylizuJKcu4dPJeyGYuN0xvjzfNXGNFWdYTMo7fJg>
+    <xmx:CajcXkzgTAYoi410hVtROe7hKpYG64OtMf2nxXPFjhBgZNLbKxx8jg>
+    <xmx:CajcXoM0M7P7HGgOSgk823yedy2gVqoKpz6_rsEb1BAvmImonuS8OQ>
+    <xmx:C6jcXknutgXrzIFXkxfV4htF6QotfJ9KUeeDkAo7_MkPwTMhIC4aiA>
+Received: from mickey.themaw.net (58-7-220-47.dyn.iinet.net.au [58.7.220.47])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 29791328005A;
+        Sun,  7 Jun 2020 04:40:37 -0400 (EDT)
+Message-ID: <36e2d782d1aea1cfbe17f3bfee35f723f2f89c0d.camel@themaw.net>
+Subject: Re: [PATCH 1/4] kernfs: switch kernfs to use an rwsem
+From:   Ian Kent <raven@themaw.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        l Viro <viro@ZenIV.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sun, 07 Jun 2020 16:40:33 +0800
+In-Reply-To: <159038562460.276051.5267555021380171295.stgit@mickey.themaw.net>
+References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
+         <159038562460.276051.5267555021380171295.stgit@mickey.themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.24.21] (185.231.240.5) by AM4PR0302CA0001.eurprd03.prod.outlook.com (2603:10a6:205:2::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18 via Frontend Transport; Sun, 7 Jun 2020 07:10:27 +0000
-X-Originating-IP: [185.231.240.5]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 75c5d552-ef8a-4feb-0d35-08d80ab1db76
-X-MS-TrafficTypeDiagnostic: AM0PR08MB4132:
-X-Microsoft-Antispam-PRVS: <AM0PR08MB4132063609C31C2738E238CAAA840@AM0PR08MB4132.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:538;
-X-Forefront-PRVS: 04270EF89C
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2WhO3iXcyr/QWXAsh2XTm6PEH9ll2JYTgF/AL6OVqLAaiAVA9Itq+s3c+0wWJ28rwRGt/q+7N08RgwkeDwUfOryz4mp6+xO2sxWuz+8rPnIoFrOSDvGfWdyg1ZE4vTitcLdTnGwf1mDpydhdojKL9EgqkaPzqoDOGUD2y/uwaDnyGcb9BLcHN5WJKAmFjsJv6zLepHvJ76DvSE0XbROVlhCzJ29mcVgRejR5rFNvd6RJoiS2KmKwjZFACSDGD+qxVa9feGG6X82eFeIS94Ds+Lpijdu9rPDx9Ekb6pY2q6cUWdHb/kWJZ8e8om40Rzm3EvyG5FPovUViVRjENHnmEMuwSFyrJQjo2DvRsn4rhG6xy7nnqJXW9VYpXiqrIvuT
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB5140.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(346002)(366004)(136003)(376002)(396003)(39830400003)(66946007)(66476007)(66556008)(5660300002)(31696002)(478600001)(4326008)(6916009)(16576012)(36756003)(83380400001)(16526019)(956004)(2616005)(86362001)(316002)(2906002)(8676002)(26005)(4744005)(52116002)(6486002)(31686004)(186003)(8936002)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: WPfcQ4WCKMyWR2N6pOhKlNiVN6oIuiyjtkwmBO5DW5nqp1JKCo/69MXMLuD2MPjVAIm/l9pr+puIJDvGXHbTFNf05da1nuRT61v4F+R8uMWW4VYYn6YtW+nGxu+QEE/Gejxvu/DiUM1hhuqCYrQV6mERAvKtnZZR0BVnQayhFLy91TeUCRooQscChR4n9DcTicdDUygZ6e4G3HqxcXweAj25z7xDys/qAKDjUpyuRlFkhMyn2nuWnNz0oZf/T48xng6OnwGfWBa6FTIWtjBL1K/ynBF3S5g7CepL2R+J9X9DIQpNfM+WjbFiDGb1hlRlgZfKl/n9pIR8qfyTMwB/pCRdwuPJVx6a8kMRjIzE3Kvm5q4YIWd6CvLlb+AW3hsT0AyufwsYeWGtippIyiR3yXLEKYzucj5rbjow+Y2+BeRcsod9G7qfxgVg9NlhmGa3aekDs1a55AK/J3ro+4GI2aA7tbciwAIWQkqUoTh/0bY=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75c5d552-ef8a-4feb-0d35-08d80ab1db76
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2020 07:10:28.2420
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SBQZfUOS9j0Zpd3bg6aHxXc6YY+4iyl0ApBoMsIODk0YXp/WfJvQ984WmGBx7UEZWU8CPK33oEUkG8T8V3Bf0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB4132
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-reported by smatch:
-fs/eventpoll.c:891 ep_item_poll() warn:
- variable dereferenced before check 'pt' (see line 885)
+Hi Greg,
 
-ep_item_poll() is newer called with empty 'pt' argument,
-and it is dereferenced in the beginning of this function,
-so 'pt' check in line 891 looks useless
+On Mon, 2020-05-25 at 13:47 +0800, Ian Kent wrote:
+> @@ -189,9 +189,9 @@ int kernfs_iop_getattr(const struct path *path,
+> struct kstat *stat,
+>  	struct inode *inode = d_inode(path->dentry);
+>  	struct kernfs_node *kn = inode->i_private;
+>  
+> -	mutex_lock(&kernfs_mutex);
+> +	down_read(&kernfs_rwsem);
+>  	kernfs_refresh_inode(kn, inode);
+> -	mutex_unlock(&kernfs_mutex);
+> +	up_read(&kernfs_rwsem);
+>  
+>  	generic_fillattr(inode, stat);
+>  	return 0;
+> @@ -281,9 +281,9 @@ int kernfs_iop_permission(struct inode *inode,
+> int mask)
+>  
+>  	kn = inode->i_private;
+>  
+> -	mutex_lock(&kernfs_mutex);
+> +	down_read(&kernfs_rwsem);
+>  	kernfs_refresh_inode(kn, inode);
+> -	mutex_unlock(&kernfs_mutex);
+> +	up_read(&kernfs_rwsem);
+>  
+>  	return generic_permission(inode, mask);
+>  }
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- fs/eventpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I changed these from a write lock to a read lock late in the
+development.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 12eebcd..5ddb549 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -888,7 +888,7 @@ static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 
- 	ep = epi->ffd.file->private_data;
- 	poll_wait(epi->ffd.file, &ep->poll_wait, pt);
--	locked = pt && (pt->_qproc == ep_ptable_queue_proc);
-+	locked = (pt->_qproc == ep_ptable_queue_proc);
- 
- 	return ep_scan_ready_list(epi->ffd.file->private_data,
- 				  ep_read_events_proc, &depth, depth,
--- 
-1.8.3.1
+But kernfs_refresh_inode() modifies the inode so I think I should
+have taken the inode lock as well as taking the read lock.
+
+I'll look again but a second opinion (anyone) would be welcome.
+
+Ian
 
