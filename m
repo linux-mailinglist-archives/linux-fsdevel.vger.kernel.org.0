@@ -2,200 +2,293 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD9C1F1891
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 14:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C207F1F18C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 14:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbgFHMNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 08:13:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60686 "EHLO mx2.suse.de"
+        id S1729744AbgFHMbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 08:31:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:52148 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbgFHMNO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 08:13:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E7970AC24;
-        Mon,  8 Jun 2020 12:13:13 +0000 (UTC)
-Date:   Mon, 8 Jun 2020 07:13:06 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Filipe Manana <fdmanana@gmail.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: [PATCH 2/3] btrfs: Wait for extent bits to release page
-Message-ID: <20200608121306.657yrfkyvj5vpkva@fiona>
-References: <20200605204838.10765-1-rgoldwyn@suse.de>
- <20200605204838.10765-3-rgoldwyn@suse.de>
- <CAL3q7H6zFBCMf6YeB-adf08t0ov0WMzLKUOOQK-QqACnRnNULA@mail.gmail.com>
+        id S1729628AbgFHMbK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 08:31:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E77441FB;
+        Mon,  8 Jun 2020 05:31:08 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E00B3F52E;
+        Mon,  8 Jun 2020 05:31:06 -0700 (PDT)
+Date:   Mon, 8 Jun 2020 13:31:03 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
+References: <20200528132327.GB706460@hirez.programming.kicks-ass.net>
+ <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
+ <20200528161112.GI2483@worktop.programming.kicks-ass.net>
+ <20200529100806.GA3070@suse.de>
+ <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
+ <87v9k84knx.derkling@matbug.net>
+ <20200603101022.GG3070@suse.de>
+ <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com>
+ <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+ <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL3q7H6zFBCMf6YeB-adf08t0ov0WMzLKUOOQK-QqACnRnNULA@mail.gmail.com>
+In-Reply-To: <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11:20 08/06, Filipe Manana wrote:
-> On Fri, Jun 5, 2020 at 9:48 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
-> >
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> >
-> > While trying to release a page, the extent containing the page may be locked
-> > which would stop the page from being released. Wait for the
-> > extent lock to be cleared, if blocking is allowed and then clear
-> > the bits.
-> >
-> > While we are at it, clean the code of try_release_extent_state() to make
-> > it simpler.
-> >
-> > Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-> > Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> I'm confused Goldwyn.
-> 
-> Previously in another thread [1] you mentioned you dropped this patch
-> from a previous patchset because
-> it was causing locking issues (iirc you mentioned a deadlock in
-> another different thread).
-> 
-> Now you send exactly the same patch (unless I missed some very subtle
-> change, in which case keeping the reviewed-by tags is not correct).
-> Are the locking issues gone? What fixed them?
-> And how did you trigger those issues, some specific fstest (which?),
-> some other test (which/how)?
+On 06/04/20 14:14, Vincent Guittot wrote:
 
-I ran xfstests and did not find the lockups I was finding earlier.
-Unfortunately, I don't have the lockups, but the process would wait for
-the extent_bits to get unlocked.
+[...]
+
+> I have tried your patch and I don't see any difference compared to
+> previous tests. Let me give you more details of my setup:
+> I create 3 levels of cgroups and usually run the tests in the 4 levels
+> (which includes root). The result above are for the root level
+> 
+> But I see a difference at other levels:
+> 
+>                            root           level 1       level 2       level 3
+> 
+> /w patch uclamp disable     50097         46615         43806         41078
+> tip uclamp enable           48706(-2.78%) 45583(-2.21%) 42851(-2.18%)
+> 40313(-1.86%)
+> /w patch uclamp enable      48882(-2.43%) 45774(-1.80%) 43108(-1.59%)
+> 40667(-1.00%)
+> 
+> Whereas tip with uclamp stays around 2% behind tip without uclamp, the
+> diff of uclamp with your patch tends to decrease when we increase the
+> number of level
+
+So I did try to dig more into this, but I think it's either not a good
+reproducer or what we're observing here is uArch level latencies caused by the
+new code that seem to produce a bigger knock on effect than what they really
+are.
+
+First, CONFIG_FAIR_GROUP_SCHED is 'expensive', for some definition of
+expensive..
+
+*** uclamp disabled/fair group enabled ***
+
+	# Executed 50000 pipe operations between two threads
+
+	     Total time: 0.958 [sec]
+
+	      19.177100 usecs/op
+		  52145 ops/sec
+
+*** uclamp disabled/fair group disabled ***
+
+	# Executed 50000 pipe operations between two threads
+	     Total time: 0.808 [sec]
+
+	     16.176200 usecs/op
+		 61819 ops/sec
+
+So there's a 15.6% drop in ops/sec when enabling this option. I think it's good
+to look at the absolutely number of usecs/op, Fair group adds around
+3 usecs/op.
+
+I dropped FAIR_GROUP_SCHED from my config to eliminate this overhead and focus
+on solely on uclamp overhead.
+
+With uclamp enabled but no fair group I get
+
+*** uclamp enabled/fair group disabled ***
+
+	# Executed 50000 pipe operations between two threads
+	     Total time: 0.856 [sec]
+
+	     17.125740 usecs/op
+		 58391 ops/sec
+
+The drop is 5.5% in ops/sec. Or 1 usecs/op.
+
+I don't know what's the expectation here. 1 us could be a lot, but I don't
+think we expect the new code to take more than few 100s of ns anyway. If you
+add potential caching effects, reaching 1 us wouldn't be that hard.
+
+Note that in my runs I chose performance governor and use `taskset 0x2` to
+force running on a big core to make sure the runs are repeatable.
+
+On Juno-r2 I managed to scrap most of the 1 us with the below patch. It seems
+there was weird branching behavior that affects the I$ in my case. It'd be good
+to try it out to see if it makes a difference for you.
+
+The I$ effect is my best educated guess. Perf doesn't catch this path and
+I couldn't convince it to look at cache and branch misses between 2 specific
+points.
+
+Other subtle code shuffling did have weird effect on the result too. One worthy
+one is making uclamp_rq_dec() noinline gains back ~400 ns. Making
+uclamp_rq_inc() noinline *too* cancels this gain out :-/
+
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0464569f26a7..0835ee20a3c7 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1071,13 +1071,11 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+ 
+ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+ {
+-	enum uclamp_id clamp_id;
+-
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+ 
+-	for_each_clamp_id(clamp_id)
+-		uclamp_rq_inc_id(rq, p, clamp_id);
++	uclamp_rq_inc_id(rq, p, UCLAMP_MIN);
++	uclamp_rq_inc_id(rq, p, UCLAMP_MAX);
+ 
+ 	/* Reset clamp idle holding when there is one RUNNABLE task */
+ 	if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+@@ -1086,13 +1084,11 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+ 
+ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+ {
+-	enum uclamp_id clamp_id;
+-
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+ 
+-	for_each_clamp_id(clamp_id)
+-		uclamp_rq_dec_id(rq, p, clamp_id);
++	uclamp_rq_dec_id(rq, p, UCLAMP_MIN);
++	uclamp_rq_dec_id(rq, p, UCLAMP_MAX);
+ }
+ 
+ static inline void
+
+
+FWIW I fail to see activate/deactivate_task in perf record. They don't show up
+on the list which means this micro benchmark doesn't stress them as Mel's test
+does.
+
+Worth noting that I did try running the same test on 2 vCPU VirtualBox VM and
+64 vCPU qemu and I couldn't spot a difference when uclamp was enabled/disabled
+in these 2 environments.
 
 > 
-> And if this patch is now working for some reason, then why are patches
-> 1/3 and 3/3 needed?
-> Wasn't patch 1/3 motivated exactly because this patch (2/3) was
-> causing the locking issues.
+> Beside this, that's also interesting to notice the ~6% of perf impact
+> between each level for the same image
 
-This patch reduces the amount of time btrfs has to fallback to the
-buffered path. Probably I should point this out in the patch header.
-The other two patches are required to make sure we don't err during
-transient release page errors, while this one reduces the amount of
-these transient errors in the first place.
+Beside my observation above, I captured this function_graph when
+FAIR_GROUP_SCHED is enabled. What I pasted below is a particularly bad
+deactivation, it's not always that costly.
+
+This ran happened was recorded with uclamp disabled.
+
+I admit I don't know how much of these numbers is ftrace overhead. When trying
+to capture similar runs for uclamp, the numbers didn't add up compared to
+running the test without ftrace generating the graph. If juno is suffering from
+bad branching costs in this path, then I suspect ftrace will amplify this as
+AFAIU it'll cause extra jumps on entry and exit.
 
 
-> 
-> Thanks.
-> 
-> [1] https://lore.kernel.org/linux-btrfs/20200526164428.sirhx6yjsghxpnqt@fiona/
-> 
-> > ---
-> >  fs/btrfs/extent_io.c | 37 ++++++++++++++++---------------------
-> >  fs/btrfs/extent_io.h |  2 +-
-> >  fs/btrfs/inode.c     |  4 ++--
-> >  3 files changed, 19 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> > index c59e07360083..0ab444d2028d 100644
-> > --- a/fs/btrfs/extent_io.c
-> > +++ b/fs/btrfs/extent_io.c
-> > @@ -4466,33 +4466,28 @@ int extent_invalidatepage(struct extent_io_tree *tree,
-> >   * are locked or under IO and drops the related state bits if it is safe
-> >   * to drop the page.
-> >   */
-> > -static int try_release_extent_state(struct extent_io_tree *tree,
-> > +static bool try_release_extent_state(struct extent_io_tree *tree,
-> >                                     struct page *page, gfp_t mask)
-> >  {
-> >         u64 start = page_offset(page);
-> >         u64 end = start + PAGE_SIZE - 1;
-> > -       int ret = 1;
-> >
-> >         if (test_range_bit(tree, start, end, EXTENT_LOCKED, 0, NULL)) {
-> > -               ret = 0;
-> > -       } else {
-> > -               /*
-> > -                * at this point we can safely clear everything except the
-> > -                * locked bit and the nodatasum bit
-> > -                */
-> > -               ret = __clear_extent_bit(tree, start, end,
-> > -                                ~(EXTENT_LOCKED | EXTENT_NODATASUM),
-> > -                                0, 0, NULL, mask, NULL);
-> > -
-> > -               /* if clear_extent_bit failed for enomem reasons,
-> > -                * we can't allow the release to continue.
-> > -                */
-> > -               if (ret < 0)
-> > -                       ret = 0;
-> > -               else
-> > -                       ret = 1;
-> > +               if (!gfpflags_allow_blocking(mask))
-> > +                       return false;
-> > +               wait_extent_bit(tree, start, end, EXTENT_LOCKED);
-> >         }
-> > -       return ret;
-> > +       /*
-> > +        * At this point we can safely clear everything except the locked and
-> > +        * nodatasum bits. If clear_extent_bit failed due to -ENOMEM,
-> > +        * don't allow release.
-> > +        */
-> > +       if (__clear_extent_bit(tree, start, end,
-> > +                               ~(EXTENT_LOCKED | EXTENT_NODATASUM), 0, 0,
-> > +                               NULL, mask, NULL) < 0)
-> > +               return false;
-> > +
-> > +       return true;
-> >  }
-> >
-> >  /*
-> > @@ -4500,7 +4495,7 @@ static int try_release_extent_state(struct extent_io_tree *tree,
-> >   * in the range corresponding to the page, both state records and extent
-> >   * map records are removed
-> >   */
-> > -int try_release_extent_mapping(struct page *page, gfp_t mask)
-> > +bool try_release_extent_mapping(struct page *page, gfp_t mask)
-> >  {
-> >         struct extent_map *em;
-> >         u64 start = page_offset(page);
-> > diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-> > index 9a10681b12bf..6cba4ad6ebc1 100644
-> > --- a/fs/btrfs/extent_io.h
-> > +++ b/fs/btrfs/extent_io.h
-> > @@ -189,7 +189,7 @@ typedef struct extent_map *(get_extent_t)(struct btrfs_inode *inode,
-> >                                           struct page *page, size_t pg_offset,
-> >                                           u64 start, u64 len);
-> >
-> > -int try_release_extent_mapping(struct page *page, gfp_t mask);
-> > +bool try_release_extent_mapping(struct page *page, gfp_t mask);
-> >  int try_release_extent_buffer(struct page *page);
-> >
-> >  int extent_read_full_page(struct page *page, get_extent_t *get_extent,
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 1242d0aa108d..8cb44c49c1d2 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -7887,8 +7887,8 @@ btrfs_readpages(struct file *file, struct address_space *mapping,
-> >
-> >  static int __btrfs_releasepage(struct page *page, gfp_t gfp_flags)
-> >  {
-> > -       int ret = try_release_extent_mapping(page, gfp_flags);
-> > -       if (ret == 1) {
-> > +       bool ret = try_release_extent_mapping(page, gfp_flags);
-> > +       if (ret) {
-> >                 ClearPagePrivate(page);
-> >                 set_page_private(page, 0);
-> >                 put_page(page);
-> > --
-> > 2.25.0
-> >
-> 
-> 
-> -- 
-> Filipe David Manana,
-> 
-> “Whether you think you can, or you think you can't — you're right.”
 
--- 
-Goldwyn
+      sched-pipe-6532  [001]  9407.276302: funcgraph_entry:                   |  deactivate_task() {
+      sched-pipe-6532  [001]  9407.276302: funcgraph_entry:                   |    dequeue_task_fair() {
+      sched-pipe-6532  [001]  9407.276303: funcgraph_entry:                   |      update_curr() {
+      sched-pipe-6532  [001]  9407.276304: funcgraph_entry:        0.780 us   |        update_min_vruntime();
+      sched-pipe-6532  [001]  9407.276306: funcgraph_entry:                   |        cpuacct_charge() {
+      sched-pipe-6532  [001]  9407.276306: funcgraph_entry:        0.820 us   |          __rcu_read_lock();
+      sched-pipe-6532  [001]  9407.276308: funcgraph_entry:        0.740 us   |          __rcu_read_unlock();
+      sched-pipe-6532  [001]  9407.276309: funcgraph_exit:         3.980 us   |        }
+      sched-pipe-6532  [001]  9407.276310: funcgraph_entry:        0.720 us   |        __rcu_read_lock();
+      sched-pipe-6532  [001]  9407.276312: funcgraph_entry:        0.720 us   |        __rcu_read_unlock();
+      sched-pipe-6532  [001]  9407.276313: funcgraph_exit:         9.840 us   |      }
+      sched-pipe-6532  [001]  9407.276314: funcgraph_entry:                   |      __update_load_avg_se() {
+      sched-pipe-6532  [001]  9407.276315: funcgraph_entry:        0.720 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276316: funcgraph_exit:         2.260 us   |      }
+      sched-pipe-6532  [001]  9407.276317: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+      sched-pipe-6532  [001]  9407.276318: funcgraph_entry:        0.860 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276319: funcgraph_exit:         2.340 us   |      }
+      sched-pipe-6532  [001]  9407.276320: funcgraph_entry:        0.760 us   |      clear_buddies();
+      sched-pipe-6532  [001]  9407.276321: funcgraph_entry:        0.800 us   |      account_entity_dequeue();
+      sched-pipe-6532  [001]  9407.276323: funcgraph_entry:        0.720 us   |      update_cfs_group();
+      sched-pipe-6532  [001]  9407.276324: funcgraph_entry:        0.740 us   |      update_min_vruntime();
+      sched-pipe-6532  [001]  9407.276326: funcgraph_entry:        0.720 us   |      set_next_buddy();
+      sched-pipe-6532  [001]  9407.276327: funcgraph_entry:                   |      __update_load_avg_se() {
+      sched-pipe-6532  [001]  9407.276328: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276329: funcgraph_exit:         2.220 us   |      }
+      sched-pipe-6532  [001]  9407.276330: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+      sched-pipe-6532  [001]  9407.276331: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276332: funcgraph_exit:         2.180 us   |      }
+      sched-pipe-6532  [001]  9407.276333: funcgraph_entry:                   |      update_cfs_group() {
+      sched-pipe-6532  [001]  9407.276334: funcgraph_entry:                   |        reweight_entity() {
+      sched-pipe-6532  [001]  9407.276335: funcgraph_entry:                   |          update_curr() {
+      sched-pipe-6532  [001]  9407.276335: funcgraph_entry:        0.720 us   |            __calc_delta();
+      sched-pipe-6532  [001]  9407.276337: funcgraph_entry:        0.740 us   |            update_min_vruntime();
+      sched-pipe-6532  [001]  9407.276338: funcgraph_exit:         3.560 us   |          }
+      sched-pipe-6532  [001]  9407.276339: funcgraph_entry:        0.720 us   |          account_entity_dequeue();
+      sched-pipe-6532  [001]  9407.276340: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+      sched-pipe-6532  [001]  9407.276342: funcgraph_exit:         7.860 us   |        }
+      sched-pipe-6532  [001]  9407.276342: funcgraph_exit:         9.280 us   |      }
+      sched-pipe-6532  [001]  9407.276343: funcgraph_entry:                   |      __update_load_avg_se() {
+      sched-pipe-6532  [001]  9407.276344: funcgraph_entry:        0.720 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276345: funcgraph_exit:         2.180 us   |      }
+      sched-pipe-6532  [001]  9407.276346: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+      sched-pipe-6532  [001]  9407.276347: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276348: funcgraph_exit:         2.180 us   |      }
+      sched-pipe-6532  [001]  9407.276349: funcgraph_entry:                   |      update_cfs_group() {
+      sched-pipe-6532  [001]  9407.276350: funcgraph_entry:                   |        reweight_entity() {
+      sched-pipe-6532  [001]  9407.276350: funcgraph_entry:                   |          update_curr() {
+      sched-pipe-6532  [001]  9407.276351: funcgraph_entry:        0.740 us   |            __calc_delta();
+      sched-pipe-6532  [001]  9407.276353: funcgraph_entry:        0.720 us   |            update_min_vruntime();
+      sched-pipe-6532  [001]  9407.276354: funcgraph_exit:         3.580 us   |          }
+      sched-pipe-6532  [001]  9407.276355: funcgraph_entry:        0.740 us   |          account_entity_dequeue();
+      sched-pipe-6532  [001]  9407.276356: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+      sched-pipe-6532  [001]  9407.276358: funcgraph_exit:         7.960 us   |        }
+      sched-pipe-6532  [001]  9407.276358: funcgraph_exit:         9.400 us   |      }
+      sched-pipe-6532  [001]  9407.276360: funcgraph_entry:                   |      __update_load_avg_se() {
+      sched-pipe-6532  [001]  9407.276360: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276362: funcgraph_exit:         2.220 us   |      }
+      sched-pipe-6532  [001]  9407.276362: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+      sched-pipe-6532  [001]  9407.276363: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+      sched-pipe-6532  [001]  9407.276365: funcgraph_exit:         2.160 us   |      }
+      sched-pipe-6532  [001]  9407.276366: funcgraph_entry:                   |      update_cfs_group() {
+      sched-pipe-6532  [001]  9407.276367: funcgraph_entry:                   |        reweight_entity() {
+      sched-pipe-6532  [001]  9407.276368: funcgraph_entry:                   |          update_curr() {
+      sched-pipe-6532  [001]  9407.276368: funcgraph_entry:        0.720 us   |            __calc_delta();
+      sched-pipe-6532  [001]  9407.276370: funcgraph_entry:        0.720 us   |            update_min_vruntime();
+      sched-pipe-6532  [001]  9407.276371: funcgraph_exit:         3.540 us   |          }
+      sched-pipe-6532  [001]  9407.276372: funcgraph_entry:        0.740 us   |          account_entity_dequeue();
+      sched-pipe-6532  [001]  9407.276373: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+      sched-pipe-6532  [001]  9407.276375: funcgraph_exit:         7.840 us   |        }
+      sched-pipe-6532  [001]  9407.276375: funcgraph_exit:         9.300 us   |      }
+      sched-pipe-6532  [001]  9407.276376: funcgraph_entry:        0.720 us   |      hrtick_update();
+      sched-pipe-6532  [001]  9407.276377: funcgraph_exit:       + 75.000 us  |    }
+      sched-pipe-6532  [001]  9407.276378: funcgraph_exit:       + 76.700 us  |  }
+
+
+Cheers
+
+--
+Qais Yousef
