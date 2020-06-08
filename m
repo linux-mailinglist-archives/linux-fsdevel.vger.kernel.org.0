@@ -2,39 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E10A41F2E97
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3309D1F2E80
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbgFIAnK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 20:43:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59722 "EHLO mail.kernel.org"
+        id S1733215AbgFIAmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 20:42:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729068AbgFHXMT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:12:19 -0400
+        id S1729123AbgFHXMa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:12:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABA7620B80;
-        Mon,  8 Jun 2020 23:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EEDD20B80;
+        Mon,  8 Jun 2020 23:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657938;
-        bh=aN5brpsFZWSZstePsyj1eXrJmP0H8MYhQWcXHNeVZI4=;
+        s=default; t=1591657950;
+        bh=J0Cr1ClTzawFS2xo1kfwDnsGciGqVo6rmgk9gsoD7eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AeLfjrPGnIBjd48EsveAaHCeHPVQKdPV0BhpIr6FXSHpQoE3vUSplL3KL5d3k/kSa
-         vDm1dbtJT65cXhUYp85KBVTo7q2dqDr6UsM48dL9iTHTizTfLqVEmdY0y6tMz3Sh/Z
-         gbP/UgYnAYU1pQ/SrlJd421JE/r6ZPBkNl1k93oc=
+        b=cRNY/rGbOGBaK6xiMpny1S5Y4j8Vx08/IA+B5GRMB6wXBED/b0nAvHbnYSeJmmvzB
+         XJdv9tv+UXng2CVZJJvcmtrveaQfmFIHGZVrcwIbHJycaIWdQU9UlMt97ymdUcBrue
+         ylWCy4VNB80nyslWoDRDITEaCwvR5zcpe1rc8fo0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roman Penyaev <rpenyaev@suse.de>, Jason Baron <jbaron@akamai.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 005/606] epoll: call final ep_events_available() check under the lock
-Date:   Mon,  8 Jun 2020 19:02:10 -0400
-Message-Id: <20200608231211.3363633-5-sashal@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.6 015/606] gcc-10 warnings: fix low-hanging fruit
+Date:   Mon,  8 Jun 2020 19:02:20 -0400
+Message-Id: <20200608231211.3363633-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -47,127 +43,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Roman Penyaev <rpenyaev@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 65759097d804d2a9ad2b687db436319704ba7019 ]
+commit 9d82973e032e246ff5663c9805fbb5407ae932e3 upstream.
 
-There is a possible race when ep_scan_ready_list() leaves ->rdllist and
-->obflist empty for a short period of time although some events are
-pending.  It is quite likely that ep_events_available() observes empty
-lists and goes to sleep.
+Due to a bug-report that was compiler-dependent, I updated one of my
+machines to gcc-10.  That shows a lot of new warnings.  Happily they
+seem to be mostly the valid kind, but it's going to cause a round of
+churn for getting rid of them..
 
-Since commit 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of
-nested epoll") we are conservative in wakeups (there is only one place
-for wakeup and this is ep_poll_callback()), thus ep_events_available()
-must always observe correct state of two lists.
+This is the really low-hanging fruit of removing a couple of zero-sized
+arrays in some core code.  We have had a round of these patches before,
+and we'll have many more coming, and there is nothing special about
+these except that they were particularly trivial, and triggered more
+warnings than most.
 
-The easiest and correct way is to do the final check under the lock.
-This does not impact the performance, since lock is taken anyway for
-adding a wait entry to the wait queue.
-
-The discussion of the problem can be found here:
-
-   https://lore.kernel.org/linux-fsdevel/a2f22c3c-c25a-4bda-8339-a7bdaf17849e@akamai.com/
-
-In this patch barrierless __set_current_state() is used.  This is safe
-since waitqueue_active() is called under the same lock on wakeup side.
-
-Short-circuit for fatal signals (i.e.  fatal_signal_pending() check) is
-moved to the line just before actual events harvesting routine.  This is
-fully compliant to what is said in the comment of the patch where the
-actual fatal_signal_pending() check was added: c257a340ede0 ("fs, epoll:
-short circuit fetching events if thread has been killed").
-
-Fixes: 339ddb53d373 ("fs/epoll: remove unnecessary wakeups of nested epoll")
-Reported-by: Jason Baron <jbaron@akamai.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Jason Baron <jbaron@akamai.com>
-Cc: Khazhismel Kumykov <khazhy@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200505145609.1865152-1-rpenyaev@suse.de
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/eventpoll.c | 48 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ include/linux/fs.h  | 2 +-
+ include/linux/tty.h | 2 +-
+ scripts/kallsyms.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index b0a097274cfe..f5a481089893 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1857,34 +1857,33 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		 * event delivery.
- 		 */
- 		init_wait(&wait);
--		write_lock_irq(&ep->lock);
--		__add_wait_queue_exclusive(&ep->wq, &wait);
--		write_unlock_irq(&ep->lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index abedbffe2c9e..872ee2131589 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -978,7 +978,7 @@ struct file_handle {
+ 	__u32 handle_bytes;
+ 	int handle_type;
+ 	/* file identifier */
+-	unsigned char f_handle[0];
++	unsigned char f_handle[];
+ };
  
-+		write_lock_irq(&ep->lock);
- 		/*
--		 * We don't want to sleep if the ep_poll_callback() sends us
--		 * a wakeup in between. That's why we set the task state
--		 * to TASK_INTERRUPTIBLE before doing the checks.
-+		 * Barrierless variant, waitqueue_active() is called under
-+		 * the same lock on wakeup ep_poll_callback() side, so it
-+		 * is safe to avoid an explicit barrier.
- 		 */
--		set_current_state(TASK_INTERRUPTIBLE);
-+		__set_current_state(TASK_INTERRUPTIBLE);
-+
- 		/*
--		 * Always short-circuit for fatal signals to allow
--		 * threads to make a timely exit without the chance of
--		 * finding more events available and fetching
--		 * repeatedly.
-+		 * Do the final check under the lock. ep_scan_ready_list()
-+		 * plays with two lists (->rdllist and ->ovflist) and there
-+		 * is always a race when both lists are empty for short
-+		 * period of time although events are pending, so lock is
-+		 * important.
- 		 */
--		if (fatal_signal_pending(current)) {
--			res = -EINTR;
--			break;
-+		eavail = ep_events_available(ep);
-+		if (!eavail) {
-+			if (signal_pending(current))
-+				res = -EINTR;
-+			else
-+				__add_wait_queue_exclusive(&ep->wq, &wait);
- 		}
-+		write_unlock_irq(&ep->lock);
+ static inline struct file *get_file(struct file *f)
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index bd5fe0e907e8..a99e9b8e4e31 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -66,7 +66,7 @@ struct tty_buffer {
+ 	int read;
+ 	int flags;
+ 	/* Data points here */
+-	unsigned long data[0];
++	unsigned long data[];
+ };
  
--		eavail = ep_events_available(ep);
--		if (eavail)
--			break;
--		if (signal_pending(current)) {
--			res = -EINTR;
-+		if (eavail || res)
- 			break;
--		}
+ /* Values for .flags field of tty_buffer */
+diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+index 3e8dea6e0a95..6dc3078649fa 100644
+--- a/scripts/kallsyms.c
++++ b/scripts/kallsyms.c
+@@ -34,7 +34,7 @@ struct sym_entry {
+ 	unsigned int len;
+ 	unsigned int start_pos;
+ 	unsigned int percpu_absolute;
+-	unsigned char sym[0];
++	unsigned char sym[];
+ };
  
- 		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS)) {
- 			timed_out = 1;
-@@ -1905,6 +1904,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 	}
- 
- send_events:
-+	if (fatal_signal_pending(current)) {
-+		/*
-+		 * Always short-circuit for fatal signals to allow
-+		 * threads to make a timely exit without the chance of
-+		 * finding more events available and fetching
-+		 * repeatedly.
-+		 */
-+		res = -EINTR;
-+	}
- 	/*
- 	 * Try to transfer events to user space. In case we get 0 events and
- 	 * there's still timeout left over, we go trying again in search of
+ struct addr_range {
 -- 
 2.25.1
 
