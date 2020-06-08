@@ -2,176 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CA31F1D00
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5121F1D0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbgFHQNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 12:13:32 -0400
-Received: from outbound-smtp17.blacknight.com ([46.22.139.234]:47741 "EHLO
-        outbound-smtp17.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730267AbgFHQNc (ORCPT
+        id S1730403AbgFHQQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 12:16:41 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39822 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730267AbgFHQQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 12:13:32 -0400
-X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jun 2020 12:13:31 EDT
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp17.blacknight.com (Postfix) with ESMTPS id B20F01C33D3
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 17:06:15 +0100 (IST)
-Received: (qmail 1248 invoked from network); 8 Jun 2020 16:06:15 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jun 2020 16:06:15 -0000
-Date:   Mon, 8 Jun 2020 17:06:14 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
- there is no watcher
-Message-ID: <20200608160614.GH3127@techsingularity.net>
-References: <20200608140557.GG3127@techsingularity.net>
- <CAOQ4uxhb1p5_rO9VjNb6assCczwQRx3xdAOXZ9S=mOA1g-0JVg@mail.gmail.com>
+        Mon, 8 Jun 2020 12:16:41 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058G8UH7065871;
+        Mon, 8 Jun 2020 16:16:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=HHRFXu/PCOEWFmyos370eOgdoHcGkVPFbRZIoCPNwdk=;
+ b=WHltGvXUGsZwrSPxIRNR30psiX6+Y2ORx4d30cpqAwnTRvXqeBfV83PRvbJSkvV+gH+B
+ YQUyTxtmUWLYHtJyJLApfXfh1C0qzpWhFEN3dNSA6EUNIRxJjXnH/A6Dnx/EGCOmbYTf
+ T//YW9dqIlBXm2ZdDq3yTPGPoxpy33nSzt3cU1hoawWxNX2st8NcU2XuGoG4N+NA8TCE
+ zzcdZecmUk0Az/o43z+CZs19kvYstpe4iYAHLnZ+zFBIDRcIMBS+R47wt035dBHDVoma
+ V5Dtoi6jh9Dn/2oJ3oQyzuPXQTByAuxxem2u3iVRAykFxZvrWd4mBG9RgKJN2vasi5cK jA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31g2jqyseb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 08 Jun 2020 16:16:31 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058GDqt8012177;
+        Mon, 8 Jun 2020 16:16:31 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 31gn2ved05-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jun 2020 16:16:31 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 058GGPS5003304;
+        Mon, 8 Jun 2020 16:16:25 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jun 2020 09:16:24 -0700
+Date:   Mon, 8 Jun 2020 09:16:23 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: Fix unsharing of an extent >2GB on a 32-bit
+ machine
+Message-ID: <20200608161623.GV2162697@magnolia>
+References: <20200607103536.26508-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhb1p5_rO9VjNb6assCczwQRx3xdAOXZ9S=mOA1g-0JVg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200607103536.26508-1-willy@infradead.org>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9646 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 malwarescore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 spamscore=0 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006080116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9646 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
+ cotscore=-2147483648 priorityscore=1501 spamscore=0 suspectscore=1
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006080116
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 06:03:56PM +0300, Amir Goldstein wrote:
-> > @@ -315,17 +315,12 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
-> >         struct fsnotify_iter_info iter_info = {};
-> >         struct super_block *sb = to_tell->i_sb;
-> >         struct mount *mnt = NULL;
-> > -       __u32 mnt_or_sb_mask = sb->s_fsnotify_mask;
-> > +       __u32 mnt_or_sb_mask;
-> >         int ret = 0;
-> > -       __u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-> > +       __u32 test_mask;
-> >
-> > -       if (path) {
-> > +       if (path)
-> >                 mnt = real_mount(path->mnt);
-> > -               mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
-> > -       }
-> > -       /* An event "on child" is not intended for a mount/sb mark */
-> > -       if (mask & FS_EVENT_ON_CHILD)
-> > -               mnt_or_sb_mask = 0;
-> >
-> >         /*
-> >          * Optimization: srcu_read_lock() has a memory barrier which can
-> > @@ -337,11 +332,21 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
-> >         if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
-> >             (!mnt || !mnt->mnt_fsnotify_marks))
-> >                 return 0;
-> > +
-> > +       /* An event "on child" is not intended for a mount/sb mark */
-> > +       mnt_or_sb_mask = 0;
-> > +       if (!(mask & FS_EVENT_ON_CHILD)) {
-> > +               mnt_or_sb_mask = sb->s_fsnotify_mask;
-> > +               if (path)
-> > +                       mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
-> > +       }
-> > +
+On Sun, Jun 07, 2020 at 03:35:36AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Are you sure that loading ->_fsnotify_mask is so much more expensive
-> than only checking ->_fsnotify_marks? They are surely on the same cache line.
-> Isn't it possible that you just moved the penalty to ->_fsnotify_marks check
-> with this change?
-
-The profile indicated that the cost was in this line
-
-	mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
-
-as opposed to the other checks. Hence, I deferred the calculation of
-mnt_or_sb_mask until it was definitely needed. However, it's perfectly
-possible that the line simply looked hot because the function entry was
-hot in general.
-
-> Did you test performance with just the fsnotify_parent() change alone?
+> Widen the type used for counting the number of bytes unshared.
 > 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-No, but I can. I looked at the profile of fsnotify() first before moving
-on to fsnotify_parent() but I didn't test them in isolation as deferring
-unnecessarily calculations in a fast path seemed reasonable.
+Makes sense,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> In any case, this hunk seriously conflicts with a patch set I am working on,
-> so I would rather not merging this change as is.
-> 
-> If you provide me the feedback that testing ->_fsnotify_marks before loading
-> ->_fsnotify_mask is beneficial on its own, then I will work this change into
-> my series.
-> 
+--D
 
-Will do. If the fsnotify_parent() changes are useful on their own, I'll
-post a v2 of the patch with just that change.
-
-> >         /*
-> >          * if this is a modify event we may need to clear the ignored masks
-> >          * otherwise return if neither the inode nor the vfsmount/sb care about
-> >          * this type of event.
-> >          */
-> > +       test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-> >         if (!(mask & FS_MODIFY) &&
-> >             !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
-> >                 return 0;
-> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> > index 5ab28f6c7d26..508f6bb0b06b 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -44,6 +44,16 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
-> >         fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
-> >  }
-> >
-> > +/* Notify this dentry's parent about a child's events. */
-> > +static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
-> > +                                 const void *data, int data_type)
-> > +{
-> > +       if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
-> > +               return 0;
-> > +
-> > +       return __fsnotify_parent(dentry, mask, data, data_type);
-> > +}
-> > +
+> ---
+>  fs/iomap/buffered-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This change looks good as is, but I'm afraid my series is going to
-> make it obsolete.
-> It may very well be that my series will introduce more performance
-> penalty to your workload.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index ae6c5e38f0e8..9f90d2394535 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -909,7 +909,7 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	long status = 0;
+> -	ssize_t written = 0;
+> +	loff_t written = 0;
+>  
+>  	/* don't bother with blocks that are not shared to start with */
+>  	if (!(iomap->flags & IOMAP_F_SHARED))
+> -- 
+> 2.26.2
 > 
-> It would be very much appreciated if you could run a test for me.
-> I will gladly work in some more optimizations into my series.
-> 
-> You can find the relevant part of my work at:
-> https://github.com/amir73il/linux/commits/fsnotify_name
-> 
-
-Sure.
-
-> What this work does essentially is two things:
-> 1. Call backend once instead of twice when both inode and parent are
->     watching.
-> 2. Snapshot name and parent inode to pass to backend not only when
->     parent is watching, but also when an sb/mnt mark exists which
->     requests to get file names with events.
-> 
-> Compared to the existing implementation of fsnotify_parent(),
-> my code needs to also test bits in inode->i_fsnotify_mask,
-> inode->i_sb->s_fsnotify_mask and mnt->mnt_fsnotify_mask
-> before the fast path can be taken.
-> So its back to square one w.r.t your optimizations.
-> 
-
-Seems fair but it may be worth noting that the changes appear to be
-optimising the case where there are watchers. The case where there are
-no watchers at all is also interesting and probably a lot more common. I
-didn't look too closely at your series as I'm not familiar with fsnotify
-in general. However, at a glance it looks like fsnotify_parent() executes
-a substantial amount of code even if there are no watchers but I could
-be wrong.
-
--- 
-Mel Gorman
-SUSE Labs
