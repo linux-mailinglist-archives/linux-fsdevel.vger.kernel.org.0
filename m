@@ -2,54 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0633E1F1108
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 03:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 723EA1F1116
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 03:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgFHB2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jun 2020 21:28:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5858 "EHLO huawei.com"
+        id S1728243AbgFHBiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jun 2020 21:38:00 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5793 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727972AbgFHB2w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jun 2020 21:28:52 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7CC09978E1AF52A4C9A6;
-        Mon,  8 Jun 2020 09:28:50 +0800 (CST)
-Received: from [127.0.0.1] (10.166.213.7) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Mon, 8 Jun 2020
- 09:28:40 +0800
-Subject: Re: [PATCH v3] block: Fix use-after-free in blkdev_get()
-To:     Jan Kara <jack@suse.cz>
-CC:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Hulk Robot <hulkci@huawei.com>
-References: <20200605104558.16686-1-yanaijie@huawei.com>
- <20200605143710.GA13248@quack2.suse.cz>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <3c9298bd-6406-6815-09d2-ca4fdd732b79@huawei.com>
-Date:   Mon, 8 Jun 2020 09:28:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1728065AbgFHBiA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 7 Jun 2020 21:38:00 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5776DBCF7928A71F4C0D;
+        Mon,  8 Jun 2020 09:37:58 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 8 Jun 2020
+ 09:37:53 +0800
+Subject: Re: [PATCH v2] f2fs: avoid utf8_strncasecmp() with unstable name
+To:     Eric Biggers <ebiggers@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-ext4@vger.kernel.org>, Daniel Rosenberg <drosen@google.com>,
+        <stable@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+References: <20200601200805.59655-1-ebiggers@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a2849e34-879d-783a-761e-5ce9a1d43311@huawei.com>
+Date:   Mon, 8 Jun 2020 09:37:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200605143710.GA13248@quack2.suse.cz>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.166.213.7]
+In-Reply-To: <20200601200805.59655-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-ÔÚ 2020/6/5 22:37, Jan Kara Ð´µÀ:
-> No need for braces here after you remove bdput(). With this fixed, feel
-> free to add:
+On 2020/6/2 4:08, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Reviewed-by: Jan Kara<jack@suse.cz>
+> If the dentry name passed to ->d_compare() fits in dentry::d_iname, then
+> it may be concurrently modified by a rename.  This can cause undefined
+> behavior (possibly out-of-bounds memory accesses or crashes) in
+> utf8_strncasecmp(), since fs/unicode/ isn't written to handle strings
+> that may be concurrently modified.
+> 
+> Fix this by first copying the filename to a stack buffer if needed.
+> This way we get a stable snapshot of the filename.
+> 
+> Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
+> Cc: <stable@vger.kernel.org> # v5.4+
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Daniel Rosenberg <drosen@google.com>
+> Cc: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Thanks, I will fix it in v4.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Jason
-
+Thanks,
