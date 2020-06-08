@@ -2,226 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7681F10C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 02:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D521F10D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 02:58:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgFHAtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jun 2020 20:49:55 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:46803 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728001AbgFHAty (ORCPT
+        id S1728828AbgFHA6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jun 2020 20:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728667AbgFHA6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jun 2020 20:49:54 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id B763F54A;
-        Sun,  7 Jun 2020 20:49:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sun, 07 Jun 2020 20:49:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        ypy9wHdt9x60QtCjqTWqlpCz6bFcBx77MRo3WMv+OYo=; b=R1e4YW7jAr1iLQH3
-        7j3yOhEh8Qw5GDDVKsF+mwfl7lZ5C7iXNFO676mPkJ6+xYmusnFJkRGJ6bM0LKMq
-        yXg4+U7CYOy2Eem+mMuA3n75h+NJWVsb87F6kV8an2y0NcNc+ZlgjJsc9pvlsVZq
-        zySVPEvzvkk/rTuxM+/0VVaxX9dhT8Kzd9Q4Go06iPxS8YlFpTAdk0ShxMZ9tJJt
-        VmuXuflejR4dV5U2wOiMuRQbQuAud4UeZ84u6Y2C831xzqbziEcf+n2J54TrUCh4
-        Px1pn0IsC0OF8UDKUiLmtCyZjddSeUd8IxVLtEUlPJTEkidqxY5kJwG4/7Jk/9W1
-        753MGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=ypy9wHdt9x60QtCjqTWqlpCz6bFcBx77MRo3WMv+O
-        Yo=; b=AsPcByuHOh2lcHRZkGhqUAl2xQavgf8MaWNs6JvlZstYXj4SGF6fEa5IO
-        IXrNBNEQoJTZ63mWWSZAN4/opi9UVWsyevyQKpT3Mbu8McemhGGR9eRQfyDJ/Q5B
-        j98FzF2Rrv7LD0dmXwlo/9IEDDAl/H0qouuzZxRx5TgWy+Iwr/OLymWIu3jCMhNX
-        6XUUq7u17JLNKHReIkBGBfpZMzHAh942z87heJe5J/wEI5ia63EYi9JG1wCI3ngp
-        Jw6nfgzbX6Rsc5cfzU9+XGwqKGfMIp9n/YgTzlSP8+PGWK6osb0rqkJYRsECVy/d
-        mADU9PxrTmJ/UeDGJfN/Xf0kJCzBw==
-X-ME-Sender: <xms:L4vdXl0FGKqcyzyA0OTu1RuAHNddQN_dNHQTk7kLJPxUSwLtnWVl5Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehtddggedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ekkeejieeiieegvedvvdejjeegfeffleekudekgedvudeggeevgfekvdfhvdelfeenucff
-    ohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeehkedrjedrvddvtddrgeejnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhes
-    thhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:L4vdXsHyveDhLmE2Eetk_vf6buSMTCWyUZdIj7_AVDRNwZsalSGKmQ>
-    <xmx:L4vdXl4aRnjipMc7x4jy5Bcc-eiNzD7b3SeyCi8_u_QzrYrdrX9GKA>
-    <xmx:L4vdXi0aFUn6K-x440t7FFmqqUrVfN_cxvo8TqM2gOFS0LJxhg6hrQ>
-    <xmx:MIvdXjAgCZJSjnV-zQF1iNSvJuM6UsNWHBFbMbnNlKjOI6tfSMyTrKqZ37w>
-Received: from mickey.themaw.net (58-7-220-47.dyn.iinet.net.au [58.7.220.47])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 15BAE3060FE7;
-        Sun,  7 Jun 2020 20:49:46 -0400 (EDT)
-Message-ID: <4e388597a0fc05fc553c7afd5076d77e232f875e.camel@themaw.net>
-Subject: Re: [GIT PULL] General notification queue and key notifications
-From:   Ian Kent <raven@themaw.net>
-To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
-Cc:     viro@zeniv.linux.org.uk, dray@redhat.com, kzak@redhat.com,
-        mszeredi@redhat.com, swhiteho@redhat.com, jlayton@redhat.com,
-        andres@anarazel.de, christian.brauner@ubuntu.com,
-        jarkko.sakkinen@linux.intel.com, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 08 Jun 2020 08:49:43 +0800
-In-Reply-To: <639a79d90f51da0b53a0ba45ec28d5b0dd9fee7b.camel@themaw.net>
-References: <1503686.1591113304@warthog.procyon.org.uk>
-         <639a79d90f51da0b53a0ba45ec28d5b0dd9fee7b.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Sun, 7 Jun 2020 20:58:06 -0400
+Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C2FC08C5C4;
+        Sun,  7 Jun 2020 17:58:06 -0700 (PDT)
+Received: from [5.158.153.53] (helo=debian-buster-darwi.lab.linutronix.de.)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <a.darwish@linutronix.de>)
+        id 1ji66U-0000hc-WF; Mon, 08 Jun 2020 02:57:31 +0200
+From:   "Ahmed S. Darwish" <a.darwish@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Sebastian A. Siewior" <bigeasy@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 00/18] seqlock: Extend seqcount API with associated locks
+Date:   Mon,  8 Jun 2020 02:57:11 +0200
+Message-Id: <20200608005729.1874024-1-a.darwish@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200519214547.352050-1-a.darwish@linutronix.de>
+References: <20200519214547.352050-1-a.darwish@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-06-03 at 10:15 +0800, Ian Kent wrote:
-> On Tue, 2020-06-02 at 16:55 +0100, David Howells wrote:
-> > [[ With regard to the mount/sb notifications and fsinfo(), Karel
-> > Zak
-> > and
-> >    Ian Kent have been working on making libmount use them,
-> > preparatory to
-> >    working on systemd:
-> > 
-> > 	https://github.com/karelzak/util-linux/commits/topic/fsinfo
-> > 	
-> > https://github.com/raven-au/util-linux/commits/topic/fsinfo.public
-> > 
-> >    Development has stalled briefly due to other commitments, so I'm
-> > not
-> >    sure I can ask you to pull those parts of the series for
-> > now.  Christian
-> >    Brauner would like to use them in lxc, but hasn't started.
-> >    ]]
-> 
-> Linus,
-> 
-> Just so your aware of what has been done and where we are at here's
-> a summary.
-> 
-> Karel has done quite a bit of work on libmount (at this stage it's
-> getting hold of the mount information, aka. fsinfo()) and most of
-> what I have done is included in that too which you can see in Karel's
-> repo above). You can see a couple of bug fixes and a little bit of
-> new code present in my repo which hasn't been sent over to Karel
-> yet.
-> 
-> This infrastructure is essential before notifications work is started
-> which is where we will see the most improvement.
-> 
-> It turns out that while systemd uses libmount it has it's own
-> notifications handling sub-system as it deals with several event
-> types, not just mount information, in the same area. So,
-> unfortunately,
-> changes will need to be made there as well as in libmount, more so
-> than the trivial changes to use fsinfo() via libmount.
-> 
-> That's where we are at the moment and I will get back to it once
-> I've dealt with a few things I postponed to work on libmount.
-> 
-> If you would like a more detailed account of what we have found I
-> can provide that too.
-> 
-> Is there anything else you would like from me or Karel?
+Hi,
 
-I think there's a bit more I should say about this.
+This is v2 of the seqlock patch series:
 
-One reason work hasn't progressed further on this is I spent
-quite a bit of time looking at the affects of using fsinfo().
+   [PATCH v1 00/25] seqlock: Extend seqcount API with associated locks
+   https://lore.kernel.org/lkml/20200519214547.352050-1-a.darwish@linutronix.de
 
-My testing was done by using a large autofs direct mount map of
-20000 entries which means that at autofs startup 20000 autofs
-mounts must be done and at autofs shutdown those 20000 mounts
-must be umounted. Not very scientific but something to use to
-get a feel for the affect of our changes.
+Patches 1=>3 of this v2 series add documentation for the existing
+seqlock.h datatypes and APIs. Hopefully they can hit v5.8 -rc2 or -rc3.
 
-Initially just using fsinfo() to load all the mount entries was
-done to see how that would perform. This was done in a way that
-required no modifications to library user code but didn't get
-much improvement.
+Changelog-v2
+============
 
-Next loading all the mount ids (alone) for mount entry traversal
-was done and the various fields retrieved on-demand (implemented
-by Karel).
+1. Drop, for now, the seqlock v1 patches #7 and #8. These patches added
+lockdep non-preemptibility checks to seqcount_t write paths, but they
+now depend on on-going work by Peter:
 
-Loading the entire mount table and then traversing the entries
-means the mount table is always possibly out of date. And loading
-the ids and getting the fields on-demand might have made that
-problem worse. But loading only the mount ids and using an
-on-demand method to get needed fields worked surprisingly well.
+   [PATCH v3 0/5] lockdep: Change IRQ state tracking to use per-cpu variables
+   https://lkml.kernel.org/r/20200529213550.683440625@infradead.org
 
-The main issue is a mount going away while getting the fields.
-Testing showed that simply checking the field is valid and
-ignoring the entry if it isn't is enough to handle that case.
+   [PATCH 00/14] x86/entry: disallow #DB more and x86/entry lockdep/nmi
+   https://lkml.kernel.org/r/20200529212728.795169701@infradead.org
 
-Also the mount going away after the needed fields have been
-retrieved must be handled by callers of libmount as mounts
-can just as easily go away after reading the proc based tables.
+Once Peter's work get merged, I'll send the non-preemptibility checks as
+a separate series.
 
-The case of the underlying mount information changing needs to
-be considered too. We will need to do better on that in the
-future but it too is a problem with the proc table handing and
-hasn't seen problems logged against libmount for it AFAIK.
+2. Drop the v1 seqcount_t call-sites bugfixes. I've already posted them
+in an isolated series. They got merged into their respective trees, and
+will hit v5.8-rc1 soon:
 
-So, all in all, this approach worked pretty well as libmount
-users do use the getter access methods to retrieve the mount
-entry fields (which is required for the on-demand method to
-work). Certainly systemd always uses them (and it looks like
-udisks2 does too).
+   [PATCH v2 0/6] seqlock: seqcount_t call sites bugfixes
+   https://lore.kernel.org/lkml/20200603144949.1122421-1-a.darwish@linutronix.de
 
-Unfortunately using the libmount on-demand implementation
-requires library user code be modified (only a little in
-the systemd case) to use the implementation.
+3. Patch #1: Add a small paragraph explaining that seqcount_t/seqlock_t
+cannot be used if the protected data contains pointers. A similar
+paragraph already existed in seqlock.h, but got mistakenly dropped.
 
-Testing showed that we get between 10-15% reduction in
-overhead and CPU usage remained high.
+4. Patch #2: Don't add RST directives inside kernel-doc comments. Peter
+doesn't like them :) I've kept the indentation though, and found a
+minimal way for Sphinx to properly render these code samples without too
+much disruption.
 
-I think processing large numbers of mounts is simply a lot
-of work and there are particular cases that will remain that
-require the use of the load and traverse method. For example
-matching all mounts with a given prefix string (one of the
-systemd use cases).
+5. Patch #3: Brush up the introduced kernel-doc comments. Make them more
+consistent overall, and more concise.
 
-It's hard to get information about this but I can say that
-running pref during the autofs start and stop shows the bulk
-of the counter hits on the fsinfo() table construction code
-so that ahs to be where the overhead is.
+Thanks,
 
-The unavoidable conclusion is that the load and traverse method
-that's been imposed on us for so long (even before libmount)
-for mount handling is what we need to get away from. After all,
-this is essentially where the problem comes from in the first
-place. And fsinfo() is designed to not need to use this method
-for getting mount information for that reason.
+8<--------------
 
-There's also the notifications side of things which is the next
-area to work on. Looking at systemd I see that monitoring the
-proc mount table leads to a load, traverse, and process of the
-entire table for every single notification. It's clear that's
-because of the (what I'll call) anonymous notifications that we
-have now.
+Ahmed S. Darwish (18):
+  Documentation: locking: Describe seqlock design and usage
+  seqlock: Properly format kernel-doc code samples
+  seqlock: Add missing kernel-doc annotations
+  seqlock: Extend seqcount API with associated locks
+  dma-buf: Remove custom seqcount lockdep class key
+  dma-buf: Use sequence counter with associated wound/wait mutex
+  sched: tasks: Use sequence counter with associated spinlock
+  netfilter: conntrack: Use sequence counter with associated spinlock
+  netfilter: nft_set_rbtree: Use sequence counter with associated rwlock
+  xfrm: policy: Use sequence counters with associated lock
+  timekeeping: Use sequence counter with associated raw spinlock
+  vfs: Use sequence counter with associated spinlock
+  raid5: Use sequence counter with associated spinlock
+  iocost: Use sequence counter with associated spinlock
+  NFSv4: Use sequence counter with associated spinlock
+  userfaultfd: Use sequence counter with associated spinlock
+  kvm/eventfd: Use sequence counter with associated spinlock
+  hrtimer: Use sequence counter with associated raw spinlock
 
-The notifications in David's series carry event specific
-information, for example the mount id for mount notifications
-and the libmount fsinfo() implementation is written to use the
-mount id (lowest overhead lookup option), so there has to be
-significant improvement for this case.
+ Documentation/locking/index.rst               |   1 +
+ Documentation/locking/seqlock.rst             | 242 +++++
+ MAINTAINERS                                   |   2 +-
+ block/blk-iocost.c                            |   5 +-
+ drivers/dma-buf/dma-resv.c                    |  15 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c  |   2 -
+ drivers/md/raid5.c                            |   2 +-
+ drivers/md/raid5.h                            |   2 +-
+ fs/dcache.c                                   |   2 +-
+ fs/fs_struct.c                                |   4 +-
+ fs/nfs/nfs4_fs.h                              |   2 +-
+ fs/nfs/nfs4state.c                            |   2 +-
+ fs/userfaultfd.c                              |   4 +-
+ include/linux/dcache.h                        |   2 +-
+ include/linux/dma-resv.h                      |   4 +-
+ include/linux/fs_struct.h                     |   2 +-
+ include/linux/hrtimer.h                       |   2 +-
+ include/linux/kvm_irqfd.h                     |   2 +-
+ include/linux/sched.h                         |   2 +-
+ include/linux/seqlock.h                       | 855 ++++++++++++++----
+ include/linux/seqlock_types_internal.h        | 187 ++++
+ include/net/netfilter/nf_conntrack.h          |   2 +-
+ init/init_task.c                              |   3 +-
+ kernel/fork.c                                 |   2 +-
+ kernel/time/hrtimer.c                         |  13 +-
+ kernel/time/timekeeping.c                     |  19 +-
+ net/netfilter/nf_conntrack_core.c             |   5 +-
+ net/netfilter/nft_set_rbtree.c                |   4 +-
+ net/xfrm/xfrm_policy.c                        |  10 +-
+ virt/kvm/eventfd.c                            |   2 +-
+ 30 files changed, 1175 insertions(+), 226 deletions(-)
+ create mode 100644 Documentation/locking/seqlock.rst
+ create mode 100644 include/linux/seqlock_types_internal.h
 
-But systemd has it's own notifications handling code so there
-will need to be non-trivial changes there as well as changes
-in libmount.
-
-Bottom line is we have a bit of a challenge with this because we
-are trying to change coding practices developed over many years
-that, necessarily, use a load/traverse method and it's going to
-take quite a while to change these coding practices.
-
-My question is, is there something specific, besides what we are
-doing, that you'd like to see done now in order to get the series
-merged?
-
-Ian
-
+base-commit: 3d77e6a8804abcc0504c904bd6e5cdf3a5cf8162
+--
+2.20.1
