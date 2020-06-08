@@ -2,114 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E0C1F1D46
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CA31F1D00
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:13:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbgFHQ2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 12:28:01 -0400
-Received: from m15111.mail.126.com ([220.181.15.111]:54020 "EHLO
-        m15111.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbgFHQ2B (ORCPT
+        id S1730388AbgFHQNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 12:13:32 -0400
+Received: from outbound-smtp17.blacknight.com ([46.22.139.234]:47741 "EHLO
+        outbound-smtp17.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730267AbgFHQNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 12:28:01 -0400
-X-Greylist: delayed 1897 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jun 2020 12:27:58 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=DMG1x6PUP5eE1dmHHA
-        dR6SfyvqYK7zNd6DIJ1Bsh6lI=; b=cWdlGqhAptDsUTxrixJL7jSXjxjmpdsXSB
-        7L8MY54VG8LlSC4x7LdC7PgSGc7wlS0SHILWbdVuBS+sL+qlS2elPauHMSl9CJQL
-        oeM4o7pLK45ST8g8bmhqmVvKYLJXXmzS/4WX0CcRreIefJChXGh/Ku2KJYcuhG/y
-        sxHlft+os=
-Received: from 192.168.137.250 (unknown [112.10.75.37])
-        by smtp1 (Coremail) with SMTP id C8mowAD3Mh2hX95e45kmGQ--.43847S3;
-        Mon, 08 Jun 2020 23:56:19 +0800 (CST)
-From:   Xianting Tian <xianting_tian@126.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] direct-io: pass correct argument to dio_complete
-Date:   Mon,  8 Jun 2020 11:56:17 -0400
-Message-Id: <1591631777-9708-1-git-send-email-xianting_tian@126.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: C8mowAD3Mh2hX95e45kmGQ--.43847S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZw45KFyxtr4ktw17ur4xCrg_yoW5CrWkpF
-        yjg3y7KFWavas2yw1UAF4xZF4xWrWkGF4UWrWF9w17Ary3Jrn7tF4rKryfAr4UJrn3try2
-        qr409rW5J3WqyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrManUUUUU=
-X-Originating-IP: [112.10.75.37]
-X-CM-SenderInfo: h0ld03plqjs3xldqqiyswou0bp/1tbiwQM9pFpD+k1vMgAAso
+        Mon, 8 Jun 2020 12:13:32 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jun 2020 12:13:31 EDT
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp17.blacknight.com (Postfix) with ESMTPS id B20F01C33D3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 17:06:15 +0100 (IST)
+Received: (qmail 1248 invoked from network); 8 Jun 2020 16:06:15 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jun 2020 16:06:15 -0000
+Date:   Mon, 8 Jun 2020 17:06:14 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
+ there is no watcher
+Message-ID: <20200608160614.GH3127@techsingularity.net>
+References: <20200608140557.GG3127@techsingularity.net>
+ <CAOQ4uxhb1p5_rO9VjNb6assCczwQRx3xdAOXZ9S=mOA1g-0JVg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhb1p5_rO9VjNb6assCczwQRx3xdAOXZ9S=mOA1g-0JVg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When submit async direct-io write operation in function
-do_blockdev_direct_IO, 'struct dio' records the info of all bios,
-initial value of dio->refcount is set to 1, 'dio->refcount++' is
-executed in dio_bio_submit when submit one bio, 'dio->refcount--'
-is executed in bio completion handler dio_bio_end_aio.
+On Mon, Jun 08, 2020 at 06:03:56PM +0300, Amir Goldstein wrote:
+> > @@ -315,17 +315,12 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> >         struct fsnotify_iter_info iter_info = {};
+> >         struct super_block *sb = to_tell->i_sb;
+> >         struct mount *mnt = NULL;
+> > -       __u32 mnt_or_sb_mask = sb->s_fsnotify_mask;
+> > +       __u32 mnt_or_sb_mask;
+> >         int ret = 0;
+> > -       __u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+> > +       __u32 test_mask;
+> >
+> > -       if (path) {
+> > +       if (path)
+> >                 mnt = real_mount(path->mnt);
+> > -               mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
+> > -       }
+> > -       /* An event "on child" is not intended for a mount/sb mark */
+> > -       if (mask & FS_EVENT_ON_CHILD)
+> > -               mnt_or_sb_mask = 0;
+> >
+> >         /*
+> >          * Optimization: srcu_read_lock() has a memory barrier which can
+> > @@ -337,11 +332,21 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> >         if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+> >             (!mnt || !mnt->mnt_fsnotify_marks))
+> >                 return 0;
+> > +
+> > +       /* An event "on child" is not intended for a mount/sb mark */
+> > +       mnt_or_sb_mask = 0;
+> > +       if (!(mask & FS_EVENT_ON_CHILD)) {
+> > +               mnt_or_sb_mask = sb->s_fsnotify_mask;
+> > +               if (path)
+> > +                       mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
+> > +       }
+> > +
+> 
+> Are you sure that loading ->_fsnotify_mask is so much more expensive
+> than only checking ->_fsnotify_marks? They are surely on the same cache line.
+> Isn't it possible that you just moved the penalty to ->_fsnotify_marks check
+> with this change?
 
-In do_blockdev_direct_IO, it also calls drop_refcount to do
-'dio->refcount--', then judge if dio->refcount is 0, if yes, it
-will call dio_complete to complete the dio:
-    if (drop_refcount(dio) == 0) {
-          retval = dio_complete(dio, retval, DIO_COMPLETE_INVALIDATE);
-    } else
+The profile indicated that the cost was in this line
 
-dio_bio_end_aio and drop_refcount will race to judge if dio->refcount
-is 0:
-1, if dio_bio_end_aio finds dio->refcount is 0, it will queue work if
-   defer_completion is set, work handler
-   dio_aio_complete_work->dio_complete will be called:
-      dio_complete(dio, 0,
-                    DIO_COMPLETE_ASYNC | DIO_COMPLETE_INVALIDATE);
-   if defer_completion not set, it will call:
-      dio_complete(dio, 0, DIO_COMPLETE_ASYNC);
-   In above two cases, because DIO_COMPLETE_ASYNC is passed to
-   dio_complete. So in dio_complete, it will call aio completion handler:
-      dio->iocb->ki_complete(dio->iocb, ret, 0);
-   As ki_complete is set to aio_complete for async io, which will fill
-   an event to ring buffer, then user can use io_getevents to get this
-   event.
-2, if drop_refcount finds dio->refcount is 0, it will call:
-      dio_complete(dio, retval, DIO_COMPLETE_INVALIDATE);
-   As no DIO_COMPLETE_ASYNC is passed to dio_complete. So in dio_complete,
-   ki_complete(aio_complete) will not be called. Eventually, no one fills
-   the completion event to ring buffer, so user can't get the completion
-   event via io_getevents.
+	mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
 
-Currently, we doesn't meet above issue with existing kernel code,
-I think because do_blockdev_direct_IO is called in bio submission path,
-it will be quickly completed before all aync bios completion in almost
-all cases, so when drop_refcounng is executing, it finds dio->refcount is
-not 0 after 'dio->refcount--'. But when the last bio completed,
-dio_bio_end_aio will be called, which will find dio->refcount is 0,
-then below code will be executed and the async events ring buffer getting
-to be filled:
-      dio_complete(dio, 0, DIO_COMPLETE_ASYNC | DIO_COMPLETE_INVALIDATE);
-      or
-      dio_complete(dio, 0, DIO_COMPLETE_ASYNC);
+as opposed to the other checks. Hence, I deferred the calculation of
+mnt_or_sb_mask until it was definitely needed. However, it's perfectly
+possible that the line simply looked hot because the function entry was
+hot in general.
 
-Make the code logically with this patch and cover above scenario.
+> Did you test performance with just the fsnotify_parent() change alone?
+> 
 
-Signed-off-by: Xianting Tian <xianting_tian@126.com>
----
- fs/direct-io.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+No, but I can. I looked at the profile of fsnotify() first before moving
+on to fsnotify_parent() but I didn't test them in isolation as deferring
+unnecessarily calculations in a fast path seemed reasonable.
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 1543b5a..552459f 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1345,7 +1345,9 @@ static inline int drop_refcount(struct dio *dio)
- 		dio_await_completion(dio);
- 
- 	if (drop_refcount(dio) == 0) {
--		retval = dio_complete(dio, retval, DIO_COMPLETE_INVALIDATE);
-+		retval = dio_complete(dio, retval, dio->is_async ?
-+				DIO_COMPLETE_ASYNC | DIO_COMPLETE_INVALIDATE :
-+				DIO_COMPLETE_INVALIDATE);
- 	} else
- 		BUG_ON(retval != -EIOCBQUEUED);
- 
+> In any case, this hunk seriously conflicts with a patch set I am working on,
+> so I would rather not merging this change as is.
+> 
+> If you provide me the feedback that testing ->_fsnotify_marks before loading
+> ->_fsnotify_mask is beneficial on its own, then I will work this change into
+> my series.
+> 
+
+Will do. If the fsnotify_parent() changes are useful on their own, I'll
+post a v2 of the patch with just that change.
+
+> >         /*
+> >          * if this is a modify event we may need to clear the ignored masks
+> >          * otherwise return if neither the inode nor the vfsmount/sb care about
+> >          * this type of event.
+> >          */
+> > +       test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+> >         if (!(mask & FS_MODIFY) &&
+> >             !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
+> >                 return 0;
+> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> > index 5ab28f6c7d26..508f6bb0b06b 100644
+> > --- a/include/linux/fsnotify.h
+> > +++ b/include/linux/fsnotify.h
+> > @@ -44,6 +44,16 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+> >         fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
+> >  }
+> >
+> > +/* Notify this dentry's parent about a child's events. */
+> > +static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+> > +                                 const void *data, int data_type)
+> > +{
+> > +       if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+> > +               return 0;
+> > +
+> > +       return __fsnotify_parent(dentry, mask, data, data_type);
+> > +}
+> > +
+> 
+> This change looks good as is, but I'm afraid my series is going to
+> make it obsolete.
+> It may very well be that my series will introduce more performance
+> penalty to your workload.
+> 
+> It would be very much appreciated if you could run a test for me.
+> I will gladly work in some more optimizations into my series.
+> 
+> You can find the relevant part of my work at:
+> https://github.com/amir73il/linux/commits/fsnotify_name
+> 
+
+Sure.
+
+> What this work does essentially is two things:
+> 1. Call backend once instead of twice when both inode and parent are
+>     watching.
+> 2. Snapshot name and parent inode to pass to backend not only when
+>     parent is watching, but also when an sb/mnt mark exists which
+>     requests to get file names with events.
+> 
+> Compared to the existing implementation of fsnotify_parent(),
+> my code needs to also test bits in inode->i_fsnotify_mask,
+> inode->i_sb->s_fsnotify_mask and mnt->mnt_fsnotify_mask
+> before the fast path can be taken.
+> So its back to square one w.r.t your optimizations.
+> 
+
+Seems fair but it may be worth noting that the changes appear to be
+optimising the case where there are watchers. The case where there are
+no watchers at all is also interesting and probably a lot more common. I
+didn't look too closely at your series as I'm not familiar with fsnotify
+in general. However, at a glance it looks like fsnotify_parent() executes
+a substantial amount of code even if there are no watchers but I could
+be wrong.
+
 -- 
-1.8.3.1
-
+Mel Gorman
+SUSE Labs
