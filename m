@@ -2,136 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD421F1604
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 11:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A091F1668
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 12:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbgFHJ6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 05:58:49 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:45535 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728745AbgFHJ6t (ORCPT
+        id S1729386AbgFHKIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 06:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729356AbgFHKI2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 05:58:49 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 503415C00E7;
-        Mon,  8 Jun 2020 05:58:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 08 Jun 2020 05:58:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        dHXvjsVk7QKN9xSmxFZliOkWW0vYwmyFZklqwFJxZx0=; b=nbuRRuQMMotal5S8
-        pTkvN+cmjfx8FXtAQCeuwybBH7S6VVW0ds1kT1qKG/FvjVQYv1yuRNB3eez27HfC
-        pFmvpUz9+o3NY2whoy/ZynFDzKKpX5CcbpGCMoUqqNpnjO5zKetMk2SDHB1T9qd9
-        /h3Ah3sakw4x1Jx7umnwljUFBfDSnAz1NunymMh2tg9mV8dO2pvf8PPR8WQFWxsd
-        bp/Y2GnpF08+DJljBEOGCSwgRNxxoePPv4/zUWhCAw6sr6o6La8GDgh360TW/KW+
-        MQZjM/QJoTNciAnM8uXjGYhdK8CppxGSAycOS1JISb1TMuskSNPKFHoROkGpO9Db
-        Pp/0SA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=dHXvjsVk7QKN9xSmxFZliOkWW0vYwmyFZklqwFJxZ
-        x0=; b=ssUoMqNFeqO0sPk0K4AU8jQTyVoHyYwOSKTCca9oiggMmH3ruvzqarQG2
-        h0/gmIktox7m6oRVShAo3y0OPfd4rPhzHnUrqwaXupLnII4r29+jyvhafzjilfHW
-        tRXAsy3lXN5C13RN2utfyGsdNQxIEG2/cw8rHBgIQGWWa2SJdLlV4bwlZzZARpdy
-        aRyfdeBocNubsbdUl+2oHqMD2LQVkOwJLNFBKXHysFDNGRHsoa1vq5fanLTlobqL
-        S5+sJV9upS05bTcN9qwF4ehETAFdkNGUkORQEiHBjZLSuY3D1waiWiMw3LwriWGX
-        1W8YPQbJmcOaUPlqjiHl2i5iDo6uA==
-X-ME-Sender: <xms:1wveXlbewY_jy9ezRxmkWMcR87fu-vrQ4CjlxOXZxRIi39HgJZe0YA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehuddgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepheekrdejrddvvddtrdegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:1wveXsYKizYNVLq2lZTLheMgS5o9B3B1EKyz7f4ORP5MBkWo-fkKVg>
-    <xmx:1wveXn_Syb7GHMQLazflaIlzOS4KTuTq_3txw1SoYiGsaI0qyxUDqg>
-    <xmx:1wveXjomBAOCSmjMy1qCAZXrA6_L0IZibgcjNabBz7Ms_7k129GUOw>
-    <xmx:2AveXlDiIflgmGfYQdGT-ls72uCwU2CvI7FiNYXvahMnw8ky_V-m_w>
-Received: from mickey.themaw.net (58-7-220-47.dyn.iinet.net.au [58.7.220.47])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8F41D328005E;
-        Mon,  8 Jun 2020 05:58:43 -0400 (EDT)
-Message-ID: <6e408041ae9bedb2269cf607d7313a414c7cead3.camel@themaw.net>
-Subject: Re: [PATCH 1/4] kernfs: switch kernfs to use an rwsem
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        l Viro <viro@ZenIV.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        Mon, 8 Jun 2020 06:08:28 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85836C08C5C3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 03:08:28 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id o15so17580699ejm.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jun 2020 03:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dxkh4Kxm2qSluY2udt9pCB1rYALSYeqASDMTt8TKeJI=;
+        b=P2GKu52WItZEgtpoUj18LxtU7AgqM5FVRJdGi3TUv/5Lg5xZFomT3eHPBzOMyvALk/
+         7GBsEJETXvfGLn1q9PletcojWdFGb/np1KH7hyORWeAS3kHqADvoXOqPq95AqxdRlUJA
+         GaFPC0TkTjGiwkE6mp/dO9Rsmt7YCy68d6pG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dxkh4Kxm2qSluY2udt9pCB1rYALSYeqASDMTt8TKeJI=;
+        b=pcazUOwzwKFoN6ZmKdx0bBdDpnvi5fPjXiZP/WtqpIQqeYan97HqOocODTHhVM7dg2
+         nFNB1hqrMIdfTyJZomSqekJP8NDodw2IVz4GCf9fhc8c46ItMzY5eZx9t2m6rHa23gSC
+         TpZtRHEPLriETaDTkH0PHa3JIYI18azk7k0v8C0LrToSN2HWbB5lprZe4lTHbMkUAOXH
+         7rhDnmmILJGYqBFbxp59VDEO/vL6k4qzuTQEScZPDbseJn/SiwFw+rnhNG7EZA8tsUQB
+         dhTR4Z82T7/+Ly4rtjrvONrxxo2Q2FS/kzV21gWWRE9g3oyRQjAFRLO9YJMADwRoFAzL
+         DvOw==
+X-Gm-Message-State: AOAM530fVU6k4buJhVS3KCAPD7dhrwqCwVpGRdJ2sVQC7Fxk/5DhBLuq
+        LImI6/KjcyDnbnGdtwFkBahQgg==
+X-Google-Smtp-Source: ABdhPJxAg8FdGBWitx0l/Pw7yBtDmw4KoAgFhWNXk8/GC/u/FjggasbaZA/r5dcLa09kW4fP8S4wiA==
+X-Received: by 2002:a17:906:945:: with SMTP id j5mr10235625ejd.52.1591610907139;
+        Mon, 08 Jun 2020 03:08:27 -0700 (PDT)
+Received: from [192.168.1.149] (ip-5-186-116-45.cgn.fibianet.dk. [5.186.116.45])
+        by smtp.gmail.com with ESMTPSA id d6sm12581189edn.75.2020.06.08.03.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jun 2020 03:08:26 -0700 (PDT)
+Subject: Re: [PATCH resend] fs/namei.c: micro-optimize acl_permission_check
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 08 Jun 2020 17:58:39 +0800
-In-Reply-To: <36e2d782d1aea1cfbe17f3bfee35f723f2f89c0d.camel@themaw.net>
-References: <159038508228.276051.14042452586133971255.stgit@mickey.themaw.net>
-         <159038562460.276051.5267555021380171295.stgit@mickey.themaw.net>
-         <36e2d782d1aea1cfbe17f3bfee35f723f2f89c0d.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200605142300.14591-1-linux@rasmusvillemoes.dk>
+ <CAHk-=wgz68f2u7bFPZCWgbsbEJw+2HWTJFXSg_TguY+xJ8WrNw@mail.gmail.com>
+ <dcd7516b-0a1f-320d-018d-f3990e771f37@rasmusvillemoes.dk>
+ <CAHk-=wixdSUWFf6BoT7rJUVRmjUv+Lir_Rnh81xx7e2wnzgKbg@mail.gmail.com>
+ <CAHk-=widT2tV+sVPzNQWijtUz4JA=CS=EaJRfC3_9ymuQXQS8Q@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <934d7665-3358-576e-8434-82b16e3a1bf1@rasmusvillemoes.dk>
+Date:   Mon, 8 Jun 2020 12:08:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <CAHk-=widT2tV+sVPzNQWijtUz4JA=CS=EaJRfC3_9ymuQXQS8Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-06-07 at 16:40 +0800, Ian Kent wrote:
-> Hi Greg,
+On 07/06/2020 21.48, Linus Torvalds wrote:
+> On Sun, Jun 7, 2020 at 9:37 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>>> That will kinda work, except you do that mask &= MAY_RWX before
+>>> check_acl(), which cares about MAY_NOT_BLOCK and who knows what other bits.
+>>
+>> Good catch.
 > 
-> On Mon, 2020-05-25 at 13:47 +0800, Ian Kent wrote:
-> > @@ -189,9 +189,9 @@ int kernfs_iop_getattr(const struct path *path,
-> > struct kstat *stat,
-> >  	struct inode *inode = d_inode(path->dentry);
-> >  	struct kernfs_node *kn = inode->i_private;
-> >  
-> > -	mutex_lock(&kernfs_mutex);
-> > +	down_read(&kernfs_rwsem);
-> >  	kernfs_refresh_inode(kn, inode);
-> > -	mutex_unlock(&kernfs_mutex);
-> > +	up_read(&kernfs_rwsem);
-> >  
-> >  	generic_fillattr(inode, stat);
-> >  	return 0;
-> > @@ -281,9 +281,9 @@ int kernfs_iop_permission(struct inode *inode,
-> > int mask)
-> >  
-> >  	kn = inode->i_private;
-> >  
-> > -	mutex_lock(&kernfs_mutex);
-> > +	down_read(&kernfs_rwsem);
-> >  	kernfs_refresh_inode(kn, inode);
-> > -	mutex_unlock(&kernfs_mutex);
-> > +	up_read(&kernfs_rwsem);
-> >  
-> >  	return generic_permission(inode, mask);
-> >  }
+> With the change to not clear the non-rwx bits in general, the owner
+> case now wants to do the masking, and then the "shift left by 6"
+> modification makes no sense since it only makes for a bigger constant
+> (the only reason to do the shift-right was so that the bitwise not of
+> the i_mode could be done in parallel with the shift, but with the
+> masking that instruction scheduling optimization becomes kind of
+> immaterial too). So I modified that patch to not bother, and add a
+> comment about MAY_NOT_BLOCK.
 > 
-> I changed these from a write lock to a read lock late in the
-> development.
+> And since I was looking at the MAY_NOT_BLOCK logic, it was not only
+> not mentioned in comments, it also had some really confusing code
+> around it.
 > 
-> But kernfs_refresh_inode() modifies the inode so I think I should
-> have taken the inode lock as well as taking the read lock.
+> The posix_acl_permission() looked like it tried to conserve that bit,
+> which is completely wrong. It wasn't a bug only for the simple reason
+> that the only two call-sites had either explicitly cleared the bit
+> when calling, or had tested that the bit wasn't set in the first
+> place.
 > 
-> I'll look again but a second opinion (anyone) would be welcome.
+> So as a result, I wrote a second patch to clear that confusion up.
+> 
+> Rasmus, say the word and I'll mark you for authorship on the first one.
 
-I had a look at this today and came up with a couple of patches
-to fix it, I don't particularly like to have to do what I did
-but I don't think there's any other choice. That's because the
-rb tree locking is under significant contention and changing
-this back to use the write lock will adversely affect that.
+It might be a bit confusing with me mentioned in the third person and
+then also author, and it's really mostly your patch, so reported-by is
+fine with me. But it's up to you.
 
-But unless I can find out more about the anomalous kernel test
-robot result I can't do anything!
+> Comments? Can you find something else wrong here, or some other fixup to do?
 
-Providing a job.yaml to reproduce it with the hardware specification
-of the lkp machine it was run on and no guidelines on what that test
-does and what the test needs so it can actually be reproduced isn't
-that useful.
+No, I think it's ok. I took a look at the disassembly and it looks fine.
+There's an extra push/pop of %r14 [that's where gcc computes mode>>3,
+then CSE allows it to do cmovne %r14d,%ebx after in_group_p), so the
+owner case gets slightly penalized. I think/hope the savings from
+avoiding the in_group_p should compensate for that - any absolute path
+open() by non-root saves at least two in_group_p. YMMV.
 
-Ian
-
+Rasmus
