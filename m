@@ -2,133 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8431F1D90
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86761F1DC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 18:50:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbgFHQkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 12:40:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730523AbgFHQkt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 12:40:49 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 793152053B;
-        Mon,  8 Jun 2020 16:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591634447;
-        bh=bdHQSYuFCQC9U8rBWpgGyCgRgsDbTZv8KmlSKZVp9M4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w+sVVnQudLA+5zW4IXXj+kVIZ1M97tk/BQIyt/Ris+5A2cXcXgb9IxJSj5GjzTUPJ
-         8EGhbVtTb+DtGhaxZThtxgeAx6JbOX4JMtU+1WJgV5szji0WxYEsYJW/UMj5Yf+yEf
-         R2rK7vJLY6hjF96mta7pLZe3iL9IsxYe2RTROw6w=
-Date:   Mon, 8 Jun 2020 18:40:45 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200608164045.GC425601@kroah.com>
-References: <20200329005528.xeKtdz2A0%akpm@linux-foundation.org>
- <13fb3ab7-9ab1-b25f-52f2-40a6ca5655e1@i-love.sakura.ne.jp>
- <202006051903.C44988B@keescook>
- <875zc4c86z.fsf_-_@x220.int.ebiederm.org>
- <20200606201956.rvfanoqkevjcptfl@ast-mbp>
- <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
- <20200607014935.vhd3scr4qmawq7no@ast-mbp>
- <CAHk-=wiUjZV5VmdqUOGjpNMmobGQKyZpaa=MuJ-5XM3Da86zBg@mail.gmail.com>
- <20200608162027.iyaqtnhrjtp3vos5@ast-mbp.dhcp.thefacebook.com>
+        id S1730644AbgFHQup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 12:50:45 -0400
+Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:38998 "EHLO
+        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730600AbgFHQun (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 12:50:43 -0400
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id E83A1C4A9A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 17:50:41 +0100 (IST)
+Received: (qmail 26177 invoked from network); 8 Jun 2020 16:50:41 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jun 2020 16:50:41 -0000
+Date:   Mon, 8 Jun 2020 17:50:40 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
+ there is no watcher
+Message-ID: <20200608165040.GI3127@techsingularity.net>
+References: <20200608140557.GG3127@techsingularity.net>
+ <20200608151943.GA861@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20200608162027.iyaqtnhrjtp3vos5@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20200608151943.GA861@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 09:20:27AM -0700, Alexei Starovoitov wrote:
-> On Sat, Jun 06, 2020 at 07:19:56PM -0700, Linus Torvalds wrote:
-> > On Sat, Jun 6, 2020 at 6:49 PM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >>
-> > > I'm not aware of execve issues. I don't remember being cc-ed on them.
-> > > To me this 'lets remove everything' patch comes out of nowhere with
-> > > a link to three month old patch as a justification.
+On Mon, Jun 08, 2020 at 05:19:43PM +0200, Jan Kara wrote:
+> > This is showing that the latencies are improved by roughly 2-9%. The
+> > variability is not shown but some of these results are within the noise
+> > as this workload heavily overloads the machine. That said, the system CPU
+> > usage is reduced by quite a bit so it makes sense to avoid the overhead
+> > even if it is a bit tricky to detect at times. A perf profile of just 1
+> > group of tasks showed that 5.14% of samples taken were in either fsnotify()
+> > or fsnotify_parent(). With the patch, 2.8% of samples were in fsnotify,
+> > mostly function entry and the initial check for watchers.  The check for
+> > watchers is complicated enough that inlining it may be controversial.
 > > 
-> > Well, it's out of nowhere as far as bpf is concerned, but we've had a
-> > fair amount of discussions about execve cleanups (and a fair amount of
-> > work too, not just discussion) lately
-> > 
-> > So it comes out of "execve is rather grotty", and trying to make it
-> > simpler have fewer special cases.
-> > 
-> > > So far we had two attempts at converting netfilter rules to bpf. Both ended up
-> > > with user space implementation and short cuts.
-> > 
-> > So I have a question: are we convinced that doing this "netfilter
-> > conversion" in user space is required at all?
-> > 
-> > I realize that yes, running clang is not something we'd want to do in
-> > kernel space, that's not what I'm asking.
-> > 
-> > But how much might be doable at kernel compile time (run clang to
-> > generate bpf statically when building the kernel) together with some
-> > simplistic run-time parameterized JITting for the table details that
-> > the kernel could do on its own without a real compiler?
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 > 
-> Right. There is no room for large user space application like clang
-> in vmlinux. The idea for umh was to stay small and self contained.
-> Its advantage vs kernel module is to execute with user privs
-> and use normal syscalls to drive kernel instead of export_symbol apis.
+> Thanks for the patch! I have to tell I'm surprised this small reordering
+> helps so much. For pipe inode we will bail on:
 > 
-> There are two things in this discussion. bpfilter that intercepting
-> netfilter sockopt and elf file embedded into vmlinux that executes
-> as user process.
-> The pro/con of bpfilter approach is hard to argue now because
-> bpfilter itself didn't materialize yet. I'm fine with removal of that part
-> from the kernel, but I'm still arguing that 'embed elf into vmlinux'
-> is necessary, useful and there is no alternative.
-> There are builtin kernel modules. 'elf in vmlinux' is similar to that.
-> The primary use case is bpf driven features like bpf_lsm.
-> bpf_lsm needs to load many different bpf programs, create bpf maps, populate
-> them, attach to lsm hooks to make the whole thing ready. That initialization of
-> bpf_lsm is currently done after everything booted, but folks want it to be
-> active much early. Like other LSMs.
-> Take android for example. It can certify vmlinux, but not boot fs image.
+>        if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+>            (!mnt || !mnt->mnt_fsnotify_marks))
+>                return 0;
+> 
+> So what we save with the reordering is sb->s_fsnotify_mask and
+> mnt->mnt_fsnotify_mask fetch but that should be the same cacheline as
+> sb->s_fsnotify_marks and mnt->mnt_fsnotify_marks, respectively.
 
-Huh?  dm-verity does this for the whole "boot fs partition" already,
-right?  Or one of the "dm-" modules...
+It is likely that the contribution of that change is marginal relative
+to the fsnotify_parent() call. I'll know by tomorrow morning at the latest.
 
-> vmlinux needs to apply security policy via bpf_lsm during the boot.
-> In such case 'embedded elf in vmlinux' would start early, do its thing
-> via bpf syscall and exit. Unlike bpfilter approach it won't stay running.
-> Its job is to setup all bpf things and quit.
-> Theoretically we can do it as proper kernel module, but then it would mean huge
-> refactoring of all bpf syscall commands to be accessible from the kernel module.
-> It's simpler to embed elf into vmlinux and run it as user process doing normal
-> syscalls. I can imagine that in other cases this elf executable would keep
-> running after setup.
-> It doesn't have to be bpf related. Folks thought they can do usb drivers
-> running in user space and ready at boot. 'elf in vmlinux' would work as well.
+> We also
+> save a function call of fsnotify_parent() but I would think that is very
+> cheap (compared to the whole write path) as well.
+> 
 
-I still want to work on the "usb drivers in userspace" like this, it's
-on my TODO for this year.  But don't let that "sometime in the future
-wish" keep this code around if no one is currently using it.
+To be fair, it is cheap but with this particular workload, we call
+vfs_write() a *lot* and the path is not that long so it builds up to 5%
+of samples overall. Given that these were anonymous pipes, it surprised
+me to see fsnotify at all which is why I took a closer look.
 
-thanks,
+> The patch is simple enough so I have no problem merging it but I'm just
+> surprised by the results... Hum, maybe the structure randomization is used
+> in the builds and so e.g. sb->s_fsnotify_mask and sb->s_fsnotify_marks
+> don't end up in the same cacheline? But I don't think we enable that in
+> SUSE builds?
+> 
 
-greg k-h
+Correct, GCC_PLUGIN_RANDSTRUCT was not set.
+
+-- 
+Mel Gorman
+SUSE Labs
