@@ -2,117 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1131F1E74
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 19:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 249BB1F1EA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 20:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbgFHRqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 13:46:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbgFHRqI (ORCPT
+        id S1729939AbgFHSBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 14:01:35 -0400
+Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:40245 "EHLO
+        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729550AbgFHSBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 13:46:08 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5C9C08C5C2;
-        Mon,  8 Jun 2020 10:46:08 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id e11so12517551ilr.4;
-        Mon, 08 Jun 2020 10:46:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=flU8txg+glWIi8fulPUwPzIPdeohInHSXaY33/9ThCw=;
-        b=oWxGYT8A0b3THLWnp6+WNhUYr5lhxnC0iCsnVEWaHvL0MuzTTNd7uoI/JQzVbB1TSt
-         0ivolbkn3faqqGPZHyCRpx+F3rnZwRJKcGGzdPzP3B/dLRRfcGIeiE3yLVe4WWgS0f4x
-         Spv43/gjVHiZ7a2nLepfhlEJcDtFgUNOLiqDP84IjLvFhmBgO66qumLi3Rd0YLjC5Twt
-         aIp95j+zb6wLr5zmts6GLFSyb2dEoWOhdikR1Lx73R3x5VkxGG3ieVHoHC0HfqGV/+PL
-         /93E+q1WoTkfo4qyrUc8W3TDduY5TGBgEkDP5eZQSG785x9l3vlc7xFOlcWXUbZWS84K
-         O+vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=flU8txg+glWIi8fulPUwPzIPdeohInHSXaY33/9ThCw=;
-        b=byVjvYXHMSuNwz8TO7drOW7Pjkk/jn3ipWLfzO/x0Y+sPo8GTjF48H0y6UONlKmGFy
-         obTyMyg8v65BnlpQcjK+RA5HfKTfhnLjfVsStZC3Wbto3iOHaVh4Zhpyy4S1Bwlf+Onb
-         AJ4m4oNKM2JbrpsbwcB2Sk54DmQAvNhro12Db/WNAx9c/r7NEpyNTmWZgTIZCIgS338f
-         9dTP40Gs7iAN0AjUb4Pyaab3Rpz3Y37cq4QDi4vwryeDHXbhobJlNTnbvRZwo8/zDyQu
-         QYNYBu2sHgnJq6XK90oLWG2g5T1MqJgdQ2np8nMdrl3lsmEUy6qmt4DlHFRQYPPvqQvZ
-         bqnw==
-X-Gm-Message-State: AOAM533riWRsaMq9EftJuQMkr/bqH9qe9h7EQba+RYoyUlmPY2w7Kuxg
-        pWgXmhdNsBgpbL5mAQMJZSisokU/smPEryKtbjUtA8Gh
-X-Google-Smtp-Source: ABdhPJyfKtn7HoqtSpLNxQ7xQVqbp2EsASalnYA0qlI3rr8yKbjRc9BLAO+xaARmqQ/10tZ4f1u2dkSPjpVsx1Burgs=
-X-Received: by 2002:a92:1b86:: with SMTP id f6mr23607749ill.9.1591638367400;
- Mon, 08 Jun 2020 10:46:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200608140557.GG3127@techsingularity.net> <20200608151943.GA861@quack2.suse.cz>
- <20200608165040.GI3127@techsingularity.net>
-In-Reply-To: <20200608165040.GI3127@techsingularity.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 8 Jun 2020 20:45:56 +0300
-Message-ID: <CAOQ4uxg2BKuRCfn7BH4FYnvrp_2rsgfgJ05pjjGOarx4C3E9Mw@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
- there is no watcher
-To:     Mel Gorman <mgorman@techsingularity.net>
+        Mon, 8 Jun 2020 14:01:34 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id EF700C4AC4
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 19:01:31 +0100 (IST)
+Received: (qmail 19019 invoked from network); 8 Jun 2020 18:01:31 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jun 2020 18:01:31 -0000
+Date:   Mon, 8 Jun 2020 19:01:30 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Jan Kara <jack@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
+ there is no watcher
+Message-ID: <20200608180130.GJ3127@techsingularity.net>
+References: <20200608140557.GG3127@techsingularity.net>
+ <CAOQ4uxhb1p5_rO9VjNb6assCczwQRx3xdAOXZ9S=mOA1g-0JVg@mail.gmail.com>
+ <20200608160614.GH3127@techsingularity.net>
+ <CAOQ4uxh=Z92ppBQbRJyQqC61k944_7qG1mYqZgGC2tU7YAH7Kw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxh=Z92ppBQbRJyQqC61k944_7qG1mYqZgGC2tU7YAH7Kw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 8, 2020 at 7:50 PM Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> On Mon, Jun 08, 2020 at 05:19:43PM +0200, Jan Kara wrote:
-> > > This is showing that the latencies are improved by roughly 2-9%. The
-> > > variability is not shown but some of these results are within the noise
-> > > as this workload heavily overloads the machine. That said, the system CPU
-> > > usage is reduced by quite a bit so it makes sense to avoid the overhead
-> > > even if it is a bit tricky to detect at times. A perf profile of just 1
-> > > group of tasks showed that 5.14% of samples taken were in either fsnotify()
-> > > or fsnotify_parent(). With the patch, 2.8% of samples were in fsnotify,
-> > > mostly function entry and the initial check for watchers.  The check for
-> > > watchers is complicated enough that inlining it may be controversial.
+On Mon, Jun 08, 2020 at 07:26:10PM +0300, Amir Goldstein wrote:
+> > > What this work does essentially is two things:
+> > > 1. Call backend once instead of twice when both inode and parent are
+> > >     watching.
+> > > 2. Snapshot name and parent inode to pass to backend not only when
+> > >     parent is watching, but also when an sb/mnt mark exists which
+> > >     requests to get file names with events.
 > > >
-> > > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> > > Compared to the existing implementation of fsnotify_parent(),
+> > > my code needs to also test bits in inode->i_fsnotify_mask,
+> > > inode->i_sb->s_fsnotify_mask and mnt->mnt_fsnotify_mask
+> > > before the fast path can be taken.
+> > > So its back to square one w.r.t your optimizations.
+> > >
 > >
-> > Thanks for the patch! I have to tell I'm surprised this small reordering
-> > helps so much. For pipe inode we will bail on:
+> > Seems fair but it may be worth noting that the changes appear to be
+> > optimising the case where there are watchers. The case where there are
+> > no watchers at all is also interesting and probably a lot more common. I
+> 
+> My changes are not optimizations. They are for adding functionality.
+> Surely, that shouldn't come at a cost for the common case.
+> 
+
+My bad. I interpreted the folding of fsnotify_parent calling fsnotify to
+be a potential optimisation particularly if it bailed earlier (which it
+doesn't do but maybe it could).
+
+> > didn't look too closely at your series as I'm not familiar with fsnotify
+> > in general. However, at a glance it looks like fsnotify_parent() executes
+> > a substantial amount of code even if there are no watchers but I could
+> > be wrong.
 > >
-> >        if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
-> >            (!mnt || !mnt->mnt_fsnotify_marks))
-> >                return 0;
-> >
-> > So what we save with the reordering is sb->s_fsnotify_mask and
-> > mnt->mnt_fsnotify_mask fetch but that should be the same cacheline as
-> > sb->s_fsnotify_marks and mnt->mnt_fsnotify_marks, respectively.
->
-> It is likely that the contribution of that change is marginal relative
-> to the fsnotify_parent() call. I'll know by tomorrow morning at the latest.
->
-> > We also
-> > save a function call of fsnotify_parent() but I would think that is very
-> > cheap (compared to the whole write path) as well.
-> >
->
-> To be fair, it is cheap but with this particular workload, we call
-> vfs_write() a *lot* and the path is not that long so it builds up to 5%
-> of samples overall. Given that these were anonymous pipes, it surprised
-> me to see fsnotify at all which is why I took a closer look.
->
+> 
+> I don't about substantial, I would say it is on par with the amount of
+> code that you tries to optimize out of fsnotify().
+> 
+> Before bailing out with DCACHE_FSNOTIFY_PARENT_WATCHED
+> test, it also references d_inode->i_sb,  real_mount(path->mnt)
+> and fetches all their ->x_fsnotify_mask fields.
+> 
+> I changed the call pattern from open/modify/... hooks from:
+> fsnotify_parent(...);
+> fsnotify(...);
+> 
+> to:
+> fsnotify_parent(...); /* which calls fsnotify() */
+> 
+> So the NULL marks optimization could be done in beginning of
+> fsnotify_parent() and it will be just as effective as it is in fsnotify().
+> 
 
-I should note that after:
-7c49b8616460 fs/notify: optimize inotify/fsnotify code for unwatched files
-Which speaks of a similar workload,
-the code looked quite similar to your optimization.
+Something like that may be required because
 
-It was:
-60f7ed8c7c4d fsnotify: send path type events to group with super block marks
+                              5.7.0                  5.7.0                  5.7.0                  5.7.0
+                            vanilla      fastfsnotify-v1r1      fastfsnotify-v2r1          amir-20200608
+Amean     1       0.4837 (   0.00%)      0.4630 *   4.27%*      0.4597 *   4.96%*      0.4967 *  -2.69%*
+Amean     3       1.5447 (   0.00%)      1.4557 (   5.76%)      1.5310 (   0.88%)      1.6587 *  -7.38%*
+Amean     5       2.6037 (   0.00%)      2.4363 (   6.43%)      2.4237 (   6.91%)      2.6400 (  -1.40%)
+Amean     7       3.5987 (   0.00%)      3.4757 (   3.42%)      3.6543 (  -1.55%)      3.9040 *  -8.48%*
+Amean     12      5.8267 (   0.00%)      5.6983 (   2.20%)      5.5903 (   4.06%)      6.2593 (  -7.43%)
+Amean     18      8.4400 (   0.00%)      8.1327 (   3.64%)      7.7150 *   8.59%*      8.9940 (  -6.56%)
+Amean     24     11.0187 (   0.00%)     10.0290 *   8.98%*      9.8977 *  10.17%*     11.7247 *  -6.41%*
+Amean     30     13.1013 (   0.00%)     12.8510 (   1.91%)     12.2087 *   6.81%*     14.0290 *  -7.08%*
+Amean     32     13.9190 (   0.00%)     13.2410 (   4.87%)     13.2900 (   4.52%)     14.7140 *  -5.71%*
 
-That started accessing ->x_fsnotify_mask before ->x_fsnotify_marks,
-although I still find it hard to believe that this makes a real difference.
+vanilla and fastnotify-v1r1 are the same. fastfsnotify-v2r1 is just the
+fsnotify_parent() change which is mostly worse and may indicate that the
+first patch was reasonable. amir-20200608 is your branch as of today and
+it appears to introduce a substantial regression albeit in an extreme case
+where fsnotify overhead is visible. The regressions are mostly larger
+than noise with the caveat it may be machine specific given that the
+machine is overloaded. I accept that adding extra functional to fsnotify
+may be desirable but ideally it would not hurt the case where there are
+no watchers at all.
 
-Thanks,
-Amir.
+So what's the right way forward? The patch as-is even though the fsnotify()
+change itself may be marginal, a patch that just inlines the fast path
+of fsnotify_parent or wait for the additional functionality and try and
+address the overhead on top?
+
+-- 
+Mel Gorman
+SUSE Labs
