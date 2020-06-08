@@ -2,35 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3309D1F2E80
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E81B81F2E3C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbgFIAmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 20:42:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60062 "EHLO mail.kernel.org"
+        id S1730025AbgFIAkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 20:40:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729123AbgFHXMa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:12:30 -0400
+        id S1729239AbgFHXNK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:13:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EEDD20B80;
-        Mon,  8 Jun 2020 23:12:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D05220E65;
+        Mon,  8 Jun 2020 23:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657950;
-        bh=J0Cr1ClTzawFS2xo1kfwDnsGciGqVo6rmgk9gsoD7eU=;
+        s=default; t=1591657988;
+        bh=3aQn8lWSx0gzufLB59ZzKTddB/fgb3P21/cKvHsdEB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRNY/rGbOGBaK6xiMpny1S5Y4j8Vx08/IA+B5GRMB6wXBED/b0nAvHbnYSeJmmvzB
-         XJdv9tv+UXng2CVZJJvcmtrveaQfmFIHGZVrcwIbHJycaIWdQU9UlMt97ymdUcBrue
-         ylWCy4VNB80nyslWoDRDITEaCwvR5zcpe1rc8fo0=
+        b=AJqski512j80Kt6Ev10f430j2yptYiNXnC0B2RmJWwe3aAL260DzXP7loNO4AK3kw
+         02NbTWfzSBfIZDHE4hVM7GdvDh+T60B7Ir73m6+giF9iU5tq/4VyFoyNw76J5zXRlg
+         QhRVg+Qjp51PpVj/9XRhSM9B08vMrCNN1BBD9uTk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Rachel Sibley <rasibley@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 015/606] gcc-10 warnings: fix low-hanging fruit
-Date:   Mon,  8 Jun 2020 19:02:20 -0400
-Message-Id: <20200608231211.3363633-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 047/606] fanotify: fix merging marks masks with FAN_ONDIR
+Date:   Mon,  8 Jun 2020 19:02:52 -0400
+Message-Id: <20200608231211.3363633-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -43,68 +44,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 9d82973e032e246ff5663c9805fbb5407ae932e3 upstream.
+commit 55bf882c7f13dda8bbe624040c6d5b4fbb812d16 upstream.
 
-Due to a bug-report that was compiler-dependent, I updated one of my
-machines to gcc-10.  That shows a lot of new warnings.  Happily they
-seem to be mostly the valid kind, but it's going to cause a round of
-churn for getting rid of them..
+Change the logic of FAN_ONDIR in two ways that are similar to the logic
+of FAN_EVENT_ON_CHILD, that was fixed in commit 54a307ba8d3c ("fanotify:
+fix logic of events on child"):
 
-This is the really low-hanging fruit of removing a couple of zero-sized
-arrays in some core code.  We have had a round of these patches before,
-and we'll have many more coming, and there is nothing special about
-these except that they were particularly trivial, and triggered more
-warnings than most.
+1. The flag is meaningless in ignore mask
+2. The flag refers only to events in the mask of the mark where it is set
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This is what the fanotify_mark.2 man page says about FAN_ONDIR:
+"Without this flag, only events for files are created."  It doesn't
+say anything about setting this flag in ignore mask to stop getting
+events on directories nor can I think of any setup where this capability
+would be useful.
+
+Currently, when marks masks are merged, the FAN_ONDIR flag set in one
+mark affects the events that are set in another mark's mask and this
+behavior causes unexpected results.  For example, a user adds a mark on a
+directory with mask FAN_ATTRIB | FAN_ONDIR and a mount mark with mask
+FAN_OPEN (without FAN_ONDIR).  An opendir() of that directory (which is
+inside that mount) generates a FAN_OPEN event even though neither of the
+marks requested to get open events on directories.
+
+Link: https://lore.kernel.org/r/20200319151022.31456-10-amir73il@gmail.com
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Cc: Rachel Sibley <rasibley@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/fs.h  | 2 +-
- include/linux/tty.h | 2 +-
- scripts/kallsyms.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/notify/fanotify/fanotify.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index abedbffe2c9e..872ee2131589 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -978,7 +978,7 @@ struct file_handle {
- 	__u32 handle_bytes;
- 	int handle_type;
- 	/* file identifier */
--	unsigned char f_handle[0];
-+	unsigned char f_handle[];
- };
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index f5d30573f4a9..deb13f0a0f7d 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -171,6 +171,13 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+ 			continue;
+ 		mark = iter_info->marks[type];
++		/*
++		 * If the event is on dir and this mark doesn't care about
++		 * events on dir, don't send it!
++		 */
++		if (event_mask & FS_ISDIR && !(mark->mask & FS_ISDIR))
++			continue;
++
+ 		/*
+ 		 * If the event is for a child and this mark doesn't care about
+ 		 * events on a child, don't send it!
+@@ -203,10 +210,6 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 		user_mask &= ~FAN_ONDIR;
+ 	}
  
- static inline struct file *get_file(struct file *f)
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index bd5fe0e907e8..a99e9b8e4e31 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -66,7 +66,7 @@ struct tty_buffer {
- 	int read;
- 	int flags;
- 	/* Data points here */
--	unsigned long data[0];
-+	unsigned long data[];
- };
+-	if (event_mask & FS_ISDIR &&
+-	    !(marks_mask & FS_ISDIR & ~marks_ignored_mask))
+-		return 0;
+-
+ 	return test_mask & user_mask;
+ }
  
- /* Values for .flags field of tty_buffer */
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 3e8dea6e0a95..6dc3078649fa 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -34,7 +34,7 @@ struct sym_entry {
- 	unsigned int len;
- 	unsigned int start_pos;
- 	unsigned int percpu_absolute;
--	unsigned char sym[0];
-+	unsigned char sym[];
- };
- 
- struct addr_range {
 -- 
 2.25.1
 
