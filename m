@@ -2,100 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F05851F1A24
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 15:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A221B1F1AB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jun 2020 16:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbgFHNcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 09:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729179AbgFHNcx (ORCPT
+        id S1729553AbgFHOPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 10:15:37 -0400
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:41442 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728988AbgFHOPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 09:32:53 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF981C08C5C2;
-        Mon,  8 Jun 2020 06:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=ObZ22oOgYNGbVd4Cp8pB6DVUyibIVTQNw5PapcI68nk=; b=a5taWeGUX4HtnKc/RAOz5WhgUz
-        q6JBnbH3JTiA0cXFU9kiCQWCXW/ILe82YRWyyJCFX/BccSHPnnjG1RJ6fzG56MfIi0KikIvn0P9nf
-        mSUvR/7yJhmJEjL6YHLbAviatSAnH4qTUW0bZBTaepq+d1h02hdnqQwrHGin2OYMxi/uH2q6I2CFE
-        Bmf2dgwgtuy4ue+pK94M55DxD5NmhDOJiqDCKv4agDJrK2TlRU50paxHDYtrUgdGEJVwJptb7wL36
-        BMBtG7PyeI/lJRa1zCDx0cj4FHW1VWU83+4CkoMg/YVIb/7CHlo624nM17uJ2flQPUeEY+5R/1ZIc
-        7xPFI5/w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jiHtR-0001E9-NY; Mon, 08 Jun 2020 13:32:49 +0000
-Date:   Mon, 8 Jun 2020 06:32:49 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v7 1/8] fs: introduce kernel_pread_file* support
-Message-ID: <20200608133249.GW19604@bombadil.infradead.org>
-References: <20200606050458.17281-1-scott.branden@broadcom.com>
- <20200606050458.17281-2-scott.branden@broadcom.com>
- <20200606155216.GP19604@bombadil.infradead.org>
- <1591621401.4638.59.camel@linux.ibm.com>
- <20200608131630.GV19604@bombadil.infradead.org>
- <1591622526.4638.71.camel@linux.ibm.com>
+        Mon, 8 Jun 2020 10:15:35 -0400
+X-Greylist: delayed 573 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jun 2020 10:15:33 EDT
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 52C71CAB90
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 15:05:59 +0100 (IST)
+Received: (qmail 3392 invoked from network); 8 Jun 2020 14:05:59 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jun 2020 14:05:59 -0000
+Date:   Mon, 8 Jun 2020 15:05:57 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fsnotify: Rearrange fast path to minimise overhead when
+ there is no watcher
+Message-ID: <20200608140557.GG3127@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1591622526.4638.71.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 09:22:06AM -0400, Mimi Zohar wrote:
-> On Mon, 2020-06-08 at 06:16 -0700, Matthew Wilcox wrote:
-> > On Mon, Jun 08, 2020 at 09:03:21AM -0400, Mimi Zohar wrote:
-> > > With this new design of not using a private vmalloc, will the file
-> > > data be accessible prior to the post security hooks?  From an IMA
-> > > perspective, the hooks are used for measuring and/or verifying the
-> > > integrity of the file.
-> > 
-> > File data is already accessible prior to the post security hooks.
-> > Look how kernel_read_file works:
-> > 
-> >         ret = deny_write_access(file);
-> >         ret = security_kernel_read_file(file, id);
-> >                 *buf = vmalloc(i_size);
-> >                 bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
-> >         ret = security_kernel_post_read_file(file, *buf, i_size, id);
-> > 
-> > kernel_read() will read the data into the page cache and then copy it
-> > into the vmalloc'd buffer.  There's nothing here to prevent read accesses
-> > to the file.
-> 
-> The post security hook needs to access to the file data in order to
-> calculate the file hash.  The question is whether prior to returning
-> from kernel_read_file() the caller can access the file data.
+The fsnotify paths are trivial to hit even when there are no watchers and
+they are surprisingly expensive. For example, every successful vfs_write()
+hits fsnotify_modify which calls both fsnotify_parent and fsnotify unless
+FMODE_NONOTIFY is set which is an internal flag invisible to userspace.
+As it stands, fsnotify_parent is a guaranteed functional call even if there
+are no watchers and fsnotify() does a substantial amount of unnecessary
+work before it checks if there are any watchers. A perf profile showed
+that applying mnt->mnt_fsnotify_mask in fnotify() was almost half of the
+total samples taken in that function during a test. This patch rearranges
+the fast paths to reduce the amount of work done when there are no watchers.
 
-Whether you copy the data (as today) or map it (as I'm proposing),
-the data goes into the page cache.  It's up to the security system to
-block access to the page cache until it's been verified.
+The test motivating this was "perf bench sched messaging --pipe". Despite
+the fact the pipes are anonymous, fsnotify is still called a lot and
+the overhead is noticable even though it's completely pointless. It's
+likely the overhead is negligible for real IO so this is an extreme
+example. This is a comparison of hackbench using processes and pipes on
+a 1-socket machine with 8 CPU threads without fanotify watchers.
+
+                              5.7.0                  5.7.0
+                            vanilla      fastfsnotify-v1r1
+Amean     1       0.4837 (   0.00%)      0.4630 *   4.27%*
+Amean     3       1.5447 (   0.00%)      1.4557 (   5.76%)
+Amean     5       2.6037 (   0.00%)      2.4363 (   6.43%)
+Amean     7       3.5987 (   0.00%)      3.4757 (   3.42%)
+Amean     12      5.8267 (   0.00%)      5.6983 (   2.20%)
+Amean     18      8.4400 (   0.00%)      8.1327 (   3.64%)
+Amean     24     11.0187 (   0.00%)     10.0290 *   8.98%*
+Amean     30     13.1013 (   0.00%)     12.8510 (   1.91%)
+Amean     32     13.9190 (   0.00%)     13.2410 (   4.87%)
+
+                       5.7.0       5.7.0
+                     vanilla fastfsnotify-v1r1
+Duration User         157.05      152.79
+Duration System      1279.98     1219.32
+Duration Elapsed      182.81      174.52
+
+This is showing that the latencies are improved by roughly 2-9%. The
+variability is not shown but some of these results are within the noise
+as this workload heavily overloads the machine. That said, the system CPU
+usage is reduced by quite a bit so it makes sense to avoid the overhead
+even if it is a bit tricky to detect at times. A perf profile of just 1
+group of tasks showed that 5.14% of samples taken were in either fsnotify()
+or fsnotify_parent(). With the patch, 2.8% of samples were in fsnotify,
+mostly function entry and the initial check for watchers.  The check for
+watchers is complicated enough that inlining it may be controversial.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ fs/notify/fsnotify.c             | 25 +++++++++++++++----------
+ include/linux/fsnotify.h         | 10 ++++++++++
+ include/linux/fsnotify_backend.h |  4 ++--
+ 3 files changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 72d332ce8e12..de7bbfd973c0 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -143,7 +143,7 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+ }
+ 
+ /* Notify this dentry's parent about a child's events. */
+-int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
++int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 		    int data_type)
+ {
+ 	struct dentry *parent;
+@@ -174,7 +174,7 @@ int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(fsnotify_parent);
++EXPORT_SYMBOL_GPL(__fsnotify_parent);
+ 
+ static int send_to_group(struct inode *to_tell,
+ 			 __u32 mask, const void *data,
+@@ -315,17 +315,12 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+ 	struct fsnotify_iter_info iter_info = {};
+ 	struct super_block *sb = to_tell->i_sb;
+ 	struct mount *mnt = NULL;
+-	__u32 mnt_or_sb_mask = sb->s_fsnotify_mask;
++	__u32 mnt_or_sb_mask;
+ 	int ret = 0;
+-	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
++	__u32 test_mask;
+ 
+-	if (path) {
++	if (path)
+ 		mnt = real_mount(path->mnt);
+-		mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
+-	}
+-	/* An event "on child" is not intended for a mount/sb mark */
+-	if (mask & FS_EVENT_ON_CHILD)
+-		mnt_or_sb_mask = 0;
+ 
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
+@@ -337,11 +332,21 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+ 	if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+ 	    (!mnt || !mnt->mnt_fsnotify_marks))
+ 		return 0;
++
++	/* An event "on child" is not intended for a mount/sb mark */
++	mnt_or_sb_mask = 0;
++	if (!(mask & FS_EVENT_ON_CHILD)) {
++		mnt_or_sb_mask = sb->s_fsnotify_mask;
++		if (path)
++			mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
++	}
++
+ 	/*
+ 	 * if this is a modify event we may need to clear the ignored masks
+ 	 * otherwise return if neither the inode nor the vfsmount/sb care about
+ 	 * this type of event.
+ 	 */
++	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+ 	if (!(mask & FS_MODIFY) &&
+ 	    !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
+ 		return 0;
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 5ab28f6c7d26..508f6bb0b06b 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -44,6 +44,16 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+ 	fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
+ }
+ 
++/* Notify this dentry's parent about a child's events. */
++static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
++				  const void *data, int data_type)
++{
++	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
++		return 0;
++
++	return __fsnotify_parent(dentry, mask, data, data_type);
++}
++
+ /*
+  * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
+  * an event is on a file/dentry.
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index f0c506405b54..1626fa7d10ff 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -379,7 +379,7 @@ struct fsnotify_mark {
+ /* main fsnotify call to send events */
+ extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
+ 		    int data_type, const struct qstr *name, u32 cookie);
+-extern int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
++extern int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 			   int data_type);
+ extern void __fsnotify_inode_delete(struct inode *inode);
+ extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
+@@ -541,7 +541,7 @@ static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
+ 	return 0;
+ }
+ 
+-static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
++static inline int __fsnotify_parent(struct dentry *dentry, __u32 mask,
+ 				  const void *data, int data_type)
+ {
+ 	return 0;
