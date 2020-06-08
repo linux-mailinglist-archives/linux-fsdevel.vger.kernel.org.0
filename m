@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E81B81F2E3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E731F2EDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 02:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730025AbgFIAkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 20:40:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32836 "EHLO mail.kernel.org"
+        id S1729750AbgFIApn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 20:45:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729239AbgFHXNK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:13:10 -0400
+        id S1728975AbgFHXLq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:11:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D05220E65;
-        Mon,  8 Jun 2020 23:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 661652151B;
+        Mon,  8 Jun 2020 23:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657988;
-        bh=3aQn8lWSx0gzufLB59ZzKTddB/fgb3P21/cKvHsdEB4=;
+        s=default; t=1591657906;
+        bh=WoBvXvBT7w5MB1Ci7HGCPSvkE9k4I+qGx8ouhuGbpBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AJqski512j80Kt6Ev10f430j2yptYiNXnC0B2RmJWwe3aAL260DzXP7loNO4AK3kw
-         02NbTWfzSBfIZDHE4hVM7GdvDh+T60B7Ir73m6+giF9iU5tq/4VyFoyNw76J5zXRlg
-         QhRVg+Qjp51PpVj/9XRhSM9B08vMrCNN1BBD9uTk=
+        b=KADOENpzi4cxP4t4Fq7cuHlZ+5+7c1TbQP4G88ziw1qCEC+1L9sJp2GKhvxGgdMQ2
+         l4eA1wsaLnUV3WAsW4j5Cgcha+p0byqn6nqlFFaNd3Q6SH2HHJSuOmk5hNMC+a95ga
+         jKtfn/peoNXyE3+wmbjOHOwWjB2T35S+OQRVoqO4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Rachel Sibley <rasibley@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 047/606] fanotify: fix merging marks masks with FAN_ONDIR
-Date:   Mon,  8 Jun 2020 19:02:52 -0400
-Message-Id: <20200608231211.3363633-47-sashal@kernel.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 258/274] io_uring: fix overflowed reqs cancellation
+Date:   Mon,  8 Jun 2020 19:05:51 -0400
+Message-Id: <20200608230607.3361041-258-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
-References: <20200608231211.3363633-1-sashal@kernel.org>
+In-Reply-To: <20200608230607.3361041-1-sashal@kernel.org>
+References: <20200608230607.3361041-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,69 +43,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-commit 55bf882c7f13dda8bbe624040c6d5b4fbb812d16 upstream.
+[ Upstream commit 7b53d59859bc932b37895d2d37388e7fa29af7a5 ]
 
-Change the logic of FAN_ONDIR in two ways that are similar to the logic
-of FAN_EVENT_ON_CHILD, that was fixed in commit 54a307ba8d3c ("fanotify:
-fix logic of events on child"):
+Overflowed requests in io_uring_cancel_files() should be shed only of
+inflight and overflowed refs. All other left references are owned by
+someone else.
 
-1. The flag is meaningless in ignore mask
-2. The flag refers only to events in the mask of the mark where it is set
+If refcount_sub_and_test() fails, it will go further and put put extra
+ref, don't do that. Also, don't need to do io_wq_cancel_work()
+for overflowed reqs, they will be let go shortly anyway.
 
-This is what the fanotify_mark.2 man page says about FAN_ONDIR:
-"Without this flag, only events for files are created."  It doesn't
-say anything about setting this flag in ignore mask to stop getting
-events on directories nor can I think of any setup where this capability
-would be useful.
-
-Currently, when marks masks are merged, the FAN_ONDIR flag set in one
-mark affects the events that are set in another mark's mask and this
-behavior causes unexpected results.  For example, a user adds a mark on a
-directory with mask FAN_ATTRIB | FAN_ONDIR and a mount mark with mask
-FAN_OPEN (without FAN_ONDIR).  An opendir() of that directory (which is
-inside that mount) generates a FAN_OPEN event even though neither of the
-marks requested to get open events on directories.
-
-Link: https://lore.kernel.org/r/20200319151022.31456-10-amir73il@gmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Cc: Rachel Sibley <rasibley@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/notify/fanotify/fanotify.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/io_uring.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index f5d30573f4a9..deb13f0a0f7d 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -171,6 +171,13 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		if (!fsnotify_iter_should_report_type(iter_info, type))
- 			continue;
- 		mark = iter_info->marks[type];
-+		/*
-+		 * If the event is on dir and this mark doesn't care about
-+		 * events on dir, don't send it!
-+		 */
-+		if (event_mask & FS_ISDIR && !(mark->mask & FS_ISDIR))
-+			continue;
-+
- 		/*
- 		 * If the event is for a child and this mark doesn't care about
- 		 * events on a child, don't send it!
-@@ -203,10 +210,6 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		user_mask &= ~FAN_ONDIR;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index dd90c3fcd4f5..4038ed0a5c39 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7467,10 +7467,11 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 				finish_wait(&ctx->inflight_wait, &wait);
+ 				continue;
+ 			}
++		} else {
++			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
++			io_put_req(cancel_req);
+ 		}
+ 
+-		io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
+-		io_put_req(cancel_req);
+ 		schedule();
+ 		finish_wait(&ctx->inflight_wait, &wait);
  	}
- 
--	if (event_mask & FS_ISDIR &&
--	    !(marks_mask & FS_ISDIR & ~marks_ignored_mask))
--		return 0;
--
- 	return test_mask & user_mask;
- }
- 
 -- 
 2.25.1
 
