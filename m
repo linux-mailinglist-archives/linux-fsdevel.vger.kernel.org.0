@@ -2,134 +2,329 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47D461F4688
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 20:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB60E1F475B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 21:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbgFISpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 14:45:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49944 "EHLO
+        id S1728603AbgFITny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 15:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728400AbgFISpX (ORCPT
+        with ESMTP id S1726848AbgFITnv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 14:45:23 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD89C05BD1E;
-        Tue,  9 Jun 2020 11:45:22 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id h188so13111684lfd.7;
-        Tue, 09 Jun 2020 11:45:22 -0700 (PDT)
+        Tue, 9 Jun 2020 15:43:51 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0738CC05BD1E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jun 2020 12:43:51 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id ne5so1830313pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jun 2020 12:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i3slKnz68qRTQYqlqu1994FSzIGGWBTVPZGv8yJs3pw=;
-        b=ML6YQ4jJb/QFpD8tlkzOor4THQ5URMHQc6txTTzmLBappVOFu3Fa+OdWQIb/8j24Rk
-         dI13GLibsKN+E0P0rVKG37ENqC7EFwukfVYOAkYobmZtX5BvEUvtigeaVCvGPWTPbylf
-         pmppShPfaWtATx966MBrtIwEvz31pPz1XcqRVmQ0QUhpu+o0ihS3hasQHBlh+uK/dAa9
-         8EQ7ofGTbOt4AsKvqPnTfRo/5Pu5c+3E81abKRJUYIUV3zdy1E5v7WJMU4P1UUwFxpIW
-         YbJcBB+Gr11tkLp9eBIlJU0C/q3SObxrTJHxh+hKT5zwa/svQNplBwfQSsAAewTxgWIZ
-         Ktvw==
+         :content-disposition:in-reply-to;
+        bh=YKDRAYFyZDX1iJtgq+nOe6dDVNHusLb2+M7rgUsbsuA=;
+        b=OB0UNLhqrd2lvGP8kICD9vdu5hzwtgTCgQdsPH8Jthhlb5OjbH10hbkTSDtS9Y6Yq9
+         IH/aWtVQZa6caTzYolvet5MBvzTv7KW1n7QSgK2K7waIvCgl8sn3G74fT8VrNWAuDyad
+         3y9gtdX/8HU3qLr/UDOis0i/AVaOUfhOJcOzM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i3slKnz68qRTQYqlqu1994FSzIGGWBTVPZGv8yJs3pw=;
-        b=GYBQW5Sk1kGeIrIT/rbX1JtuTvDpHDas9qjhPxPO/B55QNBQ87t/EUM1mBCq1MHKP1
-         mlM9yU3kgGEs9CMxjnPDcITmapVQAsXj0UquLsSL9e0O2dgyXF/qZumX0xM6/GzICjiJ
-         0RQ1NkVAASw2JKA3wtY1ob4+iPr2FovPybHtOfC3893i+6+rokOtxl3MuqZLjRo56/n2
-         IrA47jpvHRt5u/HJlBSxpqfSgsb/3U5WKY5H7rfSLnPbQAPPJ1InTMooE3Y2uuCCBdVk
-         8KzFfvBiFtq3MVv89OHor3q0R/C4V6uE36WRZrsBB0434NXdCPClyPFeZc8cCroBPV3y
-         Fizg==
-X-Gm-Message-State: AOAM530s2ee1eQ3jcvOGH9w8PynctwKv2XSrOx+dkYoA6vk2HWVFGHrE
-        oALI725PW67YnL8bMDUARXA=
-X-Google-Smtp-Source: ABdhPJxwxkFABLiTt2KrTIcLwoOaAGbHv5L38QkoF51ACI0G15m/iNvaVa1oDM+8DJv+0XS/jcaWoQ==
-X-Received: by 2002:a19:6c4:: with SMTP id 187mr16117916lfg.1.1591728320923;
-        Tue, 09 Jun 2020 11:45:20 -0700 (PDT)
-Received: from grain.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id x23sm5189028lfe.32.2020.06.09.11.45.18
+         :mime-version:content-disposition:in-reply-to;
+        bh=YKDRAYFyZDX1iJtgq+nOe6dDVNHusLb2+M7rgUsbsuA=;
+        b=JS8M2hHB6Nz0uoQFmUAmM3ldblU37DmU6AEMKNPulBjCr1lUjkN0FYUrFDLvFr3zTP
+         IESBRMfcFZ5lUGd2dZqrjmEY1kJ3QgTAC9ma0HzSF9i/sqp4HvSqkJM7QqXtLcRo6WMp
+         NlZ6umF+loxF/UD4JNvyNPgzEo9yr1a9FS5/f+HHiFGuy3dxD/6xeQBU5ilC1a61B2p2
+         judOUFJp9ztfyFecw+IZPVlnTaCAQuQNON5Guv20yH5OkBY6mBNDYw9Ti838D5FYWrJa
+         2PN+WIMyp+ehPz76Opm9qJ5V/QjxijtmtQdEv+Qkz7gybRJuhOnqfDSHKQ/7bdklXHS1
+         8SIA==
+X-Gm-Message-State: AOAM530AMbIRW++8vJhLXiQONfuD0luUbWEjwQC+RGDmahkJ8WWHz7GJ
+        j14Uy9Bc7eMv9ixWCwp8mwsraA==
+X-Google-Smtp-Source: ABdhPJxtk3TJrsb3cn4/u86ecqtQjJyGnypX0YpSUv3MM3RiJjFoBvLKI78ZXrjRKTi6EyRQYt5UNA==
+X-Received: by 2002:a17:90b:46cf:: with SMTP id jx15mr6514637pjb.121.1591731830517;
+        Tue, 09 Jun 2020 12:43:50 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x18sm10637371pfr.106.2020.06.09.12.43.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 11:45:18 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-        id 10BCB1A1EC1; Tue,  9 Jun 2020 21:45:17 +0300 (MSK)
-Date:   Tue, 9 Jun 2020 21:45:17 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Adrian Reber <areber@redhat.com>
+        Tue, 09 Jun 2020 12:43:49 -0700 (PDT)
+Date:   Tue, 9 Jun 2020 12:43:48 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Sargun Dhillon <sargun@sargun.me>
 Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200609184517.GL134822@grain>
-References: <20200603162328.854164-1-areber@redhat.com>
- <20200603162328.854164-2-areber@redhat.com>
+        linux-kernel@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Robert Sesek <rsesek@google.com>,
+        containers@lists.linux-foundation.org,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Daniel Wagner <daniel.wagner@bmw-carit.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        John Fastabend <john.r.fastabend@intel.com>,
+        Tejun Heo <tj@kernel.org>, stable@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Message-ID: <202006091235.930519F5B@keescook>
+References: <20200603011044.7972-1-sargun@sargun.me>
+ <20200603011044.7972-2-sargun@sargun.me>
+ <20200604012452.vh33nufblowuxfed@wittgenstein>
+ <202006031845.F587F85A@keescook>
+ <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
+ <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200603162328.854164-2-areber@redhat.com>
-User-Agent: Mutt/1.14.0 (2020-05-02)
+In-Reply-To: <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
-> This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
-> checkpoint/restore for non-root users.
+On Fri, Jun 05, 2020 at 07:54:36AM +0000, Sargun Dhillon wrote:
+> On Thu, Jun 04, 2020 at 02:52:26PM +0200, Christian Brauner wrote:
+> > On Wed, Jun 03, 2020 at 07:22:57PM -0700, Kees Cook wrote:
+> > > On Thu, Jun 04, 2020 at 03:24:52AM +0200, Christian Brauner wrote:
+> > > > On Tue, Jun 02, 2020 at 06:10:41PM -0700, Sargun Dhillon wrote:
+> > > > > Previously there were two chunks of code where the logic to receive file
+> > > > > descriptors was duplicated in net. The compat version of copying
+> > > > > file descriptors via SCM_RIGHTS did not have logic to update cgroups.
+> > > > > Logic to change the cgroup data was added in:
+> > > > > commit 48a87cc26c13 ("net: netprio: fd passed in SCM_RIGHTS datagram not set correctly")
+> > > > > commit d84295067fc7 ("net: net_cls: fd passed in SCM_RIGHTS datagram not set correctly")
+> > > > > 
+> > > > > This was not copied to the compat path. This commit fixes that, and thus
+> > > > > should be cherry-picked into stable.
+> > > > > 
+> > > > > This introduces a helper (file_receive) which encapsulates the logic for
+> > > > > handling calling security hooks as well as manipulating cgroup information.
+> > > > > This helper can then be used other places in the kernel where file
+> > > > > descriptors are copied between processes
+> > > > > 
+> > > > > I tested cgroup classid setting on both the compat (x32) path, and the
+> > > > > native path to ensure that when moving the file descriptor the classid
+> > > > > is set.
+> > > > > 
+> > > > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> > > > > Suggested-by: Kees Cook <keescook@chromium.org>
+> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > > Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>
+> > > > > Cc: David S. Miller <davem@davemloft.net>
+> > > > > Cc: Jann Horn <jannh@google.com>,
+> > > > > Cc: John Fastabend <john.r.fastabend@intel.com>
+> > > > > Cc: Tejun Heo <tj@kernel.org>
+> > > > > Cc: Tycho Andersen <tycho@tycho.ws>
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Cc: cgroups@vger.kernel.org
+> > > > > Cc: linux-fsdevel@vger.kernel.org
+> > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > ---
+> > > > >  fs/file.c            | 35 +++++++++++++++++++++++++++++++++++
+> > > > >  include/linux/file.h |  1 +
+> > > > >  net/compat.c         | 10 +++++-----
+> > > > >  net/core/scm.c       | 14 ++++----------
+> > > > >  4 files changed, 45 insertions(+), 15 deletions(-)
+> > > > > 
+> > > > 
+> > > > This is all just a remote version of fd_install(), yet it deviates from
+> > > > fd_install()'s semantics and naming. That's not great imho. What about
+> > > > naming this something like:
+> > > > 
+> > > > fd_install_received()
+> > > > 
+> > > > and move the get_file() out of there so it has the same semantics as
+> > > > fd_install(). It seems rather dangerous to have a function like
+> > > > fd_install() that consumes a reference once it returned and another
+> > > > version of this that is basically the same thing but doesn't consume a
+> > > > reference because it takes its own. Seems an invitation for confusion.
+> > > > Does that make sense?
+> > > 
+> > > We have some competing opinions on this, I guess. What I really don't
+> > > like is the copy/pasting of the get_unused_fd_flags() and
+> > > put_unused_fd() needed by (nearly) all the callers. If it's a helper, it
+> > > should help. Specifically, I'd like to see this:
+> > > 
+> > > int file_receive(int fd, unsigned long flags, struct file *file,
+> > > 		 int __user *fdptr)
+> > 
+> > I still fail to see what this whole put_user() handling buys us at all
+> > and why this function needs to be anymore complicated then simply:
+> > 
+> > fd_install_received(int fd, struct file *file)
+> > {
+> > 	security_file_receive(file);
+> >  
+> >  	sock = sock_from_file(fd, &err);
+> >  	if (sock) {
+> >  		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+> >  		sock_update_classid(&sock->sk->sk_cgrp_data);
+> >  	}
+> > 
+> > 	fd_install();
+> > 	return;
+> > }
+> > 
+> > exactly like fd_install() but for received files.
+> > 
+> > For scm you can fail somewhere in the middle of putting any number of
+> > file descriptors so you're left in a state with only a subset of
+> > requested file descriptors installed so it's not really useful there.
+> > And if you manage to install an fd but then fail to put_user() it
+> > userspace can simply check it's fds via proc and has to anyway on any
+> > scm message error. If you fail an scm message userspace better check
+> > their fds.
+> > For seccomp maybe but even there I doubt it and I still maintain that
+> > userspace screwing this up is on them which is how we do this most of
+> > the time. And for pidfd_getfd() this whole put_user() thing doesn't
+> > matter at all.
+> > 
+> > It's much easier and clearer if we simply have a fd_install() -
+> > fd_install_received() parallelism where we follow an established
+> > convention. _But_ if that blocks you from making this generic enough
+> > then at least the replace_fd() vs fd_install() logic seems it shouldn't
+> > be in there. 
+> > 
+> > And the function name really needs to drive home the point that it
+> > installs an fd into the tasks fdtable no matter what version you go
+> > with. file_receive() is really not accurate enough for this at all.
+> > 
+> > > {
+> > > 	struct socket *sock;
+> > > 	int err;
+> > > 
+> > > 	err = security_file_receive(file);
+> > > 	if (err)
+> > > 		return err;
+> > > 
+> > > 	if (fd < 0) {
+> > > 		/* Install new fd. */
+> > > 		int new_fd;
+> > > 
+> > > 		err = get_unused_fd_flags(flags);
+> > > 		if (err < 0)
+> > > 			return err;
+> > > 		new_fd = err;
+> > > 
+> > > 		/* Copy fd to any waiting user memory. */
+> > > 		if (fdptr) {
+> > > 			err = put_user(new_fd, fdptr);
+> > > 			if (err < 0) {
+> > > 				put_unused_fd(new_fd);
+> > > 				return err;
+> > > 			}
+> > > 		}
+> > > 		fd_install(new_fd, get_file(file));
+> > > 		fd = new_fd;
+> > > 	} else {
+> > > 		/* Replace existing fd. */
+> > > 		err = replace_fd(fd, file, flags);
+> > > 		if (err)
+> > > 			return err;
+> > > 	}
+> > > 
+> > > 	/* Bump the cgroup usage counts. */
+> > > 	sock = sock_from_file(fd, &err);
+> > > 	if (sock) {
+> > > 		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+> > > 		sock_update_classid(&sock->sk->sk_cgrp_data);
+> > > 	}
+> > > 
+> > > 	return fd;
+> > > }
+> > > 
+> > > If everyone else *really* prefers keeping the get_unused_fd_flags() /
+> > > put_unused_fd() stuff outside the helper, then I guess I'll give up,
+> > > but I think it is MUCH cleaner this way -- all 4 users trim down lots
+> > > of code duplication.
+> > > 
+> > > -- 
+> > > Kees Cook
+> How about this:
 > 
-> Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
-> asked numerous times if it is possible to checkpoint/restore a process as
-> non-root. The answer usually was: 'almost'.
 > 
-> The main blocker to restore a process as non-root was to control the PID of the
-> restored process. This feature available via the clone3 system call, or via
-> /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
-...
+> static int do_dup2(struct files_struct *files,
+> 	struct file *file, unsigned fd, unsigned flags)
+> __releases(&files->file_lock)
+> {
+> 	struct file *tofree;
+> 	struct fdtable *fdt;
 > 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index d86c0afc8a85..ce02f3a4b2d7 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2189,16 +2189,16 @@ struct map_files_info {
->  };
->  
->  /*
-> - * Only allow CAP_SYS_ADMIN to follow the links, due to concerns about how the
-> - * symlinks may be used to bypass permissions on ancestor directories in the
-> - * path to the file in question.
-> + * Only allow CAP_SYS_ADMIN and CAP_CHECKPOINT_RESTORE to follow the links, due
-> + * to concerns about how the symlinks may be used to bypass permissions on
-> + * ancestor directories in the path to the file in question.
->   */
->  static const char *
->  proc_map_files_get_link(struct dentry *dentry,
->  			struct inode *inode,
->  		        struct delayed_call *done)
->  {
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!(capable(CAP_SYS_ADMIN) || capable(CAP_CHECKPOINT_RESTORE)))
->  		return ERR_PTR(-EPERM);
+> 	...
+> 
+> 	/*
+> 	 * New bit, allowing the file to be null. Doesn't have the same
+> 	 * "sanity check" bits from __alloc_fd
+> 	 */
+> 	if (likely(file))
+> 		get_file(file);
+> 	rcu_assign_pointer(fdt->fd[fd], file);
+> 
+> 	__set_open_fd(fd, fdt);
 
-First of all -- sorry for late reply. You know, looking into this code more
-I think this CAP_SYS_ADMIN is simply wrong: for example I can't even fetch
-links for /proc/self/map_files. Still /proc/$pid/maps (which as well points
-to the files opened) test for ptrace-read permission. I think we need
-ptrace-may-attach test here instead of these capabilities (if I can attach
-to a process I can read any data needed, including the content of the
-mapped files, if only I'm not missing something obvious).
+IIUC, this means we can get the fdt into a state of an open fd with a
+NULL file... is that okay? That feels like something Al might rebel at.
+:)
+
+> 
+> 	...
+> }
+> 
+> /*
+>  * File Receive - Receive a file from another process
+>  *
+>  * Encapsulates the logic to handle receiving a file from another task. It
+>  * does not install the file descriptor. That is delegated to the user. If
+>  * an error occurs that results in the file descriptor not being installed,
+>  * they must put_unused_fd.
+>  *
+>  * fd should be >= 0 if you intend on replacing a file descriptor, or
+>  * alternatively -1 if you want file_receive to allocate an FD for you
+>  *
+>  * Returns the fd number on success.
+>  * Returns negative error code on failure.
+>  *
+>  */
+> int file_receive(int fd, unsigned int flags, struct file *file)
+> {
+> 	int err;
+> 	struct socket *sock;
+> 	struct files_struct *files = current->files;
+> 
+> 	err = security_file_receive(file);
+> 	if (err)
+> 		return err;
+> 
+> 	if (fd >= 0) {
+> 		if (fd >= rlimit(RLIMIT_NOFILE))
+> 			return -EBADF;
+> 
+> 		spin_lock(&files->file_lock);
+> 		err = expand_files(files, fd);
+> 		if (err < 0) {
+> 			goto out_unlock;
+> 		}
+> 
+> 		err = do_dup2(files, NULL, fd, flags);
+> 		if (err)
+> 			return err;
+
+This seems like we're duplicating some checks and missing others -- I
+really think we need to do this using the existing primitives. But I'd
+really like some review or commentary from Al. We can do this a bunch of
+ways, and I'd like to know which way looks best to him. :(
+
+> This way there is:
+> 1. No "put_user" logic in file_receive
+> 2. Minimal (single) branching logic, unless there's something in between
+>    the file_receive and installing the FD, such as put_user.
+> 3. Doesn't implement fd_install, so there's no ambiguity about it being
+>    file_install_received vs. just the receive logic.
+
+I still wonder if we should refactor SCM_RIGHTS to just delay put_user
+failures, which would simplify a bunch. It's a behavior change, but it
+seems from Al and Jann that it just shouldn't matter. (And if it does,
+we'll hear about it.)
+
+-- 
+Kees Cook
