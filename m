@@ -2,130 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 735F81F48DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 23:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A62E11F496B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 00:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbgFIV2X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 17:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46994 "EHLO
+        id S1728515AbgFIWc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 18:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbgFIV2W (ORCPT
+        with ESMTP id S1728402AbgFIWcT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 17:28:22 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A15DC05BD1E;
-        Tue,  9 Jun 2020 14:28:22 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id 9so17298285ljv.5;
-        Tue, 09 Jun 2020 14:28:22 -0700 (PDT)
+        Tue, 9 Jun 2020 18:32:19 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A5EC05BD1E;
+        Tue,  9 Jun 2020 15:32:18 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id bh7so137012plb.11;
+        Tue, 09 Jun 2020 15:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eMUIJCyAqiPErssvu2L4X70mhx2mJmk33ZrJaC7iHl8=;
-        b=ixMuTh3wC52nziHr1AA8Ptym0DwImvA5Gbg9FprvpGpk4XEsPdKEn81JQuZvBQTVV8
-         ZGhial+5eg61qPtzJ2RFiLA8GmjhTNPrp4oeS5qodA1ahgbIpYd1pApRC3PW/DEv+mUb
-         cE8rNh8EBFhv7mlfADNFyobWiuPmrNoxkT9md5V+sPQbxmu7LggVRWQ51GXukJ9CD7NK
-         O58a3IP4RLbmeqkpQ1esMmtTvtU0gaWb9ux8vNBpfTJaB81dNuRt24dLZKBLJaTgIfJY
-         KWAogPnxwJexTyN9V0PzOS+J52niSis2gm6UWfXAuQhYuZ8oFzqbryqfB0Zk1Pnnk5ZU
-         suCw==
+         :content-disposition:in-reply-to;
+        bh=UQ0uUtbshOJy7CrvfJNOaxfAHwLaSDEjhO9A2MXahqI=;
+        b=R0NlH4qTbraRZ5ux0JFfNwXbCeeJf4QNfKGPsdwZclgwygwBpRRgoJ3JMSu9wq4IRr
+         xeDAc3COcAUPgR6CwA+OVVRtJfgoumMUSzJDmHXE59OBK+pFdya0YBk5am49vez/hX34
+         QF0LMqmxttdB/HOrsbIJpkaNW5WCL/WWW2M5OXOlck7fsS13PtD9QAuVJ8O5rNCc/e2d
+         NBugLp+Q0Hd6NTjXQRORAnO8ySS1ghA6slWyKTnmf5PxyXFU6bY3zWdGOnTo/rU3546E
+         SHOpuCq8EQXr48+YmfOSfWZ2lbLF9p9c3VUAbMacm76XlqNzRxdDkt7/Q676GJr/yqzU
+         AgMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eMUIJCyAqiPErssvu2L4X70mhx2mJmk33ZrJaC7iHl8=;
-        b=h2rNrMq6ztkmzJh/ftZ33AkUMPtHneskEuZD7z43VQ6kZY2bbGN6V+yltp8X5v88E3
-         tgIYvS/m7W0RnBe4EovE3dVeMKq5t7MQzbfPVZooJ4ocrxlmxvOeBPKBy1y5PTWZglXQ
-         iedPspw+lhW8cP9KgAGeVYP9wzMmLIRt8MaJl1bXIRA8qOsPpllyaafOyPZqu33y77gr
-         sygRruruvUv2DBql4pJCySMPD4c1W/LTDB72i/eqmj+nYn3nkyVycH+Jwo9deVrIx1pf
-         NYY+N2JSj1KJhrS/vlPGOT+ihhzZ3AgftvaZ2FIj3NRmMkyWvNM5z6gRFqqjH0XQbSlC
-         H4Uw==
-X-Gm-Message-State: AOAM530jGHq8Ct7r+ViYiMBC8aNBedZteXcWlKFR5NVrY3WAUChA+wKX
-        aOhN9iAG68Au52uEwl3Ma8w=
-X-Google-Smtp-Source: ABdhPJyfm1gS5UDR0tbQFtaSDNPx+/jZhgqUkTjRW/RLxOx3piwWnfIEN4ld2nuiQDXw47IHZk86ig==
-X-Received: by 2002:a2e:8601:: with SMTP id a1mr104128lji.255.1591738100422;
-        Tue, 09 Jun 2020 14:28:20 -0700 (PDT)
-Received: from grain.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id q190sm4502784ljb.29.2020.06.09.14.28.19
+         :mime-version:content-disposition:in-reply-to;
+        bh=UQ0uUtbshOJy7CrvfJNOaxfAHwLaSDEjhO9A2MXahqI=;
+        b=Er7GHBBUwF8MCCyjAQprWyKe+94h4mFhCIh/Nwv82JXWcHtEoKJYO3a+JXS6Oakhks
+         gePizCMX052euYrHtQWZgBO9qnY1/ClyvtB3Dag3zQz0nQx9MkUAneuJNQIgR5lqHgro
+         U3ylIU91DWzuR+iwXj9QJLR/t2FWssWnMpqUuI4Pu75hfwFX3jkVcD26Tyv8S6+2yIdi
+         +ZOfVK7D4ruE9r0QBokOgirdSrJSMFSd+RSkO+3iSgqGBFpADZtzoTpNCrwYB/gCGpGo
+         xbYXmbwmh65JQ5kTcLH3XeKcY6IfbBjZb3nsjJSQEGhKPfL5TYzyIOsVbVtWD8hjdILM
+         wG/w==
+X-Gm-Message-State: AOAM532XmF/yIQFClwYi+iYP3kwgHgzul3wp290Ue4hshRrdW7ZpdpPe
+        kgEgBof61VR1O218Sh5OJVQ=
+X-Google-Smtp-Source: ABdhPJxaagPHL6AcUm5W/5bvBwRBZ2ulXu+kFYEllIJJ9U7qfFQ3dOrjWucyHF4CShEvHFJjp/PvtQ==
+X-Received: by 2002:a17:902:aa01:: with SMTP id be1mr467779plb.63.1591741937791;
+        Tue, 09 Jun 2020 15:32:17 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:73f9])
+        by smtp.gmail.com with ESMTPSA id n19sm10867855pfa.216.2020.06.09.15.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 14:28:19 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-        id A77441A1EC1; Wed, 10 Jun 2020 00:28:18 +0300 (MSK)
-Date:   Wed, 10 Jun 2020 00:28:18 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200609212818.GM134822@grain>
-References: <20200603162328.854164-1-areber@redhat.com>
- <20200603162328.854164-2-areber@redhat.com>
- <20200609184517.GL134822@grain>
- <cda72e8402244a85862f95ea84ff9204@EXMBDFT11.ad.twosigma.com>
+        Tue, 09 Jun 2020 15:32:16 -0700 (PDT)
+Date:   Tue, 9 Jun 2020 15:32:14 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200609223214.43db3orsyjczb2dd@ast-mbp.dhcp.thefacebook.com>
+References: <202006051903.C44988B@keescook>
+ <875zc4c86z.fsf_-_@x220.int.ebiederm.org>
+ <20200606201956.rvfanoqkevjcptfl@ast-mbp>
+ <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
+ <20200607014935.vhd3scr4qmawq7no@ast-mbp>
+ <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <af00d341-6046-e187-f5c8-5f57b40f017c@i-love.sakura.ne.jp>
+ <20200609012826.dssh2lbfr6tlhwwa@ast-mbp.dhcp.thefacebook.com>
+ <ddabab93-4660-3a46-8b05-89385e292b75@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cda72e8402244a85862f95ea84ff9204@EXMBDFT11.ad.twosigma.com>
-User-Agent: Mutt/1.14.0 (2020-05-02)
+In-Reply-To: <ddabab93-4660-3a46-8b05-89385e292b75@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 08:09:49PM +0000, Nicolas Viennot wrote:
-> >>  proc_map_files_get_link(struct dentry *dentry,
-> >>  			struct inode *inode,
-> >>  		        struct delayed_call *done)
-> >>  {
-> >> -	if (!capable(CAP_SYS_ADMIN))
-> >> +	if (!(capable(CAP_SYS_ADMIN) || capable(CAP_CHECKPOINT_RESTORE)))
-> >>  		return ERR_PTR(-EPERM);
+On Tue, Jun 09, 2020 at 02:29:09PM +0900, Tetsuo Handa wrote:
+> On 2020/06/09 10:28, Alexei Starovoitov wrote:
+> >> TOMOYO LSM module uses call_usermodehelper() from tomoyo_load_policy() in order to
+> >> load and apply security policy. What is so nice with fork_usermode_blob() compared
+> >> to existing call_usermodehelper(), at the cost of confusing LSM modules by allowing
+> >> file-less execve() request from fork_usermode_blob() ?
+> > 
+> > For the same reason you did commit 0e4ae0e0dec6 ("TOMOYO: Make several options configurable.")
+> > Quoting your words from that commit:
+> > "To be able to start using enforcing mode from the early stage of boot sequence,
+> >  this patch adds support for activating access control without calling external
+> >  policy loader program."
+> > 
 > 
-> > First of all -- sorry for late reply. You know, looking into this code more I think
-> this CAP_SYS_ADMIN is simply wrong: for example I can't even fetch links for /proc/self/map_files.
-> Still /proc/$pid/maps (which as well points to the files opened) test for ptrace-read permission.
-> I think we need ptrace-may-attach test here instead of these capabilities (if I can attach to
-> a process I can read any data needed, including the content of the mapped files, if only
-> I'm not missing something obvious).
+> I can't catch what you mean. That commit is to allow not to call usermode helper.
 > 
+> You can't start a usermode helper which requires access to filesystems (e.g. ELF loaders,
+> shared libraries) before call_usermodehelper() can start a usermode helper which requires
+> access to filesystems. Under such a restricted condition, what is nice with starting a
+> usermode helper? Programs which can be started under such condition will be quite limited.
+> My question is: why you can't use existing call_usermodehelper() (if you need to call
+> a usermode helper) ?
 
-Nikolas, could you please split the text lines next time, I've had to add newlines into reply manually :)
+I think the confusion comes from assumption that usermode blob is a dynamic file that
+needs ld.so, shared libs and rootfs. This mode is supported by the blob loading
+logic, but it's not a primary use case. It's nice to be able to compile
+that blob with -g and be able to 'gdb -p' into it. That works and very
+convenient when it comes to debugging. Compare that to debugging a kernel module!
+It's pretty cool to have vmlinux with kernel module-like feature
+that folks can breakpoint and single step while the kernel is running.
+That's how we've been developing bpfilter. Sadly the other two patches
+(by Davem and Daniel) didn't land:
+https://lore.kernel.org/patchwork/patch/902785/
+https://lore.kernel.org/patchwork/patch/902783/
+and without them bpfilter looks completely useless.
 
-> Currently /proc/pid/map_files/* have exactly the same permission checks as /proc/pid/fd/*, with the exception
-> of the extra CAP_SYS_ADMIN check. The check originated from the following discussions where 3 security issues are discussed:
-> http://lkml.iu.edu/hypermail/linux/kernel/1505.2/02524.html
-> http://lkml.iu.edu/hypermail/linux/kernel/1505.2/04030.html
-> 
-> From what I understand, the extra CAP_SYS_ADMIN comes from the following issues:
-> 1. Being able to open dma-buf / kdbus region (referred in the referenced email as problem #1).
-> I don't fully understand what the dangers are, but perhaps we could do CAP_SYS_ADMIN check
-> only for such dangerous files, as opposed to all files.
-
-As far as I remember we only need to read the content of mmap'ed files and if I've ptrace-attach
-permission we aready can inject own code into a process and read anything we wish. That said we probably
-should fixup this interface like -- test for open mode and if it is read only then ptrace-attach
-should be enough, if it is write mode -- then we require being node's admin instead of just adding
-a new capability here. And thanks a huge for mail reference, I'll take a look once time permit.
+The main mode of bpfilter operation was envisioned as rootfs-less.
+It must work with any init= including busybox. For production the bpfilter
+user mode blob was compiled as static binary with no dependencies.
+So there is no path to point to. It should be ready before pid 1
+will do its first iptables sys_setsockopt. If user reboots the kernel
+with different init= cmdline the bpfilter should still be doing its job.
+Like builtin kernel module.
+Anyway bpfilter is only one of the use cases for 'elf in vmlinux'.
+I think better name would have been 'user space kernel modules'.
