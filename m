@@ -2,79 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62A601F41E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 994BB1F41C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:09:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbgFIRPC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 13:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
+        id S1728444AbgFIRI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 13:08:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbgFIRPC (ORCPT
+        with ESMTP id S1728362AbgFIRI4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 13:15:02 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24B3C05BD1E;
-        Tue,  9 Jun 2020 10:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=UpZXoNnaIyWKzV6Z6O45sLy0hwoaGi/+8KOaNyXYIhk=; b=LryZXbKuN2eGOYk2BNZevWXRQ2
-        Vz1L4QBFGOZ7HACvE4sUMqRernCPHCikllguj+wYJHCu0s5VtY6ngnkJJji5lXq44AdeRsWaq0bN7
-        QSu9A2rvLFuaYkJwrc4JPCvEUVHFFLvWxKhHPacP1AlaZfNW2nByB6c5JGoPwFsz2tdKaSQRYyXNQ
-        WrQUwBlH0Figka6mizQcT9XJzl8VgUmLkERrj6tSlrgFfn4EucxYuPj/qcL/JWrUM8U4KrNqFEcpz
-        Emt78qXrFbIRmZ+neeEhNevfxV/32D04k3HD9YCVuG4lrNOIo63vJGtd9zCcYFq9YgyupkPoKjPB3
-        2SEBcJtg==;
-Received: from 213-225-38-56.nat.highway.a1.net ([213.225.38.56] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jihpy-00083s-FN; Tue, 09 Jun 2020 17:14:58 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH 2/2] sysctl: reject gigantic reads/write to sysctl files
-Date:   Tue,  9 Jun 2020 19:08:19 +0200
-Message-Id: <20200609170819.52353-3-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200609170819.52353-1-hch@lst.de>
-References: <20200609170819.52353-1-hch@lst.de>
+        Tue, 9 Jun 2020 13:08:56 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F5FC05BD1E;
+        Tue,  9 Jun 2020 10:08:56 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id k8so16970584edq.4;
+        Tue, 09 Jun 2020 10:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4p5Irg6Dzn2qLwF5HDdUraLZe46R8G3poyQBaNHtlzs=;
+        b=kNlpBp6u6KVQEvJ4vmJM0+s8WDGqNnE4bKe6zBVx6HH31p4KJOpHoIspUOe4UlWv/q
+         Md1608OMu1hHqQ6MV0jgH6BttxuQ7f75/wW2oZAPWr41bB0SotscqivF0NFngZ3HyPp3
+         f55S0Q5aHP9WiWMFPW+8P/CgLC5S1OkOSX13ZjhAr0ztKHuWFnkVozDpFWHsBtQLO42T
+         qwjkZVJ1iJXFdgkP0tNy1gaKle7IVaY8ADUM8tAgPycpRf0o2+jj5JTTBq+SN2TjI6SX
+         TZacSnO7breOdu/e1yPCbSiF74Ywdi8kie1YA4r4zKQ/KWWJjww9xzBw0UcajZ1ph2C8
+         RV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4p5Irg6Dzn2qLwF5HDdUraLZe46R8G3poyQBaNHtlzs=;
+        b=To63hQ80lFuo2I0la1d9JHs8UUg7kUypMrtJRWihwyMjTZWuVtZGj2mwhscXdTN5Ot
+         JVn3OvFYR64wlR0GouYsMK/B2GB4s5FHIMA8T2PH/z+NgWQRpvxGkl/ZKQzwIOLLz30B
+         bWjZt3y7zgwjQeDSvugrr9JDIey5Z9nP2U9dE6ygwZcWs6DZ7CgXrX4pgMtBVy9/2bVR
+         RWjeurw+A4Xc5HaOd4GH5j+P26J2OTMmWj2eC1YMt6ImuKxNhXJSQLOKtB1sIdXeW3Wf
+         eTx/eati3yIbVzv9nJ7MGMabYpekUa9VZs/7pGZ1bjhvHHdcrhbppI5QAl/wRSLSby7G
+         e7Bg==
+X-Gm-Message-State: AOAM530V2SDe7dY4tQvxjHLQDIBxNc7p93JGldf5EmXaiJJca2x3wjb8
+        e277kiMdFyHKYEGptkWzkOWyjL4yNCO7YgOClkYdvg==
+X-Google-Smtp-Source: ABdhPJxIQpWRQjLFGlHZE6AbU18+SSFFpS2P6+r3lJPt3pUdjEciqDF05PyFD/cJ4DYgDVbiZ4EKc1Lw3JNlF4MA15E=
+X-Received: by 2002:a05:6402:1ca2:: with SMTP id cz2mr26766668edb.15.1591722534934;
+ Tue, 09 Jun 2020 10:08:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <159171918506.3038039.10915051218779105094.stgit@warthog.procyon.org.uk>
+ <159171921360.3038039.10494245358653942664.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159171921360.3038039.10494245358653942664.stgit@warthog.procyon.org.uk>
+From:   Marc Dionne <marc.c.dionne@gmail.com>
+Date:   Tue, 9 Jun 2020 14:08:43 -0300
+Message-ID: <CAB9dFdv_a_EoWOAaULD3fJpmpZdUbquKAFV7=LaZ1udAuDkFEA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] afs: Fix debugging statements with %px to be %p
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of triggering a WARN_ON deep down in the page allocator just
-give up early on allocations that are way larger than the usual sysctl
-values.
+On Tue, Jun 9, 2020 at 1:13 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Fix a couple of %px to be %x in debugging statements.
+>
 
-Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
-Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/proc/proc_sysctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Nothing critical, but as in the patch subject this should be "%px to
+be %p", not %x.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index df2143e05c571e..08c33bd1642dcd 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -564,6 +564,10 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
- 	if (!table->proc_handler)
- 		goto out;
- 
-+	/* don't even try if the size is too large */
-+	if (count > KMALLOC_MAX_SIZE)
-+		return -ENOMEM;
-+
- 	if (write) {
- 		kbuf = memdup_user_nul(ubuf, count);
- 		if (IS_ERR(kbuf)) {
--- 
-2.26.2
-
+Marc
