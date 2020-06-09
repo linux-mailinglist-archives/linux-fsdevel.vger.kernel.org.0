@@ -2,95 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E2D1F4071
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 18:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E2A1F4077
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 18:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbgFIQN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 12:13:59 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39045 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731225AbgFIQNx (ORCPT
+        id S1731255AbgFIQOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 12:14:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53541 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731021AbgFIQOx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 12:13:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591719232;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+NfdDHd048erz6t6tm56S9vVVu/IFfv0ONqlf8UAtGg=;
-        b=PfQZFkGiW2tZC5sP4z0/tICrRx3zmvtOZ5EZ3/WX/CM7PCBYNvxzL/Sxk4exeGax5TlCq7
-        5WKNwc6hVyP2BktD3t8mPRK56dAoCx69gWEKFqITb/NOr3/p8UDOl71DdkQTcVG4GAubIh
-        xJUSdv//qVtzyAZBJknro6gUda2B1vU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-140-5lTf6LqqNgSq2fj980Vfrw-1; Tue, 09 Jun 2020 12:13:49 -0400
-X-MC-Unique: 5lTf6LqqNgSq2fj980Vfrw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E159C107ACF2;
-        Tue,  9 Jun 2020 16:13:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 13DA01001281;
-        Tue,  9 Jun 2020 16:13:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 6/6] afs: Make afs_zap_data() static
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 09 Jun 2020 17:13:47 +0100
-Message-ID: <159171922724.3038039.13172044294369425099.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159171918506.3038039.10915051218779105094.stgit@warthog.procyon.org.uk>
-References: <159171918506.3038039.10915051218779105094.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.22
+        Tue, 9 Jun 2020 12:14:53 -0400
+Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jigtQ-0007qO-Cr; Tue, 09 Jun 2020 16:14:28 +0000
+Date:   Tue, 9 Jun 2020 18:14:27 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Message-ID: <20200609161427.4eoozs3kkgablmaa@wittgenstein>
+References: <20200603162328.854164-1-areber@redhat.com>
+ <20200603162328.854164-2-areber@redhat.com>
+ <20200609034221.GA150921@gmail.com>
+ <20200609074422.burwzfgwgqqysrzh@wittgenstein>
+ <20200609160627.GA163855@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200609160627.GA163855@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make afs_zap_data() static as it's only used in the file in which it is
-defined.
+On Tue, Jun 09, 2020 at 09:06:27AM -0700, Andrei Vagin wrote:
+> On Tue, Jun 09, 2020 at 09:44:22AM +0200, Christian Brauner wrote:
+> > On Mon, Jun 08, 2020 at 08:42:21PM -0700, Andrei Vagin wrote:
+> > > On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
+> > > > This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
+> > > > checkpoint/restore for non-root users.
+> > > > 
+> > > > Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
+> > > > asked numerous times if it is possible to checkpoint/restore a process as
+> > > > non-root. The answer usually was: 'almost'.
+> > > > 
+> > > > The main blocker to restore a process as non-root was to control the PID of the
+> > > > restored process. This feature available via the clone3 system call, or via
+> > > > /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
+> > > > 
+> > > > In the past two years, requests for non-root checkpoint/restore have increased
+> > > > due to the following use cases:
+> > > > * Checkpoint/Restore in an HPC environment in combination with a resource
+> > > >   manager distributing jobs where users are always running as non-root.
+> > > >   There is a desire to provide a way to checkpoint and restore long running
+> > > >   jobs.
+> > > > * Container migration as non-root
+> > > > * We have been in contact with JVM developers who are integrating
+> > > >   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
+> > > >   applications are not meant to be running with CAP_SYS_ADMIN.
+> > > > 
+> > > ...
+> > > > 
+> > > > The introduced capability allows to:
+> > > > * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
+> > > >   for the corresponding PID namespace via ns_last_pid/clone3.
+> > > > * Open files in /proc/pid/map_files when the current user is
+> > > >   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
+> > > >   files that are unreachable via the file system such as deleted files, or memfd
+> > > >   files.
+> > > 
+> > > PTRACE_O_SUSPEND_SECCOMP is needed for C/R and it is protected by
+> > > CAP_SYS_ADMIN too.
+> > 
+> > This is currently capable(CAP_SYS_ADMIN) (init_ns capable) why is it
+> > safe to allow unprivileged users to suspend security policies? That
+> > sounds like a bad idea.
+> 
+> Why do you think so bad about me;). I don't suggest to remove or
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Andrei, nothing could be further from me than to think bad about you!
+You've done way too much excellent work. ;)
 
- fs/afs/inode.c    |    2 +-
- fs/afs/internal.h |    1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+> downgrade this capability check. The patch allows all c/r related
+> operations if the current has CAP_CHECKPOINT_RESTORE.
+> 
+> So in this case the check:
+>      if (!capable(CAP_SYS_ADMIN))
+>              return -EPERM;
+> 
+> will be converted in:
+>      if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
+>              return -EPERM;
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 7dde703df40c..cd0a0060950b 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -538,7 +538,7 @@ struct inode *afs_root_iget(struct super_block *sb, struct key *key)
-  * mark the data attached to an inode as obsolete due to a write on the server
-  * - might also want to ditch all the outstanding writes and dirty pages
-  */
--void afs_zap_data(struct afs_vnode *vnode)
-+static void afs_zap_data(struct afs_vnode *vnode)
- {
- 	_enter("{%llx:%llu}", vnode->fid.vid, vnode->fid.vnode);
- 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 519ffb104616..0c9806ef2a19 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1069,7 +1069,6 @@ extern int afs_ilookup5_test_by_fid(struct inode *, void *);
- extern struct inode *afs_iget_pseudo_dir(struct super_block *, bool);
- extern struct inode *afs_iget(struct afs_operation *, struct afs_vnode_param *);
- extern struct inode *afs_root_iget(struct super_block *, struct key *);
--extern void afs_zap_data(struct afs_vnode *);
- extern bool afs_check_validity(struct afs_vnode *);
- extern int afs_validate(struct afs_vnode *, struct key *);
- extern int afs_getattr(const struct path *, struct kstat *, u32, unsigned int);
+Yeah, I got that but what's the goal here? Isn't it that you want to
+make it safe to install the criu binary with the CAP_CHECKPOINT_RESTORE
+fscap set so that unprivileged users can restore their own processes
+without creating a new user namespace or am I missing something? The
+use-cases in the cover-letter make it sound like that's what this is
+leading up to:
 
+> > > > * Checkpoint/Restore in an HPC environment in combination with a resource
+> > > >   manager distributing jobs where users are always running as non-root.
+> > > >   There is a desire to provide a way to checkpoint and restore long running
+> > > >   jobs.
+> > > > * Container migration as non-root
+> > > > * We have been in contact with JVM developers who are integrating
+> > > >   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
+> > > >   applications are not meant to be running with CAP_SYS_ADMIN.
 
+But maybe I'm just misunderstanding crucial bits (likely (TM)).
+
+Christian
