@@ -2,54 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B631F481E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 22:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3576E1F4833
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 22:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388136AbgFIUal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 16:30:41 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55551 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387991AbgFIUak (ORCPT
+        id S1728480AbgFIUh2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 16:37:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727945AbgFIUhX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 16:30:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591734639;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=NWthi4+vrXEX/1oiVdu5yh/nfH9kWltS19ynUlwFR9Y=;
-        b=e5IPL9QSBtPGlesklqyznOVmIdJc08+mJe2DKcoA93bvHftZ+wfAiYVjsJgXcVDDKiuQKE
-        UFvZFbaiWlkdT9OZ7FgmQs9K7Z2nQdCNtDgfjyPk90U/X7VLvcpD/Ecm8wQNcn65uPuJIl
-        Nerc+ltjaCq9UjnWbPA1MgGqZbvxRXI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-5qSl20efM7ypRXiyD12wPQ-1; Tue, 09 Jun 2020 16:30:37 -0400
-X-MC-Unique: 5qSl20efM7ypRXiyD12wPQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF449835B40;
-        Tue,  9 Jun 2020 20:30:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54969768C1;
-        Tue,  9 Jun 2020 20:30:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, keescook@chromium.org,
-        chengzhihao1@huawei.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: Misc small fixes
+        Tue, 9 Jun 2020 16:37:23 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1ABC08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jun 2020 13:37:22 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id x1so60725ejd.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jun 2020 13:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7ZVlejTC0YuKPGpcteISk746OUPvuY4hgSWC1f7OLtQ=;
+        b=nXo4e1lLm4NTrTzkokAa+id+fdgD1MXyvH4cDPWBQT70BhQJfREqivfXZvDNiAiWWp
+         c2ZgYsbA7T54ZHViJGcdK9qb7pLw/TvBE50mRCbzGyvTHRb6i4uKOatrKuK4p4dbglQ5
+         gHYpv3YUmO16neCN6MlZVyzyaKpZp13cG71oE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7ZVlejTC0YuKPGpcteISk746OUPvuY4hgSWC1f7OLtQ=;
+        b=H6NiH7BWiMfsoThe1WV3pQ5ECHZDcp1EhgobRA7IykUxGKMK+cPbKcsOD7uO5BQQFS
+         xB10bIL5/OtGxSlXmwbYMs3960Cw6bJlxWgrmktZBg4/g2vmp/uuJsyxGdHLucY6gMGc
+         qLuFDt99tE8P3p1cA3JSwvgu7rL3HMfeCsJ4i3N2z2hZgM78DbAPRWBbO7w9zjo1jpYv
+         KgVZjqq8B4hjye6fjOHU9OlInyyElW2gNHHXQ03csYskC5mewnpUj2VzTWwzNqwDIjsO
+         asDU2o/rXa7rU9hYiDMZvZfu+k6BaMorSpn++n5oMMCDY2mgtQu3PhQhVnWAWq5w799H
+         lhUA==
+X-Gm-Message-State: AOAM530pbooytcOR7XVhx7R2/PodE2QzBFpvKfxopSF8Ye84w0ccGe7L
+        PO5mirtnZcbKN65U4zWnVtDbrhYU0LttDA==
+X-Google-Smtp-Source: ABdhPJxpLOFautN81ZbcwIflxRmD4RRnfFtwTTRy8WEhlMS3Jc+pUiOH22RYN5xOgRBrM91Xj7MOhw==
+X-Received: by 2002:a17:906:6156:: with SMTP id p22mr152434ejl.329.1591735041107;
+        Tue, 09 Jun 2020 13:37:21 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id v12sm16508347eda.39.2020.06.09.13.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2020 13:37:20 -0700 (PDT)
+Date:   Tue, 9 Jun 2020 22:37:18 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 5.8
+Message-ID: <20200609203718.GB6171@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3071962.1591734633.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 09 Jun 2020 21:30:33 +0100
-Message-ID: <3071963.1591734633@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -57,58 +61,106 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Linus,
 
-Here's a set of small patches to fix some things, most of them minor.
-Would you prefer I defer and submit it again after -rc1?
+Please pull from:
 
- (1) Fix a memory leak in afs_put_sysnames().
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.8
 
- (2) Fix an oops in AFS file locking.
+There are some changes outside of the overlayfs tree; clone_private_mount()
+was reviewed by Al, the rest are trivial.  No other filesystems are
+affected by these.
 
- (3) Fix new use of BUG().
+Fixes:
 
- (4) Fix debugging statements containing %px.
+ - Resolve mount option conflicts consistently.
 
- (5) Remove afs_zero_fid as it's unused.
+ - Sync before remount R/O.
 
- (6) Make afs_zap_data() static.
+ - Fix file handle encoding corner cases.
 
-David
+ - Fix metacopy related issues.
+
+ - Fix an unintialized return value.
+
+ - Add missing permission checks for underlying layers.
+
+Optimizations:
+
+ - Allow multipe whiteouts to share an inode.
+
+ - Optimize small writes by inheriting SB_NOSEC from upper layer.
+
+ - Do not call ->syncfs() multiple times for sync(2).
+
+ - Do not cache negative lookups on upper layer.
+
+ - Make private internal mounts longterm.
+
+Thanks,
+Miklos
+
 ---
-The following changes since commit aaa2faab4ed8e5fe0111e04d6e168c028fe2987=
-f:
+Amir Goldstein (5):
+      ovl: resolve more conflicting mount options
+      ovl: cleanup non-empty directories in ovl_indexdir_cleanup()
+      ovl: prepare to copy up without workdir
+      ovl: index dir act as work dir
+      ovl: fix out of bounds access warning in ovl_check_fb_len()
 
-  Merge tag 'for-linus-5.8-ofs1' of git://git.kernel.org/pub/scm/linux/ker=
-nel/git/hubcap/linux (2020-06-05 16:44:36 -0700)
+Chengguang Xu (3):
+      ovl: whiteout inode sharing
+      ovl: sync dirty data when remounting to ro mode
+      ovl: drop negative dentry in upper layer
 
-are available in the Git repository at:
+Jeffle Xu (1):
+      ovl: inherit SB_NOSEC flag from upperdir
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-fixes-20200609
+Konstantin Khlebnikov (1):
+      ovl: skip overlayfs superblocks at global sync
 
-for you to fetch changes up to c68421bbad755a280851afff0fb236dd4e53e684:
+Lubos Dolezel (1):
+      ovl: return required buffer size for file handles
 
-  afs: Make afs_zap_data() static (2020-06-09 18:17:14 +0100)
+Miklos Szeredi (10):
+      ovl: pass correct flags for opening real directory
+      ovl: switch to mounter creds in readdir
+      ovl: verify permissions in ovl_path_open()
+      ovl: call secutiry hook in ovl_real_ioctl()
+      ovl: check permission to open real file
+      ovl: add accessor for ofs->upper_mnt
+      ovl: get rid of redundant members in struct ovl_fs
+      ovl: make private mounts longterm
+      ovl: only pass ->ki_flags to ovl_iocb_to_rwf()
+      ovl: make oip->index bool
 
-----------------------------------------------------------------
-AFS fixes
+Vivek Goyal (4):
+      ovl: simplify setting of origin for index lookup
+      ovl: use only uppermetacopy state in ovl_lookup()
+      ovl: initialize OVL_UPPERDATA in ovl_lookup()
+      ovl: fix redirect traversal on metacopy dentries
 
-----------------------------------------------------------------
-David Howells (5):
-      afs: Fix file locking
-      afs: Fix use of BUG()
-      afs: Fix debugging statements with %px to be %p
-      afs: Remove afs_zero_fid as it's not used
-      afs: Make afs_zap_data() static
+Yuxuan Shui (1):
+      ovl: initialize error in ovl_copy_xattr
 
-Zhihao Cheng (1):
-      afs: Fix memory leak in afs_put_sysnames()
+youngjun (1):
+      ovl: remove unnecessary lock check
 
- fs/afs/dir.c       | 2 +-
- fs/afs/flock.c     | 2 +-
- fs/afs/inode.c     | 2 +-
- fs/afs/internal.h  | 2 --
- fs/afs/proc.c      | 1 +
- fs/afs/vl_alias.c  | 5 +++--
- fs/afs/yfsclient.c | 2 --
- 7 files changed, 7 insertions(+), 9 deletions(-)
-
+---
+ Documentation/filesystems/overlayfs.rst |   7 +-
+ Documentation/filesystems/porting.rst   |   7 +
+ fs/namespace.c                          |  16 +++
+ fs/overlayfs/copy_up.c                  |   9 +-
+ fs/overlayfs/dir.c                      |  51 +++++--
+ fs/overlayfs/export.c                   |  24 ++--
+ fs/overlayfs/file.c                     |  28 +++-
+ fs/overlayfs/inode.c                    |  17 +--
+ fs/overlayfs/namei.c                    | 138 ++++++++++--------
+ fs/overlayfs/overlayfs.h                |  11 +-
+ fs/overlayfs/ovl_entry.h                |  10 +-
+ fs/overlayfs/readdir.c                  |  57 ++++++--
+ fs/overlayfs/super.c                    | 243 +++++++++++++++++++++-----------
+ fs/overlayfs/util.c                     |  36 ++++-
+ fs/sync.c                               |   3 +-
+ include/linux/fs.h                      |   2 +
+ include/linux/mount.h                   |   2 +
+ security/security.c                     |   1 +
+ 18 files changed, 440 insertions(+), 222 deletions(-)
