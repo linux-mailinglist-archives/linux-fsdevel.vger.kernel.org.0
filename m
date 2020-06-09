@@ -2,65 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54AC51F424D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 902121F4262
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:33:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731797AbgFIRaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 13:30:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37300 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727837AbgFIRaT (ORCPT
+        id S1729842AbgFIRct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 13:32:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726848AbgFIRct (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 13:30:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d10so10608176pgn.4;
-        Tue, 09 Jun 2020 10:30:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A8DHGMTd1sHPkNgYIyz/0Ui2MJBr+K+YUNJeV5ms+EI=;
-        b=igOUtULtAknXZjK+aFhId66cBEhCE3CGvTmixBp0iMPwrCGonD99peN8q+oBuwoWw7
-         PH3d5WAefviBxWL29Q6m03OQaTHStcig1EUG/ytKg1+pp7hDKycMjZNaYopqiTSnEcSL
-         O790CcktcvXwW9fIur2Ds4jXiM74KQKn06dV4uEur6QHGO3SxOljB0tAv3f8Ijl74XN7
-         MqXYbYlSR1GIuTmVq/4rL3t0gFmU9CZ539e7ibsYuo2s4Ge/cXeO+z576u6pusRch97z
-         orpLvAedPbja2v1mTSlPnhjTOpx+1mv4sjiqKKCP9N/biaUMMUIXZeqWb2QCZK665e7p
-         JwDw==
-X-Gm-Message-State: AOAM533n4a+Bkmh+ne0kOJbdfhbDzZf13aF0TSlA2XBcBtE3pHTy2HRW
-        gNvuS9V0jHIdIc13t8SmpxY=
-X-Google-Smtp-Source: ABdhPJwsI+1paYwGaFzDwlAO14eiQ4fYT9LWvjXVci//0s0p1BVhw2EugH1zomzKfGcgbezrP3ENSA==
-X-Received: by 2002:a62:2cd7:: with SMTP id s206mr18998392pfs.305.1591723819138;
-        Tue, 09 Jun 2020 10:30:19 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id 85sm10545242pfz.145.2020.06.09.10.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 10:30:17 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 630E3403AB; Tue,  9 Jun 2020 17:30:17 +0000 (UTC)
-Date:   Tue, 9 Jun 2020 17:30:17 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: two more fixes for sysctl
-Message-ID: <20200609173017.GQ11244@42.do-not-panic.com>
-References: <20200609170819.52353-1-hch@lst.de>
+        Tue, 9 Jun 2020 13:32:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D0CC05BD1E;
+        Tue,  9 Jun 2020 10:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1CWK56Bk1GHrXr3w3wzon+FcpFohKqu88sAYSOQgEFM=; b=SgB1Sx4bvrGnT6eCMKkEU2oRDe
+        aEDNmi4SqOfNTU2RS6Uo9FTIA80ZIRAVjR4R9xmjvj6jF/lYVsaBAIiV8pU/0krzPgXowjGlqkkQC
+        z7RcZIIbY4PFTJT5Gm3zIMBvI5uCJ8VFmDwCoyH7hIMR+KJW3u6wjzMKQPHSW/7QXkL9i3bmFrxKv
+        wQphVfi3F3EgFov+NqfSD33cizDNsjdBTZanKVDRox1HYJZc4o5BNYVWDpEEwhvZvms3loyYaCwbi
+        wwt8+K970BTHWvvaN9z8Syq+/454isZbXPaz5YULTfJtGYA6hu4jjrDiHELsJiYkjkByTF+Q9vbaF
+        MkIz44FQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jii6k-0004OT-Be; Tue, 09 Jun 2020 17:32:18 +0000
+Date:   Tue, 9 Jun 2020 10:32:18 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
+Message-ID: <20200609173218.GA7968@infradead.org>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-7-mcgrof@kernel.org>
+ <20200609150602.GA7111@infradead.org>
+ <20200609172922.GP11244@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200609170819.52353-1-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200609172922.GP11244@42.do-not-panic.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 07:08:17PM +0200, Christoph Hellwig wrote:
-> Hi Al,
+On Tue, Jun 09, 2020 at 05:29:22PM +0000, Luis Chamberlain wrote:
+> Is scsi-generic is the only unwanted ugly child blktrace has to deal
+> with? For some reason I thought drivers/md/md.c was one but it seems
+> like it is not. Do we have an easy way to search for these? I think
+> this would just affect how we express the comment only.
+
+grep for blk_trace_setup.  For all blk devices that setup comes in
+through the block device ioctl path, and that relies on having a
+struct block_device and queue.  sg on the other hand calls
+blk_trace_setup directly with a NULL bdev argument.
+
+> >  		 */
+> > -		dir = q->sg_debugfs_dir;
+> > +		dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> > +		bt->dir = dir;
 > 
-> two more fixes for the kernel pointers in the sysctl handlers.
+> The other chicken and egg problem to consider at least in the comments
+> is that the debugfs directory for these types of devices *have* an
+> exposed path, but the data structure is rather opaque to the device and
+> even blktrace.  Fortunately given the recent set of changes around the
+> q->blk_trace and clarifications around its use we have made it clear now
+> that so long as hold the q->blk_trace_mutex *and* check q->blk_trace we
+> *should* not race against two separate creations of debugfs directories,
+> so I think this is safe, so long as these indpendent drivers don't end
+> up re-using the same path for some other things later in the future, and
+> since we have control over what goes under debugfsroot block / I think
+> we should be good.
+> 
+> But I think that the concern for race on names may still be worth
+> explaining a bit here.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-
-  Luis
+Feel free to add more comments, but please try to keep them short
+and crisp.  At the some point long comments really distract from what
+is going on.
