@@ -2,125 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E5F1F32A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 05:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B62A1F32F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 06:23:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgFIDm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 23:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbgFIDmZ (ORCPT
+        id S1726449AbgFIEXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 00:23:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38988 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbgFIEX3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 23:42:25 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A932FC03E969;
-        Mon,  8 Jun 2020 20:42:25 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id a127so9457104pfa.12;
-        Mon, 08 Jun 2020 20:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Q4fG1A8p1olZ3q4GtpMLtFQ28rvEW4nZgX1+riXZg/c=;
-        b=mCGeZ0rTTipdKwd5l0gUb0tQ+2m3kPqjwdDI8hHvYuW0w/kRq8YwG88ztOZp4KHOhI
-         f0xaDijiD6EO6HW1cGtbQWPcfITtQ27GWlfZO6+xwO6ZMmCUmSbRt6E8FV1+kPxpxaF9
-         tCjm3A24Y93QquT3oDpmnmS0XZCgAyxnsOilaXpFZTt7gYz7dE9VGDIkHMQhqFUKxYnQ
-         4yQ9Mk3YRWKY0tR8H3zKYImfQq6ZOZHLCnOleK6hJQSl9nj6faq7KxAkceU4EO4uQMXb
-         OmGrUYnnMzDt8EFpmDRwudu94s1PBdJ4WGxqfEvmRI+ZIyB+Hv9uhxD+t8AO8kWBnK22
-         OYsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Q4fG1A8p1olZ3q4GtpMLtFQ28rvEW4nZgX1+riXZg/c=;
-        b=py/G0H5Ko9PbUjDEss/grOCQIWs/xBBIRyMDuWvaVus8Y9wCel5f7wbfpWA1ExmfF+
-         HtgRsc5TcTwqA6PICeYx0L54eR6p5E9Bx2b85eqh4i0vuoEmrBvT5/pB5V0GztZp/bE3
-         ZbRZs+Ii1SqGUgMTVM3hQAA8Byys6tTA6vVnZmfdoaa8Sz8leFiAfQEtLnsn13P3clnH
-         C9X7CCHA44d5DRMET4e+kSlP07muWrFpQWbRxKmEHcdYbGS/F3V8yDHOmsAwk3RFar4d
-         v0g7hIJ7BaQTJfBBafJUHscHnCbZC9+PfT6iOKbwqHKCG/MmHLzo8WqZxDf5BlxLTu0X
-         9XNA==
-X-Gm-Message-State: AOAM5300IhCF3ljWy7up98Gdr5R3gaJvvI9aD6qxHqunlLXlCuPjCRQG
-        x7BQXwZOTQyqJixt6CDR80k=
-X-Google-Smtp-Source: ABdhPJxsYjb/lkYFcMBrxR96yYjEB3OAL2WIlULMxD+m5UZjVDmX2sUc8vhZ0XtBk+bQ7tJaqcRNZg==
-X-Received: by 2002:aa7:9488:: with SMTP id z8mr24736520pfk.157.1591674144940;
-        Mon, 08 Jun 2020 20:42:24 -0700 (PDT)
-Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
-        by smtp.gmail.com with ESMTPSA id s197sm8552880pfc.188.2020.06.08.20.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 20:42:24 -0700 (PDT)
-Date:   Mon, 8 Jun 2020 20:42:21 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200609034221.GA150921@gmail.com>
-References: <20200603162328.854164-1-areber@redhat.com>
- <20200603162328.854164-2-areber@redhat.com>
+        Tue, 9 Jun 2020 00:23:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0594MV6I071489;
+        Tue, 9 Jun 2020 04:23:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=qWSsGo5OhM9pRPhNC5o0nZNffLaCMgdoXoYnWJh39mk=;
+ b=QnC7Id641VRgtRoIoG8pZ5O06CUc6Ga1TlkQE4snQH2qrUStSdRVIcHOM25jSsxa3GX2
+ evuR+eiS1S2Wr6H9FZC30i+rI4V3eMPWws84QX3Zo285/ieo2IeffxnhSBPpjM4GsuYU
+ euqEtI0t3bdkLPckOE1vgIZlui0Z3H977lq2CVtxDAjyUqthP5L0S0h2gTjN/pFitywS
+ T4n5hWQGjumfaP9YnYjPhcJmknD32tRrCl1NZObprByIKj7FqgTbz5HmsovKtqJpjApP
+ NIed0KAH826L3fgGEJe/NLB2psN+yWNKd1mJucj/O2mxX02zlU6Fw4dBekW4cd0Zff/5 hQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 31g3smt8wa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 09 Jun 2020 04:23:23 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0594ILgm180614;
+        Tue, 9 Jun 2020 04:23:22 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 31gn24qm5v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jun 2020 04:23:22 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0594NIbF024475;
+        Tue, 9 Jun 2020 04:23:18 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jun 2020 21:23:18 -0700
+Date:   Mon, 8 Jun 2020 21:23:17 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [ANNOUNCE] xfs-linux: iomap-5.8-merge updated to d4ff3b2ef901
+Message-ID: <20200609042317.GO1334206@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200603162328.854164-2-areber@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9646 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=2 mlxscore=0
+ phishscore=0 adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006090031
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9646 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 cotscore=-2147483648 suspectscore=2
+ spamscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006090032
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
-> This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
-> checkpoint/restore for non-root users.
-> 
-> Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
-> asked numerous times if it is possible to checkpoint/restore a process as
-> non-root. The answer usually was: 'almost'.
-> 
-> The main blocker to restore a process as non-root was to control the PID of the
-> restored process. This feature available via the clone3 system call, or via
-> /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
-> 
-> In the past two years, requests for non-root checkpoint/restore have increased
-> due to the following use cases:
-> * Checkpoint/Restore in an HPC environment in combination with a resource
->   manager distributing jobs where users are always running as non-root.
->   There is a desire to provide a way to checkpoint and restore long running
->   jobs.
-> * Container migration as non-root
-> * We have been in contact with JVM developers who are integrating
->   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
->   applications are not meant to be running with CAP_SYS_ADMIN.
-> 
-...
-> 
-> The introduced capability allows to:
-> * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
->   for the corresponding PID namespace via ns_last_pid/clone3.
-> * Open files in /proc/pid/map_files when the current user is
->   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
->   files that are unreachable via the file system such as deleted files, or memfd
->   files.
+Hi folks,
 
-PTRACE_O_SUSPEND_SECCOMP is needed for C/R and it is protected by
-CAP_SYS_ADMIN too.
+The iomap-5.8-merge branch of the xfs-linux repository at:
 
-Thanks,
-Andrei
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+
+has just been updated.
+
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  Granted, it's just this one bug fix...
+
+The new head of the iomap-5.8-merge branch is commit:
+
+d4ff3b2ef901 iomap: Fix unsharing of an extent >2GB on a 32-bit machine
+
+New Commits:
+
+Matthew Wilcox (Oracle) (1):
+      [d4ff3b2ef901] iomap: Fix unsharing of an extent >2GB on a 32-bit machine
+
+
+Code Diffstat:
+
+ fs/iomap/buffered-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
