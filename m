@@ -2,80 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 343181F38D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 12:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C961F3AC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 14:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbgFIK5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 06:57:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6742 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725996AbgFIK5j (ORCPT
+        id S1728238AbgFIMlI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 08:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726848AbgFIMlH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 06:57:39 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 059AXC6B107616;
-        Tue, 9 Jun 2020 06:57:28 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31j59u82y1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 Jun 2020 06:57:27 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 059AfCqs026468;
-        Tue, 9 Jun 2020 10:57:23 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma01fra.de.ibm.com with ESMTP id 31g2s7tc3v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 Jun 2020 10:57:23 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 059AvLxU23199958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 9 Jun 2020 10:57:21 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 754F6AE057;
-        Tue,  9 Jun 2020 10:57:21 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83455AE051;
-        Tue,  9 Jun 2020 10:57:19 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.37.89])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Jun 2020 10:57:19 +0000 (GMT)
-Subject: Re: [PATCHv5 1/1] ext4: mballoc: Use raw_cpu_ptr instead of
- this_cpu_ptr
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-ext4@vger.kernel.org, tytso@mit.edu
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
-References: <20200602134721.18211-1-riteshh@linux.ibm.com>
- <CGME20200603102422eucas1p109e0d0140e8fc61dc3e57957f2ccf700@eucas1p1.samsung.com>
- <ca794804-7d99-9837-2490-366a2eb97a94@samsung.com>
- <20200603103146.C42D65204F@d06av21.portsmouth.uk.ibm.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Tue, 9 Jun 2020 16:27:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Tue, 9 Jun 2020 08:41:07 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DACC05BD1E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jun 2020 05:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=rcWeTmk1KNP9kPmO9fBgdrwUrtPvboGP7WIdfU2onPM=; b=kSR3oYrTfpvxS6rFGEbdWShPga
+        OU0o9heherZRCuZ4IHo1bj5Fj14MI49bZEmAl2KWPGR6VEyyD1O9coHiFK0lrTOWbGBHO8RtpS4VB
+        Kself4+843YawiBKZTAt0DbUpd0mqHsxN3p4vK3lcMBmljYpzsFNXqiqzjptd4beTlvgwAqcMWxOq
+        NkHpMj+a+7dYxISUvXzWjcwYpjNTHNIf5JtULqvfq4crCerOzyRcy9szA1qhKPIK4XrADIK+yi5vl
+        9IXTFy0L3UH49wQ75vc8v3YnMHyMn7aqDwKchk2TVYL2RMhILO5w/rsOFiAYtcB07dXe+fGvz+OII
+        llrzkFrA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jidYs-0006aM-45
+        for linux-fsdevel@vger.kernel.org; Tue, 09 Jun 2020 12:41:02 +0000
+Date:   Tue, 9 Jun 2020 05:41:02 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Subject: Disentangling address_space and inode
+Message-ID: <20200609124102.GB19604@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200603103146.C42D65204F@d06av21.portsmouth.uk.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200609105719.83455AE051@d06av26.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-09_03:2020-06-09,2020-06-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 mlxscore=0 cotscore=-2147483648 phishscore=0
- mlxlogscore=678 bulkscore=0 suspectscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006090081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch is superseded by
+I have a modest proposal ...
 
-https://patchwork.ozlabs.org/project/linux-ext4/patch/534f275016296996f54ecf65168bb3392b6f653d.1591699601.git.riteshh@linux.ibm.com/
+ struct inode {
+-	struct address_space i_data;
+ }
+
++struct minode {
++	struct inode i;
++	struct address_space m;
++};
+
+ struct address_space {
+-	struct inode *host;
+ }
+
+This saves one pointer per inode, and cuts all the pagecache support
+from inodes which don't need to have a page cache (symlinks, directories,
+pipes, sockets, char devices).
+
+This was born from the annoyance of going from a struct page to a filesystem:
+page->mapping->host->i_sb->s_type
+
+That's four pointer dereferences.  This would bring it down to three:
+i_host(page->mapping)->i_sb->s_type
+
+I could see (eventually) interfaces changing to pass around a
+struct minode *mapping instead of a struct address_space *mapping.  But
+I know mapping->host and inode->i_mapping sometimes have some pretty
+weird relationships and maybe there's a legitimate usage that can't be
+handled by this change.
+
+Every filesystem which does use the page cache would have to be changed
+to use a minode instead of an inode, which is why this proposal is so
+very modest.  But before I start looking into it properly, I thought
+somebody might know why this isn't going to work.
+
+I know about raw devices:
+                file_inode(filp)->i_mapping =
+                        bdev->bd_inode->i_mapping;
+
+and this seems like it should work for that.  I know about coda:
+                coda_inode->i_mapping = host_inode->i_mapping;
+
+and this seems like it should work there too.
+
+DAX just seems confused:
+        inode->i_mapping = __dax_inode->i_mapping;
+        inode->i_mapping->host = __dax_inode;
+        inode->i_mapping->a_ops = &dev_dax_aops;
+
+GFS2 might need to embed an entire minode instead of just a mapping in its
+glocks and its superblock:
+fs/gfs2/glock.c:                mapping->host = s->s_bdev->bd_inode;
+fs/gfs2/ops_fstype.c:   mapping->host = sb->s_bdev->bd_inode;
+
+NILFS ... I don't understand at all.  It seems to allocate its own
+private address space in nilfs_inode_info instead of using i_data (why?)
+and also allocate more address spaces for metadata inodes.
+fs/nilfs2/page.c:       mapping->host = inode;
+
+So that will need to be understood, but is there a fundamental reason
+this won't work?
+
+Advantages:
+ - Eliminates a pointer dereference when moving from mapping to host
+ - Shrinks all inodes by one pointer
+ - Shrinks inodes used for symlinks, directories, sockets, pipes & char
+   devices by an entire struct address_space.
+
+Disadvantages:
+ - Churn
+ - Seems like it'll grow a few data structures in less common filesystems
+   (but may be important for some users)
