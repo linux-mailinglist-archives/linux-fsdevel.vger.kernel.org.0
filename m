@@ -2,78 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BA5A1F36B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 11:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B921F37E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 12:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgFIJMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 05:12:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47050 "EHLO mail.kernel.org"
+        id S1728633AbgFIKUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 06:20:25 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38358 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728274AbgFIJMq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 05:12:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1727831AbgFIKUZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Jun 2020 06:20:25 -0400
+Received: from zn.tnic (p200300ec2f0d68002503c5de6f6b5eb0.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:6800:2503:c5de:6f6b:5eb0])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB207207ED;
-        Tue,  9 Jun 2020 09:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591693966;
-        bh=cMnh1J3zIuMgLcOFHAluJupv/1cWiYti0VxOKtCtA7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fVknH7VyENSTts/MC/kWp3DsuA9wOc6QMHppAfJY4iaSlvc0XyTPE4vI29PvcEPVp
-         rZa4qOMzifRp+cg4CSF5H6D3RbJ1XsM3RqAU3hh7Gf86u/2xv0CqIkKLMhLEYMX03i
-         IOlT+dcBboerhZ+SIPLWHW3VBFutK+qPn5SaL3do=
-Date:   Tue, 9 Jun 2020 11:12:44 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Jason Yan <yanaijie@huawei.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hulkci@huawei.com, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH v4] block: Fix use-after-free in blkdev_get()
-Message-ID: <20200609091244.GB529192@kroah.com>
-References: <1612c34d-cd28-b80c-7296-5e17276a6596@web.de>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 21B641EC02B1;
+        Tue,  9 Jun 2020 12:20:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1591698023;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=085VCpEjqM+GYch4ms9evINYEp+0wAs7XM3mVBlU0S0=;
+        b=b9FcJ+mnX+Q47LOFSNU9YDy/3dRiU1w3RBY8bgcoCgkrdaRNbP/GouFz6vOgiKtrl38pMx
+        pV/jHoN7mWdbF16dfS5hAMKtsgLyxySnBkwXlmpPdpcPEzMK9EfNi7taapklf49q2HZui9
+        dcztIqPhrt6fhELlQj9WfKpK6elI13Q=
+Date:   Tue, 9 Jun 2020 12:20:15 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 3/5] ext4: mballoc: Introduce pcpu seqcnt for freeing
+ PA to improve ENOSPC handling
+Message-ID: <20200609102015.GA7696@zn.tnic>
+References: <cover.1589955723.git.riteshh@linux.ibm.com>
+ <7f254686903b87c419d798742fd9a1be34f0657b.1589955723.git.riteshh@linux.ibm.com>
+ <CGME20200603064851eucas1p2e435089fbdf4de1d1fa3fb051c2f3d7b@eucas1p2.samsung.com>
+ <aa4f7629-02ff-e49b-e9c0-5ef4a1deee90@samsung.com>
+ <2940d744-3f6f-d0b5-ad8d-e80128c495d0@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1612c34d-cd28-b80c-7296-5e17276a6596@web.de>
+In-Reply-To: <2940d744-3f6f-d0b5-ad8d-e80128c495d0@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 11:48:24AM +0200, Markus Elfring wrote:
-> > Looks good,
-> >
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+On Wed, Jun 03, 2020 at 03:40:16PM +0530, Ritesh Harjani wrote:
+> Yes, this is being discussed in the community.
+> I have submitted a patch which should help fix this warning msg.
+> Feel free to give this a try on your setup.
 > 
-> How does this feedback fit to remaining typos in the change description?
-> Do you care for any further improvements of the commit message
-> besides the discussed tag “Fixes”?
+> https://marc.info/?l=linux-ext4&m=159110574414645&w=2
 
-Hi,
+I just triggered the same thing here too. Looking at your fix and not
+even pretending to know what's going on with that percpu sequence
+counting, I can't help but wonder why do you wanna do:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+	seq = *raw_cpu_ptr(&discard_pa_seq);
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+instead of simply doing:
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+	seq = this_cpu_read(discard_pa_seq);
 
-thanks,
+?
 
-greg k-h's patch email bot
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
