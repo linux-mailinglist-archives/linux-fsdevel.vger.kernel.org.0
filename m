@@ -2,229 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 631C31F3221
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 03:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB3E01F3225
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 04:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbgFIB5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 21:57:25 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52660 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726887AbgFIB5Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 21:57:24 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 50E58489A72CEE3843A3;
-        Tue,  9 Jun 2020 09:57:22 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Tue, 9 Jun 2020
- 09:57:15 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
+        id S1727023AbgFICDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 22:03:04 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:12239 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726887AbgFICDC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jun 2020 22:03:02 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200609020259epoutp020dcaa0f2a043c33d39eebf135726bbda~Wvcamo4z92975729757epoutp02A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jun 2020 02:02:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200609020259epoutp020dcaa0f2a043c33d39eebf135726bbda~Wvcamo4z92975729757epoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591668179;
+        bh=R8Sr9xQ0isxegvea6Sq7X7Fbc4GHj3RJPM1sjjKZIO8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=GeCE7tA6KDHxPbDC4Rwz/dG5CosXjUEkTHCa3ZWPTs2OdNRlN71x9naQh/+Au1OOi
+         W3VHAapFJ0FpIdqlrNiqEAept7VykIqxlEciZov69hQwlZVioXRX6Jpbd9Us/f4cko
+         3SunVsuj8ZqTE3HKBLkr0WsoG1L5fKsOMWhMFj9Q=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200609020258epcas1p268e6b7f6f3ccd506e5943a382032758f~WvcaRaYAL0974409744epcas1p2u;
+        Tue,  9 Jun 2020 02:02:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 49gtgQ1XHLzMqYkb; Tue,  9 Jun
+        2020 02:02:58 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        85.DD.28581.2DDEEDE5; Tue,  9 Jun 2020 11:02:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200609020257epcas1p1829b7a8df3db637870b1bd26f8e6476d~WvcZPY2pj0976309763epcas1p1n;
+        Tue,  9 Jun 2020 02:02:57 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200609020257epsmtrp23903db503dff0c38dcacf53ccc46b361~WvcZOr-Q52147421474epsmtrp21;
+        Tue,  9 Jun 2020 02:02:57 +0000 (GMT)
+X-AuditID: b6c32a38-2cdff70000006fa5-2d-5edeedd284f9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B4.BB.08382.1DDEEDE5; Tue,  9 Jun 2020 11:02:57 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200609020257epsmtip1292fbbe6ac085a9dba1d5e13fdd17baa~WvcZFFneR2253722537epsmtip1u;
+        Tue,  9 Jun 2020 02:02:57 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Cc:     <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH v5] block: Fix use-after-free in blkdev_get()
-Date:   Tue, 9 Jun 2020 10:24:53 +0800
-Message-ID: <20200609022453.6190-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.21.3
+        "'Namjae Jeon'" <linkinjeon@kernel.org>
+In-Reply-To: <TY1PR01MB157812F9DFC574527D8AA26E90850@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH 3/3] exfat: set EXFAT_SB_DIRTY and VOL_DIRTY at the same
+ timing
+Date:   Tue, 9 Jun 2020 11:02:57 +0900
+Message-ID: <00a801d63e02$1885ffe0$4991ffa0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.28]
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLXKQP27k1kxA/L0Bi34tDQsKzyRwIaHrMyAgnBFJkBlgzLbAE6MjkHAs32T0wCUxAIpKZtBZvA
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmge6lt/fiDL6c4bR4c3Iqi8XEaUuZ
+        LfbsPclicXnXHDaLy/8/sVgs+zKZxWLLvyOsDuweX+YcZ/dom/yP3aP52Eo2j02rOtk8+ras
+        YvT4vEkugC0qxyYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DX
+        LTMH6BYlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToGhQYFecWJucWleul5yfq6V
+        oYGBkSlQZUJOxqwbv9kLJvNVfHiymaWBcSp3FyMnh4SAicTDG0dYuhi5OIQEdjBKfP0wmQUk
+        ISTwiVGi50gGROIbo8TK5W+ZYDo2n9zCDJHYyyhx6fZFqPaXjBInTy9jBqliE9CV+PdnP1sX
+        IweHiICRxNOThSA1zAI/GCVWf1sMNolTIFZizvrHYLawQKhE6+PN7CA2i4CKxMcjixhBbF4B
+        S4lbv9pYIGxBiZMzn4DZzALyEtvfzmGGuEhB4ufTZawgtohAlMSB+YuZIWpEJGZ3toFdKiGw
+        kEOi5dNUqBdcJK4ebmKDsIUlXh3fwg5hS0l8frcX7GgJgWqJj/uh5ncwSrz4bgthG0vcXL+B
+        FaSEWUBTYv0ufYiwosTO33MZIdbySbz72sMKMYVXoqNNCKJEVaLv0mGoA6Qluto/sE9gVJqF
+        5LFZSB6bheSBWQjLFjCyrGIUSy0ozk1PLTYsMEGO602M4GSqZbGDce7bD3qHGJk4GA8xSnAw
+        K4nwVj+4EyfEm5JYWZValB9fVJqTWnyI0RQY1BOZpUST84HpPK8k3tDUyNjY2MLEzNzM1FhJ
+        nPek1YU4IYH0xJLU7NTUgtQimD4mDk6pBqa43K/usxwT4v4pdnwXPTL39OuN1pq31RgKlKRW
+        nD/RJ8l7OeDKAT97rnNal4/flFnaMfGSt6/2gr0yi05Y2+oa8dQFRAY1NH2on/ehreA0t5pK
+        mGDuyg0yqVm+k098ujV5Rn/re+WTYq8Zv7x8pJlhcPff/svbD1//MvmC/MOKi3tmZkRv3PRw
+        nsLDNqd8x4tyKy1yP/y46SNxVDR92qfeDcdMM48dMHr8uG1FWKBT+SqLA/lNzaz5lu7RNV9N
+        nbeUPknMP1CSN6PL9NbKKXUNz2SCEpue9rsveqRRxKz1JbZCespFx/N71qTf3NK+/F7Hq3cX
+        f63/FLPSyu17cnWiZ8Qahz8ZUXc3pR3pTtmhxFKckWioxVxUnAgAKGKdYS8EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTvfi23txBrM7tSzenJzKYjFx2lJm
+        iz17T7JYXN41h83i8v9PLBbLvkxmsdjy7wirA7vHlznH2T3aJv9j92g+tpLNY9OqTjaPvi2r
+        GD0+b5ILYIvisklJzcksSy3St0vgyph14zd7wWS+ig9PNrM0ME7l7mLk5JAQMJHYfHILcxcj
+        F4eQwG5GiTkndrFCJKQljp04A5TgALKFJQ4fLoaoec4oset3CztIDZuArsS/P/vZQGpEBIwk
+        np4sBKlhFvjDKPH/3EpWiIY1zBKvP59mBGngFIiVmLP+MROILSwQLLHoyiGwOIuAisTHI4vA
+        bF4BS4lbv9pYIGxBiZMzn4DZzALaEr0PWxkhbHmJ7W/nMEMcqiDx8+kysKNFBKIkDsxfzAxR
+        IyIxu7ONeQKj8Cwko2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P
+        3cQIjiwtzR2M21d90DvEyMTBeIhRgoNZSYS3+sGdOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8
+        NwoXxgkJpCeWpGanphakFsFkmTg4pRqY5ri03LrGzObwboHGl7Wbcj8YMFXcLQ9Mb7rwJsrr
+        I8/+F5u/vrqgU7v4uMgVzQtigfpXLvoWv5matm6BsYa6641t8pElKrveaN04tMmmUsF86vsq
+        uX6+N92Lvj2duuvBxpeuG49qnIs8toXV/ljST9uPh23XMjw/8cFsDU9ad8fsd0IcEpLqMman
+        TTaf4w38HXFla2nHdPXMnysZUsWlFadJyu1zkCtMq+f5/Z7PcfGvvttyUy1bzXctqFYKk9hc
+        OX+j2Odna/msDRaaz5F6etToyKmHS8KlVTdPfeSxuW2WX5qPoa3p3+uBrxZOaDEyPKgiwOK2
+        pskx6ctL7wc1n+5vCbe8eOw2H4vNoYZjZ5VYijMSDbWYi4oTAVd0UEEbAwAA
+X-CMS-MailID: 20200609020257epcas1p1829b7a8df3db637870b1bd26f8e6476d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200604084534epcas1p281a332cd6d556b5d6c0ae61ec816c5a4
+References: <20200604084445.19205-1-kohada.t2@gmail.com>
+        <CGME20200604084534epcas1p281a332cd6d556b5d6c0ae61ec816c5a4@epcas1p2.samsung.com>
+        <20200604084445.19205-3-kohada.t2@gmail.com>
+        <000401d63b0b$8664f290$932ed7b0$@samsung.com>
+        <229ab132-c5f1-051c-27c4-4f962ceff700@gmail.com>
+        <CAKYAXd8SqaMj6e9urqdKWCdaexgAoN78Pzh0NYQ35iRYA=2tiA@mail.gmail.com>
+        <TY1PR01MB157812F9DFC574527D8AA26E90850@TY1PR01MB1578.jpnprd01.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In blkdev_get() we call __blkdev_get() to do some internal jobs and if
-there is some errors in __blkdev_get(), the bdput() is called which
-means we have released the refcount of the bdev (actually the refcount of
-the bdev inode). This means we cannot access bdev after that point. But
-acctually bdev is still accessed in blkdev_get() after calling
-__blkdev_get(). This results in use-after-free if the refcount is the
-last one we released in __blkdev_get(). Let's take a look at the
-following scenerio:
-
-  CPU0            CPU1                    CPU2
-blkdev_open     blkdev_open           Remove disk
-                  bd_acquire
-		  blkdev_get
-		    __blkdev_get      del_gendisk
-					bdev_unhash_inode
-  bd_acquire          bdev_get_gendisk
-    bd_forget           failed because of unhashed
-	  bdput
-	              bdput (the last one)
-		        bdev_evict_inode
-
-	  	    access bdev => use after free
-
-[  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
-[  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
-[  459.352347]
-[  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
-[  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  459.354947] Call Trace:
-[  459.355337]  dump_stack+0x111/0x19e
-[  459.355879]  ? __lock_acquire+0x24c1/0x31b0
-[  459.356523]  print_address_description+0x60/0x223
-[  459.357248]  ? __lock_acquire+0x24c1/0x31b0
-[  459.357887]  kasan_report.cold+0xae/0x2d8
-[  459.358503]  __lock_acquire+0x24c1/0x31b0
-[  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
-[  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.361123]  ? finish_task_switch+0x125/0x600
-[  459.361812]  ? finish_task_switch+0xee/0x600
-[  459.362471]  ? mark_held_locks+0xf0/0xf0
-[  459.363108]  ? __schedule+0x96f/0x21d0
-[  459.363716]  lock_acquire+0x111/0x320
-[  459.364285]  ? blkdev_get+0xce/0xbe0
-[  459.364846]  ? blkdev_get+0xce/0xbe0
-[  459.365390]  __mutex_lock+0xf9/0x12a0
-[  459.365948]  ? blkdev_get+0xce/0xbe0
-[  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
-[  459.367130]  ? blkdev_get+0xce/0xbe0
-[  459.367678]  ? destroy_inode+0xbc/0x110
-[  459.368261]  ? mutex_trylock+0x1a0/0x1a0
-[  459.368867]  ? __blkdev_get+0x3e6/0x1280
-[  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
-[  459.370114]  ? blkdev_get+0xce/0xbe0
-[  459.370656]  blkdev_get+0xce/0xbe0
-[  459.371178]  ? find_held_lock+0x2c/0x110
-[  459.371774]  ? __blkdev_get+0x1280/0x1280
-[  459.372383]  ? lock_downgrade+0x680/0x680
-[  459.373002]  ? lock_acquire+0x111/0x320
-[  459.373587]  ? bd_acquire+0x21/0x2c0
-[  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.374780]  blkdev_open+0x202/0x290
-[  459.375325]  do_dentry_open+0x49e/0x1050
-[  459.375924]  ? blkdev_get_by_dev+0x70/0x70
-[  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
-[  459.377192]  ? inode_permission+0xbe/0x3a0
-[  459.377818]  path_openat+0x148c/0x3f50
-[  459.378392]  ? kmem_cache_alloc+0xd5/0x280
-[  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.379802]  ? path_lookupat.isra.0+0x900/0x900
-[  459.380489]  ? __lock_is_held+0xad/0x140
-[  459.381093]  do_filp_open+0x1a1/0x280
-[  459.381654]  ? may_open_dev+0xf0/0xf0
-[  459.382214]  ? find_held_lock+0x2c/0x110
-[  459.382816]  ? lock_downgrade+0x680/0x680
-[  459.383425]  ? __lock_is_held+0xad/0x140
-[  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.384668]  ? _raw_spin_unlock+0x1f/0x30
-[  459.385280]  ? __alloc_fd+0x448/0x560
-[  459.385841]  do_sys_open+0x3c3/0x500
-[  459.386386]  ? filp_open+0x70/0x70
-[  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
-[  459.388342]  ? do_syscall_64+0x1a/0x520
-[  459.388930]  do_syscall_64+0xc3/0x520
-[  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.390248] RIP: 0033:0x416211
-[  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
-04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
-   05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
-      01
-[  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-[  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
-[  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
-[  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
-[  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
-[  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
-[  459.400168]
-[  459.400430] Allocated by task 20132:
-[  459.401038]  kasan_kmalloc+0xbf/0xe0
-[  459.401652]  kmem_cache_alloc+0xd5/0x280
-[  459.402330]  bdev_alloc_inode+0x18/0x40
-[  459.402970]  alloc_inode+0x5f/0x180
-[  459.403510]  iget5_locked+0x57/0xd0
-[  459.404095]  bdget+0x94/0x4e0
-[  459.404607]  bd_acquire+0xfa/0x2c0
-[  459.405113]  blkdev_open+0x110/0x290
-[  459.405702]  do_dentry_open+0x49e/0x1050
-[  459.406340]  path_openat+0x148c/0x3f50
-[  459.406926]  do_filp_open+0x1a1/0x280
-[  459.407471]  do_sys_open+0x3c3/0x500
-[  459.408010]  do_syscall_64+0xc3/0x520
-[  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.409415]
-[  459.409679] Freed by task 1262:
-[  459.410212]  __kasan_slab_free+0x129/0x170
-[  459.410919]  kmem_cache_free+0xb2/0x2a0
-[  459.411564]  rcu_process_callbacks+0xbb2/0x2320
-[  459.412318]  __do_softirq+0x225/0x8ac
-
-Fix this by delaying bdput() to the end of blkdev_get() which means we
-have finished accessing bdev.
-
-Fixes: e525fd89d380 ("block: make blkdev_get/put() handle exclusive access")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- v5: Add fixes tag and Reviewed-by tag from Christoph.
- v4: Remove uneeded braces and add Reviewed-by tag from Jan Kara.
- v3: Add bdput() when __blkdev_get() calling itself failed.
- v2: Add Reported-by tag and cc linux-block mailing list
-
- fs/block_dev.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 47860e589388..08c87db3a92b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1565,10 +1565,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	 */
- 	if (!for_part) {
- 		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
--		if (ret != 0) {
--			bdput(bdev);
-+		if (ret != 0)
- 			return ret;
--		}
- 	}
- 
-  restart:
-@@ -1637,8 +1635,10 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 				goto out_clear;
- 			BUG_ON(for_part);
- 			ret = __blkdev_get(whole, mode, 1);
--			if (ret)
-+			if (ret) {
-+				bdput(whole);
- 				goto out_clear;
-+			}
- 			bdev->bd_contains = whole;
- 			bdev->bd_part = disk_get_part(disk, partno);
- 			if (!(disk->flags & GENHD_FL_UP) ||
-@@ -1688,7 +1688,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	disk_unblock_events(disk);
- 	put_disk_and_module(disk);
-  out:
--	bdput(bdev);
- 
- 	return ret;
- }
-@@ -1755,6 +1754,9 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- 		bdput(whole);
- 	}
- 
-+	if (res)
-+		bdput(bdev);
-+
- 	return res;
- }
- EXPORT_SYMBOL(blkdev_get);
--- 
-2.21.3
+> Thank you for your comment.
+> 
+> > >> Can you split this patch into two? (Don't set VOL_DIRTY on
+> > >> -ENOTEMPTY and Setting EXFAT_SB_DIRTY is merged into
+> > >> exfat_set_vol_flag). I need to check the second one more.
+> > >
+> > > Can't do that.
+> > >
+> > > exfat_set_vol_flag() is called when rmdir processing begins. When
+> > > Not-empty is detected, VOL_DIRTY has already been written and synced
+> > > to the media.
+> > You can move it before calling exfat_remove_entries().
+> 
+> Can be moved, but that doesn't solve the problem.
+> It causes the similar problem as before.
+> 
+> exfat_remove_entries() calls exfat_get_dentry().
+> If exfat_get_dentry() fails, update bh and set SB_DIRTY will not be executed.
+> As a result, SB_DIRTY is not set and sync does not work.
+> Similar problems occur with other writing functions.
+> Similar problems occur when pre-write checks are added in the future.
+> 
+> If you don't set VOL_DIRTY at the beginning, you should delay to set VOL_DIRTY until update-bh & set
+> SB_DIRTY.
+> This avoids unnecessary changes to VOL_DIRTY/VOL_CLEAN.
+Right, That's what I am going to point out.
+> I think this method is smart, but it is difficult to decide when to set VOL_CLEAN.
+> (I tried to implement it, but gave up)
+Okay, I'm a little busy now, but I'll give you feedback soon.
+Thanks for your work!
+> 
+> > > By doing this, sync is guaranteed if VOL_DIRTY is set by calling
+> > > exfat_set_vol_flag.
+> > >
+> > > This change may still have problems, but it's little better than
+> > > before, I think.
+> > I need to check more if it is the best or there is more better way.
+> 
+> I think the sync-problems still exist.
+> Let's improve little by little. :-)
+> 
+> BR
+> ---
+> Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 
