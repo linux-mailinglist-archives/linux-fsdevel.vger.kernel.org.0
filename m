@@ -2,103 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 971201F328B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 05:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E5F1F32A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 05:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbgFIDZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jun 2020 23:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
+        id S1727030AbgFIDm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jun 2020 23:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgFIDZr (ORCPT
+        with ESMTP id S1726915AbgFIDmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jun 2020 23:25:47 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C28CC03E969
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jun 2020 20:25:46 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id w20so9677065pga.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jun 2020 20:25:46 -0700 (PDT)
+        Mon, 8 Jun 2020 23:42:25 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A932FC03E969;
+        Mon,  8 Jun 2020 20:42:25 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id a127so9457104pfa.12;
+        Mon, 08 Jun 2020 20:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=03TB4paXAcbFDwg8a3DK/XVRwYMXKk0zltL6mExpRmg=;
-        b=JNgqBK3i58CdDJVV3jPFzRV9ZwOuUkQQs90rKSKHejcbUmJ9YsbjXfVRjMr8PO7NOk
-         ggGsVI7oOd9OGQ2UYbGWaCyyinlS9r3YP0ZHqVXQd8Fwu0efWaGdFGnQW97EU6sRlJp6
-         laKC5c5InT93qdKizPsOk2IEAswlARcPULO4P/s23DhSolyj2eA0u3fHOQUKxd05qs41
-         QfLnV9XdyNHzNpVyAKXz/sTCWnVl+5oZXr4p4L7T4AWSoZHXW40UH9oYWGw2mKEMCf05
-         MPOQF6LGzeHEl1l5RGTX11PSoUEHTG0R0pneYSbKDI50dn0/x+T8Rf1wJPYrRVeG9DTE
-         YYBg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q4fG1A8p1olZ3q4GtpMLtFQ28rvEW4nZgX1+riXZg/c=;
+        b=mCGeZ0rTTipdKwd5l0gUb0tQ+2m3kPqjwdDI8hHvYuW0w/kRq8YwG88ztOZp4KHOhI
+         f0xaDijiD6EO6HW1cGtbQWPcfITtQ27GWlfZO6+xwO6ZMmCUmSbRt6E8FV1+kPxpxaF9
+         tCjm3A24Y93QquT3oDpmnmS0XZCgAyxnsOilaXpFZTt7gYz7dE9VGDIkHMQhqFUKxYnQ
+         4yQ9Mk3YRWKY0tR8H3zKYImfQq6ZOZHLCnOleK6hJQSl9nj6faq7KxAkceU4EO4uQMXb
+         OmGrUYnnMzDt8EFpmDRwudu94s1PBdJ4WGxqfEvmRI+ZIyB+Hv9uhxD+t8AO8kWBnK22
+         OYsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=03TB4paXAcbFDwg8a3DK/XVRwYMXKk0zltL6mExpRmg=;
-        b=NeS8fZO8sqgDpiiPzZshcvmtd/wlM87MBtQ60Re36zZo1ZYoJO4BVR17UfzR8eoKwj
-         xuHaiiTwDdVRnmZIePySti3BZ20rQT8IVooDDuzHeisi6VNkjW13qVAyT7Ufb4tiGf4P
-         //eYCeG19CHxoWYsLtGynPL3dOgAJvxcYUnkDgdbEs0vQeoccr1b7raMjuCtKMubHPIa
-         29Zcq2QiQO6TOnYzhgrvzQFtFm7irhU1fi7i383yX6xE2o1bctYcXKqkk49thn2eMemh
-         pAU5vb/FRQGvPzD/w+gHkW8+UNHq/i/jkz6SlzNfZQx1topeE7714As2gCm0uOzOu6hN
-         kwgw==
-X-Gm-Message-State: AOAM530VGKJK13q5zy0X4zW9wY8KaNr6yB6KvJFvM3kpvJVHgBNu9wHz
-        k4sbkK4gFjgenJ1UDDN7BHMiOtyk/L5k8A==
-X-Google-Smtp-Source: ABdhPJwT7TQV+YNpi1hW02jBKMSsECW0azxx5eqp6QhuPSr6tkSpuGRPBxpjnzIBQ+fZjmafun0teA==
-X-Received: by 2002:a63:c407:: with SMTP id h7mr22238282pgd.174.1591673145758;
-        Mon, 08 Jun 2020 20:25:45 -0700 (PDT)
-Received: from [192.168.0.12] ([125.186.151.199])
-        by smtp.googlemail.com with ESMTPSA id y4sm7170067pgr.76.2020.06.08.20.25.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jun 2020 20:25:45 -0700 (PDT)
-Subject: Re: [PATCH] exfat: clear filename field before setting initial name
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com
-References: <CGME20200609004931epcas1p3f2b10c4dea5b6d236fd1741532b529ec@epcas1p3.samsung.com>
- <1591663760-6418-1-git-send-email-Hyeongseok@gmail.com>
- <00b601d63e06$cb54b360$61fe1a20$@samsung.com>
-From:   hyeongseok <hyeongseok@gmail.com>
-Message-ID: <cbb8eed3-656b-c00b-6ca2-29d3c53adb4a@gmail.com>
-Date:   Tue, 9 Jun 2020 12:25:42 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q4fG1A8p1olZ3q4GtpMLtFQ28rvEW4nZgX1+riXZg/c=;
+        b=py/G0H5Ko9PbUjDEss/grOCQIWs/xBBIRyMDuWvaVus8Y9wCel5f7wbfpWA1ExmfF+
+         HtgRsc5TcTwqA6PICeYx0L54eR6p5E9Bx2b85eqh4i0vuoEmrBvT5/pB5V0GztZp/bE3
+         ZbRZs+Ii1SqGUgMTVM3hQAA8Byys6tTA6vVnZmfdoaa8Sz8leFiAfQEtLnsn13P3clnH
+         C9X7CCHA44d5DRMET4e+kSlP07muWrFpQWbRxKmEHcdYbGS/F3V8yDHOmsAwk3RFar4d
+         v0g7hIJ7BaQTJfBBafJUHscHnCbZC9+PfT6iOKbwqHKCG/MmHLzo8WqZxDf5BlxLTu0X
+         9XNA==
+X-Gm-Message-State: AOAM5300IhCF3ljWy7up98Gdr5R3gaJvvI9aD6qxHqunlLXlCuPjCRQG
+        x7BQXwZOTQyqJixt6CDR80k=
+X-Google-Smtp-Source: ABdhPJxsYjb/lkYFcMBrxR96yYjEB3OAL2WIlULMxD+m5UZjVDmX2sUc8vhZ0XtBk+bQ7tJaqcRNZg==
+X-Received: by 2002:aa7:9488:: with SMTP id z8mr24736520pfk.157.1591674144940;
+        Mon, 08 Jun 2020 20:42:24 -0700 (PDT)
+Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
+        by smtp.gmail.com with ESMTPSA id s197sm8552880pfc.188.2020.06.08.20.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jun 2020 20:42:24 -0700 (PDT)
+Date:   Mon, 8 Jun 2020 20:42:21 -0700
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Message-ID: <20200609034221.GA150921@gmail.com>
+References: <20200603162328.854164-1-areber@redhat.com>
+ <20200603162328.854164-2-areber@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <00b601d63e06$cb54b360$61fe1a20$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: ko-KR
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20200603162328.854164-2-areber@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/20 11:36 AM, Namjae Jeon wrote:
-> Hi Hyeongseok,
->
->> Some fsck tool complain that padding part of the FileName Field is not set to the value 0000h. So
->> let's follow the filesystem spec.
->>
->> Signed-off-by: Hyeongseok.Kim <Hyeongseok@gmail.com>
->> ---
->>   fs/exfat/dir.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index de43534..6c9810b 100644
->> --- a/fs/exfat/dir.c
->> +++ b/fs/exfat/dir.c
->> @@ -424,6 +424,9 @@ static void exfat_init_name_entry(struct exfat_dentry *ep,
->>   	exfat_set_entry_type(ep, TYPE_EXTEND);
->>   	ep->dentry.name.flags = 0x0;
->>
->> +	memset(ep->dentry.name.unicode_0_14, 0,
->> +		sizeof(ep->dentry.name.unicode_0_14));
->> +
->>   	for (i = 0; i < EXFAT_FILE_NAME_LEN; i++) {
->>   		ep->dentry.name.unicode_0_14[i] = cpu_to_le16(*uniname);
->>   		if (*uniname == 0x0)
-> Wouldn't it be better to fill the rest with 0x0000 in this loop?
-OK, I'll change like that.
->> --
->> 2.7.4
->
-> .
->
+On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
+> This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
+> checkpoint/restore for non-root users.
+> 
+> Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
+> asked numerous times if it is possible to checkpoint/restore a process as
+> non-root. The answer usually was: 'almost'.
+> 
+> The main blocker to restore a process as non-root was to control the PID of the
+> restored process. This feature available via the clone3 system call, or via
+> /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
+> 
+> In the past two years, requests for non-root checkpoint/restore have increased
+> due to the following use cases:
+> * Checkpoint/Restore in an HPC environment in combination with a resource
+>   manager distributing jobs where users are always running as non-root.
+>   There is a desire to provide a way to checkpoint and restore long running
+>   jobs.
+> * Container migration as non-root
+> * We have been in contact with JVM developers who are integrating
+>   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
+>   applications are not meant to be running with CAP_SYS_ADMIN.
+> 
+...
+> 
+> The introduced capability allows to:
+> * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
+>   for the corresponding PID namespace via ns_last_pid/clone3.
+> * Open files in /proc/pid/map_files when the current user is
+>   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
+>   files that are unreachable via the file system such as deleted files, or memfd
+>   files.
 
+PTRACE_O_SUSPEND_SECCOMP is needed for C/R and it is protected by
+CAP_SYS_ADMIN too.
+
+Thanks,
+Andrei
