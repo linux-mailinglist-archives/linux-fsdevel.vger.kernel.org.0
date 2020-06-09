@@ -2,72 +2,347 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 994BB1F41C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CADF1F41D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 19:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbgFIRI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 13:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
+        id S1731541AbgFIRK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 13:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728362AbgFIRI4 (ORCPT
+        with ESMTP id S1728759AbgFIRKX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 13:08:56 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F5FC05BD1E;
-        Tue,  9 Jun 2020 10:08:56 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id k8so16970584edq.4;
-        Tue, 09 Jun 2020 10:08:56 -0700 (PDT)
+        Tue, 9 Jun 2020 13:10:23 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2499C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jun 2020 10:10:20 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id c21so12934967lfb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jun 2020 10:10:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4p5Irg6Dzn2qLwF5HDdUraLZe46R8G3poyQBaNHtlzs=;
-        b=kNlpBp6u6KVQEvJ4vmJM0+s8WDGqNnE4bKe6zBVx6HH31p4KJOpHoIspUOe4UlWv/q
-         Md1608OMu1hHqQ6MV0jgH6BttxuQ7f75/wW2oZAPWr41bB0SotscqivF0NFngZ3HyPp3
-         f55S0Q5aHP9WiWMFPW+8P/CgLC5S1OkOSX13ZjhAr0ztKHuWFnkVozDpFWHsBtQLO42T
-         qwjkZVJ1iJXFdgkP0tNy1gaKle7IVaY8ADUM8tAgPycpRf0o2+jj5JTTBq+SN2TjI6SX
-         TZacSnO7breOdu/e1yPCbSiF74Ywdi8kie1YA4r4zKQ/KWWJjww9xzBw0UcajZ1ph2C8
-         RV9A==
+        bh=MkML/s2sAsLSTlIcZwPVD5iqinEWUXMTFG2V4ORnXJY=;
+        b=edDNy0VWLZ7oaoBzttbc5KSAeO6HvyPvAWf7iw7IQpHzGRGFgSTjm5Z01I/NfQh02g
+         bQpcTpC5+Evnl+vvSdnxAK066vZ4eCwKPbY69qoux2wB5OQ8xQE2FYwW4Ac0DmnW/SCK
+         LRayT5LcCmFe4GjDF2SEQU57mvjXx8Avi+2Q8oKoVdcTk88RdLRD/kM64BuaKrV5/rCy
+         JeuHfyDLyleOcsJTrSLDtyzZc2faSwM2ABiti9WGp3goH9iyPxRmhsGJq78jW3H/oQ7b
+         0MsNILdxQWtv+oUzMHL/U2a3/HSk4Em6agsiLqAxu6ezUY1j/lOTn2CTEGveHNyghU/W
+         EUGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4p5Irg6Dzn2qLwF5HDdUraLZe46R8G3poyQBaNHtlzs=;
-        b=To63hQ80lFuo2I0la1d9JHs8UUg7kUypMrtJRWihwyMjTZWuVtZGj2mwhscXdTN5Ot
-         JVn3OvFYR64wlR0GouYsMK/B2GB4s5FHIMA8T2PH/z+NgWQRpvxGkl/ZKQzwIOLLz30B
-         bWjZt3y7zgwjQeDSvugrr9JDIey5Z9nP2U9dE6ygwZcWs6DZ7CgXrX4pgMtBVy9/2bVR
-         RWjeurw+A4Xc5HaOd4GH5j+P26J2OTMmWj2eC1YMt6ImuKxNhXJSQLOKtB1sIdXeW3Wf
-         eTx/eati3yIbVzv9nJ7MGMabYpekUa9VZs/7pGZ1bjhvHHdcrhbppI5QAl/wRSLSby7G
-         e7Bg==
-X-Gm-Message-State: AOAM530V2SDe7dY4tQvxjHLQDIBxNc7p93JGldf5EmXaiJJca2x3wjb8
-        e277kiMdFyHKYEGptkWzkOWyjL4yNCO7YgOClkYdvg==
-X-Google-Smtp-Source: ABdhPJxIQpWRQjLFGlHZE6AbU18+SSFFpS2P6+r3lJPt3pUdjEciqDF05PyFD/cJ4DYgDVbiZ4EKc1Lw3JNlF4MA15E=
-X-Received: by 2002:a05:6402:1ca2:: with SMTP id cz2mr26766668edb.15.1591722534934;
- Tue, 09 Jun 2020 10:08:54 -0700 (PDT)
+        bh=MkML/s2sAsLSTlIcZwPVD5iqinEWUXMTFG2V4ORnXJY=;
+        b=m0d/WFpIaabGWwL7DtlSYO254LPAq54Lf4gxOXOtiW7cV6vhOZqocWBAQJ/Ecv15V9
+         DsRFiufS/6UvBxjerXHKBJNcGAfoiDY5B0f2D5OJ7ReHSHMPJlg+DkusveXY/MmRHNuu
+         ozl6nZsgKav+ocjFFi53lHjzr71olfdLs1iVWsvJsMJW0dW5p/2l/TEUY50+8vAGtupD
+         FxvjEUkMmw2km5Z352RXWygjQL9S/Py8cjmz48POHqgYsAYl4H4UiTZ7+pRdsWLekRg6
+         qIg0maz2nYpD/RY6+HZSwEl0OzEhItPL69asgH0Gd92WFewWWEC6jVWJYFfqq9kpnQu6
+         SzzA==
+X-Gm-Message-State: AOAM533hnBJhajZQIj0Uh8z1Hai6+np3DQSB0tu6/JDaB02L10f/wzbh
+        Xix99Fs4/xfZr5pxAEqaa7iZoCLOjDEjF58Y+8Thkg==
+X-Google-Smtp-Source: ABdhPJw3CZekOt96aFvax0kiSSCtmlI0zQ2zIKSm9Tp+bPjUIGJkPOd0+VLNLcSLsnLEqeGgyTLtZMc6N/azSA7LKkA=
+X-Received: by 2002:a19:c3c5:: with SMTP id t188mr16128484lff.149.1591722619072;
+ Tue, 09 Jun 2020 10:10:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <159171918506.3038039.10915051218779105094.stgit@warthog.procyon.org.uk>
- <159171921360.3038039.10494245358653942664.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159171921360.3038039.10494245358653942664.stgit@warthog.procyon.org.uk>
-From:   Marc Dionne <marc.c.dionne@gmail.com>
-Date:   Tue, 9 Jun 2020 14:08:43 -0300
-Message-ID: <CAB9dFdv_a_EoWOAaULD3fJpmpZdUbquKAFV7=LaZ1udAuDkFEA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] afs: Fix debugging statements with %px to be %p
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+References: <20200528132327.GB706460@hirez.programming.kicks-ass.net>
+ <20200528155800.yjrmx3hj72xreryh@e107158-lin.cambridge.arm.com>
+ <20200528161112.GI2483@worktop.programming.kicks-ass.net> <20200529100806.GA3070@suse.de>
+ <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com> <87v9k84knx.derkling@matbug.net>
+ <20200603101022.GG3070@suse.de> <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com>
+ <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+ <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com> <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 9 Jun 2020 19:10:07 +0200
+Message-ID: <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 9, 2020 at 1:13 PM David Howells <dhowells@redhat.com> wrote:
+On Mon, 8 Jun 2020 at 14:31, Qais Yousef <qais.yousef@arm.com> wrote:
 >
-> Fix a couple of %px to be %x in debugging statements.
+> On 06/04/20 14:14, Vincent Guittot wrote:
 >
+> [...]
+>
+> > I have tried your patch and I don't see any difference compared to
+> > previous tests. Let me give you more details of my setup:
+> > I create 3 levels of cgroups and usually run the tests in the 4 levels
+> > (which includes root). The result above are for the root level
+> >
+> > But I see a difference at other levels:
+> >
+> >                            root           level 1       level 2       level 3
+> >
+> > /w patch uclamp disable     50097         46615         43806         41078
+> > tip uclamp enable           48706(-2.78%) 45583(-2.21%) 42851(-2.18%)
+> > 40313(-1.86%)
+> > /w patch uclamp enable      48882(-2.43%) 45774(-1.80%) 43108(-1.59%)
+> > 40667(-1.00%)
+> >
+> > Whereas tip with uclamp stays around 2% behind tip without uclamp, the
+> > diff of uclamp with your patch tends to decrease when we increase the
+> > number of level
+>
+> So I did try to dig more into this, but I think it's either not a good
+> reproducer or what we're observing here is uArch level latencies caused by the
+> new code that seem to produce a bigger knock on effect than what they really
+> are.
+>
+> First, CONFIG_FAIR_GROUP_SCHED is 'expensive', for some definition of
+> expensive..
 
-Nothing critical, but as in the patch subject this should be "%px to
-be %p", not %x.
+yes, enabling CONFIG_FAIR_GROUP_SCHED adds an overhead
 
-Marc
+>
+> *** uclamp disabled/fair group enabled ***
+>
+>         # Executed 50000 pipe operations between two threads
+>
+>              Total time: 0.958 [sec]
+>
+>               19.177100 usecs/op
+>                   52145 ops/sec
+>
+> *** uclamp disabled/fair group disabled ***
+>
+>         # Executed 50000 pipe operations between two threads
+>              Total time: 0.808 [sec]
+>
+>              16.176200 usecs/op
+>                  61819 ops/sec
+>
+> So there's a 15.6% drop in ops/sec when enabling this option. I think it's good
+> to look at the absolutely number of usecs/op, Fair group adds around
+> 3 usecs/op.
+>
+> I dropped FAIR_GROUP_SCHED from my config to eliminate this overhead and focus
+> on solely on uclamp overhead.
+
+Have you checked that both tests run at the root level ?
+Your function-graph log below shows several calls to
+update_cfs_group() which means that your trace below has not been made
+at root level but most probably at the 3rd level and I wonder if you
+used the same setup for running the benchmark above. This could
+explain such huge difference because I don't have such difference on
+my platform but more around 2%
+
+For uclamp disable/fair group enable/ function graph enable :  47994ops/sec
+For uclamp disable/fair group disable/ function graph enable : 49107ops/sec
+
+>
+> With uclamp enabled but no fair group I get
+>
+> *** uclamp enabled/fair group disabled ***
+>
+>         # Executed 50000 pipe operations between two threads
+>              Total time: 0.856 [sec]
+>
+>              17.125740 usecs/op
+>                  58391 ops/sec
+>
+> The drop is 5.5% in ops/sec. Or 1 usecs/op.
+>
+> I don't know what's the expectation here. 1 us could be a lot, but I don't
+> think we expect the new code to take more than few 100s of ns anyway. If you
+> add potential caching effects, reaching 1 us wouldn't be that hard.
+>
+> Note that in my runs I chose performance governor and use `taskset 0x2` to
+
+You might want to set 2 CPUs in your cpumask instead of 1 in order to
+have 1 CPU for each thread
+
+> force running on a big core to make sure the runs are repeatable.
+
+I also use performance governor but don't pinned tasks because I use smp.
+
+>
+> On Juno-r2 I managed to scrap most of the 1 us with the below patch. It seems
+> there was weird branching behavior that affects the I$ in my case. It'd be good
+> to try it out to see if it makes a difference for you.
+
+The perf are slightly worse on my setup:
+For uclamp enable/fair group disable/ function graph enable : 48413ops/sec
+with patch  below : 47804os/sec
+
+>
+> The I$ effect is my best educated guess. Perf doesn't catch this path and
+> I couldn't convince it to look at cache and branch misses between 2 specific
+> points.
+>
+> Other subtle code shuffling did have weird effect on the result too. One worthy
+> one is making uclamp_rq_dec() noinline gains back ~400 ns. Making
+> uclamp_rq_inc() noinline *too* cancels this gain out :-/
+>
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0464569f26a7..0835ee20a3c7 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1071,13 +1071,11 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+>
+>  static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>  {
+> -       enum uclamp_id clamp_id;
+> -
+>         if (unlikely(!p->sched_class->uclamp_enabled))
+>                 return;
+>
+> -       for_each_clamp_id(clamp_id)
+> -               uclamp_rq_inc_id(rq, p, clamp_id);
+> +       uclamp_rq_inc_id(rq, p, UCLAMP_MIN);
+> +       uclamp_rq_inc_id(rq, p, UCLAMP_MAX);
+>
+>         /* Reset clamp idle holding when there is one RUNNABLE task */
+>         if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+> @@ -1086,13 +1084,11 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>
+>  static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+>  {
+> -       enum uclamp_id clamp_id;
+> -
+>         if (unlikely(!p->sched_class->uclamp_enabled))
+>                 return;
+>
+> -       for_each_clamp_id(clamp_id)
+> -               uclamp_rq_dec_id(rq, p, clamp_id);
+> +       uclamp_rq_dec_id(rq, p, UCLAMP_MIN);
+> +       uclamp_rq_dec_id(rq, p, UCLAMP_MAX);
+>  }
+>
+>  static inline void
+>
+>
+> FWIW I fail to see activate/deactivate_task in perf record. They don't show up
+> on the list which means this micro benchmark doesn't stress them as Mel's test
+> does.
+
+Strange because I have been able to trace them.
+
+>
+> Worth noting that I did try running the same test on 2 vCPU VirtualBox VM and
+> 64 vCPU qemu and I couldn't spot a difference when uclamp was enabled/disabled
+> in these 2 environments.
+>
+> >
+> > Beside this, that's also interesting to notice the ~6% of perf impact
+> > between each level for the same image
+>
+> Beside my observation above, I captured this function_graph when
+> FAIR_GROUP_SCHED is enabled. What I pasted below is a particularly bad
+> deactivation, it's not always that costly.
+>
+> This ran happened was recorded with uclamp disabled.
+>
+> I admit I don't know how much of these numbers is ftrace overhead. When trying
+> to capture similar runs for uclamp, the numbers didn't add up compared to
+> running the test without ftrace generating the graph. If juno is suffering from
+> bad branching costs in this path, then I suspect ftrace will amplify this as
+> AFAIU it'll cause extra jumps on entry and exit.
+>
+>
+>
+>       sched-pipe-6532  [001]  9407.276302: funcgraph_entry:                   |  deactivate_task() {
+>       sched-pipe-6532  [001]  9407.276302: funcgraph_entry:                   |    dequeue_task_fair() {
+>       sched-pipe-6532  [001]  9407.276303: funcgraph_entry:                   |      update_curr() {
+>       sched-pipe-6532  [001]  9407.276304: funcgraph_entry:        0.780 us   |        update_min_vruntime();
+>       sched-pipe-6532  [001]  9407.276306: funcgraph_entry:                   |        cpuacct_charge() {
+>       sched-pipe-6532  [001]  9407.276306: funcgraph_entry:        0.820 us   |          __rcu_read_lock();
+>       sched-pipe-6532  [001]  9407.276308: funcgraph_entry:        0.740 us   |          __rcu_read_unlock();
+>       sched-pipe-6532  [001]  9407.276309: funcgraph_exit:         3.980 us   |        }
+>       sched-pipe-6532  [001]  9407.276310: funcgraph_entry:        0.720 us   |        __rcu_read_lock();
+>       sched-pipe-6532  [001]  9407.276312: funcgraph_entry:        0.720 us   |        __rcu_read_unlock();
+>       sched-pipe-6532  [001]  9407.276313: funcgraph_exit:         9.840 us   |      }
+>       sched-pipe-6532  [001]  9407.276314: funcgraph_entry:                   |      __update_load_avg_se() {
+>       sched-pipe-6532  [001]  9407.276315: funcgraph_entry:        0.720 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276316: funcgraph_exit:         2.260 us   |      }
+>       sched-pipe-6532  [001]  9407.276317: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+>       sched-pipe-6532  [001]  9407.276318: funcgraph_entry:        0.860 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276319: funcgraph_exit:         2.340 us   |      }
+>       sched-pipe-6532  [001]  9407.276320: funcgraph_entry:        0.760 us   |      clear_buddies();
+>       sched-pipe-6532  [001]  9407.276321: funcgraph_entry:        0.800 us   |      account_entity_dequeue();
+>       sched-pipe-6532  [001]  9407.276323: funcgraph_entry:        0.720 us   |      update_cfs_group();
+>       sched-pipe-6532  [001]  9407.276324: funcgraph_entry:        0.740 us   |      update_min_vruntime();
+>       sched-pipe-6532  [001]  9407.276326: funcgraph_entry:        0.720 us   |      set_next_buddy();
+>       sched-pipe-6532  [001]  9407.276327: funcgraph_entry:                   |      __update_load_avg_se() {
+>       sched-pipe-6532  [001]  9407.276328: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276329: funcgraph_exit:         2.220 us   |      }
+>       sched-pipe-6532  [001]  9407.276330: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+>       sched-pipe-6532  [001]  9407.276331: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276332: funcgraph_exit:         2.180 us   |      }
+>       sched-pipe-6532  [001]  9407.276333: funcgraph_entry:                   |      update_cfs_group() {
+>       sched-pipe-6532  [001]  9407.276334: funcgraph_entry:                   |        reweight_entity() {
+>       sched-pipe-6532  [001]  9407.276335: funcgraph_entry:                   |          update_curr() {
+>       sched-pipe-6532  [001]  9407.276335: funcgraph_entry:        0.720 us   |            __calc_delta();
+>       sched-pipe-6532  [001]  9407.276337: funcgraph_entry:        0.740 us   |            update_min_vruntime();
+>       sched-pipe-6532  [001]  9407.276338: funcgraph_exit:         3.560 us   |          }
+>       sched-pipe-6532  [001]  9407.276339: funcgraph_entry:        0.720 us   |          account_entity_dequeue();
+>       sched-pipe-6532  [001]  9407.276340: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+>       sched-pipe-6532  [001]  9407.276342: funcgraph_exit:         7.860 us   |        }
+>       sched-pipe-6532  [001]  9407.276342: funcgraph_exit:         9.280 us   |      }
+>       sched-pipe-6532  [001]  9407.276343: funcgraph_entry:                   |      __update_load_avg_se() {
+>       sched-pipe-6532  [001]  9407.276344: funcgraph_entry:        0.720 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276345: funcgraph_exit:         2.180 us   |      }
+>       sched-pipe-6532  [001]  9407.276346: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+>       sched-pipe-6532  [001]  9407.276347: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276348: funcgraph_exit:         2.180 us   |      }
+>       sched-pipe-6532  [001]  9407.276349: funcgraph_entry:                   |      update_cfs_group() {
+>       sched-pipe-6532  [001]  9407.276350: funcgraph_entry:                   |        reweight_entity() {
+>       sched-pipe-6532  [001]  9407.276350: funcgraph_entry:                   |          update_curr() {
+>       sched-pipe-6532  [001]  9407.276351: funcgraph_entry:        0.740 us   |            __calc_delta();
+>       sched-pipe-6532  [001]  9407.276353: funcgraph_entry:        0.720 us   |            update_min_vruntime();
+>       sched-pipe-6532  [001]  9407.276354: funcgraph_exit:         3.580 us   |          }
+>       sched-pipe-6532  [001]  9407.276355: funcgraph_entry:        0.740 us   |          account_entity_dequeue();
+>       sched-pipe-6532  [001]  9407.276356: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+>       sched-pipe-6532  [001]  9407.276358: funcgraph_exit:         7.960 us   |        }
+>       sched-pipe-6532  [001]  9407.276358: funcgraph_exit:         9.400 us   |      }
+>       sched-pipe-6532  [001]  9407.276360: funcgraph_entry:                   |      __update_load_avg_se() {
+>       sched-pipe-6532  [001]  9407.276360: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276362: funcgraph_exit:         2.220 us   |      }
+>       sched-pipe-6532  [001]  9407.276362: funcgraph_entry:                   |      __update_load_avg_cfs_rq() {
+>       sched-pipe-6532  [001]  9407.276363: funcgraph_entry:        0.740 us   |        __accumulate_pelt_segments();
+>       sched-pipe-6532  [001]  9407.276365: funcgraph_exit:         2.160 us   |      }
+>       sched-pipe-6532  [001]  9407.276366: funcgraph_entry:                   |      update_cfs_group() {
+>       sched-pipe-6532  [001]  9407.276367: funcgraph_entry:                   |        reweight_entity() {
+>       sched-pipe-6532  [001]  9407.276368: funcgraph_entry:                   |          update_curr() {
+>       sched-pipe-6532  [001]  9407.276368: funcgraph_entry:        0.720 us   |            __calc_delta();
+>       sched-pipe-6532  [001]  9407.276370: funcgraph_entry:        0.720 us   |            update_min_vruntime();
+>       sched-pipe-6532  [001]  9407.276371: funcgraph_exit:         3.540 us   |          }
+>       sched-pipe-6532  [001]  9407.276372: funcgraph_entry:        0.740 us   |          account_entity_dequeue();
+>       sched-pipe-6532  [001]  9407.276373: funcgraph_entry:        0.720 us   |          account_entity_enqueue();
+>       sched-pipe-6532  [001]  9407.276375: funcgraph_exit:         7.840 us   |        }
+>       sched-pipe-6532  [001]  9407.276375: funcgraph_exit:         9.300 us   |      }
+>       sched-pipe-6532  [001]  9407.276376: funcgraph_entry:        0.720 us   |      hrtick_update();
+>       sched-pipe-6532  [001]  9407.276377: funcgraph_exit:       + 75.000 us  |    }
+>       sched-pipe-6532  [001]  9407.276378: funcgraph_exit:       + 76.700 us  |  }
+>
+>
+> Cheers
+>
+> --
+> Qais Yousef
