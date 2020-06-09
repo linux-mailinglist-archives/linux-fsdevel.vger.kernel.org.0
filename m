@@ -2,73 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D98471F3E25
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 16:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CCB81F3E4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jun 2020 16:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbgFIOcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 10:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39040 "EHLO
+        id S1730502AbgFIOev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 10:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728423AbgFIOcN (ORCPT
+        with ESMTP id S1726803AbgFIOev (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 10:32:13 -0400
+        Tue, 9 Jun 2020 10:34:51 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB6DBC05BD1E;
-        Tue,  9 Jun 2020 07:32:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240C7C05BD1E;
+        Tue,  9 Jun 2020 07:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zhFq2jA1ZPqLzkn56asn72ZB62NGUEkdDILPtsxItcQ=; b=DVF+LMYN8NYMF7z90TocnOwlEP
-        kW40n+vz9Yc/PlNFM8AFdRS/Bl7dg673bm/gRQBiaaIkJYxelsibx1hARqD4cQ6fYBp9XwltfXTA+
-        tY0dnZl5LykE1xqJlSFqrrdsW4kNqixAaO852mDnzHtP59eLjAA/cTPW36MPY6zFYE4esdG1hUuSr
-        VzjpBs9hvbCznt0Lo19WWTkDdeJBGjj0fjcAXAcQdQE1MX/JtLQ9GZ8wnxHvqKdccbAjG3ObowVTh
-        zLKrmC8gWUvlOvSF7t1qU+Amm+sYdR721hNy2f47jYzbcoBa3U4iyc6BRPj7og5whohWq6J+XGE+2
-        gbwq2jng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jifIR-0005rS-FA; Tue, 09 Jun 2020 14:32:11 +0000
-Date:   Tue, 9 Jun 2020 07:32:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] iomap: avoid deadlock if memory reclaim is triggered
- in writepage path
-Message-ID: <20200609143211.GA22303@infradead.org>
-References: <1591254347-15912-1-git-send-email-laoar.shao@gmail.com>
- <20200609140304.GA11626@infradead.org>
- <CALOAHbCeFFPCVS-toSC32qtLqQsEF1KG6p0OBXkQb=T2g6YpYw@mail.gmail.com>
+        bh=BS61t3scD5rhsvldmGOJtyXVG6rDl8HEmiFZUjqsT1Q=; b=pFZbRjVutesuWvEsLEcOIckCTU
+        B3HEtPGVpCN39H/vjxliXrmai3D//DgWvJMqaAaECUbY+uGMZ6/JoDe8HSpPKCIOxjdSsdO01gL4k
+        jOfpF4lX6pW0QRPLyuOg22AAoBgA/FbpiiAOEc6nvbB1s1puwqnevV0HVIEy8unMbIITqwStbo958
+        ORwKmICUrKdJ9Jpq/dlDO2GdCh36CSzheEAvMA4TxREBhMXFw8Dc31l+wFd++VFwgYc2Ytzeuu8FI
+        3Xhapr9ybl4wIdCXPbVFVt5XN4bcA0++9e/Y7RYBFDK6bTxa5Fju3SlXupYEV1qkJZRkRZmY0V66L
+        gazISSMA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jifKv-0008Vl-NS; Tue, 09 Jun 2020 14:34:45 +0000
+Date:   Tue, 9 Jun 2020 07:34:45 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] firmware: add offset to request_firmware_into_buf
+Message-ID: <20200609143445.GD19604@bombadil.infradead.org>
+References: <20200606050458.17281-1-scott.branden@broadcom.com>
+ <20200606050458.17281-3-scott.branden@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALOAHbCeFFPCVS-toSC32qtLqQsEF1KG6p0OBXkQb=T2g6YpYw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200606050458.17281-3-scott.branden@broadcom.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 10:28:06PM +0800, Yafang Shao wrote:
-> On Tue, Jun 9, 2020 at 10:03 PM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Thu, Jun 04, 2020 at 03:05:47AM -0400, Yafang Shao wrote:
-> > > Recently there is a XFS deadlock on our server with an old kernel.
-> > > This deadlock is caused by allocating memory in xfs_map_blocks() while
-> > > doing writeback on behalf of memroy reclaim. Although this deadlock happens
-> > > on an old kernel, I think it could happen on the upstream as well. This
-> > > issue only happens once and can't be reproduced, so I haven't tried to
-> > > reproduce it on upsteam kernel.
-> >
-> > The report looks sensible, but I don't think the iomap code is the
-> > right place for this.  Until/unless the VM people agree that
-> > ->writepages(s) generally should not recurse into the fs I think the
-> > low-level file system allocating is the right place, so xfs_map_blocks
-> > would seem like the correct place.
-> 
-> Thanks for your comment.
-> That is what I did in the previous version [1].
-> So should I resend the v1 ?
+On Fri, Jun 05, 2020 at 10:04:52PM -0700, Scott Branden wrote:
+>  static struct fw_priv *__allocate_fw_priv(const char *fw_name,
+>  					  struct firmware_cache *fwc,
+> -					  void *dbuf, size_t size)
+> +					  void *dbuf, size_t size,
+> +					  size_t offset,
+> +					  enum kernel_pread_opt opt)
+>  {
 
-Well, v1 won't apply.  But I do prefer the approach there.
+Your types are screwed up.  size_t is the size of something in memory.
+loff_t is an offset in a file.  This should be an loff_t.  One of the
+other patches has the opposite problem.
+
+(this is kind of a minor problem compared to all the complexity
+problems, but it's worth mentioning)
