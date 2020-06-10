@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F951F5849
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A061F5846
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbgFJPt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 11:49:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46080 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbgFJPt1 (ORCPT
+        id S1730418AbgFJPuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 11:50:05 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44741 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730336AbgFJPta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 11:49:27 -0400
-Received: by mail-pl1-f195.google.com with SMTP id n2so1091036pld.13;
-        Wed, 10 Jun 2020 08:49:27 -0700 (PDT)
+        Wed, 10 Jun 2020 11:49:30 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 64so1260190pfv.11;
+        Wed, 10 Jun 2020 08:49:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VaG7u6/oJsTeb5TEDlgcUeH6UZPnr3RsvPE6NVTbAOU=;
-        b=LONDURJ+m34Rxt1zTQe26+zWI6iaGPKGUxgdfRPEybeVavviQUFyqeE3i56mvhOQCe
-         dsyIkhS2WvRfkbIhtpyDJ+pshgtxrMFb+annPnC30/wNc81XpPA1fSZHycni4/DOIbmX
-         2eKf3ETss9jPM0WMumqHK/5efJVLrlLC2/S1HMN7mQEpmHuuAjTaw6oF9JUdYPiURw9/
-         t/h87jaU9/ZkyhpIcejulLPiWtGqO8gedYFjQdndyUx110UCQo50XaiLS7KJeWAsGFMI
-         cQJ1y0F0arwIsTwRFX2INy+l3PZunoRN/5CVHAYwkGxAGnyosx7XNrHh3sn/IUn1bfrr
-         UlrQ==
-X-Gm-Message-State: AOAM530qnyKN5H2P0PmV+ujZTW25xpAXAmyVtX+dYKbVTNR0Xlrqdo30
-        e5doaI8Z9A25Tr0DcfMqJqg=
-X-Google-Smtp-Source: ABdhPJzZoTl6eBSN8rqRCZozE//xcl2A2KM4BNx2Ocdpgf10NDUQ83ejBj8RMkeBJS9LOY1t52eKiw==
-X-Received: by 2002:a17:90a:21a2:: with SMTP id q31mr3700686pjc.230.1591804166854;
-        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
+        bh=CrxGEOGFjsdVHn3Jd9UDXtWDflxIQ5FEpiOYf5podJs=;
+        b=K4vctIrodxtU656nnPd0chQXWRRECjOiTHcokQ3nwzufmTJH48yozHbRvOCQ0mTLJJ
+         EAW/wqlgQC6svpjRJXD/iBd+JtHpxEoDFIFddPTD7nu7czb218EYL30ZZwnDdlrvPZMZ
+         nkN/6xXB6y25bdJz3vybKfdQkWxz5Qwjeho3wGqDidMv+CGPw3POKKOg523eI5qtL7F0
+         oJxTImI5/M5rt+mNxX3mrfj1KBI1Fzcq0ccG9pLpKsY2+PKF1WJySJa9siG3vUxH8Vhp
+         c/a8bjp/5ij6LRNdPBQSgdzpnb3n1r4SBQAajDTGpslv/Yh3iHCKVnurtp4OyPlt0ZG3
+         nzqg==
+X-Gm-Message-State: AOAM531W96+PUtpPQt5YADLaZqYLW3WxLAgYAxzLatPnsAM2QKs4i5qt
+        fGuXMZgB65p5ABWhJHc8G9Q=
+X-Google-Smtp-Source: ABdhPJwXqgq7uS6Tcjx1SZx1Aww2/d5U2tI05GsSHHER7yozK95nSSwZLGkFi7ZnI4HAy3+k2OwCKQ==
+X-Received: by 2002:a63:ce14:: with SMTP id y20mr3147465pgf.186.1591804168526;
+        Wed, 10 Jun 2020 08:49:28 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p31sm252812pgb.46.2020.06.10.08.49.25
+        by smtp.gmail.com with ESMTPSA id c9sm302681pfp.100.2020.06.10.08.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 08:49:25 -0700 (PDT)
+        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 3872940B24; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+        id 4CCCE40ED5; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
         philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
@@ -51,9 +51,9 @@ Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/5] selftests: kmod: Use variable NAME in kmod_test_0001()
-Date:   Wed, 10 Jun 2020 15:49:19 +0000
-Message-Id: <20200610154923.27510-2-mcgrof@kernel.org>
+Subject: [PATCH 2/5] kmod: Remove redundant "be an" in the comment
+Date:   Wed, 10 Jun 2020 15:49:20 +0000
+Message-Id: <20200610154923.27510-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
 References: <20200610154923.27510-1-mcgrof@kernel.org>
@@ -66,37 +66,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-Use the variable NAME instead of "\000" directly in kmod_test_0001().
+There exists redundant "be an" in the comment, remove it.
 
 Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- tools/testing/selftests/kmod/kmod.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/kmod.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index 3702dbcc90a7..da60c3bd4f23 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -341,7 +341,7 @@ kmod_test_0001_driver()
- 
- 	kmod_defaults_driver
- 	config_num_threads 1
--	printf '\000' >"$DIR"/config_test_driver
-+	printf $NAME >"$DIR"/config_test_driver
- 	config_trigger ${FUNCNAME[0]}
- 	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
- }
-@@ -352,7 +352,7 @@ kmod_test_0001_fs()
- 
- 	kmod_defaults_fs
- 	config_num_threads 1
--	printf '\000' >"$DIR"/config_test_fs
-+	printf $NAME >"$DIR"/config_test_fs
- 	config_trigger ${FUNCNAME[0]}
- 	config_expect_result ${FUNCNAME[0]} -EINVAL
- }
+diff --git a/kernel/kmod.c b/kernel/kmod.c
+index 37c3c4b97b8e..3cd075ce2a1e 100644
+--- a/kernel/kmod.c
++++ b/kernel/kmod.c
+@@ -36,9 +36,8 @@
+  *
+  * If you need less than 50 threads would mean we're dealing with systems
+  * smaller than 3200 pages. This assumes you are capable of having ~13M memory,
+- * and this would only be an be an upper limit, after which the OOM killer
+- * would take effect. Systems like these are very unlikely if modules are
+- * enabled.
++ * and this would only be an upper limit, after which the OOM killer would take
++ * effect. Systems like these are very unlikely if modules are enabled.
+  */
+ #define MAX_KMOD_CONCURRENT 50
+ static atomic_t kmod_concurrent_max = ATOMIC_INIT(MAX_KMOD_CONCURRENT);
 -- 
 2.26.2
 
