@@ -2,349 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F065D1F511F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 11:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B35EE1F5121
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 11:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgFJJ1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 05:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbgFJJ1y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 05:27:54 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731C3C03E96B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 02:27:54 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id a127so846160pfa.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 02:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=g5zkZKTN+9Pwa1H+ZwZQErrRQBCq/NTm9XsGCeUK92c=;
-        b=jl4GQo4LJUzYtck/CItWh5pjD/Q8fdg5mLlk/SEXkptLcklSB5+bg/6iY1ni/gAhby
-         mKWOPYJPzRywdX4LCpytW/FJdymee+9fzLlYa0gqNAbgv+VZ5jYNf4RH/Y4cJ266+vGS
-         VLIHu957ODkcWPXz6hmcHbDr8uzJlDVElFQjk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=g5zkZKTN+9Pwa1H+ZwZQErrRQBCq/NTm9XsGCeUK92c=;
-        b=PPDeKLLnwufGiYc2uafZWNBI9FDl7uv35IxAmprVfRS3LplwTIlaJlGUSuvchHmNE4
-         9LYc8RjD5tYhqvhXv5RJ609ngPGuy//Mfd0GkevereugqbPFnQfqsFNAHXJd+ZmuhmR4
-         s1KNS05CQOhs1wn7rkk/nfOIIo/B/d31thyrMwDgIa6X6TW+28Fl+MC6pFaLO7lNjsF4
-         1dhacRm49lRrCajX7vAF1W6WTbq2Btxf23g89ZQUntl3ou8pWnl2LtN2H+OxIdR1O8A2
-         Dms87GzDBDngrST8rnorQRCqiTZ03Ef0pF24O84cWZfzkaBwXXaLdDx33FkDrHhGDAX4
-         vFEg==
-X-Gm-Message-State: AOAM532+v4xLbGHjfBIl0VIQW1dMFiOhEDSf07AS+DYocTm68chK9P84
-        09y4KQF2MJYvG49n+P62lO1M/Q==
-X-Google-Smtp-Source: ABdhPJymriX6ftrm3CuauWVsdfK8DluwD7B/MKE1JpZ7r3lLVRPvr4/nt6rbVFkYvdImzJqEdDxs8g==
-X-Received: by 2002:a65:5902:: with SMTP id f2mr1800905pgu.283.1591781273915;
-        Wed, 10 Jun 2020 02:27:53 -0700 (PDT)
-Received: from localhost ([2401:fa00:8f:2:1c5:cb1a:7c95:326])
-        by smtp.gmail.com with ESMTPSA id l63sm12559000pfd.122.2020.06.10.02.27.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jun 2020 02:27:53 -0700 (PDT)
-From:   Chirantan Ekbote <chirantan@chromium.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH v2] RFC: fuse: Call security hooks on new inodes
-Date:   Wed, 10 Jun 2020 18:27:44 +0900
-Message-Id: <20200610092744.140038-1-chirantan@chromium.org>
-X-Mailer: git-send-email 2.27.0.278.ge193c7cf3a9-goog
-In-Reply-To: <20200601053214.201723-1-chirantan@chromium.org>
-References: <20200601053214.201723-1-chirantan@chromium.org>
+        id S1727827AbgFJJ2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 05:28:32 -0400
+Received: from mout.web.de ([212.227.17.11]:58825 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727041AbgFJJ2b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 05:28:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1591781280;
+        bh=oezWqI7HL3i+z/22SIzrsqLgJ1K5t78e47/mcvcy2BE=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=cjyUeV+7FyLH0Y/wiZb6cR98CgRwS0Dt7W+1cvv7bm80Ha0xXJuOEF0FDzgpXhdtK
+         2rUokqvd6HnueaqL5hWqWbgVp+guF1Jxr6xMI+hvoyHfFROJWKYW4U0TXAQSa0V+tv
+         M2RVYovDOtc9kE/SGHqVA77/93BXPxEOzjd7d75w=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.155.16]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MNOV6-1jYauw39Hm-00P0cj; Wed, 10
+ Jun 2020 11:28:00 +0200
+Subject: Re: exfat: Improving exception handling in two functions
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     linux-fsdevel@vger.kernel.org,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        Tetsuhiro Kohada <kohada.t2@gmail.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
+Date:   Wed, 10 Jun 2020 11:27:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WqE5Z56HN/jah4MONpHubuHITUhC9Q6yoPvJ5lo2AbwKKwmWwza
+ Kj5LyaPbiMoo7zt1cHnW3/TuRsQU1dmkbgU0cB4sUPfqMWmZSiUDE3aA8lBrlxuvWc9lGyU
+ FJfJkPRFn09mloBNh7lLUoZM2TZBG7m0jPBXXUsdFrsLTYgINwFPru1TvcoRU0at74Y3vKU
+ bAnAIG7quO4BN4GMyoVLw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vPBeZXUdBXU=:6K1h/hGIidn/VoXZodVyzM
+ dNHVl4WNXXI99qMlkFpiiO2R0Ly+3isacldol6Ns1ufFfWuQT5bqlLwhXg/qfABKHwv5wuj09
+ Ely2zGaa+PWW3Vxs5iXlAKPAUpvd4IhoJ2rltGa/F35hqDqwaBo3MGkhw2en/19pUdtC3E6jw
+ h8ItZbb3kpWXtvXV7eH9tvfhI4dV2uuUCMNUi+UG6nKJMS6cDipH1zJtA6g7ld3kyAo0LC+Ks
+ 11xeLMTnG9TntYWKlvOFOoAR5fzfAax85cjHH+pdsHlHhuJlKeoYY03dsjxKCVSrq9r2BGsdT
+ +mT76PCRHEXIMpHu55BargcJXvoPpBCTTn5JUh9P5tV7JAhilfS20bnAudH56t7niyMI2qQ+n
+ SLSSMt5gUBfjpW8EJOilQ8ABtm/EZoAPgswdkXldWRkJTZwJxGExeVqMAQRPf+gW9QSfVKwPk
+ hoSqNS7m6XhWSuNAit3bIg38mmobGakX5q+63gZN5mNr0aCds1/a7DnMKPxbwXE8oCElSllzz
+ 1Cxev3+7fSY+TqsCNiFtBFtefnY3fr8d7sFl4Gq6PqYA71haIwxe3DstElJeXB2JX0DxO6tOK
+ 6QkQe/yvpOmid9seHIr7xjGuHtUmVbWEjD8qxsgMxobmZjzf/r3gOiSqWOmDEHUNKfUDrlpV5
+ GQMpwFM04zkf75XA7fFFRm7wpwQOmGy4xZzcSVJRcda7m7xmVXfcIaehKCFMqJPG8mIFOQCl9
+ inwKMp7B20YRFRTPwi4RH78YMLUDhEx/zEhm7xGHbfrNvmBqN2+CBTr8fU0b2SVm0yxCc9Yu/
+ Jk9yC8oqOpB4BA3putCMZgqioQURWAyhokscMC/diu+aEAdoqU1us+Zj20LK2CLNKoz7oeVBd
+ 5lxqlDKbJkJfBpE1OY6NjrXdS+H5BNpDvIf7ycWrr6Y7gHqT9vQ7HrVdfaVniAvqlyK5DvRqY
+ pH/vuHx8TnpLMEb7eZukV2kyq24UZIS9OhmavMkph4Y9eAZ7bT/5quIQ5CfYhPIqXM8/B7wZ2
+ 7mi5MZuRwWcX8I5XQsyzdCPzTIYPUc9xyYaf4qYzNTcPeKdjRyvSPiqvSKB7V26sJyisCV4/3
+ owa/pkVy8ZRMGjqA46vbM0KEoZTR4qW6eEJ2E2+VNbBo1Qm7QvpXCKOZH8iTKyb+LFMT8OvFl
+ m+rPHt47EZ5lWkR0sAZmAzcNaaPUvWWBbbz47eTD9kTQLxXkVW6V32PswX8h7B6a0RwmjexvV
+ 7lQf9G9y/g3GBGYkz
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a new `init_security` field to `fuse_conn` that controls whether we
-initialize security when a new inode is created.  Also add a
-`FUSE_SECURITY_CTX` flag that can be set in the `flags` field of the
-`fuse_init_out` struct that controls when the `init_security` field is
-set.
+Hello,
 
-When set to true, get the security context for a newly created inode via
-`security_dentry_init_security` and append it to the create, mkdir,
-mknod, and symlink requests.  The server should use this context by
-writing it to `/proc/thread-self/attr/fscreate` before creating the
-requested inode.
+I have taken another look at pointer usage after calls of the function =E2=
+=80=9Cbrelse=E2=80=9D.
+My source code analysis approach pointed implementation details
+like the following out for further software development considerations.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/f=
+s/exfat/namei.c?id=3D3d155ae4358baf4831609c2f9cd09396a2b8badf#n1078
 
-Calling security hooks is needed for `setfscreatecon` to work since it
-is applied as part of the selinux security hook.
+=E2=80=A6
+		epold =3D exfat_get_dentry(sb, p_dir, oldentry + 1, &old_bh,
+			&sector_old);
+		epnew =3D exfat_get_dentry(sb, p_dir, newentry + 1, &new_bh,
+			&sector_new);
+		if (!epold || !epnew)
+			return -EIO;
+=E2=80=A6
 
-Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
----
-Changes in v2:
-  * Added the FUSE_SECURITY_CTX flag for init_out responses.
-  * Switched to security_dentry_init_security.
-  * Send security context with create, mknod, mkdir, and symlink
-    requests instead of applying it after creation.
+I suggest to split such an error check.
+How do you think about to release a buffer head object for the desired
+exception handling if one of these function calls succeeded?
 
- fs/fuse/dir.c             | 99 +++++++++++++++++++++++++++++++++++++--
- fs/fuse/fuse_i.h          |  3 ++
- fs/fuse/inode.c           |  5 +-
- include/uapi/linux/fuse.h |  8 +++-
- 4 files changed, 110 insertions(+), 5 deletions(-)
+Would you like to adjust such code in the functions =E2=80=9Cexfat_rename_=
+file=E2=80=9D
+and =E2=80=9Cexfat_move_file=E2=80=9D?
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ee190119f45cc..86bc073bb4f0a 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -16,6 +16,9 @@
- #include <linux/xattr.h>
- #include <linux/iversion.h>
- #include <linux/posix_acl.h>
-+#include <linux/security.h>
-+#include <linux/types.h>
-+#include <linux/kernel.h>
- 
- static void fuse_advise_use_readdirplus(struct inode *dir)
- {
-@@ -442,6 +445,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen = 0;
- 
- 	/* Userspace expects S_IFREG in create mode */
- 	BUG_ON((mode & S_IFMT) != S_IFREG);
-@@ -477,6 +482,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	args.out_args[0].value = &outentry;
- 	args.out_args[1].size = sizeof(outopen);
- 	args.out_args[1].value = &outopen;
-+
-+	if (fc->init_security) {
-+		err = security_dentry_init_security(entry, mode, &entry->d_name,
-+						    &security_ctx,
-+						    &security_ctxlen);
-+		if (err)
-+			goto out_put_forget_req;
-+
-+		if (security_ctxlen > 0) {
-+			args.in_numargs = 3;
-+			args.in_args[2].size = security_ctxlen;
-+			args.in_args[2].value = security_ctx;
-+		}
-+	}
-+
- 	err = fuse_simple_request(fc, &args);
- 	if (err)
- 		goto out_free_ff;
-@@ -513,6 +533,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	return err;
- 
- out_free_ff:
-+	if (security_ctxlen > 0)
-+		kfree(security_ctx);
- 	fuse_file_free(ff);
- out_put_forget_req:
- 	kfree(forget);
-@@ -629,6 +651,9 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
- {
- 	struct fuse_mknod_in inarg;
- 	struct fuse_conn *fc = get_fuse_conn(dir);
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen = 0;
-+	int ret;
- 	FUSE_ARGS(args);
- 
- 	if (!fc->dont_mask)
-@@ -644,7 +669,27 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
--	return create_new_entry(fc, &args, dir, entry, mode);
-+
-+	if (fc->init_security) {
-+		ret = security_dentry_init_security(entry, mode, &entry->d_name,
-+						    &security_ctx,
-+						    &security_ctxlen);
-+		if (ret)
-+			goto out;
-+
-+		if (security_ctxlen > 0) {
-+			args.in_numargs = 3;
-+			args.in_args[2].size = security_ctxlen;
-+			args.in_args[2].value = security_ctx;
-+		}
-+	}
-+
-+	ret = create_new_entry(fc, &args, dir, entry, mode);
-+
-+	if (security_ctxlen > 0)
-+		kfree(security_ctx);
-+out:
-+	return ret;
- }
- 
- static int fuse_create(struct inode *dir, struct dentry *entry, umode_t mode,
-@@ -657,6 +702,9 @@ static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
- {
- 	struct fuse_mkdir_in inarg;
- 	struct fuse_conn *fc = get_fuse_conn(dir);
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen = 0;
-+	int ret;
- 	FUSE_ARGS(args);
- 
- 	if (!fc->dont_mask)
-@@ -671,7 +719,28 @@ static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
--	return create_new_entry(fc, &args, dir, entry, S_IFDIR);
-+
-+	if (fc->init_security) {
-+		ret = security_dentry_init_security(entry, S_IFDIR,
-+						    &entry->d_name,
-+						    &security_ctx,
-+						    &security_ctxlen);
-+		if (ret)
-+			goto out;
-+
-+		if (security_ctxlen > 0) {
-+			args.in_numargs = 3;
-+			args.in_args[2].size = security_ctxlen;
-+			args.in_args[2].value = security_ctx;
-+		}
-+	}
-+
-+	ret = create_new_entry(fc, &args, dir, entry, S_IFDIR);
-+
-+	if (security_ctxlen > 0)
-+		kfree(security_ctx);
-+out:
-+	return ret;
- }
- 
- static int fuse_symlink(struct inode *dir, struct dentry *entry,
-@@ -679,6 +748,9 @@ static int fuse_symlink(struct inode *dir, struct dentry *entry,
- {
- 	struct fuse_conn *fc = get_fuse_conn(dir);
- 	unsigned len = strlen(link) + 1;
-+	void *security_ctx = NULL;
-+	u32 security_ctxlen = 0;
-+	int ret;
- 	FUSE_ARGS(args);
- 
- 	args.opcode = FUSE_SYMLINK;
-@@ -687,7 +759,28 @@ static int fuse_symlink(struct inode *dir, struct dentry *entry,
- 	args.in_args[0].value = entry->d_name.name;
- 	args.in_args[1].size = len;
- 	args.in_args[1].value = link;
--	return create_new_entry(fc, &args, dir, entry, S_IFLNK);
-+
-+	if (fc->init_security) {
-+		ret = security_dentry_init_security(entry, S_IFLNK,
-+						    &entry->d_name,
-+						    &security_ctx,
-+						    &security_ctxlen);
-+		if (ret)
-+			goto out;
-+
-+		if (security_ctxlen > 0) {
-+			args.in_numargs = 3;
-+			args.in_args[2].size = security_ctxlen;
-+			args.in_args[2].value = security_ctx;
-+		}
-+	}
-+
-+	ret = create_new_entry(fc, &args, dir, entry, S_IFLNK);
-+
-+	if (security_ctxlen > 0)
-+		kfree(security_ctx);
-+out:
-+	return ret;
- }
- 
- void fuse_update_ctime(struct inode *inode)
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index ca344bf714045..5ea9212b0a71c 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -719,6 +719,9 @@ struct fuse_conn {
- 	/* Do not show mount options */
- 	unsigned int no_mount_options:1;
- 
-+	/* Initialize security xattrs when creating a new inode */
-+	unsigned int init_security : 1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 16aec32f7f3d7..1a311771c5555 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -951,6 +951,8 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
- 					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
- 					max_t(unsigned int, arg->max_pages, 1));
- 			}
-+			if (arg->flags & FUSE_SECURITY_CTX)
-+				fc->init_security = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -988,7 +990,8 @@ void fuse_send_init(struct fuse_conn *fc)
- 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
- 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
- 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
--		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
-+		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
-+		FUSE_SECURITY_CTX;
- 	ia->args.opcode = FUSE_INIT;
- 	ia->args.in_numargs = 1;
- 	ia->args.in_args[0].size = sizeof(ia->in);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 373cada898159..00919c214149d 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -172,6 +172,10 @@
-  *  - add FUSE_WRITE_KILL_PRIV flag
-  *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
-  *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
-+ *
-+ *  7.32
-+ *  - add FUSE_SECURITY_CTX flag for fuse_init_out
-+ *  - add security context to create, mkdir, and mknod requests
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -207,7 +211,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 31
-+#define FUSE_KERNEL_MINOR_VERSION 32
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -314,6 +318,7 @@ struct fuse_file_lock {
-  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
-  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
-  * FUSE_MAP_ALIGNMENT: map_alignment field is valid
-+ * FUSE_SECURITY_CTX: add security context to create, mkdir, symlink, and mknod
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -342,6 +347,7 @@ struct fuse_file_lock {
- #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
- #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
- #define FUSE_MAP_ALIGNMENT	(1 << 26)
-+#define FUSE_SECURITY_CTX	(1 << 27)
- 
- /**
-  * CUSE INIT request/reply flags
--- 
-2.27.0.278.ge193c7cf3a9-goog
-
+Regards,
+Markus
