@@ -2,169 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F2171F5C54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 22:01:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB331F5C84
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 22:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbgFJUBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 16:01:07 -0400
-Received: from mout.web.de ([212.227.17.12]:42811 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbgFJUBG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 16:01:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591819231;
-        bh=V/kXYOzuw6rH33xEKI0N1+DMgJKBXkECKuaKk9JHHnw=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=Xf7T8lewcVQ950UiWBGazQBupJWbngdQ6RKlNpv7lXxjzOiBGo58ntdcQizhBSw6F
-         WBGzWXY1cKuCKdgEbGyiWYW6pkvAgW+HTwpoudoE9p9/Cl6EXKXghdBV/BqD6iszWB
-         OiRXvFsW+ZQgaFqAUjAJ5nGAs3pwWo1+ELwQ/3es=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.155.16]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MGicf-1jeNo62qtV-00DUaM; Wed, 10
- Jun 2020 22:00:31 +0200
-Subject: Re: exfat: add missing brelse() calls on error paths
-To:     Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        Tetsuhiro Kohada <kohada.t2@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20200610172213.GA90634@mwanda>
- <740ce77a-5404-102b-832f-870cbec82d56@web.de> <20200610184517.GC4282@kadam>
- <b44caf20-d3fc-30ac-f716-2375ed55dc9a@web.de>
- <20200610192244.GK19604@bombadil.infradead.org>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <015e5093-d139-6bee-ca45-4cb0e871e65d@web.de>
-Date:   Wed, 10 Jun 2020 22:00:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1730657AbgFJUOF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 16:14:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60544 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730613AbgFJUN4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 16:13:56 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77AAAC03E96B;
+        Wed, 10 Jun 2020 13:13:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=8oTHXpm3xPlps0OwnngRdhhKJXP6EXpNLFH5ObgyZ7o=; b=p1lQmGyIS9CTWJbiLSn5Y7tEvB
+        doha4YwSyCdse2a3ltulJxNlhPz+N6U99HYPReSzMLL7vu8yXgoRt/mH8niT2M4E0e7EkTTbIE/IB
+        1J2GoiF/6hjPCv7/oMmiVSc5FXC+IH3F8q8NoBWnTIA2AxHapiwrzUJ01RGoolEr6aa0B5fwJQ5p0
+        R16ZaUbZZibpcb53+DFHS+nw9cKB7DKUoi5PGPHMvUJB5qri9bbWhx/KIiPDMIKZGCDhnPdXBFEQY
+        Gnz9EXs8Ytzd88/NoCmgbq3coU7ewtGbKCkBmarxwDOjgdGDZz23W/9IW4nxOUYaFsaLVGaQGDKJo
+        MlyQE2gg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jj76Z-0003So-7g; Wed, 10 Jun 2020 20:13:47 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [RFC v6 00/51] Large pages in the page cache
+Date:   Wed, 10 Jun 2020 13:12:54 -0700
+Message-Id: <20200610201345.13273-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-In-Reply-To: <20200610192244.GK19604@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-X-Provags-ID: V03:K1:1CFfg75+PNIhMjnaQFQgUxOoGYHJRs1zzs0vyK9t5n9UoWJv9Ig
- mPzwqJ5d+rMhw20lCvjXHC5KCvcB+1bOIhzn2E2SyJAbaMlB/zOe3aNf1lEflIgac/9wB/b
- DGe8OrxFqAvL3lypMV8JLiPeuesd2VFZGYdjqkHzAPfmc2yHujO6gFIoC4Xb2e6QdAz3GkK
- K5XPIrYve5ki1KAalEFfw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:MOzWbS8W4yg=:fpMHfAlrbTN5wB+pGEIK+u
- h0vrDtpssBVanAfTMcK/8e/dMTFFiATBtMwubX2lFbFQG/PTkBIll21BOHz6ncwSRtr4bncYv
- fghoFFgnVap9HlYNRfba1+dLJzCpyWiEbYjCB1AyCubhgvHFGWq3iZ1UkR67xpOOOrxJdpzx4
- OMbcxgpcRDnimk4SjT4Sn5XecMuw9AIq2Z5maYfPORsr5TpOTEgsrxqzyrt67aLzPnZVQ6zcS
- BG1koWnh4/GO669tfLy+5UH3TZG778v4FLffyBVcPhn+FTC4Wig15Tf/MbB7M1NWTl0ljVwuu
- HrqvMQZ35a4FCqCsFDkIHWLyB5eKOfm46lD2GMeBgrLUs4KR4Al6bFtH5MYnnbm/3IlnSGkVs
- BHAnPjKHOTCICXUKnc8Nizj0yiwWzEauRutD6XyJHNgz4FwJapT/jUMOufUY16Q72WmVWjbTb
- ytlsnh2Q67ENwY9oFq9fwO2Y6Tit/D+WP9QSmDj2y62gafOH85pMweVG1aO4H7B9+DLSUUrKT
- 3RKyXwt4TZxB8BElrIKsQa5QujqpZNof1S7wjcRVQ+oCsKz0zKPK5yjUrGafVBaA6bltBFOUj
- bwF7VioP/KRMjvLOc0mr6jDENGY4KnFMve7TBywyjxl40oiIR9HMZYodRJ/ejWmlUPIQGoZaN
- NGY34FlRAfi5QeK1H4FKoWCRZw1ASCw/ZD8XjX0/kgB2maGjLlt8xfipSD7UWkPt/QOJVvnPy
- lBeTCzEOCDHHyFSv6R8SN6/Qs6fa90B2vCjQlHlwhfCL06Wq8xsxaXoWz8vz98ddW/guUtWmg
- O397UvsP3rbSKQuhCAeu+Y1mGKw/1PrUHb18XVwdtB1FHIAusIAsPdF2qt9hBbfzCeDHmtfxV
- rj8A1ZnX/5hS6C9jXsWlSGjt/cTUjZR1Z4PSd2UCzNb9Z2a2IDaQo2qv16v1+WZqCh29peHHo
- Mjju+cI/ba52ZA2H7SSH2RrxXr7Ds5ugX2zmy/gPsZwYTrYd8U+zDQ6NmMN70PhYacffH8sFt
- ATpnJ45B9veqWzOn/gSsGDmYxxIznxYbix5eu78gIZ4DgXdj7PKaF/YCddgVeHKrrl78NnhbX
- QQ5PuPn5co0kL2xWHPZ6kZ9iTaeyke+KPtzs7/xf5eSBkBkUWFaumEaIZo0f7QkxlSMDqHEWt
- dIov0Z0ft9l8lp/oWFedKXJcL8z4tRy2jqs394XO9iP83KWdIBL7/3IS57/QUHa+2tIuLPVkp
- jTm/kTEBdTdYf9WGk
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> You're nitpicking commit messages.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-I am occasionally trying to achieve corresponding improvements.
+Another fortnight, another dump of my current large pages work.
+I've squished a lot of bugs this time.  xfstests is much happier now,
+running for 1631 seconds and getting as far as generic/086.  This patchset
+is getting a little big, so I'm going to try to get some bits of it
+upstream soon (the bits that make sense regardless of whether the rest
+of this is merged).
+
+It's now based on linus' master (6f630784cc0d), and you can get it from
+http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray-pagecache
+if you'd rather see it there (this branch is force-pushed frequently)
+
+The primary idea here is that a large part of the overhead in dealing
+with individual pages is that there's just so darned many of them.
+We would be better off dealing with fewer, larger pages, even if they
+don't get to be the size necessary for the CPU to use a larger TLB entry.
+
+The approach taken is to make THPs support arbitrary power-of-two sizes
+(instead of just PMDs).  There's probably some tuning to be done to decide
+what sizes are worth using, but we're a fair way from doing performance
+work with this patchset yet.
+
+TODO:
+ - Fix arc/arm/arm64/mips/powerpc/space flush_dcache_page() to
+   support THPs natively
+ - Actually create large pages for sufficiently large writes
+ - Copy in larger chunks for write() in iomap
+ - More bug fixing
+
+v6:
+ - Improved debug output for large pages (will send to Andrew soon)
+ - Make compound_nr() more efficient (will send to Andrew soon)
+ - Renamed hpage_nr_pages() to thp_nr_pages()
+ - Added thp_head()
+ - Set the THP_SUPPORT flag in shmfs
+ - Change zero_user_segments() to call flush_dcache_page() once for the
+   head page instead of once for each subpage.  The architectures listed
+   above need to be fixed.
+ - Fix shmem & truncate to call zero_user_segment() with the head page
+ - Fix page_is_mergeable() for THPs
+ - Fix a bug in iomap_iop_set_range_uptodate() where I was assuming that
+   the offset was block-aligned
+ - Fix a few more places that assume unsigned int is large enough to hold
+   offset/length within a page
+ - Fix doing writeback of a page after discarding its iop due to a partial
+   truncate
+ - Convert the iomap write paths more comprehensively.  That's now four
+   separate patches
+v5:
+ - Add a mapping AS_LARGE_PAGES flag to reduce the levels of indirection
+   (Dave Chinner)
+ - Change iomap_invalidate_page() to handle subpages of a THP being punched
+ - Ensure we don't call page_cache_async_readahead() with a tail page
+ - Revert to Bill's original patch for thp_get_unmapped_area() to allow
+   for hardware page sizes other than PMD to be supported more easily
+ - Remove a few more HPAGE_PMD_NR
+ - Move shmem_punch_compound() to truncate.c and rename it to punch_thp()
+ - Add support for page_private to punch_thp()
+
+v4:
+ - Fix thp_size typo
+ - Fix the iomap page_mkwrite() path to operate on the head page, even
+   though the vm_fault has a pointer to the tail page
+ - Fix iomap_finish_ioend() to use bio_for_each_thp_segment_all()
+ - Rework PageDoubleMap (see first two patches for details)
+ - Fix page_cache_delete() to handle shadow entries being stored to a THP
+ - Fix the assertion in pagecache_get_page() to handle tail pages
+ - Change PageReadahead from NO_COMPOUND to ONLY_HEAD
+ - Handle PageReadahead being set on head pages
+ - Handle total_mapcount correctly (Kirill)
+ - Pull the FS_LARGE_PAGES check out into mapping_large_pages()
+ - Fix page size assumption in truncate_cleanup_page()
+ - Avoid splitting large pages unnecessarily on truncate
+ - Disable the page cache truncation introduced as part of the read-only
+   THP patch set
+ - Call compound_head() in iomap buffered write paths -- we retrieve a
+   (potentially) tail page from the page cache and need to use that for
+   flush_dcache_page(), but we expect to operate on a head page in most
+   of the iomap code
 
 
-> This is exactly the kind of thing which drives people away.
 
-Would you like to follow official patch process documentation?
+Kirill A. Shutemov (1):
+  mm: Fix total_mapcount assumption of page size
 
+Matthew Wilcox (Oracle) (49):
+  mm: Print head flags in dump_page
+  mm: Print the inode number in dump_page
+  mm: Print hashed address of struct page
+  mm: Move PageDoubleMap bit
+  mm: Simplify PageDoubleMap with PF_SECOND policy
+  mm: Store compound_nr as well as compound_order
+  mm: Move page-flags include to top of file
+  mm: Add thp_order
+  mm: Add thp_size
+  mm: Replace hpage_nr_pages with thp_nr_pages
+  mm: Add thp_head
+  mm: Introduce offset_in_thp
+  mm: Support arbitrary THP sizes
+  fs: Add a filesystem flag for THPs
+  fs: Do not update nr_thps for mappings which support THPs
+  fs: Introduce i_blocks_per_page
+  fs: Make page_mkwrite_check_truncate thp-aware
+  mm: Support THPs in zero_user_segments
+  mm: Zero the head page, not the tail page
+  block: Add bio_for_each_thp_segment_all
+  block: Support THPs in page_is_mergeable
+  iomap: Support arbitrarily many blocks per page
+  iomap: Support THPs in iomap_adjust_read_range
+  iomap: Support THPs in invalidatepage
+  iomap: Support THPs in read paths
+  iomap: Convert iomap_write_end types
+  iomap: Change calling convention for zeroing
+  iomap: Change iomap_write_begin calling convention
+  iomap: Support THPs in write paths
+  iomap: Inline data shouldn't see THPs
+  iomap: Handle tail pages in iomap_page_mkwrite
+  xfs: Support THPs
+  mm: Make prep_transhuge_page return its argument
+  mm: Add __page_cache_alloc_order
+  mm: Allow THPs to be added to the page cache
+  mm: Allow THPs to be removed from the page cache
+  mm: Remove page fault assumption of compound page size
+  mm: Remove assumptions of THP size
+  mm: Avoid splitting THPs
+  mm: Fix truncation for pages of arbitrary size
+  mm: Handle truncates that split THPs
+  mm: Support storing shadow entries for THPs
+  mm: Support retrieving tail pages from the page cache
+  mm: Support tail pages in wait_for_stable_page
+  mm: Add DEFINE_READAHEAD
+  mm: Make page_cache_readahead_unbounded take a readahead_control
+  mm: Make __do_page_cache_readahead take a readahead_control
+  mm: Allow PageReadahead to be set on head pages
+  mm: Add THP readahead
 
-> Dan's commit message is fine.
+William Kucharski (1):
+  mm: Align THP mappings for non-DAX
 
-I have got the impression that he indicates another deviation from
-a well-known requirement. I am curious under which circumstances
-such a patch review concern will be taken into account finally.
+ block/bio.c                |   2 +-
+ drivers/nvdimm/btt.c       |   4 +-
+ drivers/nvdimm/pmem.c      |   6 +-
+ fs/dax.c                   |  13 +-
+ fs/ext4/verity.c           |   4 +-
+ fs/f2fs/verity.c           |   4 +-
+ fs/inode.c                 |   2 +
+ fs/iomap/buffered-io.c     | 250 +++++++++++++++++++------------------
+ fs/jfs/jfs_metapage.c      |   2 +-
+ fs/xfs/xfs_aops.c          |   4 +-
+ fs/xfs/xfs_super.c         |   2 +-
+ include/linux/bio.h        |  13 ++
+ include/linux/bvec.h       |  23 ++++
+ include/linux/dax.h        |   3 +-
+ include/linux/fs.h         |  28 +----
+ include/linux/highmem.h    |  11 +-
+ include/linux/huge_mm.h    |  65 ++++++++--
+ include/linux/mm.h         |  46 +++----
+ include/linux/mm_inline.h  |   6 +-
+ include/linux/mm_types.h   |   1 +
+ include/linux/page-flags.h |  46 ++-----
+ include/linux/pagemap.h    | 102 ++++++++++++---
+ mm/compaction.c            |   2 +-
+ mm/debug.c                 |  23 ++--
+ mm/filemap.c               | 101 +++++++++------
+ mm/gup.c                   |   2 +-
+ mm/highmem.c               |  62 ++++++++-
+ mm/huge_memory.c           |  38 +++---
+ mm/hugetlb.c               |   2 +-
+ mm/internal.h              |  17 +--
+ mm/memcontrol.c            |  10 +-
+ mm/memory.c                |   7 +-
+ mm/memory_hotplug.c        |   7 +-
+ mm/mempolicy.c             |   2 +-
+ mm/migrate.c               |  16 +--
+ mm/mlock.c                 |   9 +-
+ mm/page-writeback.c        |   1 +
+ mm/page_alloc.c            |   5 +-
+ mm/page_io.c               |   4 +-
+ mm/page_vma_mapped.c       |   6 +-
+ mm/readahead.c             | 145 ++++++++++++++++-----
+ mm/rmap.c                  |  18 +--
+ mm/shmem.c                 |  39 ++----
+ mm/swap.c                  |  16 +--
+ mm/swap_state.c            |   6 +-
+ mm/swapfile.c              |   2 +-
+ mm/truncate.c              |  70 ++++++++++-
+ mm/vmscan.c                |  12 +-
+ 48 files changed, 795 insertions(+), 464 deletions(-)
 
-
-> It's actually hilarious because your emails are so unclear that I
-> can't understand them.
-
-I find such feedback surprising and interesting.
-I hope that we can reduce understanding difficulties together.
-
-
-> I have no idea what "collateral evolution" means
-
-This term expresses the situation that a single change can trigger
-further changes.
-
-Examples for programmers:
-A)
-* You add an argument to an used function.
-* How many function calls will need related adjustments?
-
-B)
-* Some function calls can fail.
-* How do you think about to complete error detection and the
-  corresponding exception handling?
-
-
-> and yet you use it in almost every email.
-
-You exaggerate here.
-
-
-> Why can't you use the same terminology the rest of us use?
-
-I got also used to some wording approaches.
-Which terminology variation do you prefer?
-
-Regards,
-Markus
+-- 
+2.26.2
