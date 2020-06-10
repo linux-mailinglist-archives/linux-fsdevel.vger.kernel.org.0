@@ -2,55 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8078B1F5D3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 22:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B87F1F5D79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 23:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbgFJUda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 16:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgFJUda (ORCPT
+        id S1726260AbgFJVGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 17:06:05 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49062 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgFJVGE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 16:33:30 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02337C03E96B;
-        Wed, 10 Jun 2020 13:33:29 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jj7Pc-006dH5-1x; Wed, 10 Jun 2020 20:33:28 +0000
-Date:   Wed, 10 Jun 2020 21:33:28 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] a bit of epoll stuff
-Message-ID: <20200610203328.GX23230@ZenIV.linux.org.uk>
+        Wed, 10 Jun 2020 17:06:04 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05AKqwwk026201;
+        Wed, 10 Jun 2020 21:05:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=4jHlZNGKPDJuq84IQpwI4b6fk3uvTWnzD8amLxzwC+s=;
+ b=ih0N4anNjUr1Uy2oYdoVXYKI+qmu09mbV6maDasAJJFwRNNdJhSyb0nn9nV+FrXhakf3
+ tAGcaJ+ZP4aFidyt1xL4AoPar0CFxbdwmDBshS+403bZ8sqnJKHSItOvAqdFxz/a1QCY
+ ZnhzMXo9FIc1x3UAD/ACB0qrufbSgsCAH29vsnbfsB9usAq8CQXqnIDyMrDHPFSFfWUc
+ XNJUMFSQ0OVPfhoBs/TeyHoyRhhTVY3iC35fzbC2IUhVFO1ivMHb7F3AaFVjD4exEDX+
+ phoM1xO9EcXDtnXlQ6SsCwm+CeqTJIMHkD5JIgWz7ytvigaxTzeqqLEKWhzELXLhQcWU IA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 31jepnxff0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 10 Jun 2020 21:05:51 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05AKiRQv132314;
+        Wed, 10 Jun 2020 21:05:51 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 31gmwtve3b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 10 Jun 2020 21:05:51 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05AL5o8a021995;
+        Wed, 10 Jun 2020 21:05:50 GMT
+Received: from localhost.localdomain (dhcp-10-65-148-96.vpn.oracle.com [10.65.148.96])
+        by userp3020.oracle.com with ESMTP id 31gmwtve2s-1;
+        Wed, 10 Jun 2020 21:05:50 +0000
+From:   Tom Hromatka <tom.hromatka@oracle.com>
+To:     tom.hromatka@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     fweisbec@gmail.com, tglx@linutronix.de, mingo@kernel.org,
+        adobriyan@gmail.com
+Subject: [PATCH 0/2] iowait and idle fixes in /proc/stat
+Date:   Wed, 10 Jun 2020 15:05:47 -0600
+Message-Id: <20200610210549.61193-1-tom.hromatka@oracle.com>
+X-Mailer: git-send-email 2.25.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9648 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 cotscore=-2147483648 adultscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006100154
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	epoll conversion to read_iter from Jens; I thought there might be
-more epoll stuff this cycle, but uaccess took too much time.  It might
-as well have sat in #work.misc, but I didn't want to rebase for no good
-reason...
+A customer is using /proc/stat to track cpu usage in a VM and noted
+that the iowait and idle times behave strangely when a cpu goes
+offline and comes back online.
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+This patchset addresses two issues that can cause iowait and idle
+to fluctuate up and down.  With these changes, cpu iowait and idle
+now only monotonically increase.
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+Tom Hromatka (2):
+  tick-sched: Do not clear the iowait and idle times
+  /proc/stat: Simplify iowait and idle calculations when cpu is offline
 
-are available in the git repository at:
+ fs/proc/stat.c           | 24 ++++++------------------
+ kernel/time/tick-sched.c |  9 +++++++++
+ 2 files changed, 15 insertions(+), 18 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.epoll
+-- 
+2.25.3
 
-for you to fetch changes up to 12aceb89b0bce19eb89735f9de7a9983e4f0adae:
-
-  eventfd: convert to f_op->read_iter() (2020-05-06 22:33:43 -0400)
-
-----------------------------------------------------------------
-Jens Axboe (1):
-      eventfd: convert to f_op->read_iter()
-
- fs/eventfd.c | 64 ++++++++++++++++++++++++++++++++++++------------------------
- 1 file changed, 38 insertions(+), 26 deletions(-)
