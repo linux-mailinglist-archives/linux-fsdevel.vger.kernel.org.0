@@ -2,178 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 568E61F59BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 19:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 357F91F59ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 19:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbgFJRKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 13:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729357AbgFJRKh (ORCPT
+        id S1729692AbgFJRRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 13:17:06 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:60928 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729619AbgFJRRF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 13:10:37 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96C7C08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 10:10:36 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id jz3so1087419pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 10:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Wu1KxK3oWDaDyFouCR1IJCWRCCZuOnfSKhmf+rK5Zxw=;
-        b=oMmr18e2vlsUwaIbxh6CowxNZ5fXzjfgmkFL2R2jM2RUlcV/0jnVTduaVrPaFnDGs9
-         QDuR/bYJP+8NCw01k5v6u7s7UrHLS9i8UYMPU93hCzQfrKP3xRzfjAw0OBDtnOAgcdtQ
-         7KVFiv3APJf/AYGrTCrcwRMVTg4Dwe/DNZI54=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Wu1KxK3oWDaDyFouCR1IJCWRCCZuOnfSKhmf+rK5Zxw=;
-        b=LRh7HZB0t8uclxgc7Z4uT00WHcFRLPG4YbSwb8CfurGUTO5tdS77stKnoZ4GMEgxbr
-         1PSDeO2msOAMZpw7GozojFJIMqsEzuWuiaMbx0/CgiWGYyZzMbFy9Ilrc2zTIHoJeEju
-         qBdnt9GUzUF/94ZeZI22vTu6rGK80CgGwKLsr4uGkyc5j9jCaS38f98kxVAoUBBfV7mO
-         9yA+c/G9mu3DIVjx0hAPWEbX36eI1b8bZY/9gmI01FLCHQt6cqsZiTzsryRm8b+D6AyR
-         HVRbd6fI6WX9e4RizN9P/oI6SROMCoGSBoGryMUylgX7nFeg1qZQVVdpHocOncBA2nHS
-         UDOg==
-X-Gm-Message-State: AOAM531rmqofsMdykXwtNF6T8jXHx0SRrc6r5tEs1VwzjSsEwksxy07i
-        53wZ6hGEmKXZa+jlaBUAKutwzw==
-X-Google-Smtp-Source: ABdhPJxayOX7rVXqbhvcTIWz5BPNBU4r5agrcCKjs9HEcbi4xBHT9zFhKhsPc7rddjV41A6Y2XRKoQ==
-X-Received: by 2002:a17:902:7487:: with SMTP id h7mr3828645pll.155.1591809036089;
-        Wed, 10 Jun 2020 10:10:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h3sm484466pfr.2.2020.06.10.10.10.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 10:10:34 -0700 (PDT)
-Date:   Wed, 10 Jun 2020 10:10:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        containers@lists.linux-foundation.org,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        linux-kernel@vger.kernel.org, Matt Denton <mpdenton@google.com>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, cgroups@vger.kernel.org,
-        stable@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Message-ID: <202006101005.D1D19EE@keescook>
-References: <20200604012452.vh33nufblowuxfed@wittgenstein>
- <202006031845.F587F85A@keescook>
- <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
- <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
- <202006091235.930519F5B@keescook>
- <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
- <202006091346.66B79E07@keescook>
- <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+        Wed, 10 Jun 2020 13:17:05 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jj4LV-0006fQ-U5; Wed, 10 Jun 2020 11:17:01 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jj4LV-0002OG-1e; Wed, 10 Jun 2020 11:17:01 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     syzbot <syzbot+4abac52934a48af5ff19@syzkaller.appspotmail.com>,
+        adobriyan@gmail.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <0000000000002d7ca605a7b8b1c5@google.com>
+        <20200610130422.1197386-1-gladkov.alexey@gmail.com>
+Date:   Wed, 10 Jun 2020 12:12:54 -0500
+In-Reply-To: <20200610130422.1197386-1-gladkov.alexey@gmail.com> (Alexey
+        Gladkov's message of "Wed, 10 Jun 2020 15:04:22 +0200")
+Message-ID: <87mu5azvxl.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+Content-Type: text/plain
+X-XM-SPF: eid=1jj4LV-0002OG-1e;;;mid=<87mu5azvxl.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18dBXhU4ULnzMCMzQEm7usNsGx80LULPAM=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4807]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa08 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Alexey Gladkov <gladkov.alexey@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 516 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 13 (2.6%), b_tie_ro: 11 (2.2%), parse: 0.96
+        (0.2%), extract_message_metadata: 12 (2.4%), get_uri_detail_list: 1.99
+        (0.4%), tests_pri_-1000: 4.5 (0.9%), tests_pri_-950: 1.31 (0.3%),
+        tests_pri_-900: 1.11 (0.2%), tests_pri_-90: 139 (27.0%), check_bayes:
+        136 (26.4%), b_tokenize: 6 (1.2%), b_tok_get_all: 9 (1.7%),
+        b_comp_prob: 2.8 (0.5%), b_tok_touch_all: 113 (22.0%), b_finish: 1.36
+        (0.3%), tests_pri_0: 331 (64.2%), check_dkim_signature: 0.82 (0.2%),
+        check_dkim_adsp: 3.4 (0.6%), poll_dns_idle: 0.93 (0.2%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 6 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] proc: s_fs_info may be NULL when proc_kill_sb is called
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
-> On Tue, Jun 09, 2020 at 10:27:54PM -0700, Kees Cook wrote:
-> > On Tue, Jun 09, 2020 at 11:27:30PM +0200, Christian Brauner wrote:
-> > > On June 9, 2020 10:55:42 PM GMT+02:00, Kees Cook <keescook@chromium.org> wrote:
-> > > >LOL. And while we were debating this, hch just went and cleaned stuff up:
-> > > >
-> > > >2618d530dd8b ("net/scm: cleanup scm_detach_fds")
-> > > >
-> > > >So, um, yeah, now my proposal is actually even closer to what we already
-> > > >have there. We just add the replace_fd() logic to __scm_install_fd() and
-> > > >we're done with it.
-> > > 
-> > > Cool, you have a link? :)
-> > 
-> > How about this:
-> > 
-> Thank you.
-> > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/seccomp/addfd/v3.1&id=bb94586b9e7cc88e915536c2e9fb991a97b62416
-> > 
-> > -- 
-> > Kees Cook
-> 
-> +		if (ufd) {
-> +			error = put_user(new_fd, ufd);
-> +			if (error) {
-> +				put_unused_fd(new_fd);
-> +				return error;
-> +			}
-> + 		}
-> I'm fairly sure this introduces a bug[1] if the user does:
+Alexey Gladkov <gladkov.alexey@gmail.com> writes:
 
-Ah, sorry, I missed this before I posted my "v3.2" tree link.
+> syzbot found that proc_fill_super() fails before filling up sb->s_fs_info,
+> deactivate_locked_super() will be called and sb->s_fs_info will be NULL.
+> The proc_kill_sb() does not expect fs_info to be NULL which is wrong.
 
-> 
-> struct msghdr msg = {};
-> struct cmsghdr *cmsg;
-> struct iovec io = {
-> 	.iov_base = &c,
-> 	.iov_len = 1,
-> };
-> 
-> msg.msg_iov = &io;
-> msg.msg_iovlen = 1;
-> msg.msg_control = NULL;
-> msg.msg_controllen = sizeof(buf);
-> 
-> recvmsg(sock, &msg, 0);
-> 
-> They will have the FD installed, no error message, but FD number wont be written 
-> to memory AFAICT. If two FDs are passed, you will get an efault. They will both
-> be installed, but memory wont be written to. Maybe instead of 0, make it a
-> poison pointer, or -1 instead?
+For the case where s_fs_info is never allocated this looks correct.
+That is because generic_shutdown_super has a special for !sb->s_root.
 
-Hmmm. I see what you mean -- SCM_RIGHTS effectively _requires_ a valid
-__user pointer, so we can't use NULL to indicate "we don't want this".
-I'm not sure I can pass this through directly at all, though.
+However for the existing cases I can't convince myself that it is safe
+to change the order we free the pid namespace and free fs_info.
 
-> -----
-> As an aside, all of this junk should be dropped:
-> +	ret = get_user(size, &uaddfd->size);
-> +	if (ret)
-> +		return ret;
+There is a lot of code that can run while generic_shutdown_super is
+running and purging all of the inodes.  We have crazy things like
+proc_flush_pid that might care, as well proc_evict_inode.
+
+I haven't found anything that actually references fs_info or actually
+depends on the pid namespace living longer than the proc inode but it
+would be really easy to miss something.
+
+Can you send a v2 version does not change the order things are freed in
+for the case where we do allocate fs_info.  That will make it trivially
+safe to apply.
+
+Otherwise this looks like a very good patch.
+
+Thank you,
+Eric
+
+
+> Link: https://lore.kernel.org/lkml/0000000000002d7ca605a7b8b1c5@google.com
+> Reported-by: syzbot+4abac52934a48af5ff19@syzkaller.appspotmail.com
+> Fixes: fa10fed30f25 ("proc: allow to mount many instances of proc in one pid namespace")
+> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+> ---
+>  fs/proc/root.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index ffebed1999e5..a715eb9f196a 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -264,15 +264,18 @@ static void proc_kill_sb(struct super_block *sb)
+>  {
+>  	struct proc_fs_info *fs_info = proc_sb_info(sb);
+>  
+> -	if (fs_info->proc_self)
+> -		dput(fs_info->proc_self);
+> +	if (fs_info) {
+> +		if (fs_info->proc_self)
+> +			dput(fs_info->proc_self);
+>  
+> -	if (fs_info->proc_thread_self)
+> -		dput(fs_info->proc_thread_self);
+> +		if (fs_info->proc_thread_self)
+> +			dput(fs_info->proc_thread_self);
 > +
-> +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> +	if (ret)
-> +		return ret;
-> 
-> and the size member of the seccomp_notif_addfd struct. I brought this up 
-> off-list with Tycho that ioctls have the size of the struct embedded in them. We 
-> should just use that. The ioctl definition is based on this[2]:
-> #define _IOC(dir,type,nr,size) \
-> 	(((dir)  << _IOC_DIRSHIFT) | \
-> 	 ((type) << _IOC_TYPESHIFT) | \
-> 	 ((nr)   << _IOC_NRSHIFT) | \
-> 	 ((size) << _IOC_SIZESHIFT))
-> 
-> 
-> We should just use copy_from_user for now. In the future, we can either 
-> introduce new ioctl names for new structs, or extract the size dynamically from 
-> the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
-
-Okay, sounds good.
-
-> ----
-> +#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-> +						struct seccomp_notif_addfd)
-> 
-> Lastly, what I believe to be a small mistake, it should be SECCOMP_IOW, based on 
-> the documentation in ioctl.h -- "_IOW means userland is writing and kernel is 
-> reading."
-
-Okay, let me tweak things and get a "v3.3". ;)
-
--- 
-Kees Cook
+> +		put_pid_ns(fs_info->pid_ns);
+> +		kfree(fs_info);
+> +	}
+>  
+>  	kill_anon_super(sb);
+> -	put_pid_ns(fs_info->pid_ns);
+> -	kfree(fs_info);
+>  }
+>  
+>  static struct file_system_type proc_fs_type = {
