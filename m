@@ -2,102 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4069C1F4E47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 08:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B621F4E5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 08:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgFJGe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 02:34:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40274 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726035AbgFJGe5 (ORCPT
+        id S1726277AbgFJGnQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 02:43:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgFJGnQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 02:34:57 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05A6X4pj187195;
-        Wed, 10 Jun 2020 02:34:39 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31jaydtk5a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Jun 2020 02:34:39 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05A6YctA002469;
-        Wed, 10 Jun 2020 02:34:38 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31jaydtk4h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Jun 2020 02:34:38 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05A6MLM4012047;
-        Wed, 10 Jun 2020 06:34:36 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03fra.de.ibm.com with ESMTP id 31jf1grag8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Jun 2020 06:34:36 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05A6YYIq57540632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Jun 2020 06:34:34 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00B7811C054;
-        Wed, 10 Jun 2020 06:34:34 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 354E411C04A;
-        Wed, 10 Jun 2020 06:34:32 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.37.89])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 10 Jun 2020 06:34:32 +0000 (GMT)
-Subject: Re: [PATCHv2 1/1] ext4: mballoc: Use this_cpu_read instead of
- this_cpu_ptr
-To:     Christoph Hellwig <hch@infradead.org>, tytso@mit.edu
-Cc:     linux-ext4@vger.kernel.org, jack@suse.com,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
-References: <534f275016296996f54ecf65168bb3392b6f653d.1591699601.git.riteshh@linux.ibm.com>
- <20200610062538.GA24975@infradead.org>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 10 Jun 2020 12:04:31 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 10 Jun 2020 02:43:16 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E39E4C03E96B;
+        Tue,  9 Jun 2020 23:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=O6XB3y7iP5PElbqh7ZAm6TiDYuBfIirIuSUwEnknJtQ=; b=tL4wIK6N92i3MrpckN6LKQJmtz
+        HdOLmmacDx4TQJx7NZ1wtwJmRMbrEvWM/7DgvnDBHitLelejf0E/4FoxicSG3aCXwjNbwGyIG3JJb
+        YEneEhXFkPw812wSmWIOpgq5Js7sm1i0ycjVzAjjbnFm/jMROmTVezHTNeufrtAisMQBOnRkCsqiL
+        nqEwd0Jk5eoIMSzYNbtf8bekmCAnAnNWWFh8QMtdktZZpLiT6M7O+DuHFSk6e3oveqYQiG1fu/vj/
+        mK72cRmhmqmoNcVsZM5uw3fbT2zET0MwA4197fkVb1lKzjYm+W5IldS6izcMgX63ykGOhyMFYdj+e
+        dai4OkOw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jiuRW-0001at-Eh; Wed, 10 Jun 2020 06:42:34 +0000
+Date:   Tue, 9 Jun 2020 23:42:34 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
+Message-ID: <20200610064234.GB24975@infradead.org>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-7-mcgrof@kernel.org>
+ <20200609150602.GA7111@infradead.org>
+ <20200609172922.GP11244@42.do-not-panic.com>
+ <20200609173218.GA7968@infradead.org>
+ <20200609175359.GR11244@42.do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <20200610062538.GA24975@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200610063432.354E411C04A@d06av25.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-10_02:2020-06-10,2020-06-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=845 spamscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 cotscore=-2147483648
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006100049
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200609175359.GR11244@42.do-not-panic.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 6/10/20 11:55 AM, Christoph Hellwig wrote:
-> On Tue, Jun 09, 2020 at 04:23:10PM +0530, Ritesh Harjani wrote:
->> Simplify reading a seq variable by directly using this_cpu_read API
->> instead of doing this_cpu_ptr and then dereferencing it.
->>
->> This also avoid the below kernel BUG: which happens when
->> CONFIG_DEBUG_PREEMPT is enabled
+On Tue, Jun 09, 2020 at 05:53:59PM +0000, Luis Chamberlain wrote:
+> > Feel free to add more comments, but please try to keep them short
+> > and crisp.  At the some point long comments really distract from what
+> > is going on.
 > 
-> I see this warning all the time with ext4 using tests VMs, so lets get
-> this fixed ASAP before -rc1:
-
-Couldn't agree more.
-
+> Sure.
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
+> Come to think of it, given the above, I think we can also do way with
+> the the partition stuff too, and rely on the buts->name too. I'll try
+> this out, and test it.
 
-Thanks
+Yes, the sg path should work for partitions as well.  That should not
+only simplify the code, but also the comments, we can do something like
+the full patch below (incorporating your original one).  This doesn't
+include the error check on the creation - I think that check probably
+is a good idea for this case based on the comments in the old patch, but
+also a separate issue that should go into another patch on top.
 
--ritesh
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index 15df3a36e9fa43..a2800bc56fb4d3 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -824,9 +824,6 @@ void blk_mq_debugfs_register(struct request_queue *q)
+ 	struct blk_mq_hw_ctx *hctx;
+ 	int i;
+ 
+-	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
+-					    blk_debugfs_root);
+-
+ 	debugfs_create_files(q->debugfs_dir, q, blk_mq_debugfs_queue_attrs);
+ 
+ 	/*
+@@ -857,9 +854,7 @@ void blk_mq_debugfs_register(struct request_queue *q)
+ 
+ void blk_mq_debugfs_unregister(struct request_queue *q)
+ {
+-	debugfs_remove_recursive(q->debugfs_dir);
+ 	q->sched_debugfs_dir = NULL;
+-	q->debugfs_dir = NULL;
+ }
+ 
+ static void blk_mq_debugfs_register_ctx(struct blk_mq_hw_ctx *hctx,
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index 561624d4cc4e7f..4e9909e1b25736 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -11,6 +11,7 @@
+ #include <linux/blktrace_api.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk-cgroup.h>
++#include <linux/debugfs.h>
+ 
+ #include "blk.h"
+ #include "blk-mq.h"
+@@ -918,6 +919,7 @@ static void blk_release_queue(struct kobject *kobj)
+ 
+ 	blk_trace_shutdown(q);
+ 
++	debugfs_remove_recursive(q->debugfs_dir);
+ 	if (queue_is_mq(q))
+ 		blk_mq_debugfs_unregister(q);
+ 
+@@ -989,6 +991,9 @@ int blk_register_queue(struct gendisk *disk)
+ 		goto unlock;
+ 	}
+ 
++	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
++					    blk_debugfs_root);
++
+ 	if (queue_is_mq(q)) {
+ 		__blk_mq_register_dev(dev, q);
+ 		blk_mq_debugfs_register(q);
+diff --git a/block/blk.h b/block/blk.h
+index b5d1f0fc6547c7..499308c6ab3b0f 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -14,9 +14,7 @@
+ /* Max future timer expiry for timeouts */
+ #define BLK_MAX_TIMEOUT		(5 * HZ)
+ 
+-#ifdef CONFIG_DEBUG_FS
+ extern struct dentry *blk_debugfs_root;
+-#endif
+ 
+ struct blk_flush_queue {
+ 	unsigned int		flush_pending_idx:1;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index fc88330a3d97ed..b49c7c741bc9f3 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -574,8 +574,8 @@ struct request_queue {
+ 	struct list_head	tag_set_list;
+ 	struct bio_set		bio_split;
+ 
+-#ifdef CONFIG_BLK_DEBUG_FS
+ 	struct dentry		*debugfs_dir;
++#ifdef CONFIG_BLK_DEBUG_FS
+ 	struct dentry		*sched_debugfs_dir;
+ 	struct dentry		*rqos_debugfs_dir;
+ #endif
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index fee5c8d8916690..6eb364b393714f 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -509,10 +509,15 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 	if (!bt->msg_data)
+ 		goto err;
+ 
+-	ret = -ENOENT;
+-
+-	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+-	if (!dir)
++	/*
++	 * When tracing a whole block device, reuse the existing debugfs
++	 * directory created by the block layer.  For partitions or character
++	 * devices (e.g. /dev/sg), create a new debugfs directory that will be
++	 * removed once the trace ends.
++	 */
++	if (bdev && bdev == bdev->bd_contains)
++		dir = q->debugfs_dir;
++	else
+ 		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+ 
+ 	bt->dev = dev;
+@@ -553,8 +558,6 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 
+ 	ret = 0;
+ err:
+-	if (dir && !bt->dir)
+-		dput(dir);
+ 	if (ret)
+ 		blk_trace_free(bt);
+ 	return ret;
