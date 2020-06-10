@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C049E1F5CA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 22:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6F91F5C93
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 22:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbgFJUPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 16:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60516 "EHLO
+        id S1730747AbgFJUOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 16:14:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbgFJUNv (ORCPT
+        with ESMTP id S1730588AbgFJUNx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 16:13:51 -0400
+        Wed, 10 Jun 2020 16:13:53 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5901C008638;
-        Wed, 10 Jun 2020 13:13:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DAD2C00863F;
+        Wed, 10 Jun 2020 13:13:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=W4JF/8+4T74bu7dBYV5gPvgjn/5tVoyv2zfUGPd36qk=; b=LAoTgmZqcjMuG+HCWwA5BxKMbm
-        Nyiwbqf3Xa8NAh4iH5iThagnkB86tvgqE8VqwdsvILSa9ApozrBRx1UoRfXdTZY/Cauy6TKA4zr34
-        0CObYbAOF5vT9G/R3029RFDiAZxL7qUl2BM9V7U2lxXmSofogsIyKWzY47bfxN6z4gYrOIMB6jnJQ
-        XvDcxJqlghi4i4a7SL7APlV+VMSh5Xnl9f/Wc9y0kJ+PwBpwV6MZx2UdiRSoCuxEePDsAKtEzj6Cn
-        2cIpvBS3CHQbmUe22So5PS0HyRXQutAimltARhNfCjSbgayoieOylYetLtrB+ZvtZS2bF0Gu6vs+2
-        bqKSLVmw==;
+        bh=034RyJserNfH7yl0tdVgBoooxMtosP1kfL7i1H9r4Ho=; b=c2zxVuJHjKpbwjap05D0eIWUuf
+        So6yrmIFHNfcd0/YkqoqRdNzrSm5Yzhrv3np0BifU/TqiIIU4SlbWEMLjymXH5QOO34gZES0HKd61
+        E/oxVQOxW3v/zbwSh7/B7LoYArFbIbfQQ/L+NI1wKEMnxMpl2E4ZIlupIXkuM+oINJOwpHE3T3bgr
+        5ZuzTR6yEKtesYzttadRPP1DQIX407Hf5FK0hH8mPtF33TIFf5dJl+fHzybXoT8APTDNCSO7+8YmR
+        uLAK8L+MJLGtnBP45zhZXC0IqOid40u31a2mwsAE8VNvUvdyjFQAmKSyedxNSRO4P4/KZFlLXcZG0
+        lL3pO8zA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jj76a-0003Wz-P8; Wed, 10 Jun 2020 20:13:48 +0000
+        id 1jj76a-0003X5-Qw; Wed, 10 Jun 2020 20:13:48 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 37/51] mm: Remove page fault assumption of compound page size
-Date:   Wed, 10 Jun 2020 13:13:31 -0700
-Message-Id: <20200610201345.13273-38-willy@infradead.org>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 38/51] mm: Fix total_mapcount assumption of page size
+Date:   Wed, 10 Jun 2020 13:13:32 -0700
+Message-Id: <20200610201345.13273-39-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200610201345.13273-1-willy@infradead.org>
 References: <20200610201345.13273-1-willy@infradead.org>
@@ -44,38 +44,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
 
-A compound page in the page cache will not necessarily be of PMD size,
-so check explicitly.
+File THPs may now be of arbitrary order.
 
+Signed-off-by: Kirill A. Shutemov <kirill@shutemov.name>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/memory.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ mm/huge_memory.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index dc7f3543b1fd..3e6ef0ebfdd0 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3552,13 +3552,14 @@ static vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
- 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
- 	pmd_t entry;
- 	int i;
--	vm_fault_t ret;
-+	vm_fault_t ret = VM_FAULT_FALLBACK;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 80fb38e93837..744863aa0374 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2490,7 +2490,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
  
- 	if (!transhuge_vma_suitable(vma, haddr))
--		return VM_FAULT_FALLBACK;
-+		return ret;
+ int total_mapcount(struct page *page)
+ {
+-	int i, compound, ret;
++	int i, compound, nr, ret;
  
--	ret = VM_FAULT_FALLBACK;
- 	page = compound_head(page);
-+	if (page_order(page) != HPAGE_PMD_ORDER)
-+		return ret;
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
  
- 	/*
- 	 * Archs like ppc64 need additonal space to store information
+@@ -2498,16 +2498,17 @@ int total_mapcount(struct page *page)
+ 		return atomic_read(&page->_mapcount) + 1;
+ 
+ 	compound = compound_mapcount(page);
++	nr = compound_nr(page);
+ 	if (PageHuge(page))
+ 		return compound;
+ 	ret = compound;
+-	for (i = 0; i < HPAGE_PMD_NR; i++)
++	for (i = 0; i < nr; i++)
+ 		ret += atomic_read(&page[i]._mapcount) + 1;
+ 	/* File pages has compound_mapcount included in _mapcount */
+ 	if (!PageAnon(page))
+-		return ret - compound * HPAGE_PMD_NR;
++		return ret - compound * nr;
+ 	if (PageDoubleMap(page))
+-		ret -= HPAGE_PMD_NR;
++		ret -= nr;
+ 	return ret;
+ }
+ 
 -- 
 2.26.2
 
