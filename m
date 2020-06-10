@@ -2,100 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 490FE1F4B07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 03:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813B71F4B30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 04:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726042AbgFJBqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jun 2020 21:46:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgFJBqd (ORCPT
+        id S1726051AbgFJCGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jun 2020 22:06:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9788 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725798AbgFJCGf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jun 2020 21:46:33 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A62E4C05BD1E;
-        Tue,  9 Jun 2020 18:46:32 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id dp10so330367qvb.10;
-        Tue, 09 Jun 2020 18:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zjEvUKOGeP0/F79VG1tPkbwEfkdJVyvg8ywjx9GcPQU=;
-        b=oWrZ6e9TU/rbxhNWPbfMhXLTZg4xruWGGcVXQ9mktslLgYxx48qz2u8cxBC7tYpZEI
-         LjwR5+JS+p7Ozd4E7Z8TmuyFDeUKg8BmeYxwQ5Xujc3rQdN/bVAoOQMS8yneUlItWdbq
-         RTOmEb+XnvIzVsivjlo9ToRTaJXrUR1s0C70dq0ZD/PxyJR60nsZERnoH5fAsiFRdY/J
-         tDPAvye0ZiFEvAUtVPWey5Uxadlp6FE2/Gahxn7PVIeHFPMzL2SwgEPf+D6LvrhVget/
-         QrcVlKQ948U1HHCDQrCBksA5G6F1NMZ+jghXW4+52PCudnWeiEizDuM+7HAsi+IICcil
-         blTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zjEvUKOGeP0/F79VG1tPkbwEfkdJVyvg8ywjx9GcPQU=;
-        b=AO+saLyPHjyWWHnWyx1lIgNxX8YTwBDX7K8WgXqecH2Vdfpnvy/FVsPf/dKjRiwRFk
-         uHXA8iXwwhFKmX1xjTlBFo7XP1jRpI1uTUXRyQT/7zKYAFeK1dBxBP6W4CdjGFC7jQnJ
-         hhnuNTFmhWppzB+VQKeYoFVmWIvh8L9JQyUIOk9LiicOvqF7+dD9RzD91iILPIL9ZYnX
-         6sj9ndXTeVrGkFEspLygBbM5AtvNvEsXT0gnKVw1/N+L3+SBja+EA2J2lHn4c6UxeeNh
-         5cbUoZk2Mpm/skkzi+04mia6PgNiESCfH8sQ0DdrMmkugFVM8fWQhnmS2lA8aaQHWVIP
-         e5uA==
-X-Gm-Message-State: AOAM531VkEB5xvntNIb0ljlLfETgSUioiEX9ZE93GbQ4k7n1/AW/trYF
-        hy1gt9kzVtiDyln4MaOF2dKdARA=
-X-Google-Smtp-Source: ABdhPJxQK5SqvejKrGmt9+oKevPj0d2I8q7utJ10aM3gzSAilCgpJsFS1MwbI2P61HEUKMFoX6J21g==
-X-Received: by 2002:ad4:42a6:: with SMTP id e6mr1002783qvr.170.1591753591894;
-        Tue, 09 Jun 2020 18:46:31 -0700 (PDT)
-Received: from moria.home.lan ([2601:19b:c500:a1:7285:c2ff:fed5:c918])
-        by smtp.gmail.com with ESMTPSA id g28sm11233434qts.88.2020.06.09.18.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 18:46:31 -0700 (PDT)
-Date:   Tue, 9 Jun 2020 21:46:29 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: generic_file_buffered_read() now uses
- find_get_pages_contig
-Message-ID: <20200610014629.GB4070152@moria.home.lan>
-References: <20200610001036.3904844-1-kent.overstreet@gmail.com>
- <20200610001036.3904844-3-kent.overstreet@gmail.com>
- <20200610013808.GF19604@bombadil.infradead.org>
+        Tue, 9 Jun 2020 22:06:35 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05A22RwB157293;
+        Tue, 9 Jun 2020 22:06:17 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31j4unst99-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 Jun 2020 22:06:17 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05A22f5j158369;
+        Tue, 9 Jun 2020 22:06:16 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31j4unst8b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 Jun 2020 22:06:16 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05A25MMP023550;
+        Wed, 10 Jun 2020 02:06:14 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 31g2s7xvcf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Jun 2020 02:06:14 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05A26Cq111338212
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Jun 2020 02:06:12 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8DEE611C04C;
+        Wed, 10 Jun 2020 02:06:12 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEB3211C066;
+        Wed, 10 Jun 2020 02:06:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.37.89])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 10 Jun 2020 02:06:10 +0000 (GMT)
+Subject: Re: [PATCHv2 1/1] ext4: mballoc: Use this_cpu_read instead of
+ this_cpu_ptr
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     linux-ext4@vger.kernel.org, jack@suse.com, tytso@mit.edu,
+        Markus Elfring <Markus.Elfring@web.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
+References: <20200609123716.16888-1-hdanton@sina.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 10 Jun 2020 07:36:09 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200610013808.GF19604@bombadil.infradead.org>
+In-Reply-To: <20200609123716.16888-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Message-Id: <20200610020610.AEB3211C066@d06av25.portsmouth.uk.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-09_14:2020-06-09,2020-06-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ cotscore=-2147483648 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ phishscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006100010
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 06:38:08PM -0700, Matthew Wilcox wrote:
-> On Tue, Jun 09, 2020 at 08:10:36PM -0400, Kent Overstreet wrote:
-> > Convert generic_file_buffered_read() to get pages to read from in
-> > batches, and then copy data to userspace from many pages at once - in
-> > particular, we now don't touch any cachelines that might be contended
-> > while we're in the loop to copy data to userspace.
-> > 
-> > This is is a performance improvement on workloads that do buffered reads
-> > with large blocksizes, and a very large performance improvement if that
-> > file is also being accessed concurrently by different threads.
+
+
+On 6/9/20 6:07 PM, Hillf Danton wrote:
 > 
-> Hey, you're stealing my performance improvements!
-
-:)
-
-> Granted, I haven't got to doing performance optimisations (certainly
-> not in this function), but this is one of the places where THP in the
-> page cache will have a useful performance improvement.
+> On Tue, 9 Jun 2020 18:53:23 +0800 Ritesh Harjani wrote:
+>>
+>> Simplify reading a seq variable by directly using this_cpu_read API
+>> instead of doing this_cpu_ptr and then dereferencing it.
 > 
-> I'm not opposed to putting this in, but I may back it out as part of
-> the THP work because the THPs will get the same performance improvements
-> that you're seeing here with less code.
+> Two of the quick questions
+> 1) Why can blocks discarded in a ext4 FS help allocators in another?
 
-I'm an _enthusiastic_ supporter of the THP stuff (as you know), but my feeling
-is that it's going to be a long time before hugepages are everywhere - and I
-think even with the pagevec stuff generic_file_buffered_read() is somewhat
-easier to read and deal with after this series than before it.
+I am not sure if I understand your Q correctly. But here is a brief 
+about the patchset. If there were PA blocks just or about to be 
+discarded by another thread, then the current thread who is doing block 
+allocation should not fail with ENOSPC error instead should be able to 
+allocate those blocks from another thread. The concept is better 
+explained in the commit msgs, if more details are required.
+Without this patchset (in some heavy multi-threaded use case) allocation 
+was failing when the overall filesystem space available was more then 50%.
 
-Though I could see the pagevec stuff making hugepage support a pain, so there is
-that. Eh.
+> 
+> 2) Why is a percpu seqcount prefered over what <linux/seqlock.h>
+> can offer?
+> 
+
+Since this could be a multi-threaded use case, per cpu variable helps in 
+avoid cache line bouncing problem, which could happen when the same 
+variable is updated by multiple threads on different cpus.
+
+-ritesh
