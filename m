@@ -2,117 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DFB11F5826
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEEA1F5842
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730321AbgFJPtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 11:49:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43498 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbgFJPtB (ORCPT
+        id S1730360AbgFJPtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 11:49:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35550 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730345AbgFJPtb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 11:49:01 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jj2xu-0004Hc-Jb; Wed, 10 Jun 2020 15:48:34 +0000
-Date:   Wed, 10 Jun 2020 17:48:33 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Andrei Vagin <avagin@gmail.com>, Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Wed, 10 Jun 2020 11:49:31 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h185so1278318pfg.2;
+        Wed, 10 Jun 2020 08:49:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J9spO8sCjIOMs0wQgccVfIprXE/wzCnPTAA23dgMAdc=;
+        b=h98127/o82LX2PUy40wev+U3cj7HdHMYnU8Jv3cGah9MgwOFtgQigPyLhjMQxgfwjQ
+         HILdmy+dMuwrtcvtNidCN/lgmknQnGDL/NUdUALy8r++cKG6mJzKMkSdT7cM0l6Z1id0
+         QPdRlj9Yg2dS31GiVMPRfaHXY2FWVWVlCIUvoMy5FNBaKrWIh/8LYQuoKXpGDShNN00T
+         lEhLAYrIOUbTplmkKywLarwm/qP0cQt8qlii3VFS6G+b/nOCBrIJW6M++qm7twFAdMS2
+         lwIQOn6ijjVUt6TElXVE9AIu2OlUWSEPrChLGkZdlPkXweZ4ils+eqGHVkWy23Ip9mBi
+         4HtA==
+X-Gm-Message-State: AOAM5301rp10LPb2cpiCWEvjK2wL9S0WhXoqKSDp5jfLsTsfRaZ22AWD
+        tX8EVJVdgthfNsGLjpD3zmo=
+X-Google-Smtp-Source: ABdhPJyu1eX5pyEODFKXM1tUOb06KZbLUOW+sULR/svGLkAhoxImKT7+pXfTo+K5VKZEdMa5hV0cwg==
+X-Received: by 2002:a62:aa0a:: with SMTP id e10mr3428008pff.91.1591804170947;
+        Wed, 10 Jun 2020 08:49:30 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id c12sm242070pgm.73.2020.06.10.08.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 2C139403AB; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
+To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
+        axboe@kernel.dk, bfields@fieldses.org, chuck.lever@oracle.com,
+        roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com,
+        davem@davemloft.net, kuba@kernel.org, dhowells@redhat.com,
+        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
+        serge@hallyn.com, christian.brauner@ubuntu.com
+Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
+        josh@joshtriplett.org, ravenexp@gmail.com, chainsaw@gentoo.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        bridge@lists.linux-foundation.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200610154833.mb6sypc5dl4yhhe3@wittgenstein>
-References: <20200603162328.854164-1-areber@redhat.com>
- <20200603162328.854164-2-areber@redhat.com>
- <20200609034221.GA150921@gmail.com>
- <20200609074422.burwzfgwgqqysrzh@wittgenstein>
- <20200609160627.GA163855@gmail.com>
- <20200609161427.4eoozs3kkgablmaa@wittgenstein>
- <20200610075928.GA172301@gmail.com>
- <37b47c7d-a24e-c453-5168-c383e6c36c9f@schaufler-ca.com>
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/5] kmod/umh: a few fixes
+Date:   Wed, 10 Jun 2020 15:49:18 +0000
+Message-Id: <20200610154923.27510-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <37b47c7d-a24e-c453-5168-c383e6c36c9f@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 08:41:29AM -0700, Casey Schaufler wrote:
-> 
-> On 6/10/2020 12:59 AM, Andrei Vagin wrote:
-> > On Tue, Jun 09, 2020 at 06:14:27PM +0200, Christian Brauner wrote:
-> >> On Tue, Jun 09, 2020 at 09:06:27AM -0700, Andrei Vagin wrote:
-> >>> On Tue, Jun 09, 2020 at 09:44:22AM +0200, Christian Brauner wrote:
-> >>>> On Mon, Jun 08, 2020 at 08:42:21PM -0700, Andrei Vagin wrote:
-> > ...
-> >>>>> PTRACE_O_SUSPEND_SECCOMP is needed for C/R and it is protected by
-> >>>>> CAP_SYS_ADMIN too.
-> >>>> This is currently capable(CAP_SYS_ADMIN) (init_ns capable) why is it
-> >>>> safe to allow unprivileged users to suspend security policies? That
-> >>>> sounds like a bad idea.
-> > ...
-> >>> I don't suggest to remove or
-> >>> downgrade this capability check. The patch allows all c/r related
-> >>> operations if the current has CAP_CHECKPOINT_RESTORE.
-> >>>
-> >>> So in this case the check:
-> >>>      if (!capable(CAP_SYS_ADMIN))
-> >>>              return -EPERM;
-> >>>
-> >>> will be converted in:
-> >>>      if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
-> >>>              return -EPERM;
-> >> Yeah, I got that but what's the goal here? Isn't it that you want to
-> >> make it safe to install the criu binary with the CAP_CHECKPOINT_RESTORE
-> >> fscap set so that unprivileged users can restore their own processes
-> >> without creating a new user namespace or am I missing something? The
-> >> use-cases in the cover-letter make it sound like that's what this is
-> >> leading up to:
-> >>>>>> * Checkpoint/Restore in an HPC environment in combination with a resource
-> >>>>>>   manager distributing jobs where users are always running as non-root.
-> >>>>>>   There is a desire to provide a way to checkpoint and restore long running
-> >>>>>>   jobs.
-> >>>>>> * Container migration as non-root
-> >>>>>> * We have been in contact with JVM developers who are integrating
-> >>>>>>   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
-> >>>>>>   applications are not meant to be running with CAP_SYS_ADMIN.
-> >> But maybe I'm just misunderstanding crucial bits (likely (TM)).
-> > I think you understand this right. The goal is to make it possible to
-> > use C/R functionality for unprivileged processes.
-> 
-> Y'all keep saying "unprivileged processes" when you mean
-> "processes with less than root privilege". A process with
-> CAP_CHECKPOINT_RESTORE *is* a privileged process. It would
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-That was me being imprecise. What I mean is "unprivileged user"
-not "unprivileged process". It makes me a little uneasy that an
-unprivileged _user_ can call the criu binary with the
-CAP_CHECKPOINT_RESTORE fscap set and suspend seccomp of a process (Which
-is what my original question here was about). Maybe this is paranoia but
-shouldn't suspending _security_ mechanisms be kept either under
-CAP_SYS_ADMIN or CAP_MAC_ADMIN?
+Tiezhu Yang had sent out a patch set with a slew of kmod selftest
+fixes, and one patch which modified kmod to return 254 when a module
+was not found. This opened up pandora's box about why that was being
+used for and low and behold its because when UMH_WAIT_PROC is used
+we call a kernel_wait4() call but have never unwrapped the error code.
+The commit log for that fix details the rationale for the approach
+taken. I'd appreciate some review on that, in particular nfs folks
+as it seems a case was never really hit before.
 
-Christian
+This goes boot tested, selftested with kmod, and 0-day gives its
+build blessings.
+
+Luis Chamberlain (2):
+  umh: fix processed error when UMH_WAIT_PROC is used
+  selftests: simplify kmod failure value
+
+Tiezhu Yang (3):
+  selftests: kmod: Use variable NAME in kmod_test_0001()
+  kmod: Remove redundant "be an" in the comment
+  test_kmod: Avoid potential double free in trigger_config_run_type()
+
+ drivers/block/drbd/drbd_nl.c         | 20 +++++------
+ fs/nfsd/nfs4recover.c                |  2 +-
+ include/linux/sched/task.h           | 13 ++++++++
+ kernel/kmod.c                        |  5 ++-
+ kernel/umh.c                         |  4 +--
+ lib/test_kmod.c                      |  2 +-
+ net/bridge/br_stp_if.c               | 10 ++----
+ security/keys/request_key.c          |  2 +-
+ tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
+ 9 files changed, 71 insertions(+), 37 deletions(-)
+
+-- 
+2.26.2
+
