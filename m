@@ -2,36 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E331F543D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 14:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C031F545A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 14:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbgFJMIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 08:08:06 -0400
-Received: from mout.web.de ([212.227.17.12]:44881 "EHLO mout.web.de"
+        id S1728889AbgFJMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 08:14:41 -0400
+Received: from mout.web.de ([217.72.192.78]:47789 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728549AbgFJMIF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 08:08:05 -0400
+        id S1728544AbgFJMOl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 08:14:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591790861;
-        bh=Rbfz1tSx1gAVqb9pVfW8xCQg7XrzBdujlG0Xi2jOCPs=;
-        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
-        b=XT6oiPRXBlPlhxV6U/j4UjIZV9qc7DlH6cXNTeiN3QRh8KSiwRXeZKF5nw/f+3fOI
-         Dnt2cs0116Q6RDXGZ2no32kq3GyZgCRCneloMT+BDZEqTIxLJDAXt+wrQC/454TiEd
-         HC30pcHQOF5pbrrSNM+W0ujFJkA0eayNRUH1Q1hw=
+        s=dbaedf251592; t=1591791260;
+        bh=pBm5IMHL7FVaD0k0KmA/bqWajr9j4HYNky5AVQf4gnE=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=VsKltnoR7ptj0X0xAYUMaXnU4I1sLf9Zvi8wM4O0UwbBEWUUHqx3vVQngjJ2JzAYi
+         LzJle0uQb4dDGzLFAT40U2pEO4JVSb1F67zhwcndrHcJ24N7tYsIieuxgqYRgNWMoC
+         8vKaqFMkTgY7bDc/f79qmH70p02q8Cbov9LUS0og=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.155.16]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mr7am-1j6xLu3LlO-00oGBe; Wed, 10
- Jun 2020 14:07:40 +0200
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+Received: from [192.168.1.2] ([93.133.155.16]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M0Qkb-1ivYKP2qKr-00uXoz; Wed, 10
+ Jun 2020 14:14:20 +0200
+Subject: Re: exfat: Improving exception handling in two functions
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     linux-fsdevel@vger.kernel.org,
         Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
         Tetsuhiro Kohada <kohada.t2@gmail.com>,
         Wei Yongjun <weiyongjun1@huawei.com>
-Subject: Re: [PATCH] exfat: call brelse() on error path
-From:   Markus Elfring <Markus.Elfring@web.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-fsdevel@vger.kernel.org
+References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
+ <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
  +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
@@ -75,58 +77,52 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <6939014a-adbf-f970-2541-df16d35de7e5@web.de>
-Date:   Wed, 10 Jun 2020 14:07:39 +0200
+Message-ID: <4379dad4-8c76-6790-2d5b-91a8fbdffc9f@web.de>
+Date:   Wed, 10 Jun 2020 14:14:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.1
 MIME-Version: 1.0
+In-Reply-To: <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BS/IQ7W2d0RfMg3aks/aA42iFUz+07KoT5lAtzL3qf4Dd6CEyam
- qPskKd5Ql1HYYl+55qLqIPI2Nh7tixb6dxeqgg7dzPlfeyxupx4nQYYpbuJartn8oFesQSu
- kfFDEQhNWn4F748jbc7x+kNSmxBPmgPzTN+6+WkFtfFxed9RBXWXxpDjDi/Z+MJvHciPqVx
- BIyRQgnfTltYbHsCc+25A==
+X-Provags-ID: V03:K1:OkKpHaS1U3vQq96DspLBKT9LuRuOOeAzvC/kvsXcf2ICtE4hVVU
+ jFkWuJbwyR9iI3/SGhhNwnicSoWXbeaOWDIOkb3EZDrrCRi4VkR1FtABAfH9DPAOyUGT3Hz
+ RrosBCcVCBwoz1/xTKTN2g6t6Wmj2Z5z4N9ngpZIuleZmGQb+fxfKPydGssILdPo2jXGX7d
+ +Uvdt7AvjCIY+TAsrAIzw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3oz132EGEAs=:vnFx1atC4mPv4V71l5BBHs
- fIuZz7PrJK0iosf21wXBs+oYZFeUONlbW2IUa6slZPQ3rjub7V2OnE+D/ningS75Vr0i7nuH7
- 9wF4gVty8ymk9LK0Iqk0A/hgtm1ZOCay/hEskAV7sBWJtTx66PxC4UTtd6nMHz4cT8PL7zxHG
- oICzU+4M3D3dsRGEkVV7saqcTaqCoYgd803ECesHyyBh/3JRyqOUdTW9lUYIotRH0rXhYkhSG
- NSYwvCEuOMH/EyagkndX1d/Ocq329Z2NW0MFtPu74EijyzJwGjQkzWT2d7BgMaH/nYVg6cuUX
- UQdXF8972dXsi6V8hUasIrU6htF7mjJJ7XmzmmBEgzL+R/jMvEAOH01ez7pGik7cfA/hHpf9H
- CQHrCq5NXHsihlQdKoAECAVRzM/ppm9SEzLEg2QLshZMA+C1f+H7rBlIchH06c/wLZfBUdtHf
- ZDrO9qxsSEEjJlF+oNM0VcUKcs5VF3FXpiXkm1hYogrnDj7/SV48AcEjBkfT3OPAYYSdAgCzc
- o1I6V5gjOVmV0LlAiutbS9Mo2X8BBlvUhl/tRHQcfRikempbPNg8mfcx3j3w00ksDFRDRvkWX
- /S+VNW7Sp9KRZPq4oCv6zjmdoT3E/HzRhqnqOjNmGKZjxH8lwc9zrtVEYPDyMIsl8oNEua5qY
- QClFpR5pmHIunUOfmLd2f37TJwBxrPpG4Qb/4Wkt62AM9vJrlQiyc/0TcXieTKvSfhXNEDLwV
- zN4EA3iB/QGgH4PWCWz0J9ILoxZRhCyeckC+PVtT7SmSw595e7tYX0Kg0tP0uhtgjG1wOKnpa
- z0XoIjMNf7Z09RBiG62rdPu85AFhcIosJfGyRyYWn1fbtGceaxOZHpLBFyoj6pqMazejf0936
- JFrBlUb6QEwMgfXo+ziaf2R6vnkb1vbmnc8nr70V0Y4IfIVOSgy55zr7/H9o6kfIPa9OCHXPg
- vGeLaG6svbHC8o5XIRuBb/T0LzxPRkhRdsJsnHafLvEtsSOSbjlxUxiGxfxjWRU5MsbUh7D/F
- POfH1017Py+MqkN0hECKbWaJ3KgUQBvtsLELVIgEGLLF8mUjt0Eu9oEHSmJBJXsdlAJZzvid1
- vo1e763RIR+ML/2/Y7rdX/DJ6UQ+j9rzASm+9Y00XPgmMJkRTSUxp9QvqTYeviBOMjgCJB/nR
- FffhVEUQwbxHlzALBuN8RTsy+ajZ5+6fHdPEMwKS9Wwo4IWMvZ311iO+CWVNM5eE9TNu0HHuC
- 6Jcfy6Ljw0sqAdYHq
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7867ozUOF0w=:OnLlKXz2d9bpod3W4MdcYb
+ Ijq0DQCyvT1CHCA9egbTbu+XA8CBmjfopy/xmo0Fmhb6f/5AU3Hqw3pWXap2eqTZ8KicHei/M
+ iLmVm+tgDF5TqXFJswlJJr4JRXomhQ5SdJ2DMil6ULi5RnkMDSncu2Inr1RLvVSi+fxRWVLtY
+ Z/eCvF8fNDGhSmaHEWfbVS8nqWmSmZq4eb48ofP/SdMlVE/1Z/dyZAOvC4qO75Ob//7hL5eqx
+ LlCbqYOHS1NDY8P4FZT2NMfcM9u8OgA12w4+9kPfQoj58PwPfaTu/DRBBgxei/7xcMGUktoiy
+ kKSLtCVUt8IVujY6A/cbRekxbi3ZsTNeuduWczLdamqj3uHXaggpUYBYytSjxtQq9dFPzJLWw
+ IdIb/eB3QCCo527etTJi3/HeFTI64fzmhVTcHP26Q4QubasasrQ0MLV0cQ0b7jtk68NW0yguW
+ z6EQrEokkkpYSFEkFncu9gr3gGSgDJSsMnbQI6R1qzNXWzCnk3/kSVnnFGoNE380slqPf3SWX
+ LRTL4TMESRt42FNGxu3FEO3wmJu6bAKgEN7NjAQZK9Zi47N8npVDa1s4zO08rUmGTLmeTWnX4
+ +t6EUhUi27L0IX4GLgDymStf+tZBMcCsBJeZjgjkZi1rBkt9GFvUgfA+82buJsdL78DzDEW/o
+ q5UaAqn2XxmypluB49jLAlJIOZEYNfiCSxTC678H9ZwfxzyHZscSamLkdT6whdpjhyEAqBqtu
+ 41HC+g87oMbJl4mLhiBJXUjnbxc/c0UedzgEEM0+oKW8PiLk9N6wKBmqQBLGnkEl6JBrrOoRo
+ 9FwyiZRHQrHHSyXjslJf+H1+Azwmnl+2MqesErJ3CLuT8ACCfZ2OxjNjRBC0kF1gaVqI6qC5s
+ XrOPhEUxyDyhnsdL+Sn5XhXwzcCrasxDrbvA0mNGk4jO7sGQhAJJhJZHfuH7INHTECikbu1HB
+ I9ZK1iQjYKIpiY3xsdPhgU3woGBdmfuSqIidiCQeSXIfvkegtjShyxAw7DoQ1f1YfwEtPvhr1
+ xqV1YGO3sxGLiRldlFCvY8iwoM1q873wYJINx3D1XNLRDYPmtI9y+CXUC0bVUmvIIxn3+Isky
+ MbjdLFMJ+ifHPiyWfcT+uW0MfozE3RI6O8MZ3Mu8bxc9RmGx8TeLYdcZX3+jV9An6FyY431yP
+ +rHwYUGCGBafyRUPKsfhtuRgaIEYjgE5FrNkcNWx4006bW3t6m5Y347IeO5Q6PT4fVM5y5O7I
+ /TyzYHH1fNQeUrXY/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> If the second exfat_get_dentry() call fails then we need to release
-> "old_bh" before returning.
+> My source code analysis approach pointed implementation details
+> like the following out for further software development considerations.
 
-Thanks you picked a bit of information up from my source code analysis
-for a possible adjustment of the function =E2=80=9Cexfat_rename_file=E2=80=
-=9D.
-
-exfat: Improving exception handling in two functions
-https://lore.kernel.org/linux-fsdevel/208cba7b-e535-c8e0-5ac7-f15170117a7f=
-@web.de/
-https://lkml.org/lkml/2020/6/10/272
-
-Would you like to adjust the implementation of the function =E2=80=9Cexfat=
-_move_file=E2=80=9D
-in a similar way in a subsequent patch variant?
+The clarification of corresponding collateral evolution will be continued
+with the update suggestion =E2=80=9Cexfat: call brelse() on error path=E2=
+=80=9D.
+https://lore.kernel.org/linux-fsdevel/20200610095934.GA35167@mwanda/
+https://lore.kernel.org/patchwork/patch/1254515/
 
 Regards,
 Markus
