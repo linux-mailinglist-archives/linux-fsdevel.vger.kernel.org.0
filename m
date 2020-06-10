@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5E61F583B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9379E1F583F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbgFJPto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1730382AbgFJPto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 10 Jun 2020 11:49:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43773 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbgFJPtf (ORCPT
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40841 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730357AbgFJPtf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 10 Jun 2020 11:49:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 23so1262530pfw.10;
-        Wed, 10 Jun 2020 08:49:34 -0700 (PDT)
+Received: by mail-pg1-f193.google.com with SMTP id e18so1158407pgn.7;
+        Wed, 10 Jun 2020 08:49:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ttnu+GumEeK2dxlrXFIgjuU2z6ZpHty3fj6TVLOpBV8=;
-        b=sM6bANWh4UjbXp03MJVOonzPUWXJlh2cXCu4Eq+CQLYBsKyBGbFEuO1abWEJum4E59
-         n3DEQEDt9il0AQvgI78hNAK6CzURvBZhH2LV2hupGFEI+Bs/WuGVY2FNBppfjrzHQqDg
-         k6S8wjB/x6+bu8qOTLi5TzGYhZ672/omdQj5D5gf9PSU23CxChJc5kBrjF1+gI13RsIc
-         QUaki2Cizke7yAJ6KYsbKcfrfVi9D/rL5Nee5epN09GfON9ilm8LFZOF/GRfTA8zfP8j
-         RDKAtTou/jbGTQbXIyQ5qtKrXChSxiC+m29j9119is39vItLOw9Im2DVKc/bf/7WGiTn
-         51kQ==
-X-Gm-Message-State: AOAM531haJWhUwKdzAPQDlLvMnPw81llEjMgb57CwRHPEyM4UeWK66rN
-        ++T4fK60DEZpomwDQKEj40Q=
-X-Google-Smtp-Source: ABdhPJy4BST5Ypqj52/eoac8mQmWFwF6I7vWpY7xXXn85YwjFOb1Y0c/dkStnzo1uFPTe0w13h7IUw==
-X-Received: by 2002:a63:58d:: with SMTP id 135mr3011251pgf.2.1591804173617;
-        Wed, 10 Jun 2020 08:49:33 -0700 (PDT)
+        bh=Ht44Q655K+m4n+7cL9U0d/GUBshFxQzLVevKrr2oj0M=;
+        b=UeqiLKBwMMpyNhNwyNWB86Wi4G23QdyqZIvrfKNvXCnjX0MSKPxC0GkslMg6lAC3qU
+         fp8mdqtqt9AQjAopXVIjoMS5oV3iuz4ExE6TaMwMCNsJIj4bAcdxiRR2SwnDzcg2TjUq
+         vUw7niJXVFqD/tZJEB7tyzvOKUmP/YBUpisgVDOQDfvZAdtkyvC1OCkaWv6w0u0M7+Gc
+         Mnkan/ZlrweFcXRosYrGOqjGu7bb2Chs1oCFClRt5Z1obrT/ZZSz/T8aI2qlIZ2ugVjI
+         8XxlXgaWm+3TkEsJZz/GQMC/zs2YzKRbMInW6WMOjLMCjC2Ob10j0D0i6TzeTAb5Oggm
+         dvww==
+X-Gm-Message-State: AOAM533MKh2QjOo+0rCUCt2jr997ZQB1CEd6L3c1F9OM6kQPeT+KWaVr
+        QBQ9cbkSCL5kHVIIP65uNQM=
+X-Google-Smtp-Source: ABdhPJy5SAdyQfQNoaTz3plQH9NsEWiOAvKCXruBaMt6+7nC5TCy5/CdN/0cXMcdcKFyT5YHNMINbw==
+X-Received: by 2002:a62:7a89:: with SMTP id v131mr3246047pfc.38.1591804174942;
+        Wed, 10 Jun 2020 08:49:34 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id w65sm272528pfb.160.2020.06.10.08.49.25
+        by smtp.gmail.com with ESMTPSA id m15sm247162pgv.45.2020.06.10.08.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
+        Wed, 10 Jun 2020 08:49:33 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 7148441D95; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+        id 94C9741DD1; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
         philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
@@ -51,9 +51,9 @@ Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
         Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: [PATCH 4/5] umh: fix processed error when UMH_WAIT_PROC is used
-Date:   Wed, 10 Jun 2020 15:49:22 +0000
-Message-Id: <20200610154923.27510-5-mcgrof@kernel.org>
+Subject: [PATCH 5/5] selftests: simplify kmod failure value
+Date:   Wed, 10 Jun 2020 15:49:23 +0000
+Message-Id: <20200610154923.27510-6-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
 References: <20200610154923.27510-1-mcgrof@kernel.org>
@@ -66,183 +66,125 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Luis Chamberlain <mcgrof@kernel.org>
 
-When UMH_WAIT_PROC is used we call kernel_wait4(). This is
-the *only* place in the kernel where we actually inspect the
-error code. Prior to this patch we returned the value from the
-wait call, and that technically requires us to use wrappers
-such as WEXITSTATUS(). We either fix all callers to start
-using WEXITSTATUS() and friends *or* we do address this within
-the umh code and let the callers get the actual error code.
+The "odd" 256 value was just an issue with the umh never
+wrapping it around with WEXITSTATUS() for us. Now that it
+does that, we can use a sane value / name for the selftest,
+and this is no longer a oddity.
 
-The way we use kernel_wait4() on the umh is with the options
-set to 0, and when this is done the wait call only waits for
-terminated children. Because of this, there is no point to
-complicate checks for the umh with W*() calls. That would
-make the checks complex, redundant, and simply not needed.
+We add a way to detect this for older kernels, and support
+the old return value for kernel code where it was given.
 
-By making the umh do the checks for us we keep users
-kernel_wait4() at bay, and promote avoiding introduction of
-further W*() macros and the complexities this can bring.
-
-There were only a few callers which properly checked for
-the error status using open-coded solutions. We remove
-them as they are no longer needed, and also remove open
-coded implicit uses of W*() uses which should never
-trigger given that the options passed to wait is 0.
-
-The only helpers we really need are for termination, so we
-just include those, and we prefix our W*() helpers with K.
-
-Since all this does is *correct* an error code, if one
-was found, this change only fixes reporting the *correct*
-error, and there are two places where this matters, and
-which this patch fixes:
-
-  * request_module() used to fail with an error code of
-    256 when a module was not found. Now it properly
-    returns 1.
-
-  * fs/nfsd/nfs4recover.c: we never were disabling the
-    upcall as the error code of -ENOENT or -EACCES was
-    *never* properly checked for.
+This never affected userspace.
 
 Reported-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 20 ++++++++------------
- fs/nfsd/nfs4recover.c        |  2 +-
- include/linux/sched/task.h   | 13 +++++++++++++
- kernel/umh.c                 |  4 ++--
- net/bridge/br_stp_if.c       | 10 ++--------
- security/keys/request_key.c  |  2 +-
- 6 files changed, 27 insertions(+), 24 deletions(-)
+ tools/testing/selftests/kmod/kmod.sh | 46 +++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index da4a3ebe04ef..aee272e620b9 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -382,13 +382,11 @@ int drbd_khelper(struct drbd_device *device, char *cmd)
- 	notify_helper(NOTIFY_CALL, device, connection, cmd, 0);
- 	ret = call_usermodehelper(drbd_usermode_helper, argv, envp, UMH_WAIT_PROC);
- 	if (ret)
--		drbd_warn(device, "helper command: %s %s %s exit code %u (0x%x)\n",
--				drbd_usermode_helper, cmd, mb,
--				(ret >> 8) & 0xff, ret);
-+		drbd_warn(device, "helper command: %s %s %s failed with exit code %u (0x%x)\n",
-+				drbd_usermode_helper, cmd, mb, ret, ret);
- 	else
--		drbd_info(device, "helper command: %s %s %s exit code %u (0x%x)\n",
--				drbd_usermode_helper, cmd, mb,
--				(ret >> 8) & 0xff, ret);
-+		drbd_info(device, "helper command: %s %s %s completed successfully\n",
-+				drbd_usermode_helper, cmd, mb);
- 	sib.sib_reason = SIB_HELPER_POST;
- 	sib.helper_exit_code = ret;
- 	drbd_bcast_event(device, &sib);
-@@ -424,13 +422,11 @@ enum drbd_peer_state conn_khelper(struct drbd_connection *connection, char *cmd)
+diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
+index da60c3bd4f23..df7b21d8561c 100755
+--- a/tools/testing/selftests/kmod/kmod.sh
++++ b/tools/testing/selftests/kmod/kmod.sh
+@@ -64,6 +64,8 @@ ALL_TESTS="$ALL_TESTS 0009:150:1"
+ ALL_TESTS="$ALL_TESTS 0010:1:1"
+ ALL_TESTS="$ALL_TESTS 0011:1:1"
  
- 	ret = call_usermodehelper(drbd_usermode_helper, argv, envp, UMH_WAIT_PROC);
- 	if (ret)
--		drbd_warn(connection, "helper command: %s %s %s exit code %u (0x%x)\n",
--			  drbd_usermode_helper, cmd, resource_name,
--			  (ret >> 8) & 0xff, ret);
-+		drbd_warn(connection, "helper command: %s %s %s failed with exit code %u (0x%x)\n",
-+			  drbd_usermode_helper, cmd, resource_name, ret, ret);
- 	else
--		drbd_info(connection, "helper command: %s %s %s exit code %u (0x%x)\n",
--			  drbd_usermode_helper, cmd, resource_name,
--			  (ret >> 8) & 0xff, ret);
-+		drbd_info(connection, "helper command: %s %s %s completed successfully\n",
-+			  drbd_usermode_helper, cmd, resource_name);
- 	/* TODO: conn_bcast_event() ?? */
- 	notify_helper(NOTIFY_RESPONSE, NULL, connection, cmd, ret);
- 
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 9e40dfecf1b1..33e6a7fd7961 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -1820,7 +1820,7 @@ nfsd4_umh_cltrack_upcall(char *cmd, char *arg, char *env0, char *env1)
- 
- 	ret = call_usermodehelper(argv[0], argv, envp, UMH_WAIT_PROC);
- 	/*
--	 * Disable the upcall mechanism if we're getting an ENOENT or EACCES
-+	 * Disable the upcall mechanism if we're getting an -ENOENT or -EACCES
- 	 * error. The admin can re-enable it on the fly by using sysfs
- 	 * once the problem has been fixed.
- 	 */
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 38359071236a..bba06befbff5 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -103,6 +103,19 @@ struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
- 
-+/* Only add helpers for actual use cases in the kernel */
-+#define KWEXITSTATUS(status)		(__KWEXITSTATUS(status))
-+#define KWIFEXITED(status)		(__KWIFEXITED(status))
++MODULE_NOT_FOUND="FAILURE"
 +
-+/* Nonzero if STATUS indicates normal termination.  */
-+#define __KWIFEXITED(status)     (__KWTERMSIG(status) == 0)
-+
-+/* If KWIFEXITED(STATUS), the low-order 8 bits of the status.  */
-+#define __KWEXITSTATUS(status)   (((status) & 0xff00) >> 8)
-+
-+/* If KWIFSIGNALED(STATUS), the terminating signal.  */
-+#define __KWTERMSIG(status)      ((status) & 0x7f)
-+
- extern void free_task(struct task_struct *tsk);
+ # Kselftest framework requirement - SKIP code is 4.
+ ksft_skip=4
  
- /* sched_exec is called by processes performing an exec */
-diff --git a/kernel/umh.c b/kernel/umh.c
-index 79f139a7ca03..f81e8698e36e 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -154,8 +154,8 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
- 		 * the real error code is already in sub_info->retval or
- 		 * sub_info->retval is 0 anyway, so don't mess with it then.
- 		 */
--		if (ret)
--			sub_info->retval = ret;
-+		if (KWIFEXITED(ret))
-+			sub_info->retval = KWEXITSTATUS(ret);
- 	}
- 
- 	/* Restore default kernel sig handler */
-diff --git a/net/bridge/br_stp_if.c b/net/bridge/br_stp_if.c
-index ba55851fe132..bdd94b45396b 100644
---- a/net/bridge/br_stp_if.c
-+++ b/net/bridge/br_stp_if.c
-@@ -133,14 +133,8 @@ static int br_stp_call_user(struct net_bridge *br, char *arg)
- 
- 	/* call userspace STP and report program errors */
- 	rc = call_usermodehelper(BR_STP_PROG, argv, envp, UMH_WAIT_PROC);
--	if (rc > 0) {
--		if (rc & 0xff)
--			br_debug(br, BR_STP_PROG " received signal %d\n",
--				 rc & 0x7f);
--		else
--			br_debug(br, BR_STP_PROG " exited with code %d\n",
--				 (rc >> 8) & 0xff);
--	}
-+	if (rc != 0)
-+		br_debug(br, BR_STP_PROG " failed with exit code %d\n", rc);
- 
- 	return rc;
+@@ -155,14 +157,19 @@ test_finish()
+ 	echo "Test completed"
  }
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index e1b9f1a80676..ff462f3d46ca 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -193,7 +193,7 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
- 	ret = call_usermodehelper_keys(request_key, argv, envp, keyring,
- 				       UMH_WAIT_PROC);
- 	kdebug("usermode -> 0x%x", ret);
--	if (ret >= 0) {
-+	if (ret != 0) {
- 		/* ret is the exit/wait code */
- 		if (test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) ||
- 		    key_validate(key) < 0)
+ 
++# OLD_FAILURE is just because the old kernel umh never wrapped
++# the error with WEXITSTATUS(). Now that it does it, we get the
++# appropriate actual value from userspace observed in-kernel.
++
++# We keep the old mapping to ensure this script keeps working
++# with older kernels.
+ errno_name_to_val()
+ {
+ 	case "$1" in
+-	# kmod calls modprobe and upon of a module not found
+-	# modprobe returns just 1... However in the kernel we
+-	# *sometimes* see 256...
+-	MODULE_NOT_FOUND)
++	OLD_FAILURE)
+ 		echo 256;;
++	FAILURE)
++		echo 1;;
+ 	SUCCESS)
+ 		echo 0;;
+ 	-EPERM)
+@@ -181,7 +188,9 @@ errno_name_to_val()
+ errno_val_to_name()
+ 	case "$1" in
+ 	256)
+-		echo MODULE_NOT_FOUND;;
++		echo OLD_FAILURE;;
++	1)
++		echo FAILURE;;
+ 	0)
+ 		echo SUCCESS;;
+ 	-1)
+@@ -335,6 +344,28 @@ kmod_defaults_fs()
+ 	config_set_test_case_fs
+ }
+ 
++check_umh()
++{
++	NAME=''
++
++	kmod_defaults_driver
++	config_num_threads 1
++	printf '\0' >"$DIR"/config_test_driver
++	config_trigger ${FUNCNAME[0]}
++	RC=$(config_get_test_result)
++	if [[ "$RC" == "256" ]]; then
++		MODULE_NOT_FOUND="OLD_FAILURE"
++		echo "check_umh: you have and old umh which didn't wrap errors"
++		echo "           with WEXITSTATUS(). This is OK!"
++	elif [[ "$RC" != "1" ]]; then
++		echo "check_umh: Unexpected return value with no modprobe argument: $RC"
++		exit
++	else
++		echo "check_umh: You have a new umh which wraps erros with"
++		echo "           WEXITSTATUS(). This is OK!"
++	fi
++}
++
+ kmod_test_0001_driver()
+ {
+ 	NAME='\000'
+@@ -343,7 +374,7 @@ kmod_test_0001_driver()
+ 	config_num_threads 1
+ 	printf $NAME >"$DIR"/config_test_driver
+ 	config_trigger ${FUNCNAME[0]}
+-	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
++	config_expect_result ${FUNCNAME[0]} $MODULE_NOT_FOUND
+ }
+ 
+ kmod_test_0001_fs()
+@@ -371,7 +402,7 @@ kmod_test_0002_driver()
+ 	config_set_driver $NAME
+ 	config_num_threads 1
+ 	config_trigger ${FUNCNAME[0]}
+-	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
++	config_expect_result ${FUNCNAME[0]} $MODULE_NOT_FOUND
+ }
+ 
+ kmod_test_0002_fs()
+@@ -648,6 +679,7 @@ load_req_mod
+ MODPROBE=$(</proc/sys/kernel/modprobe)
+ trap "test_finish" EXIT
+ 
++check_umh
+ parse_args $@
+ 
+ exit 0
 -- 
 2.26.2
 
