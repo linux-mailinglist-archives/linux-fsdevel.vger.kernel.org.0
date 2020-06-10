@@ -2,84 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 198551F5739
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D9D1F5741
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729920AbgFJPCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 11:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
+        id S1729979AbgFJPGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 11:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbgFJPCG (ORCPT
+        with ESMTP id S1726081AbgFJPGO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 11:02:06 -0400
+        Wed, 10 Jun 2020 11:06:14 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCCA7C03E96B;
-        Wed, 10 Jun 2020 08:02:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC6CC03E96B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 08:06:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=e/I7IeBlmcoJH8pxLjvp2NE3V5TNcZtshVifaD2OjQs=; b=tyK3sm9NsopRaJm+EEC0wowYUV
-        Tr8R2GEGuheASallfJRx0hvcmZ5g1lyREuAeVbfaIieHwryNVsG641pMAQWCYm16/ruW/WhOT7dCz
-        BJhsmqsXlVHRiMzszwd4KY6njDoRid1x2z/bPZPKD/101UyjXaM6KtyrcNqWsc+YMWrpFcBbUZMfK
-        WR0Akzk+k5wNAvgcqlTWRcLaDU0hjRwl8Jy9BNXZM0JuuaIfqlammJ8l6Vgi/UlwDSFC6/DWAavHU
-        rJNNrnkSwCuukx6pYjxNB3peUp8jdluURTlMYnjaKSYM2N8OcquTCLP/7KFjL+uQI33YsCPX8MX58
-        lMHDhVYA==;
+        bh=lZDjk3L6WcZzdrntDgNva3FmGjCKYaBSvu1VEO2v/KM=; b=q7eBynAbllL7QhFUYbufsZSt/s
+        fZ39qf98PJ+Svge06z03WOBbqoTneEFrNzlQ4o1bw1C8YtC21gdA2TplbJJjuFaR67g4Ol105JvpV
+        trAtaYpC1w4dTbp9U9U3PrT9bbTwdrdAbaKJvKEhdOCZE46+eucj9vh5XsIow32HSYEglLs8RhSlw
+        8oJ+NWXimLMjBLW21gHxnWc3iLqyoObzA47zzzyW4IlaFAuF9cOHvHw+GBOuiukQI5hMEFwgLN0cE
+        Uotrwh3nkgFw382o0nHj/80oJ1eXTurGqUct4c8NfyHBWM03T84VPnLw5UvOf9NLce8JLKe4wbWES
+        7b//lc4A==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jj2Et-0003Ao-7J; Wed, 10 Jun 2020 15:02:03 +0000
-Date:   Wed, 10 Jun 2020 08:02:03 -0700
+        id 1jj2Iw-0006E9-9P; Wed, 10 Jun 2020 15:06:14 +0000
+Date:   Wed, 10 Jun 2020 08:06:14 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Martijn Coenen <maco@android.com>, tj@kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] writeback: Avoid skipping inode writeback
-Message-ID: <20200610150203.GA21733@infradead.org>
+        Martijn Coenen <maco@android.com>, tj@kernel.org
+Subject: Re: [PATCH 2/3] writeback: Fix sync livelock due to b_dirty_time
+ processing
+Message-ID: <20200610150614.GB21733@infradead.org>
 References: <20200601091202.31302-1-jack@suse.cz>
- <20200601091904.4786-1-jack@suse.cz>
+ <20200601091904.4786-2-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200601091904.4786-1-jack@suse.cz>
+In-Reply-To: <20200601091904.4786-2-jack@suse.cz>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This generall looks ok, but a few nitpicks below:
+On Mon, Jun 01, 2020 at 11:18:56AM +0200, Jan Kara wrote:
+> When we are processing writeback for sync(2), move_expired_inodes()
+> didn't set any inode expiry value (older_than_this). This can result in
+> writeback never completing if there's steady stream of inodes added to
+> b_dirty_time list as writeback rechecks dirty lists after each writeback
+> round whether there's more work to be done. Fix the problem by using
+> sync(2) start time is inode expiry value when processing b_dirty_time
+> list similarly as for ordinarily dirtied inodes. This requires some
+> refactoring of older_than_this handling which simplifies the code
+> noticeably as a bonus.
 
-> -static void redirty_tail(struct inode *inode, struct bdi_writeback *wb)
-> +static void __redirty_tail(struct inode *inode, struct bdi_writeback *wb)
-
-I think redirty_tail_locked would be a more decriptive name, and also
-fit other uses in this file (e.g. inode_io_list_move_locked and
-inode_io_list_del_locked).
-
->  {
-> +	assert_spin_locked(&inode->i_lock);
->  	if (!list_empty(&wb->b_dirty)) {
-
-Nit: I find an empty line after asserts and before the real code starts
-nice on the eye.
-
->  			break;
->  		list_move(&inode->i_io_list, &tmp);
->  		moved++;
-> +		spin_lock(&inode->i_lock);
->  		if (flags & EXPIRE_DIRTY_ATIME)
-> -			set_bit(__I_DIRTY_TIME_EXPIRED, &inode->i_state);
-> +			inode->i_state |= I_DIRTY_TIME_EXPIRED;
-> +		inode->i_state |= I_SYNC_QUEUED;
-> +		spin_unlock(&inode->i_lock);
-
-I wonder if the locking changes should go into a prep patch vs the
-actual logic changes related to I_SYNC_QUEUED?  That would untangle
-the patch quite a bit and make it easier to follow.
-
->  #define I_WB_SWITCH		(1 << 13)
->  #define I_OVL_INUSE		(1 << 14)
->  #define I_CREATING		(1 << 15)
-> +#define I_SYNC_QUEUED		(1 << 16)
-
-FYI, this conflicts with the I_DONTCAT addition in mainline now.
+Looks sane, but if you touch all the older_than_this users can we
+rename it to something more reasonable like oldest or oldest_jif?
