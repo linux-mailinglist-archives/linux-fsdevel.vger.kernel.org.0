@@ -2,96 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC181F5713
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 16:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 198551F5739
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729950AbgFJOxv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 10:53:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbgFJOxu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 10:53:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDBAC2072F;
-        Wed, 10 Jun 2020 14:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591800830;
-        bh=TC73ZRDSuoUg0mbgkZG8iBdzAr9faRcRABDM7yMly28=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TFu/AplpxtnCVEq78ohceG29T7SYBjPC5HIAjxG+hxCRxeLrPsNRy6j26NYJwFeJ3
-         QvsLuNdCVS76nhPuHuTAwnK+XQfju0sw8jNByZiGyMECclLQF04DAR+Z4IqXPkEVqP
-         MgQGPcl1Ntz21ulzRCF6E58ON+T9q5eiGmmkIeOE=
-Date:   Wed, 10 Jun 2020 16:53:44 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-        Tetsuhiro Kohada <kohada.t2@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Subject: Re: exfat: Improving exception handling in two functions
-Message-ID: <20200610145344.GA2102023@kroah.com>
-References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
- <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
+        id S1729920AbgFJPCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 11:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbgFJPCG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 11:02:06 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCCA7C03E96B;
+        Wed, 10 Jun 2020 08:02:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=e/I7IeBlmcoJH8pxLjvp2NE3V5TNcZtshVifaD2OjQs=; b=tyK3sm9NsopRaJm+EEC0wowYUV
+        Tr8R2GEGuheASallfJRx0hvcmZ5g1lyREuAeVbfaIieHwryNVsG641pMAQWCYm16/ruW/WhOT7dCz
+        BJhsmqsXlVHRiMzszwd4KY6njDoRid1x2z/bPZPKD/101UyjXaM6KtyrcNqWsc+YMWrpFcBbUZMfK
+        WR0Akzk+k5wNAvgcqlTWRcLaDU0hjRwl8Jy9BNXZM0JuuaIfqlammJ8l6Vgi/UlwDSFC6/DWAavHU
+        rJNNrnkSwCuukx6pYjxNB3peUp8jdluURTlMYnjaKSYM2N8OcquTCLP/7KFjL+uQI33YsCPX8MX58
+        lMHDhVYA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jj2Et-0003Ao-7J; Wed, 10 Jun 2020 15:02:03 +0000
+Date:   Wed, 10 Jun 2020 08:02:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Martijn Coenen <maco@android.com>, tj@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] writeback: Avoid skipping inode writeback
+Message-ID: <20200610150203.GA21733@infradead.org>
+References: <20200601091202.31302-1-jack@suse.cz>
+ <20200601091904.4786-1-jack@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
+In-Reply-To: <20200601091904.4786-1-jack@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 11:27:58AM +0200, Markus Elfring wrote:
-> Hello,
-> 
-> I have taken another look at pointer usage after calls of the function “brelse”.
-> My source code analysis approach pointed implementation details
-> like the following out for further software development considerations.
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/exfat/namei.c?id=3d155ae4358baf4831609c2f9cd09396a2b8badf#n1078
-> 
-> …
-> 		epold = exfat_get_dentry(sb, p_dir, oldentry + 1, &old_bh,
-> 			&sector_old);
-> 		epnew = exfat_get_dentry(sb, p_dir, newentry + 1, &new_bh,
-> 			&sector_new);
-> 		if (!epold || !epnew)
-> 			return -EIO;
-> …
-> 
-> I suggest to split such an error check.
-> How do you think about to release a buffer head object for the desired
-> exception handling if one of these function calls succeeded?
-> 
-> Would you like to adjust such code in the functions “exfat_rename_file”
-> and “exfat_move_file”?
-> 
-> Regards,
-> Markus
+This generall looks ok, but a few nitpicks below:
 
-Hi,
+> -static void redirty_tail(struct inode *inode, struct bdi_writeback *wb)
+> +static void __redirty_tail(struct inode *inode, struct bdi_writeback *wb)
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+I think redirty_tail_locked would be a more decriptive name, and also
+fit other uses in this file (e.g. inode_io_list_move_locked and
+inode_io_list_del_locked).
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+>  {
+> +	assert_spin_locked(&inode->i_lock);
+>  	if (!list_empty(&wb->b_dirty)) {
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+Nit: I find an empty line after asserts and before the real code starts
+nice on the eye.
 
-thanks,
+>  			break;
+>  		list_move(&inode->i_io_list, &tmp);
+>  		moved++;
+> +		spin_lock(&inode->i_lock);
+>  		if (flags & EXPIRE_DIRTY_ATIME)
+> -			set_bit(__I_DIRTY_TIME_EXPIRED, &inode->i_state);
+> +			inode->i_state |= I_DIRTY_TIME_EXPIRED;
+> +		inode->i_state |= I_SYNC_QUEUED;
+> +		spin_unlock(&inode->i_lock);
 
-greg k-h's patch email bot
+I wonder if the locking changes should go into a prep patch vs the
+actual logic changes related to I_SYNC_QUEUED?  That would untangle
+the patch quite a bit and make it easier to follow.
+
+>  #define I_WB_SWITCH		(1 << 13)
+>  #define I_OVL_INUSE		(1 << 14)
+>  #define I_CREATING		(1 << 15)
+> +#define I_SYNC_QUEUED		(1 << 16)
+
+FYI, this conflicts with the I_DONTCAT addition in mainline now.
