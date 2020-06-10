@@ -2,127 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7C031F545A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 14:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758721F5535
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 14:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbgFJMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 08:14:41 -0400
-Received: from mout.web.de ([217.72.192.78]:47789 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728544AbgFJMOl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 08:14:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1591791260;
-        bh=pBm5IMHL7FVaD0k0KmA/bqWajr9j4HYNky5AVQf4gnE=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=VsKltnoR7ptj0X0xAYUMaXnU4I1sLf9Zvi8wM4O0UwbBEWUUHqx3vVQngjJ2JzAYi
-         LzJle0uQb4dDGzLFAT40U2pEO4JVSb1F67zhwcndrHcJ24N7tYsIieuxgqYRgNWMoC
-         8vKaqFMkTgY7bDc/f79qmH70p02q8Cbov9LUS0og=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.155.16]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0M0Qkb-1ivYKP2qKr-00uXoz; Wed, 10
- Jun 2020 14:14:20 +0200
-Subject: Re: exfat: Improving exception handling in two functions
-From:   Markus Elfring <Markus.Elfring@web.de>
-To:     linux-fsdevel@vger.kernel.org,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        Tetsuhiro Kohada <kohada.t2@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
- <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <4379dad4-8c76-6790-2d5b-91a8fbdffc9f@web.de>
-Date:   Wed, 10 Jun 2020 14:14:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1728896AbgFJMyY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 08:54:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5801 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727927AbgFJMyY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 08:54:24 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C69D89DDE7C9579F74F7;
+        Wed, 10 Jun 2020 20:54:21 +0800 (CST)
+Received: from [127.0.0.1] (10.166.215.99) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Wed, 10 Jun 2020
+ 20:54:19 +0800
+Subject: Re: [PATCH] hfs: fix null-ptr-deref in hfs_find_init()
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1591326067-29972-1-git-send-email-yangyingliang@huawei.com>
+ <A092DD0C-FEB3-4C27-BD60-576401D5ACD2@dubeyko.com>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <0fa6b82a-61ef-fd9c-53a9-c61862c8c188@huawei.com>
+Date:   Wed, 10 Jun 2020 20:54:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OkKpHaS1U3vQq96DspLBKT9LuRuOOeAzvC/kvsXcf2ICtE4hVVU
- jFkWuJbwyR9iI3/SGhhNwnicSoWXbeaOWDIOkb3EZDrrCRi4VkR1FtABAfH9DPAOyUGT3Hz
- RrosBCcVCBwoz1/xTKTN2g6t6Wmj2Z5z4N9ngpZIuleZmGQb+fxfKPydGssILdPo2jXGX7d
- +Uvdt7AvjCIY+TAsrAIzw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7867ozUOF0w=:OnLlKXz2d9bpod3W4MdcYb
- Ijq0DQCyvT1CHCA9egbTbu+XA8CBmjfopy/xmo0Fmhb6f/5AU3Hqw3pWXap2eqTZ8KicHei/M
- iLmVm+tgDF5TqXFJswlJJr4JRXomhQ5SdJ2DMil6ULi5RnkMDSncu2Inr1RLvVSi+fxRWVLtY
- Z/eCvF8fNDGhSmaHEWfbVS8nqWmSmZq4eb48ofP/SdMlVE/1Z/dyZAOvC4qO75Ob//7hL5eqx
- LlCbqYOHS1NDY8P4FZT2NMfcM9u8OgA12w4+9kPfQoj58PwPfaTu/DRBBgxei/7xcMGUktoiy
- kKSLtCVUt8IVujY6A/cbRekxbi3ZsTNeuduWczLdamqj3uHXaggpUYBYytSjxtQq9dFPzJLWw
- IdIb/eB3QCCo527etTJi3/HeFTI64fzmhVTcHP26Q4QubasasrQ0MLV0cQ0b7jtk68NW0yguW
- z6EQrEokkkpYSFEkFncu9gr3gGSgDJSsMnbQI6R1qzNXWzCnk3/kSVnnFGoNE380slqPf3SWX
- LRTL4TMESRt42FNGxu3FEO3wmJu6bAKgEN7NjAQZK9Zi47N8npVDa1s4zO08rUmGTLmeTWnX4
- +t6EUhUi27L0IX4GLgDymStf+tZBMcCsBJeZjgjkZi1rBkt9GFvUgfA+82buJsdL78DzDEW/o
- q5UaAqn2XxmypluB49jLAlJIOZEYNfiCSxTC678H9ZwfxzyHZscSamLkdT6whdpjhyEAqBqtu
- 41HC+g87oMbJl4mLhiBJXUjnbxc/c0UedzgEEM0+oKW8PiLk9N6wKBmqQBLGnkEl6JBrrOoRo
- 9FwyiZRHQrHHSyXjslJf+H1+Azwmnl+2MqesErJ3CLuT8ACCfZ2OxjNjRBC0kF1gaVqI6qC5s
- XrOPhEUxyDyhnsdL+Sn5XhXwzcCrasxDrbvA0mNGk4jO7sGQhAJJhJZHfuH7INHTECikbu1HB
- I9ZK1iQjYKIpiY3xsdPhgU3woGBdmfuSqIidiCQeSXIfvkegtjShyxAw7DoQ1f1YfwEtPvhr1
- xqV1YGO3sxGLiRldlFCvY8iwoM1q873wYJINx3D1XNLRDYPmtI9y+CXUC0bVUmvIIxn3+Isky
- MbjdLFMJ+ifHPiyWfcT+uW0MfozE3RI6O8MZ3Mu8bxc9RmGx8TeLYdcZX3+jV9An6FyY431yP
- +rHwYUGCGBafyRUPKsfhtuRgaIEYjgE5FrNkcNWx4006bW3t6m5Y347IeO5Q6PT4fVM5y5O7I
- /TyzYHH1fNQeUrXY/
+In-Reply-To: <A092DD0C-FEB3-4C27-BD60-576401D5ACD2@dubeyko.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.166.215.99]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> My source code analysis approach pointed implementation details
-> like the following out for further software development considerations.
+Hi,
+On 2020/6/9 16:06, Viacheslav Dubeyko wrote:
+> Hi Yang,
+>
+>> On Jun 5, 2020, at 6:01 AM, Yang Yingliang <yangyingliang@huawei.com> wrote:
+>>
+>> There is a null-ptr-deref in hfs_find_init():
+>>
+>> [  107.092729] hfs: continuing without an alternate MDB
+>> [  107.097632] general protection fault, probably for non-canonical address 0xdffffc0000000008: 0000 [#1] SMP KASAN PTI
+>> [  107.104679] KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
+>> [  107.109100] CPU: 0 PID: 379 Comm: hfs_inject Not tainted 5.7.0-rc7-00001-g24627f5f2973 #897
+>> [  107.114142] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+>> [  107.121095] RIP: 0010:hfs_find_init+0x72/0x170
+>> [  107.123609] Code: c1 ea 03 80 3c 02 00 0f 85 e6 00 00 00 4c 8d 65 40 48 c7 43 18 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e a5 00 00 00 8b 45 40 be c0 0c
+>> [  107.134660] RSP: 0018:ffff88810291f3f8 EFLAGS: 00010202
+>> [  107.137897] RAX: dffffc0000000000 RBX: ffff88810291f468 RCX: 1ffff110175cdf05
+>> [  107.141874] RDX: 0000000000000008 RSI: ffff88810291f468 RDI: ffff88810291f480
+>> [  107.145844] RBP: 0000000000000000 R08: 0000000000000000 R09: ffffed1020381013
+>> [  107.149431] R10: ffff88810291f500 R11: ffffed1020381012 R12: 0000000000000040
+>> [  107.152315] R13: 0000000000000000 R14: ffff888101c0814a R15: ffff88810291f468
+>> [  107.155464] FS:  00000000009ea880(0000) GS:ffff88810c600000(0000) knlGS:0000000000000000
+>> [  107.159795] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  107.162987] CR2: 00005605a19dd284 CR3: 0000000103a0c006 CR4: 0000000000020ef0
+>> [  107.166665] Call Trace:
+>> [  107.167969]  ? find_held_lock+0x33/0x1c0
+>> [  107.169972]  hfs_ext_read_extent+0x16b/0xb00
+>> [  107.172092]  ? create_page_buffers+0x14e/0x1b0
+>> [  107.174303]  ? hfs_free_extents+0x280/0x280
+>> [  107.176437]  ? lock_downgrade+0x730/0x730
+>> [  107.178272]  hfs_get_block+0x496/0x8a0
+>> [  107.179972]  block_read_full_page+0x241/0x8d0
+>> [  107.181971]  ? hfs_extend_file+0xae0/0xae0
+>> [  107.183814]  ? end_buffer_async_read_io+0x10/0x10
+>> [  107.185954]  ? add_to_page_cache_lru+0x13f/0x1f0
+>> [  107.188006]  ? add_to_page_cache_locked+0x10/0x10
+>> [  107.190175]  do_read_cache_page+0xc6a/0x1180
+>> [  107.192096]  ? generic_file_read_iter+0x4c0/0x4c0
+>> [  107.194234]  ? hfs_btree_open+0x408/0x1000
+>> [  107.196068]  ? lock_downgrade+0x730/0x730
+>> [  107.197926]  ? wake_bit_function+0x180/0x180
+>> [  107.199845]  ? lockdep_init_map_waits+0x267/0x7c0
+>> [  107.201895]  hfs_btree_open+0x455/0x1000
+>> [  107.203479]  hfs_mdb_get+0x122c/0x1ae8
+>> [  107.205065]  ? hfs_mdb_put+0x350/0x350
+>> [  107.206590]  ? queue_work_node+0x260/0x260
+>> [  107.208309]  ? rcu_read_lock_sched_held+0xa1/0xd0
+>> [  107.210227]  ? lockdep_init_map_waits+0x267/0x7c0
+>> [  107.212144]  ? lockdep_init_map_waits+0x267/0x7c0
+>> [  107.213979]  hfs_fill_super+0x9ba/0x1280
+>> [  107.215444]  ? bdev_name.isra.9+0xf1/0x2b0
+>> [  107.217028]  ? hfs_remount+0x190/0x190
+>> [  107.218428]  ? pointer+0x5da/0x710
+>> [  107.219745]  ? file_dentry_name+0xf0/0xf0
+>> [  107.221262]  ? mount_bdev+0xd1/0x330
+>> [  107.222592]  ? vsnprintf+0x7bd/0x1250
+>> [  107.224007]  ? pointer+0x710/0x710
+>> [  107.225332]  ? down_write+0xe5/0x160
+>> [  107.226698]  ? hfs_remount+0x190/0x190
+>> [  107.228120]  ? snprintf+0x91/0xc0
+>> [  107.229388]  ? vsprintf+0x10/0x10
+>> [  107.230628]  ? sget+0x3af/0x4a0
+>> [  107.231848]  ? hfs_remount+0x190/0x190
+>> [  107.233300]  mount_bdev+0x26e/0x330
+>> [  107.234611]  ? hfs_statfs+0x540/0x540
+>> [  107.236015]  legacy_get_tree+0x101/0x1f0
+>> [  107.237431]  ? security_capable+0x58/0x90
+>> [  107.238832]  vfs_get_tree+0x89/0x2d0
+>> [  107.240082]  ? ns_capable_common+0x5c/0xd0
+>> [  107.241521]  do_mount+0xd8a/0x1720
+>> [  107.242727]  ? lock_downgrade+0x730/0x730
+>> [  107.244116]  ? copy_mount_string+0x20/0x20
+>> [  107.245557]  ? _copy_from_user+0xbe/0x100
+>> [  107.246967]  ? memdup_user+0x47/0x70
+>> [  107.248212]  __x64_sys_mount+0x162/0x1b0
+>> [  107.249537]  do_syscall_64+0xa5/0x4f0
+>> [  107.250742]  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+>> [  107.252369] RIP: 0033:0x44e8ea
+>> [  107.253360] Code: 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+>> [  107.259240] RSP: 002b:00007ffd910e4c28 EFLAGS: 00000207 ORIG_RAX: 00000000000000a5
+>> [  107.261668] RAX: ffffffffffffffda RBX: 0000000000400400 RCX: 000000000044e8ea
+>> [  107.263920] RDX: 000000000049321e RSI: 0000000000493222 RDI: 00007ffd910e4d00
+>> [  107.266177] RBP: 00007ffd910e5d10 R08: 0000000000000000 R09: 000000000000000a
+>> [  107.268451] R10: 0000000000000001 R11: 0000000000000207 R12: 0000000000401c40
+>> [  107.270721] R13: 0000000000000000 R14: 00000000006ba018 R15: 0000000000000000
+>> [  107.273025] Modules linked in:
+>> [  107.274029] Dumping ftrace buffer:
+>> [  107.275121]    (ftrace buffer empty)
+>> [  107.276370] ---[ end trace c5e0b9d684f3570e ]---
+>>
+>> We need check tree in hfs_find_init().
+>>
+>> https://lore.kernel.org/linux-fsdevel/20180419024358.GA5215@bombadil.infradead.org/
+>> https://marc.info/?l=linux-fsdevel&m=152406881024567&w=2
+>> References: CVE-2018-12928
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>> ---
+>> fs/hfs/bfind.c | 2 ++
+>> 1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+>> index 4af318f..aafa6bd 100644
+>> --- a/fs/hfs/bfind.c
+>> +++ b/fs/hfs/bfind.c
+>> @@ -16,6 +16,8 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+>> {
+>> 	void *ptr;
+>>
+>> +	if (!tree)
+>> +		return -EINVAL;
+> Looks good. But we have the same issue in HFS+ driver. Could you prepare the patch for HFS+ too?
+OK, I will send a patch for HFS+.
+>
+> By the way, what is the reason for extents tree pointer to be NULL? Do we have the empty file in this use-case?
 
-The clarification of corresponding collateral evolution will be continued
-with the update suggestion =E2=80=9Cexfat: call brelse() on error path=E2=
-=80=9D.
-https://lore.kernel.org/linux-fsdevel/20200610095934.GA35167@mwanda/
-https://lore.kernel.org/patchwork/patch/1254515/
+The reproducer is came from 
+https://marc.info/?l=linux-fsdevel&m=152406881024567&w=2 .
 
-Regards,
-Markus
+And it's triggered by mounting a crafted hfs file which has a lot of 
+zero data at the end.
+
+
+Thanks,
+
+Yang
+
+>
+> Thanks,
+> Viacheslav Dubeyko.
+>
+>> 	fd->tree = tree;
+>> 	fd->bnode = NULL;
+>> 	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
+>> -- 
+>> 1.8.3
+>>
+> .
+
