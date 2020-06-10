@@ -2,153 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 963F51F5092
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 10:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5C91F5114
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 11:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgFJIuD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 04:50:03 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:20926 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726801AbgFJIuC (ORCPT
+        id S1727774AbgFJJ1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 05:27:20 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42368 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726219AbgFJJ1Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 04:50:02 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-161-0yN4TplFM4ieG9IIs6KTcQ-2; Wed, 10 Jun 2020 09:48:46 +0100
-X-MC-Unique: 0yN4TplFM4ieG9IIs6KTcQ-2
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 10 Jun 2020 09:48:45 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 10 Jun 2020 09:48:45 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Sargun Dhillon' <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>
-CC:     Christian Brauner <christian.brauner@ubuntu.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Thread-Index: AQHWPv7tCi14oegu0U6J73sUpcDiU6jRh/3w
-Date:   Wed, 10 Jun 2020 08:48:45 +0000
-Message-ID: <40d76a9a4525414a8c9809cd29a7ba8e@AcuMS.aculab.com>
-References: <20200603011044.7972-2-sargun@sargun.me>
- <20200604012452.vh33nufblowuxfed@wittgenstein>
- <202006031845.F587F85A@keescook>
- <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
- <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
- <202006091235.930519F5B@keescook>
- <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
- <202006091346.66B79E07@keescook>
- <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
-In-Reply-To: <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 10 Jun 2020 05:27:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591781235;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+DkEHrzUkdvaYyHpFkIvV6MDueFXIAyn7kupABnfisI=;
+        b=G+w8tX3jzJhp4TntADGBjwKL2NyTLgoq0KL9KRAU3jX5jQz1VSLyjxNigx5I8U9HlvV0UR
+        SrXFboM5SrbfQam9yJEHEPizh6J+GQMLML0Y0J8T7c4DChHaMtqGafRgAUvCF6aNgrOTyG
+        1M4RLH6Yf4eQ3RpE382YYFWmoU9UDbM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-220-vUryfjSfOHCfIcK4jvXXPA-1; Wed, 10 Jun 2020 05:27:13 -0400
+X-MC-Unique: vUryfjSfOHCfIcK4jvXXPA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8715CEC1A2;
+        Wed, 10 Jun 2020 09:27:12 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2DD6982036;
+        Wed, 10 Jun 2020 09:27:07 +0000 (UTC)
+Subject: Re: Disentangling address_space and inode
+To:     Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
+References: <20200609124102.GB19604@bombadil.infradead.org>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Cc:     "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Message-ID: <ec0a0819-4460-179e-b707-a717a841e830@redhat.com>
+Date:   Wed, 10 Jun 2020 10:27:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200609124102.GB19604@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Sargun Dhillon
-> Sent: 10 June 2020 09:13
-> 
-> On Tue, Jun 09, 2020 at 10:27:54PM -0700, Kees Cook wrote:
-> > On Tue, Jun 09, 2020 at 11:27:30PM +0200, Christian Brauner wrote:
-> > > On June 9, 2020 10:55:42 PM GMT+02:00, Kees Cook <keescook@chromium.org> wrote:
-> > > >LOL. And while we were debating this, hch just went and cleaned stuff up:
-> > > >
-> > > >2618d530dd8b ("net/scm: cleanup scm_detach_fds")
-> > > >
-> > > >So, um, yeah, now my proposal is actually even closer to what we already
-> > > >have there. We just add the replace_fd() logic to __scm_install_fd() and
-> > > >we're done with it.
-> > >
-> > > Cool, you have a link? :)
-> >
-> > How about this:
-> >
-> Thank you.
-> >
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/seccomp/addfd/v3.1&id=b
-> b94586b9e7cc88e915536c2e9fb991a97b62416
-> >
-> > --
-> > Kees Cook
-> 
-> +		if (ufd) {
-> +			error = put_user(new_fd, ufd);
-> +			if (error) {
-> +				put_unused_fd(new_fd);
-> +				return error;
-> +			}
-> + 		}
-> I'm fairly sure this introduces a bug[1] if the user does:
-> 
-> struct msghdr msg = {};
-> struct cmsghdr *cmsg;
-> struct iovec io = {
-> 	.iov_base = &c,
-> 	.iov_len = 1,
-> };
-> 
-> msg.msg_iov = &io;
-> msg.msg_iovlen = 1;
-> msg.msg_control = NULL;
-> msg.msg_controllen = sizeof(buf);
-> 
-> recvmsg(sock, &msg, 0);
-> 
-> They will have the FD installed, no error message, but FD number wont be written
-> to memory AFAICT. If two FDs are passed, you will get an efault. They will both
-> be installed, but memory wont be written to. Maybe instead of 0, make it a
-> poison pointer, or -1 instead?
+Hi,
 
-IMHO if the buffer isn't big enough the nothing should happen.
-(or maybe a few of the fds be returned and the others left for later.)
+On 09/06/2020 13:41, Matthew Wilcox wrote:
+> I have a modest proposal ...
+>
+>   struct inode {
+> -	struct address_space i_data;
+>   }
+>
+> +struct minode {
+> +	struct inode i;
+> +	struct address_space m;
+> +};
+>
+>   struct address_space {
+> -	struct inode *host;
+>   }
+>
+> This saves one pointer per inode, and cuts all the pagecache support
+> from inodes which don't need to have a page cache (symlinks, directories,
+> pipes, sockets, char devices).
+>
+> This was born from the annoyance of going from a struct page to a filesystem:
+> page->mapping->host->i_sb->s_type
+>
+> That's four pointer dereferences.  This would bring it down to three:
+> i_host(page->mapping)->i_sb->s_type
+>
+> I could see (eventually) interfaces changing to pass around a
+> struct minode *mapping instead of a struct address_space *mapping.  But
+> I know mapping->host and inode->i_mapping sometimes have some pretty
+> weird relationships and maybe there's a legitimate usage that can't be
+> handled by this change.
+>
+> Every filesystem which does use the page cache would have to be changed
+> to use a minode instead of an inode, which is why this proposal is so
+> very modest.  But before I start looking into it properly, I thought
+> somebody might know why this isn't going to work.
+>
+> I know about raw devices:
+>                  file_inode(filp)->i_mapping =
+>                          bdev->bd_inode->i_mapping;
+>
+> and this seems like it should work for that.  I know about coda:
+>                  coda_inode->i_mapping = host_inode->i_mapping;
+>
+> and this seems like it should work there too.
+>
+> DAX just seems confused:
+>          inode->i_mapping = __dax_inode->i_mapping;
+>          inode->i_mapping->host = __dax_inode;
+>          inode->i_mapping->a_ops = &dev_dax_aops;
+>
+> GFS2 might need to embed an entire minode instead of just a mapping in its
+> glocks and its superblock:
+> fs/gfs2/glock.c:                mapping->host = s->s_bdev->bd_inode;
+> fs/gfs2/ops_fstype.c:   mapping->host = sb->s_bdev->bd_inode;
 
-OTOH if the user passed an invalid address then installing the fd
-and returning EFAULT (and hence SIGSEGV) seems reasonable.
-Properly written apps just don't do that.
+I don't think that will scale. We did gain a big reduction in overhead 
+for each cached inode when we stopped using two struct inodes and just 
+embedded an address_space in the glock. However, I'm fairly sure that 
+for the glock address_space case, we already have our own way to find 
+the associated inode. So it might well be ok to do this anyway, and not 
+need to embed a full minode.
 
-In essence the 'copy_to_user' is done by the wrapper code.
-The code filling in the CMSG buffer can be considered to be
-writing a kernel buffer.
+Also, if there was a better way to track metadata on a per inode basis, 
+then that would be an even better solution, but a much bigger project too.
 
-IIRC other kernels (eg NetBSD) do the copies for ioctl() requests
-in the ioctl syscall wrapper.
-The IOW/IOR/IOWR flags have to be right.
+The issue that you might run across is for stacked filesystems... will 
+you land up finding the correct layer in the stack?
 
-	David
+Steve.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+
+>
+> NILFS ... I don't understand at all.  It seems to allocate its own
+> private address space in nilfs_inode_info instead of using i_data (why?)
+> and also allocate more address spaces for metadata inodes.
+> fs/nilfs2/page.c:       mapping->host = inode;
+>
+> So that will need to be understood, but is there a fundamental reason
+> this won't work?
+>
+> Advantages:
+>   - Eliminates a pointer dereference when moving from mapping to host
+>   - Shrinks all inodes by one pointer
+>   - Shrinks inodes used for symlinks, directories, sockets, pipes & char
+>     devices by an entire struct address_space.
+>
+> Disadvantages:
+>   - Churn
+>   - Seems like it'll grow a few data structures in less common filesystems
+>     (but may be important for some users)
+>
 
