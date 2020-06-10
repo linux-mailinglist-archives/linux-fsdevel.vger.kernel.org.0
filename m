@@ -2,67 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC19D1F5017
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 10:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 963F51F5092
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 10:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbgFJIMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 04:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbgFJIMn (ORCPT
+        id S1726945AbgFJIuD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 04:50:03 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:20926 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726801AbgFJIuC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 04:12:43 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67160C08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 01:12:43 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id i1so1027380ils.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 01:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RQkLDm2OyY/FS3M4wUNUpYL3uyFZaGvTTxUYnj5+5u0=;
-        b=nI03ANMd7aBQf/IJrmaOWgFbNKk87eTPdr17BZT0Q368D+WxFJkHvpDctCS/hVgbyT
-         kVsyxxlLofq2LzBHJQHeL5sgW4BdwA/8TjesGJxuPUVxCVXjgL0xnTX8DntCK/Y5ZijX
-         psuGxMlO5RjaN5LuNj5pokTZLwnbyC0KnIpO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RQkLDm2OyY/FS3M4wUNUpYL3uyFZaGvTTxUYnj5+5u0=;
-        b=diNQM4mz2Uajv5zpZF7D8EXJovAKKtPLEwLkL3/cUOY4wvZHNweI9zwM5YSXatW4zS
-         aRBQ3fcvVHIY34NjTNY0VBfljVltI/xYre0aKtzw1mZYEAPb1lI/O5CuVkIxHdYkiS1B
-         XVzneSxTGrI9lR47DMRtaeprGHQHHdjKCT7Noyj44ROq8dXl5f3ErLM7xq1beABUz4io
-         viStukdDcwORM8wfGomeV9or2Xh8OybS/2+XsgW7WOIMyZ2HbCdaps5uBfqKBvqjBSW4
-         XrvCNj3k52al6lZmE/I0LcalrG6KEKH8hfdeV+gUaccMem9go8a6BaCHv8fTQ2N/aAfV
-         O78w==
-X-Gm-Message-State: AOAM532OW8fm4/FhuSwPjfhwQD0jmp+iQVmg6VJENlzG2P2F+uC6zf1P
-        5lHUFu36SVSZ/prqljA0vJKgUA==
-X-Google-Smtp-Source: ABdhPJxGEPCGwJ8UWjC4fgMF8tdHJLSlj8CP8GaCNRxU8QqPToZFuzNsOKfIXMk7CIP+I0gYPieKXA==
-X-Received: by 2002:a92:914a:: with SMTP id t71mr1931962ild.200.1591776761027;
-        Wed, 10 Jun 2020 01:12:41 -0700 (PDT)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id q15sm8491624ioh.45.2020.06.10.01.12.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Jun 2020 01:12:40 -0700 (PDT)
-Date:   Wed, 10 Jun 2020 08:12:38 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        containers@lists.linux-foundation.org,
+        Wed, 10 Jun 2020 04:50:02 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-161-0yN4TplFM4ieG9IIs6KTcQ-2; Wed, 10 Jun 2020 09:48:46 +0100
+X-MC-Unique: 0yN4TplFM4ieG9IIs6KTcQ-2
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 10 Jun 2020 09:48:45 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 10 Jun 2020 09:48:45 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Sargun Dhillon' <sargun@sargun.me>,
+        Kees Cook <keescook@chromium.org>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
         Giuseppe Scrivano <gscrivan@redhat.com>,
         Robert Sesek <rsesek@google.com>,
         Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        linux-kernel@vger.kernel.org, Matt Denton <mpdenton@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>,
         John Fastabend <john.r.fastabend@intel.com>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, cgroups@vger.kernel.org,
-        stable@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
  move fds across processes
-Message-ID: <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Index: AQHWPv7tCi14oegu0U6J73sUpcDiU6jRh/3w
+Date:   Wed, 10 Jun 2020 08:48:45 +0000
+Message-ID: <40d76a9a4525414a8c9809cd29a7ba8e@AcuMS.aculab.com>
 References: <20200603011044.7972-2-sargun@sargun.me>
  <20200604012452.vh33nufblowuxfed@wittgenstein>
  <202006031845.F587F85A@keescook>
@@ -73,97 +59,96 @@ References: <20200603011044.7972-2-sargun@sargun.me>
  <202006091346.66B79E07@keescook>
  <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
  <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+In-Reply-To: <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202006092227.D2D0E1F8F@keescook>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 10:27:54PM -0700, Kees Cook wrote:
-> On Tue, Jun 09, 2020 at 11:27:30PM +0200, Christian Brauner wrote:
-> > On June 9, 2020 10:55:42 PM GMT+02:00, Kees Cook <keescook@chromium.org> wrote:
-> > >LOL. And while we were debating this, hch just went and cleaned stuff up:
+From: Sargun Dhillon
+> Sent: 10 June 2020 09:13
+> 
+> On Tue, Jun 09, 2020 at 10:27:54PM -0700, Kees Cook wrote:
+> > On Tue, Jun 09, 2020 at 11:27:30PM +0200, Christian Brauner wrote:
+> > > On June 9, 2020 10:55:42 PM GMT+02:00, Kees Cook <keescook@chromium.org> wrote:
+> > > >LOL. And while we were debating this, hch just went and cleaned stuff up:
+> > > >
+> > > >2618d530dd8b ("net/scm: cleanup scm_detach_fds")
+> > > >
+> > > >So, um, yeah, now my proposal is actually even closer to what we already
+> > > >have there. We just add the replace_fd() logic to __scm_install_fd() and
+> > > >we're done with it.
 > > >
-> > >2618d530dd8b ("net/scm: cleanup scm_detach_fds")
-> > >
-> > >So, um, yeah, now my proposal is actually even closer to what we already
-> > >have there. We just add the replace_fd() logic to __scm_install_fd() and
-> > >we're done with it.
-> > 
-> > Cool, you have a link? :)
+> > > Cool, you have a link? :)
+> >
+> > How about this:
+> >
+> Thank you.
+> >
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/seccomp/addfd/v3.1&id=b
+> b94586b9e7cc88e915536c2e9fb991a97b62416
+> >
+> > --
+> > Kees Cook
 > 
-> How about this:
+> +		if (ufd) {
+> +			error = put_user(new_fd, ufd);
+> +			if (error) {
+> +				put_unused_fd(new_fd);
+> +				return error;
+> +			}
+> + 		}
+> I'm fairly sure this introduces a bug[1] if the user does:
 > 
-Thank you.
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=devel/seccomp/addfd/v3.1&id=bb94586b9e7cc88e915536c2e9fb991a97b62416
+> struct msghdr msg = {};
+> struct cmsghdr *cmsg;
+> struct iovec io = {
+> 	.iov_base = &c,
+> 	.iov_len = 1,
+> };
 > 
-> -- 
-> Kees Cook
+> msg.msg_iov = &io;
+> msg.msg_iovlen = 1;
+> msg.msg_control = NULL;
+> msg.msg_controllen = sizeof(buf);
+> 
+> recvmsg(sock, &msg, 0);
+> 
+> They will have the FD installed, no error message, but FD number wont be written
+> to memory AFAICT. If two FDs are passed, you will get an efault. They will both
+> be installed, but memory wont be written to. Maybe instead of 0, make it a
+> poison pointer, or -1 instead?
 
-+		if (ufd) {
-+			error = put_user(new_fd, ufd);
-+			if (error) {
-+				put_unused_fd(new_fd);
-+				return error;
-+			}
-+ 		}
-I'm fairly sure this introduces a bug[1] if the user does:
+IMHO if the buffer isn't big enough the nothing should happen.
+(or maybe a few of the fds be returned and the others left for later.)
 
-struct msghdr msg = {};
-struct cmsghdr *cmsg;
-struct iovec io = {
-	.iov_base = &c,
-	.iov_len = 1,
-};
+OTOH if the user passed an invalid address then installing the fd
+and returning EFAULT (and hence SIGSEGV) seems reasonable.
+Properly written apps just don't do that.
 
-msg.msg_iov = &io;
-msg.msg_iovlen = 1;
-msg.msg_control = NULL;
-msg.msg_controllen = sizeof(buf);
+In essence the 'copy_to_user' is done by the wrapper code.
+The code filling in the CMSG buffer can be considered to be
+writing a kernel buffer.
 
-recvmsg(sock, &msg, 0);
+IIRC other kernels (eg NetBSD) do the copies for ioctl() requests
+in the ioctl syscall wrapper.
+The IOW/IOR/IOWR flags have to be right.
 
-They will have the FD installed, no error message, but FD number wont be written 
-to memory AFAICT. If two FDs are passed, you will get an efault. They will both
-be installed, but memory wont be written to. Maybe instead of 0, make it a
-poison pointer, or -1 instead?
+	David
 
------
-As an aside, all of this junk should be dropped:
-+	ret = get_user(size, &uaddfd->size);
-+	if (ret)
-+		return ret;
-+
-+	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-+	if (ret)
-+		return ret;
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-and the size member of the seccomp_notif_addfd struct. I brought this up 
-off-list with Tycho that ioctls have the size of the struct embedded in them. We 
-should just use that. The ioctl definition is based on this[2]:
-#define _IOC(dir,type,nr,size) \
-	(((dir)  << _IOC_DIRSHIFT) | \
-	 ((type) << _IOC_TYPESHIFT) | \
-	 ((nr)   << _IOC_NRSHIFT) | \
-	 ((size) << _IOC_SIZESHIFT))
-
-
-We should just use copy_from_user for now. In the future, we can either 
-introduce new ioctl names for new structs, or extract the size dynamically from 
-the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
-
-----
-+#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-+						struct seccomp_notif_addfd)
-
-Lastly, what I believe to be a small mistake, it should be SECCOMP_IOW, based on 
-the documentation in ioctl.h -- "_IOW means userland is writing and kernel is 
-reading."
-
-
-[1]: https://lore.kernel.org/lkml/20200604052040.GA16501@ircssh-2.c.rugged-nimbus-611.internal/
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/asm-generic/ioctl.h?id=v5.7#n69
