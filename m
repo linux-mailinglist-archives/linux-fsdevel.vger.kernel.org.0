@@ -2,159 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9415D1F5D77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 23:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050B11F5D8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 23:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgFJVGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 17:06:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:54588 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgFJVGF (ORCPT
+        id S1726475AbgFJVJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 17:09:20 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39327 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbgFJVJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 17:06:05 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05AKqv25085289;
-        Wed, 10 Jun 2020 21:05:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=ltkLJIPe4dHdcnuDRbQdb6ZEMq/7yblSuuxzoI9Jykk=;
- b=JCM8LL68Y+dpHTScVfDL+XoLxtpaOAlI5BCBEqArSKCfUEtHnKzGT6P4xcRrmuM5VVfU
- CHzv1yXtiogAKFEPrcT2pTD5qtSrfd9QWk02QWZg3KhNBb3vuvJq7Q2GEw7ZSqDufc4L
- q7psPI6OAyf2RZaNNJuRbr62P8PNekX2R1K7/hgvLFiiagHzrCNPVCF8tDR/BFLbN2Lj
- 83/2NeOiSz5asZ9OHvaicKdeedBXclPatsFzZPiKlxK6LmSzcS+pjpxNXSBGxELb7Dwo
- i5mlWKciT/na1n6W7ENywb/K5UWJXEeuGOUScf8VgPEd4PqbMYHaiKY2ewYaucovn/ul uQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 31g3sn4ffm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Jun 2020 21:05:52 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05AKiSOn132390;
-        Wed, 10 Jun 2020 21:05:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 31gmwtve42-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Jun 2020 21:05:52 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05AL5o8e021995;
-        Wed, 10 Jun 2020 21:05:52 GMT
-Received: from localhost.localdomain (dhcp-10-65-148-96.vpn.oracle.com [10.65.148.96])
-        by userp3020.oracle.com with ESMTP id 31gmwtve2s-3;
-        Wed, 10 Jun 2020 21:05:51 +0000
-From:   Tom Hromatka <tom.hromatka@oracle.com>
-To:     tom.hromatka@oracle.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     fweisbec@gmail.com, tglx@linutronix.de, mingo@kernel.org,
-        adobriyan@gmail.com
-Subject: [PATCH 2/2] /proc/stat: Simplify iowait and idle calculations when cpu is offline
-Date:   Wed, 10 Jun 2020 15:05:49 -0600
-Message-Id: <20200610210549.61193-3-tom.hromatka@oracle.com>
-X-Mailer: git-send-email 2.25.3
-In-Reply-To: <20200610210549.61193-1-tom.hromatka@oracle.com>
-References: <20200610210549.61193-1-tom.hromatka@oracle.com>
+        Wed, 10 Jun 2020 17:09:19 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w20so1530032pga.6;
+        Wed, 10 Jun 2020 14:09:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d8BFYFKBmzV6dUdQ9QzQfynNSFZ6LYMbzbQZFvp4F6I=;
+        b=mXspwi6qfqfXD5q7rwybwbMXZAOCu/6VLkp5H7537IWdMF/NX2MDV2FbRn1yjr5vio
+         rJURE0cPWZk08ZjW87h+Q1nHUc9xeSEETsJWPbCMUtFRzOp+I/bTfR28My5ih0Aw5k6k
+         RWAJwvd3eOPoPXxOgg4y8k+gRL9D3SLYZTdFDGRF7G4V17c2fZFtuTF4/xp9fuOS9dyC
+         WyALXtpjxNCNZkO8kQ9zlsmUGMdC/Ijs67KpANQVX90NULByfHvyweBiw7HcfBmkrm8N
+         RbeZI3G5iXMebug/hhp9L3HGpYLLTGOIKdoeJ1eMabhzOSfi9oOZHbSw7LuIbS9Xx76H
+         AUBA==
+X-Gm-Message-State: AOAM530dByAHHgZVH91y/9PspVrT9/d+b1pDJQ4NpNKY198ELgFBFXns
+        IatKG2K8AbjnRzCe3SlAouQ=
+X-Google-Smtp-Source: ABdhPJy9+lD7U4qc9JUoiPb50Gv6ycU7LoqiwDQKy43ONOw5V4yjlKfcEJcOV9smlWXvgROS3QWcPg==
+X-Received: by 2002:a65:64c1:: with SMTP id t1mr4240625pgv.247.1591823358925;
+        Wed, 10 Jun 2020 14:09:18 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id h3sm636371pgk.67.2020.06.10.14.09.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2020 14:09:17 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 26EE5403AB; Wed, 10 Jun 2020 21:09:17 +0000 (UTC)
+Date:   Wed, 10 Jun 2020 21:09:17 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        bvanassche@acm.org, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, ming.lei@redhat.com,
+        nstange@suse.de, akpm@linux-foundation.org, mhocko@suse.com,
+        yukuai3@huawei.com, martin.petersen@oracle.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
+Message-ID: <20200610210917.GH11244@42.do-not-panic.com>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-7-mcgrof@kernel.org>
+ <20200609150602.GA7111@infradead.org>
+ <20200609172922.GP11244@42.do-not-panic.com>
+ <20200609173218.GA7968@infradead.org>
+ <20200609175359.GR11244@42.do-not-panic.com>
+ <20200610064234.GB24975@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9648 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 cotscore=-2147483648 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006100154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200610064234.GB24975@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A customer reported that when a cpu goes offline, the iowait and idle
-times reported in /proc/stat will sometimes spike.  This is being
-caused by a different data source being used for these values when a
-cpu is offline.
+On Tue, Jun 09, 2020 at 11:42:34PM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 09, 2020 at 05:53:59PM +0000, Luis Chamberlain wrote:
+> > > Feel free to add more comments, but please try to keep them short
+> > > and crisp.  At the some point long comments really distract from what
+> > > is going on.
+> > 
+> > Sure.
+> > 
+> > Come to think of it, given the above, I think we can also do way with
+> > the the partition stuff too, and rely on the buts->name too. I'll try
+> > this out, and test it.
+> 
+> Yes, the sg path should work for partitions as well.  That should not
+> only simplify the code, but also the comments, we can do something like
+> the full patch below (incorporating your original one). 
 
-Prior to this patch:
+Indeed I ended up with something similar, will use this variation.
 
-put the system under heavy load so that there is little idle time
+> This doesn't
+> include the error check on the creation - I think that check probably
+> is a good idea for this case based on the comments in the old patch, but
+> also a separate issue that should go into another patch on top.
 
-	       user nice system    idle iowait
-	cpu  109515   17  32111  220686    607
+Makes sense.
 
-take cpu1 offline
-
-	       user nice system    idle iowait
-	cpu  113742   17  32721  220724    612
-
-bring cpu1 back online
-
-	       user nice system    idle iowait
-	cpu  118332   17  33430  220687    607
-
-To prevent this, let's use the same data source whether a cpu is
-online or not.
-
-With this patch:
-
-put the system under heavy load so that there is little idle time
-
-	       user nice system    idle iowait
-	cpu   14096   16   4646  157687    426
-
-take cpu1 offline
-
-	       user nice system    idle iowait
-	cpu   21614   16   7179  157687    426
-
-bring cpu1 back online
-
-	       user nice system    idle iowait
-	cpu   27362   16   9555  157688    426
-
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
----
- fs/proc/stat.c | 24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
-
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 46b3293015fe..35b92539e711 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -47,32 +47,20 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
- 
- static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
- {
--	u64 idle, idle_usecs = -1ULL;
-+	u64 idle, idle_usecs;
- 
--	if (cpu_online(cpu))
--		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
--
--	if (idle_usecs == -1ULL)
--		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
--		idle = kcs->cpustat[CPUTIME_IDLE];
--	else
--		idle = idle_usecs * NSEC_PER_USEC;
-+	idle_usecs = get_cpu_idle_time_us(cpu, NULL);
-+	idle = idle_usecs * NSEC_PER_USEC;
- 
- 	return idle;
- }
- 
- static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
- {
--	u64 iowait, iowait_usecs = -1ULL;
--
--	if (cpu_online(cpu))
--		iowait_usecs = get_cpu_iowait_time_us(cpu, NULL);
-+	u64 iowait, iowait_usecs;
- 
--	if (iowait_usecs == -1ULL)
--		/* !NO_HZ or cpu offline so we can rely on cpustat.iowait */
--		iowait = kcs->cpustat[CPUTIME_IOWAIT];
--	else
--		iowait = iowait_usecs * NSEC_PER_USEC;
-+	iowait_usecs = get_cpu_iowait_time_us(cpu, NULL);
-+	iowait = iowait_usecs * NSEC_PER_USEC;
- 
- 	return iowait;
- }
--- 
-2.25.3
-
+  Luis
