@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEEA1F5842
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F951F5849
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 17:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbgFJPtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 11:49:35 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35550 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730345AbgFJPtb (ORCPT
+        id S1730278AbgFJPt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 11:49:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46080 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbgFJPt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 11:49:31 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h185so1278318pfg.2;
-        Wed, 10 Jun 2020 08:49:31 -0700 (PDT)
+        Wed, 10 Jun 2020 11:49:27 -0400
+Received: by mail-pl1-f195.google.com with SMTP id n2so1091036pld.13;
+        Wed, 10 Jun 2020 08:49:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J9spO8sCjIOMs0wQgccVfIprXE/wzCnPTAA23dgMAdc=;
-        b=h98127/o82LX2PUy40wev+U3cj7HdHMYnU8Jv3cGah9MgwOFtgQigPyLhjMQxgfwjQ
-         HILdmy+dMuwrtcvtNidCN/lgmknQnGDL/NUdUALy8r++cKG6mJzKMkSdT7cM0l6Z1id0
-         QPdRlj9Yg2dS31GiVMPRfaHXY2FWVWVlCIUvoMy5FNBaKrWIh/8LYQuoKXpGDShNN00T
-         lEhLAYrIOUbTplmkKywLarwm/qP0cQt8qlii3VFS6G+b/nOCBrIJW6M++qm7twFAdMS2
-         lwIQOn6ijjVUt6TElXVE9AIu2OlUWSEPrChLGkZdlPkXweZ4ils+eqGHVkWy23Ip9mBi
-         4HtA==
-X-Gm-Message-State: AOAM5301rp10LPb2cpiCWEvjK2wL9S0WhXoqKSDp5jfLsTsfRaZ22AWD
-        tX8EVJVdgthfNsGLjpD3zmo=
-X-Google-Smtp-Source: ABdhPJyu1eX5pyEODFKXM1tUOb06KZbLUOW+sULR/svGLkAhoxImKT7+pXfTo+K5VKZEdMa5hV0cwg==
-X-Received: by 2002:a62:aa0a:: with SMTP id e10mr3428008pff.91.1591804170947;
-        Wed, 10 Jun 2020 08:49:30 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id c12sm242070pgm.73.2020.06.10.08.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VaG7u6/oJsTeb5TEDlgcUeH6UZPnr3RsvPE6NVTbAOU=;
+        b=LONDURJ+m34Rxt1zTQe26+zWI6iaGPKGUxgdfRPEybeVavviQUFyqeE3i56mvhOQCe
+         dsyIkhS2WvRfkbIhtpyDJ+pshgtxrMFb+annPnC30/wNc81XpPA1fSZHycni4/DOIbmX
+         2eKf3ETss9jPM0WMumqHK/5efJVLrlLC2/S1HMN7mQEpmHuuAjTaw6oF9JUdYPiURw9/
+         t/h87jaU9/ZkyhpIcejulLPiWtGqO8gedYFjQdndyUx110UCQo50XaiLS7KJeWAsGFMI
+         cQJ1y0F0arwIsTwRFX2INy+l3PZunoRN/5CVHAYwkGxAGnyosx7XNrHh3sn/IUn1bfrr
+         UlrQ==
+X-Gm-Message-State: AOAM530qnyKN5H2P0PmV+ujZTW25xpAXAmyVtX+dYKbVTNR0Xlrqdo30
+        e5doaI8Z9A25Tr0DcfMqJqg=
+X-Google-Smtp-Source: ABdhPJzZoTl6eBSN8rqRCZozE//xcl2A2KM4BNx2Ocdpgf10NDUQ83ejBj8RMkeBJS9LOY1t52eKiw==
+X-Received: by 2002:a17:90a:21a2:: with SMTP id q31mr3700686pjc.230.1591804166854;
         Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p31sm252812pgb.46.2020.06.10.08.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2020 08:49:25 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 2C139403AB; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+        id 3872940B24; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
         philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
@@ -49,11 +49,14 @@ Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         bridge@lists.linux-foundation.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 0/5] kmod/umh: a few fixes
-Date:   Wed, 10 Jun 2020 15:49:18 +0000
-Message-Id: <20200610154923.27510-1-mcgrof@kernel.org>
+        linux-kernel@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 1/5] selftests: kmod: Use variable NAME in kmod_test_0001()
+Date:   Wed, 10 Jun 2020 15:49:19 +0000
+Message-Id: <20200610154923.27510-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
+References: <20200610154923.27510-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -61,40 +64,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-Tiezhu Yang had sent out a patch set with a slew of kmod selftest
-fixes, and one patch which modified kmod to return 254 when a module
-was not found. This opened up pandora's box about why that was being
-used for and low and behold its because when UMH_WAIT_PROC is used
-we call a kernel_wait4() call but have never unwrapped the error code.
-The commit log for that fix details the rationale for the approach
-taken. I'd appreciate some review on that, in particular nfs folks
-as it seems a case was never really hit before.
+Use the variable NAME instead of "\000" directly in kmod_test_0001().
 
-This goes boot tested, selftested with kmod, and 0-day gives its
-build blessings.
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ tools/testing/selftests/kmod/kmod.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Luis Chamberlain (2):
-  umh: fix processed error when UMH_WAIT_PROC is used
-  selftests: simplify kmod failure value
-
-Tiezhu Yang (3):
-  selftests: kmod: Use variable NAME in kmod_test_0001()
-  kmod: Remove redundant "be an" in the comment
-  test_kmod: Avoid potential double free in trigger_config_run_type()
-
- drivers/block/drbd/drbd_nl.c         | 20 +++++------
- fs/nfsd/nfs4recover.c                |  2 +-
- include/linux/sched/task.h           | 13 ++++++++
- kernel/kmod.c                        |  5 ++-
- kernel/umh.c                         |  4 +--
- lib/test_kmod.c                      |  2 +-
- net/bridge/br_stp_if.c               | 10 ++----
- security/keys/request_key.c          |  2 +-
- tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
- 9 files changed, 71 insertions(+), 37 deletions(-)
-
+diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
+index 3702dbcc90a7..da60c3bd4f23 100755
+--- a/tools/testing/selftests/kmod/kmod.sh
++++ b/tools/testing/selftests/kmod/kmod.sh
+@@ -341,7 +341,7 @@ kmod_test_0001_driver()
+ 
+ 	kmod_defaults_driver
+ 	config_num_threads 1
+-	printf '\000' >"$DIR"/config_test_driver
++	printf $NAME >"$DIR"/config_test_driver
+ 	config_trigger ${FUNCNAME[0]}
+ 	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
+ }
+@@ -352,7 +352,7 @@ kmod_test_0001_fs()
+ 
+ 	kmod_defaults_fs
+ 	config_num_threads 1
+-	printf '\000' >"$DIR"/config_test_fs
++	printf $NAME >"$DIR"/config_test_fs
+ 	config_trigger ${FUNCNAME[0]}
+ 	config_expect_result ${FUNCNAME[0]} -EINVAL
+ }
 -- 
 2.26.2
 
