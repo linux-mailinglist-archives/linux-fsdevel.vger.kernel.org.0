@@ -2,109 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAEE1F4D4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 07:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 304F91F4E28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 08:25:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbgFJFyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 01:54:05 -0400
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:51528 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbgFJFyC (ORCPT
+        id S1726090AbgFJGZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 02:25:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbgFJGZr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 01:54:02 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 49hblR2dW9zKmrq;
-        Wed, 10 Jun 2020 07:53:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id UoN5h8M60M3c; Wed, 10 Jun 2020 07:53:52 +0200 (CEST)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, christian@brauner.io,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH] symlink.7: document magic-links more completely
-Date:   Wed, 10 Jun 2020 15:53:19 +1000
-Message-Id: <20200610055319.26374-1-cyphar@cyphar.com>
-In-Reply-To: <20200414103524.wjhyfobzpjk236o7@yavin.dot.cyphar.com>
-References: <20200414103524.wjhyfobzpjk236o7@yavin.dot.cyphar.com>
+        Wed, 10 Jun 2020 02:25:47 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8609C03E96B;
+        Tue,  9 Jun 2020 23:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yhUUkblZBtIukb8ZaU1o3no72vgZVuofYFqFK3m4UNw=; b=iom6R2+I5PdVq8+x/wIT8g6Yps
+        niFdA5pa7du8cSCNo2jTBZC/6ucxC4ER1TSBm7chhc8Wq5BCJxxKNk51jYjeQ7Tm5LsX18T5gQDik
+        mqjD/mKEqlCuSvttI4HMhXs1yuzXIC/IEokWBLce2V33R5tGYzI6jRO39LkT/x5i3R91TSVF3bEj1
+        rXgM4/moMEH2csodYQyhNIPsyQOY6p1nQcLFKgMeX+KpYyi3cfd1MtA3OMDzkWVamJU39bcJG3gQj
+        xr01uOJ+hYNpbuhbNxVcP7/cE2t7XSuEqguD9NEyHMpy9650uuPLmepXDIvYFVXsMs+u3WC9MWLKs
+        YZoGw4TQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jiuB8-0000hr-LI; Wed, 10 Jun 2020 06:25:38 +0000
+Date:   Tue, 9 Jun 2020 23:25:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, jack@suse.com, tytso@mit.edu,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
+Subject: Re: [PATCHv2 1/1] ext4: mballoc: Use this_cpu_read instead of
+ this_cpu_ptr
+Message-ID: <20200610062538.GA24975@infradead.org>
+References: <534f275016296996f54ecf65168bb3392b6f653d.1591699601.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 3F5A41750
-X-Rspamd-Score: 2.16 / 15.00 / 15.00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <534f275016296996f54ecf65168bb3392b6f653d.1591699601.git.riteshh@linux.ibm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Michael,
+On Tue, Jun 09, 2020 at 04:23:10PM +0530, Ritesh Harjani wrote:
+> Simplify reading a seq variable by directly using this_cpu_read API
+> instead of doing this_cpu_ptr and then dereferencing it.
+> 
+> This also avoid the below kernel BUG: which happens when
+> CONFIG_DEBUG_PREEMPT is enabled
 
-Sorry for the delay and here is the patch I promised in this thread.
+I see this warning all the time with ext4 using tests VMs, so lets get
+this fixed ASAP before -rc1:
 
---8<---------------------------------------------------------------------8<--
-
-Traditionally, magic-links have not been a well-understood topic in
-Linux. This helps clarify some of the terminology used in openat2.2.
-
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- man7/symlink.7 | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/man7/symlink.7 b/man7/symlink.7
-index 07b1db3a3764..ed99bc4236f1 100644
---- a/man7/symlink.7
-+++ b/man7/symlink.7
-@@ -84,6 +84,21 @@ as they are implemented on Linux and other systems,
- are outlined here.
- It is important that site-local applications also conform to these rules,
- so that the user interface can be as consistent as possible.
-+.SS Magic-links
-+There is a special class of symlink-like objects known as "magic-links" which
-+can be found in certain pseudo-filesystems such as
-+.BR proc (5)
-+(examples include
-+.IR /proc/[pid]/exe " and " /proc/[pid]/fd/* .)
-+Unlike normal symlinks, magic-links are not resolved through
-+pathname-expansion, but instead act as direct references to the kernel's own
-+representation of a file handle. As such, these magic-links allow users to
-+access files which cannot be referenced with normal paths (such as unlinked
-+files still referenced by a running program.)
-+.PP
-+Because they can bypass ordinary
-+.BR mount_namespaces (7)-based
-+restrictions, magic-links have been used as attack vectors in various exploits.
- .SS Symbolic link ownership, permissions, and timestamps
- The owner and group of an existing symbolic link can be changed
- using
-@@ -99,16 +114,14 @@ of a symbolic link can be changed using
- or
- .BR lutimes (3).
- .PP
--On Linux, the permissions of a symbolic link are not used
--in any operations; the permissions are always
--0777 (read, write, and execute for all user categories),
- .\" Linux does not currently implement an lchmod(2).
--and can't be changed.
--(Note that there are some "magic" symbolic links in the
--.I /proc
--directory tree\(emfor example, the
--.IR /proc/[pid]/fd/*
--files\(emthat have different permissions.)
-+On Linux, the permissions of an ordinary symbolic link are not used in any
-+operations; the permissions are always 0777 (read, write, and execute for all
-+user categories), and can't be changed.
-+.PP
-+However, magic-links do not follow this rule. They can have a non-0777 mode,
-+though this mode is not currently used in any permission checks.
-+
- .\"
- .\" The
- .\" 4.4BSD
--- 
-2.26.2
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
