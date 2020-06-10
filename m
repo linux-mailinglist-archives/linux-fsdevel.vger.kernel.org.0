@@ -2,243 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 127071F4EB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 09:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12081F4EEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jun 2020 09:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbgFJHTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 03:19:22 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:53928 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbgFJHTW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 03:19:22 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 49hddz0HkhzcG;
-        Wed, 10 Jun 2020 09:19:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1591773559; bh=7gEYY7fEDHliIe4ICwlpvlUotLaIa5/Vi0eVTaTvsf4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RWPUr9CKHHz19QR4ikOHzJIOVVtcmJ/omgGqvqX1DQZswAuEOeiGgmVB8dY2P66in
-         34yliL9OuGsBSjEiRQI0iPEGn4SqQzco4nryZRHbC+Odw5Rw6hBfe0KLDFSUNV0Mv6
-         KjYJY1ro7EckAcLfAlGn51P8YSp0Pj3XynXc1ziLG35iGE4pH+uRiYGz1ekRlytFs5
-         3rrGpWjgTVAE/EEZTJXvMApdaDJzFXrnwBAc5vObteoZU6gXmDRTu6dfT6+Bysvory
-         CoY5QA2+0mu/kaO12riuZSZAtJR6X0iR/+5LjwPD9MJLTUG/lQOAxg3mSAERO/Zv/X
-         iB47QCEtJkwmA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Wed, 10 Jun 2020 09:19:17 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Lockdep warning after `mdadm -S`
-Message-ID: <20200610071916.GA2668@qmqm.qmqm.pl>
+        id S1726513AbgFJHbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 03:31:18 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53947 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgFJHbS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 03:31:18 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05A7URas010288;
+        Wed, 10 Jun 2020 16:30:28 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
+ Wed, 10 Jun 2020 16:30:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05A7URpx010284
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 10 Jun 2020 16:30:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+References: <20200607014935.vhd3scr4qmawq7no@ast-mbp>
+ <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <af00d341-6046-e187-f5c8-5f57b40f017c@i-love.sakura.ne.jp>
+ <20200609012826.dssh2lbfr6tlhwwa@ast-mbp.dhcp.thefacebook.com>
+ <ddabab93-4660-3a46-8b05-89385e292b75@i-love.sakura.ne.jp>
+ <20200609223214.43db3orsyjczb2dd@ast-mbp.dhcp.thefacebook.com>
+ <6a8b284f-461e-11b5-9985-6dc70012f774@i-love.sakura.ne.jp>
+ <20200610000546.4hh4n53vaxc4hypi@ast-mbp.dhcp.thefacebook.com>
+ <1be571d2-c517-d7a7-788e-3bcc07afa858@i-love.sakura.ne.jp>
+ <20200610033256.xkv5a7l6vtb2jiox@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c9828709-c8e1-06a2-8643-e09e2e555b81@i-love.sakura.ne.jp>
+Date:   Wed, 10 Jun 2020 16:30:28 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200610033256.xkv5a7l6vtb2jiox@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Developers,
+Forwarding to LSM-ML. Security people, any comments?
 
-I found a lockdep warning in dmesg some after doing 'mdadm -S' while
-also having btrfs mounted (light to none I/O load).  Disks under MD and
-btrfs are unrelated.
-
-Best Regards,
-Micha³ Miros³aw
-
-======================================================
-WARNING: possible circular locking dependency detected
-5.7.1mq+ #383 Tainted: G           O     
-------------------------------------------------------
-kworker/u16:3/8175 is trying to acquire lock:
-ffff8882f19556a0 (sb_internal#3){.+.+}-{0:0}, at: start_transaction+0x37e/0x550 [btrfs]
-
-but task is already holding lock:
-ffffc900087c7e68 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x235/0x620
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #8 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}:
-       __flush_work+0x331/0x490
-       wb_shutdown+0x8f/0xb0
-       bdi_unregister+0x72/0x1f0
-       del_gendisk+0x2b0/0x2c0
-       md_free+0x28/0x90
-       kobject_put+0xa6/0x1b0
-       process_one_work+0x2b6/0x620
-       worker_thread+0x35/0x3e0
-       kthread+0x143/0x160
-       ret_from_fork+0x3a/0x50
-
--> #7 ((work_completion)(&mddev->del_work)){+.+.}-{0:0}:
-       process_one_work+0x28d/0x620
-       worker_thread+0x35/0x3e0
-       kthread+0x143/0x160
-       ret_from_fork+0x3a/0x50
-
--> #6 ((wq_completion)md_misc){+.+.}-{0:0}:
-       flush_workqueue+0xa9/0x4e0
-       __md_stop_writes+0x18/0x100
-       do_md_stop+0x165/0x2d0
-       md_ioctl+0xa52/0x1d60
-       blkdev_ioctl+0x1cc/0x2a0
-       block_ioctl+0x3a/0x40
-       ksys_ioctl+0x81/0xc0
-       __x64_sys_ioctl+0x11/0x20
-       do_syscall_64+0x4f/0x210
-       entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
--> #5 (&mddev->open_mutex){+.+.}-{3:3}:
-       __mutex_lock+0x93/0x9c0
-       md_open+0x43/0xc0
-       __blkdev_get+0xea/0x560
-       blkdev_get+0x60/0x130
-       do_dentry_open+0x147/0x3e0
-       path_openat+0x84f/0xa80
-       do_filp_open+0x8e/0x100
-       do_sys_openat2+0x225/0x2e0
-       do_sys_open+0x46/0x80
-       do_syscall_64+0x4f/0x210
-       entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
--> #4 (&bdev->bd_mutex){+.+.}-{3:3}:
-       __mutex_lock+0x93/0x9c0
-       __blkdev_get+0x77/0x560
-       blkdev_get+0x60/0x130
-       blkdev_get_by_path+0x41/0x80
-       btrfs_get_bdev_and_sb+0x16/0xb0 [btrfs]
-       open_fs_devices+0x9d/0x240 [btrfs]
-       btrfs_open_devices+0x89/0x90 [btrfs]
-       btrfs_mount_root+0x26a/0x4b0 [btrfs]
-       legacy_get_tree+0x2b/0x50
-       vfs_get_tree+0x23/0xc0
-       fc_mount+0x9/0x40
-       vfs_kern_mount.part.40+0x57/0x80
-       btrfs_mount+0x148/0x3f0 [btrfs]
-       legacy_get_tree+0x2b/0x50
-       vfs_get_tree+0x23/0xc0
-       do_mount+0x712/0xa40
-       __x64_sys_mount+0xbf/0xe0
-       do_syscall_64+0x4f/0x210
-       entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
--> #3 (&fs_devs->device_list_mutex){+.+.}-{3:3}:
-       __mutex_lock+0x93/0x9c0
-       btrfs_run_dev_stats+0x44/0x470 [btrfs]
-       commit_cowonly_roots+0xac/0x2a0 [btrfs]
-       btrfs_commit_transaction+0x511/0xa70 [btrfs]
-       transaction_kthread+0x13c/0x160 [btrfs]
-       kthread+0x143/0x160
-       ret_from_fork+0x3a/0x50
-
--> #2 (&fs_info->tree_log_mutex){+.+.}-{3:3}:
-       __mutex_lock+0x93/0x9c0
-       btrfs_commit_transaction+0x4b6/0xa70 [btrfs]
-       transaction_kthread+0x13c/0x160 [btrfs]
-       kthread+0x143/0x160
-       ret_from_fork+0x3a/0x50
-
--> #1 (&fs_info->reloc_mutex){+.+.}-{3:3}:
-       __mutex_lock+0x93/0x9c0
-       btrfs_record_root_in_trans+0x3e/0x60 [btrfs]
-       start_transaction+0xcb/0x550 [btrfs]
-       btrfs_mkdir+0x5c/0x1e0 [btrfs]
-       vfs_mkdir+0x107/0x1d0
-       do_mkdirat+0xe7/0x110
-       do_syscall_64+0x4f/0x210
-       entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
--> #0 (sb_internal#3){.+.+}-{0:0}:
-       __lock_acquire+0x11f9/0x1aa0
-       lock_acquire+0x9e/0x380
-       __sb_start_write+0x13a/0x270
-       start_transaction+0x37e/0x550 [btrfs]
-       cow_file_range_inline.constprop.74+0xe4/0x640 [btrfs]
-       cow_file_range+0xe5/0x3f0 [btrfs]
-       btrfs_run_delalloc_range+0x128/0x620 [btrfs]
-       writepage_delalloc+0xe2/0x140 [btrfs]
-       __extent_writepage+0x1a3/0x370 [btrfs]
-       extent_write_cache_pages+0x2b8/0x470 [btrfs]
-       extent_writepages+0x3f/0x90 [btrfs]
-       do_writepages+0x3c/0xe0
-       __writeback_single_inode+0x4f/0x650
-       writeback_sb_inodes+0x1f7/0x560
-       __writeback_inodes_wb+0x58/0xa0
-       wb_writeback+0x33b/0x4b0
-       wb_workfn+0x428/0x5b0
-       process_one_work+0x2b6/0x620
-       worker_thread+0x35/0x3e0
-       kthread+0x143/0x160
-       ret_from_fork+0x3a/0x50
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#3 --> (work_completion)(&mddev->del_work) --> (work_completion)(&(&wb->dwork)->work)
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock((work_completion)(&(&wb->dwork)->work));
-                               lock((work_completion)(&mddev->del_work));
-                               lock((work_completion)(&(&wb->dwork)->work));
-  lock(sb_internal#3);
-
- *** DEADLOCK ***
-
-3 locks held by kworker/u16:3/8175:
- #0: ffff88840baa6948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x235/0x620
- #1: ffffc900087c7e68 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x235/0x620
- #2: ffff8882f19550e8 (&type->s_umount_key#52){++++}-{3:3}, at: trylock_super+0x11/0x50
-
-stack backtrace:
-CPU: 1 PID: 8175 Comm: kworker/u16:3 Tainted: G           O      5.7.1mq+ #383
-Hardware name: System manufacturer System Product Name/P8Z68-V PRO, BIOS 3603 11/09/2012
-Workqueue: writeback wb_workfn (flush-btrfs-1)
-Call Trace:
- dump_stack+0x71/0xa0
- check_noncircular+0x165/0x180
- ? stack_trace_save+0x46/0x70
- __lock_acquire+0x11f9/0x1aa0
- lock_acquire+0x9e/0x380
- ? start_transaction+0x37e/0x550 [btrfs]
- __sb_start_write+0x13a/0x270
- ? start_transaction+0x37e/0x550 [btrfs]
- start_transaction+0x37e/0x550 [btrfs]
- ? kmem_cache_alloc+0x1b0/0x2c0
- cow_file_range_inline.constprop.74+0xe4/0x640 [btrfs]
- ? lock_acquire+0x9e/0x380
- ? test_range_bit+0x3d/0x130 [btrfs]
- cow_file_range+0xe5/0x3f0 [btrfs]
- btrfs_run_delalloc_range+0x128/0x620 [btrfs]
- ? find_lock_delalloc_range+0x1f3/0x220 [btrfs]
- writepage_delalloc+0xe2/0x140 [btrfs]
- __extent_writepage+0x1a3/0x370 [btrfs]
- extent_write_cache_pages+0x2b8/0x470 [btrfs]
- ? __lock_acquire+0x3fc/0x1aa0
- extent_writepages+0x3f/0x90 [btrfs]
- do_writepages+0x3c/0xe0
- ? find_held_lock+0x2d/0x90
- __writeback_single_inode+0x4f/0x650
- writeback_sb_inodes+0x1f7/0x560
- __writeback_inodes_wb+0x58/0xa0
- wb_writeback+0x33b/0x4b0
- wb_workfn+0x428/0x5b0
- ? sched_clock_cpu+0xe/0xd0
- process_one_work+0x2b6/0x620
- ? worker_thread+0xc7/0x3e0
- worker_thread+0x35/0x3e0
- ? process_one_work+0x620/0x620
- kthread+0x143/0x160
- ? kthread_park+0x80/0x80
- ret_from_fork+0x3a/0x50
-
+On 2020/06/10 12:32, Alexei Starovoitov wrote:
+> On Wed, Jun 10, 2020 at 12:08:20PM +0900, Tetsuo Handa wrote:
+>> On 2020/06/10 9:05, Alexei Starovoitov wrote:
+>>> I think you're still missing that usermode_blob is completely fs-less.
+>>> It doesn't need any fs to work.
+>>
+>> fork_usermode_blob() allows usage like fork_usermode_blob("#!/bin/sh").
+>> A problem for LSMs is not "It doesn't need any fs to work." but "It can access any fs and
+>> it can issue arbitrary syscalls.".
+>>
+>> LSM modules switch their security context upon execve(), based on available information like
+>> "What is the !AT_SYMLINK_NOFOLLOW pathname for the requested program passed to execve()?",
+>> "What is the AT_SYMLINK_NOFOLLOW pathname for the requested program passed to execve()?",
+>> "What are argv[]/envp[] for the requested program passed to execve()?", "What is the inode's
+>> security context passed to execve()?" etc. And file-less execve() request (a.k.a.
+>> fork_usermode_blob()) makes pathname information (which pathname-based LSMs depend on)
+>> unavailable.
+>>
+>> Since fork_usermode_blob() can execute arbitrary code in userspace, fork_usermode_blob() can
+>> allow execution of e.g. statically linked HTTP server and statically linked DBMS server, without
+>> giving LSM modules a chance to understand the intent of individual file-less execve() request.
+>> If many different statically linked programs were executed via fork_usermode_blob(), how LSM
+>> modules can determine whether a syscall from a file-less process should be permitted/denied?
+> 
+> What you're saying is tomoyo doesn't trust kernel modules that are built-in
+> as part of vmlinux and doesn't trust vmlinux build.
+> I cannot really comprehend that since it means that tomoyo doesn't trust itself.
+> 
+>> By the way, TOMOYO LSM wants to know meaningful AT_SYMLINK_NOFOLLOW pathname and !AT_SYMLINK_NOFOLLOW
+>> pathname, and currently there is no API for allow obtaining both pathnames atomically. But that is a
+>> different problem, for what this mail thread is discussing would be whether we can avoid file-less
+>> execve() request (i.e. get rid of fork_usermode_blob()).
+> 
+> tomoyo does path name resolution as a string and using that for security?
+> I'm looking at tomoyo_realpath*() and tomoyo_pathcmp(). Ouch.
+> Path based security is anti pattern of security.
+> I didn't realize tomoyo so broken.
+> 
