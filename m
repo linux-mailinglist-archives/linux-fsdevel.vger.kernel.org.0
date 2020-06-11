@@ -2,211 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DC61F7108
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 01:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4991F7114
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 01:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgFKXtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 19:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
+        id S1726298AbgFKXzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 19:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbgFKXtl (ORCPT
+        with ESMTP id S1726284AbgFKXzk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 19:49:41 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB47C08C5C4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 16:49:40 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id t7so2972828plr.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 16:49:40 -0700 (PDT)
+        Thu, 11 Jun 2020 19:55:40 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8360CC08C5C1;
+        Thu, 11 Jun 2020 16:55:39 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id g28so7458694qkl.0;
+        Thu, 11 Jun 2020 16:55:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=bIgDlQTcxFw2KokzUZZm6ZkdF0vG1JUVRJ5FqN6wv7w=;
-        b=EsU01laKYlXeUwOzqhDZANOi8lScnIXVlCztg5QhuFJsyVQo713bCIGsIewq5t48hK
-         TXYXa29VAKYNO2/fMiuiFoiAuuyam8P394K3s2j/jS1UkQhxzRjnSyM61NwpSFXT6C2r
-         dURzq4gRo8VVxydHIaMV2rFLmPerA444DM6uw=
+        bh=F5v636w1U2r9faKtpDeWzBpWJiuE/GmNaYKlismlA8U=;
+        b=HyPFX0Dbl/lvpUQZOju2xEIns4jas8JFofOmGF46iajecbOcOMCerAYq/cbCcrvLNw
+         K4pktP2zZl5zFZSJjFEWXEp8owkTrkL/Fz0zgce2JkQ8bWJPDhu5h9uhmRP9VSMStnL3
+         QHzB7pNv3q9ppH7YH66NKNUHiROeAjCeR6BzyK5KGPOwaqgk4BMqqD6n5w2cpsqPLz20
+         vENNadkxflli0r1TtyWD89BmvN56PhouGxLPYFfpZG1dgTDFgiw5SuQqpB+UacB7RzYI
+         PWgIY3c/9I7eUUnXZRVj8ZxD4+2cq0xHNsAZ3LX2Ir+jGFZ/Zn0b/AQyzvkUVBp154cw
+         +PaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=bIgDlQTcxFw2KokzUZZm6ZkdF0vG1JUVRJ5FqN6wv7w=;
-        b=KbjrYsQ8QOtDAKmTy//ManV2CqhRTnURHIIYkmw290Nx3UwQ+HBUDcr8HuagHhuoN5
-         ntPptwcp39Y/E+wox2W2AMfj9Rv4YkV9xmiINhLy7X/furLYFdrsVfF+K2JOMBxn4IdW
-         WdNqYdKGLg2P0zyT0c6YsCYWd0mmvMMYZNk1vTkR44t0r19IUHD9qgOxULPrkhKGMlQg
-         /HxD2gldqrRFVjuiC2N0XawkPJWFGhdn13wn8+iEiJq+yU7mlAnbAbzC5YHfxWmI1wGT
-         iWzyPjxgDffXjdP4WMWD2Ngjve4fWsAZ4JByBXWCoe665OwfIGbY4OpblbuJcNSGqqwF
-         WgmQ==
-X-Gm-Message-State: AOAM531tvY3Yf2xxygceyaABgVzNR9Tb3Rji7AJzgC4WONaUbQG75lD6
-        CqkPl4tufAwAptqhtWq4yL+rZg==
-X-Google-Smtp-Source: ABdhPJzKAntT+tqihIhi6knyDIQA+kIZiwM6SoOqVvMIgkg6dNBDxl2KwSVM7Qy1cAVFqCn/cRDWuA==
-X-Received: by 2002:a17:90b:e05:: with SMTP id ge5mr10405229pjb.49.1591919379416;
-        Thu, 11 Jun 2020 16:49:39 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k126sm4448492pfd.129.2020.06.11.16.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2020 16:49:38 -0700 (PDT)
-Date:   Thu, 11 Jun 2020 16:49:37 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Sargun Dhillon' <sargun@sargun.me>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Message-ID: <202006111634.8237E6A5C6@keescook>
-References: <202006091235.930519F5B@keescook>
- <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
- <202006091346.66B79E07@keescook>
- <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
- <202006101953.899EFB53@keescook>
- <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
- <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
- <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+        bh=F5v636w1U2r9faKtpDeWzBpWJiuE/GmNaYKlismlA8U=;
+        b=s67JQxetp4+QdKLGj3/Xeh84nIz/eXE3b7vqzdb00Rhm/LptfFCMRFgL3ivgNc9vUj
+         AuTbf7H2WJM4j/KBIVcBWjLxF0TTCc10IBtvZZgV+Racv5o2UMbfvCc7r1/RlQgJ9Sa2
+         WKHY91amoBziTV88mVrQJtD6r/LNpqEXAXGNbIEO5KNvpnPyfcMSnHfli1duTd5FdlHf
+         hq1WeF4IaSt1HJwBpA2C3PL+p/u2T9Or/uzm6MpO+ZZe+SYbekSppe84meZ1gMsf+sWi
+         iG4qK/CxQryEsH44SGgdzK7XR0DkJBZ5otI1quQYFcUGqfH7sk4dTJVrMe5eJSI6IsXA
+         kuEw==
+X-Gm-Message-State: AOAM53246v0pWTNQJaT80ABUaPOiM0XSSn8/INm7+M2RJ/guw0v6GwJO
+        gVc2AOAWFwJYf4MOhOOHUvQ=
+X-Google-Smtp-Source: ABdhPJxCOrnRf8nwSUdwmtMf/rNeZwmr77UMJdROHZPgjMCqlypfCoJaxxWEnO5jkLoK/YqVG3jC2g==
+X-Received: by 2002:a37:a7c5:: with SMTP id q188mr492287qke.384.1591919738575;
+        Thu, 11 Jun 2020 16:55:38 -0700 (PDT)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id q32sm3859272qtf.36.2020.06.11.16.55.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jun 2020 16:55:37 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 339CB27C0054;
+        Thu, 11 Jun 2020 19:55:36 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 11 Jun 2020 19:55:36 -0400
+X-ME-Sender: <xms:b8TiXjdZZ4Whi3jp7-wUgmKt6dvRH52VirY_52Zwz9JKIqOWK7s9Hw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeitddgvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhepveeijedthfeijeefudehhedvveegudegteehgffgtddvuedtveegtedvvdef
+    gedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphephedvrdduheehrdduud
+    durdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtd
+    eigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehf
+    ihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:b8TiXpOC0t-CX5R13OqK3l6eVl1IwaDANwjDfZGQec9tu6tDhjg-4A>
+    <xmx:b8TiXsgC1j4rj4iHTxZEzCW2qOaYtl3QOCheHGKf3x3969WhFE1lGg>
+    <xmx:b8TiXk9L4kwY0kTu-Ug1YaqZqTU8qZPOOpeqNkmMynhlOogtvHqFig>
+    <xmx:eMTiXjBMfBoZmvXPo3IDNoIf4Skm7XgWifSDGFzNUyoeBpLZxKbGleum4go>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4AB2D3060FE7;
+        Thu, 11 Jun 2020 19:55:27 -0400 (EDT)
+Date:   Fri, 12 Jun 2020 07:55:26 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
+        areber@redhat.com, aubrey.li@linux.intel.com,
+        Andrei Vagin <avagin@gmail.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: possible deadlock in send_sigio
+Message-ID: <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <000000000000760d0705a270ad0c@google.com>
+ <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
+ <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
+ <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
+ <20200611142214.GI2531@hirez.programming.kicks-ass.net>
+ <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+In-Reply-To: <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 11, 2020 at 02:56:22PM +0000, David Laight wrote:
-> From: Sargun Dhillon
-> > Sent: 11 June 2020 12:07
-> > Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to move fds across processes
+Hi Peter and Waiman,
+
+On Thu, Jun 11, 2020 at 12:09:59PM -0400, Waiman Long wrote:
+> On 6/11/20 10:22 AM, Peter Zijlstra wrote:
+> > On Thu, Jun 11, 2020 at 09:51:29AM -0400, Waiman Long wrote:
 > > 
-> > On Thu, Jun 11, 2020 at 12:01:14PM +0200, Christian Brauner wrote:
-> > > On Wed, Jun 10, 2020 at 07:59:55PM -0700, Kees Cook wrote:
-> > > > On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
-> > > > > As an aside, all of this junk should be dropped:
-> > > > > +	ret = get_user(size, &uaddfd->size);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > >
-> > > > > and the size member of the seccomp_notif_addfd struct. I brought this up
-> > > > > off-list with Tycho that ioctls have the size of the struct embedded in them. We
-> > > > > should just use that. The ioctl definition is based on this[2]:
-> > > > > #define _IOC(dir,type,nr,size) \
-> > > > > 	(((dir)  << _IOC_DIRSHIFT) | \
-> > > > > 	 ((type) << _IOC_TYPESHIFT) | \
-> > > > > 	 ((nr)   << _IOC_NRSHIFT) | \
-> > > > > 	 ((size) << _IOC_SIZESHIFT))
-> > > > >
-> > > > >
-> > > > > We should just use copy_from_user for now. In the future, we can either
-> > > > > introduce new ioctl names for new structs, or extract the size dynamically from
-> > > > > the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
-> > > >
-> > > > Yeah, that seems reasonable. Here's the diff for that part:
-> > >
-> > > Why does it matter that the ioctl() has the size of the struct embedded
-> > > within? Afaik, the kernel itself doesn't do anything with that size. It
-> > > merely checks that the size is not pathological and it does so at
-> > > compile time.
-> > >
-> > > #ifdef __CHECKER__
-> > > #define _IOC_TYPECHECK(t) (sizeof(t))
-> > > #else
-> > > /* provoke compile error for invalid uses of size argument */
-> > > extern unsigned int __invalid_size_argument_for_IOC;
-> > > #define _IOC_TYPECHECK(t) \
-> > > 	((sizeof(t) == sizeof(t[1]) && \
-> > > 	  sizeof(t) < (1 << _IOC_SIZEBITS)) ? \
-> > > 	  sizeof(t) : __invalid_size_argument_for_IOC)
-> > > #endif
-> > >
-> > > The size itself is not verified at runtime. copy_struct_from_user()
-> > > still makes sense at least if we're going to allow expanding the struct
-> > > in the future.
-> > Right, but if we simply change our headers and extend the struct, it will break
-> > all existing programs compiled against those headers. In order to avoid that, if
-> > we intend on extending this struct by appending to it, we need to have a
-> > backwards compatibility mechanism. Just having copy_struct_from_user isn't
-> > enough. The data structure either must be fixed size, or we need a way to handle
-> > multiple ioctl numbers derived from headers with different sized struct arguments
+> > > There was an old lockdep patch that I think may address the issue, but was
+> > > not merged at the time. I will need to dig it out and see if it can be
+> > > adapted to work in the current kernel. It may take some time.
+> > Boqun was working on that; I can't remember what happened, but ISTR it
+> > was shaping up nice.
 > > 
-> > The two approaches I see are:
-> > 1. use more indirection. This has previous art in drm[1]. That's look
-> > something like this:
-> > 
-> > struct seccomp_notif_addfd_ptr {
-> > 	__u64 size;
-> > 	__u64 addr;
-> > }
-> > 
-> > ... And then it'd be up to us to dereference the addr and copy struct from user.
+> Yes, I am talking about Boqun's patch. However, I think he had moved to
+> another company and so may not be able to actively work on that again.
 > 
-> Do not go down that route. It isn't worth the pain.
+
+I think you are talking about the rescursive read deadlock detection
+patchset:
+
+	https://lore.kernel.org/lkml/20180411135110.9217-1-boqun.feng@gmail.com/
+
+Let me have a good and send a new version based on today's master of tip
+tree.
+
+Regards,
+Boqun
+
+> Cheers,
+> Longman
 > 
-> You should also assume that userspace might have a compile-time check
-> on the buffer length (I've written one - not hard) and that the kernel
-> might (in the future - or on a BSD kernel) be doing the user copies
-> for you.
-> 
-> Also, if you change the structure you almost certainly need to
-> change the name of the ioctl cmd as well as its value.
-> Otherwise a recompiled program will pass the new cmd value (and
-> hopefully the right sized buffer) but it won't have initialised
-> the buffer properly.
-> This is likely to lead to unexpected behaviour.
-
-Hmmm.
-
-So, while initially I thought Sargun's observation about ioctl's fixed
-struct size was right, I think I've been swayed to Christian's view
-(which is supported by the long tail of struct size pain we've seen in
-other APIs).
-
-Doing a separate ioctl for each structure version seems like the "old
-solution" now that we've got EA syscalls. So, I'd like to keep the size
-and copy_struct_from_user().
-
-Which leaves us with the question of how to deal with the ioctl
-numbering. As we've seen, there is no actual enforcement of direction
-nor size, so to that end, while we could provide the hints about both, I
-guess we just don't need to. To that end, perhaps _IO() is best:
-
-#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IO(3)
-
-Alternatively, we could use a size of either 0, 8(u64), or -1, and then
-use IORW() so we _also_ won't paint ourselves into a corner if we ever
-want to write something back to userspace in the structure:
-
-#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),0)
-#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
-
-or
-
-#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),8)
-#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
-
-or
-
-#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),_IOC_SIZEMASK)
-#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
-
-I think I prefer the last one.
-
--- 
-Kees Cook
