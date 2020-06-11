@@ -2,253 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 585191F6593
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 281591F65D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:39:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbgFKKYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 06:24:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:50022 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbgFKKYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 06:24:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F2CD31B;
-        Thu, 11 Jun 2020 03:24:13 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B331C3F73D;
-        Thu, 11 Jun 2020 03:24:10 -0700 (PDT)
-Date:   Thu, 11 Jun 2020 11:24:08 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Mel Gorman <mgorman@suse.de>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
- boost value
-Message-ID: <20200611102407.vhy3zjexrhorx753@e107158-lin.cambridge.arm.com>
-References: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
- <20200529100806.GA3070@suse.de>
- <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
- <87v9k84knx.derkling@matbug.net>
- <20200603101022.GG3070@suse.de>
- <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com>
- <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
- <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
- <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
- <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
+        id S1726928AbgFKKj3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 06:39:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbgFKKj2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jun 2020 06:39:28 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AC0C08C5C3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 03:39:28 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id z2so4976489ilq.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 03:39:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=09AhYfVptAXhl8RbRmV+vzYPYyK8rezI6f1741Byi5g=;
+        b=hXWw9qrKRCz4lCsZBfjd9GvLPINzD5z7fubizgxMT+JbNOAdKmYagKXytL8D+qGPRs
+         lmq7mz6l8u1AbkV3NVEYISeBNmcu3aUHaVlPzhm+AkMtv3s4lXT3XROD5xmQKChyhc2U
+         y0+7scW5saZn8EzuurZAZeWC3/gnoQi+Wfu4E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=09AhYfVptAXhl8RbRmV+vzYPYyK8rezI6f1741Byi5g=;
+        b=VAyU7qw3kJ5fNa1IPtuRlZQEZ82kfrfZslwI5P6psaEUMKn6x8MLgfpVMWSYGZFl4Y
+         6OFDplyaP/gCjCzgrBe1y4QhaNN1MDtrzMmBvz9FUJ2seyXAVlCFhp9XjHB0e+5GEEnV
+         Htz9XoO857fnYutUMAdaVtqnl/iRUT/PKyKZSMmPRCNJpQdORThWNZX2b6ibHIb6gUBU
+         eVqwI9bCDEwe6+ryPXB5ySVDp1HuSUYmtSSff84C/6NcmtT1tspRV29oKmg7k0/OSIgv
+         OM2Y/390BQqSFWLmtrHZbhT7HWvyGzW4ojV27JyNPJRbnF7tcXplLMmR1uYcDopRFGqr
+         Hz6A==
+X-Gm-Message-State: AOAM530j2Xc0u+QL1Dg3b6dYyv0idVNFDaqNS0mC3gTgegfLYTZ/inpF
+        8abZW4DAbEQGLIBdWxjoaaug1A==
+X-Google-Smtp-Source: ABdhPJxolVZUsL9RqG7Jc9UwE72uQAKUEuhgQv/dBYmuIHqJ/Sf9yGKuChTRxgA86GGNuZ/S+QQO+g==
+X-Received: by 2002:a92:dccd:: with SMTP id b13mr7169618ilr.98.1591871965927;
+        Thu, 11 Jun 2020 03:39:25 -0700 (PDT)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id v2sm1276642iol.36.2020.06.11.03.39.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Jun 2020 03:39:25 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 10:39:23 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        containers@lists.linux-foundation.org,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Wagner <daniel.wagner@bmw-carit.de>,
+        linux-kernel@vger.kernel.org, Matt Denton <mpdenton@google.com>,
+        John Fastabend <john.r.fastabend@intel.com>,
+        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, cgroups@vger.kernel.org,
+        stable@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Message-ID: <20200611103922.GA30103@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
+ <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006091235.930519F5B@keescook>
+ <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
+ <202006091346.66B79E07@keescook>
+ <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
+ <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611091942.jni2glnpmxisnant@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20200611091942.jni2glnpmxisnant@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06/09/20 19:10, Vincent Guittot wrote:
-> On Mon, 8 Jun 2020 at 14:31, Qais Yousef <qais.yousef@arm.com> wrote:
-> >
-> > On 06/04/20 14:14, Vincent Guittot wrote:
-> >
-> > [...]
-> >
-> > > I have tried your patch and I don't see any difference compared to
-> > > previous tests. Let me give you more details of my setup:
-> > > I create 3 levels of cgroups and usually run the tests in the 4 levels
-> > > (which includes root). The result above are for the root level
-> > >
-> > > But I see a difference at other levels:
-> > >
-> > >                            root           level 1       level 2       level 3
-> > >
-> > > /w patch uclamp disable     50097         46615         43806         41078
-> > > tip uclamp enable           48706(-2.78%) 45583(-2.21%) 42851(-2.18%)
-> > > 40313(-1.86%)
-> > > /w patch uclamp enable      48882(-2.43%) 45774(-1.80%) 43108(-1.59%)
-> > > 40667(-1.00%)
-> > >
-> > > Whereas tip with uclamp stays around 2% behind tip without uclamp, the
-> > > diff of uclamp with your patch tends to decrease when we increase the
-> > > number of level
-> >
-> > So I did try to dig more into this, but I think it's either not a good
-> > reproducer or what we're observing here is uArch level latencies caused by the
-> > new code that seem to produce a bigger knock on effect than what they really
-> > are.
-> >
-> > First, CONFIG_FAIR_GROUP_SCHED is 'expensive', for some definition of
-> > expensive..
-> 
-> yes, enabling CONFIG_FAIR_GROUP_SCHED adds an overhead
-> 
-> >
-> > *** uclamp disabled/fair group enabled ***
-> >
-> >         # Executed 50000 pipe operations between two threads
-> >
-> >              Total time: 0.958 [sec]
-> >
-> >               19.177100 usecs/op
-> >                   52145 ops/sec
-> >
-> > *** uclamp disabled/fair group disabled ***
-> >
-> >         # Executed 50000 pipe operations between two threads
-> >              Total time: 0.808 [sec]
-> >
-> >              16.176200 usecs/op
-> >                  61819 ops/sec
-> >
-> > So there's a 15.6% drop in ops/sec when enabling this option. I think it's good
-> > to look at the absolutely number of usecs/op, Fair group adds around
-> > 3 usecs/op.
-> >
-> > I dropped FAIR_GROUP_SCHED from my config to eliminate this overhead and focus
-> > on solely on uclamp overhead.
-> 
-> Have you checked that both tests run at the root level ?
-
-I haven't actively moved tasks to cgroups. As I said that snippet was
-particularly bad and I didn't see that level of nesting in every call.
-
-> Your function-graph log below shows several calls to
-> update_cfs_group() which means that your trace below has not been made
-> at root level but most probably at the 3rd level and I wonder if you
-> used the same setup for running the benchmark above. This could
-> explain such huge difference because I don't have such difference on
-> my platform but more around 2%
-
-What promoted me to look at this is when you reported that even without uclamp
-the nested cgroup showed a drop at each level. I was just trying to understand
-how both affect the hot path in hope to understand the root cause of uclamp
-overhead.
-
-> 
-> For uclamp disable/fair group enable/ function graph enable :  47994ops/sec
-> For uclamp disable/fair group disable/ function graph enable : 49107ops/sec
-> 
-> >
-> > With uclamp enabled but no fair group I get
-> >
-> > *** uclamp enabled/fair group disabled ***
-> >
-> >         # Executed 50000 pipe operations between two threads
-> >              Total time: 0.856 [sec]
-> >
-> >              17.125740 usecs/op
-> >                  58391 ops/sec
-> >
-> > The drop is 5.5% in ops/sec. Or 1 usecs/op.
-> >
-> > I don't know what's the expectation here. 1 us could be a lot, but I don't
-> > think we expect the new code to take more than few 100s of ns anyway. If you
-> > add potential caching effects, reaching 1 us wouldn't be that hard.
-> >
-> > Note that in my runs I chose performance governor and use `taskset 0x2` to
-> 
-> You might want to set 2 CPUs in your cpumask instead of 1 in order to
-> have 1 CPU for each thread
-
-I did try that but it didn't seem to change the number. I think the 2 tasks
-interleave so running in 2 CPUs doesn't change the result. But to ease ftrace
-capture, it's easier to monitor a single cpu.
-
-> 
-> > force running on a big core to make sure the runs are repeatable.
-> 
-> I also use performance governor but don't pinned tasks because I use smp.
-
-Is your arm platform SMP?
-
-> 
-> >
-> > On Juno-r2 I managed to scrap most of the 1 us with the below patch. It seems
-> > there was weird branching behavior that affects the I$ in my case. It'd be good
-> > to try it out to see if it makes a difference for you.
-> 
-> The perf are slightly worse on my setup:
-> For uclamp enable/fair group disable/ function graph enable : 48413ops/sec
-> with patch  below : 47804os/sec
-
-I am not sure if the new code could just introduce worse cache performance
-in a platform dependent way. The evidences I have so far point in this
-direction.
-
-> 
-> >
-> > The I$ effect is my best educated guess. Perf doesn't catch this path and
-> > I couldn't convince it to look at cache and branch misses between 2 specific
-> > points.
-> >
-> > Other subtle code shuffling did have weird effect on the result too. One worthy
-> > one is making uclamp_rq_dec() noinline gains back ~400 ns. Making
-> > uclamp_rq_inc() noinline *too* cancels this gain out :-/
-> >
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 0464569f26a7..0835ee20a3c7 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -1071,13 +1071,11 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
-> >
-> >  static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> >  {
-> > -       enum uclamp_id clamp_id;
+On Thu, Jun 11, 2020 at 11:19:42AM +0200, Christian Brauner wrote:
+> On Wed, Jun 10, 2020 at 07:59:55PM -0700, Kees Cook wrote:
+> > On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
+> > > As an aside, all of this junk should be dropped:
+> > > +	ret = get_user(size, &uaddfd->size);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> > > +	if (ret)
+> > > +		return ret;
+> > > 
+> > > and the size member of the seccomp_notif_addfd struct. I brought this up 
+> > > off-list with Tycho that ioctls have the size of the struct embedded in them. We 
+> > > should just use that. The ioctl definition is based on this[2]:
+> > > #define _IOC(dir,type,nr,size) \
+> > > 	(((dir)  << _IOC_DIRSHIFT) | \
+> > > 	 ((type) << _IOC_TYPESHIFT) | \
+> > > 	 ((nr)   << _IOC_NRSHIFT) | \
+> > > 	 ((size) << _IOC_SIZESHIFT))
+> > > 
+> > > 
+> > > We should just use copy_from_user for now. In the future, we can either 
+> > > introduce new ioctl names for new structs, or extract the size dynamically from 
+> > > the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
+> > 
+> > Yeah, that seems reasonable. Here's the diff for that part:
+> > 
+> > diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> > index 7b6028b399d8..98bf19b4e086 100644
+> > --- a/include/uapi/linux/seccomp.h
+> > +++ b/include/uapi/linux/seccomp.h
+> > @@ -118,7 +118,6 @@ struct seccomp_notif_resp {
+> >  
+> >  /**
+> >   * struct seccomp_notif_addfd
+> > - * @size: The size of the seccomp_notif_addfd datastructure
+> >   * @id: The ID of the seccomp notification
+> >   * @flags: SECCOMP_ADDFD_FLAG_*
+> >   * @srcfd: The local fd number
+> > @@ -126,7 +125,6 @@ struct seccomp_notif_resp {
+> >   * @newfd_flags: The O_* flags the remote FD should have applied
+> >   */
+> >  struct seccomp_notif_addfd {
+> > -	__u64 size;
+> >  	__u64 id;
+> >  	__u32 flags;
+> >  	__u32 srcfd;
+> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > index 3c913f3b8451..00cbdad6c480 100644
+> > --- a/kernel/seccomp.c
+> > +++ b/kernel/seccomp.c
+> > @@ -1297,14 +1297,9 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
+> >  	struct seccomp_notif_addfd addfd;
+> >  	struct seccomp_knotif *knotif;
+> >  	struct seccomp_kaddfd kaddfd;
+> > -	u64 size;
+> >  	int ret;
+> >  
+> > -	ret = get_user(size, &uaddfd->size);
+> > -	if (ret)
+> > -		return ret;
 > > -
-> >         if (unlikely(!p->sched_class->uclamp_enabled))
-> >                 return;
-> >
-> > -       for_each_clamp_id(clamp_id)
-> > -               uclamp_rq_inc_id(rq, p, clamp_id);
-> > +       uclamp_rq_inc_id(rq, p, UCLAMP_MIN);
-> > +       uclamp_rq_inc_id(rq, p, UCLAMP_MAX);
-> >
-> >         /* Reset clamp idle holding when there is one RUNNABLE task */
-> >         if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
-> > @@ -1086,13 +1084,11 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> >
-> >  static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
-> >  {
-> > -       enum uclamp_id clamp_id;
-> > -
-> >         if (unlikely(!p->sched_class->uclamp_enabled))
-> >                 return;
-> >
-> > -       for_each_clamp_id(clamp_id)
-> > -               uclamp_rq_dec_id(rq, p, clamp_id);
-> > +       uclamp_rq_dec_id(rq, p, UCLAMP_MIN);
-> > +       uclamp_rq_dec_id(rq, p, UCLAMP_MAX);
-> >  }
-> >
-> >  static inline void
-> >
-> >
-> > FWIW I fail to see activate/deactivate_task in perf record. They don't show up
-> > on the list which means this micro benchmark doesn't stress them as Mel's test
-> > does.
+> > -	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> > +	ret = copy_from_user(&addfd, uaddfd, sizeof(addfd));
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > 
+> > > 
+> > > ----
+> > > +#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
+> > > +						struct seccomp_notif_addfd)
+> > > 
+> > > Lastly, what I believe to be a small mistake, it should be SECCOMP_IOW, based on 
+> > > the documentation in ioctl.h -- "_IOW means userland is writing and kernel is 
+> > > reading."
+> > 
+> > Oooooh. Yeah; good catch. Uhm, that means SECCOMP_IOCTL_NOTIF_ID_VALID
+> > is wrong too, yes? Tycho, Christian, how disruptive would this be to
+> > fix? (Perhaps support both and deprecate the IOR version at some point
+> > in the future?)
 > 
-> Strange because I have been able to trace them.
+> We have custom defines in our source code, i.e.
+> #define SECCOMP_IOCTL_NOTIF_ID_VALID  SECCOMP_IOR(2, __u64)
+> so ideally we'd have a SECCOMP_IOCTL_NOTIF_ID_VALID_V2
+> 
+> Does that sound ok?
+> 
+> Christian
+Why not change the public API in seccomp.h to:
+#define SECCOMP_IOCTL_NOTIF_ID_VALID	SECCOMP_IOW(2, __u64)
 
-On your arm platform? I can certainly see them on x86.
+And then in seccomp.c:
+#define SECCOMP_IOCTL_NOTIF_ID_VALID_OLD	SECCOMP_IOR(2, __u64)
+static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+				 unsigned long arg)
+{
+	struct seccomp_filter *filter = file->private_data;
+	void __user *buf = (void __user *)arg;
 
-Thanks
+	switch (cmd) {
+	case SECCOMP_IOCTL_NOTIF_RECV:
+		return seccomp_notify_recv(filter, buf);
+	case SECCOMP_IOCTL_NOTIF_SEND:
+		return seccomp_notify_send(filter, buf);
+	case SECCOMP_IOCTL_NOTIF_ID_VALID_OLD:
+		pr_warn_once("Detected usage of legacy (incorrect) version of seccomp notifier notif_id_valid ioctl\n");
+	case SECCOMP_IOCTL_NOTIF_ID_VALID:
+		return seccomp_notify_id_valid(filter, buf);
+	default:
+		return -EINVAL;
+	}
+}
+---- 
 
---
-Qais Yousef
+So, both will work fine, and whenevery anyone recompiles, or picks up new 
+headers, they will start calling the "right" one without a code change, and
+we wont break any userspace.
