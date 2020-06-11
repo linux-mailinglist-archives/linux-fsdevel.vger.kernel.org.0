@@ -2,108 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5729A1F6A86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 17:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5AC1F6A8E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 17:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgFKPDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 11:03:04 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6891 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbgFKPDE (ORCPT
+        id S1728470AbgFKPEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 11:04:16 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48131 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728419AbgFKPEP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 11:03:04 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ee2477a0001>; Thu, 11 Jun 2020 08:02:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 11 Jun 2020 08:03:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 11 Jun 2020 08:03:04 -0700
-Received: from [10.2.166.236] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 11 Jun
- 2020 15:03:03 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 04/51] mm: Move PageDoubleMap bit
-Date:   Thu, 11 Jun 2020 11:03:00 -0400
-X-Mailer: MailMate (1.13.1r5690)
-Message-ID: <48AB34D3-BE1C-48D3-92C4-F1B72F0224B0@nvidia.com>
-In-Reply-To: <20200610201345.13273-5-willy@infradead.org>
-References: <20200610201345.13273-1-willy@infradead.org>
- <20200610201345.13273-5-willy@infradead.org>
+        Thu, 11 Jun 2020 11:04:15 -0400
+Received: from callcc.thunk.org (pool-100-0-195-244.bstnma.fios.verizon.net [100.0.195.244])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 05BF3eIm026407
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Jun 2020 11:03:40 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0903E4200DD; Thu, 11 Jun 2020 11:03:40 -0400 (EDT)
+Date:   Thu, 11 Jun 2020 11:03:40 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        jack@suse.com, Hillf Danton <hdanton@sina.com>,
+        linux-fsdevel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
+Subject: Re: [PATCHv2 1/1] ext4: mballoc: Use this_cpu_read instead of
+ this_cpu_ptr
+Message-ID: <20200611150340.GP1347934@mit.edu>
+References: <534f275016296996f54ecf65168bb3392b6f653d.1591699601.git.riteshh@linux.ibm.com>
+ <20200610062538.GA24975@infradead.org>
 MIME-Version: 1.0
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: multipart/signed;
-        boundary="=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1591887738; bh=AgX2Zhbr7lEd6E8+Hf0L3s/xusOAST/vLsbKY8Zh+Uc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=Urxb3IptKUN/bMIzPDLnwxWEWyKGvfDE5yjGwfFxRbF4Gacik8qjoU/xe8yevukoS
-         YtMO0+UlqO4TszZ7xO7BasoZEHhdzd491eeOkpYb2ZHHZrpxz0h+/xdWPJ8PzGCQXW
-         5DyLWMT2d0jO8WMJiQuBLDC5tP024E8aWL1zIBgkCTODW4x6QdGDbJMPHbj3IDrl1v
-         v68G8qnRfOGOUT38y6XFRWMxOv49fn2R9oF2fujwoFJUO7o+mFel26xJswSY7D3nAu
-         0tD49vnkCTs61Lwyh+lVGlGVu3pWgOksSl1knTUPrD2ectRixlxP/T7SIe/m/7MoaS
-         km/QtTQjb7vlQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200610062538.GA24975@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 09, 2020 at 11:25:38PM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 09, 2020 at 04:23:10PM +0530, Ritesh Harjani wrote:
+> > Simplify reading a seq variable by directly using this_cpu_read API
+> > instead of doing this_cpu_ptr and then dereferencing it.
+> > 
+> > This also avoid the below kernel BUG: which happens when
+> > CONFIG_DEBUG_PREEMPT is enabled
+> 
+> I see this warning all the time with ext4 using tests VMs, so lets get
+> this fixed ASAP before -rc1:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-On 10 Jun 2020, at 16:12, Matthew Wilcox wrote:
+Thanks, applied.
 
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->
-> PG_private_2 is defined as being PF_ANY (applicable to tail pages
-> as well as regular & head pages).  That means that the first tail
-> page of a double-map page will appear to have Private2 set.  Use the
-> Workingset bit instead which is defined as PF_HEAD so any attempt to
-> access the Workingset bit on a tail page will redirect to the head page=
-'s
-> Workingset bit.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
-
-Make sense to me.
-
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-
-=E2=80=94
-Best Regards,
-Yan Zi
-
---=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl7iR6QPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKaDIQALG0sa0NvW2mhCPElFp0IWMCGwsfD7Q/2NQL
-OU6KnUC6CZJdYv03EMzKqrLCyVfM1hjZ/85L/qQotE7xSlMsSnsYcmuAQwLzH7/d
-0qupSup0Yh+YQtbwjaWQvq2SqH+N2YL3h9VK1I31PnVHaofndl+ODDYAK3FtraX0
-S5Q9hCZ42vN/ezAFiw7oR3W+JgowCLZQT7CAA6IGOYBCZAV3FBdjbe0h/Wg4nwjl
-kx+pdOuvqr0RQBH1zfrFgnW9Xx/y8cNlWb5706u3ZWXsVMReQuGcjoZtml+sTpl5
-zWF8eU7s3EUZofYONgxJQTXNg98xQrK0+srwsXhhNiVCALtB/+nZ88CA63VgWkLn
-ZYLR8pqf2jV5c9bveX+jv8yUK55IbDQuz27oqhpX2vKJZNRJWjxhWGBlt8loHPx8
-tLTC+fIevQXW2dQYpM+Oqj+vl0EDn3jWNVSeQgYO86LK1cqfK8RkfLGmkqJzDWj0
-sn+A3DJSm85Cg02lQ1Un3P1oqQtEMU5LApB49RFTph6+FxAUP1E4B26ifqtl5egg
-fEIuuPCex+KgwcijJuDFj00+qeDUBad30lzc019HrxRj42jSJXBemCd6QJBEikwY
-86rimHfHZZFReSDLEXKip4b/Shjzsg1J4BEq/nSR2ivhLB6MN64iVa7Q+CLrviit
-eZEojhX/
-=pM5p
------END PGP SIGNATURE-----
-
---=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=--
+						- Ted
