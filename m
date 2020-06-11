@@ -2,195 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF1D1F6116
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 06:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0AF1F6153
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 07:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbgFKEvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 00:51:33 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:53089 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbgFKEvc (ORCPT
+        id S1726523AbgFKFko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 01:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbgFKFkn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 00:51:32 -0400
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 261C35800FC;
-        Thu, 11 Jun 2020 00:51:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 11 Jun 2020 00:51:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=CpC/Vp9dgBZG1Pbnp3psLX9AkPB
-        qIwJPJOlUb8cL8Pw=; b=MZ+ct0BuROUXSTZGDvOvjE+bjnbg/ULaqQ8pC/c6c0J
-        xLnnxdOtl9KDSIwV3AbmHyjEjvHI8rWclKqdvZnyxrMM43Gm0f/pqtcxKfpPrYBY
-        W9Ccz3GGJCXcZFr+ZU4bpPhnzWDqtkhclS7QyzugMKvTR5FCiLs7RU53+JjdqJmX
-        qxlx/O2ycWqGIOi7bvBe2P2u9k1KB5OcumBlFoPPOB2nra44uVOj/azGb992sFiv
-        xGDj4cg4iE7CuBCpAr0ovgPOVGUVGTHaSc5Pkc/M1DJTAizle8G1Vg/5ri3CBpKI
-        I+zvcUqUNRRtC6iQgq52l+8CEOiZPLD79bvTzzp8NgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=CpC/Vp
-        9dgBZG1Pbnp3psLX9AkPBqIwJPJOlUb8cL8Pw=; b=J8vGACGqc7JFQFrs2/r34L
-        GGV9ODqa0ebbOWPDygKVO2j810G9SVwgoqHyHcr8tjtWCKPNFOYGWydyUjocBdcX
-        KNAXHt9W1MlmYZnLvZUCj0VzaKinzNDaUIe2yTt9aX/ZFu//CnfDnLa2SCCl77bD
-        3FrBio7FHGsAjLU4jAH7ss2JzAL/ozPNN6YpG0od2G9E33UzQ5CKNgpvdiHGs0ns
-        a3QdAzqEhn+Ta1L5NdubmeuUEOgwgVv8rd0x8JAsvbSDa1pnWMkwHnd9B8Ejyhhq
-        ncWo1EqWph8uh4YIgMTiBgiYhfB3vXJSUe4Ko7GWPHJQOqc+0b7glGODiRSfscLA
-        ==
-X-ME-Sender: <xms:ULjhXtxtAIB37BittLl569I7oXVro8HJwSt5WLcgKZW1qMdrMCwNzw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehjedgkeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    goufhushhpvggtthffohhmrghinhculdegledmnecujfgurhepfffhvffukfhfgggtuggj
-    sehttdertddttddvnecuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvg
-    hrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepiefh
-    geejiedvteetleduvdetfeetfeetgeetveeljedtgeekkeevueehkeejtdevnecuffhomh
-    grihhnpegrphhpshhpohhtrdgtohhmpdhgihhthhhusgdrtghomhenucfkphepuddujedr
-    vddtrdeikedrudefvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvth
-X-ME-Proxy: <xmx:ULjhXtSKqDk5DhdngyUX-sqtoA3SbEYUIaoOVsRet1NrZWWIE_ihTg>
-    <xmx:ULjhXnXsTcS8vi11KREeC9NKxSPTxXah8URu1tWEkIG0wOpstVpp_Q>
-    <xmx:ULjhXvg3Xk6TUyV__VFPeVzCOyUOVBHzMVOEO5Cq4t7SUAs8MKCqIg>
-    <xmx:UrjhXhSwrtvGk19vZsc3lQkrw-ErZ11c1Qc5GK7DRSL68pWMw8rODg>
-Received: from jelly (117-20-68-132.751444.bne.nbn.aussiebb.net [117.20.68.132])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5DBD23061856;
-        Thu, 11 Jun 2020 00:51:23 -0400 (EDT)
-Date:   Thu, 11 Jun 2020 14:51:18 +1000
-From:   Peter Hutterer <peter.hutterer@who-t.net>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        syzbot <syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        amir73il@gmail.com, Felipe Balbi <balbi@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, mathew.j.martineau@linux.intel.com,
-        matthieu.baerts@tessares.net, mptcp@lists.01.org,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: INFO: task hung in corrupted (2)
-Message-ID: <20200611045118.GA306934@jelly>
-References: <0000000000004afcae05a7041e98@google.com>
- <CAAeHK+ykPQ8Fmit_3cn17YKzrCWtX010HRKmBCJAQ__OMdwCDA@mail.gmail.com>
- <nycvar.YFH.7.76.2006041339220.13242@cbobk.fhfr.pm>
+        Thu, 11 Jun 2020 01:40:43 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8F2C08C5C1;
+        Wed, 10 Jun 2020 22:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=nBcFQJGzJiEbDICiDXoaT+SkntQ3fuvNt0VNHFjSgyk=; b=Ep/0TGcRRFvDTNncjorrzAlS1t
+        uBwCTucTGScB5pbbDZx9vslfW9Z0mIzzLY/SsE/G5vx1ZSk99lqNHEtaxjoMOpWaiv8DN8n++AERG
+        fdLwww2/st6O6m4Tm0LALmQU/R8ug+VYSRV8nyhBiR1kzFNoVI+1Csc0tRlNXeNy/E7hV08CBjf+C
+        rexEqTsiuZitiFCW9wTUQ4bLVl3FrFIX17F5oly+MpJk2iM23f+3TIeWs3mjLR2yQfTBuDBNYZq/J
+        bwRHxWR4lAqEz4fiUOCWDPWMhOUKc4nbQNbCQ2QURpZKfQYbLb5hP9IloOIkU/brrMfTCxwYbl5kQ
+        lOAbNbag==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jjFwb-0007iI-9y; Thu, 11 Jun 2020 05:40:05 +0000
+Date:   Wed, 10 Jun 2020 22:40:05 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org,
+        mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
+Message-ID: <20200611054005.GA25742@infradead.org>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-7-mcgrof@kernel.org>
+ <20200609150602.GA7111@infradead.org>
+ <20200609172922.GP11244@42.do-not-panic.com>
+ <20200609173218.GA7968@infradead.org>
+ <20200609175359.GR11244@42.do-not-panic.com>
+ <20200610064234.GB24975@infradead.org>
+ <20200610210917.GH11244@42.do-not-panic.com>
+ <20200610215213.GH13911@42.do-not-panic.com>
+ <20200610233116.GI13911@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.2006041339220.13242@cbobk.fhfr.pm>
+In-Reply-To: <20200610233116.GI13911@42.do-not-panic.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 01:41:07PM +0200, Jiri Kosina wrote:
-> On Tue, 2 Jun 2020, Andrey Konovalov wrote:
+On Wed, Jun 10, 2020 at 11:31:16PM +0000, Luis Chamberlain wrote:
+> On Wed, Jun 10, 2020 at 09:52:13PM +0000, Luis Chamberlain wrote:
+> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> > index 7ff2ea5cd05e..5cea04c05e09 100644
+> > --- a/kernel/trace/blktrace.c
+> > +++ b/kernel/trace/blktrace.c
+> > @@ -524,10 +524,16 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+> >  	if (!bt->msg_data)
+> >  		goto err;
+> >  
+> > -	ret = -ENOENT;
+> > -
+> > -	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> > -	if (!dir)
+> > +	/*
+> > +	 * When tracing whole make_request drivers (multiqueue) block devices,
+> > +	 * reuse the existing debugfs directory created by the block layer on
+> > +	 * init. For request-based block devices, all partitions block devices,
+> > +	 * and scsi-generic block devices we create a temporary new debugfs
+> > +	 * directory that will be removed once the trace ends.
+> > +	 */
+> > +	if (queue_is_mq(q))
 > 
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    b0c3ba31 Merge tag 'fsnotify_for_v5.7-rc8' of git://git.ke..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14089eee100000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=ce116858301bc2ea
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=6921abfb75d6fc79c0eb
-> > > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14947d26100000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172726d2100000
-> > >
-> > > The bug was bisected to:
-> > >
-> > > commit f2c2e717642c66f7fe7e5dd69b2e8ff5849f4d10
-> > > Author: Andrey Konovalov <andreyknvl@google.com>
-> > > Date:   Mon Feb 24 16:13:03 2020 +0000
-> > >
-> > >     usb: gadget: add raw-gadget interface
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119e4702100000
-> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=139e4702100000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=159e4702100000
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+6921abfb75d6fc79c0eb@syzkaller.appspotmail.com
-> > > Fixes: f2c2e717642c ("usb: gadget: add raw-gadget interface")
-> > >
-> > > INFO: task syz-executor610:7072 blocked for more than 143 seconds.
-> > >       Not tainted 5.7.0-rc7-syzkaller #0
-> > > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > syz-executor610 D24336  7072   7071 0x80004002
-> > > Call Trace:
-> > >  context_switch kernel/sched/core.c:3367 [inline]
-> > >  __schedule+0x805/0xc90 kernel/sched/core.c:4083
-> > >
-> > > Showing all locks held in the system:
-> > > 1 lock held by khungtaskd/1134:
-> > >  #0: ffffffff892e85d0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x0/0x30 net/mptcp/pm_netlink.c:860
-> > > 1 lock held by in:imklog/6715:
-> > >  #0: ffff8880a441e6b0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x25d/0x2f0 fs/file.c:826
-> > > 6 locks held by kworker/1:0/7064:
-> > > 1 lock held by syz-executor610/7072:
-> > >  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
-> > >  #0: ffffffff892eab20 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x1bd/0x5b0 kernel/rcu/tree_exp.h:856
-> > > 4 locks held by systemd-udevd/7099:
-> > >  #0: ffff8880a7fdcc70 (&p->lock){+.+.}-{3:3}, at: seq_read+0x60/0xce0 fs/seq_file.c:153
-> > >  #1: ffff888096486888 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x50/0x3b0 fs/kernfs/file.c:111
-> > >  #2: ffff88809fc0d660 (kn->count#78){.+.+}-{0:0}, at: kernfs_seq_start+0x6f/0x3b0 fs/kernfs/file.c:112
-> > >  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: device_lock_interruptible include/linux/device.h:773 [inline]
-> > >  #3: ffff8880a1df7218 (&dev->mutex){....}-{3:3}, at: serial_show+0x22/0xa0 drivers/usb/core/sysfs.c:142
-> > >
-> > > =============================================
-> > >
-> > > NMI backtrace for cpu 0
-> > > CPU: 0 PID: 1134 Comm: khungtaskd Not tainted 5.7.0-rc7-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > Call Trace:
-> > >  __dump_stack lib/dump_stack.c:77 [inline]
-> > >  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
-> > >  nmi_cpu_backtrace+0x9f/0x180 lib/nmi_backtrace.c:101
-> > >  nmi_trigger_cpumask_backtrace+0x16a/0x280 lib/nmi_backtrace.c:62
-> > >  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-> > >  watchdog+0xd2a/0xd40 kernel/hung_task.c:289
-> > >  kthread+0x353/0x380 kernel/kthread.c:268
-> > >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:351
-> > > Sending NMI from CPU 0 to CPUs 1:
-> > > NMI backtrace for cpu 1
-> > > CPU: 1 PID: 7064 Comm: kworker/1:0 Not tainted 5.7.0-rc7-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > Workqueue: usb_hub_wq hub_event
-> > > RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x0/0x90 kernel/kcov.c:275
-> > > Code: 4c f2 08 48 c1 e0 03 48 83 c8 18 49 89 14 02 4d 89 44 f2 18 49 ff c1 4d 89 0a c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 <4c> 8b 04 24 65 48 8b 04 25 40 1e 02 00 65 8b 0d 78 96 8e 7e f7 c1
-> > > RSP: 0018:ffffc90001676cf0 EFLAGS: 00000246
-> > > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88809fb9e240
-> > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000ffffffff
-> > > RBP: ffff888092d24a04 R08: ffffffff86034f3b R09: ffffc900016790cc
-> > > R10: 0000000000000004 R11: 0000000000000000 R12: ffff888092d24a00
-> > > R13: 0000000000000000 R14: dffffc0000000000 R15: ffff888092d24a00
-> > > FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00000000004c6e68 CR3: 0000000092d41000 CR4: 00000000001406e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  hid_apply_multiplier drivers/hid/hid-core.c:1106 [inline]
-> > 
-> > Looks like an issue in the HID subsystem, adding HID maintainers.
+> And this should be instead:
 > 
-> So this is hanging indefinitely in either of the loops in 
-> hid_apply_multiplier(). We'll have to decipher the reproducer to 
-> understand what made the loop (and which one) unbounded.
-> 
-> In parallel, CCing Peter, who wrote that code in the first place.
+> if (queue_is_mq(q) && bdev && bdev == bdev->bd_contains)
 
-based on the line numbers it's the while loop in there which is also the one
-that could be unbounded if the hid collection isn't set up correctly or if
-we have some other corruption happening.
-
-Need to page this back in to figure out what could be happening here.
-
-Cheers,
-   Peter
-
+Yes.  But I think keeping the queue_is_mq out and always creating the
+debugfs dir is an improvement as we'll sooner or later grow more debugfs
+files and than the whole set of problmes reappears.  But I'd be fine
+with doing the above in the first patch that is tiny and backportable,
+and then have another patch that always creates the debugfs directory.
