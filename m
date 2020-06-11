@@ -2,71 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A60821F6A81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 17:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5729A1F6A86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 17:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbgFKPCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 11:02:10 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47766 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728059AbgFKPCK (ORCPT
+        id S1728288AbgFKPDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 11:03:04 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6891 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbgFKPDE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 11:02:10 -0400
-Received: from callcc.thunk.org (pool-100-0-195-244.bstnma.fios.verizon.net [100.0.195.244])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 05BF1oeZ025687
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Jun 2020 11:01:51 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8C5C84200DD; Thu, 11 Jun 2020 11:01:50 -0400 (EDT)
-Date:   Thu, 11 Jun 2020 11:01:50 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>, stable@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Subject: Re: [PATCH v2] ext4: avoid utf8_strncasecmp() with unstable name
-Message-ID: <20200611150150.GO1347934@mit.edu>
-References: <20200601200543.59417-1-ebiggers@kernel.org>
- <E876FECB-300E-471B-A790-D44F2F1A3F9A@dilger.ca>
+        Thu, 11 Jun 2020 11:03:04 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ee2477a0001>; Thu, 11 Jun 2020 08:02:18 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 11 Jun 2020 08:03:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 11 Jun 2020 08:03:04 -0700
+Received: from [10.2.166.236] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 11 Jun
+ 2020 15:03:03 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 04/51] mm: Move PageDoubleMap bit
+Date:   Thu, 11 Jun 2020 11:03:00 -0400
+X-Mailer: MailMate (1.13.1r5690)
+Message-ID: <48AB34D3-BE1C-48D3-92C4-F1B72F0224B0@nvidia.com>
+In-Reply-To: <20200610201345.13273-5-willy@infradead.org>
+References: <20200610201345.13273-1-willy@infradead.org>
+ <20200610201345.13273-5-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E876FECB-300E-471B-A790-D44F2F1A3F9A@dilger.ca>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: multipart/signed;
+        boundary="=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1591887738; bh=AgX2Zhbr7lEd6E8+Hf0L3s/xusOAST/vLsbKY8Zh+Uc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:MIME-Version:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type;
+        b=Urxb3IptKUN/bMIzPDLnwxWEWyKGvfDE5yjGwfFxRbF4Gacik8qjoU/xe8yevukoS
+         YtMO0+UlqO4TszZ7xO7BasoZEHhdzd491eeOkpYb2ZHHZrpxz0h+/xdWPJ8PzGCQXW
+         5DyLWMT2d0jO8WMJiQuBLDC5tP024E8aWL1zIBgkCTODW4x6QdGDbJMPHbj3IDrl1v
+         v68G8qnRfOGOUT38y6XFRWMxOv49fn2R9oF2fujwoFJUO7o+mFel26xJswSY7D3nAu
+         0tD49vnkCTs61Lwyh+lVGlGVu3pWgOksSl1knTUPrD2ectRixlxP/T7SIe/m/7MoaS
+         km/QtTQjb7vlQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 01, 2020 at 02:49:51PM -0600, Andreas Dilger wrote:
-> On Jun 1, 2020, at 2:05 PM, Eric Biggers <ebiggers@kernel.org> wrote:
-> > 
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > If the dentry name passed to ->d_compare() fits in dentry::d_iname, then
-> > it may be concurrently modified by a rename.  This can cause undefined
-> > behavior (possibly out-of-bounds memory accesses or crashes) in
-> > utf8_strncasecmp(), since fs/unicode/ isn't written to handle strings
-> > that may be concurrently modified.
-> > 
-> > Fix this by first copying the filename to a stack buffer if needed.
-> > This way we get a stable snapshot of the filename.
-> > 
-> > Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
-> > Cc: <stable@vger.kernel.org> # v5.2+
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Daniel Rosenberg <drosen@google.com>
-> > Cc: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> 
-> LGTM.
-> 
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+--=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied.
+On 10 Jun 2020, at 16:12, Matthew Wilcox wrote:
 
-					- Ted
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> PG_private_2 is defined as being PF_ANY (applicable to tail pages
+> as well as regular & head pages).  That means that the first tail
+> page of a double-map page will appear to have Private2 set.  Use the
+> Workingset bit instead which is defined as PF_HEAD so any attempt to
+> access the Workingset bit on a tail page will redirect to the head page=
+'s
+> Workingset bit.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+
+Make sense to me.
+
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl7iR6QPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKaDIQALG0sa0NvW2mhCPElFp0IWMCGwsfD7Q/2NQL
+OU6KnUC6CZJdYv03EMzKqrLCyVfM1hjZ/85L/qQotE7xSlMsSnsYcmuAQwLzH7/d
+0qupSup0Yh+YQtbwjaWQvq2SqH+N2YL3h9VK1I31PnVHaofndl+ODDYAK3FtraX0
+S5Q9hCZ42vN/ezAFiw7oR3W+JgowCLZQT7CAA6IGOYBCZAV3FBdjbe0h/Wg4nwjl
+kx+pdOuvqr0RQBH1zfrFgnW9Xx/y8cNlWb5706u3ZWXsVMReQuGcjoZtml+sTpl5
+zWF8eU7s3EUZofYONgxJQTXNg98xQrK0+srwsXhhNiVCALtB/+nZ88CA63VgWkLn
+ZYLR8pqf2jV5c9bveX+jv8yUK55IbDQuz27oqhpX2vKJZNRJWjxhWGBlt8loHPx8
+tLTC+fIevQXW2dQYpM+Oqj+vl0EDn3jWNVSeQgYO86LK1cqfK8RkfLGmkqJzDWj0
+sn+A3DJSm85Cg02lQ1Un3P1oqQtEMU5LApB49RFTph6+FxAUP1E4B26ifqtl5egg
+fEIuuPCex+KgwcijJuDFj00+qeDUBad30lzc019HrxRj42jSJXBemCd6QJBEikwY
+86rimHfHZZFReSDLEXKip4b/Shjzsg1J4BEq/nSR2ivhLB6MN64iVa7Q+CLrviit
+eZEojhX/
+=pM5p
+-----END PGP SIGNATURE-----
+
+--=_MailMate_C8F162B3-6103-488D-A11B-82A1C5F1BC76_=--
