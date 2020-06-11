@@ -2,199 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E60471F6536
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ADA61F657C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbgFKKB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 06:01:27 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44357 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbgFKKB0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 06:01:26 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jjK1N-0002l0-B4; Thu, 11 Jun 2020 10:01:17 +0000
-Date:   Thu, 11 Jun 2020 12:01:14 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        containers@lists.linux-foundation.org,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        linux-kernel@vger.kernel.org, Matt Denton <mpdenton@google.com>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, cgroups@vger.kernel.org,
-        stable@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Message-ID: <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
-References: <202006031845.F587F85A@keescook>
- <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
- <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
- <202006091235.930519F5B@keescook>
- <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
- <202006091346.66B79E07@keescook>
- <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
- <202006101953.899EFB53@keescook>
+        id S1727036AbgFKKN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 06:13:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:49938 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726708AbgFKKN4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jun 2020 06:13:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C698431B;
+        Thu, 11 Jun 2020 03:13:54 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 185913F73D;
+        Thu, 11 Jun 2020 03:13:51 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 11:13:49 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+Message-ID: <20200611101349.v3utkqrcegthhahr@e107158-lin.cambridge.arm.com>
+References: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
+ <20200529100806.GA3070@suse.de>
+ <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
+ <87v9k84knx.derkling@matbug.net>
+ <20200603101022.GG3070@suse.de>
+ <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com>
+ <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+ <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
+ <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
+ <20200608104424.10781990@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202006101953.899EFB53@keescook>
+In-Reply-To: <20200608104424.10781990@gandalf.local.home>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 07:59:55PM -0700, Kees Cook wrote:
-> On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
-> > As an aside, all of this junk should be dropped:
-> > +	ret = get_user(size, &uaddfd->size);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> > +	if (ret)
-> > +		return ret;
-> > 
-> > and the size member of the seccomp_notif_addfd struct. I brought this up 
-> > off-list with Tycho that ioctls have the size of the struct embedded in them. We 
-> > should just use that. The ioctl definition is based on this[2]:
-> > #define _IOC(dir,type,nr,size) \
-> > 	(((dir)  << _IOC_DIRSHIFT) | \
-> > 	 ((type) << _IOC_TYPESHIFT) | \
-> > 	 ((nr)   << _IOC_NRSHIFT) | \
-> > 	 ((size) << _IOC_SIZESHIFT))
-> > 
-> > 
-> > We should just use copy_from_user for now. In the future, we can either 
-> > introduce new ioctl names for new structs, or extract the size dynamically from 
-> > the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
+On 06/08/20 10:44, Steven Rostedt wrote:
+> On Mon, 8 Jun 2020 13:31:03 +0100
+> Qais Yousef <qais.yousef@arm.com> wrote:
 > 
-> Yeah, that seems reasonable. Here's the diff for that part:
-
-Why does it matter that the ioctl() has the size of the struct embedded
-within? Afaik, the kernel itself doesn't do anything with that size. It
-merely checks that the size is not pathological and it does so at
-compile time.
-
-#ifdef __CHECKER__
-#define _IOC_TYPECHECK(t) (sizeof(t))
-#else
-/* provoke compile error for invalid uses of size argument */
-extern unsigned int __invalid_size_argument_for_IOC;
-#define _IOC_TYPECHECK(t) \
-	((sizeof(t) == sizeof(t[1]) && \
-	  sizeof(t) < (1 << _IOC_SIZEBITS)) ? \
-	  sizeof(t) : __invalid_size_argument_for_IOC)
-#endif
-
-The size itself is not verified at runtime. copy_struct_from_user()
-still makes sense at least if we're going to allow expanding the struct
-in the future.
-
-Leaving that aside, the proposed direction here seems to mean that any
-change to the struct itself will immediately mean a new ioctl() but
-afaict, that also means a new struct. Since when you simply extend the
-struct for the sake of the new ioctl you also change the size for the
-ioctl.
-
-Sure, you can simply treat the struct coming through the old ioctl as
-being "capped" by e.g. hiding the size as suggested but then the gain
-by having two separate ioctls is 0 compared to simply versioning the
-struct with an explicit size member since the size encoded in the ioctl
-and the actual size of the struct don't line up anymore which is the
-only plus I can see for relying on _IOC_SIZE(). All this manages to do
-then is to make it more annoying for userspace since they now need to
-maintain multiple ioctls(). And if you have - however unlikely - say
-three different ioctls all to be used with a different struct size of
-the same struct I now need to know which ioctl() goes with which size of
-the struct (I guess you could append the size to the ioctl name?
-*shudder*). If you have the size in the struct itself you don't need to
-care about any of that.
-Maybe I'm not making sense or I misunderstand what's going on though.
-
-Christian
-
+> > I admit I don't know how much of these numbers is ftrace overhead. When trying
 > 
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index 7b6028b399d8..98bf19b4e086 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -118,7 +118,6 @@ struct seccomp_notif_resp {
->  
->  /**
->   * struct seccomp_notif_addfd
-> - * @size: The size of the seccomp_notif_addfd datastructure
->   * @id: The ID of the seccomp notification
->   * @flags: SECCOMP_ADDFD_FLAG_*
->   * @srcfd: The local fd number
-> @@ -126,7 +125,6 @@ struct seccomp_notif_resp {
->   * @newfd_flags: The O_* flags the remote FD should have applied
->   */
->  struct seccomp_notif_addfd {
-> -	__u64 size;
->  	__u64 id;
->  	__u32 flags;
->  	__u32 srcfd;
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 3c913f3b8451..00cbdad6c480 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -1297,14 +1297,9 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
->  	struct seccomp_notif_addfd addfd;
->  	struct seccomp_knotif *knotif;
->  	struct seccomp_kaddfd kaddfd;
-> -	u64 size;
->  	int ret;
->  
-> -	ret = get_user(size, &uaddfd->size);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> +	ret = copy_from_user(&addfd, uaddfd, sizeof(addfd));
->  	if (ret)
->  		return ret;
->  
-> 
-> > 
-> > ----
-> > +#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-> > +						struct seccomp_notif_addfd)
-> > 
-> > Lastly, what I believe to be a small mistake, it should be SECCOMP_IOW, based on 
-> > the documentation in ioctl.h -- "_IOW means userland is writing and kernel is 
-> > reading."
-> 
-> Oooooh. Yeah; good catch. Uhm, that means SECCOMP_IOCTL_NOTIF_ID_VALID
-> is wrong too, yes? Tycho, Christian, how disruptive would this be to
-> fix? (Perhaps support both and deprecate the IOR version at some point
-> in the future?)
-> 
-> Diff for just addfd's change:
-> 
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index 7b6028b399d8..98bf19b4e086 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -146,7 +144,7 @@ struct seccomp_notif_addfd {
->  						struct seccomp_notif_resp)
->  #define SECCOMP_IOCTL_NOTIF_ID_VALID	SECCOMP_IOR(2, __u64)
->  /* On success, the return value is the remote process's added fd number */
-> -#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-> +#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOW(3,	\
->  						struct seccomp_notif_addfd)
->  
->  #endif /* _UAPI_LINUX_SECCOMP_H */
-> 
-> -- 
-> Kees Cook
+> Note, if you want to get a better idea of how long a function runs, put it
+> into set_ftrace_filter, and then trace it. That way you remove the overhead
+> of the function graph tracer when its nesting within a function.
+
+Thanks for the tip!
+
+With CONFIG_FAIR_GROUP_SCHED I see (uclamp disabled)
+
+
+      sched-pipe-602   [001]    73.755392: funcgraph_entry:        2.080 us   |  activate_task();
+      sched-pipe-602   [001]    73.755399: funcgraph_entry:        2.000 us   |  deactivate_task();
+      sched-pipe-601   [001]    73.755407: funcgraph_entry:        2.220 us   |  activate_task();
+      sched-pipe-601   [001]    73.755414: funcgraph_entry:        2.020 us   |  deactivate_task();
+      sched-pipe-602   [001]    73.755422: funcgraph_entry:        2.160 us   |  activate_task();
+      sched-pipe-602   [001]    73.755429: funcgraph_entry:        1.920 us   |  deactivate_task();
+      sched-pipe-601   [001]    73.755437: funcgraph_entry:        2.260 us   |  activate_task();
+      sched-pipe-601   [001]    73.755444: funcgraph_entry:        2.080 us   |  deactivate_task();
+      sched-pipe-602   [001]    73.755452: funcgraph_entry:        2.160 us   |  activate_task();
+      sched-pipe-602   [001]    73.755459: funcgraph_entry:        2.080 us   |  deactivate_task();
+      sched-pipe-601   [001]    73.755468: funcgraph_entry:        2.200 us   |  activate_task();
+      sched-pipe-601   [001]    73.755521: funcgraph_entry:        3.160 us   |  activate_task();
+
+update_cfs_group() overhead
+
+      sched-pipe-622   [001]   156.790478: funcgraph_entry:        0.820 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790483: funcgraph_entry:        0.840 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790485: funcgraph_entry:        0.820 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790487: funcgraph_entry:        0.820 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790488: funcgraph_entry:        0.800 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790508: funcgraph_entry:        1.040 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790510: funcgraph_entry:        0.920 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790511: funcgraph_entry:        1.040 us   |  update_cfs_group();
+      sched-pipe-622   [001]   156.790513: funcgraph_entry:        0.840 us   |  update_cfs_group();
+      sched-pipe-623   [001]   156.790540: funcgraph_entry:        1.160 us   |  update_cfs_group();
+      sched-pipe-623   [001]   156.790543: funcgraph_entry:        1.020 us   |  update_cfs_group();
+      sched-pipe-623   [001]   156.790544: funcgraph_entry:        0.880 us   |  update_cfs_group();
+      sched-pipe-623   [001]   156.790546: funcgraph_entry:        0.840 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790905: funcgraph_entry:        1.780 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790908: funcgraph_entry:        1.060 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790910: funcgraph_entry:        0.880 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790912: funcgraph_entry:        0.880 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790916: funcgraph_entry:        0.800 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790917: funcgraph_entry:        0.820 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790919: funcgraph_entry:        0.840 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790921: funcgraph_entry:        0.880 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790932: funcgraph_entry:        0.960 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790934: funcgraph_entry:        0.960 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790936: funcgraph_entry:        1.080 us   |  update_cfs_group();
+      sched-pipe-621   [001]   156.790937: funcgraph_entry:        0.840 us   |  update_cfs_group();
+
+Without CONFIG_FAIR_GROUP_SCHED and without CONFIG_UCLAMP_TASK
+
+      sched-pipe-604   [001]    76.386078: funcgraph_entry:        1.380 us   |  activate_task();
+      sched-pipe-604   [001]    76.386084: funcgraph_entry:        1.360 us   |  deactivate_task();
+      sched-pipe-605   [001]    76.386091: funcgraph_entry:        1.400 us   |  activate_task();
+      sched-pipe-605   [001]    76.386096: funcgraph_entry:        1.260 us   |  deactivate_task();
+      sched-pipe-604   [001]    76.386104: funcgraph_entry:        1.500 us   |  activate_task();
+      sched-pipe-604   [001]    76.386109: funcgraph_entry:        1.280 us   |  deactivate_task();
+      sched-pipe-605   [001]    76.386117: funcgraph_entry:        1.380 us   |  activate_task();
+      sched-pipe-605   [001]    76.386122: funcgraph_entry:        1.300 us   |  deactivate_task();
+      sched-pipe-604   [001]    76.386130: funcgraph_entry:        1.380 us   |  activate_task();
+      sched-pipe-604   [001]    76.386135: funcgraph_entry:        1.260 us   |  deactivate_task();
+      sched-pipe-605   [001]    76.386142: funcgraph_entry:        1.400 us   |  activate_task();
+      sched-pipe-605   [001]    76.386148: funcgraph_entry:        1.340 us   |  deactivate_task();
+
+So approximately 800ns are added by update_cfs_group() for enqueue and dequeue.
+This overhead affects 2 tasks in the tests, so the total effect on the
+generated usecs/ops
+
+	2 * enqueue_overhead + 2 * dequeue overhead = 4 * ~800ns = 3.2 us
+
+Which explains the 3us drop I see when fair group config is enabled.
+
+Applying similar analysis to uclamp
+
+With uclamp enabled
+
+      sched-pipe-610   [001]   173.429431: funcgraph_entry:        1.580 us   |  activate_task();
+      sched-pipe-610   [001]   173.429437: funcgraph_entry:        1.440 us   |  deactivate_task();
+      sched-pipe-609   [001]   173.429444: funcgraph_entry:        1.580 us   |  activate_task();
+      sched-pipe-609   [001]   173.429450: funcgraph_entry:        1.440 us   |  deactivate_task();
+      sched-pipe-610   [001]   173.429458: funcgraph_entry:        1.700 us   |  activate_task();
+      sched-pipe-610   [001]   173.429464: funcgraph_entry:        1.460 us   |  deactivate_task();
+      sched-pipe-609   [001]   173.429471: funcgraph_entry:        1.540 us   |  activate_task();
+      sched-pipe-609   [001]   173.429477: funcgraph_entry:        1.460 us   |  deactivate_task();
+      sched-pipe-610   [001]   173.429485: funcgraph_entry:        1.560 us   |  activate_task();
+      sched-pipe-610   [001]   173.429491: funcgraph_entry:        1.500 us   |  deactivate_task();
+      sched-pipe-609   [001]   173.429498: funcgraph_entry:        1.600 us   |  activate_task();
+      sched-pipe-609   [001]   173.429504: funcgraph_entry:        1.460 us   |  deactivate_task();
+
+Which adds approximately 200ns at enqueue and dequeue.
+
+	2 * enqueue_overhead + 2 * dequeue overhead = 4 * ~200ns = 0.8 us
+
+Which would explain the ~1us drop I've seen with uclamp when running sched
+bench. Apologies for the very course averaging of the numbers from my side.
+
+As a reminder the results I reported before:
+
+
+*** uclamp disabled/fair group enabled ***
+
+        # Executed 50000 pipe operations between two threads
+
+             Total time: 0.958 [sec]
+
+              19.177100 usecs/op
+                  52145 ops/sec
+
+*** uclamp disabled/fair group disabled ***
+
+        # Executed 50000 pipe operations between two threads
+             Total time: 0.808 [sec]
+
+             16.176200 usecs/op
+                 61819 ops/sec
+
+*** uclamp enabled/fair group disabled ***
+
+        # Executed 50000 pipe operations between two threads
+             Total time: 0.856 [sec]
+
+             17.125740 usecs/op
+                 58391 ops/sec
+
+
+Based on my observation with code shuffling it seems a lot of this 200ns comes
+from terrible I$ performance on the particular platform I am testing on.
+
+When I run on x86 machine, if I interpreted perf annotation correctly I see D$
+misses on accessing rq->uclamp_rq.bucket[] and p->uclamp[]. But I'll share this
+result on a separate email in-reply to Mel.
+
+Thanks
+
+--
+Qais Yousef
