@@ -2,273 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5F01F70E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 01:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DC61F7108
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 01:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbgFKXbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 19:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58918 "EHLO
+        id S1726353AbgFKXtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 19:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgFKXbj (ORCPT
+        with ESMTP id S1726284AbgFKXtl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 19:31:39 -0400
+        Thu, 11 Jun 2020 19:49:41 -0400
 Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D03C08C5C1;
-        Thu, 11 Jun 2020 16:31:39 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id y17so2941586plb.8;
-        Thu, 11 Jun 2020 16:31:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB47C08C5C4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 16:49:40 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id t7so2972828plr.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jun 2020 16:49:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=53niQxqahks3EKNdNU3JdcwDT5/fPF/bXLdvCKXBBLU=;
-        b=cQBSeLaO39fs84L+DCF7EpMGoLq4AUFWvJrTHTKXio6daEkqS+rp1K6pEOm7t3tIx8
-         i/g2el5SbhHHeGVCBEKrQ+1nymJjnvpcE81waFAIThUZ5oOOQ/uPVzreplkuIHSp8bxZ
-         y5uKxabngYjUdfDvvC66FY+bRyfcx6AyjUQAr1vEGWqKO4bQSfQ6V5PJLiT3EgePVnAy
-         Fqe2xTdjb8sdMpT1DvfJDthxyq3jv21fccco0e0FsY1fouFHUFRwAfk1RB4/LiXZ43JW
-         RrlU6/PV4VOPkHKmkUReX2yTO0lqMF+ltJVHEE+JMZujbibg/Hu50ilDT0etsMEmMSJU
-         p1bw==
+        bh=bIgDlQTcxFw2KokzUZZm6ZkdF0vG1JUVRJ5FqN6wv7w=;
+        b=EsU01laKYlXeUwOzqhDZANOi8lScnIXVlCztg5QhuFJsyVQo713bCIGsIewq5t48hK
+         TXYXa29VAKYNO2/fMiuiFoiAuuyam8P394K3s2j/jS1UkQhxzRjnSyM61NwpSFXT6C2r
+         dURzq4gRo8VVxydHIaMV2rFLmPerA444DM6uw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=53niQxqahks3EKNdNU3JdcwDT5/fPF/bXLdvCKXBBLU=;
-        b=oWC6Y9IrbRFvc++8nZdfKmGBkgWxlSWcy4iDGNoCjWo3XT+aCRJ01W/YmznMULFijt
-         /Vqg33cbUq4UTyXIx8QDdW8uV0THL7/02X/baJY9b3RgreSxAnZOzNY9CXfWWF+krAlw
-         VjKaohnuGjn4sPdNBwN1etq16J3IL6h4JL8751sbObJq5KyoQtZ3zyz1pP6n60b79wWK
-         3BKf60i8CbMaO2Ro8TalQe2uGySSYbzkFB/Gx0KIk6ZR5jMUWJBqK+N2oldr1/aHR4Uv
-         SxXn8t3NkvNM3uKsWAvYgmbOgBFHAVsJbl0tZSgtsToYf5M87C+PkUvgrqeYZDuJiU6x
-         R2uA==
-X-Gm-Message-State: AOAM533ZjQ0VV6N7u39+i0lIfsmxLURMlPBIaW0Dm8lNbkTRzgHkiSsU
-        kEJ9kImKYhlt5beZ/xQzzwk=
-X-Google-Smtp-Source: ABdhPJxmHS9QruoYsSu8Vwr0dt8xezQlGs8fL/ApDuOch0vBMhIPalUbjDCVFD6D25ayMBdlYjWJHA==
-X-Received: by 2002:a17:902:d711:: with SMTP id w17mr8690412ply.139.1591918298382;
-        Thu, 11 Jun 2020 16:31:38 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:73f9])
-        by smtp.gmail.com with ESMTPSA id u128sm4078947pfu.148.2020.06.11.16.31.36
+        bh=bIgDlQTcxFw2KokzUZZm6ZkdF0vG1JUVRJ5FqN6wv7w=;
+        b=KbjrYsQ8QOtDAKmTy//ManV2CqhRTnURHIIYkmw290Nx3UwQ+HBUDcr8HuagHhuoN5
+         ntPptwcp39Y/E+wox2W2AMfj9Rv4YkV9xmiINhLy7X/furLYFdrsVfF+K2JOMBxn4IdW
+         WdNqYdKGLg2P0zyT0c6YsCYWd0mmvMMYZNk1vTkR44t0r19IUHD9qgOxULPrkhKGMlQg
+         /HxD2gldqrRFVjuiC2N0XawkPJWFGhdn13wn8+iEiJq+yU7mlAnbAbzC5YHfxWmI1wGT
+         iWzyPjxgDffXjdP4WMWD2Ngjve4fWsAZ4JByBXWCoe665OwfIGbY4OpblbuJcNSGqqwF
+         WgmQ==
+X-Gm-Message-State: AOAM531tvY3Yf2xxygceyaABgVzNR9Tb3Rji7AJzgC4WONaUbQG75lD6
+        CqkPl4tufAwAptqhtWq4yL+rZg==
+X-Google-Smtp-Source: ABdhPJzKAntT+tqihIhi6knyDIQA+kIZiwM6SoOqVvMIgkg6dNBDxl2KwSVM7Qy1cAVFqCn/cRDWuA==
+X-Received: by 2002:a17:90b:e05:: with SMTP id ge5mr10405229pjb.49.1591919379416;
+        Thu, 11 Jun 2020 16:49:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k126sm4448492pfd.129.2020.06.11.16.49.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2020 16:31:37 -0700 (PDT)
-Date:   Thu, 11 Jun 2020 16:31:34 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
-References: <202006051903.C44988B@keescook>
- <875zc4c86z.fsf_-_@x220.int.ebiederm.org>
- <20200606201956.rvfanoqkevjcptfl@ast-mbp>
- <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
- <20200607014935.vhd3scr4qmawq7no@ast-mbp>
- <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
- <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
- <87r1uo2ejt.fsf@x220.int.ebiederm.org>
- <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
- <87d066vd4y.fsf@x220.int.ebiederm.org>
+        Thu, 11 Jun 2020 16:49:38 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 16:49:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Sargun Dhillon' <sargun@sargun.me>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Wagner <daniel.wagner@bmw-carit.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        John Fastabend <john.r.fastabend@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Message-ID: <202006111634.8237E6A5C6@keescook>
+References: <202006091235.930519F5B@keescook>
+ <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
+ <202006091346.66B79E07@keescook>
+ <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
+ <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
+ <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
+ <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87d066vd4y.fsf@x220.int.ebiederm.org>
+In-Reply-To: <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 04:12:29PM -0500, Eric W. Biederman wrote:
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On Thu, Jun 11, 2020 at 02:56:22PM +0000, David Laight wrote:
+> From: Sargun Dhillon
+> > Sent: 11 June 2020 12:07
+> > Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to move fds across processes
+> > 
+> > On Thu, Jun 11, 2020 at 12:01:14PM +0200, Christian Brauner wrote:
+> > > On Wed, Jun 10, 2020 at 07:59:55PM -0700, Kees Cook wrote:
+> > > > On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
+> > > > > As an aside, all of this junk should be dropped:
+> > > > > +	ret = get_user(size, &uaddfd->size);
+> > > > > +	if (ret)
+> > > > > +		return ret;
+> > > > > +
+> > > > > +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> > > > > +	if (ret)
+> > > > > +		return ret;
+> > > > >
+> > > > > and the size member of the seccomp_notif_addfd struct. I brought this up
+> > > > > off-list with Tycho that ioctls have the size of the struct embedded in them. We
+> > > > > should just use that. The ioctl definition is based on this[2]:
+> > > > > #define _IOC(dir,type,nr,size) \
+> > > > > 	(((dir)  << _IOC_DIRSHIFT) | \
+> > > > > 	 ((type) << _IOC_TYPESHIFT) | \
+> > > > > 	 ((nr)   << _IOC_NRSHIFT) | \
+> > > > > 	 ((size) << _IOC_SIZESHIFT))
+> > > > >
+> > > > >
+> > > > > We should just use copy_from_user for now. In the future, we can either
+> > > > > introduce new ioctl names for new structs, or extract the size dynamically from
+> > > > > the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
+> > > >
+> > > > Yeah, that seems reasonable. Here's the diff for that part:
+> > >
+> > > Why does it matter that the ioctl() has the size of the struct embedded
+> > > within? Afaik, the kernel itself doesn't do anything with that size. It
+> > > merely checks that the size is not pathological and it does so at
+> > > compile time.
+> > >
+> > > #ifdef __CHECKER__
+> > > #define _IOC_TYPECHECK(t) (sizeof(t))
+> > > #else
+> > > /* provoke compile error for invalid uses of size argument */
+> > > extern unsigned int __invalid_size_argument_for_IOC;
+> > > #define _IOC_TYPECHECK(t) \
+> > > 	((sizeof(t) == sizeof(t[1]) && \
+> > > 	  sizeof(t) < (1 << _IOC_SIZEBITS)) ? \
+> > > 	  sizeof(t) : __invalid_size_argument_for_IOC)
+> > > #endif
+> > >
+> > > The size itself is not verified at runtime. copy_struct_from_user()
+> > > still makes sense at least if we're going to allow expanding the struct
+> > > in the future.
+> > Right, but if we simply change our headers and extend the struct, it will break
+> > all existing programs compiled against those headers. In order to avoid that, if
+> > we intend on extending this struct by appending to it, we need to have a
+> > backwards compatibility mechanism. Just having copy_struct_from_user isn't
+> > enough. The data structure either must be fixed size, or we need a way to handle
+> > multiple ioctl numbers derived from headers with different sized struct arguments
+> > 
+> > The two approaches I see are:
+> > 1. use more indirection. This has previous art in drm[1]. That's look
+> > something like this:
+> > 
+> > struct seccomp_notif_addfd_ptr {
+> > 	__u64 size;
+> > 	__u64 addr;
+> > }
+> > 
+> > ... And then it'd be up to us to dereference the addr and copy struct from user.
 > 
-> > On Tue, Jun 09, 2020 at 03:02:30PM -0500, Eric W. Biederman wrote:
-> >> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-> >> 
-> >> > bpf_lsm is that thing that needs to load and start acting early.
-> >> > It's somewhat chicken and egg. fork_usermode_blob() will start a process
-> >> > that will load and apply security policy to all further forks and
-> >> > execs.
-> >> 
-> >> What is the timeframe for bpf_lsm patches wanting to use
-> >> fork_usermode_blob()?
-> >> 
-> >> Are we possibly looking at something that will be ready for the next
-> >> merge window?
-> >
-> > In bpf space there are these that want to use usermode_blobs:
-> > 1. bpfilter itself.
-> > First of all I think we made a mistake delaying landing the main patches:
-> > https://lore.kernel.org/patchwork/patch/902785/
-> > https://lore.kernel.org/patchwork/patch/902783/
-> > without them bpfilter is indeed dead. That probably was the reason
-> > no one was brave enough to continue working on it.
-> > So I think the landed skeleton of bpfilter can be removed.
-> > I think no user space code will notice that include/uapi/linux/bpfilter.h
-> > is gone. So it won't be considered as user space breakage.
-> > Similarly CONFIG_BPFILTER can be nuked too.
-> > bpftool is checking for it (see tools/bpf/bpftool/feature.c)
-> > but it's fine to remove it.
-> > I still think that the approach taken was a correct one, but
-> > lifting that project off the ground was too much for three of us.
-> > So when it's staffed appropriately we can re-add that code.
-> >
-> > 2. bpf_lsm.
-> > It's very active at the moment. I'm working on it as well
-> > (sleepable progs is targeting that), but I'm not sure when folks
-> > would have to have it during the boot. So far it sounds that
-> > they're addressing more critical needs first. "bpf_lsm ready at boot"
-> > came up several times during "bpf office hours" conference calls,
-> > so it's certainly on the radar. If I to guess I don't think
-> > bpf_lsm will use usermode_blobs in the next 6 weeks.
-> > More likely 2-4 month.
-> >
-> > 3. bpf iterator.
-> > It's already capable extension of several things in /proc.
-> > See https://lore.kernel.org/bpf/20200509175921.2477493-1-yhs@fb.com/
-> > Cat-ing bpf program as "cat /sys/fs/bpf/my_ipv6_route"
-> > will produce the same human output as "cat /proc/net/ipv6_route".
-> > The key difference is that bpf is all tracing based and it's unstable.
-> > struct fib6_info can change and prog will stop loading.
-> > There are few FIXME in there. That is being addressed right now.
-> > After that the next step is to make cat-able progs available
-> > right after boot via usermode_blobs.
-> > Unlike cases 1 and 2 here we don't care that they appear before pid 1.
-> > They can certainly be chef installed and started as services.
-> > But they are kernel dependent, so deploying them to production
-> > is much more complicated when they're done as separate rpm.
-> > Testing is harder and so on. Operational issues pile up when something
-> > that almost like kernel module is done as a separate package.
-> > Hence usermode_blob fits the best.
-> > Of course we were not planning to add a bunch of them to kernel tree.
-> > The idea was to add only _one_ such cat-able bpf prog and have it as
-> > a selftest for usermode_blob + bpf_iter. What we want our users to
-> > see in 'cat my_ipv6_route' is probably different from other companies.
-> > These patches will likely be using usermode_blob() in the next month.
-> >
-> > But we don't need to wait. We can make the progress right now.
-> > How about we remove bpfilter uapi and rename net/bpfilter/bpfilter_kern.c
-> > into net/umb/umb_test.c only to exercise Makefile to build elf file
-> > from simple main.c including .S with incbin trick
-> > and kernel side that does fork_usermode_blob().
-> > And that's it.
-> > net/ipv4/bpfilter/sockopt.c and kconfig can be removed.
-> > That would be enough base to do use cases 2 and 3 above.
-> > Having such selftest will be enough to adjust the layering
-> > for fork_usermode_blob(), right?
+> Do not go down that route. It isn't worth the pain.
 > 
-> If I understand correctly you are asking people to support out of tree
-> code.  I see some justification for this functionality for in-tree code.
-> For out of tree code there really is no way to understand support or
-> maintain the code.
-
-It's just like saying that sys_finit_module() is there to support out
-of tree code. There are in- and out- tree modules and there will be
-in- and out- of tree bpf programs, but the focus is on those that
-are relevant for the long term future of the kernel.
-The 1 case above is in-tree only. There is nothing in bpfilter
-that makes sense out of tree.
-The 2 case (bpf_lsm) is primarily in-tree. Security is something
-everyone wants its own way, but majority of bpf_lsm functionality
-should live in-tree.
-The 3 case is mostly out-of-tree. If there was obvious way to
-extend /proc it could have been in-tree, but no one will agree.
-
-> We probably also need to have a conversation about why this
-> functionality is a better choice that using a compiled in initramfs,
-> such as can be had by setting CONFIG_INITRAMFS_SOURCE.
-
-I explained it several times already. I don't see how initramfs solves 1 and 2.
-
-> Even with this write up and the conversations so far I don't understand
-> what problem fork_usermode_blob is supposed to be solving.  Is there
-> anything kernel version dependent about bpf_lsm?  For me the primary
-> justification of something like fork_usermode_blob is something that is
-> for all practical purposes a kernel module but it just happens to run in
-> usermode.
-
-that's what it is. It's a kernel module that runs in user space.
-
-> From what little I know about bpf_lsm that isn't the case.  So far all
-
-It is.
-
-> you have mentioned is that bpf_lsm needs to load early.  That seems like
-> something that could be solved by a couple of lines init/main.c that
-> forks and exec's a program before init if it is present.  Maybe that
-> also needs a bit of protection so the bootloader can't override the
-> binary.
+> You should also assume that userspace might have a compile-time check
+> on the buffer length (I've written one - not hard) and that the kernel
+> might (in the future - or on a BSD kernel) be doing the user copies
+> for you.
 > 
-> The entire concept of a loadable lsm has me scratching my head.  Last
-> time that concept was seriously looked at the races for initializing per
-> object data were difficult enough to deal with modular support was
-> removed from all of the existing lsms.
+> Also, if you change the structure you almost certainly need to
+> change the name of the ioctl cmd as well as its value.
+> Otherwise a recompiled program will pass the new cmd value (and
+> hopefully the right sized buffer) but it won't have initialised
+> the buffer properly.
+> This is likely to lead to unexpected behaviour.
 
-I'm not sure what races you're talking about.
-usermode_blob will interact with kernel via syscalls and other standard
-communication mechanism.
+Hmmm.
 
-> Not to mention there are places where the lsm hooks are a pretty lousy
-> API and will be refactored to make things better with no thought of any
-> out of tree code.
+So, while initially I thought Sargun's observation about ioctl's fixed
+struct size was right, I think I've been swayed to Christian's view
+(which is supported by the long tail of struct size pain we've seen in
+other APIs).
 
-I don't see how refactoring LSM hooks is relevant in this discussion.
+Doing a separate ioctl for each structure version seems like the "old
+solution" now that we've got EA syscalls. So, I'd like to keep the size
+and copy_struct_from_user().
 
-> 
-> > If I understood you correctly you want to replace pid_t
-> > in 'struct umh_info' with proper 'struct pid' pointer that
-> > is refcounted, so user process's exit is clean? What else?
-> 
-> No "if (filename)" or "if (file)" on the exec code paths.  No extra case
-> for the LSM's to have to deal with.  Nothing fork_usermode_blob does is
-> something that can't be done from userspace as far as execve is
-> concerned so there is no justification for any special cases in the core
-> of the exec code.
+Which leaves us with the question of how to deal with the ioctl
+numbering. As we've seen, there is no actual enforcement of direction
+nor size, so to that end, while we could provide the hints about both, I
+guess we just don't need to. To that end, perhaps _IO() is best:
 
-Adding getname_kernel() instead of filename==NULL is trivial enough
-and makes sense as a cleanup.
-But where do you see 'if (file)' ?
-The correct 'file' pointer is passed from shmem_kernel_file_setup() all
-the way to exec.
+#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IO(3)
 
-> Getting the deny_write_count and the reference count correct on the file
-> argument as well as getting BPRM_FLAGS_PATH_INACCESSIBLE set.
+Alternatively, we could use a size of either 0, 8(u64), or -1, and then
+use IORW() so we _also_ won't paint ourselves into a corner if we ever
+want to write something back to userspace in the structure:
 
-There is no fd because there is no task, but there is a file. I think 
-do_execve should assume BINPRM_FLAGS_PATH_INACCESSIBLE in this case.
+#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),0)
+#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
 
-> Using the proper type for argv and envp.
+or
 
-I guess that's going to be a part of other cleanup.
+#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),8)
+#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
 
-> Those are the things I know of that need to be addressed.
-> 
-> 
-> Getting the code refactored so that the do_open_execat can be called
-> in do_execveat_common instead of __do_execve_file is enough of a
-> challenge of code motion I really would rather not do that.   Unfortunately that is
-> the only way I can see right now to have both do_execveat_common and
-> do_execve_file pass in a struct file.
+or
 
-The 'struct file' is there. Please take another look at the code.
+#define SECCOMP_IOCTL_EA(nr) _IOC(_IOC_READ|_IOC_WRITE,SECCOMP_IOC_MAGIC,(nr),_IOC_SIZEMASK)
+#define SECCOMP_IOCTL_NOTIF_ADDFD       SECCOMP_IOCTL_EA(3)
 
-> Calling deny_write_access and get_file in do_execve_file and probably
-> a bit more is the only way I can see to cleanly isoloate the special
-> cases fork_usermode_blob brings to the table.
-> 
-> 
-> Strictly speaking I am also aware of the issue that the kernel has to
-> use set_fs(KERNEL_DS) to allow argv and envp to exist in kernel space
-> instead of userspace.  That needs to be fixed as well, but for all
-> kernel uses of exec.  So any work fixing fork_usermode_blob can ignore
-> that issue.
+I think I prefer the last one.
 
-well, this is the problem of usermodehelper_exec.
-usermode_blob doesn't use argv/envp.
-They could be NULL for all practical purpose.
+-- 
+Kees Cook
