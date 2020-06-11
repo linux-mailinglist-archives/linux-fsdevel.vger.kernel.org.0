@@ -2,94 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4391F601A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 04:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 419FB1F601E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 04:44:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbgFKCnD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 22:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbgFKCnC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 22:43:02 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726379AbgFKCoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 22:44:38 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58946 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726290AbgFKCoi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 22:44:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591843477;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1+nAH9EHymRayJcALo1XTuzbnoiP4s/FKdOqqpv2KIg=;
+        b=S5z/tGIx6GLqyGtIxiYMrv8wJsCsXfUhDUFclsYbEVBXnakTMNsANQsbEqljCwdjt2g7MO
+        YAlcNVVSKBQo1+aC/xIgBL4HJ5yLc1ZX6QCuKsAEhJwoVjoZy8iUQsoJWHRJg9qFFnJYgj
+        5SDDilu6HCnqdJp5Qn4zfOyj5F8oTBg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-28-QNvqgyMpP4qnCHYamqyxfw-1; Wed, 10 Jun 2020 22:44:35 -0400
+X-MC-Unique: QNvqgyMpP4qnCHYamqyxfw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 798A6206FA;
-        Thu, 11 Jun 2020 02:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591843382;
-        bh=uM3dzCIwaaLTHi9qlTTMuvqdx9nz3dpFhWZaS11i1xA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=c9mzM4KjTrYLQdNgmyeOEQ2rmtQ6gNNP8wJVJv0rQ/lVtYlCTa+6peAb5UzKZu0XO
-         x60Sm0bKJEQZUsFlS85fmoWvvkYGukWZxEcedS7NXzl0LbRjx8Hwj9qHCArhDRIz5c
-         PMyqM+TPsnD5eG/YSnt1ZhlBYld8s8NHjKbb3238=
-Date:   Wed, 10 Jun 2020 19:42:48 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, ira.weiny@intel.com
-Subject: [GIT PULL] vfs: improve DAX behavior for 5.8, part 3
-Message-ID: <20200611024248.GG11245@magnolia>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A15B1005513;
+        Thu, 11 Jun 2020 02:44:34 +0000 (UTC)
+Received: from localhost (ovpn-12-163.pek2.redhat.com [10.72.12.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C97141002382;
+        Thu, 11 Jun 2020 02:44:29 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Subject: [PATCH] fs/fs-writeback.c: don't WARN on unregistered BDI
+Date:   Thu, 11 Jun 2020 10:44:17 +0800
+Message-Id: <20200611024417.462479-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+BDI is unregistered from del_gendisk() which is usually done in device's
+release handler from device hotplug or error handling context, so BDI
+can be unregistered anytime.
 
-Please pull this third part of the 5.8 DAX changes.  Now that the xfs
-changes have landed, this third piece changes the FS_XFLAG_DAX ioctl
-code in xfs to request that the inode be reloaded after the last program
-closes the file, if doing so would make a S_DAX change happen.  This
-goal here is to make dax access mode switching quicker when possible.
+It should be normal for __mark_inode_dirty to see un-registered BDI,
+so replace the WARN() with pr_debug() just for debug purpose.
 
-I did a test merge of this branch against upstream this evening and
-there weren't any conflicts.  The first five patches in the series were
-already in the xfs merge, so it's only the last one that should change
-anything.  Please let us know if you have any complaints about pulling
-this, since I can rework the branch.
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Brian Foster <bfoster@redhat.com>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ fs/fs-writeback.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---D
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a605c3dddabc..5b7a5f5803ff 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2318,9 +2318,10 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 
+ 			wb = locked_inode_to_wb_and_lock_list(inode);
+ 
+-			WARN(bdi_cap_writeback_dirty(wb->bdi) &&
+-			     !test_bit(WB_registered, &wb->state),
+-			     "bdi-%s not registered\n", bdi_dev_name(wb->bdi));
++			if (bdi_cap_writeback_dirty(wb->bdi) &&
++			     !test_bit(WB_registered, &wb->state))
++				pr_debug("bdi-%s not registered\n",
++						bdi_dev_name(wb->bdi));
+ 
+ 			inode->dirtied_when = jiffies;
+ 			if (dirtytime)
+-- 
+2.25.2
 
-The following changes since commit 2c567af418e3f9380c2051aada58b4e5a4b5c2ad:
-
-  fs: Introduce DCACHE_DONTCACHE (2020-05-13 08:44:35 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.8-merge-3
-
-for you to fetch changes up to e4f9ba20d3b8c2b86ec71f326882e1a3c4e47953:
-
-  fs/xfs: Update xfs_ioctl_setattr_dax_invalidate() (2020-05-29 20:13:20 -0700)
-
-----------------------------------------------------------------
-Third part of new DAX code for 5.8:
-- Teach XFS to ask the VFS to drop an inode if the administrator changes
-  the FS_XFLAG_DAX inode flag such that the S_DAX state would change.
-  This can result in files changing access modes without requiring an
-  unmount cycle.
-
-----------------------------------------------------------------
-Ira Weiny (6):
-      fs/xfs: Remove unnecessary initialization of i_rwsem
-      fs/xfs: Change XFS_MOUNT_DAX to XFS_MOUNT_DAX_ALWAYS
-      fs/xfs: Make DAX mount option a tri-state
-      fs/xfs: Create function xfs_inode_should_enable_dax()
-      fs/xfs: Combine xfs_diflags_to_linux() and xfs_diflags_to_iflags()
-      fs/xfs: Update xfs_ioctl_setattr_dax_invalidate()
-
- fs/xfs/xfs_icache.c |   4 +-
- fs/xfs/xfs_inode.h  |   1 +
- fs/xfs/xfs_ioctl.c  | 141 ++++++++--------------------------------------------
- fs/xfs/xfs_iops.c   |  70 +++++++++++++++++---------
- fs/xfs/xfs_mount.h  |   4 +-
- fs/xfs/xfs_super.c  |  48 ++++++++++++++++--
- 6 files changed, 115 insertions(+), 153 deletions(-)
