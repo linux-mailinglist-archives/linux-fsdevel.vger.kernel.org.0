@@ -2,92 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9191F5F82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 03:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AACC1F5FAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 03:52:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726306AbgFKBgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 21:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53776 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgFKBgm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 21:36:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CF0EC08C5C1;
-        Wed, 10 Jun 2020 18:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OhtuvvlzzHFfDg+PC4aa+VAtbxaJoSFkoyziN0s35WQ=; b=Zof5Ro+zSJ0JDzuH+aN8Xz1rcs
-        /jYX6M5fhwAoI2LAWxewVrWIUvdGS2YPZDwwSXAOqx2aotpCL8ERbAkRZEIMBkZBRMY5EM8eLHrVz
-        FCPHFLUlooImb9VfHjsGDsoQ2C5PkmkmHsjvUO9rfWIm+6fZFR9y24k8GJYJAVuKogGJ8AHKn3itn
-        RQKWsYF8z/7AbzuarxYTQ6lKRSvi/Yg/qp7gO7lnhNG1V/y5/u7ZBwYfw2KmltZcJThWsyXcp49dO
-        5ruOY5jiLmf53/pjvyv+38HS3LQX/FoFCot4ryAgrnG75aSWq5qnfmqvYqkM8ijSWo/QgmISB5SyD
-        epRrrSFA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jjC8e-0000EW-DB; Thu, 11 Jun 2020 01:36:16 +0000
-Date:   Wed, 10 Jun 2020 18:36:16 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
-        Colin Walters <walters@verbum.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: [PATCH v2] ovl: provide real_file() and overlayfs
- get_unmapped_area()
-Message-ID: <20200611013616.GM19604@bombadil.infradead.org>
-References: <4ebd0429-f715-d523-4c09-43fa2c3bc338@oracle.com>
- <202005281652.QNakLkW3%lkp@intel.com>
- <365d83b8-3af7-2113-3a20-2aed51d9de91@oracle.com>
- <CAJfpegtz=tzndsF=_1tYHewGwEgvqEOA_4zj8HCAqyFdKe6mag@mail.gmail.com>
- <ffc00a9e-5c2f-0c3e-aa1e-9836b98f7b54@oracle.com>
- <20200611003726.GY23230@ZenIV.linux.org.uk>
+        id S1726312AbgFKBwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 21:52:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726290AbgFKBwD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jun 2020 21:52:03 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81D01206FA;
+        Thu, 11 Jun 2020 01:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591840322;
+        bh=qbhSXLGqy7qKk7V8hkialrDuSQLkU9NtfJIsVojnTwc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sbx8Li1Wuw7e/oAQaOUigHdRbD0pm5fYb454vG+P5N0XSoQipsxiiOk93Wl0gc55X
+         wepuAwrWpSrGWRUp6z4kAzlTIZ3JSPd3n+UtZNymCtqvfrmK3kw6oAsVU5/LyE0aWJ
+         9egxyTQ73g82Vn28GLHRvIkvqgHGveY5LupSF2Jo=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: don't unnecessarily clone write access for writable fds
+Date:   Wed, 10 Jun 2020 18:49:45 -0700
+Message-Id: <20200611014945.237210-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200611003726.GY23230@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 11, 2020 at 01:37:26AM +0100, Al Viro wrote:
-> On Wed, Jun 10, 2020 at 05:13:52PM -0700, Mike Kravetz wrote:
-> 
-> > To address this issue,
-> > - Add a new file operation f_real while will return the underlying file.
-> >   Only overlayfs provides a function for this operation.
-> > - Add a new routine real_file() which can be used by core code get an
-> >   underlying file.
-> > - Update is_file_hugepages to get the real file.
-> 
-> Egads...  So to find out whether it's a hugetlb you would
-> 	* check if a method is NULL
-> 	* if not, call it
-> 	* ... and check if the method table of the result is hugetlbfs one?
-> 
-> Here's a radical suggestion: FMODE_HUGEPAGES.  Just have it set by
-> ->open() and let is_file_hugepages() check it.  In ->f_mode.  And
-> make the bloody hugetlbfs_file_operations static, while we are at it.
+From: Eric Biggers <ebiggers@google.com>
 
-ITYM FMODE_OVL_UPPER.  To quote Mike:
+There's no need for mnt_want_write_file() to clone a write reference to
+the mount when the file is already open for writing, provided that
+mnt_drop_write_file() is changed to conditionally drop the reference.
 
->         while (file->f_op == &ovl_file_operations)
->                 file = file->private_data;
->         return file;
+We seem to have ended up in the current situation because
+mnt_want_write_file() used to be paired with mnt_drop_write(), due to
+mnt_drop_write_file() not having been added yet.  So originally
+mnt_want_write_file() did have to always take a reference.
 
-which would be transformed into:
+But later mnt_drop_write_file() was added, and all callers of
+mnt_want_write_file() were paired with it.  This makes the compatibility
+between mnt_want_write_file() and mnt_drop_write() no longer necessary.
 
-	while (file->f_mode & FMODE_OVL_UPPER)
-		file = file->private_data;
-	return file;
+Therefore, make __mnt_want_write_file() and __mnt_drop_write_file() be
+no-ops on files already open for writing.  This removes the only caller
+of mnt_clone_write(), so remove that too.
 
-Or are you proposing that overlayfs copy FMODE_HUGEPAGES from the
-underlying fs to the overlaying fs?
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/namespace.c        | 43 ++++++++++---------------------------------
+ include/linux/mount.h |  1 -
+ 2 files changed, 10 insertions(+), 34 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 7cd64240916573..7e78c7ae4ab34d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -359,51 +359,27 @@ int mnt_want_write(struct vfsmount *m)
+ }
+ EXPORT_SYMBOL_GPL(mnt_want_write);
+ 
+-/**
+- * mnt_clone_write - get write access to a mount
+- * @mnt: the mount on which to take a write
+- *
+- * This is effectively like mnt_want_write, except
+- * it must only be used to take an extra write reference
+- * on a mountpoint that we already know has a write reference
+- * on it. This allows some optimisation.
+- *
+- * After finished, mnt_drop_write must be called as usual to
+- * drop the reference.
+- */
+-int mnt_clone_write(struct vfsmount *mnt)
+-{
+-	/* superblock may be r/o */
+-	if (__mnt_is_readonly(mnt))
+-		return -EROFS;
+-	preempt_disable();
+-	mnt_inc_writers(real_mount(mnt));
+-	preempt_enable();
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(mnt_clone_write);
+-
+ /**
+  * __mnt_want_write_file - get write access to a file's mount
+  * @file: the file who's mount on which to take a write
+  *
+- * This is like __mnt_want_write, but it takes a file and can
+- * do some optimisations if the file is open for write already
++ * This is like __mnt_want_write, but it does nothing if the file is already
++ * open for writing.  This must be paired with __mnt_drop_write_file.
+  */
+ int __mnt_want_write_file(struct file *file)
+ {
+-	if (!(file->f_mode & FMODE_WRITER))
+-		return __mnt_want_write(file->f_path.mnt);
+-	else
+-		return mnt_clone_write(file->f_path.mnt);
++	if (file->f_mode & FMODE_WRITER)
++		return 0;
++	return __mnt_want_write(file->f_path.mnt);
+ }
+ 
+ /**
+  * mnt_want_write_file - get write access to a file's mount
+  * @file: the file who's mount on which to take a write
+  *
+- * This is like mnt_want_write, but it takes a file and can
+- * do some optimisations if the file is open for write already
++ * This is like mnt_want_write, but it skips getting write access to the mount
++ * if the file is already open for writing.  The freeze protection is still
++ * done.  This must be paired with mnt_drop_write_file.
+  */
+ int mnt_want_write_file(struct file *file)
+ {
+@@ -449,7 +425,8 @@ EXPORT_SYMBOL_GPL(mnt_drop_write);
+ 
+ void __mnt_drop_write_file(struct file *file)
+ {
+-	__mnt_drop_write(file->f_path.mnt);
++	if (!(file->f_mode & FMODE_WRITER))
++		__mnt_drop_write(file->f_path.mnt);
+ }
+ 
+ void mnt_drop_write_file(struct file *file)
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index de657bd211fa64..29d216f927c28c 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -78,7 +78,6 @@ struct path;
+ 
+ extern int mnt_want_write(struct vfsmount *mnt);
+ extern int mnt_want_write_file(struct file *file);
+-extern int mnt_clone_write(struct vfsmount *mnt);
+ extern void mnt_drop_write(struct vfsmount *mnt);
+ extern void mnt_drop_write_file(struct file *file);
+ extern void mntput(struct vfsmount *mnt);
+-- 
+2.26.2
+
