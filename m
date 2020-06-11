@@ -2,25 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADA61F657C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 585191F6593
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 12:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgFKKN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 06:13:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:49938 "EHLO foss.arm.com"
+        id S1727782AbgFKKYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 06:24:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:50022 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbgFKKN4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 06:13:56 -0400
+        id S1726693AbgFKKYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jun 2020 06:24:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C698431B;
-        Thu, 11 Jun 2020 03:13:54 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F2CD31B;
+        Thu, 11 Jun 2020 03:24:13 -0700 (PDT)
 Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 185913F73D;
-        Thu, 11 Jun 2020 03:13:51 -0700 (PDT)
-Date:   Thu, 11 Jun 2020 11:13:49 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B331C3F73D;
+        Thu, 11 Jun 2020 03:24:10 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 11:24:08 +0100
 From:   Qais Yousef <qais.yousef@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
 Cc:     Mel Gorman <mgorman@suse.de>,
         Patrick Bellasi <patrick.bellasi@matbug.net>,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
@@ -29,6 +28,7 @@ Cc:     Mel Gorman <mgorman@suse.de>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Ben Segall <bsegall@google.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -41,7 +41,7 @@ Cc:     Mel Gorman <mgorman@suse.de>,
         linux-fs <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
  boost value
-Message-ID: <20200611101349.v3utkqrcegthhahr@e107158-lin.cambridge.arm.com>
+Message-ID: <20200611102407.vhy3zjexrhorx753@e107158-lin.cambridge.arm.com>
 References: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
  <20200529100806.GA3070@suse.de>
  <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com>
@@ -51,155 +51,202 @@ References: <20200528161112.GI2483@worktop.programming.kicks-ass.net>
  <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
  <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
  <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
- <20200608104424.10781990@gandalf.local.home>
+ <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200608104424.10781990@gandalf.local.home>
+In-Reply-To: <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
 User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06/08/20 10:44, Steven Rostedt wrote:
-> On Mon, 8 Jun 2020 13:31:03 +0100
-> Qais Yousef <qais.yousef@arm.com> wrote:
+On 06/09/20 19:10, Vincent Guittot wrote:
+> On Mon, 8 Jun 2020 at 14:31, Qais Yousef <qais.yousef@arm.com> wrote:
+> >
+> > On 06/04/20 14:14, Vincent Guittot wrote:
+> >
+> > [...]
+> >
+> > > I have tried your patch and I don't see any difference compared to
+> > > previous tests. Let me give you more details of my setup:
+> > > I create 3 levels of cgroups and usually run the tests in the 4 levels
+> > > (which includes root). The result above are for the root level
+> > >
+> > > But I see a difference at other levels:
+> > >
+> > >                            root           level 1       level 2       level 3
+> > >
+> > > /w patch uclamp disable     50097         46615         43806         41078
+> > > tip uclamp enable           48706(-2.78%) 45583(-2.21%) 42851(-2.18%)
+> > > 40313(-1.86%)
+> > > /w patch uclamp enable      48882(-2.43%) 45774(-1.80%) 43108(-1.59%)
+> > > 40667(-1.00%)
+> > >
+> > > Whereas tip with uclamp stays around 2% behind tip without uclamp, the
+> > > diff of uclamp with your patch tends to decrease when we increase the
+> > > number of level
+> >
+> > So I did try to dig more into this, but I think it's either not a good
+> > reproducer or what we're observing here is uArch level latencies caused by the
+> > new code that seem to produce a bigger knock on effect than what they really
+> > are.
+> >
+> > First, CONFIG_FAIR_GROUP_SCHED is 'expensive', for some definition of
+> > expensive..
 > 
-> > I admit I don't know how much of these numbers is ftrace overhead. When trying
+> yes, enabling CONFIG_FAIR_GROUP_SCHED adds an overhead
 > 
-> Note, if you want to get a better idea of how long a function runs, put it
-> into set_ftrace_filter, and then trace it. That way you remove the overhead
-> of the function graph tracer when its nesting within a function.
+> >
+> > *** uclamp disabled/fair group enabled ***
+> >
+> >         # Executed 50000 pipe operations between two threads
+> >
+> >              Total time: 0.958 [sec]
+> >
+> >               19.177100 usecs/op
+> >                   52145 ops/sec
+> >
+> > *** uclamp disabled/fair group disabled ***
+> >
+> >         # Executed 50000 pipe operations between two threads
+> >              Total time: 0.808 [sec]
+> >
+> >              16.176200 usecs/op
+> >                  61819 ops/sec
+> >
+> > So there's a 15.6% drop in ops/sec when enabling this option. I think it's good
+> > to look at the absolutely number of usecs/op, Fair group adds around
+> > 3 usecs/op.
+> >
+> > I dropped FAIR_GROUP_SCHED from my config to eliminate this overhead and focus
+> > on solely on uclamp overhead.
+> 
+> Have you checked that both tests run at the root level ?
 
-Thanks for the tip!
+I haven't actively moved tasks to cgroups. As I said that snippet was
+particularly bad and I didn't see that level of nesting in every call.
 
-With CONFIG_FAIR_GROUP_SCHED I see (uclamp disabled)
+> Your function-graph log below shows several calls to
+> update_cfs_group() which means that your trace below has not been made
+> at root level but most probably at the 3rd level and I wonder if you
+> used the same setup for running the benchmark above. This could
+> explain such huge difference because I don't have such difference on
+> my platform but more around 2%
 
+What promoted me to look at this is when you reported that even without uclamp
+the nested cgroup showed a drop at each level. I was just trying to understand
+how both affect the hot path in hope to understand the root cause of uclamp
+overhead.
 
-      sched-pipe-602   [001]    73.755392: funcgraph_entry:        2.080 us   |  activate_task();
-      sched-pipe-602   [001]    73.755399: funcgraph_entry:        2.000 us   |  deactivate_task();
-      sched-pipe-601   [001]    73.755407: funcgraph_entry:        2.220 us   |  activate_task();
-      sched-pipe-601   [001]    73.755414: funcgraph_entry:        2.020 us   |  deactivate_task();
-      sched-pipe-602   [001]    73.755422: funcgraph_entry:        2.160 us   |  activate_task();
-      sched-pipe-602   [001]    73.755429: funcgraph_entry:        1.920 us   |  deactivate_task();
-      sched-pipe-601   [001]    73.755437: funcgraph_entry:        2.260 us   |  activate_task();
-      sched-pipe-601   [001]    73.755444: funcgraph_entry:        2.080 us   |  deactivate_task();
-      sched-pipe-602   [001]    73.755452: funcgraph_entry:        2.160 us   |  activate_task();
-      sched-pipe-602   [001]    73.755459: funcgraph_entry:        2.080 us   |  deactivate_task();
-      sched-pipe-601   [001]    73.755468: funcgraph_entry:        2.200 us   |  activate_task();
-      sched-pipe-601   [001]    73.755521: funcgraph_entry:        3.160 us   |  activate_task();
+> 
+> For uclamp disable/fair group enable/ function graph enable :  47994ops/sec
+> For uclamp disable/fair group disable/ function graph enable : 49107ops/sec
+> 
+> >
+> > With uclamp enabled but no fair group I get
+> >
+> > *** uclamp enabled/fair group disabled ***
+> >
+> >         # Executed 50000 pipe operations between two threads
+> >              Total time: 0.856 [sec]
+> >
+> >              17.125740 usecs/op
+> >                  58391 ops/sec
+> >
+> > The drop is 5.5% in ops/sec. Or 1 usecs/op.
+> >
+> > I don't know what's the expectation here. 1 us could be a lot, but I don't
+> > think we expect the new code to take more than few 100s of ns anyway. If you
+> > add potential caching effects, reaching 1 us wouldn't be that hard.
+> >
+> > Note that in my runs I chose performance governor and use `taskset 0x2` to
+> 
+> You might want to set 2 CPUs in your cpumask instead of 1 in order to
+> have 1 CPU for each thread
 
-update_cfs_group() overhead
+I did try that but it didn't seem to change the number. I think the 2 tasks
+interleave so running in 2 CPUs doesn't change the result. But to ease ftrace
+capture, it's easier to monitor a single cpu.
 
-      sched-pipe-622   [001]   156.790478: funcgraph_entry:        0.820 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790483: funcgraph_entry:        0.840 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790485: funcgraph_entry:        0.820 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790487: funcgraph_entry:        0.820 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790488: funcgraph_entry:        0.800 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790508: funcgraph_entry:        1.040 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790510: funcgraph_entry:        0.920 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790511: funcgraph_entry:        1.040 us   |  update_cfs_group();
-      sched-pipe-622   [001]   156.790513: funcgraph_entry:        0.840 us   |  update_cfs_group();
-      sched-pipe-623   [001]   156.790540: funcgraph_entry:        1.160 us   |  update_cfs_group();
-      sched-pipe-623   [001]   156.790543: funcgraph_entry:        1.020 us   |  update_cfs_group();
-      sched-pipe-623   [001]   156.790544: funcgraph_entry:        0.880 us   |  update_cfs_group();
-      sched-pipe-623   [001]   156.790546: funcgraph_entry:        0.840 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790905: funcgraph_entry:        1.780 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790908: funcgraph_entry:        1.060 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790910: funcgraph_entry:        0.880 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790912: funcgraph_entry:        0.880 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790916: funcgraph_entry:        0.800 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790917: funcgraph_entry:        0.820 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790919: funcgraph_entry:        0.840 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790921: funcgraph_entry:        0.880 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790932: funcgraph_entry:        0.960 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790934: funcgraph_entry:        0.960 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790936: funcgraph_entry:        1.080 us   |  update_cfs_group();
-      sched-pipe-621   [001]   156.790937: funcgraph_entry:        0.840 us   |  update_cfs_group();
+> 
+> > force running on a big core to make sure the runs are repeatable.
+> 
+> I also use performance governor but don't pinned tasks because I use smp.
 
-Without CONFIG_FAIR_GROUP_SCHED and without CONFIG_UCLAMP_TASK
+Is your arm platform SMP?
 
-      sched-pipe-604   [001]    76.386078: funcgraph_entry:        1.380 us   |  activate_task();
-      sched-pipe-604   [001]    76.386084: funcgraph_entry:        1.360 us   |  deactivate_task();
-      sched-pipe-605   [001]    76.386091: funcgraph_entry:        1.400 us   |  activate_task();
-      sched-pipe-605   [001]    76.386096: funcgraph_entry:        1.260 us   |  deactivate_task();
-      sched-pipe-604   [001]    76.386104: funcgraph_entry:        1.500 us   |  activate_task();
-      sched-pipe-604   [001]    76.386109: funcgraph_entry:        1.280 us   |  deactivate_task();
-      sched-pipe-605   [001]    76.386117: funcgraph_entry:        1.380 us   |  activate_task();
-      sched-pipe-605   [001]    76.386122: funcgraph_entry:        1.300 us   |  deactivate_task();
-      sched-pipe-604   [001]    76.386130: funcgraph_entry:        1.380 us   |  activate_task();
-      sched-pipe-604   [001]    76.386135: funcgraph_entry:        1.260 us   |  deactivate_task();
-      sched-pipe-605   [001]    76.386142: funcgraph_entry:        1.400 us   |  activate_task();
-      sched-pipe-605   [001]    76.386148: funcgraph_entry:        1.340 us   |  deactivate_task();
+> 
+> >
+> > On Juno-r2 I managed to scrap most of the 1 us with the below patch. It seems
+> > there was weird branching behavior that affects the I$ in my case. It'd be good
+> > to try it out to see if it makes a difference for you.
+> 
+> The perf are slightly worse on my setup:
+> For uclamp enable/fair group disable/ function graph enable : 48413ops/sec
+> with patch  below : 47804os/sec
 
-So approximately 800ns are added by update_cfs_group() for enqueue and dequeue.
-This overhead affects 2 tasks in the tests, so the total effect on the
-generated usecs/ops
+I am not sure if the new code could just introduce worse cache performance
+in a platform dependent way. The evidences I have so far point in this
+direction.
 
-	2 * enqueue_overhead + 2 * dequeue overhead = 4 * ~800ns = 3.2 us
+> 
+> >
+> > The I$ effect is my best educated guess. Perf doesn't catch this path and
+> > I couldn't convince it to look at cache and branch misses between 2 specific
+> > points.
+> >
+> > Other subtle code shuffling did have weird effect on the result too. One worthy
+> > one is making uclamp_rq_dec() noinline gains back ~400 ns. Making
+> > uclamp_rq_inc() noinline *too* cancels this gain out :-/
+> >
+> >
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 0464569f26a7..0835ee20a3c7 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -1071,13 +1071,11 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+> >
+> >  static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+> >  {
+> > -       enum uclamp_id clamp_id;
+> > -
+> >         if (unlikely(!p->sched_class->uclamp_enabled))
+> >                 return;
+> >
+> > -       for_each_clamp_id(clamp_id)
+> > -               uclamp_rq_inc_id(rq, p, clamp_id);
+> > +       uclamp_rq_inc_id(rq, p, UCLAMP_MIN);
+> > +       uclamp_rq_inc_id(rq, p, UCLAMP_MAX);
+> >
+> >         /* Reset clamp idle holding when there is one RUNNABLE task */
+> >         if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+> > @@ -1086,13 +1084,11 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+> >
+> >  static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+> >  {
+> > -       enum uclamp_id clamp_id;
+> > -
+> >         if (unlikely(!p->sched_class->uclamp_enabled))
+> >                 return;
+> >
+> > -       for_each_clamp_id(clamp_id)
+> > -               uclamp_rq_dec_id(rq, p, clamp_id);
+> > +       uclamp_rq_dec_id(rq, p, UCLAMP_MIN);
+> > +       uclamp_rq_dec_id(rq, p, UCLAMP_MAX);
+> >  }
+> >
+> >  static inline void
+> >
+> >
+> > FWIW I fail to see activate/deactivate_task in perf record. They don't show up
+> > on the list which means this micro benchmark doesn't stress them as Mel's test
+> > does.
+> 
+> Strange because I have been able to trace them.
 
-Which explains the 3us drop I see when fair group config is enabled.
-
-Applying similar analysis to uclamp
-
-With uclamp enabled
-
-      sched-pipe-610   [001]   173.429431: funcgraph_entry:        1.580 us   |  activate_task();
-      sched-pipe-610   [001]   173.429437: funcgraph_entry:        1.440 us   |  deactivate_task();
-      sched-pipe-609   [001]   173.429444: funcgraph_entry:        1.580 us   |  activate_task();
-      sched-pipe-609   [001]   173.429450: funcgraph_entry:        1.440 us   |  deactivate_task();
-      sched-pipe-610   [001]   173.429458: funcgraph_entry:        1.700 us   |  activate_task();
-      sched-pipe-610   [001]   173.429464: funcgraph_entry:        1.460 us   |  deactivate_task();
-      sched-pipe-609   [001]   173.429471: funcgraph_entry:        1.540 us   |  activate_task();
-      sched-pipe-609   [001]   173.429477: funcgraph_entry:        1.460 us   |  deactivate_task();
-      sched-pipe-610   [001]   173.429485: funcgraph_entry:        1.560 us   |  activate_task();
-      sched-pipe-610   [001]   173.429491: funcgraph_entry:        1.500 us   |  deactivate_task();
-      sched-pipe-609   [001]   173.429498: funcgraph_entry:        1.600 us   |  activate_task();
-      sched-pipe-609   [001]   173.429504: funcgraph_entry:        1.460 us   |  deactivate_task();
-
-Which adds approximately 200ns at enqueue and dequeue.
-
-	2 * enqueue_overhead + 2 * dequeue overhead = 4 * ~200ns = 0.8 us
-
-Which would explain the ~1us drop I've seen with uclamp when running sched
-bench. Apologies for the very course averaging of the numbers from my side.
-
-As a reminder the results I reported before:
-
-
-*** uclamp disabled/fair group enabled ***
-
-        # Executed 50000 pipe operations between two threads
-
-             Total time: 0.958 [sec]
-
-              19.177100 usecs/op
-                  52145 ops/sec
-
-*** uclamp disabled/fair group disabled ***
-
-        # Executed 50000 pipe operations between two threads
-             Total time: 0.808 [sec]
-
-             16.176200 usecs/op
-                 61819 ops/sec
-
-*** uclamp enabled/fair group disabled ***
-
-        # Executed 50000 pipe operations between two threads
-             Total time: 0.856 [sec]
-
-             17.125740 usecs/op
-                 58391 ops/sec
-
-
-Based on my observation with code shuffling it seems a lot of this 200ns comes
-from terrible I$ performance on the particular platform I am testing on.
-
-When I run on x86 machine, if I interpreted perf annotation correctly I see D$
-misses on accessing rq->uclamp_rq.bucket[] and p->uclamp[]. But I'll share this
-result on a separate email in-reply to Mel.
+On your arm platform? I can certainly see them on x86.
 
 Thanks
 
