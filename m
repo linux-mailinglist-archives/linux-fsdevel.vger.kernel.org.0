@@ -2,182 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A357C1F603A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 05:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF771F603E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jun 2020 05:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbgFKDAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jun 2020 23:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbgFKDAB (ORCPT
+        id S1726361AbgFKDCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jun 2020 23:02:42 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60979 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726279AbgFKDCl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jun 2020 23:00:01 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3273C08C5C2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 19:59:59 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id x22so2035216pfn.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jun 2020 19:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lP4DTVpqVtxlC9MaFsoDN9/npQaHlEe1E0smsNRDWZY=;
-        b=ewreE9bF2kyTwnZRJ5UVCC2ltyCjUSmztW1aNJ6VlB/VObo3KwT+InjCahCm8eQgLV
-         uizAtftEHbnJZxdwxttgyeTlWySA8txlDR1rN9TjDc7oZrThm+OGpQjI+V2eFhNnaJEg
-         MdkJOgqIhqsMjDg3CaemZwzwEIfrizUaDagP4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lP4DTVpqVtxlC9MaFsoDN9/npQaHlEe1E0smsNRDWZY=;
-        b=lSCFtZ0N7x5SPLaaFVhNPg/PuwgRdFHYU2QHiPHbT2Y+kB/phVcWY32UzO0owIFSYK
-         ekEFteN7NeJwY9HHXdoel1aBYlZFF/rcim14onci2i7fcfr4z41yuYMzY7SK5mIoPaQi
-         TXSpRgB39uQIzdazUFGBun8U2z4RKR13N2lZr2shTpvvWZaIKPcCjl7NUqKY8zCM5T81
-         XRpGClYS64CIwEAMVFM4zzrDcdaSVp44b2vfkGrFP+DLXkXPyyYixIVFoLCBhUnps3Zp
-         u5++QtgkDSUowwo+urSj5iT69oLO5l2PGt9H0xx7SLaJ5kFoqAOgXGM+lHgR9kD3E6hO
-         WjyQ==
-X-Gm-Message-State: AOAM533CzAupoeV+cmkmgtL+J6Xwo5qyMiqvWXysbgdnSaCgtCNjemGa
-        +CK/12cT3fJYue0QzMoED+5pwg==
-X-Google-Smtp-Source: ABdhPJxRQ3wfBebdsxh56BY1Z64vWDb6HxWrd6T2L4+yh/OHQXKSrQd+GdnwY1k6ib8nqwMT1Bt+uA==
-X-Received: by 2002:a62:6804:: with SMTP id d4mr5595936pfc.100.1591844397704;
-        Wed, 10 Jun 2020 19:59:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q193sm1295053pfq.158.2020.06.10.19.59.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 19:59:56 -0700 (PDT)
-Date:   Wed, 10 Jun 2020 19:59:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        containers@lists.linux-foundation.org,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>,
-        linux-kernel@vger.kernel.org, Matt Denton <mpdenton@google.com>,
-        John Fastabend <john.r.fastabend@intel.com>,
-        linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, cgroups@vger.kernel.org,
-        stable@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Message-ID: <202006101953.899EFB53@keescook>
-References: <20200604012452.vh33nufblowuxfed@wittgenstein>
- <202006031845.F587F85A@keescook>
- <20200604125226.eztfrpvvuji7cbb2@wittgenstein>
- <20200605075435.GA3345@ircssh-2.c.rugged-nimbus-611.internal>
- <202006091235.930519F5B@keescook>
- <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
- <202006091346.66B79E07@keescook>
- <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+        Wed, 10 Jun 2020 23:02:41 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id DC5905801A7;
+        Wed, 10 Jun 2020 23:02:39 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 10 Jun 2020 23:02:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        7/BAeetQPYmzk01Iv9MN6j1tODm19PWDi3yWsUSYw0Q=; b=1fVGQEAoT9+6G+dh
+        S0GkW8Ts6d7KVvLa5BuyhZM6BcMH5F1CsKTjcNyJq54mGo9txQKdo/sIM1KUzS7v
+        wvqLpMv9jK+ghTKFx0H//M1BMvNbdWQFO2mvSR6/wnnCEt0Wk+/2uaoygcjQvl7z
+        BxRvKqSm97zxYb+/ngOF9Swr88rg6LImTAN2wZACey1WedEjIezHqIdDKGBwW6DB
+        yjNAGiyuIAEq/Wa+adLxJJQ0j+5DdHB25ytpBNbTLR3X9y1didPm562td4oyNw4P
+        85iUY/QIfypS7i32/HO5kqO6qsHB7QZ2jR0H4/e5z67w2Nr+7sBPg3TyQleF9Enw
+        WRvx7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=7/BAeetQPYmzk01Iv9MN6j1tODm19PWDi3yWsUSYw
+        0Q=; b=OMRvzkVXwowAJFgjIwgXD7I1sGDKbDw+HkoDiwzr4wPCMRvEYzid0N4Jb
+        OMhrFB7IOonsR9aMm8adEhGhrrkMi8A/eOa2kaTTRv1neo7+vM8k8PGpWi2LJ2vB
+        71BsN9Md2WLmhV3LFtXaJ2L5EEoTY4PbJqR5+xbQ2w8CRs+bgPH5R7URG5zxXULr
+        zaL3uWAdjSKu3xv2JC5ckOmJuQnTF+18sBnTj3RJuJMeJ+2Jvex30F6N1UV9F6Uo
+        wSmaqQj/XWvnDyDdITNxj9n+Xi2BD9cr2Jeb2+mBmpociu5olddLY69N67Dg3xTP
+        nzmPo8Szi1wKHlbsdU5MVWBjcY9kA==
+X-ME-Sender: <xms:zp7hXtjPZxr9rZR8Q07fTVVnBnrXTJ9vqSpcC2bBW1hl8yApaAl--A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehjedgieekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    ekkeejieeiieegvedvvdejjeegfeffleekudekgedvudeggeevgfekvdfhvdelfeenucff
+    ohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeehkedrjedrvddvtddrgeejnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhes
+    thhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:zp7hXiCrBbaLeZnXGndqTkKjDIUt73v3wfJrt60zqcdL9rzuI2Y9dg>
+    <xmx:zp7hXtH0CBGYB5cD5buGpqYFf3UIqgqINbeobrXLClm5PLjhf-yZmQ>
+    <xmx:zp7hXiRvU4A7ls9spP4HEPyLx4wP7iMhHS-quiYjgvIXgrGG2sVH4g>
+    <xmx:z57hXlw9sL9dpsONfq4eHzAISjxqQe8T4e9_JfxwJ20vLQQOT_6x8w>
+Received: from mickey.themaw.net (58-7-220-47.dyn.iinet.net.au [58.7.220.47])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 534853060FE7;
+        Wed, 10 Jun 2020 23:02:34 -0400 (EDT)
+Message-ID: <41e9ea55fad97df81393df544343a20c466c7917.camel@themaw.net>
+Subject: Re: [kernfs] ea7c5fc39a: stress-ng.stream.ops_per_sec 11827.2%
+ improvement
+From:   Ian Kent <raven@themaw.net>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org
+Date:   Thu, 11 Jun 2020 11:02:30 +0800
+In-Reply-To: <20200611020657.GI12456@shao2-debian>
+References: <159038562460.276051.5267555021380171295.stgit@mickey.themaw.net>
+         <20200606155216.GU12456@shao2-debian> <20200606181802.GA15638@kroah.com>
+         <5df6bec6f1b332c993474782c08fe8db30bffddc.camel@themaw.net>
+         <20200611020657.GI12456@shao2-debian>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
-> As an aside, all of this junk should be dropped:
-> +	ret = get_user(size, &uaddfd->size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> +	if (ret)
-> +		return ret;
+On Thu, 2020-06-11 at 10:06 +0800, kernel test robot wrote:
+> On Sun, Jun 07, 2020 at 09:13:08AM +0800, Ian Kent wrote:
+> > On Sat, 2020-06-06 at 20:18 +0200, Greg Kroah-Hartman wrote:
+> > > On Sat, Jun 06, 2020 at 11:52:16PM +0800, kernel test robot
+> > > wrote:
+> > > > Greeting,
+> > > > 
+> > > > FYI, we noticed a 11827.2% improvement of stress-
+> > > > ng.stream.ops_per_sec due to commit:
+> > > > 
+> > > > 
+> > > > commit: ea7c5fc39ab005b501e0c7666c29db36321e4f74 ("[PATCH 1/4]
+> > > > kernfs: switch kernfs to use an rwsem")
+> > > > url: 
+> > > > https://github.com/0day-ci/linux/commits/Ian-Kent/kernfs-proposed-locking-and-concurrency-improvement/20200525-134849
+> > > > 
+> > > 
+> > > Seriously?  That's a huge performance increase, and one that
+> > > feels
+> > > really odd.  Why would a stress-ng test be touching sysfs?
+> > 
+> > That is unusually high even if there's a lot of sysfs or kernfs
+> > activity and that patch shouldn't improve VFS path walk contention
+> > very much even if it is present.
+> > 
+> > Maybe I've missed something, and the information provided doesn't
+> > seem to be quite enough to even make a start on it.
+> > 
+> > That's going to need some analysis which, for my part, will need to
+> > wait probably until around rc1 time frame to allow me to get
+> > through
+> > the push down stack (reactive, postponed due to other priorities)
+> > of
+> > jobs I have in order to get back to the fifo queue (longer term
+> > tasks,
+> > of which this is one) list of jobs I need to do as well, ;)
+> > 
+> > Please, kernel test robot, more information about this test and
+> > what
+> > it's doing.
+> > 
 > 
-> and the size member of the seccomp_notif_addfd struct. I brought this up 
-> off-list with Tycho that ioctls have the size of the struct embedded in them. We 
-> should just use that. The ioctl definition is based on this[2]:
-> #define _IOC(dir,type,nr,size) \
-> 	(((dir)  << _IOC_DIRSHIFT) | \
-> 	 ((type) << _IOC_TYPESHIFT) | \
-> 	 ((nr)   << _IOC_NRSHIFT) | \
-> 	 ((size) << _IOC_SIZESHIFT))
+> Hi Ian,
 > 
+> We increased the timeout of stress-ng from 1s to 32s, and there's
+> only
+> 3% improvement of stress-ng.stream.ops_per_sec:
 > 
-> We should just use copy_from_user for now. In the future, we can either 
-> introduce new ioctl names for new structs, or extract the size dynamically from 
-> the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
-
-Yeah, that seems reasonable. Here's the diff for that part:
-
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index 7b6028b399d8..98bf19b4e086 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -118,7 +118,6 @@ struct seccomp_notif_resp {
- 
- /**
-  * struct seccomp_notif_addfd
-- * @size: The size of the seccomp_notif_addfd datastructure
-  * @id: The ID of the seccomp notification
-  * @flags: SECCOMP_ADDFD_FLAG_*
-  * @srcfd: The local fd number
-@@ -126,7 +125,6 @@ struct seccomp_notif_resp {
-  * @newfd_flags: The O_* flags the remote FD should have applied
-  */
- struct seccomp_notif_addfd {
--	__u64 size;
- 	__u64 id;
- 	__u32 flags;
- 	__u32 srcfd;
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 3c913f3b8451..00cbdad6c480 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1297,14 +1297,9 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
- 	struct seccomp_notif_addfd addfd;
- 	struct seccomp_knotif *knotif;
- 	struct seccomp_kaddfd kaddfd;
--	u64 size;
- 	int ret;
- 
--	ret = get_user(size, &uaddfd->size);
--	if (ret)
--		return ret;
--
--	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-+	ret = copy_from_user(&addfd, uaddfd, sizeof(addfd));
- 	if (ret)
- 		return ret;
- 
-
-> 
+> fefcfc968723caf9  ea7c5fc39ab005b501e0c7666c  testcase/testparams/tes
+> tbox
+> ----------------  --------------------------  -----------------------
 > ----
-> +#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-> +						struct seccomp_notif_addfd)
+>          %stddev      change         %stddev
+>              \          |                \  
+>      10686               3%      11037        stress-ng/cpu-cache-
+> performance-1HDD-100%-32s-ucode=0x500002c/lkp-csl-2sp5
+>      10686               3%      11037        GEO-MEAN stress-
+> ng.stream.ops_per_sec
 > 
-> Lastly, what I believe to be a small mistake, it should be SECCOMP_IOW, based on 
-> the documentation in ioctl.h -- "_IOW means userland is writing and kernel is 
-> reading."
+> It seems the result of stress-ng is inaccurate if test time too
+> short, we'll increase the test time to avoid unreasonable results,
+> sorry for the inconvenience.
 
-Oooooh. Yeah; good catch. Uhm, that means SECCOMP_IOCTL_NOTIF_ID_VALID
-is wrong too, yes? Tycho, Christian, how disruptive would this be to
-fix? (Perhaps support both and deprecate the IOR version at some point
-in the future?)
+Haha, I was worried there wasn't anything that could be done to
+work out what was wrong.
 
-Diff for just addfd's change:
+I had tried to reproduce it, and failed since the job file specifies
+a host config that I simply don't have, and I don't get how to alter
+the job to suit, or how to specify a host definition file.
 
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index 7b6028b399d8..98bf19b4e086 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -146,7 +144,7 @@ struct seccomp_notif_addfd {
- 						struct seccomp_notif_resp)
- #define SECCOMP_IOCTL_NOTIF_ID_VALID	SECCOMP_IOR(2, __u64)
- /* On success, the return value is the remote process's added fd number */
--#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOR(3,	\
-+#define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOW(3,	\
- 						struct seccomp_notif_addfd)
- 
- #endif /* _UAPI_LINUX_SECCOMP_H */
+I also couldn't work out what parameters where used in running the
+test so I was about to ask on the lkp list after working through
+this in a VM.
 
--- 
-Kees Cook
+So your timing on looking into this is fortunate, for sure.
+Thank you very much for that.
+
+Now, Greg, there's that locking I changed around kernfs_refresh_inode()
+that I need to fix which I re-considered as a result of this, so that's
+a plus for the testing because it's certainly wrong.
+
+I'll have another look at that and boot test it on a couple of systems
+then post a v2 for you to consider. What I've done might offend your
+sensibilities as it does mine, or perhaps not so much.
+
+Ian
+
