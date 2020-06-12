@@ -2,67 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CC01F7DC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 21:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF6F1F7DEB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 22:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbgFLTtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 15:49:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgFLTtO (ORCPT
+        id S1726397AbgFLUDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 16:03:11 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14320 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbgFLUDH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 15:49:14 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB613C03E96F;
-        Fri, 12 Jun 2020 12:49:13 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1jjpfh-007nEs-Ie; Fri, 12 Jun 2020 19:49:01 +0000
-Date:   Fri, 12 Jun 2020 20:49:01 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Kaitao Cheng <pilgrimtao@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [v2] proc/fd: Remove unnecessary variable initialisations in
- seq_show()
-Message-ID: <20200612194901.GD23230@ZenIV.linux.org.uk>
-References: <20200612160946.21187-1-pilgrimtao@gmail.com>
- <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
- <20200612170033.GF8681@bombadil.infradead.org>
- <80794080-138f-d015-39df-36832e9ab5d4@web.de>
- <20200612170431.GG8681@bombadil.infradead.org>
- <cd8f10b2-ffbd-e10f-4921-82d75d1760f4@web.de>
- <20200612182811.GH8681@bombadil.infradead.org>
- <d3d13ca7-754d-cf52-8f2c-9b82b8cc301f@web.de>
- <20200612184701.GI8681@bombadil.infradead.org>
- <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
+        Fri, 12 Jun 2020 16:03:07 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ee3df4d0000>; Fri, 12 Jun 2020 13:02:21 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 12 Jun 2020 13:03:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 12 Jun 2020 13:03:07 -0700
+Received: from [10.2.62.89] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 12 Jun
+ 2020 20:03:07 +0000
+Subject: Re: [PATCH 1/2] docs: mm/gup: pin_user_pages.rst: add a "case 5"
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20200529234309.484480-1-jhubbard@nvidia.com>
+ <20200529234309.484480-2-jhubbard@nvidia.com>
+ <20200612192426.GK8681@bombadil.infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <d717e596-4ac7-9350-8734-379852c151d2@nvidia.com>
+Date:   Fri, 12 Jun 2020 13:03:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
+In-Reply-To: <20200612192426.GK8681@bombadil.infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1591992141; bh=fN6zAnkb8dRIBQrks+Oz4+vRiYcHSYaYUuw0BewGGEk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Mrwrs2/WN8fnEejZcAvFi1E+ICWIQc+5sT7wEIyruy1+L8O2vF2rU8etd+2m3Rcye
+         /0MGen72j1T2YMz8qzXatSCP76QXdLxycn/9MxrzFz+r0k+oGKr5wqPp43sFbsvvxJ
+         kG6DIrwJ31WVrfLqK6RrOt/FtCmOVWN8cByBMW2OYkwN5lYUueiqAzGuWU0cmQv94Q
+         Uvvv505bPXRH5YPkRvyIKX1owhLczul7/YDNdthyhbC86t0EtjEp8X1e75YFPqEGn9
+         iBucQvKo4smd+Vzmm9MOxV5oQ6ufLiUCUz2qRrkZ0AZiZ94MfBBuULhA48FkMlAfRC
+         xpX4UyB4FOplg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 09:00:14PM +0200, Markus Elfring wrote:
-> >> I suggest to take another look at published software development activities.
-> >
-> > Do you collateral evolution in the twenty?
+On 2020-06-12 12:24, Matthew Wilcox wrote:
+> On Fri, May 29, 2020 at 04:43:08PM -0700, John Hubbard wrote:
+>> +CASE 5: Pinning in order to write to the data within the page
+>> +-------------------------------------------------------------
+>> +Even though neither DMA nor Direct IO is involved, just a simple case of "pin,
+>> +access page's data, unpin" can cause a problem. Case 5 may be considered a
+>> +superset of Case 1, plus Case 2, plus anything that invokes that pattern. In
+>> +other words, if the code is neither Case 1 nor Case 2, it may still require
+>> +FOLL_PIN, for patterns like this:
+>> +
+>> +Correct (uses FOLL_PIN calls):
+>> +    pin_user_pages()
+>> +    access the data within the pages
+>> +    set_page_dirty_lock()
+>> +    unpin_user_pages()
+>> +
+>> +INCORRECT (uses FOLL_GET calls):
+>> +    get_user_pages()
+>> +    access the data within the pages
+>> +    set_page_dirty_lock()
+>> +    put_page()
 > 
-> Evolutions and software refactorings are just happening.
-> Can we continue to clarify the concrete programming items
-> also for a more constructive review of this patch variant?
+> Why does this case need to pin?  Why can't it just do ...
+> 
+> 	get_user_pages()
+> 	lock_page(page);
+> 	... modify the data ...
+> 	set_page_dirty(page);
+> 	unlock_page(page);
+> 
 
-The really shocking part is that apparently this thing is _not_ a bot -
-according to the people who'd been unfortunate enough to meet it, it's
-hosted by wetware and behaviour is the same face-to-face...
+Yes, it could do that. And that would also make a good additional "correct"
+example. Especially for the case of just dealing with a single page,
+lock_page() has the benefit of completely fixing the problem *today*,
+without waiting for the pin_user_pages*() handling improvements to get
+implemented.
 
-I'm still not convinced that it's not a sociology student collecting
-PhD material, though - something around strong programme crowd,
-with their religious avoidance of learning the subject matter, lest
-it taints their "research"...
+And it's also another (probably better) way to fix the vhost.c problem, than
+commit 690623e1b496 ("vhost: convert get_user_pages() --> pin_user_pages()").
+
+I'm inclined to leave vhost.c alone for now, unless someone really prefers
+it to be changed, but to update the Case 5 documentation with your point
+above. Sound about right?
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
