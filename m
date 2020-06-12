@@ -2,86 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1025A1F766E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 12:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55451F76AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 12:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbgFLKCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 06:02:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbgFLKB7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 06:01:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A15FB207D8;
-        Fri, 12 Jun 2020 10:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591956119;
-        bh=xFacIB852PBLC/3e4BDu950ODxUlC/jBtFDBNjC/Xrs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VNYglQsRlly8rbbI+CxH46C6AJYu3iMe73SHsZPQ8KMvuRDNKxK0VZ1KUmCVcwxeY
-         Yu5NeF//kbEJ2XcA0RVpWu8pKF98Xn692Eq0Zu9o/GjPNe/BX1Mrp1WGx03veLMdDR
-         1QN5YWBRBZ8rm9u0JTKknELf8bSXnmj4EgPz7ChU=
-Date:   Fri, 12 Jun 2020 12:01:50 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Tetsuhiro Kohada <kohada.t2@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>,
-        Takahiro Mori <Mori.Takahiro@ab.mitsubishielectric.co.jp>,
-        Hirotaka Motai <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-kernel@vger.kernel.org
+        id S1726278AbgFLKXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 06:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46032 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbgFLKWr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jun 2020 06:22:47 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68098C03E96F;
+        Fri, 12 Jun 2020 03:22:38 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id 10so4094664pfx.8;
+        Fri, 12 Jun 2020 03:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=noIaDqzF0Hy0wDxWXCxde4St7xMeQMqL/FRpa5in1SM=;
+        b=BcVsS0xJ/2gsIyBtE2ca+koozYrlg3aXsx8+9/oVbeUe+martaZOV0yydRA4arQvQv
+         7VSy6fpArXlSUIPcWDctuHiCSBG/jA0XZWoDBf+4n6UvLxPglf6E3KYvtcMx+B9u5gd/
+         HLcvmC9dc1kpfuICLvaO+sP/yoT3G0BR/ZUZDuImXORuk8y15CsV30uLomxeWsrDPlZ0
+         p2xtvdicL41O+yUH7slDvjTsbj0wpHiqGA2LjIFncrpzZp8MczRI7tFj3lvqnH/Bv2sC
+         Z143D0BIV5UiUR0p3refrlLVZpfXmv0Lza77Cy9Cn/3ZA94rcVQOk84vUBEG6F47H+BI
+         Dhvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=noIaDqzF0Hy0wDxWXCxde4St7xMeQMqL/FRpa5in1SM=;
+        b=Mullao7Ou16ruyYlB2gnNT97wMvBymvMp2UFf453GANo6gUJLTPRf/KTNIGkDF0n9c
+         GTQITDbzJheAqEjfGak0MlvC4WPoFSqD0tolywvCG4taqxN5eij8BGG/1xbiFgjr4n+q
+         GcsFw2DB14Qb9FuzqcqN1cSonCi4fNKh65H4Cvn5Nhlogc3MWeqKUKtdDFO6idhv/1qa
+         4qD7ZnKT77cALk1Ct2OECkLmmc6ktouBY0liYBaXC1q9OquNMZUX1xN04CjAKarFV/qh
+         +PVGWnCUI11jADh/wybUAuA/zATvf0TDOZGIY97KM5vUFO/khwjtQwbuclYfBGh6D7Ov
+         Z2Tg==
+X-Gm-Message-State: AOAM533oqmAuxBoK6hhbGd0cUbLZXzB7gPioKcF1Rl9+GiAonFZwuX6d
+        xqEyIdgf55+6CunGXfPCz4U6nflQcJM=
+X-Google-Smtp-Source: ABdhPJxVR2y4IaH8q1HR7ZzBxF6FhLYrHNMJSiOBUxoR+/+FRJYk6nW5RAnpxOXqb6wjl8PLHJbUow==
+X-Received: by 2002:aa7:9252:: with SMTP id 18mr11339511pfp.17.1591957357401;
+        Fri, 12 Jun 2020 03:22:37 -0700 (PDT)
+Received: from ?IPv6:2404:7a87:83e0:f800:40d4:9829:ac15:641f? ([2404:7a87:83e0:f800:40d4:9829:ac15:641f])
+        by smtp.gmail.com with ESMTPSA id f7sm5484198pje.1.2020.06.12.03.22.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jun 2020 03:22:36 -0700 (PDT)
 Subject: Re: [PATCH] exfat: remove EXFAT_SB_DIRTY flag
-Message-ID: <20200612100150.GC3157576@kroah.com>
-References: <4591596d-b33c-7e6d-803b-3375064bcf3f@web.de>
+To:     Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        'Namjae Jeon' <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20200612012902epcas1p4194d6fa3b3f7c46a8becb9bb6ce23d56@epcas1p4.samsung.com>
+ <20200612012834.13503-1-kohada.t2@gmail.com>
+ <219a01d64094$5418d7a0$fc4a86e0$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <b29d254b-212a-bfcb-ab7c-456f481b85c8@gmail.com>
+Date:   Fri, 12 Jun 2020 19:22:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <219a01d64094$5418d7a0$fc4a86e0$@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4591596d-b33c-7e6d-803b-3375064bcf3f@web.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 10:48:20AM +0200, Markus Elfring wrote:
-> > remove EXFAT_SB_DIRTY flag and related codes.
+On 2020/06/12 17:34, Sungjong Seo wrote:
+>> remove EXFAT_SB_DIRTY flag and related codes.
+>>
+>> This flag is set/reset in exfat_put_super()/exfat_sync_fs() to avoid
+>> sync_blockdev().
+>> However ...
+>> - exfat_put_super():
+>> Before calling this, the VFS has already called sync_filesystem(), so sync
+>> is never performed here.
+>> - exfat_sync_fs():
+>> After calling this, the VFS calls sync_blockdev(), so, it is meaningless
+>> to check EXFAT_SB_DIRTY or to bypass sync_blockdev() here.
+>> Not only that, but in some cases can't clear VOL_DIRTY.
+>> ex:
+>> VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
+>> return error without setting EXFAT_SB_DIRTY.
+>> If performe 'sync' in this state, VOL_DIRTY will not be cleared.
+>>
+>> Remove the EXFAT_SB_DIRTY check to ensure synchronization.
+>> And, remove the code related to the flag.
+>>
+>> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+>> ---
+>>   fs/exfat/balloc.c   |  4 ++--
+>>   fs/exfat/dir.c      | 16 ++++++++--------
+>>   fs/exfat/exfat_fs.h |  5 +----
+>>   fs/exfat/fatent.c   |  7 ++-----
+>>   fs/exfat/misc.c     |  3 +--
+>>   fs/exfat/namei.c    | 12 ++++++------
+>>   fs/exfat/super.c    | 11 +++--------
+>>   7 files changed, 23 insertions(+), 35 deletions(-)
+>>
+> [snip]
+>>
+>> @@ -62,11 +59,9 @@ static int exfat_sync_fs(struct super_block *sb, int
+>> wait)
+>>
+>>   	/* If there are some dirty buffers in the bdev inode */
+>>   	mutex_lock(&sbi->s_lock);
+>> -	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state)) {
+>> -		sync_blockdev(sb->s_bdev);
+>> -		if (exfat_set_vol_flags(sb, VOL_CLEAN))
+>> -			err = -EIO;
+>> -	}
 > 
-> I suggest to omit this sentence because a similar information
-> is provided a bit later again for this change description.
+> I looked through most codes related to EXFAT_SB_DIRTY and VOL_DIRTY.
+> And your approach looks good because all of them seem to be protected by
+> s_lock.
 > 
-> 
-> > If performe 'sync' in this state, VOL_DIRTY will not be cleared.
-> 
-> Please improve this wording.
-> 
-> 
-> Would you like to add the tag “Fixes” to the commit message?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n183
-> 
-> Regards,
-> Markus
+> BTW, as you know, sync_filesystem() calls sync_fs() with 'nowait' first,
+> and then calls it again with 'wait' twice. No need to sync with lock twice.
+> If so, isn't it okay to do nothing when wait is 0?
 
-Hi,
+I also think  ‘do nothing when wait is 0’ as you say, but I'm still not sure.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Some other Filesystems do nothing with nowait and just return.
+However, a few Filesystems always perform sync.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+sync_blockdev() waits for completion, so it may be inappropriate to call with  nowait. (But it was called in the original code)
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+I'm still not sure, so I excluded it in this patch.
+Is it okay to include it?
 
-thanks,
 
-greg k-h's patch email bot
+>> +	sync_blockdev(sb->s_bdev);
+>> +	if (exfat_set_vol_flags(sb, VOL_CLEAN))
+>> +		err = -EIO;
+>>   	mutex_unlock(&sbi->s_lock);
+>>   	return err;
+>>   }
+>> --
+>> 2.25.1
+> 
+> 
+
+BR
+---
+Tetsuhiro Kohada <kohada.t2@gmail.com>
+
