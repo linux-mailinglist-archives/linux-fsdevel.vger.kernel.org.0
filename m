@@ -2,144 +2,355 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F4991F7114
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 01:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF451F717C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 02:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbgFKXzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 19:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbgFKXzk (ORCPT
+        id S1726362AbgFLAwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 20:52:22 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59368 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbgFLAwV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 19:55:40 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8360CC08C5C1;
-        Thu, 11 Jun 2020 16:55:39 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id g28so7458694qkl.0;
-        Thu, 11 Jun 2020 16:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=F5v636w1U2r9faKtpDeWzBpWJiuE/GmNaYKlismlA8U=;
-        b=HyPFX0Dbl/lvpUQZOju2xEIns4jas8JFofOmGF46iajecbOcOMCerAYq/cbCcrvLNw
-         K4pktP2zZl5zFZSJjFEWXEp8owkTrkL/Fz0zgce2JkQ8bWJPDhu5h9uhmRP9VSMStnL3
-         QHzB7pNv3q9ppH7YH66NKNUHiROeAjCeR6BzyK5KGPOwaqgk4BMqqD6n5w2cpsqPLz20
-         vENNadkxflli0r1TtyWD89BmvN56PhouGxLPYFfpZG1dgTDFgiw5SuQqpB+UacB7RzYI
-         PWgIY3c/9I7eUUnXZRVj8ZxD4+2cq0xHNsAZ3LX2Ir+jGFZ/Zn0b/AQyzvkUVBp154cw
-         +PaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=F5v636w1U2r9faKtpDeWzBpWJiuE/GmNaYKlismlA8U=;
-        b=s67JQxetp4+QdKLGj3/Xeh84nIz/eXE3b7vqzdb00Rhm/LptfFCMRFgL3ivgNc9vUj
-         AuTbf7H2WJM4j/KBIVcBWjLxF0TTCc10IBtvZZgV+Racv5o2UMbfvCc7r1/RlQgJ9Sa2
-         WKHY91amoBziTV88mVrQJtD6r/LNpqEXAXGNbIEO5KNvpnPyfcMSnHfli1duTd5FdlHf
-         hq1WeF4IaSt1HJwBpA2C3PL+p/u2T9Or/uzm6MpO+ZZe+SYbekSppe84meZ1gMsf+sWi
-         iG4qK/CxQryEsH44SGgdzK7XR0DkJBZ5otI1quQYFcUGqfH7sk4dTJVrMe5eJSI6IsXA
-         kuEw==
-X-Gm-Message-State: AOAM53246v0pWTNQJaT80ABUaPOiM0XSSn8/INm7+M2RJ/guw0v6GwJO
-        gVc2AOAWFwJYf4MOhOOHUvQ=
-X-Google-Smtp-Source: ABdhPJxCOrnRf8nwSUdwmtMf/rNeZwmr77UMJdROHZPgjMCqlypfCoJaxxWEnO5jkLoK/YqVG3jC2g==
-X-Received: by 2002:a37:a7c5:: with SMTP id q188mr492287qke.384.1591919738575;
-        Thu, 11 Jun 2020 16:55:38 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id q32sm3859272qtf.36.2020.06.11.16.55.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jun 2020 16:55:37 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 339CB27C0054;
-        Thu, 11 Jun 2020 19:55:36 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 11 Jun 2020 19:55:36 -0400
-X-ME-Sender: <xms:b8TiXjdZZ4Whi3jp7-wUgmKt6dvRH52VirY_52Zwz9JKIqOWK7s9Hw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeitddgvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepveeijedthfeijeefudehhedvveegudegteehgffgtddvuedtveegtedvvdef
-    gedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphephedvrdduheehrdduud
-    durdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtd
-    eigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehf
-    ihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:b8TiXpOC0t-CX5R13OqK3l6eVl1IwaDANwjDfZGQec9tu6tDhjg-4A>
-    <xmx:b8TiXsgC1j4rj4iHTxZEzCW2qOaYtl3QOCheHGKf3x3969WhFE1lGg>
-    <xmx:b8TiXk9L4kwY0kTu-Ug1YaqZqTU8qZPOOpeqNkmMynhlOogtvHqFig>
-    <xmx:eMTiXjBMfBoZmvXPo3IDNoIf4Skm7XgWifSDGFzNUyoeBpLZxKbGleum4go>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4AB2D3060FE7;
-        Thu, 11 Jun 2020 19:55:27 -0400 (EDT)
-Date:   Fri, 12 Jun 2020 07:55:26 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
-        areber@redhat.com, aubrey.li@linux.intel.com,
-        Andrei Vagin <avagin@gmail.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
+        Thu, 11 Jun 2020 20:52:21 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05C0hfiI067485;
+        Fri, 12 Jun 2020 00:52:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=BqruuEepRpLOTVs/WiJmrvJ1Ufka84VWpP0ssp1Ad/Q=;
+ b=opqINedqgLtul5F8tt9GP0s4R78REWtM5gch6ohTx/FDzUgy0QGZZyvnTrSrZChW9omK
+ 8QJMe7ML97LoJfKC1w8GnZfdMyjwtjfC8DIWFdJLWF9kOR9gf0rWlHFCowIjDk7AIg0Q
+ YQecxHD4PddJ64RqjVDA37mLYE52oY9+hz6NSn2+nwZZzmMGvpAjMiVMv7QmARr+KpI3
+ FxVRug7GQBZh+JOyWpd1nuxPeGsS8QRRPdZARKVDWadwi1B6ytx6HcMfnWDu425V8eVK
+ ICQC+mGVhwmtdHrGOtt5rW9YahDb3tMNN5/1elYKKNYANSlK0HZ6NAgX27PoXi74ZAgM Lg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31g2jrjnme-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Jun 2020 00:52:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05C0lmlk021786;
+        Fri, 12 Jun 2020 00:52:01 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 31kye5070n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jun 2020 00:52:01 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05C0kv2I007040;
+        Fri, 12 Jun 2020 00:46:57 GMT
+Received: from monkey.oracle.com (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 11 Jun 2020 17:46:57 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Walters <walters@verbum.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: possible deadlock in send_sigio
-Message-ID: <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <000000000000760d0705a270ad0c@google.com>
- <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
- <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
- <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
- <20200611142214.GI2531@hirez.programming.kicks-ass.net>
- <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify hugetlbfs files
+Date:   Thu, 11 Jun 2020 17:46:43 -0700
+Message-Id: <20200612004644.255692-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9649 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 adultscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006120003
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9649 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
+ cotscore=-2147483648 priorityscore=1501 spamscore=0 suspectscore=2
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006120002
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Peter and Waiman,
+The routine is_file_hugepages() checks f_op == hugetlbfs_file_operations
+to determine if the file resides in hugetlbfs.  This is problematic when
+the file is on a union or overlay.  Instead, define a new file mode
+FMODE_HUGETLBFS which is set when a hugetlbfs file is opened.  The mode
+can easily be copied to other 'files' derived from the original hugetlbfs
+file.
 
-On Thu, Jun 11, 2020 at 12:09:59PM -0400, Waiman Long wrote:
-> On 6/11/20 10:22 AM, Peter Zijlstra wrote:
-> > On Thu, Jun 11, 2020 at 09:51:29AM -0400, Waiman Long wrote:
-> > 
-> > > There was an old lockdep patch that I think may address the issue, but was
-> > > not merged at the time. I will need to dig it out and see if it can be
-> > > adapted to work in the current kernel. It may take some time.
-> > Boqun was working on that; I can't remember what happened, but ISTR it
-> > was shaping up nice.
-> > 
-> Yes, I am talking about Boqun's patch. However, I think he had moved to
-> another company and so may not be able to actively work on that again.
-> 
+With this change hugetlbfs_file_operations can be static as it should be.
 
-I think you are talking about the rescursive read deadlock detection
-patchset:
+There is also a (duplicate) set of shm file operations used for the routine
+is_file_shm_hugepages().  Instead of setting/using special f_op's, just
+propagate the FMODE_HUGETLBFS mode.  This means is_file_shm_hugepages() and
+the duplicate f_ops can be removed.
 
-	https://lore.kernel.org/lkml/20180411135110.9217-1-boqun.feng@gmail.com/
+While cleaning things up, change the name of is_file_hugepages() to
+is_file_hugetlbfs().  The term hugepages is a bit ambiguous.
 
-Let me have a good and send a new version based on today's master of tip
-tree.
+A subsequent patch will propagate FMODE_HUGETLBFS in overlayfs.
 
-Regards,
-Boqun
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ fs/hugetlbfs/inode.c    |  7 +++++++
+ fs/io_uring.c           |  2 +-
+ include/linux/fs.h      |  3 +++
+ include/linux/hugetlb.h | 10 ++++------
+ include/linux/shm.h     |  5 -----
+ ipc/shm.c               | 34 ++++++++--------------------------
+ mm/memfd.c              |  2 +-
+ mm/mmap.c               |  8 ++++----
+ 8 files changed, 28 insertions(+), 43 deletions(-)
 
-> Cheers,
-> Longman
-> 
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 991c60c7ffe0..5c0c50a88c84 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -324,6 +324,12 @@ static ssize_t hugetlbfs_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return retval;
+ }
+ 
++static int hugetlbfs_open(struct inode *inode, struct file *file)
++{
++	file->f_mode |= FMODE_HUGETLBFS;
++	return 0;
++}
++
+ static int hugetlbfs_write_begin(struct file *file,
+ 			struct address_space *mapping,
+ 			loff_t pos, unsigned len, unsigned flags,
+@@ -1112,6 +1118,7 @@ static void init_once(void *foo)
+ 
+ const struct file_operations hugetlbfs_file_operations = {
+ 	.read_iter		= hugetlbfs_read_iter,
++	.open			= hugetlbfs_open,
+ 	.mmap			= hugetlbfs_file_mmap,
+ 	.fsync			= noop_fsync,
+ 	.get_unmapped_area	= hugetlb_get_unmapped_area,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bb25e3997d41..96e8a4bb610a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7123,7 +7123,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+ 				struct vm_area_struct *vma = vmas[j];
+ 
+ 				if (vma->vm_file &&
+-				    !is_file_hugepages(vma->vm_file)) {
++				    !is_file_hugetlbfs(vma->vm_file)) {
+ 					ret = -EOPNOTSUPP;
+ 					break;
+ 				}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 45cc10cdf6dd..99af9513f9ab 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+ 
++/* File is in hugetlbfs filesystem */
++#define FMODE_HUGETLBFS		((__force fmode_t)0x40000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 43a1cef8f0f1..aa3408775464 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -429,18 +429,16 @@ static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
+ 	return container_of(inode, struct hugetlbfs_inode_info, vfs_inode);
+ }
+ 
+-extern const struct file_operations hugetlbfs_file_operations;
+ extern const struct vm_operations_struct hugetlb_vm_ops;
+ struct file *hugetlb_file_setup(const char *name, size_t size, vm_flags_t acct,
+ 				struct user_struct **user, int creat_flags,
+ 				int page_size_log);
+ 
+-static inline bool is_file_hugepages(struct file *file)
++static inline bool is_file_hugetlbfs(struct file *file)
+ {
+-	if (file->f_op == &hugetlbfs_file_operations)
++	if (unlikely(file->f_mode & FMODE_HUGETLBFS))
+ 		return true;
+-
+-	return is_file_shm_hugepages(file);
++	return false;
+ }
+ 
+ static inline struct hstate *hstate_inode(struct inode *i)
+@@ -449,7 +447,7 @@ static inline struct hstate *hstate_inode(struct inode *i)
+ }
+ #else /* !CONFIG_HUGETLBFS */
+ 
+-#define is_file_hugepages(file)			false
++#define is_file_hugetlbfs(file)			false
+ static inline struct file *
+ hugetlb_file_setup(const char *name, size_t size, vm_flags_t acctflag,
+ 		struct user_struct **user, int creat_flags,
+diff --git a/include/linux/shm.h b/include/linux/shm.h
+index d8e69aed3d32..1ab62d7b334f 100644
+--- a/include/linux/shm.h
++++ b/include/linux/shm.h
+@@ -16,7 +16,6 @@ struct sysv_shm {
+ 
+ long do_shmat(int shmid, char __user *shmaddr, int shmflg, unsigned long *addr,
+ 	      unsigned long shmlba);
+-bool is_file_shm_hugepages(struct file *file);
+ void exit_shm(struct task_struct *task);
+ #define shm_init_task(task) INIT_LIST_HEAD(&(task)->sysvshm.shm_clist)
+ #else
+@@ -30,10 +29,6 @@ static inline long do_shmat(int shmid, char __user *shmaddr,
+ {
+ 	return -ENOSYS;
+ }
+-static inline bool is_file_shm_hugepages(struct file *file)
+-{
+-	return false;
+-}
+ static inline void exit_shm(struct task_struct *task)
+ {
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 0ba6add05b35..8f119b1d6170 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -285,7 +285,7 @@ static void shm_destroy(struct ipc_namespace *ns, struct shmid_kernel *shp)
+ 	ns->shm_tot -= (shp->shm_segsz + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	shm_rmid(ns, shp);
+ 	shm_unlock(shp);
+-	if (!is_file_hugepages(shm_file))
++	if (!is_file_hugetlbfs(shm_file))
+ 		shmem_lock(shm_file, 0, shp->mlock_user);
+ 	else if (shp->mlock_user)
+ 		user_shm_unlock(i_size_read(file_inode(shm_file)),
+@@ -560,24 +560,6 @@ static const struct file_operations shm_file_operations = {
+ 	.fallocate	= shm_fallocate,
+ };
+ 
+-/*
+- * shm_file_operations_huge is now identical to shm_file_operations,
+- * but we keep it distinct for the sake of is_file_shm_hugepages().
+- */
+-static const struct file_operations shm_file_operations_huge = {
+-	.mmap		= shm_mmap,
+-	.fsync		= shm_fsync,
+-	.release	= shm_release,
+-	.get_unmapped_area	= shm_get_unmapped_area,
+-	.llseek		= noop_llseek,
+-	.fallocate	= shm_fallocate,
+-};
+-
+-bool is_file_shm_hugepages(struct file *file)
+-{
+-	return file->f_op == &shm_file_operations_huge;
+-}
+-
+ static const struct vm_operations_struct shm_vm_ops = {
+ 	.open	= shm_open,	/* callback for a new vm-area open */
+ 	.close	= shm_close,	/* callback for when the vm-area is released */
+@@ -698,7 +680,7 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
+ no_id:
+ 	ipc_update_pid(&shp->shm_cprid, NULL);
+ 	ipc_update_pid(&shp->shm_lprid, NULL);
+-	if (is_file_hugepages(file) && shp->mlock_user)
++	if (is_file_hugetlbfs(file) && shp->mlock_user)
+ 		user_shm_unlock(size, shp->mlock_user);
+ 	fput(file);
+ 	ipc_rcu_putref(&shp->shm_perm, shm_rcu_free);
+@@ -836,7 +818,7 @@ static void shm_add_rss_swap(struct shmid_kernel *shp,
+ 
+ 	inode = file_inode(shp->shm_file);
+ 
+-	if (is_file_hugepages(shp->shm_file)) {
++	if (is_file_hugetlbfs(shp->shm_file)) {
+ 		struct address_space *mapping = inode->i_mapping;
+ 		struct hstate *h = hstate_file(shp->shm_file);
+ 		*rss_add += pages_per_huge_page(h) * mapping->nrpages;
+@@ -1102,7 +1084,7 @@ static int shmctl_do_lock(struct ipc_namespace *ns, int shmid, int cmd)
+ 	}
+ 
+ 	shm_file = shp->shm_file;
+-	if (is_file_hugepages(shm_file))
++	if (is_file_hugetlbfs(shm_file))
+ 		goto out_unlock0;
+ 
+ 	if (cmd == SHM_LOCK) {
+@@ -1523,10 +1505,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
+ 		goto out_nattch;
+ 	}
+ 
+-	file = alloc_file_clone(base, f_flags,
+-			  is_file_hugepages(base) ?
+-				&shm_file_operations_huge :
+-				&shm_file_operations);
++	file = alloc_file_clone(base, f_flags, &shm_file_operations);
+ 	err = PTR_ERR(file);
+ 	if (IS_ERR(file)) {
+ 		kfree(sfd);
+@@ -1534,6 +1513,9 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
+ 		goto out_nattch;
+ 	}
+ 
++	/* copy hugetlbfs mode for is_file_hugetlbfs() */
++	file->f_mode |= (base->f_mode & FMODE_HUGETLBFS);
++
+ 	sfd->id = shp->shm_perm.id;
+ 	sfd->ns = get_ipc_ns(ns);
+ 	sfd->file = base;
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 2647c898990c..e6c16b6bf3f6 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -123,7 +123,7 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+ 		return &SHMEM_I(file_inode(file))->seals;
+ 
+ #ifdef CONFIG_HUGETLBFS
+-	if (is_file_hugepages(file))
++	if (is_file_hugetlbfs(file))
+ 		return &HUGETLBFS_I(file_inode(file))->seals;
+ #endif
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index f609e9ec4a25..703a9680a937 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1538,7 +1538,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 			vm_flags |= VM_NORESERVE;
+ 
+ 		/* hugetlb applies strict overcommit unless MAP_NORESERVE */
+-		if (file && is_file_hugepages(file))
++		if (file && is_file_hugetlbfs(file))
+ 			vm_flags |= VM_NORESERVE;
+ 	}
+ 
+@@ -1562,10 +1562,10 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+ 		file = fget(fd);
+ 		if (!file)
+ 			return -EBADF;
+-		if (is_file_hugepages(file))
++		if (is_file_hugetlbfs(file))
+ 			len = ALIGN(len, huge_page_size(hstate_file(file)));
+ 		retval = -EINVAL;
+-		if (unlikely(flags & MAP_HUGETLB && !is_file_hugepages(file)))
++		if (unlikely(flags & MAP_HUGETLB && !is_file_hugetlbfs(file)))
+ 			goto out_fput;
+ 	} else if (flags & MAP_HUGETLB) {
+ 		struct user_struct *user = NULL;
+@@ -1678,7 +1678,7 @@ static inline int accountable_mapping(struct file *file, vm_flags_t vm_flags)
+ 	 * hugetlb has its own accounting separate from the core VM
+ 	 * VM_HUGETLB may not be set yet so we cannot check for that flag.
+ 	 */
+-	if (file && is_file_hugepages(file))
++	if (file && is_file_hugetlbfs(file))
+ 		return 0;
+ 
+ 	return (vm_flags & (VM_NORESERVE | VM_SHARED | VM_WRITE)) == VM_WRITE;
+-- 
+2.25.4
+
