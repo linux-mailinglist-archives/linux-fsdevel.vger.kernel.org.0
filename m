@@ -2,139 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A551F7A24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 16:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E261F7A7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 17:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgFLOwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 10:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        id S1726479AbgFLPNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 11:13:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgFLOwV (ORCPT
+        with ESMTP id S1726272AbgFLPNa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 10:52:21 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C7DC03E96F;
-        Fri, 12 Jun 2020 07:52:20 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id p20so10464344iop.11;
-        Fri, 12 Jun 2020 07:52:20 -0700 (PDT)
+        Fri, 12 Jun 2020 11:13:30 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F61C03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id j6so340452pgh.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qxIGr9FPyH+Gs91n0/fHkQIhX/ZfGolDhhvbaK9CMlU=;
-        b=qfmIpy0vKvOQEg/Mekd63hToHWPWLlIvidIzy+oN0SOwAisx5FaGV15mzFf4/SG1XD
-         YkkeaiRj7mIZnBq6r3kLIUASIbZeSu8HznRwCFWmNMbbEq6qTLki9uRl/2bA37R0Yd8f
-         x1BT9M8ZDilHh7sgnQfXaJEg50uQ6CSlIqzCStBBrKrEYU6u5T3+lE1PvOVHytWhvX7o
-         HZLneUwAmGVYQZa8vOEeO8p8EQmsPvqSLeipOxZNj/gj9FRuZEccTkNCBQfIZ4WzsD8I
-         H82KAkf9tQpw3z5iVbukpynC6cAX/HddRbOOUP7jADQxGuvEpfAbnlHWDguonIx2hLwd
-         W2Yg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Pno+5kYSHMw8xwXOucwExt5jksL9Xbw8epr6Z7fMvHE=;
+        b=JSjDP2ux5xIsExDkMu+jKwnIWyDo4yP7FcO/2uWZWDhSupr7sF/6Bfpw0z0x2wQ2jD
+         j1ozQAHLCGlCTem8qZTE8r5BEHrMzvoaVFkJpu0QI/WYFW09ANKlCOnUPTxBzpCa6lzT
+         u+IsrxgbSZPWpttOWWycjfaNnRDFQE2NPKRQo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qxIGr9FPyH+Gs91n0/fHkQIhX/ZfGolDhhvbaK9CMlU=;
-        b=ikUfAj0sA6fMDqmhaPJm/AmZIqE8vqFPgE34ezR3W3cIO2AsN1ZpEv2hZxaxBfju8K
-         fnnP44BTwCOke3vEaBY9f9z6Wt7x3xtmPr0I3n7JPHZrx5WnW+jyX53Z6mgAop+WPPfz
-         mhJzX2OrVSUzKLKzu338somYvsBd59qqEgYbS84pxwPw3MEkPQlwxfuTGKE9o53GPn9n
-         z6j5Lw8nq4r0K8wflVGgf8gUHrXKw99aZ3hmJ9NHKXgt9tgiaIDgXA/IfdNfwV39+Cyx
-         o0/Ub1PdTjauCPbmDpMINEoUkxpYBCe6pxBEvsdqBfcYNqbb1743UQ2/Af68hq/CAXhe
-         GvwA==
-X-Gm-Message-State: AOAM532VnJcvg1T+Tm7k5bFU2cGOyBPqV11Q8kRarJl/Ejc7098m7NUM
-        1XG2wNjdTlABm3UUgmongFxjgV4CCxU4JT31jng=
-X-Google-Smtp-Source: ABdhPJwkwYAHKc1eSyBzc7anF6WXW3t6WgRRKZVAv0DvCcQ7TbDLRDreyBbhq8KXqUrYsEfQKddTA6prsuzBI4O8TTA=
-X-Received: by 2002:a05:6602:491:: with SMTP id y17mr14024412iov.72.1591973539142;
- Fri, 12 Jun 2020 07:52:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Pno+5kYSHMw8xwXOucwExt5jksL9Xbw8epr6Z7fMvHE=;
+        b=ljEoYvFTjEIK77A8nrtlehL5Kdlv8NC9WW768JsZwuKod7dNiQyFaZWv/yaEAp+mhV
+         8K6yH8PYikMefOQXdZIw1AnYQ5xczRnu5g1Jpvi42WHzk5Amx6yr06EElWC+j0HtVaEc
+         YGbHGV8ZKW3mgjZGCPK+t153wBQYM1cKJXOHznZeyjntMHukqNgV4Y+Yi3YP+VeR0jfe
+         HHIsMSAThDaf7+b1ki2bpz4ZsBVZXgASWWPWr3JWpibOO8rmySpglwLYY8tXsGJ36tkl
+         x6n25Eg4dRYo4WtDF38G3I1VXJNOVVLnmugs2W2AJ49W4f5ieJygtGpsTiCm3KC/c6hJ
+         snog==
+X-Gm-Message-State: AOAM531yoYCs4KDV6akDbgaoGyhgFXrKOseV8vyXHfb3P9uK1sV5xDV0
+        DZI5FMD+QDT4ytJ5ntBaVK2ySg==
+X-Google-Smtp-Source: ABdhPJyXqtcPGd0aOR35qpAPznOfkgdDl72Ymk+kTDk2BJaQ8wwoEcZmw5DNB85G8nblxzhkxmohAQ==
+X-Received: by 2002:a62:8c15:: with SMTP id m21mr11771587pfd.182.1591974808293;
+        Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y4sm6573117pfr.182.2020.06.12.08.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2020 08:13:27 -0700 (PDT)
+Date:   Fri, 12 Jun 2020 08:13:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Message-ID: <202006120806.E770867EF@keescook>
+References: <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
+ <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
+ <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
+ <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+ <202006111634.8237E6A5C6@keescook>
+ <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
+ <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
-References: <20200612092603.GB3183@techsingularity.net> <CAOQ4uxikbJ19npQFWzGm6xnqXm0W8pV3NOWE0ZxS9p_G2A39Aw@mail.gmail.com>
- <20200612131854.GD3183@techsingularity.net>
-In-Reply-To: <20200612131854.GD3183@techsingularity.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 12 Jun 2020 17:52:08 +0300
-Message-ID: <CAOQ4uxghy5zOT6i=shZfFHsXOgPrd7-4iPkJBDcsHU6bUSFUFg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Do not check if there is a fsnotify watcher on pseudo inodes
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 4:18 PM Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> On Fri, Jun 12, 2020 at 12:52:28PM +0300, Amir Goldstein wrote:
-> > On Fri, Jun 12, 2020 at 12:26 PM Mel Gorman <mgorman@techsingularity.net> wrote:
-> > >
-> > > The kernel uses internal mounts for a number of purposes including pipes.
-> > > On every vfs_write regardless of filesystem, fsnotify_modify() is called
-> > > to notify of any changes which incurs a small amount of overhead in fsnotify
-> > > even when there are no watchers.
-> > >
-> > > A patch is pending that reduces, but does not eliminte, the overhead
-> > > of fsnotify but for the internal mounts, even the small overhead is
-> > > unnecessary. The user API is based on the pathname and a dirfd and proc
-> > > is the only visible path for inodes on an internal mount. Proc does not
-> > > have the same pathname as the internal entry so even if fatrace is used
-> > > on /proc, no events trigger for the /proc/X/fd/ files.
-> > >
-> >
-> > This looks like a good direction and I was going to suggest that as well.
-> > However, I am confused by the use of terminology "internal mount".
-> > The patch does not do anything dealing with "internal mount".
->
-> I was referring to users of kern_mount.
+On Fri, Jun 12, 2020 at 10:46:30AM +0000, Sargun Dhillon wrote:
+> My suggest, written out (no idea if this code actually works), is as follows:
+> 
+> ioctl.h:
+> /* This needs to be added */
+> #define IOCDIR_MASK	(_IOC_DIRMASK << _IOC_DIRSHIFT)
 
-I see. I am not sure if all kern_mount hand out only anonymous inodes,
-but FYI, now there a MNT_NS_INTERNAL that is not SB_KERNMOUNT:
-df820f8de4e4 ovl: make private mounts longterm
+This exists already:
 
->
-> > If alloc_file_pseudo() is only called for filesystems mounted as
-> > internal mounts,
->
-> I believe this is the case and I did not find a counter-example.  The
-> changelog that introduced the helper is not explicit but it was created
-> in the context of converting a number of internal mounts like pipes,
-> anon inodes to a common helper. If I'm wrong, Al will likely point it out.
->
-> > please include this analysis in commit message.
-> > In any case, not every file of internal mount is allocated with
-> > alloc_file_pseudo(),
-> > right?
->
-> Correct. It is not required and there is at least one counter example
-> in arch/ia64/kernel/perfmon.c but I don't think that is particularly
-> important, I don't think anyone is kept awake at night worrying about
-> small performance overhead on Itanium.
->
-> > So maybe it would be better to list all users of alloc_file_pseudo()
-> > and say that they all should be opted out of fsnotify, without mentioning
-> > "internal mount"?
-> >
->
-> The users are DMA buffers, CXL, aio, anon inodes, hugetlbfs, anonymous
-> pipes, shmem and sockets although not all of them necessary end up using
-> a VFS operation that triggers fsnotify.  Either way, I don't think it
-> makes sense (or even possible) to watch any of those with fanotify so
-> setting the flag seems reasonable.
->
+#define _IOC_DIRMASK    ((1 << _IOC_DIRBITS)-1)
 
-I also think this seems reasonable, but the more accurate reason IMO
-is found in the comment for d_alloc_pseudo():
-"allocate a dentry (for lookup-less filesystems)..."
+> 
+> 
+> seccomp.h:
+> 
+> struct struct seccomp_notif_addfd {
+> 	__u64 fd;
+> 	...
+> }
+> 
+> /* or IOW? */
+> #define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOWR(3, struct seccomp_notif_addfd)
+> 
+> seccomp.c:
+> static long seccomp_notify_addfd(struct seccomp_filter *filter,
+> 				 struct seccomp_notif_addfd __user *uaddfd int size)
+> {
+> 	struct seccomp_notif_addfd addfd;
+> 	int ret;
+> 
+> 	if (size < 32)
+> 		return -EINVAL;
+> 	if (size > PAGE_SIZE)
+> 		return -E2BIG;
 
-> I updated the changelog and maybe this is clearer.
+(Tanget: what was the reason for copy_struct_from_user() not including
+the min/max check? I have a memory of Al objecting to having an
+"internal" limit?)
 
-I still find the use of "internal mount" terminology too vague.
-"lookup-less filesystems" would have been more accurate,
-because as you correctly point out, the user API to set a watch
-requires that the marked object is looked up in the filesystem.
+> 
+> 	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> 	if (ret)
+> 		return ret;
+> 
+> 	...
+> }
+> 
+> /* Mask out size */
+> #define SIZE_MASK(cmd)	(~IOCSIZE_MASK & cmd)
+> 
+> /* Mask out direction */
+> #define DIR_MASK(cmd)	(~IOCDIR_MASK & cmd)
+> 
+> static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+> 				 unsigned long arg)
+> {
+> 	struct seccomp_filter *filter = file->private_data;
+> 	void __user *buf = (void __user *)arg;
+> 
+> 	/* Fixed size ioctls. Can be converted later on? */
+> 	switch (cmd) {
+> 	case SECCOMP_IOCTL_NOTIF_RECV:
+> 		return seccomp_notify_recv(filter, buf);
+> 	case SECCOMP_IOCTL_NOTIF_SEND:
+> 		return seccomp_notify_send(filter, buf);
+> 	case SECCOMP_IOCTL_NOTIF_ID_VALID:
+> 		return seccomp_notify_id_valid(filter, buf);
+> 	}
+> 
+> 	/* Probably should make some nicer macros here */
+> 	switch (SIZE_MASK(DIR_MASK(cmd))) {
+> 	case SIZE_MASK(DIR_MASK(SECCOMP_IOCTL_NOTIF_ADDFD)):
 
-There are also some kernel internal users that set watches
-like audit and nfsd, but I think they are also only interested in
-inodes that have a path at the time that the mark is setup.
+Ah yeah, I like this because of what you mention below: it's forward
+compat too. (I'd just use the ioctl masks directly...)
 
-Thanks,
-Amir.
+	switch (cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
+
+> 		return seccomp_notify_addfd(filter, buf, _IOC_SIZE(cmd));
+
+I really like that this ends up having the same construction as a
+standard EA syscall: the size is part of the syscall arguments.
+
+> 	default:
+> 		return -EINVAL;
+> 	}
+> }
+> 
+> --------
+> 
+> What boxes does this tick?
+> * Forwards (and backwards) compatibility
+> * Applies to existing commands
+> * Command can be extended without requiring new ioctl to be defined
+
+(Technically, a new one is always redefined, but it's automatic in that
+the kernel needs to do nothing.)
+
+> * It well accomodates the future where we want to have a kernel
+>   helper copy the structures from userspace
+
+Yeah, this is a good solution.
+
+> The fact that the size of the argument struct, and the ioctl are defined in the 
+> same header gives us the ability to "cheat", and for the argument size to be 
+> included / embedded for free in the command passed to ioctl. In turn, this
+> gives us two benefits. First, it means we don't have to copy from user twice,
+> and can just do it all in one shot since the size is passed with the syscall
+> arguments. Second, it means that the user does not have to do the following:
+> 
+> seccomp_notif_addfd addfd = {};
+> addfd.size = sizeof(struct seccomp_notif_addfd)
+> 
+> Because sizeof(struct seccomp_notif_addfd) is embedded in 
+> SECCOMP_IOCTL_NOTIF_ADDFD based on the same headers they plucked the struct out of.
+
+Cool. I will do more patch reworking! ;)
+
+-- 
+Kees Cook
