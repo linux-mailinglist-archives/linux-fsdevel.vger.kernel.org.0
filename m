@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBF01F7614
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C0AE1F7615
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbgFLJeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 05:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
+        id S1726053AbgFLJe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 05:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbgFLJeW (ORCPT
+        with ESMTP id S1726039AbgFLJeX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 05:34:22 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D1AC08C5C3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:22 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id mb16so9447816ejb.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:21 -0700 (PDT)
+        Fri, 12 Jun 2020 05:34:23 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF84C03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:23 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id w7so5962387edt.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ATp/RTsI7zK8EGtjqOjVBnrsgD4PvuAHbXIa5Nq+0TQ=;
-        b=sAe4xcUDVXdgDacqIpq8zjDMufAyUvIPeTxRDf3ifErFt/r1UXd1ev+MmAcmZ/XVyW
-         NRVxAKWjkiniC7uTwn5cji3M6w00oRy1rQa/8Rz6LDlVWo7R8NjwD8OHYRQMJG0XYtL8
-         B2wScN5M8sL2ncEpkc0lGuSfwlXVpfrstvXhZmPDMq7nyVCo7CEQFyzz4GHyul++c11k
-         Zx8kX7TPKhS4KP5h38ggZyvcGWrRwsmzT5tW+GJrbB/7tov7/5jB4Mi2ta8q8gxAQlfL
-         zG9a4XRQPQOzmXb/ixP64pdCIj5vkpszutMm2TVj2l/5ZBL+FPCAHg649XEk5wHQk/Mq
-         QTZw==
+        bh=VsW8lp7Dft6LsK9pLejDbZ0bzJfNS3UHszpSp8npIxQ=;
+        b=Uk1R8WfiVcIW8bHYTlMMJyv8sZjdzTCQCSXitfIgl7y0k5BSdWxNQSsHTyyKP79y1z
+         1GR0jWfqhu0DidMOoiyqNaamZEZmf4C/3W8VIhu84LcoEckuZ4zdYBl42orbBrOFA0Gk
+         wpO5bzjXKh8p6HiVbPydT53RWJLRPcEZKSk3/zF/iVBcjpOuhK/qKB75wUavyj1WNCs9
+         0HGziTSgttjLX0OPZVQ6r99QEdI/v/69/bE8xbkCoSS2Rm0rqYYtQ7mnr9hlINZ/exvL
+         339c8CIpNh27QHbCcbO1NQ2kf4evWpyg90LsqiW1/NtCiOlzslSZdUeXXSyC0Q1/kzx2
+         SjJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ATp/RTsI7zK8EGtjqOjVBnrsgD4PvuAHbXIa5Nq+0TQ=;
-        b=lNURvQgP9UOAtJCyhJl23N+jZyTdVFeEhOllQYXwaYCHgSrSrbtqUuyAjox+UIT2yQ
-         nIXvhC9aAjgAObIwH0ws7TPCnjuupD1mCQgrLtQYoLq9+lr7SuT5H/NIUIXE9O4vOFyR
-         TDOgZa8boA7H6hDjwZHv8XNBnDkVhQ8JP6NiUwl/YIoh0PUwuSf5xGyPp+EY5kNmREmb
-         cqMlUARCqOEApAx+IeP42r2UfDYS8mrbeA3f57nFiDZWI20k7lItRHMK2QGFH7dEF5iF
-         iFFv8Sg+JdUcAgxpTm8QmLG590Wdz595cW1rdAFDD+d7JCIxkO/I9PyNs7BD7AEQd2Pp
-         5fAw==
-X-Gm-Message-State: AOAM533cwWex/739AEOdmoosiwW1UGi+Hc0742K9WblWig4toQe+dtiE
-        lesmpem/QiUHQRSAz3USEGE=
-X-Google-Smtp-Source: ABdhPJy9D+3+3OMht+nzCzdQFRpqFHtVHJ0qqQ45jbB9RUcKboMZbkuo+/qVmwdSgh3m0mq2eoGf1g==
-X-Received: by 2002:a17:906:d043:: with SMTP id bo3mr11815824ejb.409.1591954460769;
-        Fri, 12 Jun 2020 02:34:20 -0700 (PDT)
+        bh=VsW8lp7Dft6LsK9pLejDbZ0bzJfNS3UHszpSp8npIxQ=;
+        b=kpUPwDiBcnlC8xpaNj0aHDklZEU3UhDAXLfUgRuBXM9n2VrRqN+w7uJd44n3ypQXMY
+         Suh6HqS9NNAmrdthL3L4luMxRpsy7b+JTjjmYxtKeAKbWMW1y8MN/OOPkTP7B/JNUl1t
+         9J/qZ/QOGs9yPUDm9rEWd6zaEiBaV8wPtBzT+wzM88XH+ZVRph9+R/BZXr6xU/RhgHOq
+         97Kbob0g67jTsMkrZJmPUaHEJRPnQHbDC+EBaywDzh2dNgRrL9ICReYStH/gp99xfzYz
+         GurjQ4fFBp52KTclsgGU+CcB8vVP6aJ6kieg7/C77ZRDo6oSsCqHga5U1H9LB7A2Ramx
+         ptwA==
+X-Gm-Message-State: AOAM531ivMIKyi823tpoZSjsaI0cNigQscoAvLauwguN2+089Dzo4E8k
+        EVEZWGsa0TnsvryZ8NfgVBo=
+X-Google-Smtp-Source: ABdhPJwF512FbkZ9Cv+CBDnlUkcD3HVn59WcJB54DKJ+7fWh8wwGDQooYHThBoixHWV0norahSrm6w==
+X-Received: by 2002:a50:cfc4:: with SMTP id i4mr10583068edk.252.1591954461880;
+        Fri, 12 Jun 2020 02:34:21 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.204.95])
-        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.19
+        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2020 02:34:20 -0700 (PDT)
+        Fri, 12 Jun 2020 02:34:21 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 15/20] fanotify: prepare for implicit event flags in mark mask
-Date:   Fri, 12 Jun 2020 12:33:38 +0300
-Message-Id: <20200612093343.5669-16-amir73il@gmail.com>
+Subject: [PATCH 16/20] fanotify: use FAN_EVENT_ON_CHILD as implicit flag on sb/mount/non-dir marks
+Date:   Fri, 12 Jun 2020 12:33:39 +0300
+Message-Id: <20200612093343.5669-17-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200612093343.5669-1-amir73il@gmail.com>
 References: <20200612093343.5669-1-amir73il@gmail.com>
@@ -61,123 +61,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So far, all flags that can be set in an fanotify mark mask can be set
-explicitly by a call to fanotify_mark(2).
+Up to now, fanotify allowed to set the FAN_EVENT_ON_CHILD flag on
+sb/mount marks and non-directory inode mask, but the flag was ignored.
 
-Prepare for defining implicit event flags that cannot be set by user with
-fanotify_mark(2), similar to how inotify/dnotify implicitly set the
-FS_EVENT_ON_CHILD flag.
+Mask out the flag if it is provided by user on sb/mount/non-dir marks
+and define it as an implicit flag that cannot be removed by user.
 
-Implicit event flags cannot be removed by user and mark gets destroyed
-when only implicit event flags remain in the mask.
+This flag is going to be used internally to request for events with
+parent and name info.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 40 ++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 27bbd67270d8..66d663baa4a6 100644
+index 66d663baa4a6..42b8cc51cb3f 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -651,12 +651,13 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- }
+@@ -1045,6 +1045,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+ 	bool ignored = flags & FAN_MARK_IGNORED_MASK;
+ 	unsigned int obj_type, fid_mode;
++	u32 umask = 0;
+ 	int ret;
  
- static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
--					    __u32 mask,
--					    unsigned int flags,
--					    int *destroy)
-+					    __u32 mask, unsigned int flags,
-+					    __u32 umask, int *destroy)
- {
- 	__u32 oldmask = 0;
+ 	pr_debug("%s: fanotify_fd=%d flags=%x dfd=%d pathname=%p mask=%llx\n",
+@@ -1162,6 +1163,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	else
+ 		mnt = path.mnt;
  
-+	/* umask bits cannot be removed by user */
-+	mask &= ~umask;
- 	spin_lock(&fsn_mark->lock);
- 	if (!(flags & FAN_MARK_IGNORED_MASK)) {
- 		oldmask = fsn_mark->mask;
-@@ -664,7 +665,13 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
- 	} else {
- 		fsn_mark->ignored_mask &= ~mask;
- 	}
--	*destroy = !(fsn_mark->mask | fsn_mark->ignored_mask);
-+	/*
-+	 * We need to keep the mark around even if remaining mask cannot
-+	 * result in any events (e.g. mask == FAN_ONDIR) to support incremenal
-+	 * changes to the mask.
-+	 * Destroy mark when only umask bits remain.
-+	 */
-+	*destroy = !((fsn_mark->mask | fsn_mark->ignored_mask) & ~umask);
- 	spin_unlock(&fsn_mark->lock);
- 
- 	return mask & oldmask;
-@@ -672,7 +679,7 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
- 
- static int fanotify_remove_mark(struct fsnotify_group *group,
- 				fsnotify_connp_t *connp, __u32 mask,
--				unsigned int flags)
-+				unsigned int flags, __u32 umask)
- {
- 	struct fsnotify_mark *fsn_mark = NULL;
- 	__u32 removed;
-@@ -686,7 +693,7 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
- 	}
- 
- 	removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags,
--						 &destroy_mark);
-+						 umask, &destroy_mark);
- 	if (removed & fsnotify_conn_mask(fsn_mark->connector))
- 		fsnotify_recalc_mask(fsn_mark->connector);
- 	if (destroy_mark)
-@@ -702,25 +709,26 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
- 
- static int fanotify_remove_vfsmount_mark(struct fsnotify_group *group,
- 					 struct vfsmount *mnt, __u32 mask,
--					 unsigned int flags)
-+					 unsigned int flags, __u32 umask)
- {
- 	return fanotify_remove_mark(group, &real_mount(mnt)->mnt_fsnotify_marks,
--				    mask, flags);
-+				    mask, flags, umask);
- }
- 
- static int fanotify_remove_sb_mark(struct fsnotify_group *group,
--				      struct super_block *sb, __u32 mask,
--				      unsigned int flags)
-+				   struct super_block *sb, __u32 mask,
-+				   unsigned int flags, __u32 umask)
- {
--	return fanotify_remove_mark(group, &sb->s_fsnotify_marks, mask, flags);
-+	return fanotify_remove_mark(group, &sb->s_fsnotify_marks, mask,
-+				    flags, umask);
- }
- 
- static int fanotify_remove_inode_mark(struct fsnotify_group *group,
- 				      struct inode *inode, __u32 mask,
--				      unsigned int flags)
-+				      unsigned int flags, __u32 umask)
- {
- 	return fanotify_remove_mark(group, &inode->i_fsnotify_marks, mask,
--				    flags);
-+				    flags, umask);
- }
- 
- static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
-@@ -1170,13 +1178,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
++	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
++	if (mnt || !S_ISDIR(inode->i_mode)) {
++		mask &= ~FAN_EVENT_ON_CHILD;
++		umask = FAN_EVENT_ON_CHILD;
++	}
++
+ 	/* create/update an inode mark */
+ 	switch (flags & (FAN_MARK_ADD | FAN_MARK_REMOVE)) {
+ 	case FAN_MARK_ADD:
+@@ -1178,13 +1185,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
  	case FAN_MARK_REMOVE:
  		if (mark_type == FAN_MARK_MOUNT)
  			ret = fanotify_remove_vfsmount_mark(group, mnt, mask,
--							    flags);
-+							    flags, 0);
+-							    flags, 0);
++							    flags, umask);
  		else if (mark_type == FAN_MARK_FILESYSTEM)
  			ret = fanotify_remove_sb_mark(group, mnt->mnt_sb, mask,
--						      flags);
-+						      flags, 0);
+-						      flags, 0);
++						      flags, umask);
  		else
  			ret = fanotify_remove_inode_mark(group, inode, mask,
--							 flags);
-+							 flags, 0);
+-							 flags, 0);
++							 flags, umask);
  		break;
  	default:
  		ret = -EINVAL;
