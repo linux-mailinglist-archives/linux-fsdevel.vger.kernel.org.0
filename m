@@ -2,14 +2,14 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F14DE1F7C0A
+	by mail.lfdr.de (Postfix) with ESMTP id 1923F1F7C08
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 19:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbgFLREG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1726553AbgFLREG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 12 Jun 2020 13:04:06 -0400
-Received: from mout.web.de ([212.227.17.12]:45997 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:53161 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbgFLRED (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726531AbgFLRED (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 12 Jun 2020 13:04:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
         s=dbaedf251592; t=1591981431;
@@ -19,8 +19,8 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
          FtboUu/vN9Ptg4rX8dn2XhGW3DRs44hK7wDIla1jDJfCEoeazFpnBDWgkF8eZpZl/3
          m34Ekqxy+oTj9P//Wjpy3YlmZOtldQ1zFuJqFOsg=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.95.40]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MYNrh-1jNX6M0Cob-00VCW4; Fri, 12
+Received: from [192.168.1.2] ([93.131.95.40]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIya8-1jTvAb0cuY-00KO5J; Fri, 12
  Jun 2020 19:03:51 +0200
 Subject: Re: [PATCH v2] proc/fd: Remove unnecessary variable initialisations
  in seq_show()
@@ -78,7 +78,7 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <98892099-4319-d442-5c6f-9f498d55e2c5@web.de>
+Message-ID: <80794080-138f-d015-39df-36832e9ab5d4@web.de>
 Date:   Fri, 12 Jun 2020 19:03:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.9.0
@@ -87,30 +87,30 @@ In-Reply-To: <20200612170033.GF8681@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9sFaHUXWouaJW1+LYeqwBmbvgak1ESoDaQM3tkYgPLf+p9oxaM+
- usBuy1WdMMLBoCyUCN4wKjEMizqTXeHF2AychDAr6lbQIjUaoE02hvsLqHWZJk8X2T3uJ91
- XpfHTRM9fBgi56tyauJ9DtRxVYbZFtPsOEaSu/2J/nwFa4mDAmAJzlSmP701HCp0WAmjyok
- umdWcKZY3vMr6wfwF34IQ==
+X-Provags-ID: V03:K1:FCSzmPXvf2NP54FkrjfIIyRWoschM7Gc1pUP1XCU0xxdOIgMUV6
+ nvR9G0wP7Z8qKntwDt2xN1RnMaorSSd2Lb5qmFi6di1CJtO3244U6/Cg1nIcUHUW+UDMue/
+ KWf88ApBohFDj8XCdBqYu/28dZblqCJg21zEzoWbvTfvas9Q3iBLPQwmuGZ0FrqrkBnac2D
+ 9j9lVdaDSzvmbsoE/rFmg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LuMuYuLr1/E=:+DxN5yWpLCcgZXKyA4GLHq
- Y0QHcenj0EbqMHmNgMvZi7dQ4E7S14yBJl7zLLkN9fp406I8njImDp1CM6d9Rn2CVNVir9Rg7
- +/jiqs/gb20yrGEAnSWK2ivONyTKSFjZ+DoLIp6HVM8zJFQKkA5CcHIHp7S3CKIBcp5MQwCoi
- bBJvnGmuJVRg7kP534NvkkPBzg+sy7yjCYwKhLAFF1SzCJ/FIKjMceAy+zhjj1adpRQh7glAC
- e5keSIj0p3azZ7+l4SnQh1NBamYAQPu1U5w0YvUsrxDmgVwy94KZ69H2CPPE4E2wCTHV6mNuT
- wSLQTfbWSofw3NzGwH5ojHjSva4H9BW0oj/AUkQIHNiu8U4my99aFoVtCc6tONujDti1V5NVu
- kL85eoxv7z5cefWCnLffzn54shzNgijZoVbi+Fs1HRiDILL6TAgt1IeevWXudaXCLEziOgVsW
- yi5fQG907BUywH1QRQg3ltmKtMKb/yn/KMnTfWOMk5DQLrRQfAHH5OvW0JTfC5kszv4sQmZpM
- nghVOh/y5pTnwM71dVwMNMCsPoutwzNS+p67Uc/0G4iz1mSLG5bKhAnyuq0QjbFeKtsAPmrfY
- PEerE/t7jaSjjL3X43OjdToAIg4vLcuEo7j1xm1fPMq4j3UJKO0pVClvxOKLB1/waLBmyaiQz
- I//qylMEEt7vGZ8wxLj/mMN4mSNQ6nBC7rUd0Xbnio6l1klXdbb9ScBFcnNw+5V2rMy9X+WMn
- WKbZH8y0hwqFLwuR7shRXz48bcoIBLRIYPCqDs14BLCP/ELJr/WeFeDa1SisdF0QukO1/7E2R
- 6XGxLibjtiYBK4/GzydPlzXU77sDtISB9EuuxOPljv7orOqiH1JIFunCs5W/IN+75mTULoKQi
- TLh/tdGXkc6ndxI4ddS3BkQIy4Fd5Rw3fFozBadFhSyLNByF3z3B3duqL7/f5tIR5L/Rk3t0V
- U3qNmARq4r1j2N29aon2DQKzLbMxea0YE4EqHJSxJtHlznBWSgK2ZGpp7sHy7hdbXtsPj78Ri
- CQvDsCCR1JTJRJ8ZFU+w/TQKQl+dLvKb2wA0V2b9cqKGfJNJMoXYSO7KGAUlwk+UFu7O0ZzCo
- asMSuuhee/yPCWfXdtmjhE/4N5gDoMdCRgXZ3CnkMCrmqwMIMBk04AG+D9Ky4o3eAWsM9Nym6
- H9uoBxNa34BuiPPiVat0Somy94CfKvD1R4wivpm2jFIAq38mN4MWHRJ2NqCYHSmaiS+8wR+fM
- 8OARsNIRDOHLS2mIh
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dfTCC8nZwgg=:R8v5BJtf3vaTcVbAgYo9ks
+ UK+BFc0vH2lYZs15qUnkms3jySMLzAPWU910l0MMQdrt/2KD0Ab7us2QEeMM0BocVSvSiR/Sc
+ hJWxY6AJC64fGmos59P3kjJs4p4NNl7+3oO+2lSLLj85xe3zoAVN3MCDSEwhVQVP0pP0HxmfE
+ WfVN6adAbLHF/epzbQOzWAZCBArhNgZTdxIpt+ZOszOIAGBeU6EY9ubxXjjRQyC47ZyqkjjuU
+ 1S6WZ5oGgJNNqptB+nbb246Ku0WM2t+nT/2nv+ELICx5FODtWvnR/6FlBwc7cg6KPqxK5rXr4
+ AEOX7Z7N56hVCMMxbXzTuHUKsUyeGjn8owsVTirDE/CSKSPqmVzbfcOOZvPDLyqw2R9Fpf8Tk
+ Jk4mjQjMAw3GYSN/p9I6ku0/8XfYIOiGbDVSFEe1GF4m1M+ReBpsNkju37TlwS/Wn1R5lX97u
+ E6b2I9wvaLoIsUu01/RzpcfSQYwfDavK3THGE+Z1qekbehf2gVwBDuJJC/Uf8O+i4xYEAG+tA
+ afj3YjZtYv/xuq5f1pX4pouAnWHYJbqSp/f9LnAScBC8hjOUQTbyW37b9ITvqnocj8F9xUCA0
+ urXQGa8x+z99W4Dj91dKK8Czb5W7/isbCh2CdYPcvsHOTlPuM9CliMnau0miiIKwjm5ORiCBn
+ wYJVULc7o8ruq/gmkmG/3aIBJ2Mbb1oK2Ds6UwhTW/ccWRUcKLskeSMI6a1RC0Dq/so1OldYW
+ bNEaI+2+guTit9wWWdzfPpdNDYVBL2D29Sypfzn8UDmATQL+cAB4Zpl3Ph7UZJmkvYzcFDCYH
+ W/iYsdEyv0lqUFnXEdEpV0yJIyFkov8w/BEqP9A7QSmWdrffVRRPEOKNkOkTQWGdSXgw6X+cv
+ E69lLWRJJG6laeyfTtF0d3iftmPw/znZU9Y/eNzcABFHsN2smqMnCrmtZK9PJybbjNgqOFoKe
+ dVkEdK+4bStQHoE2teKX22bA9086MbPi1jBPKV9FiqbyN4kII0MvoyABHtdrW9lhMhwlkH9BD
+ Gh8M6QPLXd0y4vvMgoPCJdTtMFH8f+3V71lru+qBfJPIrKjuTTts9KiT7DIbZn3oLjGW9v4YW
+ +xau7ONHNJRPgNzTQ2UGomzb0Z4zawoYHAd2VYjIqE09auLU97u+VuRGIXmeplfdiR733ak0G
+ yknp7Ik8Hu/Nty8JrRdoSED5r/Jls5ReFHE746D646YN+f9jE12oJa2L2GVdsqg47HG50eCHC
+ dHyiuP/sPfhxGjBZs
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
