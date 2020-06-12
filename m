@@ -2,175 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A641F7556
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 10:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E511F755E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 10:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgFLIew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 04:34:52 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:56509 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbgFLIev (ORCPT
+        id S1726378AbgFLIgJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 04:36:09 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:33512 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726343AbgFLIgJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 04:34:51 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200612083448epoutp03f661f67f02e6f3edce383783809e5b0e~XvuYSGaX41210612106epoutp03-
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 08:34:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200612083448epoutp03f661f67f02e6f3edce383783809e5b0e~XvuYSGaX41210612106epoutp03-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591950888;
-        bh=gAAldD/B9B3N4Tw0s7+MAFW/ThmYfm6H+aM1y5UC4+I=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=J6oeIKdTxKxSk1Lq4insvt7UUvQZGQIzWOc2Cp0Wuj3fxUD4zMlV1dbkyemccxgNT
-         guRsdHl/BuJWLkJ4moDDc4bF6ydV+C1UGzvIND2iOk7h1NbXGJIIVJ65fGqj7rAl+W
-         zvGtlPV4jUb5AY0tvtoS3eoJxaBCJchmd8PWCL7I=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200612083448epcas1p24f83d90677700e9a4702dad87f7bbe53~XvuX86sjL1023310233epcas1p2P;
-        Fri, 12 Jun 2020 08:34:48 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 49jvD71hGqzMqYm0; Fri, 12 Jun
-        2020 08:34:47 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.51.29173.72E33EE5; Fri, 12 Jun 2020 17:34:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200612083446epcas1p1595422de7bf3dc820cd062870ebef384~XvuWcKk6x1836618366epcas1p19;
-        Fri, 12 Jun 2020 08:34:46 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200612083446epsmtrp2f24b60e4b5f796ca6e85201960f3bbac~XvuWbd_2V0401604016epsmtrp2i;
-        Fri, 12 Jun 2020 08:34:46 +0000 (GMT)
-X-AuditID: b6c32a37-9cdff700000071f5-ce-5ee33e275b6b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7B.D0.08303.62E33EE5; Fri, 12 Jun 2020 17:34:46 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200612083446epsmtip2cd48bd17cd3212574f7eb8469b45d78b~XvuWPiA681677716777epsmtip2E;
-        Fri, 12 Jun 2020 08:34:46 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200612012834.13503-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH] exfat: remove EXFAT_SB_DIRTY flag
-Date:   Fri, 12 Jun 2020 17:34:46 +0900
-Message-ID: <219a01d64094$5418d7a0$fc4a86e0$@samsung.com>
+        Fri, 12 Jun 2020 04:36:09 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-254-37IQVLyONZaErv1-cO8eWQ-1; Fri, 12 Jun 2020 09:36:04 +0100
+X-MC-Unique: 37IQVLyONZaErv1-cO8eWQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 12 Jun 2020 09:36:03 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 12 Jun 2020 09:36:03 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>
+CC:     'Sargun Dhillon' <sargun@sargun.me>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Wagner <daniel.wagner@bmw-carit.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        John Fastabend <john.r.fastabend@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Index: AQHWP+BcCi14oegu0U6J73sUpcDiU6jTfHDAgACI+YCAAKH2YA==
+Date:   Fri, 12 Jun 2020 08:36:03 +0000
+Message-ID: <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
+References: <202006091235.930519F5B@keescook>
+ <20200609200346.3fthqgfyw3bxat6l@wittgenstein>
+ <202006091346.66B79E07@keescook>
+ <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
+ <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
+ <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
+ <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+ <202006111634.8237E6A5C6@keescook>
+In-Reply-To: <202006111634.8237E6A5C6@keescook>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQJnvEdqdI23glRQ63sAxRdAmHabxwH6sMC1p6HGlLA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmga663eM4g2mN7BY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
-        Hp83yQWwReXYZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
-        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMDQo0CtOzC0uzUvXS87PtTI0
-        MDAyBapMyMmYtcOyYKdAxZ0+5QbGVt4uRk4OCQETicNP2hm7GLk4hAR2MEpM2HqUHcL5xCgx
-        e85GqMxnRomJM16ywbR82LiaFSKxi1Fi2ds2NgjnJaPEyyePmUGq2AR0JZ7c+AlmiwjoSZw8
-        eR2sm1mgkUnixMtsEJtTwFJi6oLNLCC2sICZxNKuvWA2i4CqRPvF02A2L1DN86mnmCBsQYmT
-        M5+wQMyRl9j+dg4zxEUKErs/HWWF2GUlsej0I0aIGhGJ2Z1tzCDHSQjM5JBYsfY6I0SDi8S7
-        29tYIWxhiVfHt7BD2FISn9/thXqzXmL3qlMsEM0NjBJHHi1kgUgYS8xvWQg0lQNog6bE+l36
-        EGFFiZ2/50It5pN497WHFaREQoBXoqNNCKJEReL7h50sMKuu/LjKNIFRaRaS12YheW0Wkhdm
-        ISxbwMiyilEstaA4Nz212LDAGDmyNzGCk6mW+Q7GaW8/6B1iZOJgPMQowcGsJMIrKP4wTog3
-        JbGyKrUoP76oNCe1+BCjKTCwJzJLiSbnA9N5Xkm8oamRsbGxhYmZuZmpsZI4r6/VhTghgfTE
-        ktTs1NSC1CKYPiYOTqkGJvbLR6XX3Jm9Zp8iw/Utx07/zn/a6c0m46q2jm/elLRZLw0evHFP
-        +z9zzpf3s6POMFcf0BZojc0XEa5yXalQ9s0jf9mJGVV3NivtMdnz79Uc/0+v1rTM4fO55BPA
-        Yvs/VvHoPgP/fzs3tbzkkJkcyXBoVdwxkVQWJrllCir1Tr1VmcsEslclzD7bql8kfPfD1zqf
-        w8wrPfu7eqf8uvsoNo//3FsZ3jsOG77x8btNm6t0dv5dxj/KjUvnT/+YP9tfaFX4x2c14ebc
-        toKl501twn9rqz99V7WzN3PFr1Z7SX/1CQyq+puFrxQtOXBtndjSDq/rF3VS+ie2lvYo72NZ
-        +Ieh9uwxtflllivvcXL61CixFGckGmoxFxUnAgC3CbnRLwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJXlfN7nGcweRFShY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
-        Hp83yQWwRXHZpKTmZJalFunbJXBlzNphWbBToOJOn3IDYytvFyMnh4SAicSHjatZuxi5OIQE
-        djBKLHh/AsjhAEpISRzcpwlhCkscPlwMUfKcUWLex5dsIL1sAroST278ZAaxRQT0JE6evM4G
-        UsQs0Mwk0fqlmQkkISTQxSjxapkiiM0pYCkxdcFmFhBbWMBMYmnXXjCbRUBVov3iaTCbF6jm
-        +dRTTBC2oMTJmU9YQI5gBlrQtpERJMwsIC+x/e0cZoj7FSR2fzrKCnGDlcSi04+gakQkZne2
-        MU9gFJ6FZNIshEmzkEyahaRjASPLKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4GjS
-        0trBuGfVB71DjEwcjIcYJTiYlUR4BcUfxgnxpiRWVqUW5ccXleakFh9ilOZgURLn/TprYZyQ
-        QHpiSWp2ampBahFMlomDU6qBKW+jQeD1CUz3kn9KufM9MCyVEf3k1aPULcqWq/jJo2lq2rJu
-        f/fTPYyLZyos/f00/uVKEWE5o4ea0zOf23nfS/nzPzigQu/XUW67ZckfTlh567mcLYlR7Il1
-        +z3povYuTmXf8tNODjNfJ17tZmfbtLfTjnuzgFfWfsOT2h+su/n5f0lIlCyPU+R2Ldyuav11
-        8wNpno0SIop1wlVSi082GOxhkN7Vf9B8Yv6LyBsrFNQPH2hS9mwU1cl6sFt5mkBWbvXSZV++
-        C03IlJr/78pVpZfnv3Jpr/JL/fehef5x+YcSWV6HJtpa//Aqu7BKi9M2/r7GntbqZTm3gx33
-        NT/tPC873cX3X3EL65y35+crsRRnJBpqMRcVJwIAlRYz3xUDAAA=
-X-CMS-MailID: 20200612083446epcas1p1595422de7bf3dc820cd062870ebef384
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200612012902epcas1p4194d6fa3b3f7c46a8becb9bb6ce23d56
-References: <CGME20200612012902epcas1p4194d6fa3b3f7c46a8becb9bb6ce23d56@epcas1p4.samsung.com>
-        <20200612012834.13503-1-kohada.t2@gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> remove EXFAT_SB_DIRTY flag and related codes.
+From: Kees Cook
+> Sent: 12 June 2020 00:50
+> > From: Sargun Dhillon
+> > > Sent: 11 June 2020 12:07
+> > > Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to move fds across
+> processes
+> > >
+> > > On Thu, Jun 11, 2020 at 12:01:14PM +0200, Christian Brauner wrote:
+> > > > On Wed, Jun 10, 2020 at 07:59:55PM -0700, Kees Cook wrote:
+> > > > > On Wed, Jun 10, 2020 at 08:12:38AM +0000, Sargun Dhillon wrote:
+> > > > > > As an aside, all of this junk should be dropped:
+> > > > > > +	ret = get_user(size, &uaddfd->size);
+> > > > > > +	if (ret)
+> > > > > > +		return ret;
+> > > > > > +
+> > > > > > +	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> > > > > > +	if (ret)
+> > > > > > +		return ret;
+> > > > > >
+> > > > > > and the size member of the seccomp_notif_addfd struct. I brought this up
+> > > > > > off-list with Tycho that ioctls have the size of the struct embedded in them. We
+> > > > > > should just use that. The ioctl definition is based on this[2]:
+> > > > > > #define _IOC(dir,type,nr,size) \
+> > > > > > 	(((dir)  << _IOC_DIRSHIFT) | \
+> > > > > > 	 ((type) << _IOC_TYPESHIFT) | \
+> > > > > > 	 ((nr)   << _IOC_NRSHIFT) | \
+> > > > > > 	 ((size) << _IOC_SIZESHIFT))
+> > > > > >
+> > > > > >
+> > > > > > We should just use copy_from_user for now. In the future, we can either
+> > > > > > introduce new ioctl names for new structs, or extract the size dynamically from
+> > > > > > the ioctl (and mask it out on the switch statement in seccomp_notify_ioctl.
+> > > > >
+> > > > > Yeah, that seems reasonable. Here's the diff for that part:
+> > > >
+> > > > Why does it matter that the ioctl() has the size of the struct embedded
+> > > > within? Afaik, the kernel itself doesn't do anything with that size. It
+> > > > merely checks that the size is not pathological and it does so at
+> > > > compile time.
+> > > >
+> > > > #ifdef __CHECKER__
+> > > > #define _IOC_TYPECHECK(t) (sizeof(t))
+> > > > #else
+> > > > /* provoke compile error for invalid uses of size argument */
+> > > > extern unsigned int __invalid_size_argument_for_IOC;
+> > > > #define _IOC_TYPECHECK(t) \
+> > > > 	((sizeof(t) == sizeof(t[1]) && \
+> > > > 	  sizeof(t) < (1 << _IOC_SIZEBITS)) ? \
+> > > > 	  sizeof(t) : __invalid_size_argument_for_IOC)
+> > > > #endif
+> > > >
+> > > > The size itself is not verified at runtime. copy_struct_from_user()
+> > > > still makes sense at least if we're going to allow expanding the struct
+> > > > in the future.
+> > > Right, but if we simply change our headers and extend the struct, it will break
+> > > all existing programs compiled against those headers. In order to avoid that, if
+> > > we intend on extending this struct by appending to it, we need to have a
+> > > backwards compatibility mechanism. Just having copy_struct_from_user isn't
+> > > enough. The data structure either must be fixed size, or we need a way to handle
+> > > multiple ioctl numbers derived from headers with different sized struct arguments
+> > >
+> > > The two approaches I see are:
+> > > 1. use more indirection. This has previous art in drm[1]. That's look
+> > > something like this:
+> > >
+> > > struct seccomp_notif_addfd_ptr {
+> > > 	__u64 size;
+> > > 	__u64 addr;
+> > > }
+> > >
+> > > ... And then it'd be up to us to dereference the addr and copy struct from user.
+> >
+> > Do not go down that route. It isn't worth the pain.
+> >
+> > You should also assume that userspace might have a compile-time check
+> > on the buffer length (I've written one - not hard) and that the kernel
+> > might (in the future - or on a BSD kernel) be doing the user copies
+> > for you.
+> >
+> > Also, if you change the structure you almost certainly need to
+> > change the name of the ioctl cmd as well as its value.
+> > Otherwise a recompiled program will pass the new cmd value (and
+> > hopefully the right sized buffer) but it won't have initialised
+> > the buffer properly.
+> > This is likely to lead to unexpected behaviour.
 > 
-> This flag is set/reset in exfat_put_super()/exfat_sync_fs() to avoid
-> sync_blockdev().
-> However ...
-> - exfat_put_super():
-> Before calling this, the VFS has already called sync_filesystem(), so sync
-> is never performed here.
-> - exfat_sync_fs():
-> After calling this, the VFS calls sync_blockdev(), so, it is meaningless
-> to check EXFAT_SB_DIRTY or to bypass sync_blockdev() here.
-> Not only that, but in some cases can't clear VOL_DIRTY.
-> ex:
-> VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
-> return error without setting EXFAT_SB_DIRTY.
-> If performe 'sync' in this state, VOL_DIRTY will not be cleared.
+> Hmmm.
 > 
-> Remove the EXFAT_SB_DIRTY check to ensure synchronization.
-> And, remove the code related to the flag.
+> So, while initially I thought Sargun's observation about ioctl's fixed
+> struct size was right, I think I've been swayed to Christian's view
+> (which is supported by the long tail of struct size pain we've seen in
+> other APIs).
 > 
-> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
-> ---
->  fs/exfat/balloc.c   |  4 ++--
->  fs/exfat/dir.c      | 16 ++++++++--------
->  fs/exfat/exfat_fs.h |  5 +----
->  fs/exfat/fatent.c   |  7 ++-----
->  fs/exfat/misc.c     |  3 +--
->  fs/exfat/namei.c    | 12 ++++++------
->  fs/exfat/super.c    | 11 +++--------
->  7 files changed, 23 insertions(+), 35 deletions(-)
-> 
-[snip]
-> 
-> @@ -62,11 +59,9 @@ static int exfat_sync_fs(struct super_block *sb, int
-> wait)
-> 
->  	/* If there are some dirty buffers in the bdev inode */
->  	mutex_lock(&sbi->s_lock);
-> -	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state)) {
-> -		sync_blockdev(sb->s_bdev);
-> -		if (exfat_set_vol_flags(sb, VOL_CLEAN))
-> -			err = -EIO;
-> -	}
+> Doing a separate ioctl for each structure version seems like the "old
+> solution" now that we've got EA syscalls. So, I'd like to keep the size
+> and copy_struct_from_user().
 
-I looked through most codes related to EXFAT_SB_DIRTY and VOL_DIRTY.
-And your approach looks good because all of them seem to be protected by
-s_lock.
+If the size is variable then why not get the application to fill
+in the size of the structure it is sending at the time of the ioctl.
 
-BTW, as you know, sync_filesystem() calls sync_fs() with 'nowait' first,
-and then calls it again with 'wait' twice. No need to sync with lock twice.
-If so, isn't it okay to do nothing when wait is 0?
+So you'd have:
+#define xxx_IOCTL_17(param) _IOCW('X', 17, sizeof *(param))
 
-> +	sync_blockdev(sb->s_bdev);
-> +	if (exfat_set_vol_flags(sb, VOL_CLEAN))
-> +		err = -EIO;
->  	mutex_unlock(&sbi->s_lock);
->  	return err;
->  }
-> --
-> 2.25.1
+The application code would then do:
+	ioctl(fd, xxx_IOCTL_17(arg), arg);
 
+The kernel code can either choose to have specific 'case'
+for each size, or mask off the length bits and do the
+length check later.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
