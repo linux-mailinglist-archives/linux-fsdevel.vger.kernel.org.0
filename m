@@ -2,54 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E261F7A7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 17:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 226071F7B27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 17:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgFLPNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 11:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbgFLPNa (ORCPT
+        id S1726275AbgFLPzU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 11:55:20 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:40782 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726108AbgFLPzT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 11:13:30 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F61C03E96F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id j6so340452pgh.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Pno+5kYSHMw8xwXOucwExt5jksL9Xbw8epr6Z7fMvHE=;
-        b=JSjDP2ux5xIsExDkMu+jKwnIWyDo4yP7FcO/2uWZWDhSupr7sF/6Bfpw0z0x2wQ2jD
-         j1ozQAHLCGlCTem8qZTE8r5BEHrMzvoaVFkJpu0QI/WYFW09ANKlCOnUPTxBzpCa6lzT
-         u+IsrxgbSZPWpttOWWycjfaNnRDFQE2NPKRQo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Pno+5kYSHMw8xwXOucwExt5jksL9Xbw8epr6Z7fMvHE=;
-        b=ljEoYvFTjEIK77A8nrtlehL5Kdlv8NC9WW768JsZwuKod7dNiQyFaZWv/yaEAp+mhV
-         8K6yH8PYikMefOQXdZIw1AnYQ5xczRnu5g1Jpvi42WHzk5Amx6yr06EElWC+j0HtVaEc
-         YGbHGV8ZKW3mgjZGCPK+t153wBQYM1cKJXOHznZeyjntMHukqNgV4Y+Yi3YP+VeR0jfe
-         HHIsMSAThDaf7+b1ki2bpz4ZsBVZXgASWWPWr3JWpibOO8rmySpglwLYY8tXsGJ36tkl
-         x6n25Eg4dRYo4WtDF38G3I1VXJNOVVLnmugs2W2AJ49W4f5ieJygtGpsTiCm3KC/c6hJ
-         snog==
-X-Gm-Message-State: AOAM531yoYCs4KDV6akDbgaoGyhgFXrKOseV8vyXHfb3P9uK1sV5xDV0
-        DZI5FMD+QDT4ytJ5ntBaVK2ySg==
-X-Google-Smtp-Source: ABdhPJyXqtcPGd0aOR35qpAPznOfkgdDl72Ymk+kTDk2BJaQ8wwoEcZmw5DNB85G8nblxzhkxmohAQ==
-X-Received: by 2002:a62:8c15:: with SMTP id m21mr11771587pfd.182.1591974808293;
-        Fri, 12 Jun 2020 08:13:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y4sm6573117pfr.182.2020.06.12.08.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2020 08:13:27 -0700 (PDT)
-Date:   Fri, 12 Jun 2020 08:13:25 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+        Fri, 12 Jun 2020 11:55:19 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-256-WF26PnyoMeW0bYbJgCCLOA-1; Fri, 12 Jun 2020 16:55:15 +0100
+X-MC-Unique: WF26PnyoMeW0bYbJgCCLOA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 12 Jun 2020 16:55:15 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 12 Jun 2020 16:55:15 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
         "containers@lists.linux-foundation.org" 
         <containers@lists.linux-foundation.org>,
         Giuseppe Scrivano <gscrivan@redhat.com>,
@@ -63,9 +40,13 @@ Cc:     David Laight <David.Laight@ACULAB.COM>,
         "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
  move fds across processes
-Message-ID: <202006120806.E770867EF@keescook>
+Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Index: AQHWP+BcCi14oegu0U6J73sUpcDiU6jTfHDAgACI+YCAAKH2YIAAcPLvgAAKH6A=
+Date:   Fri, 12 Jun 2020 15:55:14 +0000
+Message-ID: <b598484958d140fc9f523e200490b942@AcuMS.aculab.com>
 References: <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
  <202006092227.D2D0E1F8F@keescook>
  <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
@@ -76,132 +57,66 @@ References: <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
  <202006111634.8237E6A5C6@keescook>
  <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
  <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006120806.E770867EF@keescook>
+In-Reply-To: <202006120806.E770867EF@keescook>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 10:46:30AM +0000, Sargun Dhillon wrote:
-> My suggest, written out (no idea if this code actually works), is as follows:
+From: Kees Cook
+> Sent: 12 June 2020 16:13
+...
+> > 	/* Fixed size ioctls. Can be converted later on? */
+> > 	switch (cmd) {
+> > 	case SECCOMP_IOCTL_NOTIF_RECV:
+> > 		return seccomp_notify_recv(filter, buf);
+> > 	case SECCOMP_IOCTL_NOTIF_SEND:
+> > 		return seccomp_notify_send(filter, buf);
+> > 	case SECCOMP_IOCTL_NOTIF_ID_VALID:
+> > 		return seccomp_notify_id_valid(filter, buf);
+> > 	}
+> >
+> > 	/* Probably should make some nicer macros here */
+> > 	switch (SIZE_MASK(DIR_MASK(cmd))) {
+> > 	case SIZE_MASK(DIR_MASK(SECCOMP_IOCTL_NOTIF_ADDFD)):
 > 
-> ioctl.h:
-> /* This needs to be added */
-> #define IOCDIR_MASK	(_IOC_DIRMASK << _IOC_DIRSHIFT)
+> Ah yeah, I like this because of what you mention below: it's forward
+> compat too. (I'd just use the ioctl masks directly...)
+> 
+> 	switch (cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
 
-This exists already:
+Since you need the same mask on the case labels I think
+I'd define a helper just across the switch statement:
 
-#define _IOC_DIRMASK    ((1 << _IOC_DIRBITS)-1)
+#define M(cmd) ((cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
+	switch (M(cmd)) {
+	case M(SECCOMP_IOCTL_NOTIF_RECV):
+	...
+	}
+#undef M
 
-> 
-> 
-> seccomp.h:
-> 
-> struct struct seccomp_notif_addfd {
-> 	__u64 fd;
-> 	...
-> }
-> 
-> /* or IOW? */
-> #define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOWR(3, struct seccomp_notif_addfd)
-> 
-> seccomp.c:
-> static long seccomp_notify_addfd(struct seccomp_filter *filter,
-> 				 struct seccomp_notif_addfd __user *uaddfd int size)
-> {
-> 	struct seccomp_notif_addfd addfd;
-> 	int ret;
-> 
-> 	if (size < 32)
-> 		return -EINVAL;
-> 	if (size > PAGE_SIZE)
-> 		return -E2BIG;
+It is probably wrong to mask off DIRMASK.
+But you might need to add extra case labels for
+the broken one(s).
 
-(Tanget: what was the reason for copy_struct_from_user() not including
-the min/max check? I have a memory of Al objecting to having an
-"internal" limit?)
+Prior to worries about indirect jumps you could
+get a dense set of case label and faster code.
 
-> 
-> 	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-> 	if (ret)
-> 		return ret;
-> 
-> 	...
-> }
-> 
-> /* Mask out size */
-> #define SIZE_MASK(cmd)	(~IOCSIZE_MASK & cmd)
-> 
-> /* Mask out direction */
-> #define DIR_MASK(cmd)	(~IOCDIR_MASK & cmd)
-> 
-> static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
-> 				 unsigned long arg)
-> {
-> 	struct seccomp_filter *filter = file->private_data;
-> 	void __user *buf = (void __user *)arg;
-> 
-> 	/* Fixed size ioctls. Can be converted later on? */
-> 	switch (cmd) {
-> 	case SECCOMP_IOCTL_NOTIF_RECV:
-> 		return seccomp_notify_recv(filter, buf);
-> 	case SECCOMP_IOCTL_NOTIF_SEND:
-> 		return seccomp_notify_send(filter, buf);
-> 	case SECCOMP_IOCTL_NOTIF_ID_VALID:
-> 		return seccomp_notify_id_valid(filter, buf);
-> 	}
-> 
-> 	/* Probably should make some nicer macros here */
-> 	switch (SIZE_MASK(DIR_MASK(cmd))) {
-> 	case SIZE_MASK(DIR_MASK(SECCOMP_IOCTL_NOTIF_ADDFD)):
+	David
 
-Ah yeah, I like this because of what you mention below: it's forward
-compat too. (I'd just use the ioctl masks directly...)
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-	switch (cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
-
-> 		return seccomp_notify_addfd(filter, buf, _IOC_SIZE(cmd));
-
-I really like that this ends up having the same construction as a
-standard EA syscall: the size is part of the syscall arguments.
-
-> 	default:
-> 		return -EINVAL;
-> 	}
-> }
-> 
-> --------
-> 
-> What boxes does this tick?
-> * Forwards (and backwards) compatibility
-> * Applies to existing commands
-> * Command can be extended without requiring new ioctl to be defined
-
-(Technically, a new one is always redefined, but it's automatic in that
-the kernel needs to do nothing.)
-
-> * It well accomodates the future where we want to have a kernel
->   helper copy the structures from userspace
-
-Yeah, this is a good solution.
-
-> The fact that the size of the argument struct, and the ioctl are defined in the 
-> same header gives us the ability to "cheat", and for the argument size to be 
-> included / embedded for free in the command passed to ioctl. In turn, this
-> gives us two benefits. First, it means we don't have to copy from user twice,
-> and can just do it all in one shot since the size is passed with the syscall
-> arguments. Second, it means that the user does not have to do the following:
-> 
-> seccomp_notif_addfd addfd = {};
-> addfd.size = sizeof(struct seccomp_notif_addfd)
-> 
-> Because sizeof(struct seccomp_notif_addfd) is embedded in 
-> SECCOMP_IOCTL_NOTIF_ADDFD based on the same headers they plucked the struct out of.
-
-Cool. I will do more patch reworking! ;)
-
--- 
-Kees Cook
