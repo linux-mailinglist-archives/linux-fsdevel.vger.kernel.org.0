@@ -2,73 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4C61F7CDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 20:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A2B1F7CDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 20:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgFLS2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 14:28:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgFLS2S (ORCPT
+        id S1726349AbgFLS22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 14:28:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45497 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbgFLS22 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 14:28:18 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74963C03E96F;
-        Fri, 12 Jun 2020 11:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fMK1eYp0u+euxgVOHw3duKdBcD5DBcCm6cJKZJ/S5Ew=; b=K0LoFKfReLadDNKAZKp1+itnoH
-        v8A8dgGBIgan1mqcohgDbHer/ZNOHIwRT7uW5XbU/ERBTKINqAE/pMHlES0Sf+xxWDthJp9FnLFC/
-        ggMyycSwdgbQ3d78716YqH5Ut7Bw+PikAXz7vj9bpYjd7GJY3vOx6lwKoN3TENTuj0mt/ok9L3xrn
-        6ctNZfK+IU96OwH6aCg2kk6gblFozL0R2I9Ri4TUrp3pewmLjG1mP9esGujSEaanv73UjT/zJVqRn
-        QquSt5sNP4Fc+J14oyiTQPa+R+vyfhmAfCebIisd6ZLWzx7dEJ3rJ3xClwOf198NEy6Y0AECywjq5
-        stCWouag==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jjoPU-0007Ua-0T; Fri, 12 Jun 2020 18:28:12 +0000
-Date:   Fri, 12 Jun 2020 11:28:11 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [v2] proc/fd: Remove unnecessary variable initialisations in
- seq_show()
-Message-ID: <20200612182811.GH8681@bombadil.infradead.org>
-References: <20200612160946.21187-1-pilgrimtao@gmail.com>
- <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
- <20200612170033.GF8681@bombadil.infradead.org>
- <80794080-138f-d015-39df-36832e9ab5d4@web.de>
- <20200612170431.GG8681@bombadil.infradead.org>
- <cd8f10b2-ffbd-e10f-4921-82d75d1760f4@web.de>
+        Fri, 12 Jun 2020 14:28:28 -0400
+Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jjoPZ-0006KF-MP; Fri, 12 Jun 2020 18:28:17 +0000
+Date:   Fri, 12 Jun 2020 20:28:16 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>, Tejun Heo <tj@kernel.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Message-ID: <20200612182816.okwylihs6u6wkgxd@wittgenstein>
+References: <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
+ <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
+ <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+ <202006111634.8237E6A5C6@keescook>
+ <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
+ <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006120806.E770867EF@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cd8f10b2-ffbd-e10f-4921-82d75d1760f4@web.de>
+In-Reply-To: <202006120806.E770867EF@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 08:22:43PM +0200, Markus Elfring wrote:
-> >> Would you like to clarify concrete software development ideas?
-> >
-> > Yes.  Learn something deeply, then your opinion will have value.
+On Fri, Jun 12, 2020 at 08:13:25AM -0700, Kees Cook wrote:
+> On Fri, Jun 12, 2020 at 10:46:30AM +0000, Sargun Dhillon wrote:
+> > My suggest, written out (no idea if this code actually works), is as follows:
+> > 
+> > ioctl.h:
+> > /* This needs to be added */
+> > #define IOCDIR_MASK	(_IOC_DIRMASK << _IOC_DIRSHIFT)
 > 
-> The presented suggestions trigger different views by involved contributors.
+> This exists already:
+> 
+> #define _IOC_DIRMASK    ((1 << _IOC_DIRBITS)-1)
+> 
+> > 
+> > 
+> > seccomp.h:
+> > 
+> > struct struct seccomp_notif_addfd {
+> > 	__u64 fd;
+> > 	...
+> > }
+> > 
+> > /* or IOW? */
+> > #define SECCOMP_IOCTL_NOTIF_ADDFD	SECCOMP_IOWR(3, struct seccomp_notif_addfd)
+> > 
+> > seccomp.c:
+> > static long seccomp_notify_addfd(struct seccomp_filter *filter,
+> > 				 struct seccomp_notif_addfd __user *uaddfd int size)
+> > {
+> > 	struct seccomp_notif_addfd addfd;
+> > 	int ret;
+> > 
+> > 	if (size < 32)
+> > 		return -EINVAL;
+> > 	if (size > PAGE_SIZE)
+> > 		return -E2BIG;
+> 
+> (Tanget: what was the reason for copy_struct_from_user() not including
+> the min/max check? I have a memory of Al objecting to having an
+> "internal" limit?)
 
-Most of the views I've heard are "Markus, go away".  Do you not hear these
-views?
+Al didn't want the PAGE_SIZE limit in there because there's nothing
+inherently wrong with copying insane amounts of memory.
 
-> In which directions can the desired clarification evolve?
+(Another tangent. I've asked this on Twitter not too long ago: do we
+have stats how long copy_from_user()/copy_struct_from_user() takes with
+growing struct/memory size? I'd be really interested in this. I have a
+feeling that clone3()'s and - having had a chat with David Howells -
+openat2()'s structs will continue to grow for a while... and I'd really
+like to have some numbers on when copy_struct_from_user() becomes
+costly or how costly it becomes.)
 
-You could try communicating in a way that the rest of us do.  For
-example, instead of saying something weird about "collateral evolution"
-you could say "I think there's a similar bug here".
+> 
+> > 
+> > 	ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
+> > 	if (ret)
+> > 		return ret;
+> > 
+> > 	...
+> > }
+> > 
+> > /* Mask out size */
+> > #define SIZE_MASK(cmd)	(~IOCSIZE_MASK & cmd)
+> > 
+> > /* Mask out direction */
+> > #define DIR_MASK(cmd)	(~IOCDIR_MASK & cmd)
+> > 
+> > static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+> > 				 unsigned long arg)
+> > {
+> > 	struct seccomp_filter *filter = file->private_data;
+> > 	void __user *buf = (void __user *)arg;
+> > 
+> > 	/* Fixed size ioctls. Can be converted later on? */
+> > 	switch (cmd) {
+> > 	case SECCOMP_IOCTL_NOTIF_RECV:
+> > 		return seccomp_notify_recv(filter, buf);
+> > 	case SECCOMP_IOCTL_NOTIF_SEND:
+> > 		return seccomp_notify_send(filter, buf);
+> > 	case SECCOMP_IOCTL_NOTIF_ID_VALID:
+> > 		return seccomp_notify_id_valid(filter, buf);
+> > 	}
+> > 
+> > 	/* Probably should make some nicer macros here */
+> > 	switch (SIZE_MASK(DIR_MASK(cmd))) {
+> > 	case SIZE_MASK(DIR_MASK(SECCOMP_IOCTL_NOTIF_ADDFD)):
+> 
+> Ah yeah, I like this because of what you mention below: it's forward
+> compat too. (I'd just use the ioctl masks directly...)
+> 
+> 	switch (cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
+> 
+> > 		return seccomp_notify_addfd(filter, buf, _IOC_SIZE(cmd));
+> 
+> I really like that this ends up having the same construction as a
+> standard EA syscall: the size is part of the syscall arguments.
 
-> How do you think about further function design alternatives?
+This is basically what I had proposed in my previous mail, right?
 
-Could you repeat that in German?  I don't know what you mean.
+Christian
