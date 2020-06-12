@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6181F760B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0431F760C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgFLJeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 05:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
+        id S1726517AbgFLJeP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 05:34:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgFLJeK (ORCPT
+        with ESMTP id S1726502AbgFLJeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 05:34:10 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCB9C03E96F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:10 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id m21so5928364eds.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:10 -0700 (PDT)
+        Fri, 12 Jun 2020 05:34:12 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE5AC03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:11 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id l12so9398514ejn.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8UVubkuXhicUmFZ2Y1+zmG91pHnTICwuP72MUM8XTwU=;
-        b=YKFGgRjogXAvtdZk9yJSGnicJZOHpjECTR/Z1KMDbubdnftr6Co53eVpXnawx0ABlg
-         WVqyR75r73EG6bJ6tImbO/q+LYQz8QuxEVJHGCuTrY2CJcF0UK1mYRATbYHTstqaXDbY
-         v+svjUSmxsGr4i/MNourOv9hO8rxnQwTa5PofGm2CJ3pXHFaBo/55T90GtD2Xjwu2e2Q
-         amYiJe6nNwiCsYjbXNJMsqU1zX5XevDguDKvWEh4ghv6SH8EvWgVaqO6vnNrSs9PyyEd
-         ONCVSTUQ09pY9NUa8DhDZyUnAaxyUInsIP2lmc+Uk36zNHMlq0x9JeUKS2JEf/uejBHp
-         Y7qA==
+        bh=hP42MA+PQNeh5/lNY5nfswLPCWPrDLJB57T2z7yHDZ4=;
+        b=grqOW68OijtOKZoZH7gq7QP4CPMsB8irYSQuzaDZOiR+6rLyAY01hO6NlzB7daKh+A
+         wfpsdIb97j93dl7OX0jJLeuh7r6bBjNpIJqtqvebovR7FtbiMiORH3RBhfH4BxmpcoX4
+         g3VlZ2LErwiz/56THyM1IL1tmNW+9dy1dViJlV58Bb/w8yPSy47+DfvA6cC13XJqCD8L
+         AwyycYMXu3tfpAScNT3ii09xv2eu9tbc2WYWPpTdcp2R2fi+bsiXMG/3T9E8rAdg/Av2
+         k0BCel4SvfalcIox54hI6HrGu/hR/ZQDDEoOQoQP7YB17L3Q8fD0lZuVQxBHu7HwUbq5
+         Xbkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8UVubkuXhicUmFZ2Y1+zmG91pHnTICwuP72MUM8XTwU=;
-        b=jiXZlZHrT6m/FdTjs58rnAJjUEl2KKLg7gnv2bMdPdbD7lqD584NtlFbBFk1ijrRZm
-         Yc8N3cS3YubzPfeqdwWxWcCgmGRxMQtm6UIKLcaxCN7Tf2XlBXxFBBSDFYbaUqydqyQv
-         8eWvGArYTnh6hfbphFBXx5QVmcEvs+2PBUZ6CSGZ7YbFKwg8QGZ+XnWzeqcaXDTCIO+y
-         vPhZnTGcxCTBJnS3k2l/VseYK63+KfkksFOOD3iKYjrbaFYwi6npdOy+vRfP+/07rFRL
-         XXbtJ0rH7f+UgSXXTlDO4kklKY6zfOIY8ubGPP3IAJps6mVWIZDi7l9eRmvywIH6gHGj
-         E2Gw==
-X-Gm-Message-State: AOAM530MtEg6F2VjY7T+OIa78hJ2Jsz/jrRYGCcv5pZfTn9Vo2bwtP85
-        aNtNfuaHCgWtibDgWuKvkFU=
-X-Google-Smtp-Source: ABdhPJyC1gjMbJx0tsQc+x7QJfUhYOBTRgLCW9GsbKTbTNv17UpycsLl9OZF0aXzCvGNEer7LU/Jng==
-X-Received: by 2002:a50:fe94:: with SMTP id d20mr10415614edt.254.1591954449265;
-        Fri, 12 Jun 2020 02:34:09 -0700 (PDT)
+        bh=hP42MA+PQNeh5/lNY5nfswLPCWPrDLJB57T2z7yHDZ4=;
+        b=IDlkamnpKRUUaM1CRhYC859/XCoQbjqlc/Y2s/ssYv6ElIlVHndp4JfRXob16Lx17D
+         2wD3MIwyEJ9PsmnT9u8m6Ci4xslAJPnVbQOcT8GxGmZORRg2KX/+BAjXD8DogA6+G0CH
+         kPRFSGeoqAK1G+M25amwvwUBTF5+qR8W7sFYVbv0jas/aZtb5YdiBvzahBq8AufAj2Up
+         qcsFy4/ZxK6A/aSQemhBS9XfkpNcp5YBUydL/mAm7a9xFWBMGqLEa3dhOSBRpI/x8r/o
+         KO5D4AJK2rgCK9wDe6SS+qVC3P9RQGmHRmA3R0F6lb23lPZrdW4qKHoYzCeKghs82HSB
+         mQCw==
+X-Gm-Message-State: AOAM530sis/E3nKWf48PEA+qVrxg+x7UFPKaR/UidPhLzdmJ/zIF7f6V
+        xzjFNXTaFgKmtk3XhYtVIeg=
+X-Google-Smtp-Source: ABdhPJw1Tr3r3qkVkPrfCPvN2+f2MY21MhuLJIYALj+rA7MAfiyKWeI+nyvUGx5SHuFkD4PlNYKeYQ==
+X-Received: by 2002:a17:906:481b:: with SMTP id w27mr12031798ejq.27.1591954450596;
+        Fri, 12 Jun 2020 02:34:10 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.204.95])
-        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.08
+        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2020 02:34:08 -0700 (PDT)
+        Fri, 12 Jun 2020 02:34:09 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/20] inotify: do not use objectid when comparing events
-Date:   Fri, 12 Jun 2020 12:33:29 +0300
-Message-Id: <20200612093343.5669-7-amir73il@gmail.com>
+Subject: [PATCH 07/20] fanotify: create overflow event type
+Date:   Fri, 12 Jun 2020 12:33:30 +0300
+Message-Id: <20200612093343.5669-8-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200612093343.5669-1-amir73il@gmail.com>
 References: <20200612093343.5669-1-amir73il@gmail.com>
@@ -61,37 +61,170 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-inotify's event->wd is the object identifier.
-Compare that instead of the common fsnotidy event objectid, so
-we can get rid of the objectid field later.
+The special overflow event is allocated as struct fanotify_path_event,
+but with a null path.
 
+Use a special event type to identify the overflow event, so the helper
+fanotify_has_event_path() will always indicate a non null path.
+
+Allocating the overflow event doesn't need any of the fancy stuff in
+fanotify_alloc_event(), so create a simplified helper for allocating the
+overflow event.
+
+There is also no need to store and report the pid with an overflow event.
+
+Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/inotify/inotify_fsnotify.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify.c      | 27 +++++++++++----------------
+ fs/notify/fanotify/fanotify.h      | 15 +++++++++------
+ fs/notify/fanotify/fanotify_user.c | 21 ++++++++++++++++-----
+ 3 files changed, 36 insertions(+), 27 deletions(-)
 
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index 2ebc89047153..9b481460a2dc 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
- 	if (old->mask & FS_IN_IGNORED)
- 		return false;
- 	if ((old->mask == new->mask) &&
--	    (old_fsn->objectid == new_fsn->objectid) &&
-+	    (old->wd == new->wd) &&
- 	    (old->name_len == new->name_len) &&
- 	    (!old->name_len || !strcmp(old->name, new->name)))
- 		return true;
-@@ -116,7 +116,7 @@ int inotify_handle_event(struct fsnotify_group *group,
- 		mask &= ~IN_ISDIR;
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index d9fc83dd994a..921ff05e1877 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -344,11 +344,11 @@ static struct inode *fanotify_fid_inode(struct inode *to_tell, u32 event_mask,
+ 	return fsnotify_data_inode(data, data_type);
+ }
  
- 	fsn_event = &event->fse;
--	fsnotify_init_event(fsn_event, (unsigned long)inode);
-+	fsnotify_init_event(fsn_event, 0);
- 	event->mask = mask;
- 	event->wd = i_mark->wd;
- 	event->sync_cookie = cookie;
+-struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+-					    struct inode *inode, u32 mask,
+-					    const void *data, int data_type,
+-					    const struct qstr *file_name,
+-					    __kernel_fsid_t *fsid)
++static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
++						struct inode *inode, u32 mask,
++						const void *data, int data_type,
++						const struct qstr *file_name,
++						__kernel_fsid_t *fsid)
+ {
+ 	struct fanotify_event *event = NULL;
+ 	struct fanotify_fid_event *ffe = NULL;
+@@ -426,8 +426,7 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	 * event queue, so event reported on parent is merged with event
+ 	 * reported on child when both directory and child watches exist.
+ 	 */
+-	fsnotify_init_event(&event->fse, (unsigned long)id);
+-	event->mask = mask;
++	fanotify_init_event(event, (unsigned long)id, mask);
+ 	if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
+ 		event->pid = get_pid(task_pid(current));
+ 	else
+@@ -443,15 +442,8 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 		fanotify_encode_fh(fanotify_event_dir_fh(event), id, gfp);
+ 
+ 	if (fanotify_event_has_path(event)) {
+-		struct path *p = fanotify_event_path(event);
+-
+-		if (path) {
+-			*p = *path;
+-			path_get(path);
+-		} else {
+-			p->mnt = NULL;
+-			p->dentry = NULL;
+-		}
++		*fanotify_event_path(event) = *path;
++		path_get(path);
+ 	}
+ out:
+ 	memalloc_unuse_memcg();
+@@ -640,6 +632,9 @@ static void fanotify_free_event(struct fsnotify_event *fsn_event)
+ 	case FANOTIFY_EVENT_TYPE_FID_NAME:
+ 		fanotify_free_name_event(event);
+ 		break;
++	case FANOTIFY_EVENT_TYPE_OVERFLOW:
++		kfree(event);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 	}
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index 8ce7ccfc4b0d..1b2a3bbe6008 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -63,6 +63,7 @@ enum fanotify_event_type {
+ 	FANOTIFY_EVENT_TYPE_FID_NAME, /* variable length */
+ 	FANOTIFY_EVENT_TYPE_PATH,
+ 	FANOTIFY_EVENT_TYPE_PATH_PERM,
++	FANOTIFY_EVENT_TYPE_OVERFLOW, /* struct fanotify_event */
+ };
+ 
+ struct fanotify_event {
+@@ -72,6 +73,14 @@ struct fanotify_event {
+ 	struct pid *pid;
+ };
+ 
++static inline void fanotify_init_event(struct fanotify_event *event,
++				       unsigned long id, u32 mask)
++{
++	fsnotify_init_event(&event->fse, id);
++	event->mask = mask;
++	event->pid = NULL;
++}
++
+ struct fanotify_fid_event {
+ 	struct fanotify_event fae;
+ 	__kernel_fsid_t fsid;
+@@ -202,9 +211,3 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+ 	else
+ 		return NULL;
+ }
+-
+-struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+-					    struct inode *inode, u32 mask,
+-					    const void *data, int data_type,
+-					    const struct qstr *file_name,
+-					    __kernel_fsid_t *fsid);
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 63b5dffdca9e..8f3c70873598 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -831,13 +831,26 @@ static int fanotify_add_inode_mark(struct fsnotify_group *group,
+ 				 FSNOTIFY_OBJ_TYPE_INODE, mask, flags, fsid);
+ }
+ 
++static struct fsnotify_event *fanotify_alloc_overflow_event(void)
++{
++	struct fanotify_event *oevent;
++
++	oevent = kmalloc(sizeof(*oevent), GFP_KERNEL_ACCOUNT);
++	if (!oevent)
++		return NULL;
++
++	fanotify_init_event(oevent, 0, FS_Q_OVERFLOW);
++	oevent->type = FANOTIFY_EVENT_TYPE_OVERFLOW;
++
++	return &oevent->fse;
++}
++
+ /* fanotify syscalls */
+ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ {
+ 	struct fsnotify_group *group;
+ 	int f_flags, fd;
+ 	struct user_struct *user;
+-	struct fanotify_event *oevent;
+ 
+ 	pr_debug("%s: flags=%x event_f_flags=%x\n",
+ 		 __func__, flags, event_f_flags);
+@@ -892,13 +905,11 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	atomic_inc(&user->fanotify_listeners);
+ 	group->memcg = get_mem_cgroup_from_mm(current->mm);
+ 
+-	oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL,
+-				      FSNOTIFY_EVENT_NONE, NULL, NULL);
+-	if (unlikely(!oevent)) {
++	group->overflow_event = fanotify_alloc_overflow_event();
++	if (unlikely(!group->overflow_event)) {
+ 		fd = -ENOMEM;
+ 		goto out_destroy_group;
+ 	}
+-	group->overflow_event = &oevent->fse;
+ 
+ 	if (force_o_largefile())
+ 		event_f_flags |= O_LARGEFILE;
 -- 
 2.17.1
 
