@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 232A11F7611
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC9A1F7612
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbgFLJeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1726030AbgFLJeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 12 Jun 2020 05:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38616 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbgFLJeS (ORCPT
+        with ESMTP id S1725868AbgFLJeU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 05:34:18 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92904C03E96F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:18 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id m21so5928591eds.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:18 -0700 (PDT)
+        Fri, 12 Jun 2020 05:34:20 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD5FCC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:19 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id w7so5962263edt.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GQWhwLvFbjYdU+X3+8BOvGL0FjQrjs9VQW+nzjowkyQ=;
-        b=e37S2qTy+EGuvxawpVOSRf8GRze8RPTK8+6Y6QhDL+jnYGZlVr1beVOGheXVHfih1s
-         16u76vo1CoSDXjaSTOFDrMqCmJejNaiTHm/psd44N7vj2VDDEJWPHXXgvc9roJzhS6Qk
-         ARbSlWWHB4wxyyHxF1V1j5CCUkKQ1/BOK2LFYTIoCYUMqPeejLL1d72oU9vzoWPoMf4t
-         1O6uIU+55E+EsiBOYmR90DRGonlc9sJMXrenxzEA9WoVrsqxxoZCs1QJqoOjj8rxrmm8
-         hKEFrBRVyay8i84adPndtjcwlzXlg84RlMzUMOHM4Tdvltfj2V096gDbUjfg8M/aDbKp
-         bAlA==
+        bh=tapwZE1nkO+GZnn7L+8ianGbMYvnrjU3Yn+WWBMAgW4=;
+        b=VyJVtLPtb7g3dEW8AS8Nzw2Tw27JQHaV+ZUwPZ7c2Yof3ofbU9XWvuSk9kuHeL6lA0
+         Uefx4npC55mAlm5iSh9VVypUxeGTT0wPU77TKc4JHMPLjJ9YzDiYMukmJ/3yuA09tYYk
+         Oa99jNcCvChBF6Vl427GwBfRiNK7iXyCioh9XEireM4vdZzJ8sQSdvtvom+dS3/O/9+a
+         YydHYW/EjWHs+VeC+u8GGnTHOvi+9qGN3oWJgcxS6HCiRYKlP3ZC3a81K0kOgUQYPtBw
+         gPP2JIDvxb0sqj2FHaa+swIhoSXShqRBlu7ame25dXOhBK/cjnKw4hVeIGTf47RffHBw
+         5bdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GQWhwLvFbjYdU+X3+8BOvGL0FjQrjs9VQW+nzjowkyQ=;
-        b=ftmpU7MWDedyU3PN/JikV00tgCZZnkvG2EnB77lRxas6hBYAs2JO8oPNZ5IwmmZn3j
-         yiycpve7uNGq3AwBw0lNrGbugBStlJ72B+hEsDwPKLEqJkzYk+E8nNmlLNK3nib3QDOI
-         DfCTgbyMGp9rXhXuOKg/PJQ8HYKBnNTt1Qh1JDQqNDqY9q8phwCj2/ctnh46Q6jl4z4W
-         o1GCqkURyg5R/j4pvINbn3wP3hMIwnwwXmHHmDC+LoCH+FFQTAOD8ugVDMuvx6idlO6S
-         oNeyptcRm/OUxb++3YFbRFQsi57UMDpRURoZ2ERly2BKdqDlDeZqLJo+QVky3MvHnzgo
-         4V8w==
-X-Gm-Message-State: AOAM531D73Zd8zhge55kx3Frq1EfLkNWJAWow9tBdzpVACMLHBnTeFUt
-        /jYqNAVO/maa/gtZJmTxn2G+m/X7
-X-Google-Smtp-Source: ABdhPJwHAOpa7f5Dbdu6FC6IGreJAGxmIKa4F8QO0m2CqepENfc+MZOWkOOXxRjjMLQGLN1VzgABPw==
-X-Received: by 2002:a50:e881:: with SMTP id f1mr10393530edn.98.1591954457350;
-        Fri, 12 Jun 2020 02:34:17 -0700 (PDT)
+        bh=tapwZE1nkO+GZnn7L+8ianGbMYvnrjU3Yn+WWBMAgW4=;
+        b=bFNZtxIevTw4zsW/cwtlCTSSBI59wN+e+Nn1MLACo2pGyeJx6hWxQnFuIQ+CMUTIbA
+         iqoFz2Uzfxj9rsFMWIWbPvxNHIolVNBZFiRPNpL185zzouOhsbIxoqrbSZYf4AymrUFR
+         pthtb5ffw1OkvQ3b5tNpncSUGQf7xcqVPOYxT4gpmZDk5bvXBRpSZ8gzh1wcK/NCxOeK
+         KFkh+e6N8pH6o7btQvy4QV3UJVrGjOsRsSxji+llVIeYIqTjF9ZLOZpcFlmEP6eFL4VS
+         IKY5pwViHIClygdE69EugpjssZVGxtxCRuNmNnkiXqk6lGPNSYfbSbI8khm0sxMhdE67
+         CHNA==
+X-Gm-Message-State: AOAM530uQGJycpjAe6YAiNAFY78rdAzuzg9W1HMkEy7s63ojg0Z/5cdd
+        /wBcVOrTPGzCky3OrFbkljGQ1D0p
+X-Google-Smtp-Source: ABdhPJwkD4JgBuHzWmPLXjeE4MCDiMrWDnRCRryLU96YQZcO1bE8j3aodSHEwrircX395zUMuS/Hvg==
+X-Received: by 2002:aa7:cc84:: with SMTP id p4mr10443138edt.157.1591954458526;
+        Fri, 12 Jun 2020 02:34:18 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.204.95])
-        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.16
+        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2020 02:34:16 -0700 (PDT)
+        Fri, 12 Jun 2020 02:34:18 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/20] fanotify: distinguish between fid encode error and null fid
-Date:   Fri, 12 Jun 2020 12:33:35 +0300
-Message-Id: <20200612093343.5669-13-amir73il@gmail.com>
+Subject: [PATCH 13/20] fanotify: generalize test for FAN_REPORT_FID
+Date:   Fri, 12 Jun 2020 12:33:36 +0300
+Message-Id: <20200612093343.5669-14-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200612093343.5669-1-amir73il@gmail.com>
 References: <20200612093343.5669-1-amir73il@gmail.com>
@@ -61,66 +61,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In fanotify_encode_fh(), both cases of NULL inode and failure to encode
-ended up with fh type FILEID_INVALID.
-
-Distiguish the case of NULL inode, by setting fh type to FILEID_ROOT.
-This is just a semantic difference at this point.
-
-Remove stale comment and unneeded check from fid event compare helpers.
+As preparation to new flags that report fids, define a bit set
+of flags for a group reporting fids, currently containing the
+only bit FAN_REPORT_FID.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ fs/notify/fanotify/fanotify.c      | 12 +++++++-----
+ fs/notify/fanotify/fanotify_user.c | 12 ++++++------
+ include/linux/fanotify.h           |  6 ++++--
+ 3 files changed, 17 insertions(+), 13 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 63865c5373e5..a982594ebca7 100644
+index a982594ebca7..3a82ddb63196 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -34,10 +34,6 @@ static bool fanotify_fh_equal(struct fanotify_fh *fh1,
- 	if (fh1->type != fh2->type || fh1->len != fh2->len)
- 		return false;
+@@ -207,13 +207,14 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS |
+ 				     FANOTIFY_EVENT_FLAGS;
+ 	const struct path *path = fsnotify_data_path(data, data_type);
++	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+ 	struct fsnotify_mark *mark;
+ 	int type;
  
--	/* Do not merge events if we failed to encode fh */
--	if (fh1->type == FILEID_INVALID)
--		return false;
--
- 	return !fh1->len ||
- 		!memcmp(fanotify_fh_buf(fh1), fanotify_fh_buf(fh2), fh1->len);
- }
-@@ -56,10 +52,7 @@ static bool fanotify_fid_event_equal(struct fanotify_fid_event *ffe1,
- static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
- 				      struct fanotify_name_event *fne2)
- {
--	/*
--	 * Do not merge name events without dir fh.
--	 * FAN_DIR_MODIFY does not encode object fh, so it may be empty.
--	 */
-+	/* Do not merge name events without dir fh */
- 	if (!fne1->dir_fh.len)
- 		return false;
+ 	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
+ 		 __func__, iter_info->report_mask, event_mask, data, data_type);
  
-@@ -290,8 +283,10 @@ static void fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 	void *buf = fh->buf;
- 	int err;
+-	if (!FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	if (!fid_mode) {
+ 		/* Do we have path to open a file descriptor? */
+ 		if (!path)
+ 			return 0;
+@@ -258,13 +259,13 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 	 *
+ 	 * For backward compatibility and consistency, do not report FAN_ONDIR
+ 	 * to user in legacy fanotify mode (reporting fd) and report FAN_ONDIR
+-	 * to user in FAN_REPORT_FID mode for all event types.
++	 * to user in fid mode for all event types.
+ 	 *
+ 	 * We never report FAN_EVENT_ON_CHILD to user, but we do pass it in to
+ 	 * fanotify_alloc_event() when group is reporting fid as indication
+ 	 * that event happened on child.
+ 	 */
+-	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	if (fid_mode) {
+ 		/* Do not report event flags without any event */
+ 		if (!(test_mask & ~FANOTIFY_EVENT_FLAGS))
+ 			return 0;
+@@ -424,6 +425,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT;
+ 	struct inode *id = fanotify_fid_inode(mask, data, data_type, dir);
+ 	const struct path *path = fsnotify_data_path(data, data_type);
++	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
  
-+	fh->type = FILEID_ROOT;
-+	fh->len = 0;
- 	if (!inode)
--		goto out;
-+		return;
+ 	/*
+ 	 * For queues with unlimited length lost events are not expected and
+@@ -448,7 +450,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 		 * Allocate an fanotify_name_event struct and copy the name.
+ 		 */
+ 		event = fanotify_alloc_name_event(id, fsid, file_name, gfp);
+-	} else if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	} else if (fid_mode) {
+ 		event = fanotify_alloc_fid_event(id, fsid, gfp);
+ 	} else {
+ 		event = fanotify_alloc_path_event(path, gfp);
+@@ -556,7 +558,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 			return 0;
+ 	}
  
- 	dwords = 0;
- 	err = -ENOENT;
-@@ -326,7 +321,6 @@ static void fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 			    type, bytes, err);
- 	kfree(ext_buf);
- 	*fanotify_fh_ext_buf_ptr(fh) = NULL;
--out:
- 	/* Report the event without a file identifier on encode error */
- 	fh->type = FILEID_INVALID;
- 	fh->len = 0;
+-	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
+ 		fsid = fanotify_get_fsid(iter_info);
+ 		/* Racing with mark destruction or creation? */
+ 		if (!fsid.val[0] && !fsid.val[1])
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 8f3c70873598..92bb885b98b6 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -100,7 +100,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 	if (fsnotify_notify_queue_is_empty(group))
+ 		goto out;
+ 
+-	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
+ 		event_size += fanotify_event_info_len(
+ 			FANOTIFY_E(fsnotify_peek_first_event(group)));
+ 	}
+@@ -877,7 +877,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		return -EINVAL;
+ 	}
+ 
+-	if ((flags & FAN_REPORT_FID) &&
++	if ((flags & FANOTIFY_FID_BITS) &&
+ 	    (flags & FANOTIFY_CLASS_BITS) != FAN_CLASS_NOTIF)
+ 		return -EINVAL;
+ 
+@@ -1035,7 +1035,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	__kernel_fsid_t __fsid, *fsid = NULL;
+ 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+ 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+-	unsigned int obj_type;
++	unsigned int obj_type, fid_mode;
+ 	int ret;
+ 
+ 	pr_debug("%s: fanotify_fd=%d flags=%x dfd=%d pathname=%p mask=%llx\n",
+@@ -1108,9 +1108,9 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	 * inode events are not supported on a mount mark, because they do not
+ 	 * carry enough information (i.e. path) to be filtered by mount point.
+ 	 */
++	fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+ 	if (mask & FANOTIFY_INODE_EVENTS &&
+-	    (!FAN_GROUP_FLAG(group, FAN_REPORT_FID) ||
+-	     mark_type == FAN_MARK_MOUNT))
++	    (!fid_mode || mark_type == FAN_MARK_MOUNT))
+ 		goto fput_and_out;
+ 
+ 	if (flags & FAN_MARK_FLUSH) {
+@@ -1135,7 +1135,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 			goto path_put_and_out;
+ 	}
+ 
+-	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
++	if (fid_mode) {
+ 		ret = fanotify_test_fid(&path, &__fsid);
+ 		if (ret)
+ 			goto path_put_and_out;
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index b79fa9bb7359..bbbee11d2521 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -18,8 +18,10 @@
+ #define FANOTIFY_CLASS_BITS	(FAN_CLASS_NOTIF | FAN_CLASS_CONTENT | \
+ 				 FAN_CLASS_PRE_CONTENT)
+ 
+-#define FANOTIFY_INIT_FLAGS	(FANOTIFY_CLASS_BITS | \
+-				 FAN_REPORT_TID | FAN_REPORT_FID | \
++#define FANOTIFY_FID_BITS	(FAN_REPORT_FID)
++
++#define FANOTIFY_INIT_FLAGS	(FANOTIFY_CLASS_BITS | FANOTIFY_FID_BITS | \
++				 FAN_REPORT_TID | \
+ 				 FAN_CLOEXEC | FAN_NONBLOCK | \
+ 				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
+ 
 -- 
 2.17.1
 
