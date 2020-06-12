@@ -2,93 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 301C01F75FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 546661F7605
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbgFLJdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 05:33:14 -0400
-Received: from outbound-smtp53.blacknight.com ([46.22.136.237]:50563 "EHLO
-        outbound-smtp53.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726302AbgFLJdN (ORCPT
+        id S1726482AbgFLJeE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 05:34:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgFLJeD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 05:33:13 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jun 2020 05:33:12 EDT
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp53.blacknight.com (Postfix) with ESMTPS id 669DCFADDB
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 10:26:05 +0100 (IST)
-Received: (qmail 12271 invoked from network); 12 Jun 2020 09:26:05 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.5])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 12 Jun 2020 09:26:05 -0000
-Date:   Fri, 12 Jun 2020 10:26:03 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] fs: Do not check if there is a fsnotify watcher on pseudo
- inodes
-Message-ID: <20200612092603.GB3183@techsingularity.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 12 Jun 2020 05:34:03 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6452FC03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:03 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id k11so9418426ejr.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PDi0Ki4x1VLC5+bGSDsRj6E69AKPY0HOF5IWf6+UD1E=;
+        b=BoVoQ28VE0BWJIMo66QDOCDmC/gylIV1XjP5mCpewohM+A7lTGNIzGUSj5UNJBLrCr
+         A0cyhra67Pn+IWIOz60mv5rSqF2vnU3qhSpbflnPsWMBnIBJB7UCe4AtooFXVw/iKAei
+         ZF+0XGf5s0uOzmHyLvFtU7bYfWtXKhuDhqjR5wDDxB5St3HoCasZOYGQ8uTaLXxJyYdx
+         wLMRYVnNsm3GCrSKpSEAaWrBDgf5xwe+UlnQXfdhuYSZbPSnP4TG7S9uV1qkB2pFCvfC
+         aSLQ9Od9jx3wZ4u27YZ6aJKipYuXpJLWUpx7l5V7wq0ZttQWWN6sWPDZm/VSNbR/215c
+         Ti/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PDi0Ki4x1VLC5+bGSDsRj6E69AKPY0HOF5IWf6+UD1E=;
+        b=RsLQRA+5xjjWdMkPb1FaI4OVTaP6wsYzRC67aySCo4RQN6uD7B7+RQEUWcZ5macmbm
+         9T9pg1H/rFLPo0aDS31UWZzXOH1gj7CsB5Z8SrDXORAx+9EFHo3UmgIWZhYVhlmiaILC
+         vgkVQ0gy2/a+xKqFz1n0UvrMkV0JMMjeY8FDthHyPVYRY6MfGso2H5nHHbLKsOCYHWxO
+         yjZTitL11uTYNjAB4mkFpPLcoXMHeNT7U4eQTxEz+Pp6Xy6dT26+sTou8qVewVC2cM2T
+         mOkEjxET5izYuogSiMPNmJn7KmqwjlSEUv2/gZoyBRN9ift5hEbfEgrsx3Ohgm6Ez5vX
+         9xLg==
+X-Gm-Message-State: AOAM530As8kNxxtDc+By6heXbwvL0+SsX4V9LCxjmA5Mq+7zPYB2hIM2
+        0GQvtCefnKRKKRQWVVSzprsJWYMt
+X-Google-Smtp-Source: ABdhPJwjH8SVszX7eMrkIThxEDp5gbUmaCRKFO8vXni913WnM432M5QMftmyb9o7C7c2Cg77z0H//w==
+X-Received: by 2002:a17:906:6453:: with SMTP id l19mr11853778ejn.262.1591954442094;
+        Fri, 12 Jun 2020 02:34:02 -0700 (PDT)
+Received: from localhost.localdomain ([5.102.204.95])
+        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2020 02:34:01 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/20] Prep work for fanotify named events
+Date:   Fri, 12 Jun 2020 12:33:23 +0300
+Message-Id: <20200612093343.5669-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel uses internal mounts for a number of purposes including pipes.
-On every vfs_write regardless of filesystem, fsnotify_modify() is called
-to notify of any changes which incurs a small amount of overhead in fsnotify
-even when there are no watchers.
+Hi Jan,
 
-A patch is pending that reduces, but does not eliminte, the overhead
-of fsnotify but for the internal mounts, even the small overhead is
-unnecessary. The user API is based on the pathname and a dirfd and proc
-is the only visible path for inodes on an internal mount. Proc does not
-have the same pathname as the internal entry so even if fatrace is used
-on /proc, no events trigger for the /proc/X/fd/ files.
+As you know, the fanotify named events series grew quite large due to
+a lot of prep work I needed to do and some minor bugs and optimizations
+I encoutered along the way, including Mel's optimization patch that
+needed massive conclict resolving with my series.
 
-This patch changes alloc_file_pseudo() to set the internal-only
-FMODE_NONOTIFY flag on f_flags so that no check is made for fsnotify
-watchers on internal mounts. When fsnotify is updated, it may be that
-this patch becomes redundant but it is more robust against any future
-changes that may reintroduce overhead for fsnotify on inodes with no
-watchers. The test motivating this was "perf bench sched messaging
---pipe". On a single-socket machine using threads the difference of the
-patch was as follows.
+Most of this series is harmless re-factoring, including some changes
+that were suggested by you in the last posting of fanotify named events.
+There are some minor bug fixes that change behavior, hopefully for
+the better, like the patch to kernfs. But anyway, there should be no
+issue with merging any of those patches independently from the rest of
+the work.
 
-                              5.7.0                  5.7.0
-                            vanilla        nofsnotify-v1r1
-Amean     1       1.3837 (   0.00%)      1.3547 (   2.10%)
-Amean     3       3.7360 (   0.00%)      3.6543 (   2.19%)
-Amean     5       5.8130 (   0.00%)      5.7233 *   1.54%*
-Amean     7       8.1490 (   0.00%)      7.9730 *   2.16%*
-Amean     12     14.6843 (   0.00%)     14.1820 (   3.42%)
-Amean     18     21.8840 (   0.00%)     21.7460 (   0.63%)
-Amean     24     28.8697 (   0.00%)     29.1680 (  -1.03%)
-Amean     30     36.0787 (   0.00%)     35.2640 *   2.26%*
-Amean     32     38.0527 (   0.00%)     38.1223 (  -0.18%)
+Most of this series should be fairly easy to review, with the exception
+of last two patches that change the way we store a variable size event
+struct.
 
-The difference is small but in some cases it's outside the noise so
-while marginal, there is still a small benefit to ignoring fsnotify
-for internal mounts.
+It would be great if you can provide me feedback as early as possible
+about the design choices intoduces herein, such as the "implicit event
+flags" infrastructure that is needed for requesting events on child for
+sb/mount marks.
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- fs/file_table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was hoping that we could get those changes out of the way and into
+linux-next as early as possible after rc1 to get wider testing coverage,
+before we move on to reviewing the new feature.
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 30d55c9a1744..0076ccf67a7d 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -229,7 +229,7 @@ struct file *alloc_file_pseudo(struct inode *inode, struct vfsmount *mnt,
- 		d_set_d_op(path.dentry, &anon_ops);
- 	path.mnt = mntget(mnt);
- 	d_instantiate(path.dentry, inode);
--	file = alloc_file(&path, flags, fops);
-+	file = alloc_file(&path, flags | FMODE_NONOTIFY, fops);
- 	if (IS_ERR(file)) {
- 		ihold(inode);
- 		path_put(&path);
+The full work is available on my github [1] including LTP tests [2]
+and man page [3]. More on these when I post the patches.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/fanotify_name_fid
+[2] https://github.com/amir73il/ltp/commits/fanotify_name_fid
+[3] https://github.com/amir73il/man-pages/commits/fanotify_name_fid
+
+Amir Goldstein (19):
+  fsnotify: fold fsnotify() call into fsnotify_parent()
+  fsnotify: return non const from fsnotify_data_inode()
+  nfsd: use fsnotify_data_inode() to get the unlinked inode
+  kernfs: do not call fsnotify() with name without a parent
+  inotify: do not use objectid when comparing events
+  fanotify: create overflow event type
+  fanotify: break up fanotify_alloc_event()
+  fsnotify: pass dir argument to handle_event() callback
+  fanotify: generalize the handling of extra event flags
+  fanotify: generalize merge logic of events on dir
+  fanotify: distinguish between fid encode error and null fid
+  fanotify: generalize test for FAN_REPORT_FID
+  fanotify: mask out special event flags from ignored mask
+  fanotify: prepare for implicit event flags in mark mask
+  fanotify: use FAN_EVENT_ON_CHILD as implicit flag on sb/mount/non-dir
+    marks
+  fanotify: remove event FAN_DIR_MODIFY
+  fsnotify: add object type "child" to object type iterator
+  fanotify: move event name into fanotify_fh
+  fanotify: no external fh buffer in fanotify_name_event
+
+Mel Gorman (1):
+  fsnotify: Rearrange fast path to minimise overhead when there is no
+    watcher
+
+ fs/kernfs/file.c                     |   2 +-
+ fs/nfsd/filecache.c                  |   8 +-
+ fs/notify/dnotify/dnotify.c          |   8 +-
+ fs/notify/fanotify/fanotify.c        | 319 +++++++++++++++------------
+ fs/notify/fanotify/fanotify.h        |  81 +++++--
+ fs/notify/fanotify/fanotify_user.c   | 108 +++++----
+ fs/notify/fsnotify.c                 |  82 ++++---
+ fs/notify/inotify/inotify.h          |   6 +-
+ fs/notify/inotify/inotify_fsnotify.c |  11 +-
+ fs/notify/inotify/inotify_user.c     |   4 +-
+ include/linux/fanotify.h             |   6 +-
+ include/linux/fsnotify.h             |  44 ++--
+ include/linux/fsnotify_backend.h     |  35 ++-
+ include/uapi/linux/fanotify.h        |   1 -
+ kernel/audit_fsnotify.c              |  10 +-
+ kernel/audit_tree.c                  |   6 +-
+ kernel/audit_watch.c                 |   6 +-
+ 17 files changed, 438 insertions(+), 299 deletions(-)
+
+-- 
+2.17.1
+
