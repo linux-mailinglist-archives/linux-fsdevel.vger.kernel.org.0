@@ -2,280 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 493FA1F7441
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 09:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E92941F74C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 09:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbgFLHBZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 03:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
+        id S1726387AbgFLHpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 03:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgFLHBX (ORCPT
+        with ESMTP id S1726292AbgFLHpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 03:01:23 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2B9C03E96F;
-        Fri, 12 Jun 2020 00:01:22 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id e16so6448625qtg.0;
-        Fri, 12 Jun 2020 00:01:22 -0700 (PDT)
+        Fri, 12 Jun 2020 03:45:50 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14156C03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 00:45:50 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id i27so9946780ljb.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 00:45:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mN4fOTndqYkvKBuPQlQqFgEQGw71rQkWNJnMF6fOW8I=;
-        b=iNZttPvcGNIW4njiUlnMqAdNV8ziBhu5BVVHairzMp2DTmr7g9cS3df4Dt4IdDlQhS
-         97uA7XVrAcU1INT5wnEmFeisgj7dOrX4CyIMQWgibZNRWzsqKIxrCz/aNyoKjL2ImjqA
-         zuGvEv7mz8FseLYHm3DQ22/0+sbcL9diKaOQz+65PapzBb+1g5DnCB0gp8zknsM7n3yQ
-         ZAMdQZ7Ty6NiLzcYPd7UPMl0FUvDAtPMKxEAXt4YNJY08hum4pRRJDI3sviTQxiIFps0
-         T85IayqXFrWfE3eZfZk9eSMNkffgotdvu0XdS9IruhOyVG+La6DvIJu3tEeEAGlm6ZkG
-         ShVw==
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nyCQkb3coEYpxQmt5tM2FiCmMFgNt2JWNkIxHlpOi+A=;
+        b=L/tBeQGG5Ikhhd/90oK5fCg6Za3+ahIEVNhOqYBco9ubxDinFJVZ2mNT2n24+De6vy
+         xy1c3rIps2MXPjDl99QiY3ZkWrE/eYQ0mSL0B9pro+Yxmxz+AnNukE+nMQB5m7UGjXOv
+         pDQkh/aP+mscMir/3Fbqs9awbA03zJaOhbU5vatfDRzBNo7KG/vOvAq0bdBvhpt/jmo+
+         dCJ+y4Q+XDMzlbnPgb567z4xAg0aGA3EFLpOFehnWfPwcAof2LOUh264k4qyAAAyL3dG
+         Bhb+QQB1l7xjQeT2c8/2ueO/PlkfNvra8+Fpy5NOZeWYgwUZ/fXMySjR5P73k7tSk4bh
+         k+Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mN4fOTndqYkvKBuPQlQqFgEQGw71rQkWNJnMF6fOW8I=;
-        b=aiE1KHEahPPi+faIAFMHF7r2w42Wuztq+f2W/EmCScNGWcrKCZF3VqBE55WsBuya7P
-         Vm80hbxaODzv70QkR1nNkfKoI3h4K9BWlH1ymL97Ax2/UVe8qreeIvXlHLrAbwySudcH
-         rOGP0XBpb8vtfPITq8P9bT6v2OTegbkba1fFu13hKvvuWGgExGtZC0BRtzahT0xZ9ZzO
-         NAlIojMPK9UG4XbFTg9pPaRrht+fux8YMnwHzulR64aQZB80sWDzZbIBD7M7KhVwXzZG
-         56KGlOMlhRzgvJOtr75IAexXy7rmLiZvFgIEgNlocDXWETLUa3B+cvTOBFyA1CWi8zbg
-         DWrg==
-X-Gm-Message-State: AOAM530ye5h9B5eG1f8aX4zG6dhZKyomhd909bIV0nGJP0tn3cRMeOCQ
-        4gKqiSXtaIyMNqDNzMggQq0=
-X-Google-Smtp-Source: ABdhPJzwu+8w9TYwAapEXLOqGb2boi/iE2yqPkUrG0SqWBjCxYQ3aLUjr5BjhRFShekhlfXjdIAszA==
-X-Received: by 2002:ac8:1013:: with SMTP id z19mr1647528qti.130.1591945281674;
-        Fri, 12 Jun 2020 00:01:21 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id s15sm4300022qtc.95.2020.06.12.00.01.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Jun 2020 00:01:20 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 7920D27C0054;
-        Fri, 12 Jun 2020 03:01:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 12 Jun 2020 03:01:19 -0400
-X-ME-Sender: <xms:NijjXjh_PMTo4Q6eouga8WuSX44fRVWFNwCywly1n9RVGmM_y00L-Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeitddgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepgfeufeejfeffteevfeejjeevvdfhuedtiedvgffgvdeludfgueekvdeg
-    uddviefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddtuddrkeeird
-    egjedrudejvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvge
-    ehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhm
-    sehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:NijjXgCXpAfAgtFNXrRVxMTIrdWtUIL0ZtQe0eSNbeouEFsNwPE3Vw>
-    <xmx:NijjXjGjHkxhfrt0_DJ6nTmgCfCj2stPA7t1bQiX0Uo7jdazYjGKFQ>
-    <xmx:NijjXgTuuCNWNG8az0j3ot2MYPzCGkT0NuEZApgK8F0vGgkmvkiBtQ>
-    <xmx:PyjjXsENf6ahHsRrCE0oieW9Q2f6wz6nCR0aFilwtNoFo_JgfZOoZWSu_cw>
-Received: from localhost (unknown [101.86.47.172])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 27F5C3060F09;
-        Fri, 12 Jun 2020 03:01:09 -0400 (EDT)
-Date:   Fri, 12 Jun 2020 15:01:01 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
-        areber@redhat.com, aubrey.li@linux.intel.com,
-        Andrei Vagin <avagin@gmail.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: possible deadlock in send_sigio
-Message-ID: <20200612070101.GA879624@tardis>
-References: <000000000000760d0705a270ad0c@google.com>
- <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
- <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
- <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
- <20200611142214.GI2531@hirez.programming.kicks-ass.net>
- <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
- <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nyCQkb3coEYpxQmt5tM2FiCmMFgNt2JWNkIxHlpOi+A=;
+        b=ZpKQX3RrfvSYSIwihSSllPQAizIqJjR3EONY3W1dd3r2V7U+KQ9fgJ5vUdek05peRY
+         65H3Ul0bgpiD1bbxeErq9iogTQ2kP8JLbCeGJwtnNgvwYVQE6dYFOMMBOOSStMUh6yYs
+         oSzYolT7XY4uHLikxrllmMbhyds8x0Rf46Lc4Y8+qRJgyEIdrXsEmTWGVliohPT6Ibg9
+         Yn1f81+khOR0JzQBD0CwfyWHG8TVKGCSpXMjjjvUZsMSiwsjncrWJO0s4qEJkS19fvbO
+         0pVQMVa2786PWji71832gF125oAbYSyG3wjIf37VWM5fMfG/o3KvscwsAWBZS3lsVt1R
+         eJ0g==
+X-Gm-Message-State: AOAM533fnt08wPItL6cI/HM8qWYTeolep7w+obrLh6bZA2aAjgNLZGNe
+        h2+9167OXoG/hHZD3mRZSnbTRzq63SOXn0fDO9UTHrmeRrw=
+X-Google-Smtp-Source: ABdhPJxcY7VDPHflQhGG4wkr3hw2KdrKkLqt65pvLjgSAqP7v5as/zixzwgS8raA51jxgjJj+TUow7WZPEMCpbPWBfk=
+X-Received: by 2002:a05:651c:c1:: with SMTP id 1mr5860799ljr.292.1591947948353;
+ Fri, 12 Jun 2020 00:45:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20200611075033.1248-1-jack@suse.cz> <20200611081203.18161-1-jack@suse.cz>
+In-Reply-To: <20200611081203.18161-1-jack@suse.cz>
+From:   Martijn Coenen <maco@android.com>
+Date:   Fri, 12 Jun 2020 09:45:37 +0200
+Message-ID: <CAB0TPYGUGTtt=Nd9vEKFBLNNsyM=npZs0ipVUgCNv7ZftYh-UQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] writeback: Protect inode->i_io_list with inode->i_lock
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 07:55:26AM +0800, Boqun Feng wrote:
-> Hi Peter and Waiman,
->=20
-> On Thu, Jun 11, 2020 at 12:09:59PM -0400, Waiman Long wrote:
-> > On 6/11/20 10:22 AM, Peter Zijlstra wrote:
-> > > On Thu, Jun 11, 2020 at 09:51:29AM -0400, Waiman Long wrote:
-> > >=20
-> > > > There was an old lockdep patch that I think may address the issue, =
-but was
-> > > > not merged at the time. I will need to dig it out and see if it can=
- be
-> > > > adapted to work in the current kernel. It may take some time.
-> > > Boqun was working on that; I can't remember what happened, but ISTR it
-> > > was shaping up nice.
-> > >=20
-> > Yes, I am talking about Boqun's patch. However, I think he had moved to
-> > another company and so may not be able to actively work on that again.
-> >=20
->=20
-> I think you are talking about the rescursive read deadlock detection
-> patchset:
->=20
-> 	https://lore.kernel.org/lkml/20180411135110.9217-1-boqun.feng@gmail.com/
->=20
-> Let me have a good and send a new version based on today's master of tip
-> tree.
->=20
+Hi Jan,
 
-FWIW, with the following patch, I think we can avoid to the false
-positives. But solely with this patch, we don't have the ability to
-detect deadlocks with recursive locks..
+On Thu, Jun 11, 2020 at 10:12 AM Jan Kara <jack@suse.cz> wrote:
+>
+> Currently, operations on inode->i_io_list are protected by
+> wb->list_lock. In the following patches we'll need to maintain
+> consistency between inode->i_state and inode->i_io_list so change the
+> code so that inode->i_lock protects also all inode's i_io_list handling.
+>
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-I've managed to rebase my patchset, but need some time to tweak it to
-work properly, in the meantime, Dmitry, could you give this a try?
+LGTM.
 
-Regards,
-Boqun
+Reviewed-by: Martijn Coenen <maco@android.com>
 
-------------->8
-Subject: [PATCH] locking: More accurate annotations for read_lock()
-
-On the archs using QUEUED_RWLOCKS, read_lock() is not always a recursive
-read lock, actually it's only recursive if in_interrupt() is true. So
-change the annotation accordingly to catch more deadlocks.
-
-Note we used to treat read_lock() as pure recursive read locks in
-lib/locking-seftest.c, and this is useful, especially for the lockdep
-development selftest, so we keep this via a variable to force switching
-lock annotation for read_lock().
-
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- include/linux/lockdep.h | 35 ++++++++++++++++++++++++++++++++++-
- lib/locking-selftest.c  | 11 +++++++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 8fce5c98a4b0..50aedbba0812 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -43,6 +43,7 @@ enum lockdep_wait_type {
- #include <linux/list.h>
- #include <linux/debug_locks.h>
- #include <linux/stacktrace.h>
-+#include <linux/preempt.h>
-=20
- /*
-  * We'd rather not expose kernel/lockdep_states.h this wide, but we do need
-@@ -640,6 +641,31 @@ static inline void print_irqtrace_events(struct task_s=
-truct *curr)
- }
- #endif
-=20
-+/* Variable used to make lockdep treat read_lock() as recursive in selftes=
-ts */
-+#ifdef CONFIG_DEBUG_LOCKING_API_SELFTESTS
-+extern unsigned int force_read_lock_recursive;
-+#else /* CONFIG_DEBUG_LOCKING_API_SELFTESTS */
-+#define force_read_lock_recursive 0
-+#endif /* CONFIG_DEBUG_LOCKING_API_SELFTESTS */
-+
-+#ifdef CONFIG_LOCKDEP
-+/*
-+ * read_lock() is recursive if:
-+ * 1. We force lockdep think this way in selftests or
-+ * 2. The implementation is not queued read/write lock or
-+ * 3. The locker is at an in_interrupt() context.
-+ */
-+static inline bool read_lock_is_recursive(void)
-+{
-+	return force_read_lock_recursive ||
-+	       !IS_ENABLED(CONFIG_QUEUED_RWLOCKS) ||
-+	       in_interrupt();
-+}
-+#else /* CONFIG_LOCKDEP */
-+/* If !LOCKDEP, the value is meaningless */
-+#define read_lock_is_recursive() 0
-+#endif
-+
- /*
-  * For trivial one-depth nesting of a lock-class, the following
-  * global define can be used. (Subsystems with multiple levels
-@@ -661,7 +687,14 @@ static inline void print_irqtrace_events(struct task_s=
-truct *curr)
- #define spin_release(l, i)			lock_release(l, i)
-=20
- #define rwlock_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, =
-i)
--#define rwlock_acquire_read(l, s, t, i)		lock_acquire_shared_recursive(l, =
-s, t, NULL, i)
-+#define rwlock_acquire_read(l, s, t, i)					\
-+do {									\
-+	if (read_lock_is_recursive())					\
-+		lock_acquire_shared_recursive(l, s, t, NULL, i);	\
-+	else								\
-+		lock_acquire_shared(l, s, t, NULL, i);			\
-+} while (0)
-+
- #define rwlock_release(l, i)			lock_release(l, i)
-=20
- #define seqcount_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL=
-, i)
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 14f44f59e733..caadc4dd3368 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -28,6 +28,7 @@
-  * Change this to 1 if you want to see the failure printouts:
-  */
- static unsigned int debug_locks_verbose;
-+unsigned int force_read_lock_recursive;
-=20
- static DEFINE_WD_CLASS(ww_lockdep);
-=20
-@@ -1978,6 +1979,11 @@ void locking_selftest(void)
- 		return;
- 	}
-=20
-+	/*
-+	 * treats read_lock() as recursive read locks for testing purpose
-+	 */
-+	force_read_lock_recursive =3D 1;
-+
- 	/*
- 	 * Run the testsuite:
- 	 */
-@@ -2073,6 +2079,11 @@ void locking_selftest(void)
-=20
- 	ww_tests();
-=20
-+	force_read_lock_recursive =3D 0;
-+	/*
-+	 * queued_read_lock() specific test cases can be put here
-+	 */
-+
- 	if (unexpected_testcase_failures) {
- 		printk("----------------------------------------------------------------=
--\n");
- 		debug_locks =3D 0;
---=20
-2.26.2
-
-
+> ---
+>  fs/fs-writeback.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index a605c3dddabc..ff0b18331590 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -144,6 +144,7 @@ static void inode_io_list_del_locked(struct inode *inode,
+>                                      struct bdi_writeback *wb)
+>  {
+>         assert_spin_locked(&wb->list_lock);
+> +       assert_spin_locked(&inode->i_lock);
+>
+>         list_del_init(&inode->i_io_list);
+>         wb_io_lists_depopulated(wb);
+> @@ -1122,7 +1123,9 @@ void inode_io_list_del(struct inode *inode)
+>         struct bdi_writeback *wb;
+>
+>         wb = inode_to_wb_and_lock_list(inode);
+> +       spin_lock(&inode->i_lock);
+>         inode_io_list_del_locked(inode, wb);
+> +       spin_unlock(&inode->i_lock);
+>         spin_unlock(&wb->list_lock);
+>  }
+>  EXPORT_SYMBOL(inode_io_list_del);
+> @@ -1172,8 +1175,10 @@ void sb_clear_inode_writeback(struct inode *inode)
+>   * the case then the inode must have been redirtied while it was being written
+>   * out and we don't reset its dirtied_when.
+>   */
+> -static void redirty_tail(struct inode *inode, struct bdi_writeback *wb)
+> +static void redirty_tail_locked(struct inode *inode, struct bdi_writeback *wb)
+>  {
+> +       assert_spin_locked(&inode->i_lock);
+> +
+>         if (!list_empty(&wb->b_dirty)) {
+>                 struct inode *tail;
+>
+> @@ -1184,6 +1189,13 @@ static void redirty_tail(struct inode *inode, struct bdi_writeback *wb)
+>         inode_io_list_move_locked(inode, wb, &wb->b_dirty);
+>  }
+>
+> +static void redirty_tail(struct inode *inode, struct bdi_writeback *wb)
+> +{
+> +       spin_lock(&inode->i_lock);
+> +       redirty_tail_locked(inode, wb);
+> +       spin_unlock(&inode->i_lock);
+> +}
+> +
+>  /*
+>   * requeue inode for re-scanning after bdi->b_io list is exhausted.
+>   */
+> @@ -1394,7 +1406,7 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
+>                  * writeback is not making progress due to locked
+>                  * buffers. Skip this inode for now.
+>                  */
+> -               redirty_tail(inode, wb);
+> +               redirty_tail_locked(inode, wb);
+>                 return;
+>         }
+>
+> @@ -1414,7 +1426,7 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
+>                          * retrying writeback of the dirty page/inode
+>                          * that cannot be performed immediately.
+>                          */
+> -                       redirty_tail(inode, wb);
+> +                       redirty_tail_locked(inode, wb);
+>                 }
+>         } else if (inode->i_state & I_DIRTY) {
+>                 /*
+> @@ -1422,7 +1434,7 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
+>                  * such as delayed allocation during submission or metadata
+>                  * updates after data IO completion.
+>                  */
+> -               redirty_tail(inode, wb);
+> +               redirty_tail_locked(inode, wb);
+>         } else if (inode->i_state & I_DIRTY_TIME) {
+>                 inode->dirtied_when = jiffies;
+>                 inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
+> @@ -1669,8 +1681,8 @@ static long writeback_sb_inodes(struct super_block *sb,
+>                  */
+>                 spin_lock(&inode->i_lock);
+>                 if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
+> +                       redirty_tail_locked(inode, wb);
+>                         spin_unlock(&inode->i_lock);
+> -                       redirty_tail(inode, wb);
+>                         continue;
+>                 }
+>                 if ((inode->i_state & I_SYNC) && wbc.sync_mode != WB_SYNC_ALL) {
+> --
+> 2.16.4
+>
