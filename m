@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A85D61F7609
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB6181F760B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 11:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgFLJeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 05:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38576 "EHLO
+        id S1726515AbgFLJeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 05:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbgFLJeK (ORCPT
+        with ESMTP id S1726451AbgFLJeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 12 Jun 2020 05:34:10 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65130C08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:09 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id y13so9455221eju.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:09 -0700 (PDT)
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCB9C03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:10 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id m21so5928364eds.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 02:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+1FfbhSGpx28ZH/By0VG04RLX5syo3D4ukuXN4TbR4E=;
-        b=qwXMzNvYWAkPdr8QCTBB0OYJBNLsMhKPqnz1lwn34rTFmzyrNKsv3AHHcgpE+5P1HL
-         yDb2d+P7LfTBWWRuTloilR48luLRKY/W2tHrDK+YikJvdXptLmLRfXO5I0wE8IqidyAo
-         wbgrqUPygo+6+wme5nBC+hujwvYTBu8shD2G+LnKZX+Y4CfEgq8Rf+JXpO0WgXV8uykZ
-         w09tIo5aZ+UQh/LaDVqws/jkdl5/ViUNlChF1514MYQjdmGCNLKvOiRmkU8PJpgh69qq
-         h8EznWzEshN5+6DgWrpsWPXboRk91q2Alshj1U83ERIOSM6Opzln/sqkgbdZCGUcvnn+
-         tapA==
+        bh=8UVubkuXhicUmFZ2Y1+zmG91pHnTICwuP72MUM8XTwU=;
+        b=YKFGgRjogXAvtdZk9yJSGnicJZOHpjECTR/Z1KMDbubdnftr6Co53eVpXnawx0ABlg
+         WVqyR75r73EG6bJ6tImbO/q+LYQz8QuxEVJHGCuTrY2CJcF0UK1mYRATbYHTstqaXDbY
+         v+svjUSmxsGr4i/MNourOv9hO8rxnQwTa5PofGm2CJ3pXHFaBo/55T90GtD2Xjwu2e2Q
+         amYiJe6nNwiCsYjbXNJMsqU1zX5XevDguDKvWEh4ghv6SH8EvWgVaqO6vnNrSs9PyyEd
+         ONCVSTUQ09pY9NUa8DhDZyUnAaxyUInsIP2lmc+Uk36zNHMlq0x9JeUKS2JEf/uejBHp
+         Y7qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+1FfbhSGpx28ZH/By0VG04RLX5syo3D4ukuXN4TbR4E=;
-        b=MS8xYawtNXlX17C5oKtdFE4By7R9XqmZon4uAWtbRnDjafU9ZBt58gj8fOdPGMVuB3
-         sxzWR4NEbwU0g6fQotyk0x48O4n7DjSNQBcsRrKUAAiUcM4TGJ4YlsYuTCtLuRZ164Id
-         48WLNH0nDDICp/GwXHeJeBRRzIdGen+Zk+lL1aenGVAkpEJh/yINPDswrmpr6YYUx4bM
-         AxGIGZhAX/hyVSvpEjIXApL10KDQb/M9Q2idb08CIXOXX1aZnoZ03EiSKKPdCQBB4OKi
-         GDeUNzzwM/AKBlJ6yujEFBzQgby+TeTYZuLHMk9vgmMctLChUSVVMFUHM7OKaJHkjEyA
-         QINA==
-X-Gm-Message-State: AOAM530TqRmD4odI4WvYK7yPtJblepbcJGgQP+YM6MeZB7JGixJoAlA+
-        nFxk3kh3/VMoKzvJF9Q16KvBg+6F
-X-Google-Smtp-Source: ABdhPJzeIoztiu1qWAI76ixkLrr5NgrnNYz+czKuiRDBAUHGJ7LhV69IcVMJ+AHzXJbAG0JODBuY9A==
-X-Received: by 2002:a17:906:784c:: with SMTP id p12mr12238398ejm.123.1591954448185;
-        Fri, 12 Jun 2020 02:34:08 -0700 (PDT)
+        bh=8UVubkuXhicUmFZ2Y1+zmG91pHnTICwuP72MUM8XTwU=;
+        b=jiXZlZHrT6m/FdTjs58rnAJjUEl2KKLg7gnv2bMdPdbD7lqD584NtlFbBFk1ijrRZm
+         Yc8N3cS3YubzPfeqdwWxWcCgmGRxMQtm6UIKLcaxCN7Tf2XlBXxFBBSDFYbaUqydqyQv
+         8eWvGArYTnh6hfbphFBXx5QVmcEvs+2PBUZ6CSGZ7YbFKwg8QGZ+XnWzeqcaXDTCIO+y
+         vPhZnTGcxCTBJnS3k2l/VseYK63+KfkksFOOD3iKYjrbaFYwi6npdOy+vRfP+/07rFRL
+         XXbtJ0rH7f+UgSXXTlDO4kklKY6zfOIY8ubGPP3IAJps6mVWIZDi7l9eRmvywIH6gHGj
+         E2Gw==
+X-Gm-Message-State: AOAM530MtEg6F2VjY7T+OIa78hJ2Jsz/jrRYGCcv5pZfTn9Vo2bwtP85
+        aNtNfuaHCgWtibDgWuKvkFU=
+X-Google-Smtp-Source: ABdhPJyC1gjMbJx0tsQc+x7QJfUhYOBTRgLCW9GsbKTbTNv17UpycsLl9OZF0aXzCvGNEer7LU/Jng==
+X-Received: by 2002:a50:fe94:: with SMTP id d20mr10415614edt.254.1591954449265;
+        Fri, 12 Jun 2020 02:34:09 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.204.95])
-        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.07
+        by smtp.gmail.com with ESMTPSA id l2sm2876578edq.9.2020.06.12.02.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2020 02:34:07 -0700 (PDT)
+        Fri, 12 Jun 2020 02:34:08 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 05/20] kernfs: do not call fsnotify() with name without a parent
-Date:   Fri, 12 Jun 2020 12:33:28 +0300
-Message-Id: <20200612093343.5669-6-amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH 06/20] inotify: do not use objectid when comparing events
+Date:   Fri, 12 Jun 2020 12:33:29 +0300
+Message-Id: <20200612093343.5669-7-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200612093343.5669-1-amir73il@gmail.com>
 References: <20200612093343.5669-1-amir73il@gmail.com>
@@ -62,39 +61,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When creating an FS_MODIFY event on inode itself (not on parent)
-the file_name argument should be NULL.
+inotify's event->wd is the object identifier.
+Compare that instead of the common fsnotidy event objectid, so
+we can get rid of the objectid field later.
 
-The change to send a non NULL name to inode itself was done on purpuse
-as part of another commit, as Tejun writes: "...While at it, supply the
-target file name to fsnotify() from kernfs_node->name.".
-
-But this is wrong practice and inconsistent with inotify behavior when
-watching a single file.  When a child is being watched (as opposed to the
-parent directory) the inotify event should contain the watch descriptor,
-but not the file name.
-
-Fixes: df6a58c5c5aa ("kernfs: don't depend on d_find_any_alias()...")
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/kernfs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/notify/inotify/inotify_fsnotify.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index 06b342d8462b..e23b3f62483c 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -912,7 +912,7 @@ static void kernfs_notify_workfn(struct work_struct *work)
- 		}
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index 2ebc89047153..9b481460a2dc 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
+ 	if (old->mask & FS_IN_IGNORED)
+ 		return false;
+ 	if ((old->mask == new->mask) &&
+-	    (old_fsn->objectid == new_fsn->objectid) &&
++	    (old->wd == new->wd) &&
+ 	    (old->name_len == new->name_len) &&
+ 	    (!old->name_len || !strcmp(old->name, new->name)))
+ 		return true;
+@@ -116,7 +116,7 @@ int inotify_handle_event(struct fsnotify_group *group,
+ 		mask &= ~IN_ISDIR;
  
- 		fsnotify(inode, FS_MODIFY, inode, FSNOTIFY_EVENT_INODE,
--			 &name, 0);
-+			 NULL, 0);
- 		iput(inode);
- 	}
- 
+ 	fsn_event = &event->fse;
+-	fsnotify_init_event(fsn_event, (unsigned long)inode);
++	fsnotify_init_event(fsn_event, 0);
+ 	event->mask = mask;
+ 	event->wd = i_mark->wd;
+ 	event->sync_cookie = cookie;
 -- 
 2.17.1
 
