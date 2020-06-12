@@ -2,154 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A55451F76AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 12:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED5C1F76B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 12:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgFLKXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 06:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46032 "EHLO
+        id S1725872AbgFLKZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 06:25:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbgFLKWr (ORCPT
+        with ESMTP id S1725868AbgFLKZg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 06:22:47 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68098C03E96F;
-        Fri, 12 Jun 2020 03:22:38 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 10so4094664pfx.8;
-        Fri, 12 Jun 2020 03:22:38 -0700 (PDT)
+        Fri, 12 Jun 2020 06:25:36 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA4DC03E96F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 03:25:36 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id i25so9709479iog.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jun 2020 03:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=noIaDqzF0Hy0wDxWXCxde4St7xMeQMqL/FRpa5in1SM=;
-        b=BcVsS0xJ/2gsIyBtE2ca+koozYrlg3aXsx8+9/oVbeUe+martaZOV0yydRA4arQvQv
-         7VSy6fpArXlSUIPcWDctuHiCSBG/jA0XZWoDBf+4n6UvLxPglf6E3KYvtcMx+B9u5gd/
-         HLcvmC9dc1kpfuICLvaO+sP/yoT3G0BR/ZUZDuImXORuk8y15CsV30uLomxeWsrDPlZ0
-         p2xtvdicL41O+yUH7slDvjTsbj0wpHiqGA2LjIFncrpzZp8MczRI7tFj3lvqnH/Bv2sC
-         Z143D0BIV5UiUR0p3refrlLVZpfXmv0Lza77Cy9Cn/3ZA94rcVQOk84vUBEG6F47H+BI
-         Dhvw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pgfb9/APGf2+Oie6MjGGkgG6uoI2dSd2lpbzjHkf+iw=;
+        b=EkOQ07z+Efpy121uU3t/6VqNLEevWU4CNjWNjJzytrg4NEc8E0s5RhN007zb/V3knq
+         9DtEDEFSgn0Sm7OA3ym6EkbtTu1048TZjbMfNv3k8eB/qehCYj4+9kcIX/eaIHGrKCS4
+         MqSroomDpQV0DXIjWEyzSxDqNi+Ije3QcJVW5Uk1rKpmFMFdSKWJVE01JRzjNaKRPxMi
+         5SvzWKNR4jzsfjz9nNtTxTOl291N+fXk5jiqG/N4XuQEhZkDO/WeT8e+8/2B9i2MA0jp
+         JZTBVdI/u8bEW5CKN76zkXUVGetAhjQO23Iommo48ooaLF8F3+VmrSDYLaJAQQFB2lJC
+         4nFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=noIaDqzF0Hy0wDxWXCxde4St7xMeQMqL/FRpa5in1SM=;
-        b=Mullao7Ou16ruyYlB2gnNT97wMvBymvMp2UFf453GANo6gUJLTPRf/KTNIGkDF0n9c
-         GTQITDbzJheAqEjfGak0MlvC4WPoFSqD0tolywvCG4taqxN5eij8BGG/1xbiFgjr4n+q
-         GcsFw2DB14Qb9FuzqcqN1cSonCi4fNKh65H4Cvn5Nhlogc3MWeqKUKtdDFO6idhv/1qa
-         4qD7ZnKT77cALk1Ct2OECkLmmc6ktouBY0liYBaXC1q9OquNMZUX1xN04CjAKarFV/qh
-         +PVGWnCUI11jADh/wybUAuA/zATvf0TDOZGIY97KM5vUFO/khwjtQwbuclYfBGh6D7Ov
-         Z2Tg==
-X-Gm-Message-State: AOAM533oqmAuxBoK6hhbGd0cUbLZXzB7gPioKcF1Rl9+GiAonFZwuX6d
-        xqEyIdgf55+6CunGXfPCz4U6nflQcJM=
-X-Google-Smtp-Source: ABdhPJxVR2y4IaH8q1HR7ZzBxF6FhLYrHNMJSiOBUxoR+/+FRJYk6nW5RAnpxOXqb6wjl8PLHJbUow==
-X-Received: by 2002:aa7:9252:: with SMTP id 18mr11339511pfp.17.1591957357401;
-        Fri, 12 Jun 2020 03:22:37 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:40d4:9829:ac15:641f? ([2404:7a87:83e0:f800:40d4:9829:ac15:641f])
-        by smtp.gmail.com with ESMTPSA id f7sm5484198pje.1.2020.06.12.03.22.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 03:22:36 -0700 (PDT)
-Subject: Re: [PATCH] exfat: remove EXFAT_SB_DIRTY flag
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Namjae Jeon' <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200612012902epcas1p4194d6fa3b3f7c46a8becb9bb6ce23d56@epcas1p4.samsung.com>
- <20200612012834.13503-1-kohada.t2@gmail.com>
- <219a01d64094$5418d7a0$fc4a86e0$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <b29d254b-212a-bfcb-ab7c-456f481b85c8@gmail.com>
-Date:   Fri, 12 Jun 2020 19:22:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pgfb9/APGf2+Oie6MjGGkgG6uoI2dSd2lpbzjHkf+iw=;
+        b=t2FzLiDSSMb0vr9xYGcdLIq6nK54+fM4rjs20YOuliYyWExHF6m8uqI04ZfNTIBSdQ
+         RWPt127xMbMdNqtuVOGeCTGisqGyGnziqf0rSfg5D1J9M9B3lMPxT9v2WQd5UtsdD+KI
+         pNHaT5oNK7R5TlCDptp7h6sDx4pJ/iOxAT7VAhtJUCS6OoqBGJumzZqFYLibvIBEnNRO
+         CWQwI4z417S157j2X/m5gOrYyy1YjhVeYFyhxhnyhc+/WSzunFjq4U16UjgvY5HSNbfl
+         jOrGd7RVeQhqeZBm2sZx94w9mdbYDlTUpmIHJ388fGEz5lac5Be2OV78BhBgYxVQL2jw
+         Y5VQ==
+X-Gm-Message-State: AOAM530o73/F7RQlbIjcwcS3W4x+veHa4KwEf/5rYGp1buznVMnnE7ao
+        88w72Gpo2BrMJRFAwl1lyf3A9fafIqwOQH2OEV4=
+X-Google-Smtp-Source: ABdhPJxL8SeOA0WDxIlUkLbQ8mg531AE0nJyV2T/T1rf4Dr0kaRmkCXJK/8Hy+/jGRuos7Qn7WMueupM/HLaeqxMXVM=
+X-Received: by 2002:a05:6602:5c8:: with SMTP id w8mr12896264iox.64.1591957535789;
+ Fri, 12 Jun 2020 03:25:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <219a01d64094$5418d7a0$fc4a86e0$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200612093343.5669-1-amir73il@gmail.com> <20200612093343.5669-5-amir73il@gmail.com>
+In-Reply-To: <20200612093343.5669-5-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 12 Jun 2020 13:25:24 +0300
+Message-ID: <CAOQ4uxjBP9f0beYi_UpHC-1k5dQSEcdaiF3aAfHzeoeZ0=GYdA@mail.gmail.com>
+Subject: Re: [PATCH 04/20] nfsd: use fsnotify_data_inode() to get the unlinked inode
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/12 17:34, Sungjong Seo wrote:
->> remove EXFAT_SB_DIRTY flag and related codes.
->>
->> This flag is set/reset in exfat_put_super()/exfat_sync_fs() to avoid
->> sync_blockdev().
->> However ...
->> - exfat_put_super():
->> Before calling this, the VFS has already called sync_filesystem(), so sync
->> is never performed here.
->> - exfat_sync_fs():
->> After calling this, the VFS calls sync_blockdev(), so, it is meaningless
->> to check EXFAT_SB_DIRTY or to bypass sync_blockdev() here.
->> Not only that, but in some cases can't clear VOL_DIRTY.
->> ex:
->> VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
->> return error without setting EXFAT_SB_DIRTY.
->> If performe 'sync' in this state, VOL_DIRTY will not be cleared.
->>
->> Remove the EXFAT_SB_DIRTY check to ensure synchronization.
->> And, remove the code related to the flag.
->>
->> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
->> ---
->>   fs/exfat/balloc.c   |  4 ++--
->>   fs/exfat/dir.c      | 16 ++++++++--------
->>   fs/exfat/exfat_fs.h |  5 +----
->>   fs/exfat/fatent.c   |  7 ++-----
->>   fs/exfat/misc.c     |  3 +--
->>   fs/exfat/namei.c    | 12 ++++++------
->>   fs/exfat/super.c    | 11 +++--------
->>   7 files changed, 23 insertions(+), 35 deletions(-)
->>
-> [snip]
->>
->> @@ -62,11 +59,9 @@ static int exfat_sync_fs(struct super_block *sb, int
->> wait)
->>
->>   	/* If there are some dirty buffers in the bdev inode */
->>   	mutex_lock(&sbi->s_lock);
->> -	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state)) {
->> -		sync_blockdev(sb->s_bdev);
->> -		if (exfat_set_vol_flags(sb, VOL_CLEAN))
->> -			err = -EIO;
->> -	}
-> 
-> I looked through most codes related to EXFAT_SB_DIRTY and VOL_DIRTY.
-> And your approach looks good because all of them seem to be protected by
-> s_lock.
-> 
-> BTW, as you know, sync_filesystem() calls sync_fs() with 'nowait' first,
-> and then calls it again with 'wait' twice. No need to sync with lock twice.
-> If so, isn't it okay to do nothing when wait is 0?
-
-I also think  ‘do nothing when wait is 0’ as you say, but I'm still not sure.
-
-Some other Filesystems do nothing with nowait and just return.
-However, a few Filesystems always perform sync.
-
-sync_blockdev() waits for completion, so it may be inappropriate to call with  nowait. (But it was called in the original code)
-
-I'm still not sure, so I excluded it in this patch.
-Is it okay to include it?
+On Fri, Jun 12, 2020 at 12:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> The inode argument to handle_event() is about to become obsolete.
 
 
->> +	sync_blockdev(sb->s_bdev);
->> +	if (exfat_set_vol_flags(sb, VOL_CLEAN))
->> +		err = -EIO;
->>   	mutex_unlock(&sbi->s_lock);
->>   	return err;
->>   }
->> --
->> 2.25.1
-> 
-> 
+> Return non const inode pointer from fsnotify_data_inode(), fsnotify
+> hooks do not pass const inode pointer as data.
 
-BR
----
-Tetsuhiro Kohada <kohada.t2@gmail.com>
+Sorry, this sentence is leftover from before I split this patch.
 
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/nfsd/filecache.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> index 82198d747c4c..ace8e5c30952 100644
+> --- a/fs/nfsd/filecache.c
+> +++ b/fs/nfsd/filecache.c
+> @@ -599,11 +599,13 @@ static struct notifier_block nfsd_file_lease_notifier = {
+>
+>  static int
+>  nfsd_file_fsnotify_handle_event(struct fsnotify_group *group,
+> -                               struct inode *inode,
+> +                               struct inode *to_tell,
+>                                 u32 mask, const void *data, int data_type,
+>                                 const struct qstr *file_name, u32 cookie,
+>                                 struct fsnotify_iter_info *iter_info)
+>  {
+> +       struct inode *inode = fsnotify_data_inode(data, data_type);
+> +
+>         trace_nfsd_file_fsnotify_handle_event(inode, mask);
+>
+>         /* Should be no marks on non-regular files */
+> --
+> 2.17.1
+>
