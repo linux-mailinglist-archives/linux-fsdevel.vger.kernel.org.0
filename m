@@ -2,156 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF461F7183
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 02:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70E51F7186
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 02:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbgFLA5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 20:57:20 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56182 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbgFLA5T (ORCPT
+        id S1726331AbgFLA6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 20:58:46 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54474 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbgFLA6p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 20:57:19 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05C0uWCT139167;
-        Fri, 12 Jun 2020 00:57:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=G7qsYAo6+TVtQ8VyceFO8x8YzKDVMYcOi5p/gHiivcY=;
- b=v2kfQ6gZ8eybpn9y2AU/igZyxPMPc+VkN7QoINeR29tTCSc4TJDVhZMjelqf9udxerVz
- k7k4WoJIn8Ol+wgaGXgjeBImAlcZchgaLhmVXBEcka1y07Vtqb897vSPkNkJMbv4T4pT
- XzVAB2ix3lnwB9iZp2C7APoeTiNg2ycTtQHd+DYb577ibCPOZEqWVFTc9iSKFlrXJ1g0
- wJst+s30PQLysUXnSVyhLgXTmjXX4MRIgLo5IZdlHSkQr0YG71K/NO3pkInbSTFas1hu
- d3c7k0GvTofyNfK9X1ZmqMRH9TwzRgyhK0N9shgxOObNUK51LGUZ3Mj2QvM4CwBRJVRj kQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 31g3snagvu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Jun 2020 00:57:06 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05C0lmKr021833;
-        Fri, 12 Jun 2020 00:57:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 31kye50grm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 12 Jun 2020 00:57:05 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05C0l0tH007043;
-        Fri, 12 Jun 2020 00:47:00 GMT
-Received: from monkey.oracle.com (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 11 Jun 2020 17:46:59 -0700
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Walters <walters@verbum.org>,
+        Thu, 11 Jun 2020 20:58:45 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05C0vilX017075;
+        Fri, 12 Jun 2020 09:57:44 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp);
+ Fri, 12 Jun 2020 09:57:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05C0vh7p017069
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 12 Jun 2020 09:57:43 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v4 2/2] ovl: call underlying get_unmapped_area() routine. propogate FMODE_HUGETLBFS
-Date:   Thu, 11 Jun 2020 17:46:44 -0700
-Message-Id: <20200612004644.255692-2-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200612004644.255692-1-mike.kravetz@oracle.com>
-References: <20200612004644.255692-1-mike.kravetz@oracle.com>
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+References: <202006051903.C44988B@keescook>
+ <875zc4c86z.fsf_-_@x220.int.ebiederm.org>
+ <20200606201956.rvfanoqkevjcptfl@ast-mbp>
+ <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
+ <20200607014935.vhd3scr4qmawq7no@ast-mbp>
+ <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <87r1uo2ejt.fsf@x220.int.ebiederm.org>
+ <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
+ <87d066vd4y.fsf@x220.int.ebiederm.org>
+ <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <62859212-df69-b913-c1e0-cd2e358d1adf@i-love.sakura.ne.jp>
+Date:   Fri, 12 Jun 2020 09:57:40 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9649 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
- malwarescore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006120003
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9649 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 cotscore=-2147483648 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006120004
+In-Reply-To: <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The core routine get_unmapped_area will call a filesystem specific version
-of get_unmapped_area if it exists in file operations.  If a file is on a
-union/overlay, overlayfs does not contain a get_unmapped_area f_op and the
-underlying filesystem routine may be ignored.  Add an overlayfs f_op to call
-the underlying f_op if it exists.
+On 2020/06/12 8:31, Alexei Starovoitov wrote:
+> On Wed, Jun 10, 2020 at 04:12:29PM -0500, Eric W. Biederman wrote:
+>> We probably also need to have a conversation about why this
+>> functionality is a better choice that using a compiled in initramfs,
+>> such as can be had by setting CONFIG_INITRAMFS_SOURCE.
 
-The routine is_file_hugetlbfs() is used to determine if a file is on
-hugetlbfs.  This is determined by f_mode & FMODE_HUGETLBFS.  Copy the mode
-to the overlayfs file during open so that is_file_hugetlbfs() will work as
-intended.
+I agree. CONFIG_INITRAMFS_SOURCE or call_usermodehelper() should be fine.
 
-These two issues can result in the BUG as shown in [1].
+>> Even with this write up and the conversations so far I don't understand
+>> what problem fork_usermode_blob is supposed to be solving.  Is there
+>> anything kernel version dependent about bpf_lsm?  For me the primary
+>> justification of something like fork_usermode_blob is something that is
+>> for all practical purposes a kernel module but it just happens to run in
+>> usermode.
+> 
+> that's what it is. It's a kernel module that runs in user space.
+> 
 
-[1] https://lore.kernel.org/linux-mm/000000000000b4684e05a2968ca6@google.com/
+How can the code running in the userspace memory be protected? Like you said
 
-Reported-by: syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com
-Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- fs/overlayfs/file.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+  It's nice to be able to compile that blob with -g and be able to 'gdb -p' into it.
+  That works and very convenient when it comes to debugging. Compare that to debugging
+  a kernel module!
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 87c362f65448..41e5746ba3c6 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -124,6 +124,8 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
- 	return ovl_real_fdget_meta(file, real, false);
- }
- 
-+#define OVL_F_MODE_TO_UPPER	(FMODE_HUGETLBFS)
-+
- static int ovl_open(struct inode *inode, struct file *file)
- {
- 	struct file *realfile;
-@@ -140,6 +142,9 @@ static int ovl_open(struct inode *inode, struct file *file)
- 	if (IS_ERR(realfile))
- 		return PTR_ERR(realfile);
- 
-+	/* Copy modes from underlying file */
-+	file->f_mode |= (realfile->f_mode & OVL_F_MODE_TO_UPPER);
-+
- 	file->private_data = realfile;
- 
- 	return 0;
-@@ -757,6 +762,21 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
- 			    remap_flags, op);
- }
- 
-+#ifdef CONFIG_MMU
-+static unsigned long ovl_get_unmapped_area(struct file *file,
-+				unsigned long uaddr, unsigned long len,
-+				unsigned long pgoff, unsigned long flags)
-+{
-+	struct file *realfile = file->private_data;
-+
-+	return (realfile->f_op->get_unmapped_area ?:
-+		current->mm->get_unmapped_area)(realfile,
-+						uaddr, len, pgoff, flags);
-+}
-+#else
-+#define ovl_get_unmapped_area NULL
-+#endif
-+
- const struct file_operations ovl_file_operations = {
- 	.open		= ovl_open,
- 	.release	= ovl_release,
-@@ -774,6 +794,7 @@ const struct file_operations ovl_file_operations = {
- 
- 	.copy_file_range	= ovl_copy_file_range,
- 	.remap_file_range	= ovl_remap_file_range,
-+	.get_unmapped_area	= ovl_get_unmapped_area,
- };
- 
- int __init ovl_aio_request_cache_init(void)
--- 
-2.25.4
+, the userspace memory can be easily interfered from userspace. The kernel module
+running in kernel space is protected (unless methods like /dev/{mem,kmem} are used)
+but the kernel module running in user space is not protected.
 
+You said
+
+  What you're saying is tomoyo doesn't trust kernel modules that are built-in
+  as part of vmlinux and doesn't trust vmlinux build.
+
+but the word 'trust' has multiple aspects. One of aspects is "can the program
+contain malicious code?" which would be mitigated by cryptographic signing
+technology. But another aspect is "does the program contain vulnerability or
+bugs?" which would be mitigated by updating programs as soon as possible.
+Yet another aspect is "is the program protected from interference?" which would
+be mitigated by enforcing sandbox like seccomp. But to enforce it, we need
+information for identifying what does the code need to do.
+
+We might need to invent built-in "protected userspace" because existing
+"unprotected userspace" is not trustworthy enough to run kernel modules.
+That's not just inventing fork_usermode_blob().
+
+
+
+>> Strictly speaking I am also aware of the issue that the kernel has to
+>> use set_fs(KERNEL_DS) to allow argv and envp to exist in kernel space
+>> instead of userspace.  That needs to be fixed as well, but for all
+>> kernel uses of exec.  So any work fixing fork_usermode_blob can ignore
+>> that issue.
+> 
+> well, this is the problem of usermodehelper_exec.
+> usermode_blob doesn't use argv/envp.
+> They could be NULL for all practical purpose.
+> 
+
+That's what TOMOYO LSM does not like. You said
+
+  tomoyo does path name resolution as a string and using that for security?
+  I'm looking at tomoyo_realpath*() and tomoyo_pathcmp(). Ouch.
+  Path based security is anti pattern of security.
+
+but, like Casey mentioned, pathnames/argv/envp etc. represents *user intentions*
+for controlling what that code can do.
+
+A method for allow anonymously running arbitrary code in userspace memory (which
+can be interfered) is so painful. I won't be able to trust kernel modules running
+in userspace memory.
