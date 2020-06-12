@@ -2,115 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FE41F71FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 03:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 025321F71FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 03:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgFLBzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jun 2020 21:55:48 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:34535 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726265AbgFLBzr (ORCPT
+        id S1726328AbgFLB6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jun 2020 21:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgFLB6x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jun 2020 21:55:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591926946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c4mIHNftRpH04Gb26NauuDlA6dFJVkSoOuOAWxEtdVY=;
-        b=gh8oa1ertp01y6wwTvyvA8fSl8gd5SAJSA0PWejjLuSkWvnnyUxzzUmxfc3gevT8RGOZ39
-        gJPAV0BFibLatBgCjzmgPhDTPDiIe9vpv5Q8Q7gTUlMyts8PBZSBBN3WVlNARImOxOXTP9
-        /Py3065X8jqdDT06CQTEUTFIPDqS5D8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-vym_GQzPOLq4WljfY1DDsA-1; Thu, 11 Jun 2020 21:55:41 -0400
-X-MC-Unique: vym_GQzPOLq4WljfY1DDsA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D8E11EC1BD;
-        Fri, 12 Jun 2020 01:55:28 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-115-149.rdu2.redhat.com [10.10.115.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F8219CA0;
-        Fri, 12 Jun 2020 01:55:24 +0000 (UTC)
-Subject: Re: possible deadlock in send_sigio
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
-        areber@redhat.com, aubrey.li@linux.intel.com,
-        Andrei Vagin <avagin@gmail.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <000000000000760d0705a270ad0c@google.com>
- <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
- <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
- <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
- <20200611142214.GI2531@hirez.programming.kicks-ass.net>
- <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
- <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <5fd58ce3-03f4-7529-e5c5-858222cd3ac2@redhat.com>
-Date:   Thu, 11 Jun 2020 21:55:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 11 Jun 2020 21:58:53 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03143C03E96F;
+        Thu, 11 Jun 2020 18:58:52 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1jjYxu-007MwO-TA; Fri, 12 Jun 2020 01:58:42 +0000
+Date:   Fri, 12 Jun 2020 02:58:42 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Walters <walters@verbum.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify
+ hugetlbfs files
+Message-ID: <20200612015842.GC23230@ZenIV.linux.org.uk>
+References: <20200612004644.255692-1-mike.kravetz@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200612004644.255692-1-mike.kravetz@oracle.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/11/20 7:55 PM, Boqun Feng wrote:
-> Hi Peter and Waiman,
->
-> On Thu, Jun 11, 2020 at 12:09:59PM -0400, Waiman Long wrote:
->> On 6/11/20 10:22 AM, Peter Zijlstra wrote:
->>> On Thu, Jun 11, 2020 at 09:51:29AM -0400, Waiman Long wrote:
->>>
->>>> There was an old lockdep patch that I think may address the issue, but was
->>>> not merged at the time. I will need to dig it out and see if it can be
->>>> adapted to work in the current kernel. It may take some time.
->>> Boqun was working on that; I can't remember what happened, but ISTR it
->>> was shaping up nice.
->>>
->> Yes, I am talking about Boqun's patch. However, I think he had moved to
->> another company and so may not be able to actively work on that again.
->>
-> I think you are talking about the rescursive read deadlock detection
-> patchset:
->
-> 	https://lore.kernel.org/lkml/20180411135110.9217-1-boqun.feng@gmail.com/
->
-> Let me have a good and send a new version based on today's master of tip
-> tree.
->
-> Regards,
-> Boqun
+On Thu, Jun 11, 2020 at 05:46:43PM -0700, Mike Kravetz wrote:
+> The routine is_file_hugepages() checks f_op == hugetlbfs_file_operations
+> to determine if the file resides in hugetlbfs.  This is problematic when
+> the file is on a union or overlay.  Instead, define a new file mode
+> FMODE_HUGETLBFS which is set when a hugetlbfs file is opened.  The mode
+> can easily be copied to other 'files' derived from the original hugetlbfs
+> file.
+> 
+> With this change hugetlbfs_file_operations can be static as it should be.
+> 
+> There is also a (duplicate) set of shm file operations used for the routine
+> is_file_shm_hugepages().  Instead of setting/using special f_op's, just
+> propagate the FMODE_HUGETLBFS mode.  This means is_file_shm_hugepages() and
+> the duplicate f_ops can be removed.
 
-Good to hear back from you. I thought you may not able to work on it again.
+s/HUGETLBFS/HUGEPAGES/, please.
 
-Cheers,
-Longman
+> While cleaning things up, change the name of is_file_hugepages() to
+> is_file_hugetlbfs().  The term hugepages is a bit ambiguous.
 
+Don't, especially since the very next patch adds such on overlayfs...
 
+Incidentally, can a hugetlbfs be a lower layer, while the upper one
+is a normal filesystem?  What should happen on copyup?
