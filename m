@@ -2,121 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 226071F7B27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 17:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C7B51F7B76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jun 2020 18:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgFLPzU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 11:55:20 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:40782 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726108AbgFLPzT (ORCPT
+        id S1726319AbgFLQKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 12:10:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43258 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgFLQKE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 11:55:19 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-256-WF26PnyoMeW0bYbJgCCLOA-1; Fri, 12 Jun 2020 16:55:15 +0100
-X-MC-Unique: WF26PnyoMeW0bYbJgCCLOA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 12 Jun 2020 16:55:15 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 12 Jun 2020 16:55:15 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Kees Cook' <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>
-CC:     Christian Brauner <christian.brauner@ubuntu.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Robert Sesek <rsesek@google.com>,
-        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
- move fds across processes
-Thread-Index: AQHWP+BcCi14oegu0U6J73sUpcDiU6jTfHDAgACI+YCAAKH2YIAAcPLvgAAKH6A=
-Date:   Fri, 12 Jun 2020 15:55:14 +0000
-Message-ID: <b598484958d140fc9f523e200490b942@AcuMS.aculab.com>
-References: <037A305F-B3F8-4CFA-B9F8-CD4C9EF9090B@ubuntu.com>
- <202006092227.D2D0E1F8F@keescook>
- <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
- <202006101953.899EFB53@keescook>
- <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
- <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
- <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
- <202006111634.8237E6A5C6@keescook>
- <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
- <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
- <202006120806.E770867EF@keescook>
-In-Reply-To: <202006120806.E770867EF@keescook>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 12 Jun 2020 12:10:04 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90E8C03E96F;
+        Fri, 12 Jun 2020 09:10:04 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id i4so4051153pjd.0;
+        Fri, 12 Jun 2020 09:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xGowqnfFw5R0e+Qkd5MSY7h9qfsgL+NMoQac/0huSiE=;
+        b=LWM0JgqePgHG1PtiYO/tQhhZ1IXZhDY688eqkDRtu1G1KB+lncE7qt6C/K+OD2wmIo
+         tev4g5xZQfGKLtZ0hvJbO+hFbxh7VtYJUr0VfhammcNc+16YdKyPEoDrU+UqTTNm7XLq
+         mekKCMO+v1GtAxaPyZszhPsElYm4alT9pqHosUEB+yoz/ipvIZkjuTReR1HFg5aPgTIp
+         YUI/maaYipbxTTfA9mf7qWkSnmRZP3EbkWmXiOssuTHB6qN6L2YJ+0pm2Kt3lMpONx62
+         RUYKiVwKxZdPpFIkevS+tVZYMrn24QAyZsQIk6WxXsFgGDP+UxyUvpPcUqHyzBftA3Xm
+         toIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xGowqnfFw5R0e+Qkd5MSY7h9qfsgL+NMoQac/0huSiE=;
+        b=FvxgINoX7u0GGrWc8QdTTi8QI6leOgUe44hadKgm+rwUTPb0EZJ56WE+qUO27Ha1wb
+         0dmLuHztCuPADe3k8IU0YgykqQboVnCw/nsi2f/yJVyB3oTGcQOczdElkcYZIUZkQUqO
+         loFqiIgco6UY4UL04betue9TrGiOD1K5ZbZEeXcXrMOipAHBvDuwnfQarfiNZLtXKhQ4
+         u1Sy+n26zXFEUDLG72AfzgUjn16dLCgVXc0RYT1Fmd12xhuxg4tHn09tDsNFfV5rH1l7
+         kjmC8dyb5qz/0iYDQNCdB1ZSEoqIfbRyMwLkZWACc8ve+XyIk5BJH3LKhCDn5s2ZxTAe
+         VFOQ==
+X-Gm-Message-State: AOAM532kQlNOjZUZrRkh06c9BKEjmQQ5c5DdAHxqe9RyZMU2zzB6YMRu
+        gTZJVylgclVUPrk+qOdT8No=
+X-Google-Smtp-Source: ABdhPJxdvPCcklOmzTvVthz1jvb5cZfjfI+ke/dS44xFChUkO0IZXR8rFybDkP8OxkPZmS5VPqeVig==
+X-Received: by 2002:a17:902:b718:: with SMTP id d24mr11541086pls.185.1591978204151;
+        Fri, 12 Jun 2020 09:10:04 -0700 (PDT)
+Received: from Smcdef-MBP.lan ([103.136.221.72])
+        by smtp.gmail.com with ESMTPSA id x1sm5794879pju.3.2020.06.12.09.10.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jun 2020 09:10:03 -0700 (PDT)
+From:   Kaitao Cheng <pilgrimtao@gmail.com>
+To:     adobriyan@gmail.com, Markus.Elfring@web.de
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        songmuchun@bytedance.com, kernel-janitors@vger.kernel.org,
+        Kaitao Cheng <pilgrimtao@gmail.com>
+Subject: [PATCH v2] proc/fd: Remove unnecessary {files, f_flags, file} initialization in seq_show()
+Date:   Sat, 13 Jun 2020 00:09:46 +0800
+Message-Id: <20200612160946.21187-1-pilgrimtao@gmail.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kees Cook
-> Sent: 12 June 2020 16:13
-...
-> > 	/* Fixed size ioctls. Can be converted later on? */
-> > 	switch (cmd) {
-> > 	case SECCOMP_IOCTL_NOTIF_RECV:
-> > 		return seccomp_notify_recv(filter, buf);
-> > 	case SECCOMP_IOCTL_NOTIF_SEND:
-> > 		return seccomp_notify_send(filter, buf);
-> > 	case SECCOMP_IOCTL_NOTIF_ID_VALID:
-> > 		return seccomp_notify_id_valid(filter, buf);
-> > 	}
-> >
-> > 	/* Probably should make some nicer macros here */
-> > 	switch (SIZE_MASK(DIR_MASK(cmd))) {
-> > 	case SIZE_MASK(DIR_MASK(SECCOMP_IOCTL_NOTIF_ADDFD)):
-> 
-> Ah yeah, I like this because of what you mention below: it's forward
-> compat too. (I'd just use the ioctl masks directly...)
-> 
-> 	switch (cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
+'files' will be immediately reassigned. 'f_flags' and 'file' will be
+overwritten in the if{} or seq_show() directly exits with an error.
+so we don't need to consume CPU resources to initialize them.
 
-Since you need the same mask on the case labels I think
-I'd define a helper just across the switch statement:
+Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
+---
 
-#define M(cmd) ((cmd & ~(_IOC_SIZEMASK | _IOC_DIRMASK))
-	switch (M(cmd)) {
-	case M(SECCOMP_IOCTL_NOTIF_RECV):
-	...
-	}
-#undef M
+v2 ChangeLog:
+  1. Fix some commit message
+  2. Remove unnecessary f_flags initialization
 
-It is probably wrong to mask off DIRMASK.
-But you might need to add extra case labels for
-the broken one(s).
+ fs/proc/fd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Prior to worries about indirect jumps you could
-get a dense set of case label and faster code.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..d3854b76e95e 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -19,9 +19,9 @@
+ 
+ static int seq_show(struct seq_file *m, void *v)
+ {
+-	struct files_struct *files = NULL;
+-	int f_flags = 0, ret = -ENOENT;
+-	struct file *file = NULL;
++	struct files_struct *files;
++	int f_flags, ret = -ENOENT;
++	struct file *file;
+ 	struct task_struct *task;
+ 
+ 	task = get_proc_task(m->private);
+-- 
+2.20.1
 
