@@ -2,117 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E1A1F8071
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 04:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F051F80BB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 05:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgFMCmQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jun 2020 22:42:16 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45727 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbgFMCmQ (ORCPT
+        id S1726398AbgFMDi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jun 2020 23:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbgFMDiZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jun 2020 22:42:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a127so5169576pfa.12;
-        Fri, 12 Jun 2020 19:42:15 -0700 (PDT)
+        Fri, 12 Jun 2020 23:38:25 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE95C03E96F;
+        Fri, 12 Jun 2020 20:38:25 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id s23so5227028pfh.7;
+        Fri, 12 Jun 2020 20:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nvZ8ZPQQ2Ao+T8CSV7zjmFR3kWqVRNjhytQMJrXZzTU=;
+        b=MKlwCxj9ezu8XfqLnTsxJf6T8fsjK7ThFtT9OuD7rd8/wZK7zFVaMw6RaHbpj/gRGM
+         McxML2ryVcEr+oq8OXwIQhqnBktQVYtpRm8Jf0H5wWZccGbIwv1L0Gx3rAhGWx3Dfoh0
+         DkPMoyE5NUNqeHvQS5ONYlLrW5N4e/UH3ceK8Fb2RYPrHPD0Yf/EtPVFPK7plfoUShGN
+         7SIZQg/sO4gZwbJVFTv9Ie5OfN2z/Y3r5qrkEEv6hCruVPPEyENIZyyQbKMnGIZaPNqW
+         wGO/T7L79XkW/yQnESIjprpWYVDUW8B9nfk7yPIRHAOM5//7vWYaSCeAUkj2XwQ7yHWd
+         yLiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8EIm1ytLyvfKq4wo51mDirXPq09qojINRyvoAwJXTTI=;
-        b=MzoM6GBfqh57K/ipi8bcRDzNYnm+/FpauCSsWqWlJ+03jecH/PSKrMfbYAoYyaWA2P
-         eJs9c2EVcqzVyozqywCUeWKeL8NDG3VgWN0XjU+V4alR8gEFE6EOjHBu/HMblXjEfczn
-         fekJ1XJn7Fx42hoGdldf3gXA3mcs5H4fqu80Uu/7Fqj2eJrcqD+DEDhLrwSVBecvOMJa
-         7VXAkTWgbnGdN9NMoq3RmCBm5+KVP5EgHN+Gh+lwdSv3Mcd0k603NhohO6NG+u5dtRJT
-         XhXBA2rkjOOQq0JaSZVZmDcVWVTO0teUCTDEwNiA9nRLDxMMKyTv100ssxBKxkjqKHiF
-         zUaA==
-X-Gm-Message-State: AOAM531m6dav0yp2CxUvDhEHwzn9G6Q0ZMVsSNWRnii0t9HSO/EnqUs/
-        wu/4wQLiE2ue+7z+EdyZGto=
-X-Google-Smtp-Source: ABdhPJzRKqJooT/WNnq6D7zXsMVh6/yf0SqDijB0meAnmXfPO+ZbgvjuwwPi2qaSXvJkQ/oOjt7akA==
-X-Received: by 2002:a65:6446:: with SMTP id s6mr13588266pgv.59.1592016134716;
-        Fri, 12 Jun 2020 19:42:14 -0700 (PDT)
-Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id n1sm7763197pfd.156.2020.06.12.19.42.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 19:42:13 -0700 (PDT)
-Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-References: <20200608170127.20419-1-mcgrof@kernel.org>
- <20200608170127.20419-7-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <ec643803-2339-fe8d-7f58-b37871c83386@acm.org>
-Date:   Fri, 12 Jun 2020 19:42:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nvZ8ZPQQ2Ao+T8CSV7zjmFR3kWqVRNjhytQMJrXZzTU=;
+        b=eFqSRFdTnJJjIhYKxRsoWUB5DmQWvLZ2iO66bcCYjL/W/8nx35kB/zRIZijNi0Xcev
+         IBIIST9MN6eCshsFzwiEcmlwLYdUM54Guh1596pTJbIyZs/a62OB/LlPqAdUJ5K5uSgS
+         fscHdHPOquaX8C38925bwBT+nyZcdI/2urB6DMurDk7sm3/tkuiFtDjEjO2oGZnWUVJu
+         vbODVIoN5GkkBbGRAPQ3gxWlo5x1AX4Fe+sBJHrPhlDLnq19ee9bjZfvHDo6bqipXt6a
+         aM2ficEucoZthWa+IEi6UP4Wx9l5Ok4LOeG22kQXeq17mCVQwtxwmKq7OIb0p9PzwhFK
+         9mBQ==
+X-Gm-Message-State: AOAM530CUPCy+Vawl75jU4140uBJzpAir000plL9ic5yl9XTp4igZXpu
+        YqR4HuTYipXz2wvxSRhigaI=
+X-Google-Smtp-Source: ABdhPJxsjIEetDiwLo8Z4+WtTFZ25AtbM+HqNjzgwDwf5VGQCJiI3J4aj+WFLURqWKaVgJrXFT51sw==
+X-Received: by 2002:a63:1b20:: with SMTP id b32mr13383883pgb.39.1592019504930;
+        Fri, 12 Jun 2020 20:38:24 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:400::5:9709])
+        by smtp.gmail.com with ESMTPSA id a16sm6466343pgk.88.2020.06.12.20.38.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2020 20:38:24 -0700 (PDT)
+Date:   Fri, 12 Jun 2020 20:38:21 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200613033821.l62q2ed5ligheyhu@ast-mbp>
+References: <20200606201956.rvfanoqkevjcptfl@ast-mbp>
+ <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
+ <20200607014935.vhd3scr4qmawq7no@ast-mbp>
+ <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <87r1uo2ejt.fsf@x220.int.ebiederm.org>
+ <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
+ <87d066vd4y.fsf@x220.int.ebiederm.org>
+ <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <62859212-df69-b913-c1e0-cd2e358d1adf@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20200608170127.20419-7-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62859212-df69-b913-c1e0-cd2e358d1adf@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-06-08 10:01, Luis Chamberlain wrote:
-> +	/*
-> +	 * Blktrace needs a debugfs name even for queues that don't register
-> +	 * a gendisk, so it lazily registers the debugfs directory.  But that
-> +	 * can get us into a situation where a SCSI device is found, with no
-> +	 * driver for it (yet).  Then blktrace is used on the device, creating
-> +	 * the debugfs directory, and only after that a driver is loaded. In
-> +	 * that case we might already have a debugfs directory registered here.
-> +	 * Even worse we could be racing with blktrace to register it.
-> +	 */
+On Fri, Jun 12, 2020 at 09:57:40AM +0900, Tetsuo Handa wrote:
+> 
+> , the userspace memory can be easily interfered from userspace. The kernel module
+> running in kernel space is protected (unless methods like /dev/{mem,kmem} are used)
+> but the kernel module running in user space is not protected.
 
-There are LLD and ULD drivers in the SCSI subsystem. Please mention the
-driver type explicitly. I assume that you are referring to SCSI ULDs
-since only SCSI ULD drivers call device_add_disk()?
+huh? One user process 'can easily interfere' with memory of other process?
 
-Could the above comment be made shorter by only mentioning that blktrace
-may have been set up before or concurrently with device_add_disk() and
-that device_add_disk() calls blk_register_queue()?
+> 
+> You said
+> 
+>   What you're saying is tomoyo doesn't trust kernel modules that are built-in
+>   as part of vmlinux and doesn't trust vmlinux build.
+> 
+> but the word 'trust' has multiple aspects. One of aspects is "can the program
+> contain malicious code?" which would be mitigated by cryptographic signing
 
->  	case BLKTRACESETUP:
-> +		if (!sdp->device->request_queue->sg_debugfs_dir)
-> +			blk_sg_debugfs_init(sdp->device->request_queue,
-> +					    sdp->disk->disk_name);
+usermode_blob is either part of kernel module or part of vmlinux.
+If it's part of vmlinux it's inherently trusted.
+If it's part of ko it's signed along with the rest of ko.
 
-How about moving the sg_debugfs_dir check into blk_sg_debugfs_init()?
+> We might need to invent built-in "protected userspace" because existing
+> "unprotected userspace" is not trustworthy enough to run kernel modules.
+> That's not just inventing fork_usermode_blob().
 
-Thanks,
+sorry, but this makes no sense at all to me.
 
-Bart.
+> can be interfered) is so painful. I won't be able to trust kernel modules running
+> in userspace memory.
+
+The part that I suspect is still missing is what triggers fork_usermode_blob().
+It's always kernel code == trusted code.
+
+Currently we have the following:
+
+vmlinux {
+  core code of kernel
+  built-in mod_A {
+    kernel code
+  }
+  built-in mod_B {
+    kernel code
+  }
+}
+loadable mod_C {
+  kernel code
+}
+
+With fork_usermode_blob() kernel modules can delegate parts of their
+functionality to run in user space:
+
+vmlinux {
+  core code of kernel
+  built-in mod_A {
+    kernel code
+    code to run in user space
+  }
+  built-in mod_B {
+    kernel code
+    code to run in user space
+  }
+}
+loadable mod_C {
+  kernel code
+  code to run in user space
+}
+
+The interface between kernel part of .ko and user part of .ko is
+specific to that particular kernel module. It's not a typical user space.
+Take bpfilter, for example. It has its own format of structures
+that are being passed between kernel side of bpfilter and user side
+of bpfilter. It's bpfilter's internal interface that doesn't
+create user api. bpfilter in kernel 5.x could be passing different
+structs vs bpfilter in kernel 6.x.
+It also cannot be started via init=, but it has to be ready
+if pid 1 needs it.
+Say, bpfilter was compiled as loadable kernel module.
+In such case bpfilter.ko will not be loaded into the kernel
+until the first iptables sockopt. It may never be loaded.
+But when loaded the bpfilter.ko will start its user space side
+via fork_usermode_blob() that is specific to that version of .ko.
+Other kernel modules like bpf_lsm.ko will decide what's appropriate
+for them in terms of when user side should start and exit.
+Likely bpf_lsm.ko would want to be built-in.
+In all cases kernel module cannot rely on traditional usermode_helper,
+because usermode_helper is true uapi. The admin can boot kernel 5.x
+and it must work with usermode_helpers installed in rootfs. The admin
+will reboot to kernel 6.x and it should still work without changing rootfs.
+Whereas usermode_blobs are ko and kernel specific.
