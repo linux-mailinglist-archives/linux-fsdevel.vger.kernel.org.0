@@ -2,114 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CB91F80D2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 06:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCCFB1F8118
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 07:32:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbgFMEXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jun 2020 00:23:55 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54128 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725272AbgFMEXz (ORCPT
+        id S1726290AbgFMFcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Jun 2020 01:32:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33104 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725272AbgFMFcg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jun 2020 00:23:55 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05D4MlgJ014729;
-        Sat, 13 Jun 2020 13:22:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp);
- Sat, 13 Jun 2020 13:22:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav301.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05D4Mg4c014641
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 13 Jun 2020 13:22:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        Sat, 13 Jun 2020 01:32:36 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05D5Qukh042565;
+        Sat, 13 Jun 2020 05:32:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=plALFDZZcmaS0uCQ6YZRLDke2NoBOzFfSft5jKfN/2g=;
+ b=K/4wtvDgn+INUFWBTV9JNULbQaVRJuY31EVWPB2O8AotR3c2Pn40qukXJWY2aSCVRSKt
+ flb8zduguROE4A7Hgft5v9lTBUqC/EiFdmS27feiABOdnHjsV13SC4Bg0H8VhPDNEUAv
+ jUSH3wCYxIsyHdAa9GqQUNxjJJiOhXYV2RNCXH2rfooh+gNeXyQXOaYxpdXFmOuD8Bfz
+ QkUPdNhsEq2FGzCFd2ZOM8rDjjJTlfztWYWgOEqiVeWrDZWx3vc4MWnCDlcjw5iUWkcm
+ FzrwkrBM68zCM3OHCLA0ZdlrFfz2KRA4ukGQYqVLUR2JrTEUJSdNMyyTO1A2U3NKw4Kp eg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 31mqemr3y6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 13 Jun 2020 05:32:23 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05D5T9qB049268;
+        Sat, 13 Jun 2020 05:32:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 31mkwq8hak-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 13 Jun 2020 05:32:22 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05D5WHdg014240;
+        Sat, 13 Jun 2020 05:32:17 GMT
+Received: from localhost (/10.159.130.238)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 13 Jun 2020 05:32:17 +0000
+Date:   Fri, 12 Jun 2020 22:32:15 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-References: <20200606201956.rvfanoqkevjcptfl@ast-mbp>
- <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
- <20200607014935.vhd3scr4qmawq7no@ast-mbp>
- <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
- <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
- <87r1uo2ejt.fsf@x220.int.ebiederm.org>
- <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
- <87d066vd4y.fsf@x220.int.ebiederm.org>
- <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
- <62859212-df69-b913-c1e0-cd2e358d1adf@i-love.sakura.ne.jp>
- <20200613033821.l62q2ed5ligheyhu@ast-mbp>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <92011d12-5d73-b0fd-a744-3f99f19922fe@i-love.sakura.ne.jp>
-Date:   Sat, 13 Jun 2020 13:22:39 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, ira.weiny@intel.com
+Subject: Re: [GIT PULL] vfs: improve DAX behavior for 5.8, part 3
+Message-ID: <20200613053215.GI11245@magnolia>
+References: <20200611024248.GG11245@magnolia>
+ <CAHk-=wgTMxCAHVgtKkbSJt=1pBm+86bz=RbZiZE-2sszwmcKvQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200613033821.l62q2ed5ligheyhu@ast-mbp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgTMxCAHVgtKkbSJt=1pBm+86bz=RbZiZE-2sszwmcKvQ@mail.gmail.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006130045
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=1
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 adultscore=0 phishscore=0
+ malwarescore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
+ spamscore=0 cotscore=-2147483648 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006130045
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/13 12:38, Alexei Starovoitov wrote:
-> On Fri, Jun 12, 2020 at 09:57:40AM +0900, Tetsuo Handa wrote:
->>
->> , the userspace memory can be easily interfered from userspace. The kernel module
->> running in kernel space is protected (unless methods like /dev/{mem,kmem} are used)
->> but the kernel module running in user space is not protected.
+On Thu, Jun 11, 2020 at 11:00:43AM -0700, Linus Torvalds wrote:
+> On Wed, Jun 10, 2020 at 7:43 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > I did a test merge of this branch against upstream this evening and
+> > there weren't any conflicts.  The first five patches in the series were
+> > already in the xfs merge, so it's only the last one that should change
+> > anything.  Please let us know if you have any complaints about pulling
+> > this, since I can rework the branch.
 > 
-> huh? One user process 'can easily interfere' with memory of other process?
-
-It is an execution environment problem.
-
-Somebody can send SIGKILL (e.g. OOM-killker, SysRq-i) to kill kernel code running as
-usermode process, somebody can send SIGSTOP to make kernel code running as usermode
-process defunctional, somebody can /usr/bin/strace in order to eavesdrop on secret
-data used by kernel code running as usermode process etc.
-
->> can be interfered) is so painful. I won't be able to trust kernel modules running
->> in userspace memory.
+> I've taken this, but I hate how the patches apparently got duplicated.
+> It feels like they should have been a cleanly separated branch that
+> was just pulled into whoever needed them when they were ready, rather
+> than applied in two different places.
 > 
-> The part that I suspect is still missing is what triggers fork_usermode_blob().
-> It's always kernel code == trusted code.
+> So this is just a note for future work - duplicating the patches like
+> this can cause annoyances down the line. No merge issues this time
+> (they often happen when duplicate patches then have other work done on
+> top of them), but things like "git bisect" now don't have quite as
+> black-and-white a situation etc etc.,
+> 
+> ("git bisect" will still find _one_ of the duplicate commits if it
+> introduced a problem, so it's usually not a huge deal, but it can
+> cause the bug to be then repeated if people revert that one, but
+> nobody ever notices that the other commit that did the same thing is
+> still around and it gets back-ported to stable or whatever..)
+> 
+> So part of this is just in general about confusing duplicate history,
+> and part of it is that the duplication can then cause later confusion.
 
-How can that part be guaranteed?
-In future somebody might add a caller that allows
+Urgh, sorry.  I /was/ careful to make sure the patches matched, but I'll
+be more careful the next time this (hopefully never) happens again. :/
 
-  sys_execute_anonymously_in_usermode(const char code, const int len) {
-     return fork_usermode_blob(code, len);
-  }
+--D
 
-or something similar.
 
-> The interface between kernel part of .ko and user part of .ko is
-> specific to that particular kernel module. It's not a typical user space.
-
-How can that part be guaranteed? A caller can pass arbitrary code including
-typical user space program (e.g. /bin/sh).
-
-> But when loaded the bpfilter.ko will start its user space side
-> via fork_usermode_blob() that is specific to that version of .ko.
-
-How can we guarantee that its user space side started via fork_usermode_blob()
-is not disturbed (e.g. SIGKILL, SIGSTOP, /usr/bin/strace) ?
-
-I consider that reliability (from "robustness" perspective) of fork_usermode_blob()
-is same with CONFIG_INITRAMFS_SOURCE or call_usermodehelper() or init= approach.
-
+>                 Linus
