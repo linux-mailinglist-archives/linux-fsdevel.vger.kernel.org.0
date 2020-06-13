@@ -2,91 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C36521F8441
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 18:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 138E51F8459
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jun 2020 18:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgFMQOR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jun 2020 12:14:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37534 "EHLO
+        id S1726445AbgFMQrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Jun 2020 12:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgFMQOQ (ORCPT
+        with ESMTP id S1726378AbgFMQrx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jun 2020 12:14:16 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38D4C03E96F;
-        Sat, 13 Jun 2020 09:14:15 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id n23so14393906ljh.7;
-        Sat, 13 Jun 2020 09:14:15 -0700 (PDT)
+        Sat, 13 Jun 2020 12:47:53 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B50E8C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jun 2020 09:47:51 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id 9so14464337ljv.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jun 2020 09:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3Z22YICQz99p/3fJOvv++fyY9F0HKpG3y5w4PdDzU70=;
-        b=A1P9spR+f6bHj2n3TGvTWpFq9f4pLAWeJGvVcGB+vUsLZ1v6T2k5rcVSZVvWoP85vD
-         Lxk6eSMAclQNHOo30Xvdm8BI1NSLIBi1svdH6pZhjnKu4deA8hm6f7xKyE062cnSIRMi
-         z2F2b8+iI62pLgTXXd7WtwZDhtTocRO4MCGzEaI6DpMtt/QltemDBGbZycBSLBcIg0Wg
-         N6K01/GjeoOEqlafAbCBKLdW20SecoB26XYYKzOMztTL4ynoZQNOSdzVXxEzslFNu18B
-         o8McVjf2bGN12SV/T0QkX2r/tRZ5N+Vd4m9G6n1zD4RJ/cuLIh6Qg12SRDCCPq3aweO3
-         kvOA==
+        bh=ncEwZ2YTb3mVdV4EuBbju4CI9gD1hCf0cAsyxu6rkFs=;
+        b=WxQOOQExCmoR+tWyWgfXfgTncQypYk9W5MJCAxdFj3dqLPSTkGWlfMMwGUljAXEl5R
+         DcdA9O4BYJiyYRfD230dt30F3t+DJyMR6NcHFmsBmpFKMj8GebV/5NgxzNY4KxeMK4CZ
+         y2p86lQyIBCmazacaBh+U1MDbQQBNmr34MoVg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3Z22YICQz99p/3fJOvv++fyY9F0HKpG3y5w4PdDzU70=;
-        b=ig5pzXN6jYcX2a+6H1DHUbGnAsBo0Bxh2nzCyUXiyuPJtp3klrb7Yczn0pGRyl14vI
-         xbGYQEkn+2hwZxti0MVN0125Y0K+pxV2OZ0ODu5su0kgDcMWM5OgWrs8ZyOadSesxQ5l
-         IYPmWTelf7MK6c3gMc4kUC0ZfRqDp0To1K51d/FHGQvxVe/rd+a3dvrYw2G1KIRvhQPZ
-         pbUKDpSHnUv2fZbHuLeDBOyyjbQO+0G5GaF+HC8BBHzOslrlEg8N76TkT+UOIg2ijNg/
-         AbjfAVNFcRgqkbgY9yo6SqXf3sB4S2TyF2bo5X3fFqT+g8n7+rNNEwYvz+v3Ycs/5H9V
-         3KdQ==
-X-Gm-Message-State: AOAM531HNgc7amSdQ/kLN1GxrZ62o8JDaiJZjlDj7XHP0xZ9C1bZrm3G
-        9gWldPB63tGTX0EkXd32VLT8A6rmwfr+eTfRGjc=
-X-Google-Smtp-Source: ABdhPJzOKo/GorobPu735mwueaLomXxYZbLz9eL+BquGghJcyzOhJo2f4GfhEul/wctM5P5KLsVXWiuXCE+fuAgQOBQ=
-X-Received: by 2002:a2e:b1d4:: with SMTP id e20mr8884027lja.290.1592064854002;
- Sat, 13 Jun 2020 09:14:14 -0700 (PDT)
+        bh=ncEwZ2YTb3mVdV4EuBbju4CI9gD1hCf0cAsyxu6rkFs=;
+        b=Nt432grtsX+JngPYQqU1hg85X5hOV3B1QBjOsNsPAM9TNNgvLU0R7Wk/JnnC31TCLk
+         9zPiMt9BsDllhL0s4HRbU3cXnKll4yLP+J2dTRzRA0T6z0EMWPitAcCJssq0OC36GMe+
+         CLiqgH3nHE00tsmjZrovmFDoI+kkEM9WIwHpXvvQ2q0lCs0Qq4vk9Uokaf64NEkaEi0v
+         OtLgNZm3RvU2A0ocjwpM/nwGR0z8KZSg8AX1DH+fz3m5WCRVf2VLovTnLqSHBCTt88iw
+         5fu7gxcTOxBgz6q54HQ/OpHrqLHcpCJHArphm7/Ttbrz90zlgdiAiDliOe2FjjPXPUSi
+         HXSA==
+X-Gm-Message-State: AOAM531erPQrX6K7O84BZFg2nt2SEHdcMUw+UiQAsBHdJLiGzZsUvvE1
+        n4VV5j0P6Y3Q2uHhYyRILJQmz4siEf0=
+X-Google-Smtp-Source: ABdhPJw2U183pPeFUhM+NO/mtf47YVoyy8WDYgTX+2UB4VavgD5ZKOSDWo0C1mQySbfjSoeMXSS4CQ==
+X-Received: by 2002:a2e:2f0a:: with SMTP id v10mr9067421ljv.163.1592066868559;
+        Sat, 13 Jun 2020 09:47:48 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id g22sm1818666lfb.43.2020.06.13.09.47.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Jun 2020 09:47:47 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id i3so9937074ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jun 2020 09:47:46 -0700 (PDT)
+X-Received: by 2002:a2e:b5d9:: with SMTP id g25mr10011919ljn.285.1592066866523;
+ Sat, 13 Jun 2020 09:47:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <202006051903.C44988B@keescook> <875zc4c86z.fsf_-_@x220.int.ebiederm.org>
- <20200606201956.rvfanoqkevjcptfl@ast-mbp> <CAHk-=wi=rpNZMeubhq2un3rCMAiOL8A+FZpdPnwFLEY09XGgAQ@mail.gmail.com>
- <20200607014935.vhd3scr4qmawq7no@ast-mbp> <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
- <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
- <87r1uo2ejt.fsf@x220.int.ebiederm.org> <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
- <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
- <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
-In-Reply-To: <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Sat, 13 Jun 2020 09:14:02 -0700
-Message-ID: <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+References: <1503686.1591113304@warthog.procyon.org.uk> <20200610111256.s47agmgy5gvj3zwz@ws.net.home>
+ <CAHk-=whypJLi6T01HOZ5+UPe_rs+hft8wn6iOmQpZgbZzbAumA@mail.gmail.com> <3984625.1592053492@warthog.procyon.org.uk>
+In-Reply-To: <3984625.1592053492@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 13 Jun 2020 09:47:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh=9bYycJM5ginkkwymb3x-geMtiT5i2FvRS0zbKYR9LQ@mail.gmail.com>
+Message-ID: <CAHk-=wh=9bYycJM5ginkkwymb3x-geMtiT5i2FvRS0zbKYR9LQ@mail.gmail.com>
+Subject: Re: [GIT PULL] General notification queue and key notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Karel Zak <kzak@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        dray@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        keyrings@vger.kernel.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 13, 2020 at 8:33 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Sat, Jun 13, 2020 at 6:05 AM David Howells <dhowells@redhat.com> wrote:
 >
-> On Sat, Jun 13, 2020 at 7:13 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > I am in the middle of cleaning up exec.  Send the patches that address
-> > the issues and make this mess not a maintenance issue, and I will be
-> > happy to leave fork_usermode_blob alone.  Otherwise I plan to just
-> > remove the code for now as it is all dead at the moment.
->
-> May be stop being a jerk first ?
-> It's a Nack to remove the code.
+> Would you be willing at this point to consider pulling the mount notifications
+> and fsinfo() which helps support that?  I could whip up pull reqs for those
+> two pieces - or do you want to see more concrete patches that use it?
 
-I'm happy to work on changes, but your removal threats must stop
-before we can continue discussion. ok?
+I'd want to see more concrete use cases, but I'd also like to see that
+this keyring thing gets used and doesn't find any show-stoppers when
+it does.
+
+If we have multiple uses, and one of them notices some problem that
+requires any ABI changes, but the other one has already started using
+it, we'll have more problems.
+
+          Linus
