@@ -2,161 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1E61F864E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jun 2020 05:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28111F8765
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jun 2020 09:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbgFNDHz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jun 2020 23:07:55 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:35735 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726499AbgFNDHz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jun 2020 23:07:55 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id E7AD84A2;
-        Sat, 13 Jun 2020 23:07:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sat, 13 Jun 2020 23:07:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        rVTXaitnSkKOsrvPXgD4GPCoz8JiwHZXAjq9rig9rYg=; b=KEcU2L6sJVaklxlW
-        ly4adwsoU0jBK+EOoSSsTq6+CKOaXowvcPKf0aXISmGNUW0LksFhkosvOnifDfu+
-        PZG+FX4uyNu3We1xEeBNQJ3z0VLn8BGAJ7StNtvqcS4PWyNuXegbNssG2VAnlC9j
-        pZS9QuikjDTYWQpd3XTbs0fQCdnHOneIVECurAiUGEKCCAZRS9t1sarvpv6926Lv
-        T5VFvlazph9GqI+/wl6/iTYxho6l10nlbPmL3BvtHgFlgKMCj1o/ACHIk5tDJoHm
-        XF5V3NxPwmlonyej1NJx2LPdv1K328yw94HcCzIm6K+KQ7cy+MJRDhbqe5y149+/
-        g9QVKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=rVTXaitnSkKOsrvPXgD4GPCoz8JiwHZXAjq9rig9r
-        Yg=; b=TGEpV4Og9jfsA7r+RjCnv23FfkIn/3sxhnmH3j9xDi5cnqyVEHyFI3Dbm
-        xojGEebEfw8hY70/4F+KrLYlmp7Uz4GJ7HrFvf8uSP1RJh68jj/QCBU9oR1CumQF
-        mwDZ9CmqiQkqyMx5aLCQ02efEmXJRunJ8xPXK1bJ6cO1s0lYhLBVAhsIZsJ9oZaJ
-        AHC1AosA2cXN5n69gXVuXPJjwZGQ1vgt7VDeYwYXpN8fLJpdN5EWnxKc0UJEVFUY
-        D/yilCxpJfxJXm+9gtqskVryIJEVAO80FI0/kE9E8bs653ODG9PAaahZO7UkL/wl
-        P/lJEeIBXqPCVM6NDGJW3PZ8LO3Lw==
-X-ME-Sender: <xms:h5TlXrN47VIjnvpYDt1eyXdrq3DnyPV_pnqyf1659gacM6f3Ja-sJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeigedgjedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepheekrdejrddvvddtrdegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:h5TlXl9Sh3AqgFvvMfVQwtzxUTnCkpEtv5FmnFHXWxXBB7KmbaLSNg>
-    <xmx:h5TlXqTEk8b_RUqARBhsHqPWg8jBHnwjSq2c8djf3SMJZz8igtqnww>
-    <xmx:h5TlXvt9qROB3b_gmh5oFmhjrlBCq9U9_iM6pVdOjpeZ2luNHDaCDQ>
-    <xmx:iJTlXh3BZUuJwkYXV_cj-Mzzf-CEdSLXHNlvhHM3A3kzixURy582zCRvISE>
-Received: from mickey.themaw.net (58-7-220-47.dyn.iinet.net.au [58.7.220.47])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 062B53280059;
-        Sat, 13 Jun 2020 23:07:45 -0400 (EDT)
-Message-ID: <0991792b6e2af0a5cc1a2c2257b535b5e6b032e4.camel@themaw.net>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
- attribute change notifications [ver #5]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Sun, 14 Jun 2020 11:07:42 +0800
-In-Reply-To: <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
-References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
-         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
-         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1726845AbgFNHMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Jun 2020 03:12:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725265AbgFNHMk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 14 Jun 2020 03:12:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72E7B20714;
+        Sun, 14 Jun 2020 07:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592118760;
+        bh=0vN1w9ETUOy/X7MD4cx87lWgTNrDzSyXiwMz9T1CyeA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=emUfJCiKDRvZYA9vTPzurljz+hHAFSsF1POBOJeAZlSsuDkdk+mJU0KsKE45mtvgk
+         ERE3ROK1Akj2xkMvKApmgrwh9s+m+uicxQJxX0nKUpfCBBhBRAXLSkHVErHU437Wzx
+         9yUjfCV0OuK0m1KnLN8T9x4L6khXelo1AHYMkvjc=
+Date:   Sun, 14 Jun 2020 09:12:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v2] proc/fd: Remove unnecessary variable initialisations
+ in seq_show()
+Message-ID: <20200614071235.GA2629255@kroah.com>
+References: <20200612160946.21187-1-pilgrimtao@gmail.com>
+ <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-04-02 at 17:19 +0200, Miklos Szeredi wrote:
+On Fri, Jun 12, 2020 at 06:45:57PM +0200, Markus Elfring wrote:
+> > 'files' will be immediately reassigned. 'f_flags' and 'file' will be
+> > overwritten in the if{} or seq_show() directly exits with an error.
+> > so we don't need to consume CPU resources to initialize them.
 > 
-> > Firstly, a watch queue needs to be created:
-> > 
-> >         pipe2(fds, O_NOTIFICATION_PIPE);
-> >         ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, 256);
-> > 
-> > then a notification can be set up to report notifications via that
-> > queue:
-> > 
-> >         struct watch_notification_filter filter = {
-> >                 .nr_filters = 1,
-> >                 .filters = {
-> >                         [0] = {
-> >                                 .type = WATCH_TYPE_MOUNT_NOTIFY,
-> >                                 .subtype_filter[0] = UINT_MAX,
-> >                         },
-> >                 },
-> >         };
-> >         ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> >         watch_mount(AT_FDCWD, "/", 0, fds[1], 0x02);
-> > 
-> > In this case, it would let me monitor the mount topology subtree
-> > rooted at
-> > "/" for events.  Mount notifications propagate up the tree towards
-> > the
-> > root, so a watch will catch all of the events happening in the
-> > subtree
-> > rooted at the watch.
+> I suggest to improve also this change description.
 > 
-> Does it make sense to watch a single mount?  A set of mounts?   A
-> subtree with an exclusion list (subtrees, types, ???)?
+> * Should the mentioned identifiers refer to variables?
+> 
+> * Will another imperative wording be preferred?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n151
+> 
+> * I propose to extend the patch a bit more.
+>   How do you think about to convert the initialisation for the variable “ret”
+>   also into a later assignment?
+> 
+> Regards,
+> Markus
 
-Yes, filtering, perhaps, I'm not sure a single mount is useful
-as changes generally need to be monitored for a set of mounts.
+Hi,
 
-Monitoring a subtree is obviously possible because the monitor
-path doesn't need to be "/".
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-Or am I misunderstanding what your trying to get at.
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-The notion of filtering types and other things is interesting
-but what I've seen that doesn't fit in the current implementation
-so far probably isn't appropriate for kernel implementation.
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
-There's a special case of acquiring a list of mounts where the
-path is not a mount point itself but you need all mount below
-that path prefix.
+thanks,
 
-In this case you get all mounts, including the mounts of the mount
-containing the path, so you still need to traverse the list to match
-the prefix and that can easily mean the whole list of mounts in the
-system.
-
-Point is it leads to multiple traversals of a larger than needed list
-of mounts, one to get the list of mounts to check, and one to filter
-on the prefix.
-
-I've seen this use case with fsinfo() and that's where it's needed
-although it may be useful to carry it through to notifications as
-well.
-
-While this sounds like it isn't such a big deal it can sometimes
-make a considerable difference to the number of mounts you need
-to traverse when there are a large number of mounts in the system.
-
-I didn't consider it appropriate for kernel implementation but
-since you asked here it is. OTOH were checking for connectedness
-in fsinfo() anyway so maybe this is something that could be done
-without undue overhead.
-
-But that's all I've seen so far.
-
-Ian
-
+greg k-h's patch email bot
