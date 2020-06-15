@@ -2,89 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D9C01F914D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 10:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C25B1F915A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 10:27:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbgFOIY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 04:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728426AbgFOIY4 (ORCPT
+        id S1728977AbgFOI13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 04:27:29 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:27205 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728729AbgFOI13 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 04:24:56 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65184C05BD1E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 01:24:55 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id m21so10819107eds.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 01:24:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZhrHsoF+IuuCWsNYTt36CnOUPKOXLNanHzXXw538ijY=;
-        b=Uy4iXrsdKb9Jk+JDiX/Chl9qMKx9QpugSWS5NkriaPMVcmD97vURwhir28xYpfpmqh
-         SPDMoEWcuI4fT1IewSfOaVTFRjIgC0ZgI+aTtHVa8Bt1v7S6TEeRQHOUatH5LzhwpGJ+
-         6YojzNXVz6UCsvtK15ZaCT6yZnZ3E7q4SDk9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZhrHsoF+IuuCWsNYTt36CnOUPKOXLNanHzXXw538ijY=;
-        b=KkzlKufszQTsAu01hVBZvJkuRBXX9Hpfi2rGA5jbpIDGhW4KB2MaC8KjLKlpb2xB7o
-         HazetNg2ZX/SsGsBeZ5bJSXqHra3CUje1oEVrg0ccy0u6x/EfXqFlo22NBVOLfPHoXql
-         8Zo9aJCKsHcIbx2Tcg3lWvoNuKLNyQi06qC1Jtj3XH8efnVEmWjZOeXeAx/gT4OWb2eO
-         nXoFisT1HVF+LRiLaEmesdoZM5nbr+hODEnzo1zPo86z3wRHkmhAS1RPQLd3Y4TPT8yz
-         cD1eEAV9SyEb+1sASEjUtPPbXtVwLbeuRI+K5hyeJ7qwp4f78HzdCGhj6EEU0DB3WHjN
-         pgTA==
-X-Gm-Message-State: AOAM530n9cpfkYyt/JNdPUWT8EUERtSq99toUg/rtDhtuMoH/2zbXsmJ
-        jNgqV+5ULoQqsbBr6SYztCu45/PQuDhOsmt9Mdi1mA==
-X-Google-Smtp-Source: ABdhPJyTYfl7L17Ro5jQwnBv2wTKOxjN4zvQSKG7SGBI4x6Y1v+nhySmXXUUI9zXVpw1KDpsuc+QcQbm++UqGImgmT8=
-X-Received: by 2002:a50:d785:: with SMTP id w5mr22156433edi.212.1592209493931;
- Mon, 15 Jun 2020 01:24:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200612004644.255692-1-mike.kravetz@oracle.com>
- <20200612015842.GC23230@ZenIV.linux.org.uk> <b1756da5-4e91-298f-32f1-e5642a680cbf@oracle.com>
- <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 15 Jun 2020 10:24:42 +0200
-Message-ID: <CAJfpegv28Z2aECcb+Yfqum54zfwV=k1G1n_o3o6O-QTWOy3T4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify
- hugetlbfs files
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Mon, 15 Jun 2020 04:27:29 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-243-iJtaD7E4PGOFKa-5GEiBiQ-1; Mon, 15 Jun 2020 09:27:25 +0100
+X-MC-Unique: iJtaD7E4PGOFKa-5GEiBiQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 15 Jun 2020 09:27:24 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 15 Jun 2020 09:27:24 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christian Brauner' <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>
+CC:     Sargun Dhillon <sargun@sargun.me>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Robert Sesek <rsesek@google.com>,
+        Chris Palmer <palmer@google.com>, Jann Horn <jannh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Denton <mpdenton@google.com>, Tejun Heo <tj@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Walters <walters@verbum.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: RE: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Topic: [PATCH v3 1/4] fs, net: Standardize on file_receive helper to
+ move fds across processes
+Thread-Index: AQHWP+BcCi14oegu0U6J73sUpcDiU6jTfHDAgACI+YCAAKH2YIAAp2qKgAQNYhA=
+Date:   Mon, 15 Jun 2020 08:27:24 +0000
+Message-ID: <e54c39728d944de782394f4632bc7b1e@AcuMS.aculab.com>
+References: <202006092227.D2D0E1F8F@keescook>
+ <20200610081237.GA23425@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006101953.899EFB53@keescook>
+ <20200611100114.awdjswsd7fdm2uzr@wittgenstein>
+ <20200611110630.GB30103@ircssh-2.c.rugged-nimbus-611.internal>
+ <067f494d55c14753a31657f958cb0a6e@AcuMS.aculab.com>
+ <202006111634.8237E6A5C6@keescook>
+ <94407449bedd4ba58d85446401ff0a42@AcuMS.aculab.com>
+ <20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal>
+ <202006120806.E770867EF@keescook>
+ <20200612182816.okwylihs6u6wkgxd@wittgenstein>
+In-Reply-To: <20200612182816.okwylihs6u6wkgxd@wittgenstein>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 13, 2020 at 8:53 AM Amir Goldstein <amir73il@gmail.com> wrote:
+RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMTIgSnVuZSAyMDIwIDE5OjI4DQouLi4N
+Cj4gPiA+IAlpZiAoc2l6ZSA8IDMyKQ0KPiA+ID4gCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiA+IAlp
+ZiAoc2l6ZSA+IFBBR0VfU0laRSkNCj4gPiA+IAkJcmV0dXJuIC1FMkJJRzsNCj4gPg0KPiA+IChU
+YW5nZXQ6IHdoYXQgd2FzIHRoZSByZWFzb24gZm9yIGNvcHlfc3RydWN0X2Zyb21fdXNlcigpIG5v
+dCBpbmNsdWRpbmcNCj4gPiB0aGUgbWluL21heCBjaGVjaz8gSSBoYXZlIGEgbWVtb3J5IG9mIEFs
+IG9iamVjdGluZyB0byBoYXZpbmcgYW4NCj4gPiAiaW50ZXJuYWwiIGxpbWl0PykNCj4gDQo+IEFs
+IGRpZG4ndCB3YW50IHRoZSBQQUdFX1NJWkUgbGltaXQgaW4gdGhlcmUgYmVjYXVzZSB0aGVyZSdz
+IG5vdGhpbmcNCj4gaW5oZXJlbnRseSB3cm9uZyB3aXRoIGNvcHlpbmcgaW5zYW5lIGFtb3VudHMg
+b2YgbWVtb3J5Lg0KDQpUaGUgcHJvYmxlbSBpcyByZWFsbHkgYWxsb3dpbmcgYSB1c2VyIHByb2Nl
+c3MgdG8gYWxsb2NhdGUNCnVuYm91bmRlZCBibG9ja3Mgb2YgbWVtb3J5LCBub3QgdGhlIGNvcHkg
+aXRzZWxmLg0KDQpUaGUgbGltaXQgZm9yIElPVygpIGV0YyBpcyAxNmsgLSBub3QgYSBwcm9ibGVt
+Lg0KSWYgYSAzMmJpdCBzaXplIGlzIHNldCB0byBqdXN0IHVuZGVyIDRHQiBzbyB5b3UgcmVhbGx5
+IHdhbnQNCnRvIGFsbG9jYXRlIDRHQiBvZiBtZW1vcnkgdGhlbiBmaW5kIHRoZSByZXF1ZXN0IGlz
+IGdhcmJhZ2UuDQpTZWVtcyBsaWtlIGEgbmljZSBEb1MgYXR0YWNrLg0KQSA2NGJpdCBzaXplIGNh
+biBiZSB3b3JzZS4NCg0KUG90ZW50aWFsbHkgdGhlIGxpbWl0IHNob3VsZCBiZSBpbiBtZW1kdXBf
+dXNlcigpIGl0c2VsZi4NCkFuZCBwb3NzaWJseSBhbiBleHRyYSBwYXJhbWV0ZXIgZ2l2aW5nIGEg
+cGVyLWNhbGwgbG93ZXI/IGxpbWl0Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNz
+IExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAx
+UFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> > I also looked at normal filesystem lower and hugetlbfs upper.  Yes, overlayfs
-> > allows this.  This is somewhat 'interesting' as write() is not supported in
-> > hugetlbfs.  Writing to files in the overlay actually ended up writing to
-> > files in the lower filesystem.  That seems wrong, but overlayfs is new to me.
-
-Yes, this very definitely should not happen.
-
-> I am not sure how that happened, but I think that ovl_open_realfile()
-> needs to fixup f_mode flags FMODE_CAN_WRITE | FMODE_CAN_READ
-> after open_with_fake_path().
-
-Okay, but how did the write actually get to the lower layer?
-
-I failed to reproduce this.  Mike, how did you trigger this?
-
-Thanks,
-Miklos
