@@ -2,144 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1211FA098
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 21:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 210DD1FA0B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 21:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731173AbgFOTmo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 15:42:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58332 "EHLO
+        id S1730617AbgFOTph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 15:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731153AbgFOTmd (ORCPT
+        with ESMTP id S1728773AbgFOTph (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 15:42:33 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5334C008630
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 12:42:29 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id g12so7215666pll.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 12:42:29 -0700 (PDT)
+        Mon, 15 Jun 2020 15:45:37 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E851C061A0E;
+        Mon, 15 Jun 2020 12:45:36 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id s18so19321344ioe.2;
+        Mon, 15 Jun 2020 12:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3JfL5rZ2jBHVHruE8gOvtqg9JyZgUNdlEVNmiNcV2KM=;
-        b=fZanf+Q+DkHfo4aMqHOFUedXmvMVZgrQLA/WZwrpg3u80ggEz5uw8dl6q1DJv6I69K
-         eYo3FCvwRfsraJfmLiMYBs2O/FSWtFfrZQSFOcptNWbiVrSU5HTXZzTDtSQsIil04nL+
-         zttQYNpicIkl/Y5bhmPKZWvnMFmApQ6ukgXro=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GcEsP5XHkAYWjVB1MFDssViF4cxMQLWXk2Kgbxji0hs=;
+        b=d1N76KYXqQ1fpaIX30dgZBqRd8wI/sojfUihP9H9n7SrJl5fw8AIM1QjJHFUie0ynn
+         Ba7u2YUNcGPgUH5k5/xR7j1g1AD4ubDfekbuaJsUIn8tpQbEqATe7gJrtx3bqoUJmH4s
+         5+bquUS4RYotC8sNbFVFKTlUv9aULk2bwxwqhhxgC1NWXrZ2b3J+MnEA2epJN5YcPwJd
+         seJUjothmBUqRpHkR2X5MhScZehYA2HegUeEnFWW4JD2VuEs9SDBgZ0eGzbMT5M7oi0/
+         XAULqncIPF3a7VQsBQHJiygHfxiVk4UqM7Xb3uuuIVXJb73uzIjZdrMQlG7Z9vwbj0Z+
+         CyHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3JfL5rZ2jBHVHruE8gOvtqg9JyZgUNdlEVNmiNcV2KM=;
-        b=SLOgFzKVJh49bV61WN56zGQPccqDGS52TrP3N8fYQ5EQkfrOVVg1Z1JWkE2u3kJpnv
-         gBa8OJt3Ufn4UYL+0XeP7TMvD1dZHyhJOfNR9A1nlN6A5zNFLG2JjeFtJqI8gmMw6R30
-         KV+Xe7u9Ek9krHxkIHDerM6fXoXPxV/uuuDOIigKSqndjiexMV73aAEX8aScjTcKbrMZ
-         SckzictuoFUhhCs4WCCEoyxTm3/tzh2/08btONbOJaJBMFc85SudfjGUYsUazCvVrRjD
-         Q9Wg7maW3OeNNYWCd1XA+Ct3u+27H4ZT++QTgAd9oKC2RNv0obWm0esDTSp9brDGzI7X
-         pi+w==
-X-Gm-Message-State: AOAM533Xlk3sXdHgxSdNP2Fx9s43BdGIJ1hggNT3FU6409G27RJLudSa
-        hR+A96qezILEy8NLFQ4bR2Kugw==
-X-Google-Smtp-Source: ABdhPJx3kMXK9CvuRG607l8hAulj7XpeylNQZX9QIPNmIiTc3+hVVDCGFUV4snMFUNJ8QV1CHz5ttA==
-X-Received: by 2002:a17:902:8208:: with SMTP id x8mr13325262pln.114.1592250149282;
-        Mon, 15 Jun 2020 12:42:29 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id gq8sm293663pjb.14.2020.06.15.12.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 12:42:28 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v9 8/8] ima: add FIRMWARE_PARTIAL_READ support
-Date:   Mon, 15 Jun 2020 12:41:51 -0700
-Message-Id: <20200615194151.7011-9-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200615194151.7011-1-scott.branden@broadcom.com>
-References: <20200615194151.7011-1-scott.branden@broadcom.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GcEsP5XHkAYWjVB1MFDssViF4cxMQLWXk2Kgbxji0hs=;
+        b=oD8rqe1WbSqXPeGF+kDGc8ny/y8ZwR4nKi3K9xLvoeN5cmrNEsfuIvRKjrB9b7cCiJ
+         aDCzAMYetaJJYLn4POxwKcLWyDI6do9l4LZ0aeCbK2KLF3ogWlhDpI8t563TOxzlbiZi
+         XsZTmklNrV1zI+xAv3WWoQcNa3ktsCTo2/rDEpvnpDmW6nmx08TKX5jQtJTPE6WEr6wT
+         +KIDoOpMRYvPoSjcw46UA9Xq02vIsOmDgE92qyte4GfseqBE8SDPaTjV9IN2h423Pu1U
+         Yk/lBu3IiMSLLtpuLiRGJeYlp8q905CasW9zE37EJjIJPmzDMe+v1HFJb6r1JIQDTV09
+         8loQ==
+X-Gm-Message-State: AOAM5319MNyHR3uHQK7Fo+4VDz/IfJHwZzc5RA/G6XG2nu1ijlVfVvDg
+        SRSa0DwKOOS+q/xtbhN83gIl0E1UlgXQQZlNUA==
+X-Google-Smtp-Source: ABdhPJxruXU+i+P2JjGW09+nvoxmHKpEF1SP+mxNnwxG3exn2/HqUJry5Lh3ZGwSfno6ZlJbUa99xQueu/DZAVZXhg0=
+X-Received: by 2002:a05:6602:80b:: with SMTP id z11mr29222473iow.109.1592250335524;
+ Mon, 15 Jun 2020 12:45:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200615130032.931285-1-hch@lst.de> <20200615130032.931285-3-hch@lst.de>
+ <CAK8P3a0bRD3RzE_X6Tjzu9Tj+OhHhP+S=k6+VYODBGko8oQhew@mail.gmail.com>
+ <20200615141239.GA12951@lst.de> <CAMzpN2heSzZzg16ws3yQkd7YZwmPPx_4RFCpb9JYfFWJ9gfPhA@mail.gmail.com>
+ <CAK8P3a3q-hC7kZwLPbc+E5VYcqthQS4J4Rqo+rKkBRU2n071XA@mail.gmail.com>
+In-Reply-To: <CAK8P3a3q-hC7kZwLPbc+E5VYcqthQS4J4Rqo+rKkBRU2n071XA@mail.gmail.com>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Mon, 15 Jun 2020 15:45:24 -0400
+Message-ID: <CAMzpN2iDPKatOqs+Uuw70ACbnB-D__dgSRZU0wBjOUBwTGOJ-A@mail.gmail.com>
+Subject: Re: [PATCH 2/6] exec: simplify the compat syscall handling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add FIRMWARE_PARTIAL_READ support for integrity
-measurement on partial reads of firmware files.
+On Mon, Jun 15, 2020 at 2:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Jun 15, 2020 at 4:48 PM Brian Gerst <brgerst@gmail.com> wrote:
+> > On Mon, Jun 15, 2020 at 10:13 AM Christoph Hellwig <hch@lst.de> wrote:
+> > > On Mon, Jun 15, 2020 at 03:31:35PM +0200, Arnd Bergmann wrote:
+>
+> > >
+> > > I'd rather keep it in common code as that allows all the low-level
+> > > exec stuff to be marked static, and avoid us growing new pointless
+> > > compat variants through copy and paste.
+> > > smart compiler to d
+> > >
+> > > > I don't really understand
+> > > > the comment, why can't this just use this?
+> > >
+> > > That errors out with:
+> > >
+> > > ld: arch/x86/entry/syscall_x32.o:(.rodata+0x1040): undefined reference to
+> > > `__x32_sys_execve'
+> > > ld: arch/x86/entry/syscall_x32.o:(.rodata+0x1108): undefined reference to
+> > > `__x32_sys_execveat'
+> > > make: *** [Makefile:1139: vmlinux] Error 1
+> >
+> > I think I have a fix for this, by modifying the syscall wrappers to
+> > add an alias for the __x32 variant to the native __x64_sys_foo().
+> > I'll get back to you with a patch.
+>
+> Do we actually need the __x32 prefix any more, or could we just
+> change all x32 specific calls to use __x64_compat_sys_foo()?
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- security/integrity/ima/ima_main.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+I suppose that would work too.  The prefix really describes the
+register mapping.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..5602bc858369 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -610,6 +610,9 @@ void ima_post_path_mknod(struct dentry *dentry)
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
-+	enum ima_hooks func;
-+	u32 secid;
-+
- 	/*
- 	 * READING_FIRMWARE_PREALLOC_BUFFER
- 	 *
-@@ -618,11 +621,27 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 	 * of IMA's signature verification any more than when using two
- 	 * buffers?
- 	 */
--	return 0;
-+	if (read_id != READING_FIRMWARE_PARTIAL_READ)
-+		return 0;
-+
-+	if (!file) {
-+		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-+		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+			pr_err("Prevent firmware loading_store.\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
-+		return 0;
-+	}
-+
-+	func = read_idmap[read_id] ?: FILE_CHECK;
-+	security_task_getsecid(current, &secid);
-+	return process_measurement(file, current_cred(), secid, NULL,
-+				   0, MAY_READ, func);
- }
- 
- const int read_idmap[READING_MAX_ID] = {
- 	[READING_FIRMWARE] = FIRMWARE_CHECK,
-+	[READING_FIRMWARE_PARTIAL_READ] = FIRMWARE_CHECK,
- 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
- 	[READING_MODULE] = MODULE_CHECK,
- 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-@@ -649,6 +668,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 	enum ima_hooks func;
- 	u32 secid;
- 
-+	if (read_id == READING_FIRMWARE_PARTIAL_READ)
-+		return 0;
-+
- 	if (!file && read_id == READING_FIRMWARE) {
- 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
--- 
-2.17.1
-
+--
+Brian Gerst
