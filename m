@@ -2,108 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE90D1F9633
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 14:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E59881F963C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 14:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729955AbgFOMNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 08:13:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729944AbgFOMNl (ORCPT
+        id S1729984AbgFOMOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 08:14:04 -0400
+Received: from outbound-smtp17.blacknight.com ([46.22.139.234]:49671 "EHLO
+        outbound-smtp17.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729962AbgFOMOC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 08:13:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829ACC061A0E;
-        Mon, 15 Jun 2020 05:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=PF4bzIK4C6pn8fyYVupIOSqczJ5WF2NO/8H9ENbmrME=; b=E+eWHfg8isJ5VnITgvQWL3PrTo
-        CDP0ntDNh+D+4Y08c8n8h6tHp2L9c9d/GgR/kYjjigllS6cMvUNBnKSyB2L7sPJdVG1xFLXFu9dyW
-        Iym0Uuru+rhilWJlPJB3/dGxZw7NdKubcyQyXGhIiznynOkFlDx+iuJOyFfHzOQnV4C1f47dLYPG4
-        ldy+u85fJelGMj9wn7XQ59dTHR3794/tzkjF4hErxrs3cls381N+ryJYL6Yg4AceK14tMkjB218eK
-        9jkbhkpcH8PUkqwWO5arDXrWC/D6KfxnRK3nmVcpvHozawoTwmEkslU3GmBNAy/5DsKsgM9KbJwoe
-        g9qLP+bQ==;
-Received: from 195-192-102-148.dyn.cablelink.at ([195.192.102.148] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jknze-00075s-L2; Mon, 15 Jun 2020 12:13:39 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: [PATCH 13/13] fs: don't change the address limit for ->read_iter in __kernel_read
-Date:   Mon, 15 Jun 2020 14:12:57 +0200
-Message-Id: <20200615121257.798894-14-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200615121257.798894-1-hch@lst.de>
-References: <20200615121257.798894-1-hch@lst.de>
+        Mon, 15 Jun 2020 08:14:02 -0400
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp17.blacknight.com (Postfix) with ESMTPS id 959681C35BA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 13:14:00 +0100 (IST)
+Received: (qmail 24394 invoked from network); 15 Jun 2020 12:14:00 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.5])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 15 Jun 2020 12:14:00 -0000
+Date:   Mon, 15 Jun 2020 13:13:58 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] fs: Do not check if there is a fsnotify watcher on pseudo
+ inodes
+Message-ID: <20200615121358.GF3183@techsingularity.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we read to a file that implements ->read_iter there is no need
-to change the address limit if we send a kvec down.  Implement that
-case, and prefer it over using plain ->read with a changed address
-limit if available.
+Changelog since v1
+o Updated changelog
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+The kernel uses internal mounts created by kern_mount() and populated
+with files with no lookup path by alloc_file_pseudo for a variety of
+reasons. An example of such a mount is for anonymous pipes. For pipes,
+every vfs_write regardless of filesystem, fsnotify_modify() is called to
+notify of any changes which incurs a small amount of overhead in fsnotify
+even when there are no watchers. It can also trigger for reads and readv
+and writev, it was simply vfs_write() that was noticed first.
+
+A patch is pending that reduces, but does not eliminte, the overhead of
+fsnotify but for files that cannot be looked up via a path, even that
+small overhead is unnecessary. The user API for fanotify is based on
+the pathname and a dirfd and proc entries appear to be the only visible
+representation of the files. Proc does not have the same pathname as the
+internal entry and the proc inode is not the same as the internal inode
+so even if fanotify is used on a file under /proc/XX/fd, no useful events
+are notified.
+
+This patch changes alloc_file_pseudo() to always opt out of fsnotify by
+setting FMODE_NONOTIFY flag so that no check is made for fsnotify watchers
+on pseudo files. This should be safe as the underlying helper for the
+dentry is d_alloc_pseudo which explicitly states that no lookups are ever
+performed meaning that fanotify should have nothing useful to attach to.
+
+The test motivating this was "perf bench sched messaging --pipe". On
+a single-socket machine using threads the difference of the patch was
+as follows.
+
+                              5.7.0                  5.7.0
+                            vanilla        nofsnotify-v1r1
+Amean     1       1.3837 (   0.00%)      1.3547 (   2.10%)
+Amean     3       3.7360 (   0.00%)      3.6543 (   2.19%)
+Amean     5       5.8130 (   0.00%)      5.7233 *   1.54%*
+Amean     7       8.1490 (   0.00%)      7.9730 *   2.16%*
+Amean     12     14.6843 (   0.00%)     14.1820 (   3.42%)
+Amean     18     21.8840 (   0.00%)     21.7460 (   0.63%)
+Amean     24     28.8697 (   0.00%)     29.1680 (  -1.03%)
+Amean     30     36.0787 (   0.00%)     35.2640 *   2.26%*
+Amean     32     38.0527 (   0.00%)     38.1223 (  -0.18%)
+
+The difference is small but in some cases it's outside the noise so
+while marginal, there is still some small benefit to ignoring fsnotify
+for files allocated via alloc_file_pseudo in some cases.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- fs/read_write.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ fs/file_table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 1d43da8554dc0d..3bde37aa63db6c 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -421,7 +421,6 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
- 
- ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- {
--	mm_segment_t old_fs = get_fs();
- 	ssize_t ret;
- 
- 	if (!(file->f_mode & FMODE_CAN_READ))
-@@ -429,14 +428,25 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- 
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	set_fs(KERNEL_DS);
--	if (file->f_op->read)
-+	if (file->f_op->read_iter) {
-+		struct kvec iov = { .iov_base = buf, .iov_len = count };
-+		struct kiocb kiocb;
-+		struct iov_iter iter;
-+
-+		init_sync_kiocb(&kiocb, file);
-+		kiocb.ki_pos = *pos;
-+		iov_iter_kvec(&iter, READ, &iov, 1, count);
-+		ret = file->f_op->read_iter(&kiocb, &iter);
-+		*pos = kiocb.ki_pos;
-+	} else if (file->f_op->read) {
-+		mm_segment_t old_fs = get_fs();
-+
-+		set_fs(KERNEL_DS);
- 		ret = file->f_op->read(file, (void __user *)buf, count, pos);
--	else if (file->f_op->read_iter)
--		ret = new_sync_read(file, (void __user *)buf, count, pos);
--	else
-+		set_fs(old_fs);
-+	} else {
- 		ret = -EINVAL;
--	set_fs(old_fs);
-+	}
- 	if (ret > 0) {
- 		fsnotify_access(file);
- 		add_rchar(current, ret);
--- 
-2.26.2
-
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 30d55c9a1744..0076ccf67a7d 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -229,7 +229,7 @@ struct file *alloc_file_pseudo(struct inode *inode, struct vfsmount *mnt,
+ 		d_set_d_op(path.dentry, &anon_ops);
+ 	path.mnt = mntget(mnt);
+ 	d_instantiate(path.dentry, inode);
+-	file = alloc_file(&path, flags, fops);
++	file = alloc_file(&path, flags | FMODE_NONOTIFY, fops);
+ 	if (IS_ERR(file)) {
+ 		ihold(inode);
+ 		path_put(&path);
