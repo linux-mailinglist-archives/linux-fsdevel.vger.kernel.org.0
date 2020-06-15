@@ -2,109 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 210DD1FA0B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 21:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C2F1FA1D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 22:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730617AbgFOTph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 15:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
+        id S1731171AbgFOUlM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 16:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbgFOTph (ORCPT
+        with ESMTP id S1729692AbgFOUlM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 15:45:37 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E851C061A0E;
-        Mon, 15 Jun 2020 12:45:36 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id s18so19321344ioe.2;
-        Mon, 15 Jun 2020 12:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GcEsP5XHkAYWjVB1MFDssViF4cxMQLWXk2Kgbxji0hs=;
-        b=d1N76KYXqQ1fpaIX30dgZBqRd8wI/sojfUihP9H9n7SrJl5fw8AIM1QjJHFUie0ynn
-         Ba7u2YUNcGPgUH5k5/xR7j1g1AD4ubDfekbuaJsUIn8tpQbEqATe7gJrtx3bqoUJmH4s
-         5+bquUS4RYotC8sNbFVFKTlUv9aULk2bwxwqhhxgC1NWXrZ2b3J+MnEA2epJN5YcPwJd
-         seJUjothmBUqRpHkR2X5MhScZehYA2HegUeEnFWW4JD2VuEs9SDBgZ0eGzbMT5M7oi0/
-         XAULqncIPF3a7VQsBQHJiygHfxiVk4UqM7Xb3uuuIVXJb73uzIjZdrMQlG7Z9vwbj0Z+
-         CyHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GcEsP5XHkAYWjVB1MFDssViF4cxMQLWXk2Kgbxji0hs=;
-        b=oD8rqe1WbSqXPeGF+kDGc8ny/y8ZwR4nKi3K9xLvoeN5cmrNEsfuIvRKjrB9b7cCiJ
-         aDCzAMYetaJJYLn4POxwKcLWyDI6do9l4LZ0aeCbK2KLF3ogWlhDpI8t563TOxzlbiZi
-         XsZTmklNrV1zI+xAv3WWoQcNa3ktsCTo2/rDEpvnpDmW6nmx08TKX5jQtJTPE6WEr6wT
-         +KIDoOpMRYvPoSjcw46UA9Xq02vIsOmDgE92qyte4GfseqBE8SDPaTjV9IN2h423Pu1U
-         Yk/lBu3IiMSLLtpuLiRGJeYlp8q905CasW9zE37EJjIJPmzDMe+v1HFJb6r1JIQDTV09
-         8loQ==
-X-Gm-Message-State: AOAM5319MNyHR3uHQK7Fo+4VDz/IfJHwZzc5RA/G6XG2nu1ijlVfVvDg
-        SRSa0DwKOOS+q/xtbhN83gIl0E1UlgXQQZlNUA==
-X-Google-Smtp-Source: ABdhPJxruXU+i+P2JjGW09+nvoxmHKpEF1SP+mxNnwxG3exn2/HqUJry5Lh3ZGwSfno6ZlJbUa99xQueu/DZAVZXhg0=
-X-Received: by 2002:a05:6602:80b:: with SMTP id z11mr29222473iow.109.1592250335524;
- Mon, 15 Jun 2020 12:45:35 -0700 (PDT)
+        Mon, 15 Jun 2020 16:41:12 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592B6C061A0E;
+        Mon, 15 Jun 2020 13:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kK+1jIWxN5k17bJ7A2t/Kwz+X4qUhI2qmBIqCreK+hE=; b=Kb4G8CJtwr0WDiJri9s7FgMVUJ
+        oiI15ebm0aDGuPyAfOapazyLDysYpOzrndj7dnBhbdgeNcnIqHtHZVo0t/4uEU+eyI6dswGndaUDk
+        4XJ6tej2Gn71BSyUz+hpN56kJ/6OhX3EPuGYYjQKqLAHfh7G6u+jFhpqscG1Gf55AFtH7P5mG0Lvv
+        a3KIc2/KEt2SvdYnl3p9XoL4NdSN8Sv6li4ozPs+G3ddTfDboY2AU2LANoH9/fDBj/ZXSe2LN/Ixm
+        guRiw2uzxsNV9xr1w2kqr18qlBlChoGXFD4ARWH1UGXvq2GLSxRUrZElH5QKaqIe5y1Wlh7gbOUpW
+        uvRzR69g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jkvuQ-000891-O1; Mon, 15 Jun 2020 20:40:46 +0000
+Date:   Mon, 15 Jun 2020 13:40:46 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
+        areber@redhat.com, aubrey.li@linux.intel.com,
+        Andrei Vagin <avagin@gmail.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: possible deadlock in send_sigio
+Message-ID: <20200615204046.GW8681@bombadil.infradead.org>
+References: <000000000000760d0705a270ad0c@google.com>
+ <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
+ <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
+ <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
+ <20200611142214.GI2531@hirez.programming.kicks-ass.net>
+ <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
+ <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20200612070101.GA879624@tardis>
+ <20200615164902.GV8681@bombadil.infradead.org>
+ <0c854a69-9b89-9e45-f2c1-e60e2a9d3f1c@redhat.com>
 MIME-Version: 1.0
-References: <20200615130032.931285-1-hch@lst.de> <20200615130032.931285-3-hch@lst.de>
- <CAK8P3a0bRD3RzE_X6Tjzu9Tj+OhHhP+S=k6+VYODBGko8oQhew@mail.gmail.com>
- <20200615141239.GA12951@lst.de> <CAMzpN2heSzZzg16ws3yQkd7YZwmPPx_4RFCpb9JYfFWJ9gfPhA@mail.gmail.com>
- <CAK8P3a3q-hC7kZwLPbc+E5VYcqthQS4J4Rqo+rKkBRU2n071XA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3q-hC7kZwLPbc+E5VYcqthQS4J4Rqo+rKkBRU2n071XA@mail.gmail.com>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Mon, 15 Jun 2020 15:45:24 -0400
-Message-ID: <CAMzpN2iDPKatOqs+Uuw70ACbnB-D__dgSRZU0wBjOUBwTGOJ-A@mail.gmail.com>
-Subject: Re: [PATCH 2/6] exec: simplify the compat syscall handling
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c854a69-9b89-9e45-f2c1-e60e2a9d3f1c@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 2:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Jun 15, 2020 at 4:48 PM Brian Gerst <brgerst@gmail.com> wrote:
-> > On Mon, Jun 15, 2020 at 10:13 AM Christoph Hellwig <hch@lst.de> wrote:
-> > > On Mon, Jun 15, 2020 at 03:31:35PM +0200, Arnd Bergmann wrote:
->
-> > >
-> > > I'd rather keep it in common code as that allows all the low-level
-> > > exec stuff to be marked static, and avoid us growing new pointless
-> > > compat variants through copy and paste.
-> > > smart compiler to d
-> > >
-> > > > I don't really understand
-> > > > the comment, why can't this just use this?
-> > >
-> > > That errors out with:
-> > >
-> > > ld: arch/x86/entry/syscall_x32.o:(.rodata+0x1040): undefined reference to
-> > > `__x32_sys_execve'
-> > > ld: arch/x86/entry/syscall_x32.o:(.rodata+0x1108): undefined reference to
-> > > `__x32_sys_execveat'
-> > > make: *** [Makefile:1139: vmlinux] Error 1
-> >
-> > I think I have a fix for this, by modifying the syscall wrappers to
-> > add an alias for the __x32 variant to the native __x64_sys_foo().
-> > I'll get back to you with a patch.
->
-> Do we actually need the __x32 prefix any more, or could we just
-> change all x32 specific calls to use __x64_compat_sys_foo()?
+On Mon, Jun 15, 2020 at 01:13:51PM -0400, Waiman Long wrote:
+> On 6/15/20 12:49 PM, Matthew Wilcox wrote:
+> > On Fri, Jun 12, 2020 at 03:01:01PM +0800, Boqun Feng wrote:
+> > > On the archs using QUEUED_RWLOCKS, read_lock() is not always a recursive
+> > > read lock, actually it's only recursive if in_interrupt() is true. So
+> > > change the annotation accordingly to catch more deadlocks.
+> > [...]
+> > 
+> > > +#ifdef CONFIG_LOCKDEP
+> > > +/*
+> > > + * read_lock() is recursive if:
+> > > + * 1. We force lockdep think this way in selftests or
+> > > + * 2. The implementation is not queued read/write lock or
+> > > + * 3. The locker is at an in_interrupt() context.
+> > > + */
+> > > +static inline bool read_lock_is_recursive(void)
+> > > +{
+> > > +	return force_read_lock_recursive ||
+> > > +	       !IS_ENABLED(CONFIG_QUEUED_RWLOCKS) ||
+> > > +	       in_interrupt();
+> > > +}
+> > I'm a bit uncomfortable with having the _lockdep_ definition of whether
+> > a read lock is recursive depend on what the _implementation_ is.
+> > The locking semantics should be the same, no matter which architecture
+> > you're running on.  If we rely on read locks being recursive in common
+> > code then we have a locking bug on architectures which don't use queued
+> > rwlocks.
+> > 
+> > I don't know whether we should just tell the people who aren't using
+> > queued rwlocks that they have a new requirement or whether we should
+> > say that read locks are never recursive, but having this inconsistency
+> > is not a good idea!
+> 
+> Actually, qrwlock is more restrictive. It is possible that systems with
+> qrwlock may hit deadlock which doesn't happens in other systems that use
+> recursive rwlock. However, the current lockdep code doesn't detect those
+> cases.
 
-I suppose that would work too.  The prefix really describes the
-register mapping.
+Oops.  I misread.  Still, my point stands; we should have the same
+definition of how you're allowed to use locks from the lockdep point of
+view, even if the underlying implementation won't deadlock on a particular
+usage model.
 
---
-Brian Gerst
+
+So I'd be happy with:
+
++	return lockdep_pretend_in_interrupt || in_interrupt();
+
+to allow the test-suite to test that it works as expected, without
+actually disabling interrupts while the testsuite runs.
+
