@@ -2,92 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4F21F9CB2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 18:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DC11F9C88
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 18:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbgFOQLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 12:11:40 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37986 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728585AbgFOQLk (ORCPT
+        id S1730733AbgFOQDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 12:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730426AbgFOQDu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:11:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592237499;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=AFpokfWrHaipWh7YJWyhlDrGpwMEhWoMK+9HrZUUdI4=;
-        b=T7ZHVXN41X30W2qmLZOPZK4nieZEQF8MFTBzW1ZaXxNGQ9EXKv2OMGHDG+2Mr9I1mhA9lH
-        QuVpBieCrFdiO4wUT11z495fLMhIPn8GnIcqYVIRTXCS2EgLIuq535RBdyoNtEEKq/XvmZ
-        xoACG+wsM1LPix/OiIrjfwiJXf+JDE8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-228-2T1UwQj2Ocqvg3-Q18Dsew-1; Mon, 15 Jun 2020 12:11:37 -0400
-X-MC-Unique: 2T1UwQj2Ocqvg3-Q18Dsew-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7F51901D06;
-        Mon, 15 Jun 2020 16:02:49 +0000 (UTC)
-Received: from max.home.com (unknown [10.40.195.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 49EFD5D9CD;
-        Mon, 15 Jun 2020 16:02:46 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
-Date:   Mon, 15 Jun 2020 18:02:44 +0200
-Message-Id: <20200615160244.741244-1-agruenba@redhat.com>
+        Mon, 15 Jun 2020 12:03:50 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCFCC061A0E;
+        Mon, 15 Jun 2020 09:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=ImvJGlO0FP5FUU6GtE+Nf8W+2JHUvHYZF8+rh8hHYCs=; b=JqfphNW3m5JEbtWD7auHtyYFgA
+        wPlfQu2st2C/QdQtRSI9nUPGeeLL5D1lcQ+0iUrOH0CjO6c8xE2dpaREGtmZPVaFqeF5etyrU4KYq
+        OPlxVd6SepR9OhMKq/kxoiLXRLN5w8zXEjg+fDlMXIYsoMZcNoU1Hr0QNpTGEmeek76PivPj9VLao
+        IsjqIPvkL1pQZ1lGaMzS84JWpQ7rkU9K/rQ1zW8u9mZ+IKpoye1vZKTv6Kl7PtUqHXGnIZ5P2WgZP
+        XUVB0qGlpi96O3cHN+7R33SlAQtRFoeQz7Z/CMqbXHPNjixP2n2aFyn/k7O4G8didRptDpVEIlROg
+        3tY3P7cg==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jkraQ-0007Sy-6N; Mon, 15 Jun 2020 16:03:50 +0000
+Subject: Re: decruft the early init / initrd / initramfs code
+To:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200615125323.930983-1-hch@lst.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <aa12bf27-9013-439e-f946-3d8ad654d4fd@infradead.org>
+Date:   Mon, 15 Jun 2020 09:03:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200615125323.930983-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make sure iomap_end is always called when iomap_begin succeeds: the
-filesystem may take locks in iomap_begin and release them in iomap_end,
-for example.
+On 6/15/20 5:53 AM, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series starts to move the early init code away from requiring
+> KERNEL_DS to be implicitly set during early startup.  It does so by
+> first removing legacy unused cruft, and the switches away the code
+> from struct file based APIs to our more usual in-kernel APIs.
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/iomap/apply.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Hi,
 
-diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-index 76925b40b5fd..c00a14d825db 100644
---- a/fs/iomap/apply.c
-+++ b/fs/iomap/apply.c
-@@ -46,10 +46,10 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
- 	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
- 	if (ret)
- 		return ret;
--	if (WARN_ON(iomap.offset > pos))
--		return -EIO;
--	if (WARN_ON(iomap.length == 0))
--		return -EIO;
-+	if (WARN_ON(iomap.offset > pos) || WARN_ON(iomap.length == 0)) {
-+		written = -EIO;
-+		goto out;
-+	}
- 
- 	trace_iomap_apply_dstmap(inode, &iomap);
- 	if (srcmap.type != IOMAP_HOLE)
-@@ -80,6 +80,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
- 	written = actor(inode, pos, length, data, &iomap,
- 			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
- 
-+out:
- 	/*
- 	 * Now the data has been copied, commit the range we've copied.  This
- 	 * should not fail unless the filesystem has had a fatal error.
+Would it be possible to get a series diffstat in your patch
+cover letters as a regular thing, please?
 
-base-commit: 97e0204907ac4c42c6e94ef466a047523f34b853
+thanks.
 -- 
-2.26.2
+~Randy
 
