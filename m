@@ -2,88 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E031C1F9DEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 18:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E491F9E3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 19:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbgFOQ5V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 12:57:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbgFOQ5U (ORCPT
+        id S1731230AbgFOROM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 13:14:12 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54856 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731226AbgFOROI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:57:20 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B57C061A0E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 09:57:20 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id y11so20087895ljm.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 09:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eIkal8pUfONI4oNrGMEW7FJGnsyPgxFx6nFiYlCav8Q=;
-        b=BOdfnS1nQ1loTAy3XfZG4v2ypfE6UrK/J+Zd6u9ARxAU0HozZqAjdnCtxoLxulSvq0
-         7PoDNtEz3pdUYnk9jHe+VKu0KTcBji19fekNHUB4EqiWzTIqAhfzI/qVn548WkWINsOo
-         G2cfvtd1eBk/jMWvfGGb0/G2cdASiBLrgA7w0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eIkal8pUfONI4oNrGMEW7FJGnsyPgxFx6nFiYlCav8Q=;
-        b=euZdNtEyuqcb5CfO4Rri8WYRU7KzQR/ERcBHjksdwDUeLo/1txhIKNrmRGIBRsCOIu
-         0DrT0e677gqfyeKJEFtXH5j4/RiCHBmVjGEDAKS/d4Bo1LRYj1x2A4AQGVKIcLDc2shR
-         THYjodHa+rsNWOsDg55DLDiFfBhu0XzX8nA2Nb7fybecDVITFyjTLQl3ZqpjS2+Kr6yl
-         0zGkvfhxVGPiaelVQWisk7QHnUVzLaJPh6a1S7VsUpsiJuxVIAQgZwZxGDi9GimOYYwi
-         EjLW4QmjBNUTqFDqQhCm1hLxlA0Q1bQJhDDSid7SgSU0isl2EY4T7fdpZG1lRhMY91TI
-         FO7Q==
-X-Gm-Message-State: AOAM5309l1qdw43XnPkdIk9sk4c1P/bvfPAJXqYAXaGOaxORuyuz9KB8
-        xedfjO58XBDWWlF6FCQWP3Grj7N4aTo=
-X-Google-Smtp-Source: ABdhPJw2K7M06eqz/jHp23tt4fkBaFT/IDnA13h2F7mBSXR1PcAsB6fR73fJ6XCDOrvvLCPvCqu5Eg==
-X-Received: by 2002:a2e:9804:: with SMTP id a4mr14120229ljj.369.1592240237440;
-        Mon, 15 Jun 2020 09:57:17 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id k1sm4674908lja.27.2020.06.15.09.57.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2020 09:57:16 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id 9so20037032ljv.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 09:57:16 -0700 (PDT)
-X-Received: by 2002:a2e:b5d7:: with SMTP id g23mr12503482ljn.70.1592240235665;
- Mon, 15 Jun 2020 09:57:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200615121257.798894-1-hch@lst.de> <20200615121257.798894-11-hch@lst.de>
- <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 15 Jun 2020 09:56:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVjH4C+PzyHfsR0+GzFUf_2XX5H_tQoHGqp+pMGuec7Q@mail.gmail.com>
-Message-ID: <CAHk-=wiVjH4C+PzyHfsR0+GzFUf_2XX5H_tQoHGqp+pMGuec7Q@mail.gmail.com>
-Subject: Re: [PATCH 10/13] integrity/ima: switch to using __kernel_read
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 15 Jun 2020 13:14:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592241246;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=laujHXtNzuWRWuumln1La0bpzgZIGk/wirXDlUO/7Ek=;
+        b=PKzDttg0lA9FLiqQMChpJlGa7om0/4/IAb3nUb3sX6K+/U3YWZTRBhMuEhXqgu0mW4GJ7U
+        7wJZSDiBqfJj6/ABldlWXCe4ezQZpQOEPqmEf7OGgUhD39Ktpn0WWrbGe0qHisX1z5WyYk
+        WDyKP1el+XVSbi4j7r0Wb0+gyfM/9IA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-210-0ataK8GQPYKHIOZZVTHhuQ-1; Mon, 15 Jun 2020 13:14:02 -0400
+X-MC-Unique: 0ataK8GQPYKHIOZZVTHhuQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5FF6418585A7;
+        Mon, 15 Jun 2020 17:13:58 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-117-41.rdu2.redhat.com [10.10.117.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 34B6A5C1D6;
+        Mon, 15 Jun 2020 17:13:52 +0000 (UTC)
+Subject: Re: possible deadlock in send_sigio
+To:     Matthew Wilcox <willy@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, allison@lohutok.net,
+        areber@redhat.com, aubrey.li@linux.intel.com,
+        Andrei Vagin <avagin@gmail.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Christian Brauner <christian@brauner.io>, cyphar@cyphar.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, guro@fb.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>, linmiaohe@huawei.com,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, sargun@sargun.me,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <000000000000760d0705a270ad0c@google.com>
+ <69818a6c-7025-8950-da4b-7fdc065d90d6@redhat.com>
+ <CACT4Y+brpePBoR7EUwPiSvGAgo6bhvpKvLTiCaCfRSadzn6yRw@mail.gmail.com>
+ <88c172af-46df-116e-6f22-b77f98803dcb@redhat.com>
+ <20200611142214.GI2531@hirez.programming.kicks-ass.net>
+ <b405aca6-a3b2-cf11-a482-2b4af1e548bd@redhat.com>
+ <20200611235526.GC94665@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20200612070101.GA879624@tardis>
+ <20200615164902.GV8681@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0c854a69-9b89-9e45-f2c1-e60e2a9d3f1c@redhat.com>
+Date:   Mon, 15 Jun 2020 13:13:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200615164902.GV8681@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 9:46 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 6/15/20 12:49 PM, Matthew Wilcox wrote:
+> On Fri, Jun 12, 2020 at 03:01:01PM +0800, Boqun Feng wrote:
+>> On the archs using QUEUED_RWLOCKS, read_lock() is not always a recursive
+>> read lock, actually it's only recursive if in_interrupt() is true. So
+>> change the annotation accordingly to catch more deadlocks.
+> [...]
 >
-> It worries me that you're making these kinds of transformations where
-> the comments imply it's a no-op, but the actual code doesn't agree.
+>> +#ifdef CONFIG_LOCKDEP
+>> +/*
+>> + * read_lock() is recursive if:
+>> + * 1. We force lockdep think this way in selftests or
+>> + * 2. The implementation is not queued read/write lock or
+>> + * 3. The locker is at an in_interrupt() context.
+>> + */
+>> +static inline bool read_lock_is_recursive(void)
+>> +{
+>> +	return force_read_lock_recursive ||
+>> +	       !IS_ENABLED(CONFIG_QUEUED_RWLOCKS) ||
+>> +	       in_interrupt();
+>> +}
+> I'm a bit uncomfortable with having the _lockdep_ definition of whether
+> a read lock is recursive depend on what the _implementation_ is.
+> The locking semantics should be the same, no matter which architecture
+> you're running on.  If we rely on read locks being recursive in common
+> code then we have a locking bug on architectures which don't use queued
+> rwlocks.
+>
+> I don't know whether we should just tell the people who aren't using
+> queued rwlocks that they have a new requirement or whether we should
+> say that read locks are never recursive, but having this inconsistency
+> is not a good idea!
 
-Note that it's not that I think the FMODE_READ check is necessarily
-_needed_. It's more the discrepancy between the commit message and the
-code change that I don't like.
+Actually, qrwlock is more restrictive. It is possible that systems with 
+qrwlock may hit deadlock which doesn't happens in other systems that use 
+recursive rwlock. However, the current lockdep code doesn't detect those 
+cases.
 
-The commit message implies that __kernel_read() has _more_ checks than
-the checks done by integrity_kernel_read(). But it looks like they
-aren't so much "more" as they are just "different".
+Changing lockdep to only use qrwlock semantics can be problematic as the 
+code hunk in locking selftest is due to the fact that it assumes 
+recursive lock. So we need to change that. Anyway, this patch can allow 
+us to see if current qrwlock semantics may have potential deadlock 
+problem in the current code. I actually have bug report about deadlock 
+due to qrwlock semantics in RHEL7. So I would certainly like to see if 
+the current upstream code may have also this kind of problem.
 
-                Linus
+Cheers,
+Longman
+
