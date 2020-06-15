@@ -2,111 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C33A1F9116
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 10:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9C01F914D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 10:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbgFOIMG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 04:12:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55830 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbgFOIMG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 04:12:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 33E34AA7C;
-        Mon, 15 Jun 2020 08:12:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CCD021E1289; Mon, 15 Jun 2020 10:12:02 +0200 (CEST)
-Date:   Mon, 15 Jun 2020 10:12:02 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fs: Do not check if there is a fsnotify watcher on
- pseudo inodes
-Message-ID: <20200615081202.GE9449@quack2.suse.cz>
-References: <20200612092603.GB3183@techsingularity.net>
- <CAOQ4uxikbJ19npQFWzGm6xnqXm0W8pV3NOWE0ZxS9p_G2A39Aw@mail.gmail.com>
- <20200612131854.GD3183@techsingularity.net>
- <CAOQ4uxghy5zOT6i=shZfFHsXOgPrd7-4iPkJBDcsHU6bUSFUFg@mail.gmail.com>
- <CAOQ4uxhm+afWpnb4RFw8LkZ+ZJtnFxqR5HB8Uyj-c44CU9SSJg@mail.gmail.com>
+        id S1728541AbgFOIY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 04:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728426AbgFOIY4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jun 2020 04:24:56 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65184C05BD1E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 01:24:55 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id m21so10819107eds.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 01:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZhrHsoF+IuuCWsNYTt36CnOUPKOXLNanHzXXw538ijY=;
+        b=Uy4iXrsdKb9Jk+JDiX/Chl9qMKx9QpugSWS5NkriaPMVcmD97vURwhir28xYpfpmqh
+         SPDMoEWcuI4fT1IewSfOaVTFRjIgC0ZgI+aTtHVa8Bt1v7S6TEeRQHOUatH5LzhwpGJ+
+         6YojzNXVz6UCsvtK15ZaCT6yZnZ3E7q4SDk9Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZhrHsoF+IuuCWsNYTt36CnOUPKOXLNanHzXXw538ijY=;
+        b=KkzlKufszQTsAu01hVBZvJkuRBXX9Hpfi2rGA5jbpIDGhW4KB2MaC8KjLKlpb2xB7o
+         HazetNg2ZX/SsGsBeZ5bJSXqHra3CUje1oEVrg0ccy0u6x/EfXqFlo22NBVOLfPHoXql
+         8Zo9aJCKsHcIbx2Tcg3lWvoNuKLNyQi06qC1Jtj3XH8efnVEmWjZOeXeAx/gT4OWb2eO
+         nXoFisT1HVF+LRiLaEmesdoZM5nbr+hODEnzo1zPo86z3wRHkmhAS1RPQLd3Y4TPT8yz
+         cD1eEAV9SyEb+1sASEjUtPPbXtVwLbeuRI+K5hyeJ7qwp4f78HzdCGhj6EEU0DB3WHjN
+         pgTA==
+X-Gm-Message-State: AOAM530n9cpfkYyt/JNdPUWT8EUERtSq99toUg/rtDhtuMoH/2zbXsmJ
+        jNgqV+5ULoQqsbBr6SYztCu45/PQuDhOsmt9Mdi1mA==
+X-Google-Smtp-Source: ABdhPJyTYfl7L17Ro5jQwnBv2wTKOxjN4zvQSKG7SGBI4x6Y1v+nhySmXXUUI9zXVpw1KDpsuc+QcQbm++UqGImgmT8=
+X-Received: by 2002:a50:d785:: with SMTP id w5mr22156433edi.212.1592209493931;
+ Mon, 15 Jun 2020 01:24:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhm+afWpnb4RFw8LkZ+ZJtnFxqR5HB8Uyj-c44CU9SSJg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200612004644.255692-1-mike.kravetz@oracle.com>
+ <20200612015842.GC23230@ZenIV.linux.org.uk> <b1756da5-4e91-298f-32f1-e5642a680cbf@oracle.com>
+ <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 15 Jun 2020 10:24:42 +0200
+Message-ID: <CAJfpegv28Z2aECcb+Yfqum54zfwV=k1G1n_o3o6O-QTWOy3T4Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify
+ hugetlbfs files
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Walters <walters@verbum.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 12-06-20 23:34:16, Amir Goldstein wrote:
-> > > > So maybe it would be better to list all users of alloc_file_pseudo()
-> > > > and say that they all should be opted out of fsnotify, without mentioning
-> > > > "internal mount"?
-> > > >
-> > >
-> > > The users are DMA buffers, CXL, aio, anon inodes, hugetlbfs, anonymous
-> > > pipes, shmem and sockets although not all of them necessary end up using
-> > > a VFS operation that triggers fsnotify.  Either way, I don't think it
-> > > makes sense (or even possible) to watch any of those with fanotify so
-> > > setting the flag seems reasonable.
-> > >
-> >
-> > I also think this seems reasonable, but the more accurate reason IMO
-> > is found in the comment for d_alloc_pseudo():
-> > "allocate a dentry (for lookup-less filesystems)..."
-> >
-> > > I updated the changelog and maybe this is clearer.
-> >
-> > I still find the use of "internal mount" terminology too vague.
-> > "lookup-less filesystems" would have been more accurate,
-> 
-> Only it is not really accurate for shmfs anf hugetlbfs, which are
-> not lookup-less, they just hand out un-lookable inodes.
+On Sat, Jun 13, 2020 at 8:53 AM Amir Goldstein <amir73il@gmail.com> wrote:
 
-OK, but I still think we are safe setting FMODE_NONOTIFY in
-alloc_file_pseudo() and that covers all the cases we care about. Or did I
-misunderstand something in the discussion? I can see e.g.
-__shmem_file_setup() uses alloc_file_pseudo() but again that seems to be
-used only for inodes without a path and the comment before d_alloc_pseudo()
-pretty clearly states this should be the case.
+> > I also looked at normal filesystem lower and hugetlbfs upper.  Yes, overlayfs
+> > allows this.  This is somewhat 'interesting' as write() is not supported in
+> > hugetlbfs.  Writing to files in the overlay actually ended up writing to
+> > files in the lower filesystem.  That seems wrong, but overlayfs is new to me.
 
-So is the dispute here really only about how to call files using
-d_alloc_pseudo()?
+Yes, this very definitely should not happen.
 
-> > because as you correctly point out, the user API to set a watch
-> > requires that the marked object is looked up in the filesystem.
-> >
-> > There are also some kernel internal users that set watches
-> > like audit and nfsd, but I think they are also only interested in
-> > inodes that have a path at the time that the mark is setup.
-> >
-> 
-> FWIW I verified that watches can be set on anonymous pipes
-> via /proc/XX/fd, so if we are going to apply this patch, I think it
-> should be accompanied with a complimentary patch that forbids
-> setting up a mark on these sort of inodes. If someone out there
-> is doing this, at least they would get a loud message that something
-> has changed instead of silently dropping fsnotify events.
-> 
-> So now the question is how do we identify/classify "these sort of
-> inodes"? If they are no common well defining characteristics, we
-> may need to blacklist pipes sockets and anon inodes explicitly
-> with S_NONOTIFY.
+> I am not sure how that happened, but I think that ovl_open_realfile()
+> needs to fixup f_mode flags FMODE_CAN_WRITE | FMODE_CAN_READ
+> after open_with_fake_path().
 
-We already do have FS_DISALLOW_NOTIFY_PERM in file_system_type->fs_flags so
-adding FS_DISALLOW_NOTIFY would be natural if there is a need for this.
+Okay, but how did the write actually get to the lower layer?
 
-I don't think using fsnotify on pipe inodes is sane in any way. You'd
-possibly only get the MODIFY or ACCESS events and even those would not be
-quite reliable because with pipes stuff like splicing etc. is much more
-common and that currently completely bypasses fsnotify subsystem. So
-overall I'm fine with completely ignoring fsnotify on such inodes.
+I failed to reproduce this.  Mike, how did you trigger this?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Miklos
