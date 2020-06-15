@@ -2,100 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2490F1F9E52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 19:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A4D1F9ECC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 19:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbgFORZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 13:25:53 -0400
-Received: from outbound-smtp57.blacknight.com ([46.22.136.241]:48473 "EHLO
-        outbound-smtp57.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729682AbgFORZx (ORCPT
+        id S1731231AbgFORsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 13:48:41 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40150 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728585AbgFORsk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 13:25:53 -0400
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp57.blacknight.com (Postfix) with ESMTPS id C8B53FAB2A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 18:25:50 +0100 (IST)
-Received: (qmail 13298 invoked from network); 15 Jun 2020 17:25:50 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.5])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 15 Jun 2020 17:25:47 -0000
-Date:   Mon, 15 Jun 2020 18:25:45 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 15 Jun 2020 13:48:40 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05FHleik178201;
+        Mon, 15 Jun 2020 17:48:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=8/GvKgnXyWMqWG4x04LszNrZLOvvW4SLPdr9wifArpI=;
+ b=UYLm0d99pVRGz58KNwBO6kwXK5xvC7/oZKu4Ga8N5ovM+yKoJI6S4MLKgsLioIDG3Rux
+ ITwnG65Lcm5yJFg41TeTO1K2KPd6gVj1LZb2U/J7woNHPDDKC6ZZgFpkyhhdEyIZKAMv
+ kFAq14NhDnxrYVPlR9K9byaU9OgQW/wjkPAI3EsfwnLq/YEkXrVpxg8Mzi1oSaLjjIoB
+ TVH7BlYsVio9DWXVtbqBrI/Z9Jf8nd+XlAaNGc/4Ds4FyfnPiiDDTys0qI/e3qo/2XiF
+ zOsUCAdorEVKgQRIwNVEmepbX390xaexjxcqcbvPn1jbEDh4OIXpzh4bXv9nCdfqMcAA kg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31p6s229je-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 15 Jun 2020 17:48:17 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05FHm5YV147592;
+        Mon, 15 Jun 2020 17:48:17 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 31p6s5sj6d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jun 2020 17:48:17 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05FHmDcM028323;
+        Mon, 15 Jun 2020 17:48:13 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Jun 2020 10:48:13 -0700
+Subject: Re: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify
+ hugetlbfs files
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Linux MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] fs: Do not check if there is a fsnotify watcher on
- pseudo inodes
-Message-ID: <20200615172545.GG3183@techsingularity.net>
-References: <20200615121358.GF3183@techsingularity.net>
- <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Walters <walters@verbum.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20200612004644.255692-1-mike.kravetz@oracle.com>
+ <20200612015842.GC23230@ZenIV.linux.org.uk>
+ <b1756da5-4e91-298f-32f1-e5642a680cbf@oracle.com>
+ <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
+ <CAJfpegv28Z2aECcb+Yfqum54zfwV=k1G1n_o3o6O-QTWOy3T4Q@mail.gmail.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <33cbc2b6-a37a-8bd1-d896-f4318a61b8ca@oracle.com>
+Date:   Mon, 15 Jun 2020 10:48:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJfpegv28Z2aECcb+Yfqum54zfwV=k1G1n_o3o6O-QTWOy3T4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=919 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006150132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 mlxscore=0 mlxlogscore=933 priorityscore=1501 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 cotscore=-2147483648 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006150132
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 07:26:38PM +0300, Amir Goldstein wrote:
-> On Mon, Jun 15, 2020 at 3:14 PM Mel Gorman <mgorman@techsingularity.net> wrote:
-> >
-> > Changelog since v1
-> > o Updated changelog
+On 6/15/20 1:24 AM, Miklos Szeredi wrote:
+> On Sat, Jun 13, 2020 at 8:53 AM Amir Goldstein <amir73il@gmail.com> wrote:
 > 
-> Slipped to commit message
+>>> I also looked at normal filesystem lower and hugetlbfs upper.  Yes, overlayfs
+>>> allows this.  This is somewhat 'interesting' as write() is not supported in
+>>> hugetlbfs.  Writing to files in the overlay actually ended up writing to
+>>> files in the lower filesystem.  That seems wrong, but overlayfs is new to me.
 > 
-
-It's habit, it's the layout I generally use for mm even though others
-prefer having it below ---. I wasn't sure of fsnotify's preferred format
-for tracking major differences between versions.
-
-> >
-> > The kernel uses internal mounts created by kern_mount() and populated
-> > with files with no lookup path by alloc_file_pseudo for a variety of
-> > reasons. An example of such a mount is for anonymous pipes. For pipes,
-> > every vfs_write regardless of filesystem, fsnotify_modify() is called to
-> > notify of any changes which incurs a small amount of overhead in fsnotify
-> > even when there are no watchers. It can also trigger for reads and readv
-> > and writev, it was simply vfs_write() that was noticed first.
-> >
-> > A patch is pending that reduces, but does not eliminte, the overhead of
+> Yes, this very definitely should not happen.
 > 
-> typo: eliminte
+>> I am not sure how that happened, but I think that ovl_open_realfile()
+>> needs to fixup f_mode flags FMODE_CAN_WRITE | FMODE_CAN_READ
+>> after open_with_fake_path().
 > 
-
-Yes.
-
-> > fsnotify but for files that cannot be looked up via a path, even that
-> > small overhead is unnecessary. The user API for fanotify is based on
-> > the pathname and a dirfd and proc entries appear to be the only visible
-> > representation of the files. Proc does not have the same pathname as the
-> > internal entry and the proc inode is not the same as the internal inode
-> > so even if fanotify is used on a file under /proc/XX/fd, no useful events
-> > are notified.
-> >
+> Okay, but how did the write actually get to the lower layer?
 > 
-> Note that fanotify is not the only uapi to add marks, but this is fine by me
-> I suppose if Jan wants to he can make small corrections on commit.
-> 
+> I failed to reproduce this.  Mike, how did you trigger this?
 
-True but I didn't think inotify was materially different as it also takes
-a path. Is that wrong or are there others that matter and can attach to
-a file that cannot be looked up via a path?
+My apologies!!!
 
-> > The difference is small but in some cases it's outside the noise so
-> > while marginal, there is still some small benefit to ignoring fsnotify
-> > for files allocated via alloc_file_pseudo in some cases.
-> >
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-
-Thanks!
-
+I reviewed my testing and found that it was incorrectly writing to the
+lower filesystem.  Writing to any file in the union will fail.
 -- 
-Mel Gorman
-SUSE Labs
+Mike Kravetz
