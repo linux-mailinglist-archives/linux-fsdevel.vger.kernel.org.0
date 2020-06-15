@@ -2,121 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6861F97BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 15:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F15C1F98A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jun 2020 15:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbgFONCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 09:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730081AbgFONBu (ORCPT
+        id S1730391AbgFONb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 09:31:59 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:34635 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729875AbgFONb5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 09:01:50 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A5EC05BD1E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 06:01:50 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id c35so11455836edf.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 06:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AvCe0HbqQ4BzGml+0DuV0nSjSHUXH/a7GtKAihE8SRE=;
-        b=AXJhM/hKmiZBel7yqZsPLh+qR48DiuSWw+gN6NwcjxGonGBBT4xZNIhnQoUZBfpJfH
-         1NZAFJQspIVoZmiDPMW/zVKEpYy92CPJhP1ryw7noohJnifYPJFtPAPipclcRU51LyVJ
-         aFmGcX6C+7O0dfinR4r59frhdDr+6ymq5ln90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AvCe0HbqQ4BzGml+0DuV0nSjSHUXH/a7GtKAihE8SRE=;
-        b=j1Ghs6ZYmbkhwjfb5939XJy/ixfiCMz18LAjCDbebFhHxPPWB9HjcXYUgnP363pgR8
-         OWcilErghCt4RktqN3KGpWOiTXoT7QxrX5bfMBnKz+c8/NYJr2x7X/ItSUOfyBEOInMN
-         po7VMLoFB02ZfU5ujUJE4oD7BsiKD5gyUc31GatBSRUeKPD0a7GIr0+a5Dhx9atTRg2B
-         euqxINnWhrgbPSFy52kdFtFKfvG+4psNHbygkuaYij1PpbdqP6xfZOcYlg35ZjFTOftV
-         3cVbOCN3pv/T5Q0XKhmVWXtYR8I1vi4Sb0IllOb1rrC84/fGdQOQjOvXj8++6rOQbZ2B
-         Q9Og==
-X-Gm-Message-State: AOAM531NspJatstQdYJVS6/aKzHzhyC6Jo4/obJPWB9yUkBrhS82unaQ
-        WIxhQKrDHBb/dFLAdUpgeoQuRvkw2lWfoC+pZjqLew==
-X-Google-Smtp-Source: ABdhPJw5bS2bqPFdNiYWV2UphtcYunDkac05QqFEUWlRJ3HITjBAcbh0ivLoUAsUyrpP21XvFyU3Zn5XsOsK+kRq7j8=
-X-Received: by 2002:aa7:d9d3:: with SMTP id v19mr22985359eds.364.1592226108717;
- Mon, 15 Jun 2020 06:01:48 -0700 (PDT)
+        Mon, 15 Jun 2020 09:31:57 -0400
+Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MYedH-1jNstO1k39-00VeYK; Mon, 15 Jun 2020 15:31:53 +0200
+Received: by mail-qv1-f42.google.com with SMTP id y9so7708053qvs.4;
+        Mon, 15 Jun 2020 06:31:52 -0700 (PDT)
+X-Gm-Message-State: AOAM5305tInq4MdV51zaxMlkPZL5vPRQhofoU/azItpj7hXr3Ha2g5Tl
+        micFfM+mhRo0p9H5aTSx4sECt1APlScxHUsZfsA=
+X-Google-Smtp-Source: ABdhPJyz/mDGs74yzNIwblWPhWFapqdfcdEr4Un1uVSJ/plIiN/A4CId8Axns/qweYspANUjYrgyMPVOZOnIui2BnnA=
+X-Received: by 2002:a05:6214:846:: with SMTP id dg6mr23541266qvb.210.1592227911673;
+ Mon, 15 Jun 2020 06:31:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200612004644.255692-1-mike.kravetz@oracle.com>
- <20200612015842.GC23230@ZenIV.linux.org.uk> <b1756da5-4e91-298f-32f1-e5642a680cbf@oracle.com>
- <CAOQ4uxg=o2SVbfUiz0nOg-XHG8irvAsnXzFWjExjubk2v_6c_A@mail.gmail.com>
- <6e8924b0-bfc4-eaf5-1775-54f506cdf623@oracle.com> <CAJfpegsugobr8LnJ7e3D1+QFHCdYkW1swtSZ_hKouf_uhZreMg@mail.gmail.com>
- <CAOQ4uxgA+_4_UtVz17_eJL6m0CsDEVuiriBj1ZOkho+Ub1yuSA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgA+_4_UtVz17_eJL6m0CsDEVuiriBj1ZOkho+Ub1yuSA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 15 Jun 2020 15:01:37 +0200
-Message-ID: <CAJfpegs-Ch5ua658UD5s4u6ynKGpMzdiY31G-c4Fdu_=ZCV_uA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] hugetlb: use f_mode & FMODE_HUGETLBFS to identify
- hugetlbfs files
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Walters <walters@verbum.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20200615130032.931285-1-hch@lst.de> <20200615130032.931285-3-hch@lst.de>
+In-Reply-To: <20200615130032.931285-3-hch@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 15 Jun 2020 15:31:35 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0bRD3RzE_X6Tjzu9Tj+OhHhP+S=k6+VYODBGko8oQhew@mail.gmail.com>
+Message-ID: <CAK8P3a0bRD3RzE_X6Tjzu9Tj+OhHhP+S=k6+VYODBGko8oQhew@mail.gmail.com>
+Subject: Re: [PATCH 2/6] exec: simplify the compat syscall handling
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:wILCgVPfEuQ7it6PKCvdx9OXRwj6hxxZoHP08P3xgGjbwwONfSr
+ URaA2EsNOEAqy1repJn2J4TD/jF1lFyaLqMOssBSsrzcd8l29Th8nfcvkElJtStg0GvKumY
+ n8LJWG5KTaalNZG7xt7Os9Y4oeiuw1TTFiVIOKibywh+IY1elVqNF6SnPVsAZk+/iD6z4HW
+ 6VmOnmOy0/8ZTrRABm9Yg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4nDmmrljaTw=:0McypPwOg1kRK0OS1vw7sw
+ rrEaMfCyfaXoeoEKOHlrTaBGQS3+0qsSNS1c4g9moJOf2gsMo1MX7ZHD8hBBBY+mNiXjtJUmQ
+ f+3BFCKv6WRo/o+3u7uJoCjuK1IlKdGeKyfIuX3KJ2erK3Tet8YbhKvxYIi7k+HESavrDQTYG
+ cBIAWn0lINIcPd+Q3PP1Avm5CIFjxiwZ4rwL1yyB1N+nADoYJ9VpO50yXBe7VqA6SfakzFpMD
+ XBIuRSg+xUrRSgjO/GF21mV3lM4aJE9FCSwaJxVeP2ABvRanWYReH30EqrG0WlF9V3/5T5IgA
+ SeJKodf+M793+RswCnnFrpdrE655SeehROBd+bRwEhoy4b4kITDOVtR3ppukaqskl2axXZnfT
+ Dd2tA9nEAfu46BSzxpnoFmgxmlFiPZILYMiVhh3oIN4YlHK+vN9kFN9VnJOp86f2vzzycXc1U
+ ByFyaheBd2l39xn/Xp0P6rljH3Ybj4hG6STeaklasRU1KGHxh0QEF/re2GkDeSURDwfKT0uZc
+ 1bOAzzp8rzfFxCObYuzmmzplKCqQPBF9OBge1DNOeRXb+jHhGxWKQGiFprbd2InCJexFwqmGM
+ cWcackcCSUtY5PJTD+PTODiQT7bQpESqHhN1tA2NOdHeoTtBT2CAWP4VzE2mkgYhlVbzfTtD9
+ NhmpvXRl97txthECZt403rT4TfCIbEzzFk0WPzszIGO7ptineF/HF4SYrR7TtjGSWNhkFgoZ9
+ lNOuXAkgFbdaKtL5+sX43xCm8eR7HAfSPD2NBtPj9ez5GsRvNeKcyVpwFrcD8mtnCnqrgyb/w
+ L3te1QqJjifdvv8Nw6ePcO/2OewnkkO8moRpjQ7CDTZKl7i84U=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 12:05 PM Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, Jun 15, 2020 at 3:00 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Mon, Jun 15, 2020 at 10:53 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Sat, Jun 13, 2020 at 9:12 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
-> > >
-> > > On 6/12/20 11:53 PM, Amir Goldstein wrote:
-> >
-> > > As a hugetlbfs developer, I do not know of a use case for interoperability
-> > > with overlayfs.  So yes, I am not too interested in making them work well
-> > > together.  However, if there was an actual use case I would be more than
-> > > happy to consider doing the work.  Just hate to put effort into fixing up
-> > > two 'special' filesystems for functionality that may not be used.
-> > >
-> > > I can't speak for overlayfs developers.
-> >
-> > As I said, I only know of tmpfs being upper layer as a valid use case.
-> >    Does that work with hugepages?  How would I go about testing that?
+> The only differenence betweeen the compat exec* syscalls and their
+> native versions is that compat_ptr sign extension, and the fact that
+> the pointer arithmetics for the two dimensional arrays needs to use
+> the compat pointer size.  Instead of the compat wrappers and the
+> struct user_arg_ptr machinery just use in_compat_syscall() to do the
+> right thing for the compat case deep inside get_user_arg_ptr().
 >
-> Simple, after enabling CONFIG_HUGETLBFS:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Nice!
+
+I have an older patch doing the same for sys_mount() somewhere,
+but never got around to send that. One day we should see if we
+can just do this for all of them.
+
+> -
+> -static const char __user *get_user_arg_ptr(struct user_arg_ptr argv, int nr)
+> +static const char __user *
+> +get_user_arg_ptr(const char __user *const __user *argv, int nr)
+>  {
+>         const char __user *native;
 >
-> diff --git a/mount_union.py b/mount_union.py
-> index fae8899..4070c70 100644
-> --- a/mount_union.py
-> +++ b/mount_union.py
-> @@ -15,7 +15,7 @@ def mount_union(ctx):
->          snapshot_mntroot = cfg.snapshot_mntroot()
->          if cfg.should_mount_upper():
->              system("mount " + upper_mntroot + " 2>/dev/null"
-> -                    " || mount -t tmpfs upper_layer " + upper_mntroot)
-> +                    " || mount -t hugetlbfs upper_layer " + upper_mntroot)
->          layer_mntroot = upper_mntroot + "/" + ctx.curr_layer()
->          upperdir = layer_mntroot + "/u"
->          workdir = layer_mntroot + "/w"
+>  #ifdef CONFIG_COMPAT
+> -       if (unlikely(argv.is_compat)) {
+> +       if (in_compat_syscall()) {
+> +               const compat_uptr_t __user *compat_argv =
+> +                       compat_ptr((unsigned long)argv);
+>                 compat_uptr_t compat;
 >
-> It fails colossally, because hugetlbfs, does not have write_iter().
-> It is only meant as an interface to create named maps of huge pages.
-> So I don't really see the use case for using it as upper.
+> -               if (get_user(compat, argv.ptr.compat + nr))
+> +               if (get_user(compat, compat_argv + nr))
+>                         return ERR_PTR(-EFAULT);
+>
+>                 return compat_ptr(compat);
+>         }
+>  #endif
 
-Right.
+I would expect that the "#ifdef CONFIG_COMPAT" can be removed
+now, since compat_ptr() and in_compat_syscall() are now defined
+unconditionally. I have not tried that though.
 
-I was actually asking about the tmpfs+hugepages, not the hugetlbfs case.
+> +/*
+> + * x32 syscalls are listed in the same table as x86_64 ones, so we need to
+> + * define compat syscalls that are exactly the same as the native version for
+> + * the syscall table machinery to work.  Sigh..
+> + */
+> +#ifdef CONFIG_X86_X32
+>  COMPAT_SYSCALL_DEFINE3(execve, const char __user *, filename,
+> -       const compat_uptr_t __user *, argv,
+> -       const compat_uptr_t __user *, envp)
+> +                      const char __user *const __user *, argv,
+> +                      const char __user *const __user *, envp)
+>  {
+> -       return do_compat_execve(AT_FDCWD, getname(filename), argv, envp, 0);
+> +       return do_execveat(AT_FDCWD, getname(filename), argv, envp, 0, NULL);
+>  }
 
-In the tmpfs case it looks like the lack of ->get_unmapped_area() in
-overlayfs could still be an issue.   But I'm not sure how to trigger
-that.
+Maybe move it to arch/x86/kernel/process_64.c or arch/x86/entry/syscall_x32.c
+to keep it out of the common code if this is needed. I don't really understand
+the comment, why can't this just use this?
 
-Thanks,
-Miklos
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -379,7 +379,7 @@
+ 517    x32     recvfrom                compat_sys_recvfrom
+ 518    x32     sendmsg                 compat_sys_sendmsg
+ 519    x32     recvmsg                 compat_sys_recvmsg
+-520    x32     execve                  compat_sys_execve
++520    x32     execve                  sys_execve
+ 521    x32     ptrace                  compat_sys_ptrace
+ 522    x32     rt_sigpending           compat_sys_rt_sigpending
+ 523    x32     rt_sigtimedwait         compat_sys_rt_sigtimedwait_time64
+@@ -404,7 +404,7 @@
+ 542    x32     getsockopt              compat_sys_getsockopt
+ 543    x32     io_setup                compat_sys_io_setup
+ 544    x32     io_submit               compat_sys_io_submit
+-545    x32     execveat                compat_sys_execveat
++545    x32     execveat                sys_execveat
+ 546    x32     preadv2                 compat_sys_preadv64v2
+ 547    x32     pwritev2                compat_sys_pwritev64v2
+ 548    x32     process_madvise         compat_sys_process_madvise
+
+       Arnd
