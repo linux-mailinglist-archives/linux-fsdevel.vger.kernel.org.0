@@ -2,161 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE701FACE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 11:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE3F51FACEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 11:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbgFPJkL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 05:40:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
+        id S1728140AbgFPJls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 05:41:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgFPJkL (ORCPT
+        with ESMTP id S1728086AbgFPJlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 05:40:11 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B20CC05BD43;
-        Tue, 16 Jun 2020 02:40:11 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id l6so2008411ilo.2;
-        Tue, 16 Jun 2020 02:40:11 -0700 (PDT)
+        Tue, 16 Jun 2020 05:41:47 -0400
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BB2C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:41:47 -0700 (PDT)
+Received: by mail-yb1-xb44.google.com with SMTP id s1so10498595ybo.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pGe/Er9Jr0dwQjVHm8wrk0xJ2zUDxd0eHdfdATrGabM=;
-        b=JISzqb5WUuaHpslnpQGA69Ht1wtm24SXXEG/Ko55uNC2/rGts8slc13Rj6V/ENrHTC
-         OORKZIbiKBwCZvckFdVYJ56sRIc0q3Yni8HM0EsX67D0uAvQdEcxmRhjVmGLdu1NoMTn
-         QAAoTa8U27C6zIJMjRyFq4Ydf1Tpljne0ggnp8IgutwDFUuHiD07Fa4NAyEp17rsozI4
-         XDGSV4Us1k/Bf02MT7RCW+pwgqFbT65Ft8eXSsXqf3GR1c614NYKLEHp5pN5Clf4RN1g
-         KQPjUhNDRlEu+ExH8mqdP3V/yF28u5jIKmRIbq3Z/3zGksgG+2xpBGE6zLSsmHoMJNJj
-         GEPA==
+        bh=vbO9qGecYmWXUD37SUob42kXBPCWyMyGCznqgXAEuis=;
+        b=Keh5C5dNltLNDS2F1Npj/VN3K++TmHgh7nTPacEIM2BOK+xGgVI7UcTLmX/G1wxYLV
+         bH3I8lohkmiAv+0i53hLMJefz/kGA6oQ0pJp80i3BesKw5osPZMjaq6yUOtdlR7/JAsB
+         iNjzi0tNPIeQx8YAxxsHUz2hTsz5jDigZC7IA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pGe/Er9Jr0dwQjVHm8wrk0xJ2zUDxd0eHdfdATrGabM=;
-        b=HGYLr6W3N347RNElGH9kiccI7FBVyS7bYDZ4JstGcHIqEMLMXS0iE5SvQ8LEWto7y4
-         TPNAktyWjapryPkmYbZ6CCjwhrpKXfU3wpFdOb3grzVU3hYO+sdzziaBxVvBB51LtDAr
-         kZQnJ4uOU+EPQJYT/N1pZrCk9OePzmbltJSJUzn5s28qd9yxI2732pF9j+3akNyLwC+l
-         MUt5uEDfHk20AfYHt4b2uefPOiQQic0KP7svpJ6XU/t8ad9JJXfBEvP8QWK5ivdJMHyw
-         pgPkr1oJLel9g5GRsifhWWQJuEhBf9bJyKe3fTxTXTQhRW2BWJehs3jEDcSC8YbMkhcs
-         Y2tg==
-X-Gm-Message-State: AOAM530hwLM576wr4gpEy8YdvKoYfLY7+ld5oSqwDygHzheqt9/EjlKI
-        nbPAjcgWBTyLKeGPkVeM/2/Evf/pHn+Lo7RIobpZPq4Qnw/L6Q==
-X-Google-Smtp-Source: ABdhPJyVDkDwxznobiB46ixzMp1V5r88m+gVTCdIlEi5zYtRD1GqD593akdkWKsh1iCTpEKXRAvIYuDSAtxdG4pab98=
-X-Received: by 2002:a92:4899:: with SMTP id j25mr2349071ilg.168.1592300410577;
- Tue, 16 Jun 2020 02:40:10 -0700 (PDT)
+        bh=vbO9qGecYmWXUD37SUob42kXBPCWyMyGCznqgXAEuis=;
+        b=aEKs3jcP7oV/jJ06iaN2VXGQkPMCS0zmEcRsWaN9VIo3rHdcQMwT0nORmhrtklW4Ra
+         qT/XXz7ZKo4JQZ5SPa3YNgXdJz83YWF1VRK2Tfppn5M/iADW/SSS227/k+ZJEDxIqtUx
+         afEoCQgcde9ukrtd6RSXO5x9k51MFAyoSeMv9GeVX7HE5hk166qCDVBrelltor3h7yix
+         a7FFjLaaj7tBkVMcNPwj0ooruuJjR20VBqF861IU25+XIok+OjmP6Pe6wuTmelp/bjHc
+         abcuwFEGX0bMVmPIXYyMzka9EFfcBAKyApiFSp/3fPJT4am5VHbBFgsf4vrFqx8RVXWG
+         TAsA==
+X-Gm-Message-State: AOAM530Da1nRw1UG/6d7MpkPBZ8mH6TMxjurlA2vQAoOls2X5nAXnf3V
+        9OmdDpWM8b7+EwFY9fM0yblUPAG69NN3A1ohsMetlg==
+X-Google-Smtp-Source: ABdhPJyejTI8yLpgfZih9eQjzy7khF5CLVxMp/nJMhZT/j2dwjryehwEPuCN9HPZHR7Fvlb7YW7eVszX0DE6YsYx+hs=
+X-Received: by 2002:a25:6b4d:: with SMTP id o13mr2991612ybm.496.1592300506643;
+ Tue, 16 Jun 2020 02:41:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <1592222181-9832-1-git-send-email-laoar.shao@gmail.com>
- <20200616081628.GC9499@dhcp22.suse.cz> <CALOAHbDsCB1yZE6m96xiX1KiUWJW-8Hn0eqGcuEipkf9R6_L2A@mail.gmail.com>
- <20200616092727.GD9499@dhcp22.suse.cz>
-In-Reply-To: <20200616092727.GD9499@dhcp22.suse.cz>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 16 Jun 2020 17:39:33 +0800
-Message-ID: <CALOAHbD8x3sULHpGe=t58cBU2u1vuqrBRtAB3-+oR7TQNwOxwg@mail.gmail.com>
-Subject: Re: [PATCH v3] xfs: avoid deadlock when trigger memory reclaim in ->writepages
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>
+References: <20200601053214.201723-1-chirantan@chromium.org>
+ <20200610092744.140038-1-chirantan@chromium.org> <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
+In-Reply-To: <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
+From:   Chirantan Ekbote <chirantan@chromium.org>
+Date:   Tue, 16 Jun 2020 18:41:35 +0900
+Message-ID: <CAJFHJrr7VKD-gumaG5uQ_SPKUTzN+g98rh-rKFWUV7vcGNafHQ@mail.gmail.com>
+Subject: Re: [PATCH v2] RFC: fuse: Call security hooks on new inodes
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 5:27 PM Michal Hocko <mhocko@kernel.org> wrote:
+On Tue, Jun 16, 2020 at 6:29 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> On Tue 16-06-20 17:05:25, Yafang Shao wrote:
-> > On Tue, Jun 16, 2020 at 4:16 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > >
-> > > On Mon 15-06-20 07:56:21, Yafang Shao wrote:
-> > > > Recently there is a XFS deadlock on our server with an old kernel.
-> > > > This deadlock is caused by allocating memory in xfs_map_blocks() while
-> > > > doing writeback on behalf of memroy reclaim. Although this deadlock happens
-> > > > on an old kernel, I think it could happen on the upstream as well. This
-> > > > issue only happens once and can't be reproduced, so I haven't tried to
-> > > > reproduce it on upsteam kernel.
-> > > >
-> > > > Bellow is the call trace of this deadlock.
-> > > > [480594.790087] INFO: task redis-server:16212 blocked for more than 120 seconds.
-> > > > [480594.790087] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > > [480594.790088] redis-server    D ffffffff8168bd60     0 16212  14347 0x00000004
-> > > > [480594.790090]  ffff880da128f070 0000000000000082 ffff880f94a2eeb0 ffff880da128ffd8
-> > > > [480594.790092]  ffff880da128ffd8 ffff880da128ffd8 ffff880f94a2eeb0 ffff88103f9d6c40
-> > > > [480594.790094]  0000000000000000 7fffffffffffffff ffff88207ffc0ee8 ffffffff8168bd60
-> > > > [480594.790096] Call Trace:
-> > > > [480594.790101]  [<ffffffff8168dce9>] schedule+0x29/0x70
-> > > > [480594.790103]  [<ffffffff8168b749>] schedule_timeout+0x239/0x2c0
-> > > > [480594.790111]  [<ffffffff8168d28e>] io_schedule_timeout+0xae/0x130
-> > > > [480594.790114]  [<ffffffff8168d328>] io_schedule+0x18/0x20
-> > > > [480594.790116]  [<ffffffff8168bd71>] bit_wait_io+0x11/0x50
-> > > > [480594.790118]  [<ffffffff8168b895>] __wait_on_bit+0x65/0x90
-> > > > [480594.790121]  [<ffffffff811814e1>] wait_on_page_bit+0x81/0xa0
-> > > > [480594.790125]  [<ffffffff81196ad2>] shrink_page_list+0x6d2/0xaf0
-> > > > [480594.790130]  [<ffffffff811975a3>] shrink_inactive_list+0x223/0x710
-> > > > [480594.790135]  [<ffffffff81198225>] shrink_lruvec+0x3b5/0x810
-> > > > [480594.790139]  [<ffffffff8119873a>] shrink_zone+0xba/0x1e0
-> > > > [480594.790141]  [<ffffffff81198c20>] do_try_to_free_pages+0x100/0x510
-> > > > [480594.790143]  [<ffffffff8119928d>] try_to_free_mem_cgroup_pages+0xdd/0x170
-> > > > [480594.790145]  [<ffffffff811f32de>] mem_cgroup_reclaim+0x4e/0x120
-> > > > [480594.790147]  [<ffffffff811f37cc>] __mem_cgroup_try_charge+0x41c/0x670
-> > > > [480594.790153]  [<ffffffff811f5cb6>] __memcg_kmem_newpage_charge+0xf6/0x180
-> > > > [480594.790157]  [<ffffffff8118c72d>] __alloc_pages_nodemask+0x22d/0x420
-> > > > [480594.790162]  [<ffffffff811d0c7a>] alloc_pages_current+0xaa/0x170
-> > > > [480594.790165]  [<ffffffff811db8fc>] new_slab+0x30c/0x320
-> > > > [480594.790168]  [<ffffffff811dd17c>] ___slab_alloc+0x3ac/0x4f0
-> > > > [480594.790204]  [<ffffffff81685656>] __slab_alloc+0x40/0x5c
-> > > > [480594.790206]  [<ffffffff811dfc43>] kmem_cache_alloc+0x193/0x1e0
-> > > > [480594.790233]  [<ffffffffa04fab67>] kmem_zone_alloc+0x97/0x130 [xfs]
-> > > > [480594.790247]  [<ffffffffa04f90ba>] _xfs_trans_alloc+0x3a/0xa0 [xfs]
-> > > > [480594.790261]  [<ffffffffa04f915c>] xfs_trans_alloc+0x3c/0x50 [xfs]
-> > >
-> > > Now with a more explanation from Dave I have got back to the original
-> > > backtrace. Not sure which kernel version you are using but this path
-> > > should have passed xfs_trans_reserve which sets PF_MEMALLOC_NOFS and
-> > > this in turn should have made __alloc_pages_nodemask to use __GFP_NOFS
-> > > and the memcg reclaim shouldn't ever wait_on_page_writeback (pressumably
-> > > this is what the io_schedule is coming from).
+> On Wed, Jun 10, 2020 at 11:27 AM Chirantan Ekbote
+> <chirantan@chromium.org> wrote:
 > >
-> > Hi Michal,
 > >
-> > The page is allocated before calling xfs_trans_reserve, so the
-> > PF_MEMALLOC_NOFS hasn't been set yet.
-> > See bellow,
-> >
-> > xfs_trans_alloc
-> >     kmem_zone_zalloc() <<< GPF_NOFS hasn't been set yet, but it may
-> > trigger memory reclaim
-> >     xfs_trans_reserve() <<<< GPF_NOFS is set here (for the kernel
-> > prior to commit 9070733b4efac, it is PF_FSTRANS)
+> > When set to true, get the security context for a newly created inode via
+> > `security_dentry_init_security` and append it to the create, mkdir,
+> > mknod, and symlink requests.  The server should use this context by
+> > writing it to `/proc/thread-self/attr/fscreate` before creating the
+> > requested inode.
 >
-> You are right, I have misread the actual allocation side. 8683edb7755b8
-> has added KM_NOFS and 73d30d48749f8 has removed it. I cannot really
-> judge the correctness here.
+> This is confusing.  You mean if the server is stacking on top of a
+> real fs, then it can force the created new inode to have the given
+> security attributes by writing to that proc file?
 >
 
-The history is complicated, but it doesn't matter.
-Let's  turn back to the upstream kernel now. As I explained in the commit log,
-xfs_vm_writepages
-  -> iomap_writepages.
-     -> write_cache_pages
-        -> lock_page <<<< This page is locked.
-        -> writepages ( which is  iomap_do_writepage)
-           -> xfs_map_blocks
-              -> xfs_convert_blocks
-                 -> xfs_bmapi_convert_delalloc
-                    -> xfs_trans_alloc
-                         -> kmem_zone_zalloc //It should alloc page
-with GFP_NOFS
+Yes that's correct.  Writing to that proc file ends up setting a field
+in an selinux struct in the kernel.  Later, when an inode is created
+the selinux security hook uses that field to determine the label that
+should be applied to the inode.  This ensures that inodes appear
+atomically with the correct selinux labels.  Most users actually end
+up using setfscreatecon from libselinux but all that does is write to
+/proc/thread-self/attr/fscreate itself after doing some
+conversion/validation.
 
-If GFP_NOFS isn't set in xfs_trans_alloc(), the kmem_zone_zalloc() may
-trigger the memory reclaim then it may wait on the page locked in
-write_cache_pages() ...
-That means the ->writepages should be set with GFP_NOFS to avoid this
-recursive filesystem reclaim.
+> >
+> >  static void fuse_advise_use_readdirplus(struct inode *dir)
+> >  {
+> > @@ -442,6 +445,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >         struct fuse_entry_out outentry;
+> >         struct fuse_inode *fi;
+> >         struct fuse_file *ff;
+> > +       void *security_ctx = NULL;
+> > +       u32 security_ctxlen = 0;
+> >
+> >         /* Userspace expects S_IFREG in create mode */
+> >         BUG_ON((mode & S_IFMT) != S_IFREG);
+> > @@ -477,6 +482,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >         args.out_args[0].value = &outentry;
+> >         args.out_args[1].size = sizeof(outopen);
+> >         args.out_args[1].value = &outopen;
+> > +
+> > +       if (fc->init_security) {
+> > +               err = security_dentry_init_security(entry, mode, &entry->d_name,
+> > +                                                   &security_ctx,
+> > +                                                   &security_ctxlen);
+> > +               if (err)
+> > +                       goto out_put_forget_req;
+> > +
+> > +               if (security_ctxlen > 0) {
+> > +                       args.in_numargs = 3;
+> > +                       args.in_args[2].size = security_ctxlen;
+> > +                       args.in_args[2].value = security_ctx;
+> > +               }
+> > +       }
+> > +
+>
+> The above is quadruplicated, a helper is in order.
 
--- 
-Thanks
-Yafang
+Ack.
+
+>
+> >         err = fuse_simple_request(fc, &args);
+> >         if (err)
+> >                 goto out_free_ff;
+> > @@ -513,6 +533,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >         return err;
+> >
+> >  out_free_ff:
+> > +       if (security_ctxlen > 0)
+> > +               kfree(security_ctx);
+>
+> Freeing NULL is okay, if that's guaranteed in case of security_ctxlen
+> == 0, then you need not check that condition.
+
+Ack.  Will fix in v3.
