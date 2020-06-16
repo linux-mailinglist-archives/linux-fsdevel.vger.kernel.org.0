@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD8A81FB975
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2821FB9A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733130AbgFPQD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 12:03:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49014 "EHLO
+        id S1733196AbgFPQFg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 12:05:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733085AbgFPQDy (ORCPT
+        with ESMTP id S1733007AbgFPQFc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:03:54 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE989C061755
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:03:53 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id y18so8596585plr.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:03:53 -0700 (PDT)
+        Tue, 16 Jun 2020 12:05:32 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B5FC0613EE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:05:32 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id s135so8754895pgs.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=zKc/JpLrFA5C9B00OW//vjJ8ZMv5QimUc3F5i8rvet4=;
-        b=OllvnLopOjSAVN/rCkHGWJ500Le3/6Ku5c3o8ZlC+gP2RzGDWdyhUX0XwzoK6KZlXi
-         oVUvlUOsEvATG+ldK1KcrhLOS061oY8IpfnuZkqmEEiYnuh+gmbZps73C0AZ9cOBaHq1
-         exTGM1g9ghl69TYphlzSAJ8R2IcP6MK/Wv63w=
+        bh=GsZMacKtpesOxP+a2myMr99YbAG58BqzpuI3p66lyWE=;
+        b=U+rVcwzvOxiugEYzwFEOsUTyIYC0zrD9L//KqbY3KLh6kAWaKOVLW6S2PEBZNkUzZB
+         Va/ID/Lx0jY7fHPp5zQPHHxv/Ln+/ZqNNagq0jWU0rfjSlk7wKKfPbUbnKanRNPb4MXv
+         BPQ+ZtNfKAAI/vlY8WCybDSIj/et0xHDCOIHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=zKc/JpLrFA5C9B00OW//vjJ8ZMv5QimUc3F5i8rvet4=;
-        b=V9Kt1C2MzpFjSB9cDdCl/9SGy0v8lf/OjoPpfvF3PPg39aX59VbPfe4P+vXSme5J0G
-         H2YG+hCZ6PgOoXwnpXXSXMr63EnvZE+er/hFsjJgBdjU4X2f6ayoMp0sW/clgGkyCuXz
-         yGAz2Pncp24kj8NOZDo0XYBZ7DVpJELLWNANHcPnRRIYQ9rhMo4jhCpubRjmc/zbXT4f
-         p0lSp2BQXSQeBLZWc2oO2mFv5LDk7S9v6CUSOYAfqNEOpv8BFslNZhvyVbw/Z7+GL7rB
-         xvjRIUJiVkegKUVPqRvCnTquZgkQljZxoVLmCQwzk7duAM3wMD5zVnFZsSGNAYPmGQTD
-         7gmQ==
-X-Gm-Message-State: AOAM531LD9MqSC1AWtNE6133eT5C7SjYwX1N8YEUaU2vIwxVnMbOWnHK
-        gh+ytYtnSQAqJhdZTN7MVq0x/A==
-X-Google-Smtp-Source: ABdhPJwVjALfzLCAM/XOMQlngQM0/cTr6VlDaTe0C2TtJc/aiEyzOtzkrH1NE78arH20bNJ9zx2lfA==
-X-Received: by 2002:a17:902:e901:: with SMTP id k1mr2665677pld.92.1592323433244;
-        Tue, 16 Jun 2020 09:03:53 -0700 (PDT)
+        bh=GsZMacKtpesOxP+a2myMr99YbAG58BqzpuI3p66lyWE=;
+        b=dQ7pyQpB36OtqsJ/KqH1D6CqYU0YNzd1vJgmvYATkuR+XhAhELBf3X4npkaWA6U/bs
+         mMOFpL0tZZjnb5diEpdDHSiOVgkQrHdpMHOsSmWfOHjpMad9gZ8ySPdoGN2vF4/58VhZ
+         ssAQiFMbJE7vbiYWKvr9J4CIYQlqCCsK4K+AoXZq9nRNkF3Qg4fmBlAEmC/uoBcMIEs/
+         R3a00fHdFE5Vpnnak21wY8578PeZPL+aYpLoSvaK7ga80JuQDRbxzmiHagKVA3ggu+FL
+         jtgTTtcbZf1ZKRSri9YCro27vldMksX9K39OzZacZr4b+VbqlkycpOQOeNmT5JxjtTaf
+         yVag==
+X-Gm-Message-State: AOAM532Fw8YmlY/Mr6+yjr9maOhiAbz/FP+SIVsDSPn3z/xvYzfK7nfy
+        31hTolhxfzzfwjXWhA9oEIw97w==
+X-Google-Smtp-Source: ABdhPJzdfPhLjN6zvps8V8jiQcD/fOqJIIccHadakXun+WI/1mta+SFES2gZ8pnzJRsPG2WOBzf7GA==
+X-Received: by 2002:a63:1b4b:: with SMTP id b11mr2541719pgm.243.1592323531730;
+        Tue, 16 Jun 2020 09:05:31 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a14sm17059842pfc.133.2020.06.16.09.03.51
+        by smtp.gmail.com with ESMTPSA id 140sm17823314pfz.154.2020.06.16.09.05.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 09:03:52 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 09:03:51 -0700
+        Tue, 16 Jun 2020 09:05:30 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 09:05:29 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Tycho Andersen <tycho@tycho.ws>
 Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
@@ -65,39 +65,62 @@ Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
         netdev@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 08/11] selftests/seccomp: Make kcmp() less required
-Message-ID: <202006160902.E331FF1917@keescook>
+Subject: Re: [PATCH v4 10/11] seccomp: Switch addfd to Extensible Argument
+ ioctl
+Message-ID: <202006160904.A30F2C5B9E@keescook>
 References: <20200616032524.460144-1-keescook@chromium.org>
- <20200616032524.460144-9-keescook@chromium.org>
- <20200616145725.GJ2893648@cisco>
+ <20200616032524.460144-11-keescook@chromium.org>
+ <20200616145546.GH2893648@cisco>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200616145725.GJ2893648@cisco>
+In-Reply-To: <20200616145546.GH2893648@cisco>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 08:57:25AM -0600, Tycho Andersen wrote:
-> On Mon, Jun 15, 2020 at 08:25:21PM -0700, Kees Cook wrote:
-> > The seccomp tests are a bit noisy without CONFIG_CHECKPOINT_RESTORE (due
-> > to missing the kcmp() syscall). The seccomp tests are more accurate with
-> > kcmp(), but it's not strictly required. Refactor the tests to use
-> > alternatives (comparing fd numbers), and provide a central test for
-> > kcmp() so there is a single XFAIL instead of many. Continue to produce
-> > warnings for the other tests, though.
+On Tue, Jun 16, 2020 at 08:55:46AM -0600, Tycho Andersen wrote:
+> On Mon, Jun 15, 2020 at 08:25:23PM -0700, Kees Cook wrote:
+> > This patch is based on discussions[1] with Sargun Dhillon, Christian
+> > Brauner, and David Laight. Instead of building size into the addfd
+> > structure, make it a function of the ioctl command (which is how sizes are
+> > normally passed to ioctls). To support forward and backward compatibility,
+> > just mask out the direction and size, and match everything. The size (and
+> > any future direction) checks are done along with copy_struct_from_user()
+> > logic. Also update the selftests to check size bounds.
 > > 
-> > Additionally adds some more bad flag EINVAL tests to the addfd selftest.
+> > [1] https://lore.kernel.org/lkml/20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal
 > > 
 > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  include/uapi/linux/seccomp.h                  |  2 -
+> >  kernel/seccomp.c                              | 21 ++++++----
+> >  tools/testing/selftests/seccomp/seccomp_bpf.c | 40 ++++++++++++++++---
+> >  3 files changed, 49 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> > index c347160378e5..473a61695ac3 100644
+> > --- a/include/uapi/linux/seccomp.h
+> > +++ b/include/uapi/linux/seccomp.h
+> > @@ -118,7 +118,6 @@ struct seccomp_notif_resp {
+> >  
+> >  /**
+> >   * struct seccomp_notif_addfd
+> > - * @size: The size of the seccomp_notif_addfd structure
+> >   * @id: The ID of the seccomp notification
+> >   * @flags: SECCOMP_ADDFD_FLAG_*
+> >   * @srcfd: The local fd number
+> > @@ -126,7 +125,6 @@ struct seccomp_notif_resp {
+> >   * @newfd_flags: The O_* flags the remote FD should have applied
+> >   */
+> >  struct seccomp_notif_addfd {
+> > -	__u64 size;
 > 
-> This looks fine, but I wonder if this is enough motivation for taking
-> kcmp() out of CONFIG_CHECKPOINT_RESTORE guards?
+> Huh? Won't this break builds?
 
-Do you mean in the kernel? I'd rather not -- it's a relatively powerful
-primitive. Maybe if there were other users needing it, but there doesn't
-seem to have been much demand.
+Only if they use addfd without this patch? :) Are you saying I should
+collapse this patch into the main addfd and test patches?
 
 -- 
 Kees Cook
