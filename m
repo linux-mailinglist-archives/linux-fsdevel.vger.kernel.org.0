@@ -2,233 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 056151FA71B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 05:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 571481FA83A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 07:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgFPDjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 23:39:13 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39464 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbgFPDjM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 23:39:12 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 155D5701EE9F8FC63D57;
-        Tue, 16 Jun 2020 11:39:10 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Tue, 16 Jun 2020
- 11:39:03 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Subject: [PATCH v6] block: Fix use-after-free in blkdev_get()
-Date:   Tue, 16 Jun 2020 11:40:02 +0800
-Message-ID: <20200616034002.2473743-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.25.4
+        id S1726495AbgFPF3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 01:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgFPF3o (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jun 2020 01:29:44 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AFEC05BD43
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:29:44 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id a13so520390ilh.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/atL1Ve60OqcVOW1A17eOHeeXaoo7IDTY4Z8Un8jaH8=;
+        b=193OWy+wrWHpQHLeiYDs4HwLjRR3lzkgnsBt2V+dkl6TagtCtHrBhNG24ihvS9W6Zf
+         zasBHbcZhYtRMZisoQXuaE9BeVT715PI0S1hhwE0J7wByQ95ip3Y+PHUh72iIzi+jHkx
+         GEj69+viDrq4GN/szP7+GnPsyYy7nNibYDgc0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/atL1Ve60OqcVOW1A17eOHeeXaoo7IDTY4Z8Un8jaH8=;
+        b=fleC2vdEJDjDPiQgICqAhPn0QDh0M73sIECZiv88wNP4V32X8nh2lOrS8T1EFmjGTN
+         mvcKNHrNaPrJpLngPXZt8jGH6Uvzsxc4UlZotGusLkmqfwMmalUC6qEHyz9HVBvNF1Y6
+         T7rIy+mWPbXDy1f3eZNbQmGfNyKygdXRBPbYgS973kJY8022Ojl0nbo5wpb8WSLjQKrZ
+         /A+bxNPXU284JDLtvI8F31Chv64sLtRwkghoBx30QR1502PrzkuQJASTdPMFORkj8IRr
+         05tAThy3VBiCPFCsL+0zsi0s/G7hAv25E7Aw0rmGtcXSC79sJhuHzyvDtuc2F3iSeTBT
+         SAEA==
+X-Gm-Message-State: AOAM533Y9weRAyFnY3u3nIwJ6VTcR9/Thl/mGp5+ZRKwJVk22gybblSC
+        eXXi5Y0Bpl8xLSxTRqf6G/3Xpg==
+X-Google-Smtp-Source: ABdhPJx5Rg1ST0KUj/PKC9lU9klQRZh96t9kjm/st69tOnr6RVzMkeGE8OyZPHSvj533a1JeUJYcxA==
+X-Received: by 2002:a92:c7c6:: with SMTP id g6mr1539412ilk.49.1592285383432;
+        Mon, 15 Jun 2020 22:29:43 -0700 (PDT)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id z16sm9204945ilz.64.2020.06.15.22.29.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Jun 2020 22:29:43 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 05:29:41 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        "David S. Miller" <davem@davemloft.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 02/11] fs: Move __scm_install_fd() to
+ __fd_install_received()
+Message-ID: <20200616052941.GB16032@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20200616032524.460144-1-keescook@chromium.org>
+ <20200616032524.460144-3-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200616032524.460144-3-keescook@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In blkdev_get() we call __blkdev_get() to do some internal jobs and if
-there is some errors in __blkdev_get(), the bdput() is called which
-means we have released the refcount of the bdev (actually the refcount of
-the bdev inode). This means we cannot access bdev after that point. But
-acctually bdev is still accessed in blkdev_get() after calling
-__blkdev_get(). This results in use-after-free if the refcount is the
-last one we released in __blkdev_get(). Let's take a look at the
-following scenerio:
+On Mon, Jun 15, 2020 at 08:25:15PM -0700, Kees Cook wrote:
+> In preparation for users of the "install a received file" logic outside
+> of net/ (pidfd and seccomp), relocate and rename __scm_install_fd() from
+> net/core/scm.c to __fd_install_received() in fs/file.c, and provide a
+> wrapper named fd_install_received_user(), as future patches will change
+> the interface to __fd_install_received().
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/file.c            | 47 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/file.h |  8 ++++++++
+>  include/net/scm.h    |  1 -
+>  net/compat.c         |  2 +-
+>  net/core/scm.c       | 32 +-----------------------------
+>  5 files changed, 57 insertions(+), 33 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index abb8b7081d7a..fcfddae0d252 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/export.h>
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+> +#include <linux/net.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/slab.h>
+>  #include <linux/file.h>
+> @@ -18,6 +19,8 @@
+>  #include <linux/bitops.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/rcupdate.h>
+> +#include <net/cls_cgroup.h>
+> +#include <net/netprio_cgroup.h>
+>  
+>  unsigned int sysctl_nr_open __read_mostly = 1024*1024;
+>  unsigned int sysctl_nr_open_min = BITS_PER_LONG;
+> @@ -931,6 +934,50 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+>  	return err;
+>  }
+>  
+> +/**
+> + * __fd_install_received() - Install received file into file descriptor table
+> + *
+> + * @fd: fd to install into (if negative, a new fd will be allocated)
+> + * @file: struct file that was received from another process
+> + * @ufd_required: true to use @ufd for writing fd number to userspace
+> + * @ufd: __user pointer to write new fd number to
+> + * @o_flags: the O_* flags to apply to the new fd entry
+Probably doesn't matter, but this function doesn't take the fd, or ufd_required
+argument in this patch. 
 
-  CPU0            CPU1                    CPU2
-blkdev_open     blkdev_open           Remove disk
-                  bd_acquire
-		  blkdev_get
-		    __blkdev_get      del_gendisk
-					bdev_unhash_inode
-  bd_acquire          bdev_get_gendisk
-    bd_forget           failed because of unhashed
-	  bdput
-	              bdput (the last one)
-		        bdev_evict_inode
+> + *
+> + * Installs a received file into the file descriptor table, with appropriate
+> + * checks and count updates. Optionally writes the fd number to userspace.
+ufd does not apppear options here.
 
-	  	    access bdev => use after free
-
-[  459.350216] BUG: KASAN: use-after-free in __lock_acquire+0x24c1/0x31b0
-[  459.351190] Read of size 8 at addr ffff88806c815a80 by task syz-executor.0/20132
-[  459.352347]
-[  459.352594] CPU: 0 PID: 20132 Comm: syz-executor.0 Not tainted 4.19.90 #2
-[  459.353628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  459.354947] Call Trace:
-[  459.355337]  dump_stack+0x111/0x19e
-[  459.355879]  ? __lock_acquire+0x24c1/0x31b0
-[  459.356523]  print_address_description+0x60/0x223
-[  459.357248]  ? __lock_acquire+0x24c1/0x31b0
-[  459.357887]  kasan_report.cold+0xae/0x2d8
-[  459.358503]  __lock_acquire+0x24c1/0x31b0
-[  459.359120]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.359784]  ? lockdep_hardirqs_on+0x37b/0x580
-[  459.360465]  ? _raw_spin_unlock_irq+0x24/0x40
-[  459.361123]  ? finish_task_switch+0x125/0x600
-[  459.361812]  ? finish_task_switch+0xee/0x600
-[  459.362471]  ? mark_held_locks+0xf0/0xf0
-[  459.363108]  ? __schedule+0x96f/0x21d0
-[  459.363716]  lock_acquire+0x111/0x320
-[  459.364285]  ? blkdev_get+0xce/0xbe0
-[  459.364846]  ? blkdev_get+0xce/0xbe0
-[  459.365390]  __mutex_lock+0xf9/0x12a0
-[  459.365948]  ? blkdev_get+0xce/0xbe0
-[  459.366493]  ? bdev_evict_inode+0x1f0/0x1f0
-[  459.367130]  ? blkdev_get+0xce/0xbe0
-[  459.367678]  ? destroy_inode+0xbc/0x110
-[  459.368261]  ? mutex_trylock+0x1a0/0x1a0
-[  459.368867]  ? __blkdev_get+0x3e6/0x1280
-[  459.369463]  ? bdev_disk_changed+0x1d0/0x1d0
-[  459.370114]  ? blkdev_get+0xce/0xbe0
-[  459.370656]  blkdev_get+0xce/0xbe0
-[  459.371178]  ? find_held_lock+0x2c/0x110
-[  459.371774]  ? __blkdev_get+0x1280/0x1280
-[  459.372383]  ? lock_downgrade+0x680/0x680
-[  459.373002]  ? lock_acquire+0x111/0x320
-[  459.373587]  ? bd_acquire+0x21/0x2c0
-[  459.374134]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.374780]  blkdev_open+0x202/0x290
-[  459.375325]  do_dentry_open+0x49e/0x1050
-[  459.375924]  ? blkdev_get_by_dev+0x70/0x70
-[  459.376543]  ? __x64_sys_fchdir+0x1f0/0x1f0
-[  459.377192]  ? inode_permission+0xbe/0x3a0
-[  459.377818]  path_openat+0x148c/0x3f50
-[  459.378392]  ? kmem_cache_alloc+0xd5/0x280
-[  459.379016]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.379802]  ? path_lookupat.isra.0+0x900/0x900
-[  459.380489]  ? __lock_is_held+0xad/0x140
-[  459.381093]  do_filp_open+0x1a1/0x280
-[  459.381654]  ? may_open_dev+0xf0/0xf0
-[  459.382214]  ? find_held_lock+0x2c/0x110
-[  459.382816]  ? lock_downgrade+0x680/0x680
-[  459.383425]  ? __lock_is_held+0xad/0x140
-[  459.384024]  ? do_raw_spin_unlock+0x4f/0x250
-[  459.384668]  ? _raw_spin_unlock+0x1f/0x30
-[  459.385280]  ? __alloc_fd+0x448/0x560
-[  459.385841]  do_sys_open+0x3c3/0x500
-[  459.386386]  ? filp_open+0x70/0x70
-[  459.386911]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  459.387610]  ? trace_hardirqs_off_caller+0x55/0x1c0
-[  459.388342]  ? do_syscall_64+0x1a/0x520
-[  459.388930]  do_syscall_64+0xc3/0x520
-[  459.389490]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.390248] RIP: 0033:0x416211
-[  459.390720] Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83
-04 19 00 00 c3 48 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f
-   05 <48> 8b 3c 24 48 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d
-      01
-[  459.393483] RSP: 002b:00007fe45dfe9a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-[  459.394610] RAX: ffffffffffffffda RBX: 00007fe45dfea6d4 RCX: 0000000000416211
-[  459.395678] RDX: 00007fe45dfe9b0a RSI: 0000000000000002 RDI: 00007fe45dfe9b00
-[  459.396758] RBP: 000000000076bf20 R08: 0000000000000000 R09: 000000000000000a
-[  459.397930] R10: 0000000000000075 R11: 0000000000000293 R12: 00000000ffffffff
-[  459.399022] R13: 0000000000000bd9 R14: 00000000004cdb80 R15: 000000000076bf2c
-[  459.400168]
-[  459.400430] Allocated by task 20132:
-[  459.401038]  kasan_kmalloc+0xbf/0xe0
-[  459.401652]  kmem_cache_alloc+0xd5/0x280
-[  459.402330]  bdev_alloc_inode+0x18/0x40
-[  459.402970]  alloc_inode+0x5f/0x180
-[  459.403510]  iget5_locked+0x57/0xd0
-[  459.404095]  bdget+0x94/0x4e0
-[  459.404607]  bd_acquire+0xfa/0x2c0
-[  459.405113]  blkdev_open+0x110/0x290
-[  459.405702]  do_dentry_open+0x49e/0x1050
-[  459.406340]  path_openat+0x148c/0x3f50
-[  459.406926]  do_filp_open+0x1a1/0x280
-[  459.407471]  do_sys_open+0x3c3/0x500
-[  459.408010]  do_syscall_64+0xc3/0x520
-[  459.408572]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  459.409415]
-[  459.409679] Freed by task 1262:
-[  459.410212]  __kasan_slab_free+0x129/0x170
-[  459.410919]  kmem_cache_free+0xb2/0x2a0
-[  459.411564]  rcu_process_callbacks+0xbb2/0x2320
-[  459.412318]  __do_softirq+0x225/0x8ac
-
-Fix this by delaying bdput() to the end of blkdev_get() which means we
-have finished accessing bdev.
-
-Fixes: e525fd89d380 ("block: make blkdev_get/put() handle exclusive access")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
----
- v6: Add Tested-by tag from Sedat and cc Dan.
- v5: Add fixes tag and Reviewed-by tag from Christoph.
- v4: Remove uneeded braces and add Reviewed-by tag from Jan Kara.
- v3: Add bdput() when __blkdev_get() calling itself failed.
- v2: Add Reported-by tag and cc linux-block mailing list
-
- fs/block_dev.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 47860e589388..08c87db3a92b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1565,10 +1565,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	 */
- 	if (!for_part) {
- 		ret = devcgroup_inode_permission(bdev->bd_inode, perm);
--		if (ret != 0) {
--			bdput(bdev);
-+		if (ret != 0)
- 			return ret;
--		}
- 	}
- 
-  restart:
-@@ -1637,8 +1635,10 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 				goto out_clear;
- 			BUG_ON(for_part);
- 			ret = __blkdev_get(whole, mode, 1);
--			if (ret)
-+			if (ret) {
-+				bdput(whole);
- 				goto out_clear;
-+			}
- 			bdev->bd_contains = whole;
- 			bdev->bd_part = disk_get_part(disk, partno);
- 			if (!(disk->flags & GENHD_FL_UP) ||
-@@ -1688,7 +1688,6 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	disk_unblock_events(disk);
- 	put_disk_and_module(disk);
-  out:
--	bdput(bdev);
- 
- 	return ret;
- }
-@@ -1755,6 +1754,9 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- 		bdput(whole);
- 	}
- 
-+	if (res)
-+		bdput(bdev);
-+
- 	return res;
- }
- EXPORT_SYMBOL(blkdev_get);
--- 
-2.25.4
-
+> + *
+> + * Returns -ve on error.
+> + */
+> +int __fd_install_received(struct file *file, int __user *ufd, unsigned int o_flags)
+> +{
+> +	struct socket *sock;
+> +	int new_fd;
+> +	int error;
+> +
+> +	error = security_file_receive(file);
+> +	if (error)
+> +		return error;
+> +
+> +	new_fd = get_unused_fd_flags(o_flags);
+> +	if (new_fd < 0)
+> +		return new_fd;
+> +
+> +	error = put_user(new_fd, ufd);
+> +	if (error) {
+> +		put_unused_fd(new_fd);
+> +		return error;
+> +	}
+> +
+> +	/* Bump the usage count and install the file. */
+> +	sock = sock_from_file(file, &error);
+> +	if (sock) {
+> +		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+> +		sock_update_classid(&sock->sk->sk_cgrp_data);
+> +	}
+> +	fd_install(new_fd, get_file(file));
+> +	return 0;
+> +}
+> +
+>  static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
+>  {
+>  	int err = -EBADF;
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index 122f80084a3e..fe18a1a0d555 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -91,6 +91,14 @@ extern void put_unused_fd(unsigned int fd);
+>  
+>  extern void fd_install(unsigned int fd, struct file *file);
+>  
+> +extern int __fd_install_received(struct file *file, int __user *ufd,
+> +				 unsigned int o_flags);
+> +static inline int fd_install_received_user(struct file *file, int __user *ufd,
+> +					   unsigned int o_flags)
+> +{
+> +	return __fd_install_received(file, ufd, o_flags);
+> +}
+> +
+>  extern void flush_delayed_fput(void);
+>  extern void __fput_sync(struct file *);
+>  
+> diff --git a/include/net/scm.h b/include/net/scm.h
+> index 581a94d6c613..1ce365f4c256 100644
+> --- a/include/net/scm.h
+> +++ b/include/net/scm.h
+> @@ -37,7 +37,6 @@ struct scm_cookie {
+>  #endif
+>  };
+>  
+> -int __scm_install_fd(struct file *file, int __user *ufd, unsigned int o_flags);
+>  void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
+>  void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm);
+>  int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *scm);
+> diff --git a/net/compat.c b/net/compat.c
+> index 27d477fdcaa0..94f288e8dac5 100644
+> --- a/net/compat.c
+> +++ b/net/compat.c
+> @@ -298,7 +298,7 @@ void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
+>  	int err = 0, i;
+>  
+>  	for (i = 0; i < fdmax; i++) {
+> -		err = __scm_install_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
+> +		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
+>  		if (err)
+>  			break;
+>  	}
+> diff --git a/net/core/scm.c b/net/core/scm.c
+> index 6151678c73ed..df190f1fdd28 100644
+> --- a/net/core/scm.c
+> +++ b/net/core/scm.c
+> @@ -280,36 +280,6 @@ void put_cmsg_scm_timestamping(struct msghdr *msg, struct scm_timestamping_inter
+>  }
+>  EXPORT_SYMBOL(put_cmsg_scm_timestamping);
+>  
+> -int __scm_install_fd(struct file *file, int __user *ufd, unsigned int o_flags)
+> -{
+> -	struct socket *sock;
+> -	int new_fd;
+> -	int error;
+> -
+> -	error = security_file_receive(file);
+> -	if (error)
+> -		return error;
+> -
+> -	new_fd = get_unused_fd_flags(o_flags);
+> -	if (new_fd < 0)
+> -		return new_fd;
+> -
+> -	error = put_user(new_fd, ufd);
+> -	if (error) {
+> -		put_unused_fd(new_fd);
+> -		return error;
+> -	}
+> -
+> -	/* Bump the usage count and install the file. */
+> -	sock = sock_from_file(file, &error);
+> -	if (sock) {
+> -		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+> -		sock_update_classid(&sock->sk->sk_cgrp_data);
+> -	}
+> -	fd_install(new_fd, get_file(file));
+> -	return 0;
+> -}
+> -
+>  static int scm_max_fds(struct msghdr *msg)
+>  {
+>  	if (msg->msg_controllen <= sizeof(struct cmsghdr))
+> @@ -336,7 +306,7 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
+>  	}
+>  
+>  	for (i = 0; i < fdmax; i++) {
+> -		err = __scm_install_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
+> +		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
+>  		if (err)
+>  			break;
+>  	}
+> -- 
+> 2.25.1
+> 
