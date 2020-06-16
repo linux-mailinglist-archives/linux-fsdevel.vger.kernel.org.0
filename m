@@ -2,102 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9C21FBB8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A1F1FBBA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbgFPQVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 12:21:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbgFPQVv (ORCPT
+        id S1729915AbgFPQZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 12:25:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35292 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729386AbgFPQZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:21:51 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B10C061573;
-        Tue, 16 Jun 2020 09:21:50 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id q19so24325736lji.2;
-        Tue, 16 Jun 2020 09:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rutRXz0r4RPjoUq6p2P1cCdyOAHIgEUeGio/qCwppKI=;
-        b=GKugQ2aUJSFuCPkHF4l8KI4OYDQ5aRxn2DpwgQ6bo7k47o4kF+CqPmbDEuVaKdOLka
-         M4jNLgop5VfO+oM50KJOga+oX9wwCFAS5z5eAdmTp5KnYIt9vZRGOFbGhzNDpoMp669h
-         FVsKkCaC1tiy3OKvSdM4e2zfh2wXjz1RiEnuVLwpCD2Q2y/H9w9VJ00Ok0bWOIVT81K9
-         sNMqTZnUOHnjXEyB9N1KGMriItjjY0Rbi1FkPtVS7uzWYp3Y8ymoKxWyjsFwsoMoYePC
-         vEII5p5vAWgqVGfeuOss214OTCgMNm9O3oRKtDM0pfXeJMnFJK+Fl6rvnQH3B2xDXZca
-         23Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rutRXz0r4RPjoUq6p2P1cCdyOAHIgEUeGio/qCwppKI=;
-        b=bcKAX8z1mWIziVzDk2pkb9pBCodo8F/u65/feQQSWUbvjGnuf0uF4zLf9y3tNY/ZX/
-         8VnXkhKH1jKLf1SZrXj7uvUiAeXJSx9atrdQBro/4B+quZEwm5sdt8ifkXO/WfpsjKMi
-         6B1MtaafV2qjZ8Ei+bbCxz6M3xj8I+cLYLuSvQZab5XDZ9MQPvrCfo/ltzqkM6353BeX
-         KzSmr3ZwCP9R4kdXGYJ4nrTeRMXXuXieqA+iqmHg6Gk3qkiyoalN3nn5aDvrwxXxjUQp
-         Hnmyc5dKMn4/LA/0gxJ2SG61B3pmfMSDugGUXMeDi9EQ3yDshnuqwOsjNIj7aMrvWqx7
-         B8VQ==
-X-Gm-Message-State: AOAM532ZEHGkVFrVBRm/7E21/unB1hZnOHyDP4oOWV0Y5PhsGU6cBpuc
-        55e6FJXruSiVj/jVAgdEtdAfBIWNHrJjBbvknzo=
-X-Google-Smtp-Source: ABdhPJyB27SulU6iO8WwU8QdJcISHXWJjy+R1tOYonQ3HVk1Vw7tsbXU2t+PVxAEV1ml6zPw+a4b/dCSijDYmxMoWoc=
-X-Received: by 2002:a2e:b1d4:: with SMTP id e20mr1773300lja.290.1592324509058;
- Tue, 16 Jun 2020 09:21:49 -0700 (PDT)
+        Tue, 16 Jun 2020 12:25:54 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GGLirp060906;
+        Tue, 16 Jun 2020 16:25:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=6tLUW1Q0tV/ol/immtHcQsYvkQwpHWrO4p6yajXsBrk=;
+ b=lHnJZyv7mdi7nm6nAIgVWrt3JvNsQKwkXrB6KKOKe9yZyph/D12JhEnAP9FOhP38PPMb
+ MwmJcghRV+xAG6qQDZiNjkil3IdabDusbFiSPqiqvBtaaFbJn+2E/XdxHn8paUKEDuVo
+ WtQuTY3qvbBM9p9vWoO7oTp9we1SVm/Uk00BZEl7VaGYiPQWH/REthD7JepHU5eJGBIN
+ O0pVSXcFDwLcEaCig37SMvzhQB6YkwRzYZvDs/lTDokcDTf+rGcidr9m+MAtlesJ56/O
+ 1MFSbCaTQJpZ1am2+payK67/Yi2sZprM+Quh/3jOm/Gq3RFFtxgxO341LX5qKPdegMei dA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31p6s27qt2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 Jun 2020 16:25:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GGODmi075909;
+        Tue, 16 Jun 2020 16:25:42 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 31p6s7sbxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jun 2020 16:25:42 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05GGPfm4012640;
+        Tue, 16 Jun 2020 16:25:41 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Jun 2020 09:25:41 -0700
+Date:   Tue, 16 Jun 2020 09:25:39 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
+Message-ID: <20200616162539.GN11245@magnolia>
+References: <20200615160244.741244-1-agruenba@redhat.com>
+ <20200615233239.GY2040@dread.disaster.area>
+ <20200615234437.GX8681@bombadil.infradead.org>
+ <20200616003903.GC2005@dread.disaster.area>
+ <315900873.34076732.1592309848873.JavaMail.zimbra@redhat.com>
+ <20200616132318.GZ8681@bombadil.infradead.org>
+ <CAHc6FU7uU8rUMdkspqH+Zv_O5zi2eEyOYF4x4Je-eCNeM+7NHA@mail.gmail.com>
 MIME-Version: 1.0
-References: <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
- <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
- <87r1uo2ejt.fsf@x220.int.ebiederm.org> <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
- <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
- <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
- <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
- <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 16 Jun 2020 09:21:36 -0700
-Message-ID: <CAADnVQ+D5aozzWVKjZua61B9=Xt7Cj+95o2ZOPf22YsPgqfX6Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU7uU8rUMdkspqH+Zv_O5zi2eEyOYF4x4Je-eCNeM+7NHA@mail.gmail.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9654 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=1
+ mlxlogscore=999 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006160116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9654 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1011 mlxscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
+ malwarescore=0 suspectscore=1 spamscore=0 cotscore=-2147483648 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006160116
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 6:55 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Tue, Jun 16, 2020 at 03:57:08PM +0200, Andreas Gruenbacher wrote:
+> On Tue, Jun 16, 2020 at 3:23 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > On Tue, Jun 16, 2020 at 08:17:28AM -0400, Bob Peterson wrote:
+> > > ----- Original Message -----
+> > > > > I'd assume Andreas is looking at converting a filesystem to use iomap,
+> > > > > since this problem only occurs for filesystems which have returned an
+> > > > > invalid extent.
+> > > >
+> > > > Well, I can assume it's gfs2, but you know what happens when you
+> > > > assume something....
+> > >
+> > > Yes, it's gfs2, which already has iomap. I found the bug while just browsing
+> > > the code: gfs2 takes a lock in the begin code. If there's an error,
+> > > however unlikely, the end code is never called, so we would never unlock.
+> > > It doesn't matter to me whether the error is -EIO because it's very unlikely
+> > > in the first place. I haven't looked back to see where the problem was
+> > > introduced, but I suspect it should be ported back to stable releases.
 > >
-> > int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-> >
-> >
-> > The function fork_usermode_blob is passed an array and a length.  Today
-> > that array is stored in .rodata.  Not in a init section where it could
-> > be discared.
->
-> It's a one line change in bpfilter_umh_blob.S to make it .init section,
-> but for bpfilter init may not work.
-> For some ko init is appropriate for some other it's not.
+> > It shouldn't just be "unlikely", it should be impossible.  This is the
+> > iomap code checking whether you've returned an extent which doesn't cover
+> > the range asked for.  I don't think it needs to be backported, and I'm
+> > pretty neutral on whether it needs to be applied.
+> 
+> Right, when these warnings trigger, the filesystem has already screwed
+> up; this fix only makes things less bad. Those kinds of issues are
+> very likely to be fixed long before the code hits users, so it
+> shouldn't be backported.
+> 
+> This bug was in iomap_apply right from the start, so:
+> 
+> Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
 
-since I remember discussing the desire to have only one copy of the blob
-with Andy back then I did a bit of git archeology.
-Sure enough it was in .init.rodata when usermode_blob() landed.
-But then commit 61fbf5933d42 ("net: bpfilter: restart bpfilter_umh
-when error occurred")
-added blob restart logic.
-It's kinda questionable whether bpfilter needs restart or not.
-But because the kernel module now starts the blob multiple times it had to move
-them from .init.rodata to .rodata.
-Regardless the point is that init or not-init is a decision of a
-particular kernel module.
+So... you found this through code inspection, and not because you
+actually hit this on gfs2, or any of the other iomap users?
+
+I generally think this looks ok, but I want to know if I should be
+looking deeper. :)
+
+--D
+
+> Thanks,
+> Andreas
+> 
