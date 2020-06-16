@@ -2,124 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE6C1FADCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 12:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CC61FADF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 12:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbgFPKVR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 06:21:17 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:41704 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbgFPKVQ (ORCPT
+        id S1728259AbgFPK2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 06:28:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728144AbgFPK2S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 06:21:16 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GAILsT154365;
-        Tue, 16 Jun 2020 10:20:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=j5kegrmGeTDSB0ig2F5qX6z4umw1vzMFuB/NKoAL+6c=;
- b=RuElR14UanHGq5GunllI0MWA4B7q6RgiHOJOW3YtQWOASZbTsfDa/oOdMoZIw0kjutoI
- QDhuv5rQiSpn1uqvmndFDFXQInxWZ+orRLp7ZUCnMIUXBiYJ+8o9/TP7i29o/LatvYas
- DjASjtipSEKsA8361yrxMDLKeII7jhCwJCWm+9t5R3sHeVpYh9NUym/VVkpRrSTPmQP6
- NXhZrfZGleZ4vaBbWsdvK15yNCEgnv9hCOo4t1CSLiwz1iaLaHXP5v2f2PU4pBC1HclN
- BZcbrNVrDmqWXNQLIUNxsUQ5/lb5NI2KwY+2mJA2PZRztiKnIt583eDx/m2r2T9b0Ca6 Ew== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 31p6s25w66-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 16 Jun 2020 10:20:58 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GADS4S196050;
-        Tue, 16 Jun 2020 10:20:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 31p6dcvwxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Jun 2020 10:20:58 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05GAKuxB004012;
-        Tue, 16 Jun 2020 10:20:56 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Jun 2020 03:20:55 -0700
-Date:   Tue, 16 Jun 2020 13:20:48 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jason Yan <yanaijie@huawei.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Hulk Robot <hulkci@huawei.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH v6] block: Fix use-after-free in blkdev_get()
-Message-ID: <20200616102048.GL4282@kadam>
-References: <20200616034002.2473743-1-yanaijie@huawei.com>
+        Tue, 16 Jun 2020 06:28:18 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED203C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 03:28:05 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id s28so11779762edw.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 03:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F2RIyeJm0xM8abNF+/WtYZGOzvjkk7mCrM8JO7f4jIk=;
+        b=CHfybsnYs3riJWYIIErEI+2CcGnmzcvnSZ6qQtjTMjdcMcemP4k3IWpjudDSs4Gvdf
+         85rXDu2i203erGLJtrJxPH8SW7sbWeHkvP2Xcs0+AWZyM0nk13eKv1iQgcBTAwscMXPz
+         zNkPgz10Vfua3jKlMPON0il3gJlZYWCFVpPLw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F2RIyeJm0xM8abNF+/WtYZGOzvjkk7mCrM8JO7f4jIk=;
+        b=aYm+grL8ljHCB7lOz3TCobK7SWoUDsV2m/IZDbHZuy2ie68ExsGIQzl66nsLwv1SjS
+         6DVCZ7VtUbpxRfhQ5WibU2FHqVk5sWSO4brfjTn4SSOT7DXMZeI8T24A1ahA07TTHdNn
+         RvKK8s6kuUdIN1LlRMgMpHTqTbpzIPClg6jFJztTphUHYFKZp35wLSSlRH5ncv/HgTf3
+         5MDphzc95ynxGTzZ+4+5asHI/6qNfThSirXpDMxDaNwLET/fpuR3L/A9vjIv2ZxRgqCc
+         F/9whyi2BKcF0zAFSk6rEIIc4mkWdmU1HIIc5JtrHRe9r6h5whit5XFhE2i68DeXGOqw
+         z2bA==
+X-Gm-Message-State: AOAM533RVcEQ0TV+dmHHRaoioVECZHYJ70kNh1JlWULTQjdToetnM/hT
+        EugnEv2EPbME9e/dyZHECFLfbcVCGCZaJ0VcyX0TNg==
+X-Google-Smtp-Source: ABdhPJzo/EeBLGO3OP4tRRLl+DLvv11dLrWAvxx7rkEN45ulgIYM9RXvdIZg4wesv/uGm96ZWmwSdlZbTBoI4rQgltw=
+X-Received: by 2002:a50:ee8f:: with SMTP id f15mr1933207edr.168.1592303281402;
+ Tue, 16 Jun 2020 03:28:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200616034002.2473743-1-yanaijie@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=2
- mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006160076
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- malwarescore=0 suspectscore=2 spamscore=0 cotscore=-2147483648 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006160077
+References: <20200601053214.201723-1-chirantan@chromium.org>
+ <20200610092744.140038-1-chirantan@chromium.org> <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
+ <CAJFHJrr7VKD-gumaG5uQ_SPKUTzN+g98rh-rKFWUV7vcGNafHQ@mail.gmail.com>
+In-Reply-To: <CAJFHJrr7VKD-gumaG5uQ_SPKUTzN+g98rh-rKFWUV7vcGNafHQ@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 16 Jun 2020 12:27:50 +0200
+Message-ID: <CAJfpegvpxXRcT+AgqidBexiRQ+=+wbN+aeLkJEucQnsRW9EhnQ@mail.gmail.com>
+Subject: Re: [PATCH v2] RFC: fuse: Call security hooks on new inodes
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 11:40:02AM +0800, Jason Yan wrote:
+On Tue, Jun 16, 2020 at 11:41 AM Chirantan Ekbote
+<chirantan@chromium.org> wrote:
 >
-> Fixes: e525fd89d380 ("block: make blkdev_get/put() handle exclusive access")
+> On Tue, Jun 16, 2020 at 6:29 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Wed, Jun 10, 2020 at 11:27 AM Chirantan Ekbote
+> > <chirantan@chromium.org> wrote:
+> > >
+> > >
+> > > When set to true, get the security context for a newly created inode via
+> > > `security_dentry_init_security` and append it to the create, mkdir,
+> > > mknod, and symlink requests.  The server should use this context by
+> > > writing it to `/proc/thread-self/attr/fscreate` before creating the
+> > > requested inode.
+> >
+> > This is confusing.  You mean if the server is stacking on top of a
+> > real fs, then it can force the created new inode to have the given
+> > security attributes by writing to that proc file?
+> >
+>
+> Yes that's correct.  Writing to that proc file ends up setting a field
+> in an selinux struct in the kernel.  Later, when an inode is created
+> the selinux security hook uses that field to determine the label that
+> should be applied to the inode.  This ensures that inodes appear
+> atomically with the correct selinux labels.  Most users actually end
+> up using setfscreatecon from libselinux but all that does is write to
+> /proc/thread-self/attr/fscreate itself after doing some
+> conversion/validation.
 
-I still don't understand how this is the correct fixes tag...  :/
+ FUSE servers do not necessarily use a real filesystem as a backing
+store (e.g. network filesystems), so you should clarify that in the
+description.
 
-git show e525fd89d380:fs/block_dev.c | cat -n
-  1208  int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
-  1209  {
-  1210          struct block_device *whole = NULL;
-  1211          int res;
-  1212  
-  1213          WARN_ON_ONCE((mode & FMODE_EXCL) && !holder);
-  1214  
-  1215          if ((mode & FMODE_EXCL) && holder) {
-  1216                  whole = bd_start_claiming(bdev, holder);
-  1217                  if (IS_ERR(whole)) {
-  1218                          bdput(bdev);
-  1219                          return PTR_ERR(whole);
-  1220                  }
-  1221          }
-  1222  
-  1223          res = __blkdev_get(bdev, mode, 0);
-  1224  
-  1225          if (whole) {
-  1226                  if (res == 0)
-                            ^^^^^^^^
-
-  1227                          bd_finish_claiming(bdev, whole, holder);
-  1228                  else
-  1229                          bd_abort_claiming(whole, holder);
-                                                  ^^^^^^^^^^^^^
-If __blkdev_get() then this doesn't dereference "bdev" so it's not a
-use after free bug.
-
-  1230          }
-  1231  
-  1232          return res;
-  1233  }
-
-So far as I can see the Fixes tag should be what I said earlier.
-
-Fixes: 89e524c04fa9 ("loop: Fix mount(2) failure due to race with LOOP_SET_FD")
-
-Otherwise the patch looks good to me.
-
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
+>
+> > >
+> > >  static void fuse_advise_use_readdirplus(struct inode *dir)
+> > >  {
+> > > @@ -442,6 +445,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> > >         struct fuse_entry_out outentry;
+> > >         struct fuse_inode *fi;
+> > >         struct fuse_file *ff;
+> > > +       void *security_ctx = NULL;
+> > > +       u32 security_ctxlen = 0;
+> > >
+> > >         /* Userspace expects S_IFREG in create mode */
+> > >         BUG_ON((mode & S_IFMT) != S_IFREG);
+> > > @@ -477,6 +482,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> > >         args.out_args[0].value = &outentry;
+> > >         args.out_args[1].size = sizeof(outopen);
+> > >         args.out_args[1].value = &outopen;
+> > > +
+> > > +       if (fc->init_security) {
+> > > +               err = security_dentry_init_security(entry, mode, &entry->d_name,
+> > > +                                                   &security_ctx,
+> > > +                                                   &security_ctxlen);
+> > > +               if (err)
+> > > +                       goto out_put_forget_req;
+> > > +
+> > > +               if (security_ctxlen > 0) {
+> > > +                       args.in_numargs = 3;
+> > > +                       args.in_args[2].size = security_ctxlen;
+> > > +                       args.in_args[2].value = security_ctx;
+> > > +               }
+> > > +       }
+> > > +
+> >
+> > The above is quadruplicated, a helper is in order.
+>
+> Ack.
+>
+> >
+> > >         err = fuse_simple_request(fc, &args);
+> > >         if (err)
+> > >                 goto out_free_ff;
+> > > @@ -513,6 +533,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> > >         return err;
+> > >
+> > >  out_free_ff:
+> > > +       if (security_ctxlen > 0)
+> > > +               kfree(security_ctx);
+> >
+> > Freeing NULL is okay, if that's guaranteed in case of security_ctxlen
+> > == 0, then you need not check that condition.
+>
+> Ack.  Will fix in v3.
