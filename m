@@ -2,140 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3F51FACEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 11:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D60691FADB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 12:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbgFPJls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 05:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
+        id S1727804AbgFPKRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 06:17:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbgFPJlr (ORCPT
+        with ESMTP id S1726052AbgFPKRp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 05:41:47 -0400
-Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BB2C05BD43
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:41:47 -0700 (PDT)
-Received: by mail-yb1-xb44.google.com with SMTP id s1so10498595ybo.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:41:47 -0700 (PDT)
+        Tue, 16 Jun 2020 06:17:45 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7233CC08C5C2;
+        Tue, 16 Jun 2020 03:17:45 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id t8so1827274ilm.7;
+        Tue, 16 Jun 2020 03:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vbO9qGecYmWXUD37SUob42kXBPCWyMyGCznqgXAEuis=;
-        b=Keh5C5dNltLNDS2F1Npj/VN3K++TmHgh7nTPacEIM2BOK+xGgVI7UcTLmX/G1wxYLV
-         bH3I8lohkmiAv+0i53hLMJefz/kGA6oQ0pJp80i3BesKw5osPZMjaq6yUOtdlR7/JAsB
-         iNjzi0tNPIeQx8YAxxsHUz2hTsz5jDigZC7IA=
+         :cc:content-transfer-encoding;
+        bh=ClvGezN/jILcyWyyGs0/Rt2CB3tC7TLkLhNuWV+hMG8=;
+        b=VFuoQMDppfECs4750kBTDddr5Q0xep48HMtbY3K2P9XcCrtIPmZy80S9vftY6+Fgug
+         CK5NuxesnRW83QLnJGZxEI1cPsKArb6hjcB4gBK+6QpMosAhSxWt7hvfL564LG8aTbFf
+         XUqU60XDASYQ8ry2wRwLRXSmgxzYYBDCr7BKYhv9zQ2dr2iU9OLvCedE/UYCk76JLqv9
+         ePomG6GvJgMfHDmt22TxEf9AQiowvsdRYzlUl1LXP49Hs2iEnHuo5a7LrODDFocX1BcL
+         Qd4w31r/iFPe6igBT1S0kmuZOkP4yd+ja/smcOfzpbL8lBdPrQBP1cpo9q/vt7zJD6iO
+         aY8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vbO9qGecYmWXUD37SUob42kXBPCWyMyGCznqgXAEuis=;
-        b=aEKs3jcP7oV/jJ06iaN2VXGQkPMCS0zmEcRsWaN9VIo3rHdcQMwT0nORmhrtklW4Ra
-         qT/XXz7ZKo4JQZ5SPa3YNgXdJz83YWF1VRK2Tfppn5M/iADW/SSS227/k+ZJEDxIqtUx
-         afEoCQgcde9ukrtd6RSXO5x9k51MFAyoSeMv9GeVX7HE5hk166qCDVBrelltor3h7yix
-         a7FFjLaaj7tBkVMcNPwj0ooruuJjR20VBqF861IU25+XIok+OjmP6Pe6wuTmelp/bjHc
-         abcuwFEGX0bMVmPIXYyMzka9EFfcBAKyApiFSp/3fPJT4am5VHbBFgsf4vrFqx8RVXWG
-         TAsA==
-X-Gm-Message-State: AOAM530Da1nRw1UG/6d7MpkPBZ8mH6TMxjurlA2vQAoOls2X5nAXnf3V
-        9OmdDpWM8b7+EwFY9fM0yblUPAG69NN3A1ohsMetlg==
-X-Google-Smtp-Source: ABdhPJyejTI8yLpgfZih9eQjzy7khF5CLVxMp/nJMhZT/j2dwjryehwEPuCN9HPZHR7Fvlb7YW7eVszX0DE6YsYx+hs=
-X-Received: by 2002:a25:6b4d:: with SMTP id o13mr2991612ybm.496.1592300506643;
- Tue, 16 Jun 2020 02:41:46 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ClvGezN/jILcyWyyGs0/Rt2CB3tC7TLkLhNuWV+hMG8=;
+        b=Hw7xxQ/IDcCSQ3cMkTQeECBk5ojd4fR5Di3LWoA08llvF41/J+fF7KaEFkSQWaNN3I
+         q9wo4PF49ExlNnMOpKJmnrCgl5IvOShAZnIGREL3KMHyLWTwn8b5j/9M1OpLkbRCxDSM
+         Twn/nn7OTAaZs48DnB2/VRPaIlPSYvjVqlYnML+MvZqGXkBV0AbQPE4RRG7NjdHA7gq3
+         Hru/i6OW0pe32OvSEr9wH7fIwB//PDSQuKXPk4eBVIqQUqf94uyaJajFO9jK25Tk6BwL
+         /NXiCnr0NfaxW/QlfCm/5vniEGUS+Gbmib4F4CgCFnh71zbG1Da2ntF7aNecYFx2KOMB
+         b8kQ==
+X-Gm-Message-State: AOAM532uGGdL1WRqxN3fy3Adeob0+88LUQUM/oLq98A5AsVPW9KbCKM8
+        mwS3e2AGMRGO4Yg0fQtI/QkX0m1w6PPs0noWISc=
+X-Google-Smtp-Source: ABdhPJzXVAgiCACjUYmsq8WCd22HZHDsC4jVtYcuQ9Gws7A7vDWzdqOqnzto/i+H5Bo2Pzy+HWKG59oXntP8M1FCknY=
+X-Received: by 2002:a05:6e02:13cd:: with SMTP id v13mr2252314ilj.93.1592302664627;
+ Tue, 16 Jun 2020 03:17:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200601053214.201723-1-chirantan@chromium.org>
- <20200610092744.140038-1-chirantan@chromium.org> <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
-In-Reply-To: <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
-From:   Chirantan Ekbote <chirantan@chromium.org>
-Date:   Tue, 16 Jun 2020 18:41:35 +0900
-Message-ID: <CAJFHJrr7VKD-gumaG5uQ_SPKUTzN+g98rh-rKFWUV7vcGNafHQ@mail.gmail.com>
-Subject: Re: [PATCH v2] RFC: fuse: Call security hooks on new inodes
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>
+References: <1592222181-9832-1-git-send-email-laoar.shao@gmail.com>
+ <e4c7868a-9107-573f-c1f4-24c3aa4c9d1f@applied-asynchrony.com>
+ <20200615145331.GK25296@dhcp22.suse.cz> <20200615230605.GV2040@dread.disaster.area>
+In-Reply-To: <20200615230605.GV2040@dread.disaster.area>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Tue, 16 Jun 2020 18:17:08 +0800
+Message-ID: <CALOAHbBSa77_KajnFnWdb3q8_1KrmXXzs3J9T_OGtU3Fn8=7Yw@mail.gmail.com>
+Subject: Re: [PATCH v3] xfs: avoid deadlock when trigger memory reclaim in ->writepages
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 6:29 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Tue, Jun 16, 2020 at 7:06 AM Dave Chinner <david@fromorbit.com> wrote:
 >
-> On Wed, Jun 10, 2020 at 11:27 AM Chirantan Ekbote
-> <chirantan@chromium.org> wrote:
+> On Mon, Jun 15, 2020 at 04:53:31PM +0200, Michal Hocko wrote:
+> > On Mon 15-06-20 16:25:52, Holger Hoffst=C3=A4tte wrote:
+> > > On 2020-06-15 13:56, Yafang Shao wrote:
+> > [...]
+> > > > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > > > index b356118..1ccfbf2 100644
+> > > > --- a/fs/xfs/xfs_aops.c
+> > > > +++ b/fs/xfs/xfs_aops.c
+> > > > @@ -573,9 +573,21 @@ static inline bool xfs_ioend_needs_workqueue(s=
+truct iomap_ioend *ioend)
+> > > >           struct writeback_control *wbc)
+> > > >   {
+> > > >           struct xfs_writepage_ctx wpc =3D { };
+> > > > + unsigned int nofs_flag;
+> > > > + int ret;
+> > > >           xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+> > > > - return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_op=
+s);
+> > > > +
+> > > > + /*
+> > > > +  * We can allocate memory here while doing writeback on behalf of
+> > > > +  * memory reclaim.  To avoid memory allocation deadlocks set the
+> > > > +  * task-wide nofs context for the following operations.
+> > > > +  */
+> > > > + nofs_flag =3D memalloc_nofs_save();
+> > > > + ret =3D iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_o=
+ps);
+> > > > + memalloc_nofs_restore(nofs_flag);
+> > > > +
+> > > > + return ret;
+> > > >   }
+> > > >   STATIC int
+> > > >
+> > >
+> > > Not sure if I did something wrong, but while the previous version of =
+this patch
+> > > worked fine, this one gave me (with v2 removed obviously):
+> > >
+> > > [  +0.000004] WARNING: CPU: 0 PID: 2811 at fs/iomap/buffered-io.c:154=
+4 iomap_do_writepage+0x6b4/0x780
 > >
+> > This corresponds to
+> >         /*
+> >          * Given that we do not allow direct reclaim to call us, we sho=
+uld
+> >          * never be called in a recursive filesystem reclaim context.
+> >          */
+> >         if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> >                 goto redirty;
 > >
-> > When set to true, get the security context for a newly created inode via
-> > `security_dentry_init_security` and append it to the create, mkdir,
-> > mknod, and symlink requests.  The server should use this context by
-> > writing it to `/proc/thread-self/attr/fscreate` before creating the
-> > requested inode.
+> > which effectivelly says that memalloc_nofs_save/restore cannot be used
+> > for that code path.
 >
-> This is confusing.  You mean if the server is stacking on top of a
-> real fs, then it can force the created new inode to have the given
-> security attributes by writing to that proc file?
+> No it doesn't. Everyone is ignoring the -context- of this code, most
+> especially the previous 3 lines of code and it's comment:
+>
+>         /*
+>          * Refuse to write the page out if we are called from reclaim con=
+text.
+>          *
+>          * This avoids stack overflows when called from deeply used stack=
+s in
+>          * random callers for direct reclaim or memcg reclaim.  We explic=
+itly
+>          * allow reclaim from kswapd as the stack usage there is relative=
+ly low.
+>          *
+>          * This should never happen except in the case of a VM regression=
+ so
+>          * warn about it.
+>          */
+>         if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) =3D=
+=3D
+>                         PF_MEMALLOC))
+>                 goto redirty;
+>
+> You will see that we specifically avoid this path from reclaim
+> context except for kswapd. And kswapd always runs with GFP_KERNEL
+> context so we allow writeback from it, so it will pass both this
+> check and the NOFS check above.
+>
+> IOws, we can't trigger to the WARN_ON_ONCE(current->flags &
+> PF_MEMALLOC_NOFS)) check from a memory reclaim context: this
+> PF_MEMALLOC_NOFS check here is not doing what people think it is.
+>
+> History lesson time, eh?
+>
+> The recursion protection here -used- to use PF_FSTRANS, not
+> PF_MEMALLOC_NOFS. See commit 9070733b4efac ("xfs: abstract
+> PF_FSTRANS to PF_MEMALLOC_NOFS"). This hunk is most instructive
+> when you look at the comment:
+>
+>          * Given that we do not allow direct reclaim to call us, we shoul=
+d
+>          * never be called while in a filesystem transaction.
+>          */
+
+This comment is more clear.
+
+> -       if (WARN_ON_ONCE(current->flags & PF_FSTRANS))
+> +       if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+>                 goto redirty;
+>
+> It wasn't for memory allocation recursion protection in XFS - it was
+> for transaction reservation recursion protection by something trying
+> to flush data pages while holding a transaction reservation. Doing
+> this could deadlock the journal because the existing reservation
+> could prevent the nested reservation for being able to reserve space
+> in the journal and that is a self-deadlock vector.
+>
+> IOWs, this check is not protecting against memory reclaim recursion
+> bugs at all (that's the previous check I quoted). This check is
+> protecting against the filesystem calling writepages directly from a
+> context where it can self-deadlock.
+>
+> So what we are seeing here is that the PF_FSTRANS ->
+> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
+> about what type of error this check was protecting against.
 >
 
-Yes that's correct.  Writing to that proc file ends up setting a field
-in an selinux struct in the kernel.  Later, when an inode is created
-the selinux security hook uses that field to determine the label that
-should be applied to the inode.  This ensures that inodes appear
-atomically with the correct selinux labels.  Most users actually end
-up using setfscreatecon from libselinux but all that does is write to
-/proc/thread-self/attr/fscreate itself after doing some
-conversion/validation.
+Agreed. The check of PF_MEMALLOC_NOFS here really confused me before.
+I think it will confuse others as well.
 
-> >
-> >  static void fuse_advise_use_readdirplus(struct inode *dir)
-> >  {
-> > @@ -442,6 +445,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
-> >         struct fuse_entry_out outentry;
-> >         struct fuse_inode *fi;
-> >         struct fuse_file *ff;
-> > +       void *security_ctx = NULL;
-> > +       u32 security_ctxlen = 0;
-> >
-> >         /* Userspace expects S_IFREG in create mode */
-> >         BUG_ON((mode & S_IFMT) != S_IFREG);
-> > @@ -477,6 +482,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
-> >         args.out_args[0].value = &outentry;
-> >         args.out_args[1].size = sizeof(outopen);
-> >         args.out_args[1].value = &outopen;
-> > +
-> > +       if (fc->init_security) {
-> > +               err = security_dentry_init_security(entry, mode, &entry->d_name,
-> > +                                                   &security_ctx,
-> > +                                                   &security_ctxlen);
-> > +               if (err)
-> > +                       goto out_put_forget_req;
-> > +
-> > +               if (security_ctxlen > 0) {
-> > +                       args.in_numargs = 3;
-> > +                       args.in_args[2].size = security_ctxlen;
-> > +                       args.in_args[2].value = security_ctx;
-> > +               }
-> > +       }
-> > +
+> > Your stack trace doesn't point to a reclaim path
+> > which shows that this path is shared and also underlines that this is
+> > not really an intended use of the api.
 >
-> The above is quadruplicated, a helper is in order.
-
-Ack.
-
+> Actually, Michal, it was your PF_FSTRANS -> PF_MEMALLOC_NOFS
+> abstraction of this code that turned this from "exactly what
+> PF_FSTRANS was intended to catch" to what you call "unintended use
+> of the API"....
 >
-> >         err = fuse_simple_request(fc, &args);
-> >         if (err)
-> >                 goto out_free_ff;
-> > @@ -513,6 +533,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
-> >         return err;
-> >
-> >  out_free_ff:
-> > +       if (security_ctxlen > 0)
-> > +               kfree(security_ctx);
+> IOWs, putting the iomap_writepage path under NOFS context is the
+> right thing to do from a "prevent memory reclaim" perspective, but
+> now we are hitting against the problems of repurposing filesystem
+> specific flags for subtlely different generic semantics...
 >
-> Freeing NULL is okay, if that's guaranteed in case of security_ctxlen
-> == 0, then you need not check that condition.
+> I suspect we need to re-introduce PF_FSTRANS, set/clear/transfer it
+> again in all the places XFS used to transfer it, and change this
+> iomap check to use PF_FSTRANS and not PF_MEMALLOC_NOFS, because it's
+> clearly not and never has been a memory reclaim recursion warning
+> check....
+>
 
-Ack.  Will fix in v3.
+Agree with you that it's better to convert it back to PF_FSTRANS,
+otherwise it will mislead more people.
+I would like to send a patch to change it back if there is no
+objection to this proposal.
+
+
+
+--
+Thanks
+Yafang
