@@ -2,130 +2,358 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E971FAC57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 11:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F39BF1FAC61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 11:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgFPJ1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 05:27:38 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:41787 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgFPJ1h (ORCPT
+        id S1725911AbgFPJ3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 05:29:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgFPJ3g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 05:27:37 -0400
-Received: by mail-ej1-f68.google.com with SMTP id dp18so2527669ejc.8;
-        Tue, 16 Jun 2020 02:27:35 -0700 (PDT)
+        Tue, 16 Jun 2020 05:29:36 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38EC2C05BD43
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:29:36 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id q19so20737583eja.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 02:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jlFA+GTjGZ+L42JiWyLY/sT3a84aFaqvE9tLcVF3C/0=;
+        b=ku/p9KfEweLEgoNEM1FGzPBvAZajr2kRWxHXI6hUWg6LjXkzy4zLKaJqMFauvaFjt8
+         V8waq3P0rV4zzRStT6Z5JqLwPSeLeyK4Jk70qdLpABAE2tL1+i+kRpj8CqLUiGRjV4+V
+         ZZ+y9J/Lw5+a7okEFEh4R88aZos7fsM9E+brE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HQVEwzF61pJG67w4VVFyK6E5C1QP2FoVP3jQ17g95ks=;
-        b=ianh7nndYQ13TLPF27DjLebiRUzx3SH6EsOTRsAMNeQLOdIYdu05SWftW3E27crnmB
-         Jtnn/UzJA5SCMNO3hxPYHS+doIdFEF7MavvBOvqNgumKcYYXjuwDHYKY4kH858C4/pPo
-         wr/8ok0tJ++lrux3807YQwRk/EtGHgpHqCo/DNiqZRYteNVnZF6fViiq8t+ICIi/2/Vi
-         aIjqVm+bVZdzlyghtiCRzzukPL57CBzWga2y0ralYxl9CxezoKq91JLsW+t3IB/9nya5
-         w6D4/A76pRCzz7cYKklrYRo8hKfVx5XI40Gg2PPf6QwtG1ZhLJMBsbggc95I/DopSpmU
-         MyqQ==
-X-Gm-Message-State: AOAM533yI6O+7zBHchUMz6x0a73T4edKb8e1qHYY3hNtvIX37NJ+Fg7D
-        XqtdfZ4Ow7Fqw+XJ4CgkOk0=
-X-Google-Smtp-Source: ABdhPJzgkkE5RAtuOPXtr3stKyyC1FyTvZ9fNK0/KUpTftRx6B56W2cpdvndiDarNtDvhPe+zX8URQ==
-X-Received: by 2002:a17:906:ca54:: with SMTP id jx20mr2010240ejb.549.1592299655323;
-        Tue, 16 Jun 2020 02:27:35 -0700 (PDT)
-Received: from localhost (ip-37-188-174-201.eurotel.cz. [37.188.174.201])
-        by smtp.gmail.com with ESMTPSA id a7sm9803383edx.3.2020.06.16.02.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 02:27:34 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 11:27:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH v3] xfs: avoid deadlock when trigger memory reclaim in
- ->writepages
-Message-ID: <20200616092727.GD9499@dhcp22.suse.cz>
-References: <1592222181-9832-1-git-send-email-laoar.shao@gmail.com>
- <20200616081628.GC9499@dhcp22.suse.cz>
- <CALOAHbDsCB1yZE6m96xiX1KiUWJW-8Hn0eqGcuEipkf9R6_L2A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jlFA+GTjGZ+L42JiWyLY/sT3a84aFaqvE9tLcVF3C/0=;
+        b=ZtCewZ8/RW7aqkKa2B14ld3BHPpozM4VJX8SrnEWDjVvOFC2gzA4lykRI620SZ08/T
+         8/aP6k14sDEaOEBLQYQ1aBmOAcYNuEZCfCryGf5AYglVoQz5/96f03RU3MKsO5GaBBZZ
+         HtW3XtFjKP/p9mYiYh62PJ+RGZ87czdqApx9Wbs9oEubVztgB/npYRwWErPd89ELuQwq
+         Njz9LhjRtvr8tsEIbdgRVonv2X+Ko4gAsKbL12DyymQFjnlPcKUB0txgqGUMOO/UWhOH
+         cwY49PHO4aUB+Gb5uzKoqPdfu6QgjRv5z7mfIhUwHOah1XBduvVtB90rGlEYYoG8jLnF
+         grQA==
+X-Gm-Message-State: AOAM530hYCj2m1GB1WUy6B7uIuE2kjMU5iTLPOtfOtBSqlIMwj+F+hGF
+        9Ayo0qR03fjrRrn2MSFmd1sF9oAqE9MaBU/atru+jA==
+X-Google-Smtp-Source: ABdhPJyG96tRwK2q4LWrLqp38mxwpBY0UgQOH0OEvduxu53ODjV0lolUMgbI+b71DQqoLy4I0qrblpxIBLmk5ZM1hXA=
+X-Received: by 2002:a17:906:b7cd:: with SMTP id fy13mr1807669ejb.443.1592299774818;
+ Tue, 16 Jun 2020 02:29:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALOAHbDsCB1yZE6m96xiX1KiUWJW-8Hn0eqGcuEipkf9R6_L2A@mail.gmail.com>
+References: <20200601053214.201723-1-chirantan@chromium.org> <20200610092744.140038-1-chirantan@chromium.org>
+In-Reply-To: <20200610092744.140038-1-chirantan@chromium.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 16 Jun 2020 11:29:23 +0200
+Message-ID: <CAJfpegs4Dt9gjQPQch=i_GW5EtBVaycG0_nD11xspG3x8f_W9Q@mail.gmail.com>
+Subject: Re: [PATCH v2] RFC: fuse: Call security hooks on new inodes
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 16-06-20 17:05:25, Yafang Shao wrote:
-> On Tue, Jun 16, 2020 at 4:16 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Mon 15-06-20 07:56:21, Yafang Shao wrote:
-> > > Recently there is a XFS deadlock on our server with an old kernel.
-> > > This deadlock is caused by allocating memory in xfs_map_blocks() while
-> > > doing writeback on behalf of memroy reclaim. Although this deadlock happens
-> > > on an old kernel, I think it could happen on the upstream as well. This
-> > > issue only happens once and can't be reproduced, so I haven't tried to
-> > > reproduce it on upsteam kernel.
-> > >
-> > > Bellow is the call trace of this deadlock.
-> > > [480594.790087] INFO: task redis-server:16212 blocked for more than 120 seconds.
-> > > [480594.790087] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > [480594.790088] redis-server    D ffffffff8168bd60     0 16212  14347 0x00000004
-> > > [480594.790090]  ffff880da128f070 0000000000000082 ffff880f94a2eeb0 ffff880da128ffd8
-> > > [480594.790092]  ffff880da128ffd8 ffff880da128ffd8 ffff880f94a2eeb0 ffff88103f9d6c40
-> > > [480594.790094]  0000000000000000 7fffffffffffffff ffff88207ffc0ee8 ffffffff8168bd60
-> > > [480594.790096] Call Trace:
-> > > [480594.790101]  [<ffffffff8168dce9>] schedule+0x29/0x70
-> > > [480594.790103]  [<ffffffff8168b749>] schedule_timeout+0x239/0x2c0
-> > > [480594.790111]  [<ffffffff8168d28e>] io_schedule_timeout+0xae/0x130
-> > > [480594.790114]  [<ffffffff8168d328>] io_schedule+0x18/0x20
-> > > [480594.790116]  [<ffffffff8168bd71>] bit_wait_io+0x11/0x50
-> > > [480594.790118]  [<ffffffff8168b895>] __wait_on_bit+0x65/0x90
-> > > [480594.790121]  [<ffffffff811814e1>] wait_on_page_bit+0x81/0xa0
-> > > [480594.790125]  [<ffffffff81196ad2>] shrink_page_list+0x6d2/0xaf0
-> > > [480594.790130]  [<ffffffff811975a3>] shrink_inactive_list+0x223/0x710
-> > > [480594.790135]  [<ffffffff81198225>] shrink_lruvec+0x3b5/0x810
-> > > [480594.790139]  [<ffffffff8119873a>] shrink_zone+0xba/0x1e0
-> > > [480594.790141]  [<ffffffff81198c20>] do_try_to_free_pages+0x100/0x510
-> > > [480594.790143]  [<ffffffff8119928d>] try_to_free_mem_cgroup_pages+0xdd/0x170
-> > > [480594.790145]  [<ffffffff811f32de>] mem_cgroup_reclaim+0x4e/0x120
-> > > [480594.790147]  [<ffffffff811f37cc>] __mem_cgroup_try_charge+0x41c/0x670
-> > > [480594.790153]  [<ffffffff811f5cb6>] __memcg_kmem_newpage_charge+0xf6/0x180
-> > > [480594.790157]  [<ffffffff8118c72d>] __alloc_pages_nodemask+0x22d/0x420
-> > > [480594.790162]  [<ffffffff811d0c7a>] alloc_pages_current+0xaa/0x170
-> > > [480594.790165]  [<ffffffff811db8fc>] new_slab+0x30c/0x320
-> > > [480594.790168]  [<ffffffff811dd17c>] ___slab_alloc+0x3ac/0x4f0
-> > > [480594.790204]  [<ffffffff81685656>] __slab_alloc+0x40/0x5c
-> > > [480594.790206]  [<ffffffff811dfc43>] kmem_cache_alloc+0x193/0x1e0
-> > > [480594.790233]  [<ffffffffa04fab67>] kmem_zone_alloc+0x97/0x130 [xfs]
-> > > [480594.790247]  [<ffffffffa04f90ba>] _xfs_trans_alloc+0x3a/0xa0 [xfs]
-> > > [480594.790261]  [<ffffffffa04f915c>] xfs_trans_alloc+0x3c/0x50 [xfs]
-> >
-> > Now with a more explanation from Dave I have got back to the original
-> > backtrace. Not sure which kernel version you are using but this path
-> > should have passed xfs_trans_reserve which sets PF_MEMALLOC_NOFS and
-> > this in turn should have made __alloc_pages_nodemask to use __GFP_NOFS
-> > and the memcg reclaim shouldn't ever wait_on_page_writeback (pressumably
-> > this is what the io_schedule is coming from).
-> 
-> Hi Michal,
-> 
-> The page is allocated before calling xfs_trans_reserve, so the
-> PF_MEMALLOC_NOFS hasn't been set yet.
-> See bellow,
-> 
-> xfs_trans_alloc
->     kmem_zone_zalloc() <<< GPF_NOFS hasn't been set yet, but it may
-> trigger memory reclaim
->     xfs_trans_reserve() <<<< GPF_NOFS is set here (for the kernel
-> prior to commit 9070733b4efac, it is PF_FSTRANS)
+On Wed, Jun 10, 2020 at 11:27 AM Chirantan Ekbote
+<chirantan@chromium.org> wrote:
+>
+> Add a new `init_security` field to `fuse_conn` that controls whether we
+> initialize security when a new inode is created.  Also add a
+> `FUSE_SECURITY_CTX` flag that can be set in the `flags` field of the
+> `fuse_init_out` struct that controls when the `init_security` field is
+> set.
+>
+> When set to true, get the security context for a newly created inode via
+> `security_dentry_init_security` and append it to the create, mkdir,
+> mknod, and symlink requests.  The server should use this context by
+> writing it to `/proc/thread-self/attr/fscreate` before creating the
+> requested inode.
 
-You are right, I have misread the actual allocation side. 8683edb7755b8
-has added KM_NOFS and 73d30d48749f8 has removed it. I cannot really
-judge the correctness here.
+This is confusing.  You mean if the server is stacking on top of a
+real fs, then it can force the created new inode to have the given
+security attributes by writing to that proc file?
 
--- 
-Michal Hocko
-SUSE Labs
+> Calling security hooks is needed for `setfscreatecon` to work since it
+> is applied as part of the selinux security hook.
+>
+> Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+> ---
+> Changes in v2:
+>   * Added the FUSE_SECURITY_CTX flag for init_out responses.
+>   * Switched to security_dentry_init_security.
+>   * Send security context with create, mknod, mkdir, and symlink
+>     requests instead of applying it after creation.
+>
+>  fs/fuse/dir.c             | 99 +++++++++++++++++++++++++++++++++++++--
+>  fs/fuse/fuse_i.h          |  3 ++
+>  fs/fuse/inode.c           |  5 +-
+>  include/uapi/linux/fuse.h |  8 +++-
+>  4 files changed, 110 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index ee190119f45cc..86bc073bb4f0a 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -16,6 +16,9 @@
+>  #include <linux/xattr.h>
+>  #include <linux/iversion.h>
+>  #include <linux/posix_acl.h>
+> +#include <linux/security.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+>
+>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>  {
+> @@ -442,6 +445,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         struct fuse_entry_out outentry;
+>         struct fuse_inode *fi;
+>         struct fuse_file *ff;
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen = 0;
+>
+>         /* Userspace expects S_IFREG in create mode */
+>         BUG_ON((mode & S_IFMT) != S_IFREG);
+> @@ -477,6 +482,21 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         args.out_args[0].value = &outentry;
+>         args.out_args[1].size = sizeof(outopen);
+>         args.out_args[1].value = &outopen;
+> +
+> +       if (fc->init_security) {
+> +               err = security_dentry_init_security(entry, mode, &entry->d_name,
+> +                                                   &security_ctx,
+> +                                                   &security_ctxlen);
+> +               if (err)
+> +                       goto out_put_forget_req;
+> +
+> +               if (security_ctxlen > 0) {
+> +                       args.in_numargs = 3;
+> +                       args.in_args[2].size = security_ctxlen;
+> +                       args.in_args[2].value = security_ctx;
+> +               }
+> +       }
+> +
+
+The above is quadruplicated, a helper is in order.
+
+>         err = fuse_simple_request(fc, &args);
+>         if (err)
+>                 goto out_free_ff;
+> @@ -513,6 +533,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         return err;
+>
+>  out_free_ff:
+> +       if (security_ctxlen > 0)
+> +               kfree(security_ctx);
+
+Freeing NULL is okay, if that's guaranteed in case of security_ctxlen
+== 0, then you need not check that condition.
+
+>         fuse_file_free(ff);
+>  out_put_forget_req:
+>         kfree(forget);
+> @@ -629,6 +651,9 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
+>  {
+>         struct fuse_mknod_in inarg;
+>         struct fuse_conn *fc = get_fuse_conn(dir);
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen = 0;
+> +       int ret;
+>         FUSE_ARGS(args);
+>
+>         if (!fc->dont_mask)
+> @@ -644,7 +669,27 @@ static int fuse_mknod(struct inode *dir, struct dentry *entry, umode_t mode,
+>         args.in_args[0].value = &inarg;
+>         args.in_args[1].size = entry->d_name.len + 1;
+>         args.in_args[1].value = entry->d_name.name;
+> -       return create_new_entry(fc, &args, dir, entry, mode);
+> +
+> +       if (fc->init_security) {
+> +               ret = security_dentry_init_security(entry, mode, &entry->d_name,
+> +                                                   &security_ctx,
+> +                                                   &security_ctxlen);
+> +               if (ret)
+> +                       goto out;
+> +
+> +               if (security_ctxlen > 0) {
+> +                       args.in_numargs = 3;
+> +                       args.in_args[2].size = security_ctxlen;
+> +                       args.in_args[2].value = security_ctx;
+> +               }
+> +       }
+> +
+> +       ret = create_new_entry(fc, &args, dir, entry, mode);
+> +
+> +       if (security_ctxlen > 0)
+> +               kfree(security_ctx);
+> +out:
+> +       return ret;
+>  }
+>
+>  static int fuse_create(struct inode *dir, struct dentry *entry, umode_t mode,
+> @@ -657,6 +702,9 @@ static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
+>  {
+>         struct fuse_mkdir_in inarg;
+>         struct fuse_conn *fc = get_fuse_conn(dir);
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen = 0;
+> +       int ret;
+>         FUSE_ARGS(args);
+>
+>         if (!fc->dont_mask)
+> @@ -671,7 +719,28 @@ static int fuse_mkdir(struct inode *dir, struct dentry *entry, umode_t mode)
+>         args.in_args[0].value = &inarg;
+>         args.in_args[1].size = entry->d_name.len + 1;
+>         args.in_args[1].value = entry->d_name.name;
+> -       return create_new_entry(fc, &args, dir, entry, S_IFDIR);
+> +
+> +       if (fc->init_security) {
+> +               ret = security_dentry_init_security(entry, S_IFDIR,
+> +                                                   &entry->d_name,
+> +                                                   &security_ctx,
+> +                                                   &security_ctxlen);
+> +               if (ret)
+> +                       goto out;
+> +
+> +               if (security_ctxlen > 0) {
+> +                       args.in_numargs = 3;
+> +                       args.in_args[2].size = security_ctxlen;
+> +                       args.in_args[2].value = security_ctx;
+> +               }
+> +       }
+> +
+> +       ret = create_new_entry(fc, &args, dir, entry, S_IFDIR);
+> +
+> +       if (security_ctxlen > 0)
+> +               kfree(security_ctx);
+> +out:
+> +       return ret;
+>  }
+>
+>  static int fuse_symlink(struct inode *dir, struct dentry *entry,
+> @@ -679,6 +748,9 @@ static int fuse_symlink(struct inode *dir, struct dentry *entry,
+>  {
+>         struct fuse_conn *fc = get_fuse_conn(dir);
+>         unsigned len = strlen(link) + 1;
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen = 0;
+> +       int ret;
+>         FUSE_ARGS(args);
+>
+>         args.opcode = FUSE_SYMLINK;
+> @@ -687,7 +759,28 @@ static int fuse_symlink(struct inode *dir, struct dentry *entry,
+>         args.in_args[0].value = entry->d_name.name;
+>         args.in_args[1].size = len;
+>         args.in_args[1].value = link;
+> -       return create_new_entry(fc, &args, dir, entry, S_IFLNK);
+> +
+> +       if (fc->init_security) {
+> +               ret = security_dentry_init_security(entry, S_IFLNK,
+> +                                                   &entry->d_name,
+> +                                                   &security_ctx,
+> +                                                   &security_ctxlen);
+> +               if (ret)
+> +                       goto out;
+> +
+> +               if (security_ctxlen > 0) {
+> +                       args.in_numargs = 3;
+> +                       args.in_args[2].size = security_ctxlen;
+> +                       args.in_args[2].value = security_ctx;
+> +               }
+> +       }
+> +
+> +       ret = create_new_entry(fc, &args, dir, entry, S_IFLNK);
+> +
+> +       if (security_ctxlen > 0)
+> +               kfree(security_ctx);
+> +out:
+> +       return ret;
+>  }
+>
+>  void fuse_update_ctime(struct inode *inode)
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index ca344bf714045..5ea9212b0a71c 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -719,6 +719,9 @@ struct fuse_conn {
+>         /* Do not show mount options */
+>         unsigned int no_mount_options:1;
+>
+> +       /* Initialize security xattrs when creating a new inode */
+> +       unsigned int init_security : 1;
+> +
+>         /** The number of requests waiting for completion */
+>         atomic_t num_waiting;
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 16aec32f7f3d7..1a311771c5555 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -951,6 +951,8 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
+>                                         min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+>                                         max_t(unsigned int, arg->max_pages, 1));
+>                         }
+> +                       if (arg->flags & FUSE_SECURITY_CTX)
+> +                               fc->init_security = 1;
+>                 } else {
+>                         ra_pages = fc->max_read / PAGE_SIZE;
+>                         fc->no_lock = 1;
+> @@ -988,7 +990,8 @@ void fuse_send_init(struct fuse_conn *fc)
+>                 FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+>                 FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+>                 FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+> -               FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
+> +               FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+> +               FUSE_SECURITY_CTX;
+>         ia->args.opcode = FUSE_INIT;
+>         ia->args.in_numargs = 1;
+>         ia->args.in_args[0].size = sizeof(ia->in);
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 373cada898159..00919c214149d 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -172,6 +172,10 @@
+>   *  - add FUSE_WRITE_KILL_PRIV flag
+>   *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
+>   *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
+> + *
+> + *  7.32
+> + *  - add FUSE_SECURITY_CTX flag for fuse_init_out
+> + *  - add security context to create, mkdir, and mknod requests
+>   */
+>
+>  #ifndef _LINUX_FUSE_H
+> @@ -207,7 +211,7 @@
+>  #define FUSE_KERNEL_VERSION 7
+>
+>  /** Minor version number of this interface */
+> -#define FUSE_KERNEL_MINOR_VERSION 31
+> +#define FUSE_KERNEL_MINOR_VERSION 32
+>
+>  /** The node ID of the root inode */
+>  #define FUSE_ROOT_ID 1
+> @@ -314,6 +318,7 @@ struct fuse_file_lock {
+>   * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+>   * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
+>   * FUSE_MAP_ALIGNMENT: map_alignment field is valid
+> + * FUSE_SECURITY_CTX: add security context to create, mkdir, symlink, and mknod
+>   */
+>  #define FUSE_ASYNC_READ                (1 << 0)
+>  #define FUSE_POSIX_LOCKS       (1 << 1)
+> @@ -342,6 +347,7 @@ struct fuse_file_lock {
+>  #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+>  #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
+>  #define FUSE_MAP_ALIGNMENT     (1 << 26)
+> +#define FUSE_SECURITY_CTX      (1 << 27)
+>
+>  /**
+>   * CUSE INIT request/reply flags
+> --
+> 2.27.0.278.ge193c7cf3a9-goog
+>
