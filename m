@@ -2,131 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12BF61FBB7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9C21FBB8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 18:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbgFPQTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 12:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
+        id S1730045AbgFPQVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 12:21:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732069AbgFPQTL (ORCPT
+        with ESMTP id S1729386AbgFPQVv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:19:11 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A134C0613EE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:19:10 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id e5so16361019ote.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 09:19:10 -0700 (PDT)
+        Tue, 16 Jun 2020 12:21:51 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B10C061573;
+        Tue, 16 Jun 2020 09:21:50 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id q19so24325736lji.2;
+        Tue, 16 Jun 2020 09:21:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fiWLJlRK7hIrVJhqrA73kDSLrIv9Ym+IMHSkrLmFVXs=;
-        b=W/psw7rJjjj0igh5USfHJFwAvdGtWgwMOOIfoxPkytUdSSQAdFOH/bfQIqrUsIOuzv
-         a9Vl2sPr7U6gMv9WtD5uCoRamUoj0WIOZ/n0nICz5buDFIt1jLDFuvkvAOZuebZGPj4r
-         Jn2sggqqK9sb1MI3Um3GNHKq17xFRhWCG166HdQLYSHMEk2FY5ACBBZ5hN2lGun81Qyi
-         GJENDCD6oY3Wj4DPdEsHzNRbtcAkvwi4zjzLFGU1+ft+jy2FY0geCnqGSH6Q4MrxLAjz
-         HCQPdEi04N1sqR64Sbg1vccPjTualudux+UTkyybTF1we4OWenyu+uqGY2pczphBKFNF
-         WhEw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rutRXz0r4RPjoUq6p2P1cCdyOAHIgEUeGio/qCwppKI=;
+        b=GKugQ2aUJSFuCPkHF4l8KI4OYDQ5aRxn2DpwgQ6bo7k47o4kF+CqPmbDEuVaKdOLka
+         M4jNLgop5VfO+oM50KJOga+oX9wwCFAS5z5eAdmTp5KnYIt9vZRGOFbGhzNDpoMp669h
+         FVsKkCaC1tiy3OKvSdM4e2zfh2wXjz1RiEnuVLwpCD2Q2y/H9w9VJ00Ok0bWOIVT81K9
+         sNMqTZnUOHnjXEyB9N1KGMriItjjY0Rbi1FkPtVS7uzWYp3Y8ymoKxWyjsFwsoMoYePC
+         vEII5p5vAWgqVGfeuOss214OTCgMNm9O3oRKtDM0pfXeJMnFJK+Fl6rvnQH3B2xDXZca
+         23Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fiWLJlRK7hIrVJhqrA73kDSLrIv9Ym+IMHSkrLmFVXs=;
-        b=R0vm6Vq3ImZoGG7ZgXd9rzQc2yudoYpr0tIXqXFwUW4R5FSM0Ndy8jb28cUx46IBug
-         FgYhSlK52DMLqWte3Pu7o+ykiVbqcvykrg4S4y6FCE3Dcz+4vXBP5aVQeu19A18800ot
-         ALnOxVlp7cm5/XPsBZ1BRuZP8a9MgAqdD+Qp36zRUct+MmDZvqwyEUS2mNZYu35+qoEH
-         x3dbJbADxQOA82m9heOwI7nIpg5Mca7L4amC4rZo+Hc8CpwtCwlRn26/CNhbGW1cPaNP
-         4MfsrvM3HeP5qGl4yKuJber8dJMKSbt4+QIYrl5Qn1vzEBMlEShGgCE7W4icd9uVjq+R
-         h/eg==
-X-Gm-Message-State: AOAM530u/dXpqGdfGE5nNnFd1xcJ7ymba1y3OUBj3CWTdX6InnM9zS3L
-        fTaqmqeWKgUQndm+3yCObFDJ4A==
-X-Google-Smtp-Source: ABdhPJwJLUo+s/3zvXyuzd5xR5zRDZ7iEWewkVzWg80Un1dA516CGEOvT/txqHhK+aWdjAw3vd97RA==
-X-Received: by 2002:a05:6830:1d1:: with SMTP id r17mr3101139ota.19.1592324348502;
-        Tue, 16 Jun 2020 09:19:08 -0700 (PDT)
-Received: from cisco ([2601:282:902:b340:f5b5:cc36:51c:a840])
-        by smtp.gmail.com with ESMTPSA id k84sm4256949oia.3.2020.06.16.09.19.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 09:19:07 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 10:18:59 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Christian Brauner <christian@brauner.io>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 10/11] seccomp: Switch addfd to Extensible Argument
- ioctl
-Message-ID: <20200616161859.GL2893648@cisco>
-References: <20200616032524.460144-1-keescook@chromium.org>
- <20200616032524.460144-11-keescook@chromium.org>
- <20200616145546.GH2893648@cisco>
- <202006160904.A30F2C5B9E@keescook>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rutRXz0r4RPjoUq6p2P1cCdyOAHIgEUeGio/qCwppKI=;
+        b=bcKAX8z1mWIziVzDk2pkb9pBCodo8F/u65/feQQSWUbvjGnuf0uF4zLf9y3tNY/ZX/
+         8VnXkhKH1jKLf1SZrXj7uvUiAeXJSx9atrdQBro/4B+quZEwm5sdt8ifkXO/WfpsjKMi
+         6B1MtaafV2qjZ8Ei+bbCxz6M3xj8I+cLYLuSvQZab5XDZ9MQPvrCfo/ltzqkM6353BeX
+         KzSmr3ZwCP9R4kdXGYJ4nrTeRMXXuXieqA+iqmHg6Gk3qkiyoalN3nn5aDvrwxXxjUQp
+         Hnmyc5dKMn4/LA/0gxJ2SG61B3pmfMSDugGUXMeDi9EQ3yDshnuqwOsjNIj7aMrvWqx7
+         B8VQ==
+X-Gm-Message-State: AOAM532ZEHGkVFrVBRm/7E21/unB1hZnOHyDP4oOWV0Y5PhsGU6cBpuc
+        55e6FJXruSiVj/jVAgdEtdAfBIWNHrJjBbvknzo=
+X-Google-Smtp-Source: ABdhPJyB27SulU6iO8WwU8QdJcISHXWJjy+R1tOYonQ3HVk1Vw7tsbXU2t+PVxAEV1ml6zPw+a4b/dCSijDYmxMoWoc=
+X-Received: by 2002:a2e:b1d4:: with SMTP id e20mr1773300lja.290.1592324509058;
+ Tue, 16 Jun 2020 09:21:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202006160904.A30F2C5B9E@keescook>
+References: <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <87r1uo2ejt.fsf@x220.int.ebiederm.org> <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
+ <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 16 Jun 2020 09:21:36 -0700
+Message-ID: <CAADnVQ+D5aozzWVKjZua61B9=Xt7Cj+95o2ZOPf22YsPgqfX6Q@mail.gmail.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 09:05:29AM -0700, Kees Cook wrote:
-> On Tue, Jun 16, 2020 at 08:55:46AM -0600, Tycho Andersen wrote:
-> > On Mon, Jun 15, 2020 at 08:25:23PM -0700, Kees Cook wrote:
-> > > This patch is based on discussions[1] with Sargun Dhillon, Christian
-> > > Brauner, and David Laight. Instead of building size into the addfd
-> > > structure, make it a function of the ioctl command (which is how sizes are
-> > > normally passed to ioctls). To support forward and backward compatibility,
-> > > just mask out the direction and size, and match everything. The size (and
-> > > any future direction) checks are done along with copy_struct_from_user()
-> > > logic. Also update the selftests to check size bounds.
-> > > 
-> > > [1] https://lore.kernel.org/lkml/20200612104629.GA15814@ircssh-2.c.rugged-nimbus-611.internal
-> > > 
-> > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > >  include/uapi/linux/seccomp.h                  |  2 -
-> > >  kernel/seccomp.c                              | 21 ++++++----
-> > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 40 ++++++++++++++++---
-> > >  3 files changed, 49 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> > > index c347160378e5..473a61695ac3 100644
-> > > --- a/include/uapi/linux/seccomp.h
-> > > +++ b/include/uapi/linux/seccomp.h
-> > > @@ -118,7 +118,6 @@ struct seccomp_notif_resp {
-> > >  
-> > >  /**
-> > >   * struct seccomp_notif_addfd
-> > > - * @size: The size of the seccomp_notif_addfd structure
-> > >   * @id: The ID of the seccomp notification
-> > >   * @flags: SECCOMP_ADDFD_FLAG_*
-> > >   * @srcfd: The local fd number
-> > > @@ -126,7 +125,6 @@ struct seccomp_notif_resp {
-> > >   * @newfd_flags: The O_* flags the remote FD should have applied
-> > >   */
-> > >  struct seccomp_notif_addfd {
-> > > -	__u64 size;
-> > 
-> > Huh? Won't this break builds?
-> 
-> Only if they use addfd without this patch? :) Are you saying I should
-> collapse this patch into the main addfd and test patches?
+On Mon, Jun 15, 2020 at 6:55 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> >
+> > int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
+> >
+> >
+> > The function fork_usermode_blob is passed an array and a length.  Today
+> > that array is stored in .rodata.  Not in a init section where it could
+> > be discared.
+>
+> It's a one line change in bpfilter_umh_blob.S to make it .init section,
+> but for bpfilter init may not work.
+> For some ko init is appropriate for some other it's not.
 
-Oh, derp, I see :) Yeah, maybe that would be good.
-
-Tycho
+since I remember discussing the desire to have only one copy of the blob
+with Andy back then I did a bit of git archeology.
+Sure enough it was in .init.rodata when usermode_blob() landed.
+But then commit 61fbf5933d42 ("net: bpfilter: restart bpfilter_umh
+when error occurred")
+added blob restart logic.
+It's kinda questionable whether bpfilter needs restart or not.
+But because the kernel module now starts the blob multiple times it had to move
+them from .init.rodata to .rodata.
+Regardless the point is that init or not-init is a decision of a
+particular kernel module.
