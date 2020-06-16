@@ -2,71 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7011FA9FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 09:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10ACF1FAA51
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 09:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbgFPHe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 03:34:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgFPHe3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 03:34:29 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49DAAC05BD43;
-        Tue, 16 Jun 2020 00:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6e05mEMN5r0vauFG93kV9PdfbM94bPRc4VAqYDDZqsI=; b=Szn1gACICyddKGEwiy4LJBcHl3
-        cmi9//PszUFgUgpX6jZafC5n3U7ntXj4wD0lWiJjQDRdfBJsDkA8aQKgIpeQ3QPbrtZGw41QIMfWL
-        Memnv9zVHJmQX50ZYz/UeGnPKsj4gvKeURU9jvJOwq1cSeYDMB6p2en3BmfXB5qQMDOBvXJiCRpx+
-        LFI9MCVD0SRxxEMkT502zpgu/Mrx5od3PizTtv5MWWx6cAPti2FzWOi76guW9HHAYkHztrOTeHAq4
-        Anpd8GC7uZljRzq/JvWYODpBKKq5WzYa1VLMtc6dGskmMoY2nFAAEWAYk9l69Q02xq0jPZVfeIgxf
-        q+DDL2CQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jl66x-0002Tx-3V; Tue, 16 Jun 2020 07:34:23 +0000
-Date:   Tue, 16 Jun 2020 00:34:23 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
+        id S1726303AbgFPHrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 03:47:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45026 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725822AbgFPHrD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jun 2020 03:47:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 20016AEB1;
+        Tue, 16 Jun 2020 07:47:06 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 410971E1289; Tue, 16 Jun 2020 09:47:01 +0200 (CEST)
+Date:   Tue, 16 Jun 2020 09:47:01 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Mel Gorman <mgorman@techsingularity.net>, Jan Kara <jack@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v9 1/8] fs: introduce kernel_pread_file* support
-Message-ID: <20200616073423.GC30385@infradead.org>
-References: <20200615194151.7011-1-scott.branden@broadcom.com>
- <20200615194151.7011-2-scott.branden@broadcom.com>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] fs: Do not check if there is a fsnotify watcher on
+ pseudo inodes
+Message-ID: <20200616074701.GA20086@quack2.suse.cz>
+References: <20200615121358.GF3183@techsingularity.net>
+ <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200615194151.7011-2-scott.branden@broadcom.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Seriously, no more additions to fs.h for this interface please.  As
-requested before as the very first thing move it out of this header
-used by just about every file in the kernel.  That is in addition
-to all the other issues with the interface.
+On Mon 15-06-20 19:26:38, Amir Goldstein wrote:
+> > This patch changes alloc_file_pseudo() to always opt out of fsnotify by
+> > setting FMODE_NONOTIFY flag so that no check is made for fsnotify watchers
+> > on pseudo files. This should be safe as the underlying helper for the
+> > dentry is d_alloc_pseudo which explicitly states that no lookups are ever
+> > performed meaning that fanotify should have nothing useful to attach to.
+> >
+> > The test motivating this was "perf bench sched messaging --pipe". On
+> > a single-socket machine using threads the difference of the patch was
+> > as follows.
+> >
+> >                               5.7.0                  5.7.0
+> >                             vanilla        nofsnotify-v1r1
+> > Amean     1       1.3837 (   0.00%)      1.3547 (   2.10%)
+> > Amean     3       3.7360 (   0.00%)      3.6543 (   2.19%)
+> > Amean     5       5.8130 (   0.00%)      5.7233 *   1.54%*
+> > Amean     7       8.1490 (   0.00%)      7.9730 *   2.16%*
+> > Amean     12     14.6843 (   0.00%)     14.1820 (   3.42%)
+> > Amean     18     21.8840 (   0.00%)     21.7460 (   0.63%)
+> > Amean     24     28.8697 (   0.00%)     29.1680 (  -1.03%)
+> > Amean     30     36.0787 (   0.00%)     35.2640 *   2.26%*
+> > Amean     32     38.0527 (   0.00%)     38.1223 (  -0.18%)
+> >
+> > The difference is small but in some cases it's outside the noise so
+> > while marginal, there is still some small benefit to ignoring fsnotify
+> > for files allocated via alloc_file_pseudo in some cases.
+> >
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+Thanks for the patch Mel and for review Amir! I've added the patch to my
+tree with small amendments to the changelog.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
