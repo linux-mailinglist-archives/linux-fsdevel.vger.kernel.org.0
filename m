@@ -2,104 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E841FA537
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 02:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 920551FA5C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 03:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbgFPAjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jun 2020 20:39:18 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33861 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725960AbgFPAjS (ORCPT
+        id S1726134AbgFPBz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jun 2020 21:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbgFPBz4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jun 2020 20:39:18 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3320C82189D;
-        Tue, 16 Jun 2020 10:39:04 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jkzd1-0001WN-5v; Tue, 16 Jun 2020 10:39:03 +1000
-Date:   Tue, 16 Jun 2020 10:39:03 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
-Message-ID: <20200616003903.GC2005@dread.disaster.area>
-References: <20200615160244.741244-1-agruenba@redhat.com>
- <20200615233239.GY2040@dread.disaster.area>
- <20200615234437.GX8681@bombadil.infradead.org>
+        Mon, 15 Jun 2020 21:55:56 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE937C061A0E;
+        Mon, 15 Jun 2020 18:55:56 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id i12so721532pju.3;
+        Mon, 15 Jun 2020 18:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7lL6+Gx9T4fc8FO7k8drMdevbcmV6gSseFSR7jooStY=;
+        b=s9UQsDYQw7CHhpJNeiG1fqZ+8vHFEZPqM0tlohLSmj2sl/AVeWnjGN8VSLmezYCWEI
+         Q1qMfUkD3VxsXR17VzbJ6ir6lS8rt5AzgXLp4AW8oDHllQx62PRocWXHWMvBNmLKSFCP
+         5hC2hQyFHHK1+9uXfzGqOpBK5bNnYiPASwz5jWBMSGCEiNaqCOLJ/CKgNtwX4egpz0ZA
+         v2amUTwUuir1oQs3qigQLJnwGS3niP22liIzMxP+I7PktQOJuf5X+mMzBJxW3uokJuPl
+         YFePMeJy+QsUaUrYUKQAS3lRs7/It3pYWPmIc2tbDD2q1cUcNCK386aY/sfOrJYY56MP
+         4qFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7lL6+Gx9T4fc8FO7k8drMdevbcmV6gSseFSR7jooStY=;
+        b=lbr2IGH4fTBHxoOosjyEE+PTJEG2BWOsUr3HAbfgEs4+fIK66uu2pW5twQBjb3GfQw
+         oLDSPNcDXlqLNo8NZvqqFSJ2yRQjDiJgsgwrnepaF2gWub2uHoEbe8QIGjtV59VsnBID
+         1fA7YiqPwAHAH72dL+12S+qse1FKLfvj4ez0fsqx/RDQlbTWfAPPbhrhQh5yTSueSmSA
+         y51+hi4dY6DL3hkynXUp8s5svgpSS9wHdQQlCMs+7YkMSoTiUGYyvqdRGpsO340GBnD8
+         BbUB78Jdxaicc/mOo5X/ViA/oUCgXQXWg7XdiFjA2Q9HGfnWBLVEaAB1SZFD/qq4kse7
+         tHjQ==
+X-Gm-Message-State: AOAM533mfrVaIHAuNPRGzUid8VdNuWase3zQpsWtCeXymhJANOoJ8ZLO
+        m1VME424AKdp1tO5daufke8=
+X-Google-Smtp-Source: ABdhPJwgUDkcqmTUKhMvrsIth/LimqxsIB9UKGnzWzmzI5v5zHU5h86Cyo/00r+TvNxDXwN8gLnMRg==
+X-Received: by 2002:a17:902:ac97:: with SMTP id h23mr100817plr.64.1592272556065;
+        Mon, 15 Jun 2020 18:55:56 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:1a2c])
+        by smtp.gmail.com with ESMTPSA id ca6sm635401pjb.46.2020.06.15.18.55.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2020 18:55:54 -0700 (PDT)
+Date:   Mon, 15 Jun 2020 18:55:52 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+References: <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <87r1uo2ejt.fsf@x220.int.ebiederm.org>
+ <20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com>
+ <87d066vd4y.fsf@x220.int.ebiederm.org>
+ <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <87bllngirv.fsf@x220.int.ebiederm.org>
+ <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200615234437.GX8681@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=rLt4B8utZ7MY9GfhgBkA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <87ftaxd7ky.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 04:44:37PM -0700, Matthew Wilcox wrote:
-> On Tue, Jun 16, 2020 at 09:32:39AM +1000, Dave Chinner wrote:
-> > On Mon, Jun 15, 2020 at 06:02:44PM +0200, Andreas Gruenbacher wrote:
-> > > Make sure iomap_end is always called when iomap_begin succeeds: the
-> > > filesystem may take locks in iomap_begin and release them in iomap_end,
-> > > for example.
-> > 
-> > Ok, i get that from the patch, but I don't know anything else about
-> > this problem, and nor will anyone else trying to determine if this
-> > is a fix they need to backport to other kernels. Can you add some
-> > more information to the commit message, such as how was this found
-> > and what filesystems it affects? It would also be good to know what
-> > commit introduced this issue and whether it need stable back ports
-> > (i.e. a Fixes tag).
+On Sun, Jun 14, 2020 at 09:51:09AM -0500, Eric W. Biederman wrote:
 > 
-> I'd assume Andreas is looking at converting a filesystem to use iomap,
-> since this problem only occurs for filesystems which have returned an
-> invalid extent.
+> There are some asperations to use fork_usermode_blob but no commitments
+> that I can see to actually use this code.
 
-Well, I can assume it's gfs2, but you know what happens when you
-assume something....
+huh? I've listed three projects with concrete timelines that are going to use
+fork_usermode_blob.
 
-> I almost wonder if this should return -EFSCORRUPTED rather than -EIO.
+> If someone who cares can step up so other developers don't have to deal
+> with the maintenance problems, then there is no problem in keeping the
+> code.
 
-We've typically used -EFSCORRUPTED for metadata corruptions and -EIO
-for data IO errors that result from metadata corruption. -EIO
-implies that the IO failed and the state of the data is
-indeterminate (i.e. may be corrupted), but the filesystem is still
-ok, whereas EFSCORRUPTED implies the filesystem needs to have fsck
-run on it to diagnose and fix the metadata corruption.
+That code has been there for two years and wasn't causing 'maintenance
+problems'. Quite the opposite was happening. Initial way of embedding blob
+into ko has changed quite a bit thanks to work from Masahiro.
+See commit 8e75887d321d ("bpfilter: include bpfilter_umh in assembly instead of using objcopy")
 
-This code sort of spans the grey area between them. The error could
-come from in in-memory bug and not actually a filesystem corruption,
-so it's not clear that corruption is the right thing to report
-here...
+What is happening that this bit of code is somehow in a way of some refactoring
+that you're doing (I'm not even sure what kind of refactoring you have in
+mind), but instead of working with the community on the best ways to do this
+refactoring you're arguing for removal just to avoid tweaking few lines of code.
 
-> Um, except that's currently a per-fs define.  Is it time to move that
-> up to errno.h?
+> Now there is one technical issue I see that has implications for how
+> this gets fixed.  The current implementation requires that 2 copies
+> of the user mode executable be kept.
+> 
+> int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
+> 
+> 
+> The function fork_usermode_blob is passed an array and a length.  Today
+> that array is stored in .rodata.  Not in a init section where it could
+> be discared.
 
-Has the "EFSCORRUPTED = EUCLEAN is stupid - let's break a
-longstanding user API by defining it to something completely new"
-yelling died down enough in the 6 months since this was last
-proposed?
+It's a one line change in bpfilter_umh_blob.S to make it .init section,
+but for bpfilter init may not work.
+For some ko init is appropriate for some other it's not.
 
-https://lore.kernel.org/linux-xfs/20191031010736.113783-1-Valdis.Kletnieks@vt.edu/
-https://lore.kernel.org/linux-xfs/20191104014510.102356-11-Valdis.Kletnieks@vt.edu/
+> Now userspace in general and exec in particular requires the executable
+> to be in a mmapable file.  So fork_usermode_blob creates a mini
+> filesystem that only supports one file and no file names and opens
+> a file within it, and passes that open file to exec.
+> 
+> If creation of the filesystem and copying of the data can be separated
+> from the actual execution of the code, then there will be no need to
+> keep 2 copies of the executable in memory.  If the file was also given a
+> name there would be no need for fork_usermode_blob to open the file.
+> All fork_usermode_blob would need to do is make make it possible for
+> exec to find that file.
+> 
+> The implification this has for fixing the issues with exec is that once
+> the file has a name fork_usermode_blob no longer needs to preopen the
+> file and call do_execve_file.  Instead fork_usermode_blob can call
+> do_execve.  Which means do_execve_file and all of it's strange corner
+> cases can go away.
+> 
+> We have all of the infrastructure to decode a cpio in init/initramfs.c
+> so it would be practically no code at all to place the code into a
+> filesystem instead of just into a file at startup time.  At which
+> point it could be guaranteed that the section the filesystem lives in is
+> an init section and is not used past the point of loading it into a
+> filesystem.  Making the code use half the memory.
 
-We've only been trying to get a generic -EFSCORRUPTED definition
-into the kernel errno headers for ~15 years... :(
+Could you please re-read the explanation just up the thread:
+https://lore.kernel.org/bpf/20200613033821.l62q2ed5ligheyhu@ast-mbp/
+that goes into detail how bpfilter is invoking this blob.
+Now explain how initramfs could work?
+How bpfilter can load its blob when bpfilter.ko was loaded into
+the kernel a day after boot ? Where is initramfs?
+bpfilter can be normal ko and builtin. In both cases it cannot rely on
+a path. That path may not exist. initramfs is not present after boot.
+Any path based approach has serious disadvantages.
+The ko cannot rely on an external fs hieararchy. The ko is a self contained
+object. It has kernel and user code. A blob inside ko is like another kernel
+function of that particular ko, but it runs in user space. The root fs could
+have been corrupted but ko needs to be operational if it was builtin.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Another reason why single fs (initramfs or other) doesn't work is multiple
+ko-s. Theoretically all ko-s can agree on dir layout, but ko-s are built and
+loaded at different times. Say we put all possibles blobs from all ko-s into
+some new special fs that is available during the boot and after the boot. In
+such case the majority of that ram is going to be wasted. Since ko-s may not
+need that blob to run or ko-s may not even load, but ram is wasted anyway.
+All these show stoppers with fs and path were considered two years ago
+when design of user mode blobs was done.
