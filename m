@@ -2,272 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 571481FA83A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 07:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050791FA850
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 07:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbgFPF3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 01:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgFPF3o (ORCPT
+        id S1726878AbgFPFfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 01:35:01 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:43506 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbgFPFfB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 01:29:44 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AFEC05BD43
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:29:44 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id a13so520390ilh.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:29:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/atL1Ve60OqcVOW1A17eOHeeXaoo7IDTY4Z8Un8jaH8=;
-        b=193OWy+wrWHpQHLeiYDs4HwLjRR3lzkgnsBt2V+dkl6TagtCtHrBhNG24ihvS9W6Zf
-         zasBHbcZhYtRMZisoQXuaE9BeVT715PI0S1hhwE0J7wByQ95ip3Y+PHUh72iIzi+jHkx
-         GEj69+viDrq4GN/szP7+GnPsyYy7nNibYDgc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/atL1Ve60OqcVOW1A17eOHeeXaoo7IDTY4Z8Un8jaH8=;
-        b=fleC2vdEJDjDPiQgICqAhPn0QDh0M73sIECZiv88wNP4V32X8nh2lOrS8T1EFmjGTN
-         mvcKNHrNaPrJpLngPXZt8jGH6Uvzsxc4UlZotGusLkmqfwMmalUC6qEHyz9HVBvNF1Y6
-         T7rIy+mWPbXDy1f3eZNbQmGfNyKygdXRBPbYgS973kJY8022Ojl0nbo5wpb8WSLjQKrZ
-         /A+bxNPXU284JDLtvI8F31Chv64sLtRwkghoBx30QR1502PrzkuQJASTdPMFORkj8IRr
-         05tAThy3VBiCPFCsL+0zsi0s/G7hAv25E7Aw0rmGtcXSC79sJhuHzyvDtuc2F3iSeTBT
-         SAEA==
-X-Gm-Message-State: AOAM533Y9weRAyFnY3u3nIwJ6VTcR9/Thl/mGp5+ZRKwJVk22gybblSC
-        eXXi5Y0Bpl8xLSxTRqf6G/3Xpg==
-X-Google-Smtp-Source: ABdhPJx5Rg1ST0KUj/PKC9lU9klQRZh96t9kjm/st69tOnr6RVzMkeGE8OyZPHSvj533a1JeUJYcxA==
-X-Received: by 2002:a92:c7c6:: with SMTP id g6mr1539412ilk.49.1592285383432;
-        Mon, 15 Jun 2020 22:29:43 -0700 (PDT)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id z16sm9204945ilz.64.2020.06.15.22.29.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Jun 2020 22:29:43 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 05:29:41 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 02/11] fs: Move __scm_install_fd() to
- __fd_install_received()
-Message-ID: <20200616052941.GB16032@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20200616032524.460144-1-keescook@chromium.org>
- <20200616032524.460144-3-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200616032524.460144-3-keescook@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 16 Jun 2020 01:35:01 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.51 with ESMTP; 16 Jun 2020 14:34:59 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: hyc.lee@gmail.com
+Received: from unknown (HELO localhost.localdomain) (10.177.225.35)
+        by 156.147.1.125 with ESMTP; 16 Jun 2020 14:34:59 +0900
+X-Original-SENDERIP: 10.177.225.35
+X-Original-MAILFROM: hyc.lee@gmail.com
+From:   Hyunchul Lee <hyc.lee@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: [PATCH v2] exfat: call sync_filesystem for read-only remount
+Date:   Tue, 16 Jun 2020 14:34:45 +0900
+Message-Id: <20200616053445.18125-1-hyc.lee@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 08:25:15PM -0700, Kees Cook wrote:
-> In preparation for users of the "install a received file" logic outside
-> of net/ (pidfd and seccomp), relocate and rename __scm_install_fd() from
-> net/core/scm.c to __fd_install_received() in fs/file.c, and provide a
-> wrapper named fd_install_received_user(), as future patches will change
-> the interface to __fd_install_received().
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/file.c            | 47 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/file.h |  8 ++++++++
->  include/net/scm.h    |  1 -
->  net/compat.c         |  2 +-
->  net/core/scm.c       | 32 +-----------------------------
->  5 files changed, 57 insertions(+), 33 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index abb8b7081d7a..fcfddae0d252 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -11,6 +11,7 @@
->  #include <linux/export.h>
->  #include <linux/fs.h>
->  #include <linux/mm.h>
-> +#include <linux/net.h>
->  #include <linux/sched/signal.h>
->  #include <linux/slab.h>
->  #include <linux/file.h>
-> @@ -18,6 +19,8 @@
->  #include <linux/bitops.h>
->  #include <linux/spinlock.h>
->  #include <linux/rcupdate.h>
-> +#include <net/cls_cgroup.h>
-> +#include <net/netprio_cgroup.h>
->  
->  unsigned int sysctl_nr_open __read_mostly = 1024*1024;
->  unsigned int sysctl_nr_open_min = BITS_PER_LONG;
-> @@ -931,6 +934,50 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
->  	return err;
->  }
->  
-> +/**
-> + * __fd_install_received() - Install received file into file descriptor table
-> + *
-> + * @fd: fd to install into (if negative, a new fd will be allocated)
-> + * @file: struct file that was received from another process
-> + * @ufd_required: true to use @ufd for writing fd number to userspace
-> + * @ufd: __user pointer to write new fd number to
-> + * @o_flags: the O_* flags to apply to the new fd entry
-Probably doesn't matter, but this function doesn't take the fd, or ufd_required
-argument in this patch. 
+We need to commit dirty metadata and pages to disk
+before remounting exfat as read-only.
 
-> + *
-> + * Installs a received file into the file descriptor table, with appropriate
-> + * checks and count updates. Optionally writes the fd number to userspace.
-ufd does not apppear options here.
+This fixes a failure in xfstests generic/452
 
-> + *
-> + * Returns -ve on error.
-> + */
-> +int __fd_install_received(struct file *file, int __user *ufd, unsigned int o_flags)
-> +{
-> +	struct socket *sock;
-> +	int new_fd;
-> +	int error;
-> +
-> +	error = security_file_receive(file);
-> +	if (error)
-> +		return error;
-> +
-> +	new_fd = get_unused_fd_flags(o_flags);
-> +	if (new_fd < 0)
-> +		return new_fd;
-> +
-> +	error = put_user(new_fd, ufd);
-> +	if (error) {
-> +		put_unused_fd(new_fd);
-> +		return error;
-> +	}
-> +
-> +	/* Bump the usage count and install the file. */
-> +	sock = sock_from_file(file, &error);
-> +	if (sock) {
-> +		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-> +		sock_update_classid(&sock->sk->sk_cgrp_data);
-> +	}
-> +	fd_install(new_fd, get_file(file));
-> +	return 0;
-> +}
-> +
->  static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
->  {
->  	int err = -EBADF;
-> diff --git a/include/linux/file.h b/include/linux/file.h
-> index 122f80084a3e..fe18a1a0d555 100644
-> --- a/include/linux/file.h
-> +++ b/include/linux/file.h
-> @@ -91,6 +91,14 @@ extern void put_unused_fd(unsigned int fd);
->  
->  extern void fd_install(unsigned int fd, struct file *file);
->  
-> +extern int __fd_install_received(struct file *file, int __user *ufd,
-> +				 unsigned int o_flags);
-> +static inline int fd_install_received_user(struct file *file, int __user *ufd,
-> +					   unsigned int o_flags)
-> +{
-> +	return __fd_install_received(file, ufd, o_flags);
-> +}
-> +
->  extern void flush_delayed_fput(void);
->  extern void __fput_sync(struct file *);
->  
-> diff --git a/include/net/scm.h b/include/net/scm.h
-> index 581a94d6c613..1ce365f4c256 100644
-> --- a/include/net/scm.h
-> +++ b/include/net/scm.h
-> @@ -37,7 +37,6 @@ struct scm_cookie {
->  #endif
->  };
->  
-> -int __scm_install_fd(struct file *file, int __user *ufd, unsigned int o_flags);
->  void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
->  void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm);
->  int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *scm);
-> diff --git a/net/compat.c b/net/compat.c
-> index 27d477fdcaa0..94f288e8dac5 100644
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -298,7 +298,7 @@ void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
->  	int err = 0, i;
->  
->  	for (i = 0; i < fdmax; i++) {
-> -		err = __scm_install_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
-> +		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
->  		if (err)
->  			break;
->  	}
-> diff --git a/net/core/scm.c b/net/core/scm.c
-> index 6151678c73ed..df190f1fdd28 100644
-> --- a/net/core/scm.c
-> +++ b/net/core/scm.c
-> @@ -280,36 +280,6 @@ void put_cmsg_scm_timestamping(struct msghdr *msg, struct scm_timestamping_inter
->  }
->  EXPORT_SYMBOL(put_cmsg_scm_timestamping);
->  
-> -int __scm_install_fd(struct file *file, int __user *ufd, unsigned int o_flags)
-> -{
-> -	struct socket *sock;
-> -	int new_fd;
-> -	int error;
-> -
-> -	error = security_file_receive(file);
-> -	if (error)
-> -		return error;
-> -
-> -	new_fd = get_unused_fd_flags(o_flags);
-> -	if (new_fd < 0)
-> -		return new_fd;
-> -
-> -	error = put_user(new_fd, ufd);
-> -	if (error) {
-> -		put_unused_fd(new_fd);
-> -		return error;
-> -	}
-> -
-> -	/* Bump the usage count and install the file. */
-> -	sock = sock_from_file(file, &error);
-> -	if (sock) {
-> -		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-> -		sock_update_classid(&sock->sk->sk_cgrp_data);
-> -	}
-> -	fd_install(new_fd, get_file(file));
-> -	return 0;
-> -}
-> -
->  static int scm_max_fds(struct msghdr *msg)
->  {
->  	if (msg->msg_controllen <= sizeof(struct cmsghdr))
-> @@ -336,7 +306,7 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
->  	}
->  
->  	for (i = 0; i < fdmax; i++) {
-> -		err = __scm_install_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
-> +		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
->  		if (err)
->  			break;
->  	}
-> -- 
-> 2.25.1
-> 
+generic/452 does the following:
+cp something <exfat>/
+mount -o remount,ro <exfat>
+
+the <exfat>/something is corrupted. because while
+exfat is remounted as read-only, exfat doesn't
+have a chance to commit metadata and
+vfs invalidates page caches in a block device.
+
+Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
+---
+Changes from v1:
+- Does not check the return value of sync_filesystem to
+  allow to change from "rw" to "ro" even when this function
+  fails.
+- Add the detailed explanation why generic/452 fails
+
+ fs/exfat/super.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index e650e65536f8..253a92460d52 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -693,10 +693,20 @@ static void exfat_free(struct fs_context *fc)
+ 	}
+ }
+ 
++static int exfat_reconfigure(struct fs_context *fc)
++{
++	fc->sb_flags |= SB_NODIRATIME;
++
++	/* volume flag will be updated in exfat_sync_fs */
++	sync_filesystem(fc->root->d_sb);
++	return 0;
++}
++
+ static const struct fs_context_operations exfat_context_ops = {
+ 	.parse_param	= exfat_parse_param,
+ 	.get_tree	= exfat_get_tree,
+ 	.free		= exfat_free,
++	.reconfigure	= exfat_reconfigure,
+ };
+ 
+ static int exfat_init_fs_context(struct fs_context *fc)
+-- 
+2.17.1
+
