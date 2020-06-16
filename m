@@ -2,88 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 050791FA850
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 07:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAC01FA862
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jun 2020 07:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgFPFfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 01:35:01 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:43506 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbgFPFfB (ORCPT
+        id S1726878AbgFPFsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 01:48:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38298 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbgFPFsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 01:35:01 -0400
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 16 Jun 2020 14:34:59 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: hyc.lee@gmail.com
-Received: from unknown (HELO localhost.localdomain) (10.177.225.35)
-        by 156.147.1.125 with ESMTP; 16 Jun 2020 14:34:59 +0900
-X-Original-SENDERIP: 10.177.225.35
-X-Original-MAILFROM: hyc.lee@gmail.com
-From:   Hyunchul Lee <hyc.lee@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     Hyunchul Lee <hyc.lee@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [PATCH v2] exfat: call sync_filesystem for read-only remount
-Date:   Tue, 16 Jun 2020 14:34:45 +0900
-Message-Id: <20200616053445.18125-1-hyc.lee@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 16 Jun 2020 01:48:31 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E22C08C5C2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:48:30 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id k1so7792344pls.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jun 2020 22:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jVMXkZReclJfWUwDhO52OxqMkCMrLsR1BufGDz+LRJA=;
+        b=Y/jZuYROCnWNy8yDQHa+xLPbEzmyWOXuXUaMIuKQWlxvItI97MmpLAsjOOy1PPsiNo
+         UoQgUVJa0T9FqYKoIq8imZeyd9/P/AV+w9Bu0no0JPgG3uHnW3lsDYs4HkS6FcpyekXs
+         MYT2cRX/qQMeXm+aj7sGNPaDaiCg0FqY7U+CU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jVMXkZReclJfWUwDhO52OxqMkCMrLsR1BufGDz+LRJA=;
+        b=Sd0aQ+P9gx9Ova1AxG4F3UTbZnkzDtn6aXDld2+U5bADA63pvHk8g34kyGzkg3YNXi
+         /L4OYq8acul8QSLxTZR54uhOJ9htC7RUs/Q6Q+UCAalXGeAa6G1T5ceQIv/mTUKDeBJ2
+         Uglikob9CTfSgNHb/DJEdSq8yTez0FgBjw9VGsd47qESAVMXofhfFacLPQQm+EguVPs9
+         /aDl/RTmYXB0tOnQLTHuIf4GZwAoTC3qr9X0QjBfH/YWjGEBykZ5b148kmu3vMQsnx5a
+         KLrwlpAE/9Pc63zgDuDyNw54GGqZPle/szFjY8roWtnvpkrKJ2CuwvQ5sJ1ZpnewPdhF
+         VoKw==
+X-Gm-Message-State: AOAM533gFzxFGf/+EonrjpdAU1PjFPO9fAIcIsq2OhlbWcQXMqTzds/X
+        l5s0UrGqLa3HWtG88UnOrjsJRw==
+X-Google-Smtp-Source: ABdhPJwvdozFAN2lhTlC6N/9QoMVTVKeh5sLC4qkatRF9AL2i35/dwbVQtpPyfyBZoDbRV++yi3yIA==
+X-Received: by 2002:a17:902:7611:: with SMTP id k17mr690817pll.255.1592286510152;
+        Mon, 15 Jun 2020 22:48:30 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m9sm15615291pfo.200.2020.06.15.22.48.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2020 22:48:29 -0700 (PDT)
+Date:   Mon, 15 Jun 2020 22:48:28 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        "David S. Miller" <davem@davemloft.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 02/11] fs: Move __scm_install_fd() to
+ __fd_install_received()
+Message-ID: <202006152247.17A6A1EAF7@keescook>
+References: <20200616032524.460144-1-keescook@chromium.org>
+ <20200616032524.460144-3-keescook@chromium.org>
+ <20200616052941.GB16032@ircssh-2.c.rugged-nimbus-611.internal>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200616052941.GB16032@ircssh-2.c.rugged-nimbus-611.internal>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We need to commit dirty metadata and pages to disk
-before remounting exfat as read-only.
+On Tue, Jun 16, 2020 at 05:29:41AM +0000, Sargun Dhillon wrote:
+> On Mon, Jun 15, 2020 at 08:25:15PM -0700, Kees Cook wrote:
+> > +/**
+> > + * __fd_install_received() - Install received file into file descriptor table
+> > + *
+> > + * @fd: fd to install into (if negative, a new fd will be allocated)
+> > + * @file: struct file that was received from another process
+> > + * @ufd_required: true to use @ufd for writing fd number to userspace
+> > + * @ufd: __user pointer to write new fd number to
+> > + * @o_flags: the O_* flags to apply to the new fd entry
+> Probably doesn't matter, but this function doesn't take the fd, or ufd_required
+> argument in this patch. 
+> 
+> > + *
+> > + * Installs a received file into the file descriptor table, with appropriate
+> > + * checks and count updates. Optionally writes the fd number to userspace.
+> ufd does not apppear options here.
 
-This fixes a failure in xfstests generic/452
+Argh, yes, thanks. I think this was a fixup targeting the wrong commit.
+I will adjust.
 
-generic/452 does the following:
-cp something <exfat>/
-mount -o remount,ro <exfat>
-
-the <exfat>/something is corrupted. because while
-exfat is remounted as read-only, exfat doesn't
-have a chance to commit metadata and
-vfs invalidates page caches in a block device.
-
-Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
----
-Changes from v1:
-- Does not check the return value of sync_filesystem to
-  allow to change from "rw" to "ro" even when this function
-  fails.
-- Add the detailed explanation why generic/452 fails
-
- fs/exfat/super.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index e650e65536f8..253a92460d52 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -693,10 +693,20 @@ static void exfat_free(struct fs_context *fc)
- 	}
- }
- 
-+static int exfat_reconfigure(struct fs_context *fc)
-+{
-+	fc->sb_flags |= SB_NODIRATIME;
-+
-+	/* volume flag will be updated in exfat_sync_fs */
-+	sync_filesystem(fc->root->d_sb);
-+	return 0;
-+}
-+
- static const struct fs_context_operations exfat_context_ops = {
- 	.parse_param	= exfat_parse_param,
- 	.get_tree	= exfat_get_tree,
- 	.free		= exfat_free,
-+	.reconfigure	= exfat_reconfigure,
- };
- 
- static int exfat_init_fs_context(struct fs_context *fc)
 -- 
-2.17.1
-
+Kees Cook
