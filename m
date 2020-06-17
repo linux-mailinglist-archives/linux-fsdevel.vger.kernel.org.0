@@ -2,73 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DEF1FCEBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 15:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3410B1FCF63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 16:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgFQNor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 09:44:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35046 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726331AbgFQNor (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 09:44:47 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A893EA6112A76EA029FA;
-        Wed, 17 Jun 2020 21:44:45 +0800 (CST)
-Received: from [127.0.0.1] (10.166.215.198) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Wed, 17 Jun 2020
- 21:44:36 +0800
-Subject: Re: [PATCH v2 3/5] ext4: detect metadata async write error when
- getting journal's write access
-To:     Jan Kara <jack@suse.cz>
-CC:     <linux-ext4@vger.kernel.org>, <tytso@mit.edu>,
-        <adilger.kernel@dilger.ca>, <zhangxiaoxu5@huawei.com>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20200617115947.836221-1-yi.zhang@huawei.com>
- <20200617115947.836221-4-yi.zhang@huawei.com>
- <20200617124157.GB29763@quack2.suse.cz>
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-Message-ID: <8caf9fe1-b7ce-655f-1f4d-3e0e90e211dc@huawei.com>
-Date:   Wed, 17 Jun 2020 21:44:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726594AbgFQOVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 10:21:22 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34336 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgFQOVW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 10:21:22 -0400
+Received: by mail-vs1-f65.google.com with SMTP id q2so1492092vsr.1;
+        Wed, 17 Jun 2020 07:21:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ERGqcQ7t8WT4ifOpQtED2cQLgSQqRg45Jtc+jpL/R/s=;
+        b=toAClvRvSBV0LPW/IdJ972hNRe3Kgela9tPIBMfcBd774zNapT/ua5FCA0vvI10bpP
+         jRbPiosS9NW6WSx48r48b431a2g9hqOQUluFGCeCa1tGRfdA/4bYZgj6eygGvTXmhtFt
+         pDSXmWH8GOhZtmafLy7K2cyQMqVCOzYFLiLcGBJnMtp5BIO28Mh8Ui3lIOyalYOpefB9
+         td+jceWWuTLm1Ompc2ngrs+aYeBaohhxAVcFD5/QAUBgwv1UAkq90/b6VEEB55WSh9C3
+         BKt82uDAwz/8oNKV5d80odkqjtkiBvQcEf9wcN9FLAGDGbAA48VzntJTIUwN30+xmFcj
+         J+5w==
+X-Gm-Message-State: AOAM530r41Dl7gaEL5PEpKT7IJvZXrs1CoHa37BBf12DGv1Mvi9+DFna
+        OtlLunI/tcxGbnpRDUWAlNIf7B5jZcrlYydNkDo=
+X-Google-Smtp-Source: ABdhPJxUB28eId7C069Z9yU5wnQSTxhlhjJBmlSA6lDeLgkW8xYFy5G701t2YSWHVSEGhHywz7FhjlBV+Vo9znzTuNM=
+X-Received: by 2002:a67:e90e:: with SMTP id c14mr6182478vso.185.1592403680997;
+ Wed, 17 Jun 2020 07:21:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200617124157.GB29763@quack2.suse.cz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.166.215.198]
-X-CFilter-Loop: Reflected
+References: <20200605162518.28099-1-florian.fainelli@broadcom.com>
+ <6b1f0668-572e-ae52-27e6-c897bab4204c@gmail.com> <0c0ba84e-4b2d-53ac-5092-40312ecba13b@gmail.com>
+In-Reply-To: <0c0ba84e-4b2d-53ac-5092-40312ecba13b@gmail.com>
+From:   Michael Ira Krufky <mkrufky@linuxtv.org>
+Date:   Wed, 17 Jun 2020 10:21:08 -0400
+Message-ID: <CAOcJUbxfa8tQbHa8r=vyGoaJK0+N6v8puufu8vVJKZ4NdbpWKA@mail.gmail.com>
+Subject: Re: [PATCH stable 4.9 00/21] Unbreak 32-bit DVB applications on
+ 64-bit kernels
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
+        <linux-media@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/6/17 20:41, Jan Kara wrote:
-> On Wed 17-06-20 19:59:45, zhangyi (F) wrote:
->> Although we have already introduce s_bdev_wb_err_work to detect and
->> handle async write metadata buffer error as soon as possible, there is
->> still a potential race that could lead to filesystem inconsistency,
->> which is the buffer may reading and re-writing out to journal before
->> s_bdev_wb_err_work run. So this patch detect bdev mapping->wb_err when
->> getting journal's write access and also mark the filesystem error if
->> something bad happened.
->>
->> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-> 
-> So instead of all this, cannot we just do:
-> 
-> 	if (work_pending(sbi->s_bdev_wb_err_work))
-> 		flush_work(sbi->s_bdev_wb_err_work);
-> 
-> ? And so we are sure the filesystem is aborted if the abort was pending?
-> 
+Hey Florian,
 
-Thanks for this suggestion. Yeah, we could do this, it depends on the second
-patch, if we check and flush the pending work here, we could not use the
-end_buffer_async_write() in ext4_end_buffer_async_write(), we need to open
-coding ext4_end_buffer_async_write() and queue the error work before the
-buffer is unlocked, or else the race is still there. Do you agree ?
+Thank you for the time and effort that you put into this patch series.
+I was excited to see this, when I first saw it posted a few weeks ago.
+I have every intention of giving it a review, but just haven't found
+the time yet.  I'm sure that Mauro would say the same.
 
-Thanks,
-Yi.
+I'm sure that he and I both will find some time, hopefully over the
+next few weeks or sooner, to give this a thorough review and provide
+some feedback.
 
+Hopefully we can put this on its way for merge soon.  Please bear with us..
+
+Thanks again for your contribution.
+
+-Mike Krufky
+
+On Wed, Jun 17, 2020 at 12:39 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 6/11/2020 9:45 PM, Florian Fainelli wrote:
+> >
+> >
+> > On 6/5/2020 9:24 AM, Florian Fainelli wrote:
+> >> Hi all,
+> >>
+> >> This long patch series was motivated by backporting Jaedon's changes
+> >> which add a proper ioctl compatibility layer for 32-bit applications
+> >> running on 64-bit kernels. We have a number of Android TV-based products
+> >> currently running on the 4.9 kernel and this was broken for them.
+> >>
+> >> Thanks to Robert McConnell for identifying and providing the patches in
+> >> their initial format.
+> >>
+> >> In order for Jaedon's patches to apply cleanly a number of changes were
+> >> applied to support those changes. If you deem the patch series too big
+> >> please let me know.
+> >
+> > Mauro, can you review this? I would prefer not to maintain those patches
+> > in our downstream 4.9 kernel as there are quite a few of them, and this
+> > is likely beneficial to other people.
+>
+> Hello? Anybody here?
+> --
+> Florian
