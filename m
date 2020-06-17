@@ -2,184 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E3A1FD5A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 21:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0E321FD692
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 23:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgFQT6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 15:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53746 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbgFQT6D (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 15:58:03 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61266C0613EE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 12:58:03 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id b7so2615334pju.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 12:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mtm26zMhVvziSNAo5SmfL3grFhcLxm63K6Ll3k7pVLA=;
-        b=OGVeyzLchDvvpgrQEJsCwDmB0g5mSK2iyCbWztP7Kq7e12lAsbrbJJ/O765BM1d9FQ
-         vMMvIE3saYLDImlEZ8eBNU3vlyvAG5MdNrvhwK/eP1+c7i+djFuR5nroesN2ZDFLFVQh
-         AMcDeULYTTf+crJp+k+EIY9BLyYqFncTk8mtc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mtm26zMhVvziSNAo5SmfL3grFhcLxm63K6Ll3k7pVLA=;
-        b=eC099l16l191d/fBv11uI1zZYE0nMFval+6oz8FLtPz6xlRm8X8Llg+EqdLjzR1QiP
-         Olj3G6ZB1OndruUhI1uFRTYIBR00tKxqLvrY1Jc9swxnOaL2Km3Z52DVBhpOUvBkAUM1
-         KpaDACbAcY7pdfqCr0MVZkVQg3jl3QwhxgUfcOE5wH5mP9bfHz8rFNkPihuEfQIgl0DI
-         azPllqgBHLab2Ln9YhrT4WxbqFL2kPBjHNpEE/m/IHTffSofR9LPgNijgxM8l1Kd+e+x
-         CeqW6kXi/QK1mP7f6PU0Jtb5xK97T0hBtaMFjqltJGyiwnZoWi6RDS5n6zm028FU/nOG
-         yoVA==
-X-Gm-Message-State: AOAM532553wuNobBysAMR4viPQ0DcKNGfUEBRQkHIEjd04wkSAKiBKcB
-        yfU+fvxVzKLYE7xNTAyDyyNohA==
-X-Google-Smtp-Source: ABdhPJx1Vhks5l1dJnwJicud25Ov+I84VyGCU0nF8o3XyWLhCCiEEzvHbnFtOemqhaMfq16ly8QKug==
-X-Received: by 2002:a17:90a:7a8f:: with SMTP id q15mr598912pjf.116.1592423882783;
-        Wed, 17 Jun 2020 12:58:02 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w22sm628496pfq.193.2020.06.17.12.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2020 12:58:01 -0700 (PDT)
-Date:   Wed, 17 Jun 2020 12:58:00 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Christian Brauner <christian@brauner.io>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v4 03/11] fs: Add fd_install_received() wrapper for
- __fd_install_received()
-Message-ID: <202006171141.4DA1174979@keescook>
-References: <20200616032524.460144-1-keescook@chromium.org>
- <20200616032524.460144-4-keescook@chromium.org>
- <6de12195ec3244b99e6026b4b46e5be2@AcuMS.aculab.com>
+        id S1726763AbgFQVAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 17:00:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbgFQVAr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 17:00:47 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADBBA2166E;
+        Wed, 17 Jun 2020 21:00:46 +0000 (UTC)
+Date:   Wed, 17 Jun 2020 17:00:45 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 0/7] libfs: group and simplify linux fs code
+Message-ID: <20200617170045.7d41976d@oasis.local.home>
+In-Reply-To: <20200504090032.10367-1-eesposit@redhat.com>
+References: <20200504090032.10367-1-eesposit@redhat.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6de12195ec3244b99e6026b4b46e5be2@AcuMS.aculab.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 03:35:20PM +0000, David Laight wrote:
-> From: Kees Cook
-> > Sent: 16 June 2020 04:25
-> > 
-> > For both pidfd and seccomp, the __user pointer is not used. Update
-> > __fd_install_received() to make writing to ufd optional. (ufd
-> > itself cannot checked for NULL because this changes the SCM_RIGHTS
-> > interface behavior.) In these cases, the new fd needs to be returned
-> > on success.  Update the existing callers to handle it. Add new wrapper
-> > fd_install_received() for pidfd and seccomp that does not use the ufd
-> > argument.
-> ...> 
-> >  static inline int fd_install_received_user(struct file *file, int __user *ufd,
-> >  					   unsigned int o_flags)
-> >  {
-> > -	return __fd_install_received(file, ufd, o_flags);
-> > +	return __fd_install_received(file, true, ufd, o_flags);
-> > +}
+
+What happened to this work?
+
+-- Steve
+
+
+On Mon,  4 May 2020 11:00:25 +0200
+Emanuele Giuseppe Esposito <eesposit@redhat.com> wrote:
+
+> libfs.c has many functions that are useful to implement dentry and inode
+> operations, but not many at the filesystem level.  As a result, code to
+> create files and inodes has a lot of duplication, to the point that
+> tracefs has copied several hundred lines from debugfs.
 > 
-> Can you get rid of the 'return user' parameter by adding
-> 	if (!ufd) return -EFAULT;
-> to the above wrapper, then checking for NULL in the function?
+> The main two libfs.c functions for filesystems are simple_pin_fs and
+> simple_release_fs, which hide a somewhat complicated locking sequence
+> that is needed to serialize vfs_kern_mount and mntget.  In this series,
+> my aim is to add functions that create dentries and inodes of various
+> kinds (either anonymous inodes, or directory/file/symlink).  These
+> functions take the code that was duplicated across debugfs and tracefs
+> and move it to libfs.c.
 > 
-> Or does that do the wrong horrid things in the fail path?
+> In order to limit the number of arguments to the new functions, the
+> series first creates a data type that is passed to both
+> simple_pin_fs/simple_release_fs and the new creation functions.  The new
+> struct, introduced in patch 2, simply groups the "mount" and "count"
+> arguments to simple_pin_fs and simple_release_fs.
+> 
+> Patches 1-4 are preparations to introduce the new simple_fs struct and
+> new functions that are useful in the remainder of the series.  Patch 5
+> introduces the dentry and inode creation functions.  Patch 6-7 can then
+> adopt them in debugfs and tracefs.
+> 
+> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
+> 
+> v1->v2: rename simple_new_inode in new_inode_current_time,
+> more detailed explanations, put all common code in fs/libfs.c
+> 
+> v2->v3: remove unused debugfs_get_inode and tracefs_get_inode
+> functions
+> 
+> Emanuele Giuseppe Esposito (7):
+>   apparmor: just use vfs_kern_mount to make .null
+>   libfs: wrap simple_pin_fs/simple_release_fs arguments in a struct
+>   libfs: introduce new_inode_current_time
+>   libfs: add alloc_anon_inode wrapper
+>   libfs: add file creation functions
+>   debugfs: switch to simplefs inode creation API
+>   tracefs: switch to simplefs inode creation API
+> 
+>  drivers/gpu/drm/drm_drv.c       |  11 +-
+>  drivers/misc/cxl/api.c          |  13 +-
+>  drivers/scsi/cxlflash/ocxl_hw.c |  14 +-
+>  fs/binfmt_misc.c                |   9 +-
+>  fs/configfs/mount.c             |  10 +-
+>  fs/debugfs/inode.c              | 169 +++---------------
+>  fs/libfs.c                      | 299 ++++++++++++++++++++++++++++++--
+>  fs/tracefs/inode.c              | 106 ++---------
+>  include/linux/fs.h              |  31 +++-
+>  security/apparmor/apparmorfs.c  |  38 ++--
+>  security/inode.c                |  11 +-
+>  11 files changed, 399 insertions(+), 312 deletions(-)
+> 
 
-Oh, hm. No, that shouldn't break the failure path, since everything gets
-unwound in __fd_install_received if the ufd write fails.
-
-Effectively this (I'll chop it up into the correct patches):
-
-diff --git a/fs/file.c b/fs/file.c
-index b583e7c60571..3b80324a31cc 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -939,18 +939,16 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-  *
-  * @fd: fd to install into (if negative, a new fd will be allocated)
-  * @file: struct file that was received from another process
-- * @ufd_required: true to use @ufd for writing fd number to userspace
-  * @ufd: __user pointer to write new fd number to
-  * @o_flags: the O_* flags to apply to the new fd entry
-  *
-  * Installs a received file into the file descriptor table, with appropriate
-  * checks and count updates. Optionally writes the fd number to userspace, if
-- * @ufd_required is true (@ufd cannot just be tested for NULL because NULL may
-- * actually get passed into SCM_RIGHTS).
-+ * @ufd is non-NULL.
-  *
-  * Returns newly install fd or -ve on error.
-  */
--int __fd_install_received(int fd, struct file *file, bool ufd_required,
-+int __fd_install_received(int fd, struct file *file,
- 			  int __user *ufd, unsigned int o_flags)
- {
- 	struct socket *sock;
-@@ -967,7 +965,7 @@ int __fd_install_received(int fd, struct file *file, bool ufd_required,
- 			return new_fd;
- 	}
- 
--	if (ufd_required) {
-+	if (ufd) {
- 		error = put_user(new_fd, ufd);
- 		if (error) {
- 			put_unused_fd(new_fd);
-diff --git a/include/linux/file.h b/include/linux/file.h
-index f1d16e24a12e..2ade0d90bc5e 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -91,20 +91,22 @@ extern void put_unused_fd(unsigned int fd);
- 
- extern void fd_install(unsigned int fd, struct file *file);
- 
--extern int __fd_install_received(int fd, struct file *file, bool ufd_required,
-+extern int __fd_install_received(int fd, struct file *file,
- 				 int __user *ufd, unsigned int o_flags);
- static inline int fd_install_received_user(struct file *file, int __user *ufd,
- 					   unsigned int o_flags)
- {
--	return __fd_install_received(-1, file, true, ufd, o_flags);
-+	if (ufd == NULL)
-+		return -EFAULT;
-+	return __fd_install_received(-1, file, ufd, o_flags);
- }
- static inline int fd_install_received(struct file *file, unsigned int o_flags)
- {
--	return __fd_install_received(-1, file, false, NULL, o_flags);
-+	return __fd_install_received(-1, file, NULL, o_flags);
- }
- static inline int fd_replace_received(int fd, struct file *file, unsigned int o_flags)
- {
--	return __fd_install_received(fd, file, false, NULL, o_flags);
-+	return __fd_install_received(fd, file, NULL, o_flags);
- }
- 
- extern void flush_delayed_fput(void);
-
--- 
-Kees Cook
