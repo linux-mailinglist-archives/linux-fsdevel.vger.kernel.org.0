@@ -2,148 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 311851FD33A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 19:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD9D1FD36A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 19:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbgFQROd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 13:14:33 -0400
-Received: from sandeen.net ([63.231.237.45]:53950 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbgFQROb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 13:14:31 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id D138C11643;
-        Wed, 17 Jun 2020 12:14:08 -0500 (CDT)
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-References: <20200616202123.12656-1-msys.mizuma@gmail.com>
- <20200617080314.GA7147@infradead.org> <20200617155836.GD13815@fieldses.org>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
-Date:   Wed, 17 Jun 2020 12:14:28 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200617155836.GD13815@fieldses.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726954AbgFQR06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 13:26:58 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:41003 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgFQR06 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 13:26:58 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200617172654epoutp02490f5995c35ebaa6eae7426b2ea718f0~ZZNZWFVYO2436424364epoutp02D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 17:26:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200617172654epoutp02490f5995c35ebaa6eae7426b2ea718f0~ZZNZWFVYO2436424364epoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592414815;
+        bh=quPbHKvd3t/tKAk2Vd44HQREZ4TCnzbl9br8Bua5p/U=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Ns/ECDWJPc4X81fFNtW7YRq8Gd/eMxlpBo+VlV8ayjCCInc1FJoAhH6/ZKvr8wFS4
+         6lH4XB9CKSpxxvUz27/JxNEqmEQAbGAXUL+foQ/84ZU+yFE0dapcUI4BMmr7WGRhef
+         PXqVJSfGGDswM3UOBRP+yFW3qdOKAWMCRkgb62dY=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200617172654epcas5p29bf502ec3f75e53e630e5ced45725658~ZZNYscZFV2352223522epcas5p2U;
+        Wed, 17 Jun 2020 17:26:54 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3D.66.09475.E525AEE5; Thu, 18 Jun 2020 02:26:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200617172653epcas5p488de50090415eb802e62acc0e23d8812~ZZNYDZtWv0132401324epcas5p4Y;
+        Wed, 17 Jun 2020 17:26:53 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200617172653epsmtrp19806cab50c6c159c2b00e4bbf421e4d9~ZZNYAp-BX1872618726epsmtrp1-;
+        Wed, 17 Jun 2020 17:26:53 +0000 (GMT)
+X-AuditID: b6c32a4b-389ff70000002503-21-5eea525e12d2
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        71.7E.08303.D525AEE5; Thu, 18 Jun 2020 02:26:53 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.110.206.5]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200617172651epsmtip1c8390df6b20117c9b29b6c11e6f54825~ZZNWEdhr61054210542epsmtip1D;
+        Wed, 17 Jun 2020 17:26:51 +0000 (GMT)
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, javier.gonz@samsung.com,
+        Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH 0/3] zone-append support in aio and io-uring
+Date:   Wed, 17 Jun 2020 22:53:36 +0530
+Message-Id: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7bCmum5c0Ks4gxcbuSxW3+1ns+j6t4XF
+        4l3rORaLx3c+s1sc/f+WzWLhxmVMFlOmNTFa7L2lbbFn70kWi8u75rBZbPs9n9niypRFzBav
+        f5xkszj/9zirA5/H5bOlHps+TWL36NuyitHj8yY5j01P3jIFsEZx2aSk5mSWpRbp2yVwZdyb
+        /IW54Ct7xdL//UwNjBPYuhg5OSQETCS+PtrECmILCexmlLhxqbiLkQvI/sQo8WfvCSYI5zOj
+        xOeDU1hhOi5suMcOkdjFKHHk0glGuKrmLTOB5nJwsAloSlyYXApiigjYSOxcogLSyyzQwCTx
+        /7sOiC0MFD7dvJQFpIRFQFVi6VsrkDCvgJPEl3/zmCFWyUncPNfJDDJdQuAeu0TvgcVQN7hI
+        LPq7CqpIWOLV8S3sELaUxMv+Nii7WOLXnaNQzR2MEtcbZrJAJOwlLu75ywSymBnozPW79CFu
+        45Po/f0ELCwhwCvR0SYEUa0ocW/SU6i14hIPZyyBsj0kJvW0MUICLlbiy7G57BMYZWYhDF3A
+        yLiKUTK1oDg3PbXYtMA4L7Vcrzgxt7g0L10vOT93EyM4OWh572B89OCD3iFGJg7GQ4wSHMxK
+        IrzOv1/ECfGmJFZWpRblxxeV5qQWH2KU5mBREudV+nEmTkggPbEkNTs1tSC1CCbLxMEp1cC0
+        UiJh2vxjEwVeePcYzLSUYjJeqvag+g7P3ulRc01L/OcmHrO0z1ivvkHug05FxMvcizJHpC9F
+        v/3O1r/Mp+mJ+bmT9lrZ5d7Xk9IXVn8JMnxv9ktR4UbWPTeWSUmL2RTeMM3okD/5J6N5Pm9w
+        0/kzttJPwjv9dH0aJizb8EB00kIJ3Xd8UxVO2ukYlK+aHiS1ZUct3+RTMhUH3f9OPdjUcI1x
+        XmKRKV9viNtrTt8ANf/puYnPXs7ZzPy62dXiykybJdt+73b/wFX9MGAKkx9HjEjTuRu+OlJ9
+        B7jsj9//E2p8X+Z1moZIz7t/ir28c5szxJi8jyl/VzVVvHKj6yvvC90La4NVVj3pv9zxw1SJ
+        pTgj0VCLuag4EQCZtNXMfQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsWy7bCSnG5s0Ks4g6cXZSxW3+1ns+j6t4XF
+        4l3rORaLx3c+s1sc/f+WzWLhxmVMFlOmNTFa7L2lbbFn70kWi8u75rBZbPs9n9niypRFzBav
+        f5xkszj/9zirA5/H5bOlHps+TWL36NuyitHj8yY5j01P3jIFsEZx2aSk5mSWpRbp2yVwZdyb
+        /IW54Ct7xdL//UwNjBPYuhg5OSQETCQubLjHDmILCexglFjXGwYRF5dovvaDHcIWllj57zmQ
+        zQVU85FRoufXIqYuRg4ONgFNiQuTS0FqRAQcJLqOP2YCqWEW6GKSOHFzFxNIQljARuJ081IW
+        kHoWAVWJpW+tQMK8Ak4SX/7NY4aYLydx81wn8wRGngWMDKsYJVMLinPTc4sNC4zyUsv1ihNz
+        i0vz0vWS83M3MYKDUEtrB+OeVR/0DjEycTAeYpTgYFYS4XX+/SJOiDclsbIqtSg/vqg0J7X4
+        EKM0B4uSOO/XWQvjhATSE0tSs1NTC1KLYLJMHJxSDUyBX/V6+Riuvjygsub21p12rE9arr6/
+        Jslx8bzj7Zl93eIFz2fW8+/b8Ovni+aCokI/X6aP/bnqbmf9i1fdOR6zV+Wm/SXu+NsdRsUx
+        nCe4LvVmTXkQu7JTUtQlJXCaTn0xJ/eirY9VzOskrC7/mXYzk7tFzbmgQjeaq93wQFqssqNk
+        zal/0bzdJYyZRy3NPFV7ldZkbz9TL6QXpbJclLnon/BD4fun5ojHzZvBKH112pmVu/mW3bw3
+        /5ga80+L1Yof+cqMu/UmhNxi2+euK1SQtsr0M9/O6C5Ji4mPFl5ydCuQXyt5luVNYvzMzvW3
+        o1QesV84933lrHlR2W3nItYFNU18curnVsZkh9LodiWW4oxEQy3mouJEADL6srGxAgAA
+X-CMS-MailID: 20200617172653epcas5p488de50090415eb802e62acc0e23d8812
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200617172653epcas5p488de50090415eb802e62acc0e23d8812
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patchset enables issuing zone-append using aio and io-uring direct-io interface.
 
+For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
+of the zone to issue append. On completion 'res2' field is used to return
+zone-relative offset.
 
-On 6/17/20 10:58 AM, J. Bruce Fields wrote:
-> On Wed, Jun 17, 2020 at 01:03:14AM -0700, Christoph Hellwig wrote:
->> On Tue, Jun 16, 2020 at 04:21:23PM -0400, Masayoshi Mizuma wrote:
->>> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
->>>
->>> /proc/mounts doesn't show 'i_version' even if iversion
->>> mount option is set to XFS.
->>>
->>> iversion mount option is a VFS option, not ext4 specific option.
->>> Move the handler to show_sb_opts() so that /proc/mounts can show
->>> 'i_version' on not only ext4 but also the other filesystem.
->>
->> SB_I_VERSION is a kernel internal flag.  XFS doesn't have an i_version
->> mount option.
-> 
-> It probably *should* be a kernel internal flag, but it seems to work as
-> a mount option too.
+For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
 
-Not on XFS AFAICT:
+Kanchan Joshi (1):
+  aio: add support for zone-append
 
-[600280.685810] xfs: Unknown parameter 'i_version'
+Selvakumar S (2):
+  fs,block: Introduce IOCB_ZONE_APPEND and direct-io handling
+  io_uring: add support for zone-append
 
-so we can't be exporting "mount options" for xfs that aren't actually
-going to be accepted by the filesystem.
+ fs/aio.c                      |  8 +++++
+ fs/block_dev.c                | 19 +++++++++++-
+ fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++++++++--
+ include/linux/fs.h            |  1 +
+ include/uapi/linux/aio_abi.h  |  1 +
+ include/uapi/linux/io_uring.h |  8 ++++-
+ 6 files changed, 105 insertions(+), 4 deletions(-)
 
-> By coincidence I've just been looking at a bug report showing that
-> i_version support is getting accidentally turned off on XFS whenever
-> userspace does a read-write remount.
-> 
-> Is there someplace in the xfs mount code where it should be throwing out
-> SB_I_VERSION?
+-- 
+2.7.4
 
-<cc xfs list>
-
-XFS doesn't manipulate that flag on remount.  We just turn it on by default
-for modern filesystem formats:
-
-        /* version 5 superblocks support inode version counters. */
-        if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-                sb->s_flags |= SB_I_VERSION;
-
-Also, this behavior doesn't seem unique to xfs:
-
-# mount -o loop,i_version fsfile test_iversion
-# grep test_iversion /proc/mounts
-/dev/loop4 /tmp/test_iversion ext4 rw,seclabel,relatime,i_version 0 0
-# mount -o remount test_iversion
-# grep test_iversion /proc/mounts
-/dev/loop4 /tmp/test_iversion ext4 rw,seclabel,relatime 0 0
-# uname -a
-Linux <hostname> 5.7.0-rc4+ #7 SMP Wed Jun 10 14:01:34 EDT 2020 x86_64 x86_64 x86_64 GNU/Linux
-
--Eric
-
-> Ideally there'd be entirely different fields for mount options and
-> internal feature flags.  But I don't know, maybe SB_I_VERSION is the
-> only flag we have like this.
-> 
-> --b.
-> 
