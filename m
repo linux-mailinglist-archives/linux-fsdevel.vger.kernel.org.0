@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1379E1FC793
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9C11FC797
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbgFQHiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 03:38:14 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:33941 "EHLO
+        id S1726854AbgFQHiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 03:38:21 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:42595 "EHLO
         wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726804AbgFQHiN (ORCPT
+        by vger.kernel.org with ESMTP id S1726542AbgFQHiS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 03:38:13 -0400
+        Wed, 17 Jun 2020 03:38:18 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id E83FC478;
-        Wed, 17 Jun 2020 03:38:11 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:38:12 -0400
+        by mailout.west.internal (Postfix) with ESMTP id E49C94C5;
+        Wed, 17 Jun 2020 03:38:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:38:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         subject:from:to:cc:date:message-id:in-reply-to:references
         :mime-version:content-type:content-transfer-encoding; s=fm3; bh=
-        U0hpE2t4Jb5LiAicyzV44p0oKfUxQp3342ldxD2V7j8=; b=AHZvD4oMx3a+1tZg
-        NoNMRNSKlQrDTRN65fMY52gYUV/GR435OUwKa89btZespVl4A2nd/Z/FfXHdpX6Z
-        T+OuxZoxYTWiCnM+wVfDAX/nvRFX61vCrIfIFH6GePQmqg5myKzCXeaxX8E9LxPY
-        nDXWPQT0Wmqm9Q0nnNXgvilD2ZJKY/TLnROeHl3cr0k3f4OQ3nHyfCsK1Y0DxLAa
-        2quwgI2bTX7jA0jcqcBmA4PDLroehgGR14Gcj5SVlyV2xygbun/Q5IJDXCjnzmyS
-        1vUeuX4lSVjgtHMkC25ylT4P1acmC/ZXGAoEtHe3U26SC5ADfYV1VniMEG6f/quN
-        entGtA==
+        trUDM6J4xTL+EvlxC8X7RzYKusxzZbaupwPRTQgum+k=; b=O9uu4vFr57zyFqdT
+        ku9gOfS4bETKmnlks7bHBs6kQyaFSZNTUmTxsUlid8DIQIqFw+NPeEj9qaPxUfiT
+        y1Bn9ofqrChhfnC2pFLCnTbIkMYRC4rAYQ3+ATVzr9h2hFwGNitY0kiq1iVJ1Igs
+        6nOF0TnoiYeZXaRV8VZSb4C0BoXyWMBBaNc2dr/+4gIBQcwskII5gmCxXEFcZvWI
+        oYGzjYJbIXn0gWU7CT6zemyOOaEW9Vznj+ISUdfDrtDCA4EZ2qOgE+OjiikRAtQA
+        DnR2g9l1Cf/0X6Y/wL/9kUOJW1M/yU/4vylGRTN08BwYaGJBFl/PrgKzlykXq1Oa
+        wZIaDA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=U0hpE2t4Jb5LiAicyzV44p0oKfUxQp3342ldxD2V7
-        j8=; b=Pj5ug67ulDJK+utTDVWd5yo7ai80EN2g7Sk3p9h6ejclxbTg+PsPWrw8d
-        v30Mc22VJ3preasooPo0jZqQlMYbdHMF/m9Ma1SEGQaFphYoOyqcZDAdky3Oin5U
-        DKnQBNyGLCzI5DZ06LjOlg4IYq3PdGyxwO4o3mI2u81/ZcfusO2ObOMAF2abjCTe
-        TVmsLG8E51gsSyAokSt2R5KiNysgj4dA4+NiylJp8JtW0FxcaIfzBiiZwDBsBV4f
-        wqVtbblxoUdEvhn10aTrIagcIrrTJ40/gdROrMe2YJ2hNQiFULyG3aNgGkBtzrCv
-        vhuAy6foC+XboRdd21ZqZ+MGrk8BQ==
-X-ME-Sender: <xms:Y8jpXhgeYGSv3Ee0m1-5Psf429ksBWEwaJ3AmMVuwC94sySSeEqfDA>
+        :x-sasl-enc; s=fm3; bh=trUDM6J4xTL+EvlxC8X7RzYKusxzZbaupwPRTQgum
+        +k=; b=Tei9xWnyMb36/BJ9CIKJSta419ZA02dxi9Hff7wXNiSj3/VyLGvDxMfFk
+        F0Wrluwr+YyGkZXeDlsKoLGAj0w6kFHH9m0gVJLkwo1+N8WaUHsY51a3L31EzsMv
+        4zHSfL+GvqbN5TOzDyxDCuh84bJnEAS9eqkM6Gr/Z2tnULvOXTuQ9jA8ylyKYHQG
+        FO+lW9tLWwZupxzJTPPUoOs/HO9mW+uczUiUahTxQs+z5QeYmnLPTuz9SbHbO+DU
+        FE6/xYYOlAFPQ/JX9Dxbok+gE7JCKmtZ2H6MziroLpdcFCGmLaZFHs95VQzJ9gFs
+        UBbmblffbHgC30BU+M7x0xTGh143w==
+X-ME-Sender: <xms:aMjpXlkTsLOmI160YiThV4Tey0lKnzbfUnkKZzQJTRn3oiHzskrQ7A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejuddguddvhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefuhffvfffkjghffgggtgfgsehtjedttddtreejnecuhfhrohhmpefkrghn
     ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
     epvddvvdfgleefhfelgfekvdejjefhvdetfeevueeggeefhfdujeegveejveejgfdunecu
-    kfhppeehkedrjedrudelgedrkeejnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrg
+    kfhppeehkedrjedrudelgedrkeejnecuvehluhhsthgvrhfuihiivgepheenucfrrghrrg
     hmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:Y8jpXmB8DO7VD1EisVt8R9QEXCrJnVoDr6QTQYbR-Z-PL8P3Al-Xlg>
-    <xmx:Y8jpXhGN73IV9m33z-WQIdVMyuDSs6oxvaWWgGqxsqPRpLk9bKwgNw>
-    <xmx:Y8jpXmTCSzd9C5MClizP8lWuFYNfBGUF8PSLtY4IioPQXkdmXfHZhQ>
-    <xmx:Y8jpXlrm6II5unf80aogDl7e0-OlaOjxdlk4VBs5ItEDpirvrNQJZA>
+X-ME-Proxy: <xmx:aMjpXg1PXP9-JJ8KEc4yqRLLEf_4XjL45nEaxG5h9OvvY_b8ciNy6Q>
+    <xmx:aMjpXrqur8YpFwVW-GzYu2lfh2KVi7O7ldGnkvC2Kg-C-aWJHq6TZg>
+    <xmx:aMjpXlntIxSwGT97dnFA-rEnSgYuwO-t_Qj4X2ELC69FsV81S3fprg>
+    <xmx:aMjpXj8vyGi8Pb1e1Hktx5u5xddScSPOY4Ezz9Nsl0-8BSDNjjppIQ>
 Received: from mickey.themaw.net (58-7-194-87.dyn.iinet.net.au [58.7.194.87])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1736B306215A;
-        Wed, 17 Jun 2020 03:38:11 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1837F328005E;
+        Wed, 17 Jun 2020 03:38:16 -0400 (EDT)
 Received: from mickey.themaw.net (localhost [127.0.0.1])
-        by mickey.themaw.net (Postfix) with ESMTP id 86338A0314;
-        Wed, 17 Jun 2020 15:38:08 +0800 (AWST)
-Subject: [PATCH v2 5/6] kernfs: refactor attr locking
+        by mickey.themaw.net (Postfix) with ESMTP id 9413FA0314;
+        Wed, 17 Jun 2020 15:38:13 +0800 (AWST)
+Subject: [PATCH v2 6/6] kernfs: make attr_mutex a local kernfs node lock
 From:   Ian Kent <raven@themaw.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -68,8 +68,8 @@ Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 17 Jun 2020 15:38:08 +0800
-Message-ID: <159237948850.89469.14590162329652845934.stgit@mickey.themaw.net>
+Date:   Wed, 17 Jun 2020 15:38:13 +0800
+Message-ID: <159237949356.89469.1012120560805135591.stgit@mickey.themaw.net>
 In-Reply-To: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 User-Agent: StGit/0.19
@@ -81,126 +81,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The inode operations .permission() and .getattr() use the kernfs node
-write lock but all that's needed is to keep the rb tree stable while
-copying the node attributes. And .permission() is called frequently
-during path walks so it can cause quite a bit of contention between
-kernfs node opertations and path walks when the number of concurrant
-walks is high.
+The global mutex attr_mutex is used to protect the update of inode
+attributes in kernfs_refresh_inode() (as well as kernfs node attribute
+structure creation) and this function is called by the inode operation
+.permission().
 
-Ideally the inode mutex would protect the inode update but .permission()
-may be called both with and without holding the inode mutex so there's no
-way for kernfs .permission() to know if it is the holder of the mutex
-which means it could be released during the update.
+Since .permission() is called quite frequently during path walks it
+can lead to contention when the number of concurrent path walks is
+high.
 
-So refactor __kernfs_iattrs() by moving the static mutex declaration out
-of the function and changing the function itself a little. And also use
-the mutex to protect the inode attribute fields updated by .permission()
-and .getattr() calls to kernfs_refresh_inode().
-
-Using the attr mutex to protect two different things, the node
-attributes as well as the copy of them to the inode is not ideal. But
-the only other choice is to use two locks which seems like excessive
-ovherhead when the attr mutex is so closely related to the inode fields
-it's protecting.
+This mutex is used for kernfs node objects only so make it local to
+the kernfs node to reduce the impact of this type of contention.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/kernfs/inode.c |   50 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ fs/kernfs/dir.c        |    1 +
+ fs/kernfs/inode.c      |   12 ++++++------
+ include/linux/kernfs.h |    2 ++
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 03f4f179bbc4..3233e01651e4 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -597,6 +597,7 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+ 	kn = kmem_cache_zalloc(kernfs_node_cache, GFP_KERNEL);
+ 	if (!kn)
+ 		goto err_out1;
++	mutex_init(&kn->attr_mutex);
+ 
+ 	idr_preload(GFP_KERNEL);
+ 	spin_lock(&kernfs_idr_lock);
 diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 23a7996d06a9..5c3fac356ce0 100644
+index 5c3fac356ce0..5eb11094bb2e 100644
 --- a/fs/kernfs/inode.c
 +++ b/fs/kernfs/inode.c
-@@ -17,6 +17,8 @@
- 
- #include "kernfs-internal.h"
- 
-+static DEFINE_MUTEX(attr_mutex);
-+
- static const struct address_space_operations kernfs_aops = {
- 	.readpage	= simple_readpage,
- 	.write_begin	= simple_write_begin,
-@@ -32,33 +34,33 @@ static const struct inode_operations kernfs_iops = {
- 
- static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
+@@ -36,7 +36,7 @@ static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
  {
--	static DEFINE_MUTEX(iattr_mutex);
--	struct kernfs_iattrs *ret;
--
--	mutex_lock(&iattr_mutex);
-+	struct kernfs_iattrs *iattr = NULL;
+ 	struct kernfs_iattrs *iattr = NULL;
  
--	if (kn->iattr || !alloc)
-+	mutex_lock(&attr_mutex);
-+	if (kn->iattr || !alloc) {
-+		iattr = kn->iattr;
+-	mutex_lock(&attr_mutex);
++	mutex_lock(&kn->attr_mutex);
+ 	if (kn->iattr || !alloc) {
+ 		iattr = kn->iattr;
  		goto out_unlock;
-+	}
- 
--	kn->iattr = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
--	if (!kn->iattr)
-+	iattr = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
-+	if (!iattr)
- 		goto out_unlock;
- 
- 	/* assign default attributes */
--	kn->iattr->ia_uid = GLOBAL_ROOT_UID;
--	kn->iattr->ia_gid = GLOBAL_ROOT_GID;
-+	iattr->ia_uid = GLOBAL_ROOT_UID;
-+	iattr->ia_gid = GLOBAL_ROOT_GID;
- 
--	ktime_get_real_ts64(&kn->iattr->ia_atime);
--	kn->iattr->ia_mtime = kn->iattr->ia_atime;
--	kn->iattr->ia_ctime = kn->iattr->ia_atime;
-+	ktime_get_real_ts64(&iattr->ia_atime);
-+	iattr->ia_mtime = iattr->ia_atime;
-+	iattr->ia_ctime = iattr->ia_atime;
- 
--	simple_xattrs_init(&kn->iattr->xattrs);
--	atomic_set(&kn->iattr->nr_user_xattrs, 0);
--	atomic_set(&kn->iattr->user_xattr_size, 0);
-+	simple_xattrs_init(&iattr->xattrs);
-+	atomic_set(&iattr->nr_user_xattrs, 0);
-+	atomic_set(&iattr->user_xattr_size, 0);
-+	kn->iattr = iattr;
+@@ -59,7 +59,7 @@ static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
+ 	atomic_set(&iattr->user_xattr_size, 0);
+ 	kn->iattr = iattr;
  out_unlock:
--	ret = kn->iattr;
--	mutex_unlock(&iattr_mutex);
--	return ret;
-+	mutex_unlock(&attr_mutex);
-+	return iattr;
+-	mutex_unlock(&attr_mutex);
++	mutex_unlock(&kn->attr_mutex);
+ 	return iattr;
  }
  
- static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
-@@ -189,9 +191,11 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
- 	struct inode *inode = d_inode(path->dentry);
+@@ -192,9 +192,9 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
  	struct kernfs_node *kn = inode->i_private;
  
--	down_write(&kernfs_rwsem);
-+	down_read(&kernfs_rwsem);
-+	mutex_lock(&attr_mutex);
+ 	down_read(&kernfs_rwsem);
+-	mutex_lock(&attr_mutex);
++	mutex_lock(&kn->attr_mutex);
  	kernfs_refresh_inode(kn, inode);
--	up_writeread(&kernfs_rwsem);
-+	mutex_unlock(&attr_mutex);
-+	up_read(&kernfs_rwsem);
+-	mutex_unlock(&attr_mutex);
++	mutex_unlock(&kn->attr_mutex);
+ 	up_read(&kernfs_rwsem);
  
  	generic_fillattr(inode, stat);
- 	return 0;
-@@ -281,9 +285,11 @@ int kernfs_iop_permission(struct inode *inode, int mask)
- 
+@@ -286,9 +286,9 @@ int kernfs_iop_permission(struct inode *inode, int mask)
  	kn = inode->i_private;
  
--	down_write(&kernfs_rwsem);
-+	down_read(&kernfs_rwsem);
-+	mutex_lock(&attr_mutex);
+ 	down_read(&kernfs_rwsem);
+-	mutex_lock(&attr_mutex);
++	mutex_lock(&kn->attr_mutex);
  	kernfs_refresh_inode(kn, inode);
--	up_write(&kernfs_rwsem);
-+	mutex_unlock(&attr_mutex);
-+	up_read(&kernfs_rwsem);
+-	mutex_unlock(&attr_mutex);
++	mutex_unlock(&kn->attr_mutex);
+ 	up_read(&kernfs_rwsem);
  
  	return generic_permission(inode, mask);
- }
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index 74727d98e380..8669f65d5a39 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -142,6 +142,8 @@ struct kernfs_node {
+ 
+ 	struct rb_node		rb;
+ 
++	struct mutex		attr_mutex; /* protect attr updates */
++
+ 	const void		*ns;	/* namespace tag */
+ 	unsigned int		hash;	/* ns + name hash */
+ 	union {
 
 
