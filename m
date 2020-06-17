@@ -2,233 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3AB01FD752
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 23:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFF11FD83A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 00:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgFQVd3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 17:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40266 "EHLO
+        id S1726976AbgFQWEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 18:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbgFQVd2 (ORCPT
+        with ESMTP id S1727105AbgFQWDf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 17:33:28 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E36C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 14:33:26 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id dr13so4180972ejc.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 14:33:25 -0700 (PDT)
+        Wed, 17 Jun 2020 18:03:35 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62B7C061795
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 15:03:34 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id h95so1715177pje.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 15:03:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=082ZDcJ58JiAJ5FQwZhCB4u9ixr0nyVZnt4fYABIR84=;
-        b=TfwM4lavAZ4qLtd5wq6rQlVNKfmuRYQ43amsKkYVgFT+8SBxWmO9x5wsvBq940XKAg
-         b7y6FNbnpN7VONhX+pNMmIsdCJV2FjiC9n3+Wds9hgiE4ZfZvYN7TCSi+l1RKQMVjc4H
-         VTqR6pGcGhx/snMwZMlMlSTbYX/5tZcXbYQ2svqAQstq6/l7ixnZwU+LOMkPqqWbKemq
-         DE2g2KY2Nej+5bcYigqtEWd1ECLF3ZomjpGrAbXdruDnwjJ6vnXStdMOI4InbA3xCd2M
-         rE6umaqSA2gnDeoaV49w5DHVs/9DQHlZzxQYa0C0nK3iaVkh/+O/v2Rk4uIEfXXD7JS4
-         YtMg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2q7bLMUd5vfYPBehCH2qcIvt1dDMWXzsM1rSr8xASEs=;
+        b=fiquKUdyAlyN5DN55k77fJo/naedBS1mJ6UPcwZUUzNVbhK6HBR2lN9vkr/JQ4toCx
+         dncsX1dNE5j6lxBS7GZWAMyhdOA95exy4UqW2G53ACGN7/yiUulBC9tSekOj3i7WRpAR
+         q91Ikv3l4LUdzw/5lIaj5dL5WFyrEGxRvY6MQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=082ZDcJ58JiAJ5FQwZhCB4u9ixr0nyVZnt4fYABIR84=;
-        b=r6sfJD4YjzMXraSVixB1zPrWE0HNdZIl2oYfRFxBTS1jY8TJOsXnyzHuUNgayQKUQA
-         t0S4eqWkwIf30bAyxURw9/6eTJiiqRPc2exNw6dxLq84G/24H03/U4OsSlfy2a7Ofqvr
-         Zgbk5ktnHLP8Jrah5t24gTCWpgeL0K44T6qQHIJE71+0buG7aK61x36Ux6XHX4hg5S3h
-         RbBYpXd+jL1bCezNgj73v64VHjkmTBi34/8pRt2CHhcYEl19gOT2EHJBE7MWmDnZIcbG
-         Htt+gYxn2qMUjTQviaWaQmTVDTEnN40385BpDqd2N/oOSVbXlFJZ5zExP8418o1oJ2zh
-         jiVQ==
-X-Gm-Message-State: AOAM533bO42ki0Y93v4gXcbA3zGgzWFMw+f9VZYM4EVdaJGGbCqaUzOV
-        LybylHRDJH2RLqgz+47fr9JWEC8tcgHbXOY7XSGm
-X-Google-Smtp-Source: ABdhPJwGl2Yew0IZrhIcRIB+PA6D6jtLPBcAXq287JWVLoatXUiRC+F29j9ZkG+eUUYXUmHK2aSjHOoPf26wthrPENk=
-X-Received: by 2002:a17:906:434f:: with SMTP id z15mr1080529ejm.178.1592429604473;
- Wed, 17 Jun 2020 14:33:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2q7bLMUd5vfYPBehCH2qcIvt1dDMWXzsM1rSr8xASEs=;
+        b=oRIjclRhCfZirEhGDCSvYt6EqFTjTrFmhrWEs8CtGJG138JCjog9f8CUQU9FVmcPGr
+         MjmLW3J1VHP8fP85PjnLZ5Z0gsLA2adObfJhlqFcu/wvEK2VFm5RAgQ7TLD/rmz/13ta
+         k+eDmfjFT0W0eKhCJ+LIUvpBqqoNBd/arwmJZocmUV0d2KEdBUrQp6J+Fgupb+DwSj2m
+         6CeBmBbPQ10+YErilsSsRTHzixxs7ABCv9B0Xs/onIweBbpylwKEIGKDjnX2l59x92Ih
+         n3ecZdT9TTBZwLRLSmeOrR/1YsNzyp4aTr2WgeG/yM3XjBNqsSESFqA8FuhUl6Bv+jnf
+         KgbA==
+X-Gm-Message-State: AOAM531t5SRL3eQSc7aVfRJNqWm2GXCz0WW7fBGhjwLlTPJ2WjoGDD8X
+        2ZdBZHeLUpzS8ek+30gyZ14Ksg==
+X-Google-Smtp-Source: ABdhPJwWiHmF17czxWIFIza6ENA/VAOzxqML/oF2F5VpOl/XEl59WcAXnyHbcoCd9YUHlSOmjcqCKA==
+X-Received: by 2002:a17:90a:20a2:: with SMTP id f31mr1193084pjg.34.1592431414361;
+        Wed, 17 Jun 2020 15:03:34 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d23sm467248pjv.45.2020.06.17.15.03.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jun 2020 15:03:30 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH v5 0/7] Add seccomp notifier ioctl that enables adding fds
+Date:   Wed, 17 Jun 2020 15:03:20 -0700
+Message-Id: <20200617220327.3731559-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca>
- <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
- <20200330162156.mzh2tsnovngudlx2@madcap2.tricolour.ca> <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
- <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca> <CAHC9VhR_bKSHDn2WAUgkquu+COwZUanc0RV3GRjMDvpoJ5krjQ@mail.gmail.com>
- <871ronf9x2.fsf@x220.int.ebiederm.org> <CAHC9VhR3gbmj5+5MY-whLtStKqDEHgvMRigU9hW0X1kpxF91ag@mail.gmail.com>
- <871rol7nw3.fsf@x220.int.ebiederm.org> <CAHC9VhQvhja=vUEbT3uJgQqpj-480HZzWV7b5oc2GWtzFN1qJw@mail.gmail.com>
- <20200608180330.z23hohfa2nclhxf5@madcap2.tricolour.ca>
-In-Reply-To: <20200608180330.z23hohfa2nclhxf5@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Jun 2020 17:33:13 -0400
-Message-ID: <CAHC9VhQExpNcK-7H+tZg5ouCVts=YmnNiXrgk-ZYenj_zrr1GQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>, nhorman@tuxdriver.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 8, 2020 at 2:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-04-22 13:24, Paul Moore wrote:
-> > On Fri, Apr 17, 2020 at 6:26 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > > Paul Moore <paul@paul-moore.com> writes:
-> > > > On Thu, Apr 16, 2020 at 4:36 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > > >> Paul Moore <paul@paul-moore.com> writes:
-> > > >> > On Mon, Mar 30, 2020 at 1:49 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >> >> On 2020-03-30 13:34, Paul Moore wrote:
-> > > >> >> > On Mon, Mar 30, 2020 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >> >> > > On 2020-03-30 10:26, Paul Moore wrote:
-> > > >> >> > > > On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >> >> > > > > On 2020-03-28 23:11, Paul Moore wrote:
-> > > >> >> > > > > > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >> >> > > > > > > On 2020-03-23 20:16, Paul Moore wrote:
-> > > >> >> > > > > > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >> >> > > > > > > > > On 2020-03-18 18:06, Paul Moore wrote:
-> > > >> >
-> > > >> > ...
-> > > >> >
-> > > >> >> > > Well, every time a record gets generated, *any* record gets generated,
-> > > >> >> > > we'll need to check for which audit daemons this record is in scope and
-> > > >> >> > > generate a different one for each depending on the content and whether
-> > > >> >> > > or not the content is influenced by the scope.
-> > > >> >> >
-> > > >> >> > That's the problem right there - we don't want to have to generate a
-> > > >> >> > unique record for *each* auditd on *every* record.  That is a recipe
-> > > >> >> > for disaster.
-> > > >> >> >
-> > > >> >> > Solving this for all of the known audit records is not something we
-> > > >> >> > need to worry about in depth at the moment (although giving it some
-> > > >> >> > casual thought is not a bad thing), but solving this for the audit
-> > > >> >> > container ID information *is* something we need to worry about right
-> > > >> >> > now.
-> > > >> >>
-> > > >> >> If you think that a different nested contid value string per daemon is
-> > > >> >> not acceptable, then we are back to issuing a record that has only *one*
-> > > >> >> contid listed without any nesting information.  This brings us back to
-> > > >> >> the original problem of keeping *all* audit log history since the boot
-> > > >> >> of the machine to be able to track the nesting of any particular contid.
-> > > >> >
-> > > >> > I'm not ruling anything out, except for the "let's just completely
-> > > >> > regenerate every record for each auditd instance".
-> > > >>
-> > > >> Paul I am a bit confused about what you are referring to when you say
-> > > >> regenerate every record.
-> > > >>
-> > > >> Are you saying that you don't want to repeat the sequence:
-> > > >>         audit_log_start(...);
-> > > >>         audit_log_format(...);
-> > > >>         audit_log_end(...);
-> > > >> for every nested audit daemon?
-> > > >
-> > > > If it can be avoided yes.  Audit performance is already not-awesome,
-> > > > this would make it even worse.
-> > >
-> > > As far as I can see not repeating sequences like that is fundamental
-> > > for making this work at all.  Just because only the audit subsystem
-> > > should know about one or multiple audit daemons.  Nothing else should
-> > > care.
-> >
-> > Yes, exactly, this has been mentioned in the past.  Both the
-> > performance hit and the code complication in the caller are things we
-> > must avoid.
-> >
-> > > >> Or are you saying that you would like to literraly want to send the same
-> > > >> skb to each of the nested audit daemons?
-> > > >
-> > > > Ideally we would reuse the generated audit messages as much as
-> > > > possible.  Less work is better.  That's really my main concern here,
-> > > > let's make sure we aren't going to totally tank performance when we
-> > > > have a bunch of nested audit daemons.
-> > >
-> > > So I think there are two parts of this answer.  Assuming we are talking
-> > > about nesting audit daemons in containers we will have different
-> > > rulesets and I expect most of the events for a nested audit daemon won't
-> > > be of interest to the outer audit daemon.
-> >
-> > Yes, this is another thing that Richard and I have discussed in the
-> > past.  We will basically need to create per-daemon queues, rules,
-> > tracking state, etc.; that is easy enough.  What will be slightly more
-> > tricky is the part where we apply the filters to the individual
-> > records and decide if that record is valid/desired for a given daemon.
-> > I think it can be done without too much pain, and any changes to the
-> > callers, but it will require a bit of work to make sure it is done
-> > well and that records are needlessly duplicated in the kernel.
-> >
-> > > Beyond that it should be very straight forward to keep a pointer and
-> > > leave the buffer as a scatter gather list until audit_log_end
-> > > and translate pids, and rewrite ACIDs attributes in audit_log_end
-> > > when we build the final packet.  Either through collaboration with
-> > > audit_log_format or a special audit_log command that carefully sets
-> > > up the handful of things that need that information.
-> >
-> > In order to maximize record re-use I think we will want to hold off on
-> > assembling the final packet until it is sent to the daemons in the
-> > kauditd thread.  We'll also likely need to create special
-> > audit_log_XXX functions to capture fields which we know will need
-> > translation, e.g. ACID information.  (the reason for the new
-> > audit_log_XXX functions would be to mark the new sg element and ensure
-> > the buffer is handled correctly)
-> >
-> > Regardless of the details, I think the scatter gather approach is the
-> > key here - that seems like the best design idea I've seen thus far.
-> > It enables us to replace portions of the record as needed ... and
-> > possibly use the existing skb cow stuff ... it has been a while, but
-> > does the skb cow functions handle scatter gather skbs or do they need
-> > to be linear?
->
-> How does the selection of this data management technique affect our
-> choice of field format?
+Hello!
 
-I'm not sure it affects the record string, but it might affect the
-in-kernel API as we would likely want to have a special function for
-logging the audit container ID that does the scatter-gather management
-for the record.  There might also need to be some changes to how we
-allocate the records.
+v5:
+- merge ioctl fixes into Sargun's patches directly
+- adjust new API to avoid "ufd_required" argument
+- drop general clean up patches now present in for-next/seccomp
+v4: https://lore.kernel.org/lkml/20200616032524.460144-1-keescook@chromium.org/
 
-However, since you're the one working on these patches I would expect
-you to be the one to look into how this would work and what the
-impacts might be to the code, record format, etc.
+This continues the thread-merge between [1] and [2]. tl;dr: add a way for
+a seccomp user_notif process manager to inject files into the managed
+process in order to handle emulation of various fd-returning syscalls
+across security boundaries. Containers folks and Chrome are in need
+of the feature, and investigating this solution uncovered (and fixed)
+implementation issues with existing file sending routines.
 
-> Does this lock the field value to a fixed length?
+I intend to carry this in the seccomp tree, unless someone has objections.
+:) Please review and test!
 
-I wouldn't think so.  In fact if it did it wouldn't really be a good solution.
+-Kees
 
-Once again, this is something I would expect you to look into.
+[1] https://lore.kernel.org/lkml/20200603011044.7972-1-sargun@sargun.me/
+[2] https://lore.kernel.org/lkml/20200610045214.1175600-1-keescook@chromium.org/
 
-> Does the use of scatter/gather techniques or structures allow
-> the use of different lengths of data for each destination (auditd)?
 
-This is related to the above ... but yes, the reason why Eric and I
-were discussing a scatter/gather approach is that it would presumably
-allow one to break the single record string into pieces which could be
-managed and manipulated much easier than the monolithic record string.
+Kees Cook (5):
+  net/scm: Regularize compat handling of scm_detach_fds()
+  fs: Move __scm_install_fd() to __fd_install_received()
+  fs: Add fd_install_received() wrapper for __fd_install_received()
+  pidfd: Replace open-coded partial fd_install_received()
+  fs: Expand __fd_install_received() to accept fd
 
-> I could see different target audit daemons triggering or switching to a
-> different chunk of data and length.  This does raise a concern related
-> to the previous sig_info2 discussion that the struct contobj that exists
-> at the time of audit_log_exit called could have been reaped by the time
-> the buffer is pulled from the queue for transmission to auditd, but we
-> could hold a reference to it as is done for sig_info2.
+Sargun Dhillon (2):
+  seccomp: Introduce addfd ioctl to seccomp user notifier
+  selftests/seccomp: Test SECCOMP_IOCTL_NOTIF_ADDFD
 
-Yes.
-
-> Looking through the kernel scatter/gather possibilities, I see struct
-> iovec which is used by the readv/writev/preadv/pwritev syscalls, but I'm
-> understanding that this is a kernel implementation that will be not
-> visible to user space.  So would the struct scatterlist be the right
-> choice?
-
-It has been so long since I've looked at the scatter-gather code that
-I can't really say with any confidence at this point.  All I can say
-is that the scatter-gather code really should just be an
-implementation detail in the kernel and should not be visible to
-userspace; userspace should get the same awful, improperly generated
-netlink message it always has received from the kernel ;)
+ fs/file.c                                     |  63 +++++
+ include/linux/file.h                          |  19 ++
+ include/uapi/linux/seccomp.h                  |  22 ++
+ kernel/pid.c                                  |  11 +-
+ kernel/seccomp.c                              | 172 ++++++++++++-
+ net/compat.c                                  |  55 ++---
+ net/core/scm.c                                |  50 +---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 229 ++++++++++++++++++
+ 8 files changed, 540 insertions(+), 81 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.25.1
+
