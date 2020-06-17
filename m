@@ -2,93 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 348081FD00A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 16:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A2001FD02F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 16:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgFQOxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 10:53:16 -0400
-Received: from outbound-smtp53.blacknight.com ([46.22.136.237]:43731 "EHLO
-        outbound-smtp53.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726971AbgFQOxP (ORCPT
+        id S1726758AbgFQO7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 10:59:44 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:54389 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726328AbgFQO7o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 10:53:15 -0400
-Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
-        by outbound-smtp53.blacknight.com (Postfix) with ESMTPS id 1ACF3FAE9A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 15:53:13 +0100 (IST)
-Received: (qmail 30696 invoked from network); 17 Jun 2020 14:53:12 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.5])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Jun 2020 14:53:12 -0000
-Date:   Wed, 17 Jun 2020 15:53:10 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Wed, 17 Jun 2020 10:59:44 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-53-5uhEa_3bOfazzDN9lH_l0Q-1; Wed, 17 Jun 2020 15:59:40 +0100
+X-MC-Unique: 5uhEa_3bOfazzDN9lH_l0Q-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 17 Jun 2020 15:59:39 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 17 Jun 2020 15:59:39 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        "David Howells" <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] fs, pseudo: Do not update atime for pseudo inodes
-Message-ID: <20200617145310.GK3183@techsingularity.net>
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Subject: RE: [PATCH 05/13] fs: check FMODE_WRITE in __kernel_write
+Thread-Topic: [PATCH 05/13] fs: check FMODE_WRITE in __kernel_write
+Thread-Index: AQHWQzOZSLTjK0HIqkOBmunfm0asUajc6RXQ
+Date:   Wed, 17 Jun 2020 14:59:39 +0000
+Message-ID: <a1dcd0f17c9c468980c2f62e8d2a4529@AcuMS.aculab.com>
+References: <20200615121257.798894-1-hch@lst.de>
+ <20200615121257.798894-6-hch@lst.de>
+ <CAHk-=whfMo7gvco8N5qEjh+jSqezv+bd+N-7txpNokD39t=dhQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whfMo7gvco8N5qEjh+jSqezv+bd+N-7txpNokD39t=dhQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The kernel uses internal mounts created by kern_mount() and populated
-with files with no lookup path by alloc_file_pseudo() for a variety of
-reasons. An relevant example is anonymous pipes because every vfs_write
-also checks if atime needs to be updated even though it is unnecessary.
-Most of the relevant users for alloc_file_pseudo() either have no statfs
-helper or use simple_statfs which does not return st_atime. The closest
-proxy measure is the proc fd representations of such inodes which do not
-appear to change once they are created. This patch sets the S_NOATIME
-on inode->i_flags for inodes created by new_inode_pseudo() so that atime
-will not be updated.
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTUgSnVuZSAyMDIwIDE3OjQwDQo+IE9uIE1v
+biwgSnVuIDE1LCAyMDIwIGF0IDU6MTMgQU0gQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+
+IHdyb3RlOg0KPiA+DQo+ID4gV2Ugc3RpbGwgbmVlZCB0byBjaGVjayBpZiB0aGUgZtGVIGlzIG9w
+ZW4gd3JpdGUsIGV2ZW4gZm9yIHRoZSBsb3ctbGV2ZWwNCj4gPiBoZWxwZXIuDQo+IA0KPiBJcyB0
+aGVyZSBhY3R1YWxseSBhIHdheSB0byB0cmlnZ2VyIHNvbWV0aGluZyBsaWtlIHRoaXM/IEknbSB3
+b25kZXJpbmcNCj4gaWYgaXQncyB3b3J0aCBhIFdBUk5fT05fT05DRSgpPw0KPiANCj4gSXQgZG9l
+c24ndCBzb3VuZCBzZW5zaWJsZSB0byBoYXZlIHNvbWUga2VybmVsIGZ1bmN0aW9uYWxpdHkgdHJ5
+IHRvDQo+IHdyaXRlIHRvIGEgZmlsZSBpdCBkaWRuJ3Qgb3BlbiBmb3Igd3JpdGUsIGFuZCBzb3Vu
+ZHMgbGlrZSBhIGtlcm5lbCBidWcNCj4gaWYgdGhpcyBjYXNlIHdlcmUgdG8gZXZlciB0cmlnZ2Vy
+Li4NCg0KSXQncyBhIGNoZWFwIHRlc3QgYXQgdGhlIHRvcCBvZiBzb21lIGZhaXJseSBoZWF2eSBj
+b2RlLg0KRmFpbGluZyB0aGUgcmVxdWVzdCB3aWxsIHNvb24gaWRlbnRpZnkgdGhlIGJ1Zy4NCg0K
+CURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBN
+b3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAx
+Mzk3Mzg2IChXYWxlcykNCg==
 
-The test motivating this was "perf bench sched messaging --pipe" where
-atime-related functions were noticeable in the profiles. On a single-socket
-machine using threads the difference of the patch was as follows. The
-difference in performance was
-
-                          5.8.0-rc1              5.8.0-rc1
-                            vanilla       pseudoatime-v1r1
-Amean     1       0.4807 (   0.00%)      0.4623 *   3.81%*
-Amean     3       1.5543 (   0.00%)      1.4610 (   6.00%)
-Amean     5       2.5647 (   0.00%)      2.5183 (   1.81%)
-Amean     7       3.7407 (   0.00%)      3.7120 (   0.77%)
-Amean     12      5.9900 (   0.00%)      5.5233 (   7.79%)
-Amean     18      8.8727 (   0.00%)      6.8353 *  22.96%*
-Amean     24     11.1510 (   0.00%)      8.9123 *  20.08%*
-Amean     30     13.9330 (   0.00%)     10.8743 *  21.95%*
-Amean     32     14.2177 (   0.00%)     10.9923 *  22.69%*
-
-Note that I consider the impact to be disproportionate and so it may not
-be universal. On a profiled run for just *one* group, the difference in
-perf profiles for atime-related functions were
-
-     0.23%     -0.18%  [kernel.vmlinux]    [k] atime_needs_update
-     0.13%     -0.02%  [kernel.vmlinux]    [k] touch_atime
-
-So there is a large reduction in atime overhead which on this particular
-machine must have gotten incrementally worse as the group count
-increased. I could measure it specifically but I think it's reasonable
-to reduce atime overhead for pseudo files unconditionally.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- fs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 72c4c347afb7..6d4ea0c9fe3e 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -930,6 +930,7 @@ struct inode *new_inode_pseudo(struct super_block *sb)
- 	if (inode) {
- 		spin_lock(&inode->i_lock);
- 		inode->i_state = 0;
-+		inode->i_flags |= S_NOATIME;
- 		spin_unlock(&inode->i_lock);
- 		INIT_LIST_HEAD(&inode->i_sb_list);
- 	}
