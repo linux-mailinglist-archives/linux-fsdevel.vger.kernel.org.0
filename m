@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4793A1FC799
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1379E1FC793
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbgFQHi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 03:38:29 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:43099 "EHLO
+        id S1726833AbgFQHiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 03:38:14 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:33941 "EHLO
         wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726769AbgFQHiI (ORCPT
+        by vger.kernel.org with ESMTP id S1726804AbgFQHiN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 03:38:08 -0400
+        Wed, 17 Jun 2020 03:38:13 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id D04F1561;
-        Wed, 17 Jun 2020 03:38:06 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:38:07 -0400
+        by mailout.west.internal (Postfix) with ESMTP id E83FC478;
+        Wed, 17 Jun 2020 03:38:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:38:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         subject:from:to:cc:date:message-id:in-reply-to:references
         :mime-version:content-type:content-transfer-encoding; s=fm3; bh=
-        YP81i3I+Z4aS6pPC7VYSp+SNREBPRhMa7fFT8ZR5kf8=; b=VARnqolEz9kMpyOG
-        rueMBTTc+omAW2E/8JihoNv6+SbQLONF4FMTPJhJzGUjCqPFVvgTtZklKCqXuKQH
-        sao7DxZ/XzN70CRTPA4E4bnihrSsTnOOIekMaob8Kp/iVRStsBGraheOmaT7Shij
-        E2oMFstbgp00D+43D+GzXGoFCCP4ZW+v9Ejjg0RjLeg2HecT1MBulnu37pbCEi7Q
-        aveHGFplNn/At35OKw02tWbRBE1KLjGR2XACHGKDsn+FJjU71RjR3x7pIkVa5Fis
-        OPsVsMPv+PWwWLkrQAkF4XEl0yK87QYQ65mNLiGKQ6HfHfhOyBZfwq+pNTdpYmk6
-        Ncy7RA==
+        U0hpE2t4Jb5LiAicyzV44p0oKfUxQp3342ldxD2V7j8=; b=AHZvD4oMx3a+1tZg
+        NoNMRNSKlQrDTRN65fMY52gYUV/GR435OUwKa89btZespVl4A2nd/Z/FfXHdpX6Z
+        T+OuxZoxYTWiCnM+wVfDAX/nvRFX61vCrIfIFH6GePQmqg5myKzCXeaxX8E9LxPY
+        nDXWPQT0Wmqm9Q0nnNXgvilD2ZJKY/TLnROeHl3cr0k3f4OQ3nHyfCsK1Y0DxLAa
+        2quwgI2bTX7jA0jcqcBmA4PDLroehgGR14Gcj5SVlyV2xygbun/Q5IJDXCjnzmyS
+        1vUeuX4lSVjgtHMkC25ylT4P1acmC/ZXGAoEtHe3U26SC5ADfYV1VniMEG6f/quN
+        entGtA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=YP81i3I+Z4aS6pPC7VYSp+SNREBPRhMa7fFT8ZR5k
-        f8=; b=kA62n4dMK9q8KoCq0Z/fLzeUfL/w+UQpRJXyfpc9mpEclDNnJO5790ci1
-        sle1qA3nJDbJmmv6h/EyIeivRAfB2Ojg4FjP3UhE3Ug9g5LNKRhB7SaOEs9iYc5g
-        9BS3u0SQ8s5wQzb5snW//h3SN9xqTQ0h0CnNZcih2lX2k51leP8zb5jQXast5Slk
-        5HOBBME9yEJXmHyaai5/Kk324Nxye1TngWDKxqLztPnUMYwQv7/mQukwpiMY/XfP
-        MyJ5Aqj6o1C/NLvDN+5UUIk0eGdJbbKApq1euafVZD80efG3+2ma2Jj3IHGXqaA1
-        MD0I5gGbGC1OWOQpG17pQz8z0yqXA==
-X-ME-Sender: <xms:XsjpXgKLoE92dhsF0V8fcFM7aZRABP6vdQoLS6dwplYqAnI1I_6OuA>
+        :x-sasl-enc; s=fm3; bh=U0hpE2t4Jb5LiAicyzV44p0oKfUxQp3342ldxD2V7
+        j8=; b=Pj5ug67ulDJK+utTDVWd5yo7ai80EN2g7Sk3p9h6ejclxbTg+PsPWrw8d
+        v30Mc22VJ3preasooPo0jZqQlMYbdHMF/m9Ma1SEGQaFphYoOyqcZDAdky3Oin5U
+        DKnQBNyGLCzI5DZ06LjOlg4IYq3PdGyxwO4o3mI2u81/ZcfusO2ObOMAF2abjCTe
+        TVmsLG8E51gsSyAokSt2R5KiNysgj4dA4+NiylJp8JtW0FxcaIfzBiiZwDBsBV4f
+        wqVtbblxoUdEvhn10aTrIagcIrrTJ40/gdROrMe2YJ2hNQiFULyG3aNgGkBtzrCv
+        vhuAy6foC+XboRdd21ZqZ+MGrk8BQ==
+X-ME-Sender: <xms:Y8jpXhgeYGSv3Ee0m1-5Psf429ksBWEwaJ3AmMVuwC94sySSeEqfDA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejuddguddvhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
@@ -47,18 +47,17 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejuddguddvhecutefuodetgg
     epvddvvdfgleefhfelgfekvdejjefhvdetfeevueeggeefhfdujeegveejveejgfdunecu
     kfhppeehkedrjedrudelgedrkeejnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrg
     hmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:XsjpXgIYDU4kFtnkUPrcD-ZyPtGbQ5jdO6-jN1GknWPzqQi0JFDHXA>
-    <xmx:XsjpXgtdXdR2d-wTAUmwI4HLSSkO1fpfGQprOWjGATWAmlC9y9HmEg>
-    <xmx:XsjpXtbrX-LRvBGuvwJWD3UxGl8IBVEzC_V-O8EQn6DIHcRrtynUHQ>
-    <xmx:XsjpXix1YaR-vfywETePTw3dNre2k7ALE-fwMlAsqqTGTpXO0CKbEg>
+X-ME-Proxy: <xmx:Y8jpXmB8DO7VD1EisVt8R9QEXCrJnVoDr6QTQYbR-Z-PL8P3Al-Xlg>
+    <xmx:Y8jpXhGN73IV9m33z-WQIdVMyuDSs6oxvaWWgGqxsqPRpLk9bKwgNw>
+    <xmx:Y8jpXmTCSzd9C5MClizP8lWuFYNfBGUF8PSLtY4IioPQXkdmXfHZhQ>
+    <xmx:Y8jpXlrm6II5unf80aogDl7e0-OlaOjxdlk4VBs5ItEDpirvrNQJZA>
 Received: from mickey.themaw.net (58-7-194-87.dyn.iinet.net.au [58.7.194.87])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EC8ED328005D;
-        Wed, 17 Jun 2020 03:38:05 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1736B306215A;
+        Wed, 17 Jun 2020 03:38:11 -0400 (EDT)
 Received: from mickey.themaw.net (localhost [127.0.0.1])
-        by mickey.themaw.net (Postfix) with ESMTP id 79164A0314;
-        Wed, 17 Jun 2020 15:38:03 +0800 (AWST)
-Subject: [PATCH v2 4/6] kernfs: use revision to identify directory node
- changes
+        by mickey.themaw.net (Postfix) with ESMTP id 86338A0314;
+        Wed, 17 Jun 2020 15:38:08 +0800 (AWST)
+Subject: [PATCH v2 5/6] kernfs: refactor attr locking
 From:   Ian Kent <raven@themaw.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -69,8 +68,8 @@ Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 17 Jun 2020 15:38:03 +0800
-Message-ID: <159237948345.89469.9839924207092477321.stgit@mickey.themaw.net>
+Date:   Wed, 17 Jun 2020 15:38:08 +0800
+Message-ID: <159237948850.89469.14590162329652845934.stgit@mickey.themaw.net>
 In-Reply-To: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 User-Agent: StGit/0.19
@@ -82,135 +81,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a kernfs directory node hasn't changed there's no need to search for
-an added (or removed) child dentry.
+The inode operations .permission() and .getattr() use the kernfs node
+write lock but all that's needed is to keep the rb tree stable while
+copying the node attributes. And .permission() is called frequently
+during path walks so it can cause quite a bit of contention between
+kernfs node opertations and path walks when the number of concurrant
+walks is high.
 
-Add a revision counter to kernfs directory nodes so it can be used
-to detect if a directory node has changed.
+Ideally the inode mutex would protect the inode update but .permission()
+may be called both with and without holding the inode mutex so there's no
+way for kernfs .permission() to know if it is the holder of the mutex
+which means it could be released during the update.
+
+So refactor __kernfs_iattrs() by moving the static mutex declaration out
+of the function and changing the function itself a little. And also use
+the mutex to protect the inode attribute fields updated by .permission()
+and .getattr() calls to kernfs_refresh_inode().
+
+Using the attr mutex to protect two different things, the node
+attributes as well as the copy of them to the inode is not ideal. But
+the only other choice is to use two locks which seems like excessive
+ovherhead when the attr mutex is so closely related to the inode fields
+it's protecting.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/kernfs/dir.c             |   17 +++++++++++++++--
- fs/kernfs/kernfs-internal.h |   24 ++++++++++++++++++++++++
- include/linux/kernfs.h      |    5 +++++
- 3 files changed, 44 insertions(+), 2 deletions(-)
+ fs/kernfs/inode.c |   50 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index f4943329e578..03f4f179bbc4 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -383,6 +383,7 @@ static int kernfs_link_sibling(struct kernfs_node *kn)
- 	/* successfully added, account subdir number */
- 	if (kernfs_type(kn) == KERNFS_DIR)
- 		kn->parent->dir.subdirs++;
-+	kernfs_inc_rev(kn->parent);
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index 23a7996d06a9..5c3fac356ce0 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -17,6 +17,8 @@
  
- 	return 0;
- }
-@@ -405,6 +406,7 @@ static bool kernfs_unlink_sibling(struct kernfs_node *kn)
+ #include "kernfs-internal.h"
  
- 	if (kernfs_type(kn) == KERNFS_DIR)
- 		kn->parent->dir.subdirs--;
-+	kernfs_inc_rev(kn->parent);
++static DEFINE_MUTEX(attr_mutex);
++
+ static const struct address_space_operations kernfs_aops = {
+ 	.readpage	= simple_readpage,
+ 	.write_begin	= simple_write_begin,
+@@ -32,33 +34,33 @@ static const struct inode_operations kernfs_iops = {
  
- 	rb_erase(&kn->rb, &kn->parent->dir.children);
- 	RB_CLEAR_NODE(&kn->rb);
-@@ -1044,9 +1046,16 @@ struct kernfs_node *kernfs_create_empty_dir(struct kernfs_node *parent,
- 
- static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
+ static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
  {
-+	struct kernfs_node *parent;
- 	struct kernfs_node *kn;
- 
- 	if (flags & LOOKUP_RCU) {
-+		/* Directory node changed? */
-+		parent = kernfs_dentry_node(dentry->d_parent);
-+
-+		if (!kernfs_dir_changed(parent, dentry))
-+			return 1;
-+
- 		kn = kernfs_dentry_node(dentry);
- 		if (!kn) {
- 			/* Negative hashed dentry, tell the VFS to switch to
-@@ -1093,8 +1102,6 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
- 
- 	kn = kernfs_dentry_node(dentry);
- 	if (!kn) {
--		struct kernfs_node *parent;
+-	static DEFINE_MUTEX(iattr_mutex);
+-	struct kernfs_iattrs *ret;
 -
- 		/* If the kernfs node can be found this is a stale negative
- 		 * hashed dentry so it must be discarded and the lookup redone.
- 		 */
-@@ -1102,6 +1109,10 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
- 		if (parent) {
- 			const void *ns = NULL;
+-	mutex_lock(&iattr_mutex);
++	struct kernfs_iattrs *iattr = NULL;
  
-+			/* Directory node changed? */
-+			if (kernfs_dir_changed(parent, dentry))
-+				goto out_bad;
-+
- 			if (kernfs_ns_enabled(parent))
- 				ns = kernfs_info(dentry->d_parent->d_sb)->ns;
- 			kn = kernfs_find_ns(parent, dentry->d_name.name, ns);
-@@ -1156,6 +1167,8 @@ static struct dentry *kernfs_iop_lookup(struct inode *dir,
+-	if (kn->iattr || !alloc)
++	mutex_lock(&attr_mutex);
++	if (kn->iattr || !alloc) {
++		iattr = kn->iattr;
+ 		goto out_unlock;
++	}
  
- 	down_read(&kernfs_rwsem);
+-	kn->iattr = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
+-	if (!kn->iattr)
++	iattr = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
++	if (!iattr)
+ 		goto out_unlock;
  
-+	kernfs_set_rev(dentry, parent);
-+
- 	if (kernfs_ns_enabled(parent))
- 		ns = kernfs_info(dir->i_sb)->ns;
+ 	/* assign default attributes */
+-	kn->iattr->ia_uid = GLOBAL_ROOT_UID;
+-	kn->iattr->ia_gid = GLOBAL_ROOT_GID;
++	iattr->ia_uid = GLOBAL_ROOT_UID;
++	iattr->ia_gid = GLOBAL_ROOT_GID;
  
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 097c1a989aa4..a7b0e2074260 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -82,6 +82,30 @@ static inline struct kernfs_node *kernfs_dentry_node(struct dentry *dentry)
- 	return d_inode(dentry)->i_private;
+-	ktime_get_real_ts64(&kn->iattr->ia_atime);
+-	kn->iattr->ia_mtime = kn->iattr->ia_atime;
+-	kn->iattr->ia_ctime = kn->iattr->ia_atime;
++	ktime_get_real_ts64(&iattr->ia_atime);
++	iattr->ia_mtime = iattr->ia_atime;
++	iattr->ia_ctime = iattr->ia_atime;
+ 
+-	simple_xattrs_init(&kn->iattr->xattrs);
+-	atomic_set(&kn->iattr->nr_user_xattrs, 0);
+-	atomic_set(&kn->iattr->user_xattr_size, 0);
++	simple_xattrs_init(&iattr->xattrs);
++	atomic_set(&iattr->nr_user_xattrs, 0);
++	atomic_set(&iattr->user_xattr_size, 0);
++	kn->iattr = iattr;
+ out_unlock:
+-	ret = kn->iattr;
+-	mutex_unlock(&iattr_mutex);
+-	return ret;
++	mutex_unlock(&attr_mutex);
++	return iattr;
  }
  
-+static inline void kernfs_set_rev(struct dentry *dentry,
-+				  struct kernfs_node *kn)
-+{
-+	dentry->d_time = kn->dir.rev;
-+}
-+
-+static inline void kernfs_inc_rev(struct kernfs_node *kn)
-+{
-+	if (kernfs_type(kn) == KERNFS_DIR) {
-+		if (!++kn->dir.rev)
-+			kn->dir.rev++;
-+	}
-+}
-+
-+static inline bool kernfs_dir_changed(struct kernfs_node *kn,
-+				      struct dentry *dentry)
-+{
-+	if (kernfs_type(kn) == KERNFS_DIR) {
-+		if (kn->dir.rev != dentry->d_time)
-+			return true;
-+	}
-+	return false;
-+}
-+
- extern const struct super_operations kernfs_sops;
- extern struct kmem_cache *kernfs_node_cache, *kernfs_iattrs_cache;
+ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+@@ -189,9 +191,11 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct kernfs_node *kn = inode->i_private;
  
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 89f6a4214a70..74727d98e380 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -98,6 +98,11 @@ struct kernfs_elem_dir {
- 	 * better directly in kernfs_node but is here to save space.
- 	 */
- 	struct kernfs_root	*root;
-+	/*
-+	 * Monotonic revision counter, used to identify if a directory
-+	 * node has changed during revalidation.
-+	 */
-+	unsigned long rev;
- };
+-	down_write(&kernfs_rwsem);
++	down_read(&kernfs_rwsem);
++	mutex_lock(&attr_mutex);
+ 	kernfs_refresh_inode(kn, inode);
+-	up_writeread(&kernfs_rwsem);
++	mutex_unlock(&attr_mutex);
++	up_read(&kernfs_rwsem);
  
- struct kernfs_elem_symlink {
+ 	generic_fillattr(inode, stat);
+ 	return 0;
+@@ -281,9 +285,11 @@ int kernfs_iop_permission(struct inode *inode, int mask)
+ 
+ 	kn = inode->i_private;
+ 
+-	down_write(&kernfs_rwsem);
++	down_read(&kernfs_rwsem);
++	mutex_lock(&attr_mutex);
+ 	kernfs_refresh_inode(kn, inode);
+-	up_write(&kernfs_rwsem);
++	mutex_unlock(&attr_mutex);
++	up_read(&kernfs_rwsem);
+ 
+ 	return generic_permission(inode, mask);
+ }
 
 
