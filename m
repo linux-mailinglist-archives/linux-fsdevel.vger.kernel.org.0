@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1893A1FC78D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C5F11FC79C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 09:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbgFQHht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 03:37:49 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:54675 "EHLO
+        id S1726510AbgFQHh4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 03:37:56 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:39781 "EHLO
         wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725901AbgFQHhs (ORCPT
+        by vger.kernel.org with ESMTP id S1725901AbgFQHhz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 03:37:48 -0400
+        Wed, 17 Jun 2020 03:37:55 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 3BF69561;
-        Wed, 17 Jun 2020 03:37:47 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:37:47 -0400
+        by mailout.west.internal (Postfix) with ESMTP id 91DB85A1;
+        Wed, 17 Jun 2020 03:37:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 17 Jun 2020 03:37:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        subject:from:to:cc:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm3; bh=deSknUuePkPVUMFanOBKM4EFKl
-        G91i09uI4kkHritao=; b=E4QNVxCgWqec3OWDCZ9LyfGcARtXufmujhExPOCQ1X
-        4TwUZzboMsThL2lFiJ3RTUAk+qH7JYGrG9nZ9dRQQ3t10Jhyd2OEwfbPuD0ffDo6
-        ND9Xway+VIYgwoPG96I7ZZjqTWR2qEp1o7fJbJnbwfNLASPpB6wzz2L0XRJ5jpBu
-        glCJ5pXInT0S4yHE9ewBGG5eshStUaeNjkZQT9w9lP9lk/hX84lVbLxknf/umrak
-        hRqDPpYig7A3R2TaPqtcR88Wh9R1n5/ypT3xND/lvgd3BXi6n4Ol3HVzc8P0rWDW
-        hT4JkdjDSV2HF0bT7EtqIHmFHva17g8Z0nWhz10AYkPg==
+        subject:from:to:cc:date:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=fm3; bh=
+        KjcVrueijtwR2vVGeRp/lq0vvqKnNOZUqYEQUpc1N74=; b=j1PlPr9XwGVu4Iit
+        iOHKgMwy/4t+dbQP3f23Y6whcwve4gYDzYj+4QDEXdNUihgV3IF4wBWKDHgM055B
+        rePTza2gO3cWlZmU2484u0tgi3Fpku8L5MqLPjUOelCCzkhRIPyOxdbTc2tF9mGW
+        hJZbLbfkwr2+Z1BlCNwPFfjEehHI1JqUQojd9HhdtxAzjdZa/auUYZ9BGx7TQKPt
+        jtI62YnP074tW3X6aH8vJeiFsLqJ46zMAWwpD7fO8IraDUWImyJDSSAiyXvs2efR
+        IqhwdbU2mpsCx5yNYoqtFOdb5+5ef7Z0j3rAmHsujta8F2XRnNIi/xEIiVQNOuAz
+        PDWPZg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=deSknU
-        uePkPVUMFanOBKM4EFKlG91i09uI4kkHritao=; b=GC5+45usB1GFyP495DypVm
-        TXCHOx7SjND3pATQyVritfQd8+LdLFOzoALMeXGcDmxpBX84kDq2XtFiKN2fyu36
-        vQlvzC+cuMKjW1GajWcUmQFc2nau1rTn9H/gO546mu26Ad6/LfOmDEVdASQuvDQf
-        7EumYzN0VS0Iypg61aFb1zO/rVGrdHIA5Pc3EmnZmFCam8lTnOVg+yucWKtLvjsP
-        jeYn3HBv6/iD4xRkCTcNPCoTdvNM7CXeRU7h2jfny5Ko7TjCziX9yXq6b2faaR6i
-        4ug/x598aQ9V3TXpJJi54Irz6cX3RILwMkCrfIXy400xfmOps3rHFT5RiFL658aQ
-        ==
-X-ME-Sender: <xms:SsjpXoQwWzrK2GSRiN3Lo6PpJky8F_h_I-arERFqxWfxx95Y44MHOg>
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=KjcVrueijtwR2vVGeRp/lq0vvqKnNOZUqYEQUpc1N
+        74=; b=lmxhk20O3iRsZtb6QdoMI6SVXIaJL3V5mbH22q7mKO4Znyxd5XNfhnba/
+        6UKH43nXtYpH91IAj2jCtQ0s4fpY+7OYTjCzK2XDCyYN4ECFEn3immKw5wRUGeDQ
+        8MRP+taY2A0FS81FjWYSoFK/tVSKpdPpJUzIK159ewldfb15DDGWfCKPUBBWt4NH
+        ry9025GQkRGClTqD8C7KkU72ntAxy+EktEsmAd+CcWZt15Q5HzfKtMw1DDQkfpSk
+        pLVpNooA0o8GwPizMrfSVDwqW0iCWncsZONIchXBgDRW1z52rOxYjAK8VfwC7uwx
+        rPJthVUXdlEL3k2zyKWooY9A77CFA==
+X-ME-Sender: <xms:UcjpXikCWnFGEoVIRor4162LHopfEVrHRWY9iatHymS-V_I_5CkkFQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejuddguddvhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefuhffvfffkfgggtgfgsehtjedttddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepue
-    eikeevgeekveetueffgefhveetieeigefghfejkefgteevheeguddufeethfdunecukfhp
-    peehkedrjedrudelgedrkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:SsjpXlxcEECerBnzmPG_WMrELBAxSjJCFLnEMPUZrGXN2BdEZcnuGg>
-    <xmx:SsjpXl1TIt4dN7q3NmMmC3-qxqwXP0AOz8z9OYklLrLE1zafhqQc5g>
-    <xmx:SsjpXsB4IjApovAxcWwouecsIb1DzykimXySKNf5GHEHoNbsCAbU7w>
-    <xmx:SsjpXvaNTJz0D43ZviNmIzGP3Dp4DVhD_AFnXlQWdvA9Xw2uYbVe5A>
+    enucfjughrpefuhffvfffkjghffgggtgfgsehtjedttddtreejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvddvvdfgleefhfelgfekvdejjefhvdetfeevueeggeefhfdujeegveejveejgfdunecu
+    kfhppeehkedrjedrudelgedrkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:UcjpXp3dBfU5nndNzy9jjzFLRTNip59qLBHMuRHhcdrLCa0rzoaf1Q>
+    <xmx:UcjpXgrCtgLSQ4bdB9dBpcdzTh5hYvifeV0ISttQml-1LsAOqvZJRA>
+    <xmx:UcjpXmkGQSyGjjrSyzO4gme0xFnSN58RvpI0pNZb0L8ZIjYE7N5YXg>
+    <xmx:UcjpXk_7NqYPAc62FviJxEAi5HTRRz9YovVTK5DSQOAkvf5UgReyCA>
 Received: from mickey.themaw.net (58-7-194-87.dyn.iinet.net.au [58.7.194.87])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6536D3280063;
-        Wed, 17 Jun 2020 03:37:46 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6719B30618C1;
+        Wed, 17 Jun 2020 03:37:52 -0400 (EDT)
 Received: from mickey.themaw.net (localhost [127.0.0.1])
-        by mickey.themaw.net (Postfix) with ESMTP id 3FCD1A0314;
-        Wed, 17 Jun 2020 15:37:43 +0800 (AWST)
-Subject: [PATCH v2 0/6] kernfs: proposed locking and concurrency improvement
+        by mickey.themaw.net (Postfix) with ESMTP id 515DEA0314;
+        Wed, 17 Jun 2020 15:37:48 +0800 (AWST)
+Subject: [PATCH v2 1/6] kernfs: switch kernfs to use an rwsem
 From:   Ian Kent <raven@themaw.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -67,8 +68,10 @@ Cc:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 17 Jun 2020 15:37:43 +0800
-Message-ID: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+Date:   Wed, 17 Jun 2020 15:37:48 +0800
+Message-ID: <159237946827.89469.3338654922163121567.stgit@mickey.themaw.net>
+In-Reply-To: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -78,83 +81,598 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For very large IBM Power mainframe systems with hundreds of CPUs and TBs
-of RAM booting can take a very long time.
+The kernfs global lock restricts the ability to perform kernfs node
+lookup operations in parallel.
 
-Initial reports showed that booting a configuration of several hundred
-CPUs and 64TB of RAM would take more than 30 minutes and require kernel
-parameters of udev.children-max=1024 systemd.default_timeout_start_sec=3600
-to prevent dropping into emergency mode.
+Change the kernfs mutex to an rwsem so that, when oppertunity arises,
+node searches can be done in parallel.
 
-Gathering information about what's happening during the boot is a bit
-challenging but two main issues appeared to be: a large number of path
-lookups for non-existent files, and very high lock contention in the VFS
-during path walks particularly in the dentry allocation code path.
-
-The underlying cause of this was thought to be the sheer number of sysfs
-memory objects, 100,000+ for a 64TB memory configuration as the hardware
-divides the memory into 256MB logical blocks. This is believed to be due
-to either IBM Power hardware design or a requirement of the mainframe
-software used to create logical partitions (LPARs, that are used to
-install an operating system to provide services), since these can be made
-up of a wide range of resources, CPU, Memory, disks, etc.
-
-It's unclear yet whether the creation of syfs nodes for these memory
-devices can be postponed or spread out over a larger amount of time.
-That's because the high overhead looks to be due to notifications received
-by udev which invokes a systemd program for them and attempts by systemd
-folks to improve this have not focused on changing the handling of these
-notifications, possibly because of difficulties with doing so. This
-remains an avenue of investigation.
-
-Kernel traces show there are many path walks with a fairly large portion
-of those for non-existent paths. However, looking at the systemd code
-invoked by the udev action it appears there's only one additional lookup
-for each invocation so the large number of negative lookups is most likely
-due to the large number of notifications rather than a fault with the
-systemd program.
-
-The series here tries to reduce the locking needed during path walks
-based on the assumption that there are many path walks with a fairly
-large portion of those for non-existent paths, as described above.
-
-That was done by adding kernfs negative dentry caching (non-existent
-paths) to avoid continual alloc/free cycle of dentries and a read/write
-semaphore introduced to increase kernfs concurrency during path walks.
-
-With these changes we still need kernel parameters of udev.children-max=2048
-and systemd.default_timeout_start_sec=300 for the fastest boot times of
-under 5 minutes.
-
-There may be opportunities for further improvements but the series here
-has seen a fair amount of testing and thinking about what else these could
-be. Discussing it with Rick Lindsay, I suspect improvements will get more
-difficult to implement for somewhat less improvement so I think what we
-have here is a good start for now.
-
-Changes since v1:
-- fix locking in .permission() and .getattr() by re-factoring the attribute
-  handling code.
+Signed-off-by: Ian Kent <raven@themaw.net>
 ---
+ fs/kernfs/dir.c             |  119 +++++++++++++++++++++++--------------------
+ fs/kernfs/file.c            |    4 +
+ fs/kernfs/inode.c           |   16 +++---
+ fs/kernfs/kernfs-internal.h |    5 +-
+ fs/kernfs/mount.c           |   12 ++--
+ fs/kernfs/symlink.c         |    4 +
+ 6 files changed, 86 insertions(+), 74 deletions(-)
 
-Ian Kent (6):
-      kernfs: switch kernfs to use an rwsem
-      kernfs: move revalidate to be near lookup
-      kernfs: improve kernfs path resolution
-      kernfs: use revision to identify directory node changes
-      kernfs: refactor attr locking
-      kernfs: make attr_mutex a local kernfs node lock
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 9aec80b9d7c6..d8213fc65eba 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -17,7 +17,7 @@
+ 
+ #include "kernfs-internal.h"
+ 
+-DEFINE_MUTEX(kernfs_mutex);
++DECLARE_RWSEM(kernfs_rwsem);
+ static DEFINE_SPINLOCK(kernfs_rename_lock);	/* kn->parent and ->name */
+ static char kernfs_pr_cont_buf[PATH_MAX];	/* protected by rename_lock */
+ static DEFINE_SPINLOCK(kernfs_idr_lock);	/* root->ino_idr */
+@@ -26,10 +26,21 @@ static DEFINE_SPINLOCK(kernfs_idr_lock);	/* root->ino_idr */
+ 
+ static bool kernfs_active(struct kernfs_node *kn)
+ {
+-	lockdep_assert_held(&kernfs_mutex);
+ 	return atomic_read(&kn->active) >= 0;
+ }
+ 
++static bool kernfs_active_write(struct kernfs_node *kn)
++{
++	lockdep_assert_held_write(&kernfs_rwsem);
++	return kernfs_active(kn);
++}
++
++static bool kernfs_active_read(struct kernfs_node *kn)
++{
++	lockdep_assert_held_read(&kernfs_rwsem);
++	return kernfs_active(kn);
++}
++
+ static bool kernfs_lockdep(struct kernfs_node *kn)
+ {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+@@ -340,7 +351,7 @@ static int kernfs_sd_compare(const struct kernfs_node *left,
+  *	@kn->parent->dir.children.
+  *
+  *	Locking:
+- *	mutex_lock(kernfs_mutex)
++ *	kernfs_rwsem write lock
+  *
+  *	RETURNS:
+  *	0 on susccess -EEXIST on failure.
+@@ -385,7 +396,7 @@ static int kernfs_link_sibling(struct kernfs_node *kn)
+  *	removed, %false if @kn wasn't on the rbtree.
+  *
+  *	Locking:
+- *	mutex_lock(kernfs_mutex)
++ *	kernfs_rwsem write lock
+  */
+ static bool kernfs_unlink_sibling(struct kernfs_node *kn)
+ {
+@@ -455,14 +466,14 @@ void kernfs_put_active(struct kernfs_node *kn)
+  * return after draining is complete.
+  */
+ static void kernfs_drain(struct kernfs_node *kn)
+-	__releases(&kernfs_mutex) __acquires(&kernfs_mutex)
++	__releases(&kernfs_rwsem) __acquires(&kernfs_rwsem)
+ {
+ 	struct kernfs_root *root = kernfs_root(kn);
+ 
+-	lockdep_assert_held(&kernfs_mutex);
++	lockdep_assert_held_write(&kernfs_rwsem);
+ 	WARN_ON_ONCE(kernfs_active(kn));
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	if (kernfs_lockdep(kn)) {
+ 		rwsem_acquire(&kn->dep_map, 0, 0, _RET_IP_);
+@@ -481,7 +492,7 @@ static void kernfs_drain(struct kernfs_node *kn)
+ 
+ 	kernfs_drain_open_files(kn);
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ }
+ 
+ /**
+@@ -560,10 +571,10 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
+ 		goto out_bad_unlocked;
+ 
+ 	kn = kernfs_dentry_node(dentry);
+-	mutex_lock(&kernfs_mutex);
++	down_read(&kernfs_rwsem);
+ 
+ 	/* The kernfs node has been deactivated */
+-	if (!kernfs_active(kn))
++	if (!kernfs_active_read(kn))
+ 		goto out_bad;
+ 
+ 	/* The kernfs node has been moved? */
+@@ -579,10 +590,10 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
+ 	    kernfs_info(dentry->d_sb)->ns != kn->ns)
+ 		goto out_bad;
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ 	return 1;
+ out_bad:
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ out_bad_unlocked:
+ 	return 0;
+ }
+@@ -764,7 +775,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 	bool has_ns;
+ 	int ret;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 
+ 	ret = -EINVAL;
+ 	has_ns = kernfs_ns_enabled(parent);
+@@ -779,7 +790,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 	if (parent->flags & KERNFS_EMPTY_DIR)
+ 		goto out_unlock;
+ 
+-	if ((parent->flags & KERNFS_ACTIVATED) && !kernfs_active(parent))
++	if ((parent->flags & KERNFS_ACTIVATED) && !kernfs_active_write(parent))
+ 		goto out_unlock;
+ 
+ 	kn->hash = kernfs_name_hash(kn->name, kn->ns);
+@@ -795,7 +806,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 		ps_iattr->ia_mtime = ps_iattr->ia_ctime;
+ 	}
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	/*
+ 	 * Activate the new node unless CREATE_DEACTIVATED is requested.
+@@ -809,7 +820,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 	return 0;
+ 
+ out_unlock:
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	return ret;
+ }
+ 
+@@ -830,7 +841,7 @@ static struct kernfs_node *kernfs_find_ns(struct kernfs_node *parent,
+ 	bool has_ns = kernfs_ns_enabled(parent);
+ 	unsigned int hash;
+ 
+-	lockdep_assert_held(&kernfs_mutex);
++	lockdep_assert_held(&kernfs_rwsem);
+ 
+ 	if (has_ns != (bool)ns) {
+ 		WARN(1, KERN_WARNING "kernfs: ns %s in '%s' for '%s'\n",
+@@ -862,7 +873,7 @@ static struct kernfs_node *kernfs_walk_ns(struct kernfs_node *parent,
+ 	size_t len;
+ 	char *p, *name;
+ 
+-	lockdep_assert_held(&kernfs_mutex);
++	lockdep_assert_held_read(&kernfs_rwsem);
+ 
+ 	/* grab kernfs_rename_lock to piggy back on kernfs_pr_cont_buf */
+ 	spin_lock_irq(&kernfs_rename_lock);
+@@ -902,10 +913,10 @@ struct kernfs_node *kernfs_find_and_get_ns(struct kernfs_node *parent,
+ {
+ 	struct kernfs_node *kn;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_read(&kernfs_rwsem);
+ 	kn = kernfs_find_ns(parent, name, ns);
+ 	kernfs_get(kn);
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ 
+ 	return kn;
+ }
+@@ -926,10 +937,10 @@ struct kernfs_node *kernfs_walk_and_get_ns(struct kernfs_node *parent,
+ {
+ 	struct kernfs_node *kn;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_read(&kernfs_rwsem);
+ 	kn = kernfs_walk_ns(parent, path, ns);
+ 	kernfs_get(kn);
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ 
+ 	return kn;
+ }
+@@ -1084,7 +1095,7 @@ static struct dentry *kernfs_iop_lookup(struct inode *dir,
+ 	struct inode *inode;
+ 	const void *ns = NULL;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_read(&kernfs_rwsem);
+ 
+ 	if (kernfs_ns_enabled(parent))
+ 		ns = kernfs_info(dir->i_sb)->ns;
+@@ -1107,7 +1118,7 @@ static struct dentry *kernfs_iop_lookup(struct inode *dir,
+ 	/* instantiate and hash dentry */
+ 	ret = d_splice_alias(inode, dentry);
+  out_unlock:
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ 	return ret;
+ }
+ 
+@@ -1226,7 +1237,7 @@ static struct kernfs_node *kernfs_next_descendant_post(struct kernfs_node *pos,
+ {
+ 	struct rb_node *rbn;
+ 
+-	lockdep_assert_held(&kernfs_mutex);
++	lockdep_assert_held_write(&kernfs_rwsem);
+ 
+ 	/* if first iteration, visit leftmost descendant which may be root */
+ 	if (!pos)
+@@ -1262,7 +1273,7 @@ void kernfs_activate(struct kernfs_node *kn)
+ {
+ 	struct kernfs_node *pos;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 
+ 	pos = NULL;
+ 	while ((pos = kernfs_next_descendant_post(pos, kn))) {
+@@ -1276,14 +1287,14 @@ void kernfs_activate(struct kernfs_node *kn)
+ 		pos->flags |= KERNFS_ACTIVATED;
+ 	}
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ }
+ 
+ static void __kernfs_remove(struct kernfs_node *kn)
+ {
+ 	struct kernfs_node *pos;
+ 
+-	lockdep_assert_held(&kernfs_mutex);
++	lockdep_assert_held_write(&kernfs_rwsem);
+ 
+ 	/*
+ 	 * Short-circuit if non-root @kn has already finished removal.
+@@ -1298,7 +1309,7 @@ static void __kernfs_remove(struct kernfs_node *kn)
+ 	/* prevent any new usage under @kn by deactivating all nodes */
+ 	pos = NULL;
+ 	while ((pos = kernfs_next_descendant_post(pos, kn)))
+-		if (kernfs_active(pos))
++		if (kernfs_active_write(pos))
+ 			atomic_add(KN_DEACTIVATED_BIAS, &pos->active);
+ 
+ 	/* deactivate and unlink the subtree node-by-node */
+@@ -1306,7 +1317,7 @@ static void __kernfs_remove(struct kernfs_node *kn)
+ 		pos = kernfs_leftmost_descendant(kn);
+ 
+ 		/*
+-		 * kernfs_drain() drops kernfs_mutex temporarily and @pos's
++		 * kernfs_drain() drops kernfs_rwsem temporarily and @pos's
+ 		 * base ref could have been put by someone else by the time
+ 		 * the function returns.  Make sure it doesn't go away
+ 		 * underneath us.
+@@ -1353,9 +1364,9 @@ static void __kernfs_remove(struct kernfs_node *kn)
+  */
+ void kernfs_remove(struct kernfs_node *kn)
+ {
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	__kernfs_remove(kn);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ }
+ 
+ /**
+@@ -1442,17 +1453,17 @@ bool kernfs_remove_self(struct kernfs_node *kn)
+ {
+ 	bool ret;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	kernfs_break_active_protection(kn);
+ 
+ 	/*
+ 	 * SUICIDAL is used to arbitrate among competing invocations.  Only
+ 	 * the first one will actually perform removal.  When the removal
+ 	 * is complete, SUICIDED is set and the active ref is restored
+-	 * while holding kernfs_mutex.  The ones which lost arbitration
+-	 * waits for SUICDED && drained which can happen only after the
+-	 * enclosing kernfs operation which executed the winning instance
+-	 * of kernfs_remove_self() finished.
++	 * while holding kernfs_rwsem for write.  The ones which lost
++	 * arbitration waits for SUICIDED && drained which can happen only
++	 * after the enclosing kernfs operation which executed the winning
++	 * instance of kernfs_remove_self() finished.
+ 	 */
+ 	if (!(kn->flags & KERNFS_SUICIDAL)) {
+ 		kn->flags |= KERNFS_SUICIDAL;
+@@ -1470,9 +1481,9 @@ bool kernfs_remove_self(struct kernfs_node *kn)
+ 			    atomic_read(&kn->active) == KN_DEACTIVATED_BIAS)
+ 				break;
+ 
+-			mutex_unlock(&kernfs_mutex);
++			up_write(&kernfs_rwsem);
+ 			schedule();
+-			mutex_lock(&kernfs_mutex);
++			down_write(&kernfs_rwsem);
+ 		}
+ 		finish_wait(waitq, &wait);
+ 		WARN_ON_ONCE(!RB_EMPTY_NODE(&kn->rb));
+@@ -1480,12 +1491,12 @@ bool kernfs_remove_self(struct kernfs_node *kn)
+ 	}
+ 
+ 	/*
+-	 * This must be done while holding kernfs_mutex; otherwise, waiting
+-	 * for SUICIDED && deactivated could finish prematurely.
++	 * This must be done while holding kernfs_rwsem for write; otherwise,
++	 * waiting for SUICIDED && deactivated could finish prematurely.
+ 	 */
+ 	kernfs_unbreak_active_protection(kn);
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	return ret;
+ }
+ 
+@@ -1509,13 +1520,13 @@ int kernfs_remove_by_name_ns(struct kernfs_node *parent, const char *name,
+ 		return -ENOENT;
+ 	}
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 
+ 	kn = kernfs_find_ns(parent, name, ns);
+ 	if (kn)
+ 		__kernfs_remove(kn);
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	if (kn)
+ 		return 0;
+@@ -1541,10 +1552,10 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ 	if (!kn->parent)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 
+ 	error = -ENOENT;
+-	if (!kernfs_active(kn) || !kernfs_active(new_parent) ||
++	if (!kernfs_active_write(kn) || !kernfs_active_write(new_parent) ||
+ 	    (new_parent->flags & KERNFS_EMPTY_DIR))
+ 		goto out;
+ 
+@@ -1595,7 +1606,7 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ 
+ 	error = 0;
+  out:
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	return error;
+ }
+ 
+@@ -1615,7 +1626,7 @@ static struct kernfs_node *kernfs_dir_pos(const void *ns,
+ 	struct kernfs_node *parent, loff_t hash, struct kernfs_node *pos)
+ {
+ 	if (pos) {
+-		int valid = kernfs_active(pos) &&
++		int valid = kernfs_active_read(pos) &&
+ 			pos->parent == parent && hash == pos->hash;
+ 		kernfs_put(pos);
+ 		if (!valid)
+@@ -1635,7 +1646,7 @@ static struct kernfs_node *kernfs_dir_pos(const void *ns,
+ 		}
+ 	}
+ 	/* Skip over entries which are dying/dead or in the wrong namespace */
+-	while (pos && (!kernfs_active(pos) || pos->ns != ns)) {
++	while (pos && (!kernfs_active_read(pos) || pos->ns != ns)) {
+ 		struct rb_node *node = rb_next(&pos->rb);
+ 		if (!node)
+ 			pos = NULL;
+@@ -1656,7 +1667,7 @@ static struct kernfs_node *kernfs_dir_next_pos(const void *ns,
+ 				pos = NULL;
+ 			else
+ 				pos = rb_to_kn(node);
+-		} while (pos && (!kernfs_active(pos) || pos->ns != ns));
++		} while (pos && (!kernfs_active_read(pos) || pos->ns != ns));
+ 	}
+ 	return pos;
+ }
+@@ -1670,7 +1681,7 @@ static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
+ 
+ 	if (!dir_emit_dots(file, ctx))
+ 		return 0;
+-	mutex_lock(&kernfs_mutex);
++	down_read(&kernfs_rwsem);
+ 
+ 	if (kernfs_ns_enabled(parent))
+ 		ns = kernfs_info(dentry->d_sb)->ns;
+@@ -1687,12 +1698,12 @@ static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
+ 		file->private_data = pos;
+ 		kernfs_get(pos);
+ 
+-		mutex_unlock(&kernfs_mutex);
++		up_read(&kernfs_rwsem);
+ 		if (!dir_emit(ctx, name, len, ino, type))
+ 			return 0;
+-		mutex_lock(&kernfs_mutex);
++		down_read(&kernfs_rwsem);
+ 	}
+-	mutex_unlock(&kernfs_mutex);
++	up_read(&kernfs_rwsem);
+ 	file->private_data = NULL;
+ 	ctx->pos = INT_MAX;
+ 	return 0;
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index 34366db3620d..455caea6ab0b 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -879,7 +879,7 @@ static void kernfs_notify_workfn(struct work_struct *work)
+ 	spin_unlock_irq(&kernfs_notify_lock);
+ 
+ 	/* kick fsnotify */
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 
+ 	list_for_each_entry(info, &kernfs_root(kn)->supers, node) {
+ 		struct kernfs_node *parent;
+@@ -916,7 +916,7 @@ static void kernfs_notify_workfn(struct work_struct *work)
+ 		iput(inode);
+ 	}
+ 
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	kernfs_put(kn);
+ 	goto repeat;
+ }
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index fc2469a20fed..23a7996d06a9 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -106,9 +106,9 @@ int kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr)
+ {
+ 	int ret;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	ret = __kernfs_setattr(kn, iattr);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	return ret;
+ }
+ 
+@@ -121,7 +121,7 @@ int kernfs_iop_setattr(struct dentry *dentry, struct iattr *iattr)
+ 	if (!kn)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	error = setattr_prepare(dentry, iattr);
+ 	if (error)
+ 		goto out;
+@@ -134,7 +134,7 @@ int kernfs_iop_setattr(struct dentry *dentry, struct iattr *iattr)
+ 	setattr_copy(inode, iattr);
+ 
+ out:
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	return error;
+ }
+ 
+@@ -189,9 +189,9 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct kernfs_node *kn = inode->i_private;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	kernfs_refresh_inode(kn, inode);
+-	mutex_unlock(&kernfs_mutex);
++	up_writeread(&kernfs_rwsem);
+ 
+ 	generic_fillattr(inode, stat);
+ 	return 0;
+@@ -281,9 +281,9 @@ int kernfs_iop_permission(struct inode *inode, int mask)
+ 
+ 	kn = inode->i_private;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	kernfs_refresh_inode(kn, inode);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	return generic_permission(inode, mask);
+ }
+diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+index 7ee97ef59184..097c1a989aa4 100644
+--- a/fs/kernfs/kernfs-internal.h
++++ b/fs/kernfs/kernfs-internal.h
+@@ -13,6 +13,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/fs.h>
+ #include <linux/mutex.h>
++#include <linux/rwsem.h>
+ #include <linux/xattr.h>
+ 
+ #include <linux/kernfs.h>
+@@ -69,7 +70,7 @@ struct kernfs_super_info {
+ 	 */
+ 	const void		*ns;
+ 
+-	/* anchored at kernfs_root->supers, protected by kernfs_mutex */
++	/* anchored at kernfs_root->supers, protected by kernfs_rwsem */
+ 	struct list_head	node;
+ };
+ #define kernfs_info(SB) ((struct kernfs_super_info *)(SB->s_fs_info))
+@@ -99,7 +100,7 @@ int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
+ /*
+  * dir.c
+  */
+-extern struct mutex kernfs_mutex;
++extern struct rw_semaphore kernfs_rwsem;
+ extern const struct dentry_operations kernfs_dops;
+ extern const struct file_operations kernfs_dir_fops;
+ extern const struct inode_operations kernfs_dir_iops;
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index 9dc7e7a64e10..baa4155ba2ed 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -255,9 +255,9 @@ static int kernfs_fill_super(struct super_block *sb, struct kernfs_fs_context *k
+ 	sb->s_shrink.seeks = 0;
+ 
+ 	/* get root inode, initialize and unlock it */
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	inode = kernfs_get_inode(sb, info->root->kn);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 	if (!inode) {
+ 		pr_debug("kernfs: could not get root inode\n");
+ 		return -ENOMEM;
+@@ -344,9 +344,9 @@ int kernfs_get_tree(struct fs_context *fc)
+ 		}
+ 		sb->s_flags |= SB_ACTIVE;
+ 
+-		mutex_lock(&kernfs_mutex);
++		down_write(&kernfs_rwsem);
+ 		list_add(&info->node, &info->root->supers);
+-		mutex_unlock(&kernfs_mutex);
++		up_write(&kernfs_rwsem);
+ 	}
+ 
+ 	fc->root = dget(sb->s_root);
+@@ -372,9 +372,9 @@ void kernfs_kill_sb(struct super_block *sb)
+ {
+ 	struct kernfs_super_info *info = kernfs_info(sb);
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	list_del(&info->node);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	/*
+ 	 * Remove the superblock from fs_supers/s_instances
+diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
+index 5432883d819f..7246b470de3c 100644
+--- a/fs/kernfs/symlink.c
++++ b/fs/kernfs/symlink.c
+@@ -116,9 +116,9 @@ static int kernfs_getlink(struct inode *inode, char *path)
+ 	struct kernfs_node *target = kn->symlink.target_kn;
+ 	int error;
+ 
+-	mutex_lock(&kernfs_mutex);
++	down_write(&kernfs_rwsem);
+ 	error = kernfs_get_target_path(parent, target, path);
+-	mutex_unlock(&kernfs_mutex);
++	up_write(&kernfs_rwsem);
+ 
+ 	return error;
+ }
 
-
- fs/kernfs/dir.c             |  284 ++++++++++++++++++++++++++++---------------
- fs/kernfs/file.c            |    4 -
- fs/kernfs/inode.c           |   58 +++++----
- fs/kernfs/kernfs-internal.h |   29 ++++
- fs/kernfs/mount.c           |   12 +-
- fs/kernfs/symlink.c         |    4 -
- include/linux/kernfs.h      |    7 +
- 7 files changed, 259 insertions(+), 139 deletions(-)
-
---
-Ian
 
