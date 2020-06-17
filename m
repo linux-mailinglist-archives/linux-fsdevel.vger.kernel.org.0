@@ -2,113 +2,364 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED5E1FC41A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 04:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 066CD1FC4B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 05:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbgFQCWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 22:22:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59946 "EHLO
+        id S1726824AbgFQDcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 23:32:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbgFQCWD (ORCPT
+        with ESMTP id S1726703AbgFQDcE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 22:22:03 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4507C061573;
-        Tue, 16 Jun 2020 19:22:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=BEusnUbR+/cmrBB9bk/xdvHCANKyUH/aAcSZAMuW5OE=; b=Pw7h6Zurn3kEfvE1eYLcuqezpS
-        6dv6YNzk6+f6NL9T5b1t5Q3S1oT5qqAMDEOxHE+1wGzAU1/UvkbHdNz07Ga1WaCWGzhKUCRSeZ6QZ
-        o0I5/jAy2zGLAu1G4S3MZdS3qCqGws/6WiA4NRqQjbA9SmyY+Nnm0QKGoSQJFNIHsS2xUI0I9Udce
-        qOHpLfYIPOR526dlzyvkD4gq0Xo6OO+YQA5h+uvfTaDDzfQbzfntE6t8KKL/bdGZugpf9j96kxyXi
-        uqj9bm92o25yQodA2+9jXT7MN6tTeGOpuEujbqml8NcV0guvi1GGbOd5RpsedFvm4bLu4W95FUUfR
-        YKCs+4uQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlNi9-0002wT-UP; Wed, 17 Jun 2020 02:21:57 +0000
-Date:   Tue, 16 Jun 2020 19:21:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
-        <andreas.gruenbacher@gmail.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel <cluster-devel@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
-        linux-btrfs@vger.kernel.org,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [Cluster-devel] [PATCH v11 16/25] fs: Convert mpage_readpages to
- mpage_readahead
-Message-ID: <20200617022157.GF8681@bombadil.infradead.org>
-References: <20200414150233.24495-1-willy@infradead.org>
- <20200414150233.24495-17-willy@infradead.org>
- <CAHc6FU4m1M7Tv4scX0UxSiVBqkL=Vcw_z-R7SufL8k7Bw=qPOw@mail.gmail.com>
- <20200617003216.GC8681@bombadil.infradead.org>
- <CAHpGcMK6Yu0p-FO8CciiySqh+qcWLG-t3hEaUg-rqJnS=2uhqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHpGcMK6Yu0p-FO8CciiySqh+qcWLG-t3hEaUg-rqJnS=2uhqg@mail.gmail.com>
+        Tue, 16 Jun 2020 23:32:04 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D09C061573
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 20:32:04 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id d8so285826plo.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 20:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=/o4IaVPf0kzNBvpVEC0K3iVjen4MlWNK8mBVtZ2/Gqc=;
+        b=Ivs1F45qH3c+ZDDTi7pDlv6+jOmzu0/svSfTOo1nZyggQCCuWdijtsq2Uc9MWZcckm
+         pwzXI7NeC2AzoYDpebR2pNF/ri4Nedfrl+CjFlF3R019czlltUAzFgRazzjB/Pav7mEG
+         mr0QvmuAIu2FWfF7TvX771NdIPUH34RusBlbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/o4IaVPf0kzNBvpVEC0K3iVjen4MlWNK8mBVtZ2/Gqc=;
+        b=janjxWMTRdNFb6w7RUXJve882Xy7svBc74quB5OSU9SJVO2XOab91z06vGDAfGiHoJ
+         cDNkbsDT6VCTGuGekjoF9sgW/7crAnItzV4gsBOPs/ximh7qe/xkKUNi4D51Y7oE9mbQ
+         2BgMguwE2LtiG9lEjJkbMc97toyaS03sgy5foliYahJp0TsN+oR7KVeIlDwdqzCpgxyn
+         5ivzOU6jYn7jbeEZDvARxTUhRC0cTfqOnrcJDEq8BSJ4Q4Wxgq2FxN3/jeOJvmc80wL6
+         iDJ9Lp5UzSruVQqp1JhnijpvGPAhZFqTR5FiQ9tofQh2JXAlpkp8nqzEJFQ44Yo0LVCH
+         x4sA==
+X-Gm-Message-State: AOAM530awXL//HzfdbjHpiOKQKvoqI6rBlXlWlsGQlBoq4CN0dsaXLFr
+        gXV96hk+kCctOtGVwxjLYRpFKg==
+X-Google-Smtp-Source: ABdhPJzwFt5BXhU2PeAqSlbGRJ3FqJoDtzea7QNVzQ8cOqmoFOce0D6XcbILs/9MsHCyEN1geYZoUg==
+X-Received: by 2002:a17:90b:1013:: with SMTP id gm19mr5895967pjb.231.1592364723583;
+        Tue, 16 Jun 2020 20:32:03 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id b14sm17937159pft.23.2020.06.16.20.32.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2020 20:32:02 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Jessica Yu <jeyu@kernel.org>
+Cc:     BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH] fs: move kernel_read_file* to its own include file
+Date:   Tue, 16 Jun 2020 20:31:52 -0700
+Message-Id: <20200617033152.16883-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 02:57:14AM +0200, Andreas Grünbacher wrote:
-> Am Mi., 17. Juni 2020 um 02:33 Uhr schrieb Matthew Wilcox <willy@infradead.org>:
-> >
-> > On Wed, Jun 17, 2020 at 12:36:13AM +0200, Andreas Gruenbacher wrote:
-> > > Am Mi., 15. Apr. 2020 um 23:39 Uhr schrieb Matthew Wilcox <willy@infradead.org>:
-> > > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > >
-> > > > Implement the new readahead aop and convert all callers (block_dev,
-> > > > exfat, ext2, fat, gfs2, hpfs, isofs, jfs, nilfs2, ocfs2, omfs, qnx6,
-> > > > reiserfs & udf).  The callers are all trivial except for GFS2 & OCFS2.
-> > >
-> > > This patch leads to an ABBA deadlock in xfstest generic/095 on gfs2.
-> > >
-> > > Our lock hierarchy is such that the inode cluster lock ("inode glock")
-> > > for an inode needs to be taken before any page locks in that inode's
-> > > address space.
-> >
-> > How does that work for ...
-> >
-> > writepage:              yes, unlocks (see below)
-> > readpage:               yes, unlocks
-> > invalidatepage:         yes
-> > releasepage:            yes
-> > freepage:               yes
-> > isolate_page:           yes
-> > migratepage:            yes (both)
-> > putback_page:           yes
-> > launder_page:           yes
-> > is_partially_uptodate:  yes
-> > error_remove_page:      yes
-> >
-> > Is there a reason that you don't take the glock in the higher level
-> > ops which are called before readhead gets called?  I'm looking at XFS,
-> > and it takes the xfs_ilock SHARED in xfs_file_buffered_aio_read()
-> > (called from xfs_file_read_iter).
-> 
-> Right, the approach from the following thread might fix this:
-> 
-> https://lore.kernel.org/linux-fsdevel/20191122235324.17245-1-agruenba@redhat.com/T/#t
+Move kernel_read_file* to it own kernel_read_file.h include file.
 
-In general, I think this is a sound approach.
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/base/firmware_loader/main.c |  1 +
+ fs/exec.c                           |  1 +
+ include/linux/fs.h                  | 39 ----------------------
+ include/linux/ima.h                 |  1 +
+ include/linux/kernel_read_file.h    | 52 +++++++++++++++++++++++++++++
+ include/linux/security.h            |  1 +
+ kernel/kexec_file.c                 |  1 +
+ kernel/module.c                     |  1 +
+ security/integrity/digsig.c         |  1 +
+ security/integrity/ima/ima_fs.c     |  1 +
+ security/integrity/ima/ima_main.c   |  1 +
+ security/integrity/ima/ima_policy.c |  1 +
+ security/loadpin/loadpin.c          |  1 +
+ security/security.c                 |  1 +
+ security/selinux/hooks.c            |  1 +
+ 15 files changed, 65 insertions(+), 39 deletions(-)
+ create mode 100644 include/linux/kernel_read_file.h
 
-Specifically, I think FAULT_FLAG_CACHED can go away.  map_pages()
-will bring in the pages which are in the page cache, so when we get to
-gfs2_fault(), we know there's a reason to acquire the glock.
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index ca871b13524e..136933f1bd6e 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/capability.h>
+ #include <linux/device.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/timer.h>
+diff --git a/fs/exec.c b/fs/exec.c
+index 7b7cbb180785..4ea87db5e4d5 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -23,6 +23,7 @@
+  * formats.
+  */
+ 
++#include <linux/kernel_read_file.h>
+ #include <linux/slab.h>
+ #include <linux/file.h>
+ #include <linux/fdtable.h>
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2e675c075694..09427d393954 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3012,45 +3012,6 @@ static inline void i_readcount_inc(struct inode *inode)
+ #endif
+ extern int do_pipe_flags(int *, int);
+ 
+-#define __kernel_read_file_id(id) \
+-	id(UNKNOWN, unknown)		\
+-	id(FIRMWARE, firmware)		\
+-	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+-	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
+-	id(MODULE, kernel-module)		\
+-	id(KEXEC_IMAGE, kexec-image)		\
+-	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+-	id(POLICY, security-policy)		\
+-	id(X509_CERTIFICATE, x509-certificate)	\
+-	id(MAX_ID, )
+-
+-#define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
+-#define __fid_stringify(dummy, str) #str,
+-
+-enum kernel_read_file_id {
+-	__kernel_read_file_id(__fid_enumify)
+-};
+-
+-static const char * const kernel_read_file_str[] = {
+-	__kernel_read_file_id(__fid_stringify)
+-};
+-
+-static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
+-{
+-	if ((unsigned)id >= READING_MAX_ID)
+-		return kernel_read_file_str[READING_UNKNOWN];
+-
+-	return kernel_read_file_str[id];
+-}
+-
+-extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
+-			    enum kernel_read_file_id);
+-extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
+-				      enum kernel_read_file_id);
+-extern int kernel_read_file_from_path_initns(const char *, void **, loff_t *, loff_t,
+-					     enum kernel_read_file_id);
+-extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
+-				    enum kernel_read_file_id);
+ extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
+ extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
+ extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 9164e1534ec9..148636bfcc8f 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -7,6 +7,7 @@
+ #ifndef _LINUX_IMA_H
+ #define _LINUX_IMA_H
+ 
++#include <linux/kernel_read_file.h>
+ #include <linux/fs.h>
+ #include <linux/security.h>
+ #include <linux/kexec.h>
+diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
+new file mode 100644
+index 000000000000..53f5ca41519a
+--- /dev/null
++++ b/include/linux/kernel_read_file.h
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_KERNEL_READ_FILE_H
++#define _LINUX_KERNEL_READ_FILE_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#define __kernel_read_file_id(id) \
++	id(UNKNOWN, unknown)		\
++	id(FIRMWARE, firmware)		\
++	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
++	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
++	id(MODULE, kernel-module)		\
++	id(KEXEC_IMAGE, kexec-image)		\
++	id(KEXEC_INITRAMFS, kexec-initramfs)	\
++	id(POLICY, security-policy)		\
++	id(X509_CERTIFICATE, x509-certificate)	\
++	id(MAX_ID, )
++
++#define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
++#define __fid_stringify(dummy, str) #str,
++
++enum kernel_read_file_id {
++	__kernel_read_file_id(__fid_enumify)
++};
++
++static const char * const kernel_read_file_str[] = {
++	__kernel_read_file_id(__fid_stringify)
++};
++
++static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
++{
++	if ((unsigned int)id >= READING_MAX_ID)
++		return kernel_read_file_str[READING_UNKNOWN];
++
++	return kernel_read_file_str[id];
++}
++
++int kernel_read_file(struct file *file,
++		     void **buf, loff_t *size, loff_t max_size,
++		     enum kernel_read_file_id id);
++int kernel_read_file_from_path(const char *path,
++			       void **buf, loff_t *size, loff_t max_size,
++			       enum kernel_read_file_id id);
++int kernel_read_file_from_path_initns(const char *path,
++				      void **buf, loff_t *size, loff_t max_size,
++				      enum kernel_read_file_id id);
++int kernel_read_file_from_fd(int fd,
++			     void **buf, loff_t *size, loff_t max_size,
++			     enum kernel_read_file_id id);
++
++#endif /* _LINUX_KERNEL_READ_FILE_H */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 2797e7f6418e..fc1c6af331bd 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -23,6 +23,7 @@
+ #ifndef __LINUX_SECURITY_H
+ #define __LINUX_SECURITY_H
+ 
++#include <linux/kernel_read_file.h>
+ #include <linux/key.h>
+ #include <linux/capability.h>
+ #include <linux/fs.h>
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index bb05fd52de85..54efafc31d34 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -24,6 +24,7 @@
+ #include <linux/elf.h>
+ #include <linux/elfcore.h>
+ #include <linux/kernel.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmalloc.h>
+ #include "kexec_internal.h"
+diff --git a/kernel/module.c b/kernel/module.c
+index e8a198588f26..6ed67699531f 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -18,6 +18,7 @@
+ #include <linux/fs.h>
+ #include <linux/sysfs.h>
+ #include <linux/kernel.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/elf.h>
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..d09602aab7bd 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -10,6 +10,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/cred.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/key-type.h>
+ #include <linux/digsig.h>
+ #include <linux/vmalloc.h>
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index e3fcad871861..57ecbf285fc7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/fcntl.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
+ #include <linux/seq_file.h>
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c1583d98c5e5..15f29fed6d9f 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/file.h>
+ #include <linux/binfmts.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/mount.h>
+ #include <linux/mman.h>
+ #include <linux/slab.h>
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index e493063a3c34..f8390f6081f0 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/init.h>
+ #include <linux/list.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/fs.h>
+ #include <linux/security.h>
+ #include <linux/magic.h>
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index ee5cb944f4ad..81bc95127f92 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/fs.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/mount.h>
+ #include <linux/path.h>
+diff --git a/security/security.c b/security/security.c
+index 2bb912496232..8983cdc07ebb 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -16,6 +16,7 @@
+ #include <linux/export.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/integrity.h>
+ #include <linux/ima.h>
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index efa6108b1ce9..5de45010fb1a 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -24,6 +24,7 @@
+ #include <linux/init.h>
+ #include <linux/kd.h>
+ #include <linux/kernel.h>
++#include <linux/kernel_read_file.h>
+ #include <linux/tracehook.h>
+ #include <linux/errno.h>
+ #include <linux/sched/signal.h>
+-- 
+2.17.1
 
