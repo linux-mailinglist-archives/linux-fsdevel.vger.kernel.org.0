@@ -2,364 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 066CD1FC4B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 05:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5611FC4D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 05:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbgFQDcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jun 2020 23:32:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbgFQDcE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jun 2020 23:32:04 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D09C061573
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 20:32:04 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d8so285826plo.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jun 2020 20:32:04 -0700 (PDT)
+        id S1726669AbgFQDzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jun 2020 23:55:19 -0400
+Received: from mail-eopbgr1320083.outbound.protection.outlook.com ([40.107.132.83]:11239
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726321AbgFQDzS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jun 2020 23:55:18 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fEgITlIvwnkTq6Yz+e6yBLShHFJwAxzAprie9JXTwPUQk8IOfog0C+M5sDEqmU8POi7u8ga4DA0yxjODEhVvzai7EYmTL0814CX7PogmE5+fpuT/cvtrG2viz6UATZmjqr/5t8G4KiHxOIuydJ4qDWlcoeUDo5ZcNduI0OpmkYHG5xVbLhNG4W/yJf4VvsuA0OndKUii+exxHV+tioZUeMi10H3p+zLZl0tkPhmcYmgXG+5msAQilZfRG9BkKWMsozf9q01TVk8ml5YZ3BBkW/egcDRA9rB/LpdU4S0LbYTOZj+lLjBlz5/bPcqra5k8ijEUZlQDajCCw9EU8Tinww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJWbrybKq60PkbTqBuETii9LMCwgJQOH3EfSS5hGlfs=;
+ b=CAeKizoB6hw6jQ2PB234UBbHEBcpZrMZhjIgn9QaRNruDJAgRqHfF5yBdlMkKq7R5w3zDAbE4t3cd7BafLQT2YmWruTslZbYiMdAjfpfv0EYalVoVcOKAjhLOhp+IOm1U9OFwZfxdFY0KoooUEVkm8sEM44invJxNxq78+Om+Cf6BV+qNPppQxKVSpEmrGHuwUy5G1e35Hkp76jU2fo6WvX0fhJE7j9RWEjFdUmf0X85/0rD36ZBcM526t9BTpxl/MdsMnllBILjmRism1Z2maID2SKf0TaMQtKmCSaD0/KuCVzC49blrgDBAT+7b7OMfqBi9hhwubiOa2QsKEfJ0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=/o4IaVPf0kzNBvpVEC0K3iVjen4MlWNK8mBVtZ2/Gqc=;
-        b=Ivs1F45qH3c+ZDDTi7pDlv6+jOmzu0/svSfTOo1nZyggQCCuWdijtsq2Uc9MWZcckm
-         pwzXI7NeC2AzoYDpebR2pNF/ri4Nedfrl+CjFlF3R019czlltUAzFgRazzjB/Pav7mEG
-         mr0QvmuAIu2FWfF7TvX771NdIPUH34RusBlbM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/o4IaVPf0kzNBvpVEC0K3iVjen4MlWNK8mBVtZ2/Gqc=;
-        b=janjxWMTRdNFb6w7RUXJve882Xy7svBc74quB5OSU9SJVO2XOab91z06vGDAfGiHoJ
-         cDNkbsDT6VCTGuGekjoF9sgW/7crAnItzV4gsBOPs/ximh7qe/xkKUNi4D51Y7oE9mbQ
-         2BgMguwE2LtiG9lEjJkbMc97toyaS03sgy5foliYahJp0TsN+oR7KVeIlDwdqzCpgxyn
-         5ivzOU6jYn7jbeEZDvARxTUhRC0cTfqOnrcJDEq8BSJ4Q4Wxgq2FxN3/jeOJvmc80wL6
-         iDJ9Lp5UzSruVQqp1JhnijpvGPAhZFqTR5FiQ9tofQh2JXAlpkp8nqzEJFQ44Yo0LVCH
-         x4sA==
-X-Gm-Message-State: AOAM530awXL//HzfdbjHpiOKQKvoqI6rBlXlWlsGQlBoq4CN0dsaXLFr
-        gXV96hk+kCctOtGVwxjLYRpFKg==
-X-Google-Smtp-Source: ABdhPJzwFt5BXhU2PeAqSlbGRJ3FqJoDtzea7QNVzQ8cOqmoFOce0D6XcbILs/9MsHCyEN1geYZoUg==
-X-Received: by 2002:a17:90b:1013:: with SMTP id gm19mr5895967pjb.231.1592364723583;
-        Tue, 16 Jun 2020 20:32:03 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b14sm17937159pft.23.2020.06.16.20.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 20:32:02 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jessica Yu <jeyu@kernel.org>
-Cc:     BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH] fs: move kernel_read_file* to its own include file
-Date:   Tue, 16 Jun 2020 20:31:52 -0700
-Message-Id: <20200617033152.16883-1-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+ d=oppoglobal.onmicrosoft.com; s=selector1-oppoglobal-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJWbrybKq60PkbTqBuETii9LMCwgJQOH3EfSS5hGlfs=;
+ b=b5dH0T3Xh4XZaWktfXr+mzdGDzkPd7Ryyj/lPPdNcsoX9Nt58/fUaGZsa4QqWweIagsGlTiKF//4/fj/dw2R4nutxil1CQF5Bqidg4IeUN1x8defOYVT480RHEYdkTE2nVt67AQDCxZq4ZB6asqFNzxUraGNmgtWMPxoMYZK18M=
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com (2603:1096:203:25::11)
+ by HK0PR02MB2785.apcprd02.prod.outlook.com (2603:1096:203:6e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3109.22; Wed, 17 Jun
+ 2020 03:55:12 +0000
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::9876:cff7:52ee:5c06]) by HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::9876:cff7:52ee:5c06%7]) with mapi id 15.20.3088.029; Wed, 17 Jun 2020
+ 03:55:12 +0000
+From:   =?gb2312?B?s8Kwssfs?= <chenanqing@oppo.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: about the fuse code question,maybe a bug
+Thread-Topic: about the fuse code question,maybe a bug
+Thread-Index: AdZEWEMmRFP1O9KgRIOpjFli/Bijqg==
+Date:   Wed, 17 Jun 2020 03:55:11 +0000
+Message-ID: <HK0PR02MB2563952EA994718C6B34DAC7AB9A0@HK0PR02MB2563.apcprd02.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: szeredi.hu; dkim=none (message not signed)
+ header.d=none;szeredi.hu; dmarc=none action=none header.from=oppo.com;
+x-originating-ip: [58.255.79.101]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cfba4165-967c-4ada-a901-08d812723c4b
+x-ms-traffictypediagnostic: HK0PR02MB2785:
+x-microsoft-antispam-prvs: <HK0PR02MB2785896680285B026EE25204AB9A0@HK0PR02MB2785.apcprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 04371797A5
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QrNVMcfrdgUg0z6keaihS1ixtdVXU9oCYbDW+hJNHAJJ1lcHAI3Z51S/2IxHfnR6FVi9PHq7vaOCf+iohyWcpmzoaFdfoXkxvtOjqS8aywLXsCydTfYhjfSMyHyIJyQYKvL1H2G9XdchGKs/cX6sSkOn9Yxf2jH8pXo6zLr6ujEE6pj9FV669G1I18kzeyeP60mRbl9iNDSnmDiA0wyKGZskxVixvadIN0sxKRDFX7lCGtKUuwmanldmYgT/unCBWClvDpMnYBcLvn834lxo57mCXgUOEH/wxq1qXEH/u0c92gnxJzxEPra7s/9AYfiktux/hN3fQWNkiGuvtimAtdwCLZtCuINJd0NCUOFVo1dZxeMP/RqNscu+f9erwadnBquYreURwcBSD/yEQpeiHQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR02MB2563.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(366004)(5660300002)(52536014)(26005)(2906002)(86362001)(6506007)(498600001)(8936002)(85182001)(33656002)(83380400001)(66946007)(7696005)(186003)(76116006)(4326008)(71200400001)(54906003)(66476007)(55016002)(9686003)(6916009)(64756008)(66446008)(66556008)(8676002)(11606004)(142933001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: tba/qhlgQsfcInQAuyW7rtQ5/IGpkhwRjw7aglUd6nUKGS32DzsB+1hPKdsDaDzpK3qCNajuq7mFxsYh3ONt9/Llh57UDViksqcnELMpYWcs9O3nHDiOj82IV92bPR3ZhlMbfD+dRTSUcyDUJNfdcg6HcIx2e1obeInj1ztKxFa2jQ//7Qn50Bu1NIdlCMcZ6IaPr1rpliuMF0rMCPjNJrkldi0osmAjxjCTNoQWW/fuIXhzm+CVIJ4bsDBGk1ilcYojOqjkDhsSf9UfNiuENZug5HLzlRL8uwWKpcc5eysupQ1Ka6C8HKto0lp68QV8eWeK4rZyrrV7RkFnuJOv8wLPTB5mFwdxuLpnhNha1eIkux1PhEculg8hhp7dH33yvZHvdkAYA2YxsKD6TeL3yO/yAaosr9awR1yI4VhyzGhC47ULqcIrlQvXmffqFpBrSzwox5Z0HHGYNBkmRYXcGrDyot2UAtZHv6q7C5Zo7Qc=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfba4165-967c-4ada-a901-08d812723c4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2020 03:55:11.8179
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sAbuXZ7keSXfp0/+jz3npdEe6wDRslgNP7zTOuWVdN7wmrsDl/CGypr4ybXyrojvmiK4XgdbALf8jovVuHMzMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR02MB2785
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move kernel_read_file* to it own kernel_read_file.h include file.
-
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- drivers/base/firmware_loader/main.c |  1 +
- fs/exec.c                           |  1 +
- include/linux/fs.h                  | 39 ----------------------
- include/linux/ima.h                 |  1 +
- include/linux/kernel_read_file.h    | 52 +++++++++++++++++++++++++++++
- include/linux/security.h            |  1 +
- kernel/kexec_file.c                 |  1 +
- kernel/module.c                     |  1 +
- security/integrity/digsig.c         |  1 +
- security/integrity/ima/ima_fs.c     |  1 +
- security/integrity/ima/ima_main.c   |  1 +
- security/integrity/ima/ima_policy.c |  1 +
- security/loadpin/loadpin.c          |  1 +
- security/security.c                 |  1 +
- security/selinux/hooks.c            |  1 +
- 15 files changed, 65 insertions(+), 39 deletions(-)
- create mode 100644 include/linux/kernel_read_file.h
-
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index ca871b13524e..136933f1bd6e 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/capability.h>
- #include <linux/device.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/timer.h>
-diff --git a/fs/exec.c b/fs/exec.c
-index 7b7cbb180785..4ea87db5e4d5 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -23,6 +23,7 @@
-  * formats.
-  */
- 
-+#include <linux/kernel_read_file.h>
- #include <linux/slab.h>
- #include <linux/file.h>
- #include <linux/fdtable.h>
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2e675c075694..09427d393954 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3012,45 +3012,6 @@ static inline void i_readcount_inc(struct inode *inode)
- #endif
- extern int do_pipe_flags(int *, int);
- 
--#define __kernel_read_file_id(id) \
--	id(UNKNOWN, unknown)		\
--	id(FIRMWARE, firmware)		\
--	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
--	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
--	id(MODULE, kernel-module)		\
--	id(KEXEC_IMAGE, kexec-image)		\
--	id(KEXEC_INITRAMFS, kexec-initramfs)	\
--	id(POLICY, security-policy)		\
--	id(X509_CERTIFICATE, x509-certificate)	\
--	id(MAX_ID, )
--
--#define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
--#define __fid_stringify(dummy, str) #str,
--
--enum kernel_read_file_id {
--	__kernel_read_file_id(__fid_enumify)
--};
--
--static const char * const kernel_read_file_str[] = {
--	__kernel_read_file_id(__fid_stringify)
--};
--
--static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
--{
--	if ((unsigned)id >= READING_MAX_ID)
--		return kernel_read_file_str[READING_UNKNOWN];
--
--	return kernel_read_file_str[id];
--}
--
--extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
--			    enum kernel_read_file_id);
--extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
--				      enum kernel_read_file_id);
--extern int kernel_read_file_from_path_initns(const char *, void **, loff_t *, loff_t,
--					     enum kernel_read_file_id);
--extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
--				    enum kernel_read_file_id);
- extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
- extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
- extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 9164e1534ec9..148636bfcc8f 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -7,6 +7,7 @@
- #ifndef _LINUX_IMA_H
- #define _LINUX_IMA_H
- 
-+#include <linux/kernel_read_file.h>
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/kexec.h>
-diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
-new file mode 100644
-index 000000000000..53f5ca41519a
---- /dev/null
-+++ b/include/linux/kernel_read_file.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_KERNEL_READ_FILE_H
-+#define _LINUX_KERNEL_READ_FILE_H
-+
-+#include <linux/file.h>
-+#include <linux/types.h>
-+
-+#define __kernel_read_file_id(id) \
-+	id(UNKNOWN, unknown)		\
-+	id(FIRMWARE, firmware)		\
-+	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-+	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
-+	id(MODULE, kernel-module)		\
-+	id(KEXEC_IMAGE, kexec-image)		\
-+	id(KEXEC_INITRAMFS, kexec-initramfs)	\
-+	id(POLICY, security-policy)		\
-+	id(X509_CERTIFICATE, x509-certificate)	\
-+	id(MAX_ID, )
-+
-+#define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
-+#define __fid_stringify(dummy, str) #str,
-+
-+enum kernel_read_file_id {
-+	__kernel_read_file_id(__fid_enumify)
-+};
-+
-+static const char * const kernel_read_file_str[] = {
-+	__kernel_read_file_id(__fid_stringify)
-+};
-+
-+static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
-+{
-+	if ((unsigned int)id >= READING_MAX_ID)
-+		return kernel_read_file_str[READING_UNKNOWN];
-+
-+	return kernel_read_file_str[id];
-+}
-+
-+int kernel_read_file(struct file *file,
-+		     void **buf, loff_t *size, loff_t max_size,
-+		     enum kernel_read_file_id id);
-+int kernel_read_file_from_path(const char *path,
-+			       void **buf, loff_t *size, loff_t max_size,
-+			       enum kernel_read_file_id id);
-+int kernel_read_file_from_path_initns(const char *path,
-+				      void **buf, loff_t *size, loff_t max_size,
-+				      enum kernel_read_file_id id);
-+int kernel_read_file_from_fd(int fd,
-+			     void **buf, loff_t *size, loff_t max_size,
-+			     enum kernel_read_file_id id);
-+
-+#endif /* _LINUX_KERNEL_READ_FILE_H */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 2797e7f6418e..fc1c6af331bd 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -23,6 +23,7 @@
- #ifndef __LINUX_SECURITY_H
- #define __LINUX_SECURITY_H
- 
-+#include <linux/kernel_read_file.h>
- #include <linux/key.h>
- #include <linux/capability.h>
- #include <linux/fs.h>
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index bb05fd52de85..54efafc31d34 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -24,6 +24,7 @@
- #include <linux/elf.h>
- #include <linux/elfcore.h>
- #include <linux/kernel.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/syscalls.h>
- #include <linux/vmalloc.h>
- #include "kexec_internal.h"
-diff --git a/kernel/module.c b/kernel/module.c
-index e8a198588f26..6ed67699531f 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -18,6 +18,7 @@
- #include <linux/fs.h>
- #include <linux/sysfs.h>
- #include <linux/kernel.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/elf.h>
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index e9cbadade74b..d09602aab7bd 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -10,6 +10,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/cred.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
- #include <linux/vmalloc.h>
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index e3fcad871861..57ecbf285fc7 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <linux/fcntl.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/seq_file.h>
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..15f29fed6d9f 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/file.h>
- #include <linux/binfmts.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/mount.h>
- #include <linux/mman.h>
- #include <linux/slab.h>
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e493063a3c34..f8390f6081f0 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/init.h>
- #include <linux/list.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/magic.h>
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index ee5cb944f4ad..81bc95127f92 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
- #include <linux/mount.h>
- #include <linux/path.h>
-diff --git a/security/security.c b/security/security.c
-index 2bb912496232..8983cdc07ebb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -16,6 +16,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
- #include <linux/integrity.h>
- #include <linux/ima.h>
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index efa6108b1ce9..5de45010fb1a 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -24,6 +24,7 @@
- #include <linux/init.h>
- #include <linux/kd.h>
- #include <linux/kernel.h>
-+#include <linux/kernel_read_file.h>
- #include <linux/tracehook.h>
- #include <linux/errno.h>
- #include <linux/sched/signal.h>
--- 
-2.17.1
-
+RGVhciBNaWtsb3MNCg0KICAgIEhpIKOsSSByZWFkIHRoZSBmdXNlIGNvZGUgaW4gbGludXgga2Vy
+bmVso6xhbmQgSSBoYXZlIHNvbWUgcXVlc3Rpb24gYWJvdXQgdGhlIGNvZGUgYmxvd6O6DQoNCnN0
+YXRpYyBpbnQgZnVzZV9yZWFkX2ludGVycnVwdChzdHJ1Y3QgZnVzZV9pcXVldWUgKmZpcSwNCiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZnVzZV9jb3B5X3N0YXRlICpjcywN
+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzaXplX3QgbmJ5dGVzLCBzdHJ1Y3QgZnVz
+ZV9yZXEgKnJlcSkNCl9fcmVsZWFzZXMoZmlxLT5sb2NrKQ0Kew0KICAgICAgICBzdHJ1Y3QgZnVz
+ZV9pbl9oZWFkZXIgaWg7DQogICAgICAgIHN0cnVjdCBmdXNlX2ludGVycnVwdF9pbiBhcmc7DQog
+ICAgICAgIHVuc2lnbmVkIHJlcXNpemUgPSBzaXplb2YoaWgpICsgc2l6ZW9mKGFyZyk7DQogICAg
+ICAgIGludCBlcnI7DQoNCiAgICAgICAgbGlzdF9kZWxfaW5pdCgmcmVxLT5pbnRyX2VudHJ5KTsN
+CiAgICAgICAgbWVtc2V0KCZpaCwgMCwgc2l6ZW9mKGloKSk7DQogICAgICAgIG1lbXNldCgmYXJn
+LCAwLCBzaXplb2YoYXJnKSk7DQogICAgICAgIGloLmxlbiA9IHJlcXNpemU7DQogICAgICAgIGlo
+Lm9wY29kZSA9IEZVU0VfSU5URVJSVVBUOw0KICAgICAgICBpaC51bmlxdWUgPSAocmVxLT5pbi5o
+LnVuaXF1ZSB8IEZVU0VfSU5UX1JFUV9CSVQpOw0KICAgICAgICBhcmcudW5pcXVlID0gcmVxLT5p
+bi5oLnVuaXF1ZTsNCg0KICAgICAgICBzcGluX3VubG9jaygmZmlxLT5sb2NrKTsNCiAgICAgICAg
+aWYgKG5ieXRlcyA8IHJlcXNpemUpDQogICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQoN
+CiAgICAgICAgZXJyID0gZnVzZV9jb3B5X29uZShjcywgJmloLCBzaXplb2YoaWgpKTstLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0taGVyZSBpcyBteSBxdWVzdGlvbg0KICAgICAgICBpZiAoIWVycikt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLWlmIGNvcHkgc3VjY2VzcyAsd2h5IHNob3VsZCBjb3B5IGFnYWluPw0KICAgICAg
+ICAgICAgICAgIGVyciA9IGZ1c2VfY29weV9vbmUoY3MsICZhcmcsIHNpemVvZihhcmcpKTsNCiAg
+ICAgICAgZnVzZV9jb3B5X2ZpbmlzaChjcyk7DQoNCiAgICAgICAgcmV0dXJuIGVyciA/IGVyciA6
+IHJlcXNpemU7DQp9DQoNCmJlY2F1c2UgZnVzZV9jb3B5X29uZSByZXR1cm4gemVybyB3aGVuIGNv
+cHkgaXMgb2ujrHdoeSBzaG91bGQgd2UgY29weSBhZ2FpbiB3aXRoICIgZXJyID0gZnVzZV9jb3B5
+X29uZShjcywgJmFyZywgc2l6ZW9mKGFyZykpOyI/Pw0KDQppZiB3ZSBjb3B5IGFnYWluLHdlIGNo
+YW5nZWQgdGhlICIgaWgub3Bjb2RlID0gRlVTRV9JTlRFUlJVUFQ7IiBsb2dpYywNCix3ZSBtYXli
+ZSBlbnRlciBhIGN5Y2xlIGJlY2F1c2UgdGhlIGxpYmZ1c2UgY29kZSBpcyBibG93Og0KDQppZiAo
+aW4tPm9wY29kZSAhPSBGVVNFX0lOVEVSUlVQVCkgew0KICAgICAgICAgICAgICAgIHN0cnVjdCBm
+dXNlX3JlcSAqaW50cjsNCiAgICAgICAgICAgICAgICBwdGhyZWFkX211dGV4X2xvY2soJmYtPmxv
+Y2spOw0KICAgICAgICAgICAgICAgIGludHIgPSBjaGVja19pbnRlcnJ1cHQoZiwgcmVxKTsNCiAg
+ICAgICAgICAgICAgICBsaXN0X2FkZF9yZXEocmVxLCAmZi0+bGlzdCk7DQogICAgICAgICAgICAg
+ICAgcHRocmVhZF9tdXRleF91bmxvY2soJmYtPmxvY2spOw0KICAgICAgICAgICAgICAgIGlmIChp
+bnRyKQ0KICAgICAgICAgICAgICAgICAgICAgICAgZnVzZV9yZXBseV9lcnIoaW50ciwgRUFHQUlO
+KTsNCiAgICAgICAgfQ0KDQp3ZSBuZWVkIHRoZSBvcGNvZGUgdG8gYmUgRlVTRV9JTlRFUlJVUFQg
+aWYgd2UgaGFkIGJlZW4gaW50ZXJydXB0ZWQgLg0KDQoNCnNvIHRoZSByZXF1ZXN0IGJlIHF1ZXVl
+ZCBpbiB0aGUgbGlzdCBhZ2FpbiBhbmQgYWdhaW4uDQoNCm15IHN0YXAgcmVzdWx0IGlzIGJsZXc6
+DQpjYWxsIHF1ZXVlX2ludGVycnVwdCxyZXEtPmludHJfdW5pcXVlPTE1MDQxNDU2Nyx3YWl0aW5n
+PTEsc3RhdGU9MyxyZXE9ZmZmZjk3MmRjMTFiYjlkMA0KIDB4ZmZmZmZmZmZjMDk1NjM5MCA6IHF1
+ZXVlX2ludGVycnVwdCsweDAvMHg2MCBbZnVzZV0NCiAweGZmZmZmZmZmYzA5NTkzNGUgOiBmdXNl
+X2Rldl9kb193cml0ZSsweDNhZS8weDNmMCBbZnVzZV0NCiAweGZmZmZmZmZmYWNiNmY0MzkgOiBr
+cmV0cHJvYmVfdHJhbXBvbGluZSsweDAvMHg1NyBba2VybmVsXQ0KZW50ZXIgMTg3NixudW09MTUw
+NDE0NTY3LGVycm9yPS0xMSxmYy0+ZGV2PTQwDQpjYWxsIHF1ZXVlX2ludGVycnVwdCxyZXEtPmlu
+dHJfdW5pcXVlPTE1MDQxNDU2OSx3YWl0aW5nPTEsc3RhdGU9MyxyZXE9ZmZmZjk3MmRjMTFiYjlk
+MA0KIDB4ZmZmZmZmZmZjMDk1NjM5MCA6IHF1ZXVlX2ludGVycnVwdCsweDAvMHg2MCBbZnVzZV0N
+CiAweGZmZmZmZmZmYzA5NTkzNGUgOiBmdXNlX2Rldl9kb193cml0ZSsweDNhZS8weDNmMCBbZnVz
+ZV0NCiAweGZmZmZmZmZmYWNiNmY0MzkgOiBrcmV0cHJvYmVfdHJhbXBvbGluZSsweDAvMHg1NyBb
+a2VybmVsXQ0KZW50ZXIgMTg3NixudW09MTUwNDE0NTY5LGVycm9yPS0xMSxmYy0+ZGV2PTQwDQpj
+YWxsIHF1ZXVlX2ludGVycnVwdCxyZXEtPmludHJfdW5pcXVlPTE1MDQxNDU3MSx3YWl0aW5nPTEs
+c3RhdGU9MyxyZXE9ZmZmZjk3MmRjMTFiYjlkMA0KIDB4ZmZmZmZmZmZjMDk1NjM5MCA6IHF1ZXVl
+X2ludGVycnVwdCsweDAvMHg2MCBbZnVzZV0NCiAweGZmZmZmZmZmYzA5NTkzNGUgOiBmdXNlX2Rl
+dl9kb193cml0ZSsweDNhZS8weDNmMCBbZnVzZV0NCiAweGZmZmZmZmZmYWNiNmY0MzkgOiBrcmV0
+cHJvYmVfdHJhbXBvbGluZSsweDAvMHg1NyBba2VybmVsXQ0KZW50ZXIgMTg3NixudW09MTUwNDE0
+NTcxLGVycm9yPS0xMSxmYy0+ZGV2PTQwDQoNCmV2ZXJ5IHRpbWUgSSBsb29rIHRoZSByZXF1ZXN0
+ICwgaXQgaXMgdGhlIHNhbWUgaWQ6DQoNCmNyYXNoPiBmdXNlX3JlcS5pbnRlcnJ1cHRlZCxzdGF0
+ZSxpbnRyX3VuaXF1ZSxpbi5oLm9wY29kZSxpbi5oLnBpZCxpbi5oLnVuaXF1ZSBmZmZmOTcyZGMx
+MWJiOWQwDQogIGludGVycnVwdGVkID0gMQ0KICBzdGF0ZSA9IEZVU0VfUkVRX1NFTlQNCiAgaW50
+cl91bmlxdWUgPSAxNTE2NTE0OTANCiAgaW4uaC5vcGNvZGUgPSAxNCwNCiAgaW4uaC5waWQgPSAx
+NDQ5OTMsDQogIGluLmgudW5pcXVlID0gMjY3NDQ4MDEsDQpjcmFzaD4gZnVzZV9yZXEuaW50ZXJy
+dXB0ZWQsc3RhdGUsaW50cl91bmlxdWUsaW4uaC5vcGNvZGUsaW4uaC5waWQsaW4uaC51bmlxdWUg
+ZmZmZjk3MmRjMTFiYjlkMA0KICBpbnRlcnJ1cHRlZCA9IDENCiAgc3RhdGUgPSBGVVNFX1JFUV9T
+RU5UDQogIGludHJfdW5pcXVlID0gMTUxNjUxNTM1LS0tLS0tLS0tLS0tLS1vbmx5IHRoZSAgaW50
+cl91bmlxdWUgdmFsdWUgYmVlbiBjaGFuZ2VkDQogIGluLmgub3Bjb2RlID0gMTQsDQogIGluLmgu
+cGlkID0gMTQ0OTkzLA0KICBpbi5oLnVuaXF1ZSA9IDI2NzQ0ODAxLA0KDQoNCmFuZCBJJ20gdmVy
+eSBzdXJlIHRoZSB0YXNrIDE0NDk5MyBuZXJ2ZXIgYmVlbiBzY2hlZHVsZWQgLg0KY2F0IC9wcm9j
+LzE0NDk5My9zdGF0dXMgfGdyZXAgc3dpdGNoZXMgJiYgc2xlZXAgMTAgJiYgY2F0IC9wcm9jLzE0
+NDk5My9zdGF0dXMgfGdyZXAgc3dpdGNoZXMNCnZvbHVudGFyeV9jdHh0X3N3aXRjaGVzOjI2MDAx
+Mg0Kbm9udm9sdW50YXJ5X2N0eHRfc3dpdGNoZXM6MTU5Mg0Kdm9sdW50YXJ5X2N0eHRfc3dpdGNo
+ZXM6MjYwMDEyDQpub252b2x1bnRhcnlfY3R4dF9zd2l0Y2hlczoxNTkyDQoNCnRoZSB0YXNrIGlz
+IGJlZW4gIlN0YXRlOkQgKGRpc2sgc2xlZXApIiBhbGwgdGhlIHRpbWUgLg0KDQptYXliZSBJIGNh
+biBwcm92aWRlIGEgcGF0Y2ggLEkgbmVlZCB5b3VyIHJlcGx5ICx0aGFua3lvdSB2ZXJ5IG11Y2gu
+DQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpPUFBPDQoNCrG+tefX09PKvP68
+sMbkuL28/rqs09BPUFBPuavLvrXEsaPD3NDFz6KjrL32z97T2tPKvP7WuMP3tcTK1bz+yMvKudPD
+o6iw/LqsuPbIy7ywyLrX6aOpoaO9+9a5yM66zsjL1NrOtL6tytrIqLXEx+m/9s/C0tTIzrrO0M7K
+vcq508Oho8jnufvE+rTtytXBy7G+08q8/qOsx+vBory00tS159fT08q8/s2o1qq3orz+yMuyosm+
+s/2xvtPKvP68sMbkuL28/qGjDQoNClRoaXMgZS1tYWlsIGFuZCBpdHMgYXR0YWNobWVudHMgY29u
+dGFpbiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gZnJvbSBPUFBPLCB3aGljaCBpcyBpbnRlbmRl
+ZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBh
+Ym92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkg
+d2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNj
+bG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5IHBlcnNvbnMgb3RoZXIg
+dGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpIGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNl
+aXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcGhv
+bmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSBpdCENCg==
