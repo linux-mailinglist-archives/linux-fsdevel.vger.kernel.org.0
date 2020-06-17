@@ -2,59 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA8E1FD3A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 19:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE0391FD3B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jun 2020 19:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbgFQRnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 13:43:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbgFQRm7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 13:42:59 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DAFDC06174E;
-        Wed, 17 Jun 2020 10:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CkyHJY+MLCHaDHdWKXst4+zbNAtcnZ7dwIww1fY+0cU=; b=KH9dEePlMHpTfpCpY97B0WgqzR
-        apq9Cwcf0HNGJgYj8xSCmuLWcRoCSO1GjCmpI7XH8KV1PJs+h9dHna54hr4ieZxHtcdOiO/BxiRnk
-        iYYte5LX7UYv4axoVDkT6leuq/+JjUrfGAdw5iI9WiLpGIlgblUJYoJoocdEpmABdv8viFl9rlnzh
-        RpdqTU2HxXWp6B4OILcwr1xt8hHLibbc68W7OYO8eRxoUPYXgvJmaDWL93CNinvE+nAOwj09QuL6s
-        f5p9UXq7aWLvGkgCTpRvuxwiHVrQiWHF/4WscBAK4USfRg4IRXu8oIpGFEEC3GadavRrw5TDs6OVo
-        LwH8EIyQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlc5J-0008QP-68; Wed, 17 Jun 2020 17:42:49 +0000
-Date:   Wed, 17 Jun 2020 10:42:49 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
-        nj.shetty@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
-Message-ID: <20200617174249.GL8681@bombadil.infradead.org>
-References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
- <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+        id S1726815AbgFQRrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 13:47:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbgFQRrA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 13:47:00 -0400
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE73221532;
+        Wed, 17 Jun 2020 17:46:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592416019;
+        bh=UXP974nYkcnqpDwmLS52ZN4JfgNusjfQ08nltGiLMkk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LbwKHHobboW5GPv0wwI+ZH1bHD8EJHTDwG/XEvIaC7RMerremZcH/laUwq3uc8Cnj
+         9tnf5tOtejgrxrfIx7RyMAqlxE+kEgZYytd88SETByOu2K0Z7z2M4MUqCVhedRUDmz
+         5oZM0Ms7lY2M/CErISFBpz0jW0VZGBPYwi59JrLA=
+Date:   Wed, 17 Jun 2020 10:46:59 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 1/4] fs: introduce SB_INLINECRYPT
+Message-ID: <20200617174659.GA114489@google.com>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-2-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+In-Reply-To: <20200617075732.213198-2-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 10:53:36PM +0530, Kanchan Joshi wrote:
-> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
+On 06/17, Satya Tangirala wrote:
+> Introduce SB_INLINECRYPT, which is set by filesystems that wish to use
+> blk-crypto for file content en/decryption. This flag maps to the
+> '-o inlinecrypt' mount option which multiple filesystems will implement,
+> and code in fs/crypto/ needs to be able to check for this mount option
+> in a filesystem-independent way.
 > 
-> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
-> of the zone to issue append. On completion 'res2' field is used to return
-> zone-relative offset.
+> Signed-off-by: Satya Tangirala <satyat@google.com>
 
-Maybe it's obvious to everyone working with zoned drives on a daily
-basis, but please explain in the commit message why you need to return
-the zone-relative offset to the application.
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+> ---
+>  fs/proc_namespace.c | 1 +
+>  include/linux/fs.h  | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> index 3059a9394c2d..e0ff1f6ac8f1 100644
+> --- a/fs/proc_namespace.c
+> +++ b/fs/proc_namespace.c
+> @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+>  		{ SB_DIRSYNC, ",dirsync" },
+>  		{ SB_MANDLOCK, ",mand" },
+>  		{ SB_LAZYTIME, ",lazytime" },
+> +		{ SB_INLINECRYPT, ",inlinecrypt" },
+>  		{ 0, NULL }
+>  	};
+>  	const struct proc_fs_opts *fs_infop;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 6c4ab4dc1cd7..abef6aa95524 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1380,6 +1380,7 @@ extern int send_sigurg(struct fown_struct *fown);
+>  #define SB_NODIRATIME	2048	/* Do not update directory access times */
+>  #define SB_SILENT	32768
+>  #define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
+> +#define SB_INLINECRYPT	(1<<17)	/* Use blk-crypto for encrypted files */
+>  #define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
+>  #define SB_I_VERSION	(1<<23) /* Update inode I_version field */
+>  #define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
+> -- 
+> 2.27.0.290.gba653c62da-goog
