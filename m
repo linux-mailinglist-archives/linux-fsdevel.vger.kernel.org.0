@@ -2,104 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 328051FE43C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129C01FE461
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387566AbgFRCQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 22:16:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727086AbgFRBUM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:20:12 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E661521D80;
-        Thu, 18 Jun 2020 01:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443211;
-        bh=4JyrHkTxJQCWKgw1uCe76MclNU1kd8vc5gEAb79+BY0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zm2tHrx54TCIQf8cA0/Mgcn7MpML0t88z86SvQF93WCCy+3CoPWBUQqXyxk6Qd0VZ
-         y2ShmBAOWCwwt5EqbsEkD1v6bLfuCk6a9VJIJXdeS5mZfLQN4a724CiM9iOjFT4BWj
-         9I/YlC2uryKHDdUMl1kO+L0uTgo1d/3LqPTMm4K8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 168/266] fuse: copy_file_range should truncate cache
-Date:   Wed, 17 Jun 2020 21:14:53 -0400
-Message-Id: <20200618011631.604574-168-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
-References: <20200618011631.604574-1-sashal@kernel.org>
+        id S1731569AbgFRCR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 22:17:57 -0400
+Received: from [211.29.132.59] ([211.29.132.59]:46282 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1729811AbgFRBTv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:19:51 -0400
+Received: from dread.disaster.area (unknown [49.180.124.177])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id BB9BD1AEAF2;
+        Thu, 18 Jun 2020 11:19:20 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jljCy-0001gV-Fl; Thu, 18 Jun 2020 11:19:12 +1000
+Date:   Thu, 18 Jun 2020 11:19:12 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 1/4] fs: introduce SB_INLINECRYPT
+Message-ID: <20200618011912.GA2040@dread.disaster.area>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-2-satyat@google.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200617075732.213198-2-satyat@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=1XWaLZrsAAAA:8 a=7-415B0cAAAA:8
+        a=Yn2aIsqHhkDqJBDDX5kA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+On Wed, Jun 17, 2020 at 07:57:29AM +0000, Satya Tangirala wrote:
+> Introduce SB_INLINECRYPT, which is set by filesystems that wish to use
+> blk-crypto for file content en/decryption. This flag maps to the
+> '-o inlinecrypt' mount option which multiple filesystems will implement,
+> and code in fs/crypto/ needs to be able to check for this mount option
+> in a filesystem-independent way.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  fs/proc_namespace.c | 1 +
+>  include/linux/fs.h  | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> index 3059a9394c2d..e0ff1f6ac8f1 100644
+> --- a/fs/proc_namespace.c
+> +++ b/fs/proc_namespace.c
+> @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+>  		{ SB_DIRSYNC, ",dirsync" },
+>  		{ SB_MANDLOCK, ",mand" },
+>  		{ SB_LAZYTIME, ",lazytime" },
+> +		{ SB_INLINECRYPT, ",inlinecrypt" },
+>  		{ 0, NULL }
+>  	};
+>  	const struct proc_fs_opts *fs_infop;
 
-[ Upstream commit 9b46418c40fe910e6537618f9932a8be78a3dd6c ]
+NACK.
 
-After the copy operation completes the cache is not up-to-date.  Truncate
-all pages in the interval that has successfully been copied.
+SB_* flgs are for functionality enabled on the superblock, not for
+indicating mount options that have been set by the user.
 
-Truncating completely copied dirty pages is okay, since the data has been
-overwritten anyway.  Truncating partially copied dirty pages is not okay;
-add a comment for now.
+If the mount options are directly parsed by the filesystem option
+parser (as is done later in this patchset), then the mount option
+setting should be emitted by the filesystem's ->show_options
+function, not a generic function.
 
-Fixes: 88bc7d5097a1 ("fuse: add support for copy_file_range()")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/fuse/file.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+The option string must match what the filesystem defines, not
+require separate per-filesystem and VFS definitions of the same
+option that people could potentially get wrong (*cough* i_version vs
+iversion *cough*)....
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index e730e3d8ad99..66214707a945 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3292,6 +3292,24 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (err)
- 		goto out;
- 
-+	/*
-+	 * Write out dirty pages in the destination file before sending the COPY
-+	 * request to userspace.  After the request is completed, truncate off
-+	 * pages (including partial ones) from the cache that have been copied,
-+	 * since these contain stale data at that point.
-+	 *
-+	 * This should be mostly correct, but if the COPY writes to partial
-+	 * pages (at the start or end) and the parts not covered by the COPY are
-+	 * written through a memory map after calling fuse_writeback_range(),
-+	 * then these partial page modifications will be lost on truncation.
-+	 *
-+	 * It is unlikely that someone would rely on such mixed style
-+	 * modifications.  Yet this does give less guarantees than if the
-+	 * copying was performed with write(2).
-+	 *
-+	 * To fix this a i_mmap_sem style lock could be used to prevent new
-+	 * faults while the copy is ongoing.
-+	 */
- 	err = fuse_writeback_range(inode_out, pos_out, pos_out + len - 1);
- 	if (err)
- 		goto out;
-@@ -3315,6 +3333,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (err)
- 		goto out;
- 
-+	truncate_inode_pages_range(inode_out->i_mapping,
-+				   ALIGN_DOWN(pos_out, PAGE_SIZE),
-+				   ALIGN(pos_out + outarg.size, PAGE_SIZE) - 1);
-+
- 	if (fc->writeback_cache) {
- 		fuse_write_update_size(inode_out, pos_out + outarg.size);
- 		file_update_time(file_out);
+Cheers,
+
+Dave.
 -- 
-2.25.1
-
+Dave Chinner
+david@fromorbit.com
