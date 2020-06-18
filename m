@@ -2,211 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54BC01FEB1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 07:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDBD1FEBC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 08:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgFRFtY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 01:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
+        id S1727922AbgFRG4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 02:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbgFRFtW (ORCPT
+        with ESMTP id S1727010AbgFRG4h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 01:49:22 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE8EC061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 22:49:22 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id q8so5673052iow.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 22:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jM1eoIIAt+grvNiuYi3rzmR7kTBktuLf10g4AO+YUOI=;
-        b=0y1bvfItLik1rf3wmKn7Iu980MFvRglKuXHNUxhRgvYIMadB13+ziJIB8021zVD/3i
-         S8wWZ/I1MB9wNT2Og7foF3D2CWDOmQmGASC8WAOPga/NMs3q6tUJudABNh6zM9yINyAp
-         PttGFB7ur2H99nzntubSzEkQDyVNh4EGlGKgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jM1eoIIAt+grvNiuYi3rzmR7kTBktuLf10g4AO+YUOI=;
-        b=OBtsRpo1S0hSFyPEQBnMf4EscYNfENrYIOA+Vp78hub6rHoRuEaE4QfyKo1XTfJqMZ
-         d4DxpdJQ6jKukfBMcdMmD7sQeq1BYBTd3LU8DZ91ENSUomFLsudQ7zwYlSYW50GwVYN4
-         l3AJSBA/hytt5ZTNT0asaYYToLWaNnW13v5CHjBp8Ziz2I9aK2s5wdWXuGA25B/Jnobe
-         GRqzFFYWeN/eoIe7aeYoc2EHaHS5OqKMKm9jAtx5x8FguKYn9ceLz8Jh7kVsS6T1rC+T
-         IpZaQ5e3j3yw/ETnNq0dImQaEanK2fqv9gTQ9DhSrELFpAO/LXUBv60gpNHdaeSqULQe
-         BKAQ==
-X-Gm-Message-State: AOAM5326sOX4JRK2zEN7OK/Up7fIdWXOUaZeug7PfsOTPzWk3Tp9ZE+V
-        yF1ZTY2zZdXL9gIe1sHAAu/NUQ==
-X-Google-Smtp-Source: ABdhPJycTD13Sevq9m2oc4L0wrVq1HgAkVfxdAa6RYaU6kPm28Y0RVvqaHnaQIcOg/iycnCDSM67EQ==
-X-Received: by 2002:a02:5a85:: with SMTP id v127mr2785152jaa.83.1592459361462;
-        Wed, 17 Jun 2020 22:49:21 -0700 (PDT)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id b22sm1146946ios.21.2020.06.17.22.49.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jun 2020 22:49:20 -0700 (PDT)
-Date:   Thu, 18 Jun 2020 05:49:19 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 3/7] fs: Add fd_install_received() wrapper for
- __fd_install_received()
-Message-ID: <20200618054918.GB18669@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20200617220327.3731559-1-keescook@chromium.org>
- <20200617220327.3731559-4-keescook@chromium.org>
+        Thu, 18 Jun 2020 02:56:37 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6ACC06174E;
+        Wed, 17 Jun 2020 23:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uAvmk2CwDLs4X+Ko7ajFBaGyB0rcXPF4WnH3SQrYs4k=; b=iQ/jY6BwNU0GexOcII4Y8RmC90
+        vslaU7EwpUIeDbH4l3fPejGtKiiupUxIiUtFiXf9OKFRfNWnG9EfupRM5LYyTyoqkQ4NaCxf+rQEx
+        QpA0xyEbPpW6VGUiNbZPittAv+QRYNnNWsWAqedu0wTvaDrHGNzeST60Osvj66lkMXofncPReYaX4
+        xFEqPz0Pl/FlgUEfYqpEGhHy0/hcdSLaJ9QIprhDs1/QkI8aerds64dV+fhAfvor9e/DUmYIX86+S
+        TJC0Ps7C1qPcTVNwNM4UX+vYpk2ktc961oLqTiOI4ve7lfCJzRLxzGLqieBv7S/MYQVFHGZpIRreL
+        YlLoGcYw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jloTS-00012N-So; Thu, 18 Jun 2020 06:56:34 +0000
+Date:   Wed, 17 Jun 2020 23:56:34 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, javier.gonz@samsung.com
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Message-ID: <20200618065634.GB24943@infradead.org>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200617220327.3731559-4-keescook@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 03:03:23PM -0700, Kees Cook wrote:
-> For both pidfd and seccomp, the __user pointer is not used. Update
-> __fd_install_received() to make writing to ufd optional via a NULL check.
-> However, for the fd_install_received_user() wrapper, ufd is NULL checked
-> so an -EFAULT can be returned to avoid changing the SCM_RIGHTS interface
-> behavior. Add new wrapper fd_install_received() for pidfd and seccomp
-> that does not use the ufd argument. For the new helper, the new fd needs
-> to be returned on success. Update the existing callers to handle it.
+On Wed, Jun 17, 2020 at 10:53:36PM +0530, Kanchan Joshi wrote:
+> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/file.c            | 22 ++++++++++++++--------
->  include/linux/file.h |  7 +++++++
->  net/compat.c         |  2 +-
->  net/core/scm.c       |  2 +-
->  4 files changed, 23 insertions(+), 10 deletions(-)
+> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
+> of the zone to issue append. On completion 'res2' field is used to return
+> zone-relative offset.
 > 
-> diff --git a/fs/file.c b/fs/file.c
-> index f2167d6feec6..de85a42defe2 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -942,9 +942,10 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
->   * @o_flags: the O_* flags to apply to the new fd entry
->   *
->   * Installs a received file into the file descriptor table, with appropriate
-> - * checks and count updates. Writes the fd number to userspace.
-> + * checks and count updates. Optionally writes the fd number to userspace, if
-> + * @ufd is non-NULL.
->   *
-> - * Returns -ve on error.
-> + * Returns newly install fd or -ve on error.
->   */
->  int __fd_install_received(struct file *file, int __user *ufd, unsigned int o_flags)
->  {
-> @@ -960,20 +961,25 @@ int __fd_install_received(struct file *file, int __user *ufd, unsigned int o_fla
->  	if (new_fd < 0)
->  		return new_fd;
->  
-> -	error = put_user(new_fd, ufd);
-> -	if (error) {
-> -		put_unused_fd(new_fd);
-> -		return error;
-> +	if (ufd) {
-> +		error = put_user(new_fd, ufd);
-> +		if (error) {
-> +			put_unused_fd(new_fd);
-> +			return error;
-> +		}
->  	}
->  
-> -	/* Bump the usage count and install the file. */
-> +	/* Bump the usage count and install the file. The resulting value of
-> +	 * "error" is ignored here since we only need to take action when
-> +	 * the file is a socket and testing "sock" for NULL is sufficient.
-> +	 */
->  	sock = sock_from_file(file, &error);
->  	if (sock) {
->  		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
->  		sock_update_classid(&sock->sk->sk_cgrp_data);
->  	}
->  	fd_install(new_fd, get_file(file));
-> -	return 0;
-> +	return new_fd;
->  }
->  
->  static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
-> diff --git a/include/linux/file.h b/include/linux/file.h
-> index fe18a1a0d555..e19974ed9322 100644
-> --- a/include/linux/file.h
-> +++ b/include/linux/file.h
-> @@ -9,6 +9,7 @@
->  #include <linux/compiler.h>
->  #include <linux/types.h>
->  #include <linux/posix_types.h>
-> +#include <linux/errno.h>
->  
->  struct file;
->  
-> @@ -96,8 +97,14 @@ extern int __fd_install_received(struct file *file, int __user *ufd,
->  static inline int fd_install_received_user(struct file *file, int __user *ufd,
->  					   unsigned int o_flags)
->  {
-> +	if (ufd == NULL)
-> +		return -EFAULT;
-Isn't this *technically* a behvaiour change? Nonetheless, I think this is a much better
-approach than forcing everyone to do null checking, and avoids at least one error case
-where the kernel installs FDs for SCM_RIGHTS, and they're not actualy usable.
+> For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+> Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
 
->  	return __fd_install_received(file, ufd, o_flags);
->  }
-> +static inline int fd_install_received(struct file *file, unsigned int o_flags)
-> +{
-> +	return __fd_install_received(file, NULL, o_flags);
-> +}
->  
->  extern void flush_delayed_fput(void);
->  extern void __fput_sync(struct file *);
-> diff --git a/net/compat.c b/net/compat.c
-> index 94f288e8dac5..71494337cca7 100644
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -299,7 +299,7 @@ void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
->  
->  	for (i = 0; i < fdmax; i++) {
->  		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
-> -		if (err)
-> +		if (err < 0)
->  			break;
->  	}
->  
-> diff --git a/net/core/scm.c b/net/core/scm.c
-> index df190f1fdd28..b9a0442ebd26 100644
-> --- a/net/core/scm.c
-> +++ b/net/core/scm.c
-> @@ -307,7 +307,7 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
->  
->  	for (i = 0; i < fdmax; i++) {
->  		err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
-> -		if (err)
-> +		if (err < 0)
->  			break;
->  	}
->  
-> -- 
-> 2.25.1
-> 
+And what exactly are the semantics supposed to be?  Remember the
+unix file abstractions does not know about zones at all.
 
-Reviewed-by: Sargun Dhillon <sargun@sargun.me>
+I really don't think squeezing low-level not quite block storage
+protocol details into the Linux read/write path is a good idea.
+
+What could be a useful addition is a way for O_APPEND/RWF_APPEND writes
+to report where they actually wrote, as that comes close to Zone Append
+while still making sense at our usual abstraction level for file I/O.
