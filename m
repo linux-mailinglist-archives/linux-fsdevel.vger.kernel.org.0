@@ -2,87 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10C3E1FE3ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F6011FE804
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbgFRCOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 22:14:31 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46946 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730379AbgFRCO2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 22:14:28 -0400
-Received: by mail-pl1-f194.google.com with SMTP id n2so1774404pld.13;
-        Wed, 17 Jun 2020 19:14:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+Le1+A9v4jFjRt4VG3Xq//Jk2RuRTl7qEG22rEXGxqc=;
-        b=IkZnAJvy4AnFsQ2fSv5CeHRspXDmKf8olCYjFKzZC5YosTz5TlMQFhkUzct6Oix6Rg
-         5fC/1Cr4xSbpPIyMnjrd2vKydzbQ6vv+rb65ZFgIn6gEWewTWja4/R2+5eevJfe4MIIF
-         Yczxg8471GcXxgFmE5km6jTtR/p4rsnvLR9zs5BdB58rt41dVu9MYhnAzGZ6LVQKQvec
-         j+f6iX4lkMh/SULah7rFrtd5wtxEsMN8CjFc7vmdY5cWyHXhtIId9AwRbMKIZ+PSeWQS
-         cPLo+PWfxUfZvQjH+WX8am4rf3LdnDA9eaxQ/KHGHc24p8GTZE9+mNBlkES6HufEwuhY
-         8LyA==
-X-Gm-Message-State: AOAM533dbVYxaN5q9NS3NKcQDdeQswldzroTSg7LkRhw+CAmdnfFpOoF
-        RQgptkHxcNyEKRgBt1ca0x4=
-X-Google-Smtp-Source: ABdhPJwl1mkg/jrvMc/UXQw/tv7F5UxkmlI9Bmx1IsFCwraX6RSBJKMpSeYe0TrYLrbpkDxMK8kVMA==
-X-Received: by 2002:a17:90a:ad87:: with SMTP id s7mr1971712pjq.225.1592446466771;
-        Wed, 17 Jun 2020 19:14:26 -0700 (PDT)
-Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id q24sm959825pgg.3.2020.06.17.19.14.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jun 2020 19:14:26 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] loop: replace kill_bdev with invalidate_bdev
-To:     Zheng Bin <zhengbin13@huawei.com>, hch@infradead.org,
-        axboe@kernel.dk, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Cc:     houtao1@huawei.com, yi.zhang@huawei.com
-References: <20200530114032.125678-1-zhengbin13@huawei.com>
- <20200530114032.125678-2-zhengbin13@huawei.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <bf6c99e3-bf17-1d45-1ef8-d3431bd0d09e@acm.org>
-Date:   Wed, 17 Jun 2020 19:14:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S1729404AbgFRCpO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 22:45:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728677AbgFRBLB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:11:01 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE08220FC3;
+        Thu, 18 Jun 2020 01:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592442660;
+        bh=Gpq89Boeo82rKY6nSce6Tq9xPIIuuioaUyKxagZCfCw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VXAvoKx6APS+Pjpj7WDsUGqUn4gHHWHJJvgbIREY9fqOcUYbS+RFwny6zxeIaUnBM
+         eCcF/xW54silTA+r/e156g5JwiPkZ0J5yMWGJOSJc29ZXY5rNcdRcibmzrDUELhyIA
+         t1Tkae2XtPcFFaXBfaZGmf+yVACF/4Wct2Q4ePh4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.7 131/388] virtiofs: schedule blocking async replies in separate worker
+Date:   Wed, 17 Jun 2020 21:03:48 -0400
+Message-Id: <20200618010805.600873-131-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
+References: <20200618010805.600873-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200530114032.125678-2-zhengbin13@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-05-30 04:40, Zheng Bin wrote:
-> When a filesystem is mounted on a loop device and on a loop ioctl
-> LOOP_SET_STATUS64, because of kill_bdev, buffer_head mappings are getting
-> destroyed.
+From: Vivek Goyal <vgoyal@redhat.com>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+[ Upstream commit bb737bbe48bea9854455cb61ea1dc06e92ce586c ]
+
+In virtiofs (unlike in regular fuse) processing of async replies is
+serialized.  This can result in a deadlock in rare corner cases when
+there's a circular dependency between the completion of two or more async
+replies.
+
+Such a deadlock can be reproduced with xfstests:generic/503 if TEST_DIR ==
+SCRATCH_MNT (which is a misconfiguration):
+
+ - Process A is waiting for page lock in worker thread context and blocked
+   (virtio_fs_requests_done_work()).
+ - Process B is holding page lock and waiting for pending writes to
+   finish (fuse_wait_on_page_writeback()).
+ - Write requests are waiting in virtqueue and can't complete because
+   worker thread is blocked on page lock (process A).
+
+Fix this by creating a unique work_struct for each async reply that can
+block (O_DIRECT read).
+
+Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/file.c      |   1 +
+ fs/fuse/fuse_i.h    |   1 +
+ fs/fuse/virtio_fs.c | 106 +++++++++++++++++++++++++++++---------------
+ 3 files changed, 73 insertions(+), 35 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 9d67b830fb7a..d400b71b98d5 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -712,6 +712,7 @@ static ssize_t fuse_async_req_send(struct fuse_conn *fc,
+ 	spin_unlock(&io->lock);
+ 
+ 	ia->ap.args.end = fuse_aio_complete_req;
++	ia->ap.args.may_block = io->should_dirty;
+ 	err = fuse_simple_background(fc, &ia->ap.args, GFP_KERNEL);
+ 	if (err)
+ 		fuse_aio_complete_req(fc, &ia->ap.args, err);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index ca344bf71404..d7cde216fc87 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -249,6 +249,7 @@ struct fuse_args {
+ 	bool out_argvar:1;
+ 	bool page_zeroing:1;
+ 	bool page_replace:1;
++	bool may_block:1;
+ 	struct fuse_in_arg in_args[3];
+ 	struct fuse_arg out_args[2];
+ 	void (*end)(struct fuse_conn *fc, struct fuse_args *args, int error);
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index bade74768903..0c6ef5d3c6ab 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -60,6 +60,12 @@ struct virtio_fs_forget {
+ 	struct virtio_fs_forget_req req;
+ };
+ 
++struct virtio_fs_req_work {
++	struct fuse_req *req;
++	struct virtio_fs_vq *fsvq;
++	struct work_struct done_work;
++};
++
+ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 				 struct fuse_req *req, bool in_flight);
+ 
+@@ -485,19 +491,67 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
+ }
+ 
+ /* Work function for request completion */
++static void virtio_fs_request_complete(struct fuse_req *req,
++				       struct virtio_fs_vq *fsvq)
++{
++	struct fuse_pqueue *fpq = &fsvq->fud->pq;
++	struct fuse_conn *fc = fsvq->fud->fc;
++	struct fuse_args *args;
++	struct fuse_args_pages *ap;
++	unsigned int len, i, thislen;
++	struct page *page;
++
++	/*
++	 * TODO verify that server properly follows FUSE protocol
++	 * (oh.uniq, oh.len)
++	 */
++	args = req->args;
++	copy_args_from_argbuf(args, req);
++
++	if (args->out_pages && args->page_zeroing) {
++		len = args->out_args[args->out_numargs - 1].size;
++		ap = container_of(args, typeof(*ap), args);
++		for (i = 0; i < ap->num_pages; i++) {
++			thislen = ap->descs[i].length;
++			if (len < thislen) {
++				WARN_ON(ap->descs[i].offset);
++				page = ap->pages[i];
++				zero_user_segment(page, len, thislen);
++				len = 0;
++			} else {
++				len -= thislen;
++			}
++		}
++	}
++
++	spin_lock(&fpq->lock);
++	clear_bit(FR_SENT, &req->flags);
++	spin_unlock(&fpq->lock);
++
++	fuse_request_end(fc, req);
++	spin_lock(&fsvq->lock);
++	dec_in_flight_req(fsvq);
++	spin_unlock(&fsvq->lock);
++}
++
++static void virtio_fs_complete_req_work(struct work_struct *work)
++{
++	struct virtio_fs_req_work *w =
++		container_of(work, typeof(*w), done_work);
++
++	virtio_fs_request_complete(w->req, w->fsvq);
++	kfree(w);
++}
++
+ static void virtio_fs_requests_done_work(struct work_struct *work)
+ {
+ 	struct virtio_fs_vq *fsvq = container_of(work, struct virtio_fs_vq,
+ 						 done_work);
+ 	struct fuse_pqueue *fpq = &fsvq->fud->pq;
+-	struct fuse_conn *fc = fsvq->fud->fc;
+ 	struct virtqueue *vq = fsvq->vq;
+ 	struct fuse_req *req;
+-	struct fuse_args_pages *ap;
+ 	struct fuse_req *next;
+-	struct fuse_args *args;
+-	unsigned int len, i, thislen;
+-	struct page *page;
++	unsigned int len;
+ 	LIST_HEAD(reqs);
+ 
+ 	/* Collect completed requests off the virtqueue */
+@@ -515,38 +569,20 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
+ 
+ 	/* End requests */
+ 	list_for_each_entry_safe(req, next, &reqs, list) {
+-		/*
+-		 * TODO verify that server properly follows FUSE protocol
+-		 * (oh.uniq, oh.len)
+-		 */
+-		args = req->args;
+-		copy_args_from_argbuf(args, req);
+-
+-		if (args->out_pages && args->page_zeroing) {
+-			len = args->out_args[args->out_numargs - 1].size;
+-			ap = container_of(args, typeof(*ap), args);
+-			for (i = 0; i < ap->num_pages; i++) {
+-				thislen = ap->descs[i].length;
+-				if (len < thislen) {
+-					WARN_ON(ap->descs[i].offset);
+-					page = ap->pages[i];
+-					zero_user_segment(page, len, thislen);
+-					len = 0;
+-				} else {
+-					len -= thislen;
+-				}
+-			}
+-		}
+-
+-		spin_lock(&fpq->lock);
+-		clear_bit(FR_SENT, &req->flags);
+ 		list_del_init(&req->list);
+-		spin_unlock(&fpq->lock);
+ 
+-		fuse_request_end(fc, req);
+-		spin_lock(&fsvq->lock);
+-		dec_in_flight_req(fsvq);
+-		spin_unlock(&fsvq->lock);
++		/* blocking async request completes in a worker context */
++		if (req->args->may_block) {
++			struct virtio_fs_req_work *w;
++
++			w = kzalloc(sizeof(*w), GFP_NOFS | __GFP_NOFAIL);
++			INIT_WORK(&w->done_work, virtio_fs_complete_req_work);
++			w->fsvq = fsvq;
++			w->req = req;
++			schedule_work(&w->done_work);
++		} else {
++			virtio_fs_request_complete(req, fsvq);
++		}
+ 	}
+ }
+ 
+-- 
+2.25.1
+
