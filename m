@@ -2,151 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9747B1FE93A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 05:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7421FE962
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 05:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgFRDGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 23:06:14 -0400
-Received: from [211.29.132.246] ([211.29.132.246]:57138 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726952AbgFRDGN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 23:06:13 -0400
-Received: from dread.disaster.area (unknown [49.180.124.177])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B8369821885;
-        Thu, 18 Jun 2020 13:05:47 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jlkrz-0002Nn-SF; Thu, 18 Jun 2020 13:05:39 +1000
-Date:   Thu, 18 Jun 2020 13:05:39 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-Message-ID: <20200618030539.GH2005@dread.disaster.area>
-References: <20200616202123.12656-1-msys.mizuma@gmail.com>
- <20200617080314.GA7147@infradead.org>
- <20200617155836.GD13815@fieldses.org>
- <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
- <20200618013026.ewnhvf64nb62k2yx@gabell>
+        id S1727798AbgFRDTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 23:19:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726966AbgFRDTh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 23:19:37 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA20121655;
+        Thu, 18 Jun 2020 03:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592450377;
+        bh=tb8eihrC/QSLy1DAOwhuACWDwQVJ7zu3gsQrF0KN6W8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a5nCURSUqqX0UUIMT3I1h+OR1Z2Lak9E0lXPKq4jwQjzuth5mpakN9gMWOWgW28le
+         iBadBT/YYRVhbmROBTA8eyC4fXxTYGMBV6FXAkaHv0RPZTWMbFzIkffZxMoC7MZbDp
+         pHdoOal6ViKvmNvO1MAYr0rTmaoWUMSAjjssWUlE=
+Date:   Wed, 17 Jun 2020 20:19:35 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Satya Tangirala <satyat@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 1/4] fs: introduce SB_INLINECRYPT
+Message-ID: <20200618031935.GE1138@sol.localdomain>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-2-satyat@google.com>
+ <20200618011912.GA2040@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200618013026.ewnhvf64nb62k2yx@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
-        a=yHdZGDY2jtx0MHS2ggIA:9 a=aBMfwiDfj0bUOVTI:21 a=1xHCqXNt3GIuuEAb:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200618011912.GA2040@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 09:30:26PM -0400, Masayoshi Mizuma wrote:
-> On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
-> > On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
-> > > but mount(8) has already exposed this interface:
-> > > 
-> > >        iversion
-> > >               Every time the inode is modified, the i_version field will be incremented.
-> > > 
-> > >        noiversion
-> > >               Do not increment the i_version inode field.
-> > > 
-> > > so now what?
+On Thu, Jun 18, 2020 at 11:19:12AM +1000, Dave Chinner wrote:
+> On Wed, Jun 17, 2020 at 07:57:29AM +0000, Satya Tangirala wrote:
+> > Introduce SB_INLINECRYPT, which is set by filesystems that wish to use
+> > blk-crypto for file content en/decryption. This flag maps to the
+> > '-o inlinecrypt' mount option which multiple filesystems will implement,
+> > and code in fs/crypto/ needs to be able to check for this mount option
+> > in a filesystem-independent way.
 > > 
-> > It's not like anyone's actually depending on i_version *not* being
-> > incremented.  (Can you even observe it from userspace other than over
-> > NFS?)
+> > Signed-off-by: Satya Tangirala <satyat@google.com>
+> > ---
+> >  fs/proc_namespace.c | 1 +
+> >  include/linux/fs.h  | 1 +
+> >  2 files changed, 2 insertions(+)
 > > 
-> > So, just silently turn on the "iversion" behavior and ignore noiversion,
-> > and I doubt you're going to break any real application.
+> > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> > index 3059a9394c2d..e0ff1f6ac8f1 100644
+> > --- a/fs/proc_namespace.c
+> > +++ b/fs/proc_namespace.c
+> > @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+> >  		{ SB_DIRSYNC, ",dirsync" },
+> >  		{ SB_MANDLOCK, ",mand" },
+> >  		{ SB_LAZYTIME, ",lazytime" },
+> > +		{ SB_INLINECRYPT, ",inlinecrypt" },
+> >  		{ 0, NULL }
+> >  	};
+> >  	const struct proc_fs_opts *fs_infop;
 > 
-> I suppose it's probably good to remain the options for user compatibility,
-> however, it seems that iversion and noiversiont are useful for
-> only ext4.
-> How about moving iversion and noiversion description on mount(8)
-> to ext4 specific option?
+> NACK.
 > 
-> And fixing the remount issue for XFS (maybe btrfs has the same
-> issue as well)?
-> For XFS like as:
+> SB_* flgs are for functionality enabled on the superblock, not for
+> indicating mount options that have been set by the user.
+
+That's an interesting claim, given that most SB_* flags are for mount options.
+E.g.:
+
+	ro => SB_RDONLY
+	nosuid => SB_NOSUID
+	nodev => SB_NODEV
+	noexec => SB_NOEXEC
+	sync => SB_SYNCHRONOUS
+	mand => SB_MANDLOCK
+	noatime => SB_NOATIME
+	nodiratime => SB_NODIRATIME
+	lazytime => SB_LAZYTIME
+
 > 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 379cbff438bc..2ddd634cfb0b 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
->                         return error;
->         }
+> If the mount options are directly parsed by the filesystem option
+> parser (as is done later in this patchset), then the mount option
+> setting should be emitted by the filesystem's ->show_options
+> function, not a generic function.
 > 
-> +       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-> +               mp->m_super->s_flags |= SB_I_VERSION;
-> +
->         return 0;
->  }
+> The option string must match what the filesystem defines, not
+> require separate per-filesystem and VFS definitions of the same
+> option that people could potentially get wrong (*cough* i_version vs
+> iversion *cough*)....
 
-no this doesn't work, because the sueprblock flags are modified
-after ->reconfigure is called.
+Are you objecting to the use of a SB_* flag, or just to showing the flag in
+show_sb_opts() instead of in the individual filesystems?  Note that the SB_*
+flag was requested by Christoph
+(https://lkml.kernel.org/r/20191031183217.GF23601@infradead.org/,
+https://lkml.kernel.org/r/20191031212103.GA6244@infradead.org/).  We originally
+used a function fscrypt_operations::inline_crypt_enabled() instead.
 
-i.e. reconfigure_super() does this:
-
-	if (fc->ops->reconfigure) {
-		retval = fc->ops->reconfigure(fc);
-		if (retval) {
-			if (!force)
-				goto cancel_readonly;
-			/* If forced remount, go ahead despite any errors */
-			WARN(1, "forced remount of a %s fs returned %i\n",
-			     sb->s_type->name, retval);
-		}
-	}
-
-	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
-				 (fc->sb_flags & fc->sb_flags_mask)));
-
-And it's the WRITE_ONCE() line that clears SB_I_VERSION out of
-sb->s_flags. Hence adding it in ->reconfigure doesn't help.
-
-What we actually want to do here in xfs_fc_reconfigure() is this:
-
-	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-		fc->sb_flags_mask |= SB_I_VERSION;
-
-So that the SB_I_VERSION is not cleared from sb->s_flags.
-
-I'll also note that btrfs will need the same fix, because it also
-sets SB_I_VERSION unconditionally, as will any other filesystem that
-does this, too.
-
-Really, this is just indicative of the mess that the mount
-flags vs superblock feature flags are. Filesystems can choose to
-unconditionally support various superblock features, and no mount
-option futzing from userspace should -ever- be able to change that
-feature. Filesystems really do need to be able to override mount
-options that were parsed in userspace and turned into a binary
-flag...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
