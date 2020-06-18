@@ -2,121 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B75FD1FEDBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4418B1FEDED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgFRIgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 04:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
+        id S1728932AbgFRIjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 04:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbgFRIgi (ORCPT
+        with ESMTP id S1728765AbgFRIjo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 04:36:38 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9739EC06174E;
-        Thu, 18 Jun 2020 01:36:38 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id x22so2477310pfn.3;
-        Thu, 18 Jun 2020 01:36:38 -0700 (PDT)
+        Thu, 18 Jun 2020 04:39:44 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD00FC0613EF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:39:43 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id c3so5077422wru.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=klpQjbXIkQXxjkoBdlgU5/GUXlGcyonJcPCF31K/eoI=;
-        b=R1ISLPA1Bi1xyMmkZ6RmwaiRYT+NeGSvP7tRvlCO2sPLopPDh2AEfRp1FZ+YRS+cAb
-         Ti/x24ez6I0XQ7GX7YWZkIimYpp8UHUNmHwHwTVS9CRDTG+G58t/D70U73pC3crvNv2n
-         BLz0/3asjEx4TgVQqdUMhN5rTRRizc3uS0wRx8Qp8ORKHfDCeNxwfowq8cmFgtzKtHAh
-         IX3oEQahvvezWP2001tg7HMteHsNa/BOk/AP1r+6TNVdSWQH4La7yMdOzKUrF39kYdQ7
-         p2akBaO2Ifma+fyhWoB0a1kR12YhtpoP0+2SAQBgltC+nnJSy2VXMUWm/IkHAe6QxfgK
-         7LhA==
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bfGxedb35Oy+a+SaZCiApfvdfQftE+QGRqOTHCEiwk0=;
+        b=Jp9qjrjhQcFj3NXFN/4Rrfme74bB0nupeKD4ZlzQWvUS7V6iRJu1jv1Sw/xuYGTK7k
+         ej+7JPWkQcKo3Ajn043X+/+R+2UJ5jWokpn3flKm+7PyPqNh17V4WhZVxVl8UGg64Wfl
+         yLAVVzaAY5T02u0306kGK6RI1pOm68OMgMXs1Q6bzwjTyr46pYHRf/2EDMWEUCo1eENB
+         ah42bVn0bM6JaiFAzRuDUo0UXVHCUtYN8YRPwPB1XYEJI1AxR6UM7zrwjYxOlgOAVjlf
+         Murw1Sff/3vLDbdD7Obz+r4KwOHNyTfSd6/UabOTjfMlsof+K6zxD5w1t/9NBrZ/jGDZ
+         u39Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=klpQjbXIkQXxjkoBdlgU5/GUXlGcyonJcPCF31K/eoI=;
-        b=L+mSBvyzsWeYY1CdKPdFFSIwtvG+HtCdXsK6KtyEoUt+4SBQ8BiF3qgwn97GrSVrR9
-         k5aewD0mmBC+zJoqt4kvcG8UrzSfm3cX1UxvT7cSMy38MtPZ32sxk7cJoMPgkBkkT/dg
-         8vsO5B9184YaRzT8/1jESDyJzlL1TrrvI3SlX4wPPbvtYxH5IFm61T3HUaxJwcfmW4VW
-         Opz4ux8kXwMEkMUjoJZyWdbNuD33UboPFtMKQ+h3HfYGwZNHuofI+fxo+EWCKCQ2qFXc
-         CUE0utpHnJHSFesW3FU6+u1BB/mx/5qtqVyOb28pLryV4FeF4oglLHalkpB287m7ms++
-         KJtA==
-X-Gm-Message-State: AOAM531kh9oW0knUqEYy7n7IXwmNdvMdYuXaLKgY254XtcX+DjjAHlld
-        y04CnnBEyA2oQm/tRQUaDuvtmd8qkvc=
-X-Google-Smtp-Source: ABdhPJyP1p+nWNCcIHbB2JgesFBWX2Y+8DA/h7dXnvxqC3c+r+3RPNEepdSs1JVhNHE3l4QlM3gBtw==
-X-Received: by 2002:aa7:9a5d:: with SMTP id x29mr2543652pfj.65.1592469397756;
-        Thu, 18 Jun 2020 01:36:37 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:f960:d5b8:822f:1ca1? ([2404:7a87:83e0:f800:f960:d5b8:822f:1ca1])
-        by smtp.gmail.com with ESMTPSA id m14sm1948808pgt.6.2020.06.18.01.36.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jun 2020 01:36:37 -0700 (PDT)
-Subject: Re: [PATCH v3] exfat: remove EXFAT_SB_DIRTY flag
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Namjae Jeon' <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200616021816epcas1p2bb235df44c0b6f74cdec2f12072891e3@epcas1p2.samsung.com>
- <20200616021808.5222-1-kohada.t2@gmail.com>
- <414101d64477$ccb661f0$662325d0$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <aac9d6c7-1d62-a85d-9bcb-d3c0ddc8fcd6@gmail.com>
-Date:   Thu, 18 Jun 2020 17:36:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bfGxedb35Oy+a+SaZCiApfvdfQftE+QGRqOTHCEiwk0=;
+        b=FB2P7vjWpvhHtkb9k+9eKnKUMJ59WtymBFOxVTj//0fbA5EPQnWXaFFOr9DtENuy9R
+         0bTsTOrOHzBdz7V0j6l85BQvve/41g3cQB7WneaxbDq+O2d3U2S9xwfoxIU1uqVroDTd
+         RGvoGHx2gyPwnLxAWV2gb4fzCfNBgHrjaoJ5Kja+LCyKvIxGetNXG0bcjJue4EezkcOc
+         BboF00I8DrKDWyPzCtAxnAUUiBSmZn/feYMpSkgKrZXno8LptfS8MQmHqpF0OULebeAu
+         myJOmd5xhml6vcIeE+DbqbCPfufYGbvIcfdSVhZNdER+l8lbqYYPoMuYcIL+OgiVCMAl
+         H/wA==
+X-Gm-Message-State: AOAM530AjXTxObXNc+X+ATTcdzLX6hxYouFU7prFIEY6PKrZWYc1X8T5
+        mbKWtRl5i/hrXJ9ibgvwfNQUDw==
+X-Google-Smtp-Source: ABdhPJyDJ4nqkXRrg8KN6BZdktgYlGnBwNdxZkxcf0GETyowwUFVAIHSwSrcMLTYoBfjtVs+p7hvSA==
+X-Received: by 2002:adf:a18b:: with SMTP id u11mr3390432wru.102.1592469582468;
+        Thu, 18 Jun 2020 01:39:42 -0700 (PDT)
+Received: from localhost ([194.62.217.57])
+        by smtp.gmail.com with ESMTPSA id d24sm2471775wmb.45.2020.06.18.01.39.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jun 2020 01:39:41 -0700 (PDT)
+Date:   Thu, 18 Jun 2020 10:39:40 +0200
+From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>
+To:     Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <keith.busch@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Message-ID: <20200618083940.jzjtbfwwyyyhpnhs@mpHalley.local>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+ <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
+ <20200618082740.i4sfoi54aed6sxnk@mpHalley.local>
+ <f9b820af-2b23-7bb4-f651-e6e1b3002ebf@lightnvm.io>
 MIME-Version: 1.0
-In-Reply-To: <414101d64477$ccb661f0$662325d0$@samsung.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9b820af-2b23-7bb4-f651-e6e1b3002ebf@lightnvm.io>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for your comment.
-
-On 2020/06/17 16:20, Sungjong Seo wrote:
->> remove EXFAT_SB_DIRTY flag and related codes.
+On 18.06.2020 10:32, Matias Bjørling wrote:
+>On 18/06/2020 10.27, Javier González wrote:
+>>On 18.06.2020 10:04, Matias Bjørling wrote:
+>>>On 17/06/2020 19.23, Kanchan Joshi wrote:
+>>>>This patchset enables issuing zone-append using aio and io-uring 
+>>>>direct-io interface.
+>>>>
+>>>>For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. 
+>>>>Application uses start LBA
+>>>>of the zone to issue append. On completion 'res2' field is used 
+>>>>to return
+>>>>zone-relative offset.
+>>>>
+>>>>For io-uring, this introduces three opcodes: 
+>>>>IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+>>>>Since io_uring does not have aio-like res2, cqe->flags are 
+>>>>repurposed to return zone-relative offset
+>>>
+>>>Please provide a pointers to applications that are updated and 
+>>>ready to take advantage of zone append.
 >>
->> This flag is set/reset in exfat_put_super()/exfat_sync_fs() to avoid
->> sync_blockdev().
->> However ...
->> - exfat_put_super():
->> Before calling this, the VFS has already called sync_filesystem(), so sync
->> is never performed here.
->> - exfat_sync_fs():
->> After calling this, the VFS calls sync_blockdev(), so, it is meaningless
->> to check EXFAT_SB_DIRTY or to bypass sync_blockdev() here.
->> Not only that, but in some cases can't clear VOL_DIRTY.
->> ex:
->> VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
->> return error without setting EXFAT_SB_DIRTY.
->> If performe 'sync' in this state, VOL_DIRTY will not be cleared.
+>>Good point. We are posting a RFC with fio support for append. We wanted
+>>to start the conversation here before.
 >>
-> 
-> Since this patch does not resolve 'VOL_DIRTY in ENOTEMPTY' problem you
-> mentioned,
-> it would be better to remove the description above for that and to make new
-> patch.
+>>We can post a fork for improve the reviews in V2.
+>
+>Christoph's response points that it is not exactly clear how this 
+>matches with the POSIX API.
 
-I mentioned rmdir as an example.
-However, this problem is not only with rmdirs.
-VOL_DIRTY remains when some functions abort with an error.
-In original, VOL_DIRTY is not cleared even if performe 'sync'.
-With this patch, it ensures that VOL_DIRTY will be cleared by 'sync'.
+Yes. We will address this.
+>
+>fio support is great - but I was thinking along the lines of 
+>applications that not only benchmark performance. fio should be part 
+>of the supported applications, but should not be the sole reason the 
+>API is added.
 
-Is my description insufficient?
+Agree. It is a process with different steps. We definitely want to have
+the right kernel interface before pushing any changes to libraries and /
+or applications. These will come as the interface becomes more stable.
 
+To start with xNVMe will be leveraging this new path. A number of
+customers are leveraging the xNVMe API for their applications already.
 
-BTW
-Even with this patch applied,  VOL_DIRTY remains until synced in the above case.
-It's not  easy to reproduce as rmdir, but I'll try to fix it in the future.
-
-
-BR
----
-Tetsuhiro Kohada <kohada.t2@gmail.com>
-
-
+Thanks,
+Javier
 
