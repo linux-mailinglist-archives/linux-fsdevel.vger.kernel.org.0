@@ -2,97 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89ADB1FFE56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 00:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B071FFE70
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 01:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731899AbgFRWuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 18:50:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728932AbgFRWuM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 18:50:12 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731502AbgFRXBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 19:01:36 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:50985 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731367AbgFRXBf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jun 2020 19:01:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592521294;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fVl7NirlPBDaZbv0g3tbYP7L/Gzjwfxt3r7f0D5EtyA=;
+        b=fMHKBye7qMOKzFq+rFofKjt/PWcGai6G+BvQvCxHygpQ+0yg2TmZq4S6dcKhUETjJF/XDi
+        aD8NVg5LiE4BHUB1RRVdIdDP/Rhh8bepGR0ZZ8a21v13Kp/qBYkNg4EUWZ6tmv4tVltkA/
+        CNLPrqir2ShHtAU2SEtzoaZz1KyrDes=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-471-I141doS4NfOHr44PF510Eg-1; Thu, 18 Jun 2020 19:01:32 -0400
+X-MC-Unique: I141doS4NfOHr44PF510Eg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56F5220720;
-        Thu, 18 Jun 2020 22:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592520611;
-        bh=HYGod6h7F0uGZKxft0EPpj5IScO/V7jm1M/teBNdy6s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L+1dinT/55/j1xVvfBjHT5Et+P7+8KZg4YS557H8LYrg195s8hd/bYt7q+cQL6ZeO
-         zlEj41LEnzrCKAAZ0yeGfyZbsTZY5xWsQemwiJN0ywf0k+qS4Mj4zfUXpiFe+wuBrG
-         vLVCAVzIkptKANY2O81F1qNWTAD3JJQ4Bwcjs+OQ=
-Date:   Thu, 18 Jun 2020 15:50:09 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 3/4] f2fs: add inline encryption support
-Message-ID: <20200618225009.GA35732@gmail.com>
-References: <20200617075732.213198-1-satyat@google.com>
- <20200617075732.213198-4-satyat@google.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02636464;
+        Thu, 18 Jun 2020 23:01:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 07EEF5D9C5;
+        Thu, 18 Jun 2020 23:01:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix afs_do_lookup() to call correct fetch-status op
+ variant
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 19 Jun 2020 00:01:28 +0100
+Message-ID: <159252128817.1594103.7234386826450496394.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.22
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617075732.213198-4-satyat@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 07:57:31AM +0000, Satya Tangirala wrote:
-> Wire up f2fs to support inline encryption via the helper functions which
-> fs/crypto/ now provides.  This includes:
-> 
-> - Adding a mount option 'inlinecrypt' which enables inline encryption
->   on encrypted files where it can be used.
-> 
-> - Setting the bio_crypt_ctx on bios that will be submitted to an
->   inline-encrypted file.
-> 
-> - Not adding logically discontiguous data to bios that will be submitted
->   to an inline-encrypted file.
-> 
-> - Not doing filesystem-layer crypto on inline-encrypted files.
-> 
-> This patch includes a fix for a race during IPU by
-> Sahitya Tummala <stummala@codeaurora.org>
-> 
-> Co-developed-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  Documentation/filesystems/f2fs.rst |  7 ++-
->  fs/f2fs/compress.c                 |  2 +-
->  fs/f2fs/data.c                     | 81 ++++++++++++++++++++++++------
->  fs/f2fs/super.c                    | 32 ++++++++++++
->  4 files changed, 104 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-> index 099d45ac8d8f..4dc36143ff82 100644
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -258,7 +258,12 @@ compress_extension=%s  Support adding specified extension, so that f2fs can enab
->                         on compression extension list and enable compression on
->                         these file by default rather than to enable it via ioctl.
->                         For other files, we can still enable compression via ioctl.
-> -====================== ============================================================
+Fix afs_do_lookup()'s fallback case for when FS.InlineBulkStatus isn't
+supported by the server.  In the fallback, it calls FS.FetchStatus for the
+specific vnode it's meant to be looking up.  Commit b6489a49f7b7 broke this
+by renaming one of the two identically-named afs_fetch_status_operation
+descriptors to something else so that one of them could be made non-static.
+The site that used the renamed one, however, wasn't renamed and didn't
+produce any warning because the other was declared in a header.
 
-The above line being deleted marks the end of a table, so it shouldn't be
-deleted (it should go after the part below).
+Fix this by making afs_do_lookup() use the renamed variant.
 
-> +inlinecrypt
-> +                       Encrypt/decrypt the contents of encrypted files using the
-> +                       blk-crypto framework rather than filesystem-layer encryption.
-> +                       This allows the use of inline encryption hardware. The on-disk
-> +                       format is unaffected. For more details, see
-> +                       Documentation/block/inline-encryption.rst.
+Note that there are two variants of the success method because one is
+called from ->lookup() where we may or may not have an inode, but can't
+call iget until after we've talked to the server - whereas the other is
+called from within iget where we have an inode, but it may or may not be
+initialised.
 
-Like I commented on one of the commit messages -- this doesn't make it clear
-what happens in cases where blk-crypto can't be used.  Maybe just replace:
-"Encrypt/decrypt" => "When possible, encrypt/decrypt".
+The latter variant expects there to be an inode, but because it's being
+called from there former case, there might not be - resulting in an oops
+like the following:
 
-Likewise for the ext4 documentation for this same mount option.
+ BUG: kernel NULL pointer dereference, address: 00000000000000b0
+ ...
+ RIP: 0010:afs_fetch_status_success+0x27/0x7e
+ ...
+ Call Trace:
+  ? rxrpc_cleanup_call+0xb5/0xc5
+  afs_wait_for_operation+0xda/0x234
+  afs_do_lookup+0x2fe/0x3c1
+  afs_lookup+0x3c5/0x4bd
+  __lookup_slow+0xcd/0x10f
+  walk_component+0xa2/0x10c
+  ? path_init+0x101/0x2eb
+  path_lookupat.isra.0+0x80/0x110
+  filename_lookup+0x81/0x104
+  ? slab_post_alloc_hook.isra.0+0xa/0x1a
+  ? kmem_cache_alloc+0xc3/0x129
+  vfs_statx+0x76/0x109
+  ? touch_atime+0x33/0xac
+  __do_sys_newlstat+0x39/0x6b
+  ? ksys_getdents64+0xb9/0xe0
+  ? vtime_delta.isra.0+0xe/0x24
+  ? vtime_delta.isra.0+0xe/0x24
+  ? get_vtime_delta+0x12/0x20
+  ? vtime_user_exit+0x21/0x61
+  ? __context_tracking_exit+0x3a/0x87
+  do_syscall_64+0x4c/0x78
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-- Eric
+
+Fixes: b6489a49f7b7 ("afs: Fix silly rename")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/dir.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 3e3c2bf0a722..96757f3abd74 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -845,7 +845,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * to FS.FetchStatus for op->file[1].
+ 		 */
+ 		op->fetch_status.which = 1;
+-		op->ops = &afs_fetch_status_operation;
++		op->ops = &afs_lookup_fetch_status_operation;
+ 		afs_begin_vnode_operation(op);
+ 		afs_wait_for_operation(op);
+ 	}
+
+
