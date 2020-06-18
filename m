@@ -2,228 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA2F1FFA81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 19:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946FF1FFAA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 19:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbgFRRsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 13:48:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbgFRRsd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 13:48:33 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D599207DD;
-        Thu, 18 Jun 2020 17:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592502512;
-        bh=ZOxGV61qCMZ+mvpZMM0gV3hYOdWhVFXHU/BEccRNoNE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uedDzgpvpynhZLypdYUPWQUHm9movWphBFmtrCdHmsm3s7+j/ieEsOiR4XkReCYto
-         OEZtiW6GiqXvnUx4YqqthusOkVd8jzdinjuEqzGCz/uSUwIHmQWGYWz2s9EzLAeuW1
-         GLCim5nOZXmhLjy1G+awTfmk/P+XKYaNthFqQUUY=
-Date:   Thu, 18 Jun 2020 10:48:31 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 2/4] fscrypt: add inline encryption support
-Message-ID: <20200618174831.GB2957@sol.localdomain>
-References: <20200617075732.213198-1-satyat@google.com>
- <20200617075732.213198-3-satyat@google.com>
+        id S1728069AbgFRRzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 13:55:25 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:17649 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbgFRRzV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jun 2020 13:55:21 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200618175517epoutp03a6fe71b4191d34cd81f545fa2aaafa86~ZtPdZxWRu1286312863epoutp03N
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 17:55:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200618175517epoutp03a6fe71b4191d34cd81f545fa2aaafa86~ZtPdZxWRu1286312863epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592502917;
+        bh=23380seXF4LQQ6pQBR9gN9kzZCCfOnSZsPuBF4BqYIc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gecGjsWKapgNOP5W6RKHoWm0KuqUCPvAu4vJz7EE+yXv6ztQLazhz5cXFwRp/jWYg
+         lZH3LfZB7ndMK75aieRx9KVAGeEfCsjedmdIFHIRW737FF+1SlxOWEnlfKnaaZQajI
+         acBo7DHJ2pGSpzy6wFONvzHyE8ZTq9hsBmVrPsU0=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200618175516epcas5p29a72b748dda5977b80e4b76f42236c97~ZtPcrk5t40357303573epcas5p2P;
+        Thu, 18 Jun 2020 17:55:16 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        28.A6.09475.48AABEE5; Fri, 19 Jun 2020 02:55:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200618175516epcas5p33a2df3fbdcfb8a78096b326fd271c292~ZtPb9BCGO0053400534epcas5p3r;
+        Thu, 18 Jun 2020 17:55:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200618175516epsmtrp232287ce5a7ac7cbd3eb16c82afc8a5b3~ZtPb8KiBt2407124071epsmtrp2G;
+        Thu, 18 Jun 2020 17:55:16 +0000 (GMT)
+X-AuditID: b6c32a4b-39fff70000002503-c1-5eebaa84f84f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D3.AC.08382.38AABEE5; Fri, 19 Jun 2020 02:55:15 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200618175514epsmtip142e1ee19f7bc182d89f085a5e6f3cff8~ZtPaGLzbt1202912029epsmtip1W;
+        Thu, 18 Jun 2020 17:55:14 +0000 (GMT)
+Date:   Thu, 18 Jun 2020 23:22:58 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, javier.gonz@samsung.com
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Message-ID: <20200618175258.GA4141152@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617075732.213198-3-satyat@google.com>
+In-Reply-To: <20200618065634.GB24943@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmhm7LqtdxBm0zTS1W3+1ns+j6t4XF
+        4vSERUwW71rPsVg8vvOZ3WLKtCZGi723tC327D3JYnF51xw2i22/5zNbXJmyiNni9Y+TbBbn
+        /x5ndeD12LxCy+Py2VKPTZ8msXv0bVnF6PF5k5zHpidvmQLYorhsUlJzMstSi/TtErgyVu/f
+        yVRwUqDi+uyrrA2MP3i7GDk5JARMJBredrN1MXJxCAnsZpTYvPMdO4TziVHiyfduZgjnG6PE
+        4ukTWGFaZj2+AFW1l1HiW+taJgjnGaNEz681TCBVLAKqEgffdwG1c3CwCWhKXJhcChIWATJv
+        LW8Hm8osMJVJ4uW+p+wgCWEBB4kb82cygti8AvoSm369ZYGwBSVOznwCZnMKGEucubwKzBYV
+        UJY4sO042GIJgaUcEjcvvmKCOM9F4tuepWwQtrDEq+Nb2CFsKYnP7/ZCxYslft05ygzR3MEo
+        cb1hJgtEwl7i4p6/TCBXMwtkSJw9GwASZhbgk+j9/QQsLCHAK9HRJgRRrShxb9JTaKiISzyc
+        sQTK9pCY1NPGCAmU/YwSdxftYZ7AKDcLyT+zEDbMAttgJdH5oYkVIiwtsfwfB4SpKbF+l/4C
+        RtZVjJKpBcW56anFpgXGeanlesWJucWleel6yfm5mxjBCUvLewfjowcf9A4xMnEwHmKU4GBW
+        EuF1/v0iTog3JbGyKrUoP76oNCe1+BCjNAeLkjiv0o8zcUIC6YklqdmpqQWpRTBZJg5OqQYm
+        QwvJQ4kLph23Fdn6QuvWwrVz02a1nZQ1/v6mlr/P8aDWjqnycqKloQvsdRSjDY6v77TfabXd
+        8Nuhbw3/Zy0+a84+5++e7rx1Olv294uVJV5cckSn3fHclCcB5pt3qi283PVNak7CjC8Hjusf
+        upwddDXxzHyrEw/8Zk9f3nTxy88YLaOLpZmPMmYuXDTl61Zrj6lvVl/MjFpuIRx77foFr5B1
+        P3R2f5zUbHb8vFlfsajJIW3TLqYpPgdmvWF1/y4289ATkVrTc9Ks99kW7mO6zXXrR2X8infr
+        DhRmaRxTOWXv6pwddCJQYVYYD39ty6TVLabGl5ry2Zc+lm8zi5/aK64/KeS545bmiwws6c81
+        XJVYijMSDbWYi4oTAfNj+SXHAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSnG7LqtdxBtdlLVbf7Wez6Pq3hcXi
+        9IRFTBbvWs+xWDy+85ndYsq0JkaLvbe0LfbsPclicXnXHDaLbb/nM1tcmbKI2eL1j5NsFuf/
+        Hmd14PXYvELL4/LZUo9Nnyaxe/RtWcXo8XmTnMemJ2+ZAtiiuGxSUnMyy1KL9O0SuDLmXprC
+        VvCbt2L21kbmBsYj3F2MnBwSAiYSsx5fYO9i5OIQEtjNKHFqzipmiIS4RPO1H+wQtrDEyn/P
+        oYqeMEpMeb4OLMEioCpx8H0XUAMHB5uApsSFyaUgYREg89bydrA5zALTmSQObdEHsYUFHCRu
+        zJ/JCGLzCuhLbPr1lgVi5n5GieNHV7FAJAQlTs58wgLRbCYxb/NDsPnMAtISy/9xgIQ5BYwl
+        zlyGKBcVUJY4sO040wRGwVlIumch6Z6F0L2AkXkVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpe
+        cn7uJkZwBGlp7mDcvuqD3iFGJg7GQ4wSHMxKIrzOv1/ECfGmJFZWpRblxxeV5qQWH2KU5mBR
+        Eue9UbgwTkggPbEkNTs1tSC1CCbLxMEp1cC05N3jiux7uz+Fmu9l/yxll5W7Ru5nX3ir9rLm
+        h9Pdoh71Gv145RIpp8zOGz519ucvBQlt4a+v+l99ofhZ9L6OwOxbLJ/6L+lZTS9JMetQMly3
+        6DxPzLnlyxbf+/xonvbO5VNvxXBdKfnnl9YmYyF1a4kb65Ny/2iLZSe3LUo7v8k1wLcu4EdL
+        9R4HjTKRHRpGvic3T3WJn7HBr19V/5Waj05AwAMfzrPr3Y7Mcr3AJiKwcr36nquhfhuvtq1X
+        T/W5EdeTbPfwktuB/Oqfev9vh065/LPCSEpg64V/KazVjWGsx352eOnNkGqzmd9saezEFua2
+        a4ltef0bGQnrvYeu+Z7YvmTyLMXCWxdXu9QqsRRnJBpqMRcVJwIAcHiaqA8DAAA=
+X-CMS-MailID: 20200618175516epcas5p33a2df3fbdcfb8a78096b326fd271c292
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----LJmyoXw8O9.Ba._wAgamKaSQQ_oizdakYzSktnuewvRJuSc2=_77fd7_"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200617172653epcas5p488de50090415eb802e62acc0e23d8812
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+        <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+        <20200618065634.GB24943@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A few nits:
+------LJmyoXw8O9.Ba._wAgamKaSQQ_oizdakYzSktnuewvRJuSc2=_77fd7_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-On Wed, Jun 17, 2020 at 07:57:30AM +0000, Satya Tangirala wrote:
-> To use inline encryption, the filesystem needs to be mounted with
-> '-o inlinecrypt'.  The contents of any encrypted files will then be
-> encrypted using blk-crypto, instead of using the traditional
-> filesystem-layer crypto.
+On Wed, Jun 17, 2020 at 11:56:34PM -0700, Christoph Hellwig wrote:
+>On Wed, Jun 17, 2020 at 10:53:36PM +0530, Kanchan Joshi wrote:
+>> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
+>>
+>> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
+>> of the zone to issue append. On completion 'res2' field is used to return
+>> zone-relative offset.
+>>
+>> For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+>> Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
+>
+>And what exactly are the semantics supposed to be?  Remember the
+>unix file abstractions does not know about zones at all.
+>
+>I really don't think squeezing low-level not quite block storage
+>protocol details into the Linux read/write path is a good idea.
 
-This isn't clear about what happens when blk-crypto isn't supported on a
-file.  How about:
+I was thinking of raw block-access to zone device rather than pristine file
+abstraction. And in that context, semantics, at this point, are unchanged
+(i.e. same as direct writes) while flexibility of async-interface gets
+added.
+Synchronous-writes on single-zone sound fine, but synchronous-appends on
+single-zone do not sound that fine.
 
-"To use inline encryption, the filesystem needs to be mounted with
-'-o inlinecrypt'.  blk-crypto will then be used to encrypt the contents
-of any encrypted files where it can be used instead of the traditional
-filesystem-layer crypto."
+>What could be a useful addition is a way for O_APPEND/RWF_APPEND writes
+>to report where they actually wrote, as that comes close to Zone Append
+>while still making sense at our usual abstraction level for file I/O.
 
-> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-> index eb7fcd2b7fb8..1572186b0db4 100644
-> --- a/fs/crypto/fscrypt_private.h
-> +++ b/fs/crypto/fscrypt_private.h
-> @@ -14,6 +14,7 @@
->  #include <linux/fscrypt.h>
->  #include <linux/siphash.h>
->  #include <crypto/hash.h>
-> +#include <linux/blk-crypto.h>
->  
->  #define CONST_STRLEN(str)	(sizeof(str) - 1)
->  
-> @@ -166,6 +167,20 @@ struct fscrypt_symlink_data {
->  	char encrypted_path[1];
->  } __packed;
->  
-> +/**
-> + * struct fscrypt_prepared_key - a key prepared for actual encryption/decryption
-> + * @tfm: crypto API transform object
-> + * @blk_key: key for blk-crypto
-> + *
-> + * Normally only one of the fields will be non-NULL.
-> + */
-> +struct fscrypt_prepared_key {
-> +	struct crypto_skcipher *tfm;
-> +#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-> +	struct fscrypt_blk_crypto_key *blk_key;
-> +#endif
-> +};
-> +
->  /*
->   * fscrypt_info - the "encryption key" for an inode
->   *
-> @@ -175,12 +190,23 @@ struct fscrypt_symlink_data {
->   */
->  struct fscrypt_info {
->  
-> -	/* The actual crypto transform used for encryption and decryption */
-> -	struct crypto_skcipher *ci_ctfm;
-> +	/* The key in a form prepared for actual encryption/decryption */
-> +	struct fscrypt_prepared_key	ci_enc_key;
+Thanks for suggesting this. O and RWF_APPEND may not go well with block
+access as end-of-file will be picked from dev inode. But perhaps a new
+flag like RWF_ZONE_APPEND can help to transform writes (aio or uring)
+into append without introducing new opcodes.
+And, I think, this can fit fine on file-abstraction of ZoneFS as well.
 
-Space instead of tab before ci_enc_key, to match the other fields of
-this struct.
+------LJmyoXw8O9.Ba._wAgamKaSQQ_oizdakYzSktnuewvRJuSc2=_77fd7_
+Content-Type: text/plain; charset="utf-8"
 
->  
-> -	/* True if the key should be freed when this fscrypt_info is freed */
-> +	/*
-> +	 * True if the ci_enc_key should be freed when this fscrypt_info is
-> +	 * freed
-> +	 */
->  	bool ci_owns_key;
 
-This comment would fit nicely on one line if "the" was deleted:
-
-	/* True if ci_enc_key should be freed when this fscrypt_info is freed */
-
-> +/* inline_crypt.c */
-> +#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-> +void fscrypt_select_encryption_impl(struct fscrypt_info *ci);
-> +
-> +static inline bool
-> +fscrypt_using_inline_encryption(const struct fscrypt_info *ci)
-> +{
-> +	return ci->ci_inlinecrypt;
-> +}
-> +
-> +int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
-> +				     const u8 *raw_key,
-> +				     const struct fscrypt_info *ci);
-> +
-> +void fscrypt_destroy_inline_crypt_key(struct fscrypt_prepared_key *prep_key);
-> +
-> +/*
-> + * Check whether the crypto transform or blk-crypto key has been allocated in
-> + * @prep_key, depending on which encryption implementation the file will use.
-> + */
-> +static inline bool
-> +fscrypt_is_key_prepared(struct fscrypt_prepared_key *prep_key,
-> +			const struct fscrypt_info *ci)
-> +{
-> +	/*
-> +	 * The READ_ONCE() here pairs with the smp_store_release() in
-> +	 * fscrypt_prepare_key().  (This only matters for the per-mode keys,
-> +	 * which are shared by multiple inodes.)
-> +	 */
-> +	if (fscrypt_using_inline_encryption(ci))
-> +		return READ_ONCE(prep_key->blk_key) != NULL;
-> +	return READ_ONCE(prep_key->tfm) != NULL;
-> +}
-> +
-> +#else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
-> +
-> +static inline void fscrypt_select_encryption_impl(struct fscrypt_info *ci)
-> +{
-> +}
-> +
-> +static inline bool fscrypt_using_inline_encryption(
-> +					const struct fscrypt_info *ci)
-> +{
-> +	return false;
-> +}
-
-fscrypt_using_inline_encryption() here is formatted differently from the
-CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y case.  I'd use for both:
-
-static inline bool
-fscrypt_using_inline_encryption(const struct fscrypt_info *ci)
-
-> +int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
-> +			const u8 *raw_key,
-> +			const struct fscrypt_info *ci);
-
-'raw_key' and 'ci' fit on one line.  (Note: the definition already does that.)
-
-> +/* Enable inline encryption for this file if supported. */
-> +void fscrypt_select_encryption_impl(struct fscrypt_info *ci)
-> +{
-
-This function should return an error code (0 or -ENOMEM) so that
-failure of kmalloc_array() can be reported.
-
-> +	/* The crypto mode must be valid */
-> +	if (ci->ci_mode->blk_crypto_mode == BLK_ENCRYPTION_MODE_INVALID)
-> +		return;
-
-The comment "The crypto mode must be valid" is confusing, since the mode
-*is* valid for fscrypt, just not for blk-crypto.  How about:
-
-	/* The crypto mode must have a blk-crypto counterpart */
-
-> +	/*
-> +	 * blk-crypto must support the crypto configuration we'll use for the
-> +	 * inode on all devices in the sb
-> +	 */
-
-I think the following would be a slightly clearer and more consistent
-with other comments:
-
-	/*
-	 * On all the filesystem's devices, blk-crypto must support the crypto
-	 * configuration that the file would use.
-	 */
-
-> +/**
-> + * fscrypt_mergeable_bio() - test whether data can be added to a bio
-> + * @bio: the bio being built up
-> + * @inode: the inode for the next part of the I/O
-> + * @next_lblk: the next file logical block number in the I/O
-> + *
-> + * When building a bio which may contain data which should undergo inline
-> + * encryption (or decryption) via fscrypt, filesystems should call this function
-> + * to ensure that the resulting bio contains only logically contiguous data.
-> + * This will return false if the next part of the I/O cannot be merged with the
-> + * bio because either the encryption key would be different or the encryption
-> + * data unit numbers would be discontiguous.
-> + *
-> + * fscrypt_set_bio_crypt_ctx() must have already been called on the bio.
-> + *
-> + * Return: true iff the I/O is mergeable
-> + */
-
-The mention of "logically contiguous data" here is now technically wrong
-due to the new IV_INO_LBLK_32 IV generation method.  For that, logically
-contiguous blocks don't necessarily have contiguous DUNs.
-
-I'd replace in this comment:
-	"logically contiguous data" => "contiguous data unit numbers"
-
-- Eric
+------LJmyoXw8O9.Ba._wAgamKaSQQ_oizdakYzSktnuewvRJuSc2=_77fd7_--
