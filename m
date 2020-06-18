@@ -2,194 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 046CF1FF360
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 15:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D83121FF3AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 15:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbgFRNl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 09:41:56 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45048 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726940AbgFRNly (ORCPT
+        id S1730326AbgFRNtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 09:49:15 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:32694 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727921AbgFRNtO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 09:41:54 -0400
+        Thu, 18 Jun 2020 09:49:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592487712;
+        s=mimecast20190719; t=1592488152;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Cexa4tsvwTnBBGHx0OVpN/yf320flKSSjXgML68NX8=;
-        b=VwLMLEBfB1WXN8qBJQvFRkJ+hFb4TwYOqNXRfnwgPwDA/pufzfB5TD/WheDbBfkGaZDlJ1
-        2oZP/hxBYeVMQWT+LJsDL6KEjQdcWgzEJVO7PLrfLvHg4Im7h0lh0+CI8cj6nTPHnUDh3g
-        kX8za3lCJMzCtn/0EY8WhbhK/oO0x0w=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=DUQ6ngZQh7gXiB43u6OrO1UGnUYbS+2l9T1n8YlMUQ0=;
+        b=CQ/+X5vbbYjyxDrffpr7SHIYhPQcJ9nMjgMJ4z6BYhvJKXEqNv6ub3C2iV+jkhKQR6epsn
+        I8CgqhI9F4tvHiRB25FQW/Bq74JD2AgrsANJrn937IOf/88giDIO9vC6BOE04SKrLxs0HN
+        glsJO+saofmRqT8dIfNIxSqQ2kwkkHk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-k6bxuqGrPWmC0i8HF5oCAg-1; Thu, 18 Jun 2020 09:41:48 -0400
-X-MC-Unique: k6bxuqGrPWmC0i8HF5oCAg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-230-929ZvOwgOPOcHf0IkOhyBg-1; Thu, 18 Jun 2020 09:49:09 -0400
+X-MC-Unique: 929ZvOwgOPOcHf0IkOhyBg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B3938107ACF7;
-        Thu, 18 Jun 2020 13:41:46 +0000 (UTC)
-Received: from localhost (ovpn-12-22.pek2.redhat.com [10.72.12.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 961BB19C79;
-        Thu, 18 Jun 2020 13:41:45 +0000 (UTC)
-Date:   Thu, 18 Jun 2020 21:41:42 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Nitin Gupta <nigupta@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Nitin Gupta <ngupta@nitingupta.dev>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:PROC SYSCTL" <linux-fsdevel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm: Use unsigned types for fragmentation score
-Message-ID: <20200618134142.GD3346@MiWiFi-R3L-srv>
-References: <20200618010319.13159-1-nigupta@nvidia.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2AD08107ACF4;
+        Thu, 18 Jun 2020 13:49:05 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-112-197.ams2.redhat.com [10.36.112.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6837D1E2264;
+        Thu, 18 Jun 2020 13:48:51 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?UTF-8?q?Micha=C5=82=20C=C5=82api=C5=84ski?= 
+        <mclapinski@google.com>, Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Date:   Thu, 18 Jun 2020 15:48:22 +0200
+Message-Id: <20200618134825.487467-1-areber@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618010319.13159-1-nigupta@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06/17/20 at 06:03pm, Nitin Gupta wrote:
-> Proactive compaction uses per-node/zone "fragmentation score" which
-> is always in range [0, 100], so use unsigned type of these scores
-> as well as for related constants.
-> 
-> Signed-off-by: Nitin Gupta <nigupta@nvidia.com>
-> ---
->  include/linux/compaction.h |  4 ++--
->  kernel/sysctl.c            |  2 +-
->  mm/compaction.c            | 18 +++++++++---------
->  mm/vmstat.c                |  2 +-
->  4 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-> index 7a242d46454e..25a521d299c1 100644
-> --- a/include/linux/compaction.h
-> +++ b/include/linux/compaction.h
-> @@ -85,13 +85,13 @@ static inline unsigned long compact_gap(unsigned int order)
->  
->  #ifdef CONFIG_COMPACTION
->  extern int sysctl_compact_memory;
-> -extern int sysctl_compaction_proactiveness;
-> +extern unsigned int sysctl_compaction_proactiveness;
->  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
->  			void *buffer, size_t *length, loff_t *ppos);
->  extern int sysctl_extfrag_threshold;
->  extern int sysctl_compact_unevictable_allowed;
->  
-> -extern int extfrag_for_order(struct zone *zone, unsigned int order);
-> +extern unsigned int extfrag_for_order(struct zone *zone, unsigned int order);
->  extern int fragmentation_index(struct zone *zone, unsigned int order);
->  extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
->  		unsigned int order, unsigned int alloc_flags,
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 58b0a59c9769..40180cdde486 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2833,7 +2833,7 @@ static struct ctl_table vm_table[] = {
->  	{
->  		.procname	= "compaction_proactiveness",
->  		.data		= &sysctl_compaction_proactiveness,
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+This is v3 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. There
+is only one change from v2:
 
-Patch looks good to me. Wondering why not using 'unsigned int' here,
-just curious.
+ * made if condition easier to read as requested by Cyrill
 
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec_minmax,
->  		.extra1		= SYSCTL_ZERO,
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index ac2030814edb..45fd24a0ea0b 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -53,7 +53,7 @@ static inline void count_compact_events(enum vm_event_item item, long delta)
->  /*
->   * Fragmentation score check interval for proactive compaction purposes.
->   */
-> -static const int HPAGE_FRAG_CHECK_INTERVAL_MSEC = 500;
-> +static const unsigned int HPAGE_FRAG_CHECK_INTERVAL_MSEC = 500;
->  
->  /*
->   * Page order with-respect-to which proactive compaction
-> @@ -1890,7 +1890,7 @@ static bool kswapd_is_running(pg_data_t *pgdat)
->   * ZONE_DMA32. For smaller zones, the score value remains close to zero,
->   * and thus never exceeds the high threshold for proactive compaction.
->   */
-> -static int fragmentation_score_zone(struct zone *zone)
-> +static unsigned int fragmentation_score_zone(struct zone *zone)
->  {
->  	unsigned long score;
->  
-> @@ -1906,9 +1906,9 @@ static int fragmentation_score_zone(struct zone *zone)
->   * the node's score falls below the low threshold, or one of the back-off
->   * conditions is met.
->   */
-> -static int fragmentation_score_node(pg_data_t *pgdat)
-> +static unsigned int fragmentation_score_node(pg_data_t *pgdat)
->  {
-> -	unsigned long score = 0;
-> +	unsigned int score = 0;
->  	int zoneid;
->  
->  	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
-> @@ -1921,17 +1921,17 @@ static int fragmentation_score_node(pg_data_t *pgdat)
->  	return score;
->  }
->  
-> -static int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
-> +static unsigned int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
->  {
-> -	int wmark_low;
-> +	unsigned int wmark_low;
->  
->  	/*
->  	 * Cap the low watermak to avoid excessive compaction
->  	 * activity in case a user sets the proactivess tunable
->  	 * close to 100 (maximum).
->  	 */
-> -	wmark_low = max(100 - sysctl_compaction_proactiveness, 5);
-> -	return low ? wmark_low : min(wmark_low + 10, 100);
-> +	wmark_low = max(100U - sysctl_compaction_proactiveness, 5U);
-> +	return low ? wmark_low : min(wmark_low + 10, 100U);
->  }
->  
->  static bool should_proactive_compact_node(pg_data_t *pgdat)
-> @@ -2604,7 +2604,7 @@ int sysctl_compact_memory;
->   * aggressively the kernel should compact memory in the
->   * background. It takes values in the range [0, 100].
->   */
-> -int __read_mostly sysctl_compaction_proactiveness = 20;
-> +unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
->  
->  /*
->   * This is the entry point for compacting all nodes via
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 3e7ba8bce2ba..b1de695b826d 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1079,7 +1079,7 @@ static int __fragmentation_index(unsigned int order, struct contig_page_info *in
->   * It is defined as the percentage of pages found in blocks of size
->   * less than 1 << order. It returns values in range [0, 100].
->   */
-> -int extfrag_for_order(struct zone *zone, unsigned int order)
-> +unsigned int extfrag_for_order(struct zone *zone, unsigned int order)
->  {
->  	struct contig_page_info info;
->  
-> -- 
-> 2.27.0
-> 
-> 
+Besides that there were no further comments on the changes proposed in
+this patchset.
+
+There was the discussion from Andrei that PTRACE_O_SUSPEND_SECCOMP is
+also needed for checkpointing. CRIU already has the possibility to
+detect if a process is using seccomp and could so tell the user that
+it cannot checkpoint a process if the process is using seccomp. As
+seccomp has not come up in the requests from users to use CRIU as
+non-root so far and as there was some push back from Christian to allow
+PTRACE_O_SUSPEND_SECCOMP if CAP_CHECKPOINT_RESTORE is set I would like
+to leave this open for the future.
+
+Another discussion was around relaxing the existing map_files check from
+capable() to ns_capable() or even completely removing it. Even if this
+happens we still need CAP_CHECKPOINT_RESTORE and the removal or change
+to ns_capable() is not blocked by this patchset.
+
+Besides that there was nothing speaking against CAP_CHECKPOINT_RESTORE
+during the v2 discussions.
+
+Adrian Reber (2):
+  capabilities: Introduce CAP_CHECKPOINT_RESTORE
+  selftests: add clone3() CAP_CHECKPOINT_RESTORE test
+
+Nicolas Viennot (1):
+  prctl: Allow ptrace capable processes to change exe_fd
+
+ fs/proc/base.c                                |   8 +-
+ include/linux/capability.h                    |   6 +
+ include/uapi/linux/capability.h               |   9 +-
+ kernel/pid.c                                  |   2 +-
+ kernel/pid_namespace.c                        |   2 +-
+ kernel/sys.c                                  |  21 +-
+ security/selinux/include/classmap.h           |   5 +-
+ tools/testing/selftests/clone3/Makefile       |   4 +-
+ .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
+ 9 files changed, 245 insertions(+), 15 deletions(-)
+ create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+
+
+base-commit: 5fcb9628fd1227a5f11d87171cb1b8b5c414d9d9
+-- 
+2.26.2
 
