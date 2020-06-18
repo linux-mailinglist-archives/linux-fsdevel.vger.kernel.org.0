@@ -2,83 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A8A1FE99D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 05:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EFF1FE9A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 05:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgFRDqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 23:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbgFRDqg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 23:46:36 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1232C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 20:46:34 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id m7so1869473plt.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jun 2020 20:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4GT56k9T/ZTDoyTYqGTbPF7+FHS2XvXa9AkMU/5htfA=;
-        b=oMY2V4F0GZ4EaNFR9ALy1J/WJKUSagln2jQWoKHSSHprBse0BcRSPzNRfYaFH/Q731
-         fFr3LBpUu9HCzfEpKjvDWcAIETemlq6lTuejnio/7Xp/xL/U30ZNEfU+vVoF/pfZCqgu
-         VtNMy1Q0XJgNGgNUGOl+il+5+JpX6aIAv78Ts+z4KYoAGdvlBSH4UBhax+YRq4sEbsGl
-         AnOuJErt7wgLVMFCREjhTaraBnX4NRnUiG8Wou5+qFgLuAiXsELFs/lpvQ7RjKDo7gBU
-         dq3tRXbdxivc6WsLFp5/3wMZilb0m+oNw/8o0dkFhI4b65PKbBHzEiHiNN3WkmBrTNYi
-         0JHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4GT56k9T/ZTDoyTYqGTbPF7+FHS2XvXa9AkMU/5htfA=;
-        b=Hfge2xXLJsn8EdhQemK0PLlYqmpcRAn9+RDZefufp16lLZuFvEq1pixK0EwqTV/e15
-         Jq5a7BKiViY0HKJSgZ6xiaDuwOGhgw2c3LtU7wPCFJ4xoBI50qdXPEwJhfhpWvnIVNQT
-         IuvW5LFllwFVEbJb18fG3nLvuqPa5MUIJTrvvESyXKrvxQZ7wGSwQIXdotLuEs2oGWMJ
-         sLL6pFGuDUPEo7CRCCe3RdXVuAbIOmdHP4khc2BfU8zF5Kqr5vXvgK0eE/Eu9IbBhVTo
-         KAvxRrjKub2uHdDaiboGqS5SZcE/tnZ74XvR0kPpo25pJwpxWq4o9QYwJvoTKU8SiFwb
-         tPFQ==
-X-Gm-Message-State: AOAM530ySysOIbLyCC2NExrZ6EzmypfwxwsYK3aLGkvF2b3X3J2tc/Ci
-        5Er3ca93OaRlCVng/AvR7k0SsAzwKc7P4Q==
-X-Google-Smtp-Source: ABdhPJxxx7EVn4Cpsblh2T7oW56MKK52snnSq2TEgJvD++4dJbPCza8tlqhrtmtxkvIWk1LQ27YFiQ==
-X-Received: by 2002:a17:902:599a:: with SMTP id p26mr2120023pli.322.1592451994183;
-        Wed, 17 Jun 2020 20:46:34 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id b11sm1198002pfr.58.2020.06.17.20.46.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jun 2020 20:46:33 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] loop: replace kill_bdev with invalidate_bdev
-To:     Zheng Bin <zhengbin13@huawei.com>, hch@infradead.org,
-        bvanassche@acm.org, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Cc:     houtao1@huawei.com, yi.zhang@huawei.com
-References: <20200530114032.125678-1-zhengbin13@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f50b771a-52c3-f8ae-9baa-1603dc83d115@kernel.dk>
-Date:   Wed, 17 Jun 2020 21:46:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1727894AbgFRDxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 23:53:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36226 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727839AbgFRDxk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 23:53:40 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1BD8C27422F0F153F043;
+        Thu, 18 Jun 2020 11:53:38 +0800 (CST)
+Received: from [127.0.0.1] (10.166.215.198) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Thu, 18 Jun 2020
+ 11:53:31 +0800
+Subject: Re: [PATCH v2 3/5] ext4: detect metadata async write error when
+ getting journal's write access
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+To:     Jan Kara <jack@suse.cz>
+CC:     <linux-ext4@vger.kernel.org>, <tytso@mit.edu>,
+        <adilger.kernel@dilger.ca>, <zhangxiaoxu5@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>
+References: <20200617115947.836221-1-yi.zhang@huawei.com>
+ <20200617115947.836221-4-yi.zhang@huawei.com>
+ <20200617124157.GB29763@quack2.suse.cz>
+ <8caf9fe1-b7ce-655f-1f4d-3e0e90e211dc@huawei.com>
+Message-ID: <9efa3fdb-e0d0-ef90-94ba-1e9124722df0@huawei.com>
+Date:   Thu, 18 Jun 2020 11:53:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200530114032.125678-1-zhengbin13@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <8caf9fe1-b7ce-655f-1f4d-3e0e90e211dc@huawei.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.166.215.198]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/30/20 5:40 AM, Zheng Bin wrote:
-> v1->v2: modify comment, and make function 'kill_bdev' static
+On 2020/6/17 21:44, zhangyi (F) wrote:
+> On 2020/6/17 20:41, Jan Kara wrote:
+>> On Wed 17-06-20 19:59:45, zhangyi (F) wrote:
+>>> Although we have already introduce s_bdev_wb_err_work to detect and
+>>> handle async write metadata buffer error as soon as possible, there is
+>>> still a potential race that could lead to filesystem inconsistency,
+>>> which is the buffer may reading and re-writing out to journal before
+>>> s_bdev_wb_err_work run. So this patch detect bdev mapping->wb_err when
+>>> getting journal's write access and also mark the filesystem error if
+>>> something bad happened.
+>>>
+>>> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+>>
+>> So instead of all this, cannot we just do:
+>>
+>> 	if (work_pending(sbi->s_bdev_wb_err_work))
+>> 		flush_work(sbi->s_bdev_wb_err_work);
+>>
+>> ? And so we are sure the filesystem is aborted if the abort was pending?
+>>
 > 
-> Zheng Bin (2):
->   loop: replace kill_bdev with invalidate_bdev
->   block: make function 'kill_bdev' static
+> Thanks for this suggestion. Yeah, we could do this, it depends on the second
+> patch, if we check and flush the pending work here, we could not use the
+> end_buffer_async_write() in ext4_end_buffer_async_write(), we need to open
+> coding ext4_end_buffer_async_write() and queue the error work before the
+> buffer is unlocked, or else the race is still there. Do you agree ?
+> 
 
-This doesn't apply, so please fix that and resubmit.
+Add one point, add work_pending check here may not safe. We need to make sure
+the filesystem is aborted, so we need to wait the error handle work is finished,
+but the work's pending bit is cleared before it start running. I think may
+better to just invoke flush_work() here.
 
--- 
-Jens Axboe
+BTW, I also notice another race condition that may lead to inconsistency. In
+bdev_try_to_free_page(), if we free a write error buffer before the worker
+is finished, the jbd2 checkpoint procedure will miss this error and wrongly
+think it has already been written to disk successfully, and finally it will
+destroy the log and lead to inconsistency (the same to no-journal mode).
+So I think the ninth patch in my v1 patch set is still needed. What do you
+think?
+
+Thanks,
+Yi.
 
