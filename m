@@ -2,123 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 846131FEDB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B75FD1FEDBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbgFRIfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 04:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56966 "EHLO
+        id S1728514AbgFRIgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 04:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbgFRIfd (ORCPT
+        with ESMTP id S1728416AbgFRIgi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 04:35:33 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83327C06174E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:35:32 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id l26so4321894wme.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:35:32 -0700 (PDT)
+        Thu, 18 Jun 2020 04:36:38 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9739EC06174E;
+        Thu, 18 Jun 2020 01:36:38 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id x22so2477310pfn.3;
+        Thu, 18 Jun 2020 01:36:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XeqeGCk0h227IbaUO31Te14Ep+DTbyrxKQiQv5iAGUM=;
-        b=kiq7EiV+NbQ+zkWGdgIxS4diLlNIdZsy2YpyY3fOoiZjFDoM0Aw6xumKAxZS8JZzes
-         zO3LwZzOCRwhTJFyYgu8zjkLrrxAagZ4Jghj75zv7UmdYqQRe0UQQ4rp7mQe9gT+3DBQ
-         E3KhxmSl9KeqSnzdjpseVAnl6szVQLo7mK4OSBlhrJyeLRX9wxXnNXylUlMZf3cZVOfj
-         b8NjNpKi1pG/3ppOO5b6K+Qux02YUgTs1Ps61lEFB4AE7Ah1+gUS6EmumutAEX2+bxqv
-         AYPqalk+OtcLwX1ByIUhfHA3xjSQ1z7rf263yTQoxc9nZkTIwpp1FdRddEVbaWxsJ7qt
-         9LOA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=klpQjbXIkQXxjkoBdlgU5/GUXlGcyonJcPCF31K/eoI=;
+        b=R1ISLPA1Bi1xyMmkZ6RmwaiRYT+NeGSvP7tRvlCO2sPLopPDh2AEfRp1FZ+YRS+cAb
+         Ti/x24ez6I0XQ7GX7YWZkIimYpp8UHUNmHwHwTVS9CRDTG+G58t/D70U73pC3crvNv2n
+         BLz0/3asjEx4TgVQqdUMhN5rTRRizc3uS0wRx8Qp8ORKHfDCeNxwfowq8cmFgtzKtHAh
+         IX3oEQahvvezWP2001tg7HMteHsNa/BOk/AP1r+6TNVdSWQH4La7yMdOzKUrF39kYdQ7
+         p2akBaO2Ifma+fyhWoB0a1kR12YhtpoP0+2SAQBgltC+nnJSy2VXMUWm/IkHAe6QxfgK
+         7LhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XeqeGCk0h227IbaUO31Te14Ep+DTbyrxKQiQv5iAGUM=;
-        b=BXBZwH5iJkLu6WG95wuhug8uyDo3vX0aDr7tG7gi9RXCCyAEEL7983NRQGFWwciJT+
-         oCekcINQi1+UuqG0SpTsd9UX7+Hlat/sVBMlmOSAumRaa8X7vDMIAQW6Wf16kFZB5GMT
-         X3na61bCpC28Nb+THcOAtpd5mVFVTid25IGVObn+rSnELkvbrZb5ZUg1q5ZsMCbtKCeI
-         GV1PiXW9okYzvtcoqtxzRr6xi/9ED2OxDwHrVWg7FRgT9QOqCoIEPB6IbnJiXWQIofcZ
-         n5WMrsti9Bq6JClZw+RuC5RyKhhgQWgdiIbLLZg1uq0vK8gBUxYhprzS+XwhPe0Iy2Nd
-         B+cA==
-X-Gm-Message-State: AOAM532S6jG+XRhkGDzycMIH390Iak0Kv891Hoew9ccz4Xrhqbe4xkGR
-        fpCkdF8/DUDMYkfmmhS1Q1/GQQ==
-X-Google-Smtp-Source: ABdhPJzAKFaR/sh/flHYyjmoEWwug3yFpLTufpPxJ16XUVsPQXHOB0qJvJqSG0H/AvgdiFKjJBfaiA==
-X-Received: by 2002:a1c:dcc2:: with SMTP id t185mr2957197wmg.91.1592469331180;
-        Thu, 18 Jun 2020 01:35:31 -0700 (PDT)
-Received: from localhost ([194.62.217.57])
-        by smtp.gmail.com with ESMTPSA id z7sm1541167wmb.42.2020.06.18.01.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2020 01:35:30 -0700 (PDT)
-From:   "javier.gonz@samsung.com" <javier@javigon.com>
-X-Google-Original-From: "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Date:   Thu, 18 Jun 2020 10:35:29 +0200
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
-        "nj.shetty@samsung.com" <nj.shetty@samsung.com>
-Subject: Re: [PATCH 3/3] io_uring: add support for zone-append
-Message-ID: <20200618083529.ciifu4chr4vrv2j5@mpHalley.local>
-References: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
- <CGME20200617172713epcas5p352f2907a12bd4ee3c97be1c7d8e1569e@epcas5p3.samsung.com>
- <1592414619-5646-4-git-send-email-joshi.k@samsung.com>
- <CY4PR04MB37510E916B6F243D189B4EB0E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=klpQjbXIkQXxjkoBdlgU5/GUXlGcyonJcPCF31K/eoI=;
+        b=L+mSBvyzsWeYY1CdKPdFFSIwtvG+HtCdXsK6KtyEoUt+4SBQ8BiF3qgwn97GrSVrR9
+         k5aewD0mmBC+zJoqt4kvcG8UrzSfm3cX1UxvT7cSMy38MtPZ32sxk7cJoMPgkBkkT/dg
+         8vsO5B9184YaRzT8/1jESDyJzlL1TrrvI3SlX4wPPbvtYxH5IFm61T3HUaxJwcfmW4VW
+         Opz4ux8kXwMEkMUjoJZyWdbNuD33UboPFtMKQ+h3HfYGwZNHuofI+fxo+EWCKCQ2qFXc
+         CUE0utpHnJHSFesW3FU6+u1BB/mx/5qtqVyOb28pLryV4FeF4oglLHalkpB287m7ms++
+         KJtA==
+X-Gm-Message-State: AOAM531kh9oW0knUqEYy7n7IXwmNdvMdYuXaLKgY254XtcX+DjjAHlld
+        y04CnnBEyA2oQm/tRQUaDuvtmd8qkvc=
+X-Google-Smtp-Source: ABdhPJyP1p+nWNCcIHbB2JgesFBWX2Y+8DA/h7dXnvxqC3c+r+3RPNEepdSs1JVhNHE3l4QlM3gBtw==
+X-Received: by 2002:aa7:9a5d:: with SMTP id x29mr2543652pfj.65.1592469397756;
+        Thu, 18 Jun 2020 01:36:37 -0700 (PDT)
+Received: from ?IPv6:2404:7a87:83e0:f800:f960:d5b8:822f:1ca1? ([2404:7a87:83e0:f800:f960:d5b8:822f:1ca1])
+        by smtp.gmail.com with ESMTPSA id m14sm1948808pgt.6.2020.06.18.01.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jun 2020 01:36:37 -0700 (PDT)
+Subject: Re: [PATCH v3] exfat: remove EXFAT_SB_DIRTY flag
+To:     Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        'Namjae Jeon' <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20200616021816epcas1p2bb235df44c0b6f74cdec2f12072891e3@epcas1p2.samsung.com>
+ <20200616021808.5222-1-kohada.t2@gmail.com>
+ <414101d64477$ccb661f0$662325d0$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <aac9d6c7-1d62-a85d-9bcb-d3c0ddc8fcd6@gmail.com>
+Date:   Thu, 18 Jun 2020 17:36:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <414101d64477$ccb661f0$662325d0$@samsung.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CY4PR04MB37510E916B6F243D189B4EB0E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.06.2020 07:39, Damien Le Moal wrote:
->On 2020/06/18 2:27, Kanchan Joshi wrote:
->> From: Selvakumar S <selvakuma.s1@samsung.com>
->>
->> Introduce three new opcodes for zone-append -
->>
->>    IORING_OP_ZONE_APPEND     : non-vectord, similiar to IORING_OP_WRITE
->>    IORING_OP_ZONE_APPENDV    : vectored, similar to IORING_OP_WRITEV
->>    IORING_OP_ZONE_APPEND_FIXED : append using fixed-buffers
->>
->> Repurpose cqe->flags to return zone-relative offset.
->>
->> Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
->> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
->> ---
->>  fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++++++++--
->>  include/uapi/linux/io_uring.h |  8 ++++-
->>  2 files changed, 77 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 155f3d8..c14c873 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -649,6 +649,10 @@ struct io_kiocb {
->>  	unsigned long		fsize;
->>  	u64			user_data;
->>  	u32			result;
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +	/* zone-relative offset for append, in bytes */
->> +	u32			append_offset;
->
->this can overflow. u64 is needed.
+Thank you for your comment.
 
-We chose to do it this way to start with because struct io_uring_cqe
-only has space for u32 when we reuse the flags.
+On 2020/06/17 16:20, Sungjong Seo wrote:
+>> remove EXFAT_SB_DIRTY flag and related codes.
+>>
+>> This flag is set/reset in exfat_put_super()/exfat_sync_fs() to avoid
+>> sync_blockdev().
+>> However ...
+>> - exfat_put_super():
+>> Before calling this, the VFS has already called sync_filesystem(), so sync
+>> is never performed here.
+>> - exfat_sync_fs():
+>> After calling this, the VFS calls sync_blockdev(), so, it is meaningless
+>> to check EXFAT_SB_DIRTY or to bypass sync_blockdev() here.
+>> Not only that, but in some cases can't clear VOL_DIRTY.
+>> ex:
+>> VOL_DIRTY is set when rmdir starts, but when non-empty-dir is detected,
+>> return error without setting EXFAT_SB_DIRTY.
+>> If performe 'sync' in this state, VOL_DIRTY will not be cleared.
+>>
+> 
+> Since this patch does not resolve 'VOL_DIRTY in ENOTEMPTY' problem you
+> mentioned,
+> it would be better to remove the description above for that and to make new
+> patch.
 
-We can of course create a new cqe structure, but that will come with
-larger changes to io_uring for supporting append.
+I mentioned rmdir as an example.
+However, this problem is not only with rmdirs.
+VOL_DIRTY remains when some functions abort with an error.
+In original, VOL_DIRTY is not cleared even if performe 'sync'.
+With this patch, it ensures that VOL_DIRTY will be cleared by 'sync'.
 
-Do you believe this is a better approach?
+Is my description insufficient?
 
-Javier
+
+BTW
+Even with this patch applied,  VOL_DIRTY remains until synced in the above case.
+It's not  easy to reproduce as rmdir, but I'll try to fix it in the future.
+
+
+BR
+---
+Tetsuhiro Kohada <kohada.t2@gmail.com>
+
+
+
