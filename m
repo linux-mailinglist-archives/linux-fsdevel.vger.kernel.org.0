@@ -2,172 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D2B1FEE02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF141FEE08
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgFRIpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 04:45:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44890 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728579AbgFRIpx (ORCPT
+        id S1728815AbgFRIqz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 04:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbgFRIqu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 04:45:53 -0400
-Received: from ip-109-41-0-102.web.vodafone.de ([109.41.0.102] helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jlqBB-0002LI-VL; Thu, 18 Jun 2020 08:45:50 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wolfgang Bumiller <w.bumiller@proxmox.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH] nsfs: add NS_GET_INIT_PID ioctl
-Date:   Thu, 18 Jun 2020 10:45:43 +0200
-Message-Id: <20200618084543.326605-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.27.0
+        Thu, 18 Jun 2020 04:46:50 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC10C0613EE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:46:49 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id q11so5156418wrp.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pGnDJXtKWLgnAg2IYpy2p8BjxoQVNW7qIESt0st593I=;
+        b=LmlpGVuN7mlTuO3Dr+tB3GDPKZgd7JsDvzZm8m/ZHSzntyuHkVmvAluS2YgrLnz1ga
+         SCCXvCLLjEwnDveNhuJZXkHYRzEIwz6hFT2R1Aqrs2CoRp7vc0+tDn6I8b3JMz9OtVAw
+         VBO/nk0Kho//o0jbSKAEuQde0cM+Y4nJGotjtukPZ2OnJYQNQAyhQt3iURJ9fUCRNcMY
+         OQcyQxqZEdzCzPXG2nsq/k0wrRQm4Vws1MeH7Mz2AzOSXZSQVUmkfV0Ko5fFs/36fkdV
+         Ts01XGXDvfWPL9P8TZU5oSTeGJOqZcI0AkVsZ+IMxaaVB1eb9YjhyiWsC4g6mKUA0z6u
+         TUhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pGnDJXtKWLgnAg2IYpy2p8BjxoQVNW7qIESt0st593I=;
+        b=o+agqHEWwEWNtGzUC9CTQhbl0YhBfa5lzxIO/oVX3Ih9tBCKcj9hX0y/Vc4ycjauss
+         v67qfXo0acHvo5M2fFplRnqaHpbvm+Vwi+IGTVbIMBk123+c4n7MfKxW7NKanumAOVaB
+         ERvVuvOfv8nO2se/K/BZQOUZGDCVWoE9ZZlGydKv5klY5YKgpZBYjhAlM7HSIVpz53Kx
+         KIVvsG8A1SFlo1J75bUHWctD8jJa//asuxwQkUPlBsBBZ+qKrJN0yOXFiJe0Z47Qhoc3
+         G3TsK9eQniqpCDRWi7Avf7B9CSE7b1trx7ApjPlHj27bbjR2alrRDVhjL94a6CSPL678
+         yYVg==
+X-Gm-Message-State: AOAM531EMxhhZ0SnZLND/hZyfDRL47p8nbAZPdoghcM8n6GyFSQfUZ2g
+        GBh/3lMJtKKC5zsoDY+0rfx/hA==
+X-Google-Smtp-Source: ABdhPJwQKmr23B3EQGx+XylxHf9s5hvzqsXABEc1zdAsSvZlNgi68eOepgXEvF/Hz0HTAF8tD5aQQw==
+X-Received: by 2002:a5d:55c2:: with SMTP id i2mr3423049wrw.225.1592470008628;
+        Thu, 18 Jun 2020 01:46:48 -0700 (PDT)
+Received: from [10.0.0.6] (xb932c246.cust.hiper.dk. [185.50.194.70])
+        by smtp.gmail.com with ESMTPSA id m65sm2114654wmf.17.2020.06.18.01.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jun 2020 01:46:48 -0700 (PDT)
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+To:     =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <keith.busch@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+ <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
+ <20200618082740.i4sfoi54aed6sxnk@mpHalley.local>
+ <f9b820af-2b23-7bb4-f651-e6e1b3002ebf@lightnvm.io>
+ <20200618083940.jzjtbfwwyyyhpnhs@mpHalley.local>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <01581df5-d1d0-2375-23b2-20fc34dcdefd@lightnvm.io>
+Date:   Thu, 18 Jun 2020 10:46:48 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <20200618083940.jzjtbfwwyyyhpnhs@mpHalley.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an ioctl() to return the PID of the init process/child reaper of a pid
-namespace as seen in the caller's pid namespace.
+On 18/06/2020 10.39, Javier González wrote:
+> On 18.06.2020 10:32, Matias Bjørling wrote:
+>> On 18/06/2020 10.27, Javier González wrote:
+>>> On 18.06.2020 10:04, Matias Bjørling wrote:
+>>>> On 17/06/2020 19.23, Kanchan Joshi wrote:
+>>>>> This patchset enables issuing zone-append using aio and io-uring 
+>>>>> direct-io interface.
+>>>>>
+>>>>> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application 
+>>>>> uses start LBA
+>>>>> of the zone to issue append. On completion 'res2' field is used to 
+>>>>> return
+>>>>> zone-relative offset.
+>>>>>
+>>>>> For io-uring, this introduces three opcodes: 
+>>>>> IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+>>>>> Since io_uring does not have aio-like res2, cqe->flags are 
+>>>>> repurposed to return zone-relative offset
+>>>>
+>>>> Please provide a pointers to applications that are updated and 
+>>>> ready to take advantage of zone append.
+>>>
+>>> Good point. We are posting a RFC with fio support for append. We wanted
+>>> to start the conversation here before.
+>>>
+>>> We can post a fork for improve the reviews in V2.
+>>
+>> Christoph's response points that it is not exactly clear how this 
+>> matches with the POSIX API.
+>
+> Yes. We will address this.
+>>
+>> fio support is great - but I was thinking along the lines of 
+>> applications that not only benchmark performance. fio should be part 
+>> of the supported applications, but should not be the sole reason the 
+>> API is added.
+>
+> Agree. It is a process with different steps. We definitely want to have
+> the right kernel interface before pushing any changes to libraries and /
+> or applications. These will come as the interface becomes more stable.
+>
+> To start with xNVMe will be leveraging this new path. A number of
+> customers are leveraging the xNVMe API for their applications already.
 
-LXCFS is a tiny fuse filesystem used to virtualize various aspects of
-procfs. It is used actively by a large number of users including ChromeOS
-and cloud providers. LXCFS is run on the host. The files and directories it
-creates can be bind-mounted by e.g. a container at startup and mounted over
-the various procfs files the container wishes to have virtualized. When
-e.g. a read request for uptime is received, LXCFS will receive the pid of
-the reader. In order to virtualize the corresponding read, LXCFS needs to
-know the pid of the init process of the reader's pid namespace. In order to
-do this, LXCFS first needs to fork() two helper processes. The first helper
-process setns() to the readers pid namespace. The second helper process is
-needed to create a process that is a proper member of the pid namespace.
-The second helper process then creates a ucred message with ucred.pid set
-to 1 and sends it back to LXCFS. The kernel will translate the ucred.pid
-field to the corresponding pid number in LXCFS's pid namespace. This way
-LXCFS can learn the init pid number of the reader's pid namespace and can
-go on to virtualize. Since these two forks() are costly LXCFS maintains an
-init pid cache that caches a given pid for a fixed amount of time. The
-cache is pruned during new read requests. However, even with the cache the
-hit of the two forks() is singificant when a very large number of
-containers are running. With this simple patch we add an ns ioctl that
-let's a caller retrieve the init pid nr of a pid namespace through its
-pid namespace fd. This _significantly_ improves our performance with a very
-simple change. A caller should do something like:
-- pid_t init_pid = ioctl(pid_ns_fd, NS_GET_INIT_PID);
-- verify init_pid is still valid (not necessarily both but recommended):
-  - opening a pidfd to get a stable reference
-  - opening /proc/<init_pid>/ns/pid and verifying that <pid_ns_fd>
-    and the pid namespace fd of <init_pid> refer to the same pid namespace
+Heh, let me be even more specific - open-source applications, that is 
+outside of fio (or any other benchmarking application), and libraries 
+that acts as a mediator between two APIs.
 
-Note, it is possible for the init process of the pid namespace (identified
-via the child_reaper member in the relevant pid namespace) to die and get
-reaped right after the ioctl returned. If that happens there are two cases
-to consider:
-- if the init process was single threaded, all other processes in the pid
-  namespace will be zapped and any new process creation in there will fail;
-  A caller can detect this case since either the init pid is still around
-  but it is a zombie, or it already has exited and not been recycled, or it
-  has exited, been reaped, and also been recycled. The last case is the
-  most interesting one but a caller would then be able to detect that the
-  recycled process lives in a different pid namespace.
-- if the init process was multi-threaded, then the kernel will try to make
-  one of the threads in the same thread-group - if any are still alive -
-  the new child_reaper. In this case the caller can detect that the thread
-  which exited and used to be the child_reaper is no longer alive. If it's
-  tid has been recycled in the same pid namespace a caller can detect this
-  by parsing through /proc/<tid>/stat, looking at the Nspid: field and if
-  there's a entry with pid nr 1 in the respective pid namespace it can be
-  sure that it hasn't been recycled.
-Both options can be combined with pidfd_open() to make sure that a stable
-reference is maintained.
-
-Cc: Wolfgang Bumiller <w.bumiller@proxmox.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/nsfs.c                 | 29 +++++++++++++++++++++++++++++
- include/uapi/linux/nsfs.h |  2 ++
- 2 files changed, 31 insertions(+)
-
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 800c1d0eb0d0..5a7de1ee6df0 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -8,6 +8,7 @@
- #include <linux/magic.h>
- #include <linux/ktime.h>
- #include <linux/seq_file.h>
-+#include <linux/pid_namespace.h>
- #include <linux/user_namespace.h>
- #include <linux/nsfs.h>
- #include <linux/uaccess.h>
-@@ -189,6 +190,10 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			unsigned long arg)
- {
- 	struct user_namespace *user_ns;
-+	struct pid_namespace *pid_ns;
-+	struct task_struct *child_reaper;
-+	struct pid *pid_struct;
-+	pid_t pid;
- 	struct ns_common *ns = get_proc_ns(file_inode(filp));
- 	uid_t __user *argp;
- 	uid_t uid;
-@@ -209,6 +214,30 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 		argp = (uid_t __user *) arg;
- 		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
- 		return put_user(uid, argp);
-+	case NS_GET_INIT_PID:
-+		if (ns->ops->type != CLONE_NEWPID)
-+			return -EINVAL;
-+
-+		pid_ns = container_of(ns, struct pid_namespace, ns);
-+
-+		/*
-+		 * If we're asking for the init pid of our own pid namespace
-+		 * that's of course silly but no need to fail this since we can
-+		 * both infer or find out our own pid namespaces's init pid
-+		 * trivially. In all other cases, we require the same
-+		 * privileges as for setns().
-+		 */
-+		if (task_active_pid_ns(current) != pid_ns &&
-+		    !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
-+			return -EPERM;
-+
-+		pid = -ESRCH;
-+		read_lock(&tasklist_lock);
-+		if (likely(pid_ns->child_reaper))
-+			pid = task_pid_vnr(pid_ns->child_reaper);
-+		read_unlock(&tasklist_lock);
-+
-+		return pid;
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-index a0c8552b64ee..29c775f42bbe 100644
---- a/include/uapi/linux/nsfs.h
-+++ b/include/uapi/linux/nsfs.h
-@@ -15,5 +15,7 @@
- #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
- /* Get owner UID (in the caller's user namespace) for a user namespace */
- #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-+/* Get init PID (in the caller's pid namespace) of a pid namespace */
-+#define NS_GET_INIT_PID		_IO(NSIO, 0x5)
- 
- #endif /* __LINUX_NSFS_H */
-
-base-commit: b3a9e3b9622ae10064826dccb4f7a52bd88c7407
--- 
-2.27.0
 
