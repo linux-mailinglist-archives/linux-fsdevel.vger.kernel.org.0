@@ -2,114 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B1581FED28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F1B1FED73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 10:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbgFRIFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 04:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52162 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728308AbgFRIEg (ORCPT
+        id S1728584AbgFRIUM convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 04:20:12 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:34036 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728466AbgFRIUH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 04:04:36 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 932D3C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:04:34 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id q2so2563341wrv.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 01:04:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ypYuYJigIb8VHCUtNcGOn99vAHuAHCA9hokHiE2bncc=;
-        b=H9uCyCXnVKd0UETnW1mP2ouZ0DUuu32PQNmdlcfrlGc6dBYA1ssCtS5Og4ICZS1l3I
-         BvkHo8b5cVnsKeMvyTo+6I+/jFfm0gyl71MZ8PtJfBR9wuswZ7K6fGKZzEH+NHLhgW2T
-         5Ehk1R4JTzGYy9trrQMRYcUeQ1UtMzHLL818OqTdBL5OpuMRiUEbCsUHUFN8BkJglFIP
-         Rx7ucKs9q6j3PA1UFObnV46cmjSciUYjjaBELY5hjxPur2qhUWGPZfldonjbpRO4sLbJ
-         Z45f0M+9d3OqaVz73ZDhBilGF4kzEKXSurss/hCfzLuEeybyqttBkYHEzKy0DF+7qoyR
-         PCGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ypYuYJigIb8VHCUtNcGOn99vAHuAHCA9hokHiE2bncc=;
-        b=b4gFi+wQis+Jy2ip1xB83UXi+5KxPX1wkZ3vVhwI+bCLA/qRCsnsoJryYUlmulvHYm
-         EN3Wy37Y61XtkMAhDkcALxhSrb5TrFoVBFw/KttzpGAwjX/aRJO6KjsGQ5GRfoLXq+eN
-         7d0gWfcDEqbmgWTK6DvIhGB9AON5cKLxtI1nk6e/0k0FqwL2ArhUNWiIzFbSaRVBiueQ
-         j6ejFQzkEWn5WRh/OJJGrekkKj39Ep2Ut94T/Q/RuIztSL/aez3q21x5Y5J5ImZ2QwJ2
-         aDEG1IxgCQHodsc+mekI4T321aV74hlR3SRXpvBAOgYntgeaWMOmkhMObQxFa9qdzUu+
-         nonw==
-X-Gm-Message-State: AOAM531Zx7vWGQQ8RDUhTJ4L41MQnHrKyxjFJxFzqxGnh24faEQcRbO4
-        6+YHa1Zrod1MOY94T4NLiReOBg==
-X-Google-Smtp-Source: ABdhPJy9kYbtxsS9p1Gqu9ZzDkGKhTVRMt8ZrKgQyjdOb0qD5wXvXTGOpcc9v04//KMjqkivzoMq0A==
-X-Received: by 2002:adf:db47:: with SMTP id f7mr3375855wrj.101.1592467473275;
-        Thu, 18 Jun 2020 01:04:33 -0700 (PDT)
-Received: from [10.0.0.6] (xb932c246.cust.hiper.dk. [185.50.194.70])
-        by smtp.gmail.com with ESMTPSA id l17sm2439436wmi.3.2020.06.18.01.04.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jun 2020 01:04:32 -0700 (PDT)
-Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
-To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, bcrl@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
-        nj.shetty@samsung.com, javier.gonz@samsung.com,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <keith.busch@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
- <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
-Date:   Thu, 18 Jun 2020 10:04:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 18 Jun 2020 04:20:07 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-60-xqW0qJM9OuOmp_SMWmfb5w-1; Thu, 18 Jun 2020 09:20:00 +0100
+X-MC-Unique: xqW0qJM9OuOmp_SMWmfb5w-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 18 Jun 2020 09:19:59 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 18 Jun 2020 09:19:59 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sargun Dhillon" <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        "David S. Miller" <davem@davemloft.net>,
+        Christoph Hellwig <hch@lst.de>,
+        "Tycho Andersen" <tycho@tycho.ws>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Andy Lutomirski" <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: RE: [PATCH v4 03/11] fs: Add fd_install_received() wrapper for
+ __fd_install_received()
+Thread-Topic: [PATCH v4 03/11] fs: Add fd_install_received() wrapper for
+ __fd_install_received()
+Thread-Index: AQHWQ44F2CX108LjrkCobo2loVeUYajc8NxQgAA6eACAANyJYA==
+Date:   Thu, 18 Jun 2020 08:19:59 +0000
+Message-ID: <bed4dbb349cf4dbda78652f9c2bf1090@AcuMS.aculab.com>
+References: <20200616032524.460144-1-keescook@chromium.org>
+ <20200616032524.460144-4-keescook@chromium.org>
+ <6de12195ec3244b99e6026b4b46e5be2@AcuMS.aculab.com>
+ <202006171141.4DA1174979@keescook>
+In-Reply-To: <202006171141.4DA1174979@keescook>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17/06/2020 19.23, Kanchan Joshi wrote:
-> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
->
-> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
-> of the zone to issue append. On completion 'res2' field is used to return
-> zone-relative offset.
->
-> For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
-> Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
+From: Kees Cook
+> Sent: 17 June 2020 20:58
+> On Wed, Jun 17, 2020 at 03:35:20PM +0000, David Laight wrote:
+> > From: Kees Cook
+> > > Sent: 16 June 2020 04:25
+> > >
+> > > For both pidfd and seccomp, the __user pointer is not used. Update
+> > > __fd_install_received() to make writing to ufd optional. (ufd
+> > > itself cannot checked for NULL because this changes the SCM_RIGHTS
+> > > interface behavior.) In these cases, the new fd needs to be returned
+> > > on success.  Update the existing callers to handle it. Add new wrapper
+> > > fd_install_received() for pidfd and seccomp that does not use the ufd
+> > > argument.
+> > ...>
+> > >  static inline int fd_install_received_user(struct file *file, int __user *ufd,
+> > >  					   unsigned int o_flags)
+> > >  {
+> > > -	return __fd_install_received(file, ufd, o_flags);
+> > > +	return __fd_install_received(file, true, ufd, o_flags);
+> > > +}
+> >
+> > Can you get rid of the 'return user' parameter by adding
+> > 	if (!ufd) return -EFAULT;
+> > to the above wrapper, then checking for NULL in the function?
+> >
+> > Or does that do the wrong horrid things in the fail path?
+> 
+> Oh, hm. No, that shouldn't break the failure path, since everything gets
+> unwound in __fd_install_received if the ufd write fails.
+> 
+> Effectively this (I'll chop it up into the correct patches):
 
-Please provide a pointers to applications that are updated and ready to 
-take advantage of zone append.
+Yep, that's what i was thinking...
 
-I do not believe it's beneficial at this point to change the libaio API, 
-applications that would want to use this API, should anyway switch to 
-use io_uring.
+Personally I'm not sure that it matters whether the file is left
+attached to a process fd when the copy_to_user() fails.
+The kernel data structures are consistent either way.
+So sane code relies on catching SIGSEGV, fixing thigs up,
+and carrying on.
+(IIRC the original /bin/sh code called sbrk() in its SIGSEGV
+handler instead of doing the limit check in malloc()!)
 
-Please also note that applications and libraries that want to take 
-advantage of zone append, can already use the zonefs file-system, as it 
-will use the zone append command when applicable.
+The important error path is 'failing to get an fd number'.
+In that case the caller needs to keep the 'file *' or close it.
 
-> Kanchan Joshi (1):
->    aio: add support for zone-append
->
-> Selvakumar S (2):
->    fs,block: Introduce IOCB_ZONE_APPEND and direct-io handling
->    io_uring: add support for zone-append
->
->   fs/aio.c                      |  8 +++++
->   fs/block_dev.c                | 19 +++++++++++-
->   fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++++++++--
->   include/linux/fs.h            |  1 +
->   include/uapi/linux/aio_abi.h  |  1 +
->   include/uapi/linux/io_uring.h |  8 ++++-
->   6 files changed, 105 insertions(+), 4 deletions(-)
->
+I've not looked at the code, but I wonder if you need to pass
+the 'file *' by reference so that you can consume it (write NULL)
+and return an error.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
