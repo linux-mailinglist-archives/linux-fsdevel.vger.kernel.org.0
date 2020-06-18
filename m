@@ -2,171 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 149CF1FFE3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 00:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89ADB1FFE56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 00:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbgFRWkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 18:40:15 -0400
-Received: from [211.29.132.53] ([211.29.132.53]:55738 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726835AbgFRWkO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 18:40:14 -0400
-Received: from dread.disaster.area (unknown [49.180.124.177])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 2169CD5B28E;
-        Fri, 19 Jun 2020 08:39:51 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jm3CG-0000vL-Qx; Fri, 19 Jun 2020 08:39:48 +1000
-Date:   Fri, 19 Jun 2020 08:39:48 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-Message-ID: <20200618223948.GI2005@dread.disaster.area>
-References: <20200617155836.GD13815@fieldses.org>
- <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
- <20200618013026.ewnhvf64nb62k2yx@gabell>
- <20200618030539.GH2005@dread.disaster.area>
- <20200618034535.h5ho7pd4eilpbj3f@gabell>
+        id S1731899AbgFRWuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 18:50:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728932AbgFRWuM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jun 2020 18:50:12 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56F5220720;
+        Thu, 18 Jun 2020 22:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592520611;
+        bh=HYGod6h7F0uGZKxft0EPpj5IScO/V7jm1M/teBNdy6s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L+1dinT/55/j1xVvfBjHT5Et+P7+8KZg4YS557H8LYrg195s8hd/bYt7q+cQL6ZeO
+         zlEj41LEnzrCKAAZ0yeGfyZbsTZY5xWsQemwiJN0ywf0k+qS4Mj4zfUXpiFe+wuBrG
+         vLVCAVzIkptKANY2O81F1qNWTAD3JJQ4Bwcjs+OQ=
+Date:   Thu, 18 Jun 2020 15:50:09 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 3/4] f2fs: add inline encryption support
+Message-ID: <20200618225009.GA35732@gmail.com>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-4-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200618034535.h5ho7pd4eilpbj3f@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
-        a=T-c9y1LhZP_wMowfrC8A:9 a=M9xdgUNOmOWECtrQ:21 a=SC1P7o9sxr00x_CH:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200617075732.213198-4-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 11:45:35PM -0400, Masayoshi Mizuma wrote:
-> On Thu, Jun 18, 2020 at 01:05:39PM +1000, Dave Chinner wrote:
-> > On Wed, Jun 17, 2020 at 09:30:26PM -0400, Masayoshi Mizuma wrote:
-> > > On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
-> > > > On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
-> > > > > but mount(8) has already exposed this interface:
-> > > > > 
-> > > > >        iversion
-> > > > >               Every time the inode is modified, the i_version field will be incremented.
-> > > > > 
-> > > > >        noiversion
-> > > > >               Do not increment the i_version inode field.
-> > > > > 
-> > > > > so now what?
-> > > > 
-> > > > It's not like anyone's actually depending on i_version *not* being
-> > > > incremented.  (Can you even observe it from userspace other than over
-> > > > NFS?)
-> > > > 
-> > > > So, just silently turn on the "iversion" behavior and ignore noiversion,
-> > > > and I doubt you're going to break any real application.
-> > > 
-> > > I suppose it's probably good to remain the options for user compatibility,
-> > > however, it seems that iversion and noiversiont are useful for
-> > > only ext4.
-> > > How about moving iversion and noiversion description on mount(8)
-> > > to ext4 specific option?
-> > > 
-> > > And fixing the remount issue for XFS (maybe btrfs has the same
-> > > issue as well)?
-> > > For XFS like as:
-> > > 
-> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > > index 379cbff438bc..2ddd634cfb0b 100644
-> > > --- a/fs/xfs/xfs_super.c
-> > > +++ b/fs/xfs/xfs_super.c
-> > > @@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
-> > >                         return error;
-> > >         }
-> > > 
-> > > +       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-> > > +               mp->m_super->s_flags |= SB_I_VERSION;
-> > > +
-> > >         return 0;
-> > >  }
-> > 
-> > no this doesn't work, because the sueprblock flags are modified
-> > after ->reconfigure is called.
-> > 
-> > i.e. reconfigure_super() does this:
-> > 
-> > 	if (fc->ops->reconfigure) {
-> > 		retval = fc->ops->reconfigure(fc);
-> > 		if (retval) {
-> > 			if (!force)
-> > 				goto cancel_readonly;
-> > 			/* If forced remount, go ahead despite any errors */
-> > 			WARN(1, "forced remount of a %s fs returned %i\n",
-> > 			     sb->s_type->name, retval);
-> > 		}
-> > 	}
-> > 
-> > 	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
-> > 				 (fc->sb_flags & fc->sb_flags_mask)));
-> > 
-> > And it's the WRITE_ONCE() line that clears SB_I_VERSION out of
-> > sb->s_flags. Hence adding it in ->reconfigure doesn't help.
-> > 
-> > What we actually want to do here in xfs_fc_reconfigure() is this:
-> > 
-> > 	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-> > 		fc->sb_flags_mask |= SB_I_VERSION;
-> > 
-> > So that the SB_I_VERSION is not cleared from sb->s_flags.
-> > 
-> > I'll also note that btrfs will need the same fix, because it also
-> > sets SB_I_VERSION unconditionally, as will any other filesystem that
-> > does this, too.
+On Wed, Jun 17, 2020 at 07:57:31AM +0000, Satya Tangirala wrote:
+> Wire up f2fs to support inline encryption via the helper functions which
+> fs/crypto/ now provides.  This includes:
 > 
-> Thank you for pointed it out.
-> How about following change? I believe it works both xfs and btrfs...
+> - Adding a mount option 'inlinecrypt' which enables inline encryption
+>   on encrypted files where it can be used.
 > 
-> diff --git a/fs/super.c b/fs/super.c
-> index b0a511bef4a0..42fc6334d384 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -973,6 +973,9 @@ int reconfigure_super(struct fs_context *fc)
->                 }
->         }
+> - Setting the bio_crypt_ctx on bios that will be submitted to an
+>   inline-encrypted file.
 > 
-> +       if (sb->s_flags & SB_I_VERSION)
-> +               fc->sb_flags |= MS_I_VERSION;
-> +
->         WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
->                                  (fc->sb_flags & fc->sb_flags_mask)));
->         /* Needs to be ordered wrt mnt_is_readonly() */
+> - Not adding logically discontiguous data to bios that will be submitted
+>   to an inline-encrypted file.
+> 
+> - Not doing filesystem-layer crypto on inline-encrypted files.
+> 
+> This patch includes a fix for a race during IPU by
+> Sahitya Tummala <stummala@codeaurora.org>
+> 
+> Co-developed-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  Documentation/filesystems/f2fs.rst |  7 ++-
+>  fs/f2fs/compress.c                 |  2 +-
+>  fs/f2fs/data.c                     | 81 ++++++++++++++++++++++++------
+>  fs/f2fs/super.c                    | 32 ++++++++++++
+>  4 files changed, 104 insertions(+), 18 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 099d45ac8d8f..4dc36143ff82 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -258,7 +258,12 @@ compress_extension=%s  Support adding specified extension, so that f2fs can enab
+>                         on compression extension list and enable compression on
+>                         these file by default rather than to enable it via ioctl.
+>                         For other files, we can still enable compression via ioctl.
+> -====================== ============================================================
 
-This will prevent SB_I_VERSION from being turned off at all. That
-will break existing filesystems that allow SB_I_VERSION to be turned
-off on remount, such as ext4.
+The above line being deleted marks the end of a table, so it shouldn't be
+deleted (it should go after the part below).
 
-The manipulations here need to be in the filesystem specific code;
-we screwed this one up so badly there is no "one size fits all"
-behaviour that we can implement in the generic code...
+> +inlinecrypt
+> +                       Encrypt/decrypt the contents of encrypted files using the
+> +                       blk-crypto framework rather than filesystem-layer encryption.
+> +                       This allows the use of inline encryption hardware. The on-disk
+> +                       format is unaffected. For more details, see
+> +                       Documentation/block/inline-encryption.rst.
 
-Cheers,
+Like I commented on one of the commit messages -- this doesn't make it clear
+what happens in cases where blk-crypto can't be used.  Maybe just replace:
+"Encrypt/decrypt" => "When possible, encrypt/decrypt".
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Likewise for the ext4 documentation for this same mount option.
+
+- Eric
