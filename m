@@ -2,78 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6191FF3FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 15:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B330E1FF452
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 16:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbgFRN4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 09:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50058 "EHLO
+        id S1730668AbgFROLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 10:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbgFRN4m (ORCPT
+        with ESMTP id S1726001AbgFROLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 09:56:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52481C06174E;
-        Thu, 18 Jun 2020 06:56:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=m7789sLCyjbHjOAuLr012wW0yNomx7QoVtM2ofWyOX0=; b=jTJkvgIORv1ov8++MY6At1I8xl
-        n6QHj230U1RbaQrLrT8mxtyaxFmAaI9vSqBaiJDkU2rB5wUehFHWEPuFnNcohi+Ua7qRL5ubbw4Cz
-        fgys0Syn5plsSo58iEKLTSrKygOHqvHlfy4GjVVyKP0mTbWoojnOJKENvgvtnq3UyiHINCRP9Hzfd
-        BWt1RuRnRMnrxTKQ4eiYb5EhMMBdEA74FoNDAgV/nxy6cuOoI9nkcwQsun+lWQrz30ut87x1dNEhg
-        v50o94/McQrWsRYcU/AxYFZLBpG/6dg1tvF5ZfyEHRd9V1B/enRNzOYR6VaZWgFuYx4ShX7lNPOwo
-        KBzYn6Gw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlv1z-0004AS-Qx; Thu, 18 Jun 2020 13:56:39 +0000
-Date:   Thu, 18 Jun 2020 06:56:39 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
-Message-ID: <20200618135639.GA15658@infradead.org>
-References: <20200615160244.741244-1-agruenba@redhat.com>
- <20200618013901.GR11245@magnolia>
- <20200618123227.GO8681@bombadil.infradead.org>
- <CAHc6FU5x8+54zX5NWEDdsf5HV5qXLnjS1SM+oYmX1yMrh_mDfA@mail.gmail.com>
+        Thu, 18 Jun 2020 10:11:48 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2285DC0613ED
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 07:11:48 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id c11so3552306lfh.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jun 2020 07:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p5Y6VzjE46+NhDt4mg2S5o4yQ1/eLUcB29QBrcYK8BY=;
+        b=ZHO6wpiR6gUAr5OGQL9Lcu20ukX5A8y/2szri0NCuxCituzyRMXuO27B9wEQfv/wQ5
+         7y3MVf0+4hgPlF8bXFksP8xwoZ/vdomiLdQCze5oKFf1FVpZjnqtLbAF90IwWaEjJXG/
+         EpRVw459oeG5ruYEteC2Hn9T3jUj4kAClnKwWVevZ84vGeUPcRYvg9I1AHJdTqokRt4m
+         f6FsQmiMzanQ1mLDBRXYEX7MDQp15PeiDU3j7ZC7gsS6F8uYpQRyaYITm+DkUwUXCiUi
+         V4DqGZdQUqb/MK6hJwnEqnj9NkzUXPW7bCYIBL1CBG2GkbeibvP2ImUPFA3HzMyvlCcC
+         US4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p5Y6VzjE46+NhDt4mg2S5o4yQ1/eLUcB29QBrcYK8BY=;
+        b=ObuMOh3v/WazyjRE3io12bN0oX7xHhM66MbA0mQK87KwOg43aUjheO/kubf929hUy6
+         eT3GEG29eKYLv9zJ8X7RWC5zhfqYPX/gl/46N3MNDUsVkSBkwEukYeoNrs7xptSfgAJy
+         TrMPMB8ss4rGCMYYSzfE/TkzazKV5g8OFAc3T3cXpk4Kbm8YOXSWtqQZUlr35G6F5RPP
+         2D1wAoyp5+kQVnSUTNtoffsZuKkjDv9R+okdXHdPexfftiDtmtVY70MopV5ESntGaIAP
+         M7C+l/dYSQWPvWF2nWe5k/6QZw5cni4AdyE1zZPFWpPPBv0lpFryzYuR/CQ1U9Ejn++v
+         1MtA==
+X-Gm-Message-State: AOAM5315tKyzatsXUpzoqNwoQbyY1mP5zfO34JwFKXzXjqeKNnIetOa2
+        8gEoBIT4VyCD0bYby17GTbAn4wElUC73EAlxrSRP7A==
+X-Google-Smtp-Source: ABdhPJy7kZ8D6qE5luLc9Fgfu8aDqrqhxjP3QuwJ2YEmh29DYhfXstHRsj34nRVydo3qZV0fE4Ml//GGY0Ob3NcQ6KU=
+X-Received: by 2002:a19:be4b:: with SMTP id o72mr1872950lff.141.1592489506308;
+ Thu, 18 Jun 2020 07:11:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU5x8+54zX5NWEDdsf5HV5qXLnjS1SM+oYmX1yMrh_mDfA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200618134825.487467-1-areber@redhat.com> <20200618134825.487467-4-areber@redhat.com>
+In-Reply-To: <20200618134825.487467-4-areber@redhat.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 18 Jun 2020 16:11:19 +0200
+Message-ID: <CAG48ez1ocnFNSPdVDaVtB2-S+B4uBeLTLaekCYq=m1DuMyA-CA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] prctl: Allow ptrace capable processes to change exe_fd
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 02:37:37PM +0200, Andreas Gruenbacher wrote:
-> On Thu, Jun 18, 2020 at 2:32 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > On Wed, Jun 17, 2020 at 06:39:01PM -0700, Darrick J. Wong wrote:
-> > > > -   if (WARN_ON(iomap.offset > pos))
-> > > > -           return -EIO;
-> > > > -   if (WARN_ON(iomap.length == 0))
-> > > > -           return -EIO;
-> > > > +   if (WARN_ON(iomap.offset > pos) || WARN_ON(iomap.length == 0)) {
-> > >
-> > > Why combine these WARN_ON?  Before, you could distinguish between your
-> > > iomap_begin method returning zero length vs. bad offset.
-> >
-> > Does it matter?  They're both the same problem -- the filesystem has
-> > returned an invalid iomap.  I'd go further and combine the two:
-> >
-> >         if (WARN_ON(iomap.offset > pos || iomap.length == 0)) {
-> >
-> > that'll save a few bytes of .text
-> 
-> That would be fine by me as well. Christoph may have wanted separate
-> warnings for a particular reason though.
+On Thu, Jun 18, 2020 at 3:50 PM Adrian Reber <areber@redhat.com> wrote:
+> The current process is authorized to change its /proc/self/exe link via
+> two policies:
+> 1) The current user can do checkpoint/restore In other words is
+>    CAP_SYS_ADMIN or CAP_CHECKPOINT_RESTORE capable.
+> 2) The current user can use ptrace.
+>
+> With access to ptrace facilities, a process can do the following: fork a
+> child, execve() the target executable, and have the child use ptrace()
+> to replace the memory content of the current process. This technique
+> makes it possible to masquerade an arbitrary program as any executable,
+> even setuid ones.
+>
+> This commit also changes the permission error code from -EINVAL to
+> -EPERM for consistency with the rest of the prctl() syscall when
+> checking capabilities.
+[...]
+> diff --git a/kernel/sys.c b/kernel/sys.c
+[...]
+> @@ -2007,12 +2007,23 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+>
+>         if (prctl_map.exe_fd != (u32)-1) {
+>                 /*
+> -                * Make sure the caller has the rights to
+> -                * change /proc/pid/exe link: only local sys admin should
+> -                * be allowed to.
+> +                * The current process is authorized to change its
+> +                * /proc/self/exe link via two policies:
+> +                * 1) The current user can do checkpoint/restore
+> +                *    In other words is CAP_SYS_ADMIN or
+> +                *    CAP_CHECKPOINT_RESTORE capable.
+> +                * 2) The current user can use ptrace.
+> +                *
+> +                * With access to ptrace facilities, a process can do the
+> +                * following: fork a child, execve() the target executable,
+> +                * and have the child use ptrace() to replace the memory
+> +                * content of the current process. This technique makes it
+> +                * possible to masquerade an arbitrary program as the target
+> +                * executable, even if it is setuid.
 
-Yes.  The line number in the WARN_ON will tell you which condition
-you if they are separate, which is really useful to diagnose what is
-going on.
+(That is not necessarily true in the presence of LSMs like SELinux:
+You'd have to be able to FILE__EXECUTE_NO_TRANS the target executable
+according to the system's security policy.)
