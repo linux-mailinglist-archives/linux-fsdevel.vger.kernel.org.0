@@ -2,104 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A9A1FE703
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B521FE783
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbgFRCiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 22:38:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729123AbgFRBN1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:13:27 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED39E221E6;
-        Thu, 18 Jun 2020 01:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442806;
-        bh=sbGwC6NhDmYEFi7b4f6rPFlvOBAV0L/Avk5C5yKYsRg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xSShlrtQ2GDLZKADpQlGaoe9G6hk3uh2y9JoV6j8aakROp7QSg/HnrsZCcyQleSNB
-         2xXXuMwvMML+AL3xWi2VcsiPhUK5CHK3FqnXJH02FontTqamt9OOaHXwuxJqF971Ul
-         T65pDPHivubPtjvS/T30ftER6hLWqRVwvRKhmZU8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 246/388] fuse: copy_file_range should truncate cache
-Date:   Wed, 17 Jun 2020 21:05:43 -0400
-Message-Id: <20200618010805.600873-246-sashal@kernel.org>
+        id S1728893AbgFRCld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 22:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbgFRBMZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:12:25 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5DAC061755;
+        Wed, 17 Jun 2020 18:12:25 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 23so1981113pfw.10;
+        Wed, 17 Jun 2020 18:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2mYYmw9nQduGr7ImYE2MP1C2QsjcPBen23TKEtxnDoY=;
+        b=kBa3G0l+ZNUXGCRjrjIh/s9kaSyUojbgB+Eyc39Uf/7c8gLLYv3g5WFrTplfAXZSGj
+         Ueg4+uAgarXniOlUAp+AC46WRJSoLNnrj1PIkVBcEeRYdR58TvKwFV9LkxqmFkUFtSDm
+         qoWSMDCY/5hMkvJl4c8s3bA93TIZqTfsYGepQ1SDqvko2De6KbRJrNRvgSriNUqyirPm
+         Z/XMPQ//Av9revEdsHJtzzlpIq+i7Nw9bzZwxc69FNnY2gRXr65vmVykrJpJbB0q8Ywi
+         vHaBxvZveDmajKMqGsWHZvRA4rcJec9Z6iAOKoTulcl+M5MN/np6JJecMEzr/NnS0HGz
+         MH9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2mYYmw9nQduGr7ImYE2MP1C2QsjcPBen23TKEtxnDoY=;
+        b=NbR8KWAtJQZhnSs47MjpcS97DqHzOQDcxVzl6ZmXYrj425VxIR0bz/KEx8S0ULGUN4
+         86zAJJHPJ4y0Qts7S9M0yLGtUv/kBXIkoBLz10buz5rnx/+Z173f/lVyNc6nU8fFn8PS
+         rhRNwCH5DgyM1lb3E2zwevMPnos1MloMlJS92qWBOOZn7qbUoJitOFNvnRAJYrqxd69f
+         F5w8Bj6zoXDYm2ns/qAZVQ2cbNKVKpcCFJYvxIPnJXCG/i0OOx+iLlyHIdkVBvfxiobK
+         DnDhptJwtsSQcFsUMesdVix78rmpiJneVRI8+v74doNQNBnPRql5s2aBAarYm9k9R81r
+         pGMw==
+X-Gm-Message-State: AOAM533scHdM1ODVLdBJ1+CeiqOmn6+qSDj75j/OrKde3G98n1E+eoFP
+        akIW+x7sQPLVIzD8KFbx7l11CBHtpLU=
+X-Google-Smtp-Source: ABdhPJz/mOUor7XwvAv9bccD3inxzqmkUVqwhIN47oG3dQuKAkR+QC0pz02eMw/i7U68pqz8EN7zXw==
+X-Received: by 2002:a63:3409:: with SMTP id b9mr1394174pga.106.1592442744653;
+        Wed, 17 Jun 2020 18:12:24 -0700 (PDT)
+Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
+        by smtp.gmail.com with ESMTPSA id q10sm1022781pfk.86.2020.06.17.18.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jun 2020 18:12:24 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2 v3] exfat: write multiple sectors at once
+Date:   Thu, 18 Jun 2020 10:12:03 +0900
+Message-Id: <20200618011205.1406-1-kohada.t2@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
-References: <20200618010805.600873-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+Write multiple sectors at once when updating dir-entries.
+Add exfat_update_bhs() for that. It wait for write completion once
+instead of sector by sector.
+It's only effective if sync enabled.
 
-[ Upstream commit 9b46418c40fe910e6537618f9932a8be78a3dd6c ]
-
-After the copy operation completes the cache is not up-to-date.  Truncate
-all pages in the interval that has successfully been copied.
-
-Truncating completely copied dirty pages is okay, since the data has been
-overwritten anyway.  Truncating partially copied dirty pages is not okay;
-add a comment for now.
-
-Fixes: 88bc7d5097a1 ("fuse: add support for copy_file_range()")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 ---
- fs/fuse/file.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Changes in v2:
+ - Split into 'write multiple sectors at once'
+   and 'add error check when updating dir-entries'
+Changes in v3
+ - Rebase to latest exfat-dev
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index d58324198b7a..e3afceecaa6b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3292,6 +3292,24 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (err)
- 		goto out;
+ fs/exfat/dir.c      | 12 ++++++------
+ fs/exfat/exfat_fs.h |  1 +
+ fs/exfat/misc.c     | 19 +++++++++++++++++++
+ 3 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 02acbb6ddf02..a3364df6339c 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -606,13 +606,13 @@ void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
  
-+	/*
-+	 * Write out dirty pages in the destination file before sending the COPY
-+	 * request to userspace.  After the request is completed, truncate off
-+	 * pages (including partial ones) from the cache that have been copied,
-+	 * since these contain stale data at that point.
-+	 *
-+	 * This should be mostly correct, but if the COPY writes to partial
-+	 * pages (at the start or end) and the parts not covered by the COPY are
-+	 * written through a memory map after calling fuse_writeback_range(),
-+	 * then these partial page modifications will be lost on truncation.
-+	 *
-+	 * It is unlikely that someone would rely on such mixed style
-+	 * modifications.  Yet this does give less guarantees than if the
-+	 * copying was performed with write(2).
-+	 *
-+	 * To fix this a i_mmap_sem style lock could be used to prevent new
-+	 * faults while the copy is ongoing.
-+	 */
- 	err = fuse_writeback_range(inode_out, pos_out, pos_out + len - 1);
- 	if (err)
- 		goto out;
-@@ -3315,6 +3333,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (err)
- 		goto out;
+ void exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync)
+ {
+-	int i;
++	int i, err = 0;
  
-+	truncate_inode_pages_range(inode_out->i_mapping,
-+				   ALIGN_DOWN(pos_out, PAGE_SIZE),
-+				   ALIGN(pos_out + outarg.size, PAGE_SIZE) - 1);
+-	for (i = 0; i < es->num_bh; i++) {
+-		if (es->modified)
+-			exfat_update_bh(es->bh[i], sync);
+-		brelse(es->bh[i]);
+-	}
++	if (es->modified)
++		err = exfat_update_bhs(es->bh, es->num_bh, sync);
 +
- 	if (fc->writeback_cache) {
- 		fuse_write_update_size(inode_out, pos_out + outarg.size);
- 		file_update_time(file_out);
++	for (i = 0; i < es->num_bh; i++)
++		err ? bforget(es->bh[i]):brelse(es->bh[i]);
+ 	kfree(es);
+ }
+ 
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 84664024e51e..cbb00ee97183 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -512,6 +512,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
+ u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
+ void exfat_update_bh(struct buffer_head *bh, int sync);
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync);
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags);
+ void exfat_chain_dup(struct exfat_chain *dup, struct exfat_chain *ec);
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index 8a3dde59052b..564718747fb2 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -172,6 +172,25 @@ void exfat_update_bh(struct buffer_head *bh, int sync)
+ 		sync_dirty_buffer(bh);
+ }
+ 
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync)
++{
++	int i, err = 0;
++
++	for (i = 0; i < nr_bhs; i++) {
++		set_buffer_uptodate(bhs[i]);
++		mark_buffer_dirty(bhs[i]);
++		if (sync)
++			write_dirty_buffer(bhs[i], 0);
++	}
++
++	for (i = 0; i < nr_bhs && sync; i++) {
++		wait_on_buffer(bhs[i]);
++		if (!buffer_uptodate(bhs[i]))
++			err = -EIO;
++	}
++	return err;
++}
++
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags)
+ {
 -- 
 2.25.1
 
