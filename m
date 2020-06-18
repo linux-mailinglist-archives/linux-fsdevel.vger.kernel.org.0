@@ -2,127 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B071FFE70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 01:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7A61FFEC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 01:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbgFRXBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 19:01:36 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:50985 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731367AbgFRXBf (ORCPT
+        id S1726925AbgFRXj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 19:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55384 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbgFRXj6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 19:01:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592521294;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=fVl7NirlPBDaZbv0g3tbYP7L/Gzjwfxt3r7f0D5EtyA=;
-        b=fMHKBye7qMOKzFq+rFofKjt/PWcGai6G+BvQvCxHygpQ+0yg2TmZq4S6dcKhUETjJF/XDi
-        aD8NVg5LiE4BHUB1RRVdIdDP/Rhh8bepGR0ZZ8a21v13Kp/qBYkNg4EUWZ6tmv4tVltkA/
-        CNLPrqir2ShHtAU2SEtzoaZz1KyrDes=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-471-I141doS4NfOHr44PF510Eg-1; Thu, 18 Jun 2020 19:01:32 -0400
-X-MC-Unique: I141doS4NfOHr44PF510Eg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02636464;
-        Thu, 18 Jun 2020 23:01:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 07EEF5D9C5;
-        Thu, 18 Jun 2020 23:01:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix afs_do_lookup() to call correct fetch-status op
- variant
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 19 Jun 2020 00:01:28 +0100
-Message-ID: <159252128817.1594103.7234386826450496394.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.22
+        Thu, 18 Jun 2020 19:39:58 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A38C06174E;
+        Thu, 18 Jun 2020 16:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=xVgYnEdgAFHTs+nHrdH7aFVHFB4jUEehtYybUXoVPqU=; b=iLkuI0Rx7uZO85pIBQkwO4+iZu
+        CQZXDISHNVl+UlKu3rV5wgTkQjLiJlGSnw2FDuPc3dlvD/zKhL4FGJ8K/GCRRvgQAgxsmRehLMfoE
+        pFIO6WhTlEjz80gqMCp2YQG4+E927DPahJRnKAABA7uYErFOV1OmZksCuacxTv4W9OPPAo/hMobku
+        Hs2azdhlElROexWFhUPOOkPItMFLtGms+Byyp6RQ8p7NT4yvlGsWxLVbA2BM4o1/NVG/Nxx/BVG8M
+        gtfID5qfAkBmNtNkny5xz7G5wRmpmGErQwQv18blehGCWXixSWlVX2Te16rm4ElTvtghAAtz+diey
+        TyMRC6bg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jm48U-0004EV-7i; Thu, 18 Jun 2020 23:39:58 +0000
+Date:   Thu, 18 Jun 2020 16:39:58 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin@oracle.com" <joe.jin@oracle.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: severe proc dentry lock contention
+Message-ID: <20200618233958.GV8681@bombadil.infradead.org>
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs_do_lookup()'s fallback case for when FS.InlineBulkStatus isn't
-supported by the server.  In the fallback, it calls FS.FetchStatus for the
-specific vnode it's meant to be looking up.  Commit b6489a49f7b7 broke this
-by renaming one of the two identically-named afs_fetch_status_operation
-descriptors to something else so that one of them could be made non-static.
-The site that used the renamed one, however, wasn't renamed and didn't
-produce any warning because the other was declared in a header.
+On Thu, Jun 18, 2020 at 03:17:33PM -0700, Junxiao Bi wrote:
+> When debugging some performance issue, i found that thousands of threads
+> exit around same time could cause a severe spin lock contention on proc
+> dentry "/proc/$parent_process_pid/task/", that's because threads needs to
+> clean up their pid file from that dir when exit. Check the following
+> standalone test case that simulated the case and perf top result on v5.7
+> kernel. Any idea on how to fix this?
 
-Fix this by making afs_do_lookup() use the renamed variant.
+Thanks, Junxiao.
 
-Note that there are two variants of the success method because one is
-called from ->lookup() where we may or may not have an inode, but can't
-call iget until after we've talked to the server - whereas the other is
-called from within iget where we have an inode, but it may or may not be
-initialised.
+We've looked at a few different ways of fixing this problem.
 
-The latter variant expects there to be an inode, but because it's being
-called from there former case, there might not be - resulting in an oops
-like the following:
+Even though the contention is within the dcache, it seems like a usecase
+that the dcache shouldn't be optimised for -- generally we do not have
+hundreds of CPUs removing dentries from a single directory in parallel.
 
- BUG: kernel NULL pointer dereference, address: 00000000000000b0
- ...
- RIP: 0010:afs_fetch_status_success+0x27/0x7e
- ...
- Call Trace:
-  ? rxrpc_cleanup_call+0xb5/0xc5
-  afs_wait_for_operation+0xda/0x234
-  afs_do_lookup+0x2fe/0x3c1
-  afs_lookup+0x3c5/0x4bd
-  __lookup_slow+0xcd/0x10f
-  walk_component+0xa2/0x10c
-  ? path_init+0x101/0x2eb
-  path_lookupat.isra.0+0x80/0x110
-  filename_lookup+0x81/0x104
-  ? slab_post_alloc_hook.isra.0+0xa/0x1a
-  ? kmem_cache_alloc+0xc3/0x129
-  vfs_statx+0x76/0x109
-  ? touch_atime+0x33/0xac
-  __do_sys_newlstat+0x39/0x6b
-  ? ksys_getdents64+0xb9/0xe0
-  ? vtime_delta.isra.0+0xe/0x24
-  ? vtime_delta.isra.0+0xe/0x24
-  ? get_vtime_delta+0x12/0x20
-  ? vtime_user_exit+0x21/0x61
-  ? __context_tracking_exit+0x3a/0x87
-  do_syscall_64+0x4c/0x78
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+We could fix this within procfs.  We don't have a great patch yet, but
+the current approach we're looking at allows only one thread at a time
+to call dput() on any /proc/*/task directory.
 
+We could also look at fixing this within the scheduler.  Only allowing
+one CPU to run the threads of an exiting process would fix this particular
+problem, but might have other consequences.
 
-Fixes: b6489a49f7b7 ("afs: Fix silly rename")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+I was hoping that 7bc3e6e55acf would fix this, but that patch is in 5.7,
+so that hope is ruled out.
 
- fs/afs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 3e3c2bf0a722..96757f3abd74 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -845,7 +845,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
- 		 * to FS.FetchStatus for op->file[1].
- 		 */
- 		op->fetch_status.which = 1;
--		op->ops = &afs_fetch_status_operation;
-+		op->ops = &afs_lookup_fetch_status_operation;
- 		afs_begin_vnode_operation(op);
- 		afs_wait_for_operation(op);
- 	}
-
-
+> 
+>    PerfTop:   48891 irqs/sec  kernel:95.6%  exact: 100.0% lost: 0/0 drop:
+> 0/0 [4000Hz cycles],  (all, 72 CPUs)
+> ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+> 
+> 
+>     66.10%  [kernel]                               [k]
+> native_queued_spin_lock_slowpath
+>      1.13%  [kernel]                               [k] _raw_spin_lock
+>      0.84%  [kernel]                               [k] clear_page_erms
+>      0.82%  [kernel]                               [k]
+> queued_write_lock_slowpath
+>      0.64%  [kernel]                               [k] proc_task_readdir
+>      0.61%  [kernel]                               [k]
+> find_idlest_group.isra.95
+>      0.61%  [kernel]                               [k]
+> syscall_return_via_sysret
+>      0.55%  [kernel]                               [k] entry_SYSCALL_64
+>      0.49%  [kernel]                               [k] memcpy_erms
+>      0.46%  [kernel]                               [k] update_cfs_group
+>      0.41%  [kernel]                               [k] get_pid_task
+>      0.39%  [kernel]                               [k]
+> _raw_spin_lock_irqsave
+>      0.37%  [kernel]                               [k]
+> __list_del_entry_valid
+>      0.34%  [kernel]                               [k]
+> get_page_from_freelist
+>      0.34%  [kernel]                               [k] __d_lookup
+>      0.32%  [kernel]                               [k] update_load_avg
+>      0.31%  libc-2.17.so                           [.] get_next_seq
+>      0.27%  [kernel]                               [k] avc_has_perm_noaudit
+>      0.26%  [kernel]                               [k] __sched_text_start
+>      0.25%  [kernel]                               [k]
+> selinux_inode_permission
+>      0.25%  [kernel]                               [k] __slab_free
+>      0.24%  [kernel]                               [k] detach_entity_cfs_rq
+>      0.23%  [kernel]                               [k] zap_pte_range
+>      0.22%  [kernel]                               [k]
+> _find_next_bit.constprop.1
+>      0.22%  libc-2.17.so                           [.] vfprintf
+>      0.20%  libc-2.17.so                           [.] _int_malloc
+>      0.19%  [kernel]                               [k] _raw_spin_lock_irq
+>      0.18%  [kernel]                               [k] rb_erase
+>      0.18%  [kernel]                               [k] pid_revalidate
+>      0.18%  [kernel]                               [k] lockref_get_not_dead
+>      0.18%  [kernel]                               [k]
+> __alloc_pages_nodemask
+>      0.17%  [kernel]                               [k] set_task_cpu
+>      0.17%  libc-2.17.so                           [.] __strcoll_l
+>      0.17%  [kernel]                               [k] do_syscall_64
+>      0.17%  [kernel]                               [k] __vmalloc_node_range
+>      0.17%  libc-2.17.so                           [.] _IO_vfscanf
+>      0.17%  [kernel]                               [k] refcount_dec_not_one
+>      0.15%  [kernel]                               [k] __task_pid_nr_ns
+>      0.15%  [kernel]                               [k]
+> native_irq_return_iret
+>      0.15%  [kernel]                               [k] free_pcppages_bulk
+>      0.14%  [kernel]                               [k] kmem_cache_alloc
+>      0.14%  [kernel]                               [k] link_path_walk
+>      0.14%  libc-2.17.so                           [.] _int_free
+>      0.14%  [kernel]                               [k]
+> __update_load_avg_cfs_rq
+>      0.14%  perf.5.7.0-master.20200601.ol7.x86_64  [.] 0x00000000000eac29
+>      0.13%  [kernel]                               [k] kmem_cache_free
+>      0.13%  [kernel]                               [k] number
+>      0.13%  [kernel]                               [k] memset_erms
+>      0.12%  [kernel]                               [k] proc_pid_status
+>      0.12%  [kernel]                               [k] __d_lookup_rcu
+> 
+> 
+> =========== runme.sh ==========
+> 
+> #!/bin/bash
+> 
+> threads=${1:-10000}
+> prog=proc_race
+> while [ 1 ]; do ./$prog $threads; done &
+> 
+> while [ 1 ]; do
+>     pid=`ps aux | grep $prog | grep -v grep| awk '{print $2}'`
+>     if [ -z $pid ]; then continue; fi
+>     threadnum=`ls -l /proc/$pid/task | wc -l`
+>     if [ $threadnum -gt $threads ]; then
+>         echo kill $pid
+>         kill -9 $pid
+>     fi
+> done
+> 
+> 
+> ===========proc_race.c=========
+> 
+> 
+> #include <pthread.h>
+> #include <string.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <errno.h>
+> #include <ctype.h>
+> 
+> #define handle_error_en(en, msg) \
+>     do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
+> 
+> #define handle_error(msg) \
+>     do { perror(msg); exit(EXIT_FAILURE); } while (0)
+> 
+> struct thread_info {
+>     pthread_t thread_id;
+>     int       thread_num;
+> };
+> 
+> static void *child_thread()
+> {
+>     int i;
+> 
+>     while (1) { if (!(i++ % 1000000)) sleep(1);}
+>     return NULL;
+> }
+> 
+> int main(int argc, char *argv[])
+> {
+>     int s, tnum, opt, num_threads;
+>     struct thread_info *tinfo;
+>     void *res;
+> 
+>     if (argc == 2)
+>         num_threads = atoi(argv[1]);
+>     else
+>         num_threads = 10000;
+> 
+>     tinfo = calloc(num_threads, sizeof(struct thread_info));
+>     if (tinfo == NULL)
+>         handle_error("calloc");
+> 
+> 
+>     for (tnum = 0; tnum < num_threads; tnum++) {
+>         tinfo[tnum].thread_num = tnum + 1;
+> 
+>         s = pthread_create(&tinfo[tnum].thread_id, NULL,
+>                 &child_thread, NULL);
+>         if (s != 0)
+>             handle_error_en(s, "pthread_create");
+>     }
+> 
+>     for (tnum = 0; tnum < num_threads; tnum++) {
+>         s = pthread_join(tinfo[tnum].thread_id, &res);
+>         if (s != 0)
+>             handle_error_en(s, "pthread_join");
+> 
+>         free(res);
+>     }
+> 
+>     free(tinfo);
+>     exit(EXIT_SUCCESS);
+> }
+> 
+> ==========
+> 
+> Thanks,
+> 
+> Junxiao.
+> 
