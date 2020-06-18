@@ -2,126 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 113381FDF0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 03:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9121FDF22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 03:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732822AbgFRBi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 21:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732547AbgFRBab (ORCPT
+        id S1731328AbgFRBjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 21:39:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:56176 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732508AbgFRBjJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:30:31 -0400
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056DAC061755;
-        Wed, 17 Jun 2020 18:30:30 -0700 (PDT)
-Received: by mail-qk1-x744.google.com with SMTP id b27so4094827qka.4;
-        Wed, 17 Jun 2020 18:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BgQL6jr7f4Pok+oRfrdP837PZf1178oPJYqZuFJeOOM=;
-        b=PsoyNROs97j1k2IGHTBbgdA1UmsBzqoIU4M9fAiqotRAMt2bltVbCKEquho2syZZ8a
-         hBoONSygFB18Ey8vU3Y3DQic30cQ34dLKddxAqW74b0hN7xln8EFfDmJL+yPMf/RCQNH
-         +8UC8geUs0OFu6oPvSUOl+BjoSKT73x8hLu8Si+8xsOkIMmw8utndSm2YFEl1d+2y3Vy
-         SIETCtxkGsv/mNz/kre1pCMonY3xKajSxgHkH/I7UvrRTq7w9Pzn1JyiTVainKp1tjST
-         nk6zyaFXLinCbFwP//4BjNJKz5i+UuVUcENob2yJ9qKKHk2e/d5ZQGjn3BcUUjMDc3I8
-         A+HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BgQL6jr7f4Pok+oRfrdP837PZf1178oPJYqZuFJeOOM=;
-        b=r8T9rzT07whmPCoah12mDClWmTH/na8nIVIvMrjfUYkn0O+MKzWTepn6IS8xL3s3up
-         aFONMUT4MysG2B/u5/smkzvgSAP4F1X9gfALpfSHxQlW8XAxaHYOTDZ55gS6PVe6FuS6
-         NWUESj7yFFXCjc8M3lC2n1iaByG+Dm9ZfHCGWPITxdxYMOxAGr20rnRJPC6Q7hSBvrsK
-         cDfDNIW3cRE4i16a0eBc+cRM79m6PnbXHgjZOwJZ6chWN9ym1Z8OfHSrWZZQP6DD1bRW
-         E0/qCHrpCK39MVTtMAKrbY0bwE+8BtRqxK4qgjfA6R9sAkEY9gr4tmqlfoCn7sSE7DKf
-         s/Zw==
-X-Gm-Message-State: AOAM530qwgOtAZjmUwycuYwlCiXs8mciam2q7i4TEstW7jSAnNbfHQQB
-        mxrhFM5Fj7npDyvxFigNTg==
-X-Google-Smtp-Source: ABdhPJwmfKV/RiX9rrG5aWDGqFvBQuR28QYYzJpTADtHrTUuB7rzV/CkW5/nnvBH2d+2wQJphU09nA==
-X-Received: by 2002:a37:63c2:: with SMTP id x185mr1621171qkb.82.1592443829168;
-        Wed, 17 Jun 2020 18:30:29 -0700 (PDT)
-Received: from gabell (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id d78sm1642255qkg.106.2020.06.17.18.30.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jun 2020 18:30:28 -0700 (PDT)
-Date:   Wed, 17 Jun 2020 21:30:26 -0400
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-Message-ID: <20200618013026.ewnhvf64nb62k2yx@gabell>
-References: <20200616202123.12656-1-msys.mizuma@gmail.com>
- <20200617080314.GA7147@infradead.org>
- <20200617155836.GD13815@fieldses.org>
- <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
+        Wed, 17 Jun 2020 21:39:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05I1b029041625;
+        Thu, 18 Jun 2020 01:39:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=ZNRhFbsEVEkKKSlXU9prNIrsFxXt4SEIe0tUGgiS1NI=;
+ b=jz6PSOTL1QPpPrk8IhQPhJUzeNzdiCKUBT+tuOyD+fPe9adpoY6mBBw9jU5kD2Ih6g3l
+ ELqucGhqXwSGNLgxY9/3JIlmpCoFT1FOmhZyvsuPUFsvfSbyMtfoqz7BlDfk0+fS4dJv
+ Lxj/IArOIzAumpYzywwXRD7g0hI4oRDbobEBu2xT1I1ENcYTvDiTwe1UkjikC6ZDpvBV
+ dW7ZQR3RronbERZEr6k6wDjACqXfOfhtH2PcSZqlJjiYiUvl8Tlp99Hx4AqkqKH6bJ82
+ UIgd3rT/Tddh/9OMxrYizD6Oespecnmane8JXwS8GkOyrvrwIIOb1BXSoiDRUXiLpdyf fQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 31qeckw0ds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 18 Jun 2020 01:39:03 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05I1bhjn064536;
+        Thu, 18 Jun 2020 01:39:03 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 31q65ympkb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Jun 2020 01:39:02 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05I1d1UO011446;
+        Thu, 18 Jun 2020 01:39:01 GMT
+Received: from localhost (/10.159.233.73)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Jun 2020 18:39:00 -0700
+Date:   Wed, 17 Jun 2020 18:39:01 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>
+Subject: Re: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
+Message-ID: <20200618013901.GR11245@magnolia>
+References: <20200615160244.741244-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200617184507.GB18315@fieldses.org>
+In-Reply-To: <20200615160244.741244-1-agruenba@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9655 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ suspectscore=1 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006180009
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9655 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 cotscore=-2147483648 malwarescore=0
+ clxscore=1015 adultscore=0 suspectscore=1 spamscore=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006180009
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
-> On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
-> > but mount(8) has already exposed this interface:
-> > 
-> >        iversion
-> >               Every time the inode is modified, the i_version field will be incremented.
-> > 
-> >        noiversion
-> >               Do not increment the i_version inode field.
-> > 
-> > so now what?
+On Mon, Jun 15, 2020 at 06:02:44PM +0200, Andreas Gruenbacher wrote:
+> Make sure iomap_end is always called when iomap_begin succeeds: the
+> filesystem may take locks in iomap_begin and release them in iomap_end,
+> for example.
 > 
-> It's not like anyone's actually depending on i_version *not* being
-> incremented.  (Can you even observe it from userspace other than over
-> NFS?)
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> ---
+>  fs/iomap/apply.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> So, just silently turn on the "iversion" behavior and ignore noiversion,
-> and I doubt you're going to break any real application.
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index 76925b40b5fd..c00a14d825db 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -46,10 +46,10 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
+>  	if (ret)
+>  		return ret;
+> -	if (WARN_ON(iomap.offset > pos))
+> -		return -EIO;
+> -	if (WARN_ON(iomap.length == 0))
+> -		return -EIO;
+> +	if (WARN_ON(iomap.offset > pos) || WARN_ON(iomap.length == 0)) {
 
-I suppose it's probably good to remain the options for user compatibility,
-however, it seems that iversion and noiversiont are useful for
-only ext4.
-How about moving iversion and noiversion description on mount(8)
-to ext4 specific option?
+<urk> Forgot to actually review the original patch. :P
 
-And fixing the remount issue for XFS (maybe btrfs has the same
-issue as well)?
-For XFS like as:
+Why combine these WARN_ON?  Before, you could distinguish between your
+iomap_begin method returning zero length vs. bad offset.
 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 379cbff438bc..2ddd634cfb0b 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
-                        return error;
-        }
+--D
 
-+       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-+               mp->m_super->s_flags |= SB_I_VERSION;
-+
-        return 0;
- }
-
-Thanks,
-Masa
+> +		written = -EIO;
+> +		goto out;
+> +	}
+>  
+>  	trace_iomap_apply_dstmap(inode, &iomap);
+>  	if (srcmap.type != IOMAP_HOLE)
+> @@ -80,6 +80,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  	written = actor(inode, pos, length, data, &iomap,
+>  			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
+>  
+> +out:
+>  	/*
+>  	 * Now the data has been copied, commit the range we've copied.  This
+>  	 * should not fail unless the filesystem has had a fatal error.
+> 
+> base-commit: 97e0204907ac4c42c6e94ef466a047523f34b853
+> -- 
+> 2.26.2
+> 
