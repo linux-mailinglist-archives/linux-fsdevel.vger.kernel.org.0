@@ -2,138 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DBD1FE009
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 03:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEB31FE4D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbgFRBou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 21:44:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59408 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731882AbgFRBos (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:44:48 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05I1hKkH045757;
-        Thu, 18 Jun 2020 01:44:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=5X00ZJpGkm2D/zskn/YigNSmctslOOmCYVArBKtpGog=;
- b=ZQ79Lr/nEr0DFZiACUEMndR3onRqUE0mV9ccvdrF562efk6LtE+ATJwwLAgFzzSCBk9U
- De7pxVwAMYc6yW1gL62gsx3qruyjRZRA7PzxJwMBP9cBOabvFdl2gefCy39qK/SNcykI
- 0xJZ1ZaDmwXbmujcpNrcnoY8sEw49s21tfLjSOnJvq1bA4lYU0NiYl2nHfxPPRKsoKXg
- nJi+nvse01mploRKeNCv/XNFeqniB3Zn8BCEmTLRH23A/a2uqXjFbPZ/nNeowVdsYG07
- tySWVAAq1KYffu2fAHb6kP/90iEctV2NVFgPDRlpg7OdmgMFG3oahU/o4PNTlbdlC97y FA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 31qeckw0wc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 18 Jun 2020 01:44:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05I1hhr3085176;
-        Thu, 18 Jun 2020 01:44:35 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 31q65yn412-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jun 2020 01:44:35 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05I1iTNJ013625;
-        Thu, 18 Jun 2020 01:44:29 GMT
-Received: from localhost (/10.159.233.73)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 17 Jun 2020 18:44:29 -0700
-Date:   Wed, 17 Jun 2020 18:44:29 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-Message-ID: <20200618014429.GS11245@magnolia>
-References: <20200616202123.12656-1-msys.mizuma@gmail.com>
- <20200617080314.GA7147@infradead.org>
- <20200617155836.GD13815@fieldses.org>
- <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
- <20200618013026.ewnhvf64nb62k2yx@gabell>
+        id S1730163AbgFRCVR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 22:21:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729993AbgFRBSm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:18:42 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5658621D79;
+        Thu, 18 Jun 2020 01:18:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592443122;
+        bh=y/DZ9hLMdBsskUut5fK33dyF0EPxv0N8/iguPa9VEuo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lgF93bG5Ygl3aAfy3TFeYCkm1PUl9XECUzP3GDk189llaWxw3DZ1g8UZOrhRYEnEl
+         RnfcDq1V8G/xhBbtnEoVw5WrgH+cusp0PMLUsC3JhLtcC1yqsVIhNYB59t9lvlIR7x
+         +c6+P7XnJpYOFimunydXtipVLzIKKQNifUK0AMqo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.4 096/266] virtiofs: schedule blocking async replies in separate worker
+Date:   Wed, 17 Jun 2020 21:13:41 -0400
+Message-Id: <20200618011631.604574-96-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
+References: <20200618011631.604574-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618013026.ewnhvf64nb62k2yx@gabell>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9655 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 adultscore=0
- suspectscore=1 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006180010
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9655 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 cotscore=-2147483648 malwarescore=0
- clxscore=1015 adultscore=0 suspectscore=1 spamscore=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006180010
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 09:30:26PM -0400, Masayoshi Mizuma wrote:
-> On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
-> > On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
-> > > but mount(8) has already exposed this interface:
-> > > 
-> > >        iversion
-> > >               Every time the inode is modified, the i_version field will be incremented.
-> > > 
-> > >        noiversion
-> > >               Do not increment the i_version inode field.
-> > > 
-> > > so now what?
-> > 
-> > It's not like anyone's actually depending on i_version *not* being
-> > incremented.  (Can you even observe it from userspace other than over
-> > NFS?)
-> > 
-> > So, just silently turn on the "iversion" behavior and ignore noiversion,
-> > and I doubt you're going to break any real application.
-> 
-> I suppose it's probably good to remain the options for user compatibility,
-> however, it seems that iversion and noiversiont are useful for
-> only ext4.
-> How about moving iversion and noiversion description on mount(8)
-> to ext4 specific option?
-> 
-> And fixing the remount issue for XFS (maybe btrfs has the same
-> issue as well)?
-> For XFS like as:
-> 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 379cbff438bc..2ddd634cfb0b 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
->                         return error;
->         }
-> 
-> +       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
-> +               mp->m_super->s_flags |= SB_I_VERSION;
-> +
+From: Vivek Goyal <vgoyal@redhat.com>
 
-I wonder, does this have to be done at the top of this function because
-the vfs already removed S_I_VERSION from s_flags?
+[ Upstream commit bb737bbe48bea9854455cb61ea1dc06e92ce586c ]
 
---D
+In virtiofs (unlike in regular fuse) processing of async replies is
+serialized.  This can result in a deadlock in rare corner cases when
+there's a circular dependency between the completion of two or more async
+replies.
 
->         return 0;
->  }
-> 
-> Thanks,
-> Masa
+Such a deadlock can be reproduced with xfstests:generic/503 if TEST_DIR ==
+SCRATCH_MNT (which is a misconfiguration):
+
+ - Process A is waiting for page lock in worker thread context and blocked
+   (virtio_fs_requests_done_work()).
+ - Process B is holding page lock and waiting for pending writes to
+   finish (fuse_wait_on_page_writeback()).
+ - Write requests are waiting in virtqueue and can't complete because
+   worker thread is blocked on page lock (process A).
+
+Fix this by creating a unique work_struct for each async reply that can
+block (O_DIRECT read).
+
+Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/file.c      |   1 +
+ fs/fuse/fuse_i.h    |   1 +
+ fs/fuse/virtio_fs.c | 106 +++++++++++++++++++++++++++++---------------
+ 3 files changed, 73 insertions(+), 35 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 3dd37a998ea9..713d55a61890 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -712,6 +712,7 @@ static ssize_t fuse_async_req_send(struct fuse_conn *fc,
+ 	spin_unlock(&io->lock);
+ 
+ 	ia->ap.args.end = fuse_aio_complete_req;
++	ia->ap.args.may_block = io->should_dirty;
+ 	err = fuse_simple_background(fc, &ia->ap.args, GFP_KERNEL);
+ 	if (err)
+ 		fuse_aio_complete_req(fc, &ia->ap.args, err);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index ca344bf71404..d7cde216fc87 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -249,6 +249,7 @@ struct fuse_args {
+ 	bool out_argvar:1;
+ 	bool page_zeroing:1;
+ 	bool page_replace:1;
++	bool may_block:1;
+ 	struct fuse_in_arg in_args[3];
+ 	struct fuse_arg out_args[2];
+ 	void (*end)(struct fuse_conn *fc, struct fuse_args *args, int error);
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index a5c86048b96e..7505f8102762 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -55,6 +55,12 @@ struct virtio_fs_forget {
+ 	struct list_head list;
+ };
+ 
++struct virtio_fs_req_work {
++	struct fuse_req *req;
++	struct virtio_fs_vq *fsvq;
++	struct work_struct done_work;
++};
++
+ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 				 struct fuse_req *req, bool in_flight);
+ 
+@@ -443,19 +449,67 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
+ }
+ 
+ /* Work function for request completion */
++static void virtio_fs_request_complete(struct fuse_req *req,
++				       struct virtio_fs_vq *fsvq)
++{
++	struct fuse_pqueue *fpq = &fsvq->fud->pq;
++	struct fuse_conn *fc = fsvq->fud->fc;
++	struct fuse_args *args;
++	struct fuse_args_pages *ap;
++	unsigned int len, i, thislen;
++	struct page *page;
++
++	/*
++	 * TODO verify that server properly follows FUSE protocol
++	 * (oh.uniq, oh.len)
++	 */
++	args = req->args;
++	copy_args_from_argbuf(args, req);
++
++	if (args->out_pages && args->page_zeroing) {
++		len = args->out_args[args->out_numargs - 1].size;
++		ap = container_of(args, typeof(*ap), args);
++		for (i = 0; i < ap->num_pages; i++) {
++			thislen = ap->descs[i].length;
++			if (len < thislen) {
++				WARN_ON(ap->descs[i].offset);
++				page = ap->pages[i];
++				zero_user_segment(page, len, thislen);
++				len = 0;
++			} else {
++				len -= thislen;
++			}
++		}
++	}
++
++	spin_lock(&fpq->lock);
++	clear_bit(FR_SENT, &req->flags);
++	spin_unlock(&fpq->lock);
++
++	fuse_request_end(fc, req);
++	spin_lock(&fsvq->lock);
++	dec_in_flight_req(fsvq);
++	spin_unlock(&fsvq->lock);
++}
++
++static void virtio_fs_complete_req_work(struct work_struct *work)
++{
++	struct virtio_fs_req_work *w =
++		container_of(work, typeof(*w), done_work);
++
++	virtio_fs_request_complete(w->req, w->fsvq);
++	kfree(w);
++}
++
+ static void virtio_fs_requests_done_work(struct work_struct *work)
+ {
+ 	struct virtio_fs_vq *fsvq = container_of(work, struct virtio_fs_vq,
+ 						 done_work);
+ 	struct fuse_pqueue *fpq = &fsvq->fud->pq;
+-	struct fuse_conn *fc = fsvq->fud->fc;
+ 	struct virtqueue *vq = fsvq->vq;
+ 	struct fuse_req *req;
+-	struct fuse_args_pages *ap;
+ 	struct fuse_req *next;
+-	struct fuse_args *args;
+-	unsigned int len, i, thislen;
+-	struct page *page;
++	unsigned int len;
+ 	LIST_HEAD(reqs);
+ 
+ 	/* Collect completed requests off the virtqueue */
+@@ -473,38 +527,20 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
+ 
+ 	/* End requests */
+ 	list_for_each_entry_safe(req, next, &reqs, list) {
+-		/*
+-		 * TODO verify that server properly follows FUSE protocol
+-		 * (oh.uniq, oh.len)
+-		 */
+-		args = req->args;
+-		copy_args_from_argbuf(args, req);
+-
+-		if (args->out_pages && args->page_zeroing) {
+-			len = args->out_args[args->out_numargs - 1].size;
+-			ap = container_of(args, typeof(*ap), args);
+-			for (i = 0; i < ap->num_pages; i++) {
+-				thislen = ap->descs[i].length;
+-				if (len < thislen) {
+-					WARN_ON(ap->descs[i].offset);
+-					page = ap->pages[i];
+-					zero_user_segment(page, len, thislen);
+-					len = 0;
+-				} else {
+-					len -= thislen;
+-				}
+-			}
+-		}
+-
+-		spin_lock(&fpq->lock);
+-		clear_bit(FR_SENT, &req->flags);
+ 		list_del_init(&req->list);
+-		spin_unlock(&fpq->lock);
+ 
+-		fuse_request_end(fc, req);
+-		spin_lock(&fsvq->lock);
+-		dec_in_flight_req(fsvq);
+-		spin_unlock(&fsvq->lock);
++		/* blocking async request completes in a worker context */
++		if (req->args->may_block) {
++			struct virtio_fs_req_work *w;
++
++			w = kzalloc(sizeof(*w), GFP_NOFS | __GFP_NOFAIL);
++			INIT_WORK(&w->done_work, virtio_fs_complete_req_work);
++			w->fsvq = fsvq;
++			w->req = req;
++			schedule_work(&w->done_work);
++		} else {
++			virtio_fs_request_complete(req, fsvq);
++		}
+ 	}
+ }
+ 
+-- 
+2.25.1
+
