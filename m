@@ -2,155 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B521FE783
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 04:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9747B1FE93A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 05:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgFRCld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jun 2020 22:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbgFRBMZ (ORCPT
+        id S1727820AbgFRDGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jun 2020 23:06:14 -0400
+Received: from [211.29.132.246] ([211.29.132.246]:57138 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726952AbgFRDGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:12:25 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5DAC061755;
-        Wed, 17 Jun 2020 18:12:25 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id 23so1981113pfw.10;
-        Wed, 17 Jun 2020 18:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2mYYmw9nQduGr7ImYE2MP1C2QsjcPBen23TKEtxnDoY=;
-        b=kBa3G0l+ZNUXGCRjrjIh/s9kaSyUojbgB+Eyc39Uf/7c8gLLYv3g5WFrTplfAXZSGj
-         Ueg4+uAgarXniOlUAp+AC46WRJSoLNnrj1PIkVBcEeRYdR58TvKwFV9LkxqmFkUFtSDm
-         qoWSMDCY/5hMkvJl4c8s3bA93TIZqTfsYGepQ1SDqvko2De6KbRJrNRvgSriNUqyirPm
-         Z/XMPQ//Av9revEdsHJtzzlpIq+i7Nw9bzZwxc69FNnY2gRXr65vmVykrJpJbB0q8Ywi
-         vHaBxvZveDmajKMqGsWHZvRA4rcJec9Z6iAOKoTulcl+M5MN/np6JJecMEzr/NnS0HGz
-         MH9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2mYYmw9nQduGr7ImYE2MP1C2QsjcPBen23TKEtxnDoY=;
-        b=NbR8KWAtJQZhnSs47MjpcS97DqHzOQDcxVzl6ZmXYrj425VxIR0bz/KEx8S0ULGUN4
-         86zAJJHPJ4y0Qts7S9M0yLGtUv/kBXIkoBLz10buz5rnx/+Z173f/lVyNc6nU8fFn8PS
-         rhRNwCH5DgyM1lb3E2zwevMPnos1MloMlJS92qWBOOZn7qbUoJitOFNvnRAJYrqxd69f
-         F5w8Bj6zoXDYm2ns/qAZVQ2cbNKVKpcCFJYvxIPnJXCG/i0OOx+iLlyHIdkVBvfxiobK
-         DnDhptJwtsSQcFsUMesdVix78rmpiJneVRI8+v74doNQNBnPRql5s2aBAarYm9k9R81r
-         pGMw==
-X-Gm-Message-State: AOAM533scHdM1ODVLdBJ1+CeiqOmn6+qSDj75j/OrKde3G98n1E+eoFP
-        akIW+x7sQPLVIzD8KFbx7l11CBHtpLU=
-X-Google-Smtp-Source: ABdhPJz/mOUor7XwvAv9bccD3inxzqmkUVqwhIN47oG3dQuKAkR+QC0pz02eMw/i7U68pqz8EN7zXw==
-X-Received: by 2002:a63:3409:: with SMTP id b9mr1394174pga.106.1592442744653;
-        Wed, 17 Jun 2020 18:12:24 -0700 (PDT)
-Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
-        by smtp.gmail.com with ESMTPSA id q10sm1022781pfk.86.2020.06.17.18.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2020 18:12:24 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2 v3] exfat: write multiple sectors at once
-Date:   Thu, 18 Jun 2020 10:12:03 +0900
-Message-Id: <20200618011205.1406-1-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 17 Jun 2020 23:06:13 -0400
+Received: from dread.disaster.area (unknown [49.180.124.177])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B8369821885;
+        Thu, 18 Jun 2020 13:05:47 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jlkrz-0002Nn-SF; Thu, 18 Jun 2020 13:05:39 +1000
+Date:   Thu, 18 Jun 2020 13:05:39 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
+Message-ID: <20200618030539.GH2005@dread.disaster.area>
+References: <20200616202123.12656-1-msys.mizuma@gmail.com>
+ <20200617080314.GA7147@infradead.org>
+ <20200617155836.GD13815@fieldses.org>
+ <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
+ <20200617172456.GP11245@magnolia>
+ <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
+ <20200617181816.GA18315@fieldses.org>
+ <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
+ <20200617184507.GB18315@fieldses.org>
+ <20200618013026.ewnhvf64nb62k2yx@gabell>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200618013026.ewnhvf64nb62k2yx@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
+        a=yHdZGDY2jtx0MHS2ggIA:9 a=aBMfwiDfj0bUOVTI:21 a=1xHCqXNt3GIuuEAb:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Write multiple sectors at once when updating dir-entries.
-Add exfat_update_bhs() for that. It wait for write completion once
-instead of sector by sector.
-It's only effective if sync enabled.
+On Wed, Jun 17, 2020 at 09:30:26PM -0400, Masayoshi Mizuma wrote:
+> On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
+> > On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
+> > > but mount(8) has already exposed this interface:
+> > > 
+> > >        iversion
+> > >               Every time the inode is modified, the i_version field will be incremented.
+> > > 
+> > >        noiversion
+> > >               Do not increment the i_version inode field.
+> > > 
+> > > so now what?
+> > 
+> > It's not like anyone's actually depending on i_version *not* being
+> > incremented.  (Can you even observe it from userspace other than over
+> > NFS?)
+> > 
+> > So, just silently turn on the "iversion" behavior and ignore noiversion,
+> > and I doubt you're going to break any real application.
+> 
+> I suppose it's probably good to remain the options for user compatibility,
+> however, it seems that iversion and noiversiont are useful for
+> only ext4.
+> How about moving iversion and noiversion description on mount(8)
+> to ext4 specific option?
+> 
+> And fixing the remount issue for XFS (maybe btrfs has the same
+> issue as well)?
+> For XFS like as:
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 379cbff438bc..2ddd634cfb0b 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
+>                         return error;
+>         }
+> 
+> +       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+> +               mp->m_super->s_flags |= SB_I_VERSION;
+> +
+>         return 0;
+>  }
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
----
-Changes in v2:
- - Split into 'write multiple sectors at once'
-   and 'add error check when updating dir-entries'
-Changes in v3
- - Rebase to latest exfat-dev
+no this doesn't work, because the sueprblock flags are modified
+after ->reconfigure is called.
 
- fs/exfat/dir.c      | 12 ++++++------
- fs/exfat/exfat_fs.h |  1 +
- fs/exfat/misc.c     | 19 +++++++++++++++++++
- 3 files changed, 26 insertions(+), 6 deletions(-)
+i.e. reconfigure_super() does this:
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 02acbb6ddf02..a3364df6339c 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -606,13 +606,13 @@ void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
- 
- void exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync)
- {
--	int i;
-+	int i, err = 0;
- 
--	for (i = 0; i < es->num_bh; i++) {
--		if (es->modified)
--			exfat_update_bh(es->bh[i], sync);
--		brelse(es->bh[i]);
--	}
-+	if (es->modified)
-+		err = exfat_update_bhs(es->bh, es->num_bh, sync);
-+
-+	for (i = 0; i < es->num_bh; i++)
-+		err ? bforget(es->bh[i]):brelse(es->bh[i]);
- 	kfree(es);
- }
- 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 84664024e51e..cbb00ee97183 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -512,6 +512,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
- u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
- u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
- void exfat_update_bh(struct buffer_head *bh, int sync);
-+int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync);
- void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
- 		unsigned int size, unsigned char flags);
- void exfat_chain_dup(struct exfat_chain *dup, struct exfat_chain *ec);
-diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-index 8a3dde59052b..564718747fb2 100644
---- a/fs/exfat/misc.c
-+++ b/fs/exfat/misc.c
-@@ -172,6 +172,25 @@ void exfat_update_bh(struct buffer_head *bh, int sync)
- 		sync_dirty_buffer(bh);
- }
- 
-+int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync)
-+{
-+	int i, err = 0;
-+
-+	for (i = 0; i < nr_bhs; i++) {
-+		set_buffer_uptodate(bhs[i]);
-+		mark_buffer_dirty(bhs[i]);
-+		if (sync)
-+			write_dirty_buffer(bhs[i], 0);
-+	}
-+
-+	for (i = 0; i < nr_bhs && sync; i++) {
-+		wait_on_buffer(bhs[i]);
-+		if (!buffer_uptodate(bhs[i]))
-+			err = -EIO;
-+	}
-+	return err;
-+}
-+
- void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
- 		unsigned int size, unsigned char flags)
- {
+	if (fc->ops->reconfigure) {
+		retval = fc->ops->reconfigure(fc);
+		if (retval) {
+			if (!force)
+				goto cancel_readonly;
+			/* If forced remount, go ahead despite any errors */
+			WARN(1, "forced remount of a %s fs returned %i\n",
+			     sb->s_type->name, retval);
+		}
+	}
+
+	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
+				 (fc->sb_flags & fc->sb_flags_mask)));
+
+And it's the WRITE_ONCE() line that clears SB_I_VERSION out of
+sb->s_flags. Hence adding it in ->reconfigure doesn't help.
+
+What we actually want to do here in xfs_fc_reconfigure() is this:
+
+	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+		fc->sb_flags_mask |= SB_I_VERSION;
+
+So that the SB_I_VERSION is not cleared from sb->s_flags.
+
+I'll also note that btrfs will need the same fix, because it also
+sets SB_I_VERSION unconditionally, as will any other filesystem that
+does this, too.
+
+Really, this is just indicative of the mess that the mount
+flags vs superblock feature flags are. Filesystems can choose to
+unconditionally support various superblock features, and no mount
+option futzing from userspace should -ever- be able to change that
+feature. Filesystems really do need to be able to override mount
+options that were parsed in userspace and turned into a binary
+flag...
+
+Cheers,
+
+Dave.
 -- 
-2.25.1
-
+Dave Chinner
+david@fromorbit.com
