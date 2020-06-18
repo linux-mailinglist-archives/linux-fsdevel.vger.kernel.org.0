@@ -2,152 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD92C1FF568
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 16:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684391FF615
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jun 2020 17:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbgFROq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 10:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
+        id S1731171AbgFRPDN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 11:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730924AbgFROq5 (ORCPT
+        with ESMTP id S1726853AbgFRPDM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 10:46:57 -0400
+        Thu, 18 Jun 2020 11:03:12 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0086C0613ED;
-        Thu, 18 Jun 2020 07:46:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E26C06174E;
+        Thu, 18 Jun 2020 08:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=T94kCvjMg3POOYY9QZ5B+bKnsinmf9rCUNlS0Naq4B0=; b=sZIUAkI2NjZ+MMiCdvtfYxmhhZ
-        QSfUBaQNaFTFjYXrnoa0k4CfMSMBYgWQJcIeJT2KPiGTzastkugYaRi0P2OkdM+B9tZ1giWQFDEAu
-        2xX9amWSGWOU8oF7zGU04ktP0FLYqU657CZfucoyNEhEny+VDLOxDC0qMFWvalfdkhsvTTYC8QmgH
-        WrqZ4LAO5GNL64WUFddp82LA21mBJE9Kg0c2s2xM1T+A7AOKiD/B+MZISNiupYctsyLexsbpGTaYl
-        RPdqczujbtE412KJXCBAeVRyHRT5BW4lEA9qrdRJUA3JtyyPAKSfu0XHEGWFrcTiq+7RnTdV7r0ks
-        TF1gnuUg==;
-Received: from 195-192-102-148.dyn.cablelink.at ([195.192.102.148] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlvoX-0006W3-Dz; Thu, 18 Jun 2020 14:46:50 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] kernel: add a kernel_wait helper
-Date:   Thu, 18 Jun 2020 16:46:27 +0200
-Message-Id: <20200618144627.114057-7-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200618144627.114057-1-hch@lst.de>
-References: <20200618144627.114057-1-hch@lst.de>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=UL+8ApV4cJJsaL9i1XR4k0qibz3XspT8vONGVk524kc=; b=EuLHMlaVNrGT+gpgg4ZOy214Lf
+        /NetdKt4msEGn/SdU6wS7Vb3Nicec9n/1E16Pv5CLgJpT25JAXyLZqTClcv5dthiCzHK32BiNFyNn
+        2Vtkj1cmYSbWiXKfh18xDTiF4w22UEYWsdQ5WG/abzsVteDtOAX8vWZ3bKmb0ydVHdoW/dmfLoAdv
+        rcWXcFdBrgdT+0Rnct9YP5xWZ5E6pNPsBKwkf9wU8u6uAxjlRbX/tFeF4hooENdTFNAX/QSEm8LMc
+        hZs29nl0IRtyQgR2KBWEayJ7IYD2dzdJAKDyw0r1yoEP6TVl666nT/5G8UpJw9LpuF0WelqGPXar4
+        ortJ5rhQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jlw4L-0003On-LK; Thu, 18 Jun 2020 15:03:09 +0000
+Date:   Thu, 18 Jun 2020 08:03:09 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel <cluster-devel@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
+        linux-btrfs@vger.kernel.org,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: Re: [Cluster-devel] [PATCH v11 16/25] fs: Convert mpage_readpages to
+ mpage_readahead
+Message-ID: <20200618150309.GP8681@bombadil.infradead.org>
+References: <20200414150233.24495-1-willy@infradead.org>
+ <20200414150233.24495-17-willy@infradead.org>
+ <CAHc6FU4m1M7Tv4scX0UxSiVBqkL=Vcw_z-R7SufL8k7Bw=qPOw@mail.gmail.com>
+ <20200617003216.GC8681@bombadil.infradead.org>
+ <CAHpGcMK6Yu0p-FO8CciiySqh+qcWLG-t3hEaUg-rqJnS=2uhqg@mail.gmail.com>
+ <20200617022157.GF8681@bombadil.infradead.org>
+ <CAHc6FU7NLRHKRJJ6c2kQT0ig8ed1n+3qR-YcSCWzXOeJCUsLbA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAHc6FU7NLRHKRJJ6c2kQT0ig8ed1n+3qR-YcSCWzXOeJCUsLbA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper that waits for a pid and stores the status in the passed
-in kernel pointer.  Use it to fix the usage of kernel_wait4 in
-call_usermodehelper_exec_sync that only happens to work due to the
-implicit set_fs(KERNEL_DS) for kernel threads.
+On Thu, Jun 18, 2020 at 02:46:03PM +0200, Andreas Gruenbacher wrote:
+> On Wed, Jun 17, 2020 at 4:22 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > On Wed, Jun 17, 2020 at 02:57:14AM +0200, Andreas Grünbacher wrote:
+> > > Right, the approach from the following thread might fix this:
+> > >
+> > > https://lore.kernel.org/linux-fsdevel/20191122235324.17245-1-agruenba@redhat.com/T/#t
+> >
+> > In general, I think this is a sound approach.
+> >
+> > Specifically, I think FAULT_FLAG_CACHED can go away.  map_pages()
+> > will bring in the pages which are in the page cache, so when we get to
+> > gfs2_fault(), we know there's a reason to acquire the glock.
+> 
+> We'd still be grabbing a glock while holding a dependent page lock.
+> Another process could be holding the glock and could try to grab the
+> same page lock (i.e., a concurrent writer), leading to the same kind
+> of deadlock.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/sched/task.h |  1 +
- kernel/exit.c              | 16 ++++++++++++++++
- kernel/umh.c               | 29 ++++-------------------------
- 3 files changed, 21 insertions(+), 25 deletions(-)
+What I'm saying is that gfs2_fault should just be:
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 38359071236ad7..a80007df396e95 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -102,6 +102,7 @@ struct task_struct *fork_idle(int);
- struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
-+int kernel_wait(pid_t pid, int *stat);
- 
- extern void free_task(struct task_struct *tsk);
- 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 727150f2810338..fd598846df0b17 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1626,6 +1626,22 @@ long kernel_wait4(pid_t upid, int __user *stat_addr, int options,
- 	return ret;
- }
- 
-+int kernel_wait(pid_t pid, int *stat)
++static vm_fault_t gfs2_fault(struct vm_fault *vmf)
 +{
-+	struct wait_opts wo = {
-+		.wo_type	= PIDTYPE_PID,
-+		.wo_pid		= find_get_pid(pid),
-+		.wo_flags	= WEXITED,
-+	};
-+	int ret;
++	struct inode *inode = file_inode(vmf->vma->vm_file);
++	struct gfs2_inode *ip = GFS2_I(inode);
++	struct gfs2_holder gh;
++	vm_fault_t ret;
++	int err;
 +
-+	ret = do_wait(&wo);
-+	if (ret > 0 && wo.wo_stat)
-+		*stat = wo.wo_stat;
-+	put_pid(wo.wo_pid);
++	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
++	err = gfs2_glock_nq(&gh);
++	if (err) {
++		ret = block_page_mkwrite_return(err);
++		goto out_uninit;
++	}
++	ret = filemap_fault(vmf);
++	gfs2_glock_dq(&gh);
++out_uninit:
++	gfs2_holder_uninit(&gh);
 +	return ret;
 +}
-+
- SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
- 		int, options, struct rusage __user *, ru)
- {
-diff --git a/kernel/umh.c b/kernel/umh.c
-index 1284823dbad338..6fd948e478bec4 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -126,37 +126,16 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
- {
- 	pid_t pid;
- 
--	/* If SIGCLD is ignored kernel_wait4 won't populate the status. */
-+	/* If SIGCLD is ignored do_wait won't populate the status. */
- 	kernel_sigaction(SIGCHLD, SIG_DFL);
- 	pid = kernel_thread(call_usermodehelper_exec_async, sub_info, SIGCHLD);
--	if (pid < 0) {
-+	if (pid < 0)
- 		sub_info->retval = pid;
--	} else {
--		int ret = -ECHILD;
--		/*
--		 * Normally it is bogus to call wait4() from in-kernel because
--		 * wait4() wants to write the exit code to a userspace address.
--		 * But call_usermodehelper_exec_sync() always runs as kernel
--		 * thread (workqueue) and put_user() to a kernel address works
--		 * OK for kernel threads, due to their having an mm_segment_t
--		 * which spans the entire address space.
--		 *
--		 * Thus the __user pointer cast is valid here.
--		 */
--		kernel_wait4(pid, (int __user *)&ret, 0, NULL);
--
--		/*
--		 * If ret is 0, either call_usermodehelper_exec_async failed and
--		 * the real error code is already in sub_info->retval or
--		 * sub_info->retval is 0 anyway, so don't mess with it then.
--		 */
--		if (ret)
--			sub_info->retval = ret;
--	}
-+	else
-+		kernel_wait(pid, &sub_info->retval);
- 
- 	/* Restore default kernel sig handler */
- 	kernel_sigaction(SIGCHLD, SIG_IGN);
--
- 	umh_complete(sub_info);
- }
- 
--- 
-2.26.2
 
+because by the time gfs2_fault() is called, map_pages() has already been
+called and has failed to insert the necessary page, so we should just
+acquire the glock now instead of trying again to look for the page in
+the page cache.
