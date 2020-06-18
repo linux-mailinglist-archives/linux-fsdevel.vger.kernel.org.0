@@ -2,243 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAE41FFDDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 00:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149CF1FFE3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 00:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731945AbgFRWRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 18:17:40 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55716 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731935AbgFRWRj (ORCPT
+        id S1728416AbgFRWkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 18:40:15 -0400
+Received: from [211.29.132.53] ([211.29.132.53]:55738 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726835AbgFRWkO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 18:17:39 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05IM840c009933;
-        Thu, 18 Jun 2020 22:17:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : from :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=47dOQpqiKGfsW/QjCgUZPqBcNDXW/hGNuK+7RNWRugA=;
- b=HM6VqxOV6rTi6psG2HNf3jHycDosE7YJ23H5fzAFhzPiecRw+bSSdRS2HKfVN1UUvqGt
- 9hyw+kTAAuLUbvXsv3FkiWEpJMvpwQ7LrmMmbuRdrAsFVQCqCyjC+4ixVTkRIjfMG6as
- XWX9AQZ0YKejPtF2851ciuYhMV15dxnA1kn6N1Vr06M9zGFurdAro5LH+4nMe52nv1cZ
- 1uWRw9NxgP9sO741AZ1VMhd/GWP/ipK+Qmh7yGNIKmpmJlkK6nicDbt6li6UNg0LUC+p
- pkYxQOkbR8xontB6d2+fA/3BqnlzMo5Pi1RlMnID5tSksqGUaNHGxrzUqXLeTZ+7Mj7s pg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 31q6603r9f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 18 Jun 2020 22:17:36 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05IMDnHP041001;
-        Thu, 18 Jun 2020 22:17:36 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 31q661hyy4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jun 2020 22:17:36 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05IMHZ7u022436;
-        Thu, 18 Jun 2020 22:17:35 GMT
-Received: from dhcp-10-159-251-35.vpn.oracle.com (/10.159.251.35)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Jun 2020 15:17:35 -0700
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     adobriyan@gmail.com, Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin@oracle.com" <joe.jin@oracle.com>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Subject: severe proc dentry lock contention
-Message-ID: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
-Date:   Thu, 18 Jun 2020 15:17:33 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.9.0
+        Thu, 18 Jun 2020 18:40:14 -0400
+Received: from dread.disaster.area (unknown [49.180.124.177])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 2169CD5B28E;
+        Fri, 19 Jun 2020 08:39:51 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jm3CG-0000vL-Qx; Fri, 19 Jun 2020 08:39:48 +1000
+Date:   Fri, 19 Jun 2020 08:39:48 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
+Message-ID: <20200618223948.GI2005@dread.disaster.area>
+References: <20200617155836.GD13815@fieldses.org>
+ <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
+ <20200617172456.GP11245@magnolia>
+ <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
+ <20200617181816.GA18315@fieldses.org>
+ <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
+ <20200617184507.GB18315@fieldses.org>
+ <20200618013026.ewnhvf64nb62k2yx@gabell>
+ <20200618030539.GH2005@dread.disaster.area>
+ <20200618034535.h5ho7pd4eilpbj3f@gabell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9656 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 adultscore=0
- suspectscore=13 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006180169
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9656 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
- bulkscore=0 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 clxscore=1011 mlxlogscore=999 suspectscore=13 impostorscore=0
- cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006180168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200618034535.h5ho7pd4eilpbj3f@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
+        a=T-c9y1LhZP_wMowfrC8A:9 a=M9xdgUNOmOWECtrQ:21 a=SC1P7o9sxr00x_CH:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Jun 17, 2020 at 11:45:35PM -0400, Masayoshi Mizuma wrote:
+> On Thu, Jun 18, 2020 at 01:05:39PM +1000, Dave Chinner wrote:
+> > On Wed, Jun 17, 2020 at 09:30:26PM -0400, Masayoshi Mizuma wrote:
+> > > On Wed, Jun 17, 2020 at 02:45:07PM -0400, J. Bruce Fields wrote:
+> > > > On Wed, Jun 17, 2020 at 01:28:11PM -0500, Eric Sandeen wrote:
+> > > > > but mount(8) has already exposed this interface:
+> > > > > 
+> > > > >        iversion
+> > > > >               Every time the inode is modified, the i_version field will be incremented.
+> > > > > 
+> > > > >        noiversion
+> > > > >               Do not increment the i_version inode field.
+> > > > > 
+> > > > > so now what?
+> > > > 
+> > > > It's not like anyone's actually depending on i_version *not* being
+> > > > incremented.  (Can you even observe it from userspace other than over
+> > > > NFS?)
+> > > > 
+> > > > So, just silently turn on the "iversion" behavior and ignore noiversion,
+> > > > and I doubt you're going to break any real application.
+> > > 
+> > > I suppose it's probably good to remain the options for user compatibility,
+> > > however, it seems that iversion and noiversiont are useful for
+> > > only ext4.
+> > > How about moving iversion and noiversion description on mount(8)
+> > > to ext4 specific option?
+> > > 
+> > > And fixing the remount issue for XFS (maybe btrfs has the same
+> > > issue as well)?
+> > > For XFS like as:
+> > > 
+> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > > index 379cbff438bc..2ddd634cfb0b 100644
+> > > --- a/fs/xfs/xfs_super.c
+> > > +++ b/fs/xfs/xfs_super.c
+> > > @@ -1748,6 +1748,9 @@ xfs_fc_reconfigure(
+> > >                         return error;
+> > >         }
+> > > 
+> > > +       if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+> > > +               mp->m_super->s_flags |= SB_I_VERSION;
+> > > +
+> > >         return 0;
+> > >  }
+> > 
+> > no this doesn't work, because the sueprblock flags are modified
+> > after ->reconfigure is called.
+> > 
+> > i.e. reconfigure_super() does this:
+> > 
+> > 	if (fc->ops->reconfigure) {
+> > 		retval = fc->ops->reconfigure(fc);
+> > 		if (retval) {
+> > 			if (!force)
+> > 				goto cancel_readonly;
+> > 			/* If forced remount, go ahead despite any errors */
+> > 			WARN(1, "forced remount of a %s fs returned %i\n",
+> > 			     sb->s_type->name, retval);
+> > 		}
+> > 	}
+> > 
+> > 	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
+> > 				 (fc->sb_flags & fc->sb_flags_mask)));
+> > 
+> > And it's the WRITE_ONCE() line that clears SB_I_VERSION out of
+> > sb->s_flags. Hence adding it in ->reconfigure doesn't help.
+> > 
+> > What we actually want to do here in xfs_fc_reconfigure() is this:
+> > 
+> > 	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
+> > 		fc->sb_flags_mask |= SB_I_VERSION;
+> > 
+> > So that the SB_I_VERSION is not cleared from sb->s_flags.
+> > 
+> > I'll also note that btrfs will need the same fix, because it also
+> > sets SB_I_VERSION unconditionally, as will any other filesystem that
+> > does this, too.
+> 
+> Thank you for pointed it out.
+> How about following change? I believe it works both xfs and btrfs...
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index b0a511bef4a0..42fc6334d384 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -973,6 +973,9 @@ int reconfigure_super(struct fs_context *fc)
+>                 }
+>         }
+> 
+> +       if (sb->s_flags & SB_I_VERSION)
+> +               fc->sb_flags |= MS_I_VERSION;
+> +
+>         WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
+>                                  (fc->sb_flags & fc->sb_flags_mask)));
+>         /* Needs to be ordered wrt mnt_is_readonly() */
 
-When debugging some performance issue, i found that thousands of threads 
-exit around same time could cause a severe spin lock contention on proc 
-dentry "/proc/$parent_process_pid/task/", that's because threads needs 
-to clean up their pid file from that dir when exit. Check the following 
-standalone test case that simulated the case and perf top result on v5.7 
-kernel. Any idea on how to fix this?
+This will prevent SB_I_VERSION from being turned off at all. That
+will break existing filesystems that allow SB_I_VERSION to be turned
+off on remount, such as ext4.
 
+The manipulations here need to be in the filesystem specific code;
+we screwed this one up so badly there is no "one size fits all"
+behaviour that we can implement in the generic code...
 
-    PerfTop:   48891 irqs/sec  kernel:95.6%  exact: 100.0% lost: 0/0 
-drop: 0/0 [4000Hz cycles],  (all, 72 CPUs)
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+Cheers,
 
-
-     66.10%  [kernel]                               [k] 
-native_queued_spin_lock_slowpath
-      1.13%  [kernel]                               [k] _raw_spin_lock
-      0.84%  [kernel]                               [k] clear_page_erms
-      0.82%  [kernel]                               [k] 
-queued_write_lock_slowpath
-      0.64%  [kernel]                               [k] proc_task_readdir
-      0.61%  [kernel]                               [k] 
-find_idlest_group.isra.95
-      0.61%  [kernel]                               [k] 
-syscall_return_via_sysret
-      0.55%  [kernel]                               [k] entry_SYSCALL_64
-      0.49%  [kernel]                               [k] memcpy_erms
-      0.46%  [kernel]                               [k] update_cfs_group
-      0.41%  [kernel]                               [k] get_pid_task
-      0.39%  [kernel]                               [k] 
-_raw_spin_lock_irqsave
-      0.37%  [kernel]                               [k] 
-__list_del_entry_valid
-      0.34%  [kernel]                               [k] 
-get_page_from_freelist
-      0.34%  [kernel]                               [k] __d_lookup
-      0.32%  [kernel]                               [k] update_load_avg
-      0.31%  libc-2.17.so                           [.] get_next_seq
-      0.27%  [kernel]                               [k] avc_has_perm_noaudit
-      0.26%  [kernel]                               [k] __sched_text_start
-      0.25%  [kernel]                               [k] 
-selinux_inode_permission
-      0.25%  [kernel]                               [k] __slab_free
-      0.24%  [kernel]                               [k] detach_entity_cfs_rq
-      0.23%  [kernel]                               [k] zap_pte_range
-      0.22%  [kernel]                               [k] 
-_find_next_bit.constprop.1
-      0.22%  libc-2.17.so                           [.] vfprintf
-      0.20%  libc-2.17.so                           [.] _int_malloc
-      0.19%  [kernel]                               [k] _raw_spin_lock_irq
-      0.18%  [kernel]                               [k] rb_erase
-      0.18%  [kernel]                               [k] pid_revalidate
-      0.18%  [kernel]                               [k] lockref_get_not_dead
-      0.18%  [kernel]                               [k] 
-__alloc_pages_nodemask
-      0.17%  [kernel]                               [k] set_task_cpu
-      0.17%  libc-2.17.so                           [.] __strcoll_l
-      0.17%  [kernel]                               [k] do_syscall_64
-      0.17%  [kernel]                               [k] __vmalloc_node_range
-      0.17%  libc-2.17.so                           [.] _IO_vfscanf
-      0.17%  [kernel]                               [k] refcount_dec_not_one
-      0.15%  [kernel]                               [k] __task_pid_nr_ns
-      0.15%  [kernel]                               [k] 
-native_irq_return_iret
-      0.15%  [kernel]                               [k] free_pcppages_bulk
-      0.14%  [kernel]                               [k] kmem_cache_alloc
-      0.14%  [kernel]                               [k] link_path_walk
-      0.14%  libc-2.17.so                           [.] _int_free
-      0.14%  [kernel]                               [k] 
-__update_load_avg_cfs_rq
-      0.14%  perf.5.7.0-master.20200601.ol7.x86_64  [.] 0x00000000000eac29
-      0.13%  [kernel]                               [k] kmem_cache_free
-      0.13%  [kernel]                               [k] number
-      0.13%  [kernel]                               [k] memset_erms
-      0.12%  [kernel]                               [k] proc_pid_status
-      0.12%  [kernel]                               [k] __d_lookup_rcu
-
-
-=========== runme.sh ==========
-
-#!/bin/bash
-
-threads=${1:-10000}
-prog=proc_race
-while [ 1 ]; do ./$prog $threads; done &
-
-while [ 1 ]; do
-     pid=`ps aux | grep $prog | grep -v grep| awk '{print $2}'`
-     if [ -z $pid ]; then continue; fi
-     threadnum=`ls -l /proc/$pid/task | wc -l`
-     if [ $threadnum -gt $threads ]; then
-         echo kill $pid
-         kill -9 $pid
-     fi
-done
-
-
-===========proc_race.c=========
-
-
-#include <pthread.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <ctype.h>
-
-#define handle_error_en(en, msg) \
-     do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
-
-#define handle_error(msg) \
-     do { perror(msg); exit(EXIT_FAILURE); } while (0)
-
-struct thread_info {
-     pthread_t thread_id;
-     int       thread_num;
-};
-
-static void *child_thread()
-{
-     int i;
-
-     while (1) { if (!(i++ % 1000000)) sleep(1);}
-     return NULL;
-}
-
-int main(int argc, char *argv[])
-{
-     int s, tnum, opt, num_threads;
-     struct thread_info *tinfo;
-     void *res;
-
-     if (argc == 2)
-         num_threads = atoi(argv[1]);
-     else
-         num_threads = 10000;
-
-     tinfo = calloc(num_threads, sizeof(struct thread_info));
-     if (tinfo == NULL)
-         handle_error("calloc");
-
-
-     for (tnum = 0; tnum < num_threads; tnum++) {
-         tinfo[tnum].thread_num = tnum + 1;
-
-         s = pthread_create(&tinfo[tnum].thread_id, NULL,
-                 &child_thread, NULL);
-         if (s != 0)
-             handle_error_en(s, "pthread_create");
-     }
-
-     for (tnum = 0; tnum < num_threads; tnum++) {
-         s = pthread_join(tinfo[tnum].thread_id, &res);
-         if (s != 0)
-             handle_error_en(s, "pthread_join");
-
-         free(res);
-     }
-
-     free(tinfo);
-     exit(EXIT_SUCCESS);
-}
-
-==========
-
-Thanks,
-
-Junxiao.
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
