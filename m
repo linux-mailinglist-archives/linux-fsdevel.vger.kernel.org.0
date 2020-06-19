@@ -2,192 +2,686 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E22201A77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 20:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA1C201A99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 20:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732910AbgFSShl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 14:37:41 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:40208 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729796AbgFSShl (ORCPT
+        id S2387646AbgFSSow (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 14:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728068AbgFSSov (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 14:37:41 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jmLtS-0004KO-02; Fri, 19 Jun 2020 12:37:38 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jmLtR-0001qA-4j; Fri, 19 Jun 2020 12:37:37 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>
-References: <87pn9u6h8c.fsf@x220.int.ebiederm.org>
-Date:   Fri, 19 Jun 2020 13:33:19 -0500
-In-Reply-To: <87pn9u6h8c.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Fri, 19 Jun 2020 13:30:27 -0500")
-Message-ID: <87eeqa6h3k.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 19 Jun 2020 14:44:51 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB839C06174E;
+        Fri, 19 Jun 2020 11:44:50 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id dp10so4921505qvb.10;
+        Fri, 19 Jun 2020 11:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9xOU6Sp/cc/uHKz9u02GlkdQF/0Ir7xHd+HK/+E4Qvg=;
+        b=ApNkKFh7fKU3k4R5486j694Onv5XRZ6bYLrf7ucRa0A0d1bPw/lbqiOaX7B7whMsDg
+         O82hcJta1MLdnk0m/bzZ4vNpd2pXs7cKo31EdMPlJlN1IekWUQLpEN2zjH+lmF3Rn54G
+         7/TJd7fEDKghtVmtNX4FxtQNaXaVoASNTW3d5JtU8t6mT8F7FlrDyW0jHu/fQpXlARoF
+         5PSRI2qr+dervUyWp/HiRsuPCD/KbbIsFCFw8t0Lpskcz1IapmSIFD4/QdARdwexsFjj
+         zG1l63DDF6QXl32pEUN4XuK3NsnDMvtjtqJ9OcgQ/3sidBMUwJu/KJM/lzKkAnc9vxn8
+         rsNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9xOU6Sp/cc/uHKz9u02GlkdQF/0Ir7xHd+HK/+E4Qvg=;
+        b=GO7mioU1l/MwSajnbNrMDIZCrZM7zfY+//byK8i7A+27m5Myk/getXaU+lDALL/JAU
+         4Yn2j9P4COmEL5pIR7kCE5HWH5h30ynl04fuY+ueoxig8/tvhbqeK6Fy1SprU9WtH1Z2
+         /5BTOzTSu0uHAXZZHF0i5oo+HnBnyTLMXHvSz1DxP34Z3VTAIPwY/5H4e3vLmKEZnU0O
+         PwcknZyHmV7WmwnCUp/aXCvqz2FzLflqGGgJN1cq/K73CJWW0a2tKKj7bOrO3iofzeNc
+         7xdYCHmss3RGBFrrfV2FoClcyEf/67pqD2dGYnJZY6U2Kd6IxT4dWb+PkIi/dEYZT8eE
+         znbw==
+X-Gm-Message-State: AOAM531k+fB7O9LGbnNLI+vcHUkBzbSSstZbIAZNP5SlKQ+RnrT18EQ/
+        nlz54WS47t/rJhKAAWCVsQ==
+X-Google-Smtp-Source: ABdhPJxDlWk1ziyV2XKXpFsln7kPdOMCIIMwAk5yMm/MzbBrkPNReFkdhUo4Di0JqOWM3ACNQKGL2g==
+X-Received: by 2002:a05:6214:4c1:: with SMTP id ck1mr1038813qvb.96.1592592289952;
+        Fri, 19 Jun 2020 11:44:49 -0700 (PDT)
+Received: from zaphod.evilpiepirate.org ([2601:19b:c500:a1:7403:986f:d31f:7f2e])
+        by smtp.gmail.com with ESMTPSA id m14sm7391650qke.99.2020.06.19.11.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 11:44:49 -0700 (PDT)
+Date:   Fri, 19 Jun 2020 14:44:42 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] generic_file_buffered_read() refactoring &
+ optimization
+Message-ID: <20200619184430.GA1278697@zaphod.evilpiepirate.org>
+References: <20200617180558.9722e7337cbe3b88c4767126@linux-foundation.org>
+ <20200619032049.2687598-1-kent.overstreet@gmail.com>
+ <20200619125920.GA29193@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jmLtR-0001qA-4j;;;mid=<87eeqa6h3k.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18+KI2lJvwlCsNg7M5ExV7z+N31SkkoRnc=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;<linux-kernel@vger.kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 475 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 10 (2.1%), b_tie_ro: 9 (1.9%), parse: 1.33 (0.3%),
-         extract_message_metadata: 17 (3.6%), get_uri_detail_list: 3.4 (0.7%),
-        tests_pri_-1000: 18 (3.9%), tests_pri_-950: 1.65 (0.3%),
-        tests_pri_-900: 1.34 (0.3%), tests_pri_-90: 90 (18.9%), check_bayes:
-        88 (18.5%), b_tokenize: 14 (3.0%), b_tok_get_all: 12 (2.6%),
-        b_comp_prob: 3.4 (0.7%), b_tok_touch_all: 54 (11.4%), b_finish: 0.94
-        (0.2%), tests_pri_0: 318 (67.0%), check_dkim_signature: 0.75 (0.2%),
-        check_dkim_adsp: 2.2 (0.5%), poll_dns_idle: 0.31 (0.1%), tests_pri_10:
-        2.9 (0.6%), tests_pri_500: 10 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 2/2] exec: Rename group_exit_task group_exec_task and correct the Documentation
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200619125920.GA29193@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jun 19, 2020 at 05:59:20AM -0700, Christoph Hellwig wrote:
+> After looking at v2 yesterday I noticed I few things in the structure
+> that I really didn't like:
+> 
+>  - using a struct page * return value just to communicate status codes
+>  - the extremely long function names
+>  - a generally somewhat non-intuitive split of the helpers
+> 
+> I then hacked on top of it for a bit while sitting in a telephone
+> conference.  Below is my result, which passes a quick xfstests run.
+> Note that this includes the refactoring and the batch lookup changes
+> as I did it on top of your series:
 
-Rename group_exit_task to group_exec_task to make it clear this
-field is only used during exec.
+I like it - I can't get your patch to apply to anything though, do you have it
+up in a git repo anywhere?
 
-Update the comments for the fields group_exec_task and notify_count as
-they are only used by exec.  Notifications to the execing task aka
-group_exec_task happen at 0 and -1.
-
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- fs/exec.c                    |  8 ++++----
- include/linux/sched/signal.h | 13 +++++--------
- kernel/exit.c                |  4 ++--
- 3 files changed, 11 insertions(+), 14 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index e6e8a9a70327..0bf8bde6edfd 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1145,7 +1145,7 @@ static int de_thread(struct task_struct *tsk)
- 		return -EAGAIN;
- 	}
- 
--	sig->group_exit_task = tsk;
-+	sig->group_exec_task = tsk;
- 	sig->notify_count = zap_other_threads(tsk);
- 	if (!thread_group_leader(tsk))
- 		sig->notify_count--;
-@@ -1173,7 +1173,7 @@ static int de_thread(struct task_struct *tsk)
- 			write_lock_irq(&tasklist_lock);
- 			/*
- 			 * Do this under tasklist_lock to ensure that
--			 * exit_notify() can't miss ->group_exit_task
-+			 * exit_notify() can't miss ->group_exec_task
- 			 */
- 			sig->notify_count = -1;
- 			if (likely(leader->exit_state))
-@@ -1240,7 +1240,7 @@ static int de_thread(struct task_struct *tsk)
- 		release_task(leader);
- 	}
- 
--	sig->group_exit_task = NULL;
-+	sig->group_exec_task = NULL;
- 	sig->notify_count = 0;
- 
- no_thread_group:
-@@ -1253,7 +1253,7 @@ static int de_thread(struct task_struct *tsk)
- killed:
- 	/* protects against exit_notify() and __exit_signal() */
- 	read_lock(&tasklist_lock);
--	sig->group_exit_task = NULL;
-+	sig->group_exec_task = NULL;
- 	sig->notify_count = 0;
- 	read_unlock(&tasklist_lock);
- 	return -EAGAIN;
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 92c72f5db111..61019d8fe86b 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -98,13 +98,10 @@ struct signal_struct {
- 
- 	/* thread group exit support */
- 	int			group_exit_code;
--	/* overloaded:
--	 * - notify group_exit_task when ->count is equal to notify_count
--	 * - everyone except group_exit_task is stopped during signal delivery
--	 *   of fatal signals, group_exit_task processes the signal.
--	 */
-+
-+	/* exec support, notify group_exec_task when notify_count is 0 or -1 */
- 	int			notify_count;
--	struct task_struct	*group_exit_task;
-+	struct task_struct	*group_exec_task;
- 
- 	/* thread group stop support, overloads group_exit_code too */
- 	int			group_stop_count;
-@@ -262,11 +259,11 @@ static inline void signal_set_stop_flags(struct signal_struct *sig,
- 	sig->flags = (sig->flags & ~SIGNAL_STOP_MASK) | flags;
- }
- 
--/* If true, all threads except ->group_exit_task have pending SIGKILL */
-+/* If true, all threads except ->group_exec_task have pending SIGKILL */
- static inline int signal_group_exit(const struct signal_struct *sig)
- {
- 	return	(sig->flags & (SIGNAL_GROUP_EXIT | SIGNAL_GROUP_COREDUMP)) ||
--		(sig->group_exit_task != NULL);
-+		(sig->group_exec_task != NULL);
- }
- 
- extern void flush_signals(struct task_struct *);
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 727150f28103..4206d33b4904 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -115,7 +115,7 @@ static void __exit_signal(struct task_struct *tsk)
- 		 * then notify it:
- 		 */
- 		if (sig->notify_count > 0 && !--sig->notify_count)
--			wake_up_process(sig->group_exit_task);
-+			wake_up_process(sig->group_exec_task);
- 
- 		if (tsk == sig->curr_target)
- 			sig->curr_target = next_thread(tsk);
-@@ -672,7 +672,7 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
- 
- 	/* mt-exec, de_thread() is waiting for group leader */
- 	if (unlikely(tsk->signal->notify_count < 0))
--		wake_up_process(tsk->signal->group_exit_task);
-+		wake_up_process(tsk->signal->group_exec_task);
- 	write_unlock_irq(&tasklist_lock);
- 
- 	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
--- 
-2.20.1
-
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index f0ae9a6308cb4d..9e0aecd99950f4 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1972,273 +1972,360 @@ static void shrink_readahead_size_eio(struct file_ra_state *ra)
+>  	ra->ra_pages /= 4;
+>  }
+>  
+> -/**
+> - * generic_file_buffered_read - generic file read routine
+> - * @iocb:	the iocb to read
+> - * @iter:	data destination
+> - * @written:	already copied
+> - *
+> - * This is a generic file read routine, and uses the
+> - * mapping->a_ops->readpage() function for the actual low-level stuff.
+> - *
+> - * This is really ugly. But the goto's actually try to clarify some
+> - * of the logic when it comes to error handling etc.
+> - *
+> - * Return:
+> - * * total number of bytes copied, including those the were already @written
+> - * * negative error code if nothing was copied
+> - */
+> -ssize_t generic_file_buffered_read(struct kiocb *iocb,
+> -		struct iov_iter *iter, ssize_t written)
+> +static inline pgoff_t filemap_last_index(struct kiocb *iocb,
+> +		struct iov_iter *iter)
+>  {
+> -	struct file *filp = iocb->ki_filp;
+> -	struct address_space *mapping = filp->f_mapping;
+> -	struct inode *inode = mapping->host;
+> -	struct file_ra_state *ra = &filp->f_ra;
+> -	loff_t *ppos = &iocb->ki_pos;
+> -	pgoff_t index;
+> -	pgoff_t last_index;
+> -	pgoff_t prev_index;
+> -	unsigned long offset;      /* offset into pagecache page */
+> -	unsigned int prev_offset;
+> -	int error = 0;
+> -
+> -	if (unlikely(*ppos >= inode->i_sb->s_maxbytes))
+> -		return 0;
+> -	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
+> -
+> -	index = *ppos >> PAGE_SHIFT;
+> -	prev_index = ra->prev_pos >> PAGE_SHIFT;
+> -	prev_offset = ra->prev_pos & (PAGE_SIZE-1);
+> -	last_index = (*ppos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
+> -	offset = *ppos & ~PAGE_MASK;
+> +	return (iocb->ki_pos + iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> +}
+>  
+> -	for (;;) {
+> -		struct page *page;
+> -		pgoff_t end_index;
+> -		loff_t isize;
+> -		unsigned long nr, ret;
+> +static inline unsigned long filemap_nr_pages(struct kiocb *iocb,
+> +		struct iov_iter *iter)
+> +{
+> +	return filemap_last_index(iocb, iter) - (iocb->ki_pos >> PAGE_SHIFT);
+> +}
+>  
+> -		cond_resched();
+> -find_page:
+> -		if (fatal_signal_pending(current)) {
+> -			error = -EINTR;
+> -			goto out;
+> -		}
+> +static int __filemap_read_not_uptodate(struct file *file, struct page *page)
+> +{
+> +	int error;
+>  
+> -		page = find_get_page(mapping, index);
+> -		if (!page) {
+> -			if (iocb->ki_flags & IOCB_NOWAIT)
+> -				goto would_block;
+> -			page_cache_sync_readahead(mapping,
+> -					ra, filp,
+> -					index, last_index - index);
+> -			page = find_get_page(mapping, index);
+> -			if (unlikely(page == NULL))
+> -				goto no_cached_page;
+> -		}
+> -		if (PageReadahead(page)) {
+> -			page_cache_async_readahead(mapping,
+> -					ra, filp, page,
+> -					index, last_index - index);
+> -		}
+> -		if (!PageUptodate(page)) {
+> -			if (iocb->ki_flags & IOCB_NOWAIT) {
+> -				put_page(page);
+> -				goto would_block;
+> -			}
+> +	error = lock_page_killable(page);
+> +	if (error)
+> +		return error;
+>  
+> +	if (!PageUptodate(page)) {
+> +		if (!page->mapping) {
+>  			/*
+> -			 * See comment in do_read_cache_page on why
+> -			 * wait_on_page_locked is used to avoid unnecessarily
+> -			 * serialisations and why it's safe.
+> +			 * invalidate_mapping_pages got it
+>  			 */
+> -			error = wait_on_page_locked_killable(page);
+> -			if (unlikely(error))
+> -				goto readpage_error;
+> -			if (PageUptodate(page))
+> -				goto page_ok;
+> -
+> -			if (inode->i_blkbits == PAGE_SHIFT ||
+> -					!mapping->a_ops->is_partially_uptodate)
+> -				goto page_not_up_to_date;
+> -			/* pipes can't handle partially uptodate pages */
+> -			if (unlikely(iov_iter_is_pipe(iter)))
+> -				goto page_not_up_to_date;
+> -			if (!trylock_page(page))
+> -				goto page_not_up_to_date;
+> -			/* Did it get truncated before we got the lock? */
+> -			if (!page->mapping)
+> -				goto page_not_up_to_date_locked;
+> -			if (!mapping->a_ops->is_partially_uptodate(page,
+> -							offset, iter->count))
+> -				goto page_not_up_to_date_locked;
+> -			unlock_page(page);
+> +			error = AOP_TRUNCATED_PAGE;
+> +		} else {
+> +			error = -EIO;
+>  		}
+> -page_ok:
+> -		/*
+> -		 * i_size must be checked after we know the page is Uptodate.
+> -		 *
+> -		 * Checking i_size after the check allows us to calculate
+> -		 * the correct value for "nr", which means the zero-filled
+> -		 * part of the page is not copied back to userspace (unless
+> -		 * another truncate extends the file - this is desired though).
+> -		 */
+> +	}
+>  
+> -		isize = i_size_read(inode);
+> -		end_index = (isize - 1) >> PAGE_SHIFT;
+> -		if (unlikely(!isize || index > end_index)) {
+> -			put_page(page);
+> -			goto out;
+> -		}
+> +	unlock_page(page);
+> +	if (error == -EIO)
+> +		shrink_readahead_size_eio(&file->f_ra);
+> +	return error;
+> +}
+>  
+> -		/* nr is the maximum number of bytes to copy from this page */
+> -		nr = PAGE_SIZE;
+> -		if (index == end_index) {
+> -			nr = ((isize - 1) & ~PAGE_MASK) + 1;
+> -			if (nr <= offset) {
+> -				put_page(page);
+> -				goto out;
+> -			}
+> -		}
+> -		nr = nr - offset;
+> +static int __filemap_read_one_page(struct file *file, struct page *page)
+> +{
+> +	int error;
+>  
+> -		/* If users can be writing to this page using arbitrary
+> -		 * virtual addresses, take care about potential aliasing
+> -		 * before reading the page on the kernel side.
+> -		 */
+> -		if (mapping_writably_mapped(mapping))
+> -			flush_dcache_page(page);
+> +	/*
+> +	 * A previous I/O error may have been due to temporary failures, e.g.
+> +	 * multipath errors. PG_error will be set again if readpage fails.
+> +	 */
+> +	ClearPageError(page);
+>  
+> -		/*
+> -		 * When a sequential read accesses a page several times,
+> -		 * only mark it as accessed the first time.
+> -		 */
+> -		if (prev_index != index || offset != prev_offset)
+> -			mark_page_accessed(page);
+> -		prev_index = index;
+> +	/*
+> +	 * Start the actual read. The read will unlock the page.
+> +	 */
+> +	error = file->f_mapping->a_ops->readpage(file, page);
+> +	if (!error && !PageUptodate(page))
+> +		return __filemap_read_not_uptodate(file, page);
+> +	return error;
+> +}
+>  
+> -		/*
+> -		 * Ok, we have the page, and it's up-to-date, so
+> -		 * now we can copy it to user space...
+> -		 */
+> +static int filemap_read_one_page(struct kiocb *iocb, struct iov_iter *iter,
+> +		struct page *page, pgoff_t index)
+> +{
+> +	struct file *file = iocb->ki_filp;
+> +	struct address_space *mapping = file->f_mapping;
+> +	loff_t pos = max(iocb->ki_pos, (loff_t)index << PAGE_SHIFT);
+> +	loff_t count = iocb->ki_pos + iter->count - pos;
+> +	int error;
+>  
+> -		ret = copy_page_to_iter(page, offset, nr, iter);
+> -		offset += ret;
+> -		index += offset >> PAGE_SHIFT;
+> -		offset &= ~PAGE_MASK;
+> -		prev_offset = offset;
+> +	/*
+> +	 * See comment in do_read_cache_page on why wait_on_page_locked is used
+> +	 * to avoid unnecessarily serialisations and why it's safe.
+> +	 */
+> +	error = wait_on_page_locked_killable(page);
+> +	if (unlikely(error))
+> +		goto out_put_page;
+>  
+> -		put_page(page);
+> -		written += ret;
+> -		if (!iov_iter_count(iter))
+> -			goto out;
+> -		if (ret < nr) {
+> -			error = -EFAULT;
+> -			goto out;
+> -		}
+> -		continue;
+> +	if (PageUptodate(page))
+> +		return 0;
+> +
+> +	if (mapping->host->i_blkbits == PAGE_SHIFT ||
+> +	    !mapping->a_ops->is_partially_uptodate)
+> +		goto page_not_up_to_date;
+> +	/* pipes can't handle partially uptodate pages */
+> +	if (unlikely(iov_iter_is_pipe(iter)))
+> +		goto page_not_up_to_date;
+> +	if (!trylock_page(page))
+> +		goto page_not_up_to_date;
+> +	/* Did it get truncated before we got the lock? */
+> +	if (!page->mapping)
+> +		goto page_not_up_to_date_locked;
+> +	if (!mapping->a_ops->is_partially_uptodate(page, pos & ~PAGE_MASK,
+> +			count))
+> +		goto page_not_up_to_date_locked;
+> +done:
+> +	unlock_page(page);
+> +	return 0;
+>  
+>  page_not_up_to_date:
+> -		/* Get exclusive access to the page ... */
+> -		error = lock_page_killable(page);
+> -		if (unlikely(error))
+> -			goto readpage_error;
+> +	/* Get exclusive access to the page ... */
+> +	error = lock_page_killable(page);
+> +	if (unlikely(error))
+> +		goto out_put_page;
+>  
+>  page_not_up_to_date_locked:
+> -		/* Did it get truncated before we got the lock? */
+> -		if (!page->mapping) {
+> -			unlock_page(page);
+> -			put_page(page);
+> +	/* Did it get truncated before we got the lock? */
+> +	if (!page->mapping) {
+> +		error = AOP_TRUNCATED_PAGE;
+> +		unlock_page(page);
+> +		goto out_put_page;
+> +	}
+> +
+> +	/* Did somebody else fill it already? */
+> +	if (PageUptodate(page))
+> +		goto done;
+> +
+> +	error = __filemap_read_one_page(file, page);
+> +	if (error)
+> +		goto out_put_page;
+> +	return 0;
+> +
+> +out_put_page:
+> +	put_page(page);
+> +	return error;
+> +}
+> +
+> +static int filemap_read_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+> +		struct page **pages, unsigned long max_pages)
+> +{
+> +	struct file *file = iocb->ki_filp;
+> +	struct address_space *mapping = file->f_mapping;
+> +	unsigned long nr = min(filemap_nr_pages(iocb, iter), max_pages);
+> +	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
+> +	int ret;
+> +
+> +	if (fatal_signal_pending(current))
+> +		return -EINTR;
+> +
+> +	ret = find_get_pages_contig(mapping, index, nr, pages);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT)
+> +		return -EAGAIN;
+> +
+> +	page_cache_sync_readahead(mapping, &file->f_ra, file, index,
+> +				  filemap_nr_pages(iocb, iter));
+> +
+> +	ret = find_get_pages_contig(mapping, index, nr, pages);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Ok, it wasn't cached, so we need to create a new page..
+> +	 */
+> +	pages[0] = page_cache_alloc(mapping);
+> +	if (!pages[0])
+> +		return -ENOMEM;
+> +
+> +	ret = add_to_page_cache_lru(pages[0], mapping, index,
+> +			mapping_gfp_constraint(mapping, GFP_KERNEL));
+> +	if (ret) {
+> +		if (ret == -EEXIST)
+> +			ret = 0;
+> +		goto out_put_page;
+> +	}
+> +
+> +	ret = __filemap_read_one_page(file, pages[0]);
+> +	if (ret) {
+> +		if (ret == AOP_TRUNCATED_PAGE)
+> +			ret = 0;
+> +		goto out_put_page;
+> +	}
+> +
+> +	return 1;
+> +
+> +out_put_page:
+> +	put_page(pages[0]);
+> +	return ret;
+> +}
+> +
+> +static int filemap_read_pages(struct kiocb *iocb, struct iov_iter *iter,
+> +		struct page **pages, unsigned int nr_pages)
+> +{
+> +	struct file *file = iocb->ki_filp;
+> +	struct address_space *mapping = file->f_mapping;
+> +	pgoff_t last_index = filemap_last_index(iocb, iter);
+> +	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
+> +	unsigned int cur_page, j;
+> +	int err = 0;
+> +
+> +	for (cur_page = 0; cur_page < nr_pages; cur_page++, index++) {
+> +		struct page *page = pages[cur_page];
+> +
+> +		if (PageReadahead(page))
+> +			page_cache_async_readahead(mapping, &file->f_ra, file,
+> +					page, index, last_index - index);
+> +
+> +		if (PageUptodate(page))
+>  			continue;
+> -		}
+>  
+> -		/* Did somebody else fill it already? */
+> -		if (PageUptodate(page)) {
+> -			unlock_page(page);
+> -			goto page_ok;
+> +		if (iocb->ki_flags & IOCB_NOWAIT) {
+> +			put_page(page);
+> +			err = -EAGAIN;
+> +			goto out_put_pages;
+>  		}
+>  
+> -readpage:
+> -		/*
+> -		 * A previous I/O error may have been due to temporary
+> -		 * failures, eg. multipath errors.
+> -		 * PG_error will be set again if readpage fails.
+> -		 */
+> -		ClearPageError(page);
+> -		/* Start the actual read. The read will unlock the page. */
+> -		error = mapping->a_ops->readpage(filp, page);
+> +		err = filemap_read_one_page(iocb, iter, page, index);
+> +		if (err)
+> +			goto out_put_pages;
+> +	}
+>  
+> -		if (unlikely(error)) {
+> -			if (error == AOP_TRUNCATED_PAGE) {
+> -				put_page(page);
+> -				error = 0;
+> -				goto find_page;
+> -			}
+> -			goto readpage_error;
+> -		}
+> +	return cur_page;
+>  
+> -		if (!PageUptodate(page)) {
+> -			error = lock_page_killable(page);
+> -			if (unlikely(error))
+> -				goto readpage_error;
+> -			if (!PageUptodate(page)) {
+> -				if (page->mapping == NULL) {
+> -					/*
+> -					 * invalidate_mapping_pages got it
+> -					 */
+> -					unlock_page(page);
+> -					put_page(page);
+> -					goto find_page;
+> -				}
+> -				unlock_page(page);
+> -				shrink_readahead_size_eio(ra);
+> -				error = -EIO;
+> -				goto readpage_error;
+> -			}
+> -			unlock_page(page);
+> -		}
+> +out_put_pages:
+> +	for (j = cur_page + 1; j < nr_pages; j++)
+> +		put_page(pages[j]);
+> +	if (cur_page == 0) {
+> +		if (err == AOP_TRUNCATED_PAGE)
+> +			err = 0;
+> +		return err;
+> +	}
+> +	return cur_page;
+> +}
+>  
+> -		goto page_ok;
+> +static int filemap_do_read(struct kiocb *iocb, struct iov_iter *iter,
+> +		struct page **pages, unsigned long max_pages)
+> +{
+> +	struct file *filp = iocb->ki_filp;
+> +	struct address_space *mapping = filp->f_mapping;
+> +	struct file_ra_state *ra = &filp->f_ra;
+> +	loff_t isize, end_offset;
+> +	int nr_pages, i;
+> +	bool writably_mapped;
+>  
+> -readpage_error:
+> -		/* UHHUH! A synchronous read error occurred. Report it */
+> -		put_page(page);
+> -		goto out;
+> +	cond_resched();
+> +
+> +was_truncated:
+> +	nr_pages = filemap_read_get_pages(iocb, iter, pages, max_pages);
+> +	if (nr_pages > 0)
+> +		nr_pages = filemap_read_pages(iocb, iter, pages, nr_pages);
+> +	if (nr_pages == 0)
+> +		goto was_truncated;
+> +	if (nr_pages < 0)
+> +		return nr_pages;
+> +
+> +	/*
+> +	 * i_size must be checked after we know the pages are Uptodate.
+> +	 *
+> +	 * Checking i_size after the check allows us to calculate the correct
+> +	 * value for "nr_pages", which means the zero-filled part of the page is
+> +	 * not copied back to userspace (unless another truncate extends the
+> +	 * file - this is desired though).
+> +	 */
+> +	isize = i_size_read(mapping->host);
+> +	if (unlikely(iocb->ki_pos >= isize))
+> +		goto put_pages;
+> +
+> +	end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
+> +
+> +	while ((iocb->ki_pos >> PAGE_SHIFT) + nr_pages >
+> +	       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
+> +		put_page(pages[--nr_pages]);
+> +
+> +	/*
+> +	 * Once we start copying data, we don't want to be touching any
+> +	 * cachelines that might be contended:
+> +	 */
+> +	writably_mapped = mapping_writably_mapped(mapping);
+> +
+> +	/*
+> +	 * When a sequential read accesses a page several times, only mark it as
+> +	 * accessed the first time.
+> +	 */
+> +	if (iocb->ki_pos >> PAGE_SHIFT != ra->prev_pos >> PAGE_SHIFT)
+> +		mark_page_accessed(pages[0]);
+> +	for (i = 1; i < nr_pages; i++)
+> +		mark_page_accessed(pages[i]);
+> +
+> +	for (i = 0; i < nr_pages; i++) {
+> +		unsigned offset = iocb->ki_pos & ~PAGE_MASK;
+> +		unsigned bytes = min_t(loff_t, end_offset - iocb->ki_pos,
+> +					       PAGE_SIZE - offset);
+> +		unsigned copied;
+>  
+> -no_cached_page:
+>  		/*
+> -		 * Ok, it wasn't cached, so we need to create a new
+> -		 * page..
+> +		 * If users can be writing to this page using arbitrary virtual
+> +		 * addresses, take care about potential aliasing before reading
+> +		 * the page on the kernel side.
+>  		 */
+> -		page = page_cache_alloc(mapping);
+> -		if (!page) {
+> -			error = -ENOMEM;
+> -			goto out;
+> -		}
+> -		error = add_to_page_cache_lru(page, mapping, index,
+> -				mapping_gfp_constraint(mapping, GFP_KERNEL));
+> -		if (error) {
+> -			put_page(page);
+> -			if (error == -EEXIST) {
+> -				error = 0;
+> -				goto find_page;
+> -			}
+> -			goto out;
+> -		}
+> -		goto readpage;
+> +		if (writably_mapped)
+> +			flush_dcache_page(pages[i]);
+> +
+> +		copied = copy_page_to_iter(pages[i], offset, bytes, iter);
+> +
+> +		iocb->ki_pos += copied;
+> +		ra->prev_pos = iocb->ki_pos;
+> +
+> +		if (copied < bytes)
+> +			return -EFAULT;
+>  	}
+>  
+> -would_block:
+> -	error = -EAGAIN;
+> -out:
+> -	ra->prev_pos = prev_index;
+> -	ra->prev_pos <<= PAGE_SHIFT;
+> -	ra->prev_pos |= prev_offset;
+> +put_pages:
+> +	for (i = 0; i < nr_pages; i++)
+> +		put_page(pages[i]);
+> +	return 0;
+> +}
+> +
+> +/**
+> + * generic_file_buffered_read - generic file read routine
+> + * @iocb:	the iocb to read
+> + * @iter:	data destination
+> + * @written:	already copied
+> + *
+> + * This is a generic file read routine, and uses the
+> + * mapping->a_ops->readpage() function for the actual low-level stuff.
+> + *
+> + * Return:
+> + * * total number of bytes copied, including those the were already @written
+> + * * negative error code if nothing was copied
+> + */
+> +ssize_t generic_file_buffered_read(struct kiocb *iocb,
+> +		struct iov_iter *iter, ssize_t written)
+> +{
+> +	struct address_space *mapping = iocb->ki_filp->f_mapping;
+> +	size_t orig_count = iov_iter_count(iter);
+> +	struct inode *inode = mapping->host;
+> +	struct page *page_array[8], **pages = NULL;
+> +	unsigned max_pages = filemap_nr_pages(iocb, iter);
+> +	int error;
+>  
+> -	*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
+> -	file_accessed(filp);
+> -	return written ? written : error;
+> +	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
+> +		return 0;
+> +	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
+> +
+> +	if (max_pages > ARRAY_SIZE(page_array))
+> +		pages = kmalloc_array(max_pages, sizeof(void *), GFP_KERNEL);
+> +
+> +	if (!pages) {
+> +		pages = page_array;
+> +		max_pages = ARRAY_SIZE(page_array);
+> +	}
+> +
+> +	do {
+> +		error = filemap_do_read(iocb, iter, pages, max_pages);
+> +		if (error)
+> +			break;
+> +	} while (iov_iter_count(iter) && iocb->ki_pos < i_size_read(inode));
+> +
+> +	file_accessed(iocb->ki_filp);
+> +	written += orig_count - iov_iter_count(iter);
+> +
+> +	if (pages != page_array)
+> +		kfree(pages);
+> +
+> +	if (unlikely(!written))
+> +		return error;
+> +	return written;
+>  }
+>  EXPORT_SYMBOL_GPL(generic_file_buffered_read);
+>  
