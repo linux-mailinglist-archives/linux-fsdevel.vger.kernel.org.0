@@ -2,100 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BC5200022
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 04:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF93C200052
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 04:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbgFSCUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 22:20:07 -0400
-Received: from fieldses.org ([173.255.197.46]:52028 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726517AbgFSCUG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 22:20:06 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id D77A814D8; Thu, 18 Jun 2020 22:20:05 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org D77A814D8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1592533205;
-        bh=tPBUrS2dw2CNJJWnlKPuvieHEc3u/i6Wc5TU2ZESPC0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nLr3ZJr5/23V2Y5xzN5XfJB1JaO/LXjJBJuS+O9NwynuGAP6WZCnDsmGJwbFzBeu7
-         2+PmhFrjYHVYcPEwhS1oEEaCN089NnTXR8009D++ZJHgKiTSZrj3ZVUK7gfouBnZMZ
-         /ZnVxmQsv1Fntbiv/ofG3OoLwKStJVESrWdppses=
-Date:   Thu, 18 Jun 2020 22:20:05 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>, jlayton@redhat.com
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-Message-ID: <20200619022005.GA25414@fieldses.org>
-References: <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
- <20200618013026.ewnhvf64nb62k2yx@gabell>
- <20200618030539.GH2005@dread.disaster.area>
- <20200618034535.h5ho7pd4eilpbj3f@gabell>
- <20200618223948.GI2005@dread.disaster.area>
+        id S1728527AbgFSCjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 22:39:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35730 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726906AbgFSCjn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jun 2020 22:39:43 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 615274DC5B259B57828C;
+        Fri, 19 Jun 2020 10:39:40 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 19 Jun
+ 2020 10:39:35 +0800
+Subject: Re: [PATCH 3/4] f2fs: add inline encryption support
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     Satya Tangirala <satyat@google.com>,
+        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-ext4@vger.kernel.org>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-4-satyat@google.com>
+ <5e78e1be-f948-d54c-d28e-50f1f0a92ab3@huawei.com>
+ <20200618181357.GC2957@sol.localdomain>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <c6f9d02d-623f-8b36-1f18-91c69bdd17c8@huawei.com>
+Date:   Fri, 19 Jun 2020 10:39:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618223948.GI2005@dread.disaster.area>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200618181357.GC2957@sol.localdomain>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 19, 2020 at 08:39:48AM +1000, Dave Chinner wrote:
-> On Wed, Jun 17, 2020 at 11:45:35PM -0400, Masayoshi Mizuma wrote:
-> > Thank you for pointed it out.
-> > How about following change? I believe it works both xfs and btrfs...
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index b0a511bef4a0..42fc6334d384 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -973,6 +973,9 @@ int reconfigure_super(struct fs_context *fc)
-> >                 }
-> >         }
-> > 
-> > +       if (sb->s_flags & SB_I_VERSION)
-> > +               fc->sb_flags |= MS_I_VERSION;
-> > +
-> >         WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
-> >                                  (fc->sb_flags & fc->sb_flags_mask)));
-> >         /* Needs to be ordered wrt mnt_is_readonly() */
+Hi Eric,
+
+On 2020/6/19 2:13, Eric Biggers wrote:
+> Hi Chao,
 > 
-> This will prevent SB_I_VERSION from being turned off at all. That
-> will break existing filesystems that allow SB_I_VERSION to be turned
-> off on remount, such as ext4.
+> On Thu, Jun 18, 2020 at 06:06:02PM +0800, Chao Yu wrote:
+>>> @@ -936,8 +972,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>>>  
+>>>  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+>>>  
+>>> -	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
+>>> -			io->last_block_in_bio, fio->new_blkaddr))
+>>> +	if (io->bio &&
+>>> +	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+>>> +			      fio->new_blkaddr) ||
+>>> +	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
+>>> +				       fio->page->index, fio)))
+>>
+>> bio_page->index, fio)))
+>>
+>>>  		__submit_merged_bio(io);
+>>>  alloc_new:
+>>>  	if (io->bio == NULL) {
+>>> @@ -949,6 +988,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>>>  			goto skip;
+>>>  		}
+>>>  		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
+>>> +		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
+>>> +				       fio->page->index, fio, GFP_NOIO);
+>>
+>> bio_page->index, fio, GFP_NOIO);
+>>
 > 
-> The manipulations here need to be in the filesystem specific code;
-> we screwed this one up so badly there is no "one size fits all"
-> behaviour that we can implement in the generic code...
+> We're using ->mapping->host and ->index.  Ordinarily that would mean the page
+> needs to be a pagecache page.  But bio_page can also be a compressed page or a
+> bounce page containing fs-layer encrypted contents.
 
-My memory was that after Jeff Layton's i_version patches, there wasn't
-really a significant performance hit any more, so the ability to turn it
-off is no longer useful.
+I'm concerning about compression + inlinecrypt case.
 
-But looking back through Jeff's postings, I don't see him claiming that;
-e.g. in:
+> 
+> Is your suggestion to keep using fio->page->mapping->host (since encrypted pages
 
-	https://lore.kernel.org/lkml/20171222120556.7435-1-jlayton@kernel.org/
-	https://lore.kernel.org/linux-nfs/20180109141059.25929-1-jlayton@kernel.org/
-	https://lore.kernel.org/linux-nfs/1517228795.5965.24.camel@redhat.com/
+Yup,
 
-he reports comparing old iversion behavior to new iversion behavior, but
-not new iversion behavior to new noiversion behavior.
+> don't have a mapping), but start using bio_page->index (since f2fs apparently
 
---b.
+I meant that we need to use bio_page->index as tweak value in write path to
+keep consistent as we did in read path, otherwise we may read the wrong
+decrypted data later to incorrect tweak value.
+
+- f2fs_read_multi_pages (only comes from compression inode)
+ - f2fs_alloc_dic
+  - f2fs_set_compressed_page(page, cc->inode,
+					start_idx + i + 1, dic);
+                                        ^^^^^^^^^^^^^^^^^
+  - dic->cpages[i] = page;
+ - for ()
+     struct page *page = dic->cpages[i];
+     if (!bio)
+       - f2fs_grab_read_bio(..., page->index,..)
+        - f2fs_set_bio_crypt_ctx(..., first_idx, ..)   /* first_idx == cpage->index */
+
+You can see that cpage->index was set to page->index + 1, that's why we need
+to use one of cpage->index/page->index as tweak value all the time rather than
+using both index mixed in read/write path.
+
+But note that for fs-layer encryption, we have used cpage->index as tweak value,
+so here I suggest we can keep consistent to use cpage->index in inlinecrypt case.
+
+> *does* set ->index for compressed pages, and if the file uses fs-layer
+> encryption then f2fs_set_bio_crypt_ctx() won't use the index anyway)?
+> 
+> Does this mean the code is currently broken for compression + inline encryption
+> because it's using the wrong ->index?  I think the answer is no, since
+
+I guess it's broken now for compression + inlinecrypt case.
+
+> f2fs_write_compressed_pages() will still pass the first 'nr_cpages' pagecache
+> pages along with the compressed pages.  In that case, your suggestion would be a
+> cleanup rather than a fix?
+
+That's a fix.
+
+> 
+> It would be helpful if there was an f2fs mount option to auto-enable compression
+> on all files (similar to how test_dummy_encryption auto-enables encryption on
+> all files) so that it could be tested more easily.
+
+Agreed.
+
+Previously I changed mkfs to allow to add compression flag to root inode for
+compression test. :P
+
+Thanks,
+
+> 
+> - Eric
+> .
+> 
