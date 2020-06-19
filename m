@@ -2,171 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56CCF2000D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 05:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB27200109
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 06:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbgFSDei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 23:34:38 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:51406 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbgFSDeh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 23:34:37 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jm7nV-0007NK-El; Thu, 18 Jun 2020 21:34:33 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jm7nU-0004ps-IZ; Thu, 18 Jun 2020 21:34:33 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        id S1727983AbgFSEUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 00:20:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725832AbgFSEUv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Jun 2020 00:20:51 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3359020789;
+        Fri, 19 Jun 2020 04:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592540450;
+        bh=9T0AEviO632sZSTUNtzmI3mY0uqN/4x8TYNPeuKa2ho=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mY+DUhxDh+Qnevb5TU4KKwVJj7MPkASAN2TW9KMdOGGPpOJqxD6bvWc6R5+uxiSTn
+         vQG/EWR+cbCYE5F6pxWNWXqG3VazfY0dm2nyIJCCNw2+jFwto4mV9XfTkptJZvzVBj
+         IsxjM6raML1mkbJ60cjQ0ZfoEttRyaRI4RlroQcI=
+Date:   Thu, 18 Jun 2020 21:20:48 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Satya Tangirala <satyat@google.com>, linux-fscrypt@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin\@oracle.com" <joe.jin@oracle.com>
-References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
-        <20200618233958.GV8681@bombadil.infradead.org>
-        <877dw3apn8.fsf@x220.int.ebiederm.org>
-        <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
-Date:   Thu, 18 Jun 2020 22:30:15 -0500
-In-Reply-To: <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com> (Junxiao Bi's
-        message of "Thu, 18 Jun 2020 17:27:43 -0700")
-Message-ID: <87sger91h4.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 3/4] f2fs: add inline encryption support
+Message-ID: <20200619042048.GF2957@sol.localdomain>
+References: <20200617075732.213198-1-satyat@google.com>
+ <20200617075732.213198-4-satyat@google.com>
+ <5e78e1be-f948-d54c-d28e-50f1f0a92ab3@huawei.com>
+ <20200618181357.GC2957@sol.localdomain>
+ <c6f9d02d-623f-8b36-1f18-91c69bdd17c8@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jm7nU-0004ps-IZ;;;mid=<87sger91h4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19o0dSaAfyOt0uwUe//uvCCTnRQtYzJvXU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4666]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Junxiao Bi <junxiao.bi@oracle.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 421 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 12 (2.8%), b_tie_ro: 10 (2.5%), parse: 1.16
-        (0.3%), extract_message_metadata: 17 (4.1%), get_uri_detail_list: 2.9
-        (0.7%), tests_pri_-1000: 25 (6.0%), tests_pri_-950: 1.22 (0.3%),
-        tests_pri_-900: 0.99 (0.2%), tests_pri_-90: 59 (14.1%), check_bayes:
-        58 (13.8%), b_tokenize: 9 (2.1%), b_tok_get_all: 10 (2.3%),
-        b_comp_prob: 3.1 (0.7%), b_tok_touch_all: 33 (7.9%), b_finish: 0.83
-        (0.2%), tests_pri_0: 289 (68.5%), check_dkim_signature: 0.53 (0.1%),
-        check_dkim_adsp: 2.3 (0.6%), poll_dns_idle: 0.72 (0.2%), tests_pri_10:
-        3.1 (0.7%), tests_pri_500: 9 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: severe proc dentry lock contention
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6f9d02d-623f-8b36-1f18-91c69bdd17c8@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Junxiao Bi <junxiao.bi@oracle.com> writes:
+On Fri, Jun 19, 2020 at 10:39:34AM +0800, Chao Yu wrote:
+> Hi Eric,
+> 
+> On 2020/6/19 2:13, Eric Biggers wrote:
+> > Hi Chao,
+> > 
+> > On Thu, Jun 18, 2020 at 06:06:02PM +0800, Chao Yu wrote:
+> >>> @@ -936,8 +972,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+> >>>  
+> >>>  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+> >>>  
+> >>> -	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
+> >>> -			io->last_block_in_bio, fio->new_blkaddr))
+> >>> +	if (io->bio &&
+> >>> +	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+> >>> +			      fio->new_blkaddr) ||
+> >>> +	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
+> >>> +				       fio->page->index, fio)))
+> >>
+> >> bio_page->index, fio)))
+> >>
+> >>>  		__submit_merged_bio(io);
+> >>>  alloc_new:
+> >>>  	if (io->bio == NULL) {
+> >>> @@ -949,6 +988,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+> >>>  			goto skip;
+> >>>  		}
+> >>>  		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
+> >>> +		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
+> >>> +				       fio->page->index, fio, GFP_NOIO);
+> >>
+> >> bio_page->index, fio, GFP_NOIO);
+> >>
+> > 
+> > We're using ->mapping->host and ->index.  Ordinarily that would mean the page
+> > needs to be a pagecache page.  But bio_page can also be a compressed page or a
+> > bounce page containing fs-layer encrypted contents.
+> 
+> I'm concerning about compression + inlinecrypt case.
+> 
+> > 
+> > Is your suggestion to keep using fio->page->mapping->host (since encrypted pages
+> 
+> Yup,
+> 
+> > don't have a mapping), but start using bio_page->index (since f2fs apparently
+> 
+> I meant that we need to use bio_page->index as tweak value in write path to
+> keep consistent as we did in read path, otherwise we may read the wrong
+> decrypted data later to incorrect tweak value.
+> 
+> - f2fs_read_multi_pages (only comes from compression inode)
+>  - f2fs_alloc_dic
+>   - f2fs_set_compressed_page(page, cc->inode,
+> 					start_idx + i + 1, dic);
+>                                         ^^^^^^^^^^^^^^^^^
+>   - dic->cpages[i] = page;
+>  - for ()
+>      struct page *page = dic->cpages[i];
+>      if (!bio)
+>        - f2fs_grab_read_bio(..., page->index,..)
+>         - f2fs_set_bio_crypt_ctx(..., first_idx, ..)   /* first_idx == cpage->index */
+> 
+> You can see that cpage->index was set to page->index + 1, that's why we need
+> to use one of cpage->index/page->index as tweak value all the time rather than
+> using both index mixed in read/write path.
+> 
+> But note that for fs-layer encryption, we have used cpage->index as tweak value,
+> so here I suggest we can keep consistent to use cpage->index in inlinecrypt case.
 
-> On 6/18/20 5:02 PM, ebiederm@xmission.com wrote:
->
->> Matthew Wilcox <willy@infradead.org> writes:
->>
->>> On Thu, Jun 18, 2020 at 03:17:33PM -0700, Junxiao Bi wrote:
->>>> When debugging some performance issue, i found that thousands of threads
->>>> exit around same time could cause a severe spin lock contention on proc
->>>> dentry "/proc/$parent_process_pid/task/", that's because threads needs to
->>>> clean up their pid file from that dir when exit. Check the following
->>>> standalone test case that simulated the case and perf top result on v5.7
->>>> kernel. Any idea on how to fix this?
->>> Thanks, Junxiao.
->>>
->>> We've looked at a few different ways of fixing this problem.
->>>
->>> Even though the contention is within the dcache, it seems like a usecase
->>> that the dcache shouldn't be optimised for -- generally we do not have
->>> hundreds of CPUs removing dentries from a single directory in parallel.
->>>
->>> We could fix this within procfs.  We don't have a great patch yet, but
->>> the current approach we're looking at allows only one thread at a time
->>> to call dput() on any /proc/*/task directory.
->>>
->>> We could also look at fixing this within the scheduler.  Only allowing
->>> one CPU to run the threads of an exiting process would fix this particular
->>> problem, but might have other consequences.
->>>
->>> I was hoping that 7bc3e6e55acf would fix this, but that patch is in 5.7,
->>> so that hope is ruled out.
->> Does anyone know if problem new in v5.7?  I am wondering if I introduced
->> this problem when I refactored the code or if I simply churned the code
->> but the issue remains effectively the same.
-> It's not new issue, we see it in old kernel like v4.14
->>
->> Can you try only flushing entries when the last thread of the process is
->> reaped?  I think in practice we would want to be a little more
->> sophisticated but it is a good test case to see if it solves the issue.
->
-> Thank you. i will try and let you know.
+Yes, inlinecrypt mustn't change the ciphertext that gets written to disk.
 
-Assuming this works we can remove the hacking part of always doing
-this by only doing this if SIGNAL_GROUP_EXIT when we know this
-thundering herd will appear.
+> 
+> > *does* set ->index for compressed pages, and if the file uses fs-layer
+> > encryption then f2fs_set_bio_crypt_ctx() won't use the index anyway)?
+> > 
+> > Does this mean the code is currently broken for compression + inline encryption
+> > because it's using the wrong ->index?  I think the answer is no, since
+> 
+> I guess it's broken now for compression + inlinecrypt case.
+> 
+> > f2fs_write_compressed_pages() will still pass the first 'nr_cpages' pagecache
+> > pages along with the compressed pages.  In that case, your suggestion would be a
+> > cleanup rather than a fix?
+> 
+> That's a fix.
+> 
 
-We still need to do something with the list however.
+FWIW, I tested this, and it actually works both before and after your suggested
+change.  The reason is that f2fs_write_compressed_pages() actually passes the
+pagecache pages sequentially starting at 'start_idx_of_cluster(cc) + 1' for the
+length of the compressed cluster.  That matches the '+ 1' adjustment elsewhere,
+so we have fio->page->index == bio_page->index.
 
-If your testing works out performance wise I will figure out what
-we need to make the hack generale and safe.
+I personally think the way the f2fs compression code works is really confusing.
+Compressed pages don't have a 1:1 correspondence to pagecache pages, so there
+should *not* be a pagecache page passed around when writing a compressed page.
 
-Eric
+Anyway, here's the test script I used in case anyone else wants to use it.  But
+we really need to write a proper f2fs compression + encryption test for xfstests
+which decrypts and decompresses a file in userspace and verifies we get back the
+original data.  (There are already ciphertext verification tests, but they don't
+cover compression.)  Note that this test is needed even for the filesystem-layer
+encryption which is currently supported.
 
+#!/bin/bash
 
+set -e
 
-> Thanks,
->
-> Junxiao.
->
->>
->> diff --git a/kernel/exit.c b/kernel/exit.c
->> index cebae77a9664..d56e4eb60bdd 100644
->> --- a/kernel/exit.c
->> +++ b/kernel/exit.c
->> @@ -152,7 +152,7 @@ void put_task_struct_rcu_user(struct task_struct *task)
->>   void release_task(struct task_struct *p)
->>   {
->>   	struct task_struct *leader;
->> -	struct pid *thread_pid;
->> +	struct pid *thread_pid = NULL;
->>   	int zap_leader;
->>   repeat:
->>   	/* don't need to get the RCU readlock here - the process is dead and
->> @@ -165,7 +165,8 @@ void release_task(struct task_struct *p)
->>     	write_lock_irq(&tasklist_lock);
->>   	ptrace_release_task(p);
->> -	thread_pid = get_pid(p->thread_pid);
->> +	if (p == p->group_leader)
->> +		thread_pid = get_pid(p->thread_pid);
->>   	__exit_signal(p);
->>     	/*
->> @@ -188,8 +189,10 @@ void release_task(struct task_struct *p)
->>   	}
->>     	write_unlock_irq(&tasklist_lock);
->> -	proc_flush_pid(thread_pid);
->> -	put_pid(thread_pid);
->> +	if (thread_pid) {
->> +		proc_flush_pid(thread_pid);
->> +		put_pid(thread_pid);
->> +	}
->>   	release_thread(p);
->>   	put_task_struct_rcu_user(p);
->>   
+DEV=/dev/vdb
+
+umount /mnt &> /dev/null || true
+mkfs.f2fs -f -O encrypt,compression,extra_attr $DEV
+head -c 1000000 /dev/zero > /tmp/testdata
+
+for opt1 in '-o inlinecrypt' ''; do
+        mount $DEV /mnt $opt1
+        rm -rf /mnt/.fscrypt /mnt/dir
+        fscrypt setup /mnt
+        mkdir /mnt/dir
+        chattr +c /mnt/dir
+        echo hunter2 | fscrypt encrypt /mnt/dir --quiet --source=custom_passphrase --name=secret
+        cp /tmp/testdata /mnt/dir/file
+        umount /mnt
+        for opt2 in '-o inlinecrypt' ''; do
+                mount $DEV /mnt $opt2
+                echo hunter2 | fscrypt unlock /mnt/dir --quiet
+                cmp /mnt/dir/file /tmp/testdata
+                umount /mnt
+        done
+done
