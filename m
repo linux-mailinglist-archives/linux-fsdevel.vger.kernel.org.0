@@ -2,68 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC1681FFEF5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 01:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 928A41FFF23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 02:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbgFRXyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 19:54:37 -0400
-Received: from [211.29.132.249] ([211.29.132.249]:55388 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726001AbgFRXyh (ORCPT
+        id S1727909AbgFSAHT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 20:07:19 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:57062 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbgFSAHS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 19:54:37 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4CD343A75DB;
-        Fri, 19 Jun 2020 09:54:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jm4MF-0001IW-Lp; Fri, 19 Jun 2020 09:54:11 +1000
-Date:   Fri, 19 Jun 2020 09:54:11 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH v2] iomap: Make sure iomap_end is called after iomap_begin
-Message-ID: <20200618235411.GM2005@dread.disaster.area>
-References: <20200618122408.1054092-1-agruenba@redhat.com>
+        Thu, 18 Jun 2020 20:07:18 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jm4Yr-0005eM-GX; Thu, 18 Jun 2020 18:07:13 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jm4Ym-0006Uh-Qy; Thu, 18 Jun 2020 18:07:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin\@oracle.com" <joe.jin@oracle.com>
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
+        <20200618233958.GV8681@bombadil.infradead.org>
+Date:   Thu, 18 Jun 2020 19:02:51 -0500
+In-Reply-To: <20200618233958.GV8681@bombadil.infradead.org> (Matthew Wilcox's
+        message of "Thu, 18 Jun 2020 16:39:58 -0700")
+Message-ID: <877dw3apn8.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618122408.1054092-1-agruenba@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=GTJ3AWLjlxiO5Q93NkkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
+X-XM-SPF: eid=1jm4Ym-0006Uh-Qy;;;mid=<877dw3apn8.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19NVkE1QwlpS7bOnHbUSF8lVHt7TQQejhQ=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4693]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Matthew Wilcox <willy@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 4221 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 11 (0.3%), b_tie_ro: 10 (0.2%), parse: 1.05
+        (0.0%), extract_message_metadata: 25 (0.6%), get_uri_detail_list: 8
+        (0.2%), tests_pri_-1000: 6 (0.2%), tests_pri_-950: 1.59 (0.0%),
+        tests_pri_-900: 1.18 (0.0%), tests_pri_-90: 196 (4.6%), check_bayes:
+        194 (4.6%), b_tokenize: 12 (0.3%), b_tok_get_all: 23 (0.5%),
+        b_comp_prob: 3.7 (0.1%), b_tok_touch_all: 150 (3.6%), b_finish: 1.26
+        (0.0%), tests_pri_0: 264 (6.3%), check_dkim_signature: 0.66 (0.0%),
+        check_dkim_adsp: 2.6 (0.1%), poll_dns_idle: 3682 (87.3%),
+        tests_pri_10: 2.4 (0.1%), tests_pri_500: 3707 (87.8%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: severe proc dentry lock contention
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 02:24:08PM +0200, Andreas Gruenbacher wrote:
-> Make sure iomap_end is always called when iomap_begin succeeds.
-> 
-> Without this fix, iomap_end won't be called when a filesystem's
-> iomap_begin operation returns an invalid mapping, bypassing any
-> unlocking done in iomap_end.  With this fix, the unlocking would
-> at least still happen.
-> 
-> This iomap_apply bug was found by Bob Peterson during code review.
-> It's unlikely that such iomap_begin bugs will survive to affect
-> users, so backporting this fix seems unnecessary.
-> 
-> Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Matthew Wilcox <willy@infradead.org> writes:
 
-Thanks for the updated commit message, Andreas. :)
+> On Thu, Jun 18, 2020 at 03:17:33PM -0700, Junxiao Bi wrote:
+>> When debugging some performance issue, i found that thousands of threads
+>> exit around same time could cause a severe spin lock contention on proc
+>> dentry "/proc/$parent_process_pid/task/", that's because threads needs to
+>> clean up their pid file from that dir when exit. Check the following
+>> standalone test case that simulated the case and perf top result on v5.7
+>> kernel. Any idea on how to fix this?
 
-Patch looks good to me.
+>
+> Thanks, Junxiao.
+>
+> We've looked at a few different ways of fixing this problem.
+>
+> Even though the contention is within the dcache, it seems like a usecase
+> that the dcache shouldn't be optimised for -- generally we do not have
+> hundreds of CPUs removing dentries from a single directory in parallel.
+>
+> We could fix this within procfs.  We don't have a great patch yet, but
+> the current approach we're looking at allows only one thread at a time
+> to call dput() on any /proc/*/task directory.
+>
+> We could also look at fixing this within the scheduler.  Only allowing
+> one CPU to run the threads of an exiting process would fix this particular
+> problem, but might have other consequences.
+>
+> I was hoping that 7bc3e6e55acf would fix this, but that patch is in 5.7,
+> so that hope is ruled out.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Does anyone know if problem new in v5.7?  I am wondering if I introduced
+this problem when I refactored the code or if I simply churned the code
+but the issue remains effectively the same.
 
--- 
-Dave Chinner
-david@fromorbit.com
+Can you try only flushing entries when the last thread of the process is
+reaped?  I think in practice we would want to be a little more
+sophisticated but it is a good test case to see if it solves the issue.
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index cebae77a9664..d56e4eb60bdd 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -152,7 +152,7 @@ void put_task_struct_rcu_user(struct task_struct *task)
+ void release_task(struct task_struct *p)
+ {
+ 	struct task_struct *leader;
+-	struct pid *thread_pid;
++	struct pid *thread_pid = NULL;
+ 	int zap_leader;
+ repeat:
+ 	/* don't need to get the RCU readlock here - the process is dead and
+@@ -165,7 +165,8 @@ void release_task(struct task_struct *p)
+ 
+ 	write_lock_irq(&tasklist_lock);
+ 	ptrace_release_task(p);
+-	thread_pid = get_pid(p->thread_pid);
++	if (p == p->group_leader)
++		thread_pid = get_pid(p->thread_pid);
+ 	__exit_signal(p);
+ 
+ 	/*
+@@ -188,8 +189,10 @@ void release_task(struct task_struct *p)
+ 	}
+ 
+ 	write_unlock_irq(&tasklist_lock);
+-	proc_flush_pid(thread_pid);
+-	put_pid(thread_pid);
++	if (thread_pid) {
++		proc_flush_pid(thread_pid);
++		put_pid(thread_pid);
++	}
+ 	release_thread(p);
+ 	put_task_struct_rcu_user(p);
+ 
