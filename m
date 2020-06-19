@@ -2,74 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF482013CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 18:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DF5201856
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 19:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403814AbgFSQEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 12:04:14 -0400
-Received: from outbound-smtp18.blacknight.com ([46.22.139.245]:40589 "EHLO
-        outbound-smtp18.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392757AbgFSQEL (ORCPT
+        id S2387589AbgFSOgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 10:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387575AbgFSOgo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 12:04:11 -0400
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp18.blacknight.com (Postfix) with ESMTPS id 2A3131C376A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 17:04:10 +0100 (IST)
-Received: (qmail 28271 invoked from network); 19 Jun 2020 16:04:10 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.5])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 19 Jun 2020 16:04:09 -0000
-Date:   Fri, 19 Jun 2020 17:04:07 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fs, pseudo: Do not update atime for pseudo inodes
-Message-ID: <20200619160407.GL3183@techsingularity.net>
-References: <20200617145310.GK3183@techsingularity.net>
- <CAOQ4uxjdTUnA2ACQtyZ95QkTtH_zaKZEYLyok73yjrhuUyXmtg@mail.gmail.com>
+        Fri, 19 Jun 2020 10:36:44 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD73BC0613EE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 07:36:43 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id p3so1878321pgh.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 07:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pZm6yfNYNBuxBStKZC0kZanPMnKOlf2CgfGPgI4tuHQ=;
+        b=uqgJVkp2ta13UJdmiW7Lw1bFtHRXApq/tVCDyt3pdUyhLeTsrd5cL3WhGO3XyEGEUj
+         lnDHihZwWdimLe6RISBNN32+ELxaLgJ8/y4dcXDHN/GHrdU63EgDC4BsgFD/CQ6bxmSX
+         BjsUEvg1+/6CaqfL4ZohtQouempwFJyB34irxdn3pQwDv4FXJtpk8F1knNvZbWe6dk/G
+         tiUPF0iInhm/PXgGCIKHtskVRZq78Pb81cuOlKAUYpeAp39mlQEZWasHKf/6KecRgIqq
+         2Qyeok7cXRpAZFm11moXK535vCVJ5QuNGI/Ob/P1YI1oIVBOQIh+UXokJpmC3VimY6mL
+         0IpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pZm6yfNYNBuxBStKZC0kZanPMnKOlf2CgfGPgI4tuHQ=;
+        b=dE6wkU7LVXWixoH8pfUdgXf9Q8a+4agrTtL6NaeENVgPa73wIsTh9MWdhjeSmwkUbS
+         0+RgOkOvly+RVigE45ijKJuJABsuHpgFfoInWAsxwhFisbuvCTDK9UJvfDND9J/lociL
+         SRXdpq+q+2mCcN/TOdIIut65v7W0VsBrxNR5yE25HPBGupNC9Sn2LYDT3wbxUouhGVWw
+         DMwUBU75K9BwWTnFae6rCqiWUFzO8SRqcnsHrrGkUd7tJAN57v5fseVAFY6bf1uNHHAp
+         Cs5A+91ToA9slvdNi8sAHrEYSQAKbnB9EFUbOWYN1Kd7efi17UlwpWna94yQddZzils8
+         q0Vg==
+X-Gm-Message-State: AOAM5330K9C8UNKKISTv7Wso+v+phvrvxpyIbWtEoZf1hcrgtm3dwUZ6
+        kXk3SVgLRTEMafzLtwEpeC0huRe4Ig0/pQ==
+X-Google-Smtp-Source: ABdhPJwLZap2gCbNRLjuZq9p47CcZnx/KyR0tvZKTiGdcuRCXJAnOlkelvd5T5h1TxDPz4q9D8EYAA==
+X-Received: by 2002:a62:640b:: with SMTP id y11mr8309607pfb.195.1592577403047;
+        Fri, 19 Jun 2020 07:36:43 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id b191sm5484675pga.13.2020.06.19.07.36.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jun 2020 07:36:42 -0700 (PDT)
+Subject: Re: [PATCH 04/15] io_uring: re-issue block requests that failed
+ because of resources
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-5-axboe@kernel.dk>
+ <cdd4bf56-5a08-5d28-969f-81b70cc3c473@gmail.com>
+ <da21ba82-c027-0c15-93e3-a372283d7030@kernel.dk>
+ <105a78f0-407f-09e3-5951-7f76756762b2@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e7f492a3-e180-ccf6-fcf2-2cd7f318f152@kernel.dk>
+Date:   Fri, 19 Jun 2020 08:36:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjdTUnA2ACQtyZ95QkTtH_zaKZEYLyok73yjrhuUyXmtg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <105a78f0-407f-09e3-5951-7f76756762b2@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 19, 2020 at 04:45:09PM +0300, Amir Goldstein wrote:
-> > proxy measure is the proc fd representations of such inodes which do not
-> > appear to change once they are created. This patch sets the S_NOATIME
-> > on inode->i_flags for inodes created by new_inode_pseudo() so that atime
-> > will not be updated.
-> >
+On 6/19/20 8:30 AM, Pavel Begunkov wrote:
+> On 19/06/2020 17:22, Jens Axboe wrote:
+>> On 6/19/20 8:12 AM, Pavel Begunkov wrote:
+>>> On 18/06/2020 17:43, Jens Axboe wrote:
+>>>> Mark the plug with nowait == true, which will cause requests to avoid
+>>>> blocking on request allocation. If they do, we catch them and reissue
+>>>> them from a task_work based handler.
+>>>>
+>>>> Normally we can catch -EAGAIN directly, but the hard case is for split
+>>>> requests. As an example, the application issues a 512KB request. The
+>>>> block core will split this into 128KB if that's the max size for the
+>>>> device. The first request issues just fine, but we run into -EAGAIN for
+>>>> some latter splits for the same request. As the bio is split, we don't
+>>>> get to see the -EAGAIN until one of the actual reads complete, and hence
+>>>> we cannot handle it inline as part of submission.
+>>>>
+>>>> This does potentially cause re-reads of parts of the range, as the whole
+>>>> request is reissued. There's currently no better way to handle this.
+>>>>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> ---
+>>>>  fs/io_uring.c | 148 ++++++++++++++++++++++++++++++++++++++++++--------
+>>>>  1 file changed, 124 insertions(+), 24 deletions(-)
+>>>>
+>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>> index 2e257c5a1866..40413fb9d07b 100644
+>>>> --- a/fs/io_uring.c
+>>>> +++ b/fs/io_uring.c
+>>>> @@ -900,6 +900,13 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+>>>>  static void __io_queue_sqe(struct io_kiocb *req,
+>>>>  			   const struct io_uring_sqe *sqe);
+>>>>  
+>>> ...> +
+>>>> +static void io_rw_resubmit(struct callback_head *cb)
+>>>> +{
+>>>> +	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+>>>> +	struct io_ring_ctx *ctx = req->ctx;
+>>>> +	int err;
+>>>> +
+>>>> +	__set_current_state(TASK_RUNNING);
+>>>> +
+>>>> +	err = io_sq_thread_acquire_mm(ctx, req);
+>>>> +
+>>>> +	if (io_resubmit_prep(req, err)) {
+>>>> +		refcount_inc(&req->refs);
+>>>> +		io_queue_async_work(req);
+>>>> +	}
+>>>
+>>> Hmm, I have similar stuff but for iopoll. On top removing grab_env* for
+>>> linked reqs and some extra. I think I'll rebase on top of this.
+>>
+>> Yes, there's certainly overlap there. I consider this series basically
+>> wrapped up, so feel free to just base on top of it.
+>>
+>>>> +static bool io_rw_reissue(struct io_kiocb *req, long res)
+>>>> +{
+>>>> +#ifdef CONFIG_BLOCK
+>>>> +	struct task_struct *tsk;
+>>>> +	int ret;
+>>>> +
+>>>> +	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
+>>>> +		return false;
+>>>> +
+>>>> +	tsk = req->task;
+>>>> +	init_task_work(&req->task_work, io_rw_resubmit);
+>>>> +	ret = task_work_add(tsk, &req->task_work, true);
+>>>
+>>> I don't like that the request becomes un-discoverable for cancellation
+>>> awhile sitting in the task_work list. Poll stuff at least have hash_node
+>>> for that.
+>>
+>> Async buffered IO was never cancelable, so it doesn't really matter.
+>> It's tied to the task, so we know it'll get executed - either run, or
+>> canceled if the task is going away. This is really not that different
+>> from having the work discoverable through io-wq queueing before, since
+>> the latter could never be canceled anyway as it sits there
+>> uninterruptibly waiting for IO completion.
 > 
-> new_inode() calls new_inode_pseudo() ...
-> You need to factor out a new helper.
-> 
+> Makes sense. I was thinking about using this task-requeue for all kinds
+> of requests. Though, instead of speculating it'd be better for me to embody
+> ideas into patches and see.
 
-You're right, it's broken as it stands. Even though I don't think direct
-users of alloc_file_pseudo use simple_getattr, it doesn't matter.
+And that's fine, for requests where it matters, on-the-side
+discoverability can still be a thing. If we're in the task itself where
+it is queued, that provides us safey from the work going way from under
+us. Then we just have to mark it appropriately, if it needs to get
+canceled instead of run to completion.
 
-> Either you can provide callers analysis of all new_inode_pseudo() users
-> or use a new helper to set S_NOATIME and call it from the relevant users
-> (pipe, socket).
-> 
-
-Relevant users makes sense as it's less likely to cause surprises.
-
-> How about S_NOCMTIME while you are at it?
-> Doesn't file_update_time() show in profiling?
-
-I can look into it, I don't recall seeing file_update_time() in the
-profile but maybe it was just too small.
-
-> Is there a valid use case for updating c/mtime of anonymous socket/pipe?
-> 
-
-Not that I can think of but that could be a failure of imagination.
+Some care needed, of course, but there's nothing that would prevent this
+from working. Ideally we'd be able to peal off a task_work entry, but
+that's kind of difficult with the singly linked non-locked list.
 
 -- 
-Mel Gorman
-SUSE Labs
+Jens Axboe
+
