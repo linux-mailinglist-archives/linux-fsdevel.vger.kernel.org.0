@@ -2,66 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E8AE2009CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 15:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD928200A89
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 15:45:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731946AbgFSNSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 09:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39864 "EHLO
+        id S1732944AbgFSNpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 09:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbgFSNST (ORCPT
+        with ESMTP id S1732785AbgFSNpW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 09:18:19 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D8BC06174E;
-        Fri, 19 Jun 2020 06:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=b0goR5/zxlpemil3+FImPZfqp9ezrFkx/bKeIQ1Vi3Y=; b=beQs5fo4caTmQK19KVmCCUe+WH
-        mp5fNCExITVOO4vQ6QZnRM6VBvLLvprtOikEmZmWk7LsaRUPriohXmuAeFYVKAup/UbQOfN/UHXL+
-        G/fO2P+D7SPRSkQDsCvIhvMAUS8KSQybkK8rL8njwvjPT0EpnwcJbbrhdiUtkt6B7F15a0xmrvj8L
-        LytefAzzF9mptH0PRRM26FcWMckIdgpK2g+oobumbcDgZkkL5B08fddlDtH9mqxhOZ+Ryhc+4A2VI
-        XjTbad789qG1x/14jfZz06dqX4z8TyR0ldzOatg1+vePs7+2D7FXaE74SzLbj6hUfLkbdXYmdYln4
-        n41Af6/g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmGuO-0007Ah-Sc; Fri, 19 Jun 2020 13:18:16 +0000
-Date:   Fri, 19 Jun 2020 06:18:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH] iomap: Make sure iomap_end is called after iomap_begin
-Message-ID: <20200619131816.GB15982@infradead.org>
-References: <20200615160244.741244-1-agruenba@redhat.com>
- <20200618013901.GR11245@magnolia>
- <20200618123227.GO8681@bombadil.infradead.org>
- <CAHc6FU5x8+54zX5NWEDdsf5HV5qXLnjS1SM+oYmX1yMrh_mDfA@mail.gmail.com>
- <20200618135639.GA15658@infradead.org>
- <20200618151523.GQ8681@bombadil.infradead.org>
+        Fri, 19 Jun 2020 09:45:22 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F15C06174E;
+        Fri, 19 Jun 2020 06:45:21 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id s18so11288463ioe.2;
+        Fri, 19 Jun 2020 06:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3KbCMnQ3fWd4OCh5WOjleAHLA7RE7+a68TWER+fluSg=;
+        b=RYAsabp67D/InlnPAiumJVkynZbAgsyRWv4Mx9DAozwizFjB3/C+cwmRYwLobjEppu
+         XWfoPExMMTISzF0JO3JD+Ar/qKt30A38vOuCNYiYFKuO4K2shOkdLphM76VKwsZP278/
+         bROUHjsEyd0yjTjSyaVI3QU56PW/2eYV7tmVCkJCQjxTVAQ1N84j4K8YB+ZWQM0rZLT1
+         wvBmz/1UCukS4r5gRZbxtEN5sTHsQSNXjQES5a4B0wQbYgJgctrL9230vCWGdveOI8Bu
+         UKvPuIrQAgTrxQJD7iv8fDot778pxeU8OXTeUgc+VmUpWieYaCHFtIKngEKGHKEbdG9O
+         h6Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3KbCMnQ3fWd4OCh5WOjleAHLA7RE7+a68TWER+fluSg=;
+        b=YJWUX0GTI7id8TgxSszwUVXnvv5QG8a12TRBpXDCYxSAY5PMSE7nAkenDtw6R4WLox
+         I0lRpKexGHXYsmnmDGWzmbhdoZl/7BzrzZpiYex7S85DPzv7FOlz2wq4IvK0iGK9C+xQ
+         QL55FyB42xPK4X/1uGt8Koiudr65Taah5gxB9osSoqVdV9LPxXXElIX88iwDwTpt+1ny
+         ReNZhawkCZvdj3whsER0S91vgFESbfVB+kyK+ttw0j+HVsqDxqWQj9Usoa/iMHGoi/8K
+         YlMPfw4HTHoI+I0r40nCcjUZqv//As0WXROE0UAJo2mIuCjNeGXsF5bVrpvpesyPpr/p
+         o08w==
+X-Gm-Message-State: AOAM532KhZePrV8JPeqHHquQPtwlGtkwr3Ino4yYrq1QSWK8bJe50viI
+        f7JbptEBwhFhi65RZW/nRvhfNtVyaIZeshJv8/s=
+X-Google-Smtp-Source: ABdhPJymf9lkb/99ztlOPnVqmjfseQ5wZThn/cprANDQ+siUR8wjgIkqr7UjfS+nJJstOGBrPuLNfd2PIePPHzrSZU8=
+X-Received: by 2002:a05:6602:2e87:: with SMTP id m7mr4397605iow.203.1592574320698;
+ Fri, 19 Jun 2020 06:45:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618151523.GQ8681@bombadil.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200617145310.GK3183@techsingularity.net>
+In-Reply-To: <20200617145310.GK3183@techsingularity.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 19 Jun 2020 16:45:09 +0300
+Message-ID: <CAOQ4uxjdTUnA2ACQtyZ95QkTtH_zaKZEYLyok73yjrhuUyXmtg@mail.gmail.com>
+Subject: Re: [PATCH] fs, pseudo: Do not update atime for pseudo inodes
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 08:15:23AM -0700, Matthew Wilcox wrote:
-> Thinking about it, wouldn't the second test be better replaced with:
-> 
-> 	if (WARN_ON(iomap.offset + iomap.length <= pos))
-> 
-> in case the filesystem returns an extent which finishes before pos?
-> This would be a superset of the test for length being 0.
+On Wed, Jun 17, 2020 at 5:53 PM Mel Gorman <mgorman@techsingularity.net> wrote:
+>
+> The kernel uses internal mounts created by kern_mount() and populated
+> with files with no lookup path by alloc_file_pseudo() for a variety of
+> reasons. An relevant example is anonymous pipes because every vfs_write
+> also checks if atime needs to be updated even though it is unnecessary.
+> Most of the relevant users for alloc_file_pseudo() either have no statfs
+> helper or use simple_statfs which does not return st_atime. The closest
 
-The idea was to tell what is wrong.  Both with the initial iomap work
-and later the COW support I had all kinds of weird scenarious during
-bringup where an obvious error has been very helpful.
+st_atime is returned by simple_getattr()
+
+> proxy measure is the proc fd representations of such inodes which do not
+> appear to change once they are created. This patch sets the S_NOATIME
+> on inode->i_flags for inodes created by new_inode_pseudo() so that atime
+> will not be updated.
+>
+
+new_inode() calls new_inode_pseudo() ...
+You need to factor out a new helper.
+
+Either you can provide callers analysis of all new_inode_pseudo() users
+or use a new helper to set S_NOATIME and call it from the relevant users
+(pipe, socket).
+
+How about S_NOCMTIME while you are at it?
+Doesn't file_update_time() show in profiling?
+Is there a valid use case for updating c/mtime of anonymous socket/pipe?
+
+Thanks,
+Amir.
