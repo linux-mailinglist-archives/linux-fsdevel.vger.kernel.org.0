@@ -2,92 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD928200A89
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 15:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED65200B19
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 16:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732944AbgFSNpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 09:45:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732785AbgFSNpW (ORCPT
+        id S1733013AbgFSOOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 10:14:06 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:51900 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbgFSOOE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 09:45:22 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F15C06174E;
-        Fri, 19 Jun 2020 06:45:21 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id s18so11288463ioe.2;
-        Fri, 19 Jun 2020 06:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3KbCMnQ3fWd4OCh5WOjleAHLA7RE7+a68TWER+fluSg=;
-        b=RYAsabp67D/InlnPAiumJVkynZbAgsyRWv4Mx9DAozwizFjB3/C+cwmRYwLobjEppu
-         XWfoPExMMTISzF0JO3JD+Ar/qKt30A38vOuCNYiYFKuO4K2shOkdLphM76VKwsZP278/
-         bROUHjsEyd0yjTjSyaVI3QU56PW/2eYV7tmVCkJCQjxTVAQ1N84j4K8YB+ZWQM0rZLT1
-         wvBmz/1UCukS4r5gRZbxtEN5sTHsQSNXjQES5a4B0wQbYgJgctrL9230vCWGdveOI8Bu
-         UKvPuIrQAgTrxQJD7iv8fDot778pxeU8OXTeUgc+VmUpWieYaCHFtIKngEKGHKEbdG9O
-         h6Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3KbCMnQ3fWd4OCh5WOjleAHLA7RE7+a68TWER+fluSg=;
-        b=YJWUX0GTI7id8TgxSszwUVXnvv5QG8a12TRBpXDCYxSAY5PMSE7nAkenDtw6R4WLox
-         I0lRpKexGHXYsmnmDGWzmbhdoZl/7BzrzZpiYex7S85DPzv7FOlz2wq4IvK0iGK9C+xQ
-         QL55FyB42xPK4X/1uGt8Koiudr65Taah5gxB9osSoqVdV9LPxXXElIX88iwDwTpt+1ny
-         ReNZhawkCZvdj3whsER0S91vgFESbfVB+kyK+ttw0j+HVsqDxqWQj9Usoa/iMHGoi/8K
-         YlMPfw4HTHoI+I0r40nCcjUZqv//As0WXROE0UAJo2mIuCjNeGXsF5bVrpvpesyPpr/p
-         o08w==
-X-Gm-Message-State: AOAM532KhZePrV8JPeqHHquQPtwlGtkwr3Ino4yYrq1QSWK8bJe50viI
-        f7JbptEBwhFhi65RZW/nRvhfNtVyaIZeshJv8/s=
-X-Google-Smtp-Source: ABdhPJymf9lkb/99ztlOPnVqmjfseQ5wZThn/cprANDQ+siUR8wjgIkqr7UjfS+nJJstOGBrPuLNfd2PIePPHzrSZU8=
-X-Received: by 2002:a05:6602:2e87:: with SMTP id m7mr4397605iow.203.1592574320698;
- Fri, 19 Jun 2020 06:45:20 -0700 (PDT)
+        Fri, 19 Jun 2020 10:14:04 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jmHmK-00081o-MS; Fri, 19 Jun 2020 08:14:00 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jmHmJ-0001Ae-Fn; Fri, 19 Jun 2020 08:14:00 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin\@oracle.com" <joe.jin@oracle.com>
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
+        <20200618233958.GV8681@bombadil.infradead.org>
+        <877dw3apn8.fsf@x220.int.ebiederm.org>
+        <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
+Date:   Fri, 19 Jun 2020 09:09:41 -0500
+In-Reply-To: <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com> (Junxiao Bi's
+        message of "Thu, 18 Jun 2020 17:27:43 -0700")
+Message-ID: <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20200617145310.GK3183@techsingularity.net>
-In-Reply-To: <20200617145310.GK3183@techsingularity.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 19 Jun 2020 16:45:09 +0300
-Message-ID: <CAOQ4uxjdTUnA2ACQtyZ95QkTtH_zaKZEYLyok73yjrhuUyXmtg@mail.gmail.com>
-Subject: Re: [PATCH] fs, pseudo: Do not update atime for pseudo inodes
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1jmHmJ-0001Ae-Fn;;;mid=<87bllf87ve.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19+kJXk7DdBNSbufeE2zhsPt9yABoMvPa4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4921]
+        *  0.7 XMSubLong Long Subject
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Junxiao Bi <junxiao.bi@oracle.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 753 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 9 (1.2%), b_tie_ro: 8 (1.0%), parse: 1.48 (0.2%),
+        extract_message_metadata: 25 (3.3%), get_uri_detail_list: 4.0 (0.5%),
+        tests_pri_-1000: 42 (5.5%), tests_pri_-950: 1.78 (0.2%),
+        tests_pri_-900: 1.41 (0.2%), tests_pri_-90: 135 (17.9%), check_bayes:
+        132 (17.5%), b_tokenize: 32 (4.2%), b_tok_get_all: 10 (1.3%),
+        b_comp_prob: 3.2 (0.4%), b_tok_touch_all: 82 (10.9%), b_finish: 1.01
+        (0.1%), tests_pri_0: 522 (69.2%), check_dkim_signature: 0.94 (0.1%),
+        check_dkim_adsp: 6 (0.8%), poll_dns_idle: 3.4 (0.5%), tests_pri_10:
+        3.3 (0.4%), tests_pri_500: 8 (1.1%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH] proc: Avoid a thundering herd of threads freeing proc dentries
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 5:53 PM Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> The kernel uses internal mounts created by kern_mount() and populated
-> with files with no lookup path by alloc_file_pseudo() for a variety of
-> reasons. An relevant example is anonymous pipes because every vfs_write
-> also checks if atime needs to be updated even though it is unnecessary.
-> Most of the relevant users for alloc_file_pseudo() either have no statfs
-> helper or use simple_statfs which does not return st_atime. The closest
 
-st_atime is returned by simple_getattr()
+Junxiao Bi <junxiao.bi@oracle.com> reported:
+> When debugging some performance issue, i found that thousands of threads exit
+> around same time could cause a severe spin lock contention on proc dentry
+> "/proc/$parent_process_pid/task/", that's because threads needs to clean up
+> their pid file from that dir when exit.
 
-> proxy measure is the proc fd representations of such inodes which do not
-> appear to change once they are created. This patch sets the S_NOATIME
-> on inode->i_flags for inodes created by new_inode_pseudo() so that atime
-> will not be updated.
->
+Matthew Wilcox <willy@infradead.org> reported:
+> We've looked at a few different ways of fixing this problem.
 
-new_inode() calls new_inode_pseudo() ...
-You need to factor out a new helper.
+The flushing of the proc dentries from the dcache is an optmization,
+and is not necessary for correctness.  Eventually cache pressure will
+cause the dentries to be freed even if no flushing happens.  Some
+light testing when I refactored the proc flushg[1] indicated that at
+least the memory footprint is easily measurable.
 
-Either you can provide callers analysis of all new_inode_pseudo() users
-or use a new helper to set S_NOATIME and call it from the relevant users
-(pipe, socket).
+An optimization that causes a performance problem due to a thundering
+herd of threads is no real optimization.
 
-How about S_NOCMTIME while you are at it?
-Doesn't file_update_time() show in profiling?
-Is there a valid use case for updating c/mtime of anonymous socket/pipe?
+Modify the code to only flush the /proc/<tgid>/ directory when all
+threads in a process are killed at once.  This continues to flush
+practically everything when the process is reaped as the threads live
+under /proc/<tgid>/task/<tid>.
 
-Thanks,
-Amir.
+There is a rare possibility that a debugger will access /proc/<tid>/,
+which this change will no longer flush, but I believe such accesses
+are sufficiently rare to not be observed in practice.
+
+[1] 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
+Link: https://lkml.kernel.org/r/54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com
+Reported-by: Masahiro Yamada <masahiroy@kernel.org>
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+
+I am still waiting for word on how this affects performance, but this is
+a clean version that should avoid the thundering herd problem in
+general.
+
+
+ kernel/exit.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index cebae77a9664..567354550d62 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -151,8 +151,8 @@ void put_task_struct_rcu_user(struct task_struct *task)
+ 
+ void release_task(struct task_struct *p)
+ {
++	struct pid *flush_pid = NULL;
+ 	struct task_struct *leader;
+-	struct pid *thread_pid;
+ 	int zap_leader;
+ repeat:
+ 	/* don't need to get the RCU readlock here - the process is dead and
+@@ -165,7 +165,16 @@ void release_task(struct task_struct *p)
+ 
+ 	write_lock_irq(&tasklist_lock);
+ 	ptrace_release_task(p);
+-	thread_pid = get_pid(p->thread_pid);
++
++	/*
++	 * When all of the threads are exiting wait until the end
++	 * and flush everything.
++	 */
++	if (thread_group_leader(p))
++		flush_pid = get_pid(task_tgid(p));
++	else if (!(p->signal->flags & SIGNAL_GROUP_EXIT))
++		flush_pid = get_pid(task_pid(p));
++
+ 	__exit_signal(p);
+ 
+ 	/*
+@@ -188,8 +197,10 @@ void release_task(struct task_struct *p)
+ 	}
+ 
+ 	write_unlock_irq(&tasklist_lock);
+-	proc_flush_pid(thread_pid);
+-	put_pid(thread_pid);
++	if (flush_pid) {
++		proc_flush_pid(flush_pid);
++		put_pid(flush_pid);
++	}
+ 	release_thread(p);
+ 	put_task_struct_rcu_user(p);
+ 
+-- 
+2.20.1
