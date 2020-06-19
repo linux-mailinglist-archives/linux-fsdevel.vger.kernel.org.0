@@ -2,99 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59340201C8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C07201C9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390741AbgFSUl5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 16:41:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388929AbgFSUl5 (ORCPT
+        id S2390072AbgFSUqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 16:46:30 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45820 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388929AbgFSUqa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 16:41:57 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05JKVqrN159665;
-        Fri, 19 Jun 2020 16:41:44 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31rthajuyn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Jun 2020 16:41:43 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05JKVsWf159881;
-        Fri, 19 Jun 2020 16:41:43 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31rthajuyd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Jun 2020 16:41:43 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05JKdf0o025533;
-        Fri, 19 Jun 2020 20:41:42 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02wdc.us.ibm.com with ESMTP id 31rdtfga8a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Jun 2020 20:41:42 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05JKfgle14287410
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Jun 2020 20:41:42 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15134124052;
-        Fri, 19 Jun 2020 20:41:42 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FA7E124058;
-        Fri, 19 Jun 2020 20:41:40 +0000 (GMT)
-Received: from [9.163.11.155] (unknown [9.163.11.155])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 19 Jun 2020 20:41:40 +0000 (GMT)
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-To:     Tejun Heo <tj@kernel.org>, Ian Kent <raven@themaw.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
- <20200619153833.GA5749@mtj.thefacebook.com>
-From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
-Message-ID: <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
-Date:   Fri, 19 Jun 2020 13:41:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Fri, 19 Jun 2020 16:46:30 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a127so4906098pfa.12;
+        Fri, 19 Jun 2020 13:46:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+ig1uMooEc7hJ7T4tJda0UtWOL236yx/7EtI4v6obG4=;
+        b=SI2YpQ7h0RMWuvuoFd1z5sbCGXsvbiuGDddv+bvOzcZMLDHxe0rAs6xY8u0lSjGoEy
+         KSuIyXT5q0iWZwQ7wWzzdgV1XI018+CSZZrYRhj+nnSx+pw1GoltC/LPceM1J0jOoEoU
+         aDTJn03MrW9670CvSu+PxBpxVVGCHQAcbkQaTUCNIOIrOG1bfqvyPh4EfaecupqfSh6+
+         kEaZfqnaCM4t0nmbw8V3syVb4lC1vJhql/yZvyrvoJurdiWVM5CcjtyBfKgRFYtoEPhu
+         ECf5kC8DkF/yYAlqxekF4CsGeHNvJZpI6dExZZhiUb6FKomHd981O7Y2P0hS7lHYYhco
+         NoRg==
+X-Gm-Message-State: AOAM532Roo6s/Rw8pXRoxuP6cpGGlI9Zh6ReHv2mvlKxk9dbheyC0D9u
+        hdeMfIX9+kHnnWkRt38ZXCs=
+X-Google-Smtp-Source: ABdhPJzKNPWlIV0nmO+CTspxV1ueBsq/MLwS42z81TaqEce+i1mqYn5aUJ4K080LEjB7u0IDfz6xvA==
+X-Received: by 2002:aa7:8145:: with SMTP id d5mr9453904pfn.196.1592599589431;
+        Fri, 19 Jun 2020 13:46:29 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id n9sm6138891pjj.23.2020.06.19.13.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 13:46:27 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id CAC654063E; Fri, 19 Jun 2020 20:46:26 +0000 (UTC)
+Date:   Fri, 19 Jun 2020 20:46:26 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Cc:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
+        axboe@kernel.dk, roopa@cumulusnetworks.com,
+        nikolay@cumulusnetworks.com, davem@davemloft.net, kuba@kernel.org,
+        dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, serge@hallyn.com, christian.brauner@ubuntu.com,
+        slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
+        josh@joshtriplett.org, ravenexp@gmail.com, chainsaw@gentoo.org,
+        linux-fsdevel@vger.kernel.org, bridge@lists.linux-foundation.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] kmod/umh: a few fixes
+Message-ID: <20200619204626.GK11244@42.do-not-panic.com>
+References: <20200610154923.27510-1-mcgrof@kernel.org>
+ <20200617174348.70710c3ecb14005fb1b9ec39@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20200619153833.GA5749@mtj.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-19_21:2020-06-19,2020-06-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 adultscore=0 malwarescore=0
- mlxscore=0 mlxlogscore=893 spamscore=0 impostorscore=0 suspectscore=0
- bulkscore=0 cotscore=-2147483648 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006190141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200617174348.70710c3ecb14005fb1b9ec39@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/19/20 8:38 AM, Tejun Heo wrote:
+On Wed, Jun 17, 2020 at 05:43:48PM -0700, Andrew Morton wrote:
+> On Wed, 10 Jun 2020 15:49:18 +0000 "Luis R. Rodriguez" <mcgrof@kernel.org> wrote:
+> 
+> > Tiezhu Yang had sent out a patch set with a slew of kmod selftest
+> > fixes, and one patch which modified kmod to return 254 when a module
+> > was not found. This opened up pandora's box about why that was being
+> > used for and low and behold its because when UMH_WAIT_PROC is used
+> > we call a kernel_wait4() call but have never unwrapped the error code.
+> > The commit log for that fix details the rationale for the approach
+> > taken. I'd appreciate some review on that, in particular nfs folks
+> > as it seems a case was never really hit before.
+> > 
+> > This goes boot tested, selftested with kmod, and 0-day gives its
+> > build blessings.
+> 
+> Any thoughts on which kernel version(s) need some/all of these fixes?
 
-> I don't have strong objections to the series but the rationales don't seem
-> particularly strong. It's solving a suspected problem but only half way. It
-> isn't clear whether this can be the long term solution for the problem
-> machine and whether it will benefit anyone else in a meaningful way either.
+Well, in so far as fixes, this is the real important part:
 
-I don't understand your statement about solving the problem halfway.  Could you elaborate?
+* request_module() used to fail with an error code of
+  256 when a module was not found. Now it properly
+  returns 1.
 
-> I think Greg already asked this but how are the 100,000+ memory objects
-> used? Is that justified in the first place?
+* fs/nfsd/nfs4recover.c: we never were disabling the
+  upcall as the error code of -ENOENT or -EACCES was
+  *never* properly checked for error code
 
-They are used for hotplugging and partitioning memory.  The size of the segments (and thus the number of them) is dictated by the underlying hardware.
+Since the request_module() fix is only affecting userspace
+for the kmod tests, through the kmod test driver, ie, we don't expose
+this to userspace in any other place, I don't see that as critical.
+Let me be clear, we have a test_kmod driver which exposes knobs
+and one of the knobs lets userspace query the return value of a
+request_module() call, and we use this test_kmod driver to stress
+test kmod loader. Let us also recall that the fix is *iff* an error
+*did* occur. I *cannot* think of a reason why this would be critical
+to merge to older stable kernels for this reason for request_module()'s
+sake.
 
-Rick
+Bruce, Chuck:
 
+But... for NFS... I'd like the NFS folks to really look at that
+and tell us is some folks really should care about that. I also
+find it perplexing there was a comment in place there to *ensure*
+the error was checked for, and so it seemed someone cared for that
+condition.
+
+> >  drivers/block/drbd/drbd_nl.c         | 20 +++++------
+> >  fs/nfsd/nfs4recover.c                |  2 +-
+> >  include/linux/sched/task.h           | 13 ++++++++
+> >  kernel/kmod.c                        |  5 ++-
+> >  kernel/umh.c                         |  4 +--
+> >  lib/test_kmod.c                      |  2 +-
+> >  net/bridge/br_stp_if.c               | 10 ++----
+> >  security/keys/request_key.c          |  2 +-
+> >  tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
+> 
+> I'm not really sure who takes kmod changes - I'll grab these unless
+> someone shouts at me.
+
+Greg usually takes it, but as usual, thanks for picking up the slack ;)
+
+  Luis
