@@ -2,91 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 137B02003DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 10:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B471C20042F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 10:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731381AbgFSI3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 04:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51768 "EHLO
+        id S1731228AbgFSIjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 04:39:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730651AbgFSI3C (ORCPT
+        with ESMTP id S1730983AbgFSIjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 04:29:02 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21163C06174E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 01:29:01 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id o4so5072445lfi.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 01:29:01 -0700 (PDT)
+        Fri, 19 Jun 2020 04:39:04 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77946C06174E;
+        Fri, 19 Jun 2020 01:39:03 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id u128so4197556pgu.13;
+        Fri, 19 Jun 2020 01:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=irVvm75B8uOjhet4ds9NewlHhGnanjSr3qTRTZzIUE4=;
-        b=qkbi8YvZIpYdgXOhuLz+oLhk6FU5nre6FOh8jwCxVM9654uCe38mG3xi4sHqGzzDyG
-         SEH1hJrw2TFIChHUxX1ZXnbwARwg6RC5j0BV0+jMRPStvzbKMhHOWFkkmEsrWjqdX5F+
-         D1IOfQlW2zLQg/nVx9gJMOxi4uOERKvqBd1S1RhEt6EhjY5th0/tAvBfP2KAJAM96y7o
-         h72udRwv1GPKxwptl875dVONvJoltvXpQNW88Rr7UCqkXi2dwlS43kJ7lnlN+shZedPc
-         UEpFi+EUsizwMgSG5KrzWkYQzjXdopu2qfdbxfjTUi6dvlVTSJe8cWAu3gdUIqCShHxT
-         T2Bg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+uPgnf+wW5u/QVoRDiXSyxSE34HMaGyVu1r9BybJSWM=;
+        b=WD8Wfa/tV35Oo05bw3vytpEFgdHXmeW+Thl+2NEMIERdfjMGD2VqggqFX2raY2QiWN
+         i8Ju2B88b7i/EiJDSvSLkmt7rXCIw9Pld+An57ups1CAKpKwMgGcBKv4157K60+ilTcr
+         /WunHGRfxNsBfo2i/H2nBwMOps+/cbl3WOWnMut1aGKKL+4Z1N3DpInjAwFuNUFMhWq/
+         6q0DohAoxCCjP/uAXaQM1G/zAlNrmzhWf5AnCwq2rij8aKuvEVgYSiTjB/k8b2NdAWnw
+         /sGhCiAxDvP7o5QDxFKCydsLH5Fe7+T79EUhPARszg7yUyUPTmHCTJHJvwNdZ587g3QB
+         IBCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=irVvm75B8uOjhet4ds9NewlHhGnanjSr3qTRTZzIUE4=;
-        b=kBGqodu15S9BMMCEqEjxO/bzo0ZCMJj5D5wO+NSQrn0IMaDLRVmQLhXrfhnKGGY6V3
-         anHXtCHvDJq997Ua5332k65bQjMSvA5vVhKhXEA3qgW7JvG9JmScjTHRzo2PuYtFmP2G
-         EdEJY3b5ihengLbKntzEjH/pPD4gbLGIuR+f6qZfVq7SfUWHNKtJzd4WNbSR4AYIWlWb
-         l6WTMV+QVMQ1jsjuj/w6z/Pk+ODbFyKt3fZ8pnvAxw/so9fAf4g0NKG62Duya/x4fbWU
-         mHFgcHOXQnEcehLKtST+5ThL+rSwbQVIOOIDDds0wTAFrsZFn66qDssuMkaU8Xan0pxv
-         yZ3A==
-X-Gm-Message-State: AOAM533HaURofONHzjIAk1SNt5I55EmPFdohnjm+evAlkVWsWpsfhSvK
-        8JvPjLn5DiXAYOmzO+6YWX7AlfyrXq8Jvw==
-X-Google-Smtp-Source: ABdhPJxnSAk4hCfsyIu7N052ONa1UuRXTstPiF0JmLx3L/kM6WdrlnqV1xaj4A+uNl5wLop8yEYwoQ==
-X-Received: by 2002:ac2:5c49:: with SMTP id s9mr1327184lfp.90.1592555339610;
-        Fri, 19 Jun 2020 01:28:59 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:8c9:4beb:2ce8:f19d:33e5:571e? ([2a00:1fa0:8c9:4beb:2ce8:f19d:33e5:571e])
-        by smtp.gmail.com with ESMTPSA id a16sm1058721ljb.107.2020.06.19.01.28.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2020 01:28:58 -0700 (PDT)
-Subject: Re: [PATCH 3/6] exec: cleanup the count() function
-To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200618144627.114057-1-hch@lst.de>
- <20200618144627.114057-4-hch@lst.de>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <04e7876b-a8f3-3f6e-939c-bb0764ece1ac@cogentembedded.com>
-Date:   Fri, 19 Jun 2020 11:28:44 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        bh=+uPgnf+wW5u/QVoRDiXSyxSE34HMaGyVu1r9BybJSWM=;
+        b=gW2PkL2MMg8vNfNim8n3H1UCRUiJgI4vI8izMG2w1S9bKcrAJfEcPLIKJ5d5mmAuX9
+         TgpwhGH0YFPoyWUPgBlHp7zgxF22YBmHsea0bX6v9IOotucKVpq6ZjeXNVbHzeRe+JHN
+         MkZNRB7H+Wa60k4Un6Bf3k6CsG7ZPpy2KD/0z2XIl/MlcRdbF/MpehaWYpZRmnwYGEOp
+         j1dAGnAHc8Un0CDgivGbLNIA/RVZ7Xf3U1f59dY3FEt/oOH+Q5WqFsC+3WEajGoj5/90
+         bnJBaqSoIB7vzn36im1uLpLdQ8D5gOkudN2K42GaRz/U7pk+Qeg58lT1ydEZQJo+HDtB
+         PQZA==
+X-Gm-Message-State: AOAM533JOGYVun3gsLc0VMwokv1W2B7hr0ec7ZPRv+2/4yUiyyJ34cXw
+        mq7idbCiZoOF8zD92DZIVaY=
+X-Google-Smtp-Source: ABdhPJw656x3Mb0pQiRBNA1Vp5rBDHmdfd3Xpff8peVjGOFinVY+rdOVyVeLWKwfJIIPWmcyZpDKzg==
+X-Received: by 2002:a63:2043:: with SMTP id r3mr2018078pgm.299.1592555942574;
+        Fri, 19 Jun 2020 01:39:02 -0700 (PDT)
+Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
+        by smtp.gmail.com with ESMTPSA id u24sm4437183pga.47.2020.06.19.01.38.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 01:39:01 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Christoph Hellwig <hch@infradead.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2 v4] exfat: write multiple sectors at once
+Date:   Fri, 19 Jun 2020 17:38:54 +0900
+Message-Id: <20200619083855.15789-1-kohada.t2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200618144627.114057-4-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
+Write multiple sectors at once when updating dir-entries.
+Add exfat_update_bhs() for that. It wait for write completion once
+instead of sector by sector.
+It's only effective if sync enabled.
 
-On 18.06.2020 17:46, Christoph Hellwig wrote:
+Reviewed-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+---
+Changes in v2:
+ - Split into 'write multiple sectors at once'
+   and 'add error check when updating dir-entries'
+Changes in v3
+ - Rebase to latest exfat-dev
+Changes in v4
+ - Use if/else instead of conditional operator
 
-> Remove the max argument as it is hard wired to MAX_ARG_STRINGS, and
+ fs/exfat/dir.c      | 15 +++++++++------
+ fs/exfat/exfat_fs.h |  1 +
+ fs/exfat/misc.c     | 19 +++++++++++++++++++
+ 3 files changed, 29 insertions(+), 6 deletions(-)
 
-    Technically, argument is what's actually passed to a function, you're 
-removing a function parameter.
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 02acbb6ddf02..7c2e29632634 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -606,13 +606,16 @@ void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
+ 
+ void exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync)
+ {
+-	int i;
++	int i, err = 0;
+ 
+-	for (i = 0; i < es->num_bh; i++) {
+-		if (es->modified)
+-			exfat_update_bh(es->bh[i], sync);
+-		brelse(es->bh[i]);
+-	}
++	if (es->modified)
++		err = exfat_update_bhs(es->bh, es->num_bh, sync);
++
++	for (i = 0; i < es->num_bh; i++)
++		if (err)
++			bforget(es->bh[i]);
++		else
++			brelse(es->bh[i]);
+ 	kfree(es);
+ }
+ 
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 84664024e51e..cbb00ee97183 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -512,6 +512,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
+ u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
+ void exfat_update_bh(struct buffer_head *bh, int sync);
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync);
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags);
+ void exfat_chain_dup(struct exfat_chain *dup, struct exfat_chain *ec);
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index 8a3dde59052b..564718747fb2 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -172,6 +172,25 @@ void exfat_update_bh(struct buffer_head *bh, int sync)
+ 		sync_dirty_buffer(bh);
+ }
+ 
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync)
++{
++	int i, err = 0;
++
++	for (i = 0; i < nr_bhs; i++) {
++		set_buffer_uptodate(bhs[i]);
++		mark_buffer_dirty(bhs[i]);
++		if (sync)
++			write_dirty_buffer(bhs[i], 0);
++	}
++
++	for (i = 0; i < nr_bhs && sync; i++) {
++		wait_on_buffer(bhs[i]);
++		if (!buffer_uptodate(bhs[i]))
++			err = -EIO;
++	}
++	return err;
++}
++
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags)
+ {
+-- 
+2.25.1
 
-> give the function a slightly less generic name.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-[...]
-
-MBR, Sergei
