@@ -2,159 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E58DB1FFF3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 02:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A62D91FFF88
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 03:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbgFSA16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jun 2020 20:27:58 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37290 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbgFSA15 (ORCPT
+        id S1729861AbgFSBDk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jun 2020 21:03:40 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:33800 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729302AbgFSBDj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jun 2020 20:27:57 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05J0M2u0004756;
-        Fri, 19 Jun 2020 00:27:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=mZHm+L5Ei1oR1XqCOi3sReF6y81eXJTuWYq1i07VHxc=;
- b=YuKX4BOpzlRKsrGXHMuPk/Yi06HFsG8RxziPXHMVeobCjvE6vkITeNYsd2g7VHDWuXqG
- dUJdhwrfVho+sWi/FpqTcnGKQtEiZuAa7LQosMRTjZ3qZFrdtUf0CSMnpBaoc36Wqqhf
- OUTQX5lxW6qNFMM6MydbVHVK3rrZuOkD46a2v7NfYoUnTpSIq99xrRpe3wxaNDAzm/3W
- Vw9O3QFU43p5dX+JFqTxt8EAtLrdAjQ4sdp9fePBkVIac9hQdi/7woRFQHekSXYXXCyZ
- zhrYZsf3CK6pQxI2X9ehtCfsTve3+gngerXudw3wSagIEzsX3NTNCuyGqj3UqM4Ejdga cQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 31qg35a2m0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 19 Jun 2020 00:27:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05J0JEVO167553;
-        Fri, 19 Jun 2020 00:27:46 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 31q66qm8u9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Jun 2020 00:27:45 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05J0Rj3G017571;
-        Fri, 19 Jun 2020 00:27:45 GMT
-Received: from dhcp-10-159-251-35.vpn.oracle.com (/10.159.251.35)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Jun 2020 17:27:45 -0700
-Subject: Re: severe proc dentry lock contention
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin@oracle.com" <joe.jin@oracle.com>
-References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
- <20200618233958.GV8681@bombadil.infradead.org>
- <877dw3apn8.fsf@x220.int.ebiederm.org>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Message-ID: <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
-Date:   Thu, 18 Jun 2020 17:27:43 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <877dw3apn8.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 18 Jun 2020 21:03:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1592528629; x=1624064629;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=uTZheYLe+avvcAdr9w6H6EHKGUVcgJyqDufWzgn3UmA=;
+  b=bc/da6vhnLItSYPUHM1SJob7j1ek2bIBuQ0Wg6gIf3lkAjL0NMzn3YgW
+   EmbbcBINYQ7ceHOtQ5Gd6EPg5xJLfq4UX78vVC+BNwaP1ld+kQA9r/7C6
+   2nUIUA6FFG1ArcCEVp0w/Ak0xc8jK0BxLMxC0Dh9Nb8DXX6F0qs24fpoq
+   BIBAlFbnEhKg2C9YEaJagZ6hBy4GRjQdurDqjhjchtTDCm2+QPq8Ux/Ob
+   XQ28uOIZtgEO+ylyuTdeQyTNTJlnIC1heXiROfMobZUaFa26Il8pJFoTw
+   IAIkv8D/dIjQiNTYwocCIb5NdDXxAlu1/oaghmHlH7lWICK1A8Y28S4C5
+   A==;
+IronPort-SDR: wwbqC9msmR4iji5ztoM85AR/qaKe8O4SDMLI2dnJpt3c9Rleb/fhHBTUDB08ptf4moID1JqII0
+ 73aE43/5oWNWxKqROJonH4apYDaC+OVVDu1cEzuWFsrXvwDZTYYpZKNOAW89CZ8vrwUUvUgbBm
+ wIE1WL53OPfEEg/jHuB4RaoJnvzqJ2tWPeY1NTTczuXT7ngcI3JMRLrxEL+FQPy0H3Ad+5yh1K
+ OJq3TnTINuJRadASh8kdxnW+8nLYNlXjQwzHXjqyf6qPtmso2b59NoEkwlW6mH9WGR36UGwDcs
+ zU4=
+X-IronPort-AV: E=Sophos;i="5.75,253,1589212800"; 
+   d="scan'208";a="243341481"
+Received: from mail-bn3nam04lp2053.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([104.47.46.53])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Jun 2020 09:03:46 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q7eLf0mid6wFj6uEnnAXIiPbFZTkJs3s4fFd4DUDVCdfb/jmte9sE5LI1fawWns36pG9Coy96uCdeMYceWf9k38T6sa8aedSpCjhrNeruc+U5KWojOYSHtO0lhHVQvIORxU1TofmWI6nEFXO5NPCftOjQyDRTybczyGx7Z1oBJFrn75GMgNH6AWTndEegbar0tE2Kl54yP/kjxWZihTFwyMF3MrN+7gpNskADNjXzSIYAA1H0IQkDH0SGx7QxWpfY4pa2FspYpz4vA1ku3ur7sW3zFE796TvuAM1gn0DfBosK5GUVEqP7/NXB1QQ+hdrwKOOV0CXkf+Z1S7BrfHurg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uTZheYLe+avvcAdr9w6H6EHKGUVcgJyqDufWzgn3UmA=;
+ b=JVhPGtc5e1LR/Dzl2+WW6x5wEiJ6KzKX5nPRNU2uJithcmmlj2gqyREjMWPgr9wtuXyARJDCoNkC+GUOdO1ooSYTJqK1QAhwc85NrmbhrO+Cg9xVOAS/kz/wXJTGyfaf0Lvl4x5Xp9lj0TJeEyavqY6ZuoPpMEOpRuqCMBLPVXGwG9yO+v7EkjzdcRDuOWk9nME2+6W3wxx0g3tcYlz6AXopyNbnkhZ4dDGA8jt6PFAJ89ZWmhuOMZ1XWwfjAQGM1n+cxoi3OVdofnnHhGRb2ZancLRcZSmISbZciXIQDlRxxMjr5SCYDg+W66K4iiSWUOL0g4v4RNUqkPr9OAzyCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uTZheYLe+avvcAdr9w6H6EHKGUVcgJyqDufWzgn3UmA=;
+ b=U+vb5uu3Eb4lf5VSsScIXq1pNTMtFp9+ry20aIuu16AsLzMpd2NEx/GwBAVh6L7CVbbWNt5tgXYAgxXo9AORdaNQHNrpr+oLTB0Oddjo2ZNG7RysCUixmh5HMg2knUT/d6zIy8V0hAnOuyR1fBfGFEVK64iIaqjqdM9moLdu3kQ=
+Received: from CY4PR04MB3751.namprd04.prod.outlook.com (2603:10b6:903:ec::14)
+ by CY4PR04MB1049.namprd04.prod.outlook.com (2603:10b6:910:56::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.24; Fri, 19 Jun
+ 2020 01:03:35 +0000
+Received: from CY4PR04MB3751.namprd04.prod.outlook.com
+ ([fe80::c593:f271:eebe:ac7]) by CY4PR04MB3751.namprd04.prod.outlook.com
+ ([fe80::c593:f271:eebe:ac7%9]) with mapi id 15.20.3109.023; Fri, 19 Jun 2020
+ 01:03:34 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
+        Kanchan Joshi <joshi.k@samsung.com>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
+        "nj.shetty@samsung.com" <nj.shetty@samsung.com>,
+        "javier.gonz@samsung.com" <javier.gonz@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Thread-Topic: [PATCH 0/3] zone-append support in aio and io-uring
+Thread-Index: AQHWRMyErNBfEVsLrU+xBQX5pX+rOw==
+Date:   Fri, 19 Jun 2020 01:03:34 +0000
+Message-ID: <CY4PR04MB37518B422D0E9539DD20E8F9E7980@CY4PR04MB3751.namprd04.prod.outlook.com>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+ <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
+ <20200618192153.GA4141485@test-zns>
+ <12a630ce-599b-3877-8079-10b319b55d45@lightnvm.io>
+Accept-Language: en-US
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9656 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
- mlxscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 suspectscore=3
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006190000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9656 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
- clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0
- cotscore=-2147483648 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- suspectscore=3 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006190000
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lightnvm.io; dkim=none (message not signed)
+ header.d=none;lightnvm.io; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.182.57]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7183cb54-41aa-46e8-19e8-08d813ec979c
+x-ms-traffictypediagnostic: CY4PR04MB1049:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR04MB1049F97CA6E0A677B15F50DAE7980@CY4PR04MB1049.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0439571D1D
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: cXZbVURiBoiivH2Xwq06670JJfgSfKw1c8/pzIDrzREF3ywwaHjVQ0aBfpj6nhQhHfTM3CnmtHLuhVLQqt2sXlZQ0a4TzKVnxcGwpmm81R9jILjxplkG23tWreKPgkWYKx0UrOge7Ghb9vn6XS29N0s8pUth+12NPLJTaQQarE9Ua9bSjt4EwW6HJOufhyhCUrmgz956gDyeM1qW2i4/lDhMgKtVKop6lwuc0Scmjtrn8syYQUJhfMLaZz8HyHWlf52M/VbvYdqkNhqyRstbS8ag5TQWE8rFemCLEPQiAfiOiR7spARiOeEhhna0apv3gIw3geBNXLsflwIYkY3RyA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR04MB3751.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(376002)(346002)(366004)(39860400002)(136003)(83380400001)(26005)(4326008)(8676002)(316002)(55016002)(9686003)(2906002)(110136005)(478600001)(33656002)(54906003)(7696005)(8936002)(7416002)(5660300002)(76116006)(64756008)(86362001)(66446008)(71200400001)(53546011)(52536014)(66556008)(6506007)(66476007)(186003)(66946007)(91956017)(66574015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: AAWUTBktaUQV/AML/ePrW8SzU7mjcV4cAME3Vggz72btLQ4hGbkRmSXDGj2A55/55DgBOUN37/sMFcQP4w3iKfmyE7ZBXYp90i7VnhGs3LoCIgmqb7NWWN5BePmEKm3lblGmI0tN3PGnyDvb8Mhpxuk5Zhz+6xL5mBSeIl5wFlANtmGde5W8Q9KnQE+CG4jURacgy+8Fm2oM8daTJ85gfA0vzv1T5hmo1zY+8CCjKhsnF6mIjIuTfP/+6BIpvx76dzrbZNZeWTAAK0Z1atd9VTaVmr2+iMXzLkdizWzWS5t2MV29QtcNL5BKQhUUziOWgTj4HVPKo4J/uolwDErqCxfpmyw3nCi3R0HfVQ1l08DvmdeepuoT73Tii8uWZr3hbyX5ZlNwNpt9wV5AwhVe/9qHI1IVTfcD/CWUyHHs2+iFTQMW2dQ65X4VcGX7pZ6TNoCJ+vGjDPr5MscHiZ2aMXeo0SPljXbaJt5TfymxPgJn7GwTfKuxj6ZHqifQsVK0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7183cb54-41aa-46e8-19e8-08d813ec979c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2020 01:03:34.8525
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Jp+Bq8GfbVHG4E39RaMW3FOWGzeMCmmlJdjFEVB/wrZEqkIff/kr1gsUm5Shn6+G0F0v8GM5H+JwgREbGjXbxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB1049
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/18/20 5:02 PM, ebiederm@xmission.com wrote:
-
-> Matthew Wilcox <willy@infradead.org> writes:
->
->> On Thu, Jun 18, 2020 at 03:17:33PM -0700, Junxiao Bi wrote:
->>> When debugging some performance issue, i found that thousands of threads
->>> exit around same time could cause a severe spin lock contention on proc
->>> dentry "/proc/$parent_process_pid/task/", that's because threads needs to
->>> clean up their pid file from that dir when exit. Check the following
->>> standalone test case that simulated the case and perf top result on v5.7
->>> kernel. Any idea on how to fix this?
->> Thanks, Junxiao.
->>
->> We've looked at a few different ways of fixing this problem.
->>
->> Even though the contention is within the dcache, it seems like a usecase
->> that the dcache shouldn't be optimised for -- generally we do not have
->> hundreds of CPUs removing dentries from a single directory in parallel.
->>
->> We could fix this within procfs.  We don't have a great patch yet, but
->> the current approach we're looking at allows only one thread at a time
->> to call dput() on any /proc/*/task directory.
->>
->> We could also look at fixing this within the scheduler.  Only allowing
->> one CPU to run the threads of an exiting process would fix this particular
->> problem, but might have other consequences.
->>
->> I was hoping that 7bc3e6e55acf would fix this, but that patch is in 5.7,
->> so that hope is ruled out.
-> Does anyone know if problem new in v5.7?  I am wondering if I introduced
-> this problem when I refactored the code or if I simply churned the code
-> but the issue remains effectively the same.
-It's not new issue, we see it in old kernel like v4.14
->
-> Can you try only flushing entries when the last thread of the process is
-> reaped?  I think in practice we would want to be a little more
-> sophisticated but it is a good test case to see if it solves the issue.
-
-Thank you. i will try and let you know.
-
-Thanks,
-
-Junxiao.
-
->
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index cebae77a9664..d56e4eb60bdd 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -152,7 +152,7 @@ void put_task_struct_rcu_user(struct task_struct *task)
->   void release_task(struct task_struct *p)
->   {
->   	struct task_struct *leader;
-> -	struct pid *thread_pid;
-> +	struct pid *thread_pid = NULL;
->   	int zap_leader;
->   repeat:
->   	/* don't need to get the RCU readlock here - the process is dead and
-> @@ -165,7 +165,8 @@ void release_task(struct task_struct *p)
->   
->   	write_lock_irq(&tasklist_lock);
->   	ptrace_release_task(p);
-> -	thread_pid = get_pid(p->thread_pid);
-> +	if (p == p->group_leader)
-> +		thread_pid = get_pid(p->thread_pid);
->   	__exit_signal(p);
->   
->   	/*
-> @@ -188,8 +189,10 @@ void release_task(struct task_struct *p)
->   	}
->   
->   	write_unlock_irq(&tasklist_lock);
-> -	proc_flush_pid(thread_pid);
-> -	put_pid(thread_pid);
-> +	if (thread_pid) {
-> +		proc_flush_pid(thread_pid);
-> +		put_pid(thread_pid);
-> +	}
->   	release_thread(p);
->   	put_task_struct_rcu_user(p);
->   
+On 2020/06/19 5:04, Matias Bj=F8rling wrote:=0A=
+> On 18/06/2020 21.21, Kanchan Joshi wrote:=0A=
+>> On Thu, Jun 18, 2020 at 10:04:32AM +0200, Matias Bj=F8rling wrote:=0A=
+>>> On 17/06/2020 19.23, Kanchan Joshi wrote:=0A=
+>>>> This patchset enables issuing zone-append using aio and io-uring =0A=
+>>>> direct-io interface.=0A=
+>>>>=0A=
+>>>> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application =0A=
+>>>> uses start LBA=0A=
+>>>> of the zone to issue append. On completion 'res2' field is used to =0A=
+>>>> return=0A=
+>>>> zone-relative offset.=0A=
+>>>>=0A=
+>>>> For io-uring, this introduces three opcodes: =0A=
+>>>> IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.=0A=
+>>>> Since io_uring does not have aio-like res2, cqe->flags are =0A=
+>>>> repurposed to return zone-relative offset=0A=
+>>>=0A=
+>>> Please provide a pointers to applications that are updated and ready =
+=0A=
+>>> to take advantage of zone append.=0A=
+>>>=0A=
+>>> I do not believe it's beneficial at this point to change the libaio =0A=
+>>> API, applications that would want to use this API, should anyway =0A=
+>>> switch to use io_uring.=0A=
+>>>=0A=
+>>> Please also note that applications and libraries that want to take =0A=
+>>> advantage of zone append, can already use the zonefs file-system, as =
+=0A=
+>>> it will use the zone append command when applicable.=0A=
+>>=0A=
+>> AFAIK, zonefs uses append while serving synchronous I/O. And append bio=
+=0A=
+>> is waited upon synchronously. That maybe serving some purpose I do=0A=
+>> not know currently. But it seems applications using zonefs file=0A=
+>> abstraction will get benefitted if they could use the append =0A=
+>> themselves to=0A=
+>> carry the I/O, asynchronously.=0A=
+> Yep, please see Christoph's comment regarding adding the support to zonef=
+s.=0A=
+=0A=
+For the asynchronous processing of zone append in zonefs, we need to add=0A=
+plumbing in the iomap code first. Since this is missing currently, zonefs c=
+an=0A=
+only do synchronous/blocking zone append for now. Will be working on that, =
+if we=0A=
+can come up with a semantic that makes sense for posix system calls. zonefs=
+ is=0A=
+not a posix compliant file system, so we are not strongly tied by posix=0A=
+specifications. But we still want to make it as easy as possible to underst=
+and=0A=
+and use by the user.=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
