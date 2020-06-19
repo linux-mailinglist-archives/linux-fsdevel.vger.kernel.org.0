@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9012201CA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CC1201CA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391070AbgFSUrl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 16:47:41 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39886 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390831AbgFSUri (ORCPT
+        id S2391154AbgFSUrr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 16:47:47 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35810 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391113AbgFSUrn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 16:47:38 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d66so4927060pfd.6;
-        Fri, 19 Jun 2020 13:47:37 -0700 (PDT)
+        Fri, 19 Jun 2020 16:47:43 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k1so4385638pls.2;
+        Fri, 19 Jun 2020 13:47:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jH2CPsvsaNzRGDf+QoUv0Reklj4c8N9GM5jBSfoalww=;
-        b=EtMRTWjSA/XS/Sj0DF7zU5HchaXyxTbxxShmaD0xKI2F5Bwav1WbC/6+ykbZDAZpY5
-         3F8TGjiOgxE6YEqxXA6Gpr+w+yeHcORkGlc1hW7eujvW2NK8ndMTJVkv67VtyFG8U722
-         I5wU4dpAaMivjvD1RvZhRakdQL6zubdLzvz6oypQXckaKdx3y4WFFEedMXd9I+KbJlFw
-         96GWjcugF+szq5tzOCxckol7oXOn0EmBmRh47+iUzDDbaM8U0bzGHkZxAwbfIH9Gp9QX
-         OHLWXqnSqI5mVkDitD6GD7YIE+ckxFqt1Sr0H/7DeJDAlggMnx+A4NgXC8JQ1JWru15i
-         GVOw==
-X-Gm-Message-State: AOAM533EQ6oTZ6pqrWTvRuLZOguJQ71BtPhnXki9vIzFyliKVoQnhad5
-        GUU45iVGXAP2OU8xfDE2nrg=
-X-Google-Smtp-Source: ABdhPJw+rxutY1uGOaVhJTaFSz863dhub5gLBJTRgN2o19CWJtfQJo8NFso3QjofJ3IY9132mgZ6aQ==
-X-Received: by 2002:aa7:981d:: with SMTP id e29mr727732pfl.298.1592599657521;
-        Fri, 19 Jun 2020 13:47:37 -0700 (PDT)
+        bh=f88bEORI++QIsnJdKm2ca64CmhxGUzC3g+SSrwClYUg=;
+        b=b597umi/vwQhZzxLMDHbVDwgdPWBKhCvCp4M01vq276lf1KR8jDcUF058/2qmLGs/3
+         zyGtULDU824dglz2AvD0OHy0l6HmqBwJ1rYigiWiRtbUrQcQz4rGnLmH92s95CAFvgTH
+         UB3N41EPWoNpUqlso6CmVTwEr/eIEr1GEg+A4sW8al8AhwMyfUkIaq4NLyH7B25VjEFd
+         hru93WuDmgMrbn88iON5pAeBoCRXONHlddX/t5TaLdcJi0loWUj/FhQL4NbKDxQccNAO
+         GOuCdGxHBBYZOMlQxu6386i8aXVaoa+kI5hCVAYr8Zx12IwBItDDOiPGDlUJZIoRQ3P9
+         QaVw==
+X-Gm-Message-State: AOAM532f0wYUxQEaiopXZcaukXN4eTb/3VruOK97Io0KNAUyBtOmcSrd
+        7YqEyuGYevviWu/I+zIV7AY=
+X-Google-Smtp-Source: ABdhPJyoZ4/dvNRCLnarrxnxISmW+vu/kyGF815p5j84q6q1BrSobxtKcghLOojyOlj8eKMv/rwguw==
+X-Received: by 2002:a17:90a:8083:: with SMTP id c3mr5595094pjn.83.1592599661138;
+        Fri, 19 Jun 2020 13:47:41 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id u14sm7353047pfk.211.2020.06.19.13.47.32
+        by smtp.gmail.com with ESMTPSA id m10sm5741217pjs.27.2020.06.19.13.47.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jun 2020 13:47:33 -0700 (PDT)
+        Fri, 19 Jun 2020 13:47:39 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 657E241DAA; Fri, 19 Jun 2020 20:47:32 +0000 (UTC)
+        id 792F241DAB; Fri, 19 Jun 2020 20:47:32 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
         gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
@@ -44,10 +44,11 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bvanassche@acm.org,
 Cc:     mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
         jejb@linux.ibm.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v7 4/8] blktrace: annotate required lock on do_blk_trace_setup()
-Date:   Fri, 19 Jun 2020 20:47:26 +0000
-Message-Id: <20200619204730.26124-5-mcgrof@kernel.org>
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v7 5/8] loop: be paranoid on exit and prevent new additions / removals
+Date:   Fri, 19 Jun 2020 20:47:27 +0000
+Message-Id: <20200619204730.26124-6-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200619204730.26124-1-mcgrof@kernel.org>
 References: <20200619204730.26124-1-mcgrof@kernel.org>
@@ -58,27 +59,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ensure it is clear which lock is required on do_blk_trace_setup().
+Be pedantic on removal as well and hold the mutex.
+This should prevent uses of addition while we exit.
 
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- kernel/trace/blktrace.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/loop.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 7f60029bdaff..7ff2ea5cd05e 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -483,6 +483,8 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 	struct dentry *dir = NULL;
- 	int ret;
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index c33bbbfd1bd9..d55e1b52f076 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -2402,6 +2402,8 @@ static void __exit loop_exit(void)
  
-+	lockdep_assert_held(&q->blk_trace_mutex);
+ 	range = max_loop ? max_loop << part_shift : 1UL << MINORBITS;
+ 
++	mutex_lock(&loop_ctl_mutex);
 +
- 	if (!buts->buf_size || !buts->buf_nr)
- 		return -EINVAL;
+ 	idr_for_each(&loop_index_idr, &loop_exit_cb, NULL);
+ 	idr_destroy(&loop_index_idr);
  
+@@ -2409,6 +2411,8 @@ static void __exit loop_exit(void)
+ 	unregister_blkdev(LOOP_MAJOR, "loop");
+ 
+ 	misc_deregister(&loop_misc);
++
++	mutex_unlock(&loop_ctl_mutex);
+ }
+ 
+ module_init(loop_init);
 -- 
 2.26.2
 
