@@ -2,170 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A073C2003A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 10:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 137B02003DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 10:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbgFSIXW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 04:23:22 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51378 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731318AbgFSIVH (ORCPT
+        id S1731381AbgFSI3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 04:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51768 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730651AbgFSI3C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 04:21:07 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-78-mkYMfPweOkGnJdWf_Vspzw-1; Fri, 19 Jun 2020 09:20:56 +0100
-X-MC-Unique: mkYMfPweOkGnJdWf_Vspzw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 19 Jun 2020 09:20:55 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 19 Jun 2020 09:20:55 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Kees Cook' <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Christian Brauner" <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "Christoph Hellwig" <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH v5 3/7] fs: Add fd_install_received() wrapper for
- __fd_install_received()
-Thread-Topic: [PATCH v5 3/7] fs: Add fd_install_received() wrapper for
- __fd_install_received()
-Thread-Index: AQHWRazi5O9oFyX6VkOfXGvu43vXPajfldBw
-Date:   Fri, 19 Jun 2020 08:20:55 +0000
-Message-ID: <c7d9f68d5dff4c54b4da0d96b03de2a0@AcuMS.aculab.com>
-References: <20200617220327.3731559-1-keescook@chromium.org>
- <20200617220327.3731559-4-keescook@chromium.org>
- <20200618054918.GB18669@ircssh-2.c.rugged-nimbus-611.internal>
- <202006181305.01F1B08@keescook>
-In-Reply-To: <202006181305.01F1B08@keescook>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 19 Jun 2020 04:29:02 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21163C06174E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 01:29:01 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id o4so5072445lfi.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 01:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=irVvm75B8uOjhet4ds9NewlHhGnanjSr3qTRTZzIUE4=;
+        b=qkbi8YvZIpYdgXOhuLz+oLhk6FU5nre6FOh8jwCxVM9654uCe38mG3xi4sHqGzzDyG
+         SEH1hJrw2TFIChHUxX1ZXnbwARwg6RC5j0BV0+jMRPStvzbKMhHOWFkkmEsrWjqdX5F+
+         D1IOfQlW2zLQg/nVx9gJMOxi4uOERKvqBd1S1RhEt6EhjY5th0/tAvBfP2KAJAM96y7o
+         h72udRwv1GPKxwptl875dVONvJoltvXpQNW88Rr7UCqkXi2dwlS43kJ7lnlN+shZedPc
+         UEpFi+EUsizwMgSG5KrzWkYQzjXdopu2qfdbxfjTUi6dvlVTSJe8cWAu3gdUIqCShHxT
+         T2Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=irVvm75B8uOjhet4ds9NewlHhGnanjSr3qTRTZzIUE4=;
+        b=kBGqodu15S9BMMCEqEjxO/bzo0ZCMJj5D5wO+NSQrn0IMaDLRVmQLhXrfhnKGGY6V3
+         anHXtCHvDJq997Ua5332k65bQjMSvA5vVhKhXEA3qgW7JvG9JmScjTHRzo2PuYtFmP2G
+         EdEJY3b5ihengLbKntzEjH/pPD4gbLGIuR+f6qZfVq7SfUWHNKtJzd4WNbSR4AYIWlWb
+         l6WTMV+QVMQ1jsjuj/w6z/Pk+ODbFyKt3fZ8pnvAxw/so9fAf4g0NKG62Duya/x4fbWU
+         mHFgcHOXQnEcehLKtST+5ThL+rSwbQVIOOIDDds0wTAFrsZFn66qDssuMkaU8Xan0pxv
+         yZ3A==
+X-Gm-Message-State: AOAM533HaURofONHzjIAk1SNt5I55EmPFdohnjm+evAlkVWsWpsfhSvK
+        8JvPjLn5DiXAYOmzO+6YWX7AlfyrXq8Jvw==
+X-Google-Smtp-Source: ABdhPJxnSAk4hCfsyIu7N052ONa1UuRXTstPiF0JmLx3L/kM6WdrlnqV1xaj4A+uNl5wLop8yEYwoQ==
+X-Received: by 2002:ac2:5c49:: with SMTP id s9mr1327184lfp.90.1592555339610;
+        Fri, 19 Jun 2020 01:28:59 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:8c9:4beb:2ce8:f19d:33e5:571e? ([2a00:1fa0:8c9:4beb:2ce8:f19d:33e5:571e])
+        by smtp.gmail.com with ESMTPSA id a16sm1058721ljb.107.2020.06.19.01.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jun 2020 01:28:58 -0700 (PDT)
+Subject: Re: [PATCH 3/6] exec: cleanup the count() function
+To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200618144627.114057-1-hch@lst.de>
+ <20200618144627.114057-4-hch@lst.de>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <04e7876b-a8f3-3f6e-939c-bb0764ece1ac@cogentembedded.com>
+Date:   Fri, 19 Jun 2020 11:28:44 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200618144627.114057-4-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kees Cook
-> Sent: 18 June 2020 21:13
-> On Thu, Jun 18, 2020 at 05:49:19AM +0000, Sargun Dhillon wrote:
-> > On Wed, Jun 17, 2020 at 03:03:23PM -0700, Kees Cook wrote:
-> > > [...]
-> > >  static inline int fd_install_received_user(struct file *file, int __user *ufd,
-> > >  					   unsigned int o_flags)
-> > >  {
-> > > +	if (ufd == NULL)
-> > > +		return -EFAULT;
-> > Isn't this *technically* a behvaiour change? Nonetheless, I think this is a much better
-> > approach than forcing everyone to do null checking, and avoids at least one error case
-> > where the kernel installs FDs for SCM_RIGHTS, and they're not actualy usable.
-> 
-> So, the only behavior change I see is that the order of sanity checks is
-> changed.
-> 
-> The loop in scm_detach_fds() is:
-> 
-> 
->         for (i = 0; i < fdmax; i++) {
->                 err = __scm_install_fd(scm->fp->fp[i], cmsg_data + i, o_flags);
->                 if (err < 0)
->                         break;
->         }
-> 
-> Before, __scm_install_fd() does:
-> 
->         error = security_file_receive(file);
->         if (error)
->                 return error;
-> 
->         new_fd = get_unused_fd_flags(o_flags);
->         if (new_fd < 0)
->                 return new_fd;
-> 
->         error = put_user(new_fd, ufd);
->         if (error) {
->                 put_unused_fd(new_fd);
->                 return error;
->         }
-> 	...
-> 
-> After, fd_install_received_user() and __fd_install_received() does:
-> 
->         if (ufd == NULL)
->                 return -EFAULT;
-> 	...
->         error = security_file_receive(file);
->         if (error)
->                 return error;
-> 	...
->                 new_fd = get_unused_fd_flags(o_flags);
->                 if (new_fd < 0)
->                         return new_fd;
-> 	...
->                 error = put_user(new_fd, ufd);
->                 if (error) {
->                         put_unused_fd(new_fd);
->                         return error;
->                 }
-> 
-> i.e. if a caller attempts a receive that is rejected by LSM *and*
-> includes a NULL userpointer destination, they will get an EFAULT now
-> instead of an EPERM.
+Hello!
 
-The 'user' pointer the fd is written to is in the middle of
-the 'cmsg' buffer.
-So to hit 'ufd == NULL' the program would have to pass a small
-negative integer!
+On 18.06.2020 17:46, Christoph Hellwig wrote:
 
-The error paths are strange if there are multiple fd in the message.
-A quick look at the old code seems to imply that if the user doesn't
-supply a big enough buffer then the extra 'file *' just get closed.
-OTOH if there is an error processing one of the files the request
-fails with the earlier file allocated fd numbers.
+> Remove the max argument as it is hard wired to MAX_ARG_STRINGS, and
 
-In addition most of the userspace buffer is written after the
-loop - any errors there return -EFAULT (SIGSEGV) without
-even trying to tidy up the allocated fd.
+    Technically, argument is what's actually passed to a function, you're 
+removing a function parameter.
 
-ISTM that the put_user(new_fd, ufd) could be done in __scm_install_fd()
-after __fd_install_received() returns.
+> give the function a slightly less generic name.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+[...]
 
-scm_detach_fds() could do the put_user(SOL_SOCKET,...) before actually
-processing the first file - so that the state can be left unchanged
-when a naff buffer is passed.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+MBR, Sergei
