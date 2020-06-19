@@ -2,175 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 801F8201241
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 17:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B682012C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 17:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394118AbgFSPul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 11:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35260 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394132AbgFSPuk (ORCPT
+        id S2404036AbgFSP4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 11:56:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58444 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392422AbgFSP4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 11:50:40 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F93C06174E;
-        Fri, 19 Jun 2020 08:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=gqRrOSjrTbnmLixbeSJjNyufrKjbx8bQ0hoWXFgHbbA=; b=FUNxybH2BQdZYCAyU9DCQsfcFT
-        milNvBpSYbFN9uggxqVw0KSSDEG8nnbG+ql3mVjPp7AGcKj7l66qo7y2pl6Hsv7KKr6kCa51ScPTA
-        EWwUCzuL0G+vNeMOviK7AWZvLfdFPi8VUhljOifHnmuFJUfXW3CJKbQ1H2c5PTeuGieu8SbXAa1Dp
-        YrWnLx/3z4T6G+ocOe4jNVdXNTaCsztfIZqLGclRIelAdmBMlLEo5XKpVhrctiNhazPND5Tcu3MFM
-        mJb5LKpxVvyhwWPmmJKuO6DX/PwVz4UKmTlTElCrFBDQmypl5AUn9Db+94F3puc3J3a2YbmpFPz9Q
-        NxC1wcFg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmJHo-0005rh-J2; Fri, 19 Jun 2020 15:50:36 +0000
-Date:   Fri, 19 Jun 2020 08:50:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        agruenba@redhat.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [RFC] Bypass filesystems for reading cached pages
-Message-ID: <20200619155036.GZ8681@bombadil.infradead.org>
+        Fri, 19 Jun 2020 11:56:31 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05JFq3bi170918;
+        Fri, 19 Jun 2020 15:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=N6oqYfCHp2QV/JmQ5LTSA79FMCO+5ovjIc8N1hvqNII=;
+ b=jwcPp93u21clgfcXb8amGQARxjsXxNDJMa5eOGgNveCmOAFbN8qjQT4FS/8lgasOk/j9
+ R7ErM8Bs8ONT0q5t+QDEoF1aX7qfN49Jk3pUd5TFHc9jQtMqp2cBHH0GEiU39LxzqcrR
+ mMCQCl/OEHGcZPLC/O0RJVowgo+EwVsZxilrRC0kqFp/y/G8ToHnrlsvMX4vF1Hz0sRN
+ wwec7UpU3iHZ/xva2LEyFu8/8wabBmr+UyUjPVUuw7JWiD3QBZpycNlvTn3+jCRMdxQB
+ sxWAncWKGlBWwrc6V3TvhJpizC1QnYUDD7/XyZ9efthMEddYFsRldrrhUFRmuyAf+7Y1 9w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31q6607fbj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Jun 2020 15:56:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05JFqadD159790;
+        Fri, 19 Jun 2020 15:56:24 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 31q66d78mc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jun 2020 15:56:24 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05JFuNPN010644;
+        Fri, 19 Jun 2020 15:56:23 GMT
+Received: from dhcp-10-159-240-10.vpn.oracle.com (/10.159.240.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Jun 2020 08:56:23 -0700
+Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc
+ dentries
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin@oracle.com" <joe.jin@oracle.com>,
+        Wengang Wang <wen.gang.wang@oracle.com>
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
+ <20200618233958.GV8681@bombadil.infradead.org>
+ <877dw3apn8.fsf@x220.int.ebiederm.org>
+ <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
+ <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+From:   Junxiao Bi <junxiao.bi@oracle.com>
+Message-ID: <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
+Date:   Fri, 19 Jun 2020 08:56:21 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9657 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006190116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9657 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 impostorscore=0
+ cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006190116
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Eric,
 
-This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
-The advantage of this patch is that we can avoid taking any filesystem
-lock, as long as the pages being accessed are in the cache (and we don't
-need to readahead any pages into the cache).  We also avoid an indirect
-function call in these cases.
+The patch didn't improve lock contention.
 
-I'm sure reusing the name call_read_iter() is the wrong way to go about
-this, but renaming all the callers would make this a larger patch.
-I'm happy to do it if something like this stands a chance of being
-accepted.
+    PerfTop:   48925 irqs/sec  kernel:95.6%  exact: 100.0% lost: 0/0 
+drop: 0/0 [4000Hz cycles],  (all, 104 CPUs)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
-Compared to Andreas' patch, I removed the -ECANCELED return value.
-We can happily return 0 from generic_file_buffered_read() and it's less
-code to handle that.  I bypass the attempt to read from the page cache
-for O_DIRECT reads, and for inodes which have no cached pages.  Hopefully
-this will avoid calling generic_file_buffered_read() for drivers which
-implement read_iter() (although I haven't audited them all to check that
 
-This could go horribly wrong if filesystems rely on doing work in their
-->read_iter implementation (eg checking i_size after acquiring their
-lock) instead of keeping the page cache uptodate.  On the other hand,
-the ->map_pages() method is already called without locks, so filesystems
-should already be prepared for this.
+     69.66%  [kernel]                                        [k] 
+native_queued_spin_lock_slowpath
+      1.93%  [kernel]                                        [k] 
+_raw_spin_lock
+      1.24%  [kernel]                                        [k] 
+page_counter_cancel
+      0.70%  [kernel]                                        [k] 
+do_syscall_64
+      0.62%  [kernel]                                        [k] 
+find_idlest_group.isra.96
+      0.57%  [kernel]                                        [k] 
+queued_write_lock_slowpath
+      0.56%  [kernel]                                        [k] d_walk
+      0.45%  [kernel]                                        [k] 
+clear_page_erms
+      0.44%  [kernel]                                        [k] 
+syscall_return_via_sysret
+      0.40%  [kernel]                                        [k] 
+entry_SYSCALL_64
+      0.38%  [kernel]                                        [k] 
+refcount_dec_not_one
+      0.37%  [kernel]                                        [k] 
+propagate_protected_usage
+      0.33%  [kernel]                                        [k] 
+unmap_page_range
+      0.33%  [kernel]                                        [k] 
+select_collect
+      0.32%  [kernel]                                        [k] memcpy_erms
+      0.30%  [kernel]                                        [k] 
+proc_task_readdir
+      0.27%  [kernel]                                        [k] 
+_raw_spin_lock_irqsave
 
-Arguably we could do something similar for writes.  I'm a little more
-scared of that patch since filesystems are more likely to want to do
-things to keep their fies in sync for writes.
+Thanks,
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index bbfa9b12b15e..7b899538d3c0 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -401,6 +401,41 @@ int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t
- 				read_write == READ ? MAY_READ : MAY_WRITE);
- }
- 
-+ssize_t call_read_iter(struct file *file, struct kiocb *iocb,
-+				     struct iov_iter *iter)
-+{
-+	ssize_t written, ret = 0;
-+
-+	if (iocb->ki_flags & IOCB_DIRECT)
-+		goto uncached;
-+	if (!file->f_mapping->nrpages)
-+		goto uncached;
-+
-+	iocb->ki_flags |= IOCB_CACHED;
-+	ret = generic_file_buffered_read(iocb, iter, 0);
-+	iocb->ki_flags &= ~IOCB_CACHED;
-+
-+	if (likely(!iov_iter_count(iter)))
-+		return ret;
-+
-+	if (ret == -EAGAIN) {
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			return ret;
-+		ret = 0;
-+	} else if (ret < 0) {
-+		return ret;
-+	}
-+
-+uncached:
-+	written = ret;
-+
-+	ret = file->f_op->read_iter(iocb, iter);
-+	if (ret > 0)
-+		written += ret;
-+
-+	return written ? written : ret;
-+}
-+
- static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, loff_t *ppos)
- {
- 	struct iovec iov = { .iov_base = buf, .iov_len = len };
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6c4ab4dc1cd7..0985773feffd 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -315,6 +315,7 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+#define IOCB_CACHED		(1 << 8)
- 
- struct kiocb {
- 	struct file		*ki_filp;
-@@ -1895,11 +1896,7 @@ struct inode_operations {
- 	int (*set_acl)(struct inode *, struct posix_acl *, int);
- } ____cacheline_aligned;
- 
--static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
--				     struct iov_iter *iter)
--{
--	return file->f_op->read_iter(kio, iter);
--}
-+ssize_t call_read_iter(struct file *, struct kiocb *, struct iov_iter *);
- 
- static inline ssize_t call_write_iter(struct file *file, struct kiocb *kio,
- 				      struct iov_iter *iter)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f0ae9a6308cb..4ee97941a1f2 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2028,7 +2028,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- 		page = find_get_page(mapping, index);
- 		if (!page) {
--			if (iocb->ki_flags & IOCB_NOWAIT)
-+			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED))
- 				goto would_block;
- 			page_cache_sync_readahead(mapping,
- 					ra, filp,
-@@ -2038,12 +2038,16 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 				goto no_cached_page;
- 		}
- 		if (PageReadahead(page)) {
-+			if (iocb->ki_flags & IOCB_CACHED) {
-+				put_page(page);
-+				goto out;
-+			}
- 			page_cache_async_readahead(mapping,
- 					ra, filp, page,
- 					index, last_index - index);
- 		}
- 		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_NOWAIT) {
-+			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED)) {
- 				put_page(page);
- 				goto would_block;
- 			}
+Junxiao.
 
+On 6/19/20 7:09 AM, ebiederm@xmission.com wrote:
+> Junxiao Bi <junxiao.bi@oracle.com> reported:
+>> When debugging some performance issue, i found that thousands of threads exit
+>> around same time could cause a severe spin lock contention on proc dentry
+>> "/proc/$parent_process_pid/task/", that's because threads needs to clean up
+>> their pid file from that dir when exit.
+> Matthew Wilcox <willy@infradead.org> reported:
+>> We've looked at a few different ways of fixing this problem.
+> The flushing of the proc dentries from the dcache is an optmization,
+> and is not necessary for correctness.  Eventually cache pressure will
+> cause the dentries to be freed even if no flushing happens.  Some
+> light testing when I refactored the proc flushg[1] indicated that at
+> least the memory footprint is easily measurable.
+>
+> An optimization that causes a performance problem due to a thundering
+> herd of threads is no real optimization.
+>
+> Modify the code to only flush the /proc/<tgid>/ directory when all
+> threads in a process are killed at once.  This continues to flush
+> practically everything when the process is reaped as the threads live
+> under /proc/<tgid>/task/<tid>.
+>
+> There is a rare possibility that a debugger will access /proc/<tid>/,
+> which this change will no longer flush, but I believe such accesses
+> are sufficiently rare to not be observed in practice.
+>
+> [1] 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
+> Link: https://lkml.kernel.org/r/54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com
+> Reported-by: Masahiro Yamada <masahiroy@kernel.org>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>
+> I am still waiting for word on how this affects performance, but this is
+> a clean version that should avoid the thundering herd problem in
+> general.
+>
+>
+>   kernel/exit.c | 19 +++++++++++++++----
+>   1 file changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index cebae77a9664..567354550d62 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -151,8 +151,8 @@ void put_task_struct_rcu_user(struct task_struct *task)
+>   
+>   void release_task(struct task_struct *p)
+>   {
+> +	struct pid *flush_pid = NULL;
+>   	struct task_struct *leader;
+> -	struct pid *thread_pid;
+>   	int zap_leader;
+>   repeat:
+>   	/* don't need to get the RCU readlock here - the process is dead and
+> @@ -165,7 +165,16 @@ void release_task(struct task_struct *p)
+>   
+>   	write_lock_irq(&tasklist_lock);
+>   	ptrace_release_task(p);
+> -	thread_pid = get_pid(p->thread_pid);
+> +
+> +	/*
+> +	 * When all of the threads are exiting wait until the end
+> +	 * and flush everything.
+> +	 */
+> +	if (thread_group_leader(p))
+> +		flush_pid = get_pid(task_tgid(p));
+> +	else if (!(p->signal->flags & SIGNAL_GROUP_EXIT))
+> +		flush_pid = get_pid(task_pid(p));
+> +
+>   	__exit_signal(p);
+>   
+>   	/*
+> @@ -188,8 +197,10 @@ void release_task(struct task_struct *p)
+>   	}
+>   
+>   	write_unlock_irq(&tasklist_lock);
+> -	proc_flush_pid(thread_pid);
+> -	put_pid(thread_pid);
+> +	if (flush_pid) {
+> +		proc_flush_pid(flush_pid);
+> +		put_pid(flush_pid);
+> +	}
+>   	release_thread(p);
+>   	put_task_struct_rcu_user(p);
+>   
