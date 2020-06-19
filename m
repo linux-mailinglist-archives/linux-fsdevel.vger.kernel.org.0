@@ -2,81 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9568201B2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 21:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73680201BBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 21:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387873AbgFSTWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 15:22:36 -0400
-Received: from cloud1-vm154.de-nserver.de ([178.250.10.56]:25993 "EHLO
-        cloud1-vm154.de-nserver.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387818AbgFSTWf (ORCPT
+        id S2391288AbgFST6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 15:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390834AbgFST6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 15:22:35 -0400
-Received: (qmail 4893 invoked from network); 19 Jun 2020 21:22:33 +0200
-X-Fcrdns: No
-Received: from phoffice.de-nserver.de (HELO [10.242.2.5]) (185.39.223.5)
-  (smtp-auth username hostmaster@profihost.com, mechanism plain)
-  by cloud1-vm154.de-nserver.de (qpsmtpd/0.92) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA; Fri, 19 Jun 2020 21:22:33 +0200
-X-GeoIP-Country: DE
-Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
-From:   Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-To:     David Howells <dhowells@redhat.com>
-Cc:     ebiggers@google.com, viro@zeniv.linux.org.uk, mszeredi@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        "p.kramme@profihost.ag" <p.kramme@profihost.ag>,
-        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
-References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
- <1696715.1592552822@warthog.procyon.org.uk>
- <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
-Message-ID: <2b3b05e0-0aca-b677-181c-769bd3dc1ab8@profihost.ag>
-Date:   Fri, 19 Jun 2020 21:22:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Fri, 19 Jun 2020 15:58:08 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB57DC06174E;
+        Fri, 19 Jun 2020 12:58:08 -0700 (PDT)
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id C96C32B8;
+        Fri, 19 Jun 2020 19:58:07 +0000 (UTC)
+Date:   Fri, 19 Jun 2020 13:58:06 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Luigi Semenzato <semenzato@chromium.org>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        NeilBrown <neilb@suse.de>, Yang Shi <yang.shi@linux.alibaba.com>,
+        Mark Brown <broonie@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Daniel Kiss <daniel.kiss@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] docs: fs: proc.rst: fix a warning due to a merge
+ conflict
+Message-ID: <20200619135806.7f0e8b0f@lwn.net>
+In-Reply-To: <28c4f4c5c66c0fd7cbce83fe11963ea6154f1d47.1591137229.git.mchehab+huawei@kernel.org>
+References: <cover.1591137229.git.mchehab+huawei@kernel.org>
+        <28c4f4c5c66c0fd7cbce83fe11963ea6154f1d47.1591137229.git.mchehab+huawei@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-In-Reply-To: <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-User-Auth: Auth by hostmaster@profihost.com through 185.39.223.5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-may be more details:
+On Wed,  3 Jun 2020 00:38:14 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Am 19.06.20 um 21:02 schrieb Stefan Priebe - Profihost AG:
+> Changeset 424037b77519 ("mm: smaps: Report arm64 guarded pages in smaps")
+> added a new parameter to a table. This causes Sphinx warnings,
+> because there's now an extra "-" at the wrong place:
 > 
-> Am 19.06.20 um 09:47 schrieb David Howells:
->> Stefan Priebe - Profihost AG <s.priebe@profihost.ag> wrote:
->>
->>> while using fuse 2.x and nonempty mount option - fuse mounts breaks
->>> after upgrading from kernel 4.19 to 5.4.
->>
->> Can you give us an example mount commandline to try?
+> 	/devel/v4l/docs/Documentation/filesystems/proc.rst:548: WARNING: Malformed table.
+> 	Text in column margin in table line 29.
 > 
-> see fstab which daniel sent or:
-> ceph-fuse  /var/log/pve/tasks nonempty
+> 	==    =======================================
+> 	rd    readable
+> 	...
+> 	bt  - arm64 BTI guarded page
+> 	==    =======================================
 > 
-> Greets,
-> Stefan
+> Fixes: 424037b77519 ("mm: smaps: Report arm64 guarded pages in smaps")
+> Fixes: c33e97efa9d9 ("docs: filesystems: convert proc.txt to ReST")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+I went ahead and applied this overdue patch, thanks.
 
-# ceph-fuse /var/log/pve/tasks -o rw,nonempty,noatime
-2020-06-19 21:20:18.092 7f26af394f40 -1 init, newargv = 0x5627e08cc3d0
-newargc=9fuse: bad mount point `/var/log/pve/tasks': Transport endpoint
-is not connected
-
-ceph-fuse[6955032020-06-19 21:20:18.092 7f26af394f40 -1
-fuse_parse_cmdline failed.
-]: fuse failed to initialize
-
-# dmesg
-[1226534.081647] fuse: Unknown parameter 'nonempty'
-
-works fine with vanilla 4.19 kernel.
-
->>
->> Thanks,
->> David
->>
+jon
