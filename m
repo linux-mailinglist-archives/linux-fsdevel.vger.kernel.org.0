@@ -2,88 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CB120125B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 17:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180DF2010FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 17:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390792AbgFSPwB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 11:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393189AbgFSPXb (ORCPT
+        id S2405070AbgFSPg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 11:36:28 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:56178 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391695AbgFSPgY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 11:23:31 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A039C061794
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 08:23:30 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id x207so4568713pfc.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 08:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zzBeoYkChCcVAStYW7riry6t3ZsDx2Q3uCHI24rM2Uw=;
-        b=nnSCFoxYQ6AUSpPl6es7No4L1LX1qK6aUh3FwEFvx+WeSsOtxLwXhsHLAvFM6kig2O
-         SV245MBqVFTqZWl4g3U9QzuwU+oxj1v4jxKS4r1RDH+Qe5p83thMMXeebnx9oe8xnYCb
-         JB2UmXJ3oVZgULEcF+krwdSlyupQk5jtNrhcK6Nc+joMLRC6xJKI75lYwqECAxKxnoXM
-         f3tq2NmFzCnozoFNNfLnQJAFoM3fuj8Btgjq+HaI7KEw09q7MV5+F0nuwFqYDD6r1fbJ
-         WE53xOFEsZNg8/DJUR3WUCPMVi4E5ZjdMjRveodE4idwaRFNR5TaFOFR+50U7OAgJ0Mo
-         1E0A==
+        Fri, 19 Jun 2020 11:36:24 -0400
+Received: by mail-pj1-f67.google.com with SMTP id ne5so4198232pjb.5;
+        Fri, 19 Jun 2020 08:36:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zzBeoYkChCcVAStYW7riry6t3ZsDx2Q3uCHI24rM2Uw=;
-        b=ecTdPh5iR3xTjPrDiis/aXBOuny3A2zXLXwvpz/xnuUZ2R/uC/4gEwz6h+YjAj9RHx
-         Ez7YNaWrJWp8eLXlSLBgwTc4wz08ThJt/7BTjZhZQ+WJhbTdp2JwyCWAXJgLHdLXkICO
-         I5SXv+W6m5/NY257RXTOE6OVi/sjOGK3AxZP+fYRjni5hbgBX27G2rKrbqB+dJ0R73Od
-         fTHuW6/tx9bsq3hBAXWayagvhVjXHNKFEskLcAxfozWU9YInov06admgJ7/hiAsPOmtP
-         ni/83m8DU7AjmyqxJZ2jYvQ6wSIvtCcOeb/fZVrQwPnn6LW8u4K9AY0k9eacT4eGii7O
-         6vaA==
-X-Gm-Message-State: AOAM530YF0mIvuJkCTXX7lIi2ydOSKz6+g391RbnEJQ8iWeDGrrAx/Nm
-        k6jHxH/BIw6IzDz19Qd8WjtFlDgTId++nw==
-X-Google-Smtp-Source: ABdhPJwvjmildVQ458MWHvwKJ1J5ToeoGRI4YFBGf+vUIXbuLmaFSHrHXTi8H577NG+qCE8UU1yEIw==
-X-Received: by 2002:a63:525a:: with SMTP id s26mr1423522pgl.155.1592580209702;
-        Fri, 19 Jun 2020 08:23:29 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a8sm2864224pga.64.2020.06.19.08.23.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2020 08:23:29 -0700 (PDT)
-Subject: Re: [PATCH 3/3] io_uring: add support for zone-append
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        javier.gonz@samsung.com, linux-aio@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200619152208.GA62406@localhost.localdomain>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b5bb1ba8-4738-3f8b-a8b7-839792cbfbf6@kernel.dk>
-Date:   Fri, 19 Jun 2020 09:23:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LjzrirVb+ZQBftcrRnoHLV9aRjuJIVfcPAYJhueLEQk=;
+        b=j5o5tO1tyDDGisXMWl6kWkDjdFhK2FjznjMc5EuwqXD/hVXUn54Cd94YxgQvB2eKm5
+         B3jQgLkjJ2auPVeSKVfjQjzc0alqO1f5jAraGYVl2fe3PDCKTSfwszZONn0pQX8QsP+X
+         pF2piML2/z4jHogDjdDkJzV3RHPbYiKytxjF8KSOfODkMaeuGn50tI1E5Q1eQhu9OzjV
+         BCq41297JQ1QAL/uxF9WRufJY4CeNYNhRLhVOr9mb1GY0S0nyMmR0GfMnf/vsH5llkdS
+         +Hag2VWUTm7flab+tFX4zfhVskY/PjsOBLq+nCKjDgRiMuc884h+CeWsI+IlpJgbZ8YU
+         bN1Q==
+X-Gm-Message-State: AOAM530ZiggpUZSitQ2Wb9nvdQwVhV0pv5Wny6SJA8ksO2SGdygu3nMn
+        Fdomf+a3jIMvmvnEPbRCM5s=
+X-Google-Smtp-Source: ABdhPJzViKsR3tVw6K/ch+JBLdo17uGcti8CT335conquQT26tgspJ89pJQG6ng0CCGMq0+rPtsHZQ==
+X-Received: by 2002:a17:902:b906:: with SMTP id bf6mr8845200plb.129.1592580983204;
+        Fri, 19 Jun 2020 08:36:23 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id p16sm5382348pgj.53.2020.06.19.08.36.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 08:36:21 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id CD1B84063E; Fri, 19 Jun 2020 15:36:20 +0000 (UTC)
+Date:   Fri, 19 Jun 2020 15:36:20 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        martin.petersen@oracle.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [PATCH v6 6/6] blktrace: fix debugfs use after free
+Message-ID: <20200619153620.GI11244@42.do-not-panic.com>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-7-mcgrof@kernel.org>
+ <ec643803-2339-fe8d-7f58-b37871c83386@acm.org>
 MIME-Version: 1.0
-In-Reply-To: <20200619152208.GA62406@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec643803-2339-fe8d-7f58-b37871c83386@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/19/20 9:22 AM, Alexey Dobriyan wrote:
->> 	uint64_t val = cqe->res; // assuming non-error here
->>
->> 	if (cqe->flags & IORING_CQE_F_ZONE_FOO)
->> 		val |= (cqe->flags >> 16) << 32ULL;
+On Fri, Jun 12, 2020 at 07:42:12PM -0700, Bart Van Assche wrote:
+> On 2020-06-08 10:01, Luis Chamberlain wrote:
+> > +	/*
+> > +	 * Blktrace needs a debugfs name even for queues that don't register
+> > +	 * a gendisk, so it lazily registers the debugfs directory.  But that
+> > +	 * can get us into a situation where a SCSI device is found, with no
+> > +	 * driver for it (yet).  Then blktrace is used on the device, creating
+> > +	 * the debugfs directory, and only after that a driver is loaded. In
+> > +	 * that case we might already have a debugfs directory registered here.
+> > +	 * Even worse we could be racing with blktrace to register it.
+> > +	 */
 > 
-> Jens, ULL in shift doesn't do anything for widening the result.
-> You need
+> There are LLD and ULD drivers in the SCSI subsystem. Please mention the
+> driver type explicitly. I assume that you are referring to SCSI ULDs
+> since only SCSI ULD drivers call device_add_disk()?
+
+I've simplified this and so this is no longer a valid comment.
+
+> >  	case BLKTRACESETUP:
+> > +		if (!sdp->device->request_queue->sg_debugfs_dir)
+> > +			blk_sg_debugfs_init(sdp->device->request_queue,
+> > +					    sdp->disk->disk_name);
 > 
-> 	val |= (uint64_t)(cqe->flags >> 16) << 32;
+> How about moving the sg_debugfs_dir check into blk_sg_debugfs_init()?
 
-You're right of course, guess I should check my in-mail code a bit
-better :-)
+I found a way to not have to do any of this, the fix will be short and
+sweet now.
 
--- 
-Jens Axboe
-
+  Luis
