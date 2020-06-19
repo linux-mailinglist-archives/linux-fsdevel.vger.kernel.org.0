@@ -2,167 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED65200B19
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 16:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A99200B14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 16:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733013AbgFSOOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 10:14:06 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51900 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbgFSOOE (ORCPT
+        id S1732695AbgFSONv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 10:13:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbgFSONr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 10:14:04 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jmHmK-00081o-MS; Fri, 19 Jun 2020 08:14:00 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jmHmJ-0001Ae-Fn; Fri, 19 Jun 2020 08:14:00 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin\@oracle.com" <joe.jin@oracle.com>
-References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
-        <20200618233958.GV8681@bombadil.infradead.org>
-        <877dw3apn8.fsf@x220.int.ebiederm.org>
-        <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
-Date:   Fri, 19 Jun 2020 09:09:41 -0500
-In-Reply-To: <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com> (Junxiao Bi's
-        message of "Thu, 18 Jun 2020 17:27:43 -0700")
-Message-ID: <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 19 Jun 2020 10:13:47 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF15EC06174E;
+        Fri, 19 Jun 2020 07:13:46 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id l12so10346159ejn.10;
+        Fri, 19 Jun 2020 07:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/u6tJnI73bJ/e/Tlk8P+EJrFujPPPek4eDZC5ID4TB4=;
+        b=OOdb10J3fJcUv7rD7aa2nUAL2at0tcc+aJ+JmPHo1mNqaaNtEE2mGL/LDBYIA/RChO
+         fLIWzDY8P23r2i12eghtL9CGezE+y0Z3lL35O+bnRFBfSaz2DZRUOhpgbB7jzRncPr4k
+         IMx6vBGtazjQgbTxo+DrN0HJpgkU/GUoqttbcppx4cZUrusCKEfnkDAYU/811C0svVSc
+         DYukW/CJQcoW8m/papdvBWF4L49snxiYqT+7InBCdUwcKOILhkFBuH7wVRJYP6KH9QJ7
+         mD63k6lXHNav4GC+dP2hEsJo2fsZBjaU9UIzPbVUT24Tb9bGvJWKpR+BCFmxDsmrrspB
+         PsJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=/u6tJnI73bJ/e/Tlk8P+EJrFujPPPek4eDZC5ID4TB4=;
+        b=ZKjVNoQs0t/Vr5Dzm+U0klL6JiRFLtjhI37hoRKHUayZXq/zm5/0V6ZebuHJuL9Cq5
+         avArnjfmGUZXqDDUh6va/0ni/S+Rg8iNGRBmqt1aHxqGJN/IjtSB62zV2+zm1cvSUb1h
+         s+hMXd1AAX5abmG4U2jyVhNhRd1RvfmNuQLjPVXn2yzh4AmFnO+TZtO4D6TeHD0brjbR
+         q8w/eyrgAzXT8iQlZNgSGfIFAFzV95y9nxwxhMb9f/uljUxqviftFCoGn14r3DpkdqUs
+         RjOBscA1uq2Orsgdi4PmQXgbsQsqjbKTXGg1i7GFARfxyCiWiBuU8MOGLhG520hL67ct
+         2usQ==
+X-Gm-Message-State: AOAM5317lKRSP2qJpWoPI3rOxOteu/76nv8tGimiLVPDuaHEp+4lh6oL
+        4ml4r5s69XHMGtfuUk6GeaNWBCJY
+X-Google-Smtp-Source: ABdhPJwWdBfRvifwAV1AW1ZLcskxfE0/peDRuwlANJdnd5OP32hhuWt7QQZuJy2YsaBdReoZ4DuO7w==
+X-Received: by 2002:a17:907:216c:: with SMTP id rl12mr4088982ejb.156.1592576025563;
+        Fri, 19 Jun 2020 07:13:45 -0700 (PDT)
+Received: from [192.168.43.243] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id k24sm4611013edk.95.2020.06.19.07.13.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Jun 2020 07:13:45 -0700 (PDT)
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-5-axboe@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 04/15] io_uring: re-issue block requests that failed
+ because of resources
+Message-ID: <cdd4bf56-5a08-5d28-969f-81b70cc3c473@gmail.com>
+Date:   Fri, 19 Jun 2020 17:12:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jmHmJ-0001Ae-Fn;;;mid=<87bllf87ve.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19+kJXk7DdBNSbufeE2zhsPt9yABoMvPa4=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4921]
-        *  0.7 XMSubLong Long Subject
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Junxiao Bi <junxiao.bi@oracle.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 753 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 9 (1.2%), b_tie_ro: 8 (1.0%), parse: 1.48 (0.2%),
-        extract_message_metadata: 25 (3.3%), get_uri_detail_list: 4.0 (0.5%),
-        tests_pri_-1000: 42 (5.5%), tests_pri_-950: 1.78 (0.2%),
-        tests_pri_-900: 1.41 (0.2%), tests_pri_-90: 135 (17.9%), check_bayes:
-        132 (17.5%), b_tokenize: 32 (4.2%), b_tok_get_all: 10 (1.3%),
-        b_comp_prob: 3.2 (0.4%), b_tok_touch_all: 82 (10.9%), b_finish: 1.01
-        (0.1%), tests_pri_0: 522 (69.2%), check_dkim_signature: 0.94 (0.1%),
-        check_dkim_adsp: 6 (0.8%), poll_dns_idle: 3.4 (0.5%), tests_pri_10:
-        3.3 (0.4%), tests_pri_500: 8 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] proc: Avoid a thundering herd of threads freeing proc dentries
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20200618144355.17324-5-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 18/06/2020 17:43, Jens Axboe wrote:
+> Mark the plug with nowait == true, which will cause requests to avoid
+> blocking on request allocation. If they do, we catch them and reissue
+> them from a task_work based handler.
+> 
+> Normally we can catch -EAGAIN directly, but the hard case is for split
+> requests. As an example, the application issues a 512KB request. The
+> block core will split this into 128KB if that's the max size for the
+> device. The first request issues just fine, but we run into -EAGAIN for
+> some latter splits for the same request. As the bio is split, we don't
+> get to see the -EAGAIN until one of the actual reads complete, and hence
+> we cannot handle it inline as part of submission.
+> 
+> This does potentially cause re-reads of parts of the range, as the whole
+> request is reissued. There's currently no better way to handle this.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 148 ++++++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 124 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 2e257c5a1866..40413fb9d07b 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -900,6 +900,13 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+>  static void __io_queue_sqe(struct io_kiocb *req,
+>  			   const struct io_uring_sqe *sqe);
+>  
+...> +
+> +static void io_rw_resubmit(struct callback_head *cb)
+> +{
+> +	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +	int err;
+> +
+> +	__set_current_state(TASK_RUNNING);
+> +
+> +	err = io_sq_thread_acquire_mm(ctx, req);
+> +
+> +	if (io_resubmit_prep(req, err)) {
+> +		refcount_inc(&req->refs);
+> +		io_queue_async_work(req);
+> +	}
 
-Junxiao Bi <junxiao.bi@oracle.com> reported:
-> When debugging some performance issue, i found that thousands of threads exit
-> around same time could cause a severe spin lock contention on proc dentry
-> "/proc/$parent_process_pid/task/", that's because threads needs to clean up
-> their pid file from that dir when exit.
+Hmm, I have similar stuff but for iopoll. On top removing grab_env* for
+linked reqs and some extra. I think I'll rebase on top of this.
 
-Matthew Wilcox <willy@infradead.org> reported:
-> We've looked at a few different ways of fixing this problem.
+> +}
+> +#endif
+> +
+> +static bool io_rw_reissue(struct io_kiocb *req, long res)
+> +{
+> +#ifdef CONFIG_BLOCK
+> +	struct task_struct *tsk;
+> +	int ret;
+> +
+> +	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
+> +		return false;
+> +
+> +	tsk = req->task;
+> +	init_task_work(&req->task_work, io_rw_resubmit);
+> +	ret = task_work_add(tsk, &req->task_work, true);
 
-The flushing of the proc dentries from the dcache is an optmization,
-and is not necessary for correctness.  Eventually cache pressure will
-cause the dentries to be freed even if no flushing happens.  Some
-light testing when I refactored the proc flushg[1] indicated that at
-least the memory footprint is easily measurable.
+I don't like that the request becomes un-discoverable for cancellation
+awhile sitting in the task_work list. Poll stuff at least have hash_node
+for that.
 
-An optimization that causes a performance problem due to a thundering
-herd of threads is no real optimization.
+> +	if (!ret)
+> +		return true;
+> +#endif
+> +	return false;
+> +}
+> +
 
-Modify the code to only flush the /proc/<tgid>/ directory when all
-threads in a process are killed at once.  This continues to flush
-practically everything when the process is reaped as the threads live
-under /proc/<tgid>/task/<tid>.
-
-There is a rare possibility that a debugger will access /proc/<tid>/,
-which this change will no longer flush, but I believe such accesses
-are sufficiently rare to not be observed in practice.
-
-[1] 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
-Link: https://lkml.kernel.org/r/54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com
-Reported-by: Masahiro Yamada <masahiroy@kernel.org>
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
-
-I am still waiting for word on how this affects performance, but this is
-a clean version that should avoid the thundering herd problem in
-general.
-
-
- kernel/exit.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/exit.c b/kernel/exit.c
-index cebae77a9664..567354550d62 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -151,8 +151,8 @@ void put_task_struct_rcu_user(struct task_struct *task)
- 
- void release_task(struct task_struct *p)
- {
-+	struct pid *flush_pid = NULL;
- 	struct task_struct *leader;
--	struct pid *thread_pid;
- 	int zap_leader;
- repeat:
- 	/* don't need to get the RCU readlock here - the process is dead and
-@@ -165,7 +165,16 @@ void release_task(struct task_struct *p)
- 
- 	write_lock_irq(&tasklist_lock);
- 	ptrace_release_task(p);
--	thread_pid = get_pid(p->thread_pid);
-+
-+	/*
-+	 * When all of the threads are exiting wait until the end
-+	 * and flush everything.
-+	 */
-+	if (thread_group_leader(p))
-+		flush_pid = get_pid(task_tgid(p));
-+	else if (!(p->signal->flags & SIGNAL_GROUP_EXIT))
-+		flush_pid = get_pid(task_pid(p));
-+
- 	__exit_signal(p);
- 
- 	/*
-@@ -188,8 +197,10 @@ void release_task(struct task_struct *p)
- 	}
- 
- 	write_unlock_irq(&tasklist_lock);
--	proc_flush_pid(thread_pid);
--	put_pid(thread_pid);
-+	if (flush_pid) {
-+		proc_flush_pid(flush_pid);
-+		put_pid(flush_pid);
-+	}
- 	release_thread(p);
- 	put_task_struct_rcu_user(p);
- 
 -- 
-2.20.1
+Pavel Begunkov
