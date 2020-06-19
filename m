@@ -2,112 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 363D2201C0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B213B201C56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 22:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389727AbgFSUMV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 16:12:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730512AbgFSUMU (ORCPT
+        id S2392200AbgFSUXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 16:23:53 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:54794 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392082AbgFSUXw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 16:12:20 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9F1C06174E;
-        Fri, 19 Jun 2020 13:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WWsx+pVx9piQcNEsHsBJIPa3fmY2toq8I9FnSM+ryZ4=; b=hMYgCBWIu7277TNYsJDgCbquy4
-        /91lhyU/OpohJkij0iD8PIz9tiWQ8qAO7Mrd8Wi9pK/n2xfpYRUFOfAWS1xXrMOO6Osk8DS9khIo4
-        DETgCGskQTnR2aba10rsox2965+iEfQHZd6HwIzdJbdkKtqnNdI7r4ApPFnDJ+p8F3GHE/C/AQHaY
-        ejpOCYwpIAuA1OF+iOlpcNa7x4B/dzg6OUUhWu0jkqHbicOE8LNokxW0ZgQF1CY+b7ba7wgIxPXZ9
-        DCD+U5D8+R736SMLnJNW0SN25qBTzRn/5I+HJ/QTT2EO7KLwLdiSh6MQnRCkm1LNX8IlPIh6awvOO
-        Q0aTU9Dg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmNN2-00050h-HG; Fri, 19 Jun 2020 20:12:16 +0000
-Date:   Fri, 19 Jun 2020 13:12:16 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "agruenba@redhat.com" <agruenba@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Bypass filesystems for reading cached pages
-Message-ID: <20200619201216.GA8681@bombadil.infradead.org>
-References: <20200619155036.GZ8681@bombadil.infradead.org>
- <BYAPR04MB49655EAA09477CB716D39C8986980@BYAPR04MB4965.namprd04.prod.outlook.com>
+        Fri, 19 Jun 2020 16:23:52 -0400
+Received: by mail-pj1-f68.google.com with SMTP id u8so4508001pje.4;
+        Fri, 19 Jun 2020 13:23:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RNk3YYxZgiMdt5E1Q+HAeQPHMt5QiUV6QIFeXf5YA6E=;
+        b=Znu/O3rgl5x+2/g2VK8Uox5QocoVot9+V13koAF7V5goz9AvVLHwRL2SlhqEUEyoze
+         kMhlaXutNvU03sEbVemqqm9PX+sll7AaWVOf03BtIm/4KZkAWBRuHEMvPZFtlbp7Oxb0
+         zobeEByLLXL8URLOCin2SuqCNC5UDKhil61DtfwDIlzBRYpIuUc+mhiexPAqbLXAuCiY
+         uqBXGfGhvV8n/X9dCU00h7voJsDLHnFR13yeQzXqi2wllfovX10lnUaJec2S9N1z2b5N
+         Pmf16mLyccJd06d7sQyd1oTA/QMa99U08QuX93DwHdfDehPKBKpiGz+RD0Js/DP0clb8
+         zV+w==
+X-Gm-Message-State: AOAM532GnDlQOpmz1nS4rnZnpa8pHvcyaQmSz5KM8stGMkV3SLAqubr2
+        DzyIQLI+18ITc7NB2+nw2XQ=
+X-Google-Smtp-Source: ABdhPJwyTucVAhYVByutNy/3iB7HUovNaBJeVj/WU7TGkfz1k4YvkICw6ZEx8Vi19BK0QPdR+PbQWw==
+X-Received: by 2002:a17:902:e989:: with SMTP id f9mr10040039plb.268.1592598231563;
+        Fri, 19 Jun 2020 13:23:51 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b1sm6738696pfr.89.2020.06.19.13.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 13:23:49 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 9DED34063E; Fri, 19 Jun 2020 20:23:48 +0000 (UTC)
+Date:   Fri, 19 Jun 2020 20:23:48 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        martin.petersen@oracle.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 3/6] block: revert back to synchronous request_queue
+ removal
+Message-ID: <20200619202348.GJ11244@42.do-not-panic.com>
+References: <20200608170127.20419-1-mcgrof@kernel.org>
+ <20200608170127.20419-4-mcgrof@kernel.org>
+ <e1fad3cd-32a1-7a08-b8a4-084dfbff4680@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR04MB49655EAA09477CB716D39C8986980@BYAPR04MB4965.namprd04.prod.outlook.com>
+In-Reply-To: <e1fad3cd-32a1-7a08-b8a4-084dfbff4680@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 19, 2020 at 07:06:19PM +0000, Chaitanya Kulkarni wrote:
-> On 6/19/20 8:50 AM, Matthew Wilcox wrote:
-> > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
-> > The advantage of this patch is that we can avoid taking any filesystem
-> > lock, as long as the pages being accessed are in the cache (and we don't
-> > need to readahead any pages into the cache).  We also avoid an indirect
-> > function call in these cases.
+On Fri, Jun 12, 2020 at 06:53:40PM -0700, Bart Van Assche wrote:
+> On 2020-06-08 10:01, Luis Chamberlain wrote:
+> > + * Drivers exist which depend on the release of the request_queue to be
+> > + * synchronous, it should not be deferred.
 > 
-> I did a testing with NVMeOF target file backend with buffered I/O
-> enabled with your patch and setting the IOCB_CACHED for each I/O ored 
-> '|' with IOCB_NOWAIT calling call_read_iter_cached() [1].
->
-> The name was changed from call_read_iter() -> call_read_iter_cached() [2]).
+> This sounds mysterious. Which drivers? Why do these depend on this
+> function being synchronous?
+
+Sorry that should be "Userspace can exist". I've fixed that.
+
+> Anyway:
 > 
-> For the file system I've used XFS and device was null_blk with memory
-> backed so entire file was cached into the DRAM.
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-Thanks for testing!  Can you elaborate a little more on what the test does?
-Are there many threads or tasks?  What is the I/O path?  XFS on an NVMEoF
-device, talking over loopback to localhost with nullblk as the server?
-
-The nullblk device will have all the data in its pagecache, but each XFS
-file will have an empty pagecache initially.  Then it'll be populated by
-the test, so does the I/O pattern revisit previously accessed data at all?
-
-> Following are the performance numbers :-
-> 
-> IOPS/Bandwidth :-
-> 
-> default-page-cache:      read:  IOPS=1389k,  BW=5424MiB/s  (5688MB/s)
-> default-page-cache:      read:  IOPS=1381k,  BW=5395MiB/s  (5657MB/s)
-> default-page-cache:      read:  IOPS=1391k,  BW=5432MiB/s  (5696MB/s)
-> iocb-cached-page-cache:  read:  IOPS=1403k,  BW=5481MiB/s  (5747MB/s)
-> iocb-cached-page-cache:  read:  IOPS=1393k,  BW=5439MiB/s  (5704MB/s)
-> iocb-cached-page-cache:  read:  IOPS=1399k,  BW=5465MiB/s  (5731MB/s)
-
-That doesn't look bad at all ... about 0.7% increase in IOPS.
-
-> Submission lat :-
-> 
-> default-page-cache:      slat  (usec):  min=2,  max=1076,  avg=  3.71,
-> default-page-cache:      slat  (usec):  min=2,  max=489,   avg=  3.72,
-> default-page-cache:      slat  (usec):  min=2,  max=1078,  avg=  3.70,
-> iocb-cached-page-cache:  slat  (usec):  min=2,  max=1731,  avg=  3.70,
-> iocb-cached-page-cache:  slat  (usec):  min=2,  max=2115,  avg=  3.69,
-> iocb-cached-page-cache:  slat  (usec):  min=2,  max=3055,  avg=  3.70,
-
-Average latency unchanged, max latency up a little ... makes sense,
-since we'll do a little more work in the worst case.
-
-> @@ -264,7 +267,8 @@ static void nvmet_file_execute_rw(struct nvmet_req *req)
-> 
->          if (req->ns->buffered_io) {
->                  if (likely(!req->f.mpool_alloc) &&
-> -                               nvmet_file_execute_io(req, IOCB_NOWAIT))
-> +                               nvmet_file_execute_io(req,
-> +                                       IOCB_NOWAIT |IOCB_CACHED))
->                          return;
->                  nvmet_file_submit_buffered_io(req);
-
-You'll need a fallback path here, right?  IOCB_CACHED can get part-way
-through doing a request, and then need to be finished off after taking
-the mutex.
-
+  Luis
