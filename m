@@ -2,146 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B582008CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 14:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D32802008EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jun 2020 14:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgFSMiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 08:38:16 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57135 "EHLO
+        id S1729509AbgFSMm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 08:42:59 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34568 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725446AbgFSMiP (ORCPT
+        with ESMTP id S1725806AbgFSMm7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 08:38:15 -0400
+        Fri, 19 Jun 2020 08:42:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592570293;
+        s=mimecast20190719; t=1592570577;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P5+ozR9Mh9wRcX5EutPvXQ198atkpIm6K5Bk+g+xg4k=;
-        b=NWtyybu2e3WWfi0CMSA5GNo6XXmgfGfAs0EljT0qLuSjQlKesm3JRi+1jZjCT+hiA7Bu4n
-        oBEQUYnlBAP8dsFscVIkK5JG6Xl/UmEN9b4hUMbW+xTd39c9nN3rtj+pMe6B9ww55HqO/w
-        VAVqTBCiG3R34211FHxJTQQvN68DJLY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-JwP6ZuSBMA-7djNeuQmRSA-1; Fri, 19 Jun 2020 08:38:11 -0400
-X-MC-Unique: JwP6ZuSBMA-7djNeuQmRSA-1
-Received: by mail-wm1-f71.google.com with SMTP id 11so2632181wmj.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jun 2020 05:38:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P5+ozR9Mh9wRcX5EutPvXQ198atkpIm6K5Bk+g+xg4k=;
-        b=TRJsQBrvLa631vq6iBUrQ8wuif73Hcu0JTYIYOrvCM/DoIgN7K3ba4S6Uqv7jtOyq2
-         2VuTqtfE+dfcmgFLmZMImE3ht3VaVRzPz6wKFVS7bFgCgTgOm7VMLNx/e7qCOG88GAv9
-         bye63jvqLFDG8RvGdhjR5BJfqgAYqeWZz7lXq59/Eml4QaUjk/HeoEO5niZTi+VheI0C
-         dBHvHU1yezi6twvTi649EiWWeQjiBYvTN2B7CWJShQYobCuUU7VkA7wHJ+bQoUcgzeka
-         w3VJmBnQrF91Bj5vp7xGw/Ox+YEWG75iqN7YjpQkG5eorK0npuWTJive9h6H/Ae/qNce
-         ChiQ==
-X-Gm-Message-State: AOAM533U/FZ/ikvn7m404D3ypug4uvW3GH5q16nDuXKvKg2li0NzdaD6
-        W2RF6yqaA4sjnwefmZU9dEXFw5NXXUoLCw9DX/ifJrFJL6kR+Np3v7MjTQSod8s88ii3LbrIj22
-        CEGG6lqoBvPY/q42TKCLJn8em9Q==
-X-Received: by 2002:a5d:5492:: with SMTP id h18mr3793405wrv.330.1592570290572;
-        Fri, 19 Jun 2020 05:38:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyFuZ25wuwkQUd6CbPEmnrMjWv/3vMT/uGmOlAWutX7ws8+y5hFhlt6h1yO/BomxmeA09glnA==
-X-Received: by 2002:a5d:5492:: with SMTP id h18mr3793384wrv.330.1592570290339;
-        Fri, 19 Jun 2020 05:38:10 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:e1d2:138e:4eff:42cb? ([2001:b07:6468:f312:e1d2:138e:4eff:42cb])
-        by smtp.gmail.com with ESMTPSA id b204sm6017655wmb.12.2020.06.19.05.38.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2020 05:38:09 -0700 (PDT)
-Subject: Re: [PATCH v3 0/7] libfs: group and simplify linux fs code
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20200504090032.10367-1-eesposit@redhat.com>
- <20200617170045.7d41976d@oasis.local.home>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <689597ee-114f-9334-2e1c-10a8250a61e1@redhat.com>
-Date:   Fri, 19 Jun 2020 14:38:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        bh=Gv76+7wPlxv1JgTAX5XGbER7AaxLFtv8PFB7E49p9nI=;
+        b=C8A9GH3BmB/8CGTRIs7bi6t/aP+Rs/IUJBwkkfcItBiacLevTifmsTuurOuWeR7XU4QY5b
+        v4q4ZBfWxrKowibEhjQ9KldEUC50IGlRzaPLN7uuHIuvrZN4+bnQ1605gRZ7K881POrtrB
+        2o+9s9J4f6NxgJFRqDjeqiIP0Z8sk/k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-433-7Wo61-9uPoqvi1tbAT48UA-1; Fri, 19 Jun 2020 08:42:56 -0400
+X-MC-Unique: 7Wo61-9uPoqvi1tbAT48UA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6060E1005512;
+        Fri, 19 Jun 2020 12:42:53 +0000 (UTC)
+Received: from localhost (ovpn-12-50.pek2.redhat.com [10.72.12.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8212B71671;
+        Fri, 19 Jun 2020 12:42:51 +0000 (UTC)
+Date:   Fri, 19 Jun 2020 20:42:48 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Nitin Gupta <nigupta@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Nitin Gupta <ngupta@nitingupta.dev>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:PROC SYSCTL" <linux-fsdevel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm: Use unsigned types for fragmentation score
+Message-ID: <20200619124248.GF3346@MiWiFi-R3L-srv>
+References: <20200618010319.13159-1-nigupta@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20200617170045.7d41976d@oasis.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200618010319.13159-1-nigupta@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17/06/20 23:00, Steven Rostedt wrote:
+On 06/17/20 at 06:03pm, Nitin Gupta wrote:
+> Proactive compaction uses per-node/zone "fragmentation score" which
+> is always in range [0, 100], so use unsigned type of these scores
+> as well as for related constants.
 > 
-> What happened to this work?
+> Signed-off-by: Nitin Gupta <nigupta@nvidia.com>
 
-Nobody has acked it or queued it.  Al?
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-Paolo
-
-> -- Steve
+> ---
+>  include/linux/compaction.h |  4 ++--
+>  kernel/sysctl.c            |  2 +-
+>  mm/compaction.c            | 18 +++++++++---------
+>  mm/vmstat.c                |  2 +-
+>  4 files changed, 13 insertions(+), 13 deletions(-)
 > 
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index 7a242d46454e..25a521d299c1 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -85,13 +85,13 @@ static inline unsigned long compact_gap(unsigned int order)
+>  
+>  #ifdef CONFIG_COMPACTION
+>  extern int sysctl_compact_memory;
+> -extern int sysctl_compaction_proactiveness;
+> +extern unsigned int sysctl_compaction_proactiveness;
+>  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  			void *buffer, size_t *length, loff_t *ppos);
+>  extern int sysctl_extfrag_threshold;
+>  extern int sysctl_compact_unevictable_allowed;
+>  
+> -extern int extfrag_for_order(struct zone *zone, unsigned int order);
+> +extern unsigned int extfrag_for_order(struct zone *zone, unsigned int order);
+>  extern int fragmentation_index(struct zone *zone, unsigned int order);
+>  extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
+>  		unsigned int order, unsigned int alloc_flags,
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 58b0a59c9769..40180cdde486 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2833,7 +2833,7 @@ static struct ctl_table vm_table[] = {
+>  	{
+>  		.procname	= "compaction_proactiveness",
+>  		.data		= &sysctl_compaction_proactiveness,
+> -		.maxlen		= sizeof(int),
+> +		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec_minmax,
+>  		.extra1		= SYSCTL_ZERO,
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index ac2030814edb..45fd24a0ea0b 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -53,7 +53,7 @@ static inline void count_compact_events(enum vm_event_item item, long delta)
+>  /*
+>   * Fragmentation score check interval for proactive compaction purposes.
+>   */
+> -static const int HPAGE_FRAG_CHECK_INTERVAL_MSEC = 500;
+> +static const unsigned int HPAGE_FRAG_CHECK_INTERVAL_MSEC = 500;
+>  
+>  /*
+>   * Page order with-respect-to which proactive compaction
+> @@ -1890,7 +1890,7 @@ static bool kswapd_is_running(pg_data_t *pgdat)
+>   * ZONE_DMA32. For smaller zones, the score value remains close to zero,
+>   * and thus never exceeds the high threshold for proactive compaction.
+>   */
+> -static int fragmentation_score_zone(struct zone *zone)
+> +static unsigned int fragmentation_score_zone(struct zone *zone)
+>  {
+>  	unsigned long score;
+>  
+> @@ -1906,9 +1906,9 @@ static int fragmentation_score_zone(struct zone *zone)
+>   * the node's score falls below the low threshold, or one of the back-off
+>   * conditions is met.
+>   */
+> -static int fragmentation_score_node(pg_data_t *pgdat)
+> +static unsigned int fragmentation_score_node(pg_data_t *pgdat)
+>  {
+> -	unsigned long score = 0;
+> +	unsigned int score = 0;
+>  	int zoneid;
+>  
+>  	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
+> @@ -1921,17 +1921,17 @@ static int fragmentation_score_node(pg_data_t *pgdat)
+>  	return score;
+>  }
+>  
+> -static int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
+> +static unsigned int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
+>  {
+> -	int wmark_low;
+> +	unsigned int wmark_low;
+>  
+>  	/*
+>  	 * Cap the low watermak to avoid excessive compaction
+>  	 * activity in case a user sets the proactivess tunable
+>  	 * close to 100 (maximum).
+>  	 */
+> -	wmark_low = max(100 - sysctl_compaction_proactiveness, 5);
+> -	return low ? wmark_low : min(wmark_low + 10, 100);
+> +	wmark_low = max(100U - sysctl_compaction_proactiveness, 5U);
+> +	return low ? wmark_low : min(wmark_low + 10, 100U);
+>  }
+>  
+>  static bool should_proactive_compact_node(pg_data_t *pgdat)
+> @@ -2604,7 +2604,7 @@ int sysctl_compact_memory;
+>   * aggressively the kernel should compact memory in the
+>   * background. It takes values in the range [0, 100].
+>   */
+> -int __read_mostly sysctl_compaction_proactiveness = 20;
+> +unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+>  
+>  /*
+>   * This is the entry point for compacting all nodes via
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 3e7ba8bce2ba..b1de695b826d 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1079,7 +1079,7 @@ static int __fragmentation_index(unsigned int order, struct contig_page_info *in
+>   * It is defined as the percentage of pages found in blocks of size
+>   * less than 1 << order. It returns values in range [0, 100].
+>   */
+> -int extfrag_for_order(struct zone *zone, unsigned int order)
+> +unsigned int extfrag_for_order(struct zone *zone, unsigned int order)
+>  {
+>  	struct contig_page_info info;
+>  
+> -- 
+> 2.27.0
 > 
-> On Mon,  4 May 2020 11:00:25 +0200
-> Emanuele Giuseppe Esposito <eesposit@redhat.com> wrote:
-> 
->> libfs.c has many functions that are useful to implement dentry and inode
->> operations, but not many at the filesystem level.  As a result, code to
->> create files and inodes has a lot of duplication, to the point that
->> tracefs has copied several hundred lines from debugfs.
->>
->> The main two libfs.c functions for filesystems are simple_pin_fs and
->> simple_release_fs, which hide a somewhat complicated locking sequence
->> that is needed to serialize vfs_kern_mount and mntget.  In this series,
->> my aim is to add functions that create dentries and inodes of various
->> kinds (either anonymous inodes, or directory/file/symlink).  These
->> functions take the code that was duplicated across debugfs and tracefs
->> and move it to libfs.c.
->>
->> In order to limit the number of arguments to the new functions, the
->> series first creates a data type that is passed to both
->> simple_pin_fs/simple_release_fs and the new creation functions.  The new
->> struct, introduced in patch 2, simply groups the "mount" and "count"
->> arguments to simple_pin_fs and simple_release_fs.
->>
->> Patches 1-4 are preparations to introduce the new simple_fs struct and
->> new functions that are useful in the remainder of the series.  Patch 5
->> introduces the dentry and inode creation functions.  Patch 6-7 can then
->> adopt them in debugfs and tracefs.
->>
->> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
->>
->> v1->v2: rename simple_new_inode in new_inode_current_time,
->> more detailed explanations, put all common code in fs/libfs.c
->>
->> v2->v3: remove unused debugfs_get_inode and tracefs_get_inode
->> functions
->>
->> Emanuele Giuseppe Esposito (7):
->>   apparmor: just use vfs_kern_mount to make .null
->>   libfs: wrap simple_pin_fs/simple_release_fs arguments in a struct
->>   libfs: introduce new_inode_current_time
->>   libfs: add alloc_anon_inode wrapper
->>   libfs: add file creation functions
->>   debugfs: switch to simplefs inode creation API
->>   tracefs: switch to simplefs inode creation API
->>
->>  drivers/gpu/drm/drm_drv.c       |  11 +-
->>  drivers/misc/cxl/api.c          |  13 +-
->>  drivers/scsi/cxlflash/ocxl_hw.c |  14 +-
->>  fs/binfmt_misc.c                |   9 +-
->>  fs/configfs/mount.c             |  10 +-
->>  fs/debugfs/inode.c              | 169 +++---------------
->>  fs/libfs.c                      | 299 ++++++++++++++++++++++++++++++--
->>  fs/tracefs/inode.c              | 106 ++---------
->>  include/linux/fs.h              |  31 +++-
->>  security/apparmor/apparmorfs.c  |  38 ++--
->>  security/inode.c                |  11 +-
->>  11 files changed, 399 insertions(+), 312 deletions(-)
->>
 > 
 
