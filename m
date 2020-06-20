@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC297201FF0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 04:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D26F201FEB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 04:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732145AbgFTCxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jun 2020 22:53:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54916 "EHLO huawei.com"
+        id S1732138AbgFTCxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jun 2020 22:53:41 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54910 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732118AbgFTCxf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jun 2020 22:53:35 -0400
+        id S1732119AbgFTCxh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Jun 2020 22:53:37 -0400
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8A9974562A62E6CC226F;
+        by Forcepoint Email with ESMTP id 820CC923E92422E49FE3;
         Sat, 20 Jun 2020 10:53:33 +0800 (CST)
 Received: from huawei.com (10.175.127.227) by DGGEMS401-HUB.china.huawei.com
  (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Sat, 20 Jun 2020
- 10:53:20 +0800
+ 10:53:21 +0800
 From:   "zhangyi (F)" <yi.zhang@huawei.com>
 To:     <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <jack@suse.cz>
 CC:     <adilger.kernel@dilger.ca>, <zhangxiaoxu5@huawei.com>,
         <yi.zhang@huawei.com>, <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v3 1/5] ext4: abort the filesystem if failed to async write metadata buffer
-Date:   Sat, 20 Jun 2020 10:54:23 +0800
-Message-ID: <20200620025427.1756360-2-yi.zhang@huawei.com>
+Subject: [PATCH v3 2/5] ext4: remove ext4_buffer_uptodate()
+Date:   Sat, 20 Jun 2020 10:54:24 +0800
+Message-ID: <20200620025427.1756360-3-yi.zhang@huawei.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200620025427.1756360-1-yi.zhang@huawei.com>
 References: <20200620025427.1756360-1-yi.zhang@huawei.com>
@@ -37,122 +37,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a risk of filesystem inconsistency if we failed to async write
-back metadata buffer in the background. Because of current buffer's end
-io procedure is handled by end_buffer_async_write() in the block layer,
-and it only clear the buffer's uptodate flag and mark the write_io_error
-flag, so ext4 cannot detect such failure immediately. In most cases of
-getting metadata buffer (e.g. ext4_read_inode_bitmap()), although the
-buffer's data is actually uptodate, it may still read data from disk
-because the buffer's uptodate flag has been cleared. Finally, it may
-lead to on-disk filesystem inconsistency if reading old data from the
-disk successfully and write them out again.
-
-This patch detect bdev mapping->wb_err when getting journal's write
-access and mark the filesystem error if bdev's mapping->wb_err was
-increased, this could prevent further writing and potential
-inconsistency.
+After we add async write error check in ext4_journal_get_write_access(),
+we can remove the partial fix for filesystem inconsistency problem
+caused by reading old data from disk, which in commit <7963e5ac9012>
+"ext4: treat buffers with write errors as containing valid data" and
+<cf2834a5ed57> "ext4: treat buffers contining write errors as valid in
+ext4_sb_bread()".
 
 Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Suggested-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/ext4.h      |  3 +++
- fs/ext4/ext4_jbd2.c | 25 +++++++++++++++++++++++++
- fs/ext4/super.c     | 17 +++++++++++++++++
- 3 files changed, 45 insertions(+)
+ fs/ext4/ext4.h  | 13 -------------
+ fs/ext4/inode.c |  4 ++--
+ fs/ext4/super.c |  2 +-
+ 3 files changed, 3 insertions(+), 16 deletions(-)
 
 diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index b08841f70b69..60374eda1f51 100644
+index 60374eda1f51..f22940e5de5a 100644
 --- a/fs/ext4/ext4.h
 +++ b/fs/ext4/ext4.h
-@@ -1573,6 +1573,9 @@ struct ext4_sb_info {
- #ifdef CONFIG_EXT4_DEBUG
- 	unsigned long s_simulate_fail;
- #endif
-+	/* Record the errseq of the backing block device */
-+	errseq_t s_bdev_wb_err;
-+	spinlock_t s_bdev_wb_lock;
- };
+@@ -3501,19 +3501,6 @@ extern const struct iomap_ops ext4_iomap_ops;
+ extern const struct iomap_ops ext4_iomap_overwrite_ops;
+ extern const struct iomap_ops ext4_iomap_report_ops;
  
- static inline struct ext4_sb_info *EXT4_SB(struct super_block *sb)
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index 0c76cdd44d90..760b9ee49dc0 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -195,6 +195,28 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
- 	jbd2_journal_abort_handle(handle);
- }
+-static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+-{
+-	/*
+-	 * If the buffer has the write error flag, we have failed
+-	 * to write out data in the block.  In this  case, we don't
+-	 * have to read the block because we may read the old data
+-	 * successfully.
+-	 */
+-	if (!buffer_uptodate(bh) && buffer_write_io_error(bh))
+-		set_buffer_uptodate(bh);
+-	return buffer_uptodate(bh);
+-}
+-
+ #endif	/* __KERNEL__ */
  
-+static void ext4_check_bdev_write_error(struct super_block *sb)
-+{
-+	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	int err;
-+
-+	/*
-+	 * If the block device has write error flag, it may have failed to
-+	 * async write out metadata buffers in the background. In this case,
-+	 * we could read old data from disk and write it out again, which
-+	 * may lead to on-disk filesystem inconsistency.
-+	 */
-+	if (errseq_check(&mapping->wb_err, READ_ONCE(sbi->s_bdev_wb_err))) {
-+		spin_lock(&sbi->s_bdev_wb_lock);
-+		err = errseq_check_and_advance(&mapping->wb_err, &sbi->s_bdev_wb_err);
-+		spin_unlock(&sbi->s_bdev_wb_lock);
-+		if (err)
-+			ext4_error_err(sb, -err,
-+				       "Error while async write back metadata");
-+	}
-+}
-+
- int __ext4_journal_get_write_access(const char *where, unsigned int line,
- 				    handle_t *handle, struct buffer_head *bh)
- {
-@@ -202,6 +224,9 @@ int __ext4_journal_get_write_access(const char *where, unsigned int line,
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 40ec5c7ef0d3..f68afc5c0b2d 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -883,7 +883,7 @@ struct buffer_head *ext4_bread(handle_t *handle, struct inode *inode,
+ 	bh = ext4_getblk(handle, inode, block, map_flags);
+ 	if (IS_ERR(bh))
+ 		return bh;
+-	if (!bh || ext4_buffer_uptodate(bh))
++	if (!bh || buffer_uptodate(bh))
+ 		return bh;
+ 	ll_rw_block(REQ_OP_READ, REQ_META | REQ_PRIO, 1, &bh);
+ 	wait_on_buffer(bh);
+@@ -910,7 +910,7 @@ int ext4_bread_batch(struct inode *inode, ext4_lblk_t block, int bh_count,
  
- 	might_sleep();
+ 	for (i = 0; i < bh_count; i++)
+ 		/* Note that NULL bhs[i] is valid because of holes. */
+-		if (bhs[i] && !ext4_buffer_uptodate(bhs[i]))
++		if (bhs[i] && !buffer_uptodate(bhs[i]))
+ 			ll_rw_block(REQ_OP_READ, REQ_META | REQ_PRIO, 1,
+ 				    &bhs[i]);
  
-+	if (bh->b_bdev->bd_super)
-+		ext4_check_bdev_write_error(bh->b_bdev->bd_super);
-+
- 	if (ext4_handle_valid(handle)) {
- 		err = jbd2_journal_get_write_access(handle, bh);
- 		if (err)
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c668f6b42374..8d3925c31b8a 100644
+index 8d3925c31b8a..513d1e270f6d 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -4699,6 +4699,15 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	}
- #endif  /* CONFIG_QUOTA */
+@@ -154,7 +154,7 @@ ext4_sb_bread(struct super_block *sb, sector_t block, int op_flags)
  
-+	/*
-+	 * Save the original bdev mapping's wb_err value which could be
-+	 * used to detect the metadata async write error.
-+	 */
-+	spin_lock_init(&sbi->s_bdev_wb_lock);
-+	if (!sb_rdonly(sb))
-+		errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
-+					 &sbi->s_bdev_wb_err);
-+	sb->s_bdev->bd_super = sb;
- 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
- 	ext4_orphan_cleanup(sb, es);
- 	EXT4_SB(sb)->s_mount_state &= ~EXT4_ORPHAN_FS;
-@@ -5562,6 +5571,14 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
- 				goto restore_opts;
- 			}
- 
-+			/*
-+			 * Update the original bdev mapping's wb_err value
-+			 * which could be used to detect the metadata async
-+			 * write error.
-+			 */
-+			errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
-+						 &sbi->s_bdev_wb_err);
-+
- 			/*
- 			 * Mounting a RDONLY partition read-write, so reread
- 			 * and store the current valid flag.  (It may have
+ 	if (bh == NULL)
+ 		return ERR_PTR(-ENOMEM);
+-	if (ext4_buffer_uptodate(bh))
++	if (buffer_uptodate(bh))
+ 		return bh;
+ 	ll_rw_block(REQ_OP_READ, REQ_META | op_flags, 1, &bh);
+ 	wait_on_buffer(bh);
 -- 
 2.25.4
 
