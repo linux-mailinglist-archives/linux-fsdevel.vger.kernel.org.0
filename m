@@ -2,41 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB6520258D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 19:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2707620259D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 19:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbgFTRLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 13:11:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:47051 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbgFTRLv (ORCPT
+        id S1728240AbgFTRbz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 13:31:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33383 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727946AbgFTRbz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 13:11:51 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u128so6013153pgu.13;
-        Sat, 20 Jun 2020 10:11:49 -0700 (PDT)
+        Sat, 20 Jun 2020 13:31:55 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b201so6129437pfb.0;
+        Sat, 20 Jun 2020 10:31:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=51wJr1PqOu83VYK7gxbc2LDTmylRFibUjG3LddkuvYg=;
-        b=uODcVYWh1RNYXpnAk/s01Hur/lZAHc4cMOY1TBHpAB6RDZaJ32xusd4cmFn6HZPFgv
-         YpZSZ/f7jw7walKZrBQFTr9yihO4OGIh8ve3CdaXjGv/fGza7ws+2ZCrcJyk09nLAHsl
-         tOcAFSWhKydDxHmwMzFXr9JKSrK3PSEwvZmm82vK54UaBf3MIeZSAYQ/4QxYxKizl9pK
-         I3I0dBBvclztsDEssju6VwlbtATplVb4Dh48mH6lxXrniFtbYK7988Bv6DVuLaHCavIO
-         5OvT8U1EYBfrvtT3QEcNT0sBHvnfWq0UylEVFu4zS/YAvYL43b8Qg3t7zgSuz+nb4MAk
-         DMIQ==
-X-Gm-Message-State: AOAM532XeceN/faI8ZODBG6PzNZt9BVIJX9GdEYBBEggBtiFg8irZ/nX
-        sTBsrAHYt1yqsWXkw+4j5eQ=
-X-Google-Smtp-Source: ABdhPJxaDf9FepE6EM0QhaljOL11cCKrZwhA42hmUbceUqr3hjsRc1lUgz7jYaEsP2tsVmnvUWsHaA==
-X-Received: by 2002:a62:196:: with SMTP id 144mr13044800pfb.316.1592673109068;
-        Sat, 20 Jun 2020 10:11:49 -0700 (PDT)
+        bh=76DjZtVoVNTfIvPgHLxvbVvnnrURAKQR9OKC4ML66Vc=;
+        b=NcMZn+Pzxwlz6Gc3cFevOO/D0qwfi7VTEkb0FG7Epa3QXMhJgsnU9SwDHmSF8BPEMI
+         WlkH0zPM1wJSlu6mFBuhk86denc+CsLLE5aKvguWZRE8RJRL45a3qdvecpTRufU2mBFW
+         66IxZW3dAxmGlUg3YKRHrp4VxhqsY9Bg/kKHoQZ/wTvJfd3P4EDICFMV43nAE1Ud7kG/
+         TR4AaqEU19zBeJU4d9futNbyEHsjIQpu5pNVM06fmqKxjC7P5o59bg7OTrkQx7RiQbZ8
+         F+vErMFePskpJIJhNfL+Ht9FnjD24vqUUG5P93YRMRcFH12g1aZjrBetNgxn+3Sr15bV
+         qn9g==
+X-Gm-Message-State: AOAM530vdv7tao7928QS4lfW93Wy3exu4Ua44WtN3X7j3aA2eQR9snQk
+        DW9dCaskM2PYdIVAoVElAg0=
+X-Google-Smtp-Source: ABdhPJx4WJJeoAZd88UMGoNU0tCyJbSMTb2c+Eg/pyZk/Y8Gvd8ak7lYZIWZRWF80NIVktK7gkeuqA==
+X-Received: by 2002:a05:6a00:22c2:: with SMTP id f2mr13824607pfj.187.1592674314328;
+        Sat, 20 Jun 2020 10:31:54 -0700 (PDT)
 Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id x126sm9348519pfc.36.2020.06.20.10.11.47
+        by smtp.gmail.com with ESMTPSA id z11sm9592511pfk.141.2020.06.20.10.31.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Jun 2020 10:11:48 -0700 (PDT)
-Subject: Re: [PATCH v7 5/8] loop: be paranoid on exit and prevent new
- additions / removals
+        Sat, 20 Jun 2020 10:31:53 -0700 (PDT)
+Subject: Re: [PATCH v7 6/8] blktrace: fix debugfs use after free
 To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
         viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
         rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
@@ -44,9 +43,12 @@ To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
 Cc:     mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
         jejb@linux.ibm.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
 References: <20200619204730.26124-1-mcgrof@kernel.org>
- <20200619204730.26124-6-mcgrof@kernel.org>
+ <20200619204730.26124-7-mcgrof@kernel.org>
 From:   Bart Van Assche <bvanassche@acm.org>
 Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
@@ -71,12 +73,12 @@ Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
  //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
  mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
  goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <7e76d892-b5fd-18ec-c96e-cf4537379eba@acm.org>
-Date:   Sat, 20 Jun 2020 10:11:46 -0700
+Message-ID: <75c3a94d-dcd1-05e4-47c6-db65f074136a@acm.org>
+Date:   Sat, 20 Jun 2020 10:31:51 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200619204730.26124-6-mcgrof@kernel.org>
+In-Reply-To: <20200619204730.26124-7-mcgrof@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -86,44 +88,56 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020-06-19 13:47, Luis Chamberlain wrote:
-> Be pedantic on removal as well and hold the mutex.
-> This should prevent uses of addition while we exit.
-> 
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  drivers/block/loop.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index c33bbbfd1bd9..d55e1b52f076 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -2402,6 +2402,8 @@ static void __exit loop_exit(void)
->  
->  	range = max_loop ? max_loop << part_shift : 1UL << MINORBITS;
->  
-> +	mutex_lock(&loop_ctl_mutex);
-> +
->  	idr_for_each(&loop_index_idr, &loop_exit_cb, NULL);
->  	idr_destroy(&loop_index_idr);
->  
-> @@ -2409,6 +2411,8 @@ static void __exit loop_exit(void)
->  	unregister_blkdev(LOOP_MAJOR, "loop");
->  
->  	misc_deregister(&loop_misc);
-> +
-> +	mutex_unlock(&loop_ctl_mutex);
->  }
->  
->  module_init(loop_init);
+> This goes tested with:
+       ^^^^
+       got?
 
-Is try_module_get(fops->owner) called before a loop device is opened and
-is module_put(fops->owner) called after a loop device is closed? Does
-that mean that it is impossible to unload the loop driver while a loop
-device is open? Does that mean that the above patch is not necessary or
-did I perhaps miss something?
+> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> index 7ff2ea5cd05e..e6e2d25fdbd6 100644
+> --- a/kernel/trace/blktrace.c
+> +++ b/kernel/trace/blktrace.c
+> @@ -524,10 +524,18 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+>  	if (!bt->msg_data)
+>  		goto err;
+>  
+> -	ret = -ENOENT;
+> -
+> -	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> -	if (!dir)
+> +#ifdef CONFIG_BLK_DEBUG_FS
+> +	/*
+> +	 * When tracing whole make_request drivers (multiqueue) block devices,
+> +	 * reuse the existing debugfs directory created by the block layer on
+> +	 * init. For request-based block devices, all partitions block devices,
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+It seems like a word is missing from the comment? Or did you perhaps
+want to refer to "all partition block devices"?
+
+> +	 * and scsi-generic block devices we create a temporary new debugfs
+> +	 * directory that will be removed once the trace ends.
+> +	 */
+> +	if (queue_is_mq(q) && bdev && bdev == bdev->bd_contains)
+> +		dir = q->debugfs_dir;
+> +	else
+> +#endif
+>  		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+
+Can it happen that two different threads each try to set up block
+tracing and hence that debugfs_create_dir() fails because a directory
+with name buts->name already exists?
+
+>  	bt->dev = dev;
+> @@ -565,8 +573,6 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+>  
+>  	ret = 0;
+>  err:
+> -	if (dir && !bt->dir)
+> -		dput(dir);
+>  	if (ret)
+>  		blk_trace_free(bt);
+>  	return ret;
+
+Shouldn't bt->dir be removed in this error path for make_request drivers?
 
 Thanks,
 
