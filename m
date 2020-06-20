@@ -2,117 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADED72025D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 20:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C5520260F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 20:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbgFTSHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 14:07:48 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36862 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727808AbgFTSHr (ORCPT
+        id S1728471AbgFTS7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 14:59:34 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46024 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbgFTS7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 14:07:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p3so3380764pgh.3;
-        Sat, 20 Jun 2020 11:07:47 -0700 (PDT)
+        Sat, 20 Jun 2020 14:59:34 -0400
+Received: by mail-lf1-f66.google.com with SMTP id d7so7390823lfi.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun 2020 11:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x63u2CH0kTOvK+Ylduvsgf843OJltI0Oa4WMxfgSi60=;
+        b=YuZaZD+2V4T+V8YzzYJGa35OmsoetmgSGhdcjtcJee15mPLl0DDVPEosSzP/PWnHJj
+         jgy4hPWH8VVmt2iYgXdkWir0ONer/cxkREFlgZ2wBjYY2Yu9ilgncolQOzb9kfd/gH8a
+         5vaDuE8OvsPxmEYbptqvWO0a+mYBuV8TbyVfI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=NzZdSjEt874a3GJH+7QELllYmmkWwmA69bmmuHgTAoc=;
-        b=hh4UONth6FNSudKukThq0sNryxE+OUj4MaywiVMXVCZsG96E7L41YXaSjFo76fy2gJ
-         sAzDdD1qNigqyzgnrGOi8/ODz3lC7+5zOnINlWwLw1LlpFzQWHFu3lndypKeI3xGL6lt
-         epZbwtA/C4hV+V7xTEry1UcSO9yZCG6aTpoBWH7PTkymPc1Aq0lxL6UftUMsDXIPC7iI
-         Z2OUhql+S5thxAlzM4cRKHcc5B/cbvuf79dUYnDXli2eOJUbT9fNfqFSdQN4MOTVEXWh
-         bcSu1hphLjrhIesM3/rgjxHDPJaPSstNzoJD8smvOWJa/fS4kMPIZljWU5//+t7L7Qih
-         Z/ag==
-X-Gm-Message-State: AOAM532ZB4zclxuJkJRhRZhEGhyD98XIdg85GJpqkbd1HCRgFWF45xOC
-        aABgAeQTHhW7gxIIRbo8NIrIqcQS5t0=
-X-Google-Smtp-Source: ABdhPJyXZ5+MX59b6ULR5gqIuxp5l3tCoeY0xbteLpJXFGzXJOEKGFgYUdAnj2qpGVZHCWN7S8ZLZw==
-X-Received: by 2002:a63:fa4d:: with SMTP id g13mr7185310pgk.26.1592676466144;
-        Sat, 20 Jun 2020 11:07:46 -0700 (PDT)
-Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id s22sm2614781pgv.43.2020.06.20.11.07.44
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x63u2CH0kTOvK+Ylduvsgf843OJltI0Oa4WMxfgSi60=;
+        b=YbFNGCgL8ZEmzRiu10i07vUo5L2g0G+O+D9kwCdzlYF9QgNYhl4L3Y1oLpshWXe70l
+         tySqa7EiNka1LKLRAGcb04pxXcuMCpF9vUZMKwebdMuussoEiZl1Zi53J6LTSycx1LCC
+         ws7OB4V2Qv77VCB9qO+zuW4d4LWAtcqlrAEZDsAvdDC1zLpHBVHIbQqPz/dsHvV4rSDb
+         2vwyhixO3RMJBHexXFe8pxsOtPMrYqE4lNhtZRlofUqo4dyfufqSuWNEZoLYpewTGpus
+         VHllUzFsBQiLYNapRc969vyqr7sYRTZloJHfZ0QNky/HOIR6jEFgcQjNy+WvqJP5QE/o
+         xPhQ==
+X-Gm-Message-State: AOAM5322YkbzPZ4Zg43Smmt1zsNdLvCmRZxBij1Ot4Xut0miWMEdJ4x4
+        5tjxIOafrVDwgZY0/8ayZQA6N8K8Vfw=
+X-Google-Smtp-Source: ABdhPJyIeC6/JOZ4pBsC86Vbh7PQ8YxQ2LpBZaF/Y+p0PJkb0mxzkyo7VvJF3fU1zoVCE2qsGfSmfQ==
+X-Received: by 2002:a19:4143:: with SMTP id o64mr5202038lfa.157.1592679511911;
+        Sat, 20 Jun 2020 11:58:31 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id o19sm1808352ljc.23.2020.06.20.11.58.30
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Jun 2020 11:07:45 -0700 (PDT)
-Subject: Re: [PATCH v7 8/8] block: create the request_queue debugfs_dir on
- registration
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200619204730.26124-1-mcgrof@kernel.org>
- <20200619204730.26124-9-mcgrof@kernel.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <02112994-4cd7-c749-6bd7-66a772593c90@acm.org>
-Date:   Sat, 20 Jun 2020 11:07:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Sat, 20 Jun 2020 11:58:30 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id s1so15124040ljo.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun 2020 11:58:30 -0700 (PDT)
+X-Received: by 2002:a2e:974e:: with SMTP id f14mr4590362ljj.102.1592679509716;
+ Sat, 20 Jun 2020 11:58:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200619204730.26124-9-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <87pn9u6h8c.fsf@x220.int.ebiederm.org> <87k1026h4x.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87k1026h4x.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 20 Jun 2020 11:58:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgczNRMP-DK3Ga-e_HXvZMBbQNxthdGt=MqMZ0CFDHHcg@mail.gmail.com>
+Message-ID: <CAHk-=wgczNRMP-DK3Ga-e_HXvZMBbQNxthdGt=MqMZ0CFDHHcg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] exec: Don't set group_exit_task during a coredump
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-06-19 13:47, Luis Chamberlain wrote:
-> We were only creating the request_queue debugfs_dir only
-> for make_request block drivers (multiqueue), but never for
-> request-based block drivers. We did this as we were only
-> creating non-blktrace additional debugfs files on that directory
-> for make_request drivers. However, since blktrace *always* creates
-> that directory anyway, we special-case the use of that directory
-> on blktrace. Other than this being an eye-sore, this exposes
-> request-based block drivers to the same debugfs fragile
-> race that used to exist with make_request block drivers
-> where if we start adding files onto that directory we can later
-> run a race with a double removal of dentries on the directory
-> if we don't deal with this carefully on blktrace.
-> 
-> Instead, just simplify things by always creating the request_queue
-> debugfs_dir on request_queue registration. Rename the mutex also to
-> reflect the fact that this is used outside of the blktrace context.
+On Fri, Jun 19, 2020 at 11:36 AM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Instead test SIGNAL_GROUP_COREDUMP in signal_group_exit().
 
-There are two changes in this patch: a bug fix and a rename of a mutex.
-I don't like it to see two changes in a single patch.
+You say "instead", but the patch itself doesn't agree:
 
-Additionally, is the new mutex name really better than the old name? The
-proper way to use mutexes is to use mutexes to protect data instead of
-code. Where is the documentation that mentions which member variable(s)
-of which data structures are protected by the mutex formerly called
-blk_trace_mutex? Since the new name makes it even less clear which data
-is protected by this mutex, is the new name really better than the old name?
+>  static inline int signal_group_exit(const struct signal_struct *sig)
+>  {
+> -       return  (sig->flags & SIGNAL_GROUP_EXIT) ||
+> +       return  (sig->flags & (SIGNAL_GROUP_EXIT | SIGNAL_GROUP_COREDUMP)) ||
+>                 (sig->group_exit_task != NULL);
+>  }
 
-Thanks,
+it does it _in_addition_to_.
 
-Bart.
+I think the whole test for "sig->group_exit_task != NULL" should be
+removed for this commit to make sense.
+
+               Linus
