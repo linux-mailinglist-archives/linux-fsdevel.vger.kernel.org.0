@@ -2,131 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7283B202266
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 09:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B9C2022B8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 11:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgFTHo0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 03:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40588 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgFTHoZ (ORCPT
+        id S1727828AbgFTJAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 05:00:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:42693 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbgFTJAH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 03:44:25 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C01C06174E;
-        Sat, 20 Jun 2020 00:44:25 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id o5so13877745iow.8;
-        Sat, 20 Jun 2020 00:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=R3DIeUaXv04N92HP3WFMAv9JRTr9DLfjsPtXt3CI6Tc=;
-        b=I3udPM4LUAU735jznatS8AR+IH1rD5XL+ktc1ev9knbyqIMQJhEzVB6x0+U0GN1M+P
-         Sg6NvO1I/0YxOmZI0K71uARUW7eicLqpyZw83s8x4Dg+1wyz/0tt7gmkY3LKY1xXA6U+
-         qvnr+ZJyeJ1P/BnrHiV+G5QeGSqqcFkaLXeLGunIBUKnYLo1YhK9icEifr/zEJVCi0r1
-         DJJwYIF0K7WrZx0TfnpbYqqAJS1k9Ph3Y0qyX/10Pe+n87gndkzGY/qVURatAeMTxtPL
-         z/1kuOFWZnIpVSFgKHpUfX8K8zJjFAtq6jTu9P9bonNQBvYiSassIA165oRfGI9RNbgU
-         Zthw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=R3DIeUaXv04N92HP3WFMAv9JRTr9DLfjsPtXt3CI6Tc=;
-        b=eiLtur44kS9S1IKvN25MVxmQfT6ntLBworXgp5Pfc2EY9n44ZYopnCK1V4MRU+vmzU
-         WztRG+OEjsZxt2BnRgQ9UZ5E47ryXDeaFg30uM2WHVCFS/+hKVa18GkQv3K3MMqu2z37
-         w2s+CCP+0WPduo0WeRop+/Sz3a4kjRV49yMLcusQpiq6eo/cyCxNy/m9RDz1ZN3fUyFf
-         uTu9cjEQ6QDDHnv5V8sD8Ocfp9FCeEJM05mDGhEw8Tp3xBH+MzaaTmLAPMaau23jmO/c
-         U7lMl4ir4OoE+EeZQeniJjRTIllr2lSLeVjrsTkTigT9cgYFP7I0nniTUQp8jhpu0es6
-         d66g==
-X-Gm-Message-State: AOAM531xsRRuD5QU4tEr1lfQd+dnc2rdi/doRTRi3G6H5N4mp1kJX2CD
-        iSF3AZdoeBmOzNhbtuZJNyqwV1P2ACN6ug50kro=
-X-Google-Smtp-Source: ABdhPJxT6aTrvzVXVZfaZQXlxk5xLyxN6TlYGQxy8b2/fW7uWBZtuTtwPl4kSlc6YmqQt4b54+St+in2RtL5E3TUfM4=
-X-Received: by 2002:a05:6602:2dca:: with SMTP id l10mr8269728iow.163.1592639064282;
- Sat, 20 Jun 2020 00:44:24 -0700 (PDT)
+        Sat, 20 Jun 2020 05:00:07 -0400
+Received: from mail-qk1-f178.google.com ([209.85.222.178]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mx0VH-1iy2Kk0UtH-00yMgg for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun
+ 2020 11:00:05 +0200
+Received: by mail-qk1-f178.google.com with SMTP id l17so11254611qki.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun 2020 02:00:04 -0700 (PDT)
+X-Gm-Message-State: AOAM533QG9xD+VA/Y9n+vXRhcKDfW6oj1x/RVEqkZL6UMESR37rdMLoy
+        /7HC1JdZH6CnO/YWXa5+xZ8yW+zj0S+PL0Xeuu0=
+X-Google-Smtp-Source: ABdhPJzXRspxKSSFOBWsT2O1FYthxaEw3Phzb5AS0xza1BwZN7k6j32WMkfK4mOB2wz8FD/flTxQpckHH/6DGg6rfts=
+X-Received: by 2002:a37:4ed2:: with SMTP id c201mr7254582qkb.138.1592643603924;
+ Sat, 20 Jun 2020 02:00:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <a1bafab884bb60250840a8721b78f4b5d3a6c2ed.camel@intel.com>
- <20200619010513.GW8681@bombadil.infradead.org> <bf968a2887536459293eaeb40d354fb365b1438d.camel@intel.com>
-In-Reply-To: <bf968a2887536459293eaeb40d354fb365b1438d.camel@intel.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sat, 20 Jun 2020 09:44:12 +0200
-Message-ID: <CA+icZUWTTdR42atb9FNYa90wwuvfFngksBWJBn2BLarkJsztxA@mail.gmail.com>
-Subject: Re: Parallel compilation performance regression
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-Cc:     "willy@infradead.org" <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
+References: <20200620021611.GD8681@bombadil.infradead.org>
+In-Reply-To: <20200620021611.GD8681@bombadil.infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 20 Jun 2020 10:59:48 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1UOJa5499mZErTH6vHgLLJzr+R0EYbcbheSbjw0VqsHQ@mail.gmail.com>
+Message-ID: <CAK8P3a1UOJa5499mZErTH6vHgLLJzr+R0EYbcbheSbjw0VqsHQ@mail.gmail.com>
+Subject: Re: Files dated before 1970
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:7Ab/e6WqjWch0yrKUKOyj1x4ZiCyN9uL6F9HygHVCTd8d7HIO5j
+ vii504zl1ZU03ta6Zu6sIJ8XqLcsPxudapXU/ozjO1jkBN7+z7dmXJcUMCIdZe1vK40DyVd
+ CAXlqhk6EFqG0TUvycA+D6ZM6XcXeFQXdddYIj//7az/ISh9xyj3aiTQNuxv8LqeWwsN9QM
+ X89lIqORPaAzTZ2ANXAOg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Mq7U6STTJ+c=:Z2lwuq8IP/UsMeZo8ZaJbW
+ w+3s1PkKxx5X9ZdIGAwfeKlNOTLYYR1dkyzEpGDz/h5QZ7LUOrbJ0fhQvzBwOGZdDvgMG0zYH
+ EBqiFpi/cPOt7EHIscHTB2+irVWs0JvcU2AdZe85tzHN+dTxZkzA6eUIZcbO/29RhIOcuvP2a
+ OeQ+v8iwWEMZV7xGMEVwOD0MFq4PAKikvZ/mLK1XzlsHsI4DzX2qH5AhrQWz2zU1OGOacT69M
+ kjQ+GzqnuPWt6o/dOY4jyNctZQNNbiy2hmEmOClhTtAhKpZLv7mhbAFp0nvB/bkjWf/04UeXP
+ mvubwn9qOta6oK99KKDqO1Zj3lltUFeIf/xVrxdnHpt9MqltHfdSYnHNeMmKkQN6gNFtVDy9H
+ eJQ+f4ynDx5zEmMCVjC+2uPDcpM+r8/lq0ihwl7/GYUT1oKrvkS75J921EHfTldaOsGxYZbjg
+ 79H+zH83SaZ5FGbK7bvg5OHsfMNWLbm3GYzjLhHcm1kdPQAY0RJLTgaoQFh7yqNLMZKC4T7yX
+ iX82Hn2CypgIxiURYrJAOU6lLE2S9LVLGq2f96DyfYWbSi9t237Vp7te0DAGmT/j29L5ASVoH
+ afMxM+Q7uwZW5JW4mEk+UBS5HEd42i2UU4kdIhYqbbbeu0H/3u6Pn+KmS8aA7Ur0lO+HhwOyp
+ DYO8Chx/jyHITemGvIIo2CPIoULOsAYt4v2rlOT2RL26kSBB/EDypx6LpElxAXJPFvsQcFHh/
+ lEYYOV+Un5Vce2gZkmMNSswhiJYmvw8UfC2nC53YE9z79qpMfy78JqxtXeN2/py0k3nUhlVgk
+ qJoHKLPqEpIKnL4gPSHra/p012DyPUzxJhfOsn//WaJfXQecm4=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 20, 2020 at 5:53 AM Derrick, Jonathan
-<jonathan.derrick@intel.com> wrote:
->
-> On Thu, 2020-06-18 at 18:05 -0700, Matthew Wilcox wrote:
-> > On Thu, Jun 18, 2020 at 11:52:55PM +0000, Derrick, Jonathan wrote:
-> > > Hi David,
-> > >
-> > > I've been experiencing a performance regression when running a parallel
-> > > compilation (eg, make -j72) on recent kernels.
-> >
-> > I bet you're using a version of make which predates 4.3:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0ddad21d3e99c743a3aa473121dc5561679e26bb
-> >
->
-> I am!
->
-> # make --version
-> GNU Make 4.2.1
+On Sat, Jun 20, 2020 at 4:16 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
 >
-> Thank you Matthew!
+> Hi Deepa,
+>
+> Your commit 95582b008388 ("vfs: change inode times to use struct
+> timespec64") changed the behaviour of some filesystems with regards to
+> files from before 1970.  Specifically, this line from JFS, unchanged
+> since before 2.6.12:
+>
+> fs/jfs/jfs_imap.c:3065: ip->i_atime.tv_sec = le32_to_cpu(dip->di_atime.tv_sec);
+>
+> le32_to_cpu() returns a u32.  Before your patch, the u32 was assigned
+> to an s32, so a file with a date stamp of 1968 would show up that way.
+> After your patch, the u32 is zero-extended to an s64, so a file from
+> 1968 now appears to be from 2104.
+>
+> Obviously there aren't a lot of files around from before 1970, so it's
+> not surprising that nobody's noticed yet.  But I don't think this was
+> an intended change.
 
-Check your distribution and included patches on top of a vanilla make v4.2.
-Debian had some important ones I described in [1].
+In the case of JFS, I think the change of behavior on 32-bit kernels was
+intended because it makes them do the same thing as 64-bit kernels.
+I'm sure Deepa or I documented this somewhere but unfortunately it's
+not clear from the commit description that actually made the transition :(.
 
-When proposing "make version 4.3" for tc-build - an opportunity to
-build a llvm-toolchain the easy way - we saw different numbers.
-I pointed in [1] to the Linus patch Matthew did here.
+> The fix is simple; cast the result to (int) like XFS and ext2 do.
+> But someone needs to go through all the filesystems with care.  And it'd
+> be great if someone wrote an xfstest for handling files from 1968.
 
-Personally, with switching to Debian's make version 4.3-3 I have seen
-no big differences when using "make -j3" to build Linux v5.7+.
-That might be different with "make -j72"...
-...can I have SSH access to this machine, please :-),
+I'm sure the xfstests check was added back when XFS and ext3 decided to
+stick with the behavior of 32-bit kernels in order to avoid an
+inadvertent change when 64-bit kernels originally became popular.
 
-You forgot to tell which Linux version you use.
+For JFS and the others that already used an unsigned interpretation
+on 64 bit kernels, the current code seems to be the least broken
+of the three alternatives we had:
 
-If you are interested please look at closed tc-build issue #72 for our analysis.
-For tc-build it did not matter - (Debian's) make v4.2 had some
-slightly better performance.
+a) as implemented in v4.18, change 32-bit kernels to behave the
+   way that 64-bit kernels always have behaved, given that 99% of
+   our users are on 64-bit kernels by now.
 
-BTW, with that pipe improvements in Linux v5.7 I see some better
-numbers when using pipebench to benchmark my devices:
+b) keep 32-bit and 64-bit kernels use a different interpretation,
+   staying compatible with older kernels but incompatible between
+   machines or between running the same user space on the
+   same machine in either native 32-bit mode or compat mode
+    a 64-bit kernel
 
-Example: SanDisk iSSD 16GB
+c) change the 99% of users that have a 64-bit kernel to overflowing
+    the timestamps in y2038 because that was what the kernel
+    file system driver originally implemented on 32-bit machines
+    that no concept of post-y2038 time.
 
-root# cat /dev/sdb | pipebench > /dev/null
-Summary:
-Piped   14.91 GB in 00h01m25.20s:  179.23 MB/second
-
-Before: approx. 100MB/s
-
-BTW, I heard of hyperfine benchmark tool the first time when dealing
-with make performance (see [2]) in ClangBuiltLinux.
-I would like to see some benchmark numbers with hyperfine from you if
-you do not mind.
-
-Stay OPEN minded and curious.
-
-Thanks.
-
-- Sedat -
-
-[1] https://github.com/ClangBuiltLinux/tc-build/issues/72
-[2] https://github.com/sharkdp/hyperfine
-[3] https://github.com/sharkdp/hyperfine/releases
+    Arnd
