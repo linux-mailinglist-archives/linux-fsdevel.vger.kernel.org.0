@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68481202233
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 09:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5FB202237
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 09:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgFTHRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 03:17:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36424 "EHLO
+        id S1727806AbgFTHRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 03:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbgFTHRO (ORCPT
+        with ESMTP id S1727783AbgFTHRS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 03:17:14 -0400
+        Sat, 20 Jun 2020 03:17:18 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77F9C06174E;
-        Sat, 20 Jun 2020 00:17:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4676AC06174E;
+        Sat, 20 Jun 2020 00:17:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=vxIwR1z3WtgDEHokhnxZst5NPuW9toIowL1zJge5q4U=; b=bob0T/OgQiIvdV02N23f59hTy9
-        RaVc427Iv2B1oGIFHPt+wMS+Rcs1chRjNuMPcv5NlC6qs9qPc7SO3guLfulPAo3X/CrWughvOwAjr
-        KrH3ZyeuIrTvk9Skau6rWVpTi2DB6BO0LbTHhUsh767gd166+m6m/WHiy1ztOtSgXQP3upX+Bo5zl
-        nKEwmHGhD5h1I6VVb91ymSkCJBwVQHJfDTkGWPjYSw/DyOJNQivAnvuhc9qAm8S0RTJ/tjpzX6eAL
-        +C6mw6iVkIfoi6v7lDBLQgVMqebgRH3IElkxtLXu1xjuctqrOI4BaG5xoaXRkzya7K7xjQ6cI4zwD
-        2OybXwXA==;
+        bh=q4EALRxcaActKV9HCTOro94tk2q9YtvXD2QaQ1ECFhU=; b=J3HzNqMsJMZq9/DJl3R1iGLAlu
+        Qvx9hc/oS08eVmeUQ9v6MbQ3QpeZwyIET+O/hNmLf1v52PvDDVarHSh2DWGje0D8zKmfv/gDwUyKB
+        mczvE41dkd46CZZpucyRovPyj4Nz4f0wdsr/zb7ry6F36Pithq6gGJ/KmlGuyE5wLEt6DYlLuCqoz
+        MzdCrtl/xx5gOQbrLEPjRzzctXHLZXvlUoFLfVIgsh2H+TFY0sCNz1o+++iQqCFWvzP3JJIw6rC7r
+        h+YI0ij4PQy2gpwT3iOvd1o2THm3joyRjGwQsj3zaMubCPO5hZ0t5B1M0pt3Oc/yGcgMsnadtyrr1
+        KnDL70JQ==;
 Received: from 195-192-102-148.dyn.cablelink.at ([195.192.102.148] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmXkW-0003uA-Qj; Sat, 20 Jun 2020 07:17:13 +0000
+        id 1jmXkZ-0003um-TD; Sat, 20 Jun 2020 07:17:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] block: reduce ifdef CONFIG_BLOCK madness in headers
-Date:   Sat, 20 Jun 2020 09:16:43 +0200
-Message-Id: <20200620071644.463185-10-hch@lst.de>
+Subject: [PATCH 10/10] block: move struct block_device to blk_types.h
+Date:   Sat, 20 Jun 2020 09:16:44 +0200
+Message-Id: <20200620071644.463185-11-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200620071644.463185-1-hch@lst.de>
 References: <20200620071644.463185-1-hch@lst.de>
@@ -48,226 +48,221 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Large part of bio.h, blkdev.h and genhd.h are under ifdef CONFIG_BLOCK
-for no good reason.  Only stub out function that are called from
-code that is not dependent on CONFIG_BLOCK and leave the harmless
-other declarations around.
+Move the struct block_device definition together with most of the
+block layer definitions, as it has nothing to do with the rest of fs.h.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/bio.h    |  3 --
- include/linux/blkdev.h | 92 ++++++++++++++++++------------------------
- include/linux/genhd.h  | 14 +++----
- 3 files changed, 46 insertions(+), 63 deletions(-)
+ fs/adfs/super.c           |  1 +
+ fs/befs/linuxvfs.c        |  1 +
+ fs/efs/super.c            |  1 +
+ fs/jfs/jfs_mount.c        |  1 +
+ fs/jfs/resize.c           |  1 +
+ include/linux/blk_types.h | 39 ++++++++++++++++++++++++++++++++++++-
+ include/linux/blkdev.h    |  1 +
+ include/linux/dasd_mod.h  |  2 ++
+ include/linux/fs.h        | 41 ---------------------------------------
+ 9 files changed, 46 insertions(+), 42 deletions(-)
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 91676d4b2dfe77..0282f8aa85935c 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -8,8 +8,6 @@
- #include <linux/highmem.h>
- #include <linux/mempool.h>
- #include <linux/ioprio.h>
--
--#ifdef CONFIG_BLOCK
- /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
- #include <linux/blk_types.h>
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index a3cc8ecb50da1a..d553bb5bc17abd 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/statfs.h>
+ #include <linux/user_namespace.h>
++#include <linux/blkdev.h>
+ #include "adfs.h"
+ #include "dir_f.h"
+ #include "dir_fplus.h"
+diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+index 64cdf4d8e42451..2482032021cac7 100644
+--- a/fs/befs/linuxvfs.c
++++ b/fs/befs/linuxvfs.c
+@@ -22,6 +22,7 @@
+ #include <linux/cred.h>
+ #include <linux/exportfs.h>
+ #include <linux/seq_file.h>
++#include <linux/blkdev.h>
  
-@@ -824,5 +822,4 @@ static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
- 		bio->bi_opf |= REQ_NOWAIT;
- }
+ #include "befs.h"
+ #include "btree.h"
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index 4a6ebff2af76f3..a4a945d0ac6a42 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -13,6 +13,7 @@
+ #include <linux/slab.h>
+ #include <linux/buffer_head.h>
+ #include <linux/vfs.h>
++#include <linux/blkdev.h>
  
--#endif /* CONFIG_BLOCK */
- #endif /* __LINUX_BIO_H */
+ #include "efs.h"
+ #include <linux/efs_vh.h>
+diff --git a/fs/jfs/jfs_mount.c b/fs/jfs/jfs_mount.c
+index eb8b9e233d73db..2935d4c776ec75 100644
+--- a/fs/jfs/jfs_mount.c
++++ b/fs/jfs/jfs_mount.c
+@@ -36,6 +36,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/buffer_head.h>
++#include <linux/blkdev.h>
+ 
+ #include "jfs_incore.h"
+ #include "jfs_filsys.h"
+diff --git a/fs/jfs/resize.c b/fs/jfs/resize.c
+index 66acea9d878b97..bde787c354fcc1 100644
+--- a/fs/jfs/resize.c
++++ b/fs/jfs/resize.c
+@@ -6,6 +6,7 @@
+ #include <linux/fs.h>
+ #include <linux/buffer_head.h>
+ #include <linux/quotaops.h>
++#include <linux/blkdev.h>
+ #include "jfs_incore.h"
+ #include "jfs_filsys.h"
+ #include "jfs_metapage.h"
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index ccb895f911b185..a602132cbe32c2 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -14,12 +14,49 @@ struct bio_set;
+ struct bio;
+ struct bio_integrity_payload;
+ struct page;
+-struct block_device;
+ struct io_context;
+ struct cgroup_subsys_state;
+ typedef void (bio_end_io_t) (struct bio *);
+ struct bio_crypt_ctx;
+ 
++struct block_device {
++	dev_t			bd_dev;  /* not a kdev_t - it's a search key */
++	int			bd_openers;
++	struct inode *		bd_inode;	/* will die */
++	struct super_block *	bd_super;
++	struct mutex		bd_mutex;	/* open/close mutex */
++	void *			bd_claiming;
++	void *			bd_holder;
++	int			bd_holders;
++	bool			bd_write_holder;
++#ifdef CONFIG_SYSFS
++	struct list_head	bd_holder_disks;
++#endif
++	struct block_device *	bd_contains;
++	unsigned		bd_block_size;
++	u8			bd_partno;
++	struct hd_struct *	bd_part;
++	/* number of times partitions within this device have been opened. */
++	unsigned		bd_part_count;
++	int			bd_invalidated;
++	struct gendisk *	bd_disk;
++	struct request_queue *  bd_queue;
++	struct backing_dev_info *bd_bdi;
++	struct list_head	bd_list;
++	/*
++	 * Private data.  You must have bd_claim'ed the block_device
++	 * to use this.  NOTE:  bd_claim allows an owner to claim
++	 * the same device multiple times, the owner must take special
++	 * care to not mess up bd_private for that case.
++	 */
++	unsigned long		bd_private;
++
++	/* The counter of freeze processes */
++	int			bd_fsfreeze_count;
++	/* Mutex for freeze */
++	struct mutex		bd_fsfreeze_mutex;
++} __randomize_layout;
++
+ /*
+  * Block error status values.  See block/blk-core:blk_errors for the details.
+  * Alpha cannot write a byte atomically, so we need to use 32-bit value.
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 973253ce202d87..0f021ee2ce1c3b 100644
+index 0f021ee2ce1c3b..60d07e89582bfa 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -4,9 +4,6 @@
+@@ -1932,6 +1932,7 @@ void bd_abort_claiming(struct block_device *bdev, struct block_device *whole,
+ 		void *holder);
+ void blkdev_put(struct block_device *bdev, fmode_t mode);
  
- #include <linux/sched.h>
- #include <linux/sched/clock.h>
--
--#ifdef CONFIG_BLOCK
--
- #include <linux/major.h>
- #include <linux/genhd.h>
- #include <linux/list.h>
-@@ -1165,13 +1162,13 @@ static inline int blk_rq_map_sg(struct request_queue *q, struct request *rq,
- 	return __blk_rq_map_sg(q, rq, sglist, &last_sg);
- }
- extern void blk_dump_rq_flags(struct request *, char *);
--extern long nr_blockdev_pages(void);
++struct block_device *I_BDEV(struct inode *inode);
+ struct block_device *bdget(dev_t);
+ struct block_device *bdgrab(struct block_device *bdev);
+ void bdput(struct block_device *);
+diff --git a/include/linux/dasd_mod.h b/include/linux/dasd_mod.h
+index d39abad2ff6e4c..14e6cf8c62677f 100644
+--- a/include/linux/dasd_mod.h
++++ b/include/linux/dasd_mod.h
+@@ -4,6 +4,8 @@
  
- bool __must_check blk_get_queue(struct request_queue *);
- struct request_queue *blk_alloc_queue(make_request_fn make_request, int node_id);
- extern void blk_put_queue(struct request_queue *);
- extern void blk_set_queue_dying(struct request_queue *);
+ #include <asm/dasd.h>
  
-+#ifdef CONFIG_BLOCK
- /*
-  * blk_plug permits building a queue of related requests by holding the I/O
-  * fragments for a short period. This allows merging of sequential requests
-@@ -1231,9 +1228,47 @@ static inline bool blk_needs_flush_plug(struct task_struct *tsk)
- 		 !list_empty(&plug->cb_list));
- }
++struct gendisk;
++
+ extern int dasd_biodasdinfo(struct gendisk *disk, dasd_information2_t *info);
  
-+int blkdev_issue_flush(struct block_device *, gfp_t);
-+long nr_blockdev_pages(void);
-+#else /* CONFIG_BLOCK */
-+struct blk_plug {
-+};
-+
-+static inline void blk_start_plug(struct blk_plug *plug)
-+{
-+}
-+
-+static inline void blk_finish_plug(struct blk_plug *plug)
-+{
-+}
-+
-+static inline void blk_flush_plug(struct task_struct *task)
-+{
-+}
-+
-+static inline void blk_schedule_flush_plug(struct task_struct *task)
-+{
-+}
-+
-+
-+static inline bool blk_needs_flush_plug(struct task_struct *tsk)
-+{
-+	return false;
-+}
-+
-+static inline int blkdev_issue_flush(struct block_device *bdev, gfp_t gfp_mask)
-+{
-+	return 0;
-+}
-+
-+static inline long nr_blockdev_pages(void)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_BLOCK */
-+
- extern void blk_io_schedule(void);
+ #endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index add30c3bdf9a28..1d7c4f7465d24c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -470,45 +470,6 @@ struct address_space {
+ 	 * must be enforced here for CRIS, to let the least significant bit
+ 	 * of struct page's "mapping" pointer be used for PAGE_MAPPING_ANON.
+ 	 */
+-struct request_queue;
+-
+-struct block_device {
+-	dev_t			bd_dev;  /* not a kdev_t - it's a search key */
+-	int			bd_openers;
+-	struct inode *		bd_inode;	/* will die */
+-	struct super_block *	bd_super;
+-	struct mutex		bd_mutex;	/* open/close mutex */
+-	void *			bd_claiming;
+-	void *			bd_holder;
+-	int			bd_holders;
+-	bool			bd_write_holder;
+-#ifdef CONFIG_SYSFS
+-	struct list_head	bd_holder_disks;
+-#endif
+-	struct block_device *	bd_contains;
+-	unsigned		bd_block_size;
+-	u8			bd_partno;
+-	struct hd_struct *	bd_part;
+-	/* number of times partitions within this device have been opened. */
+-	unsigned		bd_part_count;
+-	int			bd_invalidated;
+-	struct gendisk *	bd_disk;
+-	struct request_queue *  bd_queue;
+-	struct backing_dev_info *bd_bdi;
+-	struct list_head	bd_list;
+-	/*
+-	 * Private data.  You must have bd_claim'ed the block_device
+-	 * to use this.  NOTE:  bd_claim allows an owner to claim
+-	 * the same device multiple times, the owner must take special
+-	 * care to not mess up bd_private for that case.
+-	 */
+-	unsigned long		bd_private;
+-
+-	/* The counter of freeze processes */
+-	int			bd_fsfreeze_count;
+-	/* Mutex for freeze */
+-	struct mutex		bd_fsfreeze_mutex;
+-} __randomize_layout;
  
--int blkdev_issue_flush(struct block_device *, gfp_t);
- extern int blkdev_issue_write_same(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask, struct page *page);
- 
-@@ -1833,51 +1868,6 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
- }
- #endif /* CONFIG_BLK_DEV_ZONED */
- 
--#else /* CONFIG_BLOCK */
--
--struct block_device;
--
--/*
-- * stubs for when the block layer is configured out
-- */
--
--static inline long nr_blockdev_pages(void)
--{
--	return 0;
--}
--
--struct blk_plug {
--};
--
--static inline void blk_start_plug(struct blk_plug *plug)
--{
--}
--
--static inline void blk_finish_plug(struct blk_plug *plug)
--{
--}
--
--static inline void blk_flush_plug(struct task_struct *task)
--{
--}
--
--static inline void blk_schedule_flush_plug(struct task_struct *task)
--{
--}
--
--
--static inline bool blk_needs_flush_plug(struct task_struct *tsk)
--{
--	return false;
--}
--
--static inline int blkdev_issue_flush(struct block_device *bdev, gfp_t gfp_mask)
--{
--	return 0;
--}
--
--#endif /* CONFIG_BLOCK */
--
- static inline void blk_wake_io_task(struct task_struct *waiter)
- {
- 	/*
-@@ -1891,7 +1881,6 @@ static inline void blk_wake_io_task(struct task_struct *waiter)
- 		wake_up_process(waiter);
+ /* XArray tags, for tagging dirty and writeback pages in the pagecache. */
+ #define PAGECACHE_TAG_DIRTY	XA_MARK_0
+@@ -907,8 +868,6 @@ static inline unsigned imajor(const struct inode *inode)
+ 	return MAJOR(inode->i_rdev);
  }
  
--#ifdef CONFIG_BLOCK
- unsigned long disk_start_io_acct(struct gendisk *disk, unsigned int sectors,
- 		unsigned int op);
- void disk_end_io_acct(struct gendisk *disk, unsigned int op,
-@@ -1917,7 +1906,6 @@ static inline void bio_end_io_acct(struct bio *bio, unsigned long start_time)
- {
- 	return disk_end_io_acct(bio->bi_disk, bio_op(bio), start_time);
- }
--#endif /* CONFIG_BLOCK */
- 
- int bdev_read_only(struct block_device *bdev);
- int set_blocksize(struct block_device *bdev, int size);
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 83f8e0d8322836..31a54072ffd653 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -19,8 +19,6 @@
- #include <linux/blk_types.h>
- #include <asm/local.h>
- 
--#ifdef CONFIG_BLOCK
+-extern struct block_device *I_BDEV(struct inode *inode);
 -
- #define dev_to_disk(device)	container_of((device), struct gendisk, part0.__dev)
- #define dev_to_part(device)	container_of((device), struct hd_struct, __dev)
- #define disk_to_dev(disk)	(&(disk)->part0.__dev)
-@@ -337,12 +335,9 @@ static inline void set_capacity(struct gendisk *disk, sector_t size)
- 	disk->part0.nr_sects = size;
- }
- 
--extern dev_t blk_lookup_devt(const char *name, int partno);
--
- int bdev_disk_changed(struct block_device *bdev, bool invalidate);
- int blk_add_partitions(struct gendisk *disk, struct block_device *bdev);
- int blk_drop_partitions(struct block_device *bdev);
--extern void printk_all_partitions(void);
- 
- extern struct gendisk *__alloc_disk_node(int minors, int node_id);
- extern struct kobject *get_disk_and_module(struct gendisk *disk);
-@@ -400,10 +395,13 @@ static inline void bd_unlink_disk_holder(struct block_device *bdev,
- }
- #endif /* CONFIG_SYSFS */
- 
-+#ifdef CONFIG_BLOCK
-+void printk_all_partitions(void);
-+dev_t blk_lookup_devt(const char *name, int partno);
- #else /* CONFIG_BLOCK */
--
--static inline void printk_all_partitions(void) { }
--
-+static inline void printk_all_partitions(void)
-+{
-+}
- static inline dev_t blk_lookup_devt(const char *name, int partno)
- {
- 	dev_t devt = MKDEV(0, 0);
+ struct fown_struct {
+ 	rwlock_t lock;          /* protects pid, uid, euid fields */
+ 	struct pid *pid;	/* pid or -pgrp where SIGIO should be sent */
 -- 
 2.26.2
 
