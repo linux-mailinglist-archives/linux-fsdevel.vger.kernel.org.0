@@ -2,104 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEC5202639
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 21:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5253A2026C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 23:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbgFTTju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 15:39:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41660 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbgFTTju (ORCPT
+        id S1728951AbgFTVTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 17:19:31 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37705 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbgFTVTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 15:39:50 -0400
-X-Greylist: delayed 1464 seconds by postgrey-1.27 at vger.kernel.org; Sat, 20 Jun 2020 15:39:50 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QHhdZsEwflik6dhlpG9lDRGf2hUbiRTywvrsqPNIe50=; b=Za6zjjv9SW/fcKUx1GQuuZ9KSj
-        3wWuDUlczJhnxt7HcGZtrKs/RQAJ2AxNVABPlYlAUBMiiPlezmVC/KuFD6oTzv+hc1dMlkYzLmgp1
-        BPrTo0wrA4qsogg8qYSC3XksacQyySS6ckSNjRripeZ512qO4mTc7KGXKNg8VQ5SVqp77jaNsBQCD
-        +bna6zliSxrpte3Z5JYZigx6V/DCULCJaNKwASL42oxHzh09Glukgz997JBujOxmA6MEj2P223Zis
-        hG0Xdtepr3u9WW7EyIJ91zJac8F2UV9HEp7UHIfZXswsSbuBZIPMuRls7H1qrI9KG2uToOIRL6u0B
-        oFWJCYJg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmixW-0004zd-13; Sat, 20 Jun 2020 19:15:22 +0000
-Date:   Sat, 20 Jun 2020 12:15:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Bypass filesystems for reading cached pages
-Message-ID: <20200620191521.GG8681@bombadil.infradead.org>
-References: <20200619155036.GZ8681@bombadil.infradead.org>
- <CAOQ4uxjy6JTAQqvK9pc+xNDfzGQ3ACefTrySXtKb_OcAYQrdzw@mail.gmail.com>
+        Sat, 20 Jun 2020 17:19:31 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y18so5647889plr.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun 2020 14:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=25eSrepyVILhrv7XgPWvBbKHc9Y423BPGYOb7vQWjWs=;
+        b=t/Am+hFLmddRtCKiXi0HbUHiPvo3BwDUiHiS7fW1vmwLBIr+dyLNnWTKqSTGvW/t41
+         aK4swZ5bkA/22fovt5YvZ/ax72Zzd1mSdWWpP7CYOPx/B08WSIQExrzQEwBIIsXOUZwR
+         KZy9FMIclUUsq55bLNqYjSGKckeCTZWE9H4m2L+qfIuGTRP2IgD5FYvo/jkbqo0n5sw/
+         sB7rlC0H55rGS7hVSpHlb/d1x/4N1cftR54gNfOTHHqzuSss/BnGFjGqF8tD6opKiCbT
+         bo2AmTJwOWE5mf/K8Wa6r87Yp1loNPlH3VT1RLHmpq3LY3dw9fhJFFIDvabWlAlgD3dR
+         H29A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=25eSrepyVILhrv7XgPWvBbKHc9Y423BPGYOb7vQWjWs=;
+        b=b77XBawLKfwCMzzeqXHglqOWv5Y4JOh3RGOivdyXnO40y9pLyTG686vJjjeD3Y/J7M
+         NE45/v8trcQCuA2s+G0qK5SALh2m6qwCdVWJgmqH3t/snMAX8iHMUyT/aY64AJ7mrxSb
+         QgzKgtI1Ep6ZynaF2JLVQm0p+x13CenKqbrHwWfkSQcUeo/DfHuv/kh2aL6O+VHtdywL
+         phkAiuSCZXZOI+cOg1nPRjlC0dzJRKHJRo+5a2JP7o89C71CFRVzbyIISGHIPZYHNpJX
+         eQQhfFglD28E29bxir2nhTyyXpMG0n7in00kgFzzTigEYOvdqnzICpBRYLAm/F8lsj38
+         iLIQ==
+X-Gm-Message-State: AOAM5324L99eBNdTjn8x9wx9CRsZR/Y9nrKlcqZA0lwMptHWd/Ci4+ze
+        2ktjc5S5chPLQ1qRxp7C9TAa2A==
+X-Google-Smtp-Source: ABdhPJw6HucljAEvnDkOHfNh65rF9/hxbjXXyREwSSmUNEASTpR9xRKv8GzwdP0MYN2zYK/4mRcMAQ==
+X-Received: by 2002:a17:90a:3b09:: with SMTP id d9mr10818806pjc.225.1592687908863;
+        Sat, 20 Jun 2020 14:18:28 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id d2sm5301327pfc.1.2020.06.20.14.18.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Jun 2020 14:18:28 -0700 (PDT)
+Subject: Re: [PATCH v7 0/8] blktrace: fix debugfs use after free
+To:     Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        bvanassche@acm.org, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yukuai3@huawei.com, martin.petersen@oracle.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20200619204730.26124-1-mcgrof@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1d2ef645-9790-21b9-51bd-de7987158c78@kernel.dk>
+Date:   Sat, 20 Jun 2020 15:18:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjy6JTAQqvK9pc+xNDfzGQ3ACefTrySXtKb_OcAYQrdzw@mail.gmail.com>
+In-Reply-To: <20200619204730.26124-1-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 20, 2020 at 09:19:37AM +0300, Amir Goldstein wrote:
-> On Fri, Jun 19, 2020 at 6:52 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
-> > The advantage of this patch is that we can avoid taking any filesystem
-> > lock, as long as the pages being accessed are in the cache (and we don't
-> > need to readahead any pages into the cache).  We also avoid an indirect
-> > function call in these cases.
+On 6/19/20 2:47 PM, Luis Chamberlain wrote:
+> Its been a fun ride, but all patch series come to an end. My hope is
+> that this is it. The simplification of the fix is considerable now,
+> with only a few lines of code and with no data structure changes.
 > 
-> XFS is taking i_rwsem lock in read_iter() for a surprising reason:
-> https://lore.kernel.org/linux-xfs/CAOQ4uxjpqDQP2AKA8Hrt4jDC65cTo4QdYDOKFE-C3cLxBBa6pQ@mail.gmail.com/
-> In that post I claim that ocfs2 and cifs also do some work in read_iter().
-> I didn't go back to check what, but it sounds like cache coherence among
-> nodes.
+> We were only creating the debugfs_dir upon initialization only if
+> you had CONFIG_BLK_DEBUG_FS for for make_request block drivers
+> (multiqueue). That's where the UAF bug could happen. Folks liked
+> the idea of open coding the debugfs initialization even if
+> CONFIG_BLK_DEBUG_FS was disabled, given that debugfs code will
+> simply ignore that code if debugfs is disabled, but to make
+> the fix easier to backport, that shift is done now in another
+> patch. Likewise, although we were only creating the debugfs_dir
+> only for make_request block drivers (multiqueue), the same new
+> additional patch also creates the debugfs_dir for request-based
+> block drivers. That *begged* us to just rename the mutex to
+> clarify its for the debugfs_dir, blktrace then just becomes
+> its biggest user.
+> 
+> The only patches changed here is the last one from the last series,
+> which actually fixed the UAF oops, and that one is now split in 3
+> patches, which makes a secondary fix much clearer.
+> 
+> I've waited a while to post these, to let 0-day give me its blessings,
+> both for Linus' tree and linux-next. No issues have been found. I've
+> also taken time to run blktests prior and after this series and I have
+> found no regressions. In fact, I think I should just extend blktests
+> with the break-blktrace tests, I'll do that later.
+> 
+> Luis Chamberlain (8):
+>   block: add docs for gendisk / request_queue refcount helpers
+>   block: clarify context for refcount increment helpers
+>   block: revert back to synchronous request_queue removal
+>   blktrace: annotate required lock on do_blk_trace_setup()
+>   loop: be paranoid on exit and prevent new additions / removals
+>   blktrace: fix debugfs use after free
+>   blktrace: ensure our debugfs dir exists
+>   block: create the request_queue debugfs_dir on registration
 
-That's out of date.  Here's POSIX-2017:
+Applied for 5.9, thanks.
 
-https://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html
+-- 
+Jens Axboe
 
-  "I/O is intended to be atomic to ordinary files and pipes and
-  FIFOs. Atomic means that all the bytes from a single operation that
-  started out together end up together, without interleaving from other
-  I/O operations. It is a known attribute of terminals that this is not
-  honored, and terminals are explicitly (and implicitly permanently)
-  excepted, making the behavior unspecified. The behavior for other
-  device types is also left unspecified, but the wording is intended to
-  imply that future standards might choose to specify atomicity (or not)."
-
-That _doesn't_ say "a read cannot observe a write in progress".  It says
-"Two writes cannot interleave".  Indeed, further down in that section, it says:
-
-  "Earlier versions of this standard allowed two very different behaviors
-  with regard to the handling of interrupts. In order to minimize the
-  resulting confusion, it was decided that POSIX.1-2017 should support
-  only one of these behaviors. Historical practice on AT&T-derived systems
-  was to have read() and write() return -1 and set errno to [EINTR] when
-  interrupted after some, but not all, of the data requested had been
-  transferred. However, the US Department of Commerce FIPS 151-1 and FIPS
-  151-2 require the historical BSD behavior, in which read() and write()
-  return the number of bytes actually transferred before the interrupt. If
-  -1 is returned when any data is transferred, it is difficult to recover
-  from the error on a seekable device and impossible on a non-seekable
-  device. Most new implementations support this behavior. The behavior
-  required by POSIX.1-2017 is to return the number of bytes transferred."
-
-That explicitly allows for a write to be interrupted by a signal and
-later resumed, allowing a read to observe a half-complete write.
-
-> Because if I am not mistaken, even though this change has a potential
-> to improve many workloads, it may also degrade some workloads in cases
-> where case readahead is not properly tuned. Imagine reading a large file
-> and getting only a few pages worth of data read on every syscall.
-> Or did I misunderstand your patch's behavior in that case?
-
-I think you did.  If the IOCB_CACHED read hits a readahead page,
-it returns early.  Then call_read_iter() notices the read is not yet
-complete, and calls ->read_iter() to finish the read.  So it's two
-calls to generic_file_buffered_read() rather than one, but it's still
-one syscall.
