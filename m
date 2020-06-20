@@ -2,80 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DA4202525
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 18:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66B6202541
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jun 2020 18:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgFTQPl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Jun 2020 12:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33698 "EHLO
+        id S1728078AbgFTQ14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Jun 2020 12:27:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgFTQPl (ORCPT
+        with ESMTP id S1728051AbgFTQ14 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Jun 2020 12:15:41 -0400
+        Sat, 20 Jun 2020 12:27:56 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FA0FC06174E
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jun 2020 09:15:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DD1C06174E;
+        Sat, 20 Jun 2020 09:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9uIhA1Toyo/UbtRGFPRxn1KUA3aO8ENCwe/486W1u60=; b=DF9Vt5Ix2NXg1gSe0aD8ck7rcZ
-        A9W/EnVNtINZylJZsnGMZdSX/9BVEux8H+WTR8kIUPiD61zmiszxFHGLNKy+IZnd1UFu0/KG4ugmu
-        rcG+aLdSdxNPm5vM/KWDsWw93azfB8gUgVFbVJoyFrL4GGx/fEgz3GpKDDcnNmO+i3AgQCCkJaRR8
-        j6U4msJrVuKXBWCJ+4tcmsmO97tb+W0qbs1+vDWQDn/0JjVIPBPxVkVYxPa7TVyaco37up2sKTsbZ
-        elBXStpVSElTEubaBwIyPgKDEHQaRPuLFoied8+MrAJmQE3syG7TzMn8NlANueD7UiU4W5RK8YyHk
-        kr9t/NJA==;
+        bh=ama9No7LcT5b/qPuEpA7ghtbIZZe7ttjP4oS5TfpNFI=; b=qoUHSzwTi0k/IMsmObNSMt+L/Y
+        VDpGir+hw/HrjnqygnqAN+wb4HE0ci1oH8HJXb0TP8mz0AESEvWj0A0vOIaEPeDB7CaDQcee7H7N4
+        1pgj35IJlKhYhtfDvusBDq5mTZmNRKqjjybiGmyPAwmSKUdwvu4mSqa4jrFfuRhsVPC0448Ysiz2T
+        waTnm6QB6GZxFTFQ56FczUaCVxZd+U8yVA9hEsTwExj5blhtFEbl5T47iS823EMO+TkwGL2uOLwI4
+        Bnug6L13QpyKv0GhCCDaW3IYxaCPd0uJNErR166tdxiX+cYUGFkMO0p+luXF+Pmodkwo1NcmvooW+
+        K3OhISdg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jmg9T-0003ws-7N; Sat, 20 Jun 2020 16:15:31 +0000
-Date:   Sat, 20 Jun 2020 09:15:31 -0700
+        id 1jmgLQ-0002AA-QI; Sat, 20 Jun 2020 16:27:52 +0000
+Date:   Sat, 20 Jun 2020 09:27:52 -0700
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Subject: Re: Files dated before 1970
-Message-ID: <20200620161531.GE8681@bombadil.infradead.org>
-References: <20200620021611.GD8681@bombadil.infradead.org>
- <CAK8P3a1UOJa5499mZErTH6vHgLLJzr+R0EYbcbheSbjw0VqsHQ@mail.gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin@oracle.com" <joe.jin@oracle.com>,
+        Wengang Wang <wen.gang.wang@oracle.com>
+Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc
+ dentries
+Message-ID: <20200620162752.GF8681@bombadil.infradead.org>
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
+ <20200618233958.GV8681@bombadil.infradead.org>
+ <877dw3apn8.fsf@x220.int.ebiederm.org>
+ <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
+ <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+ <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
+ <87k1036k9y.fsf@x220.int.ebiederm.org>
+ <68a1f51b-50bf-0770-2367-c3e1b38be535@oracle.com>
+ <87blle4qze.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a1UOJa5499mZErTH6vHgLLJzr+R0EYbcbheSbjw0VqsHQ@mail.gmail.com>
+In-Reply-To: <87blle4qze.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 20, 2020 at 10:59:48AM +0200, Arnd Bergmann wrote:
-> On Sat, Jun 20, 2020 at 4:16 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > le32_to_cpu() returns a u32.  Before your patch, the u32 was assigned
-> > to an s32, so a file with a date stamp of 1968 would show up that way.
-> > After your patch, the u32 is zero-extended to an s64, so a file from
-> > 1968 now appears to be from 2104.
+On Fri, Jun 19, 2020 at 05:42:45PM -0500, Eric W. Biederman wrote:
+> Junxiao Bi <junxiao.bi@oracle.com> writes:
+> > Still high lock contention. Collect the following hot path.
 > 
-> In the case of JFS, I think the change of behavior on 32-bit kernels was
-> intended because it makes them do the same thing as 64-bit kernels.
+> A different location this time.
+> 
+> I know of at least exit_signal and exit_notify that take thread wide
+> locks, and it looks like exit_mm is another.  Those don't use the same
+> locks as flushing proc.
+> 
+> 
+> So I think you are simply seeing a result of the thundering herd of
+> threads shutting down at once.  Given that thread shutdown is fundamentally
+> a slow path there is only so much that can be done.
+> 
+> If you are up for a project to working through this thundering herd I
+> expect I can help some.  It will be a long process of cleaning up
+> the entire thread exit process with an eye to performance.
 
-Oh!  I hadn't realised that 64-bit kernels were already using a 64-bit
-signed tv_sec.  That makes a world of difference.
+Wengang had some tests which produced wall-clock values for this problem,
+which I agree is more informative.
 
-> For JFS and the others that already used an unsigned interpretation
-> on 64 bit kernels, the current code seems to be the least broken
-> of the three alternatives we had:
-> 
-> a) as implemented in v4.18, change 32-bit kernels to behave the
->    way that 64-bit kernels always have behaved, given that 99% of
->    our users are on 64-bit kernels by now.
-> 
-> b) keep 32-bit and 64-bit kernels use a different interpretation,
->    staying compatible with older kernels but incompatible between
->    machines or between running the same user space on the
->    same machine in either native 32-bit mode or compat mode
->     a 64-bit kernel
-> 
-> c) change the 99% of users that have a 64-bit kernel to overflowing
->     the timestamps in y2038 because that was what the kernel
->     file system driver originally implemented on 32-bit machines
->     that no concept of post-y2038 time.
+I'm not entirely sure what the customer workload is that requires a
+highly threaded workload to also shut down quickly.  To my mind, an
+overall workload is normally composed of highly-threaded tasks that run
+for a long time and only shut down rarely (thus performance of shutdown
+is not important) and single-threaded tasks that run for a short time.
 
-Yes, I agree, knowing more of the facts, this was the right decision to
-make at the time, and I wouldn't change it now.  Thanks!
+Understanding this workload is important to my next suggestion, which
+is that rather than searching for all the places in the exit path which
+contend on a single spinlock, we simply set the allowed CPUs for an
+exiting task to include only the CPU that this thread is running on.
+It will probably run faster to take the threads down in series on one
+CPU rather than take them down in parallel across many CPUs (or am I
+mistaken?  Is there inherently a lot of parallelism in the thread
+exiting process?)
