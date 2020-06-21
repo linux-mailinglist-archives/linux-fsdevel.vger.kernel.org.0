@@ -2,160 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9992B2028CA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 06:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E932028FD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 08:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgFUEzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jun 2020 00:55:45 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:44837 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725807AbgFUEzo (ORCPT
+        id S1729291AbgFUGAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jun 2020 02:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40220 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbgFUGAN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jun 2020 00:55:44 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id E3ED55C00D9;
-        Sun, 21 Jun 2020 00:55:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sun, 21 Jun 2020 00:55:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        f+V9My7t/LV5Z1d5BR8PtxKFjib8M82ampdGENj43xs=; b=jbmmzG5p80Saoabi
-        K3WnNtkDePNaiYrrpVhfTl522U7K1gt8nJ4Mfe3HRuusCQm5YwoOj84iuzptt+R8
-        QS9aGToJwxnUrAoYa1U/LJBbb6dX0TWCK6pvQ2NMYYvDfeMzhuo5jhCN9ZnVUfRX
-        oIUfY28YH/ANehBFvPzcJQP1g8pgnWr6D/M12OwczwjyqgBUPmWT8wQ8YHaDWgQ8
-        Z3OPRVirGKvdMhNgPtr0yLznqSJvHplfMWF0SgMWR/wgfZuWwEJfl2cXEjmAbkS9
-        tQfTwn/E4b0k4kB3+xBQuDB0Ln1itiBCzPFnXi28zW0FR3WsZM50jv6QhK6sUMJi
-        0yzu9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=f+V9My7t/LV5Z1d5BR8PtxKFjib8M82ampdGENj43
-        xs=; b=eMAb+jtW5tMrk2tCc6qgBU8MBeO4LpnSCyLWwf9n/BQjSmtoV+DRIWFsM
-        BCygPTW4+XGCgFvJ+V2CnOpbeROigIjQI4+gRaGlgbROJe0akYvd2vUsomgKuyGz
-        7xTY98IaTSSLH19ntblIafoKcHCc++6vr8dkqcMwA9vMz1l1ND9VD1nULDPSjiYI
-        QiMFjD2MzbRZVUFuIHiwfyQoiYTS9SLvE69kSXHhCdgaa/MRc154yOHBMY8pLAKg
-        YFo08HAUe/YDJ1IW6CDyYfHM3VYb53puSSuxXxgrL7T83DIlnIYgKcYaVJyGGN99
-        P/nMMSlZ0yLsXLJE5r1GmUa04+Ssg==
-X-ME-Sender: <xms:S-juXu_4mcnUs8U8t5Ll8Yt_2sptLmf2hkrISK2BixOyYUTWHoD0Rw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejledgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepheekrdejrdduleegrdekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:S-juXuvTfzIWNDDp6BGf1vqPn4D6zDo7EqCHYkRIyM6qUiENz0qyUQ>
-    <xmx:S-juXkC11nbHTRnab62GYXQf_L4Ef3dp4_7aEIT0xBfDl9esTGb2CQ>
-    <xmx:S-juXmcYJlyvoDo08j59L6OfsNQ7hGxYhOaDZhI-gtdvCHVWc5rYRg>
-    <xmx:TOjuXu3MPW_LjjcDfWoug0r4HVQ_TpI78HcytGFvLplsWfbTuhRR9w>
-Received: from mickey.themaw.net (58-7-194-87.dyn.iinet.net.au [58.7.194.87])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6513F30614FA;
-        Sun, 21 Jun 2020 00:55:36 -0400 (EDT)
-Message-ID: <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Sun, 21 Jun 2020 12:55:33 +0800
-In-Reply-To: <20200619222356.GA13061@mtj.duckdns.org>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
-         <20200619153833.GA5749@mtj.thefacebook.com>
-         <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
-         <20200619222356.GA13061@mtj.duckdns.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Sun, 21 Jun 2020 02:00:13 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63F0C061794;
+        Sat, 20 Jun 2020 23:00:13 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id t8so13075958ilm.7;
+        Sat, 20 Jun 2020 23:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oACwMnGxV711lDft/mL2GTQM/QCIsRYS4HyU3R9wY9g=;
+        b=K3xEZg8Lev6ya/17Z0awjRX9rPVz2RmlS6dL2qaRTO7hFzQXVktwBSbyTKrVFq5RfR
+         bUWWVxMw8aJ1q1x6+uPcvluW3KpNa8A5M01b3cBsR52H/UNl7lCv1jbF18ECWoKV0BOv
+         uj8EEAfXC4rpmtaeYbB4dULplLZHB+hXA2tMmKOvkxO/2ICgSAgSbqJSAfeY8ohdkKLN
+         +bw4D3EPMF1z3LjpXHr0Sl1R99MZIWtFwRXDSqcGJBlNDbm4/s8sLz2BGlfaYkZKu2Rq
+         rJk8n0QOGX9oUw0nBbgStb7G/sWlHav1RKGCibvGto/c3AGTNO341AEJAYyHSmMhyr0u
+         YDLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oACwMnGxV711lDft/mL2GTQM/QCIsRYS4HyU3R9wY9g=;
+        b=nL/xdDTyiSbWdXNxcXK28CHbqx5tj2WB3erVZcIexZaC06PjxOEU4/g6EnU9OLwNog
+         8K5O8dqkrkgZDrtudJrT5MJJfvu6CYeZxGRJsEiCd9hGL+hTbSKgRM4eAaZ3RfKM8Zjr
+         uAWNztp1MINLD0yqwGbL9MK4VKZq5sMgpWygl7ioqPFfQi4chTYPIPXa1xsWz5UFt56s
+         3e2JD115+4Z/7asRduw8AhvOwvcu6B9AceSP2Fpjtgek0aMFo3HV6xnA3pAyARTNOIWG
+         eNyLW3pJ5MbcMwQ4+QF+WIAK/pHDXnt68RVZmBu/skxPRrXl8V+7zckofxcs4uGFG5pX
+         dASw==
+X-Gm-Message-State: AOAM53379pDfOATs9SO4GH5W/ghVoB2LFPoCC0c02Z21kDvekrDuA+a4
+        FGN9ooU/Xz/tdnnNa05v6m9nCjrP2DwbJpMhx+zFXVvO
+X-Google-Smtp-Source: ABdhPJxqCRebQRDCScb+zwuWhADWhU3C7P0rpGnfUjMYacyzMd5l68nGUffrQS8wi00YLBrpOVoYPtwfZrYuSjuR52E=
+X-Received: by 2002:a92:5856:: with SMTP id m83mr11411406ilb.72.1592719212802;
+ Sat, 20 Jun 2020 23:00:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200619155036.GZ8681@bombadil.infradead.org> <CAOQ4uxjy6JTAQqvK9pc+xNDfzGQ3ACefTrySXtKb_OcAYQrdzw@mail.gmail.com>
+ <20200620191521.GG8681@bombadil.infradead.org>
+In-Reply-To: <20200620191521.GG8681@bombadil.infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 21 Jun 2020 09:00:01 +0300
+Message-ID: <CAOQ4uxgSc7hK1=GuUajzG1Z+ks6gzFFX+EtuBMULOk0s85zi3A@mail.gmail.com>
+Subject: Re: [RFC] Bypass filesystems for reading cached pages
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-06-19 at 18:23 -0400, Tejun Heo wrote:
-> On Fri, Jun 19, 2020 at 01:41:39PM -0700, Rick Lindsley wrote:
-> > On 6/19/20 8:38 AM, Tejun Heo wrote:
-> > 
-> > > I don't have strong objections to the series but the rationales
-> > > don't seem
-> > > particularly strong. It's solving a suspected problem but only
-> > > half way. It
-> > > isn't clear whether this can be the long term solution for the
-> > > problem
-> > > machine and whether it will benefit anyone else in a meaningful
-> > > way either.
-> > 
-> > I don't understand your statement about solving the problem
-> > halfway. Could
-> > you elaborate?
-> 
-> Spending 5 minutes during boot creating sysfs objects doesn't seem
-> like a
-> particularly good solution and I don't know whether anyone else would
-> experience similar issues. Again, not necessarily against improving
-> the
-> scalability of kernfs code but the use case seems a bit out there.
-> 
-> > > I think Greg already asked this but how are the 100,000+ memory
-> > > objects
-> > > used? Is that justified in the first place?
-> > 
-> > They are used for hotplugging and partitioning memory. The size of
-> > the
-> > segments (and thus the number of them) is dictated by the
-> > underlying
-> > hardware.
-> 
-> This sounds so bad. There gotta be a better interface for that,
-> right?
+[CC: Dave Chinner, Jan Kara, xfs]
 
-I'm still struggling a bit to grasp what your getting at but ...
+On Sat, Jun 20, 2020 at 10:15 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sat, Jun 20, 2020 at 09:19:37AM +0300, Amir Goldstein wrote:
+> > On Fri, Jun 19, 2020 at 6:52 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
+> > > The advantage of this patch is that we can avoid taking any filesystem
+> > > lock, as long as the pages being accessed are in the cache (and we don't
+> > > need to readahead any pages into the cache).  We also avoid an indirect
+> > > function call in these cases.
+> >
+> > XFS is taking i_rwsem lock in read_iter() for a surprising reason:
+> > https://lore.kernel.org/linux-xfs/CAOQ4uxjpqDQP2AKA8Hrt4jDC65cTo4QdYDOKFE-C3cLxBBa6pQ@mail.gmail.com/
+> > In that post I claim that ocfs2 and cifs also do some work in read_iter().
+> > I didn't go back to check what, but it sounds like cache coherence among
+> > nodes.
+>
+> That's out of date.  Here's POSIX-2017:
+>
+> https://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html
+>
+>   "I/O is intended to be atomic to ordinary files and pipes and
+>   FIFOs. Atomic means that all the bytes from a single operation that
+>   started out together end up together, without interleaving from other
+>   I/O operations. It is a known attribute of terminals that this is not
+>   honored, and terminals are explicitly (and implicitly permanently)
+>   excepted, making the behavior unspecified. The behavior for other
+>   device types is also left unspecified, but the wording is intended to
+>   imply that future standards might choose to specify atomicity (or not)."
+>
+> That _doesn't_ say "a read cannot observe a write in progress".  It says
+> "Two writes cannot interleave".  Indeed, further down in that section, it says:
+>
+>   "Earlier versions of this standard allowed two very different behaviors
+>   with regard to the handling of interrupts. In order to minimize the
+>   resulting confusion, it was decided that POSIX.1-2017 should support
+>   only one of these behaviors. Historical practice on AT&T-derived systems
+>   was to have read() and write() return -1 and set errno to [EINTR] when
+>   interrupted after some, but not all, of the data requested had been
+>   transferred. However, the US Department of Commerce FIPS 151-1 and FIPS
+>   151-2 require the historical BSD behavior, in which read() and write()
+>   return the number of bytes actually transferred before the interrupt. If
+>   -1 is returned when any data is transferred, it is difficult to recover
+>   from the error on a seekable device and impossible on a non-seekable
+>   device. Most new implementations support this behavior. The behavior
+>   required by POSIX.1-2017 is to return the number of bytes transferred."
+>
+> That explicitly allows for a write to be interrupted by a signal and
+> later resumed, allowing a read to observe a half-complete write.
+>
 
-Maybe your talking about the underlying notifications system where
-a notification is sent for every event.
+Tell that to Dave Chinner (cc). I too, find it surprising that XFS developers
+choose to "not regress" a behavior that is XFS specific and there is no
+proof or even clues of any application that could rely on such behavior.
+While the price that is being paid by all real world applications that do
+mixed random rw workload is very much real and very much significant.
 
-There's nothing new about that problem and it's becoming increasingly
-clear that existing kernel notification sub-systems don't scale well.
+The original discussion on the original post quickly steered towards the
+behavior change of rwsem [1], which you Matthew also participated in.
+The reason for taking the rwsem lock in the first place was never seriously
+challenged.
 
-Mount handling is a current example which is one of the areas David
-Howells is trying to improve and that's taken years now to get as
-far as it has.
+I posted a followup patch that fixes the performance issue without breaking
+the "atomic rw" behavior [2] by calling generic_file_read_iter() once without
+i_rwsem to pre-populate the page cache.
+Dave had some technical concerns about this patch, regarding racing
+with truncate_pagecache_range(), which later led to a fix by Jan Kara to
+solve a readahead(2) vs. hole punch race [3].
 
-It seems to me that any improvements in the area here would have a
-different solution, perhaps something along the lines of multiple
-notification merging, increased context carried in notifications,
-or the like. Something like the notification merging to reduce
-notification volume might eventually be useful for David's
-notifications sub-system too (and, I think the design of that
-sub-system could probably accommodate that sort of change away
-from the problematic anonymous notification sub-systems we have
-now).
+At the time, Jan Kara wrote [3]:
+"...other filesystems need similar protections but e.g. in case of ext4 it isn't
+so simple without seriously regressing mixed rw workload performance so
+I'm pushing just xfs fix at this moment which is simple."
 
-But it's taken a long time to get that far with that project and
-the case here would have a far more significant impact on a fairly
-large number of sub-systems, both kernel and user space, so all I
-can hope for with this discussion is to raise awareness of the need
-so that it's recognised and thought about approaches to improving
-it can happen.
+And w.r.t solving the race without taking i_rwsem:
+"...So I have an idea how it could be solved: Change calling convention for
+->readpage() so that it gets called without page locked and take
+i_mmap_sem there (and in ->readpages()) to protect from the race..."
 
-So, while the questions you ask are valid and your concerns real,
-it's unrealistic to think there's a simple solution that can be
-implemented in short order. Problem awareness is all that can be done
-now so that fundamental and probably wide spread improvements might
-be able to be implemented over time.
+My question to both Jan and Matthew is - does the new aops ->readahead()
+API make things any better in that regard?
+Will it make it easier for us to address the readahead vs. hole punch race
+without having to take i_rwsem before readahead()?
 
-But if I misunderstand your thinking on this please elaborate further.
+Thanks,
+Amir.
 
-Ian
-
+[1] https://lore.kernel.org/linux-xfs/20190325154731.GT1183@magnolia/
+[2] https://lore.kernel.org/linux-xfs/20190404165737.30889-1-amir73il@gmail.com/
+[3] https://lore.kernel.org/linux-xfs/20200120165830.GB28285@quack2.suse.cz/
