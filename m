@@ -2,177 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F010F2029F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 12:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCD8202A8C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 14:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbgFUKHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jun 2020 06:07:13 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46593 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729628AbgFUKHN (ORCPT
+        id S1730034AbgFUMq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jun 2020 08:46:27 -0400
+Received: from mail1.protonmail.ch ([185.70.40.18]:61385 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730002AbgFUMq0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jun 2020 06:07:13 -0400
-Received: by mail-io1-f70.google.com with SMTP id w2so10374358iom.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 03:07:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Mzm10RGjJNpKvxhGS4GfgH7+IDQ736GgimRVfF5QPkg=;
-        b=ban/Ep/t3tBqxWK7dpjUWDSsGaTuhIwYUDYEbdL7KO9zMBVrgepcTaz9LWozDt81La
-         rUX5WeX5cqppIGYMqo2bR20M/TlLmx5ksOqM6Sxlqk5Emow5ct/iEl3/F1mu3nnuT/oH
-         DEgNPIzMO9IXCEQHfuTWrAyIqkv9wqSiX/85G7i4keR7OPiud2jtAvwD0L1v32gRDg09
-         jqiTEohN74IyRY+wZsWyn4JRFGuYAOdDYdhvfyOBLOew5sIyFryP29vb61Peiz4dja3q
-         e3lv0q7zhk2Mze0TZVFNDTvBl75//UdJdPDV72djWPk2oXea+EnjKCyzhLiWpVo4zqVT
-         6Fag==
-X-Gm-Message-State: AOAM5306sOS/5A5qe00oJq9fGMxtKCwRTOLMhlKG+r0l3bBI86DiKokW
-        bBPLWulCR/enqYK4E+Xk2xXH107YXlrPlljdCYT1bRS+h/xD
-X-Google-Smtp-Source: ABdhPJwZv8cJwKrif3fd/MrdYQ8iTjiZ8EkVFX88TS7S24e46rMMWlVphVoI8B4IMCrijKdWohyDABfBLZvHxHlsPmsvK2k+AGGT
+        Sun, 21 Jun 2020 08:46:26 -0400
+Date:   Sun, 21 Jun 2020 12:46:18 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1592743582;
+        bh=o7oADJo0vJuRKcp5TG0sjztoofAY/q6zn+gdMVXU/GQ=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=kZYQnAe+0TNQTKsA3aMy0leOxXUaskrYFNn7A1suGYSWjTQaMPmCXkN8ERgKujCNv
+         qyU05tFqExaDLTgsHhZrZdt7SJAiikGuXAN4R04dFdyhEcOipoCSaGQ+w2eAcjn21e
+         L8PgELoRu2U7+Ehi3MbrvUHpOzkMbH8cm1qOjkss=
+To:     linux-fsdevel@vger.kernel.org
+From:   Rob Gill <rrobgill@protonmail.com>
+Cc:     Rob Gill <rrobgill@protonmail.com>
+Reply-To: Rob Gill <rrobgill@protonmail.com>
+Subject: [PATCH] fs Add MODULE_DESCRIPTION entries to kernel modules
+Message-ID: <20200621124607.24573-1-rrobgill@protonmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:5fcd:: with SMTP id i74mr11780919ill.169.1592734031570;
- Sun, 21 Jun 2020 03:07:11 -0700 (PDT)
-Date:   Sun, 21 Jun 2020 03:07:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002c6fbf05a8954afe@google.com>
-Subject: BUG: sleeping function called from invalid context in do_user_addr_fault
-From:   syzbot <syzbot+7748c5375dc20dfdb92f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM shortcircuit=no
+        autolearn=disabled version=3.4.4
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mail.protonmail.ch
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+The user tool modinfo is used to get information on kernel modules, includi=
+ng a
+description where it is available.
 
-syzbot found the following crash on:
+This patch adds a brief MODULE_DESCRIPTION to modules, text taken when
+available from code comments or information within Kconfig.
 
-HEAD commit:    7ae77150 Merge tag 'powerpc-5.8-1' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1772c3a9100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=be4578b3f1083656
-dashboard link: https://syzkaller.appspot.com/bug?extid=7748c5375dc20dfdb92f
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7748c5375dc20dfdb92f@syzkaller.appspotmail.com
-
-BUG: sleeping function called from invalid context at arch/x86/mm/fault.c:1259
-in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 10572, name: syz-executor.3
-2 locks held by syz-executor.3/10572:
- #0: ffffffff892e89d0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x5/0x30 include/linux/rcupdate.h:240
- #1: ffff88809b127028 (&mm->mmap_sem#2){++++}-{3:3}, at: do_user_addr_fault+0x344/0xba0 arch/x86/mm/fault.c:1242
-Preemption disabled at:
-[<ffffffff8147bc44>] irq_enter+0x64/0x100 kernel/softirq.c:358
-CPU: 0 PID: 10572 Comm: syz-executor.3 Not tainted 5.7.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1e9/0x30e lib/dump_stack.c:118
- ___might_sleep+0x3c0/0x570 kernel/sched/core.c:6877
- do_user_addr_fault+0x377/0xba0 arch/x86/mm/fault.c:1259
- page_fault+0x39/0x40 arch/x86/entry/entry_64.S:1203
-RIP: 0010:__read_once_size include/linux/compiler.h:252 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x60 kernel/kcov.c:202
-Code: c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 04 14 00 00 00 74 2c 8b 91 e0 13 00 00 83 fa 02 75 21 48 8b 91 e8 13 00 00 <48> 8b 32 48 8d 7e 01 8b 89 e4 13 00 00 48 39 cf 73 08 48 89 44 f2
-RSP: 0018:ffffc90004b37938 EFLAGS: 00010246
-RAX: ffffffff81c35ba2 RBX: 0000000000000001 RCX: ffff88805962a380
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae8387d8
-RBP: 0000000000000000 R08: dffffc0000000000 R09: ffffed1015d070fc
-R10: ffffed1015d070fc R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90004b37d30 R14: ffffc900000ca3b0 R15: ffff8880a26f4170
- rcu_read_lock include/linux/rcupdate.h:635 [inline]
- __d_lookup+0xa2/0x6e0 fs/dcache.c:2386
- lookup_fast+0x99/0x700 fs/namei.c:1488
- walk_component+0x72/0x680 fs/namei.c:1842
- link_path_walk+0x66d/0xba0 fs/namei.c:2165
- path_openat+0x21d/0x38b0 fs/namei.c:3342
- do_filp_open+0x191/0x3a0 fs/namei.c:3373
- do_sys_openat2+0x463/0x770 fs/open.c:1179
- do_sys_open fs/open.c:1195 [inline]
- __do_sys_openat fs/open.c:1209 [inline]
- __se_sys_openat fs/open.c:1204 [inline]
- __x64_sys_openat+0x1c8/0x1f0 fs/open.c:1204
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x45ca59
-Code: 0d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fada1226c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00000000004f7e60 RCX: 000000000045ca59
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: ffffffffffffff9c
-RBP: 000000000078c180 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000007b2 R14: 00000000004ca90b R15: 00007fada12276d4
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD a1df9067 P4D a1df9067 PUD a0772067 PMD 0 
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 10572 Comm: syz-executor.3 Tainted: G        W         5.7.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:252 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x60 kernel/kcov.c:202
-Code: c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 04 14 00 00 00 74 2c 8b 91 e0 13 00 00 83 fa 02 75 21 48 8b 91 e8 13 00 00 <48> 8b 32 48 8d 7e 01 8b 89 e4 13 00 00 48 39 cf 73 08 48 89 44 f2
-RSP: 0018:ffffc90004b37938 EFLAGS: 00010246
-RAX: ffffffff81c35ba2 RBX: 0000000000000001 RCX: ffff88805962a380
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae8387d8
-RBP: 0000000000000000 R08: dffffc0000000000 R09: ffffed1015d070fc
-R10: ffffed1015d070fc R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90004b37d30 R14: ffffc900000ca3b0 R15: ffff8880a26f4170
-FS:  00007fada1227700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000a7654000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- rcu_read_lock include/linux/rcupdate.h:635 [inline]
- __d_lookup+0xa2/0x6e0 fs/dcache.c:2386
- lookup_fast+0x99/0x700 fs/namei.c:1488
- walk_component+0x72/0x680 fs/namei.c:1842
- link_path_walk+0x66d/0xba0 fs/namei.c:2165
- path_openat+0x21d/0x38b0 fs/namei.c:3342
- do_filp_open+0x191/0x3a0 fs/namei.c:3373
- do_sys_openat2+0x463/0x770 fs/open.c:1179
- do_sys_open fs/open.c:1195 [inline]
- __do_sys_openat fs/open.c:1209 [inline]
- __se_sys_openat fs/open.c:1204 [inline]
- __x64_sys_openat+0x1c8/0x1f0 fs/open.c:1204
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x45ca59
-Code: 0d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fada1226c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00000000004f7e60 RCX: 000000000045ca59
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: ffffffffffffff9c
-RBP: 000000000078c180 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000007b2 R14: 00000000004ca90b R15: 00007fada12276d4
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 4b5ea1725b962f43 ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:252 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x60 kernel/kcov.c:202
-Code: c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 04 14 00 00 00 74 2c 8b 91 e0 13 00 00 83 fa 02 75 21 48 8b 91 e8 13 00 00 <48> 8b 32 48 8d 7e 01 8b 89 e4 13 00 00 48 39 cf 73 08 48 89 44 f2
-RSP: 0018:ffffc90004b37938 EFLAGS: 00010246
-RAX: ffffffff81c35ba2 RBX: 0000000000000001 RCX: ffff88805962a380
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae8387d8
-RBP: 0000000000000000 R08: dffffc0000000000 R09: ffffed1015d070fc
-R10: ffffed1015d070fc R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90004b37d30 R14: ffffc900000ca3b0 R15: ffff8880a26f4170
-FS:  00007fada1227700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000a7654000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Rob Gill <rrobgill@protonmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/9p/v9fs.c      | 1 +
+ fs/adfs/super.c   | 1 +
+ fs/autofs/init.c  | 1 +
+ fs/btrfs/super.c  | 1 +
+ fs/cramfs/inode.c | 1 +
+ fs/efs/super.c    | 1 +
+ fs/hfs/super.c    | 1 +
+ fs/hpfs/super.c   | 1 +
+ fs/isofs/inode.c  | 1 +
+ fs/jbd2/journal.c | 1 +
+ fs/minix/inode.c  | 1 +
+ fs/nfs/inode.c    | 1 +
+ fs/nfsd/nfsctl.c  | 1 +
+ fs/qnx4/inode.c   | 1 +
+ fs/qnx6/inode.c   | 1 +
+ fs/sysv/super.c   | 1 +
+ fs/ufs/super.c    | 1 +
+ 17 files changed, 17 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 15a99f9c7..a9b5d0d25 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -739,3 +739,4 @@ MODULE_AUTHOR("Latchesar Ionkov <lucho@ionkov.net>");
+ MODULE_AUTHOR("Eric Van Hensbergen <ericvh@gmail.com>");
+ MODULE_AUTHOR("Ron Minnich <rminnich@lanl.gov>");
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Plan 9 Resource Sharing Support (9P2000)");
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index a3cc8ecb5..dd5c4a7d8 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -492,3 +492,4 @@ static void __exit exit_adfs_fs(void)
+ module_init(init_adfs_fs)
+ module_exit(exit_adfs_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Acorn Disc Filing System support");
+diff --git a/fs/autofs/init.c b/fs/autofs/init.c
+index d3f55e874..291ef8de9 100644
+--- a/fs/autofs/init.c
++++ b/fs/autofs/init.c
+@@ -44,3 +44,4 @@ static void __exit exit_autofs_fs(void)
+ module_init(init_autofs_fs)
+ module_exit(exit_autofs_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Kernel automounter support");
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index bc73fd670..c1b2eaa53 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2518,3 +2518,4 @@ MODULE_SOFTDEP("pre: crc32c");
+ MODULE_SOFTDEP("pre: xxhash64");
+ MODULE_SOFTDEP("pre: sha256");
+ MODULE_SOFTDEP("pre: blake2b-256");
++MODULE_DESCRIPTION("Btrfs general purpose copy-on-write filesystem");
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index 912308600..94df29184 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -1011,3 +1011,4 @@ static void __exit exit_cramfs_fs(void)
+ module_init(init_cramfs_fs)
+ module_exit(exit_cramfs_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Compressed ROM file system support (cramfs)");
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index 4a6ebff2a..cc6acac88 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -42,6 +42,7 @@ static struct file_system_type efs_fs_type =3D {
+ =09.fs_flags=09=3D FS_REQUIRES_DEV,
+ };
+ MODULE_ALIAS_FS("efs");
++MODULE_DESCRIPTION("EFS file system support (read only)");
+=20
+ static struct pt_types sgi_pt_types[] =3D {
+ =09{0x00,=09=09"SGI vh"},
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index c33324686..c48a51ab3 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -29,6 +29,7 @@
+ static struct kmem_cache *hfs_inode_cachep;
+=20
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Apple Macintosh file system support");
+=20
+ static int hfs_sync_fs(struct super_block *sb, int wait)
+ {
+diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+index 0a677a9aa..7f59cded8 100644
+--- a/fs/hpfs/super.c
++++ b/fs/hpfs/super.c
+@@ -792,3 +792,4 @@ static void __exit exit_hpfs_fs(void)
+ module_init(init_hpfs_fs)
+ module_exit(exit_hpfs_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("OS/2 HPFS file system support");
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index d634561f8..0db1209a6 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1615,3 +1615,4 @@ static void __exit exit_iso9660_fs(void)
+ module_init(init_iso9660_fs)
+ module_exit(exit_iso9660_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("ISO 9660 CDROM file system support");
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index e4944436e..1abd25b32 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2759,6 +2759,7 @@ static void __exit journal_exit(void)
+ }
+=20
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("generic journaling layer");
+ module_init(journal_init);
+ module_exit(journal_exit);
+=20
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 7cb5fd38e..cf770ae20 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -686,4 +686,5 @@ static void __exit exit_minix_fs(void)
+ module_init(init_minix_fs)
+ module_exit(exit_minix_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Minix file system support");
+=20
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 0bf1f835d..cbb88f16e 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -2307,6 +2307,7 @@ static void __exit exit_nfs_fs(void)
+ /* Not quite true; I just maintain it */
+ MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("NFS Network File System protocol support");
+ module_param(enable_ino64, bool, 0644);
+=20
+ module_init(init_nfs_fs)
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index b68e96681..deb964034 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1580,5 +1580,6 @@ static void __exit exit_nfsd(void)
+=20
+ MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("NFS server support");
+ module_init(init_nfsd)
+ module_exit(exit_nfsd)
+diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+index e8da1cde8..cf7b396a7 100644
+--- a/fs/qnx4/inode.c
++++ b/fs/qnx4/inode.c
+@@ -421,4 +421,5 @@ static void __exit exit_qnx4_fs(void)
+ module_init(init_qnx4_fs)
+ module_exit(exit_qnx4_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("QNX4 file system support (read only)");
+=20
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index 755293c8c..a7e0fb162 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -680,3 +680,4 @@ static void __exit exit_qnx6_fs(void)
+ module_init(init_qnx6_fs)
+ module_exit(exit_qnx6_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("QNX6 file system");
+diff --git a/fs/sysv/super.c b/fs/sysv/super.c
+index cc8e2ed15..e1c871d47 100644
+--- a/fs/sysv/super.c
++++ b/fs/sysv/super.c
+@@ -592,3 +592,4 @@ static void __exit exit_sysv_fs(void)
+ module_init(init_sysv_fs)
+ module_exit(exit_sysv_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("System V/Xenix/V7/Coherent file system support");
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 1da0be667..7c4e37bda 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -1543,3 +1543,4 @@ static void __exit exit_ufs_fs(void)
+ module_init(init_ufs_fs)
+ module_exit(exit_ufs_fs)
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("UFS file system support (read only)");
+--=20
+2.17.1
+
+
