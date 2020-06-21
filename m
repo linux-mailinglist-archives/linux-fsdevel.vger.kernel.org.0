@@ -2,257 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC35202D9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 01:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D21202DA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 01:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbgFUXEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jun 2020 19:04:30 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57073 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726398AbgFUXEa (ORCPT
+        id S1730922AbgFUX3g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jun 2020 19:29:36 -0400
+Received: from sonic315-14.consmr.mail.bf2.yahoo.com ([74.6.134.124]:37614
+        "EHLO sonic315-14.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730914AbgFUX3g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jun 2020 19:04:30 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 837D43A4B86;
-        Mon, 22 Jun 2020 09:04:21 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jn90e-0000u6-Dr; Mon, 22 Jun 2020 09:04:20 +1000
-Date:   Mon, 22 Jun 2020 09:04:20 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     mhocko@kernel.org, darrick.wong@oracle.com, hch@infradead.org,
-        akpm@linux-foundation.org, bfoster@redhat.com, vbabka@suse.cz,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] xfs: reintroduce PF_FSTRANS for transaction reservation
- recursion protection
-Message-ID: <20200621230420.GT2005@dread.disaster.area>
-References: <1592637174-19657-1-git-send-email-laoar.shao@gmail.com>
+        Sun, 21 Jun 2020 19:29:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1592782173; bh=+NKq2YP/4c3bLm2HmGhxa/KCZOXr0NIUKHs/ECuC0yk=; h=Date:From:Reply-To:Subject:References:From:Subject; b=gKxNCLxc2jHvikx7z/6c10wap6u348h1+6COaBSGzW9NcwnZZKCclog1V/vPvd753L3R9T/t2ISkg2IMehyFBhMynx47WZ9p1U53iZMYVuCKNYSrDbWCMjyxvFf4HNtIEIgvS7R3VNSAHYDNlR534un459Cb9C6NEY6qUxYeanUct8ZOSj/6O/C+tXpvvZUNMsFMmcEwLo55NJzXgDWWC976YULUCPZAzZ4Lx+N5OHWZYJE8QicXN4xln/ywOACcgfTATUTVDus2imzDgyL+JSLtakpdeB7wJL9NlF1TXVuym6DeM/EdjnwnQTiJgr18XyHYx3Ev4ToSkPl5YyGOzw==
+X-YMail-OSG: e6d_QG0VM1laP9SAOJKzNNXnT.1Fn7H5_A3Cx6NL5gAptgEoF0dTgcmFdcreiEJ
+ emk3wJ0xn_gtRBKkeqIsYYMzm9QsOsMxJNYm2qm85F1wLwbvcFuoaC5bNwD0iQ9IoKke8UCccjpO
+ Arh66xJKKJvM7pkURNt8vkXCF6yXBd7FHwDO6ZChI1UcVd8n1HxRPKh73Qj_1Zx5IvdpN83eHgeI
+ 50Lo.lWc351F0OiNKRqKSHZOSVeTirGxPCYCP7awx_4GT3f8U8JubwrUmZD5aNg_W1snkXU4RZSR
+ NbIfxIeUeSr1211i_KJ2InfJXMP67384KbPW0Zf8maLU4Pw.UH9IH0u1R6gUL2U.YgPBKchTxQ1I
+ dsoImGknrStfDxltl7lMo85uIA_UmOfanUXXgX7FkNPTJHC6WmLOLRLRpQ54rqY7K3jLEaxZGD73
+ NK2u4FykLxdQAW8U1Ejdg_uo5HKyk53L7MFIMGQAWNpsHwvWCNQfThZCqSzY0iFEy7hQ_t68Jt2x
+ BlRfmwSHQXMaQOQnw2_6mNEWY6vaQd8Kf17HYkJzl09mVkARfCTWYJo.tSBP8Iwn43WolvyhE4Tl
+ mqujmxJm3U7.3aaawtn8Xl450a3LyfhbCz8Zk7Y81nS_1vYIOr1lzjAuiRgNefh_hfctqXr7.POj
+ NGlEmV9NOOmmxYSf0UK19HZX_Xf2eCK6o13O1Ms60XZOgXa3c.geHtRf0YYd7Cr7DGvjK3sElCoh
+ RCWrApPWBRzS.gUwUyGsB6xLWNFlOkgrPLJRGvWeF1JZl9HiM0IeCRqrt1LUw0YxAIwzaPG6AiQ0
+ R
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Sun, 21 Jun 2020 23:29:33 +0000
+Date:   Sun, 21 Jun 2020 23:29:32 +0000 (UTC)
+From:   "Mrs. Mina A. Brunel" <mrs.minaaaliyahbrunel0001@gmail.com>
+Reply-To: mrsminaaaliyahbrunel344@gmail.com
+Message-ID: <832704751.1103824.1592782172319@mail.yahoo.com>
+Subject: My Dear in the lord
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1592637174-19657-1-git-send-email-laoar.shao@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8 a=VwQbUJbxAAAA:8
-        a=pGLkceISAAAA:8 a=cCpOmXS292ZDskx4PqcA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22 a=AjGcO6oz07-iQ99wixmX:22
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <832704751.1103824.1592782172319.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.16138 YMailNodin Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 20, 2020 at 03:12:54AM -0400, Yafang Shao wrote:
-> PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-> memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-> means to avoid filesystem reclaim recursion. That change is subtle.
-> Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-> PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-> PF_MEMALLOC_NOFS is not proper.
-> 
-> Bellow comment is quoted from Dave,
-> > It wasn't for memory allocation recursion protection in XFS - it was for
-> > transaction reservation recursion protection by something trying to flush
-> > data pages while holding a transaction reservation. Doing
-> > this could deadlock the journal because the existing reservation
-> > could prevent the nested reservation for being able to reserve space
-> > in the journal and that is a self-deadlock vector.
-> > IOWs, this check is not protecting against memory reclaim recursion
-> > bugs at all (that's the previous check [1]). This check is
-> > protecting against the filesystem calling writepages directly from a
-> > context where it can self-deadlock.
-> > So what we are seeing here is that the PF_FSTRANS ->
-> > PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> > about what type of error this check was protecting against.
-> 
-> Besides reintroducing PF_FSTRANS, there're some other improvements in this
-> patch,
-> - Remove useless MACRO current_clear_flags_nested(), current_pid() and
->   current_test_flags().
-> - Remove useless memalloc_nofs_{save, restore} in __kmem_vmalloc()
-> 
-> [1]. Bellow check is to avoid memory reclaim recursion.
-> if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-> 	PF_MEMALLOC))
-> 	goto redirty;
-> 
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  fs/iomap/buffered-io.c    |  4 ++--
->  fs/xfs/kmem.c             |  7 -------
->  fs/xfs/kmem.h             |  2 +-
->  fs/xfs/libxfs/xfs_btree.c |  2 +-
->  fs/xfs/xfs_aops.c         |  4 ++--
->  fs/xfs/xfs_linux.h        |  4 ----
->  fs/xfs/xfs_trans.c        | 12 ++++++------
->  include/linux/sched.h     |  1 +
->  8 files changed, 13 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index bcfc288..0f1945c 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1500,9 +1500,9 @@ static void iomap_writepage_end_bio(struct bio *bio)
->  
->  	/*
->  	 * Given that we do not allow direct reclaim to call us, we should
-> -	 * never be called in a recursive filesystem reclaim context.
-> +	 * never be called while in a filesystem transaction.
->  	 */
-> -	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-> +	if (WARN_ON_ONCE(current->flags & PF_FSTRANS))
->  		goto redirty;
 
-This is OK, but the rest of the patch is not.
 
-I did not say "replace all XFS use of GFP_NOFS/KM_NOFS with
-PF_TRANS", which is what this patch does. The use of
-PF_MEMALLOC_NOFS within transactions is correct and valid and needs
-to remain. Replacing this with PF_FSTRANS effectively reverts all
-the simplifications and obviously self-documneting code that
-PF_MEMALLOC_NOFS provides us with.
+My Dear in the lord
 
-IOWs, PF_MEMALLOC_NOFS is used to indicate that this is a "no
-reclaim recursion" path and so it's use remains completely unchanged
-in XFS. PF_FSTRANS is to indicate this is a "no
-transaction recursion" path, which is a different thing and needs
-it's own specific annotation.
 
-> diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
-> index f136647..9875a23 100644
-> --- a/fs/xfs/kmem.c
-> +++ b/fs/xfs/kmem.c
-> @@ -41,18 +41,11 @@
->  static void *
->  __kmem_vmalloc(size_t size, xfs_km_flags_t flags)
->  {
-> -	unsigned nofs_flag = 0;
->  	void	*ptr;
->  	gfp_t	lflags = kmem_flags_convert(flags);
->  
-> -	if (flags & KM_NOFS)
-> -		nofs_flag = memalloc_nofs_save();
-> -
->  	ptr = __vmalloc(size, lflags);
->  
-> -	if (flags & KM_NOFS)
-> -		memalloc_nofs_restore(nofs_flag);
-> -
+My name is Mrs. Mina A. Brunel I am a Norway Citizen who is living in Burki=
+na Faso, I am married to Mr. Brunel Patrice, a politician who owns a small =
+gold company in Burkina Faso; He died of Leprosy and Radesyge, in the year =
+February 2010, During his lifetime he deposited the sum of =E2=82=AC 8.5 Mi=
+llion Euro) Eight million, Five hundred thousand Euros in a bank in Ouagado=
+ugou the capital city of Burkina Faso in West Africa. The money was from th=
+e sale of his company and death benefits payment and entitlements of my dec=
+eased husband by his company.
 
-This breaks both kmem_alloc_large() and kmem_alloc_io() if they are
-called from an explicit KM_NOFS context. vmalloc() does not respect
-the gfp flags that are passed to it and will always do GFP_KERNEL
-allocations deep down in the page table allocation code, and hence
-we must use memalloc_nofs_save() here if called in a KM_NOFS
-context.
+I am sending you this message with heavy tears in my eyes and great sorrow =
+in my heart, and also praying that it will reach you in good health because=
+ I am not in good health, I sleep every night without knowing if I may be a=
+live to see the next day. I am suffering from long time cancer and presentl=
+y I am partially suffering from Leprosy, which has become difficult for me =
+to move around. I was married to my late husband for more than 6 years with=
+out having a child and my doctor confided that I have less chance to live, =
+having to know when the cup of death will come, I decided to contact you to=
+ claim the fund since I don't have any relation I grew up from an orphanage=
+ home.
 
->  	return ptr;
->  }
->  
-> diff --git a/fs/xfs/kmem.h b/fs/xfs/kmem.h
-> index 34cbcfd..ccc63de 100644
-> --- a/fs/xfs/kmem.h
-> +++ b/fs/xfs/kmem.h
-> @@ -34,7 +34,7 @@
->  	BUG_ON(flags & ~(KM_NOFS | KM_MAYFAIL | KM_ZERO | KM_NOLOCKDEP));
->  
->  	lflags = GFP_KERNEL | __GFP_NOWARN;
-> -	if (flags & KM_NOFS)
-> +	if (current->flags & PF_FSTRANS || flags & KM_NOFS)
->  		lflags &= ~__GFP_FS;
+I have decided to donate this money for the support of helping Motherless b=
+abies/Less privileged/Widows and churches also to build the house of God be=
+cause I am dying and diagnosed with cancer for about 3 years ago. I have de=
+cided to donate from what I have inherited from my late husband to you for =
+the good work of Almighty God; I will be going in for an operation surgery =
+soon.
 
-No. If we are in a transaction context, PF_MEMALLOC_NOFS should be
-set. We got rid of all the PF_FSTRANS checks out of this code by
-moving to PF_MEMALLOC_NOFS, reverting this isn't an improvement.
+Now I want you to stand as my next of kin to claim the funds for charity pu=
+rposes. Because of this money remains unclaimed after my death, the bank ex=
+ecutives or the government will take the money as unclaimed fund and maybe =
+use it for selfishness and worthless ventures, I need a very honest person =
+who can claim this money and use it for Charity works, for orphanages, wido=
+ws and also build schools and churches for less privilege that will be name=
+d after my late husband and my name.
 
->  
->  	/*
-> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-> index 2d25bab..65d0afe 100644
-> --- a/fs/xfs/libxfs/xfs_btree.c
-> +++ b/fs/xfs/libxfs/xfs_btree.c
-> @@ -2814,7 +2814,7 @@ struct xfs_btree_split_args {
->  	struct xfs_btree_split_args	*args = container_of(work,
->  						struct xfs_btree_split_args, work);
->  	unsigned long		pflags;
-> -	unsigned long		new_pflags = PF_MEMALLOC_NOFS;
-> +	unsigned long		new_pflags = PF_FSTRANS;
+I need your urgent answer to know if you will be able to execute this proje=
+ct, and I will give you more information on how the fund will be transferre=
+d to your bank account or online banking.
 
-	new_pflags = PF_MEMALLOC_NOFS | PF_FSTRANS;
->  
->  	/*
->  	 * we are in a transaction context here, but may also be doing work
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index b356118..02733eb 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -62,7 +62,7 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
->  	 * We hand off the transaction to the completion thread now, so
->  	 * clear the flag here.
->  	 */
-> -	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
-
-	current_restore_flags_nested(PF_MEMALLOC_NOFS | PF_FSTRANS);
-
->  	return 0;
->  }
->  
-> @@ -125,7 +125,7 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
->  	 * thus we need to mark ourselves as being in a transaction manually.
->  	 * Similarly for freeze protection.
->  	 */
-> -	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +	current_set_flags_nested(&tp->t_pflags, PF_FSTRANS);
-
-	current_set_flags_nested(PF_MEMALLOC_NOFS | PF_FSTRANS);
-
->  	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
->  
->  	/* we abort the update if there was an IO error */
-> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> index 9f70d2f..ab737fe 100644
-> --- a/fs/xfs/xfs_linux.h
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -102,12 +102,8 @@
->  #define xfs_cowb_secs		xfs_params.cowb_timer.val
->  
->  #define current_cpu()		(raw_smp_processor_id())
-> -#define current_pid()		(current->pid)
-> -#define current_test_flags(f)	(current->flags & (f))
->  #define current_set_flags_nested(sp, f)		\
->  		(*(sp) = current->flags, current->flags |= (f))
-> -#define current_clear_flags_nested(sp, f)	\
-> -		(*(sp) = current->flags, current->flags &= ~(f))
->  #define current_restore_flags_nested(sp, f)	\
->  		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
-
-Separate cleanup patch to remove unrelated definitions, please.
-
-> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> index 3c94e5f..1c1b982 100644
-> --- a/fs/xfs/xfs_trans.c
-> +++ b/fs/xfs/xfs_trans.c
-> @@ -153,7 +153,7 @@
->  	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
->  
->  	/* Mark this thread as being in a transaction */
-> -	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +	current_set_flags_nested(&tp->t_pflags, PF_FSTRANS);
->  
-
-And, again, PF_FSTRANS | PF_MEMALLOC_NOFS through this code.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks
+Mrs. Mina A. Brunel
