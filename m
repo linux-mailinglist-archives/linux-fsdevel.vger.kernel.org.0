@@ -2,240 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FCD8202A8C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 14:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 551B4202AD3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jun 2020 15:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbgFUMq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jun 2020 08:46:27 -0400
-Received: from mail1.protonmail.ch ([185.70.40.18]:61385 "EHLO
-        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbgFUMq0 (ORCPT
+        id S1729816AbgFUNqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jun 2020 09:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729774AbgFUNqZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jun 2020 08:46:26 -0400
-Date:   Sun, 21 Jun 2020 12:46:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1592743582;
-        bh=o7oADJo0vJuRKcp5TG0sjztoofAY/q6zn+gdMVXU/GQ=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=kZYQnAe+0TNQTKsA3aMy0leOxXUaskrYFNn7A1suGYSWjTQaMPmCXkN8ERgKujCNv
-         qyU05tFqExaDLTgsHhZrZdt7SJAiikGuXAN4R04dFdyhEcOipoCSaGQ+w2eAcjn21e
-         L8PgELoRu2U7+Ehi3MbrvUHpOzkMbH8cm1qOjkss=
-To:     linux-fsdevel@vger.kernel.org
-From:   Rob Gill <rrobgill@protonmail.com>
-Cc:     Rob Gill <rrobgill@protonmail.com>
-Reply-To: Rob Gill <rrobgill@protonmail.com>
-Subject: [PATCH] fs Add MODULE_DESCRIPTION entries to kernel modules
-Message-ID: <20200621124607.24573-1-rrobgill@protonmail.com>
+        Sun, 21 Jun 2020 09:46:25 -0400
+X-Greylist: delayed 613 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 21 Jun 2020 06:46:24 PDT
+Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB25FC061794
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 06:46:24 -0700 (PDT)
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+        by smtp.al2klimov.de (Postfix) with ESMTPA id 62C72467E1;
+        Sun, 21 Jun 2020 13:36:03 +0000 (UTC)
+From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        David Sterba <dsterba@suse.com>, Rob Herring <robh@kernel.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Subject: [PATCH] Replace HTTP links with HTTPS ones: Documentation/filesystems
+Date:   Sun, 21 Jun 2020 15:35:52 +0200
+Message-Id: <20200621133552.46371-1-grandmaster@al2klimov.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM shortcircuit=no
-        autolearn=disabled version=3.4.4
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mail.protonmail.ch
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+Authentication-Results: smtp.al2klimov.de;
+        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
+X-Spam: Yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The user tool modinfo is used to get information on kernel modules, includi=
-ng a
-description where it is available.
+Rationale:
+Reduces attack surface on kernel devs opening the links for MITM
+as HTTPS traffic is much harder to manipulate.
 
-This patch adds a brief MODULE_DESCRIPTION to modules, text taken when
-available from code comments or information within Kconfig.
+Deterministic algorithm:
+For each file:
+  If not .svg:
+    For each line:
+      If doesn't contain `\bxmlns\b`:
+        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
+          If both the HTTP and HTTPS versions
+          return 200 OK and serve the same content:
+            Replace HTTP with HTTPS.
 
-Signed-off-by: Rob Gill <rrobgill@protonmail.com>
+Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 ---
- fs/9p/v9fs.c      | 1 +
- fs/adfs/super.c   | 1 +
- fs/autofs/init.c  | 1 +
- fs/btrfs/super.c  | 1 +
- fs/cramfs/inode.c | 1 +
- fs/efs/super.c    | 1 +
- fs/hfs/super.c    | 1 +
- fs/hpfs/super.c   | 1 +
- fs/isofs/inode.c  | 1 +
- fs/jbd2/journal.c | 1 +
- fs/minix/inode.c  | 1 +
- fs/nfs/inode.c    | 1 +
- fs/nfsd/nfsctl.c  | 1 +
- fs/qnx4/inode.c   | 1 +
- fs/qnx6/inode.c   | 1 +
- fs/sysv/super.c   | 1 +
- fs/ufs/super.c    | 1 +
- 17 files changed, 17 insertions(+)
+ Documentation/filesystems/hfs.rst                    | 2 +-
+ Documentation/filesystems/hpfs.rst                   | 2 +-
+ Documentation/filesystems/nfs/rpc-server-gss.rst     | 6 +++---
+ Documentation/filesystems/path-lookup.rst            | 6 +++---
+ Documentation/filesystems/ramfs-rootfs-initramfs.rst | 8 ++++----
+ Documentation/filesystems/ubifs-authentication.rst   | 4 ++--
+ Documentation/filesystems/vfs.rst                    | 6 +++---
+ 7 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 15a99f9c7..a9b5d0d25 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -739,3 +739,4 @@ MODULE_AUTHOR("Latchesar Ionkov <lucho@ionkov.net>");
- MODULE_AUTHOR("Eric Van Hensbergen <ericvh@gmail.com>");
- MODULE_AUTHOR("Ron Minnich <rminnich@lanl.gov>");
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Plan 9 Resource Sharing Support (9P2000)");
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index a3cc8ecb5..dd5c4a7d8 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -492,3 +492,4 @@ static void __exit exit_adfs_fs(void)
- module_init(init_adfs_fs)
- module_exit(exit_adfs_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Acorn Disc Filing System support");
-diff --git a/fs/autofs/init.c b/fs/autofs/init.c
-index d3f55e874..291ef8de9 100644
---- a/fs/autofs/init.c
-+++ b/fs/autofs/init.c
-@@ -44,3 +44,4 @@ static void __exit exit_autofs_fs(void)
- module_init(init_autofs_fs)
- module_exit(exit_autofs_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Kernel automounter support");
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index bc73fd670..c1b2eaa53 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2518,3 +2518,4 @@ MODULE_SOFTDEP("pre: crc32c");
- MODULE_SOFTDEP("pre: xxhash64");
- MODULE_SOFTDEP("pre: sha256");
- MODULE_SOFTDEP("pre: blake2b-256");
-+MODULE_DESCRIPTION("Btrfs general purpose copy-on-write filesystem");
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index 912308600..94df29184 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -1011,3 +1011,4 @@ static void __exit exit_cramfs_fs(void)
- module_init(init_cramfs_fs)
- module_exit(exit_cramfs_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Compressed ROM file system support (cramfs)");
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 4a6ebff2a..cc6acac88 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -42,6 +42,7 @@ static struct file_system_type efs_fs_type =3D {
- =09.fs_flags=09=3D FS_REQUIRES_DEV,
- };
- MODULE_ALIAS_FS("efs");
-+MODULE_DESCRIPTION("EFS file system support (read only)");
-=20
- static struct pt_types sgi_pt_types[] =3D {
- =09{0x00,=09=09"SGI vh"},
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index c33324686..c48a51ab3 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -29,6 +29,7 @@
- static struct kmem_cache *hfs_inode_cachep;
-=20
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Apple Macintosh file system support");
-=20
- static int hfs_sync_fs(struct super_block *sb, int wait)
- {
-diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-index 0a677a9aa..7f59cded8 100644
---- a/fs/hpfs/super.c
-+++ b/fs/hpfs/super.c
-@@ -792,3 +792,4 @@ static void __exit exit_hpfs_fs(void)
- module_init(init_hpfs_fs)
- module_exit(exit_hpfs_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("OS/2 HPFS file system support");
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index d634561f8..0db1209a6 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -1615,3 +1615,4 @@ static void __exit exit_iso9660_fs(void)
- module_init(init_iso9660_fs)
- module_exit(exit_iso9660_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("ISO 9660 CDROM file system support");
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index e4944436e..1abd25b32 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2759,6 +2759,7 @@ static void __exit journal_exit(void)
- }
-=20
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("generic journaling layer");
- module_init(journal_init);
- module_exit(journal_exit);
-=20
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 7cb5fd38e..cf770ae20 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -686,4 +686,5 @@ static void __exit exit_minix_fs(void)
- module_init(init_minix_fs)
- module_exit(exit_minix_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Minix file system support");
-=20
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 0bf1f835d..cbb88f16e 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -2307,6 +2307,7 @@ static void __exit exit_nfs_fs(void)
- /* Not quite true; I just maintain it */
- MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("NFS Network File System protocol support");
- module_param(enable_ino64, bool, 0644);
-=20
- module_init(init_nfs_fs)
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index b68e96681..deb964034 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1580,5 +1580,6 @@ static void __exit exit_nfsd(void)
-=20
- MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("NFS server support");
- module_init(init_nfsd)
- module_exit(exit_nfsd)
-diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-index e8da1cde8..cf7b396a7 100644
---- a/fs/qnx4/inode.c
-+++ b/fs/qnx4/inode.c
-@@ -421,4 +421,5 @@ static void __exit exit_qnx4_fs(void)
- module_init(init_qnx4_fs)
- module_exit(exit_qnx4_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("QNX4 file system support (read only)");
-=20
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index 755293c8c..a7e0fb162 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -680,3 +680,4 @@ static void __exit exit_qnx6_fs(void)
- module_init(init_qnx6_fs)
- module_exit(exit_qnx6_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("QNX6 file system");
-diff --git a/fs/sysv/super.c b/fs/sysv/super.c
-index cc8e2ed15..e1c871d47 100644
---- a/fs/sysv/super.c
-+++ b/fs/sysv/super.c
-@@ -592,3 +592,4 @@ static void __exit exit_sysv_fs(void)
- module_init(init_sysv_fs)
- module_exit(exit_sysv_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("System V/Xenix/V7/Coherent file system support");
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 1da0be667..7c4e37bda 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -1543,3 +1543,4 @@ static void __exit exit_ufs_fs(void)
- module_init(init_ufs_fs)
- module_exit(exit_ufs_fs)
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("UFS file system support (read only)");
---=20
-2.17.1
-
+diff --git a/Documentation/filesystems/hfs.rst b/Documentation/filesystems/hfs.rst
+index ab17a005e9b1..776015c80e3f 100644
+--- a/Documentation/filesystems/hfs.rst
++++ b/Documentation/filesystems/hfs.rst
+@@ -76,7 +76,7 @@ Creating HFS filesystems
+ 
+ The hfsutils package from Robert Leslie contains a program called
+ hformat that can be used to create HFS filesystem. See
+-<http://www.mars.org/home/rob/proj/hfs/> for details.
++<https://www.mars.org/home/rob/proj/hfs/> for details.
+ 
+ 
+ Credits
+diff --git a/Documentation/filesystems/hpfs.rst b/Documentation/filesystems/hpfs.rst
+index 0db152278572..7e0dd2f4373e 100644
+--- a/Documentation/filesystems/hpfs.rst
++++ b/Documentation/filesystems/hpfs.rst
+@@ -7,7 +7,7 @@ Read/Write HPFS 2.09
+ 1998-2004, Mikulas Patocka
+ 
+ :email: mikulas@artax.karlin.mff.cuni.cz
+-:homepage: http://artax.karlin.mff.cuni.cz/~mikulas/vyplody/hpfs/index-e.cgi
++:homepage: https://artax.karlin.mff.cuni.cz/~mikulas/vyplody/hpfs/index-e.cgi
+ 
+ Credits
+ =======
+diff --git a/Documentation/filesystems/nfs/rpc-server-gss.rst b/Documentation/filesystems/nfs/rpc-server-gss.rst
+index 812754576845..abed4a2b1b82 100644
+--- a/Documentation/filesystems/nfs/rpc-server-gss.rst
++++ b/Documentation/filesystems/nfs/rpc-server-gss.rst
+@@ -10,12 +10,12 @@ purposes of authentication.)
+ 
+ RPCGSS is specified in a few IETF documents:
+ 
+- - RFC2203 v1: http://tools.ietf.org/rfc/rfc2203.txt
+- - RFC5403 v2: http://tools.ietf.org/rfc/rfc5403.txt
++ - RFC2203 v1: https://tools.ietf.org/rfc/rfc2203.txt
++ - RFC5403 v2: https://tools.ietf.org/rfc/rfc5403.txt
+ 
+ and there is a 3rd version  being proposed:
+ 
+- - http://tools.ietf.org/id/draft-williams-rpcsecgssv3.txt
++ - https://tools.ietf.org/id/draft-williams-rpcsecgssv3.txt
+    (At draft n. 02 at the time of writing)
+ 
+ Background
+diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
+index f46b05e9b96c..1c552b97eb35 100644
+--- a/Documentation/filesystems/path-lookup.rst
++++ b/Documentation/filesystems/path-lookup.rst
+@@ -69,7 +69,7 @@ pathname that is just slashes have a final component.  If it does
+ exist, it could be "``.``" or "``..``" which are handled quite differently
+ from other components.
+ 
+-.. _POSIX: http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_12
++.. _POSIX: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_12
+ 
+ If a pathname ends with a slash, such as "``/tmp/foo/``" it might be
+ tempting to consider that to have an empty final component.  In many
+@@ -376,7 +376,7 @@ table, and the mount point hash table.
+ Bringing it together with ``struct nameidata``
+ ----------------------------------------------
+ 
+-.. _First edition Unix: http://minnie.tuhs.org/cgi-bin/utree.pl?file=V1/u2.s
++.. _First edition Unix: https://minnie.tuhs.org/cgi-bin/utree.pl?file=V1/u2.s
+ 
+ Throughout the process of walking a path, the current status is stored
+ in a ``struct nameidata``, "namei" being the traditional name - dating
+@@ -1265,7 +1265,7 @@ Symlinks are different it seems.  Both reading a symlink (with ``readlink()``)
+ and looking up a symlink on the way to some other destination can
+ update the atime on that symlink.
+ 
+-.. _clearest statement: http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_08
++.. _clearest statement: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_08
+ 
+ It is not clear why this is the case; POSIX has little to say on the
+ subject.  The `clearest statement`_ is that, if a particular implementation
+diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.rst b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+index 3fddacc6bf14..4598b0d90b60 100644
+--- a/Documentation/filesystems/ramfs-rootfs-initramfs.rst
++++ b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+@@ -246,15 +246,15 @@ If you don't already understand what shared libraries, devices, and paths
+ you need to get a minimal root filesystem up and running, here are some
+ references:
+ 
+-- http://www.tldp.org/HOWTO/Bootdisk-HOWTO/
+-- http://www.tldp.org/HOWTO/From-PowerUp-To-Bash-Prompt-HOWTO.html
++- https://www.tldp.org/HOWTO/Bootdisk-HOWTO/
++- https://www.tldp.org/HOWTO/From-PowerUp-To-Bash-Prompt-HOWTO.html
+ - http://www.linuxfromscratch.org/lfs/view/stable/
+ 
+-The "klibc" package (http://www.kernel.org/pub/linux/libs/klibc) is
++The "klibc" package (https://www.kernel.org/pub/linux/libs/klibc) is
+ designed to be a tiny C library to statically link early userspace
+ code against, along with some related utilities.  It is BSD licensed.
+ 
+-I use uClibc (http://www.uclibc.org) and busybox (http://www.busybox.net)
++I use uClibc (https://www.uclibc.org) and busybox (https://www.busybox.net)
+ myself.  These are LGPL and GPL, respectively.  (A self-contained initramfs
+ package is planned for the busybox 1.3 release.)
+ 
+diff --git a/Documentation/filesystems/ubifs-authentication.rst b/Documentation/filesystems/ubifs-authentication.rst
+index 16efd729bf7c..1f39c8cea702 100644
+--- a/Documentation/filesystems/ubifs-authentication.rst
++++ b/Documentation/filesystems/ubifs-authentication.rst
+@@ -433,9 +433,9 @@ will then have to be provided beforehand in the normal way.
+ References
+ ==========
+ 
+-[CRYPTSETUP2]        http://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
++[CRYPTSETUP2]        https://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
+ 
+-[DMC-CBC-ATTACK]     http://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-encrypted-luks-partitions/
++[DMC-CBC-ATTACK]     https://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-encrypted-luks-partitions/
+ 
+ [DM-INTEGRITY]       https://www.kernel.org/doc/Documentation/device-mapper/dm-integrity.rst
+ 
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index ed17771c212b..16ca8792344b 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -1431,13 +1431,13 @@ Resources
+  version.)
+ 
+ Creating Linux virtual filesystems. 2002
+-    <http://lwn.net/Articles/13325/>
++    <https://lwn.net/Articles/13325/>
+ 
+ The Linux Virtual File-system Layer by Neil Brown. 1999
+     <http://www.cse.unsw.edu.au/~neilb/oss/linux-commentary/vfs.html>
+ 
+ A tour of the Linux VFS by Michael K. Johnson. 1996
+-    <http://www.tldp.org/LDP/khg/HyperNews/get/fs/vfstour.html>
++    <https://www.tldp.org/LDP/khg/HyperNews/get/fs/vfstour.html>
+ 
+ A small trail through the Linux kernel by Andries Brouwer. 2001
+-    <http://www.win.tue.nl/~aeb/linux/vfs/trail.html>
++    <https://www.win.tue.nl/~aeb/linux/vfs/trail.html>
+-- 
+2.27.0
 
