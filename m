@@ -2,135 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51898202F68
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 07:16:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E69DB202F6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 07:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbgFVFQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 01:16:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56900 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbgFVFQU (ORCPT
+        id S1726673AbgFVFSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 01:18:21 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:60565 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725934AbgFVFSU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 01:16:20 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05M52HFY130522;
-        Mon, 22 Jun 2020 05:15:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=6XhL61uLBRsGx4qqMyCILKTmquZ28D8Zmwjf5hvNpqU=;
- b=JINrqbh6lenpOpaHRClW2mmHVaEQrXJBbRa/7+tvBd4SZImgmaB+tbTAHuovamFpSF67
- D/PDrEf8UTlcpw2io7YFlzjKCF+cuiTzCwN5NE1IH7f1J7egeEj13cpODW/q1WkcBKie
- tZ5KeabloQLlaNcv4ErRsEuLnyET1vEv5IpUed50bwnioO7lHrDanG5o5vDk40v8gKe7
- A4UQ7tRpZ6WbfGBkCO6uN2QfA+u+Hd/2WXhd9RXQYsqboZeo8Sh9T+IFF7vOAbcUGrcE
- 4rGD72fsKwYYFZjvL3zNrCv9MdDYBHn9ocCT3K8qlQdiD5PlsmMtPty8jbcG+z+83JEl DA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 31sebbca28-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Jun 2020 05:15:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05M54250096345;
-        Mon, 22 Jun 2020 05:15:50 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 31sv7pev7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jun 2020 05:15:49 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05M5FfKI003483;
-        Mon, 22 Jun 2020 05:15:41 GMT
-Received: from Junxiaos-MacBook-Pro.local (/73.231.9.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Jun 2020 05:15:41 +0000
-Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc
- dentries
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin@oracle.com" <joe.jin@oracle.com>,
-        Wengang Wang <wen.gang.wang@oracle.com>
-References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
- <20200618233958.GV8681@bombadil.infradead.org>
- <877dw3apn8.fsf@x220.int.ebiederm.org>
- <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
- <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
- <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
- <87k1036k9y.fsf@x220.int.ebiederm.org>
- <68a1f51b-50bf-0770-2367-c3e1b38be535@oracle.com>
- <87blle4qze.fsf@x220.int.ebiederm.org>
- <20200620162752.GF8681@bombadil.infradead.org>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Message-ID: <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
-Date:   Sun, 21 Jun 2020 22:15:39 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.9.0
+        Mon, 22 Jun 2020 01:18:20 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id 5C10817ED;
+        Mon, 22 Jun 2020 01:18:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 22 Jun 2020 01:18:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
+        B1QN7e3TFPweg/5icigcXBvh8YQ0PuwcEnbEASlXYSQ=; b=MWUJRNSLvjm2T0dL
+        h0VGoN9h9kzg+I8XSoGtT/k+Zw6sSRxS/RgMN02CAxFwj5JvPKzYj7C82qlFOJTQ
+        oamZrqzgL8es8XR7q0nH3Urq3H7aH/zTT5oGsDgQpjZjU+XtlFhV5nidCA6CGt8W
+        3v9byO6IiaT3blbiy10Z+Cw/ejDbiBqGkWNxTW5jex7YRSLm0dmdaJgoJNHDQ2X4
+        4+8fNQtlsX3FBNz7zfIbOMEYW8YTYSqJhqIw1CnHT5AG6BhCCeDPuJtVEODJpFa8
+        e8F1yoMAq6DI6h3gYEGWv9vYbh8Ic2VZooBAv38GK1/u9WTr/AWmuahytT3ACMbA
+        oLwaHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=B1QN7e3TFPweg/5icigcXBvh8YQ0PuwcEnbEASlXY
+        SQ=; b=aSD1NhNVFB0dA+ytl7knNFbv2BeLAwZdsZWavkqc8FzpWwHuRqSkFSW2E
+        Gq5d6+4SeNmmciNs3hmy+5AmGtRIbZRG1dHtMGS1jfBsQOGFOmHH3z39rrIyR7ZY
+        EKdzkJN7WKS4Pr00df7vELFEwVIpcoc86/D3b/XaVJsXNUmmE9gRBj1tD1Z3YAM1
+        pXDRFfcpfi0T5SUU8Lw0uQ0Peqk0vu5YMJooOpHkEKD49cQEiZzkphusZ688gyr+
+        PEtIpt/OosuHv5UidOlV11+JWLG3bik8sFGpW6vDZt1bYPoeAg29rMcn8HI8zw/v
+        2ncYxpMj9lwgkFXuMnOV5syeQ5Jvw==
+X-ME-Sender: <xms:Gj_wXqB9FMg_ZKYcy9Jbm9zsgeJ7IWwnx7GgyGfs-P2La7EaxcOxcg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekuddgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufhfffgjkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhho
+    lhgruhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrg
+    htthgvrhhnpefhteeugeehuddtfeetgedugfejhfeftdfhheeggeekjeeuveeileejtdef
+    feffheenucfkphepudekhedrfedrleegrdduleegnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
+X-ME-Proxy: <xmx:Gj_wXkhZDXGWcmXbNdQbu7Brt4VgdTsY-k1WuKgfvFTxvHyV8T0gIA>
+    <xmx:Gj_wXtkLptaJciG0Ilj-TA7nQdqUeoKEZ6AnaakW20t1BvSkvCeyIA>
+    <xmx:Gj_wXoxtR_LXObz6Abj6MmnGtxz9mHztJq_wxdvOknZwMQZM8Ew50g>
+    <xmx:Gz_wXuGKHI7r6I5qe4ZMPNXYcpKWWKzkJFOPZjy5XVTcStYTP73kgQ>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3731A3280060;
+        Mon, 22 Jun 2020 01:18:18 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 5D4595F;
+        Mon, 22 Jun 2020 05:18:17 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 37A50E29F9; Mon, 22 Jun 2020 06:18:17 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
+Cc:     dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        "p.kramme\@profihost.ag" <p.kramme@profihost.ag>,
+        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
+Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
+References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
+Mail-Copies-To: never
+Mail-Followup-To: Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, "p.kramme\@profihost.ag"
+        <p.kramme@profihost.ag>, Daniel Aberger - Profihost AG
+        <d.aberger@profihost.ag>
+Date:   Mon, 22 Jun 2020 06:18:17 +0100
+In-Reply-To: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag> (Stefan
+        Priebe's message of "Thu, 18 Jun 2020 22:38:25 +0200")
+Message-ID: <87pn9rsmp2.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200620162752.GF8681@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9659 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006220038
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9659 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 cotscore=-2147483648 mlxscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006220038
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/20/20 9:27 AM, Matthew Wilcox wrote:
-
-> On Fri, Jun 19, 2020 at 05:42:45PM -0500, Eric W. Biederman wrote:
->> Junxiao Bi <junxiao.bi@oracle.com> writes:
->>> Still high lock contention. Collect the following hot path.
->> A different location this time.
->>
->> I know of at least exit_signal and exit_notify that take thread wide
->> locks, and it looks like exit_mm is another.  Those don't use the same
->> locks as flushing proc.
->>
->>
->> So I think you are simply seeing a result of the thundering herd of
->> threads shutting down at once.  Given that thread shutdown is fundamentally
->> a slow path there is only so much that can be done.
->>
->> If you are up for a project to working through this thundering herd I
->> expect I can help some.  It will be a long process of cleaning up
->> the entire thread exit process with an eye to performance.
-> Wengang had some tests which produced wall-clock values for this problem,
-> which I agree is more informative.
+On Jun 18 2020, Stefan Priebe - Profihost AG <s.priebe@profihost.ag> wrote:
+> Hi,
 >
-> I'm not entirely sure what the customer workload is that requires a
-> highly threaded workload to also shut down quickly.  To my mind, an
-> overall workload is normally composed of highly-threaded tasks that run
-> for a long time and only shut down rarely (thus performance of shutdown
-> is not important) and single-threaded tasks that run for a short time.
+> while using fuse 2.x and nonempty mount option - fuse mounts breaks
+> after upgrading from kernel 4.19 to 5.4.
 
-The real workload is a Java application working in server-agent mode, 
-issue happened in agent side, all it do is waiting works dispatching 
-from server and execute. To execute one work, agent will start lots of 
-short live threads, there could be a lot of threads exit same time if 
-there were a lots of work to execute, the contention on the exit path 
-caused a high %sys time which impacted other workload.
+IIRC nonempty is not processed by the kernel, but libfuse. This sounds like
+you did a partial upgrade to libfuse 3.x (which dropped the option).
 
-Thanks,
+Best,
+Nikolaus
 
-Junxiao.
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
 
->
-> Understanding this workload is important to my next suggestion, which
-> is that rather than searching for all the places in the exit path which
-> contend on a single spinlock, we simply set the allowed CPUs for an
-> exiting task to include only the CPU that this thread is running on.
-> It will probably run faster to take the threads down in series on one
-> CPU rather than take them down in parallel across many CPUs (or am I
-> mistaken?  Is there inherently a lot of parallelism in the thread
-> exiting process?)
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
