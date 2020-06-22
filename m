@@ -2,167 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D40F0203B08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 17:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9280D203B75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 17:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729358AbgFVPhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 11:37:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729150AbgFVPhU (ORCPT
+        id S1729495AbgFVPtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 11:49:09 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:26489 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729222AbgFVPtJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 11:37:20 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D98C061573;
-        Mon, 22 Jun 2020 08:37:20 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id q17so1375734pfu.8;
-        Mon, 22 Jun 2020 08:37:20 -0700 (PDT)
+        Mon, 22 Jun 2020 11:49:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1592840949; x=1624376949;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=MFaRizNlIYX8EZ9E3dNU//eUmFiXrbsgu7yyOCV+DPo=;
+  b=SuYNnqGpjnAoszdZ0TnCyRK50LHzg2vDwIpannhjsnt4fv2T0iV8GRp1
+   /alLVhCYwPleAne3eDTH2+h4sJE3v9ai7p9WdQd8R44L2UuxQKlbWebQn
+   rBvsxjRKqC0rNXF7G8O2EjCAjwfb6xlvuoGs4cwlI4T+NAmqgDlp3LpYP
+   JSu3S3cQvnb4TAY0uPd/XEbS8FCaREq6K3AiXOK40vRbg8MwGmVgPnXdc
+   e2e76RJYZGUJ2hpHQDP/zPWyT0TZbrjG2mbPrV4XR6FMhK7AY931iK5Yz
+   wc7XGvIP6RzyASivEua6UxVcyKoYUMsZNH4SNbOlak14xH6cdpyWIAsk9
+   A==;
+IronPort-SDR: Lb8Hq2otivuURK/UkKjpGmHq9sK5XwsCrG19qUpPXlEg7NkrBrGX/EZCM1lumquH2M5iklKJT+
+ /CaRbds8pDrbqZt9jl1qPcoB4BgsVrzLdqG+3jrttyWvwQSoygtdp9N9PCla55VyDKTfvUBi+w
+ o2kfUzRos2eWRmNDjKcD6CdB1mAcdHj7JRvrQmdIl/51ynQ4gfAbtcwqSbHALRtXA3Fx6/rGxj
+ ywzOSvF54FqWzsmgzRktv9kkZOchyQ1C5u9dt4IboFLVNFiveb9rVVnFd+HaugtKrvLLwpbJ/b
+ BiY=
+X-IronPort-AV: E=Sophos;i="5.75,267,1589212800"; 
+   d="scan'208";a="141992554"
+Received: from mail-sn1nam02lp2059.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.59])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jun 2020 23:49:09 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oMfluJzlHO+8D0eui7J7iEkUA/XQKIYhlyQchG1wepqk1xUMz+FE7ZfjMdEpeaG2gQDkCf/jasvxXQgJI2o4uEItw6yC5kL/yi9J97uPEy3nGN//2i1oz+ay4ni1Bw7GovaDWdFMX5IKuTCjv0KVG73Gvlk//7dB+BdBe1H0u5lV0IAruCkjfLhPdhZS3EwwdpncxnlNcKD1O3ZKCnKL4+z/0eUjUhpwbqaXbtHzGzwSnHUtYKfw17abP0X4D9Tx53jvpImwjroVH/yicNLSv3cD1a4uC8H7Ws5sl5rLAYX/0j4L8oxEU8hq+udRnjCA5VMmNDU4Z7bSCcWQLuDR6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LX2E3G8Rxv3dQw2NUEUKda9l6I3XAmCs7Wmt5tavGsU=;
+ b=SVZT7ns5x2wVuDiI3tRV8CAZoRc9hcwquzkAaONU5hDzcZ4zwY/WB8ij7r4eFi2i27sUH6IjfWsc4DU37pEh3/d7zbBu8ighMxQjxK/bWgT86p3+l3WOq4xjMS5tSyVZtGmm6yxDNnP1yj67nnFVANS9hX90Yo8HJgEP0SnScCDmjyutaGnWKvGfiayubGyYi7TFPMKirJppFe7NgNdAWq+ARibzDJRYncljver3LSe6eRaUjKFK15//gf4BrHljGWo9P87y+LvFfcW8C4vf0ggqseZd6I5doKjGmSh11HJw5sco6Ga7DUlKHnqCaCBUjBfbShg77wqI4bGrLzwscA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7I4FBHkC3xoY8dcYSORZ0nTLqrZS6hPMwq+XQvczidk=;
-        b=O4wc8PnnSmhd0MtkI7mV9+Rlp5x+aav1eXppMIpW6e6vfWSVuBtqcKJrI+Dl6tSEjP
-         bvirBl9ybJmqgaCDLsrfCPIXGkRWxij5h4/BfSq6kShUKoEhNP58McT+yPuUZxTpaVwB
-         TB298vkuKHBamQZVx+oK8NINwJONAH5UZTiLezsdHCBeeqMK1zGWv4Bg8cSARNICaheU
-         dXGCj/bN6VHS7IuItxM10WBT8+kpc1LmVhXTfBBXyQvCZTTaWEdnWbhHYiqque2UYmUJ
-         BZ52vOqxIW6WYDuyGWcMt48OTGhyoXUCXb1z769cjgEgPuDYP+JXO65x1k2uisBtOVFd
-         1tbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7I4FBHkC3xoY8dcYSORZ0nTLqrZS6hPMwq+XQvczidk=;
-        b=kT836hbHtzhmT3dpGL71djXTKME9NaFI4RFXGO0w5vF3W2M78hUXolmufpgaMZ0R38
-         BcEP26XGr3M1dq2/18jWToICab2g3y2gQkFcdLKDGpCE1Mjmxvvrf/pDt5h93PmePCig
-         fSUQdwV8JH+iQ3OnCRJpcHrVwTqhnq6mVja7Qmcrf3fppmW2uOslugH1Nkc7g1cUIdUo
-         62fFD13fSx74vGfTFFCUgMenxJq6I160m+zYLNhavhNnBtjl5xQS/a9PhWazj/tai18d
-         W9sH/A1T62t+/2srn/L2ka35aDY5wcgCfPHMVfyyUjpJ3Bj5rH/uKuMUG2cw0og8ALcA
-         DmAw==
-X-Gm-Message-State: AOAM531TZbPOKM83Ts0B+P/BnKmTcmf2nJObUkYnNIWVzZ+c1MA/M+Eb
-        JG3LhreifoZZXZzJJTq61EOkQiY0
-X-Google-Smtp-Source: ABdhPJzqNQNJOpVYmj9g0sA4GCXf+imfhXoZXk2cFTB51ukto7iCCL0jPlM4jDE1SVmc+idfGcCl9g==
-X-Received: by 2002:a63:ca0c:: with SMTP id n12mr2298819pgi.216.1592840239667;
-        Mon, 22 Jun 2020 08:37:19 -0700 (PDT)
-Received: from ?IPv6:2601:1c0:6280:3f0::19c2? ([2601:1c0:6280:3f0::19c2])
-        by smtp.gmail.com with ESMTPSA id y10sm11749397pgi.54.2020.06.22.08.37.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2020 08:37:18 -0700 (PDT)
-Subject: Re: mmotm 2020-06-20-21-36 uploaded (lkdtm/bugs.c)
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20200621043737.pb6JV%akpm@linux-foundation.org>
-From:   Randy Dunlap <rd.dunlab@gmail.com>
-Organization: nil
-Message-ID: <20a39fd4-622d-693c-c8d6-1fbab12af62a@gmail.com>
-Date:   Mon, 22 Jun 2020 08:37:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200621043737.pb6JV%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LX2E3G8Rxv3dQw2NUEUKda9l6I3XAmCs7Wmt5tavGsU=;
+ b=LhA1RtJa3wZhUuoHNrnSDXNMscVuHpVZ+ju56NVWlmikzYDea2Rd2W7wCYhRZZ0ttiTTs7oW5Nj9w0WMMNWkU2N+srdzD8veJ5F/DnyKH1VOnPDz7veAhKPcep8By3CZA9uuMpvgZg02k+vEK5ITXSz0MoHleVNlci2TX1so1BQ=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB4864.namprd04.prod.outlook.com
+ (2603:10b6:805:9b::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3109.22; Mon, 22 Jun
+ 2020 15:49:07 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2%7]) with mapi id 15.20.3109.027; Mon, 22 Jun 2020
+ 15:49:06 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>,
+        "fdmanana@gmail.com" <fdmanana@gmail.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 1/6] iomap: Convert wait_for_completion to flags
+Thread-Topic: [PATCH 1/6] iomap: Convert wait_for_completion to flags
+Thread-Index: AQHWSKlc0noxJoz88k2OjaGRtfck+Q==
+Date:   Mon, 22 Jun 2020 15:49:06 +0000
+Message-ID: <SN4PR0401MB35985FF9FCEA5AB02017FA399B970@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200622152457.7118-1-rgoldwyn@suse.de>
+ <20200622152457.7118-2-rgoldwyn@suse.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: suse.de; dkim=none (message not signed)
+ header.d=none;suse.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2001:a62:1597:de01:e494:6330:3987:7eb6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 77d599f3-f131-4be9-ad96-08d816c3cc01
+x-ms-traffictypediagnostic: SN6PR04MB4864:
+x-microsoft-antispam-prvs: <SN6PR04MB4864B417BA68E57B96BF8C239B970@SN6PR04MB4864.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:2887;
+x-forefront-prvs: 0442E569BC
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: MwbA1w3rTVft0NxMtsZQtiAumfq179gMljuVr4Kp6DVIpiyRB3qnb2gOAwenhAlyfMewrD6ILB8toyYrI9Px5qvuVj7QNuHWq5ltEyyzrlg/WQe3Fu7BsCj2gx60fs5nTbQlXxxjmoTtzXlZMp+ehjpi3k0UD9pfFQns3GOwHhoX341DcMjjUEVG02zPuGZA14LaNc8KZrrs/IIB9hz0Ld1xRBt8qFL8hiT4Q5YfCdifwnIvan42zVKd4txvOqSBqfVktHFNxV/iyQpt8TR+oWLhDS0X+dMN0/AvDrWnOpndKI32O3Lx5EMCGITur3z/oR6cBMv+WzbKF66V3GafFw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(366004)(346002)(376002)(39860400002)(396003)(33656002)(8676002)(53546011)(6506007)(91956017)(7696005)(76116006)(316002)(66946007)(66476007)(66556008)(4326008)(7416002)(478600001)(64756008)(86362001)(5660300002)(66446008)(54906003)(110136005)(55016002)(4744005)(186003)(8936002)(71200400001)(52536014)(9686003)(2906002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: mu0gynD4qyGe4d1K1WTEFje9Gx/5Ra/9VhkGSRMN5bDjJscfW2+kVwhnSd81yK02TqlsENsNVhjuYVf2ijoN0Hg4qv4VfK2TB6WW17IGBsZpEj0vCwyxLe9h0BQqJzmoH/uj2H/eKX3yqfgWtDUd41Qp9xyMjvULC+Mak1nsa6GoPwx5mHWN7XWXapm8pLvYzXpquS5UkedImszcsX/Q3ZPeOzpjnpiAckSMIIIm+lga0eJZEICRyGFIGuwMyYqCw69HvgwdLCITzmsK3Hf4ZKBHF5O5iWalZJ3PrnZRcxIx/LcoQGj5z26BPIp973FPO1/TO518A+4w4CbdkotCkt8X7qABCr/SoI4/kMm2NLqhR4U0q1DsVPNdoeQg6yLXAVR/Xnax76JdypCVm5vh8ovA0/dLCTch4xJU6boLWCea1rAodYOsw82XKLPd9yeGB3v0bBEU7Iy+yw6z3ZWTJ+huRVI/fJe/g45lAMj4q3yO6l7NBzMCRbHJ7K9QMnQ8pPAOgL2b2VgMUdfSrNwBFTrG1HUbtUKPEerElLTuAfV7EWHVSwhyVCIP2gGj3lVZ
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77d599f3-f131-4be9-ad96-08d816c3cc01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2020 15:49:06.8289
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: b8TQmkYcYOPAUUQoE7Dc+fIlx3S+obwlefHf2TPOmkxMvQ9ccdsD7Jwu+h5jGHKC4fQlO5s3Zw06MuzzzoZyePMIrcutInA1ngtDte5gXUw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4864
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/20/20 9:37 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2020-06-20-21-36 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-
-drivers/misc/lkdtm/bugs.c has build errors when building UML for i386
-(allmodconfig or allyesconfig):
-
-
-In file included from ../drivers/misc/lkdtm/bugs.c:17:0:
-../arch/x86/um/asm/desc.h:7:0: warning: "LDT_empty" redefined
- #define LDT_empty(info) (\
- 
-In file included from ../arch/um/include/asm/mmu.h:10:0,
-                 from ../include/linux/mm_types.h:18,
-                 from ../include/linux/sched/signal.h:13,
-                 from ../drivers/misc/lkdtm/bugs.c:11:
-../arch/x86/um/asm/mm_context.h:65:0: note: this is the location of the previous definition
- #define LDT_empty(info) (_LDT_empty(info))
- 
-../drivers/misc/lkdtm/bugs.c: In function ‘lkdtm_DOUBLE_FAULT’:
-../drivers/misc/lkdtm/bugs.c:428:9: error: variable ‘d’ has initializer but incomplete type
-  struct desc_struct d = {
-         ^~~~~~~~~~~
-../drivers/misc/lkdtm/bugs.c:429:4: error: ‘struct desc_struct’ has no member named ‘type’
-   .type = 3, /* expand-up, writable, accessed data */
-    ^~~~
-../drivers/misc/lkdtm/bugs.c:429:11: warning: excess elements in struct initializer
-   .type = 3, /* expand-up, writable, accessed data */
-           ^
-../drivers/misc/lkdtm/bugs.c:429:11: note: (near initialization for ‘d’)
-../drivers/misc/lkdtm/bugs.c:430:4: error: ‘struct desc_struct’ has no member named ‘p’
-   .p = 1,  /* present */
-    ^
-../drivers/misc/lkdtm/bugs.c:430:8: warning: excess elements in struct initializer
-   .p = 1,  /* present */
-        ^
-../drivers/misc/lkdtm/bugs.c:430:8: note: (near initialization for ‘d’)
-../drivers/misc/lkdtm/bugs.c:431:4: error: ‘struct desc_struct’ has no member named ‘d’
-   .d = 1,  /* 32-bit */
-    ^
-../drivers/misc/lkdtm/bugs.c:431:8: warning: excess elements in struct initializer
-   .d = 1,  /* 32-bit */
-        ^
-../drivers/misc/lkdtm/bugs.c:431:8: note: (near initialization for ‘d’)
-../drivers/misc/lkdtm/bugs.c:432:4: error: ‘struct desc_struct’ has no member named ‘g’
-   .g = 0,  /* limit in bytes */
-    ^
-../drivers/misc/lkdtm/bugs.c:432:8: warning: excess elements in struct initializer
-   .g = 0,  /* limit in bytes */
-        ^
-../drivers/misc/lkdtm/bugs.c:432:8: note: (near initialization for ‘d’)
-../drivers/misc/lkdtm/bugs.c:433:4: error: ‘struct desc_struct’ has no member named ‘s’
-   .s = 1,  /* not system */
-    ^
-../drivers/misc/lkdtm/bugs.c:433:8: warning: excess elements in struct initializer
-   .s = 1,  /* not system */
-        ^
-../drivers/misc/lkdtm/bugs.c:433:8: note: (near initialization for ‘d’)
-../drivers/misc/lkdtm/bugs.c:428:21: error: storage size of ‘d’ isn’t known
-  struct desc_struct d = {
-                     ^
-../drivers/misc/lkdtm/bugs.c:437:2: error: implicit declaration of function ‘write_gdt_entry’; did you mean ‘init_wait_entry’? [-Werror=implicit-function-declaration]
-  write_gdt_entry(get_cpu_gdt_rw(smp_processor_id()),
-  ^~~~~~~~~~~~~~~
-  init_wait_entry
-../drivers/misc/lkdtm/bugs.c:437:18: error: implicit declaration of function ‘get_cpu_gdt_rw’; did you mean ‘get_cpu_ptr’? [-Werror=implicit-function-declaration]
-  write_gdt_entry(get_cpu_gdt_rw(smp_processor_id()),
-                  ^~~~~~~~~~~~~~
-                  get_cpu_ptr
-../drivers/misc/lkdtm/bugs.c:438:27: error: ‘DESCTYPE_S’ undeclared (first use in this function)
-    GDT_ENTRY_TLS_MIN, &d, DESCTYPE_S);
-                           ^~~~~~~~~~
-../drivers/misc/lkdtm/bugs.c:438:27: note: each undeclared identifier is reported only once for each function it appears in
-../drivers/misc/lkdtm/bugs.c:428:21: warning: unused variable ‘d’ [-Wunused-variable]
-  struct desc_struct d = {
-                     ^
-cc1: some warnings being treated as errors
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+On 22/06/2020 17:25, Goldwyn Rodrigues wrote:=0A=
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c=0A=
+> index 07bc42d62673..88dc5aa70d1b 100644=0A=
+> --- a/fs/zonefs/super.c=0A=
+> +++ b/fs/zonefs/super.c=0A=
+> @@ -715,7 +715,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *io=
+cb, struct iov_iter *from)=0A=
+>  		ret =3D zonefs_file_dio_append(iocb, from);=0A=
+>  	else=0A=
+>  		ret =3D iomap_dio_rw(iocb, from, &zonefs_iomap_ops,=0A=
+> -				   &zonefs_write_dio_ops, sync);=0A=
+> +				   &zonefs_write_dio_ops,=0A=
+> +				   sync ? IOMAP_DIOF_WAIT_FOR_COMPLETION : 0);=0A=
+=0A=
+Not a huge fan of that construct above but for zonefs:=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
