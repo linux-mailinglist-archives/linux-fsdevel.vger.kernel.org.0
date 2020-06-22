@@ -2,135 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 697E1202FCD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 08:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2890202FE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 08:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbgFVGhs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 02:37:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
+        id S1726721AbgFVGm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 02:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbgFVGhr (ORCPT
+        with ESMTP id S1726704AbgFVGm0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 02:37:47 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0E7FC061794
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 23:37:47 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id y5so18163931iob.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 23:37:47 -0700 (PDT)
+        Mon, 22 Jun 2020 02:42:26 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0ECFC061794
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 23:42:25 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id j10so3271039qtq.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jun 2020 23:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=df+V+gsHVZZlfJaulEQ1Oh5nR/4WdLuTcsk0Vdms43Y=;
-        b=EJvmdcv2VIOdcgAKYjPJbTK5mIX0J2PujTJrYPES0kz90UOhfkM89JllNzKUEV0Rbg
-         duw5VlgRfLTh/E6ezn70i/hfTIn4Mg1va160BammJk4iRcHnwVGLWi3pidOTTRXBod67
-         PEQuq8hQEPCBNeQUlf4MW3yOYbRdWYb/p8VSl644AWr/c8LGiY0LEYUochTfsaLbdUmu
-         OafjKVcvpEfYjlijJwmEwoMnT/Pq2X+AAWSFeUKyCWy6B21MNKpU6v2H1JbtZMv9P1NR
-         aVeLVpgax0lk4LNm0fjkKWRJ7GCi0q9FPsBkBBfZVvFN+atabHoazNwLbrJxW8kb7t12
-         Vk2g==
+         :cc:content-transfer-encoding;
+        bh=UhciZLVdGKEJk7KHTw+RU8JWs5dQKAECyz5UjSzBrP0=;
+        b=EyF5FuUsWQitHjx7BN4lfK2XcWY7vlK1Elm2C5+czbIrJnmhqFTAkpW5dNchOjMYQa
+         m2TLVe5resLpBBx6d16MAKG8YbkEM7gSyEr0VRWn6GoH7+uEoEW090OfViix7wAoT/6E
+         vP8jz4YaO+TAiSfGRcxcZLnf94KukhpdZugyRYd9Cr/xOsWN93pQOg4ZrSpwwQPypW3y
+         Xc/FL4aARuZ3E6Aoh8B/DXUBsDQxJ6n0Ey9MzbMssaMalGxbbiW+y4MMWDiQ8/y80Mhj
+         SOLke1Gc4AIHcB/xAxa07KjuW2Gin3VRjJaRkMucEqOZeq60mtVn2HfRwq97kVDrfsgb
+         jZ7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=df+V+gsHVZZlfJaulEQ1Oh5nR/4WdLuTcsk0Vdms43Y=;
-        b=RwEmVQ3/8eYUHkehefOYZReXzigOh2DqvetryEIY2XHxLXBV0qHLjOHzAWjqvq10WC
-         trupHI36aSR6Z5wvo2orQ9uMid+HJQTskTfXrIEJUSX1L1TEjnorVlc7yv2C7L3qkyhx
-         vny0zoaWGxEk//dLbpa1PrRJ+tTSZfairKUK93KjgylvJ8/h8ZhxOAYxO52RbQ+rWc6S
-         lbWcDVIYr7Z6qrFEBsfh5vAaq3ESXmAa8AUUoU3RjNm19xlp4vbsLzRgkL4PshaehkYP
-         oOwxzj4744SRU0GvoZ5jm6geUbKh+ue1jEp4ZUAYvjX/QPiK+lewsjFm2CZfFGmfoyRY
-         0bdA==
-X-Gm-Message-State: AOAM532CtSoY+sda7niGIU+KhtbgWYfYxxqnAtnBkCgzOMK8uixOZ8q8
-        H9zqUqjFsDekzd0kDMyIzyjb/GQyXE/44OOb7Mo=
-X-Google-Smtp-Source: ABdhPJxCW8HlmypD8xNcLajB5gknM9yHtgTKTLM3H6LRc9eLRdmzj9iaiHuFYRq5XyoxKjAhGuVbfTZN5TZoX8uw8sQ=
-X-Received: by 2002:a05:6638:a0a:: with SMTP id 10mr16547706jan.30.1592807867146;
- Sun, 21 Jun 2020 23:37:47 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UhciZLVdGKEJk7KHTw+RU8JWs5dQKAECyz5UjSzBrP0=;
+        b=LO7wibA8ErGjYl3nC6UY//wEBvL3VDbx6oUHU/CVfVocd3lIYJ6+GnnX/s7roo7ZFg
+         LDnjylMXB7nWjGjXt4mcW/sgLFJBTneYWHBm2WUqnq6cSIvmXxQjpaX3f+hIftoYvG4J
+         hw6RaJinMMmddbhZlGuUOY05fNirw/AUoQ5yNmGK3dBE2S+/IKxit3v/Yse4TVqGYHpQ
+         p+WefpJmbYYiyrW6dTtYgrtlsmIe8iYePp+I8SUXzYBCBOSjsvCUDSKCknnvuPeKM6+A
+         fyShpWuPeq9uU1EsrI1RQo9RwWEp3FgnnjsdXJc7v2Jbw+cR/I6+RPvgf6lUtE1gI9UY
+         mA5A==
+X-Gm-Message-State: AOAM531+s8NU+K5DkS3mgIYJo3jt8qA+EE3QLwSPG/y5iAv849U/ngZI
+        G7CmatTtCnOpxpX4RAK839A2l92Un4t/lRj+Ct7vCQ==
+X-Google-Smtp-Source: ABdhPJxrXaR2MRdiPAJU6NZZSqPOj09boIx0YXa64M3CfHeEi2VvHVT8MYtt4nmImQOknEhCv3I16YGiBoKqk30+teY=
+X-Received: by 2002:ac8:36c2:: with SMTP id b2mr15006149qtc.257.1592808144668;
+ Sun, 21 Jun 2020 23:42:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMHtQmP_TVR8QA+noWQk04Nj_8AxMXfjCj1K_k0Zf6BN-Bq9sg@mail.gmail.com>
- <87bllhh7mg.fsf@vostro.rath.org> <CAMHtQmPcADq0WSAY=uFFyRgAeuCCAo=8dOHg37304at1SRjGBg@mail.gmail.com>
- <877dw0g0wn.fsf@vostro.rath.org> <CAJfpegs3xthDEuhx_vHUtjJ7BAbVfoDu9voNPPAqJo4G3BBYZQ@mail.gmail.com>
- <87sgensmsk.fsf@vostro.rath.org>
-In-Reply-To: <87sgensmsk.fsf@vostro.rath.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 Jun 2020 09:37:35 +0300
-Message-ID: <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
-Subject: Re: [fuse-devel] 512 byte aligned write + O_DIRECT for xfstests
-To:     fuse-devel <fuse-devel@lists.sourceforge.net>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Nikolaus Rath <Nikolaus@rath.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>
+References: <000000000000617f9d05a8a5a2c4@google.com> <4A35E92B-9DEF-4833-81DD-0C6FA50EB174@lca.pw>
+In-Reply-To: <4A35E92B-9DEF-4833-81DD-0C6FA50EB174@lca.pw>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 22 Jun 2020 08:42:13 +0200
+Message-ID: <CACT4Y+ZcbA=9L2XPC_rRG-FdwOoH6XteOoGHg7jfvd+1CH2M+w@mail.gmail.com>
+Subject: Re: linux-next boot error: WARNING in kmem_cache_free
+To:     Qian Cai <cai@lca.pw>
+Cc:     syzbot <syzbot+95bccd805a4aa06a4b0d@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+CC fsdevel folks]
-
-On Mon, Jun 22, 2020 at 8:33 AM Nikolaus Rath <Nikolaus@rath.org> wrote:
+On Mon, Jun 22, 2020 at 8:29 AM Qian Cai <cai@lca.pw> wrote:
+> > On Jun 22, 2020, at 1:37 AM, syzbot <syzbot+95bccd805a4aa06a4b0d@syzkal=
+ler.appspotmail.com> wrote:
+> >
+> > WARNING: CPU: 0 PID: 0 at mm/slab.h:232 kmem_cache_free+0x0/0x200 mm/sl=
+ab.c:2262
 >
-> On Jun 21 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >> I am not sure that is correct. At step 6, the write() request from
-> >> userspace is still being processed. I don't think that it is reasonable
-> >> to expect that the write() request is atomic, i.e. you can't expect to
-> >> see none or all of the data that is *currently being written*.
-> >
-> > Apparently the standard is quite clear on this:
-> >
-> >   "All of the following functions shall be atomic with respect to each
-> > other in the effects specified in POSIX.1-2017 when they operate on
-> > regular files or symbolic links:
-> >
-> > [...]
-> > pread()
-> > read()
-> > readv()
-> > pwrite()
-> > write()
-> > writev()
-> > [...]
-> >
-> > If two threads each call one of these functions, each call shall
-> > either see all of the specified effects of the other call, or none of
-> > them."[1]
-> >
-> > Thanks,
-> > Miklos
-> >
-> > [1]
-> > https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html#tag_15_09_07
+> Is there any particular reason to use CONFIG_SLAB rather than CONFIG_SLUB=
+?
+
+There is a reason, it's still important for us.
+But also it's not our strategy to deal with bugs by not testing
+configurations and closing eyes on bugs, right? If it's an official
+config in the kernel, it needs to be tested. If SLAB is in the state
+that we don't care about any bugs in it, then we need to drop it. It
+will automatically remove it from all testing systems out there. Or at
+least make it "depends on BROKEN" to slowly phase it out during
+several releases.
+
+
+> You are really asking for trouble to test something that almost nobody is=
+ exercising that code path very well nowadays.
 >
-> Thanks for digging this up, I did not know about this.
->
-> That leaves FUSE in a rather uncomfortable place though, doesn't it?
-> What does the kernel do when userspace issues a write request that's
-> bigger than FUSE userspace pipe? It sounds like either the request must
-> be splitted (so it becomes non-atomic), or you'd have to return a short
-> write (which IIRC is not supposed to happen for local filesystems).
->
-
-What makes you say that short writes are not supposed to happen?
-and what is the definition of "local filesystem" in that claim?
-
-FYI, a similar discussion is also happening about XFS "atomic rw" behavior [1].
-
-Seems like the options for FUSE are:
-- Take shared i_rwsem lock on read like XFS and regress performance of
-  mixed rw workload
-- Do the above only for non-direct and writeback_cache to minimize the
-  damage potential
-- Return short read/write for direct IO if request is bigger that FUSE
-buffer size
-- Add a FUSE mode that implements direct IO internally as something like
-  RWF_UNCACHED [2] - this is a relaxed version of "no caching" in client or
-  a stricter version of "cache write-through"  in the sense that
-during an ongoing
-  large write operation, read of those fresh written bytes only is served
-  from the client cache copy and not from the server.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20200622010234.GD2040@dread.disaster.area/
-[2] https://lore.kernel.org/linux-fsdevel/20191217143948.26380-1-axboe@kernel.dk/
+> Anyway, there is a patchset in -mm that might well introduce this regress=
+ion that we could go to confirm it, but I kind of don=E2=80=99t want to spe=
+nd too much time on SLAB that suppose to be obsolete eventually.
