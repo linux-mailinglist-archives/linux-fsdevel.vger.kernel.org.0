@@ -2,98 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F11162030A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 09:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227DC2030B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 09:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731404AbgFVH2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 03:28:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731320AbgFVH2L (ORCPT
+        id S1731405AbgFVHfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 03:35:11 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:33741 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731323AbgFVHfK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 03:28:11 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8898FC061796
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 00:28:11 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id d27so11932983qtg.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 00:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=+Uan9/0g2Kyk0+JFE+Gg6CPXTL0iWc6TM1qX4k9tCCI=;
-        b=CEIoTrFcH9/ZEoLTpd6fmSkXQV5kJx6SiBea4C6+IwoO8z+Z1TfY40M/x2iObM6GCX
-         Jy0tips3m8ok7iClqxkfuII3htkyFo2IDfNlN9BJlPhADjGd4YdrnLMXw4ktOca61LUM
-         RgCJBX3fDwyzBWJfd0ozcaqZ6YmVWeYWWSAO3lq1tlxxaoTRw/zU38Dp0DN404aTxwyv
-         2/LqaODnfkrI2Swvw8Goi9ZK+IAOUU1I/ISmwsOvUqZHpiTgD1Sh3Ynja398PQfCSD8T
-         x/QO1WjXLd1y8S85tUcQSR8LZeMki8SEWYs+lZdo7Dp8DrHB218NllVMmIRo8KfQ7AwQ
-         oOKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=+Uan9/0g2Kyk0+JFE+Gg6CPXTL0iWc6TM1qX4k9tCCI=;
-        b=sWV+G/XCeqdHKweG/w1/3qunz1gJ0Zr1Yf1RgXje+jcqZe+QsQpUcYYhp1ujy29zPH
-         KBv4nS4Tx5WWyFI0qkLBHD0ji8L7RQM0XMT9j1Nfilt5hbOlOPu1fV2Povpowrl2euf4
-         ZuIEKm7n6sO2tr3bUnX74LFhgxP2vfAeUkYK3Csb/X5kWMqj+ikb/PdXttfoJPQ0UAlO
-         l54myy7Aa/8SqefFmgvMnCeV2Qk4kC9ZlOO9DhrWPmAUGV2f2iGROiJxf1QlWJeeccqB
-         n/Edst6y/m4CCDcdUxfAAMzVyGlJJ3I+ZQa2Z6m0qy1MivYbcG1okrWWIlqt41fGSYu/
-         IrRw==
-X-Gm-Message-State: AOAM531a8oZ/2PeXiQ+ifsaRZpjcecSQTfmSw5C3tDwIfDIsr6ezqa+8
-        htRDbvHTRajAw3cu2IAYJKRCUQ==
-X-Google-Smtp-Source: ABdhPJyWb4e97Z2/IMIqh2GpP+NVHRpesI9AkxGHkQn4/h3yxibqRZAvS1qnEvwYKJTYlHnAvtsp5w==
-X-Received: by 2002:ac8:5307:: with SMTP id t7mr15073070qtn.229.1592810890652;
-        Mon, 22 Jun 2020 00:28:10 -0700 (PDT)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id k20sm14406128qtu.16.2020.06.22.00.28.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2020 00:28:10 -0700 (PDT)
+        Mon, 22 Jun 2020 03:35:10 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id B5534FE9;
+        Mon, 22 Jun 2020 03:35:09 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 22 Jun 2020 03:35:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
+        9J0MA+owJTES6VlBwwJwkP9QNd2iN8Nn7MVpzFfGH/A=; b=0QrH+cRz+rCUBDFf
+        xtERZ1IcgAqvIGtf3FtH9ExWrn7W2tljbqmGC+m4m5ZBpAWeGxJw1rbt/3UmRk78
+        OHv3s/YSmtv4RBIP8eVX8uBekucXHCeYvnJ95N5E9ehJnaJkraaFgRrTxBmXRr9C
+        KMw9QPmHOmUE7F0Z/RobyjiU6X9lML+Oe/fpc/dwS95dAN8FoELn+j4jJcIKXYOU
+        WHvy70o0vcz+L/2Dis9pJcyl1PddTXUcCDIRUx5Pew891YS4/xHF5j+/Nzx4Qhh+
+        EcNpPo4/ignZtezJRnYHq4UIMDWNqjv5fhXXa5+OzEh+y9Wy+CDl8Dg73PgBUoZS
+        Yqk8Zw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=9J0MA+owJTES6VlBwwJwkP9QNd2iN8Nn7MVpzFfGH
+        /A=; b=nBII26kH2a0EZciIXfW6L+aCl54zJWFgPVRbVfA+Cp4duXOF4gsq17GRw
+        IS0COnoed2vrVKMeUw5bY+pqVCpm+Xe/9+heNwAH62/hZRoy5nmt+zrrPL3e5LsS
+        JwuIxcz+zRmT1G3Vh7jcrK1jNHwsfd9MoA0l7bcz2tqHLRV5JW8EHX9Ph+YoMjaI
+        MOYJ0zH7DqIw3+DodtZHMDS1Sxz1K6zp6cac08iwIn4qSOawsNUlNdJ0WgcJ8u9a
+        gdIE4/usaRiTYVqIKXJPyCs8seSr5NTo/L1AipIfaufZj+FROT135B2wiNadft3W
+        jexw2iNVc7upmbokd5ihYJ5MS214Q==
+X-ME-Sender: <xms:KF_wXukL_fxXVrRFoNsVMnvr6Uv36RclspJhFpaNYcJSeaacxLFmcA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekuddguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
+    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrf
+    grthhtvghrnhepgeefjedvueejueekgffhtdefteeihfetvdfgvefgheffhefgkedtgfek
+    vdfgveefnecuffhomhgrihhnpehophgvnhhgrhhouhhprdhorhhgnecukfhppedukeehrd
+    efrdelgedrudelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
+X-ME-Proxy: <xmx:KF_wXl2EM2FHgiYYHnf12vDmvJKw9AmKIR0rvlSRNLTGdokI0TDc1A>
+    <xmx:KF_wXspB904TYurOZ9HIKnfPlMHSCIaVYUR7Qx1piFVXxW7dAPlruA>
+    <xmx:KF_wXinrfds68S2qYlPYSC6NPY-9V9ZMW63zzSBOmmILXpHmL8DyWw>
+    <xmx:LV_wXg_EurRWPv2kDHYYPcsveQKPGbIHpPbKN6F75Fc48DQZkI2qWw>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2F9133067331;
+        Mon, 22 Jun 2020 03:35:04 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 5782438;
+        Mon, 22 Jun 2020 07:35:03 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 35B02E28AF; Mon, 22 Jun 2020 08:35:03 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [fuse-devel] 512 byte aligned write + O_DIRECT for xfstests
+References: <CAMHtQmP_TVR8QA+noWQk04Nj_8AxMXfjCj1K_k0Zf6BN-Bq9sg@mail.gmail.com>
+        <87bllhh7mg.fsf@vostro.rath.org>
+        <CAMHtQmPcADq0WSAY=uFFyRgAeuCCAo=8dOHg37304at1SRjGBg@mail.gmail.com>
+        <877dw0g0wn.fsf@vostro.rath.org>
+        <CAJfpegs3xthDEuhx_vHUtjJ7BAbVfoDu9voNPPAqJo4G3BBYZQ@mail.gmail.com>
+        <87sgensmsk.fsf@vostro.rath.org>
+        <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Amir Goldstein <amir73il@gmail.com>, fuse-devel
+        <fuse-devel@lists.sourceforge.net>, linux-fsdevel
+        <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>, Dave Chinner
+        <dchinner@redhat.com>
+Date:   Mon, 22 Jun 2020 08:35:03 +0100
+In-Reply-To: <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
+        (Amir Goldstein's message of "Mon, 22 Jun 2020 09:37:35 +0300")
+Message-ID: <87mu4vsgd4.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: linux-next boot error: WARNING in kmem_cache_free
-Date:   Mon, 22 Jun 2020 03:28:09 -0400
-Message-Id: <121C0D57-C9E6-406B-A280-A67E773EA9D0@lca.pw>
-References: <CACT4Y+ZcbA=9L2XPC_rRG-FdwOoH6XteOoGHg7jfvd+1CH2M+w@mail.gmail.com>
-Cc:     syzbot <syzbot+95bccd805a4aa06a4b0d@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-In-Reply-To: <CACT4Y+ZcbA=9L2XPC_rRG-FdwOoH6XteOoGHg7jfvd+1CH2M+w@mail.gmail.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-X-Mailer: iPhone Mail (17F80)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Jun 22 2020, Amir Goldstein <amir73il@gmail.com> wrote:
+> [+CC fsdevel folks]
+>
+> On Mon, Jun 22, 2020 at 8:33 AM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>>
+>> On Jun 21 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>> >> I am not sure that is correct. At step 6, the write() request from
+>> >> userspace is still being processed. I don't think that it is reasonab=
+le
+>> >> to expect that the write() request is atomic, i.e. you can't expect to
+>> >> see none or all of the data that is *currently being written*.
+>> >
+>> > Apparently the standard is quite clear on this:
+>> >
+>> >   "All of the following functions shall be atomic with respect to each
+>> > other in the effects specified in POSIX.1-2017 when they operate on
+>> > regular files or symbolic links:
+>> >
+>> > [...]
+>> > pread()
+>> > read()
+>> > readv()
+>> > pwrite()
+>> > write()
+>> > writev()
+>> > [...]
+>> >
+>> > If two threads each call one of these functions, each call shall
+>> > either see all of the specified effects of the other call, or none of
+>> > them."[1]
+>> >
+>> > Thanks,
+>> > Miklos
+>> >
+>> > [1]
+>> > https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.h=
+tml#tag_15_09_07
+>>
+>> Thanks for digging this up, I did not know about this.
+>>
+>> That leaves FUSE in a rather uncomfortable place though, doesn't it?
+>> What does the kernel do when userspace issues a write request that's
+>> bigger than FUSE userspace pipe? It sounds like either the request must
+>> be splitted (so it becomes non-atomic), or you'd have to return a short
+>> write (which IIRC is not supposed to happen for local filesystems).
+>>
+>
+> What makes you say that short writes are not supposed to happen?
 
+I don't think it was an authoritative source, but I I've repeatedly read
+that "you do not have to worry about short reads/writes when accessing
+the local disk". I expect this to be a common expectation to be baked
+into programs, no matter if valid or not.
 
-> On Jun 22, 2020, at 2:42 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->=20
-> There is a reason, it's still important for us.
-> But also it's not our strategy to deal with bugs by not testing
-> configurations and closing eyes on bugs, right? If it's an official
-> config in the kernel, it needs to be tested. If SLAB is in the state
-> that we don't care about any bugs in it, then we need to drop it. It
-> will automatically remove it from all testing systems out there. Or at
-> least make it "depends on BROKEN" to slowly phase it out during
-> several releases.
+> Seems like the options for FUSE are:
+> - Take shared i_rwsem lock on read like XFS and regress performance of
+>   mixed rw workload
+> - Do the above only for non-direct and writeback_cache to minimize the
+>   damage potential
+> - Return short read/write for direct IO if request is bigger that FUSE
+> buffer size
+> - Add a FUSE mode that implements direct IO internally as something like
+>   RWF_UNCACHED [2] - this is a relaxed version of "no caching" in client =
+or
+>   a stricter version of "cache write-through"  in the sense that
+> during an ongoing
+>   large write operation, read of those fresh written bytes only is served
+>   from the client cache copy and not from the server.
 
-Do you mind sharing what=E2=80=99s your use cases with CONFIG_SLAB? The only=
- thing prevents it from being purged early is that it might perform better w=
-ith a certain type of networking workloads where syzbot should have nothing t=
-o gain from it.
+I didn't understand all of that, but it seems to me that there is a
+fundamental problem with splitting up a single write into multiple FUSE
+requests, because the second request may fail after the first one
+succeeds.=20
 
-I am more of thinking about the testing coverage that we could use for syzbo=
-t to test SLUB instead of SLAB. Also, I have no objection for syzbot to test=
- SLAB, but then from my experience, you are probably on your own to debug fu=
-rther with those testing failures. Until you are able to figure out the bugg=
-y patch or patchset introduced the regression, I am afraid not many people w=
-ould be able to spend much time on SLAB. The developers are pretty much alre=
-ady half-hearted on it by only fixing SLAB here and there without runtime te=
-sting it.=
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
