@@ -2,116 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BC3B202DE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 02:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B26202DED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 02:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbgFVA1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jun 2020 20:27:23 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:29390 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbgFVA1W (ORCPT
+        id S1726608AbgFVAcW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jun 2020 20:32:22 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57844 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726407AbgFVAcW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jun 2020 20:27:22 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200622002720epoutp041d7bb3bec1117483b2a3f56c02ff2540~athnLXswm2887028870epoutp043
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 00:27:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200622002720epoutp041d7bb3bec1117483b2a3f56c02ff2540~athnLXswm2887028870epoutp043
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592785640;
-        bh=jCPcOeaRvhdkHyFgABEEVptIERkV666narv0UilYcno=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Ym1FQJdM3dQisyoacsy73mwG3+7DIQxWxAbzlgirE44BA1nnBUTJiPdXmHn6Ox0yG
-         cURqkHcHpExyIQ8CnORFnfbCwjyWrF8Vga3qdSPR5Yj2AW5uHB009l5+mRydi4rgWD
-         Wki8fiz0dYLgI4C7RbTVVQErW9thw1tMsd+vTT2g=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200622002719epcas1p1f213bae64a3d5bffe6d1dfc570e3055c~athmr1Wvm3266532665epcas1p1P;
-        Mon, 22 Jun 2020 00:27:19 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.164]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 49qqx25VxrzMqYkZ; Mon, 22 Jun
-        2020 00:27:18 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7B.4D.18978.5EAFFEE5; Mon, 22 Jun 2020 09:27:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200622002716epcas1p1f72a6a18e7d7c86990d34f118296eddd~athj8YmPl1151811518epcas1p1g;
-        Mon, 22 Jun 2020 00:27:16 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200622002716epsmtrp112c643bf8dd52aa8876b012e106efd6a~athj7phab0409704097epsmtrp1E;
-        Mon, 22 Jun 2020 00:27:16 +0000 (GMT)
-X-AuditID: b6c32a35-5edff70000004a22-a6-5eeffae590a4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7B.FE.08382.4EAFFEE5; Mon, 22 Jun 2020 09:27:16 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200622002716epsmtip1c27d0d0fff5f48bcb67c70c7b29aa0ab~athjyeArn3252932529epsmtip1O;
-        Mon, 22 Jun 2020 00:27:16 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Sungjong Seo'" <sj1557.seo@samsung.com>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <1592480606-14657-1-git-send-email-sj1557.seo@samsung.com>
-Subject: RE: [PATCH] exfat: flush dirty metadata in fsync
-Date:   Mon, 22 Jun 2020 09:27:16 +0900
-Message-ID: <000a01d6482b$e1eb34d0$a5c19e70$@samsung.com>
+        Sun, 21 Jun 2020 20:32:22 -0400
+Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0804D82229B;
+        Mon, 22 Jun 2020 10:32:17 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jnANj-0001RI-85; Mon, 22 Jun 2020 10:32:15 +1000
+Date:   Mon, 22 Jun 2020 10:32:15 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        agruenba@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Bypass filesystems for reading cached pages
+Message-ID: <20200622003215.GC2040@dread.disaster.area>
+References: <20200619155036.GZ8681@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQDtA/PAf/AkJUVnASwyuxUrAs/RQAI7piHFqqRyXYA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsWy7bCmnu7TX+/jDKZPYLXYs/cki8XlXXPY
-        LLb8O8LqwOzRt2UVo8fnTXIBTFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZK
-        CnmJuam2Si4+AbpumTlAO5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BYYGBXrF
-        ibnFpXnpesn5uVaGBgZGpkCVCTkZp+a8ZSyYz1zxtFO8gfECUxcjJ4eEgInEugf9rF2MXBxC
-        AjsYJS6vmsQE4XxilJg34ToLhPONUWL7rD3MMC39TTOhWvYySjR0NbNBOC8ZJS4svwZWxSag
-        K/Hvz36gBAeHCJDd98cLJMws4Cxx+MYpsBJOAXeJydtfgd0hLGAp8XbxInYQm0VAVWLinz9s
-        IDYvULx5y3lmCFtQ4uTMJywQc+Qltr+dA3WQgsTPp8tYQWwRASuJOw9vskPUiEjM7mxjBrlN
-        QuAeu8T799+hnnaRWNP/EsoWlnh1fAs7hC0l8bK/jR3kZgmBaomP+6HmdzBKvPhuC2EbS9xc
-        v4EVpIRZQFNi/S59iLCixM7fcxkh1vJJvPvawwoxhVeio00IokRVou/SYail0hJd7R/YJzAq
-        zULy2Cwkj81C8sAshGULGFlWMYqlFhTnpqcWGxYYIkf1JkZw6tMy3cE48e0HvUOMTByMhxgl
-        OJiVRHhfB7yLE+JNSaysSi3Kjy8qzUktPsRoCgzqicxSosn5wOSbVxJvaGpkbGxsYWJmbmZq
-        rCTOKy5zIU5IID2xJDU7NbUgtQimj4mDU6qBqSwqWO6OhfY2xv3v/5++0+GSvPynfouz0+GY
-        fwUNxwu7T53ieaLEunfqlL/nSlIjbLhu3i//9lAq339BvKOIT8CTG8z/529xfJizu++58bFo
-        z//l1qJd0TM2C7Qeb/hw8fCrFG3pniytta5c/57OC96U88i/59z65JKFZ8uXJujG3brF/Tg4
-        /o7s38aGWb5MXzOYtxX9uvN4R8+JPwfz7rOtC516tWRyXm9A8m21u392R5279iFcormkIfKQ
-        m63rT9b6mxkhZSE/1qlP0RVf5zSvcd//uVVb21IzBQSXVIeJRM7qfLR4akTYn7A5IUmP1y27
-        HlY6ffmFwEknVrYtu9pktV5ydrkT0/rHHA72DUosxRmJhlrMRcWJAJ0Yqt0GBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSnO6TX+/jDB4dVbXYs/cki8XlXXPY
-        LLb8O8LqwOzRt2UVo8fnTXIBTFFcNimpOZllqUX6dglcGafmvGUsmM9c8bRTvIHxAlMXIyeH
-        hICJRH/TTNYuRi4OIYHdjBJN2w6yQCSkJY6dOMPcxcgBZAtLHD5cDFHznFHiU+t9sBo2AV2J
-        f3/2s4HUiADZfX+8QMLMAq4S85+vZoOon8Eo8fvORLBlnALuEpO3vwKzhQUsJd4uXsQOYrMI
-        qEpM/POHDcTmBYo3bznPDGELSpyc+YQFYqi2xNObT6FseYntb+cwQ9ypIPHz6TJWEFtEwEri
-        zsOb7BA1IhKzO9uYJzAKz0IyahaSUbOQjJqFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLS
-        vHS95PzcTYzgKNDS3MG4fdUHvUOMTByMhxglOJiVRHhfB7yLE+JNSaysSi3Kjy8qzUktPsQo
-        zcGiJM57o3BhnJBAemJJanZqakFqEUyWiYNTqoEp3OdX7YQTVeXbDfijcyYLr2efE/3uC//C
-        cx/dZktc1Tqr4/719T7eedkaTbPPybc7nv7CVHLlv7viOeY/TRwrVu5wyHwyIbG2N7Douerd
-        oLaovk7TJyyZ9mev8s34GPLKT/EU04cnVXs1dbvXx7umvW5d8XIvB2Pgn6lRXx96n9IL05P+
-        GPJJWuL/m5car547ntroH551d8WVzRoyyR9vNnh0bIh9KjrpzyR502mOS4QzeHoPTp1qzzJ/
-        h2/vlH3GNtx5XvxNMn1n5q9wmmZm6vHyqK2LxqIf1zl9Jj60r/Lf4Hf32+7lN4WtNrFmT1io
-        sThKyV7X78W6T73m3xYmb05pEan8bdanp/Zl1ZvLSizFGYmGWsxFxYkAXpqVgPECAAA=
-X-CMS-MailID: 20200622002716epcas1p1f72a6a18e7d7c86990d34f118296eddd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200618121007epcas1p1aa0f24b361e0232913bf7477ee0a92c8
-References: <CGME20200618121007epcas1p1aa0f24b361e0232913bf7477ee0a92c8@epcas1p1.samsung.com>
-        <1592480606-14657-1-git-send-email-sj1557.seo@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200619155036.GZ8681@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
+        a=0py_wnm_iWKtagbpVocA:9 a=p7nhVbAf7fyorWVF:21 a=KqMQ5NIseWXE2gGM:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> generic_file_fsync() exfat used could not guarantee the consistency of a file because it has flushed
-> not dirty metadata but only dirty data pages for a file.
+On Fri, Jun 19, 2020 at 08:50:36AM -0700, Matthew Wilcox wrote:
 > 
-> Instead of that, use exfat_file_fsync() for files and directories so that it guarantees to commit both
-> the metadata and data pages for a file.
-> 
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Pushed it into exfat #dev. Thanks!
+> This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
+> The advantage of this patch is that we can avoid taking any filesystem
+> lock, as long as the pages being accessed are in the cache (and we don't
+> need to readahead any pages into the cache).  We also avoid an indirect
+> function call in these cases.
 
+What does this micro-optimisation actually gain us except for more
+complexity in the IO path?
+
+i.e. if a filesystem lock has such massive overhead that it slows
+down the cached readahead path in production workloads, then that's
+something the filesystem needs to address, not unconditionally
+bypass the filesystem before the IO gets anywhere near it.
+
+> This could go horribly wrong if filesystems rely on doing work in their
+> ->read_iter implementation (eg checking i_size after acquiring their
+> lock) instead of keeping the page cache uptodate.  On the other hand,
+> the ->map_pages() method is already called without locks, so filesystems
+> should already be prepared for this.
+
+Oh, gawd, we have *yet another* unlocked page cache read path that
+can race with invalidations during fallocate() operations?
+
+/me goes and looks at filemap_map_pages()
+
+Yup, filemap_map_pages() is only safe against invalidations beyond
+EOF (i.e. truncate) and can still race with invalidations within
+EOF. So, yes, I'm right in that this path is not safe to run without
+filesystem locking to serialise the IO against fallocate()...
+
+Darrick, it looks like we need to wrap filemap_map_pages() with the
+XFS_MMAPLOCK_SHARED like we do for all the other page fault paths
+that can call into the IO path.
+
+> Arguably we could do something similar for writes.  I'm a little more
+> scared of that patch since filesystems are more likely to want to do
+> things to keep their fies in sync for writes.
+
+Please, no.  We can have uptodate cached pages over holes, unwritten
+extents, shared extents, etc but they all require filesystem level
+serialisation and space/block allocation work *before* we copy data
+into the page. i.e. if allocation/space reservation fails, we need
+to abort before changing data.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
