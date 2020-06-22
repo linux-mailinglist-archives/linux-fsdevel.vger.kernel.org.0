@@ -2,104 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E69DB202F6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 07:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BA9202F8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 07:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbgFVFSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 01:18:21 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:60565 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725934AbgFVFSU (ORCPT
+        id S1731143AbgFVFic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 01:38:32 -0400
+Received: from condef-01.nifty.com ([202.248.20.66]:43768 "EHLO
+        condef-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731108AbgFVFic (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 01:18:20 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 5C10817ED;
-        Mon, 22 Jun 2020 01:18:19 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 22 Jun 2020 01:18:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:cc:subject:references:date:in-reply-to:message-id
-        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
-        B1QN7e3TFPweg/5icigcXBvh8YQ0PuwcEnbEASlXYSQ=; b=MWUJRNSLvjm2T0dL
-        h0VGoN9h9kzg+I8XSoGtT/k+Zw6sSRxS/RgMN02CAxFwj5JvPKzYj7C82qlFOJTQ
-        oamZrqzgL8es8XR7q0nH3Urq3H7aH/zTT5oGsDgQpjZjU+XtlFhV5nidCA6CGt8W
-        3v9byO6IiaT3blbiy10Z+Cw/ejDbiBqGkWNxTW5jex7YRSLm0dmdaJgoJNHDQ2X4
-        4+8fNQtlsX3FBNz7zfIbOMEYW8YTYSqJhqIw1CnHT5AG6BhCCeDPuJtVEODJpFa8
-        e8F1yoMAq6DI6h3gYEGWv9vYbh8Ic2VZooBAv38GK1/u9WTr/AWmuahytT3ACMbA
-        oLwaHw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=B1QN7e3TFPweg/5icigcXBvh8YQ0PuwcEnbEASlXY
-        SQ=; b=aSD1NhNVFB0dA+ytl7knNFbv2BeLAwZdsZWavkqc8FzpWwHuRqSkFSW2E
-        Gq5d6+4SeNmmciNs3hmy+5AmGtRIbZRG1dHtMGS1jfBsQOGFOmHH3z39rrIyR7ZY
-        EKdzkJN7WKS4Pr00df7vELFEwVIpcoc86/D3b/XaVJsXNUmmE9gRBj1tD1Z3YAM1
-        pXDRFfcpfi0T5SUU8Lw0uQ0Peqk0vu5YMJooOpHkEKD49cQEiZzkphusZ688gyr+
-        PEtIpt/OosuHv5UidOlV11+JWLG3bik8sFGpW6vDZt1bYPoeAg29rMcn8HI8zw/v
-        2ncYxpMj9lwgkFXuMnOV5syeQ5Jvw==
-X-ME-Sender: <xms:Gj_wXqB9FMg_ZKYcy9Jbm9zsgeJ7IWwnx7GgyGfs-P2La7EaxcOxcg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekuddgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufhfffgjkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhho
-    lhgruhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrg
-    htthgvrhhnpefhteeugeehuddtfeetgedugfejhfeftdfhheeggeekjeeuveeileejtdef
-    feffheenucfkphepudekhedrfedrleegrdduleegnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:Gj_wXkhZDXGWcmXbNdQbu7Brt4VgdTsY-k1WuKgfvFTxvHyV8T0gIA>
-    <xmx:Gj_wXtkLptaJciG0Ilj-TA7nQdqUeoKEZ6AnaakW20t1BvSkvCeyIA>
-    <xmx:Gj_wXoxtR_LXObz6Abj6MmnGtxz9mHztJq_wxdvOknZwMQZM8Ew50g>
-    <xmx:Gz_wXuGKHI7r6I5qe4ZMPNXYcpKWWKzkJFOPZjy5XVTcStYTP73kgQ>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3731A3280060;
-        Mon, 22 Jun 2020 01:18:18 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 5D4595F;
-        Mon, 22 Jun 2020 05:18:17 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 37A50E29F9; Mon, 22 Jun 2020 06:18:17 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Cc:     dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        "p.kramme\@profihost.ag" <p.kramme@profihost.ag>,
-        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
-Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
-References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
-Mail-Copies-To: never
-Mail-Followup-To: Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        dhowells@redhat.com, ebiggers@google.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, "p.kramme\@profihost.ag"
-        <p.kramme@profihost.ag>, Daniel Aberger - Profihost AG
-        <d.aberger@profihost.ag>
-Date:   Mon, 22 Jun 2020 06:18:17 +0100
-In-Reply-To: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag> (Stefan
-        Priebe's message of "Thu, 18 Jun 2020 22:38:25 +0200")
-Message-ID: <87pn9rsmp2.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 22 Jun 2020 01:38:32 -0400
+Received: from conssluserg-05.nifty.com ([10.126.8.84])by condef-01.nifty.com with ESMTP id 05M5YhGn010354
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 14:34:43 +0900
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 05M5YHTq010632;
+        Mon, 22 Jun 2020 14:34:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 05M5YHTq010632
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1592804058;
+        bh=l1Wp8QkA57im+NZmeXieOSoL1AHhaVcvQ4yMPx1u/lw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zka7rOiFfK4LJYPLBtdXrDwXPFTimfyqIuYntf3jwVO3e07ZfWV6HGUDX2cTVBDSg
+         HS9b4J7EJsJBcwSgfbhCmVQFxQHmNHVODfq98QIpUoe2UI7kRregJKUfD6aAObmfTg
+         Y3k7cM2+ut1N69s9dHw9A51qgCTCd+HlK0g/RAXLCBG8lBsJ6bYC/5yWj8I31H4EBA
+         u5gidbiT0P96mHIZb9EH9HzduDTeY9EZkvY7RZjXPYfxvdRW6un3aA/Ik1YIZnPoP4
+         tsZP1cvfDjNsUNO0+NxXssOhHD4GPBes/FE9Dx0nrOztTHByzfCfMCDWvQc2UrTrc2
+         xspEZ8Zs8mH3A==
+X-Nifty-SrcIP: [209.85.221.171]
+Received: by mail-vk1-f171.google.com with SMTP id s6so3661635vkb.9;
+        Sun, 21 Jun 2020 22:34:17 -0700 (PDT)
+X-Gm-Message-State: AOAM530mnAtZ/G1XVqkaU+olnDoj1x7Ey52CE2q0c5m/QXi0l/kZ/KtL
+        yOHmwd97ulkJOhCjShGrhrFzLEIVenlIDMMg9EM=
+X-Google-Smtp-Source: ABdhPJwh6BZWfd4rlU2RWuyudUqoKaTL84W4xch0jXewj8b3Y2FY7i6N6lJ2HXvrwYHzcQc/HZddEaokfWVLepAfzoU=
+X-Received: by 2002:a1f:1f04:: with SMTP id f4mr14462230vkf.73.1592804056188;
+ Sun, 21 Jun 2020 22:34:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com>
+ <20200618233958.GV8681@bombadil.infradead.org> <877dw3apn8.fsf@x220.int.ebiederm.org>
+ <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com> <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 22 Jun 2020 14:33:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARr4aWTUqcS5TGdQ-7C_u=PFQVMMuakQ2Oro3-43fYu9w@mail.gmail.com>
+Message-ID: <CAK7LNARr4aWTUqcS5TGdQ-7C_u=PFQVMMuakQ2Oro3-43fYu9w@mail.gmail.com>
+Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc dentries
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin@oracle.com" <joe.jin@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Jun 18 2020, Stefan Priebe - Profihost AG <s.priebe@profihost.ag> wrote:
-> Hi,
+On Fri, Jun 19, 2020 at 11:14 PM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
 >
-> while using fuse 2.x and nonempty mount option - fuse mounts breaks
-> after upgrading from kernel 4.19 to 5.4.
+>
+> Junxiao Bi <junxiao.bi@oracle.com> reported:
+> > When debugging some performance issue, i found that thousands of threads exit
+> > around same time could cause a severe spin lock contention on proc dentry
+> > "/proc/$parent_process_pid/task/", that's because threads needs to clean up
+> > their pid file from that dir when exit.
+>
+> Matthew Wilcox <willy@infradead.org> reported:
+> > We've looked at a few different ways of fixing this problem.
+>
+> The flushing of the proc dentries from the dcache is an optmization,
+> and is not necessary for correctness.  Eventually cache pressure will
+> cause the dentries to be freed even if no flushing happens.  Some
+> light testing when I refactored the proc flushg[1] indicated that at
+> least the memory footprint is easily measurable.
+>
+> An optimization that causes a performance problem due to a thundering
+> herd of threads is no real optimization.
+>
+> Modify the code to only flush the /proc/<tgid>/ directory when all
+> threads in a process are killed at once.  This continues to flush
+> practically everything when the process is reaped as the threads live
+> under /proc/<tgid>/task/<tid>.
+>
+> There is a rare possibility that a debugger will access /proc/<tid>/,
+> which this change will no longer flush, but I believe such accesses
+> are sufficiently rare to not be observed in practice.
+>
+> [1] 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
+> Link: https://lkml.kernel.org/r/54091fc0-ca46-2186-97a8-d1f3c4f3877b@oracle.com
 
-IIRC nonempty is not processed by the kernel, but libfuse. This sounds like
-you did a partial upgrade to libfuse 3.x (which dropped the option).
 
-Best,
-Nikolaus
+> Reported-by: Masahiro Yamada <masahiroy@kernel.org>
 
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+I did not report this.
 
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+
+
+
+
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+
+
+-- 
+Best Regards
+Masahiro Yamada
