@@ -2,85 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68362204006
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 21:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CBA020428A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 23:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbgFVTTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 15:19:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbgFVTTN (ORCPT
+        id S1730474AbgFVVWx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 17:22:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39748 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730460AbgFVVWw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 15:19:13 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CD4FC061573;
-        Mon, 22 Jun 2020 12:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RQJq+7AzCVSDpLZ6UztkdVPIx33ju3bxwq7Nfv4giNc=; b=ETs4k3/6ptZjuGJ6PGMlAriF7D
-        M2ZdWwBt07llvSQB3BRcysDLSM3TjUVsx2uKutQ2vRUYTecj/a7AXSp0PL3NPz0UPP2IXjq5VLKjn
-        6ozhtSFlY44iX3P4Ap8ARRAzJivWbV/gjuu+us5GHL1+vWt3oT6DCfP/QV87dyc4uhiGZcDLgnu8N
-        uiRNKe31sLOCccpwMvpf0WOFRcD3KbMhRWGZYheSJnDhCgDg6cO7jup1Xc7/MnC1OFUfosB6V8oNv
-        9IKsT6yEgtZCNKy+qKjYCc4j/f7UfIglA9F+Jwa67DqAWH/1GBFptB4m0SRMrD+ASdOEZEdHCcMpn
-        0uIbqEuA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jnRy5-0001ra-3v; Mon, 22 Jun 2020 19:18:57 +0000
-Date:   Mon, 22 Jun 2020 20:18:57 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        agruenba@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Bypass filesystems for reading cached pages
-Message-ID: <20200622191857.GB21350@casper.infradead.org>
-References: <20200619155036.GZ8681@bombadil.infradead.org>
- <20200622003215.GC2040@dread.disaster.area>
+        Mon, 22 Jun 2020 17:22:52 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05ML2xIt106480;
+        Mon, 22 Jun 2020 17:22:38 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysvg7v8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 17:22:38 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05ML4WE3112081;
+        Mon, 22 Jun 2020 17:22:38 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysvg7uv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 17:22:38 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05MLFbdJ028588;
+        Mon, 22 Jun 2020 21:22:37 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma01dal.us.ibm.com with ESMTP id 31sa38q828-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 21:22:37 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05MLMZtg41353574
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Jun 2020 21:22:36 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E265B6A047;
+        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3CC7D6A051;
+        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
+Received: from [9.211.67.55] (unknown [9.211.67.55])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Ian Kent <raven@themaw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+ <20200619153833.GA5749@mtj.thefacebook.com>
+ <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
+ <20200619222356.GA13061@mtj.duckdns.org>
+ <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
+ <20200622175343.GC13061@mtj.duckdns.org>
+From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
+Message-ID: <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
+Date:   Mon, 22 Jun 2020 14:22:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200622003215.GC2040@dread.disaster.area>
+In-Reply-To: <20200622175343.GC13061@mtj.duckdns.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-22_12:2020-06-22,2020-06-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ cotscore=-2147483648 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006220137
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 10:32:15AM +1000, Dave Chinner wrote:
-> On Fri, Jun 19, 2020 at 08:50:36AM -0700, Matthew Wilcox wrote:
-> > 
-> > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
-> > The advantage of this patch is that we can avoid taking any filesystem
-> > lock, as long as the pages being accessed are in the cache (and we don't
-> > need to readahead any pages into the cache).  We also avoid an indirect
-> > function call in these cases.
-> 
-> What does this micro-optimisation actually gain us except for more
-> complexity in the IO path?
-> 
-> i.e. if a filesystem lock has such massive overhead that it slows
-> down the cached readahead path in production workloads, then that's
-> something the filesystem needs to address, not unconditionally
-> bypass the filesystem before the IO gets anywhere near it.
+On 6/22/20 10:53 AM, Tejun Heo wrote:
 
-You're been talking about adding a range lock to XFS for a while now.
-I remain quite sceptical that range locks are a good idea; they have not
-worked out well as a replacement for the mmap_sem, although the workload
-for the mmap_sem is quite different and they may yet show promise for
-the XFS iolock.
+> I don't know. The above highlights the absurdity of the approach itself to
+> me. You seem to be aware of it too in writing: 250,000 "devices".
 
-There are production workloads that do not work well on top of a single
-file on an XFS filesystem.  For example, using an XFS file in a host as
-the backing store for a guest block device.  People tend to work around
-that kind of performance bug rather than report it.
+Just because it is absurd doesn't mean it wasn't built that way :)
 
-Do you agree that the guarantees that XFS currently supplies regarding
-locked operation will be maintained if the I/O is contained within a
-single page and the mutex is not taken?  ie add this check to the original
-patch:
+I agree, and I'm trying to influence the next hardware design.  However, what's already out there is memory units that must be accessed in 256MB blocks.  If you want to remove/add a GB, that's really 4 blocks of memory you're manipulating, to the hardware.  Those blocks have to be registered and recognized by the kernel for that to work.
 
-        if (iocb->ki_pos / PAGE_SIZE !=
-            (iocb->ki_pos + iov_iter_count(iter) - 1) / PAGE_SIZE)
-                goto uncached;
+Rick
 
-I think that gets me almost everything I want.  Small I/Os are going to
-notice the pain of the mutex more than large I/Os.
